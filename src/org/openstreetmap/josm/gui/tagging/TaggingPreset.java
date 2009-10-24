@@ -70,6 +70,7 @@ public class TaggingPreset extends AbstractAction implements LayerChangeListener
     public String name;
     public String name_context;
     public String locale_name;
+    public final static String OPTIONAL_TOOLTIP_TEXT = "Optional tooltip text";
 
     public static abstract class Item {
         protected void initAutoCompletionField(AutoCompletingTextField field, String key) {
@@ -517,9 +518,6 @@ public class TaggingPreset extends AbstractAction implements LayerChangeListener
     public void setDisplayName() {
         putValue(Action.NAME, getName());
         putValue("toolbar", "tagging_" + getRawName());
-        putValue(SHORT_DESCRIPTION, (group != null ?
-                tr("Use preset ''{0}'' of group ''{1}''", getLocaleName(), group.getName()) :
-                    tr("Use preset ''{0}''", getLocaleName())));
     }
 
     public String getLocaleName() {

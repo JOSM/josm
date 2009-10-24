@@ -20,9 +20,10 @@ public class TaggingPresetMenu extends TaggingPreset {
     public JMenu menu = null; // set by TaggingPresetPreferences
     public void setDisplayName() {
         putValue(Action.NAME, getName());
-        putValue(SHORT_DESCRIPTION, (group != null ?
-                tr("Preset group ''{0}'' of group ''{1}''", getLocaleName(), group.getName()) :
-                    tr("Preset group ''{0}''", getLocaleName())));
+        /** Tooltips should be shown for the toolbar buttons, but not in the menu. */
+        putValue(OPTIONAL_TOOLTIP_TEXT, (group != null ?
+                tr("Preset group {1} / {0}", getLocaleName(), group.getName()) :
+                    tr("Preset group {0}", getLocaleName())));
         putValue("toolbar", "tagginggroup_" + getRawName());
     }
     public void setIcon(String iconName) {

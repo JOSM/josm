@@ -50,6 +50,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -492,8 +493,14 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         for (String s : getToolString()) {
             if (s.equals("|"))
                 control.addSeparator();
-            else
-                control.add(getAction(s));
+            else {
+                Action a = getAction(s);
+                JButton b = control.add(a);
+                String tt = (String) a.getValue(TaggingPreset.OPTIONAL_TOOLTIP_TEXT);
+                if (tt != null) {
+                    b.setToolTipText(tt);
+                }
+            }
         }
         control.setVisible(control.getComponentCount() != 0);
     }
