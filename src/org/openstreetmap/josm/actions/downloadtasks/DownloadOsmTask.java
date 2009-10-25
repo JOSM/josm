@@ -17,7 +17,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -25,30 +24,85 @@ import org.openstreetmap.josm.io.BoundingBoxDownloader;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
-import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.xml.sax.SAXException;
 
 /**
  * Open the download dialog and download the data.
  * Run in the worker thread.
  */
-public class DownloadOsmTask implements DownloadTask {
+public class DownloadOsmTask extends AbstractDownloadTask {
     private static final Logger logger = Logger.getLogger(DownloadOsmTask.class.getName());
 
     private static Bounds currentBounds;
-    private Future<Task> task = null;
     private DataSet downloadedData;
-    private boolean canceled = false;
-    private boolean failed = false;
+    private DownloadTask downloadTask;
 
-    private class Task extends PleaseWaitRunnable {
+    private JCheckBox checkBox = new JCheckBox(tr("OpenStreetMap data"), true);
+
+    private void rememberDownloadedData(DataSet ds) {
+        this.downloadedData = ds;
+    }
+
+    public DataSet getDownloadedData() {
+        return downloadedData;
+    }
+
+    public Future<?> download(DownloadAction action, double minlat, double minlon,
+            double maxlat, double maxlon, ProgressMonitor progressMonitor) {
+        // Swap min and max if user has specified them the wrong way round
+        // (easy to do if you are crossing 0, for example)
+        // FIXME should perhaps be done in download dialog?
+        if (minlat > maxlat) {
+            double t = minlat; minlat = maxlat; maxlat = t;
+        }
+        if (minlon > maxlon) {
+            double t = minlon; minlon = maxlon; maxlon = t;
+        }
+
+        boolean newLayer = action != null
+        && (action.dialog == null || action.dialog.newLayer.isSelected());
+
+        downloadTask = new DownloadTask(newLayer,
+                new BoundingBoxDownloader(minlat, minlon, maxlat, maxlon), progressMonitor);
+        currentBounds = new Bounds(new LatLon(minlat, minlon), new LatLon(maxlat, maxlon));
+        // We need submit instead of execute so we can wait for it to finish and get the error
+        // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
+        return Main.worker.submit(downloadTask);
+    }
+
+    /**
+     * Loads a given URL from the OSM Server
+     * @param True if the data should be saved to a new layer
+     * @param The URL as String
+     */
+    public Future<?> loadUrl(boolean new_layer, String url, ProgressMonitor progressMonitor) {
+        downloadTask = new DownloadTask(new_layer,
+                new OsmServerLocationReader(url),
+                progressMonitor);
+        currentBounds = new Bounds(new LatLon(0,0), new LatLon(0,0));
+        return Main.worker.submit(downloadTask);
+    }
+
+    public JCheckBox getCheckBox() {
+        return checkBox;
+    }
+
+    public String getPreferencesSuffix() {
+        return "osm";
+    }
+
+    public void cancel() {
+        if (downloadTask != null) {
+            downloadTask.cancel();
+        }
+    }
+
+    private class DownloadTask extends PleaseWaitRunnable {
         private OsmServerReader reader;
         private DataSet dataSet;
         private boolean newLayer;
-        private boolean canceled;
-        private Exception lastException;
 
-        public Task(boolean newLayer, OsmServerReader reader, ProgressMonitor progressMonitor) {
+        public DownloadTask(boolean newLayer, OsmServerReader reader, ProgressMonitor progressMonitor) {
             super(tr("Downloading data"), progressMonitor, false);
             this.reader = reader;
             this.newLayer = newLayer;
@@ -56,17 +110,20 @@ public class DownloadOsmTask implements DownloadTask {
 
         @Override public void realRun() throws IOException, SAXException, OsmTransferException {
             try {
+                if (isCanceled())
+                    return;
                 dataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             } catch(Exception e) {
-                if (canceled) {
+                if (isCanceled()) {
                     logger.warning(tr("Ignoring exception because download has been cancelled. Exception was: {0}" + e.toString()));
                     return;
                 }
                 if (e instanceof OsmTransferException) {
-                    lastException = e;
+                    rememberException(e);
                 } else {
-                    lastException = new OsmTransferException(e);
+                    rememberException(new OsmTransferException(e));
                 }
+                DownloadOsmTask.this.setFailed(true);
             }
         }
 
@@ -101,19 +158,14 @@ public class DownloadOsmTask implements DownloadTask {
         }
 
         @Override protected void finish() {
-            if (canceled)
+            if (isFailed() || isCanceled())
                 return;
-            if (lastException != null) {
-                getProgressMonitor().setErrorMessage(ExceptionUtil.explainException(lastException));
-                DownloadOsmTask.this.setFailed(true);
-                return;
-            }
             if (dataSet == null)
                 return; // user canceled download or error occurred
             if (currentBounds == null)
                 return; // no data retrieved
             if (dataSet.allPrimitives().isEmpty()) {
-                progressMonitor.setErrorMessage(tr("No data found in this area."));
+                rememberErrorMessage(tr("No data found in this area."));
                 // need to synthesize a download bounds lest the visual indication of downloaded
                 // area doesn't work
                 dataSet.dataSources.add(new DataSource(currentBounds, "OpenStreetMap server"));
@@ -137,98 +189,10 @@ public class DownloadOsmTask implements DownloadTask {
         }
 
         @Override protected void cancel() {
-            this.canceled = true;
+            setCanceled(true);
             if (reader != null) {
                 reader.cancel();
             }
-            DownloadOsmTask.this.setCanceled(true);
-        }
-    }
-    private JCheckBox checkBox = new JCheckBox(tr("OpenStreetMap data"), true);
-
-    private void rememberDownloadedData(DataSet ds) {
-        this.downloadedData = ds;
-    }
-
-    public boolean isCanceled() {
-        return canceled;
-    }
-
-    public void setCanceled(boolean canceled) {
-        this.canceled = canceled;
-    }
-
-    public boolean isFailed() {
-        return failed;
-    }
-
-    public void setFailed(boolean failed) {
-        this.failed = failed;
-    }
-
-    public DataSet getDownloadedData() {
-        return downloadedData;
-    }
-
-    public void download(DownloadAction action, double minlat, double minlon,
-            double maxlat, double maxlon, ProgressMonitor progressMonitor) {
-        // Swap min and max if user has specified them the wrong way round
-        // (easy to do if you are crossing 0, for example)
-        // FIXME should perhaps be done in download dialog?
-        if (minlat > maxlat) {
-            double t = minlat; minlat = maxlat; maxlat = t;
-        }
-        if (minlon > maxlon) {
-            double t = minlon; minlon = maxlon; maxlon = t;
-        }
-
-        boolean newLayer = action != null
-        && (action.dialog == null || action.dialog.newLayer.isSelected());
-
-        Task t = new Task(newLayer,
-                new BoundingBoxDownloader(minlat, minlon, maxlat, maxlon), progressMonitor);
-        currentBounds = new Bounds(new LatLon(minlat, minlon), new LatLon(maxlat, maxlon));
-        // We need submit instead of execute so we can wait for it to finish and get the error
-        // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
-        task = Main.worker.submit(t, t);
-    }
-
-    /**
-     * Loads a given URL from the OSM Server
-     * @param True if the data should be saved to a new layer
-     * @param The URL as String
-     */
-    public void loadUrl(boolean new_layer, String url, ProgressMonitor progressMonitor) {
-        Task t = new Task(new_layer,
-                new OsmServerLocationReader(url),
-                progressMonitor);
-        currentBounds = new Bounds(new LatLon(0,0), new LatLon(0,0));
-        task = Main.worker.submit(t, t);
-    }
-
-    public JCheckBox getCheckBox() {
-        return checkBox;
-    }
-
-    public String getPreferencesSuffix() {
-        return "osm";
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask#getErrorMessage()
-     */
-    public String getErrorMessage() {
-        if(task == null)
-            return "";
-
-        try {
-            Task t = task.get();
-            return t.getProgressMonitor().getErrorMessage() == null
-            ? ""
-                    : t.getProgressMonitor().getErrorMessage();
-        } catch (Exception e) {
-            return "";
         }
     }
 }

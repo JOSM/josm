@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -17,7 +18,9 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
+import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -101,6 +104,9 @@ public class OpenLocationAction extends JosmAction {
      * Open the given file.
      */
     public void openUrl(boolean new_layer, String url) {
-        new DownloadOsmTask().loadUrl(new_layer, url, null);
+        DownloadOsmTask task = new DownloadOsmTask();
+        PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download Data"));
+        Future<?> future = task.loadUrl(new_layer, url, monitor);
+        Main.worker.submit(new PostDownloadHandler(task, future));
     }
 }

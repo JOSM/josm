@@ -26,6 +26,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DownloadAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -44,44 +45,6 @@ import org.openstreetmap.josm.tools.OsmUrlToBounds;
  *
  */
 public class DownloadDialog extends JPanel {
-
-    public interface DownloadTask {
-        /**
-         * Execute the download using the given bounding box. Set silent on progressMonitor
-         * if no error messages should be popped up.
-         */
-        void download(DownloadAction action, double minlat, double minlon,
-                double maxlat, double maxlon, ProgressMonitor progressMonitor);
-
-        /**
-         * Execute the download using the given URL
-         * @param newLayer
-         * @param url
-         */
-        void loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor);
-
-        /**
-         * @return The checkbox presented to the user
-         */
-        JCheckBox getCheckBox();
-
-        /**
-         * @return The name of the preferences suffix to use for storing the
-         * selection state.
-         */
-        String getPreferencesSuffix();
-
-        /**
-         * Gets the error message of the task once it executed. If there is no error message, an empty
-         * string is returned.
-         *
-         * WARNING: Never call this in the same thread you requested the download() or it will cause a
-         * dead lock. See actions/downloadTasks/DownloadOsmTaskList.java for a proper implementation.
-         *
-         * @return Error message or empty String
-         */
-        String getErrorMessage();
-    }
 
     /**
      * The list of download tasks. First entry should be the osm data entry

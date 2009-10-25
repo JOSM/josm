@@ -277,6 +277,8 @@ public class GeoImageLayer extends Layer {
         private GeoImageLayer layer;
         private final Collection<File> files;
         private final GpxLayer gpxLayer;
+        private LinkedList<TimedPoint> gps;
+
         public Loader(Collection<File> files, GpxLayer gpxLayer) {
             super(tr("Images for {0}", gpxLayer.getName()));
             this.files = files;
@@ -285,7 +287,7 @@ public class GeoImageLayer extends Layer {
         @Override protected void realRun() throws IOException {
             progressMonitor.subTask(tr("Read GPX..."));
             progressMonitor.setTicksCount(10 + files.size());
-            LinkedList<TimedPoint> gps = new LinkedList<TimedPoint>();
+            gps = new LinkedList<TimedPoint>();
 
             // Extract dates and locations from GPX input
 
@@ -321,10 +323,8 @@ public class GeoImageLayer extends Layer {
             }
 
 
-            if (gps.isEmpty()) {
-                progressMonitor.setErrorMessage(tr("No images with readable timestamps found."));
+            if (gps.isEmpty())
                 return;
-            }
 
             // read the image files
             ArrayList<ImageEntry> data = new ArrayList<ImageEntry>(files.size());
@@ -351,10 +351,20 @@ public class GeoImageLayer extends Layer {
             layer.calculatePosition();
         }
         @Override protected void finish() {
+            if (gps.isEmpty()) {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("No images with readable timestamps found."),
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
             if (layer != null) {
                 Main.main.addLayer(layer);
             }
         }
+
         @Override
         protected void cancel() {
 

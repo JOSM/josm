@@ -120,8 +120,6 @@ public interface ProgressMonitor {
     void removeCancelListener(CancelListener listener);
 
     void setSilent(boolean value);
-    void setErrorMessage(String message);
-    String getErrorMessage();
 
     /**
      * Appends a message to the log managed by the progress monitor.

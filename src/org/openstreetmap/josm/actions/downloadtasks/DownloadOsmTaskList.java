@@ -4,14 +4,18 @@ package org.openstreetmap.josm.actions.downloadtasks;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.EventQueue;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
 
@@ -19,10 +23,11 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UpdateSelectionAction;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor.CancelListener;
+import org.openstreetmap.josm.tools.ExceptionUtil;
 
 /**
  * This class encapsulates the downloading of several bounding boxes that would otherwise be too
@@ -33,6 +38,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  */
 public class DownloadOsmTaskList implements Runnable {
     private List<DownloadTask> osmTasks = new LinkedList<DownloadTask>();
+    private List<Future<?>> osmTaskFutures = new LinkedList<Future<?>>();
     private ProgressMonitor progressMonitor;
 
     /**
@@ -40,7 +46,7 @@ public class DownloadOsmTaskList implements Runnable {
      * @param newLayer Set to true if all areas should be put into a single new layer
      * @param The List of Rectangle2D to download
      */
-    public void download(boolean newLayer, List<Rectangle2D> rects, ProgressMonitor progressMonitor) {
+    public Future<?> download(boolean newLayer, List<Rectangle2D> rects, ProgressMonitor progressMonitor) {
         this.progressMonitor = progressMonitor;
         if(newLayer) {
             Layer l = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null);
@@ -49,23 +55,27 @@ public class DownloadOsmTaskList implements Runnable {
         }
 
         progressMonitor.beginTask(null, rects.size());
-        try {
-            int i = 0;
-            for(Rectangle2D td : rects) {
-                i++;
-                DownloadTask dt = new DownloadOsmTask();
-                ProgressMonitor childProgress = progressMonitor.createSubTaskMonitor(1, false);
-                childProgress.setSilent(true);
-                childProgress.setCustomText(tr("Download {0} of {1} ({2} left)", i, rects.size(), rects.size()-i));
-                dt.download(null, td.getMinY(), td.getMinX(), td.getMaxY(), td.getMaxX(), childProgress);
-                osmTasks.add(dt);
-            }
-        } finally {
-            // If we try to get the error message now the download task will never have been started
-            // and we'd be stuck in a classical dead lock. Instead attach this to the worker and once
-            // run() gets called all downloadTasks have finished and we can grab the error messages.
-            Main.worker.execute(this);
+        int i = 0;
+        for(Rectangle2D td : rects) {
+            i++;
+            DownloadTask dt = new DownloadOsmTask();
+            ProgressMonitor childProgress = progressMonitor.createSubTaskMonitor(1, false);
+            childProgress.setSilent(true);
+            childProgress.setCustomText(tr("Download {0} of {1} ({2} left)", i, rects.size(), rects.size()-i));
+            Future<?> future = dt.download(null, td.getMinY(), td.getMinX(), td.getMaxY(), td.getMaxX(), childProgress);
+            osmTaskFutures.add(future);
+            osmTasks.add(dt);
         }
+        progressMonitor.addCancelListener(
+                new CancelListener() {
+                    public void operationCanceled() {
+                        for (DownloadTask dt: osmTasks) {
+                            dt.cancel();
+                        }
+                    }
+                }
+        );
+        return Main.worker.submit(this);
     }
 
     /**
@@ -92,23 +102,36 @@ public class DownloadOsmTaskList implements Runnable {
      */
     public void run() {
         progressMonitor.finishTask();
-        String errors = "";
 
-        LinkedList<Integer> shown = new LinkedList<Integer>();
-        for(DownloadTask dt : osmTasks) {
-            String err = dt.getErrorMessage();
-            // avoid display of identical messages
-            if (err.equals("") || shown.contains(err.hashCode())) {
-                continue;
+        // wait for all tasks to finish
+        //
+        for (Future<?> future: osmTaskFutures) {
+            try {
+                future.get();
+            } catch(Exception e) {
+                e.printStackTrace();
+                return;
             }
-            shown.add(err.hashCode());
-            errors += "<br>* " + err;
         }
+        LinkedHashSet<Object> errors = new LinkedHashSet<Object>();
+        for(DownloadTask dt : osmTasks) {
+            errors.addAll(dt.getErrorObjects());
+        }
+        if (!errors.isEmpty()) {
+            StringBuffer sb = new StringBuffer();
+            for (Object error:errors) {
+                if (error instanceof String) {
+                    sb.append("<li>").append(error).append("</li>").append("<br>");
+                } else if (error instanceof Exception) {
+                    sb.append("<li>").append(ExceptionUtil.explainException((Exception)error)).append("</li>").append("<br>");
+                }
+            }
+            sb.insert(0, "<ul>");
+            sb.append("</ul>");
 
-        if(! errors.equals("")) {
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    "<html>"+tr("The following errors occurred during mass download:{0}", errors)
+                    "<html>"+tr("The following errors occurred during mass download: {0}", sb.toString())
                     +"</html>",
                     tr("Errors during Download"),
                     JOptionPane.ERROR_MESSAGE);

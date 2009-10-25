@@ -72,22 +72,6 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
                         });
                     }
                 }
-            } catch (SAXException x) {
-                x.printStackTrace();
-                progressMonitor.setErrorMessage(tr("Error while parsing")+": "+x.getMessage());
-            } catch (FileNotFoundException x) {
-                x.printStackTrace();
-                progressMonitor.setErrorMessage(tr("File not found")+": "+x.getMessage());
-            } catch (IOException x) {
-                x.printStackTrace();
-                progressMonitor.setErrorMessage(x.getMessage());
-            } catch(OsmTransferException x) {
-                x.printStackTrace();
-                if (x.getCause() != null) {
-                    progressMonitor.setErrorMessage(x.getCause().getMessage());
-                } else {
-                    progressMonitor.setErrorMessage(x.getMessage());
-                }
             } finally {
                 progressMonitor.finishTask();
                 progressMonitor.removeCancelListener(this);
@@ -95,12 +79,12 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
                     ((PleaseWaitProgressMonitor)progressMonitor).close();
                 }
             }
-        } catch (final Throwable e) {
+        } catch (final Exception e) {
             if (!ignoreException) {
                 // Exception has to thrown in EDT to be shown to user
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        throw new RuntimeException(e);
+                        ExceptionDialogUtil.explainException(e);
                     }
                 });
             }

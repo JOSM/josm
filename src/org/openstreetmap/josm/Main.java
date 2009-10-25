@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +32,8 @@ import javax.swing.UIManager;
 import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
+import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
@@ -45,7 +48,6 @@ import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.SplashScreen;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
-import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
 import org.openstreetmap.josm.gui.help.HelpBrowserProxy;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -420,7 +422,8 @@ abstract public class Main {
             } else {
                 //DownloadTask osmTask = main.menu.download.downloadTasks.get(0);
                 DownloadTask osmTask = new DownloadOsmTask();
-                osmTask.download(main.menu.download, b.min.lat(), b.min.lon(), b.max.lat(), b.max.lon(), null);
+                Future<?> future = osmTask.download(main.menu.download, b.min.lat(), b.min.lon(), b.max.lat(), b.max.lon(), null);
+                Main.worker.submit(new PostDownloadHandler(osmTask, future));
             }
             return;
         }
@@ -465,7 +468,10 @@ abstract public class Main {
         if (st.countTokens() == 4) {
             try {
                 DownloadTask task = rawGps ? new DownloadGpsTask() : new DownloadOsmTask();
-                task.download(main.menu.download, Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()), null);
+                // asynchronously launch the download task ...
+                Future<?> future = task.download(main.menu.download, Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()), null);
+                // ... and the continuation when the download is finished (this will wait for the download to finish)
+                Main.worker.execute(new PostDownloadHandler(task, future));
                 return;
             } catch (final NumberFormatException e) {
             }

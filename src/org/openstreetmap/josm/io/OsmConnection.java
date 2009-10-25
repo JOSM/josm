@@ -96,13 +96,21 @@ public class OsmConnection {
 
     public void cancel() {
         cancel = true;
-        if (activeConnection != null) {
-            activeConnection.setConnectTimeout(100);
-            activeConnection.setReadTimeout(100);
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {}
-            activeConnection.disconnect();
+        synchronized (this) {
+            if (activeConnection != null) {
+                activeConnection.setConnectTimeout(100);
+                activeConnection.setReadTimeout(100);
+            }
+        }
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ex) {
+        }
+
+        synchronized (this) {
+            if (activeConnection != null) {
+                activeConnection.disconnect();
+            }
         }
     }
 

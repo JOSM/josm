@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 
 public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {

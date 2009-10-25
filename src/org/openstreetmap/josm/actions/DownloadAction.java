@@ -7,14 +7,19 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.List;
+import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
+import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
+import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
-import org.openstreetmap.josm.gui.download.DownloadDialog.DownloadTask;
+import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -68,7 +73,10 @@ public class DownloadAction extends JosmAction {
                 for (DownloadTask task : dialog.downloadTasks) {
                     Main.pref.put("download."+task.getPreferencesSuffix(), task.getCheckBox().isSelected());
                     if (task.getCheckBox().isSelected()) {
-                        task.download(this, dialog.minlat, dialog.minlon, dialog.maxlat, dialog.maxlon, null);
+                        // asynchronously launch the download task ...
+                        Future<?> future = task.download(this, dialog.minlat, dialog.minlon, dialog.maxlat, dialog.maxlon, null);
+                        // ... and the continuation when the download task is finished
+                        Main.worker.submit(new PostDownloadHandler(task, future));
                         finish = true;
                     }
                 }
