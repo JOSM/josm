@@ -9,12 +9,16 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -59,6 +63,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected int fillAlpha;
     protected Color untaggedColor;
     protected Color textColor;
+    protected Color areaTextColor;
     protected float[] currentDashed = new float[0];
     protected Color currentDashedColor;
     protected int currentWidth = 0;
@@ -1150,6 +1155,34 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         return polygon;
     }
 
+    protected Point2D getCentroid(Polygon p)
+    {
+	double cx = 0.0, cy = 0.0, a = 0.0;
+
+	// usually requires points[0] == points[npoints] and can then use i+1 instead of j.
+	// Faked it slowly using j.  If this is really gets used, this should be fixed.
+	for (int i = 0;  i < p.npoints;  i++) {
+	    int j = i+1 == p.npoints ? 0 : i+1;
+	    a += (p.xpoints[i] * p.ypoints[j]) - (p.ypoints[i] * p.xpoints[j]);
+	    cx += (p.xpoints[i] + p.xpoints[j]) * (p.xpoints[i] * p.ypoints[j] - p.ypoints[i] * p.xpoints[j]);
+	    cy += (p.ypoints[i] + p.ypoints[j]) * (p.xpoints[i] * p.ypoints[j] - p.ypoints[i] * p.xpoints[j]);
+	}
+	return new Point2D.Double(cx / (3.0*a), cy / (3.0*a));
+    }
+
+    protected double getArea(Polygon p)
+    {
+	double sum = 0.0;
+
+	// usually requires points[0] == points[npoints] and can then use i+1 instead of j.
+	// Faked it slowly using j.  If this is really gets used, this should be fixed.
+	for (int i = 0;  i < p.npoints;  i++) {
+	    int j = i+1 == p.npoints ? 0 : i+1;
+	    sum = sum + (p.xpoints[i] * p.ypoints[j]) - (p.ypoints[i] * p.xpoints[j]);
+	}
+	return Math.abs(sum/2.0);
+    }
+
     protected void drawArea(Way w, Color color)
     {
         Polygon polygon = getPolygon(w);
@@ -1157,6 +1190,65 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         /* set the opacity (alpha) level of the filled polygon */
         g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), fillAlpha));
         g.fillPolygon(polygon);
+
+	if (showNames > dist) {
+	    String name = getWayName(w);
+	    if (name!=null /* && annotate */) {
+		Rectangle pb = polygon.getBounds();
+		FontMetrics fontMetrics = g.getFontMetrics(orderFont); // if slow, use cache
+		Rectangle2D nb = fontMetrics.getStringBounds(name, g); // if slow, approximate by strlen()*maxcharbounds(font)
+
+		// Point2D c = getCentroid(polygon);
+		// Using the Centroid is Nicer for buildings like: +--------+
+		// but this needs to be fast.  As most houses are  |   42   |
+		// boxes anyway, the center of the bounding box    +---++---+
+		// will have to do.                                    ++
+		// Centroids are not optimal either, just imagine a U-shaped house.
+		// Point2D c = new Point2D.Double(pb.x + pb.width / 2.0, pb.y + pb.height / 2.0);
+		// Rectangle2D.Double centeredNBounds =
+		//     new Rectangle2D.Double(c.getX() - nb.getWidth()/2,
+		//                            c.getY() - nb.getHeight()/2,
+		//                            nb.getWidth(),
+		//                            nb.getHeight());
+
+		Rectangle centeredNBounds = new Rectangle(pb.x + (int)((pb.width - nb.getWidth())/2.0),
+							  pb.y + (int)((pb.height - nb.getHeight())/2.0),
+							  (int)nb.getWidth(),
+							  (int)nb.getHeight());
+
+		//// Draw name bounding box for debugging:
+		// g.setColor(new Color(255,255,0,128));
+		// g.drawRect((int)centeredNBounds.getMinX(),
+		//	   (int)centeredNBounds.getMinY(),
+		//	   (int)centeredNBounds.getWidth(),
+		//	   (int)centeredNBounds.getHeight());
+
+		if ((pb.width >= nb.getWidth() && pb.height >= nb.getHeight()) && // quick check
+		    polygon.contains(centeredNBounds) // slow but nice
+		    ) {
+		    g.setColor(areaTextColor);
+		    Font defaultFont = g.getFont();
+		    g.setFont (orderFont);
+		    g.drawString (name,
+				  (int)(centeredNBounds.getMinX() - nb.getMinX()),
+				  (int)(centeredNBounds.getMinY() - nb.getMinY()));
+		    g.setFont(defaultFont);
+		}
+	    }
+	}
+    }
+
+    protected String getWayName(Way w) {
+	String name = null;
+	if (w.hasKeys()) {
+	    for (String rn : regionalNameOrder) {
+		name = w.get(rn);
+		if (name != null) {
+		    break;
+		}
+	    }
+	}
+	return name;
     }
 
     protected void drawAreaPolygon(Polygon polygon, Color color)
@@ -1328,6 +1420,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         super.getColors();
         untaggedColor = Main.pref.getColor(marktr("untagged"),Color.GRAY);
         textColor = Main.pref.getColor (marktr("text"), Color.WHITE);
+        areaTextColor = Main.pref.getColor (marktr("areatext"), Color.GRAY);
     }
 
     DataSet data;
