@@ -1,15 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.help;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Listens to commands on an input stream and delegates them to the help browser.
@@ -70,9 +69,7 @@ public class HelpBrowserCommandProcessor implements Runnable {
 
             try {
                 cmd = reader.readLine();
-                logger.info("got command: " + cmd);
             } catch(IOException e) {
-                logger.log(Level.SEVERE,e.toString());
                 System.out.println(tr("Failed to read command. Exiting help browser. Exception was:" + e.toString()));
                 System.exit(1);
             }

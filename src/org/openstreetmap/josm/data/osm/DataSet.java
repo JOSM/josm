@@ -4,18 +4,16 @@ import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 /**
  * DataSet is the data behind the application. It can consists of only a few points up to the whole
@@ -134,9 +132,8 @@ public class DataSet implements Cloneable {
             Relation relation = new Relation((RelationData)data, this);
             relations.add(relation);
             return relation;
-        } else {
+        } else
             throw new AssertionError();
-        }
     }
 
     /**
@@ -169,8 +166,9 @@ public class DataSet implements Cloneable {
         Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
         for (OsmPrimitive osm : selectedPrimitives) {
             if (osm instanceof Way ||
-                osm instanceof Node)
+                    osm instanceof Node) {
                 sel.add(osm);
+            }
         }
         return sel;
     }
@@ -244,8 +242,9 @@ public class DataSet implements Cloneable {
     LinkedHashSet<OsmPrimitive> selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
 
     public boolean toggleSelected(OsmPrimitive osm) {
-        if (!selectedPrimitives.remove(osm))
+        if (!selectedPrimitives.remove(osm)) {
             selectedPrimitives.add(osm);
+        }
         return true;
     }
     public boolean isSelected(OsmPrimitive osm) {
@@ -479,15 +478,14 @@ public class DataSet implements Cloneable {
         if (createNew) {
             OsmPrimitive result = null;
             switch (type) {
-            case NODE: result = new Node(id, true); break;
-            case WAY: result = new Way(id, true); break;
-            case RELATION: result = new Relation(id, true); break;
+                case NODE: result = new Node(id, true); break;
+                case WAY: result = new Way(id, true); break;
+                case RELATION: result = new Relation(id, true); break;
             }
             addPrimitive(result);
             return result;
-        } else {
+        } else
             return null;
-        }
     }
 
     public Set<Long> getPrimitiveIds() {

@@ -1202,7 +1202,12 @@ public class GenericRelationEditor extends RelationEditor {
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
-            Main.worker.submit(new DownloadTask(GenericRelationEditor.this));
+            Main.worker.submit(new DownloadTask(
+                    Collections.singletonList(getRelation()),
+                    getLayer(),
+                    memberTableModel,
+                    GenericRelationEditor.this)
+            );
         }
 
         protected void updateEnabledState() {
@@ -1368,17 +1373,34 @@ public class GenericRelationEditor extends RelationEditor {
      * The asynchronous task for downloading relation members.
      *
      */
-    class DownloadTask extends PleaseWaitRunnable {
+    public static class DownloadTask extends PleaseWaitRunnable {
         private boolean cancelled;
         private int conflictsCount;
         private Exception lastException;
+        private List<Relation> relations;
+        private OsmDataLayer curLayer;
+        private MemberTableModel memberTableModel;
 
-        public DownloadTask(Dialog parent) {
+        public DownloadTask(List<Relation> relations, OsmDataLayer curLayer, MemberTableModel memberTableModel, Dialog parent) {
             super(tr("Download relation members"), new PleaseWaitProgressMonitor(parent), false /*
              * don't
              * ignore
              * exception
              */);
+            this.relations = relations;
+            this.curLayer = curLayer;
+            this.memberTableModel = memberTableModel;
+        }
+
+        public DownloadTask(List<Relation> relations, OsmDataLayer curLayer, MemberTableModel memberTableModel) {
+            super(tr("Download relation members"), new PleaseWaitProgressMonitor(), false /*
+             * don't
+             * ignore
+             * exception
+             */);
+            this.relations = relations;
+            this.curLayer = curLayer;
+            this.memberTableModel = memberTableModel;
         }
 
         @Override
@@ -1389,9 +1411,12 @@ public class GenericRelationEditor extends RelationEditor {
 
         @Override
         protected void finish() {
+            Main.map.repaint();
             if (cancelled)
                 return;
-            memberTableModel.updateMemberReferences(getLayer().data);
+            if (memberTableModel != null) {
+                memberTableModel.fireTableDataChanged();
+            }
             if (lastException != null) {
                 ExceptionDialogUtil.explainException(lastException);
             }
@@ -1409,32 +1434,38 @@ public class GenericRelationEditor extends RelationEditor {
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                progressMonitor.indeterminateSubTask("");
-                OsmServerObjectReader reader = new OsmServerObjectReader(getRelation().getId(), OsmPrimitiveType.RELATION,
-                        true);
-                DataSet dataSet = reader.parseOsm(progressMonitor
-                        .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-                if (dataSet != null) {
-                    final MergeVisitor visitor = new MergeVisitor(getLayer().data, dataSet);
-                    visitor.merge();
+                boolean changed = false;
+                for (Relation relation : relations) {
+                    progressMonitor.indeterminateSubTask("");
+                    OsmServerObjectReader reader = new OsmServerObjectReader(relation.getId(), OsmPrimitiveType.RELATION,
+                            true);
+                    DataSet dataSet = reader.parseOsm(progressMonitor
+                            .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+                    if (dataSet != null) {
+                        changed = true;
+                        final MergeVisitor visitor = new MergeVisitor(curLayer.data, dataSet);
+                        visitor.merge();
 
-                    // copy the merged layer's data source info
-                    for (DataSource src : dataSet.dataSources) {
-                        getLayer().data.dataSources.add(src);
+                        // copy the merged layer's data source info
+                        for (DataSource src : dataSet.dataSources) {
+                            curLayer.data.dataSources.add(src);
+                        }
+                        if (!visitor.getConflicts().isEmpty()) {
+                            curLayer.getConflicts().add(visitor.getConflicts());
+                            conflictsCount = visitor.getConflicts().size();
+                        }
                     }
-                    // FIXME: this is necessary because there are dialogs listening
-                    // for DataChangeEvents which manipulate Swing components on this
-                    // thread.
-                    //
+                }
+                // FIXME: this is necessary because there are dialogs listening
+                // for DataChangeEvents which manipulate Swing components on this
+                // thread.
+                //
+                if (changed) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                            getLayer().fireDataChange();
+                            curLayer.fireDataChange();
                         }
                     });
-                    if (!visitor.getConflicts().isEmpty()) {
-                        getLayer().getConflicts().add(visitor.getConflicts());
-                        conflictsCount = visitor.getConflicts().size();
-                    }
                 }
             } catch (Exception e) {
                 if (cancelled) {

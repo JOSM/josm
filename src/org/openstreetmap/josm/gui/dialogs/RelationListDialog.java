@@ -1,24 +1,30 @@
 package org.openstreetmap.josm.gui.dialogs;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
@@ -35,6 +41,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.DataChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -63,6 +70,8 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     private EditAction editAction;
     /** the delete action */
     private DeleteAction deleteAction;
+    /** the popup menu */
+    private RelationDialogPopupMenu popupMenu;
 
 
     /**
@@ -74,11 +83,13 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
         // create the list of relations
         //
-        model = new RelationListModel();
+        DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
+        model = new RelationListModel(selectionModel);
         displaylist = new JList(model);
+        displaylist.setSelectionModel(selectionModel);
         displaylist.setCellRenderer(new OsmPrimitivRenderer());
         displaylist.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        displaylist.addMouseListener(new DoubleClickAdapter());
+        displaylist.addMouseListener(new MouseEventHandler());
         add(new JScrollPane(displaylist), BorderLayout.CENTER);
 
         // create the panel with buttons
@@ -118,6 +129,8 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         add(buttonPanel, BorderLayout.SOUTH);
         displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "deleteRelation");
         displaylist.getActionMap().put("deleteRelation", deleteAction);
+
+        popupMenu = new RelationDialogPopupMenu();
 
         // register as layer listener
         //
@@ -169,7 +182,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             model.setRelations(null);
             return;
         }
-        Relation selected = getSelected();
+        Relation[] selected = getAllSelected();
 
         model.setRelations(getDisplayedRelationsInSortOrder(Main.main.getCurrentDataSet()));
         if(model.getSize() > 0) {
@@ -177,7 +190,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         } else {
             setTitle(tr("Relations"));
         }
-        selectRelation(selected);
+        selectRelations(selected);
     }
 
     public void activeLayerChange(Layer a, Layer b) {
@@ -239,25 +252,54 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     }
 
     /**
+     * @return All selected relations in the list, possibly empty List
+     */
+    private Relation[] getAllSelected() {
+        return Arrays.asList(displaylist.getSelectedValues()).toArray(new Relation[0]);
+    }
+
+    /**
      * Selects the relation <code>relation</code> in the list of relations.
      *
      * @param relation  the relation
      */
     public void selectRelation(Relation relation) {
-        if (relation == null){
-            displaylist.clearSelection();
-            return;
-        }
-        int idx = model.getIndexOfRelation(relation);
-        if (idx == -1) {
-            displaylist.clearSelection();
-        } else {
-            displaylist.setSelectedIndex(idx);
-            displaylist.scrollRectToVisible(displaylist.getCellBounds(idx,idx));
-        }
+        selectRelations(new Relation[] {relation});
     }
 
-    class DoubleClickAdapter extends MouseAdapter {
+    /**
+     * Selects the relations <code>relations</code> in the list of relations.
+     *
+     * @param relations  the relations (may be empty)
+     */
+    public void selectRelations(Relation[] relations) {
+        List<Integer> sel = new ArrayList<Integer>();
+        for (Relation r : relations) {
+            if (r == null) {
+                continue;
+            }
+            int idx = model.getIndexOfRelation(r);
+            if (idx != -1) {
+                sel.add(idx);
+            }
+        }
+        if (sel.isEmpty()) {
+            displaylist.clearSelection();
+            return;
+        } else {
+            int fst = Collections.min(sel);
+            displaylist.scrollRectToVisible(displaylist.getCellBounds(fst, fst));
+        }
+
+        int[] aSel = new int[sel.size()];       //FIXME: how to cast Integer[] -> int[] ?
+        for (int i=0; i<sel.size(); ++i) {
+            aSel[i] = sel.get(i);
+        }
+
+        displaylist.setSelectedIndices(aSel);
+    }
+
+    class MouseEventHandler extends MouseAdapter {
         protected void setCurrentRelationAsSelection() {
             Main.main.getCurrentDataSet().setSelected((Relation)displaylist.getSelectedValue());
         }
@@ -273,6 +315,27 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
                 } else {
                     setCurrentRelationAsSelection();
                 }
+            }
+        }
+        private void openPopup(MouseEvent e) {
+            Point p = e.getPoint();
+            int index = displaylist.locationToIndex(p);
+            if (index < 0) return;
+            if (!displaylist.getCellBounds(index, index).contains(e.getPoint()))
+                return;
+            if (! displaylist.isSelectedIndex(index)) {
+                displaylist.setSelectedIndex(index);
+            }
+            popupMenu.show(RelationListDialog.this, p.x, p.y-3);
+        }
+        @Override public void mousePressed(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                openPopup(e);
+            }
+        }
+        @Override public void mouseReleased(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                openPopup(e);
             }
         }
     }
@@ -440,7 +503,6 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     class SelectAction extends AbstractAction implements ListSelectionListener{
         public SelectAction() {
             putValue(SHORT_DESCRIPTION,tr("Set the current selection to the list of selected relations"));
-            //putValue(NAME, tr("Select"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
             setEnabled(false);
         }
@@ -462,8 +524,74 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
     }
 
+    /**
+     * Sets the current selection to the list of relations selected in this dialog
+     *
+     */
+    class SelectMembersAction extends AbstractAction implements ListSelectionListener{
+        public SelectMembersAction() {
+            putValue(SHORT_DESCRIPTION,tr("Select the members of all selected relations"));
+            putValue(SMALL_ICON, ImageProvider.get("selectall"));
+            putValue(NAME, tr("Select members"));
+            updateEnabledState();
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (!isEnabled()) return;
+            List<Relation> relations = model.getSelectedRelations();
+            HashSet<OsmPrimitive> members = new HashSet<OsmPrimitive>();
+            for(Relation r: relations) {
+                members.addAll(r.getMemberPrimitives());
+            }
+            Main.map.mapView.getEditLayer().data.setSelected(members);
+            DataSet.fireSelectionChanged(members);
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(displaylist.getSelectedIndices() != null && displaylist.getSelectedIndices().length > 0);
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+    }
+
+
+    class DownloadMembersAction extends AbstractAction implements ListSelectionListener{
+
+        public DownloadMembersAction() {
+            putValue(SHORT_DESCRIPTION,tr("Download all members of the selected relations"));
+            putValue(NAME, tr("Download members"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "downloadincomplete"));
+            putValue("help", ht("/Dialog/RelationList#DownloadMembers"));
+            updateEnabledState();
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(! model.getSelectedNonNewRelations().isEmpty());
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            List<Relation> relations = model.getSelectedNonNewRelations();
+            if (relations.isEmpty())
+                return;
+            Main.worker.submit(new GenericRelationEditor.DownloadTask(
+                    model.getSelectedNonNewRelations(),
+                    Main.map.mapView.getEditLayer(), null));
+        }
+    }
+
     private static  class RelationListModel extends AbstractListModel {
         private ArrayList<Relation> relations;
+        private DefaultListSelectionModel selectionModel;
+
+        public RelationListModel(DefaultListSelectionModel selectionModel) {
+            this.selectionModel = selectionModel;
+        }
 
         public ArrayList<Relation> getRelations() {
             return relations;
@@ -491,6 +619,64 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         public int getIndexOfRelation(Relation relation) {
             if (relation == null) return -1;
             return relations.indexOf(relation);
+        }
+
+        /**
+         * Replies the list of selected, non-new relations. Empty list,
+         * if there are no selected, non-new relations.
+         * 
+         * @return the list of selected, non-new relations.
+         */
+        public List<Relation> getSelectedNonNewRelations() {
+            ArrayList<Relation> ret = new ArrayList<Relation>();
+            for (int i=0; i<getSize();i++) {
+                if (!selectionModel.isSelectedIndex(i)) {
+                    continue;
+                }
+                if (relations.get(i).isNew()) {
+                    continue;
+                }
+                ret.add(relations.get(i));
+            }
+            return ret;
+        }
+
+        /**
+         * Replies the list of selected relations. Empty list,
+         * if there are no selected relations.
+         * 
+         * @return the list of selected, non-new relations.
+         */
+        public List<Relation> getSelectedRelations() {
+            ArrayList<Relation> ret = new ArrayList<Relation>();
+            for (int i=0; i<getSize();i++) {
+                if (!selectionModel.isSelectedIndex(i)) {
+                    continue;
+                }
+                ret.add(relations.get(i));
+            }
+            return ret;
+        }
+    }
+
+    class RelationDialogPopupMenu extends JPopupMenu {
+
+        protected void build() {
+            // -- download members action
+            //
+            DownloadMembersAction downloadMembersAction = new DownloadMembersAction();
+            displaylist.addListSelectionListener(downloadMembersAction);
+            add(downloadMembersAction);
+
+            // -- select members action
+            //
+            SelectMembersAction selectMembersAction = new SelectMembersAction();
+            displaylist.addListSelectionListener(selectMembersAction);
+            add(selectMembersAction);
+        }
+
+        public RelationDialogPopupMenu() {
+            build();
         }
     }
 }

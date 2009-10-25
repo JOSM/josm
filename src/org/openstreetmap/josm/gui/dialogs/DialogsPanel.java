@@ -270,12 +270,14 @@ public class DialogsPanel extends JPanel {
          */
         if (numPanels == 1 && panels.get(N-1).getComponents().length == 0)
         {
+            parent.setDividerSize(0);
             this.setVisible(false);
         } else {
             if (this.getWidth() != 0) { // only if josm started with hidden panel
                 this.setPreferredSize(new Dimension(this.getWidth(), 0));
             }
             this.setVisible(true);
+            parent.setDividerSize(5);
             parent.resetToPreferredSizes();
         }
     }

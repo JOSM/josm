@@ -17,10 +17,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -86,12 +84,12 @@ public class MemberTableModel extends AbstractTableModel {
 
     public Object getValueAt(int rowIndex, int columnIndex) {
         switch (columnIndex) {
-        case 0:
-            return members.get(rowIndex).getRole();
-        case 1:
-            return members.get(rowIndex).getMember();
-        case 2:
-            return wayConnection(rowIndex);
+            case 0:
+                return members.get(rowIndex).getRole();
+            case 1:
+                return members.get(rowIndex).getMember();
+            case 2:
+                return wayConnection(rowIndex);
         }
         // should not happen
         return null;
@@ -196,24 +194,7 @@ public class MemberTableModel extends AbstractTableModel {
             listSelectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         }
         return listSelectionModel;
-    }
-
-    public void updateMemberReferences(DataSet ds) {
-        for (int i=0; i< members.size();i++) {
-            RelationMember member = members.get(i);
-            if (member.getMember().isNew()) {
-                continue;
-            }
-            OsmPrimitive primitive = ds.getPrimitiveById(member.getMember().getId(), OsmPrimitiveType.from(member.getMember()));
-            if (primitive != null) {
-                RelationMember newMember = new RelationMember(member.getRole(), primitive);
-                members.remove(i);
-                members.add(i, newMember);
-            }
-        }
-        fireTableDataChanged();
-    }
-
+    }
     public void removeMembersReferringTo(List<? extends OsmPrimitive> primitives) {
         if (primitives == null)
             return;
@@ -723,14 +704,12 @@ public class MemberTableModel extends AbstractTableModel {
 
     private WayConnectionType wayConnection(int i) {
         RelationMember m = members.get(i);
-        if (! m.isWay()) {
+        if (! m.isWay())
             return new WayConnectionType();
-        }
         Way w = m.getWay();
-        if (w == null || w.incomplete) {
+        if (w == null || w.incomplete)
             return new WayConnectionType();
-        }
-        
+
         int ip = (i - 1 + members.size()) % members.size();
         Integer link_p = linked(ip);
         Integer link_n = linked(i);
