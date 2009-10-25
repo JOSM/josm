@@ -6,18 +6,20 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
-import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpBrowserProxy;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -46,7 +48,7 @@ public class HelpAwareOptionPane {
         }
     }
 
-    static private class DefaultAction implements ActionListener {
+    static private class DefaultAction extends AbstractAction {
         private JDialog dialog;
         private JOptionPane pane;
         private int value;
@@ -56,16 +58,29 @@ public class HelpAwareOptionPane {
             this.pane = pane;
             this.value = value;
         }
+
         public void actionPerformed(ActionEvent e) {
             pane.setValue(value);
             dialog.setVisible(false);
         }
     }
 
+    /**
+     * Creates the list buttons to be displayed in the option pane dialog.
+     * 
+     * @param options the option. If null, just creates an OK button and a help button
+     * @param helpTopic the help topic. The context sensitive help of all buttons is equal
+     * to the context sensitive help of the whole dialog
+     * @return the list of buttons
+     */
     static private List<JButton> createOptionButtons(ButtonSpec[] options, String helpTopic) {
         List<JButton> buttons = new ArrayList<JButton>();
         if (options == null) {
-            buttons.add(new JButton(tr("OK")));
+            JButton b = new JButton(tr("OK"));
+            b.setIcon(ImageProvider.get("ok"));
+            b.setToolTipText(tr("Click to close the dialog"));
+            b.setFocusable(true);
+            buttons.add(b);
         } else {
             for (ButtonSpec spec: options) {
                 JButton b = new JButton(spec.text);
@@ -76,12 +91,17 @@ public class HelpAwareOptionPane {
                 }
                 b.setFocusable(true);
                 buttons.add(b);
-
             }
         }
         return buttons;
     }
 
+    /**
+     * Creates the help button
+     * 
+     * @param helpTopic the help topic
+     * @return the help button
+     */
     static private JButton createHelpButton(final String helpTopic) {
         JButton b = new JButton(tr("Help"));
         b.setIcon(ImageProvider.get("help"));
@@ -90,19 +110,11 @@ public class HelpAwareOptionPane {
         b.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        HelpBrowserProxy.getInstance().setUrlForHelpTopic(completeHelpTopic(helpTopic));
+                        HelpBrowserProxy.getInstance().setUrlForHelpTopic(helpTopic);
                     }
                 }
         );
         return b;
-    }
-
-    static private String completeHelpTopic(String helpTopic) {
-        if (helpTopic == null) return null;
-        if (! helpTopic.startsWith("/")) {
-            helpTopic = "/" + helpTopic;
-        }
-        return "Help" + helpTopic;
     }
 
     /**
@@ -171,6 +183,7 @@ public class HelpAwareOptionPane {
         dialog.setContentPane(pane);
         dialog.addWindowListener(
                 new WindowAdapter() {
+
                     @Override
                     public void windowClosing(WindowEvent e) {
                         pane.setValue(JOptionPane.CLOSED_OPTION);
@@ -186,18 +199,30 @@ public class HelpAwareOptionPane {
                                     break;
                                 }
                             }
-                            if (i >= options.length) return; // default option not an option?
-
+                            if (i >= options.length) {
+                                buttons.get(0).requestFocusInWindow();
+                            }
                             buttons.get(i).requestFocusInWindow();
+                        } else {
+                            buttons.get(0).requestFocusInWindow();
                         }
                     }
                 }
         );
         if (options != null) {
             for (int i=0; i < options.length;i++) {
-                buttons.get(i).addActionListener(new DefaultAction(dialog, pane, i));
+                final DefaultAction action = new DefaultAction(dialog, pane, i);
+                buttons.get(i).addActionListener(action);
+                buttons.get(i).getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "enter");
+                buttons.get(i).getActionMap().put("enter", action);
             }
+        } else {
+            final DefaultAction action = new DefaultAction(dialog, pane, 0);
+            buttons.get(0).addActionListener(action);
+            buttons.get(0).getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "enter");
+            buttons.get(0).getActionMap().put("enter", action);
         }
+
         dialog.pack();
         WindowGeometry.centerOnScreen(dialog.getSize()).applySafe(dialog);
         if (helpTopic != null) {

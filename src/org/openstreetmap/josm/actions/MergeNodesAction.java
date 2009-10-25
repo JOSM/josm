@@ -4,6 +4,7 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.combineTigerTags;
 import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.completeTagCollectionForEditing;
 import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.normalizeTagCollectionBeforeEditing;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -28,11 +29,13 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.BackreferencedDataSet.RelationToChildReference;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
-
-
 /**
  * Merges a collection of nodes into one node.
  * 
@@ -160,12 +163,26 @@ public class MergeNodesAction extends JosmAction {
                 if (backreferences.getParents(w).isEmpty()) {
                     waysToDelete.add(w);
                 } else {
-                    JOptionPane.showMessageDialog(
+                    ButtonSpec[] options = new ButtonSpec[] {
+                            new ButtonSpec(
+                                    tr("Abort Merging"),
+                                    ImageProvider.get("cancel"),
+                                    tr("Click to abort merging nodes"),
+                                    null /* no special help topic */
+                            )
+                    };
+                    HelpAwareOptionPane.showOptionDialog(
                             Main.parent,
-                            tr("Cannot merge nodes: " +
-                            "Would have to delete a way that is still used."),
+                            tr(
+                                    "Cannot merge nodes: Would have to delete way ''{0}'' which is still used.",
+                                    w.getDisplayName(DefaultNameFormatter.getInstance())
+                            ),
                             tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE
+                            JOptionPane.WARNING_MESSAGE,
+                            null, /* no icon */
+                            options,
+                            options[0],
+                            ht("/Action/MergeNodes#WaysToDeleteStillInUse")
                     );
                     return null;
                 }
@@ -177,6 +194,7 @@ public class MergeNodesAction extends JosmAction {
                 cmds.add(new ChangeCommand(w, newWay));
             }
         }
+        cmds.add(new DeleteCommand(waysToDelete));
         return cmds;
     }
 
