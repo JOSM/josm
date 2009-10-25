@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.progress;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.Dialog;
 import java.awt.EventQueue;
 import java.awt.Frame;
@@ -12,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JOptionPane;
 
@@ -34,7 +31,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     }
 
     public PleaseWaitProgressMonitor(String windowTitle) {
-        this(JOptionPane.getFrameForComponent(Main.map));
+        this(JOptionPane.getFrameForComponent(Main.parent));
         this.windowTitle = windowTitle;
     }
 
@@ -52,29 +49,8 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     private WindowListener windowListener = new WindowAdapter(){
         @Override public void windowClosing(WindowEvent e) {
             cancel();
-            closeDialog();
         }
     };
-
-    private void closeDialog() {
-        try {
-            Runnable runnable = new Runnable(){
-                public void run() {
-                }
-            };
-
-            // make sure, this is called in the dispatcher thread ASAP
-            if (EventQueue.isDispatchThread()) {
-                runnable.run();
-            } else {
-                EventQueue.invokeAndWait(runnable);
-            }
-
-        } catch (InterruptedException e) {
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private void doInEDT(Runnable runnable) {
         EventQueue.invokeLater(runnable);
@@ -84,19 +60,19 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     public void doBeginTask() {
         doInEDT(new Runnable() {
             public void run() {
-                if (dialogParent instanceof Frame) {
-                    dialog = new PleaseWaitDialog((Frame)dialogParent);
-                } else if (dialogParent instanceof Dialog) {
-                    dialog = new PleaseWaitDialog((Dialog)dialogParent);
+                if (dialogParent instanceof Frame && dialog == null) {
+                    dialog = new PleaseWaitDialog(dialogParent);
+                } else if (dialogParent instanceof Dialog && dialog == null) {
+                    dialog = new PleaseWaitDialog(dialogParent);
                 } else
                     throw new ProgressException("PleaseWaitDialog parent must be either Frame or Dialog");
 
                 if (windowTitle != null) {
                     dialog.setTitle(windowTitle);
                 }
-                dialog.cancel.setEnabled(true);
+                dialog.setCancelEnabled(true);
+                dialog.setCancelCallback(cancelListener);
                 dialog.setCustomText("");
-                dialog.cancel.addActionListener(cancelListener);
                 dialog.addWindowListener(windowListener);
                 dialog.progress.setMaximum(PROGRESS_BAR_MAX);
                 dialog.setVisible(true);
@@ -106,23 +82,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
     @Override
     public void doFinishTask() {
-        doInEDT(new Runnable() {
-            public void run() {
-                if (dialog != null) {
-                    dialog.setVisible(false);
-                    dialog.dispose();
-                    dialog.removeWindowListener(windowListener);
-                    dialog.cancel.removeActionListener(cancelListener);
-                    if (getErrorMessage() != null) {
-                        JOptionPane.showMessageDialog(
-                                Main.parent, getErrorMessage(),
-                                tr("Error"),
-                                JOptionPane.ERROR_MESSAGE);
-                    }
-                    dialog = null;
-                }
-            }
-        });
+        // do nothing
     }
 
     @Override
@@ -163,7 +123,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         doInEDT(new Runnable() {
             public void run() {
                 if (value && dialog.progress.getValue() == 0) {
-                    // Enable only if progress is at the begging. Doing intermediate progress in the middle
+                    // Enable only if progress is at the beginning. Doing intermediate progress in the middle
                     // will hide already reached progress
                     dialog.setIndeterminate(true);
                 } else {
@@ -178,4 +138,20 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         // Do nothing
     }
 
+    @Override
+    public void appendLogMessage(final String message) {
+        doInEDT(new Runnable() {
+            public void run() {
+                dialog.appendLogMessage(message);
+            }
+        });
+    }
+
+    public void close() {
+        dialog.setVisible(false);
+        dialog.setCancelCallback(null);
+        dialog.removeWindowListener(windowListener);
+        dialog.dispose();
+        dialog = null;
+    }
 }

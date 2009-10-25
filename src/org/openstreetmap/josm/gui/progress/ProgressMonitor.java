@@ -122,4 +122,11 @@ public interface ProgressMonitor {
     void setSilent(boolean value);
     void setErrorMessage(String message);
     String getErrorMessage();
+
+    /**
+     * Appends a message to the log managed by the progress monitor.
+     * 
+     * @param message the log message. Ignored if null or white space only.
+     */
+    void appendLogMessage(String message);
 }

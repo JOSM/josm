@@ -358,16 +358,6 @@ public class ToggleDialog extends JPanel implements Helpful {
                     dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, ToggleDialog.this);
                 }
             });
-            addMouseListener(
-                    new MouseAdapter() {
-                        @Override
-                        public void mouseEntered(MouseEvent e) {
-                            super.mouseEntered(e);
-                            System.out.println("requesting focus ...");
-                            requestFocusInWindow();
-                        }
-                    }
-            );
 
             String bounds = Main.pref.get(preferencePrefix+".bounds",null);
             if (bounds != null) {

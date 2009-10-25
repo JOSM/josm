@@ -59,6 +59,9 @@ public class NullProgressMonitor implements ProgressMonitor {
     public void setExtraText(String text) {
     }
 
+    public void appendLogMessage(String message) {
+    }
+
     public void setSilent(boolean value) {
     }
 

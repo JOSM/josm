@@ -632,7 +632,8 @@ public class UploadAction extends JosmAction{
             if (p.isDeleted()) {
                 // we tried to delete an already deleted primitive.
                 //
-                System.out.println(tr("Warning: primitive ''{0}'' is already deleted on the server. Skipping this primitive and retrying to upload.", p.getDisplayName(DefaultNameFormatter.getInstance())));
+                System.out.println(tr("Warning: object ''{0}'' is already deleted on the server. Skipping this object and retrying to upload.", p.getDisplayName(DefaultNameFormatter.getInstance())));
+                monitor.appendLogMessage(tr("Object ''{0}'' is already deleted. Skipping object in upload.",p.getDisplayName(DefaultNameFormatter.getInstance())));
                 processedPrimitives.addAll(writer.getProcessedPrimitives());
                 processedPrimitives.add(p);
                 toUpload.removeAll(processedPrimitives);
@@ -647,14 +648,12 @@ public class UploadAction extends JosmAction{
         @Override protected void realRun() throws SAXException, IOException {
             writer = new OsmServerWriter();
             try {
-                //
                 while(true) {
                     try {
-                        ProgressMonitor monitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
-                        writer.uploadOsm(layer.data.version, toUpload, changeset, monitor);
+                        getProgressMonitor().subTask(tr("Uploading {0} objects ...", toUpload.size()));
+                        writer.uploadOsm(layer.data.version, toUpload, changeset, getProgressMonitor().createSubTaskMonitor(1, false));
                         processedPrimitives.addAll(writer.getProcessedPrimitives());
-                        // if we get here we've successfully uploaded the data. We
-                        // can exit the loop.
+                        // if we get here we've successfully uploaded the data. Exit the loop.
                         //
                         break;
                     } catch(OsmApiPrimitiveGoneException e) {
@@ -671,7 +670,7 @@ public class UploadAction extends JosmAction{
                 }
             } catch (Exception e) {
                 if (uploadCancelled) {
-                    System.out.println("Ignoring exception caught because upload is cancelled. Exception is: " + e.toString());
+                    System.out.println(tr("Ignoring caught exception because upload is canceled. Exception is: {0}", e.toString()));
                     return;
                 }
                 lastException = e;

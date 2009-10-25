@@ -38,8 +38,9 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
 
     /**
      * Create the runnable object with a given message for the user.
-     * @param title Message for user
-     * @param ignoreException If true, exception will be propaged to calling code. If false then
+     * 
+     * @param title message for the user
+     * @param ignoreException If true, exception will be propagated to calling code. If false then
      * exception will be thrown directly in EDT. When this runnable is executed using executor framework
      * then use false unless you read result of task (because exception will get lost if you don't)
      */
@@ -51,12 +52,12 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
         this.title = title;
         this.progressMonitor = progressMonitor == null?new PleaseWaitProgressMonitor(title):progressMonitor;
         this.ignoreException = ignoreException;
-        this.progressMonitor.addCancelListener(this);
     }
 
     private void doRealRun() {
         try {
             try {
+                progressMonitor.addCancelListener(this);
                 progressMonitor.beginTask(title);
                 try {
                     realRun();
@@ -89,6 +90,10 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
                 }
             } finally {
                 progressMonitor.finishTask();
+                progressMonitor.removeCancelListener(this);
+                if (progressMonitor instanceof PleaseWaitProgressMonitor) {
+                    ((PleaseWaitProgressMonitor)progressMonitor).close();
+                }
             }
         } catch (final Throwable e) {
             if (!ignoreException) {

@@ -59,9 +59,8 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 
     protected void checkState(State... expectedStates) {
         for (State s:expectedStates) {
-            if (s == state) {
+            if (s == state)
                 return;
-            }
         }
         throw new ProgressException("Expected states are %s but current state is %s", Arrays.asList(expectedStates).toString(), state);
     }
@@ -153,6 +152,13 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
             this.extraText = text;
             resetState();
         }
+    }
+
+    /**
+     * Default implementation is empty. Override in subclasses to display the log messages.
+     */
+    public void appendLogMessage(String message) {
+        // do nothing
     }
 
     private void resetState() {
@@ -326,9 +332,8 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 
     private Request getRequest(AbstractProgressMonitor child) {
         for (Request request:requests) {
-            if (request.originator == child) {
+            if (request.originator == child)
                 return request;
-            }
         }
         throw new ProgressException("Subtask %s not found", child);
     }
