@@ -1420,7 +1420,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         super.getColors();
         untaggedColor = Main.pref.getColor(marktr("untagged"),Color.GRAY);
         textColor = Main.pref.getColor (marktr("text"), Color.WHITE);
-        areaTextColor = Main.pref.getColor (marktr("areatext"), Color.GRAY);
+        areaTextColor = Main.pref.getColor (marktr("areatext"), Color.LIGHT_GRAY);
     }
 
     DataSet data;
