@@ -495,10 +495,12 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 control.addSeparator();
             else {
                 Action a = getAction(s);
-                JButton b = control.add(a);
-                String tt = (String) a.getValue(TaggingPreset.OPTIONAL_TOOLTIP_TEXT);
-                if (tt != null) {
-                    b.setToolTipText(tt);
+                if(a != null)
+                {
+                    JButton b = control.add(a);
+                    Object tt = a.getValue(TaggingPreset.OPTIONAL_TOOLTIP_TEXT);
+                    if (tt != null)
+                        b.setToolTipText((String)tt);
                 }
             }
         }
