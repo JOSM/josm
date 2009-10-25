@@ -90,7 +90,7 @@ public class OpenLocationAction extends JosmAction {
                 tr("Start downloading data"),
                 tr("Close dialog and cancel downloading")
         });
-        dialog.configureContextsensitiveHelp("Help/Action/OpenLocation", true /* show help button */);
+        dialog.configureContextsensitiveHelp("/Action/OpenLocation", true /* show help button */);
         dialog.showDialog();
         if (dialog.getValue() != 1) return;
         remindUploadAddressHistory(uploadAdresses);

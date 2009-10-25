@@ -141,7 +141,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         if (ctrl) {
             c = DeleteCommand.deleteWithReferences(getEditLayer(),getCurrentDataSet().getSelected());
         } else {
-            c = DeleteCommand.delete(getEditLayer(),getCurrentDataSet().getSelected(), !alt);
+            c = DeleteCommand.delete(getEditLayer(),getCurrentDataSet().getSelected(), !alt /* also delete nodes in way */);
         }
         if (c != null) {
             Main.main.undoRedo.add(c);
@@ -308,11 +308,11 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      * that should be deleted but does not actually delete them.
      * @param e MouseEvent from which modifiers and position are taken
      * @param int modifiers For explanation: @see updateCursor
-     * @param Simulate Set to true if the user should be bugged with additional
+     * @param silet Set to true if the user should not be bugged with additional
      *        dialogs
      * @return
      */
-    private Command buildDeleteCommands(MouseEvent e, int modifiers, boolean simulate) {
+    private Command buildDeleteCommands(MouseEvent e, int modifiers, boolean silent) {
         // Note: CTRL is the only modifier that is checked in MouseMove, don't
         // forget updating it there
         boolean ctrl = (modifiers & ActionEvent.CTRL_MASK) != 0;
@@ -329,13 +329,13 @@ public class DeleteAction extends MapMode implements AWTEventListener {
                 } else if (ctrl) {
                     c = DeleteCommand.deleteWithReferences(getEditLayer(),Collections.singleton((OsmPrimitive)ws.way),true);
                 } else {
-                    c = DeleteCommand.delete(getEditLayer(),Collections.singleton((OsmPrimitive)ws.way), !alt, simulate);
+                    c = DeleteCommand.delete(getEditLayer(),Collections.singleton((OsmPrimitive)ws.way), !alt, silent);
                 }
             }
         } else if (ctrl) {
             c = DeleteCommand.deleteWithReferences(getEditLayer(),Collections.singleton(sel));
         } else {
-            c = DeleteCommand.delete(getEditLayer(),Collections.singleton(sel), !alt, simulate);
+            c = DeleteCommand.delete(getEditLayer(),Collections.singleton(sel), !alt, silent);
         }
 
         return c;

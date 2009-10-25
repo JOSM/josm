@@ -76,11 +76,11 @@ public class HelpBrowserProxy {
 
     /**
      * Direct the help browser to the help page for help topic
-     * <code>helpTopic</code>
+     * <code>relativeHelpTopic</code>
      * 
-     * @param helpTopic the help topic
+     * @param relativeHelpTopic the help topic
      */
-    public void setUrlForHelpTopic(String helpTopic) {
+    public void setUrlForHelpTopic(String relativeHelpTopic) {
         if (helpBrowserProcess == null) {
             launch();
         }
@@ -94,7 +94,7 @@ public class HelpBrowserProxy {
             System.err.println("Failed to launch browser");
             return;
         }
-        pw.println("setUrlForHelpTopics " + helpTopic);
+        pw.println("setUrlForHelpTopic " + relativeHelpTopic);
         pw.flush();
     }
 

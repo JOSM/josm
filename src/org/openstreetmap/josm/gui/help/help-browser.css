@@ -18,3 +18,28 @@ em {font-style: italic}
 i {font-style: italic}
 tt {font-family: Courier New}
 pre {font-family: Courier New}
+.warning-header {
+	font-family: Arial, sans-serif; 
+	font-size:24pt; 
+	font-weight:bold
+}
+.warning-body {
+	background-color:rgb(253,255,221);
+	padding: 10pt; 
+	border-color:rgb(128,128,128);
+	border-style: solid; 
+	border-width: 1px;
+}
+
+.error-header {
+	font-family: Arial, sans-serif; 
+	font-size:24pt; 
+	font-weight:bold
+}
+.error-body {
+	background-color:rgb(254,195,190);
+	padding: 10pt; 
+	border-color:rgb(128,128,128);
+	border-style: solid; 
+	border-width: 1px;
+}

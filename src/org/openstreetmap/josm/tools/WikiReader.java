@@ -34,7 +34,7 @@ public class WikiReader {
      * If the url is within the baseurl path, parse it as an trac wikipage and replace relative
      * pathes etc..
      * 
-     * @return Either the string of the content of the wiki page.
+     * @return
      * @throws IOException Throws, if the page could not be loaded.
      */
     public String read(String url) throws IOException {
@@ -45,7 +45,7 @@ public class WikiReader {
     }
 
     public String readLang(String text) {
-        String languageCode = LanguageInfo.getLanguageCodeWiki();
+        String languageCode = LanguageInfo.getWikiLanguagePrefix();
         String url = baseurl + "/wiki/" + languageCode + text;
         String res = "";
         InputStream in = null;

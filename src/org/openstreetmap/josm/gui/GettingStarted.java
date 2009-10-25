@@ -51,7 +51,7 @@ public class GettingStarted extends JPanel {
         }
 
         final private int myVersion = AboutAction.getVersionNumber();
-        final private String myLang = LanguageInfo.getLanguageCodeWiki();
+        final private String myLang = LanguageInfo.getWikiLanguagePrefix();
 
         /**
          * This function gets executed whenever the cached files need updating

@@ -34,7 +34,7 @@ public class HelpBrowserHistory extends Observable {
         historyPos--;
         if (historyPos < 0) return;
         String url = history.get(historyPos);
-        browser.loadUrl(url);
+        browser.openUrl(url);
         setChanged();
         notifyObservers();
     }
@@ -43,7 +43,7 @@ public class HelpBrowserHistory extends Observable {
         historyPos++;
         if (historyPos >= history.size()) return;
         String url = history.get(historyPos);
-        browser.loadUrl(url);
+        browser.openUrl(url);
         setChanged();
         notifyObservers();
     }

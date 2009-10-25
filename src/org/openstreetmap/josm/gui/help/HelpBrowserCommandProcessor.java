@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.help;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
@@ -15,6 +17,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
  *
  */
 public class HelpBrowserCommandProcessor implements Runnable {
+    private static final Logger logger = Logger.getLogger(HelpBrowserCommandProcessor.class.getName());
 
     /** the controlled help browser*/
     private HelpBrowser browser;
@@ -30,12 +33,12 @@ public class HelpBrowserCommandProcessor implements Runnable {
     /**
      * Show the help page for help topic <code>helpTopic</code>.
      * 
-     * @param helpTopics the help topic
+     * @param helpTopic the help topic
      */
-    protected void setUrlForHelpTopics(final String helpTopics) {
+    protected void setUrlForHelpTopic(final String helpTopic) {
         Runnable r = new Runnable() {
             public void run() {
-                browser.setUrlForHelpTopic(helpTopics);
+                browser.openHelpTopic(helpTopic);
                 browser.setVisible(true);
                 browser.toFront();
             }
@@ -64,17 +67,20 @@ public class HelpBrowserCommandProcessor implements Runnable {
         );
         while(true) {
             String cmd = null;
+
             try {
                 cmd = reader.readLine();
+                logger.info("got command: " + cmd);
             } catch(IOException e) {
+                logger.log(Level.SEVERE,e.toString());
                 System.out.println(tr("Failed to read command. Exiting help browser. Exception was:" + e.toString()));
                 System.exit(1);
             }
             if (cmd.startsWith("exit")) {
                 exit();
-            } else if (cmd.startsWith("setUrlForHelpTopics ")) {
-                String helpTopics = cmd.substring("setUrlForHelpTopics ".length());
-                setUrlForHelpTopics(helpTopics);
+            } else if (cmd.startsWith("setUrlForHelpTopic ")) {
+                String helpTopic = cmd.substring("setUrlForHelpTopic ".length());
+                setUrlForHelpTopic(helpTopic);
             }
         }
     }

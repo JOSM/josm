@@ -191,9 +191,8 @@ public class UploadDialog extends JDialog {
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0),
                 JComponent.WHEN_IN_FOCUSED_WINDOW
         );
-
-        pnl.add(new SideButton(new ContextSensitiveHelpAction("/Help/Dialogs/UploadDialog")));
-        HelpUtil.setHelpContext(getRootPane(),"/Help/Dialogs/UploadDialog");
+        pnl.add(new SideButton(new ContextSensitiveHelpAction("/Dialogs/UploadDialog")));
+        HelpUtil.setHelpContext(getRootPane(),"/Dialogs/UploadDialog");
         return pnl;
     }
 

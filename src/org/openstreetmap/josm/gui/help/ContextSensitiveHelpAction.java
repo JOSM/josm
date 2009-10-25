@@ -18,6 +18,10 @@ public class ContextSensitiveHelpAction extends AbstractAction {
     /** the help topic */
     private String helpTopic;
 
+    /**
+     * 
+     * @param helpTopic
+     */
     public ContextSensitiveHelpAction(String helpTopic) {
         putValue(SHORT_DESCRIPTION, tr("Show help information"));
         putValue(NAME, tr("Help"));

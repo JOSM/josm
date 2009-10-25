@@ -9,7 +9,6 @@ import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -23,6 +22,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.BackreferencedDataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -30,16 +30,20 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.BackreferencedDataSet.RelationToChildReference;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.actionsupport.DeleteFromRelationConfirmationDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+import sun.swing.BakedArrayList;
+
 /**
  * A command to delete a number of primitives from the dataset.
- * @author imi
+
  */
 public class DeleteCommand extends Command {
     /**
@@ -48,18 +52,26 @@ public class DeleteCommand extends Command {
     private final Collection<? extends OsmPrimitive> toDelete;
 
     /**
-     * Constructor for a collection of data
+     * Constructor. Deletes a collection of primitives in the current edit layer.
+     * 
+     * @param data the primitives to delete
      */
     public DeleteCommand(Collection<? extends OsmPrimitive> data) {
-        super();
+        if (data == null) {
+            data = Collections.emptyList();
+        }
         this.toDelete = data;
     }
 
     /**
-     * Constructor for a single data item. Use the collection constructor to delete multiple
-     * objects.
+     * Constructor. Deletes a single primitive in the current edit layer.
+     * 
+     * @param data  the primitive to delete. Must not be null.
+     * @throws IllegalArgumentException thrown if data is null
      */
-    public DeleteCommand(OsmPrimitive data) {
+    public DeleteCommand(OsmPrimitive data) throws IllegalArgumentException {
+        if (data == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "data"));
         this.toDelete = Collections.singleton(data);
     }
 
@@ -67,11 +79,15 @@ public class DeleteCommand extends Command {
      * Constructor for a single data item. Use the collection constructor to delete multiple
      * objects.
      *
-     * @param layer the layer context for deleting this primitive
-     * @param data the primitive to delete
+     * @param layer the layer context for deleting this primitive. Must not be null.
+     * @param data the primitive to delete. Must not be null.
+     * @throws IllegalArgumentException thrown if data is null
+     * @throws IllegalArgumentException thrown if layer is null
      */
-    public DeleteCommand(OsmDataLayer layer, OsmPrimitive data) {
+    public DeleteCommand(OsmDataLayer layer, OsmPrimitive data) throws IllegalArgumentException {
         super(layer);
+        if (data == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "data"));
         this.toDelete = Collections.singleton(data);
     }
 
@@ -79,12 +95,44 @@ public class DeleteCommand extends Command {
      * Constructor for a collection of data to be deleted in the context of
      * a specific layer
      *
-     * @param layer the layer context for deleting these primitives
+     * @param layer the layer context for deleting these primitives. Must not be null.
      * @param data the primitives to delete
+     * @throws IllegalArgumentException thrown if layer is null
      */
-    public DeleteCommand(OsmDataLayer layer, Collection<? extends OsmPrimitive> data) {
+    public DeleteCommand(OsmDataLayer layer, Collection<? extends OsmPrimitive> data) throws IllegalArgumentException{
         super(layer);
+        if (data == null) {
+            data = Collections.emptyList();
+        }
         this.toDelete = data;
+    }
+
+    protected void removeNewNodesFromDeletedWay(Way w) {
+        // #2707: ways to be deleted can include new nodes (with node.id == 0).
+        // Remove them from the way before the way is deleted. Otherwise the
+        // deleted way is saved (or sent to the API) with a dangling reference to a node
+        // Example:
+        // <node id='2' action='delete' visible='true' version='1' ... />
+        // <node id='1' action='delete' visible='true' version='1' ... />
+        // <!-- missing node with id -1 because new deleted nodes are not persisted -->
+        // <way id='3' action='delete' visible='true' version='1'>
+        // <nd ref='1' />
+        // <nd ref='-1' /> <!-- here's the problem -->
+        // <nd ref='2' />
+        // </way>
+        if (w.isNew())
+            return; // process existing ways only
+        List<Node> nodesToKeep = new ArrayList<Node>();
+        // lookup new nodes which have been added to the set of deleted
+        // nodes ...
+        Iterator<Node> it = nodesToKeep.iterator();
+        while(it.hasNext()) {
+            Node n = it.next();
+            if (n.isNew()) {
+                it.remove();
+            }
+        }
+        w.setNodes(nodesToKeep);
     }
 
     @Override
@@ -92,6 +140,9 @@ public class DeleteCommand extends Command {
         super.executeCommand();
         for (OsmPrimitive osm : toDelete) {
             osm.setDeleted(true);
+            if (osm instanceof Way) {
+                removeNewNodesFromDeletedWay((Way)osm);
+            }
         }
         return true;
     }
@@ -108,9 +159,9 @@ public class DeleteCommand extends Command {
             OsmPrimitive primitive = toDelete.iterator().next();
             String msg = "";
             switch(OsmPrimitiveType.from(primitive)) {
-            case NODE: msg = "Delete node {0}"; break;
-            case WAY: msg = "Delete way {0}"; break;
-            case RELATION:msg = "Delete relation {0}"; break;
+                case NODE: msg = "Delete node {0}"; break;
+                case WAY: msg = "Delete way {0}"; break;
+                case RELATION:msg = "Delete relation {0}"; break;
             }
 
             return new DefaultMutableTreeNode(new JLabel(tr(msg, primitive.getDisplayName(DefaultNameFormatter.getInstance())),
@@ -129,9 +180,9 @@ public class DeleteCommand extends Command {
             OsmPrimitiveType t = typesToDelete.iterator().next();
             apiname = t.getAPIName();
             switch(t) {
-            case NODE: msg = trn("Delete {0} node", "Delete {0} nodes", toDelete.size(), toDelete.size()); break;
-            case WAY: msg = trn("Delete {0} way", "Delete {0} ways", toDelete.size(), toDelete.size()); break;
-            case RELATION: msg = trn("Delete {0} relation", "Delete {0} relations", toDelete.size(), toDelete.size()); break;
+                case NODE: msg = trn("Delete {0} node", "Delete {0} nodes", toDelete.size(), toDelete.size()); break;
+                case WAY: msg = trn("Delete {0} way", "Delete {0} ways", toDelete.size(), toDelete.size()); break;
+                case RELATION: msg = trn("Delete {0} relation", "Delete {0} relations", toDelete.size(), toDelete.size()); break;
             }
         }
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(
@@ -155,12 +206,16 @@ public class DeleteCommand extends Command {
      *
      * If a way is deleted, only the way and no nodes are deleted.
      *
-     * @param layer
+     * @param layer the {@see OsmDataLayer} in whose context primitives are deleted. Must not be null.
      * @param selection The list of all object to be deleted.
-     * @param simulate  Set to true if the user should not be bugged with additional dialogs
+     * @param silent  Set to true if the user should not be bugged with additional dialogs
      * @return command A command to perform the deletions, or null of there is nothing to delete.
+     * @throws IllegalArgumentException thrown if layer is null
      */
-    public static Command deleteWithReferences(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection, boolean simulate) {
+    public static Command deleteWithReferences(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection, boolean silent) throws IllegalArgumentException {
+        if (layer == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "layer"));
+        if (selection == null || selection.isEmpty()) return null;
         CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(layer.data);
         v.initialize();
         for (OsmPrimitive osm : selection) {
@@ -169,7 +224,7 @@ public class DeleteCommand extends Command {
         v.getData().addAll(selection);
         if (v.getData().isEmpty())
             return null;
-        if (!checkAndConfirmOutlyingDeletes(layer,v.getData()) && !simulate)
+        if (!checkAndConfirmOutlyingDeletes(layer,v.getData()) && !silent)
             return null;
         return new DeleteCommand(layer,v.getData());
     }
@@ -232,25 +287,23 @@ public class DeleteCommand extends Command {
      *    <li>it is untagged (see {@see Node#isTagged()}</li>
      *    <li>it is not referred to by other non-deleted primitives outside of  <code>primitivesToDelete</code></li>
      * <ul>
+     * @param backreferences backreference data structure
      * @param layer  the layer in whose context primitives are deleted
      * @param primitivesToDelete  the primitives to delete
      * @return the collection of nodes referred to by primitives in <code>primitivesToDelete</code> which
      * can be deleted too
      */
-    protected static Collection<Node> computeNodesToDelete(OsmDataLayer layer, Collection<OsmPrimitive> primitivesToDelete) {
+    protected static Collection<Node> computeNodesToDelete(BackreferencedDataSet backreferences, OsmDataLayer layer, Collection<OsmPrimitive> primitivesToDelete) {
         Collection<Node> nodesToDelete = new HashSet<Node>();
-        CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(layer.data, false);
-        for (OsmPrimitive osm : primitivesToDelete) {
-            if (! (osm instanceof Way) ) {
-                continue;
-            }
-            for (Node n : ((Way) osm).getNodes()) {
+        //CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(layer.data, false);
+        for (Way way : OsmPrimitive.getFilteredList(primitivesToDelete, Way.class)) {
+            for (Node n : way.getNodes()) {
                 if (n.isTagged()) {
                     continue;
                 }
-                v.initialize();
-                n.visit(v);
-                Collection<OsmPrimitive> referringPrimitives = v.getData();
+                //v.initialize();
+                //n.visit(v);
+                Collection<OsmPrimitive> referringPrimitives = backreferences.getParents(n);
                 referringPrimitives.removeAll(primitivesToDelete);
                 int count = 0;
                 for (OsmPrimitive p : referringPrimitives) {
@@ -275,60 +328,53 @@ public class DeleteCommand extends Command {
      * If this would cause ways with less than 2 nodes to be created, delete these ways instead. If
      * they are part of a relation, inform the user and do not delete.
      *
-     * @param layer the {@see OsmDataLayer} in whose context a primitive the primitives are deleted
-     * @param selection The objects to delete.
+     * @param layer the {@see OsmDataLayer} in whose context the primitives are deleted
+     * @param selection the objects to delete.
      * @param alsoDeleteNodesInWay <code>true</code> if nodes should be deleted as well
-     * @param simulate Set to true if the user should not be bugged with additional questions
      * @return command a command to perform the deletions, or null if there is nothing to delete.
      */
     public static Command delete(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection,
             boolean alsoDeleteNodesInWay) {
-        return delete(layer, selection, alsoDeleteNodesInWay, false);
+        return delete(layer, selection, alsoDeleteNodesInWay, false /* not silent */);
     }
 
+    /**
+     * Try to delete all given primitives.
+     *
+     * If a node is used by a way, it's removed from that way. If a node or a way is used by a
+     * relation, inform the user and do not delete.
+     *
+     * If this would cause ways with less than 2 nodes to be created, delete these ways instead. If
+     * they are part of a relation, inform the user and do not delete.
+     *
+     * @param layer the {@see OsmDataLayer} in whose context the primitives are deleted
+     * @param selection the objects to delete.
+     * @param alsoDeleteNodesInWay <code>true</code> if nodes should be deleted as well
+     * @param silent set to true if the user should not be bugged with additional questions
+     * @return command a command to perform the deletions, or null if there is nothing to delete.
+     */
     public static Command delete(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection,
-            boolean alsoDeleteNodesInWay, boolean simulate) {
-        if (selection.isEmpty())
+            boolean alsoDeleteNodesInWay, boolean silent) {
+        if (selection == null || selection.isEmpty())
             return null;
 
-        Collection<OsmPrimitive> primitivesToDelete = new HashSet<OsmPrimitive>(selection);
+        BackreferencedDataSet backreferences = new BackreferencedDataSet(layer.data);
+        backreferences.build();
+
+        Set<OsmPrimitive> primitivesToDelete = new HashSet<OsmPrimitive>(selection);
         Collection<Way> waysToBeChanged = new HashSet<Way>();
-        HashMap<OsmPrimitive, Collection<OsmPrimitive>> relationsToBeChanged = new HashMap<OsmPrimitive, Collection<OsmPrimitive>>();
 
         if (alsoDeleteNodesInWay) {
             // delete untagged nodes only referenced by primitives in primitivesToDelete,
             // too
-            Collection<Node> nodesToDelete = computeNodesToDelete(layer, primitivesToDelete);
+            Collection<Node> nodesToDelete = computeNodesToDelete(backreferences, layer, primitivesToDelete);
             primitivesToDelete.addAll(nodesToDelete);
         }
 
-        if (!simulate && !checkAndConfirmOutlyingDeletes(layer,primitivesToDelete))
+        if (!silent && !checkAndConfirmOutlyingDeletes(layer,primitivesToDelete))
             return null;
 
-        CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(layer.data, false);
-        for (OsmPrimitive osm : primitivesToDelete) {
-            v.initialize();
-            osm.visit(v);
-            for (OsmPrimitive ref : v.getData()) {
-                if (primitivesToDelete.contains(ref)) {
-                    continue;
-                }
-                if (ref instanceof Way) {
-                    waysToBeChanged.add((Way) ref);
-                } else if (ref instanceof Relation) {
-                    if (testRelation((Relation) ref, osm, simulate) == 1) {
-                        Collection<OsmPrimitive> relset = relationsToBeChanged.get(ref);
-                        if (relset == null) {
-                            relset = new HashSet<OsmPrimitive>();
-                        }
-                        relset.add(osm);
-                        relationsToBeChanged.put(ref, relset);
-                    } else
-                        return null;
-                } else
-                    return null;
-            }
-        }
+        waysToBeChanged.addAll(OsmPrimitive.getFilteredSet(backreferences.getParents(primitivesToDelete), Way.class));
 
         Collection<Command> cmds = new LinkedList<Command>();
         for (Way w : waysToBeChanged) {
@@ -336,88 +382,44 @@ public class DeleteCommand extends Command {
             wnew.removeNodes(primitivesToDelete);
             if (wnew.getNodesCount() < 2) {
                 primitivesToDelete.add(w);
-
-                v.initialize();
-                w.visit(v);
-                for (OsmPrimitive ref : v.getData()) {
-                    if (primitivesToDelete.contains(ref)) {
-                        continue;
-                    }
-                    if (ref instanceof Relation) {
-                        Boolean found = false;
-                        Collection<OsmPrimitive> relset = relationsToBeChanged.get(ref);
-                        if (relset == null) {
-                            relset = new HashSet<OsmPrimitive>();
-                        } else {
-                            for (OsmPrimitive m : relset) {
-                                if (m == w) {
-                                    found = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!found) {
-                            if (testRelation((Relation) ref, w, simulate) == 1) {
-                                relset.add(w);
-                                relationsToBeChanged.put(ref, relset);
-                            } else
-                                return null;
-                        }
-                    } else
-                        return null;
-                }
             } else {
                 cmds.add(new ChangeCommand(w, wnew));
             }
         }
 
-        Iterator<OsmPrimitive> iterator = relationsToBeChanged.keySet().iterator();
-        while (iterator.hasNext()) {
-            Relation cur = (Relation) iterator.next();
-            Relation rel = new Relation(cur);
-            for (OsmPrimitive osm : relationsToBeChanged.get(cur)) {
-                rel.removeMembersFor(osm);
+        // get a confirmation that the objects to delete can be removed from their parent
+        // relations
+        //
+        if (!silent) {
+            Set<RelationToChildReference> references = backreferences.getRelationToChildReferences(primitivesToDelete);
+            Iterator<RelationToChildReference> it = references.iterator();
+            while(it.hasNext()) {
+                RelationToChildReference ref = it.next();
+                if (ref.getParent().isDeleted()) {
+                    it.remove();
+                }
             }
+            if (!references.isEmpty()) {
+                DeleteFromRelationConfirmationDialog dialog = DeleteFromRelationConfirmationDialog.getInstance();
+                dialog.getModel().populate(references);
+                dialog.setVisible(true);
+                if (dialog.isCanceled())
+                    return null;
+            }
+        }
+
+        // remove the objects from their parent relations
+        //
+        Iterator<Relation> iterator = OsmPrimitive.getFilteredSet(backreferences.getParents(primitivesToDelete), Relation.class).iterator();
+        while (iterator.hasNext()) {
+            Relation cur = iterator.next();
+            Relation rel = new Relation(cur);
+            rel.removeMembersFor(primitivesToDelete);
             cmds.add(new ChangeCommand(cur, rel));
         }
 
-        // #2707: ways to be deleted can include new nodes (with node.id == 0).
-        // Remove them from the way before the way is deleted. Otherwise the
-        // deleted way is saved (or sent to the API) with a dangling reference to a node
-        // Example:
-        // <node id='2' action='delete' visible='true' version='1' ... />
-        // <node id='1' action='delete' visible='true' version='1' ... />
-        // <!-- missing node with id -1 because new deleted nodes are not persisted -->
-        // <way id='3' action='delete' visible='true' version='1'>
-        // <nd ref='1' />
-        // <nd ref='-1' /> <!-- heres the problem -->
-        // <nd ref='2' />
-        // </way>
-        for (OsmPrimitive primitive : primitivesToDelete) {
-            if (!(primitive instanceof Way)) {
-                continue;
-            }
-            Way w = (Way) primitive;
-            if (w.isNew()) { // new ways with id == 0 are fine,
-                continue; // process existing ways only
-            }
-            Way wnew = new Way(w);
-            List<Node> nodesToKeep = new ArrayList<Node>();
-            // lookup new nodes which have been added to the set of deleted
-            // nodes ...
-            for (Node n : wnew.getNodes()) {
-                if (!n.isNew() || !primitivesToDelete.contains(n)) {
-                    nodesToKeep.add(n);
-                }
-            }
-            // .. and remove them from the way
-            //
-            wnew.setNodes(nodesToKeep);
-            if (nodesToKeep.size() < w.getNodesCount()) {
-                cmds.add(new ChangeCommand(w, wnew));
-            }
-        }
-
+        // build the delete command
+        //
         if (!primitivesToDelete.isEmpty()) {
             cmds.add(new DeleteCommand(layer,primitivesToDelete));
         }
@@ -426,12 +428,8 @@ public class DeleteCommand extends Command {
     }
 
     public static Command deleteWaySegment(OsmDataLayer layer, WaySegment ws) {
-        if (ws.way.getNodesCount() < 3) {
-            // If the way contains less than three nodes, it can't have more
-            // than one segment, so the way should be deleted.
-
+        if (ws.way.getNodesCount() < 3)
             return new DeleteCommand(layer, Collections.singleton(ws.way));
-        }
 
         if (ws.way.firstNode() == ws.way.lastNode()) {
             // If the way is circular (first and last nodes are the same),

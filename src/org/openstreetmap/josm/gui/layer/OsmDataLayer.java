@@ -375,14 +375,14 @@ public class OsmDataLayer extends Layer {
                     new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             HelpBrowser b = new HelpBrowser();
-                            b.setUrlForHelpTopic("Help/Concepts/Conflict");
+                            b.openHelpTopic("Help/Concepts/Conflict");
                             b.setVisible(true);
                         }
                     }
             );
             dialog.setContentPane(pane);
             dialog.pack();
-            HelpUtil.setHelpContext(dialog.getRootPane(), "Concepts/Conflict");
+            HelpUtil.setHelpContext(dialog.getRootPane(), "/Concepts/Conflict");
             WindowGeometry.centerOnScreen(dialog.getSize()).applySafe(dialog);
             dialog.setVisible(true);
         }

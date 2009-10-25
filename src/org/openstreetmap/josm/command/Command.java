@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.command;
 
 import java.util.Collection;
+import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -57,9 +58,12 @@ abstract public class Command {
     /**
      * Creates a new command in the context of a specific data layer
      *
-     * @param layer the data layer
+     * @param layer the data layer. Must not be null.
+     * @throws IllegalArgumentException thrown if layer is null
      */
-    public Command(OsmDataLayer layer) {
+    public Command(OsmDataLayer layer) throws IllegalArgumentException {
+        if (layer == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "layer"));
         this.layer = layer;
     }
 

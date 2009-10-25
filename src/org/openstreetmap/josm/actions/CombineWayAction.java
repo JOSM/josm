@@ -106,7 +106,6 @@ public class CombineWayAction extends JosmAction {
         //
         TagCollection wayTags = TagCollection.unionOfAllPrimitives(ways);
 
-
         // try to build a new way which includes all the combined
         // ways
         //

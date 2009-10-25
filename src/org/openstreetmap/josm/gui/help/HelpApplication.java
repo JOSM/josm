@@ -5,12 +5,23 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
+import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -22,6 +33,7 @@ import org.openstreetmap.josm.tools.I18n;
  * 
  */
 public class HelpApplication {
+    static private final Logger logger = Logger.getLogger(HelpApplication.class.getName());
     private HelpBrowser browser;
     private HelpBrowserCommandProcessor commandProcessor;
 
@@ -81,6 +93,15 @@ public class HelpApplication {
         }
 
         MainApplication.preConstructorInit(args);
+        Thread.setDefaultUncaughtExceptionHandler(
+                new UncaughtExceptionHandler() {
+                    public void uncaughtException(Thread t, Throwable e) {
+                        StringWriter sw = new StringWriter();
+                        e.printStackTrace(new PrintWriter(sw));
+                        logger.log(Level.SEVERE, sw.getBuffer().toString());
+                    }
+                }
+        );
 
         new HelpApplication().start();
     }

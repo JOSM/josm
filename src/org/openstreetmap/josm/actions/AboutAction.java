@@ -92,7 +92,7 @@ public class AboutAction extends JosmAction {
 
     static public void setUserAgent() {
         Properties sysProp = System.getProperties();
-        sysProp.put("http.agent", "JOSM/1.5 ("+(version.equals(tr("UNKNOWN"))?"UNKNOWN":version)+" "+LanguageInfo.getLanguageCode()+")");
+        sysProp.put("http.agent", "JOSM/1.5 ("+(version.equals(tr("UNKNOWN"))?"UNKNOWN":version)+" "+LanguageInfo.getJOSMLocaleCode()+")");
         System.setProperties(sysProp);
     }
 

@@ -191,7 +191,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         }
 
         public void actionPerformed(ActionEvent arg0) {
-            HelpBrowserProxy.getInstance().setUrlForHelpTopic("/Help/Dialog/ConflictDialog");
+            HelpBrowserProxy.getInstance().setUrlForHelpTopic("/Dialog/ConflictDialog");
         }
     }
 
