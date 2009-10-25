@@ -4,8 +4,10 @@ import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 /**
  * DataSet is the data behind the application. It can consists of only a few points up to the whole
@@ -155,6 +158,7 @@ public class DataSet implements Cloneable {
         } else if (primitive instanceof Relation) {
             relations.remove(primitive);
         }
+        selectedPrimitives.remove(primitive);
     }
 
     public void removePrimitive(long id, OsmPrimitiveType type) {
@@ -162,8 +166,12 @@ public class DataSet implements Cloneable {
     }
 
     public Collection<OsmPrimitive> getSelectedNodesAndWays() {
-        Collection<OsmPrimitive> sel = getSelected(nodes);
-        sel.addAll(getSelected(ways));
+        Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
+        for (OsmPrimitive osm : selectedPrimitives) {
+            if (osm instanceof Way ||
+                osm instanceof Node)
+                sel.add(osm);
+        }
         return sel;
     }
 
@@ -173,10 +181,11 @@ public class DataSet implements Cloneable {
      * @return List of all selected objects.
      */
     public Collection<OsmPrimitive> getSelected() {
-        Collection<OsmPrimitive> sel = getSelected(nodes);
-        sel.addAll(getSelected(ways));
-        sel.addAll(getSelected(relations));
-        return sel;
+        // It would be nice to have this be a copy-on-write list
+        // or an Collections.unmodifiableList().  It would be
+        // much faster for large selections.  May users just
+        // call this, and only check the .size().
+        return new ArrayList<OsmPrimitive>(selectedPrimitives);
     }
 
     /**
@@ -232,17 +241,15 @@ public class DataSet implements Cloneable {
         }
     }
 
-    public boolean addSelected(OsmPrimitive osm) {
-        osm.setSelected(true);
-        return true;
-    }
+    LinkedHashSet<OsmPrimitive> selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
 
     public boolean toggleSelected(OsmPrimitive osm) {
-        osm.setSelected(!osm.isSelected());
+        if (!selectedPrimitives.remove(osm))
+            selectedPrimitives.add(osm);
         return true;
     }
     public boolean isSelected(OsmPrimitive osm) {
-        return osm.isSelected();
+        return selectedPrimitives.contains(osm);
     }
 
     public void setDisabled(OsmPrimitive... osm) {
@@ -267,12 +274,7 @@ public class DataSet implements Cloneable {
      * @param fireSelectionChangeEvent true, if the selection change listeners are to be notified; false, otherwise
      */
     public void setSelected(Collection<? extends OsmPrimitive> selection, boolean fireSelectionChangeEvent) {
-        clearSelection(nodes);
-        clearSelection(ways);
-        clearSelection(relations);
-        for (OsmPrimitive osm : selection) {
-            osm.setSelected(true);
-        }
+        selectedPrimitives = new LinkedHashSet<OsmPrimitive>(selection);
         if (fireSelectionChangeEvent) {
             fireSelectionChanged(selection);
         }
@@ -298,6 +300,10 @@ public class DataSet implements Cloneable {
         addSelected(selection, true /* fire selection change event */);
     }
 
+    public void addSelected(OsmPrimitive... osm) {
+        addSelected(Arrays.asList(osm));
+    }
+
     /**
      * Adds the primitives in <code>selection</code> to the current selection.
      * Notifies all {@see SelectionChangedListener} if <code>fireSelectionChangeEvent</code> is true.
@@ -306,9 +312,7 @@ public class DataSet implements Cloneable {
      * @param fireSelectionChangeEvent true, if the selection change listeners are to be notified; false, otherwise
      */
     public void addSelected(Collection<? extends OsmPrimitive> selection, boolean fireSelectionChangeEvent) {
-        for (OsmPrimitive osm : selection) {
-            osm.setSelected(true);
-        }
+        selectedPrimitives.addAll(selection);
         if (fireSelectionChangeEvent) {
             fireSelectionChanged(selection);
         }
@@ -320,14 +324,9 @@ public class DataSet implements Cloneable {
             setSelected();
             return;
         }
-        clearSelection(nodes);
-        clearSelection(ways);
-        clearSelection(relations);
-        for (OsmPrimitive o : osm)
-            if (o != null) {
-                o.setSelected(true);
-            }
-        fireSelectionChanged(Arrays.asList(osm));
+        List<OsmPrimitive> list = Arrays.asList(osm);
+        setSelected(list);
+        fireSelectionChanged(list);
     }
 
     /**
@@ -363,9 +362,7 @@ public class DataSet implements Cloneable {
     private void clearSelection(Collection<? extends OsmPrimitive> list) {
         if (list == null)
             return;
-        for (OsmPrimitive osm : list) {
-            osm.setSelected(false);
-        }
+        selectedPrimitives.removeAll(list);
     }
 
     /**
@@ -373,13 +370,13 @@ public class DataSet implements Cloneable {
      * @param list The collection from which the selected items are returned.
      */
     private Collection<OsmPrimitive> getSelected(Collection<? extends OsmPrimitive> list) {
-        Collection<OsmPrimitive> sel = new HashSet<OsmPrimitive>();
         if (list == null)
-            return sel;
-        for (OsmPrimitive osm : list)
-            if (osm.isSelected() && !osm.isDeleted()) {
-                sel.add(osm);
-            }
+            return new LinkedList<OsmPrimitive>();
+        // getSelected() is called with large lists, so
+        // creating the return list from the selection
+        // should be faster most of the time.
+        Collection<OsmPrimitive> sel = new LinkedHashSet<OsmPrimitive>(selectedPrimitives);
+        sel.retainAll(list);
         return sel;
     }
 

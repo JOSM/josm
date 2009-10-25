@@ -46,9 +46,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     private static final int FLAG_DISABLED = 1 << 2;
     private static final int FLAG_DELETED  = 1 << 3;
     private static final int FLAG_FILTERED = 1 << 4;
-    private static final int FLAG_SELECTED = 1 << 5;
-    private static final int FLAG_HAS_DIRECTIONS = 1 << 6;
-    private static final int FLAG_TAGGED = 1 << 7;
+    private static final int FLAG_HAS_DIRECTIONS = 1 << 5;
+    private static final int FLAG_TAGGED = 1 << 6;
 
     /**
      * Replies the sub-collection of {@see OsmPrimitive}s of type <code>type</code> present in
@@ -188,7 +187,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     /**
      * Sets whether this primitive is disabled or not.
      *
-     * @param selected  true, if this primitive is disabled; false, otherwise
+     * @param disabled true, if this primitive is disabled; false, otherwise
      */
     public void setDisabled(boolean disabled) {
         if (disabled) {
@@ -210,7 +209,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     /**
      * Sets whether this primitive is filtered out or not.
      *
-     * @param selected  true, if this primitive is filtered out; false, otherwise
+     * @param filtered true, if this primitive is filtered out; false, otherwise
      */
     public void setFiltered(boolean filtered) {
         if (filtered) {
@@ -226,29 +225,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      */
     public boolean isFiltered() {
         return (flags & FLAG_FILTERED) != 0;
-    }
-
-    /**
-     * Sets whether this primitive is selected or not.
-     *
-     * @param selected  true, if this primitive is selected; false, otherwise
-     * @since 1899
-     */
-    @Deprecated public void setSelected(boolean selected) {
-        if (selected) {
-            flags |= FLAG_SELECTED;
-        } else {
-            flags &= ~FLAG_SELECTED;
-        }
-    }
-    /**
-     * Replies true, if this primitive is selected.
-     *
-     * @return true, if this primitive is selected
-     * @since 1899
-     */
-    @Deprecated public boolean isSelected() {
-        return (flags & FLAG_SELECTED) != 0;
     }
 
     /**
@@ -474,7 +450,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
     /**
      * Sets whether this primitive is deleted or not.
      *
-     * Also marks this primitive as modified if deleted is true and sets selected to false.
+     * Also marks this primitive as modified if deleted is true.
      *
      * @param deleted  true, if this primitive is deleted; false, otherwise
      */
@@ -485,7 +461,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
             flags &= ~FLAG_DELETED;
         }
         setModified(deleted);
-        setSelected(false);
     }
 
     /**
