@@ -3372,7 +3372,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="natural" v="wood"/>
 		<icon src="misc/landmark/trees.png"/>
-		<area colour="wood#008000"/>
+		<area colour="woodarea#008000"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
