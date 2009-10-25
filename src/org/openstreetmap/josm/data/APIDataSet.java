@@ -58,14 +58,15 @@ public class APIDataSet {
                 continue;
             }
             if (osm.isNew() && !osm.isDeleted()) {
-                toAdd.addLast(osm);
+                toAdd.add(osm);
             } else if (osm.isModified() && !osm.isDeleted()) {
-                toUpdate.addLast(osm);
+                toUpdate.add(osm);
             } else if (osm.isDeleted() && !osm.isNew() && osm.isModified()) {
-                toDelete.addFirst(osm);
+                toDelete.add(osm);
             }
         }
         sortDeleted();
+        sortNew();
     }
 
     /**
@@ -91,6 +92,36 @@ public class APIDataSet {
                             return 1;
                         else if (o2 instanceof Way && o1 instanceof Relation)
                             return -1;
+
+                        return 0;
+                    }
+                }
+        );
+    }
+
+    /**
+     * Ensures that primitives are added in the following order: Nodes, then Ways,
+     * then Relations.
+     * 
+     */
+    protected void sortNew() {
+        Collections.sort(
+                toAdd,
+                new Comparator<OsmPrimitive>() {
+                    public int compare(OsmPrimitive o1, OsmPrimitive o2) {
+                        if (o1 instanceof Node && o2 instanceof Node)
+                            return 0;
+                        else if (o1 instanceof Node)
+                            return -1;
+                        else if (o2 instanceof Node)
+                            return 1;
+
+                        if (o1 instanceof Way && o2 instanceof Way)
+                            return 0;
+                        else if (o1 instanceof Way && o2 instanceof Relation)
+                            return -1;
+                        else if (o2 instanceof Way && o1 instanceof Relation)
+                            return 1;
 
                         return 0;
                     }
@@ -126,6 +157,7 @@ public class APIDataSet {
                 toDelete.addFirst(osm);
             }
         }
+        sortNew();
         sortDeleted();
     }
 
