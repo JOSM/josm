@@ -20,8 +20,10 @@ import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSetListener;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.dialogs.HistoryDialog;
+import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 /**
  * This is non-modal dialog, always showing on top, which displays history information
@@ -70,7 +72,13 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         btn = new SideButton(new CloseAction());
         btn.setName("btn.close");
         pnl.add(btn);
+
+        btn = new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/History")));
+        btn.setName("btn.help");
+        pnl.add(btn);
         add(pnl, BorderLayout.SOUTH);
+
+        HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/History"));
 
         setSize(800, 500);
     }

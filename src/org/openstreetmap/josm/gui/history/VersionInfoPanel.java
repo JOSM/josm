@@ -11,6 +11,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,6 +26,7 @@ import org.openstreetmap.josm.tools.UrlLabel;
  * 
  */
 public class VersionInfoPanel extends JPanel implements Observer{
+    static private final Logger logger = Logger.getLogger(VersionInfoPanel.class.getName());
 
     private PointInTimeType pointInTimeType;
     private HistoryBrowserModel model;
@@ -122,6 +124,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
             e.printStackTrace();
             lblUser.setUrl(null);
         }
-        lblUser.setDescription(getPrimitive().getUser());
+        String username = getPrimitive().getUser();
+        lblUser.setDescription(username);
     }
 }
