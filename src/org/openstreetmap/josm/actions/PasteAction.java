@@ -57,7 +57,11 @@ public final class PasteAction extends JosmAction {
             /* adjust the coordinates to the middle of the visible map area */
             mPosition = Main.map.mapView.getCenter();
         } else {
-            mPosition = Main.map.mapView.getEastNorth(Main.map.mapView.lastMEvent.getX(), Main.map.mapView.lastMEvent.getY());
+            if (Main.map.mapView.lastMEvent != null) {
+                mPosition = Main.map.mapView.getEastNorth(Main.map.mapView.lastMEvent.getX(), Main.map.mapView.lastMEvent.getY());
+            } else {
+                mPosition = Main.map.mapView.getCenter();
+            }
         }
 
         double offsetEast  = mPosition.east() - (maxEast + minEast)/2.0;
