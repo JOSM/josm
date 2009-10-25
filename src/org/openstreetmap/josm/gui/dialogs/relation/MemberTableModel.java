@@ -91,7 +91,7 @@ public class MemberTableModel extends AbstractTableModel {
         case 1:
             return members.get(rowIndex).getMember();
         case 2:
-            return linked(rowIndex);
+            return wayConnection(rowIndex);
         }
         // should not happen
         return null;
@@ -681,15 +681,16 @@ public class MemberTableModel extends AbstractTableModel {
     // simple version of code that was removed from GenericReleationEditor
     // no recursion and no forward/backward support
     // TODO: add back the number of linked elements
-    private WayConnectionType linked(int i) {
+    // Returns +1 if member i and (i+1) are ways and could be combined without changing
+    // the direction of one of them. If they are linked "head to head" or "tail to tail"
+    // -1 is returned.
+    // In all other cases the result is null.
+    private Integer linked(int i) {
         // this method is aimed at finding out whether the
         // relation member is "linked" with the next, i.e. whether
-        // (if both are ways) these ways are connected. It should
-        // really produce a much more beautiful output (with a linkage
-        // symbol somehow placed between the two member lines!),
-        // so... FIXME ;-)
+        // (if both are ways) these ways are connected.
 
-        WayConnectionType link = WayConnectionType.none;
+        Integer link = null;
         RelationMember m1 = members.get(i);
         RelationMember m2 = members.get((i + 1) % members.size());
         Way way1 = null;
@@ -707,16 +708,43 @@ public class MemberTableModel extends AbstractTableModel {
             Node way2first = way2.firstNode();
             Node way2last = way2.lastNode();
             if (way1first != null && way2first != null && (way1first == way2first)) {
-                link = WayConnectionType.tail_to_tail;
+                link = -1;
             } else if (way1first != null && way2last != null && (way1first == way2last)) {
-                link = WayConnectionType.tail_to_head;
+                link = 1;
             } else if (way1last != null && way2first != null && (way1last == way2first)) {
-                link = WayConnectionType.head_to_tail;
+                link = 1;
             } else if (way1last != null && way2last != null && (way1last == way2last)) {
-                link = WayConnectionType.head_to_head;
+                link = -1;
             }
         }
 
         return link;
+    }
+
+    private WayConnectionType wayConnection(int i) {
+        RelationMember m = members.get(i);
+        if (! m.isWay()) {
+            return new WayConnectionType();
+        }
+        Way w = m.getWay();
+        if (w == null || w.incomplete) {
+            return new WayConnectionType();
+        }
+        
+        int ip = (i - 1 + members.size()) % members.size();
+        Integer link_p = linked(ip);
+        Integer link_n = linked(i);
+        Integer dir = 1;
+        // FIXME: It is somewhat stupid to loop here, but
+        // there shouldn't be a performance problem in practice.
+        for (int k = i - 1; k >= 0; --k) {
+            Integer link = linked(k);
+            if (link != null) {
+                dir *= link;
+            } else {
+                break;
+            }
+        }
+        return new WayConnectionType(link_p != null, link_n != null, dir);
     }
 }

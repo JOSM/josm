@@ -3,28 +3,49 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-public enum WayConnectionType {
+public class WayConnectionType {
 
-    none("", tr("Not connected")),
-    head_to_head("-><-", tr("Last points of ways are connected")),
-    tail_to_tail("<-->", tr("First points of ways are connected")),
-    head_to_tail("->->", tr("First point of second way connects to last point of first way")),
-    tail_to_head("<-<-", tr("First point of first way connects to last point of second way"));
+    public final boolean connectedToPrevious;
+    public final boolean connectedToNext;
+    /** Is 1 if way has the same direction as the first way in the set of connected ways. Else it is (-1) */
+    public final int direction;
+    /** The WayConnectionType is invalid, if the corresponding primitive is not a way or the way is incomplete */
+    public final boolean invalid;
 
-    private String textSymbol;
-    private String toolTip;
-
-    WayConnectionType(String textSymbol, String toolTip) {
-        this.textSymbol = textSymbol;
-        this.toolTip = toolTip;
+    public WayConnectionType(boolean connectedToPrevious, boolean connectedToNext, int direction) {
+        this.connectedToPrevious = connectedToPrevious;
+        this.connectedToNext = connectedToNext;
+        this.direction = direction;
+        invalid = false;
     }
 
-    @Override
-    public String toString() {
-        return textSymbol;
+    public WayConnectionType() {
+        connectedToPrevious = false;
+        connectedToNext = false;
+        direction = 1;
+        invalid = true;
     }
+
+//    @Override
+//    public String toString() {
+//        return ...
+//    }
 
     public String getToolTip() {
-        return toolTip;
+        if (invalid) {
+            return "";
+        }
+        else if (connectedToPrevious && connectedToNext) {
+            return tr("way is connected");
+        }
+        else if (connectedToPrevious) {
+            return tr("way is connected to previous relation member");
+        }
+        else if (connectedToNext) {
+            return tr("way is connected to next relation member");
+        }
+        else {
+            return tr("way is not connected to previous or next relation member");
+        }
     }
 }
