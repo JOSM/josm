@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +44,6 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SelectionManager;
 import org.openstreetmap.josm.gui.SelectionManager.SelectionEnded;
-import org.openstreetmap.josm.gui.dialogs.LayerListDialog.MergeAction;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -486,15 +486,14 @@ public class SelectAction extends MapMode implements SelectionEnded {
                     }
                 }
                 if (ctrl) {
-                    Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
+                    Collection<Node> affectedNodes = OsmPrimitive.getFilteredSet(selection, Node.class);
                     Collection<Node> nn = Main.map.mapView.getNearestNodes(e.getPoint(), affectedNodes);
                     if (nn != null) {
-                        Node n = nn.iterator().next();
-                        Set<Node> selectedNodes = OsmPrimitive.getFilteredSet(selection, Node.class);
-                        if (!selectedNodes.isEmpty()) {
-                            selectedNodes.add(n);
-                            Node targetNode = MergeNodesAction.selectTargetNode(selectedNodes);
-                            Command cmd = MergeNodesAction.mergeNodes(Main.main.getEditLayer(),selectedNodes, targetNode);
+                        Node targetNode = nn.iterator().next();
+                        Set<Node> nodesToMerge = new HashSet<Node>(affectedNodes);
+                        nodesToMerge.add(targetNode);
+                        if (!nodesToMerge.isEmpty()) {
+                            Command cmd = MergeNodesAction.mergeNodes(Main.main.getEditLayer(),nodesToMerge, targetNode);
                             Main.main.undoRedo.add(cmd);
                         }
                     }
