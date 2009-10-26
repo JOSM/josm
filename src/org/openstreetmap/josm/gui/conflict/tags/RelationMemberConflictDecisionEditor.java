@@ -2,8 +2,6 @@
 package org.openstreetmap.josm.gui.conflict.tags;
 
 import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.EventObject;
 
 import javax.swing.DefaultComboBoxModel;
@@ -19,7 +17,7 @@ public class RelationMemberConflictDecisionEditor extends JComboBox implements T
     public RelationMemberConflictDecisionEditor() {
         setOpaque(true);
         DefaultComboBoxModel model = new DefaultComboBoxModel();
-        model.addElement(RelationMemberConflictDecisionType.REPLACE);
+        model.addElement(RelationMemberConflictDecisionType.KEEP);
         model.addElement(RelationMemberConflictDecisionType.REMOVE);
         model.addElement(RelationMemberConflictDecisionType.UNDECIDED);
         setModel(model);

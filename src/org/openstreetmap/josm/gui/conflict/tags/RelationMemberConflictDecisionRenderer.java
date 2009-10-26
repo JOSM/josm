@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.conflict.tags;
 import java.awt.Component;
 import java.awt.Font;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTable;
@@ -13,6 +15,8 @@ import javax.swing.table.TableCellRenderer;
 
 public class RelationMemberConflictDecisionRenderer extends JLabel implements TableCellRenderer, ListCellRenderer{
 
+    private JComboBox cbDecisionTypes; 
+    
     protected void resetTableRenderer() {
         setOpaque(true);
         setFont(UIManager.getFont("Table.font"));
@@ -27,6 +31,14 @@ public class RelationMemberConflictDecisionRenderer extends JLabel implements Ta
         setForeground(UIManager.getColor("ComboBox.foreground"));
     }
 
+    public RelationMemberConflictDecisionRenderer() {
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        cbDecisionTypes = new JComboBox(model);
+        model.addElement(RelationMemberConflictDecisionType.KEEP);
+        model.addElement(RelationMemberConflictDecisionType.REMOVE);
+        model.addElement(RelationMemberConflictDecisionType.UNDECIDED);
+        cbDecisionTypes.setRenderer(this);
+    }
 
     /* --------------------------------------------------------------------------------- */
     /* TableCellRenderer                                                                 */
@@ -39,8 +51,8 @@ public class RelationMemberConflictDecisionRenderer extends JLabel implements Ta
             setForeground(UIManager.getColor("Table.selectionForeground"));
         }
         RelationMemberConflictDecisionType decision = (RelationMemberConflictDecisionType)value;
-        RelationMemberConflictDecisionType.prepareLabel(decision, this);
-        return this;
+        cbDecisionTypes.setSelectedItem(decision);
+        return cbDecisionTypes;
     }
 
     /* --------------------------------------------------------------------------------- */

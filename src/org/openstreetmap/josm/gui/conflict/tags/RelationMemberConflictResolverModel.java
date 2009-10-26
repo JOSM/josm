@@ -233,7 +233,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                 modifiedRelation.addMember(rm);
             } else {
                 switch(decision.getDecision()) {
-                    case REPLACE:
+                    case KEEP:
                         rmNew = new RelationMember(decision.getRole(),newPrimitive);
                         modifiedRelation.addMember(rmNew);
                         isChanged |= ! rm.equals(rmNew);
@@ -279,7 +279,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
             }
             switch(decision.getDecision()) {
                 case REMOVE: return true;
-                case REPLACE:
+                case KEEP:
                     if (!relation.getMember(i).getRole().equals(decision.getRole()))
                         return true;
                     if (relation.getMember(i).getMember() != newPrimitive)

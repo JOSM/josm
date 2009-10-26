@@ -6,7 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.Collection;
 
 import javax.swing.AbstractAction;
@@ -26,6 +31,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.tagging.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
@@ -39,16 +45,34 @@ public class RelationMemberConflictResolver extends JPanel {
     private JCheckBox cbTagRelations;
     private RelationMemberConflictResolverModel model;
     private RelationMemberConflictResolverTable tblResolver;
+    private JMultilineLabel lblHeader;
 
     protected void build() {
-        setLayout(new BorderLayout());
-        model=new RelationMemberConflictResolverModel();
-        add (new JScrollPane(tblResolver = new RelationMemberConflictResolverTable(model)), BorderLayout.CENTER);
-        JPanel pnl = new JPanel();
+        setLayout(new GridBagLayout());
+        JPanel pnl = new JPanel();        
+        pnl.setLayout(new BorderLayout());
+        pnl.add(lblHeader = new JMultilineLabel(""));
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.weighty = 0.0;
+        gc.weightx = 1.0;
+        gc.insets = new Insets(5,5,5,5);
+        add(pnl, gc);
+        model = new RelationMemberConflictResolverModel();
+        
+        gc.gridy = 1;
+        gc.weighty = 1.0;
+        gc.fill = GridBagConstraints.BOTH;
+        gc.insets = new Insets(0,0,0,0);
+        add(new JScrollPane(tblResolver = new RelationMemberConflictResolverTable(model)), gc);
+        pnl = new JPanel();
         pnl.setLayout(new BoxLayout(pnl, BoxLayout.Y_AXIS));
         pnl.add(buildRoleEditingPanel());
         pnl.add(buildTagRelationsPanel());
-        add(pnl, BorderLayout.SOUTH);
+        gc.gridy = 2;
+        gc.weighty = 0.0;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        add(pnl,gc);
     }
 
     protected JPanel buildRoleEditingPanel() {
@@ -56,20 +80,35 @@ public class RelationMemberConflictResolver extends JPanel {
         pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
         pnl.add(new JLabel(tr("Role:")));
         pnl.add(tfRole = new AutoCompletingTextField(10));
+        tfRole.setToolTipText(tr("Enter a role for all relation memberships"));
         pnl.add(new JButton(new ApplyRoleAction()));
+        tfRole.addActionListener(new ApplyRoleAction());
+        tfRole.addFocusListener(
+                new FocusAdapter() {
+                    @Override
+                    public void focusGained(FocusEvent e) {
+                        tfRole.selectAll();
+                    }                    
+                }
+        );
         return pnl;
     }
 
     protected JPanel buildTagRelationsPanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
-        cbTagRelations = new JCheckBox(tr("Tag modified relations with   "));
+        cbTagRelations = new JCheckBox(tr("Tag modified relations with "));
         cbTagRelations.addChangeListener(new ToggleTagRelationsAction());
+        cbTagRelations.setToolTipText(
+                tr("<html>Select to enable entering a tag which will be applied<br>"
+                        + "to all modified relations.</html>"));
         pnl.add(cbTagRelations);
-        pnl.add(new JLabel(trc("tag","Key:")));
+        pnl.add(new JLabel(trc("tag", "Key:")));        
         pnl.add(tfKey = new AutoCompletingTextField(10));
+        tfKey.setToolTipText(tr("<html>Enter a tag key, i.e. <strong><tt>fixme</tt></strong></html>"));
         pnl.add(new JLabel(tr("Value:")));
         pnl.add(tfValue = new AutoCompletingTextField(10));
+        tfValue.setToolTipText(tr("<html>Enter a tag value, i.e. <strong><tt>check members</tt></strong></html>"));
         cbTagRelations.setSelected(false);
         tfKey.setEnabled(false);
         tfValue.setEnabled(false);
@@ -79,6 +118,24 @@ public class RelationMemberConflictResolver extends JPanel {
     public RelationMemberConflictResolver() {
         build();
     }
+    
+    public void initForWayCombining() {
+       lblHeader.setText(tr("<html>The combined ways are members in one ore more relations. "
+                + "Please decide whether your want to <strong>keep</strong> these memberships "
+                + "for the combined way or whether you want to <strong>remove</strong> them.<br>" 
+                + "The default is to <strong>keep</strong> them: the combined way will take the place of the original way in the membership."
+                        + "</html>"));
+       invalidate();
+    }
+
+    public void initForNodeMerging() {
+        lblHeader.setText(tr("<html>The merged nodes are members in one ore more relations. "
+                 + "Please decide whether your want to <strong>keep</strong> these memberships "
+                 + "for the target node or whether you want to <strong>remove</strong> them.<br>" 
+                 + "The default is to <strong>keep</strong> them: the target node will take the place of the original node in the membership."
+                         + "</html>"));
+        invalidate();
+     }
 
     class ApplyRoleAction extends AbstractAction {
         public ApplyRoleAction() {
@@ -94,11 +151,13 @@ public class RelationMemberConflictResolver extends JPanel {
 
     class ToggleTagRelationsAction implements ChangeListener {
         public void stateChanged(ChangeEvent e) {
-            ButtonModel buttonModel = ((AbstractButton)e.getSource()).getModel();
+            ButtonModel buttonModel = ((AbstractButton) e.getSource()).getModel();
             tfKey.setEnabled(buttonModel.isSelected());
             tfValue.setEnabled(buttonModel.isSelected());
-            tfKey.setBackground(buttonModel.isSelected() ? UIManager.getColor("TextField.background") : UIManager.getColor("Panel.background"));
-            tfValue.setBackground(buttonModel.isSelected() ? UIManager.getColor("TextField.background") : UIManager.getColor("Panel.background"));
+            tfKey.setBackground(buttonModel.isSelected() ? UIManager.getColor("TextField.background") : UIManager
+                    .getColor("Panel.background"));
+            tfValue.setBackground(buttonModel.isSelected() ? UIManager.getColor("TextField.background") : UIManager
+                    .getColor("Panel.background"));
         }
     }
 
@@ -107,10 +166,14 @@ public class RelationMemberConflictResolver extends JPanel {
     }
 
     public Command buildTagApplyCommands(Collection<? extends OsmPrimitive> primitives) {
-        if (! cbTagRelations.isSelected()) return null;
-        if (tfKey.getText().trim().equals("")) return null;
-        if (tfValue.getText().trim().equals("")) return null;
-        if (primitives == null || primitives.isEmpty()) return null;
+        if (!cbTagRelations.isSelected())
+            return null;
+        if (tfKey.getText().trim().equals(""))
+            return null;
+        if (tfValue.getText().trim().equals(""))
+            return null;
+        if (primitives == null || primitives.isEmpty())
+            return null;
         return new ChangePropertyCommand(primitives, tfKey.getText(), tfValue.getText());
     }
 
@@ -119,12 +182,13 @@ public class RelationMemberConflictResolver extends JPanel {
         AutoCompletionList acList = new AutoCompletionList();
         AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).populateWithMemberRoles(acList);
         tfRole.setAutoCompletionList(acList);
-        AutoCompletingTextField editor = (AutoCompletingTextField)tblResolver.getColumnModel().getColumn(2).getCellEditor();
+        AutoCompletingTextField editor = (AutoCompletingTextField) tblResolver.getColumnModel().getColumn(2)
+                .getCellEditor();
         if (editor != null) {
             editor.setAutoCompletionList(acList);
         }
         AutoCompletionList acList2 = new AutoCompletionList();
-        AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).populateWithKeys(acList2, false /* don't append */);
+        AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).populateWithKeys(acList2, false /* don'tappend */);
         tfKey.setAutoCompletionList(acList2);
     }
 }

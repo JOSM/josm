@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -36,6 +37,8 @@ public class RelationMemberConflictResolverTable extends JTable implements Multi
         selectPreviousColumnCellAction = new SelectPreviousColumnCellAction();
         getActionMap().put("selectNextColumnCell", selectNextColumnCellAction);
         getActionMap().put("selectPreviousColumnCell", selectPreviousColumnCellAction);
+        
+        setRowHeight((int)new JComboBox().getPreferredSize().getHeight());
     }
 
     /**
