@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -57,6 +58,17 @@ public class AutoScaleAction extends JosmAction {
         String modeHelp = Character.toUpperCase(mode.charAt(0)) + mode.substring(1);
         putValue("help", "Action/AutoScale/" + modeHelp);
         this.mode = mode;
+        if (mode.equals("data")) {
+            putValue("help", ht("/Action/ZoomToData"));
+        } else if (mode.equals("layer")) {
+            putValue("help", ht("/Action/ZoomToLayer"));
+        } else if (mode.equals("selection")) {
+            putValue("help", ht("/Action/ZoomToSelection"));
+        } else if (mode.equals("conflict")) {
+            putValue("help", ht("/Action/ZoomToConflict"));
+        }else if (mode.equals("download")) {
+            putValue("help", ht("/Action/ZoomToDownload"));
+        }       		
     }
 
     public void autoScale()  {

@@ -32,7 +32,7 @@ import org.openstreetmap.josm.io.OsmServerBackreferenceReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.xml.sax.SAXException;
-
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 /**
  * Uploads the current selection to the server.
@@ -48,6 +48,7 @@ public class UploadSelectionAction extends JosmAction{
                 tr("Upload all changes in the current selection to the OSM server."),
                 null, /* no shortcut */
                 true);
+        putValue("help", ht("/Action/UploadSelection"));
     }
 
     @Override

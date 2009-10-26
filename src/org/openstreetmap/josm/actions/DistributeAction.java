@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -29,6 +30,7 @@ public final class DistributeAction extends JosmAction {
     public DistributeAction() {
         super(tr("Distribute Nodes"), "distribute", tr("Distribute the selected nodes to equal distances along a line."),
                 Shortcut.registerShortcut("tools:distribute", tr("Tool: {0}", tr("Distribute Nodes")), KeyEvent.VK_B, Shortcut.GROUP_EDIT), true);
+        putValue("help", ht("/Action/Distribute"));
     }
 
     /**

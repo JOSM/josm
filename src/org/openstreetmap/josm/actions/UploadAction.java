@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -118,6 +119,7 @@ public class UploadAction extends JosmAction{
     public UploadAction() {
         super(tr("Upload data"), "upload", tr("Upload all changes in the active data layer to the OSM server"),
                 Shortcut.registerShortcut("file:upload", tr("File: {0}", tr("Upload data")), KeyEvent.VK_U, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY), true);
+        putValue("help", ht("/Action/Upload"));
     }
 
     /**

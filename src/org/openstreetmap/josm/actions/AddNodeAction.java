@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -29,6 +30,7 @@ public final class AddNodeAction extends JosmAction {
         super(tr("Add Node..."), "addnode", tr("Add a node by entering latitude and longitude."),
                 Shortcut.registerShortcut("addnode", tr("Edit: {0}", tr("Add Node...")), KeyEvent.VK_D, Shortcut.GROUP_EDIT,
                         Shortcut.SHIFT_DEFAULT), true);
+        putValue("help", ht("/Action/AddNode"));
     }
 
     public void actionPerformed(ActionEvent e) {

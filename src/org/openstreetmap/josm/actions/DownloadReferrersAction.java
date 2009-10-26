@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -38,6 +39,7 @@ public class DownloadReferrersAction extends JosmAction{
     public DownloadReferrersAction() {
         super(tr("Download parent ways/relations..."), "downloadreferrers", tr("Download primitives referring to one of the selected primitives"),
                 Shortcut.registerShortcut("file:downloadreferrers", tr("File: {0}", tr("Download parent ways/relations...")), KeyEvent.VK_D, Shortcut.GROUPS_ALT2+Shortcut.GROUP_HOTKEY), true);
+        putValue("help", ht("/Action/Downloadreferrers"));
     }
 
     /**

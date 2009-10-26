@@ -27,23 +27,19 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.BackreferencedDataSet.RelationToChildReference;
 import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
-import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.actionsupport.DeleteFromRelationConfirmationDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-import sun.swing.BakedArrayList;
-
 /**
  * A command to delete a number of primitives from the dataset.
-
+ *
  */
 public class DeleteCommand extends Command {
     /**
@@ -231,49 +227,6 @@ public class DeleteCommand extends Command {
 
     public static Command deleteWithReferences(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection) {
         return deleteWithReferences(layer, selection, false);
-    }
-
-    private static int testRelation(Relation ref, OsmPrimitive osm, boolean simulate) {
-        // If this delete action is simulated, do not bug the user with dialogs
-        // and assume the relations should be deleted
-        if(simulate)
-            return 1;
-
-        String role = "";
-        for (RelationMember m : ref.getMembers()) {
-            if (m.getMember() == osm) {
-                role = m.getRole();
-                break;
-            }
-        }
-        ExtendedDialog dialog = new ExtendedDialog(
-                Main.parent,
-                tr("Conflicting relation"),
-                new String[] { tr("Delete from relation"),tr("Cancel") }
-        );
-        dialog.setButtonIcons( new String[] { "dialogs/delete.png", "cancel.png" });
-        if (role.length() > 0) {
-            dialog.setContent(
-                    tr(
-                            "<html>Selection \"{0}\" is used by relation \"{1}\" with role {2}.<br>Delete from relation?</html>",
-                            osm.getDisplayName(DefaultNameFormatter.getInstance()),
-                            ref.getDisplayName(DefaultNameFormatter.getInstance()),
-                            role
-                    )
-            );
-            dialog.showDialog();
-            return dialog.getValue();
-        } else {
-            dialog.setContent(
-                    tr(
-                            "<html>Selection \"{0}\" is used by relation \"{1}\".<br>Delete from relation?</html>",
-                            osm.getDisplayName(DefaultNameFormatter.getInstance()),
-                            ref.getDisplayName(DefaultNameFormatter.getInstance())
-                    )
-            );
-            dialog.showDialog();
-            return dialog.getValue();
-        }
     }
 
     public static Command delete(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection) {

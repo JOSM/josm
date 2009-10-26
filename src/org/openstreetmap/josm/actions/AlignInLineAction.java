@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -31,6 +32,7 @@ public final class AlignInLineAction extends JosmAction {
     public AlignInLineAction() {
         super(tr("Align Nodes in Line"), "alignline", tr("Move the selected nodes in to a line."),
                 Shortcut.registerShortcut("tools:alignline", tr("Tool: {0}", tr("Align Nodes in Line")), KeyEvent.VK_L, Shortcut.GROUP_EDIT), true);
+        putValue("help", ht("/Action/AlignInLine"));
     }
 
     /**

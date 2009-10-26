@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -35,6 +36,8 @@ public class UnselectAllAction extends JosmAction {
                 Shortcut.registerShortcut("edit:unselectallescape", tr("Edit: {0}", tr("Unselect All (Escape)")),
                         KeyEvent.VK_ESCAPE, Shortcut.GROUP_DIRECT).getKeyStroke(),
                         tr("Unselect All"));
+        
+        putValue("help", ht("/Action/UnselectAll"));
     }
 
     public void actionPerformed(ActionEvent e) {

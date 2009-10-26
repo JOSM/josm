@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.combineTigerTags;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.completeTagCollectionForEditing;
 import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.normalizeTagCollectionBeforeEditing;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
@@ -45,6 +46,7 @@ public class MergeNodesAction extends JosmAction {
     public MergeNodesAction() {
         super(tr("Merge Nodes"), "mergenodes", tr("Merge nodes into the oldest one."),
                 Shortcut.registerShortcut("tools:mergenodes", tr("Tool: {0}", tr("Merge Nodes")), KeyEvent.VK_M, Shortcut.GROUP_EDIT), true);
+        putValue("help", ht("/Action/MergeNodesAction"));
     }
 
     public void actionPerformed(ActionEvent event) {

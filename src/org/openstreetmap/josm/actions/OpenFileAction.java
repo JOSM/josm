@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -35,6 +36,8 @@ public class OpenFileAction extends DiskAccessAction {
     public OpenFileAction() {
         super(tr("Open..."), "open", tr("Open a file."),
                 Shortcut.registerShortcut("system:open", tr("File: {0}", tr("Open...")), KeyEvent.VK_O, Shortcut.GROUP_MENU));
+        putValue("help", ht("/Action/OpenFile"));
+        
     }
 
     public void actionPerformed(ActionEvent e) {

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -56,6 +57,7 @@ public class MoveAction extends JosmAction {
                 tr("Moves Objects {0}", calltosupermustbefirststatementinconstructor(dir, true)),
                 (Shortcut)calltosupermustbefirststatementinconstructor(dir, false), true);
         myDirection = dir;
+        putValue("help", ht("/Action/Move"));
     }
 
     public void actionPerformed(ActionEvent event) {

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
@@ -51,6 +52,7 @@ public class SplitWayAction extends JosmAction {
     public SplitWayAction() {
         super(tr("Split Way"), "splitway", tr("Split a way at the selected node."),
                 Shortcut.registerShortcut("tools:splitway", tr("Tool: {0}", tr("Split Way")), KeyEvent.VK_P, Shortcut.GROUP_EDIT), true);
+        putValue("help", ht("/Action/SplitWay"));
     }
 
     /**

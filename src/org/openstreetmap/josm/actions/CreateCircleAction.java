@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -43,6 +44,7 @@ public final class CreateCircleAction extends JosmAction {
     public CreateCircleAction() {
         super(tr("Create Circle"), "createcircle", tr("Create a circle from three selected nodes."),
                 Shortcut.registerShortcut("tools:createcircle", tr("Tool: {0}", tr("Create Circle")), KeyEvent.VK_O, Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), true);
+        putValue("help", ht("/Action/CreateCircle"));
     }
 
     private double calcang(double xc, double yc, double x, double y) {

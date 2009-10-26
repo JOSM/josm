@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -23,6 +24,7 @@ public class UndoAction extends JosmAction {
         super(tr("Undo"), "undo", tr("Undo the last action."),
                 Shortcut.registerShortcut("system:undo", tr("Edit: {0}", tr("Undo")), KeyEvent.VK_Z, Shortcut.GROUP_MENU), true);
         setEnabled(false);
+        putValue("help", ht("/Action/Undo"));
     }
 
     public void actionPerformed(ActionEvent e) {

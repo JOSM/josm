@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -30,6 +31,7 @@ public class PreferencesAction extends JosmAction implements Runnable {
     public PreferencesAction() {
         super(tr("Preferences..."), "preference", tr("Open a preferences page for global settings."),
         Shortcut.registerShortcut("system:preferences", tr("Preferences"), KeyEvent.VK_F12, Shortcut.GROUP_DIRECT), true);
+        putValue("help", ht("/Action/Preferences"));
     }
 
     /**

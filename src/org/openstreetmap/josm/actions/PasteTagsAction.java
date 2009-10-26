@@ -3,6 +3,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
@@ -32,6 +33,7 @@ public final class PasteTagsAction extends JosmAction {
                 tr("Apply tags of contents of paste buffer to all selected items."),
                 Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")), KeyEvent.VK_V, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT), true);
         copyAction.addListener(this);
+        putValue("help", ht("/Action/PasteTags"));
     }
 
     public static class TagPaster {

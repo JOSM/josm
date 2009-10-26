@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -26,6 +27,7 @@ public class SaveAction extends SaveActionBase {
     public SaveAction() {
         super(tr("Save"), "save", tr("Save the current data."),
                 Shortcut.registerShortcut("system:save", tr("File: {0}", tr("Save")), KeyEvent.VK_S, Shortcut.GROUP_MENU));
+        putValue("help", ht("/Action/Save"));
     }
 
     @Override public File getFile(Layer layer) {

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -23,6 +24,7 @@ public class RedoAction extends JosmAction {
         super(tr("Redo"), "redo", tr("Redo the last undone action."),
                 Shortcut.registerShortcut("system:redo", tr("Edit: {0}", tr("Redo")), KeyEvent.VK_Y, Shortcut.GROUP_MENU), true);
         setEnabled(false);
+        putValue("help", ht("/Action/Redo"));
     }
 
     public void actionPerformed(ActionEvent e) {

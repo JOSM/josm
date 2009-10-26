@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -36,7 +37,7 @@ public class RenameLayerAction extends AbstractAction {
         super(tr("Rename layer"), ImageProvider.get("dialogs", "edit"));
         this.file = file;
         this.layer = layer;
-        this.putValue("help", "Action/LayerRename");
+        this.putValue("help", ht("/Action/RenameLayer"));       
     }
 
     public void actionPerformed(ActionEvent e) {

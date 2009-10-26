@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -14,6 +15,7 @@ public final class ZoomOutAction extends JosmAction {
     public ZoomOutAction() {
         super(tr("Zoom Out"), "dialogs/zoomout", tr("Zoom Out"),
                 Shortcut.registerShortcut("view:zoomout", tr("View: {0}", tr("Zoom Out")), KeyEvent.VK_MINUS, Shortcut.GROUP_DIRECT), true);
+        putValue("help", ht("/Action/ZoomOut"));
     }
 
     public void actionPerformed(ActionEvent e) {

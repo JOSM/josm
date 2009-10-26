@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -28,6 +29,7 @@ public class JoinNodeWayAction extends JosmAction {
     public JoinNodeWayAction() {
         super(tr("Join Node to Way"), "joinnodeway", tr("Join a node into the nearest way segments"),
                 Shortcut.registerShortcut("tools:joinnodeway", tr("Tool: {0}", tr("Join Node to Way")), KeyEvent.VK_J, Shortcut.GROUP_EDIT), true);
+        putValue("help", ht("/Action/JoinNodeWay"));
     }
 
     public void actionPerformed(ActionEvent e) {

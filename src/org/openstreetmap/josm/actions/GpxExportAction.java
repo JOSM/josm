@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.actions.SaveActionBase.createAndOpenSaveFileChooser;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -27,6 +28,7 @@ public class GpxExportAction extends DiskAccessAction {
     public GpxExportAction() {
         super(tr("Export to GPX..."), "exportgpx", tr("Export the data to GPX file."),
                 Shortcut.registerShortcut("file:exportgpx", tr("Export to GPX..."), KeyEvent.VK_E, Shortcut.GROUP_MENU));
+        putValue("help", ht("/Action/GpxExport"));
     }
 
     protected GpxLayer getLayer() {

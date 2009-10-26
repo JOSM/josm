@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -33,6 +34,7 @@ public final class MirrorAction extends JosmAction {
         super(tr("Mirror"), "mirror", tr("Mirror selected nodes and ways."),
                 Shortcut.registerShortcut("tools:mirror", tr("Tool: {0}", tr("Mirror")),
                         KeyEvent.VK_M, Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), true);
+        putValue("help", ht("/Action/Mirror"));
     }
 
     public void actionPerformed(ActionEvent e) {

@@ -3,6 +3,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -29,6 +30,7 @@ public final class PasteAction extends JosmAction {
     public PasteAction() {
         super(tr("Paste"), "paste", tr("Paste contents of paste buffer."),
                 Shortcut.registerShortcut("system:paste", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_V, Shortcut.GROUP_MENU), true);
+        putValue("help", ht("/Action/Paste"));
     }
 
     public void actionPerformed(ActionEvent e) {

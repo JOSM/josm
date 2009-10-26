@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -36,6 +37,7 @@ public final class AlignInCircleAction extends JosmAction {
         super(tr("Align Nodes in Circle"), "aligncircle", tr("Move the selected nodes into a circle."),
                 Shortcut.registerShortcut("tools:aligncircle", tr("Tool: {0}", tr("Align Nodes in Circle")),
                         KeyEvent.VK_O, Shortcut.GROUP_EDIT), true);
+        putValue("help", ht("/Action/AlignInCircle"));
     }
 
     public double distance(EastNorth n, EastNorth m) {

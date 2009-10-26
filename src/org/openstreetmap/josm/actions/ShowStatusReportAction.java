@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -38,6 +39,7 @@ public final class ShowStatusReportAction extends JosmAction {
                 Shortcut.registerShortcut("help:showstatusreport", tr("Help: {0}",
                         tr("Show Status Report")), KeyEvent.VK_R, Shortcut.GROUP_NONE), true);
 
+        putValue("help", ht("/Action/ShowStatusReport"));
     }
 
     public static String getReportHeader()
