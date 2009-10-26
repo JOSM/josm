@@ -9,7 +9,9 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTaskList;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
@@ -80,7 +82,21 @@ public class UpdateDataAction extends JosmAction{
         } else {
             // bounds defined? => use the bbox downloader
             //
-            new DownloadOsmTaskList().download(false, areas, new PleaseWaitProgressMonitor(tr("Updating data")));
+            final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download data"));
+            final Future<?> future = new DownloadOsmTaskList().download(false /* no new layer */, areas, monitor);
+            Main.worker.submit(
+                    new Runnable() {
+                        public void run() {
+                            try {
+                                future.get();
+                            } catch(Exception e) {
+                                e.printStackTrace();
+                                return;
+                            }
+                            monitor.close();
+                        }
+                    }
+            );
         }
     }
 }

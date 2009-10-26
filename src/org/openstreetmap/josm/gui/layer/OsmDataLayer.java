@@ -3,6 +3,7 @@
 package org.openstreetmap.josm.gui.layer;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -61,7 +62,9 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.MapPaintVisitor;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
@@ -333,58 +336,50 @@ public class OsmDataLayer extends Layer {
                 numNewConflicts
         );
         String msg2 = trn(
-                "{0} object has been purged from the local dataset because it is deleted on the server.",
-                "{0} objects have been purged from the local dataset because they are deleted on the server.",
+                "{0} conflict has been <strong>resolved automatically</strong> by purging {0} object<br>from the local dataset because it is deleted on the server.",
+                "{0} conflicts have been <strong>resolved automatically</strong> by purging {0} objects<br> from the local dataset because they are deleted on the server.",
                 numPurgedPrimitives,
                 numPurgedPrimitives
         );
+        int numRemainingConflicts = numNewConflicts - numPurgedPrimitives;
+        String msg3 = "";
+        if (numRemainingConflicts >0) {
+            msg3 = trn(
+                    "{0} conflict remains to be resolved.<br><br>Please open the Conflict List Dialog and manually resolve it.",
+                    "{0} conflicts remain to be resolved.<br><br>Please open the Conflict List Dialog and manually resolve them.",
+                    numRemainingConflicts,
+                    numRemainingConflicts
+            );            
+        }
+        
         StringBuffer sb = new StringBuffer();
         sb.append("<html>").append(msg1);
         if (numPurgedPrimitives > 0) {
             sb.append("<br>").append(msg2);
         }
-        sb.append("<br>").append(tr("Please consult the Conflict List Dialog<br>and manually resolve them."));
+        if (numRemainingConflicts > 0) {
+            sb.append("<br>").append(msg3);
+        }
         sb.append("</html>");
         if (numNewConflicts > 0) {
-            JButton[] options = new JButton[] {
-                    new JButton(tr("OK")),
-                    new JButton(tr("Help"))
+            ButtonSpec[] options = new ButtonSpec[] {
+                    new ButtonSpec(
+                            tr("OK"),
+                            ImageProvider.get("ok"),
+                            tr("Click to close this dialog and continue editing"),
+                            null /* no specific help */
+                            )
             };
-            options[0].setIcon(ImageProvider.get("ok"));
-            options[1].setIcon(ImageProvider.get("help"));
-            final JOptionPane pane = new JOptionPane(
+            HelpAwareOptionPane.showOptionDialog(
+                    Main.parent,
                     sb.toString(),
-                    JOptionPane.WARNING_MESSAGE,
-                    JOptionPane.DEFAULT_OPTION,
-                    null,
-                    options,
-                    options[0]
-            );
-            final JDialog dialog = new JDialog(
-                    JOptionPane.getFrameForComponent(Main.parent),
                     tr("Conflicts detected"),
-                    true);
-            options[0].addActionListener(
-                    new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            dialog.setVisible(false);
-                        }
-                    }
-            );
-            options[1].addActionListener(
-                    new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            HelpBrowser b = new HelpBrowser();
-                            b.openHelpTopic("Help/Concepts/Conflict");
-                            b.setVisible(true);
-                        }
-                    }
-            );
-            dialog.setContentPane(pane);
-            dialog.pack();
-            HelpUtil.setHelpContext(dialog.getRootPane(), "/Concepts/Conflict");
-            WindowGeometry.centerOnScreen(dialog.getSize()).applySafe(dialog);
-            dialog.setVisible(true);
+                    JOptionPane.WARNING_MESSAGE,
+                    null, /* no icon */
+                    options,
+                    options[0],
+                    ht("/Concepts/Conflict#WarningAboutDetectedConflicts")
+             );            
         }
     }
 
