@@ -43,11 +43,8 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         return downloadedData;
     }
 
-    public Future<?> download(DownloadAction action, Bounds downloadArea, ProgressMonitor progressMonitor) {
+    public Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
        
-        boolean newLayer = action != null
-        && (action.dialog == null || action.dialog.isNewLayerRequired());
-
         downloadTask = new DownloadTask(newLayer,
                 new BoundingBoxDownloader(downloadArea), progressMonitor);
         currentBounds = new Bounds(downloadArea);

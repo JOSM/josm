@@ -423,7 +423,7 @@ abstract public class Main {
             } else {
                 //DownloadTask osmTask = main.menu.download.downloadTasks.get(0);
                 DownloadTask osmTask = new DownloadOsmTask();
-                Future<?> future = osmTask.download(main.menu.download, b, null);
+                Future<?> future = osmTask.download(true, b, null);
                 Main.worker.submit(new PostDownloadHandler(osmTask, future));
             }
             return;
@@ -474,7 +474,7 @@ abstract public class Main {
             try {
                 DownloadTask task = rawGps ? new DownloadGpsTask() : new DownloadOsmTask();
                 // asynchronously launch the download task ...
-                Future<?> future = task.download(main.menu.download, b, null);
+                Future<?> future = task.download(true, b, null);
                 // ... and the continuation when the download is finished (this will wait for the download to finish)
                 Main.worker.execute(new PostDownloadHandler(task, future));
                 return;

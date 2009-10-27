@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.DownloadAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -22,8 +21,8 @@ public class DownloadGpsTask extends AbstractDownloadTask {
 
     private DownloadTask downloadTask;
 
-    public Future<?> download(DownloadAction action, Bounds downloadArea, ProgressMonitor progressMonitor) {
-        downloadTask = new DownloadTask(action.dialog.isNewLayerRequired(),
+    public Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
+        downloadTask = new DownloadTask(newLayer,
                 new BoundingBoxDownloader(downloadArea), progressMonitor);
         // We need submit instead of execute so we can wait for it to finish and get the error
         // message if necessary. If no one calls getErrorMessage() it just behaves like execute.

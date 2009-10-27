@@ -4,7 +4,6 @@ package org.openstreetmap.josm.actions.downloadtasks;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import org.openstreetmap.josm.actions.DownloadAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
@@ -14,7 +13,7 @@ public interface DownloadTask {
      * Execute the download using the given bounding box. Set silent on progressMonitor
      * if no error messages should be popped up.
      */
-    Future<?> download(DownloadAction action, Bounds downloadArea, ProgressMonitor progressMonitor);
+    Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor);
 
     /**
      * Execute the download using the given URL

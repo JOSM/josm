@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 public class DownloadAction extends JosmAction {
     
 
-    public DownloadDialog dialog;
+    private DownloadDialog dialog;
     private ExtendedDialog downloadDialog;
 
     public DownloadAction() {
@@ -77,13 +77,13 @@ public class DownloadAction extends JosmAction {
                 dialog.rememberSettings();
                 if (dialog.isDownloadOsmData()) {
                     DownloadOsmTask task = new DownloadOsmTask();
-                    Future<?> future = task.download(this, dialog.getSelectedDownloadArea(), null);
+                    Future<?> future = task.download(dialog.isNewLayerRequired(), dialog.getSelectedDownloadArea(), null);
                     Main.worker.submit(new PostDownloadHandler(task, future));
                     finish = true;
                 }
                 if (dialog.isDownloadGpxData()) {
                     DownloadGpsTask task = new DownloadGpsTask();
-                    Future<?> future = task.download(this,dialog.getSelectedDownloadArea(), null);
+                    Future<?> future = task.download(dialog.isNewLayerRequired(),dialog.getSelectedDownloadArea(), null);
                     Main.worker.submit(new PostDownloadHandler(task, future));
                     finish = true;
                 }
