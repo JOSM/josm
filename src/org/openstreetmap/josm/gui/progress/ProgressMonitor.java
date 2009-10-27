@@ -119,7 +119,6 @@ public interface ProgressMonitor {
     void addCancelListener(CancelListener listener);
     void removeCancelListener(CancelListener listener);
 
-    void setSilent(boolean value);
 
     /**
      * Appends a message to the log managed by the progress monitor.

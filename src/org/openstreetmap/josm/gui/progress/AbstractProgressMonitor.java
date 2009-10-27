@@ -43,9 +43,6 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
     private AbstractProgressMonitor currentChild;
     private Request requestedState = new Request();
 
-    private boolean silent;
-    private String errorMessage;
-
     protected abstract void doBeginTask();
     protected abstract void doFinishTask();
     protected abstract void doSetIntermediate(boolean value);
@@ -373,23 +370,4 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
             getRequest(child).intermediate = value;
         }
     }
-
-    /*======================
-     * Silent/error message
-     ======================*/
-    public synchronized void setSilent(boolean value) {
-        this.silent = value;
-    }
-
-    public synchronized void setErrorMessage(String message) {
-        this.errorMessage = message;
-        if (!silent) {
-            doSetErrorMessage(message);
-        }
-    }
-
-    public synchronized String getErrorMessage() {
-        return errorMessage;
-    }
-
 }

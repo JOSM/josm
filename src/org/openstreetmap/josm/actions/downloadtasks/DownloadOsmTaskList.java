@@ -63,7 +63,6 @@ public class DownloadOsmTaskList {
             i++;
             DownloadTask dt = new DownloadOsmTask();
             ProgressMonitor childProgress = progressMonitor.createSubTaskMonitor(1, false);
-            childProgress.setSilent(true);
             childProgress.setCustomText(tr("Download {0} of {1} ({2} left)", i, rects.size(), rects.size() - i));
             Future<?> future = dt.download(false, new Bounds(td), childProgress);
             osmTaskFutures.add(future);

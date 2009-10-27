@@ -43,11 +43,6 @@ class ChildProgress extends AbstractProgressMonitor {
     }
 
     @Override
-    protected void doSetErrorMessage(String message) {
-        parent.setErrorMessage(message);
-    }
-
-    @Override
     protected void doFinishTask() {
         parent.childFinished(this);
     }
