@@ -196,7 +196,9 @@ public class MergeNodesAction extends JosmAction {
                 cmds.add(new ChangeCommand(w, newWay));
             }
         }
-        cmds.add(new DeleteCommand(waysToDelete));
+        if (!waysToDelete.isEmpty()) {
+            cmds.add(new DeleteCommand(waysToDelete));
+        }
         return cmds;
     }
 

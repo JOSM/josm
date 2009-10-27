@@ -50,12 +50,14 @@ public class DeleteCommand extends Command {
     /**
      * Constructor. Deletes a collection of primitives in the current edit layer.
      * 
-     * @param data the primitives to delete
+     * @param data the primitives to delete. Must neither be null nor empty.
+     * @throws IllegalArgumentException thrown if data is null or empty
      */
-    public DeleteCommand(Collection<? extends OsmPrimitive> data) {
-        if (data == null) {
-            data = Collections.emptyList();
-        }
+    public DeleteCommand(Collection<? extends OsmPrimitive> data) throws IllegalArgumentException {
+        if (data == null) 
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be empty"));
+        if (data.isEmpty())
+            throw new IllegalArgumentException(tr("At least one object to delete requird, got empty collection"));            
         this.toDelete = data;
     }
 
@@ -92,14 +94,16 @@ public class DeleteCommand extends Command {
      * a specific layer
      *
      * @param layer the layer context for deleting these primitives. Must not be null.
-     * @param data the primitives to delete
+     * @param data the primitives to delete. Must neither be null nor empty.
      * @throws IllegalArgumentException thrown if layer is null
+     * @throws IllegalArgumentException thrown if data is null or empty
      */
     public DeleteCommand(OsmDataLayer layer, Collection<? extends OsmPrimitive> data) throws IllegalArgumentException{
         super(layer);
-        if (data == null) {
-            data = Collections.emptyList();
-        }
+        if (data == null) 
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be empty"));
+        if (data.isEmpty())
+            throw new IllegalArgumentException(tr("At least one object to delete requird, got empty collection"));            
         this.toDelete = data;
     }
 
