@@ -232,13 +232,13 @@ public class PlaceSelection implements DownloadSelection {
         // when the button is clicked
         submitSearch.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                queryServer(gui);
+                queryServer(gui.getRootPane());
             }
         });
 
         searchTerm.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                queryServer(gui);
+                queryServer(gui.getRootPane());
             }
         });
 
