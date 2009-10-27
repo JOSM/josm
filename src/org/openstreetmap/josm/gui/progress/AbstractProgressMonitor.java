@@ -48,7 +48,6 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
     protected abstract void doSetIntermediate(boolean value);
     protected abstract void doSetTitle(String title);
     protected abstract void doSetCustomText(String title);
-    protected abstract void doSetErrorMessage(String message);
 
     protected AbstractProgressMonitor(CancelHandler cancelHandler) {
         this.cancelHandler = cancelHandler;
