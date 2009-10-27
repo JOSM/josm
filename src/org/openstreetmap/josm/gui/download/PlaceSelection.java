@@ -309,9 +309,7 @@ public class PlaceSelection implements DownloadSelection {
                             r.lon + size
                          )
                     );
-                    updatingSelf = true;
                     gui.boundingBoxChanged(b,null);
-                    updatingSelf = false;
                 }
             }
         });
@@ -331,10 +329,7 @@ public class PlaceSelection implements DownloadSelection {
 
     }
 
-    // if bounding box selected on other tab, de-select item
-    public void boundingBoxChanged(DownloadDialog gui) {
-        if (!updatingSelf) {
-            searchResultDisplay.clearSelection();
-        }
+    public void setDownloadArea(Bounds area) {
+       searchResultDisplay.clearSelection();
     }
 }

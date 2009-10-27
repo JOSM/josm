@@ -17,6 +17,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.BookmarkList;
 import org.openstreetmap.josm.tools.GBC;
@@ -99,10 +100,10 @@ public class BookmarkSelection implements DownloadSelection {
         dlg.add(buttons, GBC.eop().fill(GBC.HORIZONTAL));
     }
 
-    public void boundingBoxChanged(DownloadDialog gui) {
-        tempBookmark = new Preferences.Bookmark(gui.getSelectedDownloadArea());
+    
+    public void setDownloadArea(Bounds area) {
+        if (area == null) return;
+        tempBookmark = new Preferences.Bookmark(area);
         bookmarks.clearSelection();
     }
-
-
 }

@@ -3,20 +3,27 @@ package org.openstreetmap.josm.gui.download;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.JTextComponent;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.GBC;
@@ -32,45 +39,39 @@ import org.openstreetmap.josm.tools.OsmUrlToBounds;
  */
 public class BoundingBoxSelection implements DownloadSelection {
 
-    private JTextField[] latlon = new JTextField[] {
-            new JTextField(11),
-            new JTextField(11),
-            new JTextField(11),
-            new JTextField(11) };
+    private JTextField[] latlon = null;
     final JTextArea osmUrl = new JTextArea();
     final JTextArea showUrl = new JTextArea();
 
-    public void addGui(final DownloadDialog gui) {
-
-        JPanel dlg = new JPanel(new GridBagLayout());
-
-        final FocusListener dialogUpdater = new FocusAdapter() {
-            @Override public void focusLost(FocusEvent e) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        try {
-                            double minlat = Double.parseDouble(latlon[0].getText());
-                            double minlon = Double.parseDouble(latlon[1].getText());
-                            double maxlat = Double.parseDouble(latlon[2].getText());
-                            double maxlon = Double.parseDouble(latlon[3].getText());
-                            Bounds b = new Bounds(minlat,minlon, maxlat,maxlon);
-                            if (gui.getSelectedDownloadArea() == null) return;
-                            if (gui.getSelectedDownloadArea() == null || !gui.getSelectedDownloadArea().equals(new Bounds(minlat,minlon, maxlat,maxlon))) {
-                                gui.boundingBoxChanged(b, BoundingBoxSelection.this);
-                            }
-                        } catch (NumberFormatException x) {
-                            // ignore
-                        }
-                        updateUrl(gui);
-                    }
-                });
-            }
-        };
-
-        for (JTextField f : latlon) {
-            f.setMinimumSize(new Dimension(100,new JTextField().getMinimumSize().height));
-            f.addFocusListener(dialogUpdater);
+    
+    protected void buildDownloadAreaInputFields() {
+        latlon = new JTextField[4];
+        for(int i=0; i< 4; i++) {
+            latlon[i] = new JTextField(11);
+            latlon[i].setMinimumSize(new Dimension(100,new JTextField().getMinimumSize().height));
+            latlon[i].addFocusListener(new SelectAllOnFocusHandler(latlon[i]));
         }
+        LatValueChecker latChecker = new LatValueChecker(latlon[0]);
+        latlon[0].addFocusListener(latChecker);
+        latlon[0].addActionListener(latChecker);
+
+        latChecker = new LatValueChecker(latlon[3]);
+        latlon[2].addFocusListener(latChecker);
+        latlon[2].addActionListener(latChecker);
+        
+        LonValueChecker lonChecker = new LonValueChecker(latlon[1]);
+        latlon[1].addFocusListener(lonChecker);
+        latlon[1].addActionListener(lonChecker);
+
+        lonChecker = new LonValueChecker(latlon[3]);
+        latlon[3].addFocusListener(lonChecker);
+        latlon[3].addActionListener(lonChecker);
+        
+    }
+    
+    public void addGui(final DownloadDialog gui) {
+        buildDownloadAreaInputFields();
+        JPanel dlg = new JPanel(new GridBagLayout());
 
         class osmUrlRefresher implements DocumentListener {
             public void changedUpdate(DocumentEvent e) { parseURL(gui); }
@@ -83,15 +84,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         // select content on receiving focus. this seems to be the default in the
         // windows look+feel but not for others. needs invokeLater to avoid strange
         // side effects that will cancel out the newly made selection otherwise.
-        osmUrl.addFocusListener(new FocusAdapter() {
-            @Override public void focusGained(FocusEvent e) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        osmUrl.selectAll();
-                    }
-                });
-            }
-        });
+        osmUrl.addFocusListener(new SelectAllOnFocusHandler(osmUrl));
         osmUrl.setLineWrap(true);
         osmUrl.setBorder(latlon[0].getBorder());
 
@@ -109,47 +102,157 @@ public class BoundingBoxSelection implements DownloadSelection {
         dlg.add(showUrl, GBC.eop().insets(10,0,5,5));
         showUrl.setEditable(false);
         showUrl.setBackground(dlg.getBackground());
-        showUrl.addFocusListener(new FocusAdapter(){
-            @Override
-            public void focusGained(FocusEvent e) {
-                showUrl.selectAll();
-            }
-        });
+        showUrl.addFocusListener(new SelectAllOnFocusHandler(showUrl));
 
         gui.addDownloadAreaSelector(dlg, tr("Bounding Box"));
     }
 
-    /**
-     * Called when bounding box is changed by one of the other download dialog tabs.
-     */
-    public void boundingBoxChanged(DownloadDialog gui) {
-        updateBboxFields(gui);
-        updateUrl(gui);
+    
+    public void setDownloadArea(Bounds area) {
+        updateBboxFields(area);
+        updateUrl(area);
+    }
+    
+    public Bounds getDownloadArea() {
+        double[] values = new double[4];
+        for (int i=0; i < 4; i++) {
+            try {
+                values[i] = Double.parseDouble(latlon[i].getText());
+            } catch(NumberFormatException x) {
+                return null;
+            }
+        }
+        if (!LatLon.isValidLat(values[0]) || !LatLon.isValidLon(values[1]))
+            return null;
+        if (!LatLon.isValidLat(values[2]) || !LatLon.isValidLon(values[3]))
+            return null;        
+        return new Bounds(values);
     }
 
     private boolean parseURL(DownloadDialog gui) {
         Bounds b = OsmUrlToBounds.parse(osmUrl.getText());
         if(b == null) return false;        
         gui.boundingBoxChanged(b,BoundingBoxSelection.this);
-        updateBboxFields(gui);
-        updateUrl(gui);
+        updateBboxFields(b);
+        updateUrl(b);
         return true;
     }
 
-    private void updateBboxFields(DownloadDialog gui) {
-        Bounds b = gui.getSelectedDownloadArea();
-        if (b == null) return;
-        latlon[0].setText(Double.toString(b.getMin().lat()));
-        latlon[1].setText(Double.toString(b.getMin().lon()));
-        latlon[2].setText(Double.toString(b.getMax().lat()));
-        latlon[3].setText(Double.toString(b.getMax().lon()));
+    private void updateBboxFields(Bounds area) {
+        if (area == null) return;
+        latlon[0].setText(Double.toString(area.getMin().lat()));
+        latlon[1].setText(Double.toString(area.getMin().lon()));
+        latlon[2].setText(Double.toString(area.getMax().lat()));
+        latlon[3].setText(Double.toString(area.getMax().lon()));
         for (JTextField f : latlon) {
             f.setCaretPosition(0);
         }
     }
 
-    private void updateUrl(DownloadDialog gui) {
-        if (gui.getSelectedDownloadArea() == null) return;
-        showUrl.setText(OsmUrlToBounds.getURL(gui.getSelectedDownloadArea()));
+    private void updateUrl(Bounds area) {
+        if (area == null) return;
+        showUrl.setText(OsmUrlToBounds.getURL(area));
+    }
+    
+    
+    class LatValueChecker extends FocusAdapter implements ActionListener{
+        private JTextField tfLatValue;
+        
+        private Border errorBorder = BorderFactory.createLineBorder(Color.RED, 1);
+        protected void setErrorMessage(String msg) {
+            if (msg != null) {
+                tfLatValue.setBorder(errorBorder);
+                tfLatValue.setToolTipText(msg);
+            } else {
+                tfLatValue.setBorder(UIManager.getBorder("TextField.border"));
+                tfLatValue.setToolTipText("");                
+            }
+        }
+     
+        public LatValueChecker(JTextField tfLatValue) {
+            this.tfLatValue = tfLatValue;
+        }
+        
+        protected void check() {
+            double value = 0;
+            try {
+                value = Double.parseDouble(tfLatValue.getText());
+            } catch(NumberFormatException ex) {
+                setErrorMessage(tr("The string ''{0}'' isn''t a valid double value.", tfLatValue.getText()));
+                return;
+            }
+            if (!LatLon.isValidLat(value)) {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("Value for latitude in range [-90,90] required.", tfLatValue.getText()),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+               );         
+                setErrorMessage(tr("Value for latitude in range [-90,90] required.", tfLatValue.getText()));
+                return;            
+            }
+        }
+        
+        @Override
+        public void focusLost(FocusEvent e) {
+            check();
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            check();            
+        }        
+    }
+    
+    class LonValueChecker extends FocusAdapter implements ActionListener {
+        private JTextField tfLonValue;
+        private Border errorBorder = BorderFactory.createLineBorder(Color.RED, 1);
+        protected void setErrorMessage(String msg) {
+            if (msg != null) {
+                tfLonValue.setBorder(errorBorder);
+                tfLonValue.setToolTipText(msg);
+            } else {
+                tfLonValue.setBorder(UIManager.getBorder("TextField.border"));
+                tfLonValue.setToolTipText("");                
+            }
+        }
+        
+        public LonValueChecker(JTextField tfLonValue) {
+            this.tfLonValue = tfLonValue;
+        }
+        
+        protected void check() {
+            double value = 0;
+            try {
+                value = Double.parseDouble(tfLonValue.getText());
+            } catch(NumberFormatException ex) {
+               setErrorMessage(tr("The string ''{0}'' isn''t a valid double value.", tfLonValue.getText()));
+               return;
+            }
+            if (!LatLon.isValidLon(value)) {
+                setErrorMessage(tr("Value for longitude in range [-180,180] required.", tfLonValue.getText()));
+                return;
+            }
+        }
+        
+        @Override
+        public void focusLost(FocusEvent e) {
+            check();
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            check();
+        }        
+    }
+    
+    class SelectAllOnFocusHandler extends FocusAdapter {
+        private JTextComponent tfTarget;
+        public SelectAllOnFocusHandler(JTextComponent tfTarget) {
+            this.tfTarget = tfTarget;            
+        }
+        
+        @Override
+        public void focusGained(FocusEvent e) {
+            tfTarget.selectAll();
+        }        
     }
 }

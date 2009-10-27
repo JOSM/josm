@@ -165,26 +165,25 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
         }
     }
 
-    public void boundingBoxChanged(DownloadDialog gui) {
-        Bounds b = gui.getSelectedDownloadArea();
-        if (b == null)
+    public void setDownloadArea(Bounds area) {
+        if (area == null)
             return;
         
         // test if a bounding box has been set set
-        if (b.getMin().lat() == 0.0 && b.getMin().lon() == 0.0 && b.getMax().lat() == 0.0 && b.getMax().lon() == 0.0)
+        if (area.getMin().lat() == 0.0 && area.getMin().lon() == 0.0 && area.getMax().lat() == 0.0 && area.getMax().lon() == 0.0)
             return;
 
-        int y1 = OsmMercator.LatToY(b.getMin().lat(), MAX_ZOOM);
-        int y2 = OsmMercator.LatToY(b.getMax().lat(), MAX_ZOOM);
-        int x1 = OsmMercator.LonToX(b.getMin().lon(), MAX_ZOOM);
-        int x2 = OsmMercator.LonToX(b.getMax().lon(), MAX_ZOOM);
+        int y1 = OsmMercator.LatToY(area.getMin().lat(), MAX_ZOOM);
+        int y2 = OsmMercator.LatToY(area.getMax().lat(), MAX_ZOOM);
+        int x1 = OsmMercator.LonToX(area.getMin().lon(), MAX_ZOOM);
+        int x2 = OsmMercator.LonToX(area.getMax().lon(), MAX_ZOOM);
 
         iSelectionRectStart = new Point(Math.min(x1, x2), Math.min(y1, y2));
         iSelectionRectEnd = new Point(Math.max(x1, x2), Math.max(y1, y2));
 
         // calc the screen coordinates for the new selection rectangle
-        MapMarkerDot xmin_ymin = new MapMarkerDot(b.getMin().lat(), b.getMin().lon());
-        MapMarkerDot xmax_ymax = new MapMarkerDot(b.getMax().lat(), b.getMax().lon());
+        MapMarkerDot xmin_ymin = new MapMarkerDot(area.getMin().lat(), area.getMin().lon());
+        MapMarkerDot xmax_ymax = new MapMarkerDot(area.getMax().lat(), area.getMax().lon());
 
         Vector<MapMarker> marker = new Vector<MapMarker>(2);
         marker.add(xmin_ymin);

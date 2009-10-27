@@ -24,7 +24,26 @@ public class LatLon extends Coordinate {
     private static DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
     private static DecimalFormat cDdFormatter = new DecimalFormat("###0.0000");
 
+    /**
+     * Replies true if lat is in the range [-90,90]
+     * 
+     * @param lat the latitude 
+     * @return true if lat is in the range [-90,90]
+     */
+    public static boolean isValidLat(double lat) {
+        return lat >= -90d && lat <= 90d;
+    }
 
+    /**
+     * Replies true if lon is in the range [-180,180]
+     * 
+     * @param lon the longitude 
+     * @return true if lon is in the range [-180,180]
+     */
+    public static boolean isValidLon(double lon) {
+        return lon >= -180d && lon <= 180d;
+    }
+    
     public static String dms(double pCoordinate) {
 
         double tAbsCoord = Math.abs(pCoordinate);

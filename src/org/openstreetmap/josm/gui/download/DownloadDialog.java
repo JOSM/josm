@@ -194,7 +194,7 @@ public class DownloadDialog extends JDialog  {
         this.currentBounds = b;
         for (DownloadSelection s : downloadSelections) {
             if (s != eventSource) {
-                s.boundingBoxChanged(this);
+                s.setDownloadArea(currentBounds);
             }
         }
         updateSizeCheck();

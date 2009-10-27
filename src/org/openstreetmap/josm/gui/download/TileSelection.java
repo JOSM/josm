@@ -86,22 +86,14 @@ public class TileSelection implements DownloadSelection {
         gui.addDownloadAreaSelector(smpanel, tr("Tile Numbers"));
     }
 
-    /**
-     * Called when bounding box is changed by one of the other download dialog tabs.
-     */
-    public void boundingBoxChanged(DownloadDialog gui) {
-        updateBboxFields(gui);
-    }
-
-    private void updateBboxFields(DownloadDialog gui) {
-        int z = ((Integer) tileZ.getValue()).intValue();
-        Bounds b = gui.getSelectedDownloadArea();
-        if (b == null)
+    public void setDownloadArea(Bounds area) {
+        if (area == null)
             return;
-        tileX0.setText(Integer.toString(lonToTileX(z, b.getMin().lon())));
-        tileX1.setText(Integer.toString(lonToTileX(z, b.getMax().lon()-.00001)));
-        tileY0.setText(Integer.toString(latToTileY(z, b.getMax().lat()-.00001)));
-        tileY1.setText(Integer.toString(latToTileY(z, b.getMin().lat())));
+        int z = ((Integer) tileZ.getValue()).intValue();
+        tileX0.setText(Integer.toString(lonToTileX(z, area.getMin().lon())));
+        tileX1.setText(Integer.toString(lonToTileX(z, area.getMax().lon()-.00001)));
+        tileY0.setText(Integer.toString(latToTileY(z, area.getMax().lat()-.00001)));
+        tileY1.setText(Integer.toString(latToTileY(z, area.getMin().lat())));
     }
 
     public static int latToTileY(int zoom, double lat) {
