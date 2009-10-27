@@ -3,16 +3,22 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Component;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.ListCellRenderer;
+import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.Preferences.Bookmark;
 
 /**
  * List class that read and save its content from the bookmark file.
@@ -27,6 +33,7 @@ public class BookmarkList extends JList {
         setModel(new DefaultListModel());
         load();
         setVisibleRowCount(7);
+        setCellRenderer(new BookmarkCellRenderer());
     }
 
     /**
@@ -71,5 +78,44 @@ public class BookmarkList extends JList {
                     JOptionPane.ERROR_MESSAGE
             );
         }
+    }
+    
+    class BookmarkCellRenderer extends JLabel implements ListCellRenderer {
+
+        public BookmarkCellRenderer() {
+            setOpaque(true);
+        }
+        
+        protected void renderColor(boolean selected) {
+            if (selected) {
+                setBackground(UIManager.getColor("List.selectionBackground"));
+                setForeground(UIManager.getColor("List.selectionForeground"));
+            } else {
+                setBackground(UIManager.getColor("List.background"));
+                setForeground(UIManager.getColor("List.foreground"));
+            }
+        }
+        
+        protected String buildToolTipText(Bookmark b) {
+            Bounds area = b.getArea();
+            StringBuffer sb = new StringBuffer();
+            sb.append("<html>min[latitude,longitude]=<strong>[")
+            .append(area.getMin().lat()).append(",").append(area.getMin().lon()).append("]</strong>")
+            .append("<br>")
+            .append("max[latitude,longitude]=<strong>[")
+            .append(area.getMax().lat()).append(",").append(area.getMax().lon()).append("]</strong>")
+            .append("</html>");
+            return sb.toString();
+            
+        }
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+                boolean cellHasFocus) {
+            
+            Bookmark b = (Bookmark) value;
+            renderColor(isSelected);
+            setText(b.getName());
+            setToolTipText(buildToolTipText(b));
+            return this;
+        }        
     }
 }

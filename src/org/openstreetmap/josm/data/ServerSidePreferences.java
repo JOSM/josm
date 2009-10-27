@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences.Bookmark;
 import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.Base64;
@@ -190,19 +191,24 @@ public class ServerSidePreferences extends Preferences {
 
             for (String line = in.readLine(); line != null; line = in.readLine()) {
                 StringTokenizer st = new StringTokenizer(line, ",");
-                if (st.countTokens() < 5) {
+                if (st.countTokens() != 5) {
+                    System.err.println(tr("Error: Unexpected line ''{0}'' in bookmark list from server",line));
                     continue;
                 }
                 Bookmark b = new Bookmark();
-                b.name = st.nextToken();
-                try {
-                    for (int i = 0; i < b.latlon.length; ++i) {
-                        b.latlon[i] = Double.parseDouble(st.nextToken());
+                b.setName(st.nextToken());
+                double[] values= new double[4];
+                for (int i = 0; i < 4; ++i) {
+                    String token = st.nextToken();
+                    try {                        
+                        values[i] = Double.parseDouble(token);
+                    } catch(NumberFormatException e) {
+                        System.err.println(tr("Error: Illegal double value ''{0}'' on line ''{1}'' in bookmark list from server",token,line));
+                        continue;                    
                     }
-                    bookmarks.add(b);
-                } catch (NumberFormatException x) {
-                    // line not parsed
                 }
+                b.setArea(new Bounds(values));
+                bookmarks.add(b);
             }
             in.close();
             return bookmarks;

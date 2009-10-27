@@ -13,7 +13,6 @@ import java.awt.event.FocusEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -23,7 +22,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.GBC;
@@ -182,12 +180,6 @@ public class BoundingBoxSelection implements DownloadSelection {
                 return;
             }
             if (!LatLon.isValidLat(value)) {
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("Value for latitude in range [-90,90] required.", tfLatValue.getText()),
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE
-               );         
                 setErrorMessage(tr("Value for latitude in range [-90,90] required.", tfLatValue.getText()));
                 return;            
             }

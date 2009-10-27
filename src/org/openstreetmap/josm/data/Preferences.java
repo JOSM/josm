@@ -59,24 +59,16 @@ public class Preferences {
      * @author imi
      */
     public static class Bookmark implements Comparable<Bookmark> {
-        public String name;
-        public double[] latlon = new double[4]; // minlat, minlon, maxlat, maxlon
+        private String name;
+        private Bounds area;
         
-        public Bookmark() {           
+        public Bookmark() {    
+            area = null;
+            name = null;
         }
         
-        public Bookmark(Bounds b) {
-            if (b == null) {
-                latlon[0] = 0.0;
-                latlon[1] = 0.0;
-                latlon[2] = 0.0;
-                latlon[3] = 0.0;
-            } else {
-                latlon[0] = b.getMin().lat();
-                latlon[1] = b.getMin().lon();
-                latlon[2] = b.getMax().lat();
-                latlon[3] = b.getMax().lon();
-            }
+        public Bookmark(Bounds area) {
+            this.area = area;           
         }
         
         @Override public String toString() {
@@ -87,8 +79,20 @@ public class Preferences {
             return name.toLowerCase().compareTo(b.name.toLowerCase());
         }
         
-        public Bounds asBounds() {
-            return new Bounds(latlon[0], latlon[1], latlon[2], latlon[3]);
+        public Bounds getArea() { 
+            return area;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public void setArea(Bounds area) {
+            this.area = area;
         }
     }
 
@@ -487,15 +491,23 @@ public class Preferences {
         for (String line = in.readLine(); line != null; line = in.readLine()) {
             // FIXME: legacy code using ',' sign, should be \u001e only
             Matcher m = Pattern.compile("^(.+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)$").matcher(line);
-            if(m.matches())
-            {
-                Bookmark b = new Bookmark();
-                b.name = m.group(1);
-                for (int i = 0; i < b.latlon.length; ++i) {
-                    b.latlon[i] = Double.parseDouble(m.group(i+2));
-                }
-                bookmarks.add(b);
+            if (!m.matches() || m.groupCount() != 5) {
+                System.err.println(tr("Error: Unexpected line ''{0}'' in bookmark file ''{1}''",line, bookmarkFile.toString()));
+                continue;
             }
+            Bookmark b = new Bookmark();
+            b.setName(m.group(1));
+            double[] values= new double[4];
+            for (int i = 0; i < 4; ++i) {
+                try {
+                    values[i] = Double.parseDouble(m.group(i+2));
+                } catch(NumberFormatException e) {
+                    System.err.println(tr("Error: Illegal double value ''{0}'' on line ''{1}'' in bookmark file ''{2}''",m.group(i+2),line, bookmarkFile.toString()));
+                    continue;                    
+                }
+            }
+            b.setArea(new Bounds(values));
+            bookmarks.add(b);
         }
         in.close();
         Collections.sort(bookmarks);
@@ -510,10 +522,12 @@ public class Preferences {
         PrintWriter out = new PrintWriter(new OutputStreamWriter(
                 new FileOutputStream(bookmarkFile), "utf-8"));
         for (Bookmark b : bookmarks) {
-            out.print(b.name+"\u001e");
-            for (int i = 0; i < b.latlon.length; ++i) {
-                out.print(b.latlon[i]+(i<b.latlon.length-1?"\u001e":""));
-            }
+            out.print(b.getName()+ "\u001e");
+            Bounds area = b.getArea();
+            out.print(area.getMin().lat() +"\u001e");
+            out.print(area.getMin().lon() +"\u001e");
+            out.print(area.getMax().lat() +"\u001e");
+            out.print(area.getMax().lon());
             out.println();
         }
         out.close();
