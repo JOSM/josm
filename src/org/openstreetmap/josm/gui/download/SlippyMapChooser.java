@@ -183,8 +183,8 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
         iSelectionRectEnd = new Point(Math.max(x1, x2), Math.max(y1, y2));
 
         // calc the screen coordinates for the new selection rectangle
-        MapMarkerDot xmin_ymin = new MapMarkerDot(b.getMin());
-        MapMarkerDot xmax_ymax = new MapMarkerDot(b.getMax());
+        MapMarkerDot xmin_ymin = new MapMarkerDot(b.getMin().lat(), b.getMin().lon());
+        MapMarkerDot xmax_ymax = new MapMarkerDot(b.getMax().lat(), b.getMax().lon());
 
         Vector<MapMarker> marker = new Vector<MapMarker>(2);
         marker.add(xmin_ymin);
