@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -17,6 +18,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -31,8 +33,8 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * @author imi
  */
 public class DownloadAction extends JosmAction {
+    private static final Logger logger = Logger.getLogger(DownloadAction.class.getName());
     
-
     private DownloadDialog dialog;
     private ExtendedDialog downloadDialog;
 
@@ -44,20 +46,21 @@ public class DownloadAction extends JosmAction {
 
     /**
      * Creates the download dialog
+     * 
      * @return the downlaod dialog
      */
-    protected ExtendedDialog createUploadDialog() {
-        if (dialog == null)
+    protected ExtendedDialog createDownloadDialog() {
+        if (dialog == null) 
             dialog = new DownloadDialog();
         dialog.restoreSettings();
-        JPanel downPanel = new JPanel(new BorderLayout());
-        downPanel.add(dialog, BorderLayout.CENTER);
 
         final String prefName = dialog.getClass().getName()+ ".geometry";
         final WindowGeometry wg = WindowGeometry.centerInWindow(Main.parent,
                 new Dimension(1000,600));
 
         if (downloadDialog == null) {
+            JPanel downPanel = new JPanel(new BorderLayout());
+            downPanel.add(dialog, BorderLayout.CENTER);
             downloadDialog= new ExtendedDialog(Main.parent,
                 tr("Download"),
                 new String[] {tr("OK"), tr("Cancel")});
@@ -69,21 +72,22 @@ public class DownloadAction extends JosmAction {
     }
 
     public void actionPerformed(ActionEvent e) {
-        ExtendedDialog dlg = createUploadDialog();
+        ExtendedDialog dlg = createDownloadDialog();
         boolean finish = false;
         while (!finish) {            
             dlg.showDialog();
             if (dlg.getValue() == 1 /* OK */) {
                 dialog.rememberSettings();
+                Bounds area = dialog.getSelectedDownloadArea();                
                 if (dialog.isDownloadOsmData()) {
                     DownloadOsmTask task = new DownloadOsmTask();
-                    Future<?> future = task.download(dialog.isNewLayerRequired(), dialog.getSelectedDownloadArea(), null);
+                    Future<?> future = task.download(dialog.isNewLayerRequired(), area, null);
                     Main.worker.submit(new PostDownloadHandler(task, future));
                     finish = true;
                 }
                 if (dialog.isDownloadGpxData()) {
                     DownloadGpsTask task = new DownloadGpsTask();
-                    Future<?> future = task.download(dialog.isNewLayerRequired(),dialog.getSelectedDownloadArea(), null);
+                    Future<?> future = task.download(dialog.isNewLayerRequired(),area, null);
                     Main.worker.submit(new PostDownloadHandler(task, future));
                     finish = true;
                 }
@@ -99,8 +103,5 @@ public class DownloadAction extends JosmAction {
                 );
             }
         }
-
-        dialog = null;
-        dlg.dispose();
     }
 }

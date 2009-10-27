@@ -147,7 +147,7 @@ public class DownloadDialog extends JPanel {
      *
      * @param eventSource - the DownloadSelection object that fired this notification.
      */
-    public void boundingBoxChanged(Bounds b, DownloadSelection eventSource) {
+    public void boundingBoxChanged(Bounds b, DownloadSelection eventSource) {        
         this.currentBounds = b;
         for (DownloadSelection s : downloadSelections) {
             if (s != eventSource) {
