@@ -96,7 +96,7 @@ public class ProjectionPreference implements PreferenceSetting {
         projectionCode.setText(Main.proj.toCode());
         Bounds b = Main.proj.getWorldBoundsLatLon();
         CoordinateFormat cf = CoordinateFormat.getDefaultFormat();
-        bounds.setText(b.min.latToString(cf)+"; "+b.min.lonToString(cf)+" : "+b.max.latToString(cf)+"; "+b.max.lonToString(cf));
+        bounds.setText(b.getMin().latToString(cf)+"; "+b.getMin().lonToString(cf)+" : "+b.getMax().latToString(cf)+"; "+b.getMax().lonToString(cf));
         /* TODO: Fix bugs, refresh code line and world bounds, fix design (e.g. add border around sub-prefs-stuff */
     }
 

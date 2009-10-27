@@ -31,6 +31,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.GBC;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -223,7 +225,7 @@ public class PlaceSelection implements DownloadSelection {
         JScrollPane scrollPane = new JScrollPane(searchResultDisplay);
         scrollPane.setPreferredSize(new Dimension(200,200));
         panel.add(scrollPane, c);
-        gui.tabpane.add(panel, tr("Places"));
+        gui.addDownloadAreaSelector(panel, tr("Places"));
 
         scrollPane.setPreferredSize(scrollPane.getPreferredSize());
 
@@ -297,12 +299,18 @@ public class PlaceSelection implements DownloadSelection {
                 if (r != null)
                 {
                     double size = 180.0 / Math.pow(2, r.zoom);
-                    gui.minlat = r.lat - size / 2;
-                    gui.maxlat = r.lat + size / 2;
-                    gui.minlon = r.lon - size;
-                    gui.maxlon = r.lon + size;
+                    Bounds b = new Bounds(
+                        new LatLon(
+                            r.lat - size / 2,
+                            r.lat + size / 2
+                         ),
+                         new LatLon(
+                            r.lon - size,
+                            r.lon + size
+                         )
+                    );
                     updatingSelf = true;
-                    gui.boundingBoxChanged(null);
+                    gui.boundingBoxChanged(b,null);
                     updatingSelf = false;
                 }
             }

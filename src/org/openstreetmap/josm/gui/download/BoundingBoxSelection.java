@@ -8,8 +8,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -55,10 +53,10 @@ public class BoundingBoxSelection implements DownloadSelection {
                             double minlon = Double.parseDouble(latlon[1].getText());
                             double maxlat = Double.parseDouble(latlon[2].getText());
                             double maxlon = Double.parseDouble(latlon[3].getText());
-                            if (minlat != gui.minlat || minlon != gui.minlon || maxlat != gui.maxlat || maxlon != gui.maxlon) {
-                                gui.minlat = minlat; gui.minlon = minlon;
-                                gui.maxlat = maxlat; gui.maxlon = maxlon;
-                                gui.boundingBoxChanged(BoundingBoxSelection.this);
+                            Bounds b = new Bounds(minlat,minlon, maxlat,maxlon);
+                            if (gui.getSelectedDownloadArea() == null) return;
+                            if (gui.getSelectedDownloadArea() == null || !gui.getSelectedDownloadArea().equals(new Bounds(minlat,minlon, maxlat,maxlon))) {
+                                gui.boundingBoxChanged(b, BoundingBoxSelection.this);
                             }
                         } catch (NumberFormatException x) {
                             // ignore
@@ -118,7 +116,7 @@ public class BoundingBoxSelection implements DownloadSelection {
             }
         });
 
-        gui.tabpane.addTab(tr("Bounding Box"), dlg);
+        gui.addDownloadAreaSelector(dlg, tr("Bounding Box"));
     }
 
     /**
@@ -131,29 +129,27 @@ public class BoundingBoxSelection implements DownloadSelection {
 
     private boolean parseURL(DownloadDialog gui) {
         Bounds b = OsmUrlToBounds.parse(osmUrl.getText());
-        if(b == null) return false;
-        gui.minlon = b.min.lon();
-        gui.minlat = b.min.lat();
-        gui.maxlon = b.max.lon();
-        gui.maxlat = b.max.lat();
-        gui.boundingBoxChanged(BoundingBoxSelection.this);
+        if(b == null) return false;        
+        gui.boundingBoxChanged(b,BoundingBoxSelection.this);
         updateBboxFields(gui);
         updateUrl(gui);
         return true;
     }
 
     private void updateBboxFields(DownloadDialog gui) {
-        latlon[0].setText(Double.toString(gui.minlat));
-        latlon[1].setText(Double.toString(gui.minlon));
-        latlon[2].setText(Double.toString(gui.maxlat));
-        latlon[3].setText(Double.toString(gui.maxlon));
+        Bounds b = gui.getSelectedDownloadArea();
+        if (b == null) return;
+        latlon[0].setText(Double.toString(b.getMin().lat()));
+        latlon[1].setText(Double.toString(b.getMin().lon()));
+        latlon[2].setText(Double.toString(b.getMax().lat()));
+        latlon[3].setText(Double.toString(b.getMax().lon()));
         for (JTextField f : latlon) {
             f.setCaretPosition(0);
         }
     }
 
     private void updateUrl(DownloadDialog gui) {
-        showUrl.setText(OsmUrlToBounds.getURL(new Bounds(
-                new LatLon(gui.minlat, gui.minlon), new LatLon(gui.maxlat, gui.maxlon))));
+        if (gui.getSelectedDownloadArea() == null) return;
+        showUrl.setText(OsmUrlToBounds.getURL(gui.getSelectedDownloadArea()));
     }
 }

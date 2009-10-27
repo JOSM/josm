@@ -89,15 +89,15 @@ public class LatLon extends Coordinate {
      */
     public boolean isOutSideWorld() {
         Bounds b = Main.proj.getWorldBoundsLatLon();
-        return lat() < b.min.lat() || lat() > b.max.lat() ||
-        lon() < b.min.lon() || lon() > b.max.lon();
+        return lat() < b.getMin().lat() || lat() > b.getMax().lat() ||
+        lon() < b.getMin().lon() || lon() > b.getMax().lon();
     }
 
     /**
      * @return <code>true</code> if this is within the given bounding box.
      */
     public boolean isWithin(Bounds b) {
-        return lat() >= b.min.lat() && lat() <= b.max.lat() && lon() > b.min.lon() && lon() < b.max.lon();
+        return lat() >= b.getMin().lat() && lat() <= b.getMax().lat() && lon() > b.getMin().lon() && lon() < b.getMax().lon();
     }
 
     /**

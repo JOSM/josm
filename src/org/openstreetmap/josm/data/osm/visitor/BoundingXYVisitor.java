@@ -44,8 +44,8 @@ public class BoundingXYVisitor extends AbstractVisitor {
     public void visit(Bounds b) {
         if(b != null)
         {
-            visit(b.min);
-            visit(b.max);
+            visit(b.getMin());
+            visit(b.getMax());
         }
     }
 

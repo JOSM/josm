@@ -29,6 +29,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
  * JComponent that displays the slippy map tiles
@@ -119,8 +121,8 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
         slipyyMapTabPanel.add(this, BorderLayout.CENTER);
         String labelText = tr("<b>Zoom:</b> Mousewheel, double click or Ctrl + Up/Down "
                 + "<b>Move map:</b> Hold right mousebutton and move mouse or use cursor keys. <b>Select:</b> Hold left mousebutton and draw a frame.");
-        slipyyMapTabPanel.add(new JLabel("<html>" + labelText + "</html>"), BorderLayout.SOUTH);
-        iGui.tabpane.add(slipyyMapTabPanel, tr("Slippy map"));
+        slipyyMapTabPanel.add(new JLabel("<html>" + labelText + "</html>"), BorderLayout.SOUTH);        
+        iGui.addDownloadAreaSelector(slipyyMapTabPanel, tr("Slippy map"));
         new OsmMapControl(this, slipyyMapTabPanel, iSizeButton, iSourceButton);
     }
 
@@ -164,22 +166,25 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
     }
 
     public void boundingBoxChanged(DownloadDialog gui) {
-
+        Bounds b = gui.getSelectedDownloadArea();
+        if (b == null)
+            return;
+        
         // test if a bounding box has been set set
-        if (gui.minlat == 0.0 && gui.minlon == 0.0 && gui.maxlat == 0.0 && gui.maxlon == 0.0)
+        if (b.getMin().lat() == 0.0 && b.getMin().lon() == 0.0 && b.getMax().lat() == 0.0 && b.getMax().lon() == 0.0)
             return;
 
-        int y1 = OsmMercator.LatToY(gui.minlat, MAX_ZOOM);
-        int y2 = OsmMercator.LatToY(gui.maxlat, MAX_ZOOM);
-        int x1 = OsmMercator.LonToX(gui.minlon, MAX_ZOOM);
-        int x2 = OsmMercator.LonToX(gui.maxlon, MAX_ZOOM);
+        int y1 = OsmMercator.LatToY(b.getMin().lat(), MAX_ZOOM);
+        int y2 = OsmMercator.LatToY(b.getMax().lat(), MAX_ZOOM);
+        int x1 = OsmMercator.LonToX(b.getMin().lon(), MAX_ZOOM);
+        int x2 = OsmMercator.LonToX(b.getMax().lon(), MAX_ZOOM);
 
         iSelectionRectStart = new Point(Math.min(x1, x2), Math.min(y1, y2));
         iSelectionRectEnd = new Point(Math.max(x1, x2), Math.max(y1, y2));
 
         // calc the screen coordinates for the new selection rectangle
-        MapMarkerDot xmin_ymin = new MapMarkerDot(gui.minlat, gui.minlon);
-        MapMarkerDot xmax_ymax = new MapMarkerDot(gui.maxlat, gui.maxlon);
+        MapMarkerDot xmin_ymin = new MapMarkerDot(b.getMin());
+        MapMarkerDot xmax_ymax = new MapMarkerDot(b.getMax());
 
         Vector<MapMarker> marker = new Vector<MapMarker>(2);
         marker.add(xmin_ymin);
@@ -217,12 +222,16 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
 
         Coordinate l1 = getPosition(p_max);
         Coordinate l2 = getPosition(p_min);
-        iGui.minlon = Math.min(l2.getLon(), l1.getLon());
-        iGui.minlat = Math.min(l1.getLat(), l2.getLat());
-        iGui.maxlon = Math.max(l2.getLon(), l1.getLon());
-        iGui.maxlat = Math.max(l1.getLat(), l2.getLat());
-
-        iGui.boundingBoxChanged(this);
+        Bounds b = new Bounds(
+                new LatLon(
+                        Math.min(l2.getLat(), l1.getLat()), 
+                        Math.min(l1.getLon(), l2.getLon())
+                        ),
+                new LatLon(
+                        Math.max(l2.getLat(), l1.getLat()), 
+                        Math.max(l1.getLon(), l2.getLon()))
+                );
+        iGui.boundingBoxChanged(b, this);
         repaint();
     }
 

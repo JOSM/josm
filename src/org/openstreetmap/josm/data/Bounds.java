@@ -3,7 +3,9 @@ package org.openstreetmap.josm.data;
 
 import java.awt.geom.Rectangle2D;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * This is a simple data class for "rectangular" areas of the world, given in
@@ -15,7 +17,15 @@ public class Bounds {
     /**
      * The minimum and maximum coordinates.
      */
-    public LatLon min, max;
+    private LatLon min, max;
+    
+    public LatLon getMin() {
+        return min;
+    }
+
+    public LatLon getMax() {
+        return max;
+    }
 
     /**
      * Construct bounds out of two points
@@ -29,7 +39,50 @@ public class Bounds {
         this.min = b;
         this.max = b;
     }
+    
+    public Bounds(double minlat, double minlon, double maxlat, double maxlon) {
+        this.min = new LatLon(minlat, minlon);
+        this.max = new LatLon(maxlat, maxlon);
+    }
+    
+    public Bounds(double [] coords) {
+        if (coords == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "coords"));
+        if (coords.length != 4)
+            throw new IllegalArgumentException(tr("Expected array of length 4, got {0}", coords.length));
+        this.min = new LatLon(coords[0], coords[1]);
+        this.max = new LatLon(coords[2], coords[3]);
+    }
+    
+    public Bounds(String asString, String separator) throws IllegalArgumentException {
+        if (asString == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "asString"));
+        String[] components = asString.split(separator);
+        if (components.length != 4) {
+            throw new IllegalArgumentException(tr("Exactly four doubles excpected in string, got {0}", components.length));
+        }
+        double[] values = new double[4];
+        for (int i=0; i<4; i++) {
+            try {
+                values[i] = Double.parseDouble(components[i]);
+            } catch(NumberFormatException e) {
+                throw new IllegalArgumentException(tr("Illegal double value ''{0}''", components[i]));
+            }
+        }
+        this.min = new LatLon(values[0], values[1]);
+        this.max = new LatLon(values[2], values[3]);
+    }
+    
+    public Bounds(Bounds other) {
+        this.min = new LatLon(other.min);
+        this.max = new LatLon(other.max);
+    }
 
+    public Bounds(Rectangle2D rect) {
+        this.min = new LatLon(rect.getMinY(), rect.getMinX());
+        this.max = new LatLon(rect.getMaxY(), rect.getMaxX());
+    }
+    
     @Override public String toString() {
         return "Bounds["+min.lat()+","+min.lon()+","+max.lat()+","+max.lon()+"]";
     }
@@ -68,6 +121,49 @@ public class Bounds {
      */
     public Rectangle2D.Double asRect() {
         return new Rectangle2D.Double(min.lon(), min.lat(), max.lon()-min.lon(), max.lat()-min.lat());
+    }
+    
+    public double getArea() {
+        return (max.lon() - min.lon()) * (max.lat() - min.lat());
+    }
+
+    public String encodeAsString(String separator) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(min.lat()).append(separator).append(min.lon())
+        .append(separator).append(max.lat()).append(separator)
+        .append(max.lon());
+        return sb.toString();
+    }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((max == null) ? 0 : max.hashCode());
+        result = prime * result + ((min == null) ? 0 : min.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Bounds other = (Bounds) obj;
+        if (max == null) {
+            if (other.max != null)
+                return false;
+        } else if (!max.equals(other.max))
+            return false;
+        if (min == null) {
+            if (other.min != null)
+                return false;
+        } else if (!min.equals(other.min))
+            return false;
+        return true;
     }
 
 }

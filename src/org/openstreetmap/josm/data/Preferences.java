@@ -61,11 +61,34 @@ public class Preferences {
     public static class Bookmark implements Comparable<Bookmark> {
         public String name;
         public double[] latlon = new double[4]; // minlat, minlon, maxlat, maxlon
+        
+        public Bookmark() {           
+        }
+        
+        public Bookmark(Bounds b) {
+            if (b == null) {
+                latlon[0] = 0.0;
+                latlon[1] = 0.0;
+                latlon[2] = 0.0;
+                latlon[3] = 0.0;
+            } else {
+                latlon[0] = b.getMin().lat();
+                latlon[1] = b.getMin().lon();
+                latlon[2] = b.getMax().lat();
+                latlon[3] = b.getMax().lon();
+            }
+        }
+        
         @Override public String toString() {
             return name;
         }
+                
         public int compareTo(Bookmark b) {
             return name.toLowerCase().compareTo(b.name.toLowerCase());
+        }
+        
+        public Bounds asBounds() {
+            return new Bounds(latlon[0], latlon[1], latlon[2], latlon[3]);
         }
     }
 

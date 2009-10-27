@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UpdateSelectionAction;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
@@ -64,7 +65,7 @@ public class DownloadOsmTaskList {
             ProgressMonitor childProgress = progressMonitor.createSubTaskMonitor(1, false);
             childProgress.setSilent(true);
             childProgress.setCustomText(tr("Download {0} of {1} ({2} left)", i, rects.size(), rects.size() - i));
-            Future<?> future = dt.download(null, td.getMinY(), td.getMinX(), td.getMaxY(), td.getMaxX(), childProgress);
+            Future<?> future = dt.download(null, new Bounds(td), childProgress);
             osmTaskFutures.add(future);
             osmTasks.add(dt);
         }

@@ -15,6 +15,8 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
+import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.GBC;
 /**
  * Tile selector.
@@ -64,11 +66,11 @@ public class TileSelection implements DownloadSelection {
                     }
                     if (toy<fromy) { int i = fromy; fromy=toy; toy=i; }
 
-                    gui.minlat = tileYToLat(zoomlvl, toy+1);
-                    gui.minlon = tileXToLon(zoomlvl, fromx);
-                    gui.maxlat = tileYToLat(zoomlvl, fromy);
-                    gui.maxlon = tileXToLon(zoomlvl, tox+1);
-                    gui.boundingBoxChanged(TileSelection.this);
+                    Bounds b = new Bounds(
+                            new LatLon(tileYToLat(zoomlvl, toy + 1), tileXToLon(zoomlvl, fromx)),
+                            new LatLon(tileYToLat(zoomlvl, fromy), tileXToLon(zoomlvl, tox + 1))
+                            );
+                    gui.boundingBoxChanged(b, TileSelection.this);
                     //repaint();
                 } catch (NumberFormatException x) {
                     // ignore
@@ -81,7 +83,7 @@ public class TileSelection implements DownloadSelection {
             f.addFocusListener(dialogUpdater);
         }
 
-        gui.tabpane.addTab(tr("Tile Numbers"), smpanel);
+        gui.addDownloadAreaSelector(smpanel, tr("Tile Numbers"));
     }
 
     /**
@@ -93,10 +95,13 @@ public class TileSelection implements DownloadSelection {
 
     private void updateBboxFields(DownloadDialog gui) {
         int z = ((Integer) tileZ.getValue()).intValue();
-        tileX0.setText(Integer.toString(lonToTileX(z, gui.minlon)));
-        tileX1.setText(Integer.toString(lonToTileX(z, gui.maxlon-.00001)));
-        tileY0.setText(Integer.toString(latToTileY(z, gui.maxlat-.00001)));
-        tileY1.setText(Integer.toString(latToTileY(z, gui.minlat)));
+        Bounds b = gui.getSelectedDownloadArea();
+        if (b == null)
+            return;
+        tileX0.setText(Integer.toString(lonToTileX(z, b.getMin().lon())));
+        tileX1.setText(Integer.toString(lonToTileX(z, b.getMax().lon()-.00001)));
+        tileY0.setText(Integer.toString(latToTileY(z, b.getMax().lat()-.00001)));
+        tileY1.setText(Integer.toString(latToTileY(z, b.getMin().lat())));
     }
 
     public static int latToTileY(int zoom, double lat) {

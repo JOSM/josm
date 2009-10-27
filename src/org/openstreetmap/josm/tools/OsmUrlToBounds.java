@@ -58,9 +58,9 @@ public class OsmUrlToBounds {
 
     static public int getZoom(Bounds b) {
         // convert to mercator (for calculation of zoom only)
-        double latMin = Math.log(Math.tan(Math.PI/4.0+b.min.lat()/180.0*Math.PI/2.0))*180.0/Math.PI;
-        double latMax = Math.log(Math.tan(Math.PI/4.0+b.max.lat()/180.0*Math.PI/2.0))*180.0/Math.PI;
-        double size = Math.max(Math.abs(latMax-latMin), Math.abs(b.max.lon()-b.min.lon()));
+        double latMin = Math.log(Math.tan(Math.PI/4.0+b.getMin().lat()/180.0*Math.PI/2.0))*180.0/Math.PI;
+        double latMax = Math.log(Math.tan(Math.PI/4.0+b.getMax().lat()/180.0*Math.PI/2.0))*180.0/Math.PI;
+        double size = Math.max(Math.abs(latMax-latMin), Math.abs(b.getMax().lon()-b.getMin().lon()));
         int zoom = 0;
         while (zoom <= 20) {
             if (size >= 180)

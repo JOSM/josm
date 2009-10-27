@@ -3,7 +3,9 @@ package org.openstreetmap.josm.actions.downloadtasks;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.concurrent.Future;
 
 import javax.swing.JOptionPane;
@@ -15,7 +17,7 @@ import org.openstreetmap.josm.tools.ExceptionUtil;
 
 public class PostDownloadHandler implements Runnable {
     private DownloadTask task;
-    private Future<?> future;
+    private List<Future<?>> futures;
 
     /**
      * constructor
@@ -24,17 +26,50 @@ public class PostDownloadHandler implements Runnable {
      */
     public PostDownloadHandler(DownloadTask task, Future<?> future) {
         this.task = task;
-        this.future = future;
+        this.futures = new ArrayList<Future<?>>();
+        if (future != null) {
+            this.futures.add(future);
+        }
     }
 
+    /**
+     * constructor
+     * @param task the asynchronous download task
+     * @param future the future on which the completion of the download task can be synchronized
+     */
+    public PostDownloadHandler(DownloadTask task, Future<?> ... futures) {
+        this.task = task;
+        this.futures = new ArrayList<Future<?>>();
+        if (futures == null) return;
+        for (Future<?> future: futures) {
+            this.futures.add(future);
+        }
+    }
+    
+
+    /**
+     * constructor
+     * @param task the asynchronous download task
+     * @param future the future on which the completion of the download task can be synchronized
+     */
+    public PostDownloadHandler(DownloadTask task, List<Future<?>> futures) {
+        this.task = task;
+        this.futures = new ArrayList<Future<?>>();
+        if (futures == null) return;
+        this.futures.addAll(futures);
+    }
+    
     public void run() {
-        // wait for the download task to complete
+        // wait for all downloads task to finish (by waiting for the futures
+        // to return a value)
         //
-        try {
-            future.get();
-        } catch(Exception e) {
-            e.printStackTrace();
-            return;
+        for (Future<?> future: futures) {
+            try {
+                future.get();
+            } catch(Exception e) {
+                e.printStackTrace();
+                return;
+            }
         }
 
         // make sure errors are reported only once

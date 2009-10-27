@@ -59,8 +59,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     private EastNorth calculateDefaultCenter() {
         Bounds b = Main.proj.getWorldBoundsLatLon();
-        double lat = (b.max.lat() + b.min.lat())/2;
-        double lon = (b.max.lon() + b.min.lon())/2;
+        double lat = (b.getMax().lat() + b.getMin().lat())/2;
+        double lon = (b.getMax().lon() + b.getMin().lon())/2;
 
         return Main.proj.latlon2eastNorth(new LatLon(lat, lon));
     }
@@ -127,8 +127,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /* FIXME: replace with better method - used by MapSlider */
     public ProjectionBounds getMaxProjectionBounds() {
         Bounds b = getProjection().getWorldBoundsLatLon();
-        return new ProjectionBounds(getProjection().latlon2eastNorth(b.min),
-                getProjection().latlon2eastNorth(b.max));
+        return new ProjectionBounds(getProjection().latlon2eastNorth(b.getMin()),
+                getProjection().latlon2eastNorth(b.getMax()));
     }
 
     /* FIXME: replace with better method - used by Main to reset Bounds when projection changes, don't use otherwise */
@@ -192,10 +192,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
         boolean changed = false;
         double lat = cl.lat();
         double lon = cl.lon();
-        if(lat < b.min.lat()) {changed = true; lat = b.min.lat(); }
-        else if(lat > b.max.lat()) {changed = true; lat = b.max.lat(); }
-        if(lon < b.min.lon()) {changed = true; lon = b.min.lon(); }
-        else if(lon > b.max.lon()) {changed = true; lon = b.max.lon(); }
+        if(lat < b.getMin().lat()) {changed = true; lat = b.getMin().lat(); }
+        else if(lat > b.getMax().lat()) {changed = true; lat = b.getMax().lat(); }
+        if(lon < b.getMin().lon()) {changed = true; lon = b.getMin().lon(); }
+        else if(lon > b.getMax().lon()) {changed = true; lon = b.getMax().lon(); }
         if(changed) {
             newCenter = new CachedLatLon(lat, lon).getEastNorth();
         }
@@ -208,16 +208,16 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
         int width = getWidth()/2;
         int height = getHeight()/2;
-        LatLon l1 = new LatLon(b.min.lat(), lon);
-        LatLon l2 = new LatLon(b.max.lat(), lon);
+        LatLon l1 = new LatLon(b.getMin().lat(), lon);
+        LatLon l2 = new LatLon(b.getMax().lat(), lon);
         EastNorth e1 = getProjection().latlon2eastNorth(l1);
         EastNorth e2 = getProjection().latlon2eastNorth(l2);
         double d = e2.north() - e1.north();
         if(d < height*newScale)
         {
             double newScaleH = d/height;
-            e1 = getProjection().latlon2eastNorth(new LatLon(lat, b.min.lon()));
-            e2 = getProjection().latlon2eastNorth(new LatLon(lat, b.max.lon()));
+            e1 = getProjection().latlon2eastNorth(new LatLon(lat, b.getMin().lon()));
+            e2 = getProjection().latlon2eastNorth(new LatLon(lat, b.getMax().lon()));
             d = e2.east() - e1.east();
             if(d < width*newScale) {
                 newScale = Math.max(newScaleH, d/width);
@@ -291,8 +291,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     public void zoomTo(Bounds box) {
-        zoomTo(new ProjectionBounds(getProjection().latlon2eastNorth(box.min),
-                getProjection().latlon2eastNorth(box.max)));
+        zoomTo(new ProjectionBounds(getProjection().latlon2eastNorth(box.getMin()),
+                getProjection().latlon2eastNorth(box.getMax())));
     }
 
     /**

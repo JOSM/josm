@@ -14,6 +14,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
@@ -23,13 +24,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.DownloadAction;
-import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
-import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
-import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
@@ -45,41 +41,27 @@ import org.openstreetmap.josm.tools.OsmUrlToBounds;
  *
  */
 public class DownloadDialog extends JPanel {
+    static private final Logger logger = Logger.getLogger(DownloadDialog.class.getName());
 
-    /**
-     * The list of download tasks. First entry should be the osm data entry
-     * and the second the gps entry. After that, plugins can register additional
-     * download possibilities.
-     */
-    public final List<DownloadTask> downloadTasks = new ArrayList<DownloadTask>(5);
+    private final List<DownloadSelection> downloadSelections = new ArrayList<DownloadSelection>();
+    private final JTabbedPane tpDownloadAreaSelectors = new JTabbedPane();
+    private final JCheckBox cbNewLayer;
+    private final JLabel sizeCheck = new JLabel();
 
-    public final List<DownloadSelection> downloadSelections = new ArrayList<DownloadSelection>();
-    public final JTabbedPane tabpane = new JTabbedPane();
-    public final JCheckBox newLayer;
-    public final JLabel sizeCheck = new JLabel();
+    private Bounds currentBounds = null;
 
-    public double minlon;
-    public double minlat;
-    public double maxlon;
-    public double maxlat;
+    private JCheckBox cbDownloadOsmData = new JCheckBox(tr("OpenStreetMap data"), true);
+    private JCheckBox cbDownloadGpxData = new JCheckBox(tr("Raw GPS data"));
 
 
     public DownloadDialog() {
         setLayout(new GridBagLayout());
 
-        downloadTasks.add(new DownloadOsmTask());
-        downloadTasks.add(new DownloadGpsTask());
-
         // adding the download tasks
         add(new JLabel(tr("Data Sources and Types")), GBC.eol().insets(0,5,0,0));
-        for (DownloadTask task : downloadTasks) {
-            add(task.getCheckBox(), GBC.eol().insets(20,0,0,0));
-            // don't override defaults, if we (initially) don't have any preferences
-            if(Main.pref.hasKey("download."+task.getPreferencesSuffix())) {
-                task.getCheckBox().setSelected(Main.pref.getBoolean("download."+task.getPreferencesSuffix()));
-            }
-        }
-
+        add(cbDownloadOsmData,  GBC.eol().insets(20,0,0,0));
+        add(cbDownloadGpxData,  GBC.eol().insets(20,0,0,0));
+        
         // predefined download selections
         downloadSelections.add(new SlippyMapChooser());
         downloadSelections.add(new BookmarkSelection());
@@ -96,38 +78,15 @@ public class DownloadDialog extends JPanel {
         for (DownloadSelection s : downloadSelections) {
             s.addGui(this);
         }
-
-        if (Main.map != null) {
-            MapView mv = Main.map.mapView;
-            minlon = mv.getLatLon(0, mv.getHeight()).lon();
-            minlat = mv.getLatLon(0, mv.getHeight()).lat();
-            maxlon = mv.getLatLon(mv.getWidth(), 0).lon();
-            maxlat = mv.getLatLon(mv.getWidth(), 0).lat();
-            boundingBoxChanged(null);
-        }
-        else if (Main.pref.hasKey("osm-download.bounds")) {
-            // read the bounding box from the preferences
-            try {
-                String bounds[] = Main.pref.get("osm-download.bounds").split(";");
-                minlat = Double.parseDouble(bounds[0]);
-                minlon = Double.parseDouble(bounds[1]);
-                maxlat = Double.parseDouble(bounds[2]);
-                maxlon = Double.parseDouble(bounds[3]);
-                boundingBoxChanged(null);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        newLayer = new JCheckBox(tr("Download as new layer"), Main.pref.getBoolean("download.newlayer", false));
-        add(newLayer, GBC.eol().insets(0,5,0,0));
+   
+        cbNewLayer = new JCheckBox(tr("Download as new layer"));
+        add(cbNewLayer, GBC.eol().insets(0,5,0,0));
 
         add(new JLabel(tr("Download Area")), GBC.eol().insets(0,5,0,0));
-        add(tabpane, GBC.eol().fill());
+        add(tpDownloadAreaSelectors, GBC.eol().fill());
 
         try {
-            tabpane.setSelectedIndex(Main.pref.getInteger("download.tab", 0));
+            tpDownloadAreaSelectors.setSelectedIndex(Main.pref.getInteger("download.tab", 0));
         } catch (Exception ex) {
             Main.pref.putInteger("download.tab", 0);
         }
@@ -144,6 +103,8 @@ public class DownloadDialog extends JPanel {
                 checkClipboardContents();
             }
         });
+        
+        restoreSettings();
     }
 
     private void checkClipboardContents() {
@@ -162,16 +123,15 @@ public class DownloadDialog extends JPanel {
 
         Bounds b = OsmUrlToBounds.parse(result);
         if (b != null) {
-            minlon = b.min.lon();
-            minlat = b.min.lat();
-            maxlon = b.max.lon();
-            maxlat = b.max.lat();
-            boundingBoxChanged(null);
+            boundingBoxChanged(new Bounds(b),null);
         }
     }
 
     private void updateSizeCheck() {
-        if ((maxlon-minlon)*(maxlat-minlat) > Main.pref.getDouble("osm-server.max-request-area", 0.25)) {
+        if (currentBounds == null) {
+            sizeCheck.setText(tr("No area selected yet"));
+            sizeCheck.setForeground(Color.darkGray);
+        } else if (currentBounds.getArea() > Main.pref.getDouble("osm-server.max-request-area", 0.25)) {
             sizeCheck.setText(tr("Download area too large; will probably be rejected by server"));
             sizeCheck.setForeground(Color.red);
         } else {
@@ -187,7 +147,8 @@ public class DownloadDialog extends JPanel {
      *
      * @param eventSource - the DownloadSelection object that fired this notification.
      */
-    public void boundingBoxChanged(DownloadSelection eventSource) {
+    public void boundingBoxChanged(Bounds b, DownloadSelection eventSource) {
+        this.currentBounds = b;
         for (DownloadSelection s : downloadSelections) {
             if (s != eventSource) {
                 s.boundingBoxChanged(this);
@@ -195,11 +156,94 @@ public class DownloadDialog extends JPanel {
         }
         updateSizeCheck();
     }
-
-    /*
-     * Returns currently selected tab.
+    
+    /**
+     * Replies true if the user selected to download OSM data
+     * 
+     * @return true if the user selected to download OSM data
      */
-    public int getSelectedTab() {
-        return tabpane.getSelectedIndex();
+    public boolean isDownloadOsmData() {
+        return cbDownloadOsmData.isSelected();
     }
+    
+    /**
+     * Replies true if the user selected to download GPX data
+     * 
+     * @return true if the user selected to download GPX data
+     */
+    public boolean isDownloadGpxData() {
+        return cbDownloadGpxData.isSelected();
+    }
+    
+    /**
+     * Replies true if the user requires to download into a new layer 
+     * 
+     * @return true if the user requires to download into a new layer 
+     */
+    public boolean isNewLayerRequired() {
+        return cbNewLayer.isSelected();
+    }
+    
+    /**
+     * Adds a new download area selector to the download dialog
+     * 
+     * @param selector the download are selector 
+     * @param displayName the display name of the selector
+     */
+    public void addDownloadAreaSelector(JPanel selector, String displayName) {
+        tpDownloadAreaSelectors.add(displayName, selector);
+    }
+    
+    /**
+     * Remembers the current settings in the download dialog 
+     * 
+     */
+    public void rememberSettings() {
+        Main.pref.put("download.tab", Integer.toString(tpDownloadAreaSelectors.getSelectedIndex()));
+        Main.pref.put("download.osm", cbDownloadOsmData.isSelected());
+        Main.pref.put("download.gps", cbDownloadGpxData.isSelected());
+        Main.pref.put("download.newlayer", cbNewLayer.isSelected());
+        if (currentBounds != null) {
+            Main.pref.put("osm-download.bounds", currentBounds.encodeAsString(";"));
+        }
+    }
+    
+    public void restoreSettings() {
+        cbDownloadOsmData.setSelected(Main.pref.getBoolean("download.osm", true));
+        cbDownloadGpxData.setSelected(Main.pref.getBoolean("download.gps", false));
+        cbNewLayer.setSelected(Main.pref.getBoolean("download.newlayer", false));
+        int idx = Main.pref.getInteger("download.tab", 0);
+        if (idx < 0 || idx > tpDownloadAreaSelectors.getTabCount()) {
+            idx = 0;
+        }
+        tpDownloadAreaSelectors.setSelectedIndex(idx);
+        
+        if (Main.map != null) {
+            MapView mv = Main.map.mapView;
+            currentBounds = new Bounds(
+                    mv.getLatLon(0, mv.getHeight()),
+                    mv.getLatLon(mv.getWidth(), 0)                    
+                    );
+            boundingBoxChanged(currentBounds,null);
+        }
+        else if (Main.pref.hasKey("osm-download.bounds")) {
+            // read the bounding box from the preferences
+            try {
+                currentBounds = new Bounds(Main.pref.get("osm-download.bounds"), ";");
+                boundingBoxChanged(currentBounds,null);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    /**
+     * Replies the currently selected download area. May be null, if no download area is selected
+     * yet.
+     */
+    public Bounds getSelectedDownloadArea() {
+        return currentBounds;
+    }
+    
 }

@@ -92,10 +92,10 @@ public class OsmWriter extends XmlWriter implements Visitor {
     public void writeDataSources(DataSet ds) {
         for (DataSource s : ds.dataSources) {
             out.println("  <bounds minlat='"
-                    + s.bounds.min.lat()+"' minlon='"
-                    + s.bounds.min.lon()+"' maxlat='"
-                    + s.bounds.max.lat()+"' maxlon='"
-                    + s.bounds.max.lon()
+                    + s.bounds.getMin().lat()+"' minlon='"
+                    + s.bounds.getMin().lon()+"' maxlat='"
+                    + s.bounds.getMax().lat()+"' maxlon='"
+                    + s.bounds.getMax().lon()
                     +"' origin='"+XmlWriter.encode(s.origin)+"' />");
         }
     }

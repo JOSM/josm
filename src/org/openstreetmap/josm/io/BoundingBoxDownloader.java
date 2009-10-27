@@ -6,7 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -23,14 +23,11 @@ public class BoundingBoxDownloader extends OsmServerReader {
     private final double lat2;
     private final double lon2;
 
-    public BoundingBoxDownloader(double lat1, double lon1, double lat2, double lon2) {
-        this.lat1 = lat1;
-        this.lon1 = lon1;
-        this.lat2 = lat2;
-        this.lon2 = lon2;
-        // store the bounding box in the preferences so it can be
-        // re-used across invocations of josm
-        Main.pref.put("osm-download.bounds", lat1+";"+lon1+";"+lat2+";"+lon2);
+    public BoundingBoxDownloader(Bounds downloadArea) {
+        this.lat1 = downloadArea.getMin().lat();
+        this.lon1 = downloadArea.getMin().lon();
+        this.lat2 = downloadArea.getMax().lat();
+        this.lon2 = downloadArea.getMax().lon();
     }
 
     /**
@@ -43,7 +40,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
         progressMonitor.beginTask("", 1);
         try {
             progressMonitor.indeterminateSubTask(tr("Contacting OSM Server..."));
-            String url = "trackpoints?bbox="+lon1+","+lat1+","+lon2+","+lat2+"&page=";
+            String url = "trackpoints?bbox="+lon1+","+lat1+","+lon2+","+lat2+"&page=";            
 
             boolean done = false;
             GpxData result = null;

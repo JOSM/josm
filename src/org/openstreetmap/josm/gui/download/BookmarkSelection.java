@@ -7,9 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -41,18 +38,14 @@ public class BookmarkSelection implements DownloadSelection {
     public void addGui(final DownloadDialog gui) {
 
         JPanel dlg = new JPanel(new GridBagLayout());
-        gui.tabpane.addTab(tr("Bookmarks"), dlg);
+        gui.addDownloadAreaSelector(dlg, tr("Bookmarks"));
 
         bookmarks = new BookmarkList();
         bookmarks.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 Preferences.Bookmark b = (Preferences.Bookmark)bookmarks.getSelectedValue();
                 if (b != null) {
-                    gui.minlat = b.latlon[0];
-                    gui.minlon = b.latlon[1];
-                    gui.maxlat = b.latlon[2];
-                    gui.maxlon = b.latlon[3];
-                    gui.boundingBoxChanged(BookmarkSelection.this);
+                    gui.boundingBoxChanged(b.asBounds(),BookmarkSelection.this);
                 }
             }
         });
@@ -107,11 +100,7 @@ public class BookmarkSelection implements DownloadSelection {
     }
 
     public void boundingBoxChanged(DownloadDialog gui) {
-        tempBookmark = new Preferences.Bookmark();
-        tempBookmark.latlon[0] = gui.minlat;
-        tempBookmark.latlon[1] = gui.minlon;
-        tempBookmark.latlon[2] = gui.maxlat;
-        tempBookmark.latlon[3] = gui.maxlon;
+        tempBookmark = new Preferences.Bookmark(gui.getSelectedDownloadArea());
         bookmarks.clearSelection();
     }
 

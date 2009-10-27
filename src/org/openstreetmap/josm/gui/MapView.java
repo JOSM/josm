@@ -368,33 +368,33 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         // draw world borders
         tempG.setColor(Color.WHITE);
         Bounds b = getProjection().getWorldBoundsLatLon();
-        double lat = b.min.lat();
-        double lon = b.min.lon();
+        double lat = b.getMin().lat();
+        double lon = b.getMin().lon();
 
-        Point p = getPoint(b.min);
+        Point p = getPoint(b.getMin());
 
         GeneralPath path = new GeneralPath();
 
         path.moveTo(p.x, p.y);
-        double max = b.max.lat();
+        double max = b.getMax().lat();
         for(; lat <= max; lat += 1.0)
         {
             p = getPoint(new LatLon(lat >= max ? max : lat, lon));
             path.lineTo(p.x, p.y);
         }
-        lat = max; max = b.max.lon();
+        lat = max; max = b.getMax().lon();
         for(; lon <= max; lon += 1.0)
         {
             p = getPoint(new LatLon(lat, lon >= max ? max : lon));
             path.lineTo(p.x, p.y);
         }
-        lon = max; max = b.min.lat();
+        lon = max; max = b.getMin().lat();
         for(; lat >= max; lat -= 1.0)
         {
             p = getPoint(new LatLon(lat <= max ? max : lat, lon));
             path.lineTo(p.x, p.y);
         }
-        lat = max; max = b.min.lon();
+        lat = max; max = b.getMin().lon();
         for(; lon >= max; lon -= 1.0)
         {
             p = getPoint(new LatLon(lat, lon <= max ? max : lon));

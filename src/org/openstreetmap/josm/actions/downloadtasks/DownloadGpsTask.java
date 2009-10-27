@@ -6,10 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.util.concurrent.Future;
 
-import javax.swing.JCheckBox;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DownloadAction;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -21,26 +20,16 @@ import org.xml.sax.SAXException;
 
 public class DownloadGpsTask extends AbstractDownloadTask {
 
-    private JCheckBox checkBox = new JCheckBox(tr("Raw GPS data"));
     private DownloadTask downloadTask;
 
-    public Future<?> download(DownloadAction action, double minlat, double minlon,
-            double maxlat, double maxlon, ProgressMonitor progressMonitor) {
-        downloadTask = new DownloadTask(action.dialog.newLayer.isSelected(),
-                new BoundingBoxDownloader(minlat, minlon, maxlat, maxlon), progressMonitor);
+    public Future<?> download(DownloadAction action, Bounds downloadArea, ProgressMonitor progressMonitor) {
+        downloadTask = new DownloadTask(action.dialog.isNewLayerRequired(),
+                new BoundingBoxDownloader(downloadArea), progressMonitor);
         // We need submit instead of execute so we can wait for it to finish and get the error
         // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
         return Main.worker.submit(downloadTask);
     }
-
-    public JCheckBox getCheckBox() {
-        return checkBox;
-    }
-
-    public String getPreferencesSuffix() {
-        return "gps";
-    }
-
+    
     public Future<?> loadUrl(boolean a,java.lang.String b,  ProgressMonitor progressMonitor) {
         return null;
         // FIXME this is not currently used

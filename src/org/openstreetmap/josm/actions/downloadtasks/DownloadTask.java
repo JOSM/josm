@@ -4,9 +4,8 @@ package org.openstreetmap.josm.actions.downloadtasks;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import javax.swing.JCheckBox;
-
 import org.openstreetmap.josm.actions.DownloadAction;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 
@@ -15,8 +14,7 @@ public interface DownloadTask {
      * Execute the download using the given bounding box. Set silent on progressMonitor
      * if no error messages should be popped up.
      */
-    Future<?> download(DownloadAction action, double minlat, double minlon,
-            double maxlat, double maxlon, ProgressMonitor progressMonitor);
+    Future<?> download(DownloadAction action, Bounds downloadArea, ProgressMonitor progressMonitor);
 
     /**
      * Execute the download using the given URL
@@ -24,17 +22,6 @@ public interface DownloadTask {
      * @param url
      */
     Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor);
-
-    /**
-     * @return The checkbox presented to the user
-     */
-    JCheckBox getCheckBox();
-
-    /**
-     * @return The name of the preferences suffix to use for storing the
-     * selection state.
-     */
-    String getPreferencesSuffix();
 
     /**
      * Replies the error objects of the task. Empty list, if no error messages are available.

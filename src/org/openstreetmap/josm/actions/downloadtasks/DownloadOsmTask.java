@@ -8,8 +8,6 @@ import java.util.Collection;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
-import javax.swing.JCheckBox;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DownloadAction;
 import org.openstreetmap.josm.data.Bounds;
@@ -37,8 +35,6 @@ public class DownloadOsmTask extends AbstractDownloadTask {
     private DataSet downloadedData;
     private DownloadTask downloadTask;
 
-    private JCheckBox checkBox = new JCheckBox(tr("OpenStreetMap data"), true);
-
     private void rememberDownloadedData(DataSet ds) {
         this.downloadedData = ds;
     }
@@ -47,24 +43,14 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         return downloadedData;
     }
 
-    public Future<?> download(DownloadAction action, double minlat, double minlon,
-            double maxlat, double maxlon, ProgressMonitor progressMonitor) {
-        // Swap min and max if user has specified them the wrong way round
-        // (easy to do if you are crossing 0, for example)
-        // FIXME should perhaps be done in download dialog?
-        if (minlat > maxlat) {
-            double t = minlat; minlat = maxlat; maxlat = t;
-        }
-        if (minlon > maxlon) {
-            double t = minlon; minlon = maxlon; maxlon = t;
-        }
-
+    public Future<?> download(DownloadAction action, Bounds downloadArea, ProgressMonitor progressMonitor) {
+       
         boolean newLayer = action != null
-        && (action.dialog == null || action.dialog.newLayer.isSelected());
+        && (action.dialog == null || action.dialog.isNewLayerRequired());
 
         downloadTask = new DownloadTask(newLayer,
-                new BoundingBoxDownloader(minlat, minlon, maxlat, maxlon), progressMonitor);
-        currentBounds = new Bounds(new LatLon(minlat, minlon), new LatLon(maxlat, maxlon));
+                new BoundingBoxDownloader(downloadArea), progressMonitor);
+        currentBounds = new Bounds(downloadArea);
         // We need submit instead of execute so we can wait for it to finish and get the error
         // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
         return Main.worker.submit(downloadTask);
@@ -81,14 +67,6 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 progressMonitor);
         currentBounds = new Bounds(new LatLon(0,0), new LatLon(0,0));
         return Main.worker.submit(downloadTask);
-    }
-
-    public JCheckBox getCheckBox() {
-        return checkBox;
-    }
-
-    public String getPreferencesSuffix() {
-        return "osm";
     }
 
     public void cancel() {

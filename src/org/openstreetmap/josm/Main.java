@@ -40,6 +40,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -422,7 +423,7 @@ abstract public class Main {
             } else {
                 //DownloadTask osmTask = main.menu.download.downloadTasks.get(0);
                 DownloadTask osmTask = new DownloadOsmTask();
-                Future<?> future = osmTask.download(main.menu.download, b.min.lat(), b.min.lon(), b.max.lat(), b.max.lon(), null);
+                Future<?> future = osmTask.download(main.menu.download, b, null);
                 Main.worker.submit(new PostDownloadHandler(osmTask, future));
             }
             return;
@@ -466,10 +467,14 @@ abstract public class Main {
 
         final StringTokenizer st = new StringTokenizer(s, ",");
         if (st.countTokens() == 4) {
+            Bounds b = new Bounds(
+                   new LatLon(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken())),
+                   new LatLon(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()))
+                   );
             try {
                 DownloadTask task = rawGps ? new DownloadGpsTask() : new DownloadOsmTask();
                 // asynchronously launch the download task ...
-                Future<?> future = task.download(main.menu.download, Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()), null);
+                Future<?> future = task.download(main.menu.download, b, null);
                 // ... and the continuation when the download is finished (this will wait for the download to finish)
                 Main.worker.execute(new PostDownloadHandler(task, future));
                 return;

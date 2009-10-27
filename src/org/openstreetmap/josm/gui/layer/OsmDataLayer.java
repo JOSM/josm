@@ -225,9 +225,9 @@ public class OsmDataLayer extends Layer {
 
             // now succesively subtract downloaded areas
             for (DataSource src : data.dataSources) {
-                if (src.bounds != null && !src.bounds.min.equals(src.bounds.max)) {
-                    EastNorth en1 = mv.getProjection().latlon2eastNorth(src.bounds.min);
-                    EastNorth en2 = mv.getProjection().latlon2eastNorth(src.bounds.max);
+                if (src.bounds != null && !src.bounds.getMin().equals(src.bounds.getMax())) {
+                    EastNorth en1 = mv.getProjection().latlon2eastNorth(src.bounds.getMin());
+                    EastNorth en2 = mv.getProjection().latlon2eastNorth(src.bounds.getMax());
                     Point p1 = mv.getPoint(en1);
                     Point p2 = mv.getPoint(en2);
                     Rectangle r = new Rectangle(Math.min(p1.x, p2.x),Math.min(p1.y, p2.y),Math.abs(p2.x-p1.x),Math.abs(p2.y-p1.y));
