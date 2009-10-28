@@ -352,7 +352,7 @@ public class DownloadDialog extends JDialog  {
                 );
                 return;
             }
-            if (!isDownloadOsmData() && !isDownloadOsmData()) {
+            if (!isDownloadOsmData() && !isDownloadGpxData()) {
                 JOptionPane.showMessageDialog(
                         DownloadDialog.this,
                         tr("<html>Neither <strong>{0}</strong> nor <strong>{1}</strong> is enabled.<br>" 
