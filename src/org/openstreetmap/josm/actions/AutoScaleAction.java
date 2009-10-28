@@ -180,8 +180,7 @@ public class AutoScaleAction extends JosmAction {
             }
         } else {
             setEnabled(
-                    Main.map != null
-                    && Main.map.mapView != null
+                    Main.isDisplayingMapView()
                     && Main.map.mapView.hasLayers()
             );
         }

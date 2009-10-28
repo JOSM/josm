@@ -175,6 +175,9 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      * @parm int modifiers
      */
     private void updateCursor(MouseEvent e, int modifiers) {
+        if (!Main.isDisplayingMapView()) {
+            return;
+        }
         if(!Main.map.mapView.isActiveLayerVisible() || e == null)
             return;
 

@@ -103,15 +103,13 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         }
 
         protected OsmDataLayer getEditLayer() {
-            if (Main.map == null) return null;
-            if (Main.map.mapView == null) return null;
+            if (!Main.isDisplayingMapView()) return null;
             return Main.map.mapView.getEditLayer();
         }
 
         protected int getNumDataLayers() {
             int count = 0;
-            if (Main.map == null) return 0;
-            if (Main.map.mapView == null) return 0;
+            if (!Main.isDisplayingMapView()) return 0;
             Collection<Layer> layers = Main.map.mapView.getAllLayers();
             for (Layer layer : layers) {
                 if (layer instanceof OsmDataLayer) {
@@ -122,8 +120,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         }
 
         protected OsmDataLayer getFirstDataLayer() {
-            if (Main.map == null) return null;
-            if (Main.map.mapView == null) return null;
+            if (!Main.isDisplayingMapView()) return null;
             Collection<Layer> layers = Main.map.mapView.getAllLayersAsList();
             for (Layer layer : layers) {
                 if (layer instanceof OsmDataLayer)

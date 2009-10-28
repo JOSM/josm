@@ -91,7 +91,7 @@ public class DownloadReferrersAction extends JosmAction{
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || Main.map == null || Main.map.mapView == null)
+        if (!isEnabled() || ! Main.isDisplayingMapView())
             return;
         OsmDataLayer layer = Main.map.mapView.getEditLayer();
         if (layer == null)

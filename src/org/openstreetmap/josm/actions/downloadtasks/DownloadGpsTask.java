@@ -86,7 +86,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
 
         private Layer findMergeLayer() {
             boolean merge = Main.pref.getBoolean("download.gps.mergeWithLocal", false);
-            if (Main.map == null)
+            if (!Main.isDisplayingMapView())    
                 return null;
             Layer active = Main.map.mapView.getActiveLayer();
             if (active != null && active instanceof GpxLayer && (merge || ((GpxLayer)active).data.fromServer))

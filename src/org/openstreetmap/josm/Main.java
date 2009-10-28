@@ -69,6 +69,18 @@ import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.Shortcut;
 
 abstract public class Main {
+    
+    /**
+     * Replies true if JOSM currently displays a map view. False, if it doesn't, i.e. if
+     * it only shows the MOTD panel.
+     * 
+     * @return true if JOSM currently displays a map view
+     */
+    static public boolean isDisplayingMapView() {
+        if (map == null) return false;
+        if (map.mapView == null) return false;
+        return true;
+    }
     /**
      * Global parent component for all dialogs and message boxes
      */

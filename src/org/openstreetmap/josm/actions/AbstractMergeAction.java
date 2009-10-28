@@ -32,10 +32,7 @@ public abstract class AbstractMergeAction extends JosmAction {
     static public class LayerListCellRenderer extends DefaultListCellRenderer {
 
         protected boolean isActiveLayer(Layer layer) {
-            if (Main.map == null)
-                return false;
-            if (Main.map.mapView == null)
-                return false;
+            if (Main.isDisplayingMapView()) return false;
             return Main.map.mapView.getActiveLayer() == layer;
         }
 

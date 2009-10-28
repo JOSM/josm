@@ -32,8 +32,7 @@ public class GpxExportAction extends DiskAccessAction {
     }
 
     protected GpxLayer getLayer() {
-        if (Main.map == null) return null;
-        if (Main.map.mapView == null) return null;
+        if (!Main.isDisplayingMapView()) return null;
         if (Main.map.mapView.getActiveLayer() == null) return null;
         Layer layer = Main.map.mapView.getActiveLayer();
         if (! (layer instanceof GpxLayer)) return null;
@@ -94,9 +93,8 @@ public class GpxExportAction extends DiskAccessAction {
      */
     @Override
     protected void updateEnabledState() {
-        boolean check = Main.main != null
-        && Main.map != null
-        && Main.map.mapView !=null
+        boolean check =            
+        Main.isDisplayingMapView() 
         && Main.map.mapView.getActiveLayer() != null;
         if(!check) {
             setEnabled(false);

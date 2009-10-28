@@ -19,15 +19,14 @@ public final class ZoomOutAction extends JosmAction {
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (Main.map == null) return;
+        if (!Main.isDisplayingMapView()) return;
         Main.map.mapView.zoomToFactor(1/0.9);
     }
 
     @Override
     protected void updateEnabledState() {
         setEnabled(
-                Main.map != null
-                && Main.map.mapView != null
+                Main.isDisplayingMapView()
                 && Main.map.mapView.hasLayers()
         );
     }

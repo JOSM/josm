@@ -35,7 +35,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
 
     public boolean doSave() {
         Layer layer = null;
-        if (Main.map != null && (Main.map.mapView.getActiveLayer() instanceof OsmDataLayer
+        if (Main.isDisplayingMapView() && (Main.map.mapView.getActiveLayer() instanceof OsmDataLayer
                 || Main.map.mapView.getActiveLayer() instanceof GpxLayer)) {
             layer = Main.map.mapView.getActiveLayer();
         }
