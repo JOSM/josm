@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.combineTigerTags;
-import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.completeTagCollectionForEditing;
 import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.normalizeTagCollectionBeforeEditing;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
@@ -13,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -53,7 +53,7 @@ public class MergeNodesAction extends JosmAction {
         if (!isEnabled())
             return;
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
-        Set<Node> selectedNodes = OsmPrimitive.getFilteredSet(selection, Node.class);
+        LinkedHashSet<Node> selectedNodes = OsmPrimitive.getFilteredSet(selection, Node.class);
         if (selectedNodes.size() < 2) {
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -73,34 +73,17 @@ public class MergeNodesAction extends JosmAction {
     }
 
     /**
-     * Selects a node out of a collection of candidate nodes. The selected
-     * node will become the target node the remaining nodes are merged to.
-     * 
+     * Find which node to merge into (i.e. which one will be left)
+     * The last selected node will become the target node the remaining 
+     * nodes are merged to.
+     *  
      * @param candidates the collection of candidate nodes
      * @return the selected target node
      */
-    public static Node selectTargetNode(Collection<Node> candidates) {
-        // Find which node to merge into (i.e. which one will be left)
-        // - this should be combined from two things:
-        //   1. It will be the first node in the list that has a
-        //      positive ID number, OR the first node.
-        //   2. It will be at the position of the first node in the
-        //      list.
-        //
-        // *However* - there is the problem that the selection list is
-        // _not_ in the order that the nodes were clicked on, meaning
-        // that the user doesn't know which node will be chosen (so
-        // (2) is not implemented yet.)  :-(
+    public static Node selectTargetNode(LinkedHashSet<Node> candidates) {
         Node targetNode = null;
-        for (Node n: candidates) {
-            if (!n.isNew()) {
-                targetNode = n;
-                break;
-            }
-        }
-        if (targetNode == null) {
-            // an arbitrary node
-            targetNode = candidates.iterator().next();
+        for (Node n : candidates) { // pick last one
+            targetNode = n;
         }
         return targetNode;
     }

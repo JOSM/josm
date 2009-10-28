@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -82,12 +83,13 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * @param type the type to filter for
      * @return the sub-set of OSM primitives of type <code>type</code>
      */
-    static public <T extends OsmPrimitive>  Set<T> getFilteredSet(Collection<OsmPrimitive> set, Class<T> type) {
-        if (set == null) return Collections.emptySet();
-        HashSet<T> ret = new HashSet<T>();
-        for(OsmPrimitive p: set) {
-            if (type.isInstance(p)) {
-                ret.add(type.cast(p));
+    static public <T extends OsmPrimitive>  LinkedHashSet<T> getFilteredSet(Collection<OsmPrimitive> set, Class<T> type) {
+        LinkedHashSet<T> ret = new LinkedHashSet<T>();
+        if (set != null) {
+            for(OsmPrimitive p: set) {
+                if (type.isInstance(p)) {
+                    ret.add(type.cast(p));
+                }
             }
         }
         return ret;
