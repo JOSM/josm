@@ -92,9 +92,4 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
             }
         });
     }
-
-    @Override
-    protected void doSetErrorMessage(String message) {
-        // Do nothing
-    }
 }

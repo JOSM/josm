@@ -135,11 +135,6 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     }
 
     @Override
-    protected void doSetErrorMessage(String message) {
-        // Do nothing
-    }
-
-    @Override
     public void appendLogMessage(final String message) {
         doInEDT(new Runnable() {
             public void run() {
