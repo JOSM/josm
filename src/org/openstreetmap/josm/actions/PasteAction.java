@@ -105,7 +105,6 @@ public final class PasteAction extends JosmAction {
         /* Now execute the commands to add the duplicated contents of the paste buffer to the map */
 
         Main.main.undoRedo.add(new AddPrimitivesCommand(bufferCopy));
-        //getCurrentDataSet().setSelected(osms);
         Main.map.mapView.repaint();
     }
 
