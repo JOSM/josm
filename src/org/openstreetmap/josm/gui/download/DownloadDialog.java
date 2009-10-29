@@ -137,6 +137,8 @@ public class DownloadDialog extends JDialog  {
          
         pnl.add(btnDownload = new SideButton(actDownload = new DownloadAction()));
         btnDownload.setFocusable(true);
+        btnDownload.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "download");
+        btnDownload.getActionMap().put("download",actDownload);
         pnl.add(new SideButton(new CancelAction()));
         pnl.add(new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/DownloadDialog"))));
         return pnl;        
