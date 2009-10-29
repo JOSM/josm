@@ -54,6 +54,7 @@ public class DownloadDialog extends JDialog  {
     /** the unique instance of the download dialog */
     static private DownloadDialog instance;
     
+    
     /**
      * Replies the unique instance of the download dialog
      * 
@@ -74,6 +75,9 @@ public class DownloadDialog extends JDialog  {
 
     private JCheckBox cbDownloadOsmData = new JCheckBox(tr("OpenStreetMap data"), true);
     private JCheckBox cbDownloadGpxData = new JCheckBox(tr("Raw GPS data"));
+    /** the download action and button */
+    private DownloadAction actDownload;
+    private SideButton btnDownload;
 
     
     public JPanel buildMainPanel() {
@@ -123,8 +127,9 @@ public class DownloadDialog extends JDialog  {
     protected JPanel buildButtonPanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new FlowLayout());
-        
-        pnl.add(new SideButton(new DownloadAction()));
+         
+        pnl.add(btnDownload = new SideButton(actDownload = new DownloadAction()));
+        btnDownload.setFocusable(true);
         pnl.add(new SideButton(new CancelAction()));
         pnl.add(new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/DownloadDialog"))));
         return pnl;        
@@ -198,6 +203,15 @@ public class DownloadDialog extends JDialog  {
             }
         }
         updateSizeCheck();
+    }
+    
+    /**
+     * Invoked by 
+     * @param b
+     */
+    public void startDownload(Bounds b) {
+        this.currentBounds = b;
+        actDownload.run();
     }
     
     /**
@@ -342,7 +356,7 @@ public class DownloadDialog extends JDialog  {
             putValue(SHORT_DESCRIPTION, tr("Click do download the currently selected area"));            
         }
         
-        public void actionPerformed(ActionEvent e) {
+        public void run() {
             if (currentBounds == null) {
                 JOptionPane.showMessageDialog(
                         DownloadDialog.this,
@@ -366,7 +380,11 @@ public class DownloadDialog extends JDialog  {
                 return;
             }
             setCanceled(false);
-            setVisible(false);            
+            setVisible(false);  
+        }
+        
+        public void actionPerformed(ActionEvent e) {
+            run();
         }       
     }
     
@@ -374,6 +392,11 @@ public class DownloadDialog extends JDialog  {
         @Override
         public void windowClosing(WindowEvent e) {
             new CancelAction().run();
+        }
+
+        @Override
+        public void windowActivated(WindowEvent e) {
+            btnDownload.requestFocusInWindow();
         }        
     }
 }

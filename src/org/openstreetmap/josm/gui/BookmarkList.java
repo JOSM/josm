@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -19,6 +20,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.Bookmark;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * List class that read and save its content from the bookmark file.
@@ -82,8 +84,12 @@ public class BookmarkList extends JList {
     
     class BookmarkCellRenderer extends JLabel implements ListCellRenderer {
 
+        private ImageIcon icon;
+        
         public BookmarkCellRenderer() {
             setOpaque(true);
+            icon = ImageProvider.get("dialogs", "bookmark");
+            setIcon(icon);
         }
         
         protected void renderColor(boolean selected) {

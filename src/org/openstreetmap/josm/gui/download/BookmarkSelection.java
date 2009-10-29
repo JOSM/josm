@@ -5,7 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
@@ -13,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -20,38 +24,53 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.Bookmark;
+import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.gui.BookmarkList;
+import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
- * Bookmark selector.
- *
- * Provides selection, creation and deletion of bookmarks.
- * Extracted from old DownloadAction.
- *
- * @author Frederik Ramm <frederik@remote.org>
+ * DownloadAreaSelector which manages a list of "bookmarks", i.e. a list of
+ * name download areas.
  *
  */
 public class BookmarkSelection implements DownloadSelection {
 
+    /** the currently selected download area. One can add bookmarks for this
+     * area, if not null
+     */
     private Bounds currentArea;
+    /** the list of bookmarks */
     private BookmarkList bookmarks;
     
+    /** the parent download GUI */
+    private DownloadDialog parent;
+    
+    /** displays information about the current download area */
+    private JMultilineLabel lblCurrentDownloadArea;
+    /** the add action */
+    private AddAction actAdd;
+    
+    /**
+     * Creates the panel with the action buttons on the left 
+     * 
+     * @return the panel with the action buttons on the left
+     */
     protected JPanel buildButtonPanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
-        gc.weighty = 0.0;
-        pnl.add(new JButton(new AddAction()), gc);
+//        gc.fill = GridBagConstraints.HORIZONTAL;
+//        gc.weightx = 1.0;
+//        gc.weighty = 0.0;
+//        pnl.add(new JButton(actAdd = new AddAction()), gc);
 
-        gc.gridy = 1;
+        gc.gridy = 0;
         RemoveAction removeAction = new RemoveAction();
         bookmarks.addListSelectionListener(removeAction);
         pnl.add(new JButton(removeAction), gc);
 
-        gc.gridy = 2;
+        gc.gridy = 1;
         RenameAction renameAction = new RenameAction();
         bookmarks.addListSelectionListener(renameAction);
         pnl.add(new JButton(renameAction), gc);
@@ -61,6 +80,28 @@ public class BookmarkSelection implements DownloadSelection {
         gc.weighty = 1.0;
         gc.gridy = 3;
         pnl.add(new JPanel(), gc); // just a filler
+        return pnl;
+    }
+    
+    protected JPanel buildDownloadAreaAddPanel() {
+        JPanel pnl = new JPanel();
+        pnl.setLayout(new GridBagLayout());
+        
+        GridBagConstraints  gc = new GridBagConstraints();
+        gc.anchor = GridBagConstraints.NORTHWEST;
+        gc.fill = GridBagConstraints.BOTH;
+        gc.weightx = 1.0;
+        gc.weighty = 1.0;
+        gc.insets = new Insets(5,5,5,5);
+        
+        pnl.add(lblCurrentDownloadArea = new JMultilineLabel(""), gc);
+        
+        gc.anchor = GridBagConstraints.NORTHEAST;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.weightx = 0.0;
+        gc.weighty = 0.0;
+        gc.insets = new Insets(5,5,5,5);
+        pnl.add(new JButton(actAdd = new AddAction()), gc);
         return pnl;
     }
  
@@ -79,29 +120,69 @@ public class BookmarkSelection implements DownloadSelection {
                 }
             }
         });
+        bookmarks.addMouseListener(new DoubleClickAdapter());
+        
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.weightx = 1.0;
+        gc.weighty = 0.0;        
+        gc.gridwidth = 2;
+        dlg.add(buildDownloadAreaAddPanel(),gc);
                 
+        gc.gridwidth = 1;
+        gc.gridx = 0;
+        gc.gridy = 1;
         gc.fill = GridBagConstraints.VERTICAL;
         gc.weightx = 0.0;
         gc.weighty = 1.0;        
         dlg.add(buildButtonPanel(),gc);
-        
+
+        gc.gridwidth = 1;
+        gc.gridx = 1;
+        gc.gridy = 1;
         gc.fill = GridBagConstraints.BOTH;
         gc.weightx = 1.0;
         gc.weighty = 1.0;   
         gc.gridx = 1;
-        dlg.add(new JScrollPane(bookmarks), gc);        
+        dlg.add(new JScrollPane(bookmarks), gc);       
+        
+        this.parent = gui;
     }
     
+    protected void updateDownloadAreaLabel() {
+        if (currentArea == null) {
+            lblCurrentDownloadArea.setText(tr("<html>There is currently no download area selected.</html>"));
+        } else {
+            lblCurrentDownloadArea.setText(tr("<html><strong>Current download area</strong> (minlat,minlon, maxlat, maxlon): {0}, {1}, {2}, {3}</html>",
+                    currentArea.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES),
+                    currentArea.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES),
+                    currentArea.getMax().latToString(CoordinateFormat.DECIMAL_DEGREES),
+                    currentArea.getMax().lonToString(CoordinateFormat.DECIMAL_DEGREES)
+                    )
+            );                   
+        }
+    }
+    
+    /**
+     * Sets the current download area 
+     * 
+     * @param area the download area. 
+     */
     public void setDownloadArea(Bounds area) {
         if (area == null) return;
         this.currentArea = area;
         bookmarks.clearSelection();
+        updateDownloadAreaLabel();
+        actAdd.setEnabled(area != null);
     }
     
+    /**
+     * The action to add a new bookmark for the current download area.
+     *
+     */
     class AddAction extends AbstractAction {
         public AddAction() {
-            //putValue(NAME, tr("Add"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
+            putValue(NAME, tr("Create bookmark"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "bookmark-new"));
             putValue(SHORT_DESCRIPTION, tr("Add a bookmark for the currently selected download area"));
         }
         
@@ -192,5 +273,17 @@ public class BookmarkSelection implements DownloadSelection {
             updateEnabledState();
         }       
     }
-   
+    
+    class DoubleClickAdapter extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (!(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2)) 
+                return;
+            int idx = bookmarks.locationToIndex(e.getPoint());
+            if (idx < 0 || idx >= bookmarks.getModel().getSize())
+                return;
+            Bookmark b = (Bookmark)bookmarks.getModel().getElementAt(idx);
+            parent.startDownload(b.getArea());            
+        }       
+    }   
 }
