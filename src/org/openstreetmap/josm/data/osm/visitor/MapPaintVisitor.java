@@ -390,9 +390,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         displaySegments();
     }
 
-    public Collection<Way> joinWays(Collection<Way> join, OsmPrimitive errs)
+    public Collection<PolyData> joinWays(Collection<Way> join, OsmPrimitive errs)
     {
-        Collection<Way> res = new LinkedList<Way>();
+        Collection<PolyData> res = new LinkedList<PolyData>();
         Object[] joinArray = join.toArray();
         int left = join.size();
         while(left != 0)
@@ -479,11 +479,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             {
                 w = new Way(w);
                 w.setNodes(n);
-                if (selected) {
-                    data.addSelected(Collections.singleton(w),false /* don't notify listeners */);
-                } else {
-                    data.clearSelection(w);
-                }
+                // Do not mess with the DataSet's contents here.
             }
             if(!w.isClosed())
             {
@@ -493,7 +489,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                             w.getDisplayName(DefaultNameFormatter.getInstance())), true);
                 }
             }
-            res.add(w);
+            PolyData pd = new PolyData(w);
+            pd.selected = selected;
+            res.add(new PolyData(w));
         } /* while(left != 0) */
 
         return res;
@@ -844,6 +842,99 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         }
     }
 
+    class PolyData {
+        public Polygon poly = new Polygon();
+        public Way way;
+        public boolean selected = false;
+        private Point p = null;
+        private Collection<Polygon> inner = null;
+        PolyData(Way w)
+        {
+            way = w;
+            for (Node n : w.getNodes())
+            {
+                p = nc.getPoint(n);
+                poly.addPoint(p.x,p.y);
+            }
+        }
+        public int contains(Polygon p)
+        {
+            int contains = p.npoints;
+            for(int i = 0; i < p.npoints; ++i)
+            {
+                if(poly.contains(p.xpoints[i],p.ypoints[i])) {
+                    --contains;
+                }
+            }
+            if(contains == 0) return 1;
+            if(contains == p.npoints) return 0;
+            return 2;
+        }
+        public void addInner(Polygon p)
+        {
+            if(inner == null) {
+                inner = new ArrayList<Polygon>();
+            }
+            inner.add(p);
+        }
+        public boolean isClosed()
+        {
+            return (poly.npoints >= 3
+                    && poly.xpoints[0] == poly.xpoints[poly.npoints-1]
+                                                       && poly.ypoints[0] == poly.ypoints[poly.npoints-1]);
+        }
+        public Polygon get()
+        {
+            if(inner != null)
+            {
+                for (Polygon pp : inner)
+                {
+                    for(int i = 0; i < pp.npoints; ++i) {
+                        poly.addPoint(pp.xpoints[i],pp.ypoints[i]);
+                    }
+                    poly.addPoint(p.x,p.y);
+                }
+                inner = null;
+            }
+            return poly;
+        }
+    }
+    void addInnerToOuters(Relation r, boolean incomplete, PolyData pdInner, LinkedList<PolyData> outerPolygons)
+    {
+        Way wInner = pdInner.way;
+        if(wInner != null && !wInner.isClosed())
+        {
+            Point pInner = nc.getPoint(wInner.getNode(0));
+            pdInner.poly.addPoint(pInner.x,pInner.y);
+        }
+        PolyData o = null;
+        for (PolyData pdOuter : outerPolygons)
+        {
+            Integer c = pdOuter.contains(pdInner.poly);
+            if(c >= 1)
+            {
+                if(c > 1 && pdOuter.way != null && pdOuter.way.isClosed())
+                {
+                    r.putError(tr("Intersection between ways ''{0}'' and ''{1}''.",
+                            pdOuter.way.getDisplayName(DefaultNameFormatter.getInstance()), wInner.getDisplayName(DefaultNameFormatter.getInstance())), true);
+                }
+                if(o == null || o.contains(pdOuter.poly) > 0) {
+                    o = pdOuter;
+                }
+            }
+        }
+        if(o == null)
+        {
+            if(!incomplete)
+            {
+                r.putError(tr("Inner way ''{0}'' is outside.",
+                        wInner.getDisplayName(DefaultNameFormatter.getInstance())), true);
+            }
+            o = outerPolygons.get(0);
+        }
+        o.addInner(pdInner.poly);
+    }
+
     public Boolean drawMultipolygon(Relation r) {
         Collection<Way> inner = new LinkedList<Way>();
         Collection<Way> outer = new LinkedList<Way>();
@@ -911,7 +1002,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         {
             Boolean zoomok = isZoomOk(wayStyle);
             Boolean visible = false;
-            Collection<Way> join = new LinkedList<Way>();
+            Collection<Way> outerjoin = new LinkedList<Way>();
+            Collection<Way> innerjoin = new LinkedList<Way>();
 
             drawn = true;
             for (Way w : outer)
@@ -919,33 +1011,18 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 if(w.isClosed()) {
                     outerclosed.add(w);
                 } else {
-                    join.add(w);
+                    outerjoin.add(w);
                 }
             }
-            if(join.size() != 0)
-            {
-                for(Way w : joinWays(join, incomplete ? null : r)) {
-                    outerclosed.add(w);
-                }
-            }
-
-            join.clear();
             for (Way w : inner)
             {
                 if(w.isClosed()) {
                     innerclosed.add(w);
                 } else {
-                    join.add(w);
+                    innerjoin.add(w);
                 }
             }
-            if(join.size() != 0)
-            {
-                for(Way w : joinWays(join, incomplete ? null : r)) {
-                    innerclosed.add(w);
-                }
-            }
-
-            if(outerclosed.size() == 0)
+            if(outerclosed.size() == 0 && outerjoin.size() == 0)
             {
                 r.putError(tr("No outer way for multipolygon ''{0}''.",
                         r.getDisplayName(DefaultNameFormatter.getInstance())), true);
@@ -953,107 +1030,19 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             }
             else if(zoomok)
             {
-                class PolyData {
-                    public Polygon poly = new Polygon();
-                    public Way way;
-                    private Point p = null;
-                    private Collection<Polygon> inner = null;
-                    PolyData(Way w)
-                    {
-                        way = w;
-                        for (Node n : w.getNodes())
-                        {
-                            p = nc.getPoint(n);
-                            poly.addPoint(p.x,p.y);
-                        }
-                    }
-                    public int contains(Polygon p)
-                    {
-                        int contains = p.npoints;
-                        for(int i = 0; i < p.npoints; ++i)
-                        {
-                            if(poly.contains(p.xpoints[i],p.ypoints[i])) {
-                                --contains;
-                            }
-                        }
-                        if(contains == 0) return 1;
-                        if(contains == p.npoints) return 0;
-                        return 2;
-                    }
-                    public void addInner(Polygon p)
-                    {
-                        if(inner == null) {
-                            inner = new ArrayList<Polygon>();
-                        }
-                        inner.add(p);
-                    }
-                    public boolean isClosed()
-                    {
-                        return (poly.npoints >= 3
-                                && poly.xpoints[0] == poly.xpoints[poly.npoints-1]
-                                                                   && poly.ypoints[0] == poly.ypoints[poly.npoints-1]);
-                    }
-                    public Polygon get()
-                    {
-                        if(inner != null)
-                        {
-                            for (Polygon pp : inner)
-                            {
-                                for(int i = 0; i < pp.npoints; ++i) {
-                                    poly.addPoint(pp.xpoints[i],pp.ypoints[i]);
-                                }
-                                poly.addPoint(p.x,p.y);
-                            }
-                            inner = null;
-                        }
-                        return poly;
-                    }
-                }
                 LinkedList<PolyData> poly = new LinkedList<PolyData>();
-                for (Way w : outerclosed)
-                {
+                for (Way w : outerclosed) {
                     poly.add(new PolyData(w));
                 }
+                poly.addAll(joinWays(outerjoin, incomplete ? null : r));
                 for (Way wInner : innerclosed)
                 {
-                    Polygon polygon = new Polygon();
-
-                    for (Node n : wInner.getNodes())
-                    {
-                        Point pInner = nc.getPoint(n);
-                        polygon.addPoint(pInner.x,pInner.y);
-                    }
-                    if(!wInner.isClosed())
-                    {
-                        Point pInner = nc.getPoint(wInner.getNode(0));
-                        polygon.addPoint(pInner.x,pInner.y);
-                    }
-                    PolyData o = null;
-                    for (PolyData pd : poly)
-                    {
-                        Integer c = pd.contains(polygon);
-                        if(c >= 1)
-                        {
-                            if(c > 1 && pd.way.isClosed())
-                            {
-                                r.putError(tr("Intersection between ways ''{0}'' and ''{1}''.",
-                                        pd.way.getDisplayName(DefaultNameFormatter.getInstance()), wInner.getDisplayName(DefaultNameFormatter.getInstance())), true);
-                            }
-                            if(o == null || o.contains(pd.poly) > 0) {
-                                o = pd;
-                            }
-                        }
-                    }
-                    if(o == null)
-                    {
-                        if(!incomplete)
-                        {
-                            r.putError(tr("Inner way ''{0}'' is outside.",
-                                    wInner.getDisplayName(DefaultNameFormatter.getInstance())), true);
-                        }
-                        o = poly.get(0);
-                    }
-                    o.addInner(polygon);
+                    PolyData pdInner = new PolyData(wInner);
+                    // incomplete is probably redundant
+                    addInnerToOuters(r, incomplete, pdInner, poly);
+                }
+                for (PolyData pdInner : joinWays(innerjoin, incomplete ? null : r)) {
+                    addInnerToOuters(r, incomplete, pdInner, poly);
                 }
                 AreaElemStyle areaStyle = (AreaElemStyle)wayStyle;
                 for (PolyData pd : poly)
@@ -1061,8 +1050,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     Polygon p = pd.get();
                     if(isPolygonVisible(p))
                     {
-                        drawAreaPolygon(p, (data.isSelected(pd.way) || data.isSelected(r)) ? selectedColor
-                                : areaStyle.color);
+                        boolean selected = (data.isSelected(pd.way) || data.isSelected(r));
+                        drawAreaPolygon(p, selected ? selectedColor : areaStyle.color);
                         visible = true;
                     }
                 }
