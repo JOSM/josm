@@ -34,14 +34,12 @@ public class HelpAction extends AbstractAction {
                 if (mouse != null) {
                     c = SwingUtilities.getDeepestComponentAt(c, mouse.x, mouse.y);
                     topic = HelpUtil.getContextSpecificHelpTopic(c);
-                    System.out.println("topic is:" + topic);
                 } else {
                     topic = null;
                 }
             } else {
                 Point mouse = Main.parent.getMousePosition();
                 topic = HelpUtil.getContextSpecificHelpTopic(SwingUtilities.getDeepestComponentAt(Main.parent, mouse.x, mouse.y));
-                System.out.println("topic is:" + topic);
             }
             if (topic == null) {
                 HelpBrowserProxy.getInstance().setUrlForHelpTopic("/");

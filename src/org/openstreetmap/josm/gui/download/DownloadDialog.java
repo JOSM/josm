@@ -134,13 +134,32 @@ public class DownloadDialog extends JDialog  {
     protected JPanel buildButtonPanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new FlowLayout());
-         
+        
+        // -- download button
         pnl.add(btnDownload = new SideButton(actDownload = new DownloadAction()));
         btnDownload.setFocusable(true);
         btnDownload.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "download");
         btnDownload.getActionMap().put("download",actDownload);
-        pnl.add(new SideButton(new CancelAction()));
-        pnl.add(new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/DownloadDialog"))));
+
+        // -- cancel button         
+        SideButton btnCancel;
+        CancelAction actCancel = new CancelAction();
+        pnl.add(btnCancel = new SideButton(actCancel));
+        btnCancel.setFocusable(true);
+        btnCancel.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "enter");
+        btnCancel.getActionMap().put("enter",actCancel);
+
+        // -- cancel on ESC 
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "cancel");
+        getRootPane().getActionMap().put("cancel", actCancel);
+
+        // -- help button 
+        SideButton btnHelp;
+        pnl.add(btnHelp = new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/DownloadDialog"))));
+        btnHelp.setFocusable(true);
+        btnHelp.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "enter");
+        btnHelp.getActionMap().put("enter",btnHelp.getAction());
+        
         return pnl;        
     }
     

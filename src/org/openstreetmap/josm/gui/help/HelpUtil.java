@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.help;
 
 import java.awt.Component;
-import java.awt.event.KeyEvent;
 import java.util.Locale;
 
 import javax.swing.AbstractButton;
@@ -210,16 +209,15 @@ public class HelpUtil {
      * A relative help topic doesn't start with /Help and doesn't include a locale
      * code. Example: /Dialog/RelationEditor is a relative help topic, /De:Help/Dialog/RelationEditor
      * is not.
-     * 
-     * 
+     *  
      * @param component the component  the component
      * @param topic the help topic. Set to the default help topic if null.
      */
     static public void setHelpContext(JComponent component, String relativeHelpTopic) {
         if (relativeHelpTopic == null) {
-            relativeHelpTopic = "";
+            relativeHelpTopic = "/";
         }
-        component.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_F1,0), "help");
+        component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F1"), "help");
         component.getActionMap().put("help", Main.main.menu.help);
         component.putClientProperty("help", relativeHelpTopic);
     }
