@@ -266,7 +266,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                             commands));
         }
 
-        DataSet.fireSelectionChanged(sel);
+        Main.main.getCurrentDataSet().fireSelectionChanged();
         selectionChanged(sel); // update whole table
         Main.parent.repaint(); // repaint all - drawing could have been changed
 
@@ -354,7 +354,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         if (value.equals(""))
             return;
         Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, value));
-        DataSet.fireSelectionChanged(sel);
+        Main.main.getCurrentDataSet().fireSelectionChanged();
         selectionChanged(sel); // update table
         Main.parent.repaint(); // repaint all - drawing could have been changed
     }
@@ -825,7 +825,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             String key = propertyData.getValueAt(row, 0).toString();
             Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
             Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, null));
-            DataSet.fireSelectionChanged(sel);
+            Main.main.getCurrentDataSet().fireSelectionChanged();
             selectionChanged(sel); // update table
 
             int rowCount = propertyTable.getRowCount();
@@ -851,7 +851,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 rel.removeMembersFor(primitive);
             }
             Main.main.undoRedo.add(new ChangeCommand(cur, rel));
-            DataSet.fireSelectionChanged(sel);
+            Main.main.getCurrentDataSet().fireSelectionChanged();
             selectionChanged(sel); // update whole table
         }
 

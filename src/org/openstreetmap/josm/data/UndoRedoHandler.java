@@ -49,7 +49,7 @@ public class UndoRedoHandler implements LayerChangeListener {
         fireCommandsChanged();
 
         // the command may have changed the selection so tell the listeners about the current situation
-        DataSet.fireSelectionChanged(Main.main.getCurrentDataSet().getSelected());
+        Main.main.getCurrentDataSet().fireSelectionChanged();
     }
 
     /**

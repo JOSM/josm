@@ -498,7 +498,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                         }
                     }
                 }
-                DataSet.fireSelectionChanged(selection);
+                getCurrentDataSet().fireSelectionChanged();
             }
         }
 
@@ -514,30 +514,30 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
     public void selectPrims(Collection<OsmPrimitive> selectionList, boolean shift,
             boolean ctrl, boolean released, boolean area) {
+        DataSet ds = getCurrentDataSet();
         if ((shift && ctrl) || (ctrl && !released))
             return; // not allowed together
 
-        Collection<OsmPrimitive> curSel;
-        if (!ctrl && !shift) {
-            curSel = new LinkedList<OsmPrimitive>(); // new selection will replace the old.
-        } else {
-            curSel = getCurrentDataSet().getSelected();
-        }
+        // plain clicks with no modifiers clear the selection
+        if (!ctrl && !shift)
+            ds.clearSelection();
 
-        for (OsmPrimitive osm : selectionList)
-        {
-            if (ctrl)
-            {
-                if(curSel.contains(osm)) {
-                    curSel.remove(osm);
-                } else if(!area) {
-                    curSel.add(osm);
-                }
-            } else {
-                curSel.add(osm);
-            }
+        if (ctrl) {
+            // Ctrl on an item toggles its selection status,
+            // but Ctrl on an *area* just clears those items
+            // out of the selection.
+            if (area)
+                ds.clearSelection(selectionList);
+            else
+                ds.toggleSelected(selectionList);
+        } else {
+            // This is either a plain click (which means we
+            // previously cleared the selection), or a
+            // shift-click where we are adding things to an
+            // existing selection.
+            ds.addSelected(selectionList);
         }
-        getCurrentDataSet().setSelected(curSel);
+        ds.fireSelectionChanged();
         Main.map.mapView.repaint();
     }
 

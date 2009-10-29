@@ -516,7 +516,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
                 selection.add(model.getRelation(i));
             }
             Main.map.mapView.getEditLayer().data.setSelected(selection);
-            DataSet.fireSelectionChanged(selection);
+            Main.map.mapView.getEditLayer().data.fireSelectionChanged();
         }
 
         public void valueChanged(ListSelectionEvent e) {
@@ -544,7 +544,6 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
                 members.addAll(r.getMemberPrimitives());
             }
             Main.map.mapView.getEditLayer().data.setSelected(members);
-            DataSet.fireSelectionChanged(members);
         }
 
         protected void updateEnabledState() {

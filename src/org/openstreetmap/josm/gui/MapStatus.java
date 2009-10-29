@@ -332,7 +332,7 @@ public class MapStatus extends JPanel implements Helpful {
                     ds.addSelected(nextSelected);
                 }
             }
-            DataSet.fireSelectionChanged(ds.getSelected());
+            ds.fireSelectionChanged();
         }
 
         /**
@@ -462,7 +462,6 @@ public class MapStatus extends JPanel implements Helpful {
                     DataSet ds = Main.main.getCurrentDataSet();
                     // Let the user toggle the selection
                     ds.toggleSelected(osm);
-                    DataSet.fireSelectionChanged(ds.getSelected());
                     l.validate();
                 }
             });

@@ -882,7 +882,6 @@ public class GenericRelationEditor extends RelationEditor {
 
         public void actionPerformed(ActionEvent e) {
             getLayer().data.setSelected(memberTableModel.getSelectedChildPrimitives());
-            DataSet.fireSelectionChanged(getLayer().data.getSelected());
         }
 
         public void valueChanged(ListSelectionEvent e) {
@@ -1005,7 +1004,7 @@ public class GenericRelationEditor extends RelationEditor {
 
             // make sure everybody is notified about the changes
             //
-            DataSet.fireSelectionChanged(getLayer().data.getSelected());
+            getLayer().data.fireSelectionChanged();
             getLayer().fireDataChange();
             GenericRelationEditor.this.setRelation(newRelation);
             RelationDialogManager.getRelationDialogManager().updateContext(
@@ -1038,7 +1037,7 @@ public class GenericRelationEditor extends RelationEditor {
             tagEditorPanel.getModel().applyToPrimitive(editedRelation);
             memberTableModel.applyToRelation(editedRelation);
             Main.main.undoRedo.add(new ChangeCommand(getRelation(), editedRelation));
-            DataSet.fireSelectionChanged(getLayer().data.getSelected());
+            getLayer().data.fireSelectionChanged();
             getLayer().fireDataChange();
             // this will refresh the snapshot and update the dialog title
             //

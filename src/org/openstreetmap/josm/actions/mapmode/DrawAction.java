@@ -244,7 +244,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // when exiting we let everybody know about the currently selected
         // primitives
         //
-        DataSet.fireSelectionChanged(getCurrentDataSet().getSelected());
+        getCurrentDataSet().fireSelectionChanged();
     }
 
     /**
@@ -271,7 +271,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     private void tryAgain(MouseEvent e) {
         getCurrentDataSet().setSelected();
-        DataSet.fireSelectionChanged(getCurrentDataSet().getSelected());
+        Main.main.getCurrentDataSet().fireSelectionChanged();
         mouseClicked(e);
     }
 
@@ -283,7 +283,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private void finishDrawing() {
         // let everybody else know about the current selection
         //
-        DataSet.fireSelectionChanged(getCurrentDataSet().getSelected());
+        Main.main.getCurrentDataSet().fireSelectionChanged();
         lastUsedNode = null;
         wayIsFinished = true;
         Main.map.selectSelectTool(true);
@@ -344,8 +344,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 // select the clicked node and do nothing else
                 // (this is just a convenience option so that people don't
                 // have to switch modes)
-                newSelection.clear();
-                newSelection.add(n);
+                getCurrentDataSet().setSelected(n);
+                selection = getCurrentDataSet().getSelected();
                 // The user explicitly selected a node, so let him continue drawing
                 wayIsFinished = false;
                 return;
@@ -522,8 +522,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 }
 
                 extendedWay = true;
-                newSelection.clear();
-                newSelection.add(wayToSelect);
+                ds.setSelected(way);
+                ds.fireSelectionChanged();
             }
         }
 
@@ -539,7 +539,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     newSelection.remove(w);
                 }
             }
-            newSelection.add(n);
+
+            ds.setSelected(n);
+            ds.fireSelectionChanged();
         } else if (!newNode) {
             title = tr("Connect existing way to node");
         } else if (reuseWays.isEmpty()) {
@@ -584,7 +586,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     (posn0 >= 1                             && targetNode.equals(selectedWay.getNode(posn0-1))) || // previous node
                     (posn0 < selectedWay.getNodesCount()-1) && targetNode.equals(selectedWay.getNode(posn0+1))) {  // next node
                 getCurrentDataSet().setSelected(targetNode);
-                DataSet.fireSelectionChanged(getCurrentDataSet().getSelected());
+                getCurrentDataSet().fireSelectionChanged();
                 lastUsedNode = targetNode;
                 return true;
             }

@@ -25,6 +25,25 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
  * @author imi
  */
 public class DataSet implements Cloneable {
+    
+    /**
+     * A list of listeners to selection changed events. The list is static, as listeners register
+     * themselves for any dataset selection changes that occur, regardless of the current active
+     * dataset. (However, the selection does only change in the active layer)
+     */
+    public static Collection<SelectionChangedListener> selListeners = new LinkedList<SelectionChangedListener>();
+    
+    /**
+     * notifies all registered selection change listeners about the current selection of
+     * primitives
+     * 
+     * @param sel the current selection
+     */
+    private static void notifySelectionChangeListeners(Collection<? extends OsmPrimitive> sel) {
+        for (SelectionChangedListener l : selListeners) {
+            l.selectionChanged(sel);
+        }
+    }
 
     /**
      * The API version that created this data set, if any.
@@ -53,14 +72,7 @@ public class DataSet implements Cloneable {
      * All data sources of this DataSet.
      */
     public Collection<DataSource> dataSources = new LinkedList<DataSource>();
-
-    /**
-     * A list of listeners to selection changed events. The list is static, as listeners register
-     * themselves for any dataset selection changes that occur, regardless of the current active
-     * dataset. (However, the selection does only change in the active layer)
-     */
-    public static Collection<SelectionChangedListener> selListeners = new LinkedList<SelectionChangedListener>();
-
+    
     /**
      * @return A collection containing all primitives of the dataset. The data is ordered after:
      * first come nodes, then ways, then relations. Ordering in between the categories is not
@@ -241,7 +253,16 @@ public class DataSet implements Cloneable {
 
     LinkedHashSet<OsmPrimitive> selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
 
-    public boolean toggleSelected(OsmPrimitive osm) {
+    public boolean toggleSelected(Collection<OsmPrimitive> osm) {
+        for (OsmPrimitive o : osm)
+            this.__toggleSelected(o);
+        fireSelectionChanged();
+        return true;
+    }
+    public boolean toggleSelected(OsmPrimitive... osm) {
+        return this.toggleSelected(Arrays.asList(osm));
+    }
+    private boolean __toggleSelected(OsmPrimitive osm) {
         if (!selectedPrimitives.remove(osm)) {
             selectedPrimitives.add(osm);
         }
@@ -275,7 +296,7 @@ public class DataSet implements Cloneable {
     public void setSelected(Collection<? extends OsmPrimitive> selection, boolean fireSelectionChangeEvent) {
         selectedPrimitives = new LinkedHashSet<OsmPrimitive>(selection);
         if (fireSelectionChangeEvent) {
-            fireSelectionChanged(selection);
+            fireSelectionChanged();
         }
     }
 
@@ -313,7 +334,7 @@ public class DataSet implements Cloneable {
     public void addSelected(Collection<? extends OsmPrimitive> selection, boolean fireSelectionChangeEvent) {
         selectedPrimitives.addAll(selection);
         if (fireSelectionChangeEvent) {
-            fireSelectionChanged(selection);
+            fireSelectionChanged();
         }
     }
 
@@ -325,7 +346,7 @@ public class DataSet implements Cloneable {
         }
         List<OsmPrimitive> list = Arrays.asList(osm);
         setSelected(list);
-        fireSelectionChanged(list);
+        fireSelectionChanged();
     }
 
     /**
@@ -358,10 +379,13 @@ public class DataSet implements Cloneable {
     public void clearSelection(OsmPrimitive... osm) {
         clearSelection(Arrays.asList(osm));
     }
-    private void clearSelection(Collection<? extends OsmPrimitive> list) {
+    public void clearSelection(Collection<? extends OsmPrimitive> list) {
         if (list == null)
             return;
         selectedPrimitives.removeAll(list);
+    }
+    public void clearSelection() {
+        selectedPrimitives.clear();
     }
 
     /**
@@ -380,15 +404,14 @@ public class DataSet implements Cloneable {
     }
 
     /**
-     * Remember to fire an selection changed event. A call to this will not fire the event
-     * immediately. For more,
-     * @see SelectionChangedListener
+     * Notifies all registered {@see SelectionChangedListener} about the current selection in 
+     * this dataset.
+     * 
      */
-    public static void fireSelectionChanged(Collection<? extends OsmPrimitive> sel) {
-        for (SelectionChangedListener l : selListeners) {
-            l.selectionChanged(sel);
-        }
+    public void fireSelectionChanged(){
+        notifySelectionChangeListeners(selectedPrimitives);
     }
+
 
     @Override public DataSet clone() {
         DataSet ds = new DataSet();

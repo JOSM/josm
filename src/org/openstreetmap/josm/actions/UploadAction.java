@@ -687,7 +687,7 @@ public class UploadAction extends JosmAction{
             // partially uploaded
             //
             layer.cleanupAfterUpload(processedPrimitives);
-            DataSet.fireSelectionChanged(layer.data.getSelected());
+            layer.data.fireSelectionChanged();
             layer.fireDataChange();
             if (lastException != null) {
                 handleFailedUpload(lastException);
