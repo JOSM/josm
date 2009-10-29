@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -53,8 +54,7 @@ public class DownloadDialog extends JDialog  {
     
     /** the unique instance of the download dialog */
     static private DownloadDialog instance;
-    
-    
+        
     /**
      * Replies the unique instance of the download dialog
      * 
@@ -73,8 +73,8 @@ public class DownloadDialog extends JDialog  {
     private Bounds currentBounds = null;
     private boolean canceled;
 
-    private JCheckBox cbDownloadOsmData = new JCheckBox(tr("OpenStreetMap data"), true);
-    private JCheckBox cbDownloadGpxData = new JCheckBox(tr("Raw GPS data"));
+    private JCheckBox cbDownloadOsmData;
+    private JCheckBox cbDownloadGpxData;
     /** the download action and button */
     private DownloadAction actDownload;
     private SideButton btnDownload;
@@ -83,10 +83,15 @@ public class DownloadDialog extends JDialog  {
     public JPanel buildMainPanel() {
         JPanel pnl = new JPanel(); 
         pnl.setLayout(new GridBagLayout());
+        pnl.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
         // adding the download tasks
         pnl.add(new JLabel(tr("Data Sources and Types")), GBC.eol().insets(0,5,0,0));
+        cbDownloadOsmData = new JCheckBox(tr("OpenStreetMap data"), true);
+        cbDownloadOsmData.setToolTipText(tr("Select to download OSM data in the selected download area."));
         pnl.add(cbDownloadOsmData,  GBC.eol().insets(20,0,0,0));
+        cbDownloadGpxData = new JCheckBox(tr("Raw GPS data"));
+        cbDownloadGpxData.setToolTipText(tr("Select to download GPS traces in the selected download area."));
         pnl.add(cbDownloadGpxData,  GBC.eol().insets(20,0,0,0));
         
         // predefined download selections
@@ -107,6 +112,8 @@ public class DownloadDialog extends JDialog  {
         }
    
         cbNewLayer = new JCheckBox(tr("Download as new layer"));
+        cbNewLayer.setToolTipText(tr("<html>Select to download data into a new data layer.<br>"
+                +"Unselect to download into the currently active data layer.</html>"));
         pnl.add(cbNewLayer, GBC.eol().insets(0,5,0,0));
 
         pnl. add(new JLabel(tr("Download Area")), GBC.eol().insets(0,5,0,0));
