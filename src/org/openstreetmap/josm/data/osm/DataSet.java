@@ -627,14 +627,11 @@ public class DataSet implements Cloneable {
     }
 
     public Set<Relation> getReferringRelations(Collection<? extends OsmPrimitive> primitives) {
+        return this.getReferringRelations(new HashSet<OsmPrimitive>(primitives));
+    }
+    public Set<Relation> getReferringRelations(Set<? extends OsmPrimitive> referred) {
         HashSet<Relation> ret = new HashSet<Relation>();
-        if (primitives == null) return ret;
-        Set<? extends OsmPrimitive> referred;
-        if (primitives instanceof Set<?>) {
-            referred = (Set<? extends OsmPrimitive>)primitives;
-        } else {
-            referred = new HashSet<OsmPrimitive>(primitives);
-        }
+        if (referred == null) return ret;
         referred.remove(null); // just in case - remove null element from primitives
         for (Relation r: relations) {
             if (r.isDeleted() || r.incomplete) {
