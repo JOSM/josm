@@ -212,6 +212,29 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             return ret;
         }
     }
+    /*
+     * This is a quick hack.  The problem is that we need the
+     * way's bounding box a *bunch* of times when it gets
+     * inserted.  It gets expensive if we have to recreate
+     * them each time.
+     *
+     * An alternative would be to calculate it at .add() time
+     * and passing it down the call chain.
+     */
+    HashMap<Way,BBox> way_bbox_cache = new HashMap<Way, BBox>();
+    BBox way_bbox(Way w)
+    {
+        if (way_bbox_cache.size() > 100)
+            way_bbox_cache.clear();
+        BBox b = way_bbox_cache.get(w);
+        if (b == null) {
+            b = new BBox(w);
+            way_bbox_cache.put(w, b);
+        }
+        return b;
+        //return new BBox(w);
+    }
+
     class QBLevel
     {
         int level;
@@ -368,28 +391,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 }
                 return;
             }
-        }
-        /*
-         * This is a quick hack.  The problem is that we need the
-         * way's bounding box a *bunch* of times when it gets
-         * inserted.  It gets expensive if we have to recreate
-         * them each time.
-         *
-         * An alternative would be to calculate it at .add() time
-         * and passing it down the call chain.
-         */
-        HashMap<Way,BBox> way_bbox_cache = new HashMap<Way, BBox>();
-        BBox way_bbox(Way w)
-        {
-            if (way_bbox_cache.size() > 100)
-                way_bbox_cache.clear();
-            BBox b = way_bbox_cache.get(w);
-            if (b == null) {
-                b = new BBox(w);
-                way_bbox_cache.put(w, b);
-            }
-            return b;
-            //return new BBox(w);
         }
 
         boolean matches(T o, BBox search_bbox)
@@ -564,24 +565,16 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
         QBLevel find_exact(T n)
         {
-            if (isLeaf())
-                return find_exact_leaf(n);
-            return find_exact_branch(n);
-        }
-        QBLevel find_exact_leaf(T n)
-        {
             QBLevel ret = null;
             if (content != null && content.contains(n))
-                ret = this;
-            return ret;
-        }
-        QBLevel find_exact_branch(T n)
-        {
-            if (content != null && content.contains(n)) {
                 return this;
-            }
-            
+            return find_exact_child(n);
+        }
+        private QBLevel find_exact_child(T n)
+        {
             QBLevel ret = null;
+            if (children == null)
+                return ret;
             for (QBLevel l : children) {
                 if (l == null)
                     continue;
@@ -892,12 +885,40 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         check_type(o);
         return this.remove(convert(o));
     }
-    public boolean remove(T n)
+    public boolean remove_slow(T removeme)
     {
-        QBLevel bucket = root.find_exact(n);
+        boolean ret = false;
+        Iterator<T> i = this.iterator();
+        while (i.hasNext()) {
+            T o = i.next();
+            if (o != removeme)
+                continue;
+            i.remove();
+            ret = true;
+            break;
+        }
+        if (debug)
+            out("qb slow remove result: " + ret);
+        return ret;
+    }
+    public boolean remove(T o)
+    {
+        /*
+         * We first try a locational search
+         */
+        QBLevel bucket = root.find_exact(o);
+        if (o instanceof Way)
+            way_bbox_cache.remove(o);
+        /*
+         * That may fail because the object was
+         * moved or changed in some way, so we
+         * resort to an iterative search:
+         */
         if (bucket == null)
-            return false;
-        boolean ret = bucket.remove_content(n);
+            return remove_slow(o);
+        boolean ret = bucket.remove_content(o);
+        if (debug)
+            out("qb remove result: " + ret);
         return ret;
     }
     public boolean contains(Object o)
@@ -1087,7 +1108,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             // search spot can not cover the current
             // search
             while (!search_cache.bbox().bounds(search_bbox)) {
-                out("bbox: " + search_bbox);
+                if (debug)
+                    out("bbox: " + search_bbox);
                 if (debug) {
                     out("search_cache: " + search_cache + " level: " + search_cache.level);
                     out("search_cache.bbox(): " + search_cache.bbox());
