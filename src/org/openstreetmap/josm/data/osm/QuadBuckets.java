@@ -245,6 +245,16 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 this.content = null;
             return ret;
         }
+        @SuppressWarnings("unchecked")
+        QBLevel[] newChildren()
+        {
+            // This is ugly and hackish.  But, it seems to work,
+            // and using an ArrayList here seems to cost us
+            // a significant performance penalty -- 50% in my
+            // testing.  Child access is one of the single
+            // hottest code paths in this entire class.
+            return (QBLevel[])Array.newInstance(this.getClass(), QuadTiling.TILES_PER_LEVEL);
+        }
         // Get the correct index for the given primitive
         // at the given level.  If the primitive can not
         // fit into a single quad at this level, return -1
@@ -303,12 +313,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             if (children != null) {
                 abort("overwrote children");
             }
-            // This is ugly and hackish.  But, it seems to work,
-            // and using an ArrayList here seems to cost us
-            // a significant performance penalty -- 50% in my
-            // testing.  Child access is one of the single
-            // hottest code paths in this entire class.
-            children = (QBLevel[])Array.newInstance(this.getClass(), QuadTiling.TILES_PER_LEVEL);
+            children = newChildren();
             // deferring allocation of children until use
             // seems a bit faster
             //for (int i = 0; i < TILES_PER_LEVEL; i++)
@@ -877,9 +882,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     }
     // If anyone has suggestions for how to fix
     // this properly, I'm listening :)
+    @SuppressWarnings("unchecked")
     private T convert(Object raw)
     {
-        //@SuppressWarnings("unchecked")
         return (T)raw;
     }
     public boolean remove(Object o)
