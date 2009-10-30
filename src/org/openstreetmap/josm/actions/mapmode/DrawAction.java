@@ -344,6 +344,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 // select the clicked node and do nothing else
                 // (this is just a convenience option so that people don't
                 // have to switch modes)
+                newSelection.clear();
+                newSelection.add(n);
                 getCurrentDataSet().setSelected(n);
                 selection = getCurrentDataSet().getSelected();
                 // The user explicitly selected a node, so let him continue drawing
@@ -522,6 +524,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 }
 
                 extendedWay = true;
+                newSelection.clear();
+                newSelection.add(wayToSelect);
                 ds.setSelected(way);
                 ds.fireSelectionChanged();
             }
@@ -539,7 +543,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     newSelection.remove(w);
                 }
             }
-
+            
+            newSelection.add(n);
             ds.setSelected(n);
             ds.fireSelectionChanged();
         } else if (!newNode) {
