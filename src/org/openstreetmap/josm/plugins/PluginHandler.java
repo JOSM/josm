@@ -64,7 +64,7 @@ public class PluginHandler {
         String [] oldplugins = new String[] {"mappaint", "unglueplugin",
                 "lang-de", "lang-en_GB", "lang-fr", "lang-it", "lang-pl", "lang-ro",
                 "lang-ru", "ewmsplugin", "ywms", "tways-0.2", "geotagged", "landsat",
-                "namefinder", "waypoints", "slippy_map_chooser", "tcx-support"};
+                "namefinder", "waypoints", "slippy_map_chooser", "tcx-support", "usertools"};
         String [] unmaintained = new String[] {"gpsbabelgui", "Intersect_way"};
 
         for (String p : oldplugins) {
