@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -48,6 +49,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.Attributes;
@@ -56,8 +58,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class PlaceSelection implements DownloadSelection {
+    private static final String HISTORY_KEY = "download.places.history";
 
-    private JTextField tfSearchExpression;
+    private HistoryComboBox cbSearchExpression;
     private JButton btnSearch;
     private NamedResultTableModel model;
     private JTable tblSearchResults;
@@ -78,19 +81,22 @@ public class PlaceSelection implements DownloadSelection {
         
         // the search expression field
         //
-        tfSearchExpression = new JTextField();
-        tfSearchExpression.setToolTipText(tr("Enter a place name to search for"));
+        cbSearchExpression = new HistoryComboBox();
+        cbSearchExpression.setToolTipText(tr("Enter a place name to search for"));
+        List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
+        Collections.reverse(cmtHistory);
+        cbSearchExpression.setPossibleItems(cmtHistory);
         gc.gridx = 0;
         gc.gridy = 1;
         gc.gridwidth = 1;
-        panel.add(tfSearchExpression,  gc);
+        panel.add(cbSearchExpression,  gc);
 
         // the search button
         //
         SearchAction searchAction = new SearchAction();
         btnSearch = new JButton(searchAction);
-        tfSearchExpression.getDocument().addDocumentListener(searchAction);
-        tfSearchExpression.addActionListener(searchAction);
+        ((JTextField)cbSearchExpression.getEditor().getEditorComponent()).getDocument().addDocumentListener(searchAction);
+        ((JTextField)cbSearchExpression.getEditor().getEditorComponent()).addActionListener(searchAction);
 
         gc.gridx = 1;
         gc.gridy = 1;
@@ -119,7 +125,7 @@ public class PlaceSelection implements DownloadSelection {
         scrollPane.setPreferredSize(new Dimension(200,200));
         panel.add(scrollPane, BorderLayout.CENTER);
         
-        gui.addDownloadAreaSelector(panel, tr("Areas around Places"));
+        gui.addDownloadAreaSelector(panel, tr("Areas around places"));
 
         scrollPane.setPreferredSize(scrollPane.getPreferredSize());        
         tblSearchResults.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -254,14 +260,16 @@ public class PlaceSelection implements DownloadSelection {
         }
         
         public void actionPerformed(ActionEvent e) {
-            if (!isEnabled() || tfSearchExpression.getText().trim().length() == 0)
+            if (!isEnabled() || cbSearchExpression.getText().trim().length() == 0)
                 return;
-            NameQueryTask task = new NameQueryTask(tfSearchExpression.getText());
+            cbSearchExpression.addCurrentItemToHistory();
+            Main.pref.putCollection(HISTORY_KEY, cbSearchExpression.getHistory());
+            NameQueryTask task = new NameQueryTask(cbSearchExpression.getText());
             Main.worker.submit(task);
         }
         
         protected void updateEnabledState() {
-            setEnabled(tfSearchExpression.getText().trim().length() > 0);
+            setEnabled(cbSearchExpression.getText().trim().length() > 0);
         }
 
         public void changedUpdate(DocumentEvent e) {
@@ -438,6 +446,7 @@ public class PlaceSelection implements DownloadSelection {
     }
     
     class NamedResultCellRenderer extends JLabel implements TableCellRenderer {
+        
         public NamedResultCellRenderer() {
             setOpaque(true);
             setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
@@ -505,4 +514,5 @@ public class PlaceSelection implements DownloadSelection {
             return this;
         }
     }
+
 }
