@@ -38,8 +38,9 @@ import org.openstreetmap.josm.tools.OsmUrlToBounds;
 public class BoundingBoxSelection implements DownloadSelection {
 
     private JTextField[] latlon = null;
-    final JTextArea osmUrl = new JTextArea();
-    final JTextArea showUrl = new JTextArea();
+    private final JTextArea osmUrl = new JTextArea();
+    private final JTextArea showUrl = new JTextArea();
+    private DownloadDialog parent;
 
     
     protected void buildDownloadAreaInputFields() {
@@ -53,7 +54,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         latlon[0].addFocusListener(latChecker);
         latlon[0].addActionListener(latChecker);
 
-        latChecker = new LatValueChecker(latlon[3]);
+        latChecker = new LatValueChecker(latlon[2]);
         latlon[2].addFocusListener(latChecker);
         latlon[2].addActionListener(latChecker);
         
@@ -71,13 +72,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         buildDownloadAreaInputFields();
         JPanel dlg = new JPanel(new GridBagLayout());
 
-        class osmUrlRefresher implements DocumentListener {
-            public void changedUpdate(DocumentEvent e) { parseURL(gui); }
-            public void insertUpdate(DocumentEvent e) { parseURL(gui); }
-            public void removeUpdate(DocumentEvent e) { parseURL(gui); }
-        }
-
-        osmUrl.getDocument().addDocumentListener(new osmUrlRefresher());
+        osmUrl.getDocument().addDocumentListener(new OsmUrlRefresher());
 
         // select content on receiving focus. this seems to be the default in the
         // windows look+feel but not for others. needs invokeLater to avoid strange
@@ -103,6 +98,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         showUrl.addFocusListener(new SelectAllOnFocusHandler(showUrl));
 
         gui.addDownloadAreaSelector(dlg, tr("Bounding Box"));
+        this.parent = gui;
     }
 
     
@@ -183,6 +179,7 @@ public class BoundingBoxSelection implements DownloadSelection {
                 setErrorMessage(tr("Value for latitude in range [-90,90] required.", tfLatValue.getText()));
                 return;            
             }
+            setErrorMessage(null);
         }
         
         @Override
@@ -224,6 +221,7 @@ public class BoundingBoxSelection implements DownloadSelection {
                 setErrorMessage(tr("Value for longitude in range [-180,180] required.", tfLonValue.getText()));
                 return;
             }
+            setErrorMessage(null);
         }
         
         @Override
@@ -246,5 +244,11 @@ public class BoundingBoxSelection implements DownloadSelection {
         public void focusGained(FocusEvent e) {
             tfTarget.selectAll();
         }        
+    }
+    
+    class OsmUrlRefresher implements DocumentListener {
+        public void changedUpdate(DocumentEvent e) { parseURL(parent); }
+        public void insertUpdate(DocumentEvent e) { parseURL(parent); }
+        public void removeUpdate(DocumentEvent e) { parseURL(parent); }
     }
 }

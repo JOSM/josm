@@ -82,7 +82,6 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * constructor
      *
      * @param id  the id of the primitive. > 0 expected
-     * @param type the type of the primitive. Must not be null.
      * @param readFull true, if referers should be read fully (i.e. including their immediate children)
      *
      */
