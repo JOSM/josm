@@ -11,6 +11,8 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -356,6 +358,14 @@ public class ToggleDialog extends JPanel implements Helpful {
                     dock();
                     expand();
                     dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, ToggleDialog.this);
+                }
+            });
+            addComponentListener(new ComponentAdapter() {
+                @Override public void componentMoved(ComponentEvent e) {
+                    rememberGeometry();
+                }
+                @Override public void componentResized(ComponentEvent e) {
+                    rememberGeometry();
                 }
             });
 
