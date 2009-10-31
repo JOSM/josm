@@ -15,6 +15,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.event.TableModelListener;
+import javax.swing.event.TableModelEvent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
@@ -24,9 +26,14 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
-public class MemberTableModel extends AbstractTableModel {
+public class MemberTableModel extends AbstractTableModel implements TableModelListener {
 
+    /**
+     * data of the table model: The list of members and the cached WayConnectionType of each member.
+     **/
     private ArrayList<RelationMember> members;
+    private ArrayList<WayConnectionType> connectionType = null;
+    
     private DefaultListSelectionModel listSelectionModel;
     private CopyOnWriteArrayList<IMemberModelListener> listeners;
     private OsmDataLayer layer;
@@ -38,6 +45,7 @@ public class MemberTableModel extends AbstractTableModel {
         members = new ArrayList<RelationMember>();
         listeners = new CopyOnWriteArrayList<IMemberModelListener>();
         this.layer = layer;
+        addTableModelListener(this);
     }
 
     public void addMemberModelListener(IMemberModelListener listener) {
@@ -98,14 +106,6 @@ public class MemberTableModel extends AbstractTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return columnIndex == 0;
-    }
-
-    @Override
-    public void setValueAt(Object value, int rowIndex, int columnIndex) {
-        RelationMember member = members.get(rowIndex);
-        RelationMember newMember = new RelationMember(value.toString(), member.getMember());
-        members.remove(rowIndex);
-        members.add(rowIndex, newMember);
     }
 
     public OsmPrimitive getReferredPrimitive(int idx) {
@@ -659,71 +659,128 @@ public class MemberTableModel extends AbstractTableModel {
         }
     }
 
-    // simple version of code that was removed from GenericReleationEditor
-    // no recursion and no forward/backward support
-    // TODO: add back the number of linked elements
-    // Returns +1 if member i and (i+1) are ways and could be combined without changing
-    // the direction of one of them. If they are linked "head to head" or "tail to tail"
-    // -1 is returned.
-    // In all other cases the result is null.
-    private Integer linked(int i) {
-        // this method is aimed at finding out whether the
-        // relation member is "linked" with the next, i.e. whether
-        // (if both are ways) these ways are connected.
-
-        Integer link = null;
-        RelationMember m1 = members.get(i);
-        RelationMember m2 = members.get((i + 1) % members.size());
-        Way way1 = null;
-        Way way2 = null;
-
-        if (m1.isWay()) {
-            way1 = m1.getWay();
+/**
+ * Determines the direction of way k with reference to the way ref_i.
+ * The direction of way ref_i is ref_direction.
+ *
+ * ref_i is usually the predecessor of k.
+ *
+ * direction:
+ * Let the relation be a route of oneway streets, and someone travels them in the given order.
+ * Direction is 1 for if it is legel and -1 if it is illegal to do so for the given way.
+ *
+ * If the two ways are not properly linked the return value is 0.
+ **/
+    private int determineDirection(int ref_i,int ref_direction, int k) {
+        if (ref_i < 0 || k < 0 || ref_i >= members.size() || k >= members.size()) {
+            return 0;
         }
-        if (m2.isWay()) {
-            way2 = m2.getWay();
+        if (ref_direction == 0) {
+            return 0;
         }
-        if ((way1 != null) && (way2 != null)) {
-            Node way1first = way1.firstNode();
-            Node way1last = way1.lastNode();
-            Node way2first = way2.firstNode();
-            Node way2last = way2.lastNode();
-            if (way1first != null && way2first != null && (way1first == way2first)) {
-                link = -1;
-            } else if (way1first != null && way2last != null && (way1first == way2last)) {
-                link = 1;
-            } else if (way1last != null && way2first != null && (way1last == way2first)) {
-                link = 1;
-            } else if (way1last != null && way2last != null && (way1last == way2last)) {
-                link = -1;
-            }
-        }
+        
+        RelationMember m_ref = members.get(ref_i);
+        RelationMember m = members.get(k);
+        Way way_ref = null;
+        Way way = null;
 
-        return link;
+        if (m_ref.isWay()) {
+            way_ref = m_ref.getWay();
+        }
+        if (m.isWay()) {
+            way = m.getWay();
+        }
+        
+        if (way_ref == null || way == null) {
+            return 0;
+        }
+        
+        Node nRef = ref_direction > 0 ? way_ref.lastNode() : way_ref.firstNode();
+        if (nRef == null) {
+            return 0;
+        }
+        
+        if (nRef == way.firstNode()) {
+            return 1;
+        }
+        if (nRef == way.lastNode()) {
+            return -1;
+        }
+        return 0;
     }
 
     private WayConnectionType wayConnection(int i) {
-        RelationMember m = members.get(i);
-        if (! m.isWay())
-            return new WayConnectionType();
-        Way w = m.getWay();
-        if (w == null || w.incomplete)
-            return new WayConnectionType();
+        if (connectionType == null) {
+            updateLinks();
+        }
+        return connectionType.get(i);
+    }
 
-        int ip = (i - 1 + members.size()) % members.size();
-        Integer link_p = linked(ip);
-        Integer link_n = linked(i);
-        Integer dir = 1;
-        // FIXME: It is somewhat stupid to loop here, but
-        // there shouldn't be a performance problem in practice.
-        for (int k = i - 1; k >= 0; --k) {
-            Integer link = linked(k);
-            if (link != null) {
-                dir *= link;
-            } else {
-                break;
+    public void tableChanged(TableModelEvent e) {
+        connectionType = null;
+    }
+
+    public void updateLinks() {
+        connectionType = null;
+        ArrayList<WayConnectionType> con = new ArrayList<WayConnectionType>();
+
+        for (int i=0; i<members.size(); ++i) con.add(null);
+
+        int firstGroupIdx=0;
+        boolean resetFirstGoupIdx=false;
+
+        for (int i=0; i<members.size(); ++i) {
+            if (resetFirstGoupIdx) {
+                firstGroupIdx = i;
+                resetFirstGoupIdx = false;
+            }
+
+            RelationMember m = members.get(i);
+            if (! m.isWay()) {
+                con.set(i, new WayConnectionType());
+                resetFirstGoupIdx = true;
+                continue;
+            }
+
+            Way w = m.getWay();
+            if (w == null || w.incomplete) {
+                con.set(i, new WayConnectionType());
+                resetFirstGoupIdx = true;
+                continue;
+            }
+
+            boolean linkPrev = (i != firstGroupIdx);
+            boolean linkNext;
+            int dir;
+            if (linkPrev) {
+                dir = determineDirection(i-1, con.get(i-1).direction, i);
+                linkNext = (determineDirection(i, dir, i+1) != 0);
+            }
+            else {
+                dir = determineDirection(i, +1, i+1) != 0 ? +1 : 0;
+                if (dir == 0) {
+                    dir = determineDirection(i, -1, i+1) != 0 ? -1 : 0;
+                }
+                linkNext = (dir != 0);
+            }
+
+            con.set(i, new WayConnectionType(linkPrev, linkNext, dir));
+
+            if (! linkNext) {
+                boolean loop;
+                if (i == firstGroupIdx) {
+                    loop = determineDirection(i, 1, i) == 1;
+                } else {
+                    loop = determineDirection(i, dir, firstGroupIdx) == con.get(firstGroupIdx).direction;
+                }
+                if (loop) {
+                    for (int j=firstGroupIdx; j <= i; ++j) {
+                        con.get(j).isLoop = true;
+                    }
+                }
+                resetFirstGoupIdx = true;
             }
         }
-        return new WayConnectionType(link_p != null, link_n != null, dir);
+        connectionType = con;
     }
 }

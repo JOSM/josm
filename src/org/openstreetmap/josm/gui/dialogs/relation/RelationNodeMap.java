@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -13,16 +14,25 @@ import org.openstreetmap.josm.data.osm.Way;
  *
  */
 public class RelationNodeMap {
-    private java.util.HashMap<Node, java.util.TreeSet<Integer>> points;
+    /**
+     * For each way endpoint, list all ways that share this node
+     */
+    private java.util.HashMap<Node, TreeSet<Integer>> points;
+    /**
+     * Singleton nodes
+     */
     private java.util.HashMap<Node, Integer> nodes;
     private java.util.Vector<Integer> remaining;
-    private ArrayList<RelationMember> members;
+    /**
+     * read only list
+     */
+    private final ArrayList<RelationMember> members;
 
     RelationNodeMap(ArrayList<RelationMember> members) {
         int i;
 
         this.members = members;
-        points = new java.util.HashMap<Node, java.util.TreeSet<Integer>>();
+        points = new java.util.HashMap<Node, TreeSet<Integer>>();
         nodes = new java.util.HashMap<Node, Integer>();
         remaining = new java.util.Vector<Integer>();
 
@@ -62,25 +72,25 @@ public class RelationNodeMap {
             Way w = m.getWay();
             if (w.lastNode() == w.firstNode())
             {
-                nodes.put(w.firstNode(), Integer.valueOf(n));
+                nodes.put(w.firstNode(), n);
             }
             else
             {
                 if (!points.containsKey(w.firstNode())) {
-                    points.put(w.firstNode(), new java.util.TreeSet<Integer>());
+                    points.put(w.firstNode(), new TreeSet<Integer>());
                 }
-                points.get(w.firstNode()).add(Integer.valueOf(n));
+                points.get(w.firstNode()).add(n);
 
                 if (!points.containsKey(w.lastNode())) {
-                    points.put(w.lastNode(), new java.util.TreeSet<Integer>());
+                    points.put(w.lastNode(), new TreeSet<Integer>());
                 }
-                points.get(w.lastNode()).add(Integer.valueOf(n));
+                points.get(w.lastNode()).add(n);
             }
         } else if (m.isNode()) {
             Node node = m.getNode();
-            nodes.put(node, Integer.valueOf(n));
+            nodes.put(node, n);
         } else {
-            remaining.add(Integer.valueOf(n));
+            remaining.add(n);
         }
     }
 
@@ -103,16 +113,6 @@ public class RelationNodeMap {
         return result;
     }
 
-    void move(int from, int to) {
-        if (from != to) {
-            RelationMember b = members.get(from);
-            RelationMember a = members.get(to);
-
-            remove(to, b);
-            add(to, a);
-        }
-    }
-
     // no node-mapped entries left
     boolean isEmpty() {
         return points.isEmpty() && nodes.isEmpty();
@@ -131,7 +131,7 @@ public class RelationNodeMap {
             result = nodes.get(node);
             nodes.remove(node);
         } else if (!points.isEmpty()) {
-            for (java.util.TreeSet<Integer> set : points.values()) {
+            for (TreeSet<Integer> set : points.values()) {
                 if (!set.isEmpty()) {
                     result = set.first();
                     Way w = members.get(result).getWay();
