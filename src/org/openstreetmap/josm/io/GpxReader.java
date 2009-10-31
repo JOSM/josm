@@ -100,7 +100,7 @@ public class GpxReader {
                     } else if (qName.equals("extensions")) {
                         states.push(currentState);
                         currentState = state.ext;
-                    } else if (qName.equals("gpx") && atts.getValue("creator").startsWith("Nokia Sports Tracker")) {
+                    } else if (qName.equals("gpx") && atts.getValue("creator") != null && atts.getValue("creator").startsWith("Nokia Sports Tracker")) {
                         nokiaSportsTrackerBug = true;
                     }
                     break;
