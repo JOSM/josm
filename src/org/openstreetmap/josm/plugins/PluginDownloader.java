@@ -26,6 +26,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.xml.sax.SAXException;
@@ -119,7 +120,7 @@ public class PluginDownloader {
     }
 
     private static boolean download(PluginInformation pd, File file) {
-        if(pd.mainversion > AboutAction.getVersionNumber())
+        if(pd.mainversion > Version.getInstance().getVersion())
         {
             ExtendedDialog dialog = new ExtendedDialog(
                     Main.parent,

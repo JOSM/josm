@@ -15,7 +15,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.AboutAction;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.io.CacheCustomContent;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -50,7 +50,7 @@ public class GettingStarted extends JPanel {
             super("motd.html", CacheCustomContent.INTERVAL_DAILY);
         }
 
-        final private int myVersion = AboutAction.getVersionNumber();
+        final private int myVersion = Version.getInstance().getVersion();
         final private String myLang = LanguageInfo.getWikiLanguagePrefix();
 
         /**

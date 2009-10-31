@@ -33,6 +33,7 @@ import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
@@ -100,7 +101,8 @@ public class PluginHandler {
                 if (info.early != early) {
                     continue;
                 }
-                if (info.mainversion > AboutAction.getVersionNumber()) {
+                int josmVersion = Version.getInstance().getVersion();
+                if (info.mainversion > josmVersion && josmVersion != Version.JOSM_UNKNOWN_VERSION) {
                     JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Plugin {0} requires JOSM update to version {1}.", pluginName,

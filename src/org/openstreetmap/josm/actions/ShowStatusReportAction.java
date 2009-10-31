@@ -20,6 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -45,7 +46,7 @@ public final class ShowStatusReportAction extends JosmAction {
     public static String getReportHeader()
     {
         StringBuilder text = new StringBuilder();
-        text.append(AboutAction.getTextBlock());
+        text.append(Version.getInstance().getRevision());
         text.append("\n");
         text.append("Memory Usage: ");
         text.append(Runtime.getRuntime().totalMemory()/1024/1024);

@@ -25,6 +25,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
 import org.openstreetmap.josm.actions.AboutAction;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -72,7 +73,7 @@ public class SplashScreen extends JWindow {
         innerContentPane.add(caption, gbc);
 
         // Add the version number
-        JLabel version = new JLabel(tr("Version {0}", AboutAction.getVersionString()));
+        JLabel version = new JLabel(tr("Version {0}", Version.getInstance().getVersionString()));
         gbc.gridy = 1;
         gbc.insets = new Insets(0, 0, 0, 0);
         innerContentPane.add(version, gbc);

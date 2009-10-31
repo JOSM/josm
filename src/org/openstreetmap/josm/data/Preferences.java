@@ -29,9 +29,9 @@ import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.gui.preferences.ProxyPreferences;
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
  * This class holds all preferences for JOSM.
@@ -323,9 +323,9 @@ public class Preferences {
      */
     public void save() throws IOException {
         /* currently unused, but may help to fix configuration issues in future */
-        properties.put("josm.version", AboutAction.getVersionString());
+        properties.put("josm.version", Version.getInstance().getVersionString());
 
-        setSystemProperties();
+        updateSystemProperties();
         File prefFile = new File(getPreferencesDirFile(), "preferences");
 
         // Backup old preferences if there are old preferences
@@ -393,7 +393,7 @@ public class Preferences {
         }
         if (!errLines.isEmpty())
             throw new IOException(tr("Malformed config file at lines {0}", errLines));
-        setSystemProperties();
+        updateSystemProperties();
     }
 
     public void init(boolean reset){
@@ -678,13 +678,16 @@ public class Preferences {
                 }
             }
         }
-
         return put(key, s);
     }
-
-    private void setSystemProperties() {
+    
+    /**
+     * Updates system properties with the current values in the preferences.
+     * 
+     */
+    public void updateSystemProperties() {
+        Properties sysProp = System.getProperties();
         if (getBoolean(ProxyPreferences.PROXY_ENABLE)) {
-            Properties sysProp = System.getProperties();
             sysProp.put("proxySet", "true");
             sysProp.put("http.proxyHost", get(ProxyPreferences.PROXY_HOST));
             sysProp.put("proxyPort", get(ProxyPreferences.PROXY_PORT));
@@ -692,8 +695,11 @@ public class Preferences {
                 sysProp.put("proxyUser", get(ProxyPreferences.PROXY_USER));
                 sysProp.put("proxyPassword", get(ProxyPreferences.PROXY_PASS));
             }
-            System.setProperties(sysProp);
+         
         }
-        AboutAction.setUserAgent();
+        int v = Version.getInstance().getVersion();
+        String s = ( v == Version.JOSM_UNKNOWN_VERSION) ? "UNKNOWN" : Integer.toString(v);        
+        sysProp.put("http.agent", "JOSM/1.5 ("+ s+" "+LanguageInfo.getJOSMLocaleCode()+")");
+        System.setProperties(sysProp);
     }
 }

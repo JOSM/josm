@@ -131,8 +131,16 @@ public class I18n {
         catch (MissingResourceException ex) { Locale.setDefault(Locale.ENGLISH);}
     }
 
-    public static void set(String localeName)
-    {
+    /**
+     * Sets the default locale (see {@see Locale#setDefault(Locale)} to the local
+     * given by <code>localName</code>.
+     * 
+     * Ignored if localName is null. If the locale with name <code>localName</code>
+     * isn't found the default local is set to <tt>en</tt> (english).
+     * 
+     * @param localeName the locale name. Ignored if null.
+     */
+    public static void set(String localeName){
         if (localeName != null) {
             Locale l;
             Locale d = Locale.getDefault();

@@ -91,7 +91,6 @@ public class HelpApplication {
         } else {
             I18n.set(Main.pref.get("language", null));
         }
-
         MainApplication.preConstructorInit(args);
         Thread.setDefaultUncaughtExceptionHandler(
                 new UncaughtExceptionHandler() {

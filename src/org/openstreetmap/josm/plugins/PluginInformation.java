@@ -21,6 +21,7 @@ import java.util.jar.Manifest;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
@@ -120,9 +121,9 @@ public class PluginInformation {
         try { mainversion = Integer.parseInt(attr.getValue("Plugin-Mainversion")); }
         catch(NumberFormatException e) {}
         author = attr.getValue("Author");
-        if(oldcheck && mainversion > AboutAction.getVersionNumber())
+        if(oldcheck && mainversion > Version.getInstance().getVersion())
         {
-            int myv = AboutAction.getVersionNumber();
+            int myv = Version.getInstance().getVersion();
             for(Map.Entry entry : attr.entrySet())
             {
                 try {

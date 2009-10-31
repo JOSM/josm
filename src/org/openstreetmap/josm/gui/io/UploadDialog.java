@@ -118,7 +118,7 @@ public class UploadDialog extends JDialog {
     protected JPanel buildListsPanel() {
         pnlLists = new JPanel();
         pnlLists.setLayout(new GridBagLayout());
-        // we don't add the lists yet, see setUploadPrimivies()
+        // we don't add the lists yet, see setUploadPrimitives()
         //
         return pnlLists;
     }
@@ -277,7 +277,7 @@ public class UploadDialog extends JDialog {
         if (!update.isEmpty()) {
             y++;
             gcLabel.gridy = y;
-            lblUpdate.setText(trn("{0} object to modifiy:", "{0} objects to modify:", update.size(),update.size()));
+            lblUpdate.setText(trn("{0} object to modify:", "{0} objects to modify:", update.size(),update.size()));
             pnlLists.add(lblUpdate, gcLabel);
             y++;
             gcList.gridy = y;

@@ -95,6 +95,7 @@ public class MainApplication extends Main {
         } else {
             I18n.set(Main.pref.get("language", null));
         }
+        Main.pref.updateSystemProperties();
 
         if (argList.contains("--help") || argList.contains("-?") || argList.contains("-h")) {
             // TODO: put in a platformHook for system that have no console by default

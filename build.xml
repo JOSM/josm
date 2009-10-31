@@ -9,8 +9,33 @@
 			<include name="**/*.jar"/>
 		</fileset>
 	</path>
+	
+	<!--
+	  ** Creates the REVISION file to be included in the distribution
+	  --> 	  
+	<target name="create-revision">
+		<exec append="false" output="REVISION" executable="svn" failifexecutionfails="false">
+				<env key="LANG" value="C"/>
+				<arg value="info"/>
+				<arg value="--xml"/>
+				<arg value="."/>
+		</exec>		
+		<xmlproperty file="REVISION" prefix="version" keepRoot="false" collapseAttributes="true"/>
+		<delete file="REVISION"/>
+		<tstamp>
+		      <format property="build.tstamp" pattern="yyyy-MM-dd HH:mm:ss"/>
+		  </tstamp>
 
-	<target name="dist" depends="compile">
+		<echo file="${build.dir}/REVISION">
+# automatically generated JOSM build.xml - do not edit 			
+Revision: ${version.entry.commit.revision}
+Is-Local-Build: true
+Build-Date: ${build.tstamp}		
+</echo>						
+	</target>
+		
+
+	<target name="dist" depends="compile,create-revision">
 
 		<exec append="false" output="REVISION" executable="svn" failifexecutionfails="false">
 			<env key="LANG" value="C"/>
@@ -27,7 +52,7 @@
 		<copy file="README" todir="build"/>
 		<copy file="LICENSE" todir="build"/>
 
-                <!-- styles -->
+        <!-- styles -->
 		<copy file="styles/standard/elemstyles.xml" todir="build/styles/standard"/>
 
         <!-- css-->
