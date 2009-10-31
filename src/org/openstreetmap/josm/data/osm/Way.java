@@ -172,6 +172,7 @@ public final class Way extends OsmPrimitive {
      * @param data
      * @param dataSet Dataset this way is part of. This parameter will be removed in future
      */
+    @Override
     public void load(PrimitiveData data, DataSet dataSet) {
         super.load(data, dataSet);
 
@@ -194,9 +195,8 @@ public final class Way extends OsmPrimitive {
             Node node = foundNodes.get(nodeId);
             if (node != marker) {
                 newNodes.add(foundNodes.get(nodeId));
-            } else {
+            } else
                 throw new AssertionError("Data consistency problem - way with missing node detected");
-            }
         }
         setNodes(newNodes);
     }
@@ -218,8 +218,8 @@ public final class Way extends OsmPrimitive {
     }
 
     @Override public String toString() {
-        if (incomplete) return "{Way id="+getId()+" version="+getVersion()+" (incomplete)}";
-        return "{Way id="+getId()+" version="+getVersion()+" nodes="+Arrays.toString(nodes)+"}";
+        String nodesDesc = incomplete?"(incomplete)":"nodes=" + Arrays.toString(nodes);
+        return "{Way id=" + getUniqueId() + " version=" + getVersion()+ " " + getFlagsAsString()  + " " + nodesDesc + "}";
     }
 
     @Override

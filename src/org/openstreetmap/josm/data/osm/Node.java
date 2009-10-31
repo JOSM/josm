@@ -111,8 +111,8 @@ public final class Node extends OsmPrimitive {
     }
 
     @Override public String toString() {
-        if (coor == null) return "{Node id="+getId()+"}";
-        return "{Node id="+getId()+",version="+getVersion()+",lat="+coor.lat()+",lon="+coor.lon()+"}";
+        String coorDesc = coor == null?"":"lat="+coor.lat()+",lon="+coor.lon();
+        return "{Node id=" + getUniqueId() + " version=" + getVersion() + " " + getFlagsAsString() + " "  + coorDesc+"}";
     }
 
     @Override

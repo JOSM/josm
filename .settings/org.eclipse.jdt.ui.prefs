@@ -1,4 +1,4 @@
-#Mon Jun 08 20:01:40 CEST 2009
+#Sat Oct 31 19:47:16 CET 2009
 cleanup_settings_version=2
 eclipse.preferences.version=1
 editor_save_participant_org.eclipse.jdt.ui.postsavelistener.cleanup=true
@@ -30,7 +30,7 @@ sp_cleanup.make_variable_declarations_final=false
 sp_cleanup.never_use_blocks=false
 sp_cleanup.never_use_parentheses_in_expressions=true
 sp_cleanup.on_save_use_additional_actions=true
-sp_cleanup.organize_imports=false
+sp_cleanup.organize_imports=true
 sp_cleanup.qualify_static_field_accesses_with_declaring_class=false
 sp_cleanup.qualify_static_member_accesses_through_instances_with_declaring_class=true
 sp_cleanup.qualify_static_member_accesses_through_subtypes_with_declaring_class=true

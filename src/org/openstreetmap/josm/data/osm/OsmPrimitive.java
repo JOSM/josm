@@ -489,7 +489,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * An primitive is equal to its incomplete counter part.
      */
     @Override public boolean equals(Object obj) {
-        if (isNew()) return obj == this;
         if (obj instanceof OsmPrimitive)
             return ((OsmPrimitive)obj).id == id && obj.getClass() == getClass();
         return false;
@@ -501,8 +500,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
      * An primitive has the same hashcode as its incomplete counterpart.
      */
     @Override public final int hashCode() {
-        if (id == 0)
-            return super.hashCode();
         final int[] ret = new int[1];
         Visitor v = new Visitor(){
             public void visit(Node n) { ret[0] = 0; }
@@ -511,7 +508,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
             public void visit(Changeset cs) { ret[0] = 3; }
         };
         visit(v);
-        return id == 0 ? super.hashCode() : (int)(id<<2)+ret[0];
+        return (int)(id<<2)+ret[0];
     }
 
     /*------------
@@ -829,6 +826,30 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged {
         data.setDeleted(isDeleted());
         data.setModified(isModified());
         data.setVisible(isVisible());
+    }
+
+    protected String getFlagsAsString() {
+
+        StringBuilder builder = new StringBuilder();
+
+        if (isModified()) {
+            builder.append("M");
+        }
+        if (isVisible()) {
+            builder.append("V");
+        }
+        if (isDeleted()) {
+            builder.append("D");
+        }
+        if (isFiltered()) {
+            builder.append("f");
+        }
+
+        if (isDeleted()) {
+            builder.append("d");
+        }
+
+        return builder.toString();
     }
 
 }
