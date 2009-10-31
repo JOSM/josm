@@ -582,7 +582,9 @@ public class CombineWayAction extends JosmAction {
 
         protected List<NodePair> getOutboundPairs(Node node) {
             List<NodePair> l = successors.get(node);
-            return l == null ? Collections.EMPTY_LIST : l;
+            if (l == null)
+                return Collections.emptyList();
+            return l;
         }
 
         protected Set<Node> getNodes() {
