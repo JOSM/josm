@@ -414,6 +414,35 @@ public class SearchCompiler {
         @Override public String toString() {return "nodes="+minCount+"-"+maxCount;}
     }
 
+    private static class TagCount extends Match {
+        private int count;
+        public TagCount(int count) {this.count = count;}
+        @Override public boolean match(OsmPrimitive osm) {
+            int size = osm.getKeys().size();
+            return size == count;
+        }
+        @Override public String toString() {return "tags="+count;}
+    }
+
+    private static class TagCountRange extends Match {
+        private int minCount;
+        private int maxCount;
+        public TagCountRange(int minCount, int maxCount) {
+            if(maxCount < minCount) {
+                this.minCount = maxCount;
+                this.maxCount = minCount;
+            } else {
+                this.minCount = minCount;
+                this.maxCount = maxCount;
+            }
+        }
+        @Override public boolean match(OsmPrimitive osm) {
+            int size = osm.getKeys().size();
+            return (size >= minCount) && (size <= maxCount);
+        }
+        @Override public String toString() {return "tags="+minCount+"-"+maxCount;}
+    }
+
     private static class Modified extends Match {
         @Override public boolean match(OsmPrimitive osm) {
             return osm.isModified() || osm.isNew();
@@ -609,6 +638,18 @@ public class SearchCompiler {
             return new ExactType(value);
         else if (key.equals("user"))
             return new UserMatch(value);
+        else if (key.equals("tags"))
+            try {
+                String[] range = value.split("-");
+                if (range.length == 1)
+                    return new TagCount(Integer.parseInt(value));
+                else if (range.length == 2)
+                    return new TagCountRange(Integer.parseInt(range[0]), Integer.parseInt(range[1]));
+                else
+                    throw new ParseError(tr("Wrong number of parameters for tags operator."));
+            } catch (NumberFormatException e) {
+                throw new ParseError(tr("Incorrect value of tags operator: {0}. Tags operator expects number of tags or range, for example tags:1 or tags:2-5", value));
+            }
         else if (key.equals("nodes")) {
             try {
                 String[] range = value.split("-");
