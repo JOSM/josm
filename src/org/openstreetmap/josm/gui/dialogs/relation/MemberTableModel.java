@@ -108,6 +108,14 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         return columnIndex == 0;
     }
 
+    @Override
+    public void setValueAt(Object value, int rowIndex, int columnIndex) {
+        RelationMember member = members.get(rowIndex);
+        RelationMember newMember = new RelationMember(value.toString(), member.getMember());
+        members.remove(rowIndex);
+        members.add(rowIndex, newMember);
+    }
+
     public OsmPrimitive getReferredPrimitive(int idx) {
         return members.get(idx).getMember();
     }
