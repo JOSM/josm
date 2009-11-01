@@ -7,10 +7,10 @@ import java.io.IOException;
 import org.openstreetmap.josm.Main;
 
 /**
-  * see PlatformHook.java
-  *
-  * BTW: THIS IS A STUB. See comments below for details.
-  */
+ * see PlatformHook.java
+ *
+ * BTW: THIS IS A STUB. See comments below for details.
+ */
 public class PlatformHookUnixoid implements PlatformHook {
     public void preStartupHook(){
     }
@@ -56,10 +56,10 @@ public class PlatformHookUnixoid implements PlatformHook {
         // TODO: Insert system shortcuts here. See Windows and espacially OSX to see how to.
     }
     /**
-      * This should work for all platforms. Yeah, should.
-      * See PlatformHook.java for a list of reasons why
-      * this is implemented here...
-      */
+     * This should work for all platforms. Yeah, should.
+     * See PlatformHook.java for a list of reasons why
+     * this is implemented here...
+     */
     public String makeTooltip(String name, Shortcut sc) {
         String result = "";
         result += "<html>";
@@ -74,9 +74,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         return result;
     }
 
-    @Override
-    public String getDefaultStyle()
-    {
+    public String getDefaultStyle() {
         return "javax.swing.plaf.metal.MetalLookAndFeel";
     }
 }
