@@ -61,7 +61,8 @@ Build-Date: ${build.tstamp}
 
 		<!-- create josm-custom.jar -->
 		<delete file="dist/josm-custom.jar"/>
-		<jar destfile="dist/josm-custom.jar" basedir="build">
+		<jar destfile="dist/josm-custom.jar" basedir="build" level="9">
+        <!-- add attribute excludes="**/*BZip2*,**/*Bzip2*" to create a non-bzip2 supporting jar -->
 			<manifest>
 				<attribute name="Main-class" value="JOSM" />
 				<attribute name="Main-Version" value="${version.entry.commit.revision} SVN"/>
