@@ -52,8 +52,10 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
         Shortcut.registerSystemShortcut("system:duplicate", "unused", KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK); // not really system, but to avoid odd results
         Shortcut.registerSystemShortcut("system:help", "unused", KeyEvent.VK_F1, 0);
     }
+
+    @Override
+    public String getDefaultStyle()
+    {
+        return "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+    }
 }
-
-
-
-

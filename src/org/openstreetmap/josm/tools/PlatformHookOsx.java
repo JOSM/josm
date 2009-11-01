@@ -262,4 +262,10 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         }
         return result;
     }
+
+    @Override
+    public String getDefaultStyle()
+    {
+        return "javax.swing.plaf.metal.MetalLookAndFeel";
+    }
 }

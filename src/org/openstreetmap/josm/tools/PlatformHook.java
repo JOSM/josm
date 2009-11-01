@@ -99,4 +99,6 @@ public interface PlatformHook {
       * LAFs.
       */
     public String makeTooltip(String name, Shortcut sc);
+
+    public String getDefaultStyle();
 }

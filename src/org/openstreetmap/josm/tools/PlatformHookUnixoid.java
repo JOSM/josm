@@ -73,4 +73,10 @@ public class PlatformHookUnixoid implements PlatformHook {
         result += "&nbsp;</html>";
         return result;
     }
+
+    @Override
+    public String getDefaultStyle()
+    {
+        return "javax.swing.plaf.metal.MetalLookAndFeel";
+    }
 }

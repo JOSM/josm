@@ -307,7 +307,7 @@ abstract public class Main {
 
         try {
             try {
-                String laf = Main.pref.get("laf");
+                String laf = Main.pref.get("laf", platform.getDefaultStyle());
                 if(laf != null && laf.length() > 0) {
                     UIManager.setLookAndFeel(laf);
                 }

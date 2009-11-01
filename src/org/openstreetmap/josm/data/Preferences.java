@@ -467,11 +467,6 @@ public class Preferences {
 
     public final void resetToDefault(){
         properties.clear();
-        if (System.getProperty("os.name").toUpperCase().indexOf("WINDOWS") == -1) {
-            put("laf", "javax.swing.plaf.metal.MetalLookAndFeel");
-        } else {
-            put("laf", "com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-        }
     }
 
     public File getBookmarksFile() {
