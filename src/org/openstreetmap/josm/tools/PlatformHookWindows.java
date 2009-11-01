@@ -53,7 +53,6 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
         Shortcut.registerSystemShortcut("system:help", "unused", KeyEvent.VK_F1, 0);
     }
 
-    @Override
     public String getDefaultStyle()
     {
         return "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
