@@ -34,14 +34,14 @@ import org.openstreetmap.josm.tools.UrlLabel;
  * @author imi
  */
 public class AboutAction extends JosmAction {
-  
+
     public AboutAction() {
         super(tr("About"), "about", tr("Display the about screen."), Shortcut.registerShortcut("system:about", tr("About"), KeyEvent.VK_F1, Shortcut.GROUP_DIRECT, Shortcut.SHIFT_DEFAULT), true);
     }
 
     public void actionPerformed(ActionEvent e) {
         JTabbedPane about = new JTabbedPane();
-        
+
         JTextArea readme = new JTextArea();
         readme.setEditable(false);
         readme.setText(Version.loadResourceFile(Main.class.getResource("/README")));
@@ -53,7 +53,7 @@ public class AboutAction extends JosmAction {
         JTextArea license = new JTextArea();
         license.setEditable(false);
         license.setText(Version.loadResourceFile(Main.class.getResource("/LICENSE")));
-        
+
         Version version = Version.getInstance();
 
         JPanel info = new JPanel(new GridBagLayout());

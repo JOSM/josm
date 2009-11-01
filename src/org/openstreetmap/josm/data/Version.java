@@ -13,23 +13,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
  * Provides basic information about the currently used JOSM build.
- * 
+ *
  */
 public class Version {
     /** constant to indicate that the currnt build isn't assigned a JOSM version number */
     static public final int JOSM_UNKNOWN_VERSION = 0;
 
-    /** the unique instance */ 
+    /** the unique instance */
     private static Version instance;
-    
+
     /**
      * Load the specified resource as string.
-     * 
+     *
      * @param resource the resource url to load
-     * @return  the content of the resource file; null, if an error occurred 
+     * @return  the content of the resource file; null, if an error occurred
      */
     static public String loadResourceFile(URL resource) {
         BufferedReader in;
@@ -47,26 +48,26 @@ public class Version {
         }
         return s;
     }
-    
+
     /**
-     * Replies the unique instance of the version information 
-     * 
+     * Replies the unique instance of the version information
+     *
      * @return the unique instance of the version information
      */
-    
+
     static public Version getInstance() {
         if (instance == null) {
             instance = new Version();
             instance.init();
         }
-        return instance;            
+        return instance;
     }
-    
+
     private int version;
     private String revision;
     private String time;
     private boolean isLocalBuild;
-    
+
     protected HashMap<String, String> parseManifestStyleFormattedString(String content) {
         HashMap<String, String> properties = new HashMap<String, String>();
         if (content == null) return properties;
@@ -81,20 +82,20 @@ public class Version {
         }
         return properties;
     }
-    
+
     /**
-     * Initializes the version infos from the revision resource file 
-     * 
-     * @param revisionInfo the revision info loaded from a revision resource file 
+     * Initializes the version infos from the revision resource file
+     *
+     * @param revisionInfo the revision info loaded from a revision resource file
      */
     protected void initFromRevisionInfo(String revisionInfo) {
         if (revisionInfo == null) {
             this.revision = tr("UNKNOWN");
             this.version = JOSM_UNKNOWN_VERSION;
             this.time = null;
-            return;        
+            return;
         }
-        
+
         HashMap<String, String> properties = parseManifestStyleFormattedString(revisionInfo);
         String value = properties.get("Revision");
         if (value != null) {
@@ -108,22 +109,22 @@ public class Version {
         } else {
             version = JOSM_UNKNOWN_VERSION;
         }
-                
-        // the last changed data 
+
+        // the last changed data
         //
         time = properties.get("Last Changed Date");
         if (time == null) {
             time = properties.get("Build-Date");
         }
-        
+
         // is this a local build ?
         //
-        isLocalBuild = false; 
+        isLocalBuild = false;
         value = properties.get("Is-Local-Build");
         if (value != null && value.trim().toLowerCase().equals("true"))  {
             isLocalBuild = true;
         }
-        
+
         // the revision info
         //
         StringBuffer sb = new StringBuffer();
@@ -131,9 +132,9 @@ public class Version {
             sb.append(property.getKey()).append(":").append(property.getValue()).append("\n");
         }
         revision = sb.toString();
-    }    
-       
-    public void init() {    
+    }
+
+    public void init() {
         URL u = Main.class.getResource("/REVISION");
         if (u == null) {
             System.err.println(tr("Warning: the revision file ''/REVISION'' is missing."));
@@ -144,20 +145,20 @@ public class Version {
         initFromRevisionInfo(loadResourceFile(u));
         System.out.println(revision);
     }
-   
+
     /**
-     * Replies the version string. Either the SVN revision "1234" (as string) or the 
+     * Replies the version string. Either the SVN revision "1234" (as string) or the
      * the I18n equivalent of "UNKNOWN".
-     * 
-     * @return the JOSM version 
+     *
+     * @return the JOSM version
      */
     public String getVersionString() {
         return  version == 0 ? tr("UNKNOWN") : Integer.toString(version);
     }
-    
+
     /**
      * Replies a text with the release attributes
-     *  
+     *
      * @return a text with the release attributes
      */
     public String getReleaseAttributes() {
@@ -165,16 +166,16 @@ public class Version {
     }
 
     /**
-     * Replies the build date as string 
-     * 
-     * @return the build date as string 
+     * Replies the build date as string
+     *
+     * @return the build date as string
      */
     public String getTime() {
         return time;
     }
-    
+
     /**
-     * Replies the JOSM version. Replies {@see #JOSM_UNKNOWN_VERSION} if the version isn't known. 
+     * Replies the JOSM version. Replies {@see #JOSM_UNKNOWN_VERSION} if the version isn't known.
      * @return the JOSM version
      */
     public int getVersion() {
@@ -183,10 +184,19 @@ public class Version {
 
     /**
      * Replies true if this is a local build, i.e. an inofficial development build.
-     * 
+     *
      * @return true if this is a local build, i.e. an inofficial development build.
      */
     public boolean isLocalBuild() {
         return isLocalBuild;
+    }
+
+    public String getAgentString() {
+        int v = getVersion();
+        String s = (v == JOSM_UNKNOWN_VERSION) ? "UNKNOWN" : Integer.toString(v);
+        if (isLocalBuild() && v != JOSM_UNKNOWN_VERSION) {
+            s += " SVN";
+        }
+        return "JOSM/1.5 ("+ s+" "+LanguageInfo.getJOSMLocaleCode()+")";
     }
 }

@@ -31,7 +31,6 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.ProxyPreferences;
 import org.openstreetmap.josm.tools.ColorHelper;
-import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
  * This class holds all preferences for JOSM.
@@ -61,25 +60,25 @@ public class Preferences {
     public static class Bookmark implements Comparable<Bookmark> {
         private String name;
         private Bounds area;
-        
-        public Bookmark() {    
+
+        public Bookmark() {
             area = null;
             name = null;
         }
-        
+
         public Bookmark(Bounds area) {
-            this.area = area;           
+            this.area = area;
         }
-        
+
         @Override public String toString() {
             return name;
         }
-                
+
         public int compareTo(Bookmark b) {
             return name.toLowerCase().compareTo(b.name.toLowerCase());
         }
-        
-        public Bounds getArea() { 
+
+        public Bounds getArea() {
             return area;
         }
 
@@ -503,7 +502,7 @@ public class Preferences {
                     values[i] = Double.parseDouble(m.group(i+2));
                 } catch(NumberFormatException e) {
                     System.err.println(tr("Error: Illegal double value ''{0}'' on line ''{1}'' in bookmark file ''{2}''",m.group(i+2),line, bookmarkFile.toString()));
-                    continue;                    
+                    continue;
                 }
             }
             b.setArea(new Bounds(values));
@@ -680,10 +679,10 @@ public class Preferences {
         }
         return put(key, s);
     }
-    
+
     /**
      * Updates system properties with the current values in the preferences.
-     * 
+     *
      */
     public void updateSystemProperties() {
         Properties sysProp = System.getProperties();
@@ -695,16 +694,9 @@ public class Preferences {
                 sysProp.put("proxyUser", get(ProxyPreferences.PROXY_USER));
                 sysProp.put("proxyPassword", get(ProxyPreferences.PROXY_PASS));
             }
-         
+
         }
-        int v = Version.getInstance().getVersion();
-        String s = (v == Version.JOSM_UNKNOWN_VERSION) ? "UNKNOWN" : Integer.toString(v);   
-        if (! Version.getInstance().isLocalBuild() && v != Version.JOSM_UNKNOWN_VERSION) {
-            s += " SVN";
-        } else if (Version.getInstance().isLocalBuild() && v != Version.JOSM_UNKNOWN_VERSION) {
-            s += " Local";
-        }
-        sysProp.put("http.agent", "JOSM/1.5 ("+ s+" "+LanguageInfo.getJOSMLocaleCode()+")");
+        sysProp.put("http.agent", Version.getInstance().getAgentString());
         System.setProperties(sysProp);
     }
 }
