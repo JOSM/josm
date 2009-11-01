@@ -74,7 +74,7 @@ public class AboutAction extends JosmAction {
 
         JTextArea revision = new JTextArea();
         revision.setEditable(false);
-        revision.setText(version.getRevision());
+        revision.setText(version.getReleaseAttributes());
         about.addTab(tr("Info"), info);
         about.addTab(tr("Readme"), createScrollPane(readme));
         about.addTab(tr("Revision"), createScrollPane(revision));

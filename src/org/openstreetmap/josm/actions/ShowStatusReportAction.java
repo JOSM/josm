@@ -46,7 +46,7 @@ public final class ShowStatusReportAction extends JosmAction {
     public static String getReportHeader()
     {
         StringBuilder text = new StringBuilder();
-        text.append(Version.getInstance().getRevision());
+        text.append(Version.getInstance().getReleaseAttributes());
         text.append("\n");
         text.append("Memory Usage: ");
         text.append(Runtime.getRuntime().totalMemory()/1024/1024);

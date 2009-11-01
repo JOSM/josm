@@ -698,7 +698,12 @@ public class Preferences {
          
         }
         int v = Version.getInstance().getVersion();
-        String s = ( v == Version.JOSM_UNKNOWN_VERSION) ? "UNKNOWN" : Integer.toString(v);        
+        String s = (v == Version.JOSM_UNKNOWN_VERSION) ? "UNKNOWN" : Integer.toString(v);   
+        if (! Version.getInstance().isLocalBuild() && v != Version.JOSM_UNKNOWN_VERSION) {
+            s += " SVN";
+        } else if (Version.getInstance().isLocalBuild() && v != Version.JOSM_UNKNOWN_VERSION) {
+            s += " Local";
+        }
         sysProp.put("http.agent", "JOSM/1.5 ("+ s+" "+LanguageInfo.getJOSMLocaleCode()+")");
         System.setProperties(sysProp);
     }

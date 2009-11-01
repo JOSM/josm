@@ -1,3 +1,14 @@
+<!--
+** build.xml - main ant file for JOSM
+**
+** To build run
+**    ant clean
+**    ant dist
+** This will create 'josm-custom.jar'  in directory 'dist'. See also 
+**   https://josm.openstreetmap.de/wiki/CreateBuild
+** 
+** 
+-->
 <project name="josm" default="dist" basedir=".">
 	<property name="test.dir" value="test" />
 	<property name="src.dir" value="src" />

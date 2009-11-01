@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -16,7 +15,7 @@ import java.util.regex.Pattern;
 import org.openstreetmap.josm.Main;
 
 /**
- * Provides basic information about JOSM build currently used.
+ * Provides basic information about the currently used JOSM build.
  * 
  */
 public class Version {
@@ -66,7 +65,7 @@ public class Version {
     private int version;
     private String revision;
     private String time;
-    
+    private boolean isLocalBuild;
     
     protected HashMap<String, String> parseManifestStyleFormattedString(String content) {
         HashMap<String, String> properties = new HashMap<String, String>();
@@ -117,6 +116,14 @@ public class Version {
             time = properties.get("Build-Date");
         }
         
+        // is this a local build ?
+        //
+        isLocalBuild = false; 
+        value = properties.get("Is-Local-Build");
+        if (value != null && value.trim().toLowerCase().equals("true"))  {
+            isLocalBuild = true;
+        }
+        
         // the revision info
         //
         StringBuffer sb = new StringBuffer();
@@ -148,15 +155,38 @@ public class Version {
         return  version == 0 ? tr("UNKNOWN") : Integer.toString(version);
     }
     
-    public String getRevision() {
+    /**
+     * Replies a text with the release attributes
+     *  
+     * @return a text with the release attributes
+     */
+    public String getReleaseAttributes() {
         return revision;
     }
 
+    /**
+     * Replies the build date as string 
+     * 
+     * @return the build date as string 
+     */
     public String getTime() {
         return time;
     }
     
+    /**
+     * Replies the JOSM version. Replies {@see #JOSM_UNKNOWN_VERSION} if the version isn't known. 
+     * @return the JOSM version
+     */
     public int getVersion() {
         return version;
+    }
+
+    /**
+     * Replies true if this is a local build, i.e. an inofficial development build.
+     * 
+     * @return true if this is a local build, i.e. an inofficial development build.
+     */
+    public boolean isLocalBuild() {
+        return isLocalBuild;
     }
 }
