@@ -36,12 +36,50 @@ public class ExtensionFileFilter extends FileFilter {
     /**
      * list of supported formats
      */
-    public static ArrayList<FileImporter> importers = new ArrayList<FileImporter>(Arrays.asList(new OsmImporter(),
-            new OsmGzipImporter(), new OsmBzip2Importer(), new GpxImporter(), new NMEAImporter(), new AllFormatsImporter()));
+    public static ArrayList<FileImporter> importers;
+    
+    public static ArrayList<FileExporter> exporters;
+    
+    // add some file types only if the relevant classes are there;
+    // this gives us the option to painlessly drop them from the .jar
+    // and build JOSM versions without support for these formats
 
-    public static ArrayList<FileExporter> exporters = new ArrayList<FileExporter>(Arrays.asList(new GpxExporter(),
-            new OsmExporter(), new OsmGzipExporter(), new OsmBzip2Exporter()));
+    static {
 
+        importers = new ArrayList<FileImporter>();
+        
+        String[] importerNames = {
+            "org.openstreetmap.josm.io.OsmImporter",
+            "org.openstreetmap.josm.io.OsmGzipImporter",
+            "org.openstreetmap.josm.io.GpxImporter",
+            "org.openstreetmap.josm.io.NMEAImporter",
+            "org.openstreetmap.josm.io.OsmBzip2Importer",
+            "org.openstreetmap.josm.io.AllFormatsImporter"
+        };
+
+        for (String classname : importerNames) {
+            try {
+                Class klass = Class.forName(classname);
+                importers.add((FileImporter)klass.newInstance());
+            } catch (Exception e) {} 
+        }
+
+        exporters = new ArrayList<FileExporter>();
+
+        String[] exporterNames = {
+            "org.openstreetmap.josm.io.GpxExporter",
+            "org.openstreetmap.josm.io.OsmExporter",
+            "org.openstreetmap.josm.io.OsmGzipExporter",
+            "org.openstreetmap.josm.io.OsmBzip2Exporter"
+        };
+
+        for (String classname : exporterNames) {
+            try {
+                Class klass = Class.forName(classname);
+                exporters.add((FileExporter)klass.newInstance());
+            } catch (Exception e) {} 
+        }
+    }
 
     private final String extensions;
     private final String description;
