@@ -31,10 +31,8 @@ import java.util.*;
 import java.util.Collection;
 
 import org.openstreetmap.josm.data.coor.QuadTiling;
-import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.visitor.Visitor;
 
 
 public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
@@ -362,7 +360,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         {
             boolean ret = false;
             if (content == null)
-                content = new LinkedList<T>();
+                content = new ArrayList<T>();
             ret = content.add(o);
             if (debug && !this.isLeaf())
                 pout("added "+o.getClass().getName()+" to non-leaf with size: " + content.size());
