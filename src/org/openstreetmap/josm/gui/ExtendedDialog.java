@@ -182,12 +182,6 @@ public class ExtendedDialog extends JDialog {
         return result;
     }
 
-    @Deprecated protected void setupDialog(Component content, String[] buttonIcons) {
-        this.setContent(content);
-        this.setButtonIcons(buttonIcons);
-        this.setupDialog();
-    }
-
     protected void setupDialog() {
         setupEscListener();
 
