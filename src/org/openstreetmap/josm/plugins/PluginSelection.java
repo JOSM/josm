@@ -37,6 +37,7 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent.EventType;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
@@ -74,12 +75,17 @@ public class PluginSelection {
         drawPanel(pluginPanel);
     }
 
+    public void update() {
+        update(null);
+    }
+
     public void update(JPanel pluginPanel) {
         // refresh description
         int num = PluginDownloader.downloadDescription();
         Boolean done = false;
         loadPlugins();
-        drawPanel(pluginPanel);
+        if(pluginPanel != null)
+            drawPanel(pluginPanel);
 
         Set<PluginInformation> toUpdate = new HashSet<PluginInformation>();
         StringBuilder toUpdateStr = new StringBuilder();
@@ -114,15 +120,17 @@ public class PluginSelection {
             ed.showDialog();
 
             if (ed.getValue() == 1) {
-                PluginDownloader.update(toUpdate);
+                PluginDownloader.update(toUpdate, pluginPanel != null);
                 done = true;
             }
         }
         if (done && num >= 1) {
             Main.pref.put("pluginmanager.lastupdate", Long.toString(System.currentTimeMillis()));
+            Main.pref.putInteger("pluginmanager.version", Version.getInstance().getVersion());
         }
         loadPlugins();
-        drawPanel(pluginPanel);
+        if(pluginPanel != null)
+            drawPanel(pluginPanel);
     }
 
     public boolean finish() {

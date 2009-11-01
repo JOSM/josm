@@ -38,10 +38,12 @@ public class PluginDownloader {
         public final Collection<PluginInformation> failed = new LinkedList<PluginInformation>();
         private String errors = "";
         private int count = 0;
+        private boolean restart;
 
-        private UpdateTask(Collection<PluginInformation> toUpdate, boolean up) {
+        private UpdateTask(Collection<PluginInformation> toUpdate, boolean up, boolean restart) {
             super(up ? tr("Update Plugins") : tr("Download Plugins"));
             this.toUpdate = toUpdate;
+            this.restart = restart;
         }
 
         @Override protected void cancel() {
@@ -57,9 +59,13 @@ public class PluginDownloader {
                         JOptionPane.ERROR_MESSAGE
                 );
             } else {
+                String txt = trn("{0} Plugin successfully downloaded.", "{0} Plugins successfully downloaded.", count, count);
+                if(restart)
+                    txt += "\n"+tr("Please restart JOSM.");
+
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        trn("{0} Plugin successfully downloaded. Please restart JOSM.", "{0} Plugins successfully downloaded. Please restart JOSM.", count, count),
+                        txt,
                         tr("Information"),
                         JOptionPane.INFORMATION_MESSAGE
                 );
@@ -153,15 +159,15 @@ public class PluginDownloader {
         return false;
     }
 
-    public static void update(Collection<PluginInformation> update) {
-        Main.worker.execute(new UpdateTask(update, true));
+    public static void update(Collection<PluginInformation> update, boolean restart) {
+        Main.worker.execute(new UpdateTask(update, true, restart));
     }
 
     public Collection<PluginInformation> download(Collection<PluginInformation> download) {
         // Execute task in current thread instead of executing it in other thread and waiting for result
         // Waiting for result is not a good idea because the waiting thread will probably be either EDT
         // or worker thread. Blocking one of these threads will cause deadlock
-        UpdateTask t = new UpdateTask(download, false);
+        UpdateTask t = new UpdateTask(download, false, true);
         t.run();
         return t.failed;
     }

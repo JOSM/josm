@@ -2,7 +2,6 @@
 
 package org.openstreetmap.josm.gui;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Frame;
@@ -158,13 +157,13 @@ public class MainMenu extends JMenuBar {
     public final JosmAction about = new AboutAction();
     public final JosmAction statusreport = new ShowStatusReportAction();
 
-    public final JMenu fileMenu = addMenu(marktr("File"), KeyEvent.VK_F, 0, ht("/Menu/File"));
-    public final JMenu editMenu = addMenu(marktr("Edit"), KeyEvent.VK_E, 1, ht("/Menu/Edit"));
-    public final JMenu viewMenu = addMenu(marktr("View"), KeyEvent.VK_V, 2, ht("/Menu/View"));
-    public final JMenu toolsMenu = addMenu(marktr("Tools"), KeyEvent.VK_T, 3, ht("/Menu/Tools"));
-    public final JMenu presetsMenu = addMenu(marktr("Presets"), KeyEvent.VK_P, 4, ht("/Menu/Presets"));
+    public final JMenu fileMenu = addMenu(tr("File"), KeyEvent.VK_F, 0, ht("/Menu/File"));
+    public final JMenu editMenu = addMenu(tr("Edit"), KeyEvent.VK_E, 1, ht("/Menu/Edit"));
+    public final JMenu viewMenu = addMenu(tr("View"), KeyEvent.VK_V, 2, ht("/Menu/View"));
+    public final JMenu toolsMenu = addMenu(tr("Tools"), KeyEvent.VK_T, 3, ht("/Menu/Tools"));
+    public final JMenu presetsMenu = addMenu(tr("Presets"), KeyEvent.VK_P, 4, ht("/Menu/Presets"));
     public JMenu audioMenu = null;
-    public final JMenu helpMenu = addMenu(marktr("Help"), KeyEvent.VK_H, 5, ht("/Menu/Help"));
+    public final JMenu helpMenu = addMenu(tr("Help"), KeyEvent.VK_H, 5, ht("/Menu/Help"));
     public final int defaultMenuPos = 5;
 
     /**
@@ -184,14 +183,9 @@ public class MainMenu extends JMenuBar {
         }
         return menuitem;
     }
-    
-    @Deprecated
-    public JMenu addMenu(String name, int mnemonicKey, int position) {
-        return addMenu(name, mnemonicKey, position, "/Menu/" + name);
-    }
-    
+
     public JMenu addMenu(String name, int mnemonicKey, int position, String relativeHelpTopic) {
-        JMenu menu = new JMenu(tr(name));
+        JMenu menu = new JMenu(name);
         Shortcut.registerShortcut("menu:" + name, tr("Menu: {0}", tr(name)), mnemonicKey,
                 Shortcut.GROUP_MNEMONIC).setMnemonic(menu);
         add(menu, position);
@@ -313,7 +307,7 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, historyinfo);
 
         if (!Main.pref.getBoolean("audio.menuinvisible", false)) {
-            audioMenu = addMenu(marktr("Audio"), KeyEvent.VK_A, 5, ht("/Menu/Audio"));
+            audioMenu = addMenu(tr("Audio"), KeyEvent.VK_A, 5, ht("/Menu/Audio"));
             add(audioMenu, audioPlayPause);
             add(audioMenu, audioNext);
             add(audioMenu, audioPrev);

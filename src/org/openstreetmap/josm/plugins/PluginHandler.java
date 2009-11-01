@@ -90,9 +90,48 @@ public class PluginHandler {
             }
         }
 
-
         if (plugins.isEmpty())
             return;
+
+        if(early)
+        {
+            String doUpdate = null;
+            String check = null;
+            int v = Version.getInstance().getVersion();
+            if(Main.pref.getInteger("pluginmanager.version", 0) < v)
+            {
+                doUpdate = tr("You updated your JOSM software\nTo prevent problems the plugins should be updated as well.\n"
+                        + "Update plugins now?");
+                check = "pluginmanger.version";
+            }
+            else
+            {
+                long tim = System.currentTimeMillis();
+                long last = Main.pref.getLong("pluginmanager.lastupdate", 0);
+                Integer maxTime = Main.pref.getInteger("pluginmanager.warntime", 60);
+                long d = (tim - last)/(24*60*60*1000l);
+                if ((last <= 0) || (maxTime <= 0)) {
+                    Main.pref.put("pluginmanager.lastupdate",Long.toString(tim));
+                } else if (d > maxTime) {
+                    doUpdate = tr("Last plugin update more than {0} days ago.", d);
+                    check = "pluginmanager.time";
+                }
+            }
+            if(doUpdate != null)
+            {
+                ExtendedDialog dialog = new ExtendedDialog(
+                        Main.parent,
+                        tr("Update plugins"),
+                        new String[] {tr("Update plugins"), tr("Skip update")}
+                );
+                dialog.setContent(doUpdate);
+                dialog.toggleEnable(check);
+                dialog.setButtonIcons( new String[] {"dialogs/refresh.png", "cancel.png"});
+                dialog.showDialog();
+                if(dialog.getValue() == 1)
+                    new PluginSelection().update();
+            }
+        }
 
         SortedMap<Integer, Collection<PluginInformation>> p = new TreeMap<Integer, Collection<PluginInformation>>();
         for (String pluginName : plugins) {
@@ -142,26 +181,6 @@ public class PluginHandler {
                         tr("Plugin not found: {0}.", pluginName),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
-                );
-            }
-        }
-
-        if (!early) {
-            long tim = System.currentTimeMillis();
-            long last = Main.pref.getLong("pluginmanager.lastupdate", 0);
-            Integer maxTime = Main.pref.getInteger("pluginmanager.warntime", 30);
-            long d = (tim - last)/(24*60*60*1000l);
-            if ((last <= 0) || (maxTime <= 0)) {
-                Main.pref.put("pluginmanager.lastupdate",Long.toString(tim));
-            } else if (d > maxTime) {
-                JOptionPane.showMessageDialog(Main.parent,
-                        "<html>" +
-                        tr("Last plugin update more than {0} days ago.", d) +
-                        "<br><em>" +
-                        tr("(You can change the number of days after which this warning appears<br>by setting the config option 'pluginmanager.warntime'.)") +
-                        "</html>",
-                        tr("Warning"),
-                        JOptionPane.WARNING_MESSAGE
                 );
             }
         }

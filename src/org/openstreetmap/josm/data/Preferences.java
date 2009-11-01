@@ -322,7 +322,7 @@ public class Preferences {
      */
     public void save() throws IOException {
         /* currently unused, but may help to fix configuration issues in future */
-        properties.put("josm.version", Version.getInstance().getVersionString());
+        putInteger("josm.version", Version.getInstance().getVersion());
 
         updateSystemProperties();
         File prefFile = new File(getPreferencesDirFile(), "preferences");
