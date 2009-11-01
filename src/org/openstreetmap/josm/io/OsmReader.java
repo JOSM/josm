@@ -168,6 +168,19 @@ public class OsmReader {
         private OsmPrimitiveData current;
         private String generator;
 
+        protected void fixLegacyVersion(Attributes atts) throws SAXException {
+            if (ds.version.equals("0.6") && atts.getValue("version") == null) {
+                throwException(
+                        tr("Mandatory attribute ''version'' missing for object with id {0}.", current.id)
+                );
+            } else if (ds.version.equals("0.5") && atts.getValue("version") == null) {
+                // legacy mode. 0.5 data might not have version attribute. Init with
+                // default value 1
+                //
+                current.version = 1;
+            }
+        }
+
         @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
             if (qName.equals("osm")) {
                 if (atts == null) {
@@ -213,11 +226,13 @@ public class OsmReader {
                 current = new OsmPrimitiveData();
                 current.latlon = new LatLon(getDouble(atts, "lat"), getDouble(atts, "lon"));
                 readCommon(atts, current);
+                fixLegacyVersion(atts);
                 Node n = current.createNode();
                 externalIdMap.put("n"+current.id, n);
             } else if (qName.equals("way")) {
                 current = new OsmPrimitiveData();
                 readCommon(atts, current);
+                fixLegacyVersion(atts);
                 Way w = current.createWay();
                 externalIdMap.put("w"+current.id, w);
                 ways.put(current.id, new ArrayList<Long>());
@@ -246,6 +261,7 @@ public class OsmReader {
             } else if (qName.equals("relation")) {
                 current = new OsmPrimitiveData();
                 readCommon(atts, current);
+                fixLegacyVersion(atts);
                 Relation r = current.createRelation();
                 externalIdMap.put("r"+current.id, r );
                 relations.put(current.id, new LinkedList<RelationMemberData>());
