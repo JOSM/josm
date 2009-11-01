@@ -1,5 +1,6 @@
 package org.openstreetmap.josm.gui.dialogs.relation;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
@@ -67,6 +68,8 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -187,6 +190,7 @@ public class GenericRelationEditor extends RelationEditor {
         );
 
         memberTableModel.setSelectedMembers(selectedMembers);
+        HelpUtil.setHelpContext(getRootPane(),ht("/Dialog/RelationEditor"));
     }
 
     /**
@@ -200,7 +204,7 @@ public class GenericRelationEditor extends RelationEditor {
 
         pnl.add(new SideButton(new OKAction()));
         pnl.add(new SideButton(new CancelAction()));
-
+        pnl.add(new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/RelationEditor"))));
         return pnl;
     }
 
