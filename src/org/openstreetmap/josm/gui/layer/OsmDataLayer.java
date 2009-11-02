@@ -111,30 +111,32 @@ public class OsmDataLayer extends Layer {
     }
 
     public final static class DataCountVisitor extends AbstractVisitor {
-        public final int[] normal = new int[3];
-        public final int[] deleted = new int[3];
-        public final String[] names = {
-                OsmPrimitiveType.NODE.getAPIName(),
-                OsmPrimitiveType.WAY.getAPIName(),
-                OsmPrimitiveType.RELATION.getAPIName()
-        };
+        public int nodes;
+        public int ways;
+        public int relations;
+        public int deletedNodes;
+        public int deletedWays;
+        public int deletedRelations;
 
-        private void inc(final OsmPrimitive osm, final int i) {
-            normal[i]++;
-            if (osm.isDeleted()) {
-                deleted[i]++;
+        public void visit(final Node n) {
+            nodes++;
+            if (n.isDeleted()) {
+                deletedNodes++;
             }
         }
 
-        public void visit(final Node n) {
-            inc(n, 0);
+        public void visit(final Way w) {
+            ways++;
+            if (w.isDeleted()) {
+                deletedWays++;
+            }
         }
 
-        public void visit(final Way w) {
-            inc(w, 1);
-        }
-        public void visit(final Relation w) {
-            inc(w, 2);
+        public void visit(final Relation r) {
+            relations++;
+            if (r.isDeleted()) {
+                deletedRelations++;
+            }
         }
     }
 
@@ -248,9 +250,12 @@ public class OsmDataLayer extends Layer {
     }
 
     @Override public String getToolTipText() {
-        String tool = "";
-        tool += undeletedSize(data.getNodes())+" "+trn("node", "nodes", undeletedSize(data.getNodes()))+", ";
-        tool += undeletedSize(data.getWays())+" "+trn("way", "ways", undeletedSize(data.getWays()));
+        int nodes = undeletedSize(data.getNodes());
+        int ways = undeletedSize(data.getWays());
+
+        String tool = trn("{0} node", "{0} nodes", nodes, nodes)+", ";
+        tool += trn("{0} way", "{0} ways", ways, ways);
+
         if (data.version != null) {
             tool += ", " + tr("version {0}", data.version);
         }
@@ -499,14 +504,23 @@ public class OsmDataLayer extends Layer {
             osm.visit(counter);
         }
         final JPanel p = new JPanel(new GridBagLayout());
+
+        String nodeText = trn("{0} node", "{0} nodes", counter.nodes, counter.nodes);
+        if (counter.deletedNodes > 0)
+            nodeText += " ("+trn("{0} deleted", "{0} deleted", counter.deletedNodes, counter.deletedNodes)+")";
+
+        String wayText = trn("{0} way", "{0} ways", counter.ways, counter.ways);
+        if (counter.deletedWays > 0)
+            wayText += " ("+trn("{0} deleted", "{0} deleted", counter.deletedWays, counter.deletedWays)+")";
+
+        String relationText = trn("{0} relation", "{0} relations", counter.relations, counter.relations);
+        if (counter.deletedRelations > 0)
+            relationText += " ("+trn("{0} deleted", "{0} deleted", counter.deletedRelations, counter.deletedRelations)+")";
+
         p.add(new JLabel(tr("{0} consists of:", getName())), GBC.eol());
-        for (int i = 0; i < counter.normal.length; ++i) {
-            String s = counter.normal[i]+" "+trn(counter.names[i],counter.names[i]+"s",counter.normal[i]);
-            if (counter.deleted[i] > 0) {
-                s += tr(" ({0} deleted.)",counter.deleted[i]);
-            }
-            p.add(new JLabel(s, ImageProvider.get("data", counter.names[i]), JLabel.HORIZONTAL), GBC.eop().insets(15,0,0,0));
-        }
+        p.add(new JLabel(nodeText, ImageProvider.get("data", "node"), JLabel.HORIZONTAL), GBC.eop().insets(15,0,0,0));
+        p.add(new JLabel(wayText, ImageProvider.get("data", "way"), JLabel.HORIZONTAL), GBC.eop().insets(15,0,0,0));
+        p.add(new JLabel(relationText, ImageProvider.get("data", "relation"), JLabel.HORIZONTAL), GBC.eop().insets(15,0,0,0));
         p.add(new JLabel(tr("API version: {0}", (data.version != null) ? data.version : tr("unset"))));
 
         return p;
