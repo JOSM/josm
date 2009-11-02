@@ -131,7 +131,7 @@ public class DefaultNameFormatter implements NameFormatter {
                                 (way.get("landuse") != null) ? tr("landuse") : "";
             }
 
-            int nodesNo = new HashSet<Node>(way.getNodes()).size();
+            int nodesNo = way.getNodesCount();
             String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
             name += (name.length() > 0) ? " ("+nodes+")" : nodes;
             if(way.errors != null) {
