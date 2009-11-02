@@ -115,7 +115,7 @@ public class WindowGeometry {
 
     protected void initFromPreferences(String preferenceKey) throws WindowGeometryException {
         String value = Main.pref.get(preferenceKey);
-        if (value == null)
+        if (value == null || value.equals(""))
             throw new WindowGeometryException(tr("Preference with key ''{0}'' does not exist. Can''t restore window geometry from preferences.", preferenceKey));
         topLeft = new Point();
         extent = new Dimension();
@@ -155,7 +155,7 @@ public class WindowGeometry {
         try {
             initFromPreferences(preferenceKey);
         } catch(WindowGeometryException e) {
-            System.out.println(tr("Warning: Failed to restore window geometry from key ''{0}''. Falling back to default geometry. Details: {1}", preferenceKey, e.getMessage()));
+//            System.out.println(tr("Warning: Failed to restore window geometry from key ''{0}''. Falling back to default geometry. Details: {1}", preferenceKey, e.getMessage()));
             initFromWindowGeometry(defaultGeometry);
         }
     }
