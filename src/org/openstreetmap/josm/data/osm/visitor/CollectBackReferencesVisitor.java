@@ -51,20 +51,20 @@ public class CollectBackReferencesVisitor extends AbstractVisitor {
           makeLookupTable();
     }
     
-    private void makeLookupTable(){
-       for (Way w : ds.ways) {
-          for (Node n : w.getNodes()) {
-             if(!lookupTable.containsKey(n)) lookupTable.put(n, new HashSet<OsmPrimitive>());
-             lookupTable.get(n).add(w);
-          }
-       }
-       for (Relation r : ds.relations) {
-          for (RelationMember m : r.getMembers()) {
-             OsmPrimitive o = m.getMember();
-             if(!lookupTable.containsKey(o)) lookupTable.put(o, new HashSet<OsmPrimitive>());
-             lookupTable.get(o).add(r);
-          }
-       }
+    private void makeLookupTable() {
+        for (Way w : ds.getWays()) {
+            for (Node n : w.getNodes()) {
+                if (!lookupTable.containsKey(n)) lookupTable.put(n, new HashSet<OsmPrimitive>());
+                lookupTable.get(n).add(w);
+            }
+        }
+        for (Relation r : ds.getRelations()) {
+            for (RelationMember m : r.getMembers()) {
+                OsmPrimitive o = m.getMember();
+                if (!lookupTable.containsKey(o)) lookupTable.put(o, new HashSet<OsmPrimitive>());
+                lookupTable.get(o).add(r);
+            }
+        }
     }
 
     /**

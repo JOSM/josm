@@ -1,4 +1,3 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm.visitor;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -59,14 +58,20 @@ public class MergeVisitor extends AbstractVisitor {
         this.myDataSet = myDataSet;
         this.theirDataSet = theirDataSet;
 
-        for (Node n : myDataSet.nodes) if (!n.isNew()) {
-            nodeshash.put(n.getId(), n);
+        for (Node n : myDataSet.getNodes()) {
+            if (!n.isNew()) {
+                nodeshash.put(n.getId(), n);
+            }
         }
-        for (Way w : myDataSet.ways) if (!w.isNew()) {
-            wayshash.put(w.getId(), w);
+        for (Way w : myDataSet.getWays()) {
+            if (!w.isNew()) {
+                wayshash.put(w.getId(), w);
+            }
         }
-        for (Relation r : myDataSet.relations) if (!r.isNew()) {
-            relshash.put(r.getId(), r);
+        for (Relation r : myDataSet.getRelations()) {
+            if (!r.isNew()) {
+                relshash.put(r.getId(), r);
+            }
         }
         conflicts = new ConflictCollection();
         merged = new HashMap<OsmPrimitive, OsmPrimitive>();
@@ -161,16 +166,16 @@ public class MergeVisitor extends AbstractVisitor {
      * data.
      */
     public void fixReferences() {
-        for (Way w : myDataSet.ways) {
+        for (Way w : myDataSet.getWays()) {
             fixWay(w);
             fixIncomplete(w);
         }
-        for (Relation r : myDataSet.relations) {
+        for (Relation r : myDataSet.getRelations()) {
             fixRelation(r);
         }
         for (OsmPrimitive osm : conflicts.getMyConflictParties())
             if (osm instanceof Way) {
-                fixWay((Way)osm);
+                fixWay((Way) osm);
             } else if (osm instanceof Relation) {
                 fixRelation((Relation) osm);
             }

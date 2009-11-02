@@ -19,7 +19,7 @@ public class APIDataSetTest {
         r.put("name", "r1");
         r.incomplete = false;
         DataSet ds = new DataSet();
-        ds.relations.add(r);
+        ds.addPrimitive(r);
 
         APIDataSet apiDataSet = new APIDataSet();
         apiDataSet.init(ds);
@@ -47,8 +47,8 @@ public class APIDataSetTest {
         r1.addMember(new RelationMember("", r2));
 
         DataSet ds = new DataSet();
-        ds.relations.add(r1);
-        ds.relations.add(r2);
+        ds.addPrimitive(r1);
+        ds.addPrimitive(r2);
 
         APIDataSet apiDataSet = new APIDataSet();
         apiDataSet.init(ds);
@@ -87,10 +87,10 @@ public class APIDataSetTest {
         r2.addMember(new RelationMember("", r3));
 
         DataSet ds = new DataSet();
-        ds.relations.add(r1);
-        ds.relations.add(r2);
-        ds.relations.add(r3);
-        ds.relations.add(r4);
+        ds.addPrimitive(r1);
+        ds.addPrimitive(r2);
+        ds.addPrimitive(r3);
+        ds.addPrimitive(r4);
 
         APIDataSet apiDataSet = new APIDataSet();
         apiDataSet.init(ds);
@@ -129,9 +129,9 @@ public class APIDataSetTest {
         r1.addMember(new RelationMember("", r3));
 
         DataSet ds = new DataSet();
-        ds.relations.add(r1);
-        ds.relations.add(r2);
-        ds.relations.add(r3);
+        ds.addPrimitive(r1);
+        ds.addPrimitive(r2);
+        ds.addPrimitive(r3);
 
         APIDataSet apiDataSet = new APIDataSet();
         apiDataSet.init(ds);
@@ -166,9 +166,9 @@ public class APIDataSetTest {
         r3.addMember(new RelationMember("", r1));
 
         DataSet ds = new DataSet();
-        ds.relations.add(r1);
-        ds.relations.add(r2);
-        ds.relations.add(r3);
+        ds.addPrimitive(r1);
+        ds.addPrimitive(r2);
+        ds.addPrimitive(r3);
 
         APIDataSet apiDataSet = new APIDataSet();
         apiDataSet.init(ds);

@@ -176,22 +176,22 @@ public final class Way extends OsmPrimitive {
     public void load(PrimitiveData data, DataSet dataSet) {
         super.load(data, dataSet);
 
-        WayData wayData = (WayData)data;
+        WayData wayData = (WayData) data;
 
         // TODO We should have some lookup by id mechanism in future to speed this up
         Node marker = new Node(0);
         Map<Long, Node> foundNodes = new HashMap<Long, Node>();
-        for (Long nodeId:wayData.getNodes()) {
+        for (Long nodeId : wayData.getNodes()) {
             foundNodes.put(nodeId, marker);
         }
-        for (Node node:dataSet.nodes) {
+        for (Node node : dataSet.getNodes()) {
             if (foundNodes.get(node.getUniqueId()) == marker) {
                 foundNodes.put(node.getUniqueId(), node);
             }
         }
 
         List<Node> newNodes = new ArrayList<Node>(wayData.getNodes().size());
-        for (Long nodeId:wayData.getNodes()) {
+        for (Long nodeId : wayData.getNodes()) {
             Node node = foundNodes.get(nodeId);
             if (node != marker) {
                 newNodes.add(foundNodes.get(nodeId));

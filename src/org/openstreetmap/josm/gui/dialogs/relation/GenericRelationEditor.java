@@ -137,7 +137,7 @@ public class GenericRelationEditor extends RelationEditor {
             tagEditorPanel.getModel().initFromPrimitive(relation);
             //this.tagEditorModel.initFromPrimitive(relation);
             this.memberTableModel.populate(relation);
-            if (!getLayer().data.relations.contains(relation)) {
+            if (!getLayer().data.getRelations().contains(relation)) {
                 // treat it as a new relation if it doesn't exist in the
                 // data set yet.
                 setRelation(null);
@@ -596,12 +596,12 @@ public class GenericRelationEditor extends RelationEditor {
                             tr("Remove them, clean up relation")
             );
             switch(ret) {
-                case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return;
-                case JOptionPane.CLOSED_OPTION: return;
-                case JOptionPane.NO_OPTION: return;
-                case JOptionPane.YES_OPTION:
-                    memberTableModel.removeMembersReferringTo(toCheck);
-                    break;
+            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return;
+            case JOptionPane.CLOSED_OPTION: return;
+            case JOptionPane.NO_OPTION: return;
+            case JOptionPane.YES_OPTION:
+                memberTableModel.removeMembersReferringTo(toCheck);
+                break;
             }
         }
     }
@@ -632,11 +632,11 @@ public class GenericRelationEditor extends RelationEditor {
                     null
             );
             switch(ret) {
-                case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION : return true;
-                case JOptionPane.YES_OPTION: return true;
-                case JOptionPane.NO_OPTION: return false;
-                case JOptionPane.CLOSED_OPTION: return false;
-                case JOptionPane.CANCEL_OPTION: throw new AddAbortException();
+            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION : return true;
+            case JOptionPane.YES_OPTION: return true;
+            case JOptionPane.NO_OPTION: return false;
+            case JOptionPane.CLOSED_OPTION: return false;
+            case JOptionPane.CANCEL_OPTION: throw new AddAbortException();
             }
             // should not happen
             return false;
@@ -1254,10 +1254,10 @@ public class GenericRelationEditor extends RelationEditor {
                     options[0]
             );
             switch(ret) {
-                case JOptionPane.YES_OPTION: return true;
-                case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return true;
-                default:
-                    return false;
+            case JOptionPane.YES_OPTION: return true;
+            case ConditionalOptionPaneUtil.DIALOG_DISABLED_OPTION: return true;
+            default:
+                return false;
             }
         }
 

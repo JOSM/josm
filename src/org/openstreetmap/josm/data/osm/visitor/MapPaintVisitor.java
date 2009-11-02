@@ -23,11 +23,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeSet;
-import java.util.Comparator;
 
 import javax.swing.ImageIcon;
 
@@ -531,6 +530,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         osm.mappaintDrawnCode = paintid;
     }
 
+    @Override
     public void visit(Relation r) {};
     public void paintUnselectedRelation(Relation r) {
         r.mappaintVisibleCode = 0;
@@ -1030,8 +1030,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 AreaElemStyle areaStyle = (AreaElemStyle)wayStyle;
                 for (PolyData pd : outerPoly) {
                     Polygon p = pd.get();
-                    if(!isPolygonVisible(p))
+                    if(!isPolygonVisible(p)) {
                         continue;
+                    }
 
                     boolean selected = pd.selected || data.isSelected(pd.way) || data.isSelected(r);
                     drawAreaPolygon(p, selected ? selectedColor : areaStyle.color);
@@ -1054,8 +1055,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 ElemStyle innerStyle = getPrimitiveStyle(wInner);
                 if(innerStyle == null)
                 {
-                    if (data.isSelected(wInner))
+                    if (data.isSelected(wInner)) {
                         continue;
+                    }
                     if(zoomok && (wInner.mappaintDrawnCode != paintid
                             || outer.size() == 0))
                     {
@@ -1088,8 +1090,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 if(outerStyle == null)
                 {
                     // Selected ways are drawn at the very end
-                    if (data.isSelected(wOuter))
+                    if (data.isSelected(wOuter)) {
                         continue;
+                    }
                     if(zoomok)
                     {
                         drawWay(wOuter, ((AreaElemStyle)wayStyle).line,
@@ -1133,30 +1136,30 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
     protected Point2D getCentroid(Polygon p)
     {
-	double cx = 0.0, cy = 0.0, a = 0.0;
+        double cx = 0.0, cy = 0.0, a = 0.0;
 
-	// usually requires points[0] == points[npoints] and can then use i+1 instead of j.
-	// Faked it slowly using j.  If this is really gets used, this should be fixed.
-	for (int i = 0;  i < p.npoints;  i++) {
-	    int j = i+1 == p.npoints ? 0 : i+1;
-	    a += (p.xpoints[i] * p.ypoints[j]) - (p.ypoints[i] * p.xpoints[j]);
-	    cx += (p.xpoints[i] + p.xpoints[j]) * (p.xpoints[i] * p.ypoints[j] - p.ypoints[i] * p.xpoints[j]);
-	    cy += (p.ypoints[i] + p.ypoints[j]) * (p.xpoints[i] * p.ypoints[j] - p.ypoints[i] * p.xpoints[j]);
-	}
-	return new Point2D.Double(cx / (3.0*a), cy / (3.0*a));
+        // usually requires points[0] == points[npoints] and can then use i+1 instead of j.
+        // Faked it slowly using j.  If this is really gets used, this should be fixed.
+        for (int i = 0;  i < p.npoints;  i++) {
+            int j = i+1 == p.npoints ? 0 : i+1;
+            a += (p.xpoints[i] * p.ypoints[j]) - (p.ypoints[i] * p.xpoints[j]);
+            cx += (p.xpoints[i] + p.xpoints[j]) * (p.xpoints[i] * p.ypoints[j] - p.ypoints[i] * p.xpoints[j]);
+            cy += (p.ypoints[i] + p.ypoints[j]) * (p.xpoints[i] * p.ypoints[j] - p.ypoints[i] * p.xpoints[j]);
+        }
+        return new Point2D.Double(cx / (3.0*a), cy / (3.0*a));
     }
 
     protected double getArea(Polygon p)
     {
-	double sum = 0.0;
+        double sum = 0.0;
 
-	// usually requires points[0] == points[npoints] and can then use i+1 instead of j.
-	// Faked it slowly using j.  If this is really gets used, this should be fixed.
-	for (int i = 0;  i < p.npoints;  i++) {
-	    int j = i+1 == p.npoints ? 0 : i+1;
-	    sum = sum + (p.xpoints[i] * p.ypoints[j]) - (p.ypoints[i] * p.xpoints[j]);
-	}
-	return Math.abs(sum/2.0);
+        // usually requires points[0] == points[npoints] and can then use i+1 instead of j.
+        // Faked it slowly using j.  If this is really gets used, this should be fixed.
+        for (int i = 0;  i < p.npoints;  i++) {
+            int j = i+1 == p.npoints ? 0 : i+1;
+            sum = sum + (p.xpoints[i] * p.ypoints[j]) - (p.ypoints[i] * p.xpoints[j]);
+        }
+        return Math.abs(sum/2.0);
     }
 
     protected void drawArea(Way w, Color color)
@@ -1167,64 +1170,64 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), fillAlpha));
         g.fillPolygon(polygon);
 
-	if (showNames > dist) {
-	    String name = getWayName(w);
-	    if (name!=null /* && annotate */) {
-		Rectangle pb = polygon.getBounds();
-		FontMetrics fontMetrics = g.getFontMetrics(orderFont); // if slow, use cache
-		Rectangle2D nb = fontMetrics.getStringBounds(name, g); // if slow, approximate by strlen()*maxcharbounds(font)
+        if (showNames > dist) {
+            String name = getWayName(w);
+            if (name!=null /* && annotate */) {
+                Rectangle pb = polygon.getBounds();
+                FontMetrics fontMetrics = g.getFontMetrics(orderFont); // if slow, use cache
+                Rectangle2D nb = fontMetrics.getStringBounds(name, g); // if slow, approximate by strlen()*maxcharbounds(font)
 
-		// Point2D c = getCentroid(polygon);
-		// Using the Centroid is Nicer for buildings like: +--------+
-		// but this needs to be fast.  As most houses are  |   42   |
-		// boxes anyway, the center of the bounding box    +---++---+
-		// will have to do.                                    ++
-		// Centroids are not optimal either, just imagine a U-shaped house.
-		// Point2D c = new Point2D.Double(pb.x + pb.width / 2.0, pb.y + pb.height / 2.0);
-		// Rectangle2D.Double centeredNBounds =
-		//     new Rectangle2D.Double(c.getX() - nb.getWidth()/2,
-		//                            c.getY() - nb.getHeight()/2,
-		//                            nb.getWidth(),
-		//                            nb.getHeight());
+                // Point2D c = getCentroid(polygon);
+                // Using the Centroid is Nicer for buildings like: +--------+
+                // but this needs to be fast.  As most houses are  |   42   |
+                // boxes anyway, the center of the bounding box    +---++---+
+                // will have to do.                                    ++
+                // Centroids are not optimal either, just imagine a U-shaped house.
+                // Point2D c = new Point2D.Double(pb.x + pb.width / 2.0, pb.y + pb.height / 2.0);
+                // Rectangle2D.Double centeredNBounds =
+                //     new Rectangle2D.Double(c.getX() - nb.getWidth()/2,
+                //                            c.getY() - nb.getHeight()/2,
+                //                            nb.getWidth(),
+                //                            nb.getHeight());
 
-		Rectangle centeredNBounds = new Rectangle(pb.x + (int)((pb.width - nb.getWidth())/2.0),
-							  pb.y + (int)((pb.height - nb.getHeight())/2.0),
-							  (int)nb.getWidth(),
-							  (int)nb.getHeight());
+                Rectangle centeredNBounds = new Rectangle(pb.x + (int)((pb.width - nb.getWidth())/2.0),
+                        pb.y + (int)((pb.height - nb.getHeight())/2.0),
+                        (int)nb.getWidth(),
+                        (int)nb.getHeight());
 
-		//// Draw name bounding box for debugging:
-		// g.setColor(new Color(255,255,0,128));
-		// g.drawRect((int)centeredNBounds.getMinX(),
-		//	   (int)centeredNBounds.getMinY(),
-		//	   (int)centeredNBounds.getWidth(),
-		//	   (int)centeredNBounds.getHeight());
+                //// Draw name bounding box for debugging:
+                // g.setColor(new Color(255,255,0,128));
+                // g.drawRect((int)centeredNBounds.getMinX(),
+                //	   (int)centeredNBounds.getMinY(),
+                //	   (int)centeredNBounds.getWidth(),
+                //	   (int)centeredNBounds.getHeight());
 
-		if ((pb.width >= nb.getWidth() && pb.height >= nb.getHeight()) && // quick check
-		    polygon.contains(centeredNBounds) // slow but nice
-		    ) {
-		    g.setColor(areaTextColor);
-		    Font defaultFont = g.getFont();
-		    g.setFont (orderFont);
-		    g.drawString (name,
-				  (int)(centeredNBounds.getMinX() - nb.getMinX()),
-				  (int)(centeredNBounds.getMinY() - nb.getMinY()));
-		    g.setFont(defaultFont);
-		}
-	    }
-	}
+                if ((pb.width >= nb.getWidth() && pb.height >= nb.getHeight()) && // quick check
+                        polygon.contains(centeredNBounds) // slow but nice
+                ) {
+                    g.setColor(areaTextColor);
+                    Font defaultFont = g.getFont();
+                    g.setFont (orderFont);
+                    g.drawString (name,
+                            (int)(centeredNBounds.getMinX() - nb.getMinX()),
+                            (int)(centeredNBounds.getMinY() - nb.getMinY()));
+                    g.setFont(defaultFont);
+                }
+            }
+        }
     }
 
     protected String getWayName(Way w) {
-	String name = null;
-	if (w.hasKeys()) {
-	    for (String rn : regionalNameOrder) {
-		name = w.get(rn);
-		if (name != null) {
-		    break;
-		}
-	    }
-	}
-	return name;
+        String name = null;
+        if (w.hasKeys()) {
+            for (String rn : regionalNameOrder) {
+                name = w.get(rn);
+                if (name != null) {
+                    break;
+                }
+            }
+        }
+        return name;
     }
 
     protected void drawAreaPolygon(Polygon polygon, Color color)
@@ -1409,17 +1412,17 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     <T extends OsmPrimitive> Collection<T> selectedLast(final DataSet data, Collection <T> prims) {
         ArrayList<T> sorted = new ArrayList<T>(prims);
         Collections.sort(sorted,
-            new Comparator<T>() {
-                public int compare(T o1, T o2) {
-                    boolean s1 = data.isSelected(o1);
-                    boolean s2 = data.isSelected(o2);
-                    if (s1 && !s2)
-                        return 1;
-                    if (!s1 && s2)
-                        return -1;
-                    return o1.compareTo(o2);
-                }
-            });
+                new Comparator<T>() {
+            public int compare(T o1, T o2) {
+                boolean s1 = data.isSelected(o1);
+                boolean s2 = data.isSelected(o2);
+                if (s1 && !s2)
+                    return 1;
+                if (!s1 && s2)
+                    return -1;
+                return o1.compareTo(o2);
+            }
+        });
         return sorted;
     }
 
@@ -1430,14 +1433,14 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         //boolean profiler = Main.pref.getBoolean("mappaint.profiler",false);
         //profilerOmitDraw = Main.pref.getBoolean("mappaint.profiler.omitdraw",false);
 
-        useStyleCache = Main.pref.getBoolean("mappaint.cache",true);
+        useStyleCache = Main.pref.getBoolean("mappaint.cache", true);
         int fillAreas = Main.pref.getInteger("mappaint.fillareas", 10000000);
         fillAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
         showNames = Main.pref.getInteger("mappaint.shownames", 10000000);
         showIcons = Main.pref.getInteger("mappaint.showicons", 10000000);
         useStrokes = Main.pref.getInteger("mappaint.strokes", 10000000);
-        LatLon ll1 = nc.getLatLon(0,0);
-        LatLon ll2 = nc.getLatLon(100,0);
+        LatLon ll1 = nc.getLatLon(0, 0);
+        LatLon ll2 = nc.getLatLon(100, 0);
         dist = ll1.greatCircleDistance(ll2);
 
         //long profilerStart = java.lang.System.currentTimeMillis();
@@ -1451,19 +1454,19 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         //        "dist=" + (int)dist + "m)");
 
         getSettings(virtual);
-        useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth",false);
-        zoomLevelDisplay = Main.pref.getBoolean("mappaint.zoomLevelDisplay",false);
+        useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth", false);
+        zoomLevelDisplay = Main.pref.getBoolean("mappaint.zoomLevelDisplay", false);
         circum = Main.map.mapView.getDist100Pixel();
         styles = MapPaintStyles.getStyles().getStyleSet();
-        drawMultipolygon = Main.pref.getBoolean("mappaint.multipolygon",true);
-        drawRestriction = Main.pref.getBoolean("mappaint.restriction",true);
+        drawMultipolygon = Main.pref.getBoolean("mappaint.multipolygon", true);
+        drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
         //restrictionDebug = Main.pref.getBoolean("mappaint.restriction.debug",false);
-        leftHandTraffic = Main.pref.getBoolean("mappaint.lefthandtraffic",false);
-        orderFont = new Font(Main.pref.get("mappaint.font","Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
-        String[] names = {"name:"+LanguageInfo.getJOSMLocaleCode(), "name", "int_name", "ref", "operator", "brand","addr:housenumber"};
+        leftHandTraffic = Main.pref.getBoolean("mappaint.lefthandtraffic", false);
+        orderFont = new Font(Main.pref.get("mappaint.font", "Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
+        String[] names = {"name:" + LanguageInfo.getJOSMLocaleCode(), "name", "int_name", "ref", "operator", "brand", "addr:housenumber"};
         regionalNameOrder = Main.pref.getCollection("mappaint.nameOrder", Arrays.asList(names));
-        minEN = nc.getEastNorth(0,nc.getHeight()-1);
-        maxEN = nc.getEastNorth(nc.getWidth()-1,0);
+        minEN = nc.getEastNorth(0, nc.getHeight() - 1);
+        maxEN = nc.getEastNorth(nc.getWidth() - 1, 0);
 
 
         ++paintid;
@@ -1486,10 +1489,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
             /*** RELATIONS ***/
             //    profilerN = 0;
-            for (final Relation osm : data.relations)
-            {
-                if(drawable(osm) && osm.mappaintVisibleCode != viewid)
-                {
+            for (final Relation osm: data.getRelations()) {
+                if (drawable(osm) && osm.mappaintVisibleCode != viewid) {
                     paintUnselectedRelation(osm);
                     //            profilerN++;
                 }
@@ -1503,16 +1504,14 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
             /*** AREAS ***/
             //    profilerN = 0;
-            for (final Way osm : selectedLast(data, data.ways)) {
+            for (final Way osm : selectedLast(data, data.getWays())) {
                 if (drawable(osm)
-                        && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid)
-                {
-                    if(isPrimitiveArea(osm) && osm.mappaintDrawnAreaCode != paintid)
-                    {
+                        && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid) {
+                    if (isPrimitiveArea(osm) && osm.mappaintDrawnAreaCode != paintid) {
                         drawWay(osm, fillAreas);
                         //                profilerN++;
                     }// else {
-                        noAreaWays.add(osm);
+                    noAreaWays.add(osm);
                     //}
                 }
             }
@@ -1526,8 +1525,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
             /*** WAYS ***/
             //    profilerN = 0;
-            for (final Way osm : noAreaWays)
-            {
+            for (final Way osm : noAreaWays) {
                 drawWay(osm, 0);
                 //        profilerN++;
             }
@@ -1538,18 +1536,16 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             //            (java.lang.System.currentTimeMillis()-profilerLast), profilerN, profilerVisibleWays);
             //        profilerLast = java.lang.System.currentTimeMillis();
             //    }
-        }
-        else
-        {
+        } else {
             /*** WAYS (filling disabled)  ***/
             //    profilerN = 0;
-            for (final Way way : data.ways)
+            for (final Way way: data.getWays()) {
                 if (drawable(way) && !data.isSelected(way)
-                        && way.mappaintVisibleCode != viewid )
-                {
+                        && way.mappaintVisibleCode != viewid) {
                     drawWay(way, 0);
                     //            profilerN++;
                 }
+            }
 
             //    if(profiler)
             //    {
@@ -1564,15 +1560,16 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         for (final OsmPrimitive osm : data.getSelected()) {
             if (!osm.incomplete && !osm.isDeleted() && !(osm instanceof Node)
                     && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid
-                    )
-            {
+            ) {
                 osm.visit(new AbstractVisitor() {
                     public void visit(Way w) {
                         drawWay(w, 0);
                     }
+
                     public void visit(Node n) {
                         drawNode(n);
                     }
+
                     public void visit(Relation r) {
                         /* TODO: is it possible to do this like the nodes/ways code? */
                         //if(profilerOmitDraw)
@@ -1600,13 +1597,14 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         /*** NODES ***/
         //profilerN = 0;
-        for (final Node osm : data.nodes)
+        for (final Node osm: data.getNodes()) {
             if (!osm.incomplete && !osm.isDeleted() && (data.isSelected(osm) || !osm.isFiltered())
                     && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid)
             {
                 drawNode(osm);
                 //        profilerN++;
             }
+        }
 
         //if(profiler)
         //{
@@ -1616,11 +1614,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         //}
 
         /*** VIRTUAL  ***/
-        if (virtualNodeSize != 0)
-        {
+        if (virtualNodeSize != 0) {
             //    profilerN = 0;
             currentColor = nodeColor;
-            for (final OsmPrimitive osm : data.ways)
+            for (final OsmPrimitive osm: data.getWays()) {
                 if (osm.isUsable() && !osm.isFiltered()
                         && osm.mappaintVisibleCode != viewid )
                 {
@@ -1629,6 +1626,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     visitVirtual((Way)osm);
                     //            profilerN++;
                 }
+            }
 
             //    if(profiler)
             //    {

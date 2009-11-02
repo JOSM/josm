@@ -102,12 +102,12 @@ public class SplitWayAction extends JosmAction {
         if (selectedWay == null && selectedNodes != null) {
             HashMap<Way, Integer> wayOccurenceCounter = new HashMap<Way, Integer>();
             for (Node n : selectedNodes) {
-                for (Way w : getCurrentDataSet().ways) {
+                for (Way w : getCurrentDataSet().getWays()) {
                     if (!w.isUsable()) {
                         continue;
                     }
-                    int last = w.getNodesCount()-1;
-                    if(last <= 0) {
+                    int last = w.getNodesCount() - 1;
+                    if (last <= 0) {
                         continue; // zero or one node ways
                     }
                     boolean circular = w.isClosed();
@@ -115,7 +115,7 @@ public class SplitWayAction extends JosmAction {
                     for (Node wn : w.getNodes()) {
                         if ((circular || (i > 0 && i < last)) && n.equals(wn)) {
                             Integer old = wayOccurenceCounter.get(w);
-                            wayOccurenceCounter.put(w, (old == null) ? 1 : old+1);
+                            wayOccurenceCounter.put(w, (old == null) ? 1 : old + 1);
                             break;
                         }
                         i++;
@@ -247,7 +247,7 @@ public class SplitWayAction extends JosmAction {
         }
 
         if (wayChunks.size() < 2) {
-            if(wayChunks.get(0).get(0) == wayChunks.get(0).get(wayChunks.get(0).size()-1)) {
+            if (wayChunks.get(0).get(0) == wayChunks.get(0).get(wayChunks.get(0).size() - 1)) {
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("You must select two or more nodes to split a circular way."),
@@ -289,11 +289,11 @@ public class SplitWayAction extends JosmAction {
             newSelection.add(wayToAdd);
 
         }
-        Boolean warnmerole=false;
-        Boolean warnme=false;
+        Boolean warnmerole = false;
+        Boolean warnme = false;
         // now copy all relations to new way also
 
-        for (Relation r : getCurrentDataSet().relations) {
+        for (Relation r : getCurrentDataSet().getRelations()) {
             if (!r.isUsable()) {
                 continue;
             }
@@ -306,9 +306,8 @@ public class SplitWayAction extends JosmAction {
 
             for (RelationMember rm : r.getMembers()) {
                 if (rm.isWay()) {
-                    if (rm.getMember() == selectedWay)
-                    {
-                        if(!("route".equals(type)) && !("multipolygon".equals(type))) {
+                    if (rm.getMember() == selectedWay) {
+                        if (!("route".equals(type)) && !("multipolygon".equals(type))) {
                             warnme = true;
                         }
                         if (c == null) {
@@ -317,10 +316,9 @@ public class SplitWayAction extends JosmAction {
 
                         int j = i;
                         boolean backwards = "backward".equals(rm.getRole());
-                        for(Way wayToAdd : newWays)
-                        {
+                        for (Way wayToAdd : newWays) {
                             RelationMember em = new RelationMember(rm.getRole(), wayToAdd);
-                            if(em.hasRole() && !("multipolygon".equals(type))) {
+                            if (em.hasRole() && !("multipolygon".equals(type))) {
                                 warnmerole = true;
                             }
 
@@ -341,13 +339,13 @@ public class SplitWayAction extends JosmAction {
                 commandList.add(new ChangeCommand(r, c));
             }
         }
-        if(warnmerole) {
+        if (warnmerole) {
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("<html>A role based relation membership was copied to all new ways.<br>You should verify this and correct it when necessary.</html>"),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE);
-        } else if(warnme) {
+        } else if (warnme) {
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("<html>A relation membership was copied to all new ways.<br>You should verify this and correct it when necessary.</html>"),

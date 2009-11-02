@@ -2,8 +2,8 @@
 
 package org.openstreetmap.josm.gui.layer;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -18,7 +18,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -31,8 +30,6 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -67,12 +64,9 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
-import org.openstreetmap.josm.gui.help.HelpBrowser;
-import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * A layer holding data from a specific dataset.
@@ -255,8 +249,8 @@ public class OsmDataLayer extends Layer {
 
     @Override public String getToolTipText() {
         String tool = "";
-        tool += undeletedSize(data.nodes)+" "+trn("node", "nodes", undeletedSize(data.nodes))+", ";
-        tool += undeletedSize(data.ways)+" "+trn("way", "ways", undeletedSize(data.ways));
+        tool += undeletedSize(data.getNodes())+" "+trn("node", "nodes", undeletedSize(data.getNodes()))+", ";
+        tool += undeletedSize(data.getWays())+" "+trn("way", "ways", undeletedSize(data.getWays()));
         if (data.version != null) {
             tool += ", " + tr("version {0}", data.version);
         }
@@ -349,9 +343,9 @@ public class OsmDataLayer extends Layer {
                     "{0} conflicts remain to be resolved.<br><br>Please open the Conflict List Dialog and manually resolve them.",
                     numRemainingConflicts,
                     numRemainingConflicts
-            );            
+            );
         }
-        
+
         StringBuffer sb = new StringBuffer();
         sb.append("<html>").append(msg1);
         if (numPurgedPrimitives > 0) {
@@ -368,7 +362,7 @@ public class OsmDataLayer extends Layer {
                             ImageProvider.get("ok"),
                             tr("Click to close this dialog and continue editing"),
                             null /* no specific help */
-                            )
+                    )
             };
             HelpAwareOptionPane.showOptionDialog(
                     Main.parent,
@@ -379,7 +373,7 @@ public class OsmDataLayer extends Layer {
                     options,
                     options[0],
                     ht("/Concepts/Conflict#WarningAboutDetectedConflicts")
-             );            
+            );
         }
     }
 
@@ -434,10 +428,11 @@ public class OsmDataLayer extends Layer {
     }
 
     @Override public void visitBoundingBox(final BoundingXYVisitor v) {
-        for (final Node n : data.nodes)
+        for (final Node n: data.getNodes()) {
             if (n.isUsable()) {
                 v.visit(n);
             }
+        }
     }
 
     /**
@@ -557,7 +552,7 @@ public class OsmDataLayer extends Layer {
         GpxData gpxData = new GpxData();
         gpxData.storageFile = file;
         HashSet<Node> doneNodes = new HashSet<Node>();
-        for (Way w : data.ways) {
+        for (Way w : data.getWays()) {
             if (!w.isUsable()) {
                 continue;
             }
@@ -582,8 +577,7 @@ public class OsmDataLayer extends Layer {
                     doneNodes.add(n);
                 }
                 WayPoint wpt = new WayPoint(n.getCoor());
-                if (!n.isTimestampEmpty())
-                {
+                if (!n.isTimestampEmpty()) {
                     wpt.attr.put("time", DateUtils.fromDate(n.getTimestamp()));
                     wpt.setTime();
                 }
@@ -593,7 +587,7 @@ public class OsmDataLayer extends Layer {
 
         // what is this loop meant to do? it creates waypoints but never
         // records them?
-        for (Node n : data.nodes) {
+        for (Node n : data.getNodes()) {
             if (n.incomplete || n.isDeleted() || doneNodes.contains(n)) {
                 continue;
             }
@@ -606,6 +600,7 @@ public class OsmDataLayer extends Layer {
             if (name != null) {
                 wpt.attr.put("name", name);
             }
+            ;
         }
         return gpxData;
     }

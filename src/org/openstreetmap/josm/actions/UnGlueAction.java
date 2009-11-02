@@ -66,7 +66,7 @@ public class UnGlueAction extends JosmAction {
         String errMsg = null;
         if (checkSelection(selection)) {
             int count = 0;
-            for (Way w : getCurrentDataSet().ways) {
+            for (Way w : getCurrentDataSet().getWays()) {
                 if (!w.isUsable() || w.getNodesCount() < 1) {
                     continue;
                 }
@@ -78,7 +78,7 @@ public class UnGlueAction extends JosmAction {
             if (count < 2) {
                 // If there aren't enough ways, maybe the user wanted to unglue the nodes
                 // (= copy tags to a new node)
-                if(checkForUnglueNode(selection)) {
+                if (checkForUnglueNode(selection)) {
                     unglueNode(e);
                 } else {
                     errMsg = tr("This node is not glued to anything else.");
@@ -91,7 +91,7 @@ public class UnGlueAction extends JosmAction {
             ArrayList<Node> tmpNodes = new ArrayList<Node>();
             for (Node n : selectedNodes) {
                 int count = 0;
-                for (Way w : getCurrentDataSet().ways) {
+                for (Way w : getCurrentDataSet().getWays()) {
                     if (w.isDeleted() || w.incomplete || w.getNodesCount() < 1) {
                         continue;
                     }
@@ -184,23 +184,23 @@ public class UnGlueAction extends JosmAction {
      * @return Selection is suitable
      */
     private boolean checkForUnglueNode(Collection<? extends OsmPrimitive> selection) {
-        if(selection.size() != 1)
+        if (selection.size() != 1)
             return false;
         OsmPrimitive n = (OsmPrimitive) selection.toArray()[0];
-        if(!(n instanceof Node))
+        if (!(n instanceof Node))
             return false;
         boolean isPartOfWay = false;
-        for(Way w : getCurrentDataSet().ways) {
-            if(w.containsNode((Node)n)) {
+        for (Way w : getCurrentDataSet().getWays()) {
+            if (w.containsNode((Node) n)) {
                 isPartOfWay = true;
                 break;
             }
         }
-        if(!isPartOfWay)
+        if (!isPartOfWay)
             return false;
 
-        selectedNode = (Node)n;
-        return  selectedNode.isTagged();
+        selectedNode = (Node) n;
+        return selectedNode.isTagged();
     }
 
     /**
@@ -321,7 +321,7 @@ public class UnGlueAction extends JosmAction {
         // modify all relations containing the node
         Relation newRel = null;
         HashSet<String> rolesToReAdd = null;
-        for (Relation r : getCurrentDataSet().relations) {
+        for (Relation r : getCurrentDataSet().getRelations()) {
             if (r.isDeleted() || r.incomplete) {
                 continue;
             }
@@ -366,7 +366,7 @@ public class UnGlueAction extends JosmAction {
         if (selectedWay == null) {
             boolean firstway = true;
             // modify all ways containing the nodes
-            for (Way w : getCurrentDataSet().ways) {
+            for (Way w : getCurrentDataSet().getWays()) {
                 if (w.isDeleted() || w.incomplete || w.getNodesCount() < 1) {
                     continue;
                 }

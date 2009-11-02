@@ -227,13 +227,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
     protected void buildHull() {
         for (OsmPrimitive primitive : mappedPrimitives.keySet()) {
             OsmPrimitive clone = mappedPrimitives.get(primitive);
-            if (clone instanceof Node) {
-                hull.nodes.add((Node)clone);
-            } else if (clone instanceof Way) {
-                hull.ways.add((Way)clone);
-            } else if (clone instanceof Relation) {
-                hull.relations.add((Relation)clone);
-            }
+            hull.addPrimitive(clone);
         }
     }
 

@@ -220,7 +220,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
     protected DataSet readIncompletePrimitives(DataSet ds, ProgressMonitor progressMonitor) throws OsmTransferException {
         progressMonitor.beginTask(null, 2);
         try {
-            Collection<Way> waysToCheck = new ArrayList<Way>(ds.ways);
+            Collection<Way> waysToCheck = new ArrayList<Way>(ds.getWays());
             if (isReadFull() ||primitiveType.equals(OsmPrimitiveType.NODE)) {
                 for (Way way: waysToCheck) {
                     if (!way.isNew() && way.incomplete) {
@@ -232,7 +232,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
                 }
             }
             if (isReadFull()) {
-                Collection<Relation> relationsToCheck  = new ArrayList<Relation>(ds.relations);
+                Collection<Relation> relationsToCheck  = new ArrayList<Relation>(ds.getRelations());
                 for (Relation relation: relationsToCheck) {
                     if (!relation.isNew() && relation.incomplete) {
                         OsmServerObjectReader reader = new OsmServerObjectReader(relation.getId(), OsmPrimitiveType.from(relation), true /* read full */);

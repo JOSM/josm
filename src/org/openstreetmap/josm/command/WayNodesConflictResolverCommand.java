@@ -68,7 +68,7 @@ public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
         // nodes
         //
         for (Node n:mergedNodeList) {
-            if (! getLayer().data.nodes.contains(n)) {
+            if (! getLayer().data.getNodes().contains(n)) {
                 logger.warning(tr("Main dataset does not include node {0}", n.toString()));
             }
         }

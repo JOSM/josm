@@ -149,7 +149,7 @@ public class AutoCompletionCache {
         for (OsmPrimitive primitive : ds) {
             cachePrimitive(primitive);
         }
-        for (Relation relation : layer.data.relations) {
+        for (Relation relation : layer.data.getRelations()) {
             if (relation.incomplete || relation.isDeleted()) {
                 continue;
             }

@@ -218,7 +218,7 @@ public class UpdateSelectionAction extends JosmAction {
                 // nodes isn't present in the local data set. We therefore fully load all
                 // incomplete ways.
                 //
-                for (Way w: ds.ways) {
+                for (Way w : ds.getWays()) {
                     if (w.incomplete) {
                         OsmServerObjectReader reader = new OsmServerObjectReader(w.getId(), OsmPrimitiveType.WAY, true /* full */);
                         theirDataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));

@@ -753,7 +753,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         Map<Relation, Collection<RelationMember>> roles = new HashMap<Relation, Collection<RelationMember>>();
         if (Main.main.getCurrentDataSet() != null) {
-            for (Relation r : Main.main.getCurrentDataSet().relations) {
+            for (Relation r : Main.main.getCurrentDataSet().getRelations()) {
                 if (!r.isFiltered() && !r.incomplete && !r.isDeleted()) {
                     for (RelationMember m : r.getMembers()) {
                         if (newSelection.contains(m.getMember())) {

@@ -257,8 +257,8 @@ public class ChildRelationBrowser extends JPanel {
             if (selection == null || selection.length == 0)
                 return;
             HashSet<Relation> relations = new HashSet<Relation>();
-            for (int i=0; i < selection.length;i++) {
-                relations.add((Relation)selection[i].getLastPathComponent());
+            for (TreePath aSelection : selection) {
+                relations.add((Relation) aSelection.getLastPathComponent());
             }
             Main.worker.submit(new DownloadRelationSetTask(getParentDialog(),relations));
         }

@@ -77,12 +77,12 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
                 List<Node> nodes = new ArrayList<Node>();
                 for (GpsPoint p : c) {
                     Node n = new Node(p.latlon);
-                    ds.nodes.add(n);
+                    ds.addPrimitive(n);
                     nodes.add(n);
                 }
                 Way w = new Way();
                 w.setNodes(nodes);
-                ds.ways.add(w);
+                ds.addPrimitive(w);
             }
             Main.main.addLayer(new OsmDataLayer(ds, tr("Converted from: {0}", RawGpsLayer.this.getName()), null));
             Main.main.removeLayer(RawGpsLayer.this);

@@ -39,16 +39,16 @@ public class MergeSourceBuildingVisitorTest {
         Node n3 = new Node(3);
         Node n4 = new Node(new LatLon(20.0,20.0));
         n4.put("name","n4");
-        source.nodes.add(n1);
-        source.nodes.add(n2);
-        source.nodes.add(n3);
-        source.nodes.add(n4);
+        source.addPrimitive(n1);
+        source.addPrimitive(n2);
+        source.addPrimitive(n3);
+        source.addPrimitive(n4);
         source.setSelected(n1,n2);
 
         MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(source);
         DataSet hull = builder.build();
         assertNotNull(hull);
-        assertEquals(2, hull.nodes.size());
+        assertEquals(2, hull.getNodes().size());
 
         OsmPrimitive p = hull.getPrimitiveById(1,OsmPrimitiveType.NODE);
         assertNotNull(p);
@@ -57,10 +57,10 @@ public class MergeSourceBuildingVisitorTest {
         p = hull.getPrimitiveById(3,OsmPrimitiveType.NODE);
         assertNull(p);
 
-        p = lookupByName(hull.nodes, "n2");
+        p = lookupByName(hull.getNodes(), "n2");
         assertNotNull(p);
 
-        p = lookupByName(hull.nodes, "n4");
+        p = lookupByName(hull.getNodes(), "n4");
         assertNull(p);
     }
 
@@ -74,16 +74,16 @@ public class MergeSourceBuildingVisitorTest {
         w1.incomplete = false;
         w1.addNode(n1);
         w1.addNode(n2);
-        source.nodes.add(n1);
-        source.nodes.add(n2);
-        source.ways.add(w1);
+        source.addPrimitive(n1);
+        source.addPrimitive(n2);
+        source.addPrimitive(w1);
         source.setSelected(w1);
 
         MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(source);
         DataSet hull = builder.build();
         assertNotNull(hull);
-        assertEquals(1, hull.ways.size());
-        assertEquals(2, hull.nodes.size());
+        assertEquals(1, hull.getWays().size());
+        assertEquals(2, hull.getNodes().size());
 
         OsmPrimitive p = hull.getPrimitiveById(1,OsmPrimitiveType.NODE);
         assertNotNull(p);
@@ -107,16 +107,16 @@ public class MergeSourceBuildingVisitorTest {
         w1.incomplete = false;
         w1.addNode(n1);
         w1.addNode(n2);
-        source.nodes.add(n1);
-        source.nodes.add(n2);
-        source.ways.add(w1);
+        source.addPrimitive(n1);
+        source.addPrimitive(n2);
+        source.addPrimitive(w1);
         source.setSelected(w1,n1,n2);
 
         MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(source);
         DataSet hull = builder.build();
         assertNotNull(hull);
-        assertEquals(1, hull.ways.size());
-        assertEquals(2, hull.nodes.size());
+        assertEquals(1, hull.getWays().size());
+        assertEquals(2, hull.getNodes().size());
 
         OsmPrimitive p = hull.getPrimitiveById(1,OsmPrimitiveType.NODE);
         assertNotNull(p);
@@ -136,13 +136,13 @@ public class MergeSourceBuildingVisitorTest {
         DataSet source = new DataSet();
         Way w1 = new Way(3);
         w1.incomplete = true;
-        source.ways.add(w1);
+        source.addPrimitive(w1);
         source.setSelected(w1);
 
         MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(source);
         DataSet hull = builder.build();
         assertNotNull(hull);
-        assertEquals(1, hull.ways.size());
+        assertEquals(1, hull.getWays().size());
 
         OsmPrimitive p = hull.getPrimitiveById(3, OsmPrimitiveType.WAY);
         assertNotNull(p);
@@ -166,20 +166,20 @@ public class MergeSourceBuildingVisitorTest {
         r1.addMember(new RelationMember("way-30",w30));
         Relation r40 = new Relation(40);
         r1.addMember(new RelationMember("relation-40", r40));
-        source.nodes.add(n20);
-        source.nodes.add(n21);
-        source.nodes.add(n22);
-        source.ways.add(w30);
-        source.relations.add(r1);
-        source.relations.add(r40);
+        source.addPrimitive(n20);
+        source.addPrimitive(n21);
+        source.addPrimitive(n22);
+        source.addPrimitive(w30);
+        source.addPrimitive(r1);
+        source.addPrimitive(r40);
         source.setSelected(r1,n20,w30,r40);
 
         MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(source);
         DataSet hull = builder.build();
         assertNotNull(hull);
-        assertEquals(1, hull.ways.size());
-        assertEquals(3, hull.nodes.size());
-        assertEquals(2, hull.relations.size());
+        assertEquals(1, hull.getWays().size());
+        assertEquals(3, hull.getNodes().size());
+        assertEquals(2, hull.getRelations().size());
 
         OsmPrimitive p = hull.getPrimitiveById(1, OsmPrimitiveType.RELATION);
         assertNotNull(p);
@@ -225,20 +225,20 @@ public class MergeSourceBuildingVisitorTest {
         r1.addMember(new RelationMember("way-30",w30));
         Relation r40 = new Relation(40);
         r1.addMember(new RelationMember("relation-40", r40));
-        source.nodes.add(n20);
-        source.nodes.add(n21);
-        source.nodes.add(n22);
-        source.ways.add(w30);
-        source.relations.add(r1);
-        source.relations.add(r40);
+        source.addPrimitive(n20);
+        source.addPrimitive(n21);
+        source.addPrimitive(n22);
+        source.addPrimitive(w30);
+        source.addPrimitive(r1);
+        source.addPrimitive(r40);
         source.setSelected(r1);
 
         MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(source);
         DataSet hull = builder.build();
         assertNotNull(hull);
-        assertEquals(1, hull.ways.size());
-        assertEquals(1, hull.nodes.size());
-        assertEquals(2, hull.relations.size());
+        assertEquals(1, hull.getWays().size());
+        assertEquals(1, hull.getNodes().size());
+        assertEquals(2, hull.getRelations().size());
 
         OsmPrimitive p = hull.getPrimitiveById(1, OsmPrimitiveType.RELATION);
         assertNotNull(p);
@@ -292,44 +292,44 @@ public class MergeSourceBuildingVisitorTest {
         r40.put("name", "r40");
         r1.addMember(new RelationMember("relation-40", r40));
 
-        source.nodes.add(n20);
-        source.nodes.add(n21);
-        source.nodes.add(n22);
-        source.ways.add(w30);
-        source.relations.add(r1);
-        source.relations.add(r40);
+        source.addPrimitive(n20);
+        source.addPrimitive(n21);
+        source.addPrimitive(n22);
+        source.addPrimitive(w30);
+        source.addPrimitive(r1);
+        source.addPrimitive(r40);
         source.setSelected(r1);
 
         MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(source);
         DataSet hull = builder.build();
         assertNotNull(hull);
-        assertEquals(1, hull.ways.size());
-        assertEquals(3, hull.nodes.size());
-        assertEquals(2, hull.relations.size());
+        assertEquals(1, hull.getWays().size());
+        assertEquals(3, hull.getNodes().size());
+        assertEquals(2, hull.getRelations().size());
 
-        OsmPrimitive p = lookupByName(hull.relations, "r1");
+        OsmPrimitive p = lookupByName(hull.getRelations(), "r1");
         assertNotNull(p);
         assertEquals(p.getClass(), Relation.class);
 
-        Way w = (Way)lookupByName(hull.ways, "w30");
+        Way w = (Way)lookupByName(hull.getWays(), "w30");
         assertNotNull(w);
         assertEquals(2, w.getNodesCount());
 
-        Node n = (Node)lookupByName(hull.nodes, "n21");
+        Node n = (Node)lookupByName(hull.getNodes(), "n21");
         assertNotNull(n);
         assertTrue(w.containsNode(n));
 
-        n = (Node)lookupByName(hull.nodes, "n22");
+        n = (Node)lookupByName(hull.getNodes(), "n22");
         assertNotNull(n);
         assertTrue(w.containsNode(n));
 
-        Relation r = (Relation)lookupByName(hull.relations, "r40");
+        Relation r = (Relation)lookupByName(hull.getRelations(), "r40");
         assertNotNull(r);
 
-        r = (Relation)lookupByName(hull.relations, "r1");
+        r = (Relation)lookupByName(hull.getRelations(), "r1");
         assertNotNull(r);
         assertEquals(3, r.getMembersCount());
-        RelationMember m = new RelationMember("node-20", lookupByName(hull.nodes, "n20"));
+        RelationMember m = new RelationMember("node-20", lookupByName(hull.getNodes(), "n20"));
         assertTrue(r.getMembers().contains(m));
         m = new RelationMember("way-30", lookupByName(hull.ways, "w30"));
         assertTrue(r.getMembers().contains(m));
@@ -342,13 +342,13 @@ public class MergeSourceBuildingVisitorTest {
         DataSet source = new DataSet();
         Relation r1 = new Relation(1);
         r1.addMember(new RelationMember("relation-1",r1));
-        source.relations.add(r1);
+        source.addPrimitive(r1);
         source.setSelected(r1);
 
         MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(source);
         DataSet hull = builder.build();
         assertNotNull(hull);
-        assertEquals(1, hull.relations.size());
+        assertEquals(1, hull.getRelations().size());
 
         Relation r = (Relation)hull.getPrimitiveById(1, OsmPrimitiveType.RELATION);
         assertNotNull(r);
@@ -362,15 +362,15 @@ public class MergeSourceBuildingVisitorTest {
         Relation r1 = new Relation();
         r1.put("name", "r1");
         r1.addMember(new RelationMember("relation-1",r1));
-        source.relations.add(r1);
+        source.addPrimitive(r1);
         source.setSelected(r1);
 
         MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(source);
         DataSet hull = builder.build();
         assertNotNull(hull);
-        assertEquals(1, hull.relations.size());
+        assertEquals(1, hull.getRelations().size());
 
-        Relation r = (Relation)lookupByName(hull.relations, "r1");
+        Relation r = (Relation)lookupByName(hull.getRelations(), "r1");
         assertNotNull(r);
         assertEquals(1, r.getMembersCount());
         assertTrue(r.getMembers().contains(new RelationMember("relation-1",r)));
@@ -383,14 +383,14 @@ public class MergeSourceBuildingVisitorTest {
         Relation r2 = new Relation(2);
         r1.addMember(new RelationMember("relation-2",r2));
         r2.addMember(new RelationMember("relation-1",r1));
-        source.relations.add(r1);
-        source.relations.add(r2);
+        source.addPrimitive(r1);
+        source.addPrimitive(r2);
         source.setSelected(r1,r2);
 
         MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(source);
         DataSet hull = builder.build();
         assertNotNull(hull);
-        assertEquals(2, hull.relations.size());
+        assertEquals(2, hull.getRelations().size());
 
         r1 = (Relation)hull.getPrimitiveById(1, OsmPrimitiveType.RELATION);
         assertNotNull(r1);

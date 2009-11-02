@@ -249,7 +249,7 @@ public class CombineWayAction extends JosmAction {
          * @param ds the data set
          */
         public void build(DataSet ds) {
-            for (Relation r: ds.relations) {
+            for (Relation r : ds.getRelations()) {
                 if (!r.isUsable()) {
                     continue;
                 }

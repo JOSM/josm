@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.downloadtasks;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.EventQueue;
 import java.awt.geom.Area;
@@ -105,17 +105,17 @@ public class DownloadOsmTaskList {
      */
     protected Set<OsmPrimitive> getCompletePrimitives(DataSet ds) {
         HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
-        for (OsmPrimitive primitive : ds.nodes) {
+        for (OsmPrimitive primitive : ds.getNodes()) {
             if (!primitive.incomplete && !primitive.isNew()) {
                 ret.add(primitive);
             }
         }
-        for (OsmPrimitive primitive : ds.ways) {
+        for (OsmPrimitive primitive : ds.getWays()) {
             if (!primitive.incomplete && !primitive.isNew()) {
                 ret.add(primitive);
             }
         }
-        for (OsmPrimitive primitive : ds.relations) {
+        for (OsmPrimitive primitive : ds.getRelations()) {
             if (!primitive.incomplete && !primitive.isNew()) {
                 ret.add(primitive);
             }
@@ -154,15 +154,15 @@ public class DownloadOsmTaskList {
     protected void handlePotentiallyDeletedPrimitives(Set<OsmPrimitive> potentiallyDeleted) {
         ButtonSpec[] options = new ButtonSpec[] {
                 new ButtonSpec(
-                        tr("Check on the server"), 
+                        tr("Check on the server"),
                         ImageProvider.get("ok"),
-                        tr("Click to check whether objects in your local dataset are deleted on the server"), 
+                        tr("Click to check whether objects in your local dataset are deleted on the server"),
                         null  /* no specific help topic */
-                ), 
+                ),
                 new ButtonSpec(
-                        tr("Ignore"), 
-                        ImageProvider.get("cancel"), 
-                        tr("Click to abort and to resume editing"), 
+                        tr("Ignore"),
+                        ImageProvider.get("cancel"),
+                        tr("Click to abort and to resume editing"),
                         null /* no specific help topic */
                 ),
         };
@@ -171,26 +171,26 @@ public class DownloadOsmTaskList {
                 + "might be deleted on the server. If you later try to delete or<br>"
                 + "update them the server is likely to report a<br>" + "conflict.<br>" + "<br>"
                 + "Click <strong>{1}</strong> to check the state of these primitives<br>" + "on the server.<br>"
-                + "Click <strong>{2}</strong> to ignore.<br>" + "</html>", 
-                potentiallyDeleted.size(), 
+                + "Click <strong>{2}</strong> to ignore.<br>" + "</html>",
+                potentiallyDeleted.size(),
                 options[0].text,
                 options[1].text
-                );
+        );
 
         int ret = HelpAwareOptionPane.showOptionDialog(
-                Main.parent, 
-                message, 
+                Main.parent,
+                message,
                 tr("Deleted or moved primitives"),
-                JOptionPane.WARNING_MESSAGE, 
-                null, 
-                options, 
+                JOptionPane.WARNING_MESSAGE,
+                null,
+                options,
                 options[0],
                 ht("/Action/UpdateData#SyncPotentiallyDeletedObjects")
         );
         if (ret != 0 /* OK */)
             return;
-        
-        updatePotentiallyDeletedPrimitives(potentiallyDeleted);        
+
+        updatePotentiallyDeletedPrimitives(potentiallyDeleted);
     }
 
     /**
@@ -204,9 +204,9 @@ public class DownloadOsmTaskList {
             if (task instanceof DownloadOsmTask) {
                 DataSet ds = ((DownloadOsmTask) task).getDownloadedData();
                 if (ds != null) {
-                    ret.addAll(ds.nodes);
-                    ret.addAll(ds.ways);
-                    ret.addAll(ds.relations);
+                    ret.addAll(ds.getNodes());
+                    ret.addAll(ds.getWays());
+                    ret.addAll(ds.getRelations());
                 }
             }
         }
@@ -241,7 +241,7 @@ public class DownloadOsmTaskList {
                         sb.append("<li>").append(error).append("</li>").append("<br>");
                     } else if (error instanceof Exception) {
                         sb.append("<li>").append(ExceptionUtil.explainException((Exception) error)).append("</li>")
-                                .append("<br>");
+                        .append("<br>");
                     }
                 }
                 sb.insert(0, "<ul>");
@@ -271,9 +271,9 @@ public class DownloadOsmTaskList {
                     if (task instanceof DownloadOsmTask) {
                         DataSet ds = ((DownloadOsmTask) task).getDownloadedData();
                         if (ds != null) {
-                            myPrimitives.removeAll(ds.nodes);
-                            myPrimitives.removeAll(ds.ways);
-                            myPrimitives.removeAll(ds.relations);
+                            myPrimitives.removeAll(ds.getNodes());
+                            myPrimitives.removeAll(ds.getWays());
+                            myPrimitives.removeAll(ds.getRelations());
                         }
                     }
                 }

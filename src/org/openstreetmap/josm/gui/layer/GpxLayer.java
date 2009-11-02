@@ -775,12 +775,12 @@ public class GpxLayer extends Layer {
                         if (timestr != null) {
                             n.setTimestamp(DateUtils.fromString(timestr));
                         }
-                        ds.nodes.add(n);
+                        ds.addPrimitive(n);
                         nodes.add(n);
                     }
                     Way w = new Way();
                     w.setNodes(nodes);
-                    ds.ways.add(w);
+                    ds.addPrimitive(w);
                 }
             }
             Main.main

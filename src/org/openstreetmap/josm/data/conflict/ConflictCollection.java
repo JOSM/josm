@@ -53,9 +53,8 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
     }
 
     protected void fireConflictAdded() {
-        Iterator<IConflictListener> it = listeners.iterator();
-        while(it.hasNext()) {
-            it.next().onConflictsAdded(this);
+        for (IConflictListener listener : listeners) {
+            listener.onConflictsAdded(this);
         }
     }
 

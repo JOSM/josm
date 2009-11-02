@@ -1,9 +1,11 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
+
 import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,14 +27,14 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
  * @author imi
  */
 public class DataSet implements Cloneable {
-    
+
     /**
      * A list of listeners to selection changed events. The list is static, as listeners register
      * themselves for any dataset selection changes that occur, regardless of the current active
      * dataset. (However, the selection does only change in the active layer)
      */
     public static Collection<SelectionChangedListener> selListeners = new LinkedList<SelectionChangedListener>();
-    
+
     /**
      * notifies all registered selection change listeners about the current selection of
      * primitives
@@ -53,26 +55,44 @@ public class DataSet implements Cloneable {
     /**
      * All nodes goes here, even when included in other data (ways etc). This enables the instant
      * conversion of the whole DataSet by iterating over this data structure.
+     * @deprecated Use getNodes() for read-only operations, addPrimitive() and removePrimitive() for modifications
      */
+    @Deprecated
     public QuadBuckets<Node> nodes = new QuadBuckets<Node>();
+
+    public Collection<Node> getNodes() {
+        return Collections.unmodifiableCollection(nodes);
+    }
 
     /**
      * All ways (Streets etc.) in the DataSet.
      *
      * The way nodes are stored only in the way list.
+     * @deprecated Use getWays() for read-only operations, addPrimitive() and removePrimitive() for modifications
      */
+    @Deprecated
     public QuadBuckets<Way> ways = new QuadBuckets<Way>();
+
+    public Collection<Way> getWays() {
+        return Collections.unmodifiableCollection(ways);
+    }
 
     /**
      * All relations/relationships
+     * @deprecated Use getRelations() for read-only operations, addPrimitive() and removePrimitive() for modifications
      */
+    @Deprecated
     public Collection<Relation> relations = new LinkedList<Relation>();
+
+    public Collection<Relation> getRelations() {
+        return Collections.unmodifiableCollection(relations);
+    }
 
     /**
      * All data sources of this DataSet.
      */
     public Collection<DataSource> dataSources = new LinkedList<DataSource>();
-    
+
     /**
      * @return A collection containing all primitives of the dataset. The data is ordered after:
      * first come nodes, then ways, then relations. Ordering in between the categories is not
@@ -254,8 +274,9 @@ public class DataSet implements Cloneable {
     LinkedHashSet<OsmPrimitive> selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
 
     public boolean toggleSelected(Collection<OsmPrimitive> osm) {
-        for (OsmPrimitive o : osm)
+        for (OsmPrimitive o : osm) {
             this.__toggleSelected(o);
+        }
         fireSelectionChanged();
         return true;
     }
@@ -404,7 +425,7 @@ public class DataSet implements Cloneable {
     }
 
     /**
-     * Notifies all registered {@see SelectionChangedListener} about the current selection in 
+     * Notifies all registered {@see SelectionChangedListener} about the current selection in
      * this dataset.
      * 
      */
@@ -490,9 +511,9 @@ public class DataSet implements Cloneable {
     public OsmPrimitive getPrimitiveById(long id, OsmPrimitiveType type, boolean createNew) {
         Collection<? extends OsmPrimitive> primitives = null;
         switch(type) {
-            case NODE: primitives = nodes; break;
-            case WAY: primitives = ways; break;
-            case RELATION: primitives = relations; break;
+        case NODE: primitives = nodes; break;
+        case WAY: primitives = ways; break;
+        case RELATION: primitives = relations; break;
         }
         for (OsmPrimitive primitive : primitives) {
             if (primitive.getUniqueId() == id) return primitive;
@@ -501,9 +522,9 @@ public class DataSet implements Cloneable {
         if (createNew) {
             OsmPrimitive result = null;
             switch (type) {
-                case NODE: result = new Node(id, true); break;
-                case WAY: result = new Way(id, true); break;
-                case RELATION: result = new Relation(id, true); break;
+            case NODE: result = new Node(id, true); break;
+            case WAY: result = new Way(id, true); break;
+            case RELATION: result = new Relation(id, true); break;
             }
             addPrimitive(result);
             return result;

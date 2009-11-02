@@ -303,9 +303,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
         double minDistanceSq = snapDistance;
         Node minPrimitive = null;
         DataSet ds = getCurrentDataSet();
-        if(ds == null)
+        if (ds == null)
             return null;
-        for (Node n : ds.nodes) {
+        for (Node n : ds.getNodes()) {
             if (!n.isUsable()) {
                 continue;
             }
@@ -316,9 +316,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 minPrimitive = n;
             }
             // when multiple nodes on one point, prefer new or selected nodes
-            else if(dist == minDistanceSq && minPrimitive != null
+            else if (dist == minDistanceSq && minPrimitive != null
                     && ((n.isNew() && ds.isSelected(n))
-                            || (!ds.isSelected(minPrimitive) && (ds.isSelected(n) || n.isNew())))) {
+                    || (!ds.isSelected(minPrimitive) && (ds.isSelected(n) || n.isNew())))) {
                 minPrimitive = n;
             }
         }
@@ -334,9 +334,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public final List<WaySegment> getNearestWaySegments(Point p) {
         TreeMap<Double, List<WaySegment>> nearest = new TreeMap<Double, List<WaySegment>>();
         DataSet ds = getCurrentDataSet();
-        if(ds == null)
+        if (ds == null)
             return null;
-        for (Way w : ds.ways) {
+        for (Way w : ds.getWays()) {
             if (!w.isUsable()) {
                 continue;
             }
@@ -357,9 +357,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 double c = A.distanceSq(B);
                 double a = p.distanceSq(B);
                 double b = p.distanceSq(A);
-                double perDist = a-(a-b+c)*(a-b+c)/4/c; // perpendicular distance squared
-                if (perDist < snapDistance && a < c+snapDistance && b < c+snapDistance) {
-                    if(ds.isSelected(w)) {
+                double perDist = a - (a - b + c) * (a - b + c) / 4 / c; // perpendicular distance squared
+                if (perDist < snapDistance && a < c + snapDistance && b < c + snapDistance) {
+                    if (ds.isSelected(w)) {
                         perDist -= 0.00001;
                     }
                     List<WaySegment> l;
@@ -458,9 +458,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public Collection<OsmPrimitive> getAllNearest(Point p) {
         Collection<OsmPrimitive> nearest = new HashSet<OsmPrimitive>();
         DataSet ds = getCurrentDataSet();
-        if(ds == null)
+        if (ds == null)
             return null;
-        for (Way w : ds.ways) {
+        for (Way w : ds.getWays()) {
             if (!w.isUsable()) {
                 continue;
             }
@@ -478,15 +478,15 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 double c = A.distanceSq(B);
                 double a = p.distanceSq(B);
                 double b = p.distanceSq(A);
-                double perDist = a-(a-b+c)*(a-b+c)/4/c; // perpendicular distance squared
-                if (perDist < snapDistance && a < c+snapDistance && b < c+snapDistance) {
+                double perDist = a - (a - b + c) * (a - b + c) / 4 / c; // perpendicular distance squared
+                if (perDist < snapDistance && a < c + snapDistance && b < c + snapDistance) {
                     nearest.add(w);
                     break;
                 }
                 lastN = n;
             }
         }
-        for (Node n : ds.nodes) {
+        for (Node n : ds.getNodes()) {
             if (n.isUsable()
                     && getPoint(n).distanceSq(p) < snapDistance) {
                 nearest.add(n);
@@ -506,9 +506,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public Collection<Node> getNearestNodes(Point p) {
         Collection<Node> nearest = new HashSet<Node>();
         DataSet ds = getCurrentDataSet();
-        if(ds == null)
+        if (ds == null)
             return null;
-        for (Node n : ds.nodes) {
+        for (Node n : ds.getNodes()) {
             if (n.isUsable()
                     && getPoint(n).distanceSq(p) < snapDistance) {
                 nearest.add(n);

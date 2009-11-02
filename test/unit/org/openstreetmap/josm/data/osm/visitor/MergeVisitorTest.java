@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -357,7 +356,7 @@ public class MergeVisitorTest {
 
         Node n2 = (Node)my.getPrimitiveById(1,OsmPrimitiveType.NODE);
         assertEquals(0,visitor.getConflicts().size());
-        assertEquals(2,my.nodes.size());
+        assertEquals(2, my.getNodes().size());
         assertEquals(n,n2);
     }
 
@@ -401,7 +400,7 @@ public class MergeVisitorTest {
         MergeVisitor visitor = new MergeVisitor(my,their);
         visitor.merge();
 
-        Node n2 = my.nodes.iterator().next();
+        Node n2 = my.getNodes().iterator().next();
         assertEquals(0,visitor.getConflicts().size());
         assertEquals("value1",n2.get("key1"));
         assertEquals(true, n1.getTimestamp().equals(n2.getTimestamp()));
@@ -439,7 +438,7 @@ public class MergeVisitorTest {
         MergeVisitor visitor = new MergeVisitor(my,their);
         visitor.merge();
 
-        Node n2 = my.nodes.iterator().next();
+        Node n2 = my.getNodes().iterator().next();
         assertEquals(0,visitor.getConflicts().size());
         assertEquals("value1",n2.get("key1"));
         assertEquals(true, n1.getTimestamp().equals(n2.getTimestamp()));

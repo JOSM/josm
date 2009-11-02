@@ -110,9 +110,9 @@ public class TagCollection implements Iterable<Tag> {
     public static TagCollection unionOfAllPrimitives(DataSet ds) {
         TagCollection tags = new TagCollection();
         if (ds == null) return tags;
-        tags.add(TagCollection.unionOfAllPrimitives(ds.nodes));
-        tags.add(TagCollection.unionOfAllPrimitives(ds.ways));
-        tags.add(TagCollection.unionOfAllPrimitives(ds.relations));
+        tags.add(TagCollection.unionOfAllPrimitives(ds.getNodes()));
+        tags.add(TagCollection.unionOfAllPrimitives(ds.getWays()));
+        tags.add(TagCollection.unionOfAllPrimitives(ds.getRelations()));
         return tags;
     }
 

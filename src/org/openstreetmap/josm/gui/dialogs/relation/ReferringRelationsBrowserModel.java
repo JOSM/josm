@@ -78,7 +78,7 @@ public class ReferringRelationsBrowserModel extends AbstractListModel {
             fireModelUpdate();
             return;
         }
-        for (Relation parent : ds.relations) {
+        for (Relation parent : ds.getRelations()) {
             if (isReferringRelation(parent)) {
                 referrers.add(parent);
             }

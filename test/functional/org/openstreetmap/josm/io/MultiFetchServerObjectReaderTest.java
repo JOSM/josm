@@ -34,7 +34,6 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.xml.sax.SAXException;
 
 public class MultiFetchServerObjectReaderTest {
     private static Logger logger = Logger.getLogger(MultiFetchServerObjectReader.class.getName());
@@ -123,9 +122,9 @@ public class MultiFetchServerObjectReaderTest {
     static public void createDataSetOnServer(DataSet ds) throws OsmTransferException {
         logger.info("creating data set on the server ...");
         ArrayList<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
-        primitives.addAll(testDataSet.nodes);
-        primitives.addAll(testDataSet.ways);
-        primitives.addAll(testDataSet.relations);
+        primitives.addAll(testDataSet.getNodes());
+        primitives.addAll(testDataSet.getWays());
+        primitives.addAll(testDataSet.getRelations());
 
         OsmServerWriter writer = new OsmServerWriter();
         Changeset cs = new Changeset();
@@ -246,7 +245,7 @@ public class MultiFetchServerObjectReaderTest {
             reader.append(nodes.get(i));
         }
         DataSet out = reader.parseOsm(NullProgressMonitor.INSTANCE);
-        assertEquals(10, out.nodes.size());
+        assertEquals(10, out.getNodes().size());
         Iterator<Node> it = out.nodes.iterator();
         while(it.hasNext()) {
             Node n1 = it.next();
@@ -260,15 +259,13 @@ public class MultiFetchServerObjectReaderTest {
     @Test
     public void testMultiGet10Ways() throws OsmTransferException {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
-        ArrayList<Way> ways= new ArrayList<Way>(ds.ways);
+        ArrayList<Way> ways= new ArrayList<Way>(ds.getWays());
         for (int i =0; i< 10; i++) {
             reader.append(ways.get(i));
         }
         DataSet out = reader.parseOsm(NullProgressMonitor.INSTANCE);
-        assertEquals(10, out.ways.size());
-        Iterator<Way> it = out.ways.iterator();
-        while(it.hasNext()) {
-            Way w1 = it.next();
+        assertEquals(10, out.getWays().size());
+        for (Way w1: out.getWays()) {
             Way w2 = (Way)ds.getPrimitiveById(w1.getId(), OsmPrimitiveType.WAY);
             assertNotNull(w2);
             assertEquals(w2.getNodesCount(), w1.getNodesCount());
@@ -280,15 +277,13 @@ public class MultiFetchServerObjectReaderTest {
     @Test
     public void testMultiGet10Relations() throws OsmTransferException {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
-        ArrayList<Relation> relations= new ArrayList<Relation>(ds.relations);
+        ArrayList<Relation> relations= new ArrayList<Relation>(ds.getRelations());
         for (int i =0; i< 10; i++) {
             reader.append(relations.get(i));
         }
         DataSet out = reader.parseOsm(NullProgressMonitor.INSTANCE);
-        assertEquals(10, out.relations.size());
-        Iterator<Relation> it = out.relations.iterator();
-        while(it.hasNext()) {
-            Relation r1 = it.next();
+        assertEquals(10, out.getRelations().size());
+        for (Relation r1: out.getRelations()) {
             Relation r2 = (Relation)ds.getPrimitiveById(r1.getId(), OsmPrimitiveType.RELATION);
             assertNotNull(r2);
             assertEquals(r2.getMembersCount(), r1.getMembersCount());
@@ -300,12 +295,12 @@ public class MultiFetchServerObjectReaderTest {
     @Test
     public void testMultiGet800Nodes() throws OsmTransferException {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
-        ArrayList<Node> nodes = new ArrayList<Node>(ds.nodes);
+        ArrayList<Node> nodes = new ArrayList<Node>(ds.getNodes());
         for (int i =0; i< 812; i++) {
             reader.append(nodes.get(i));
         }
         DataSet out = reader.parseOsm(NullProgressMonitor.INSTANCE);
-        assertEquals(812, out.nodes.size());
+        assertEquals(812, out.getNodes().size());
         Iterator<Node> it = out.nodes.iterator();
         while(it.hasNext()) {
             Node n1 = it.next();
@@ -319,17 +314,15 @@ public class MultiFetchServerObjectReaderTest {
     @Test
     public void multiGetWithNonExistingNode() throws OsmTransferException {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
-        ArrayList<Node> nodes = new ArrayList<Node>(ds.nodes);
+        ArrayList<Node> nodes = new ArrayList<Node>(ds.getNodes());
         for (int i =0; i< 10; i++) {
             reader.append(nodes.get(i));
         }
         Node n = new Node(9999999);
         reader.append(n); // doesn't exist
         DataSet out = reader.parseOsm(NullProgressMonitor.INSTANCE);
-        assertEquals(10, out.nodes.size());
-        Iterator<Node> it = out.nodes.iterator();
-        while(it.hasNext()) {
-            Node n1 = it.next();
+        assertEquals(10, out.getNodes().size());
+        for (Node n1:out.getNodes()) {
             Node n2 = (Node)ds.getPrimitiveById(n1.getId(), OsmPrimitiveType.NODE);
             assertNotNull(n2);
             assertEquals(n2.get("name"),n2.get("name"));

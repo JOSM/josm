@@ -71,18 +71,21 @@ public class OsmWriter extends XmlWriter implements Visitor {
     }
 
     public void writeContent(DataSet ds) {
-        for (Node n : ds.nodes)
+        for (Node n : ds.getNodes()) {
             if (shouldWrite(n)) {
                 visit(n);
             }
-        for (Way w : ds.ways)
+        }
+        for (Way w : ds.getWays()) {
             if (shouldWrite(w)) {
                 visit(w);
             }
-        for (Relation e : ds.relations)
+        }
+        for (Relation e : ds.getRelations()) {
             if (shouldWrite(e)) {
                 visit(e);
             }
+        }
     }
 
     private boolean shouldWrite(OsmPrimitive osm) {

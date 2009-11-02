@@ -146,7 +146,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
     protected int getNumRelations() {
         if (Main.main.getCurrentDataSet() == null) return 0;
-        return Main.main.getCurrentDataSet().relations.size();
+        return Main.main.getCurrentDataSet().getRelations().size();
     }
 
     /**
@@ -157,8 +157,8 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
      * @return the list of relations
      */
     protected ArrayList<Relation> getDisplayedRelationsInSortOrder(DataSet ds) {
-        ArrayList<Relation> relations = new ArrayList<Relation>(ds.relations.size());
-        for (Relation r: ds.relations ){
+        ArrayList<Relation> relations = new ArrayList<Relation>(ds.getRelations().size());
+        for (Relation r : ds.getRelations()) {
             if (!r.isUsable() || !r.isVisible()) {
                 continue;
             }
@@ -169,6 +169,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
                 relations,
                 new Comparator<Relation>() {
                     NameFormatter formatter = DefaultNameFormatter.getInstance();
+
                     public int compare(Relation r1, Relation r2) {
                         return r1.getDisplayName(formatter).compareTo(r2.getDisplayName(formatter));
                     }

@@ -71,7 +71,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
     @Override
     public Collection<Command> execute(Way oldway, Way way) throws UserCancelException {
         Map<OsmPrimitive, List<TagCorrection>> tagCorrectionsMap =
-            new HashMap<OsmPrimitive, List<TagCorrection>>();
+                new HashMap<OsmPrimitive, List<TagCorrection>>();
 
         ArrayList<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
         primitives.add(way);
@@ -111,10 +111,10 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         }
 
         Map<OsmPrimitive, List<RoleCorrection>> roleCorrectionMap =
-            new HashMap<OsmPrimitive, List<RoleCorrection>>();
+                new HashMap<OsmPrimitive, List<RoleCorrection>>();
         roleCorrectionMap.put(way, new ArrayList<RoleCorrection>());
 
-        for (Relation relation : Main.main.getCurrentDataSet().relations) {
+        for (Relation relation : Main.main.getCurrentDataSet().getRelations()) {
             int position = 0;
             for (RelationMember member : relation.getMembers()) {
                 if (!member.getMember().hasEqualSemanticAttributes(oldway)

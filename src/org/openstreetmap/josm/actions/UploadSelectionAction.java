@@ -67,17 +67,17 @@ public class UploadSelectionAction extends JosmAction{
 
     protected Set<OsmPrimitive> getDeletedPrimitives(DataSet ds) {
         HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
-        for (OsmPrimitive p : ds.nodes) {
+        for (OsmPrimitive p : ds.getNodes()) {
             if (p.isDeleted() && !p.isNew() && p.isVisible() && p.isModified()) {
                 ret.add(p);
             }
         }
-        for (OsmPrimitive p : ds.ways) {
+        for (OsmPrimitive p : ds.getWays()) {
             if (p.isDeleted() && !p.isNew() && p.isVisible() && p.isModified()) {
                 ret.add(p);
             }
         }
-        for (OsmPrimitive p : ds.relations) {
+        for (OsmPrimitive p : ds.getRelations()) {
             if (p.isDeleted() && !p.isNew() && p.isVisible() && p.isModified()) {
                 ret.add(p);
             }

@@ -149,12 +149,12 @@ public class SimplePaintVisitor extends AbstractVisitor {
            time to iterate through list twice, OTOH does not
            require changing the colour while painting... */
         //profilerN = 0;
-        for (final OsmPrimitive osm : data.relations)
-            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered())
-            {
+        for (final OsmPrimitive osm: data.getRelations()) {
+            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered()) {
                 osm.visit(this);
                 //        profilerN++;
             }
+        }
 
         //if(profiler)
         //{
@@ -163,20 +163,20 @@ public class SimplePaintVisitor extends AbstractVisitor {
         //}
 
         //profilerN = 0;
-        for (final OsmPrimitive osm : data.ways)
-            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered() && osm.isTagged())
-            {
+        for (final OsmPrimitive osm:data.getWays()){
+            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered() && osm.isTagged()) {
                 osm.visit(this);
                 //        profilerN++;
             }
+        }
         displaySegments();
 
-        for (final OsmPrimitive osm : data.ways)
-            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered() && !osm.isTagged())
-            {
+        for (final OsmPrimitive osm:data.getWays()){
+            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered() && !osm.isTagged()) {
                 osm.visit(this);
                 //        profilerN++;
             }
+        }
         displaySegments();
 
         //if(profiler)
@@ -188,8 +188,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
 
         //profilerN = 0;
         for (final OsmPrimitive osm : data.getSelected())
-            if (!osm.isDeleted())
-            {
+            if (!osm.isDeleted()) {
                 osm.visit(this);
                 //        profilerN++;
             }
@@ -202,12 +201,13 @@ public class SimplePaintVisitor extends AbstractVisitor {
         //}
 
         //profilerN = 0;
-        for (final OsmPrimitive osm : data.nodes)
+        for (final OsmPrimitive osm: data.getNodes()) {
             if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered())
             {
                 osm.visit(this);
                 //        profilerN++;
             }
+        }
 
         //if(profiler)
         //{
@@ -216,16 +216,15 @@ public class SimplePaintVisitor extends AbstractVisitor {
         //    profilerLast = java.lang.System.currentTimeMillis();
         //}
 
-        if(virtualNodeSize != 0)
-        {
+        if (virtualNodeSize != 0) {
             //    profilerN = 0;
             currentColor = nodeColor;
-            for (final OsmPrimitive osm : data.ways)
-                if (!osm.isDeleted() && !osm.isDisabled() && !osm.isFiltered())
-                {
-                    visitVirtual((Way)osm);
+            for (final OsmPrimitive osm:data.getWays()){
+                if (!osm.isDeleted() && !osm.isDisabled() && !osm.isFiltered()) {
+                    visitVirtual((Way) osm);
                     //                profilerN++;
                 }
+            }
             displaySegments();
 
             //    if(profiler)

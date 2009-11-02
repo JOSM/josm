@@ -149,8 +149,8 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
             return;
         }
         parents.clear();
-        for (Relation parent : referrers.relations) {
-            parents.add((Relation)getLayer().data.getPrimitiveById(parent.getId(),OsmPrimitiveType.RELATION));
+        for (Relation parent : referrers.getRelations()) {
+            parents.add((Relation) getLayer().data.getPrimitiveById(parent.getId(), OsmPrimitiveType.RELATION));
         }
         if (continuation != null) {
             continuation.run();
