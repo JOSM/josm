@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
@@ -35,8 +36,13 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainOsmApiInitializationException(OsmApiInitializationException e) {
-        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainOsmApiInitializationException(e), tr("Error"),
-                JOptionPane.ERROR_MESSAGE);
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainOsmApiInitializationException(e),
+                tr("Error"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#OsmApiInitializationException")
+        );
     }
 
     /**
@@ -45,8 +51,13 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainOsmChangesetCloseException(OsmChangesetCloseException e) {
-        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainOsmChangesetCloseException(e), tr("Error"),
-                JOptionPane.ERROR_MESSAGE);
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainOsmChangesetCloseException(e),
+                tr("Error"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#OsmChangesetCloseException")
+        );
     }
 
     /**
@@ -55,8 +66,13 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainPreconditionFailed(OsmApiException e) {
-        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainPreconditionFailed(e),
-                tr("Precondition violation"), JOptionPane.ERROR_MESSAGE);
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainPreconditionFailed(e),
+                tr("Precondition violation"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#OsmApiException")
+        );
     }
 
     /**
@@ -65,8 +81,13 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainGeneric(Exception e) {
-        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainGeneric(e), tr("Error"),
-                JOptionPane.ERROR_MESSAGE);
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainGeneric(e),
+                tr("Error"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#GenericException")
+        );
     }
 
     /**
@@ -78,8 +99,13 @@ public class ExceptionDialogUtil {
      */
 
     public static void explainSecurityException(OsmTransferException e) {
-        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainSecurityException(e), tr("Security exception"),
-                JOptionPane.ERROR_MESSAGE);
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainSecurityException(e),
+                tr("Security exception"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#SecurityException")
+        );
     }
 
     /**
@@ -91,8 +117,13 @@ public class ExceptionDialogUtil {
      */
 
     public static void explainNestedSocketException(OsmTransferException e) {
-        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainNestedSocketException(e),
-                tr("Network exception"), JOptionPane.ERROR_MESSAGE);
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainNestedSocketException(e),
+                tr("Network exception"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#NestedSocketException")
+        );
     }
 
     /**
@@ -104,8 +135,13 @@ public class ExceptionDialogUtil {
      */
 
     public static void explainNestedIOException(OsmTransferException e) {
-        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainNestedIOException(e), tr("IO Exception"),
-                JOptionPane.ERROR_MESSAGE);
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainNestedIOException(e),
+                tr("IO Exception"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#NestedIOException")
+        );
     }
 
     /**
@@ -116,8 +152,13 @@ public class ExceptionDialogUtil {
      */
 
     public static void explainInternalServerError(OsmTransferException e) {
-        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainInternalServerError(e),
-                tr("Internal Server Error"), JOptionPane.ERROR_MESSAGE);
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainInternalServerError(e),
+                tr("Internal Server Error"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#InternalServerError")
+        );
     }
 
     /**
@@ -127,8 +168,13 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainBadRequest(OsmApiException e) {
-        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainBadRequest(e), tr("Bad Request"),
-                JOptionPane.ERROR_MESSAGE);
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainBadRequest(e),
+                tr("Bad Request"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#BadRequest")
+        );
     }
 
     /**
@@ -138,8 +184,13 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainNotFound(OsmApiException e) {
-        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainNotFound(e), tr("Not Found"),
-                JOptionPane.ERROR_MESSAGE);
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainNotFound(e),
+                tr("Not Found"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#NotFound")
+        );
     }
 
     /**
@@ -148,8 +199,13 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainConflict(OsmApiException e) {
-        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainConflict(e), tr("Conflict"),
-                JOptionPane.ERROR_MESSAGE);
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainConflict(e),
+                tr("Conflict"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#Conflict")
+        );
     }
 
     /**
@@ -161,8 +217,13 @@ public class ExceptionDialogUtil {
      */
 
     public static void explainNestedUnkonwnHostException(OsmTransferException e) {
-        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainNestedUnkonwnHostException(e),
-                tr("Unknown host"), JOptionPane.ERROR_MESSAGE);
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainNestedUnkonwnHostException(e),
+                tr("Unknown host"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#UnknownHost")
+        );
     }
 
     /**
@@ -257,9 +318,13 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainGoneForUnknownPrimitive(OsmApiException e) {
-        JOptionPane.showMessageDialog(Main.parent, ExceptionUtil.explainGoneForUnknownPrimitive(e),
-                tr("Object deleted"), JOptionPane.ERROR_MESSAGE);
-
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainGoneForUnknownPrimitive(e),
+                tr("Object deleted"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#GoneForUnknownPrimitive")
+        );
     }
 
     /**

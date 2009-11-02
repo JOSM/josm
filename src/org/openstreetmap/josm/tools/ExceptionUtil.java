@@ -17,8 +17,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -143,8 +141,7 @@ public class ExceptionUtil {
             }
             msg = tr(
                     "<html>The server reported that it has detected a conflict.<br>" +
-                    "Error message (untranslated):<br>" +
-                    "{0}",
+                    "Error message (untranslated):<br>{0}</html>",
                     msg
             );
         }

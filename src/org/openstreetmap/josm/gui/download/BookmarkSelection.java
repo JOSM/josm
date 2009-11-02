@@ -60,11 +60,6 @@ public class BookmarkSelection implements DownloadSelection {
         JPanel pnl = new JPanel();
         pnl.setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
-//        gc.fill = GridBagConstraints.HORIZONTAL;
-//        gc.weightx = 1.0;
-//        gc.weighty = 0.0;
-//        pnl.add(new JButton(actAdd = new AddAction()), gc);
-
         gc.gridy = 0;
         RemoveAction removeAction = new RemoveAction();
         bookmarks.addListSelectionListener(removeAction);
