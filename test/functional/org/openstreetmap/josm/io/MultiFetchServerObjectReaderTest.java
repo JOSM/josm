@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -240,15 +239,13 @@ public class MultiFetchServerObjectReaderTest {
     @Test
     public void testMultiGet10Nodes() throws OsmTransferException {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
-        ArrayList<Node> nodes = new ArrayList<Node>(ds.nodes);
+        ArrayList<Node> nodes = new ArrayList<Node>(ds.getNodes());
         for (int i =0; i< 10; i++) {
             reader.append(nodes.get(i));
         }
         DataSet out = reader.parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(10, out.getNodes().size());
-        Iterator<Node> it = out.nodes.iterator();
-        while(it.hasNext()) {
-            Node n1 = it.next();
+        for (Node n1:out.getNodes()) {
             Node n2 = (Node)ds.getPrimitiveById(n1.getId(), OsmPrimitiveType.NODE);
             assertNotNull(n2);
             assertEquals(n2.get("name"),n2.get("name"));
@@ -301,9 +298,7 @@ public class MultiFetchServerObjectReaderTest {
         }
         DataSet out = reader.parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(812, out.getNodes().size());
-        Iterator<Node> it = out.nodes.iterator();
-        while(it.hasNext()) {
-            Node n1 = it.next();
+        for (Node n1:out.getNodes()) {
             Node n2 = (Node)ds.getPrimitiveById(n1.getId(), OsmPrimitiveType.NODE);
             assertNotNull(n2);
             assertEquals(n2.get("name"),n2.get("name"));

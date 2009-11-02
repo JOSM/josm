@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.QuadBuckets.BBox;
 
 /**
  * DataSet is the data behind the application. It can consists of only a few points up to the whole
@@ -64,6 +65,10 @@ public class DataSet implements Cloneable {
         return Collections.unmodifiableCollection(nodes);
     }
 
+    public List<Node> searchNodes(BBox bbox) {
+        return nodes.search(bbox);
+    }
+
     /**
      * All ways (Streets etc.) in the DataSet.
      *
@@ -75,6 +80,10 @@ public class DataSet implements Cloneable {
 
     public Collection<Way> getWays() {
         return Collections.unmodifiableCollection(ways);
+    }
+
+    public List<Way> searchWays(BBox bbox) {
+        return ways.search(bbox);
     }
 
     /**
@@ -437,13 +446,13 @@ public class DataSet implements Cloneable {
     @Override public DataSet clone() {
         DataSet ds = new DataSet();
         for (Node n : nodes) {
-            ds.nodes.add(new Node(n));
+            ds.addPrimitive(new Node(n));
         }
         for (Way w : ways) {
-            ds.ways.add(new Way(w));
+            ds.addPrimitive(new Way(w));
         }
         for (Relation e : relations) {
-            ds.relations.add(new Relation(e));
+            ds.addPrimitive(new Relation(e));
         }
         for (DataSource source : dataSources) {
             ds.dataSources.add(new DataSource(source.bounds, source.origin));
@@ -665,5 +674,32 @@ public class DataSet implements Cloneable {
             }
         }
         return ret;
+    }
+
+    /**
+     * Reindex all nodes and ways after their coordinates were changed. This is a temporary solution, reindexing should
+     * be automatic in the future
+     */
+    public void reindexAll() {
+        List<Node> ntmp = new ArrayList<Node>(nodes);
+        nodes.clear();
+        nodes.addAll(ntmp);
+        List<Way> wtmp = new ArrayList<Way>(ways);
+        ways.clear();
+        ways.addAll(wtmp);
+    }
+
+    public void clenupDeletedPrimitives() {
+        cleanupDeleted(nodes.iterator());
+        cleanupDeleted(ways.iterator());
+        cleanupDeleted(relations.iterator());
+    }
+
+    private void cleanupDeleted(Iterator<? extends OsmPrimitive> it) {
+        while (it.hasNext()) {
+            if (it.next().isDeleted()) {
+                it.remove();
+            }
+        }
     }
 }

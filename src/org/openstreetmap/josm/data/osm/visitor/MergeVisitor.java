@@ -97,14 +97,13 @@ public class MergeVisitor extends AbstractVisitor {
      *   assigned id (i.e. id != 0)
      */
     protected <P extends OsmPrimitive> void mergePrimitive(P other,
-            Collection<P> myPrimitives, Collection<P> otherPrimitives,
-            HashMap<Long, P> primitivesWithDefinedIds) {
+            DataSet myDataset, Collection<P> myPrimitives, HashMap<Long, P> primitivesWithDefinedIds) {
 
         if (!other.isNew() ) {
             // try to merge onto a matching primitive with the same
             // defined id
             //
-            if (mergeById(myPrimitives, primitivesWithDefinedIds, other))
+            if (mergeById(primitivesWithDefinedIds, other))
                 return;
         } else {
             // try to merge onto a primitive  which has no id assigned
@@ -135,21 +134,21 @@ public class MergeVisitor extends AbstractVisitor {
         // If we get here we didn't find a suitable primitive in
         // my dataset. Just add other to my dataset.
         //
-        myPrimitives.add(other);
+        myDataset.addPrimitive(other);
     }
 
     public void visit(Node other) {
-        mergePrimitive(other, myDataSet.nodes, theirDataSet.nodes, nodeshash);
+        mergePrimitive(other, myDataSet, myDataSet.getNodes(), nodeshash);
     }
 
     public void visit(Way other) {
         fixWay(other);
-        mergePrimitive(other, myDataSet.ways, theirDataSet.ways, wayshash);
+        mergePrimitive(other, myDataSet, myDataSet.getWays(), wayshash);
     }
 
     public void visit(Relation other) {
         fixRelation(other);
-        mergePrimitive(other, myDataSet.relations, theirDataSet.relations, relshash);
+        mergePrimitive(other, myDataSet, myDataSet.getRelations(), relshash);
     }
 
     protected void fixIncomplete(Way w) {
@@ -229,15 +228,13 @@ public class MergeVisitor extends AbstractVisitor {
     /**
      * Tries to merge a primitive <code>other</code> into an existing primitive with the same id.
      *
-     * @param myPrimitives the complete set of my primitives (potential merge targets)
      * @param myPrimitivesWithDefinedIds the map of primitives (potential merge targets) with an id <> 0, for faster lookup
      *    by id. Key is the id, value the primitive with the given value. myPrimitives.valueSet() is a
      *    subset of primitives.
      * @param other  the other primitive which is to be merged onto a primitive in my primitives
      * @return true, if this method was able to merge <code>other</code> with an existing node; false, otherwise
      */
-    private <P extends OsmPrimitive> boolean mergeById(
-            Collection<P> myPrimitives, HashMap<Long, P> myPrimitivesWithDefinedIds, P other) {
+    private <P extends OsmPrimitive> boolean mergeById(HashMap<Long, P> myPrimitivesWithDefinedIds, P other) {
 
         // merge other into an existing primitive with the same id, if possible
         //

@@ -51,7 +51,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
@@ -457,13 +456,14 @@ public class OsmDataLayer extends Layer {
 
         // if uploaded, clean the modified flags as well
         final Set<OsmPrimitive> processedSet = new HashSet<OsmPrimitive>(processed);
-        for (final Iterator<Node> it = data.nodes.iterator(); it.hasNext();) {
+        data.clenupDeletedPrimitives();
+        for (final Iterator<Node> it = data.getNodes().iterator(); it.hasNext();) {
             cleanIterator(it, processedSet);
         }
-        for (final Iterator<Way> it = data.ways.iterator(); it.hasNext();) {
+        for (final Iterator<Way> it = data.getWays().iterator(); it.hasNext();) {
             cleanIterator(it, processedSet);
         }
-        for (final Iterator<Relation> it = data.relations.iterator(); it.hasNext();) {
+        for (final Iterator<Relation> it = data.getRelations().iterator(); it.hasNext();) {
             cleanIterator(it, processedSet);
         }
     }
@@ -481,9 +481,6 @@ public class OsmDataLayer extends Layer {
         if (!processed.remove(osm))
             return;
         osm.setModified(false);
-        if (osm.isDeleted()) {
-            it.remove();
-        }
     }
 
     /**
@@ -506,16 +503,19 @@ public class OsmDataLayer extends Layer {
         final JPanel p = new JPanel(new GridBagLayout());
 
         String nodeText = trn("{0} node", "{0} nodes", counter.nodes, counter.nodes);
-        if (counter.deletedNodes > 0)
+        if (counter.deletedNodes > 0) {
             nodeText += " ("+trn("{0} deleted", "{0} deleted", counter.deletedNodes, counter.deletedNodes)+")";
+        }
 
         String wayText = trn("{0} way", "{0} ways", counter.ways, counter.ways);
-        if (counter.deletedWays > 0)
+        if (counter.deletedWays > 0) {
             wayText += " ("+trn("{0} deleted", "{0} deleted", counter.deletedWays, counter.deletedWays)+")";
+        }
 
         String relationText = trn("{0} relation", "{0} relations", counter.relations, counter.relations);
-        if (counter.deletedRelations > 0)
+        if (counter.deletedRelations > 0) {
             relationText += " ("+trn("{0} deleted", "{0} deleted", counter.deletedRelations, counter.deletedRelations)+")";
+        }
 
         p.add(new JLabel(tr("{0} consists of:", getName())), GBC.eol());
         p.add(new JLabel(nodeText, ImageProvider.get("data", "node"), JLabel.HORIZONTAL), GBC.eop().insets(15,0,0,0));

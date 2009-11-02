@@ -331,9 +331,9 @@ public class MergeSourceBuildingVisitorTest {
         assertEquals(3, r.getMembersCount());
         RelationMember m = new RelationMember("node-20", lookupByName(hull.getNodes(), "n20"));
         assertTrue(r.getMembers().contains(m));
-        m = new RelationMember("way-30", lookupByName(hull.ways, "w30"));
+        m = new RelationMember("way-30", lookupByName(hull.getWays(), "w30"));
         assertTrue(r.getMembers().contains(m));
-        m = new RelationMember("relation-40", lookupByName(hull.relations, "r40"));
+        m = new RelationMember("relation-40", lookupByName(hull.getRelations(), "r40"));
         assertTrue(r.getMembers().contains(m));
     }
 
