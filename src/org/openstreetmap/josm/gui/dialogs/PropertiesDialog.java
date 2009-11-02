@@ -129,6 +129,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 add();
             }
         }
+        @Override public void mousePressed(MouseEvent e) {
+            if (e.getSource() == propertyTable) {
+                membershipTable.clearSelection();
+            } else if (e.getSource() == membershipTable) {
+                propertyTable.clearSelection();
+            }
+        }
     }
 
     private final Map<String, Map<String, Integer>> valueCount = new TreeMap<String, Map<String, Integer>>();
