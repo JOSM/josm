@@ -11,6 +11,7 @@ import javax.swing.JMenu;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.HelpAction;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
 public class HelpUtil {
@@ -204,12 +205,26 @@ public class HelpUtil {
     }
 
     /**
+     * Replies the global help action, if available. Otherwise, creates an instance
+     * of {@see HelpAction}.
+     * 
+     * @return
+     */
+    static private Action getHelpAction() {
+        try {
+            return Main.main.menu.help;
+        } catch(NullPointerException e) {
+            return new HelpAction();
+        }
+    }
+
+    /**
      * Makes a component aware of context sensitive help.
      * 
      * A relative help topic doesn't start with /Help and doesn't include a locale
      * code. Example: /Dialog/RelationEditor is a relative help topic, /De:Help/Dialog/RelationEditor
      * is not.
-     *  
+     * 
      * @param component the component  the component
      * @param topic the help topic. Set to the default help topic if null.
      */
@@ -218,7 +233,7 @@ public class HelpUtil {
             relativeHelpTopic = "/";
         }
         component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("F1"), "help");
-        component.getActionMap().put("help", Main.main.menu.help);
+        component.getActionMap().put("help", getHelpAction());
         component.putClientProperty("help", relativeHelpTopic);
     }
 

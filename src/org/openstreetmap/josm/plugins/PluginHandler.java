@@ -1,6 +1,7 @@
 //License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.plugins;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Font;
@@ -12,10 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
@@ -32,7 +31,6 @@ import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -100,7 +98,7 @@ public class PluginHandler {
             int v = Version.getInstance().getVersion();
             if(Main.pref.getInteger("pluginmanager.version", 0) < v)
             {
-                doUpdate = tr("You updated your JOSM software\nTo prevent problems the plugins should be updated as well.\n"
+                doUpdate = tr("You updated your JOSM software.\nTo prevent problems the plugins should be updated as well.\n"
                         + "Update plugins now?");
                 check = "pluginmanger.version";
             }
@@ -127,9 +125,11 @@ public class PluginHandler {
                 dialog.setContent(doUpdate);
                 dialog.toggleEnable(check);
                 dialog.setButtonIcons( new String[] {"dialogs/refresh.png", "cancel.png"});
+                dialog.configureContextsensitiveHelp(ht("/Plugin/AutomaticUpdate"), true /* show help button */);
                 dialog.showDialog();
-                if(dialog.getValue() == 1)
+                if(dialog.getValue() == 1) {
                     new PluginSelection().update();
+                }
             }
         }
 
