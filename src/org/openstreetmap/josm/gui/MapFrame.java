@@ -6,6 +6,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.event.MouseWheelListener;
+import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -261,13 +263,18 @@ public class MapFrame extends JPanel implements Destroyable {
         JToolBar jb = new JToolBar(JToolBar.VERTICAL);
         jb.setFloatable(false);
         jb.add(toolBarActions);
-        jb.addSeparator();
+        jb.addSeparator(new Dimension(0,10));
         jb.add(toolBarToggle);
         if(Main.pref.getBoolean("sidetoolbar.visible", true))
         {
             if(Main.pref.getBoolean("sidetoolbar.scrollable", true)) {
-                panel.add(new ScrollViewport(jb, ScrollViewport.VERTICAL_DIRECTION),
-                        BorderLayout.WEST);
+                final ScrollViewport svp = new ScrollViewport(jb, ScrollViewport.VERTICAL_DIRECTION);
+                panel.add(svp, BorderLayout.WEST);
+                jb.addMouseWheelListener(new MouseWheelListener() {
+                    public void mouseWheelMoved(MouseWheelEvent e) {
+                        svp.scroll(0,e.getUnitsToScroll() * 5);
+                    }
+                });
             } else {
                 panel.add(jb, BorderLayout.WEST);
             }
