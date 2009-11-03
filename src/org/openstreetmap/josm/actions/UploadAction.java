@@ -1,8 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -27,7 +27,6 @@ import org.openstreetmap.josm.actions.upload.UploadParameterHook;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.Changeset;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
@@ -508,24 +507,6 @@ public class UploadAction extends JosmAction{
             //
             else if (ex.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
                 ExceptionDialogUtil.explainNotFound(ex);
-                return;
-            }
-            // any other API exception
-            //
-            else {
-                ex.printStackTrace();
-                String msg = tr("<html>Uploading <strong>failed</strong>."
-                        + "<br>"
-                        + "{0}"
-                        + "</html>",
-                        ex.getDisplayMessage()
-                );
-                JOptionPane.showMessageDialog(
-                        Main.map,
-                        msg,
-                        tr("Upload to OSM API failed"),
-                        JOptionPane.ERROR_MESSAGE
-                );
                 return;
             }
         }
