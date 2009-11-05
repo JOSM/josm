@@ -113,11 +113,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(!useStyleCache)
             return (styles != null) ? styles.getIcon(osm) : null;
 
-            if(osm.mappaintStyle == null && styles != null) {
-                osm.mappaintStyle = styles.getIcon(osm);
-            }
+        if(osm.mappaintStyle == null && styles != null) {
+            osm.mappaintStyle = styles.getIcon(osm);
+        }
 
-            return (IconElemStyle)osm.mappaintStyle;
+        return (IconElemStyle)osm.mappaintStyle;
     }
 
     public boolean isPrimitiveArea(Way osm) {
@@ -157,14 +157,18 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         //    return;
 
         if (nodeStyle != null && isZoomOk(nodeStyle) && showIcons > dist) {
-            drawNode(n, nodeStyle.icon, nodeStyle.annotate, data.isSelected(n));
+            if (inactive || n.isDisabled()) {
+                drawNode(n, nodeStyle.getDisabledIcon(), nodeStyle.annotate, data.isSelected(n));
+            } else {
+                drawNode(n, nodeStyle.icon, nodeStyle.annotate, data.isSelected(n));
+            }
         } else if (n.highlighted) {
             drawNode(n, highlightColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
         } else if (data.isSelected(n)) {
             drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
         } else if (n.isTagged()) {
             drawNode(n, nodeColor, taggedNodeSize, taggedNodeRadius, fillUnselectedNode);
-        } else if (n.isDisabled()) {
+        } else if (inactive || n.isDisabled()) {
             drawNode(n, inactiveColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
         } else {
             drawNode(n, nodeColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
@@ -1250,7 +1254,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             String name = getNodeName(n);
             if (name!=null && annotate)
             {
-                g.setColor(textColor);
+                if (inactive || n.isDisabled()) {
+                    g.setColor(inactiveColor);
+                } else {
+                    g.setColor(textColor);
+                }
                 Font defaultFont = g.getFont();
                 g.setFont (orderFont);
                 g.drawString (name, p.x+w/2+2, p.y+h/2+2);
@@ -1370,7 +1378,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
             //profilerVisibleNodes++;
 
-            g.setColor(color);
+            if (inactive || n.isDisabled()) {
+                g.setColor(inactiveColor);
+            } else {
+                g.setColor(color);
+            }
             if (fill) {
                 g.fillRect(p.x - radius, p.y - radius, size, size);
                 g.drawRect(p.x - radius, p.y - radius, size, size);
@@ -1383,7 +1395,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 String name = getNodeName(n);
                 if (name!=null /* && annotate */)
                 {
-                    g.setColor(textColor);
+                    if (inactive || n.isDisabled()) {
+                        g.setColor(inactiveColor);
+                    } else {
+                        g.setColor(textColor);
+                    }
                     Font defaultFont = g.getFont();
                     g.setFont (orderFont);
                     g.drawString (name, p.x+radius+2, p.y+radius+2);
