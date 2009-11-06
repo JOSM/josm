@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.*;
+
 public class WayConnectionType {
 
     /** True, if the corresponding primitive is not a way or the way is incomplete */
@@ -13,18 +15,30 @@ public class WayConnectionType {
     public final boolean linkNext;
 
     /** 
-     * direction is +1 if the first node of this way is connected to the previous way 
+     * direction is FORWARD if the first node of this way is connected to the previous way 
      * and / or the last node of this way is connected to the next way. 
-     * direction is -1 if it is the other way around.
-     * If this way is neither connected to the previous nor to the next way, then
-     * direction has the value 0.
+     * direction is BACKWARD if it is the other way around.
+     * direction has a ROUNDABOUT value, if it is tagged as such and it is somehow
+     * connected to the previous / next member.
+     * If there is no connection to the previous or next member, then
+     * direction has the value NONE.
      */
-    public final int direction;
+    public final Direction direction;
+    
+    public enum Direction {
+        FORWARD, BACKWARD, ROUNDABOUT_LEFT, ROUNDABOUT_RIGHT, NONE;
+        
+        public boolean isRoundabout() {
+            return this == ROUNDABOUT_RIGHT || this == ROUNDABOUT_LEFT;
+        }    
+    };
 
     /** True, if the element is part of a closed loop of ways. */
     public boolean isLoop;
 
-    public WayConnectionType(boolean linkPrev, boolean linkNext, int direction) {
+    public boolean isRoundabout = false;
+    
+    public WayConnectionType(boolean linkPrev, boolean linkNext, Direction direction) {
         this.linkPrev = linkPrev;
         this.linkNext = linkNext;
         this.isLoop = false;
@@ -37,7 +51,7 @@ public class WayConnectionType {
         this.linkPrev = false;
         this.linkNext = false;
         this.isLoop = false;
-        this.direction = 0;
+        this.direction = NONE;
         invalid = true;
     }
     

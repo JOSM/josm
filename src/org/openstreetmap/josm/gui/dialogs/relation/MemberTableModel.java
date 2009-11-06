@@ -19,12 +19,16 @@ import javax.swing.event.TableModelListener;
 import javax.swing.event.TableModelEvent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+
+import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.*;
 
 public class MemberTableModel extends AbstractTableModel implements TableModelListener {
 
@@ -667,24 +671,24 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         }
     }
 
-/**
- * Determines the direction of way k with reference to the way ref_i.
- * The direction of way ref_i is ref_direction.
- *
- * ref_i is usually the predecessor of k.
- *
- * direction:
- * Let the relation be a route of oneway streets, and someone travels them in the given order.
- * Direction is 1 for if it is legel and -1 if it is illegal to do so for the given way.
- *
- * If the two ways are not properly linked the return value is 0.
- **/
-    private int determineDirection(int ref_i,int ref_direction, int k) {
+    /**
+     * Determines the direction of way k with respect to the way ref_i.
+     * The way ref_i is assumed to have the direction ref_direction and
+     * to be the predecessor of k.
+     *
+     * If both ways are not linked in any way, NONE is returned.
+     * 
+     * Else the direction is given as follows:
+     * Let the relation be a route of oneway streets, and someone travels them in the given order.
+     * Direction is FORWARD for if it is legel and BACKWARD if it is illegal to do so for the given way.
+     *
+     **/
+    private Direction determineDirection(int ref_i,Direction ref_direction, int k) {
         if (ref_i < 0 || k < 0 || ref_i >= members.size() || k >= members.size()) {
-            return 0;
+            return NONE;
         }
-        if (ref_direction == 0) {
-            return 0;
+        if (ref_direction == NONE) {
+            return NONE;
         }
         
         RelationMember m_ref = members.get(ref_i);
@@ -700,23 +704,76 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         }
         
         if (way_ref == null || way == null) {
-            return 0;
+            return NONE;
+        }
+
+        /** the list of nodes the way k can dock to */
+        List<Node> refNodes= new ArrayList<Node>();
+        
+        switch (ref_direction) {
+            case FORWARD: 
+                refNodes.add(way_ref.lastNode());
+                break;
+            case BACKWARD:
+                refNodes.add(way_ref.firstNode());
+                break;
+            case ROUNDABOUT_LEFT:
+            case ROUNDABOUT_RIGHT:
+                refNodes = way_ref.getNodes();
+                break;
+        }
+                    
+        if (refNodes == null) {
+            return NONE;
         }
         
-        Node nRef = ref_direction > 0 ? way_ref.lastNode() : way_ref.firstNode();
-        if (nRef == null) {
-            return 0;
+        for (Node n : refNodes) {
+            if (n == null) continue;
+            if (roundaboutType(k) != NONE) {
+                for (Node nn : way.getNodes()) {
+                    if (n == nn) {
+                        return roundaboutType(k);
+                    }
+                }
+            } else {
+                if (n == way.firstNode()) {
+                    return FORWARD;
+                }
+                if (n == way.lastNode()) {
+                    return BACKWARD;
+                }
+            }
         }
-        
-        if (nRef == way.firstNode()) {
-            return 1;
-        }
-        if (nRef == way.lastNode()) {
-            return -1;
-        }
-        return 0;
+        return NONE;
     }
 
+    /**
+     * determine, if the way i is a roundabout and if yes, what type of roundabout
+     */
+    private Direction roundaboutType(int i) {
+        RelationMember m = members.get(i);
+        if (m == null || !m.isWay()) return NONE;
+        Way w = m.getWay();
+        if (w != null &&        
+                "roundabout".equals(w.get("junction")) && 
+                w.getNodesCount() < 200 &&
+                w.getNodesCount() > 2 &&
+                w.getNode(0) != null && 
+                w.getNode(1) != null &&
+                w.getNode(2) != null &&
+                w.firstNode() == w.lastNode()) {
+            /** do some simple determinant / cross pruduct test on the first 3 nodes
+                to see, if the roundabout goes clock wise or ccw */
+            EastNorth en1 = w.getNode(0).getEastNorth();
+            EastNorth en2 = w.getNode(1).getEastNorth();
+            EastNorth en3 = w.getNode(2).getEastNorth();
+            en1 = en1.sub(en2);
+            en2 = en2.sub(en3);
+            return en1.north() * en2.east() - en2.north() * en1.east() > 0 ? ROUNDABOUT_LEFT : ROUNDABOUT_RIGHT;
+        } else
+            return NONE;
+    }
+    
     private WayConnectionType wayConnection(int i) {
         if (connectionType == null) {
             updateLinks();
@@ -728,6 +785,9 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         connectionType = null;
     }
 
+    /**
+     * refresh the cache of member WayConnectionTypes
+     */
     public void updateLinks() {
         connectionType = null;
         ArrayList<WayConnectionType> con = new ArrayList<WayConnectionType>();
@@ -759,17 +819,27 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
 
             boolean linkPrev = (i != firstGroupIdx);
             boolean linkNext;
-            int dir;
+            Direction dir;
             if (linkPrev) {
                 dir = determineDirection(i-1, con.get(i-1).direction, i);
-                linkNext = (determineDirection(i, dir, i+1) != 0);
+                linkNext = (determineDirection(i, dir, i+1) != NONE);
             }
             else {
-                dir = determineDirection(i, +1, i+1) != 0 ? +1 : 0;
-                if (dir == 0) {
-                    dir = determineDirection(i, -1, i+1) != 0 ? -1 : 0;
+                if (roundaboutType(i) != NONE) {
+                    dir = determineDirection(i, roundaboutType(i), i+1) != NONE ? roundaboutType(i) : NONE;
+                } else { /** guess the direction and see if it fits with the next member */
+                    dir = determineDirection(i, FORWARD, i+1) != NONE ? FORWARD : NONE;
+                    if (dir == NONE) {
+                        dir = determineDirection(i, BACKWARD, i+1) != NONE ? BACKWARD : NONE;
+                    }
                 }
-                linkNext = (dir != 0);
+                linkNext = (dir != NONE);
+                if (dir == NONE) {
+                    if (roundaboutType(i) != NONE) {
+                        dir = roundaboutType(i);
+                    }
+                }
+                    
             }
 
             con.set(i, new WayConnectionType(linkPrev, linkNext, dir));
@@ -777,7 +847,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
             if (! linkNext) {
                 boolean loop;
                 if (i == firstGroupIdx) {
-                    loop = determineDirection(i, 1, i) == 1;
+                    loop = determineDirection(i, FORWARD, i) == FORWARD;
                 } else {
                     loop = determineDirection(i, dir, firstGroupIdx) == con.get(firstGroupIdx).direction;
                 }
@@ -790,5 +860,8 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
             }
         }
         connectionType = con;
+//        for (int i=0; i<con.size(); ++i) {
+//            System.err.println(con.get(i));
+//        }
     }
 }

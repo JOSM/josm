@@ -11,12 +11,16 @@ import java.awt.Image;
 import javax.swing.JTable;
 
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction;
+
 
 public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
 
-    final static Image arrowUp = ImageProvider.get("dialogs", "arrowup").getImage();
-    final static Image arrowDown = ImageProvider.get("dialogs", "arrowdown").getImage();
-    final static Image corners = ImageProvider.get("dialogs", "roundedcorners").getImage();
+    final static Image arrowUp = ImageProvider.get("dialogs/relation", "arrowup").getImage();
+    final static Image arrowDown = ImageProvider.get("dialogs/relation", "arrowdown").getImage();
+    final static Image corners = ImageProvider.get("dialogs/relation", "roundedcorners").getImage();
+    final static Image roundabout_right = ImageProvider.get("dialogs/relation", "roundabout_right_tiny").getImage();
+    final static Image roundabout_left = ImageProvider.get("dialogs/relation", "roundabout_left_tiny").getImage();
     private WayConnectionType value = new WayConnectionType();
 
     @Override
@@ -36,16 +40,6 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         super.paintComponent(g);
         if (value == null || !value.isValid()) {
             return;
-        }
-
-        Image arrow = null;
-        switch (value.direction) {
-            case 1:
-                arrow = arrowDown;
-                break;
-            case -1:
-                arrow = arrowUp;
-                break;
         }
 
         int ymax=this.getSize().height - 1;
@@ -99,15 +93,30 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
             }
         }
 
-        if ((arrow != null) && (value.linkPrev || value.linkNext)) {
-            g.drawImage(arrow, xoff-3, (y1 + y2) / 2 - 2, null);
-        }
-
+        /* vertical lines */
         g.setColor(Color.black);
         g.drawLine(xoff, y1, xoff, y2);
         if (value.isLoop) {
             g.drawLine(xoff+xloop, y1, xoff+xloop, y2);
         }
-        
+
+        /* special icons */
+        Image arrow = null;
+        switch (value.direction) {
+            case FORWARD:
+                arrow = arrowDown;
+                break;
+            case BACKWARD:
+                arrow = arrowUp;
+                break;
+        }
+        if ((arrow != null) && (value.linkPrev || value.linkNext)) {
+            g.drawImage(arrow, xoff-3, (y1 + y2) / 2 - 2, null);
+        }
+        else if (value.direction == Direction.ROUNDABOUT_LEFT) {
+            g.drawImage(roundabout_left, xoff-6, 1, null);
+        } else if (value.direction == Direction.ROUNDABOUT_RIGHT) {
+            g.drawImage(roundabout_right, xoff-6, 1, null);
+        }        
     }
 }
