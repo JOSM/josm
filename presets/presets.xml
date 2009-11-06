@@ -1838,6 +1838,12 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="historic" value="battlefield" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Palaeontological Site" icon="presets/palaeontological_site.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:geological" />
+            <label text="Edit Palaeontological Site" />
+            <key key="geological" value="palaeontological_site" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
         <separator/>
         <item name="Monument" icon="presets/monument.png" type="node,closedway">
             <label text="Edit Monument" />

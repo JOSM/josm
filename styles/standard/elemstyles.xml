@@ -3033,6 +3033,14 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="geological" v="palaeontological_site"/>
+		<icon annotate="true" src="historic/palaeontological_site.png"/>
+		<area colour="historic#663300"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="historic" v="wayside_cross"/>
 		<icon annotate="true" src="religion/wayside_cross.png"/>
 		<area colour="historic#663300"/>
