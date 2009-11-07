@@ -13,6 +13,12 @@
 	<property name="test.dir" value="test" />
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build"/>
+    <!-- build parameter: compression level (ant -Dclevel=N)
+             N ranges from 0 (no compression) to 9 (maximum compression)
+             default: 9 -->
+    <condition property="clevel" value="${clevel}" else="9">
+        <isset property="clevel" />
+    </condition>
 
 	<!-- Java classpath addition (all jar files to compile tests with this) -->
 	<path id="classpath">
@@ -72,7 +78,7 @@ Build-Date: ${build.tstamp}
 
 		<!-- create josm-custom.jar -->
 		<delete file="dist/josm-custom.jar"/>
-		<jar destfile="dist/josm-custom.jar" basedir="build" level="9">
+		<jar destfile="dist/josm-custom.jar" basedir="build" level="${clevel}">
         <!-- add attribute excludes="**/*BZip2*,**/*Bzip2*" to create a non-bzip2 supporting jar -->
 			<manifest>
 				<attribute name="Main-class" value="JOSM" />
