@@ -332,7 +332,6 @@ public class MapStatus extends JPanel implements Helpful {
                     ds.addSelected(nextSelected);
                 }
             }
-            ds.fireSelectionChanged();
         }
 
         /**

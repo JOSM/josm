@@ -528,7 +528,6 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         if (! (layer instanceof OsmDataLayer)) {
             if (getCurrentDataSet() != null) {
                 getCurrentDataSet().setSelected();
-                getCurrentDataSet().fireSelectionChanged();
             }
         }
         Layer old = activeLayer;

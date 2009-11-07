@@ -782,17 +782,25 @@ public class DataSet implements Cloneable {
     }
 
     public void clenupDeletedPrimitives() {
-        cleanupDeleted(nodes.iterator());
-        cleanupDeleted(ways.iterator());
-        cleanupDeleted(relations.iterator());
+        if (cleanupDeleted(nodes.iterator())
+                | cleanupDeleted(ways.iterator())
+                | cleanupDeleted(relations.iterator())) {
+            fireSelectionChanged();
+        }
     }
 
-    private void cleanupDeleted(Iterator<? extends OsmPrimitive> it) {
+    private boolean cleanupDeleted(Iterator<? extends OsmPrimitive> it) {
+        boolean changed = false;
         while (it.hasNext()) {
-            if (it.next().isDeleted()) {
+            OsmPrimitive primitive = it.next();
+            if (primitive.isDeleted()) {
+                selectedPrimitives.remove(primitive);
+                allPrimitives.remove(primitive);
+                changed = true;
                 it.remove();
             }
         }
+        return changed;
     }
 
     /**

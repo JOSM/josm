@@ -142,7 +142,6 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
         if (isCancelled())
             return;
         layer.cleanupAfterUpload(processedPrimitives);
-        layer.data.fireSelectionChanged();;
         layer.fireDataChange();
         layer.onPostUploadToServer();
 
