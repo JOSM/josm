@@ -517,6 +517,15 @@ public class OsmReader {
                         //
                     }
                     ds.addPrimitive(primitive);
+
+                    if (rm.type.equals("node")) {
+                        externalIdMap.put("n" + rm.id, primitive);
+                    } else if (rm.type.equals("way")) {
+                        externalIdMap.put("w" + rm.id, primitive);
+                    } else if (rm.type.equals("relation")) {
+                        externalIdMap.put("r" + rm.id, primitive);
+                    }
+
                 }
                 relationMembers.add(new RelationMember(rm.role, primitive));
             }
