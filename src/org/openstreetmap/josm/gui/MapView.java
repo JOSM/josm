@@ -42,6 +42,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -147,6 +148,29 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     }
 
     /**
+     * Adds a GPX layer. A GPX layer is added below the lowest data layer.
+     * 
+     * @param layer the GPX layer
+     */
+    protected void addGpxLayer(GpxLayer layer) {
+        if (layers.isEmpty()) {
+            layers.add(layer);
+            return;
+        }
+        for (int i=layers.size()-1; i> 0; i--) {
+            if (layers.get(i) instanceof OsmDataLayer) {
+                if (i == layers.size()) {
+                    layers.add(layer);
+                } else {
+                    layers.add(i+1, layer);
+                }
+                return;
+            }
+        }
+        layers.add(layer);
+    }
+
+    /**
      * Add a layer to the current MapView. The layer will be added at topmost
      * position.
      */
@@ -157,6 +181,8 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
         if (layer.isBackgroundLayer() || layers.isEmpty()) {
             layers.add(layer);
+        } else if (layer instanceof GpxLayer){
+            addGpxLayer((GpxLayer)layer);
         } else {
             layers.add(0, layer);
         }
