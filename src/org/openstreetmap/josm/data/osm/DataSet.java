@@ -51,16 +51,37 @@ public class DataSet implements Cloneable {
     /**
      * The API version that created this data set, if any.
      */
-    public String version;
+    private String version;
+
+    /**
+     * Replies the API version this dataset was created from. May be null.
+     * 
+     * @return the API version this dataset was created from. May be null.
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    /**
+     * Sets the API version this dataset was created from.
+     * 
+     * @param version the API version, i.e. "0.5" or "0.6"
+     */
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     /**
      * All nodes goes here, even when included in other data (ways etc). This enables the instant
      * conversion of the whole DataSet by iterating over this data structure.
-     * @deprecated Use getNodes() for read-only operations, addPrimitive() and removePrimitive() for modifications
      */
-    @Deprecated
-    public QuadBuckets<Node> nodes = new QuadBuckets<Node>();
+    private QuadBuckets<Node> nodes = new QuadBuckets<Node>();
 
+    /**
+     * Replies an unmodifiable collection of nodes in this dataset
+     * 
+     * @return an unmodifiable collection of nodes in this dataset
+     */
     public Collection<Node> getNodes() {
         return Collections.unmodifiableCollection(nodes);
     }
@@ -73,11 +94,14 @@ public class DataSet implements Cloneable {
      * All ways (Streets etc.) in the DataSet.
      *
      * The way nodes are stored only in the way list.
-     * @deprecated Use getWays() for read-only operations, addPrimitive() and removePrimitive() for modifications
      */
-    @Deprecated
-    public QuadBuckets<Way> ways = new QuadBuckets<Way>();
+    private QuadBuckets<Way> ways = new QuadBuckets<Way>();
 
+    /**
+     * Replies an unmodifiable collection of ways in this dataset
+     * 
+     * @return an unmodifiable collection of ways in this dataset
+     */
     public Collection<Way> getWays() {
         return Collections.unmodifiableCollection(ways);
     }
@@ -88,11 +112,14 @@ public class DataSet implements Cloneable {
 
     /**
      * All relations/relationships
-     * @deprecated Use getRelations() for read-only operations, addPrimitive() and removePrimitive() for modifications
      */
-    @Deprecated
-    public Collection<Relation> relations = new LinkedList<Relation>();
+    private Collection<Relation> relations = new LinkedList<Relation>();
 
+    /**
+     * Replies an unmodifiable collection of relations in this dataset
+     * 
+     * @return an unmodifiable collection of relations in this dataset
+     */
     public Collection<Relation> getRelations() {
         return Collections.unmodifiableCollection(relations);
     }
@@ -701,5 +728,20 @@ public class DataSet implements Cloneable {
                 it.remove();
             }
         }
+    }
+
+    /**
+     * Removes all primitives from the dataset and resets the currently selected primitives
+     * to the empty collection. Also notifies selection change listeners if necessary.
+     * 
+     */
+    public void clear() {
+        if (!selectedPrimitives.isEmpty()) {
+            selectedPrimitives.clear();
+            fireSelectionChanged();
+        }
+        nodes.clear();
+        ways.clear();
+        relations.clear();
     }
 }

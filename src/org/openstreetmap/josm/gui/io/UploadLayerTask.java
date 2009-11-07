@@ -9,7 +9,6 @@ import java.util.HashSet;
 import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.Changeset;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
@@ -120,7 +119,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
                 try {
                     ProgressMonitor m = monitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
                     if (isCancelled()) return;
-                    writer.uploadOsm(layer.data.version, toUpload, changeset, m);
+                    writer.uploadOsm(layer.data.getVersion(), toUpload, changeset, m);
                     processedPrimitives.addAll(writer.getProcessedPrimitives());
                     break;
                 } catch(OsmApiPrimitiveGoneException e) {

@@ -78,7 +78,7 @@ public class MergeVisitorTest {
     @Test
     public void nodeSimple_IdenticalNoConflict() {
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
         Node n = new Node(new LatLon(0,0));
         n.setOsmId(1,1);
         n.setModified(false);
@@ -86,7 +86,7 @@ public class MergeVisitorTest {
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
         Node n1 = new Node(new LatLon(0,0));
         n1.setOsmId(1,1);
         n1.setModified(false);
@@ -113,7 +113,7 @@ public class MergeVisitorTest {
     @Test
     public void nodeSimple_locallyUnmodifiedNoConflict() {
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
         Node n = new Node(new LatLon(0,0));
         n.setOsmId(1,1);
         n.setModified(false);
@@ -121,7 +121,7 @@ public class MergeVisitorTest {
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
         Node n1 = new Node(new LatLon(0,0));
         n1.setOsmId(1,2);
         n1.setModified(false);
@@ -152,7 +152,7 @@ public class MergeVisitorTest {
     @Test
     public void nodeSimple_TagConflict() {
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
         Node n = new Node(new LatLon(0,0));
         n.setOsmId(1,1);
         n.setModified(true);
@@ -161,7 +161,7 @@ public class MergeVisitorTest {
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
         Node n1 = new Node(new LatLon(0,0));
         n1.setOsmId(1,2);
         n1.setModified(false);
@@ -188,7 +188,7 @@ public class MergeVisitorTest {
     @Test
     public void nodeSimple_DeleteConflict() {
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
         Node n = new Node(1);
         n.setCoor(new LatLon(0,0));
         n.incomplete = false;
@@ -197,7 +197,7 @@ public class MergeVisitorTest {
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
         Node n1 = new Node(new LatLon(0,0));
         n1.setOsmId(1,1);
         n1.setModified(false);
@@ -222,7 +222,7 @@ public class MergeVisitorTest {
     @Test
     public void nodeSimple_VisibleConflict() {
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
         Node n = new Node(new LatLon(0,0));
         n.setOsmId(1,1);
         n.setModified(false);
@@ -230,7 +230,7 @@ public class MergeVisitorTest {
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
         Node n1 = new Node(new LatLon(0,0));
         n1.setOsmId(1,2);
 
@@ -255,14 +255,14 @@ public class MergeVisitorTest {
     @Test
     public void nodeSimple_DeleteConflict_2() {
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
         Node n = new Node(new LatLon(0,0));
         n.setOsmId(1,1);
         n.setDeleted(true);
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
         Node n1 = new Node(new LatLon(0,0));
         n1.setOsmId(1,1);
         their.addPrimitive(n1);
@@ -285,13 +285,13 @@ public class MergeVisitorTest {
     @Test
     public void nodeSimple_DeleteConflict_3() {
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
         Node n = new Node(new LatLon(1,1));
         n.setDeleted(true);
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
         Node n1 = new Node(new LatLon(1,1));
         their.addPrimitive(n1);
 
@@ -311,13 +311,13 @@ public class MergeVisitorTest {
     @Test
     public void nodeSimple_DeleteConflict_4() {
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
         Node n = new Node(new LatLon(1,1));
         n.setDeleted(true);
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
         Node n1 = new Node(new LatLon(1,1));
         n1.setDeleted(true);
         their.addPrimitive(n1);
@@ -337,14 +337,14 @@ public class MergeVisitorTest {
     @Test
     public void nodeSimple_InvisibleNodeInTheirDataset() {
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
         Node n = new Node(new LatLon(0,0));
         n.setOsmId(1,1);
         n.setDeleted(true);
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
         Node n1 = new Node(new LatLon(0,0));
         n1.setOsmId(2,1);
         n1.setVisible(false);
@@ -376,7 +376,7 @@ public class MergeVisitorTest {
         User theirUser = User.createOsmUser(222, "their");
 
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
         Node n = new Node();
         n.setCoor(new LatLon(0,0));
         n.put("key1", "value1");
@@ -386,7 +386,7 @@ public class MergeVisitorTest {
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
         Node n1 = new Node();
         n1.setCoor(new LatLon(0,0));
         n1.put("key1", "value1");
@@ -417,7 +417,7 @@ public class MergeVisitorTest {
     public void nodeSimple_IncompleteNode() {
 
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
         Node n = new Node();
         n.setCoor(new LatLon(0,0));
         n.setOsmId(1,1);
@@ -425,7 +425,7 @@ public class MergeVisitorTest {
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
         Node n1 = new Node();
         n1.setCoor(new LatLon(0,0));
         n1.setOsmId(1,1);
@@ -457,7 +457,7 @@ public class MergeVisitorTest {
 
 
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
 
         Node n1 = new Node();
         n1.setCoor(new LatLon(0,0));
@@ -479,7 +479,7 @@ public class MergeVisitorTest {
         my.addPrimitive(myWay);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
 
         Node n3 = new Node(new LatLon(0,0));
         n3.setOsmId(1,1);
@@ -524,7 +524,7 @@ public class MergeVisitorTest {
     public void waySimple_AdditionalNodesAndChangedNodes() {
 
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
 
         Node n1 = new Node(new LatLon(0,0));
         n1.setOsmId(1,1);
@@ -541,7 +541,7 @@ public class MergeVisitorTest {
         my.addPrimitive(myWay);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
 
         Node n3 = new Node(new LatLon(0,0));
         n3.setOsmId(1,1);
@@ -592,7 +592,7 @@ public class MergeVisitorTest {
     public void waySimple_DifferentNodesAndMyIsModified() {
 
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
 
         Node n1 = new Node(new LatLon(0,0));
         n1.setOsmId(1,1);
@@ -612,7 +612,7 @@ public class MergeVisitorTest {
         my.addPrimitive(myWay);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
 
         Node n3 = new Node(new LatLon(0,0));
         n3.setOsmId(1,1);
@@ -663,7 +663,7 @@ public class MergeVisitorTest {
     public void waySimple_TheirVersionNotVisible() {
 
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
 
         Node n1 = new Node(new LatLon(0,0));
         n1.setOsmId(1,1);
@@ -680,7 +680,7 @@ public class MergeVisitorTest {
         my.addPrimitive(myWay);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
 
         Way theirWay = new Way();
         theirWay.setOsmId(3,2);
@@ -709,7 +709,7 @@ public class MergeVisitorTest {
     public void waySimple_twoWaysWithNoId_NodesWithId() {
 
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
 
         Node n1 = new Node(new LatLon(0,0));
         n1.setOsmId(1,1);
@@ -725,7 +725,7 @@ public class MergeVisitorTest {
         my.addPrimitive(myWay);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
 
         Node n3 = new Node(new LatLon(0,0));
         n3.setOsmId(1,1);
@@ -762,7 +762,7 @@ public class MergeVisitorTest {
     public void waySimple_twoWaysWithNoId_NodesWithoutId() {
 
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
 
         Node n1 = new Node(new LatLon(0,0));
         my.addPrimitive(n1);
@@ -776,7 +776,7 @@ public class MergeVisitorTest {
         my.addPrimitive(myWay);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
 
         Node n3 = new Node(new LatLon(0,0));
         their.addPrimitive(n3);
@@ -814,7 +814,7 @@ public class MergeVisitorTest {
     public void wayComplex_mergingADeletedNode() {
 
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
 
         Node n1 = new Node(new LatLon(0,0));
         n1.setOsmId(1,1);
@@ -822,7 +822,7 @@ public class MergeVisitorTest {
         my.addPrimitive(n1);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
 
         Node n3 = new Node(new LatLon(0,0));
         n3.setOsmId(1,1);
@@ -870,7 +870,7 @@ public class MergeVisitorTest {
     public void relationComplex_mergingADeletedNode() {
 
         DataSet my = new DataSet();
-        my.version = "0.6";
+        my.setVersion("0.6");
 
         Node n1 = new Node(new LatLon(0,0));
         n1.setOsmId(1,1);
@@ -878,7 +878,7 @@ public class MergeVisitorTest {
         my.addPrimitive(n1);
 
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
 
         Node n3 = new Node(new LatLon(0,0));
         n3.setOsmId(1,1);
@@ -921,7 +921,7 @@ public class MergeVisitorTest {
     @Test
     public void newIncompleteWay() {
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
 
         Node n1 = new Node(1);
         their.addPrimitive(n1);
@@ -935,7 +935,7 @@ public class MergeVisitorTest {
         their.addPrimitive(w3);
 
         DataSet my = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
 
         MergeVisitor visitor = new MergeVisitor(my,their);
         visitor.merge();
@@ -968,7 +968,7 @@ public class MergeVisitorTest {
     @Test
     public void incompleteWayOntoCompleteWay() {
         DataSet their = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
 
         // an incomplete node
         Node n1 = new Node(1);
@@ -985,7 +985,7 @@ public class MergeVisitorTest {
         their.addPrimitive(w3);
 
         DataSet my = new DataSet();
-        their.version = "0.6";
+        their.setVersion("0.6");
 
         Node n4 = new Node(new LatLon(0,0));
         n4.setOsmId(1,1);

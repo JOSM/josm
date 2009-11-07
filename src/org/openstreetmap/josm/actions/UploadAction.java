@@ -228,9 +228,9 @@ public class UploadAction extends JosmAction{
     protected void handleUploadConflictForKnownConflict(final OsmPrimitiveType primitiveType, final long id, String serverVersion, String myVersion) {
         String lbl = "";
         switch(primitiveType) {
-            case NODE: lbl =  tr("Synchronize node {0} only", id); break;
-            case WAY: lbl =  tr("Synchronize way {0} only", id); break;
-            case RELATION: lbl =  tr("Synchronize relation {0} only", id); break;
+        case NODE: lbl =  tr("Synchronize node {0} only", id); break;
+        case WAY: lbl =  tr("Synchronize way {0} only", id); break;
+        case RELATION: lbl =  tr("Synchronize relation {0} only", id); break;
         }
         ButtonSpec[] spec = new ButtonSpec[] {
                 new ButtonSpec(
@@ -274,9 +274,9 @@ public class UploadAction extends JosmAction{
                 "/Concepts/Conflict"
         );
         switch(ret) {
-            case 0: synchronizePrimitive(primitiveType, id); break;
-            case 1: synchronizeDataSet(); break;
-            default: return;
+        case 0: synchronizePrimitive(primitiveType, id); break;
+        case 1: synchronizeDataSet(); break;
+        default: return;
         }
     }
 
@@ -634,7 +634,7 @@ public class UploadAction extends JosmAction{
                 while(true) {
                     try {
                         getProgressMonitor().subTask(tr("Uploading {0} objects ...", toUpload.size()));
-                        writer.uploadOsm(layer.data.version, toUpload, changeset, getProgressMonitor().createSubTaskMonitor(1, false));
+                        writer.uploadOsm(layer.data.getVersion(), toUpload, changeset, getProgressMonitor().createSubTaskMonitor(1, false));
                         processedPrimitives.addAll(writer.getProcessedPrimitives());
                         // if we get here we've successfully uploaded the data. Exit the loop.
                         //

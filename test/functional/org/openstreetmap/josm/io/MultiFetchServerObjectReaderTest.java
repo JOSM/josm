@@ -44,7 +44,7 @@ public class MultiFetchServerObjectReaderTest {
      */
     protected static DataSet buildTestDataSet() {
         DataSet ds = new DataSet();
-        ds.version = "0.6";
+        ds.setVersion("0.6");
 
         int numNodes = 1000;
         int numWays = 1000;
@@ -214,7 +214,7 @@ public class MultiFetchServerObjectReaderTest {
             fail(MessageFormat.format("failed to open file ''{0}'' for writing", dataSetCacheOutputFile.toString()));
         }
         logger.info(MessageFormat.format("caching test data set in ''{0}'' ...", dataSetCacheOutputFile.toString()));
-        OsmWriter w = new OsmWriter(pw, false, testDataSet.version);
+        OsmWriter w = new OsmWriter(pw, false, testDataSet.getVersion());
         w.header();
         w.writeDataSources(testDataSet);
         w.writeContent(testDataSet);

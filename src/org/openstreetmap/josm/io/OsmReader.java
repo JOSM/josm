@@ -183,7 +183,7 @@ public class OsmReader {
                 }
                 // save generator attribute for later use when creating DataSource objects
                 generator = atts.getValue("generator");
-                ds.version = v;
+                ds.setVersion(v);
 
             } else if (qName.equals("bounds")) {
                 // new style bounds.
@@ -347,14 +347,14 @@ public class OsmReader {
                 } catch(NumberFormatException e) {
                     throwException(tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.", Long.toString(current.id), version));
                 }
-                if (ds.version.equals("0.6")){
+                if (ds.getVersion().equals("0.6")){
                     if (current.version <= 0 && current.id > 0) {
                         throwException(tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.", Long.toString(current.id), version));
                     } else if (current.version < 0 && current.id  <=0) {
                         System.out.println(tr("WARNING: Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.id, current.version, 0, "0.6"));
                         current.version = 0;
                     }
-                } else if (ds.version.equals("0.5")) {
+                } else if (ds.getVersion().equals("0.5")) {
                     if (current.version <= 0 && current.id > 0) {
                         System.out.println(tr("WARNING: Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.id, current.version, 1, "0.5"));
                         current.version = 1;
@@ -364,18 +364,18 @@ public class OsmReader {
                     }
                 } else {
                     // should not happen. API version has been checked before
-                    throwException(tr("Unknown or unsupported API version. Got {0}.", ds.version));
+                    throwException(tr("Unknown or unsupported API version. Got {0}.", ds.getVersion()));
                 }
             } else {
                 // version expected for OSM primitives with an id assigned by the server (id > 0), since API 0.6
                 //
-                if (current.id > 0 && ds.version != null && ds.version.equals("0.6")) {
+                if (current.id > 0 && ds.getVersion() != null && ds.getVersion().equals("0.6")) {
                     throwException(tr("Missing attribute ''version'' on OSM primitive with ID {0}.", Long.toString(current.id)));
-                } else if (current.id > 0 && ds.version != null && ds.version.equals("0.5")) {
+                } else if (current.id > 0 && ds.getVersion() != null && ds.getVersion().equals("0.5")) {
                     // default version in 0.5 files for existing primitives
                     System.out.println(tr("WARNING: Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.id, current.version, 1, "0.5"));
                     current.version= 1;
-                } else if (current.id <= 0 && ds.version != null && ds.version.equals("0.5")) {
+                } else if (current.id <= 0 && ds.getVersion() != null && ds.getVersion().equals("0.5")) {
                     // default version in 0.5 files for new primitives
                     System.out.println(tr("WARNING: Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.id, current.version, 0, "0.5"));
                     current.version= 0;

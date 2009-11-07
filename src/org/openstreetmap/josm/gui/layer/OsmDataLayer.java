@@ -255,8 +255,8 @@ public class OsmDataLayer extends Layer {
         String tool = trn("{0} node", "{0} nodes", nodes, nodes)+", ";
         tool += trn("{0} way", "{0} ways", ways, ways);
 
-        if (data.version != null) {
-            tool += ", " + tr("version {0}", data.version);
+        if (data.getVersion() != null) {
+            tool += ", " + tr("version {0}", data.getVersion());
         }
         File f = getAssociatedFile();
         if (f != null) {
@@ -291,11 +291,11 @@ public class OsmDataLayer extends Layer {
         }
 
         // copy the merged layer's API version, downgrade if required
-        if (data.version == null) {
-            data.version = from.version;
-        } else if ("0.5".equals(data.version) ^ "0.5".equals(from.version)) {
+        if (data.getVersion() == null) {
+            data.setVersion(from.getVersion());
+        } else if ("0.5".equals(data.getVersion()) ^ "0.5".equals(from.getVersion())) {
             System.err.println(tr("Warning: mixing 0.6 and 0.5 data results in version 0.5"));
-            data.version = "0.5";
+            data.setVersion("0.5");
         }
 
         int numNewConflicts = 0;
@@ -521,7 +521,7 @@ public class OsmDataLayer extends Layer {
         p.add(new JLabel(nodeText, ImageProvider.get("data", "node"), JLabel.HORIZONTAL), GBC.eop().insets(15,0,0,0));
         p.add(new JLabel(wayText, ImageProvider.get("data", "way"), JLabel.HORIZONTAL), GBC.eop().insets(15,0,0,0));
         p.add(new JLabel(relationText, ImageProvider.get("data", "relation"), JLabel.HORIZONTAL), GBC.eop().insets(15,0,0,0));
-        p.add(new JLabel(tr("API version: {0}", (data.version != null) ? data.version : tr("unset"))));
+        p.add(new JLabel(tr("API version: {0}", (data.getVersion() != null) ? data.getVersion() : tr("unset"))));
 
         return p;
     }
