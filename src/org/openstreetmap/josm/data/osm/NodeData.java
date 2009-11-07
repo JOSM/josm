@@ -58,4 +58,8 @@ public class NodeData extends PrimitiveData {
         return super.toString() + " NODE " + coor;
     }
 
+    public OsmPrimitiveType getType() {
+        return OsmPrimitiveType.NODE;
+    }
+
 }

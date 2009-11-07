@@ -138,4 +138,8 @@ public final class Node extends OsmPrimitive {
     public String getDisplayName(NameFormatter formatter) {
         return formatter.format(this);
     }
+
+    public OsmPrimitiveType getType() {
+        return OsmPrimitiveType.NODE;
+    }
 }

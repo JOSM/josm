@@ -327,4 +327,8 @@ public final class Way extends OsmPrimitive {
     public String getDisplayName(NameFormatter formatter) {
         return formatter.format(this);
     }
+
+    public OsmPrimitiveType getType() {
+        return OsmPrimitiveType.WAY;
+    }
 }

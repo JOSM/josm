@@ -36,4 +36,8 @@ public class RelationData extends PrimitiveData {
         return super.toString() + " REL " + members;
     }
 
+    public OsmPrimitiveType getType() {
+        return OsmPrimitiveType.RELATION;
+    }
+
 }

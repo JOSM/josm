@@ -170,15 +170,15 @@ public final class Relation extends OsmPrimitive {
 
         for (RelationMemberData member : relationData.getMembers()) {
             switch (member.getMemberType()) {
-                case NODE:
-                    nodes.put(member.getMemberId(), nodeMarker);
-                    break;
-                case WAY:
-                    ways.put(member.getMemberId(), wayMarker);
-                    break;
-                case RELATION:
-                    relations.put(member.getMemberId(), relationMarker);
-                    break;
+            case NODE:
+                nodes.put(member.getMemberId(), nodeMarker);
+                break;
+            case WAY:
+                ways.put(member.getMemberId(), wayMarker);
+                break;
+            case RELATION:
+                relations.put(member.getMemberId(), relationMarker);
+                break;
             }
         }
 
@@ -202,21 +202,21 @@ public final class Relation extends OsmPrimitive {
         for (RelationMemberData member : relationData.getMembers()) {
             OsmPrimitive foundMember = null;
             switch (member.getMemberType()) {
-                case NODE:
-                    foundMember = nodes.get(member.getMemberId());
-                    if (foundMember == nodeMarker)
-                        throw new AssertionError("Data consistency problem - relation with missing member detected");
-                    break;
-                case WAY:
-                    foundMember = ways.get(member.getMemberId());
-                    if (foundMember == wayMarker)
-                        throw new AssertionError("Data consistency problem - relation with missing member detected");
-                    break;
-                case RELATION:
-                    foundMember = relations.get(member.getMemberId());
-                    if (foundMember == relationMarker)
-                        throw new AssertionError("Data consistency problem - relation with missing member detected");
-                    break;
+            case NODE:
+                foundMember = nodes.get(member.getMemberId());
+                if (foundMember == nodeMarker)
+                    throw new AssertionError("Data consistency problem - relation with missing member detected");
+                break;
+            case WAY:
+                foundMember = ways.get(member.getMemberId());
+                if (foundMember == wayMarker)
+                    throw new AssertionError("Data consistency problem - relation with missing member detected");
+                break;
+            case RELATION:
+                foundMember = relations.get(member.getMemberId());
+                if (foundMember == relationMarker)
+                    throw new AssertionError("Data consistency problem - relation with missing member detected");
+                break;
             }
             newMembers.add(new RelationMember(member.getRole(), foundMember));
         }
@@ -338,5 +338,9 @@ public final class Relation extends OsmPrimitive {
             }
         }
         return ret;
+    }
+
+    public OsmPrimitiveType getType() {
+        return OsmPrimitiveType.RELATION;
     }
 }

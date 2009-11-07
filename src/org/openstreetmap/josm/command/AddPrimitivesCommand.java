@@ -12,7 +12,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 
 public class AddPrimitivesCommand extends Command {
@@ -28,7 +27,7 @@ public class AddPrimitivesCommand extends Command {
         List<OsmPrimitive> createdPrimitives = new ArrayList<OsmPrimitive>(data.size());
 
         for (PrimitiveData pd:data) {
-            createdPrimitives.add(getLayer().data.getPrimitiveById(pd.getId(), OsmPrimitiveType.fromData(pd), true));
+            createdPrimitives.add(getLayer().data.getPrimitiveById(pd, true));
         }
 
         for (int i=0; i<createdPrimitives.size(); i++) {
@@ -40,13 +39,13 @@ public class AddPrimitivesCommand extends Command {
 
     @Override public void undoCommand() {
         for (PrimitiveData p:data) {
-            getLayer().data.removePrimitive(p.getId(), OsmPrimitiveType.fromData(p));
+            getLayer().data.removePrimitive(p);
         }
     }
 
     @Override
     public MutableTreeNode description() {
-         return new DefaultMutableTreeNode(
+        return new DefaultMutableTreeNode(
                 new JLabel(tr("Added {0} objects", data.size()), null,
                         JLabel.HORIZONTAL
                 )

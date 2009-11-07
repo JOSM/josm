@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -20,7 +21,6 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
@@ -32,7 +32,6 @@ import org.openstreetmap.josm.io.OsmServerBackreferenceReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.xml.sax.SAXException;
-import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 /**
  * Uploads the current selection to the server.
@@ -325,7 +324,7 @@ public class UploadSelectionAction extends JosmAction{
                     getProgressMonitor().subTask(tr("Checking for deleted parents in the local dataset"));
                     for (OsmPrimitive p: ds.allPrimitives()) {
                         if (canceled) return;
-                        OsmPrimitive myDeletedParent = layer.data.getPrimitiveById(p.getId(), OsmPrimitiveType.from(p));
+                        OsmPrimitive myDeletedParent = layer.data.getPrimitiveById(p);
                         // our local dataset includes a deleted parent of a primitive we want
                         // to delete. Include this parent in the collection of uploaded primitives
                         //

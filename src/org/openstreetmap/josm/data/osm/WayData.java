@@ -36,4 +36,8 @@ public class WayData extends PrimitiveData {
         return super.toString() + " WAY" + nodes.toString();
     }
 
+    public OsmPrimitiveType getType() {
+        return OsmPrimitiveType.WAY;
+    }
+
 }

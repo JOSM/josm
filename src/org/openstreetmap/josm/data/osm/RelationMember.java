@@ -6,7 +6,7 @@ package org.openstreetmap.josm.data.osm;
  * list is not sufficient.
  *
  */
-public class RelationMember {
+public class RelationMember implements PrimitiveId {
 
     /**
      *
@@ -155,5 +155,19 @@ public class RelationMember {
             return member.equals(other.getMember()) && role.equals(other.getRole());
         } else
             return false;
+    }
+
+    /**
+     * PrimitiveId implementation. Returns the same value as getMember().getType()
+     */
+    public OsmPrimitiveType getType() {
+        return member.getType();
+    }
+
+    /**
+     * PrimitiveId implementation. Returns the same value as getMemberType().getUniqueId()
+     */
+    public long getUniqueId() {
+        return member.getUniqueId();
     }
 }

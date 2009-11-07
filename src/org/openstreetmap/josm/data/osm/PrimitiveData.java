@@ -14,7 +14,7 @@ import java.util.Map;
  * reported by events
  *
  */
-public abstract class PrimitiveData implements Tagged {
+public abstract class PrimitiveData implements Tagged, PrimitiveId {
 
     // Useful?
     //private boolean disabled;
@@ -166,6 +166,13 @@ public abstract class PrimitiveData implements Tagged {
         for (int i=0; i<keys.length/2; i++) {
             this.keys.put(keys[i * 2], keys[i * 2 + 1]);
         }
+    }
+
+    /**
+     * PrimitiveId implementation. Returns the same value as getId()
+     */
+    public long getUniqueId() {
+        return id;
     }
 
 

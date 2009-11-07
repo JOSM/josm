@@ -321,7 +321,7 @@ public class OsmServerBackreferenceReaderTest {
         assertEquals(2, referers.getRelations().size());  // two relations referring to
         Set<Long> expectedNodeIds = new HashSet<Long>();
         for (Way way : referers.getWays()) {
-            Way orig = (Way) ds.getPrimitiveById(way.getId(), OsmPrimitiveType.WAY);
+            Way orig = (Way) ds.getPrimitiveById(way);
             for (Node n : orig.getNodes()) {
                 expectedNodeIds.add(n.getId());
             }

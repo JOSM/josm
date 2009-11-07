@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-public class RelationMemberData {
+public class RelationMemberData implements PrimitiveId {
 
     private final String role;
     private final long memberId;
@@ -30,6 +30,20 @@ public class RelationMemberData {
     @Override
     public String toString() {
         return memberType.getAPIName() + " " + memberId;
+    }
+
+    /**
+     * PrimitiveId implementation. Returns the same value as {@link #getMemberType()}
+     */
+    public OsmPrimitiveType getType() {
+        return memberType;
+    }
+
+    /**
+     * PrimitiveId implementation. Returns the same value as {@link #getMemberId()()}
+     */
+    public long getUniqueId() {
+        return memberId;
     }
 
 }

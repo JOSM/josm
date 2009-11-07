@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
@@ -28,6 +31,18 @@ import org.openstreetmap.josm.data.osm.QuadBuckets.BBox;
  * @author imi
  */
 public class DataSet implements Cloneable {
+
+    private static class IdHash implements Hash<PrimitiveId,OsmPrimitive> {
+
+        public int getHashCode(PrimitiveId k) {
+            return (int)k.getUniqueId() ^ k.getType().hashCode();
+        }
+
+        public boolean equals(PrimitiveId key, OsmPrimitive value) {
+            if (key == null || value == null) return false;
+            return key.getUniqueId() == value.getUniqueId() && key.getType() == value.getType();
+        }
+    }
 
     /**
      * A list of listeners to selection changed events. The list is static, as listeners register
@@ -47,6 +62,9 @@ public class DataSet implements Cloneable {
             l.selectionChanged(sel);
         }
     }
+
+    private Storage<OsmPrimitive> allPrimitives = new Storage<OsmPrimitive>(new IdHash());
+    private Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives.foreignKey(new IdHash());
 
     /**
      * The API version that created this data set, if any.
@@ -178,6 +196,10 @@ public class DataSet implements Cloneable {
      * @param primitive the primitive. Ignored if null.
      */
     public void addPrimitive(OsmPrimitive primitive) {
+        if (getPrimitiveById(primitive) != null)
+            throw new DataIntegrityProblemException(
+                    tr("Unable to add primitive {0} to the dataset because it's already included", primitive.toString()));
+
         if (primitive instanceof Node) {
             nodes.add((Node) primitive);
         } else if (primitive instanceof Way) {
@@ -185,23 +207,21 @@ public class DataSet implements Cloneable {
         } else if (primitive instanceof Relation) {
             relations.add((Relation) primitive);
         }
+        allPrimitives.add(primitive);
     }
 
     public OsmPrimitive addPrimitive(PrimitiveData data) {
+        OsmPrimitive result;
         if (data instanceof NodeData) {
-            Node node = new Node((NodeData)data, this);
-            nodes.add(node);
-            return node;
+            result = new Node((NodeData)data, this);
         } else if (data instanceof WayData) {
-            Way way = new Way((WayData)data, this);
-            ways.add(way);
-            return way;
+            result = new Way((WayData)data, this);
         } else if (data instanceof RelationData) {
-            Relation relation = new Relation((RelationData)data, this);
-            relations.add(relation);
-            return relation;
+            result = new Relation((RelationData)data, this);
         } else
             throw new AssertionError();
+        addPrimitive(result);
+        return result;
     }
 
     /**
@@ -213,9 +233,13 @@ public class DataSet implements Cloneable {
      *
      * @param primitive the primitive. Ignored if null.
      */
-    public void removePrimitive(OsmPrimitive primitive) {
-        if (primitive == null)
+    public void removePrimitive(PrimitiveId primitiveId) {
+        OsmPrimitive primitive = getPrimitiveById(primitiveId);
+        if (primitive == null) {
+            System.out.println("Warning: somebody is trying to remove nonexisting primitive from the Dataset. Action will be ignored. You can report this problem on http://josm.openstreetmap.de");
+            new Exception().printStackTrace();
             return;
+        }
         if (primitive instanceof Node) {
             nodes.remove(primitive);
         } else if (primitive instanceof Way) {
@@ -224,10 +248,7 @@ public class DataSet implements Cloneable {
             relations.remove(primitive);
         }
         selectedPrimitives.remove(primitive);
-    }
-
-    public void removePrimitive(long id, OsmPrimitiveType type) {
-        removePrimitive(getPrimitiveById(id, type));
+        allPrimitives.remove(primitive);
     }
 
     public Collection<OsmPrimitive> getSelectedNodesAndWays() {
@@ -541,31 +562,26 @@ public class DataSet implements Cloneable {
      * @exception NullPointerException thrown, if type is null
      */
     public OsmPrimitive getPrimitiveById(long id, OsmPrimitiveType type) {
-        return getPrimitiveById(id, type, false);
+        return getPrimitiveById(new SimplePrimitiveId(id, type), false);
     }
 
-    public OsmPrimitive getPrimitiveById(long id, OsmPrimitiveType type, boolean createNew) {
-        Collection<? extends OsmPrimitive> primitives = null;
-        switch(type) {
-        case NODE: primitives = nodes; break;
-        case WAY: primitives = ways; break;
-        case RELATION: primitives = relations; break;
-        }
-        for (OsmPrimitive primitive : primitives) {
-            if (primitive.getUniqueId() == id) return primitive;
-        }
+    public OsmPrimitive getPrimitiveById(PrimitiveId primitiveId) {
+        return getPrimitiveById(primitiveId, false);
+    }
 
-        if (createNew) {
-            OsmPrimitive result = null;
-            switch (type) {
-            case NODE: result = new Node(id, true); break;
-            case WAY: result = new Way(id, true); break;
-            case RELATION: result = new Relation(id, true); break;
+    public OsmPrimitive getPrimitiveById(PrimitiveId primitiveId, boolean createNew) {
+        OsmPrimitive result = primitivesMap.get(primitiveId);
+
+        if (result == null && createNew) {
+            switch (primitiveId.getType()) {
+            case NODE: result = new Node(primitiveId.getUniqueId(), true); break;
+            case WAY: result = new Way(primitiveId.getUniqueId(), true); break;
+            case RELATION: result = new Relation(primitiveId.getUniqueId(), true); break;
             }
             addPrimitive(result);
-            return result;
-        } else
-            return null;
+        }
+
+        return result;
     }
 
     public Set<Long> getPrimitiveIds() {

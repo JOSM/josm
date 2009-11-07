@@ -246,7 +246,7 @@ public class MultiFetchServerObjectReaderTest {
         DataSet out = reader.parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(10, out.getNodes().size());
         for (Node n1:out.getNodes()) {
-            Node n2 = (Node)ds.getPrimitiveById(n1.getId(), OsmPrimitiveType.NODE);
+            Node n2 = (Node)ds.getPrimitiveById(n1);
             assertNotNull(n2);
             assertEquals(n2.get("name"),n2.get("name"));
         }
@@ -263,7 +263,7 @@ public class MultiFetchServerObjectReaderTest {
         DataSet out = reader.parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(10, out.getWays().size());
         for (Way w1: out.getWays()) {
-            Way w2 = (Way)ds.getPrimitiveById(w1.getId(), OsmPrimitiveType.WAY);
+            Way w2 = (Way)ds.getPrimitiveById(w1);
             assertNotNull(w2);
             assertEquals(w2.getNodesCount(), w1.getNodesCount());
             assertEquals(w2.get("name"),w1.get("name"));
@@ -299,7 +299,7 @@ public class MultiFetchServerObjectReaderTest {
         DataSet out = reader.parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(812, out.getNodes().size());
         for (Node n1:out.getNodes()) {
-            Node n2 = (Node)ds.getPrimitiveById(n1.getId(), OsmPrimitiveType.NODE);
+            Node n2 = (Node)ds.getPrimitiveById(n1);
             assertNotNull(n2);
             assertEquals(n2.get("name"),n2.get("name"));
         }
@@ -318,7 +318,7 @@ public class MultiFetchServerObjectReaderTest {
         DataSet out = reader.parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(10, out.getNodes().size());
         for (Node n1:out.getNodes()) {
-            Node n2 = (Node)ds.getPrimitiveById(n1.getId(), OsmPrimitiveType.NODE);
+            Node n2 = (Node)ds.getPrimitiveById(n1);
             assertNotNull(n2);
             assertEquals(n2.get("name"),n2.get("name"));
         }
