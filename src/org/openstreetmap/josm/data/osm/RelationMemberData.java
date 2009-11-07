@@ -8,13 +8,13 @@ public class RelationMemberData implements PrimitiveId {
     private final OsmPrimitiveType memberType;
 
     public RelationMemberData(String role, OsmPrimitiveType type, long id) {
-        this.role = role;
+        this.role = role == null?"":role;
         this.memberType = type;
         this.memberId = id;
     }
 
-    public RelationMemberData(String role, OsmPrimitive primitive) {
-        this(role, OsmPrimitiveType.from(primitive), primitive.getUniqueId());
+    public RelationMemberData(String role, PrimitiveId primitive) {
+        this(role, primitive.getType(), primitive.getUniqueId());
     }
 
     public long getMemberId() {
@@ -25,6 +25,10 @@ public class RelationMemberData implements PrimitiveId {
     }
     public OsmPrimitiveType getMemberType() {
         return memberType;
+    }
+
+    public boolean hasRole() {
+        return !"".equals(role);
     }
 
     @Override

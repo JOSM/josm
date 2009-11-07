@@ -39,7 +39,7 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
 
     private final Map<String, String> keys = new HashMap<String, String>();
     private boolean modified;
-    private boolean visible;
+    private boolean visible = true;
     private boolean deleted;
     private long id;
     private User user;

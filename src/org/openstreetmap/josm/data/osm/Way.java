@@ -6,9 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CopyList;
@@ -178,23 +176,11 @@ public final class Way extends OsmPrimitive {
 
         WayData wayData = (WayData) data;
 
-        // TODO We should have some lookup by id mechanism in future to speed this up
-        Node marker = new Node(0);
-        Map<Long, Node> foundNodes = new HashMap<Long, Node>();
-        for (Long nodeId : wayData.getNodes()) {
-            foundNodes.put(nodeId, marker);
-        }
-        for (Node node : dataSet.getNodes()) {
-            if (foundNodes.get(node.getUniqueId()) == marker) {
-                foundNodes.put(node.getUniqueId(), node);
-            }
-        }
-
         List<Node> newNodes = new ArrayList<Node>(wayData.getNodes().size());
         for (Long nodeId : wayData.getNodes()) {
-            Node node = foundNodes.get(nodeId);
-            if (node != marker) {
-                newNodes.add(foundNodes.get(nodeId));
+            Node node = (Node)dataSet.getPrimitiveById(nodeId, OsmPrimitiveType.NODE);
+            if (node != null) {
+                newNodes.add(node);
             } else
                 throw new AssertionError("Data consistency problem - way with missing node detected");
         }

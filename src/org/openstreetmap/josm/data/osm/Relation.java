@@ -2,10 +2,8 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
@@ -159,66 +157,12 @@ public final class Relation extends OsmPrimitive {
 
         RelationData relationData = (RelationData) data;
 
-        // TODO Make this faster
-
-        Node nodeMarker = new Node();
-        Way wayMarker = new Way();
-        Relation relationMarker = new Relation();
-        Map<Long, Node> nodes = new HashMap<Long, Node>();
-        Map<Long, Way> ways = new HashMap<Long, Way>();
-        Map<Long, Relation> relations = new HashMap<Long, Relation>();
-
-        for (RelationMemberData member : relationData.getMembers()) {
-            switch (member.getMemberType()) {
-            case NODE:
-                nodes.put(member.getMemberId(), nodeMarker);
-                break;
-            case WAY:
-                ways.put(member.getMemberId(), wayMarker);
-                break;
-            case RELATION:
-                relations.put(member.getMemberId(), relationMarker);
-                break;
-            }
-        }
-
-        for (Node node : dataSet.getNodes()) {
-            if (nodes.get(node.getUniqueId()) == nodeMarker) {
-                nodes.put(node.getUniqueId(), node);
-            }
-        }
-        for (Way way : dataSet.getWays()) {
-            if (ways.get(way.getUniqueId()) == wayMarker) {
-                ways.put(way.getUniqueId(), way);
-            }
-        }
-        for (Relation relation : dataSet.getRelations()) {
-            if (relations.get(relation.getUniqueId()) == relationMarker) {
-                relations.put(relation.getUniqueId(), relation);
-            }
-        }
-
         List<RelationMember> newMembers = new ArrayList<RelationMember>();
         for (RelationMemberData member : relationData.getMembers()) {
-            OsmPrimitive foundMember = null;
-            switch (member.getMemberType()) {
-            case NODE:
-                foundMember = nodes.get(member.getMemberId());
-                if (foundMember == nodeMarker)
-                    throw new AssertionError("Data consistency problem - relation with missing member detected");
-                break;
-            case WAY:
-                foundMember = ways.get(member.getMemberId());
-                if (foundMember == wayMarker)
-                    throw new AssertionError("Data consistency problem - relation with missing member detected");
-                break;
-            case RELATION:
-                foundMember = relations.get(member.getMemberId());
-                if (foundMember == relationMarker)
-                    throw new AssertionError("Data consistency problem - relation with missing member detected");
-                break;
-            }
-            newMembers.add(new RelationMember(member.getRole(), foundMember));
+            OsmPrimitive primitive = dataSet.getPrimitiveById(member);
+            if (primitive == null)
+                throw new AssertionError("Data consistency problem - relation with missing member detected");
+            newMembers.add(new RelationMember(member.getRole(), primitive));
         }
         setMembers(newMembers);
     }
