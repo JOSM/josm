@@ -12,8 +12,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
@@ -30,7 +31,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
     }
 
     public static Collection<TaggingPreset> taggingPresets;
-    private StyleSources sources;
+    private StyleSourceEditor sources;
     private JCheckBox sortMenu;
     private JCheckBox enableDefault;
 
@@ -40,24 +41,38 @@ public class TaggingPresetPreference implements PreferenceSetting {
         enableDefault = new JCheckBox(tr("Enable built-in defaults"),
                 Main.pref.getBoolean("taggingpreset.enable-defaults", true));
 
-        JPanel panel = new JPanel(new GridBagLayout());
-        JScrollPane scrollpane = new JScrollPane(panel);
+        final JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
         panel.add(sortMenu, GBC.eol().insets(5,5,5,0));
         panel.add(enableDefault, GBC.eol().insets(5,0,5,0));
-        sources = new StyleSources("taggingpreset.sources", "taggingpreset.icon.sources",
-        "http://josm.openstreetmap.de/presets", false, tr("Tagging Presets"));
+        sources = new StyleSourceEditor("taggingpreset.sources", "taggingpreset.icon.sources",
+        "http://josm.openstreetmap.de/presets");
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
-        gui.mapcontent.addTab(tr("Tagging Presets"), scrollpane);
+        gui.mapcontent.addTab(tr("Tagging Presets"), panel);
+
+        // this defers loading of tagging preset sources to the first time the tab
+        // with the tagging presets is selected by the user
+        //
+        gui.mapcontent.addChangeListener(
+                new ChangeListener() {
+                    public void stateChanged(ChangeEvent e) {
+                        if (gui.mapcontent.getSelectedComponent() == panel) {
+                            sources.initiallyLoadAvailableStyles();
+                        }
+                    }
+                }
+        );
     }
 
     public boolean ok() {
         boolean restart = Main.pref.put("taggingpreset.enable-defaults",
-        enableDefault.getSelectedObjects() != null);
-        if(Main.pref.put("taggingpreset.sortmenu", sortMenu.getSelectedObjects() != null))
+                enableDefault.getSelectedObjects() != null);
+        if(Main.pref.put("taggingpreset.sortmenu", sortMenu.getSelectedObjects() != null)) {
             restart = true;
-        if(sources.finish())
+        }
+        if(sources.finish()) {
             restart = true;
+        }
         return restart;
     }
 
@@ -75,9 +90,9 @@ public class TaggingPresetPreference implements PreferenceSetting {
             for (final TaggingPreset p : taggingPresets)
             {
                 JMenu m = p.group != null ? submenus.get(p.group) : Main.main.menu.presetsMenu;
-                if (p instanceof TaggingPresetSeparator)
+                if (p instanceof TaggingPresetSeparator) {
                     m.add(new JSeparator());
-                else if (p instanceof TaggingPresetMenu)
+                } else if (p instanceof TaggingPresetMenu)
                 {
                     JMenu submenu = new JMenu(p);
                     submenu.setText(p.getLocaleName());
@@ -93,7 +108,8 @@ public class TaggingPresetPreference implements PreferenceSetting {
                 }
             }
         }
-        if(Main.pref.getBoolean("taggingpreset.sortmenu"))
+        if(Main.pref.getBoolean("taggingpreset.sortmenu")) {
             TaggingPresetMenu.sortMenu(Main.main.menu.presetsMenu);
+        }
     }
 }
