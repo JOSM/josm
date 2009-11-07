@@ -189,18 +189,21 @@ public class DataSet implements Cloneable {
             relations.add((Relation) primitive);
         }
         allPrimitives.add(primitive);
+        primitive.setDataset(this);
     }
 
     public OsmPrimitive addPrimitive(PrimitiveData data) {
         OsmPrimitive result;
         if (data instanceof NodeData) {
-            result = new Node((NodeData)data, this);
+            result = new Node();
         } else if (data instanceof WayData) {
-            result = new Way((WayData)data, this);
+            result = new Way();
         } else if (data instanceof RelationData) {
-            result = new Relation((RelationData)data, this);
+            result = new Relation();
         } else
             throw new AssertionError();
+        result.setDataset(this);
+        result.load(data);
         addPrimitive(result);
         return result;
     }
@@ -227,6 +230,7 @@ public class DataSet implements Cloneable {
         }
         selectedPrimitives.remove(primitive);
         allPrimitives.remove(primitive);
+        primitive.setDataset(null);
     }
 
 
@@ -796,6 +800,7 @@ public class DataSet implements Cloneable {
             if (primitive.isDeleted()) {
                 selectedPrimitives.remove(primitive);
                 allPrimitives.remove(primitive);
+                primitive.setDataset(null);
                 changed = true;
                 it.remove();
             }
@@ -810,6 +815,9 @@ public class DataSet implements Cloneable {
      */
     public void clear() {
         clearSelection();
+        for (OsmPrimitive primitive:allPrimitives) {
+            primitive.setDataset(null);
+        }
         nodes.clear();
         ways.clear();
         relations.clear();

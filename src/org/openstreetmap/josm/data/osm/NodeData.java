@@ -49,11 +49,6 @@ public class NodeData extends PrimitiveData {
     }
 
     @Override
-    public Node makePrimitive(DataSet dataSet) {
-        return new Node(this, dataSet);
-    }
-
-    @Override
     public String toString() {
         return super.toString() + " NODE " + coor;
     }

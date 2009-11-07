@@ -27,11 +27,6 @@ public class RelationData extends PrimitiveData {
     }
 
     @Override
-    public Relation makePrimitive(DataSet dataSet) {
-        return new Relation(this, dataSet);
-    }
-
-    @Override
     public String toString() {
         return super.toString() + " REL " + members;
     }

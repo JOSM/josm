@@ -131,6 +131,29 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      */
     private long id = 0;
 
+    private DataSet dataSet;
+
+    /**
+     * This method should never ever by called from somewhere else than Dataset.addPrimitive or removePrimitive methods
+     * @param dataSet
+     */
+    void setDataset(DataSet dataSet) {
+        if (this.dataSet != null && dataSet != null && this.dataSet != dataSet)
+            throw new DataIntegrityProblemException("Primitive cannot be included in more than one Dataset");
+        this.dataSet = dataSet;
+    }
+
+    /**
+     * 
+     * @return DataSet this primitive is part of.
+     * @throws DataIntegrityProblemException when primitive is not part of any dataset
+     */
+    public DataSet getDataSet() {
+        if (dataSet == null)
+            throw new DataIntegrityProblemException("Primitive must be part of the dataset");
+        return dataSet;
+    }
+
     private volatile byte flags = FLAG_VISIBLE;   // visible per default
 
     /**
@@ -797,10 +820,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     /**
      * Loads (clone) this primitive from provided PrimitiveData
      * @param data
-     * @param dataSet Dataset this primitive is part of. This parameter is used only
-     * temporarily. OsmPrimitive will have final field dataset in future
      */
-    public void load(PrimitiveData data, DataSet dataSet) {
+    public void load(PrimitiveData data) {
         setKeys(data.getKeys());
         timestamp = data.getTimestamp();
         user = data.getUser();

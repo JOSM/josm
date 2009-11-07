@@ -27,11 +27,6 @@ public class WayData extends PrimitiveData {
     }
 
     @Override
-    public OsmPrimitive makePrimitive(DataSet dataSet) {
-        return new Way(this, dataSet);
-    }
-
-    @Override
     public String toString() {
         return super.toString() + " WAY" + nodes.toString();
     }

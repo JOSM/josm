@@ -160,25 +160,19 @@ public final class Way extends OsmPrimitive {
         super(id, false);
     }
 
-    public Way(WayData data, DataSet dataSet) {
-        super(data);
-        load(data, dataSet);
-    }
-
     /**
      *
      * @param data
-     * @param dataSet Dataset this way is part of. This parameter will be removed in future
      */
     @Override
-    public void load(PrimitiveData data, DataSet dataSet) {
-        super.load(data, dataSet);
+    public void load(PrimitiveData data) {
+        super.load(data);
 
         WayData wayData = (WayData) data;
 
         List<Node> newNodes = new ArrayList<Node>(wayData.getNodes().size());
         for (Long nodeId : wayData.getNodes()) {
-            Node node = (Node)dataSet.getPrimitiveById(nodeId, OsmPrimitiveType.NODE);
+            Node node = (Node)getDataSet().getPrimitiveById(nodeId, OsmPrimitiveType.NODE);
             if (node != null) {
                 newNodes.add(node);
             } else

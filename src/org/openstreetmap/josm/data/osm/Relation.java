@@ -136,12 +136,6 @@ public final class Relation extends OsmPrimitive {
         super(id, false);
     }
 
-    public Relation(RelationData data, DataSet dataSet) {
-        super(data);
-        load(data, dataSet);
-    }
-
-
     @Override public void cloneFrom(OsmPrimitive osm) {
         super.cloneFrom(osm);
         members.clear();
@@ -152,14 +146,14 @@ public final class Relation extends OsmPrimitive {
         }
     }
 
-    @Override public void load(PrimitiveData data, DataSet dataSet) {
-        super.load(data, dataSet);
+    @Override public void load(PrimitiveData data) {
+        super.load(data);
 
         RelationData relationData = (RelationData) data;
 
         List<RelationMember> newMembers = new ArrayList<RelationMember>();
         for (RelationMemberData member : relationData.getMembers()) {
-            OsmPrimitive primitive = dataSet.getPrimitiveById(member);
+            OsmPrimitive primitive = getDataSet().getPrimitiveById(member);
             if (primitive == null)
                 throw new AssertionError("Data consistency problem - relation with missing member detected");
             newMembers.add(new RelationMember(member.getRole(), primitive));

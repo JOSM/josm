@@ -98,8 +98,6 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
 
     public abstract PrimitiveData makeCopy();
 
-    public abstract OsmPrimitive makePrimitive(DataSet dataSet);
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

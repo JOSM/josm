@@ -31,7 +31,7 @@ public class AddPrimitivesCommand extends Command {
         }
 
         for (int i=0; i<createdPrimitives.size(); i++) {
-            createdPrimitives.get(i).load(data.get(i), getLayer().data);
+            createdPrimitives.get(i).load(data.get(i));
         }
         getLayer().data.setSelected(createdPrimitives);
         return true;

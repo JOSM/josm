@@ -1,8 +1,9 @@
 //License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.command;
 
-import java.util.Collection;
 import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -91,7 +92,7 @@ abstract public class Command {
      */
     public void undoCommand() {
         for (Entry<OsmPrimitive, PrimitiveData> e : cloneMap.entrySet()) {
-            e.getKey().load(e.getValue(), layer.data);
+            e.getKey().load(e.getValue());
         }
     }
 

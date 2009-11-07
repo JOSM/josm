@@ -84,11 +84,6 @@ public final class Node extends OsmPrimitive {
         setEastNorth(eastNorth);
     }
 
-    public Node(NodeData data, DataSet dataSet) {
-        super(data);
-        load(data, dataSet);
-    }
-
     @Override public void visit(Visitor visitor) {
         visitor.visit(this);
     }
@@ -98,8 +93,8 @@ public final class Node extends OsmPrimitive {
         setCoor(((Node)osm).coor);
     }
 
-    @Override public void load(PrimitiveData data, DataSet dataSet) {
-        super.load(data, dataSet);
+    @Override public void load(PrimitiveData data) {
+        super.load(data);
         setCoor(((NodeData)data).getCoor());
     }
 
