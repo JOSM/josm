@@ -44,25 +44,6 @@ public class DataSet implements Cloneable {
         }
     }
 
-    /**
-     * A list of listeners to selection changed events. The list is static, as listeners register
-     * themselves for any dataset selection changes that occur, regardless of the current active
-     * dataset. (However, the selection does only change in the active layer)
-     */
-    public static Collection<SelectionChangedListener> selListeners = new LinkedList<SelectionChangedListener>();
-
-    /**
-     * notifies all registered selection change listeners about the current selection of
-     * primitives
-     * 
-     * @param sel the current selection
-     */
-    private static void notifySelectionChangeListeners(Collection<? extends OsmPrimitive> sel) {
-        for (SelectionChangedListener l : selListeners) {
-            l.selectionChanged(sel);
-        }
-    }
-
     private Storage<OsmPrimitive> allPrimitives = new Storage<OsmPrimitive>(new IdHash());
     private Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives.foreignKey(new IdHash());
 
@@ -231,15 +212,12 @@ public class DataSet implements Cloneable {
      * {@see #relations}. References from other primitives to this
      * primitive are left unchanged.
      *
-     * @param primitive the primitive. Ignored if null.
+     * @param primitive the primitive
      */
     public void removePrimitive(PrimitiveId primitiveId) {
-        OsmPrimitive primitive = getPrimitiveById(primitiveId);
-        if (primitive == null) {
-            System.out.println("Warning: somebody is trying to remove nonexisting primitive from the Dataset. Action will be ignored. You can report this problem on http://josm.openstreetmap.de");
-            new Exception().printStackTrace();
+        OsmPrimitive primitive = getPrimitiveByIdChecked(primitiveId);
+        if (primitive == null)
             return;
-        }
         if (primitive instanceof Node) {
             nodes.remove(primitive);
         } else if (primitive instanceof Way) {
@@ -250,6 +228,42 @@ public class DataSet implements Cloneable {
         selectedPrimitives.remove(primitive);
         allPrimitives.remove(primitive);
     }
+
+
+    /*---------------------------------------------------
+     *   SELECTION HANDLING
+     *---------------------------------------------------*/
+
+    /**
+     * A list of listeners to selection changed events. The list is static, as listeners register
+     * themselves for any dataset selection changes that occur, regardless of the current active
+     * dataset. (However, the selection does only change in the active layer)
+     */
+    public static Collection<SelectionChangedListener> selListeners = new LinkedList<SelectionChangedListener>();
+
+    /**
+     * notifies all registered selection change listeners about the current selection of
+     * primitives
+     * 
+     * @param sel the current selection
+     */
+    private static void notifySelectionChangeListeners(Collection<? extends OsmPrimitive> sel) {
+        for (SelectionChangedListener l : selListeners) {
+            l.selectionChanged(sel);
+        }
+    }
+
+    /**
+     * Notifies all registered {@see SelectionChangedListener} about the current selection in
+     * this dataset.
+     * 
+     */
+    public void fireSelectionChanged(){
+        notifySelectionChangeListeners(selectedPrimitives);
+    }
+
+
+    LinkedHashSet<OsmPrimitive> selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
 
     public Collection<OsmPrimitive> getSelectedNodesAndWays() {
         Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
@@ -296,6 +310,162 @@ public class DataSet implements Cloneable {
         return getSelected(relations);
     }
 
+    /**
+     * Return all selected items in the collection.
+     * @param list The collection from which the selected items are returned.
+     */
+    private Collection<OsmPrimitive> getSelected(Collection<? extends OsmPrimitive> list) {
+        if (list == null)
+            return new LinkedList<OsmPrimitive>();
+        // getSelected() is called with large lists, so
+        // creating the return list from the selection
+        // should be faster most of the time.
+        Collection<OsmPrimitive> sel = new LinkedHashSet<OsmPrimitive>(selectedPrimitives);
+        sel.retainAll(list);
+        return sel;
+    }
+
+    public boolean isSelected(OsmPrimitive osm) {
+        return selectedPrimitives.contains(osm);
+    }
+
+
+    public void toggleSelected(Collection<? extends PrimitiveId> osm) {
+        boolean changed = false;
+        for (PrimitiveId o : osm) {
+            changed = changed | this.__toggleSelected(o);
+        }
+        if (changed) {
+            fireSelectionChanged();
+        }
+    }
+    public void toggleSelected(PrimitiveId... osm) {
+        toggleSelected(Arrays.asList(osm));
+    }
+    private boolean __toggleSelected(PrimitiveId primitiveId) {
+        OsmPrimitive primitive = getPrimitiveByIdChecked(primitiveId);
+        if (primitive == null)
+            return false;
+        if (!selectedPrimitives.remove(primitive)) {
+            selectedPrimitives.add(primitive);
+        }
+        return true;
+    }
+
+    /**
+     * Sets the current selection to the primitives in <code>selection</code>.
+     * Notifies all {@see SelectionChangedListener} if <code>fireSelectionChangeEvent</code> is true.
+     *
+     * @param selection the selection
+     * @param fireSelectionChangeEvent true, if the selection change listeners are to be notified; false, otherwise
+     */
+    public void setSelected(Collection<? extends PrimitiveId> selection, boolean fireSelectionChangeEvent) {
+        boolean wasEmpty = selectedPrimitives.isEmpty();
+        selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
+        addSelected(selection, fireSelectionChangeEvent);
+        if (!wasEmpty && selectedPrimitives.isEmpty() && fireSelectionChangeEvent) {
+            fireSelectionChanged();
+        }
+    }
+
+    /**
+     * Sets the current selection to the primitives in <code>selection</code>
+     * and notifies all {@see SelectionChangedListener}.
+     *
+     * @param selection the selection
+     */
+    public void setSelected(Collection<? extends PrimitiveId> selection) {
+        setSelected(selection, true /* fire selection change event */);
+    }
+
+    public void setSelected(PrimitiveId... osm) {
+        if (osm.length == 1 && osm[0] == null) {
+            setSelected();
+            return;
+        }
+        List<PrimitiveId> list = Arrays.asList(osm);
+        setSelected(list);
+    }
+
+    /**
+     * Adds   the primitives in <code>selection</code> to the current selection
+     * and notifies all {@see SelectionChangedListener}.
+     *
+     * @param selection the selection
+     */
+    public void addSelected(Collection<? extends PrimitiveId> selection) {
+        addSelected(selection, true /* fire selection change event */);
+    }
+
+    public void addSelected(PrimitiveId... osm) {
+        addSelected(Arrays.asList(osm));
+    }
+
+    /**
+     * Adds the primitives in <code>selection</code> to the current selection.
+     * Notifies all {@see SelectionChangedListener} if <code>fireSelectionChangeEvent</code> is true.
+     *
+     * @param selection the selection
+     * @param fireSelectionChangeEvent true, if the selection change listeners are to be notified; false, otherwise
+     */
+    public void addSelected(Collection<? extends PrimitiveId> selection, boolean fireSelectionChangeEvent) {
+        boolean changed = false;
+        for (PrimitiveId id: selection) {
+            OsmPrimitive primitive = getPrimitiveByIdChecked(id);
+            if (primitive != null) {
+                changed = changed | selectedPrimitives.add(primitive);
+            }
+        }
+        if (fireSelectionChangeEvent && changed) {
+            fireSelectionChanged();
+        }
+    }
+
+    /**
+     * Remove the selection from every value in the collection.
+     * @param list The collection to remove the selection from.
+     */
+    public void clearSelection(PrimitiveId... osm) {
+        clearSelection(Arrays.asList(osm));
+    }
+    public void clearSelection(Collection<? extends PrimitiveId> list) {
+        boolean changed = false;
+        for (PrimitiveId id:list) {
+            OsmPrimitive primitive = getPrimitiveById(id);
+            if (primitive != null) {
+                changed = changed | selectedPrimitives.remove(primitive);
+            }
+        }
+        if (changed) {
+            fireSelectionChanged();
+        }
+    }
+    public void clearSelection() {
+        if (!selectedPrimitives.isEmpty()) {
+            selectedPrimitives.clear();
+            fireSelectionChanged();
+        }
+    }
+
+
+    /*------------------------------------------------------
+     * FILTERED / DISABLED HANDLING
+     *-----------------------------------------------------*/
+
+    public void setDisabled(OsmPrimitive... osm) {
+        if (osm.length == 1 && osm[0] == null) {
+            setDisabled();
+            return;
+        }
+        clearDisabled(nodes);
+        clearDisabled(ways);
+        clearDisabled(relations);
+        for (OsmPrimitive o : osm)
+            if (o != null) {
+                o.setDisabled(true);
+            }
+    }
+
     public void setFiltered(Collection<? extends OsmPrimitive> selection) {
         clearFiltered(nodes);
         clearFiltered(ways);
@@ -328,104 +498,6 @@ public class DataSet implements Cloneable {
         }
     }
 
-    LinkedHashSet<OsmPrimitive> selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
-
-    public boolean toggleSelected(Collection<OsmPrimitive> osm) {
-        for (OsmPrimitive o : osm) {
-            this.__toggleSelected(o);
-        }
-        fireSelectionChanged();
-        return true;
-    }
-    public boolean toggleSelected(OsmPrimitive... osm) {
-        return this.toggleSelected(Arrays.asList(osm));
-    }
-    private boolean __toggleSelected(OsmPrimitive osm) {
-        if (!selectedPrimitives.remove(osm)) {
-            selectedPrimitives.add(osm);
-        }
-        return true;
-    }
-    public boolean isSelected(OsmPrimitive osm) {
-        return selectedPrimitives.contains(osm);
-    }
-
-    public void setDisabled(OsmPrimitive... osm) {
-        if (osm.length == 1 && osm[0] == null) {
-            setDisabled();
-            return;
-        }
-        clearDisabled(nodes);
-        clearDisabled(ways);
-        clearDisabled(relations);
-        for (OsmPrimitive o : osm)
-            if (o != null) {
-                o.setDisabled(true);
-            }
-    }
-
-    /**
-     * Sets the current selection to the primitives in <code>selection</code>.
-     * Notifies all {@see SelectionChangedListener} if <code>fireSelectionChangeEvent</code> is true.
-     *
-     * @param selection the selection
-     * @param fireSelectionChangeEvent true, if the selection change listeners are to be notified; false, otherwise
-     */
-    public void setSelected(Collection<? extends OsmPrimitive> selection, boolean fireSelectionChangeEvent) {
-        selectedPrimitives = new LinkedHashSet<OsmPrimitive>(selection);
-        if (fireSelectionChangeEvent) {
-            fireSelectionChanged();
-        }
-    }
-
-    /**
-     * Sets the current selection to the primitives in <code>selection</code>
-     * and notifies all {@see SelectionChangedListener}.
-     *
-     * @param selection the selection
-     */
-    public void setSelected(Collection<? extends OsmPrimitive> selection) {
-        setSelected(selection, true /* fire selection change event */);
-    }
-
-    /**
-     * Adds   the primitives in <code>selection</code> to the current selection
-     * and notifies all {@see SelectionChangedListener}.
-     *
-     * @param selection the selection
-     */
-    public void addSelected(Collection<? extends OsmPrimitive> selection) {
-        addSelected(selection, true /* fire selection change event */);
-    }
-
-    public void addSelected(OsmPrimitive... osm) {
-        addSelected(Arrays.asList(osm));
-    }
-
-    /**
-     * Adds the primitives in <code>selection</code> to the current selection.
-     * Notifies all {@see SelectionChangedListener} if <code>fireSelectionChangeEvent</code> is true.
-     *
-     * @param selection the selection
-     * @param fireSelectionChangeEvent true, if the selection change listeners are to be notified; false, otherwise
-     */
-    public void addSelected(Collection<? extends OsmPrimitive> selection, boolean fireSelectionChangeEvent) {
-        selectedPrimitives.addAll(selection);
-        if (fireSelectionChangeEvent) {
-            fireSelectionChanged();
-        }
-    }
-
-
-    public void setSelected(OsmPrimitive... osm) {
-        if (osm.length == 1 && osm[0] == null) {
-            setSelected();
-            return;
-        }
-        List<OsmPrimitive> list = Arrays.asList(osm);
-        setSelected(list);
-        fireSelectionChanged();
-    }
 
     /**
      * Remove the filtered parameter from every value in the collection.
@@ -448,46 +520,6 @@ public class DataSet implements Cloneable {
         for (OsmPrimitive osm : list) {
             osm.setDisabled(false);
         }
-    }
-
-    /**
-     * Remove the selection from every value in the collection.
-     * @param list The collection to remove the selection from.
-     */
-    public void clearSelection(OsmPrimitive... osm) {
-        clearSelection(Arrays.asList(osm));
-    }
-    public void clearSelection(Collection<? extends OsmPrimitive> list) {
-        if (list == null)
-            return;
-        selectedPrimitives.removeAll(list);
-    }
-    public void clearSelection() {
-        selectedPrimitives.clear();
-    }
-
-    /**
-     * Return all selected items in the collection.
-     * @param list The collection from which the selected items are returned.
-     */
-    private Collection<OsmPrimitive> getSelected(Collection<? extends OsmPrimitive> list) {
-        if (list == null)
-            return new LinkedList<OsmPrimitive>();
-        // getSelected() is called with large lists, so
-        // creating the return list from the selection
-        // should be faster most of the time.
-        Collection<OsmPrimitive> sel = new LinkedHashSet<OsmPrimitive>(selectedPrimitives);
-        sel.retainAll(list);
-        return sel;
-    }
-
-    /**
-     * Notifies all registered {@see SelectionChangedListener} about the current selection in
-     * this dataset.
-     * 
-     */
-    public void fireSelectionChanged(){
-        notifySelectionChangeListeners(selectedPrimitives);
     }
 
 
@@ -579,6 +611,23 @@ public class DataSet implements Cloneable {
             case RELATION: result = new Relation(primitiveId.getUniqueId(), true); break;
             }
             addPrimitive(result);
+        }
+
+        return result;
+    }
+
+    /**
+     * Show message and stack trace in log in case primitive is not found
+     * @param primitiveId
+     * @return Primitive by id.
+     */
+    private OsmPrimitive getPrimitiveByIdChecked(PrimitiveId primitiveId) {
+        OsmPrimitive result = getPrimitiveById(primitiveId);
+        if (result == null) {
+            System.out.println(tr("JOSM expected to find primitive [{0} {1}] in dataset but it's not there. Please report this "
+                    + " at http://josm.openstreetmap.de . This is not a critical error, it should be safe to continue in your work.",
+                    primitiveId.getType(), Long.toString(primitiveId.getUniqueId())));
+            new Exception().printStackTrace();
         }
 
         return result;
@@ -752,12 +801,10 @@ public class DataSet implements Cloneable {
      * 
      */
     public void clear() {
-        if (!selectedPrimitives.isEmpty()) {
-            selectedPrimitives.clear();
-            fireSelectionChanged();
-        }
+        clearSelection();
         nodes.clear();
         ways.clear();
         relations.clear();
+        allPrimitives.clear();
     }
 }

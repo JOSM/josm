@@ -27,7 +27,6 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -281,7 +280,7 @@ public class MultiFetchServerObjectReaderTest {
         DataSet out = reader.parseOsm(NullProgressMonitor.INSTANCE);
         assertEquals(10, out.getRelations().size());
         for (Relation r1: out.getRelations()) {
-            Relation r2 = (Relation)ds.getPrimitiveById(r1.getId(), OsmPrimitiveType.RELATION);
+            Relation r2 = (Relation)ds.getPrimitiveById(r1);
             assertNotNull(r2);
             assertEquals(r2.getMembersCount(), r1.getMembersCount());
             assertEquals(r2.get("name"),r2.get("name"));

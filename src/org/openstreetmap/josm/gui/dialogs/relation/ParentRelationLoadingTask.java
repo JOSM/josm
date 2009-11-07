@@ -13,7 +13,6 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -150,7 +149,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
         }
         parents.clear();
         for (Relation parent : referrers.getRelations()) {
-            parents.add((Relation) getLayer().data.getPrimitiveById(parent.getId(), OsmPrimitiveType.RELATION));
+            parents.add((Relation) getLayer().data.getPrimitiveById(parent));
         }
         if (continuation != null) {
             continuation.run();

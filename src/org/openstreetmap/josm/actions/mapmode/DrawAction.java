@@ -526,8 +526,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 extendedWay = true;
                 newSelection.clear();
                 newSelection.add(wayToSelect);
-                ds.setSelected(way);
-                ds.fireSelectionChanged();
             }
         }
 
@@ -543,7 +541,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     newSelection.remove(w);
                 }
             }
-            
+
             newSelection.add(n);
             ds.setSelected(n);
             ds.fireSelectionChanged();
