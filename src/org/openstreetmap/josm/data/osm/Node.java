@@ -67,11 +67,23 @@ public final class Node extends OsmPrimitive {
     }
 
     /**
+     * 
+     * @param clone
+     * @param clearId If true, set version to 0 and id to new unique value
+     */
+    public Node(Node clone, boolean clearId) {
+        super(clone.getUniqueId(), true);
+        cloneFrom(clone);
+        if (clearId) {
+            clearOsmId();
+        }
+    }
+
+    /**
      * Create an identical clone of the argument (including the id)
      */
     public Node(Node clone) {
-        super(clone.getUniqueId(), true);
-        cloneFrom(clone);
+        this(clone, false);
     }
 
     public Node(LatLon latlon) {

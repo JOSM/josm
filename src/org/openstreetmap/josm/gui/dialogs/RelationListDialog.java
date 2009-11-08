@@ -470,9 +470,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
 
         public void launchEditorForDuplicate(Relation original) {
-            Relation copy = new Relation(original.getId());
-            copy.cloneFrom(original);
-            copy.clearOsmId();
+            Relation copy = new Relation(original, true);
             copy.setModified(true);
             RelationEditor editor = RelationEditor.getEditor(
                     Main.main.getEditLayer(),

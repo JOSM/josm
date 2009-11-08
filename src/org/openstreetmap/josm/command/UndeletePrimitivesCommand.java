@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.JLabel;
@@ -24,17 +25,13 @@ public class UndeletePrimitivesCommand extends ConflictResolveCommand {
     static private final Logger logger = Logger.getLogger(UndeletePrimitivesCommand.class.getName());
 
     /** the node to undelete */
-    private ArrayList<OsmPrimitive> toUndelete;
+    private final List<OsmPrimitive> toUndelete = new ArrayList<OsmPrimitive>();
 
-    protected UndeletePrimitivesCommand() {
-        toUndelete = new ArrayList<OsmPrimitive>();
-    }
     /**
      * constructor
      * @param node  the node to undelete
      */
     public UndeletePrimitivesCommand(OsmPrimitive node) {
-        this();
         toUndelete.add(node);
     }
 
@@ -43,7 +40,6 @@ public class UndeletePrimitivesCommand extends ConflictResolveCommand {
      * @param node  the node to undelete
      */
     public UndeletePrimitivesCommand(OsmPrimitive ... toUndelete) {
-        this();
         for (int i=0; i < toUndelete.length; i++) {
             this.toUndelete.add(toUndelete[i]);
         }

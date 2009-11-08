@@ -148,13 +148,25 @@ public final class Way extends OsmPrimitive {
     }
 
     /**
+     * 
+     * @param original
+     * @param clearId
+     */
+    public Way(Way original, boolean clearId) {
+        super(original.getUniqueId(), true);
+        cloneFrom(original);
+        if (clearId) {
+            clearOsmId();
+        }
+    }
+
+    /**
      * Create an identical clone of the argument (including the id).
      *
      * @param original  the original way. Must not be null.
      */
     public Way(Way original) {
-        super(original.getUniqueId(), true);
-        cloneFrom(original);
+        this(original, false);
     }
 
     /**

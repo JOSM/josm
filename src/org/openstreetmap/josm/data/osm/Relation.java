@@ -139,12 +139,19 @@ public final class Relation extends OsmPrimitive {
         super(0, false);
     }
 
+    public Relation(Relation clone, boolean clearId) {
+        super(clone.getUniqueId(), true);
+        cloneFrom(clone);
+        if (clearId) {
+            clearOsmId();
+        }
+    }
+
     /**
      * Create an identical clone of the argument (including the id)
      */
     public Relation(Relation clone) {
-        super(clone.getUniqueId(), true);
-        cloneFrom(clone);
+        this(clone, false);
     }
 
     /**

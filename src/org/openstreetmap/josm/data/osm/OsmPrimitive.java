@@ -377,12 +377,15 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @param version the version > 0 required
      * @throws IllegalArgumentException thrown if id <= 0
      * @throws IllegalArgumentException thrown if version <= 0
+     * @throws DataIntegrityProblemException If id is changed and primitive was already added to the dataset
      */
     public void setOsmId(long id, int version) {
         if (id <= 0)
             throw new IllegalArgumentException(tr("ID > 0 expected. Got {0}.", id));
         if (version <= 0)
             throw new IllegalArgumentException(tr("Version > 0 expected. Got {0}.", version));
+        if (dataSet != null && id != this.id)
+            throw new DataIntegrityProblemException("Id cannot be changed after primitive was added to the dataset");
         this.id = id;
         this.version = version;
         this.incomplete = false;
@@ -390,23 +393,16 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     /**
      * Clears the id and version known to the OSM API. The id and the version is set to 0.
-     * incomplete is set to false.
+     * incomplete is set to false. It's preferred to use copy constructor with clearId set to true instead
+     * of calling this method.
      *
      * <strong>Caution</strong>: Do not use this method on primitives which are already added to a {@see DataSet}.
-     * Ways and relations might already refer to the primitive and clearing the OSM ID
-     * result in corrupt data.
      *
-     * Here's an example use case:
-     * <pre>
-     *     // create a clone of an already existing node
-     *     Node copy = new Node(otherExistingNode);
-     *
-     *     // reset the clones OSM id
-     *     copy.clearOsmId();
-     * </pre>
-     *
+     * @throws DataIntegrityProblemException If primitive was already added to the dataset
      */
     public void clearOsmId() {
+        if (dataSet != null)
+            throw new DataIntegrityProblemException("Method cannot be called after primitive was added to the dataset");
         this.id = generateUniqueId();
         this.version = 0;
         this.incomplete = false;

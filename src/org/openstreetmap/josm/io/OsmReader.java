@@ -91,10 +91,8 @@ public class OsmReader {
         private OsmPrimitive primitive;
 
         public void copyTo(OsmPrimitive osm) {
-            //  id < 0 possible if read from a file
-            if (id <= 0) {
-                osm.clearOsmId();
-            } else {
+            // It's not necessary to call clearOsmId for id < 0. The same thing is done by parameterless constructor
+            if (id > 0) {
                 osm.setOsmId(id, version);
             }
             osm.setDeleted(deleted);

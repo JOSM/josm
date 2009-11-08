@@ -1,8 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -156,8 +156,7 @@ public class UnGlueAction extends JosmAction {
         getCurrentDataSet().clearSelection(c);
         cmds.add(new ChangeCommand(selectedNode, c));
 
-        Node n = new Node(selectedNode);
-        n.clearOsmId();
+        Node n = new Node(selectedNode, true);
 
         // If this wasn't called from menu, place it where the cursor is/was
         if(e.getSource() instanceof JPanel) {
@@ -301,8 +300,7 @@ public class UnGlueAction extends JosmAction {
         for (Node pushNode : w.getNodes()) {
             if (originalNode == pushNode) {
                 // clone the node for all other ways
-                pushNode = new Node(pushNode);
-                pushNode.clearOsmId();
+                pushNode = new Node(pushNode, true);
                 newNodes.add(pushNode);
                 cmds.add(new AddCommand(pushNode));
             }
