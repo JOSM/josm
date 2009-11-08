@@ -384,8 +384,13 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             throw new IllegalArgumentException(tr("ID > 0 expected. Got {0}.", id));
         if (version <= 0)
             throw new IllegalArgumentException(tr("Version > 0 expected. Got {0}.", version));
-        if (dataSet != null && id != this.id)
-            throw new DataIntegrityProblemException("Id cannot be changed after primitive was added to the dataset");
+        if (dataSet != null && id != this.id) {
+            DataSet datasetCopy = dataSet;
+            // Reindex primitive
+            datasetCopy.removePrimitive(this);
+            this.id = id;
+            datasetCopy.addPrimitive(this);
+        }
         this.id = id;
         this.version = version;
         this.incomplete = false;
