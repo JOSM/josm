@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -16,6 +17,7 @@ import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmChangesetCloseException;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 
 /**
@@ -81,6 +83,7 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainGeneric(Exception e) {
+        e.printStackTrace();
         HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
                 ExceptionUtil.explainGeneric(e),
@@ -145,8 +148,24 @@ public class ExceptionDialogUtil {
     }
 
     /**
+     * Explains a {@see InvocationTargetException }
+     * 
+     * @param e the exception
+     */
+
+    public static void explainNestedInvocationTargetException(Exception e) {
+        InvocationTargetException ex = getNestedException(e, InvocationTargetException.class);
+        if (ex != null) {
+            // Users should be able to submit a bug report for an invocation target exception
+            //
+            BugReportExceptionHandler.handleException(ex);
+            return;
+        }
+    }
+
+    /**
      * Explains a {@see OsmApiException} which was thrown because of an internal server
-     * error in the OSM API server..
+     * error in the OSM API server.
      * 
      * @param e the exception
      */
@@ -333,6 +352,10 @@ public class ExceptionDialogUtil {
      * @param e the {@see Exception}
      */
     public static void explainException(Exception e) {
+        if (getNestedException(e, InvocationTargetException.class) != null) {
+            explainNestedInvocationTargetException(e);
+            return;
+        }
         if (e instanceof OsmTransferException) {
             explainOsmTransferException((OsmTransferException) e);
             return;
