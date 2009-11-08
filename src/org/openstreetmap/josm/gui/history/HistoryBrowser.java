@@ -17,7 +17,7 @@ import org.openstreetmap.josm.data.osm.history.History;
 
 /**
  * HistoryBrowser is an UI component which displays history information about an {@see OsmPrimitive}.
- * 
+ *
  *
  */
 public class HistoryBrowser extends JPanel {
@@ -33,7 +33,7 @@ public class HistoryBrowser extends JPanel {
 
     /**
      * embedds table in a {@see JScrollPane}
-     * 
+     *
      * @param table the table
      * @return the {@see JScrollPane} with the embedded table
      */
@@ -46,7 +46,7 @@ public class HistoryBrowser extends JPanel {
 
     /**
      * creates the table which shows the list of versions
-     * 
+     *
      * @return  the panel with the version table
      */
     protected JPanel createVersionTablePanel() {
@@ -61,7 +61,7 @@ public class HistoryBrowser extends JPanel {
     /**
      * creates the panel which shows information about two different versions
      * of the same {@see OsmPrimitive}.
-     * 
+     *
      * @return the panel
      */
     protected JPanel createVersionComparePanel() {
@@ -121,11 +121,13 @@ public class HistoryBrowser extends JPanel {
 
     /**
      * populates the browser with the history of a specific {@see OsmPrimitive}
-     * 
+     *
      * @param history the history
      */
     public void populate(History history) {
         model.setHistory(history);
+
+        tpViewers.removeAll();
 
         tpViewers.add(tagInfoViewer);
         tpViewers.setTitleAt(0, tr("Tags"));
@@ -145,7 +147,7 @@ public class HistoryBrowser extends JPanel {
 
     /**
      * replies the {@see History} currently displayed by this browser
-     * 
+     *
      * @return the current history
      */
     public History getHistory() {
