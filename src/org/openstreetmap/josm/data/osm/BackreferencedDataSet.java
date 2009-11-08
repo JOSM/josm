@@ -3,11 +3,8 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class BackreferencedDataSet {
     public static class RelationToChildReference {
@@ -86,61 +83,21 @@ public class BackreferencedDataSet {
         }
     }
 
-    private DataSet source;
-    private Map<OsmPrimitive, Set<OsmPrimitive>> referers;
-    private boolean built = false;
-
-
     /**
      * Creates a new backreference data set based on the dataset <code>source</code>.
      * 
-     * Doesn't create the cache of backreferences yet. Invoke {@see #build()} on the
-     * created {@see BackreferencedDataSet}.
-     * 
-     * @param source the source. Must not be null.
-     * @throws IllegalArgumentException thrown if source is null
+     * @param source the source. Ignored
      */
     public BackreferencedDataSet(DataSet source) {
-        if (source == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null."));
-        this.source = source;
-        int size = source.getWays().size() + source.getRelations().size();
-        referers = new HashMap<OsmPrimitive, Set<OsmPrimitive>>(size, 0.75f);
+
     }
 
     /**
-     * Remembers a reference from a parent primitive to a child primitive
-     * 
-     * @param parent the parent primitive
-     * @param child the child primitive
+     * @deprecated It's not necessary to call this method, OsmPrimitive.getReferres() is used to get list of referrers
      */
-    protected void remember(OsmPrimitive parent, OsmPrimitive child) {
-        Set<OsmPrimitive> parents = referers.get(child);
-        if (parents != null) {
-            parents.add(parent);
-            return;
-        }
-        parents = new HashSet<OsmPrimitive>();
-        parents.add(parent);
-        referers.put(child, parents);
-    }
-
-    /**
-     * Builds the dataset of back references
-     * 
-     */
+    @Deprecated
     public void build() {
-        for (Way w : source.getWays()) {
-            for (Node n : w.getNodes()) {
-                remember(w, n);
-            }
-        }
-        for (Relation r : source.getRelations()) {
-            for (RelationMember m : r.getMembers()) {
-                remember(r, m.getMember());
-            }
-        }
-        built = true;
+
     }
 
     /**
@@ -151,18 +108,16 @@ public class BackreferencedDataSet {
      * @return  the set of parent primitives for a given child primitive.
      */
     public Set<OsmPrimitive> getParents(OsmPrimitive child) {
-        Set<OsmPrimitive> parents = referers.get(child);
-        return parents == null ? new HashSet<OsmPrimitive>() : parents;
+        return new HashSet<OsmPrimitive>(child.getReferrers());
     }
 
     public Set<OsmPrimitive> getParents(Collection<? extends OsmPrimitive> children) {
         if (children == null) return Collections.emptySet();
         children.remove(null);
+
         Set<OsmPrimitive> parents = new HashSet<OsmPrimitive>();
         for(OsmPrimitive child: children) {
-            if (referers.get(child) != null) {
-                parents.addAll(referers.get(child));
-            }
+            parents.addAll(child.getReferrers());
         }
         return parents;
     }
@@ -176,15 +131,6 @@ public class BackreferencedDataSet {
      */
     public boolean hasParents(OsmPrimitive child) {
         return ! getParents(child).isEmpty();
-    }
-
-    /**
-     * Replies the source dataset for this Backreference DataSet
-     * 
-     * @return the source dataset
-     */
-    public DataSet getSource() {
-        return source;
     }
 
     /**
@@ -219,9 +165,5 @@ public class BackreferencedDataSet {
             references.addAll(getRelationToChildReferences(child));
         }
         return references;
-    }
-
-    public boolean isBuilt() {
-        return built;
     }
 }
