@@ -542,7 +542,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             }
 
             newSelection.add(n);
-            ds.setSelected(n);
         } else if (!newNode) {
             title = tr("Connect existing way to node");
         } else if (reuseWays.isEmpty()) {

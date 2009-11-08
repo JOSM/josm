@@ -146,12 +146,17 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     /**
      * 
      * @return DataSet this primitive is part of.
-     * @throws DataIntegrityProblemException when primitive is not part of any dataset
      */
     public DataSet getDataSet() {
-        if (dataSet == null)
-            throw new DataIntegrityProblemException("Primitive must be part of the dataset");
         return dataSet;
+    }
+
+    /**
+     * Throws exception if primitive is not part of the dataset
+     */
+    public void checkDataset() {
+        if (dataSet == null)
+            throw new DataIntegrityProblemException("Primitive  must be part of the dataset: " + toString());
     }
 
     private volatile byte flags = FLAG_VISIBLE;   // visible per default
@@ -647,6 +652,109 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             return Collections.emptyList();
         return keys.keySet();
     }
+
+
+    /*------------
+     * Referrers
+     ------------*/
+
+    private Object referrers;
+
+
+    /**
+     * Add new referrer. If referrer is already included then no action is taken
+     * @param referrer
+     */
+    protected void addReferrer(OsmPrimitive referrer) {
+        // Based on methods from josm-ng
+        if (referrers == null) {
+            referrers = referrer;
+        } else if (referrers instanceof OsmPrimitive) {
+            if (referrers != referrer) {
+                referrers = new OsmPrimitive[] { (OsmPrimitive)referrers, referrer };
+            }
+        } else {
+            for (OsmPrimitive primitive:(OsmPrimitive[])referrers) {
+                if (primitive == referrer)
+                    return;
+            }
+            OsmPrimitive[] orig = (OsmPrimitive[])referrers;
+            OsmPrimitive[] bigger = new OsmPrimitive[orig.length+1];
+            System.arraycopy(orig, 0, bigger, 0, orig.length);
+            bigger[orig.length] = referrer;
+            referrers = bigger;
+        }
+    }
+
+    /**
+     * Remove referrer. No action is taken if referrer is not registered
+     * @param referrer
+     */
+    protected void removeReferrer(OsmPrimitive referrer) {
+        // Based on methods from josm-ng
+        if (referrers instanceof OsmPrimitive) {
+            if (referrers == referrer) {
+                referrers = null;
+            }
+        } else if (referrers instanceof OsmPrimitive[]) {
+            OsmPrimitive[] orig = (OsmPrimitive[])referrers;
+            int idx = -1;
+            for (int i=0; i<orig.length; i++) {
+                if (orig[i] == referrer) {
+                    idx = i;
+                    break;
+                }
+            }
+            if (idx == -1)
+                return;
+
+            if (orig.length == 2) {
+                referrers = orig[1-idx]; // idx is either 0 or 1, take the other
+            } else { // downsize the array
+                OsmPrimitive[] smaller = new OsmPrimitive[orig.length-1];
+                System.arraycopy(orig, 0, smaller, 0, idx);
+                System.arraycopy(orig, idx+1, smaller, idx, smaller.length-idx);
+                referrers = smaller;
+            }
+        }
+    }
+    /**
+     * Find primitives that reference this primitive. Returns only primitives that are included in the same
+     * dataset as this primitive. <br>
+     * 
+     * For example following code will add wnew as referer to all nodes of existingWay, but this method will
+     * not return wnew because it's not part of the dataset <br>
+     * 
+     * <code>Way wnew = new Way(existingWay)</code>
+     * 
+     * @return a collection of all primitives that reference this primitive.
+     */
+
+    public final List<OsmPrimitive> getReferrers() {
+        checkDataset();
+        // Method copied from OsmPrimitive in josm-ng
+        // Returns only referrers that are members of the same dataset (primitive can have some fake references, for example
+        // when way is cloned
+        if (referrers == null)
+            return Collections.emptyList();
+
+        if (referrers instanceof OsmPrimitive) {
+            if (((OsmPrimitive)referrers).dataSet == dataSet)
+                return Collections.singletonList((OsmPrimitive)referrers);
+            else
+                return Collections.emptyList();
+        }
+
+        List<OsmPrimitive> result = new ArrayList<OsmPrimitive>();
+        for (OsmPrimitive o:(OsmPrimitive[])referrers) {
+            if (dataSet == o.dataSet) {
+                result.add(o);
+            }
+        }
+
+        return result;
+    }
+
 
     /**
      * Replies true, if the map of key/value pairs of this primitive is not empty.

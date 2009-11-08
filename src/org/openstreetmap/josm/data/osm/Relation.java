@@ -38,10 +38,18 @@ public final class Relation extends OsmPrimitive {
      * @since 1925
      */
     public void setMembers(List<RelationMember> members) {
+        for (RelationMember rm:this.members) {
+            rm.getMember().removeReferrer(this);
+        }
+
         this.members.clear();
         if (members != null) {
             this.members.addAll(members);
         }
+        for (RelationMember rm:this.members) {
+            rm.getMember().addReferrer(this);
+        }
+
     }
 
     /**
@@ -69,6 +77,7 @@ public final class Relation extends OsmPrimitive {
      */
     public void addMember(RelationMember member) {
         members.add(member);
+        member.getMember().addReferrer(this);
     }
 
     /**
@@ -79,6 +88,7 @@ public final class Relation extends OsmPrimitive {
      */
     public void addMember(int index, RelationMember member) {
         members.add(index, member);
+        member.getMember().addReferrer(this);
     }
 
     /**
@@ -89,7 +99,12 @@ public final class Relation extends OsmPrimitive {
      * @since 1951
      */
     public RelationMember setMember(int index, RelationMember member) {
-        return members.set(index, member);
+        RelationMember result = members.set(index, member);
+        if (result.getMember() != member.getMember()) {
+            member.getMember().addReferrer(this);
+            result.getMember().removeReferrer(this);
+        }
+        return result;
     }
 
     /**
@@ -99,7 +114,14 @@ public final class Relation extends OsmPrimitive {
      * @since 1951
      */
     public RelationMember removeMember(int index) {
-        return members.remove(index);
+        RelationMember result = members.remove(index);
+        for (RelationMember rm:members) {
+            // Do not remove referrer if this primitive is used in relation twice
+            if (rm.getMember() == result.getMember())
+                return result;
+        }
+        result.getMember().removeReferrer(this);
+        return result;
     }
 
     @Override public void visit(Visitor visitor) {
@@ -138,12 +160,8 @@ public final class Relation extends OsmPrimitive {
 
     @Override public void cloneFrom(OsmPrimitive osm) {
         super.cloneFrom(osm);
-        members.clear();
-        // we must not add the members themselves, but instead
-        // add clones of the members
-        for (RelationMember em : ((Relation)osm).getMembers()) {
-            members.add(new RelationMember(em));
-        }
+        // It's not necessary to clone members as RelationMember class is immutable
+        setMembers(((Relation)osm).getMembers());
     }
 
     @Override public void load(PrimitiveData data) {
@@ -235,8 +253,22 @@ public final class Relation extends OsmPrimitive {
                 todelete.add(member);
             }
         }
+        primitive.removeReferrer(this);
         members.removeAll(todelete);
     }
+
+    @Override
+    public void setDeleted(boolean deleted) {
+        for (RelationMember rm:members) {
+            if (deleted) {
+                rm.getMember().removeReferrer(this);
+            } else {
+                rm.getMember().addReferrer(this);
+            }
+        }
+        super.setDeleted(deleted);
+    }
+
 
     /**
      * removes all members with member.member == primitive
@@ -254,6 +286,9 @@ public final class Relation extends OsmPrimitive {
             }
         }
         members.removeAll(todelete);
+        for (OsmPrimitive primitive:primitives) {
+            primitive.removeReferrer(this);
+        }
     }
 
     @Override

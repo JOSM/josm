@@ -44,11 +44,19 @@ public final class Way extends OsmPrimitive {
      * @since 1862
      */
     public void setNodes(List<Node> nodes) {
+        for (Node node:this.nodes) {
+            node.removeReferrer(this);
+        }
+
         if (nodes == null) {
             this.nodes = new Node[0];
         } else {
             this.nodes = nodes.toArray(new Node[nodes.size()]);
         }
+        for (Node node:this.nodes) {
+            node.addReferrer(this);
+        }
+
         clearCached();
     }
 
@@ -193,8 +201,7 @@ public final class Way extends OsmPrimitive {
     @Override public void cloneFrom(OsmPrimitive osm) {
         super.cloneFrom(osm);
         Way otherWay = (Way)osm;
-        nodes = new Node[otherWay.nodes.length];
-        System.arraycopy(otherWay.nodes, 0, nodes, 0, otherWay.nodes.length);
+        setNodes(otherWay.getNodes());
     }
 
     @Override public String toString() {
@@ -228,6 +235,7 @@ public final class Way extends OsmPrimitive {
         }
         i = copy.size();
         if (closed && i > 2) {
+            // TODO Should this be copy.addNode(firstNode)?
             addNode(firstNode());
         } else if (i >= 2 && i <= 3 && copy.get(0) == copy.get(i-1)) {
             copy.remove(i-1);
@@ -256,6 +264,7 @@ public final class Way extends OsmPrimitive {
         if (incomplete)
             throw new IllegalStateException(tr("Cannot add node {0} to incomplete way {1}.", n.getId(), getId()));
         clearCached();
+        n.addReferrer(this);
         Node[] newNodes = new Node[nodes.length + 1];
         System.arraycopy(nodes, 0, newNodes, 0, nodes.length);
         newNodes[nodes.length] = n;
@@ -276,12 +285,26 @@ public final class Way extends OsmPrimitive {
         if (incomplete)
             throw new IllegalStateException(tr("Cannot add node {0} to incomplete way {1}.", n.getId(), getId()));
         clearCached();
+        n.addReferrer(this);
         Node[] newNodes = new Node[nodes.length + 1];
         System.arraycopy(nodes, 0, newNodes, 0, offs);
         System.arraycopy(nodes, offs, newNodes, offs + 1, nodes.length - offs);
         newNodes[offs] = n;
         nodes = newNodes;
     }
+
+    @Override
+    public void setDeleted(boolean deleted) {
+        for (Node n:nodes) {
+            if (deleted) {
+                n.removeReferrer(this);
+            } else {
+                n.addReferrer(this);
+            }
+        }
+        super.setDeleted(deleted);
+    }
+
 
     public boolean isClosed() {
         if (incomplete) return false;
