@@ -134,6 +134,10 @@ public class MergeVisitor extends AbstractVisitor {
         // If we get here we didn't find a suitable primitive in
         // my dataset. Just add other to my dataset.
         //
+
+        //TODO primitive must be only in one dataset at one time, so remove it from theirDataset. This obviously
+        // breaks theirDataset and we can only hope that nobody will try to use theirDataset after merging is finished
+        theirDataSet.removePrimitive(other);
         myDataset.addPrimitive(other);
     }
 
