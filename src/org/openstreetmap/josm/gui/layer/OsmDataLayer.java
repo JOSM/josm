@@ -390,8 +390,7 @@ public class OsmDataLayer extends Layer {
      * be purged
      */
     protected PurgePrimitivesCommand buildPurgeCommand() {
-        BackreferencedDataSet ds = new BackreferencedDataSet(data);
-        ds.build();
+        BackreferencedDataSet ds = new BackreferencedDataSet();
         ArrayList<OsmPrimitive> toPurge = new ArrayList<OsmPrimitive>();
         conflictLoop: for (Conflict<?> c: conflicts) {
             if (c.getMy().isDeleted() && !c.getTheir().isVisible()) {

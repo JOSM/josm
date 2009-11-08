@@ -9,7 +9,6 @@ import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.DownloadAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -44,7 +43,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
     }
 
     public Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
-       
+
         downloadTask = new DownloadTask(newLayer,
                 new BoundingBoxDownloader(downloadArea), progressMonitor);
         currentBounds = new Bounds(downloadArea);

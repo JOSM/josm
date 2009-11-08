@@ -84,23 +84,6 @@ public class BackreferencedDataSet {
     }
 
     /**
-     * Creates a new backreference data set based on the dataset <code>source</code>.
-     * 
-     * @param source the source. Ignored
-     */
-    public BackreferencedDataSet(DataSet source) {
-
-    }
-
-    /**
-     * @deprecated It's not necessary to call this method, OsmPrimitive.getReferres() is used to get list of referrers
-     */
-    @Deprecated
-    public void build() {
-
-    }
-
-    /**
      * Replies the set of parent primitives for a given child primitive. Replies
      * an empty set if no parents refer to the child.
      * 

@@ -54,10 +54,10 @@ public class DeleteCommand extends Command {
      * @throws IllegalArgumentException thrown if data is null or empty
      */
     public DeleteCommand(Collection<? extends OsmPrimitive> data) throws IllegalArgumentException {
-        if (data == null) 
+        if (data == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be empty"));
         if (data.isEmpty())
-            throw new IllegalArgumentException(tr("At least one object to delete requird, got empty collection"));            
+            throw new IllegalArgumentException(tr("At least one object to delete requird, got empty collection"));
         this.toDelete = data;
     }
 
@@ -100,10 +100,10 @@ public class DeleteCommand extends Command {
      */
     public DeleteCommand(OsmDataLayer layer, Collection<? extends OsmPrimitive> data) throws IllegalArgumentException{
         super(layer);
-        if (data == null) 
+        if (data == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be empty"));
         if (data.isEmpty())
-            throw new IllegalArgumentException(tr("At least one object to delete requird, got empty collection"));            
+            throw new IllegalArgumentException(tr("At least one object to delete requird, got empty collection"));
         this.toDelete = data;
     }
 
@@ -159,9 +159,9 @@ public class DeleteCommand extends Command {
             OsmPrimitive primitive = toDelete.iterator().next();
             String msg = "";
             switch(OsmPrimitiveType.from(primitive)) {
-                case NODE: msg = "Delete node {0}"; break;
-                case WAY: msg = "Delete way {0}"; break;
-                case RELATION:msg = "Delete relation {0}"; break;
+            case NODE: msg = "Delete node {0}"; break;
+            case WAY: msg = "Delete way {0}"; break;
+            case RELATION:msg = "Delete relation {0}"; break;
             }
 
             return new DefaultMutableTreeNode(new JLabel(tr(msg, primitive.getDisplayName(DefaultNameFormatter.getInstance())),
@@ -180,9 +180,9 @@ public class DeleteCommand extends Command {
             OsmPrimitiveType t = typesToDelete.iterator().next();
             apiname = t.getAPIName();
             switch(t) {
-                case NODE: msg = trn("Delete {0} node", "Delete {0} nodes", toDelete.size(), toDelete.size()); break;
-                case WAY: msg = trn("Delete {0} way", "Delete {0} ways", toDelete.size(), toDelete.size()); break;
-                case RELATION: msg = trn("Delete {0} relation", "Delete {0} relations", toDelete.size(), toDelete.size()); break;
+            case NODE: msg = trn("Delete {0} node", "Delete {0} nodes", toDelete.size(), toDelete.size()); break;
+            case WAY: msg = trn("Delete {0} way", "Delete {0} ways", toDelete.size(), toDelete.size()); break;
+            case RELATION: msg = trn("Delete {0} relation", "Delete {0} relations", toDelete.size(), toDelete.size()); break;
             }
         }
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(
@@ -315,9 +315,7 @@ public class DeleteCommand extends Command {
         if (selection == null || selection.isEmpty())
             return null;
 
-        BackreferencedDataSet backreferences = new BackreferencedDataSet(layer.data);
-        backreferences.build();
-
+        BackreferencedDataSet backreferences = new BackreferencedDataSet();
         Set<OsmPrimitive> primitivesToDelete = new HashSet<OsmPrimitive>(selection);
         Collection<Way> waysToBeChanged = new HashSet<Way>();
 

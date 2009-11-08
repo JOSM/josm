@@ -177,8 +177,7 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
     @Override
     public boolean executeCommand() {
         if (backreferenceDataSet == null) {
-            backreferenceDataSet = new BackreferencedDataSet(getLayer().data);
-            backreferenceDataSet.build();
+            backreferenceDataSet = new BackreferencedDataSet();
         }
         HashSet<OsmPrimitive> hive = new HashSet<OsmPrimitive>();
 

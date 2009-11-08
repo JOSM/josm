@@ -74,9 +74,9 @@ public class MergeNodesAction extends JosmAction {
 
     /**
      * Find which node to merge into (i.e. which one will be left)
-     * The last selected node will become the target node the remaining 
+     * The last selected node will become the target node the remaining
      * nodes are merged to.
-     *  
+     * 
      * @param candidates the collection of candidate nodes
      * @return the selected target node
      */
@@ -108,8 +108,7 @@ public class MergeNodesAction extends JosmAction {
         if (nodes == null)
             return null;
         nodes.remove(null); // just in case
-        BackreferencedDataSet backreferences = new BackreferencedDataSet(layer.data);
-        backreferences.build();
+        BackreferencedDataSet backreferences = new BackreferencedDataSet();
         return mergeNodes(layer,backreferences, nodes, targetNode);
     }
 
@@ -206,8 +205,7 @@ public class MergeNodesAction extends JosmAction {
         if (nodes == null)
             return null;
         if (backreferences == null) {
-            backreferences = new BackreferencedDataSet(layer.data);
-            backreferences.build();
+            backreferences = new BackreferencedDataSet();
         }
 
         Set<RelationToChildReference> relationToNodeReferences = backreferences.getRelationToChildReferences(nodes);
