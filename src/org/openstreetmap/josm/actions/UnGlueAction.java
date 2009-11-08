@@ -66,11 +66,8 @@ public class UnGlueAction extends JosmAction {
         String errMsg = null;
         if (checkSelection(selection)) {
             int count = 0;
-            for (Way w : getCurrentDataSet().getWays()) {
+            for (Way w : OsmPrimitive.getFilteredList(selectedNode.getReferrers(), Way.class)) {
                 if (!w.isUsable() || w.getNodesCount() < 1) {
-                    continue;
-                }
-                if (!w.containsNode(selectedNode)) {
                     continue;
                 }
                 count++;
@@ -91,11 +88,8 @@ public class UnGlueAction extends JosmAction {
             ArrayList<Node> tmpNodes = new ArrayList<Node>();
             for (Node n : selectedNodes) {
                 int count = 0;
-                for (Way w : getCurrentDataSet().getWays()) {
+                for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
                     if (w.isDeleted() || w.incomplete || w.getNodesCount() < 1) {
-                        continue;
-                    }
-                    if (!w.containsNode(n)) {
                         continue;
                     }
                     count++;
@@ -188,14 +182,7 @@ public class UnGlueAction extends JosmAction {
         OsmPrimitive n = (OsmPrimitive) selection.toArray()[0];
         if (!(n instanceof Node))
             return false;
-        boolean isPartOfWay = false;
-        for (Way w : getCurrentDataSet().getWays()) {
-            if (w.containsNode((Node) n)) {
-                isPartOfWay = true;
-                break;
-            }
-        }
-        if (!isPartOfWay)
+        if (OsmPrimitive.getFilteredList(n.getReferrers(), Way.class).isEmpty())
             return false;
 
         selectedNode = (Node) n;
@@ -319,7 +306,7 @@ public class UnGlueAction extends JosmAction {
         // modify all relations containing the node
         Relation newRel = null;
         HashSet<String> rolesToReAdd = null;
-        for (Relation r : getCurrentDataSet().getRelations()) {
+        for (Relation r : OsmPrimitive.getFilteredList(originalNode.getReferrers(), Relation.class)) {
             if (r.isDeleted() || r.incomplete) {
                 continue;
             }
@@ -364,11 +351,8 @@ public class UnGlueAction extends JosmAction {
         if (selectedWay == null) {
             boolean firstway = true;
             // modify all ways containing the nodes
-            for (Way w : getCurrentDataSet().getWays()) {
+            for (Way w : OsmPrimitive.getFilteredList(selectedNode.getReferrers(), Way.class)) {
                 if (w.isDeleted() || w.incomplete || w.getNodesCount() < 1) {
-                    continue;
-                }
-                if (!w.containsNode(selectedNode)) {
                     continue;
                 }
                 if (!firstway) {

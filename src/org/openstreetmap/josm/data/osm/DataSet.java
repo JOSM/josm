@@ -752,26 +752,6 @@ public class DataSet implements Cloneable {
         return false;
     }
 
-    public Set<Relation> getReferringRelations(Collection<? extends OsmPrimitive> primitives) {
-        return this.getReferringRelations(new HashSet<OsmPrimitive>(primitives));
-    }
-    public Set<Relation> getReferringRelations(Set<? extends OsmPrimitive> referred) {
-        HashSet<Relation> ret = new HashSet<Relation>();
-        if (referred == null) return ret;
-        referred.remove(null); // just in case - remove null element from primitives
-        for (Relation r: relations) {
-            if (r.isDeleted() || r.incomplete) {
-                continue;
-            }
-            Set<OsmPrimitive> memberPrimitives = r.getMemberPrimitives();
-            memberPrimitives.retainAll(referred);
-            if (!memberPrimitives.isEmpty()) {
-                ret.add(r);
-            }
-        }
-        return ret;
-    }
-
     /**
      * Reindex all nodes and ways after their coordinates were changed. This is a temporary solution, reindexing should
      * be automatic in the future

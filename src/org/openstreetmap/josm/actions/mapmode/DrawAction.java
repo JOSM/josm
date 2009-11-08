@@ -772,7 +772,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      */
     public Way getWayForNode(Node n) {
         Way way = null;
-        for (Way w : getCurrentDataSet().getWays()) {
+        for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
             if (!w.isUsable() || w.getNodesCount() < 1) {
                 continue;
             }

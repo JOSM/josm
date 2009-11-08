@@ -1,8 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -100,9 +101,9 @@ public class SplitWayAction extends JosmAction {
         // If only nodes are selected, try to guess which way to split. This works if there
         // is exactly one way that all nodes are part of.
         if (selectedWay == null && selectedNodes != null) {
-            HashMap<Way, Integer> wayOccurenceCounter = new HashMap<Way, Integer>();
+            Map<Way, Integer> wayOccurenceCounter = new HashMap<Way, Integer>();
             for (Node n : selectedNodes) {
-                for (Way w : getCurrentDataSet().getWays()) {
+                for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
                     if (!w.isUsable()) {
                         continue;
                     }
@@ -293,7 +294,7 @@ public class SplitWayAction extends JosmAction {
         Boolean warnme = false;
         // now copy all relations to new way also
 
-        for (Relation r : getCurrentDataSet().getRelations()) {
+        for (Relation r : OsmPrimitive.getFilteredList(selectedWay.getReferrers(), Relation.class)) {
             if (!r.isUsable()) {
                 continue;
             }
