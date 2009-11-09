@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.QuadBuckets.BBox;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.help.Helpful;
 
@@ -35,7 +36,8 @@ import org.openstreetmap.josm.gui.help.Helpful;
  */
 public class NavigatableComponent extends JComponent implements Helpful {
 
-    public static final int snapDistance = sqr(Main.pref.getInteger("node.snap-distance", 10));
+    public static final int snapDistance = Main.pref.getInteger("node.snap-distance", 10);
+    public static final int snapDistanceSq = sqr(snapDistance);
 
     private static int sqr(int a) { return a*a;}
     /**
@@ -295,17 +297,23 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 getProjection().latlon2eastNorth(box.getMax())));
     }
 
+    private BBox getSnapDistanceBBox(Point p) {
+        return new BBox(getLatLon(p.x - snapDistance / 2, p.y - snapDistance / 2),
+                getLatLon(p.x + snapDistance / 2, p.y + snapDistance / 2));
+    }
+
     /**
      * Return the nearest point to the screen point given.
      * If a node within snapDistance pixel is found, the nearest node is returned.
      */
     public final Node getNearestNode(Point p) {
-        double minDistanceSq = snapDistance;
-        Node minPrimitive = null;
         DataSet ds = getCurrentDataSet();
         if (ds == null)
             return null;
-        for (Node n : ds.getNodes()) {
+
+        double minDistanceSq = snapDistanceSq;
+        Node minPrimitive = null;
+        for (Node n : ds.searchNodes(getSnapDistanceBBox(p))) {
             if (!n.isUsable()) {
                 continue;
             }
@@ -318,7 +326,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             // when multiple nodes on one point, prefer new or selected nodes
             else if (dist == minDistanceSq && minPrimitive != null
                     && ((n.isNew() && ds.isSelected(n))
-                    || (!ds.isSelected(minPrimitive) && (ds.isSelected(n) || n.isNew())))) {
+                            || (!ds.isSelected(minPrimitive) && (ds.isSelected(n) || n.isNew())))) {
                 minPrimitive = n;
             }
         }
@@ -336,7 +344,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
         DataSet ds = getCurrentDataSet();
         if (ds == null)
             return null;
-        for (Way w : ds.getWays()) {
+
+        for (Way w : ds.searchWays(getSnapDistanceBBox(p))) {
             if (!w.isUsable()) {
                 continue;
             }
@@ -358,7 +367,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 double a = p.distanceSq(B);
                 double b = p.distanceSq(A);
                 double perDist = a - (a - b + c) * (a - b + c) / 4 / c; // perpendicular distance squared
-                if (perDist < snapDistance && a < c + snapDistance && b < c + snapDistance) {
+                if (perDist < snapDistanceSq && a < c + snapDistanceSq && b < c + snapDistanceSq) {
                     if (ds.isSelected(w)) {
                         perDist -= 0.00001;
                     }
@@ -449,7 +458,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * @return A list of all objects that are nearest to
-     * the mouse.  Does a simple sequential scan on all the data.
+     * the mouse.
      *
      * @return A collection of all items or <code>null</code>
      *      if no item under or near the point. The returned
@@ -460,7 +469,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         DataSet ds = getCurrentDataSet();
         if (ds == null)
             return null;
-        for (Way w : ds.getWays()) {
+        for (Way w : ds.searchWays(getSnapDistanceBBox(p))) {
             if (!w.isUsable()) {
                 continue;
             }
@@ -479,16 +488,16 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 double a = p.distanceSq(B);
                 double b = p.distanceSq(A);
                 double perDist = a - (a - b + c) * (a - b + c) / 4 / c; // perpendicular distance squared
-                if (perDist < snapDistance && a < c + snapDistance && b < c + snapDistance) {
+                if (perDist < snapDistanceSq && a < c + snapDistanceSq && b < c + snapDistanceSq) {
                     nearest.add(w);
                     break;
                 }
                 lastN = n;
             }
         }
-        for (Node n : ds.getNodes()) {
+        for (Node n : ds.searchNodes(getSnapDistanceBBox(p))) {
             if (n.isUsable()
-                    && getPoint(n).distanceSq(p) < snapDistance) {
+                    && getPoint(n).distanceSq(p) < snapDistanceSq) {
                 nearest.add(n);
             }
         }
@@ -497,7 +506,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * @return A list of all nodes that are nearest to
-     * the mouse.  Does a simple sequential scan on all the data.
+     * the mouse.
      *
      * @return A collection of all nodes or <code>null</code>
      *      if no node under or near the point. The returned
@@ -508,9 +517,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
         DataSet ds = getCurrentDataSet();
         if (ds == null)
             return null;
-        for (Node n : ds.getNodes()) {
+
+        for (Node n : ds.searchNodes(getSnapDistanceBBox(p))) {
             if (n.isUsable()
-                    && getPoint(n).distanceSq(p) < snapDistance) {
+                    && getPoint(n).distanceSq(p) < snapDistanceSq) {
                 nearest.add(n);
             }
         }

@@ -1,10 +1,6 @@
 // License: GPL. Copyright 2009 by Dave Hansen, others
 package org.openstreetmap.josm.data.coor;
 
-import org.openstreetmap.josm.data.osm.Node;
-
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.projection.Projection;
 
 public class QuadTiling
 {
@@ -40,10 +36,12 @@ public class QuadTiling
             //if (debug)
             //    out("shift: " + shift + " bits: " + bits);
             // remember x is the MSB
-            if ((bits & 0x2) != 0)
+            if ((bits & 0x2) != 0) {
                 x += x_unit;
-            if ((bits & 0x1) != 0)
+            }
+            if ((bits & 0x1) != 0) {
                 y += y_unit;
+            }
             x_unit /= 2;
             y_unit /= 2;
             shift -= 2;
@@ -54,17 +52,17 @@ public class QuadTiling
     }
     static long xy2tile(long x, long y)
     {
-       long tile = 0;
-       int i;
-       for (i = NR_LEVELS-1; i >= 0; i--)
-       {
+        long tile = 0;
+        int i;
+        for (i = NR_LEVELS-1; i >= 0; i--)
+        {
             long xbit = ((x >> i) & 1);
             long ybit = ((y >> i) & 1);
             tile <<= 2;
             // Note that x is the MSB
             tile |= (xbit<<1) | ybit;
-       }
-       return tile;
+        }
+        return tile;
     }
     static long coorToTile(LatLon coor)
     {
@@ -72,24 +70,26 @@ public class QuadTiling
     }
     static long lon2x(double lon)
     {
-       //return Math.round((lon + 180.0) * QuadBuckets.WORLD_PARTS / 360.0)-1;
-       long ret = (long)Math.floor((lon + 180.0) * WORLD_PARTS / 360.0);
-       if (ret == WORLD_PARTS)
-           ret--;
-       return ret;
+        //return Math.round((lon + 180.0) * QuadBuckets.WORLD_PARTS / 360.0)-1;
+        long ret = (long)Math.floor((lon + 180.0) * WORLD_PARTS / 360.0);
+        if (ret == WORLD_PARTS) {
+            ret--;
+        }
+        return ret;
     }
     static long lat2y(double lat)
     {
-       //return Math.round((lat + 90.0) * QuadBuckets.WORLD_PARTS / 180.0)-1;
-       long ret = (long)Math.floor((lat + 90.0) * WORLD_PARTS / 180.0);
-       if (ret == WORLD_PARTS)
-           ret--;
-       return ret;
+        //return Math.round((lat + 90.0) * QuadBuckets.WORLD_PARTS / 180.0)-1;
+        long ret = (long)Math.floor((lat + 90.0) * WORLD_PARTS / 180.0);
+        if (ret == WORLD_PARTS) {
+            ret--;
+        }
+        return ret;
     }
     static public long quadTile(LatLon coor)
     {
         return xy2tile(lon2x(coor.lon()),
-                       lat2y(coor.lat()));
+                lat2y(coor.lat()));
     }
     static public int index(int level, long quad)
     {
