@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.data.osm;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,9 +20,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
 
     static void abort(String s)
     {
-        out(s);
-        Object o = null;
-        o.hashCode();
+        throw new AssertionError(s);
     }
     static void out(String s)
     {
@@ -81,11 +80,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             if ((xmin < -180.0) ||
                     (xmax >  180.0) ||
                     (ymin <  -90.0) ||
-                    (ymax >   90.0)) {
-                out("bad BBox: " + this);
-                Object o = null;
-                o.hashCode();
-            }
+                    (ymax >   90.0))
+                throw new IllegalArgumentException("bad BBox: " + this);
         }
         @Override
         public String toString()
@@ -252,7 +248,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             }
             return ret;
         }
-        @SuppressWarnings("unchecked")
         QBLevel[] newChildren()
         {
             // This is ugly and hackish.  But, it seems to work,
@@ -271,7 +266,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 out("getting index for " + o + " at level: " + level);
             }
             if (o instanceof Node) {
-                Node n = (Node)o;
                 LatLon coor = ((Node)o).getCoor();
                 if (coor == null)
                     return -1;
@@ -364,7 +358,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
         void add_to_leaf(T o)
         {
-            QBLevel ret = this;
             add_content(o);
             if (content.size() > MAX_OBJECTS_PER_LEVEL) {
                 if (debug) {
@@ -544,7 +537,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         {
             if (content == null) {
                 if (debug) {
-                    out("["+level+"] leaf size: null content, children? " + children);
+                    out("["+level+"] leaf size: null content, children? " + Arrays.toString(children));
                 }
                 return 0;
             }
@@ -579,7 +572,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
         QBLevel find_exact(T n)
         {
-            QBLevel ret = null;
             if (content != null && content.contains(n))
                 return this;
             return find_exact_child(n);
@@ -854,7 +846,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         out("unsupported operation");
         throw new UnsupportedOperationException();
     }
-    public boolean retainAll(Collection objects)
+    public boolean retainAll(Collection<?> objects)
     {
         for (T o : this) {
             if (objects.contains(o)) {
@@ -873,7 +865,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             return true;
         return false;
     }
-    public boolean removeAll(Collection objects)
+    public boolean removeAll(Collection<?> objects)
     {
         for (Object o : objects) {
             if (!canStore(o))
@@ -883,7 +875,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
         return true;
     }
-    public boolean addAll(Collection objects)
+    public boolean addAll(Collection<? extends T> objects)
     {
         for (Object o : objects) {
             if (!canStore(o))
@@ -893,9 +885,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
         return true;
     }
-    public boolean containsAll(Collection objects)
+    public boolean containsAll(Collection<?> objects)
     {
-        boolean ret = true;
         for (Object o : objects) {
             if (!canStore(o))
                 return false;
@@ -986,7 +977,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     {
         return this.toArrayList().toArray();
     }
-    public <T> T[] toArray(T[] template)
+    public <A> A[] toArray(A[] template)
     {
         return this.toArrayList().toArray(template);
     }
@@ -1081,7 +1072,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             // 2. move the index back since we removed
             //    an element
             content_index--;
-            T object = peek();
+            peek(); //TODO Is the call to peek() necessary?
             current_node.content.remove(content_index);
         }
     }
@@ -1195,8 +1186,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             }
             tmp = tmp.parent;
         }
-        if (ret == null || ret.size() == 0)
-            return Collections.emptyList();
         if (debug) {
             out("search of QuadBuckets for " + search_bbox + " ret len: " + ret.size());
         }
