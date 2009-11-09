@@ -105,6 +105,25 @@ public final class Node extends OsmPrimitive {
         setCoor(((Node)osm).coor);
     }
 
+    /**
+     * Merges the technical and semantical attributes from <code>other</code> onto this.
+     * 
+     * Both this and other must be new, or both must be assigned an OSM ID. If both this and <code>other</code>
+     * have an assigend OSM id, the IDs have to be the same.
+     * 
+     * @param other the other primitive. Must not be null.
+     * @throws IllegalArgumentException thrown if other is null.
+     * @throws DataIntegrityProblemException thrown if either this is new and other is not, or other is new and this is not
+     * @throws DataIntegrityProblemException thrown if other is new and other.getId() != this.getId()
+     */
+    @Override
+    public void mergeFrom(OsmPrimitive other) {
+        super.mergeFrom(other);
+        if (!other.incomplete) {
+            setCoor(new LatLon(((Node)other).coor));
+        }
+    }
+
     @Override public void load(PrimitiveData data) {
         super.load(data);
         setCoor(((NodeData)data).getCoor());

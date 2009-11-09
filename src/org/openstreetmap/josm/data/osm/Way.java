@@ -228,7 +228,12 @@ public final class Way extends OsmPrimitive {
         if (! super.hasEqualSemanticAttributes(other))
             return false;
         Way w = (Way)other;
-        return Arrays.equals(nodes, w.nodes);
+        if (getNodesCount() != w.getNodesCount()) return false;
+        for (int i=0;i<getNodesCount();i++) {
+            if (! getNode(i).hasEqualSemanticAttributes(w.getNode(i)))
+                return false;
+        }
+        return true;
     }
 
     public int compareTo(OsmPrimitive o) {

@@ -791,6 +791,32 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     /**
+     * Merges the technical and semantical attributes from <code>other</code> onto this.
+     * 
+     * Both this and other must be new, or both must be assigned an OSM ID. If both this and <code>other</code>
+     * have an assigend OSM id, the IDs have to be the same.
+     * 
+     * @param other the other primitive. Must not be null.
+     * @throws IllegalArgumentException thrown if other is null.
+     * @throws DataIntegrityProblemException thrown if either this is new and other is not, or other is new and this is not
+     * @throws DataIntegrityProblemException thrown if other is new and other.getId() != this.getId()
+     */
+    public void mergeFrom(OsmPrimitive other) {
+        if (other == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "other"));
+        if (other.isNew() ^ isNew())
+            throw new DataIntegrityProblemException(tr("Can''t merge because either of the participating primitives is new and the other is not"));
+        if (! other.isNew() && other.getId() != id)
+            throw new DataIntegrityProblemException(tr("Can''t merge primitives with different ids. This id is {0}, the other is {1}", id, other.getId()));
+        keys = other.keys == null ? null : new HashMap<String, String>(other.keys);
+        timestamp = other.timestamp;
+        version = other.version;
+        incomplete = other.incomplete;
+        flags = other.flags;
+        user= other.user;
+    }
+
+    /**
      * Replies true if this primitive and other are equal with respect to their
      * semantic attributes.
      * <ol>

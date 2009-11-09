@@ -552,8 +552,6 @@ public class MergeVisitorTest {
 
         their.addPrimitive(n5);
 
-        their.addPrimitive(n5);
-
         Node n4 = new Node(new LatLon(2,2));
         n4.setOsmId(2,2);
         n4.put("key1", "value1");
@@ -585,7 +583,7 @@ public class MergeVisitorTest {
     /**
      * their way has a higher version and different nodes. My way is modified.
      *
-     * => merge it onto my way not possbile, conflict
+     * => merge onto my way not possible, create a conflict
      *
      */
     @Test
@@ -620,8 +618,6 @@ public class MergeVisitorTest {
 
         Node n5 = new Node(new LatLon(1,1));
         n5.setOsmId(4,1);
-        their.addPrimitive(n5);
-
         their.addPrimitive(n5);
 
         Node n4 = new Node(new LatLon(2,2));
@@ -787,7 +783,8 @@ public class MergeVisitorTest {
         Way theirWay = new Way();
         theirWay.addNode(n3);
         theirWay.addNode(n4);
-        theirWay.setUser(User.createOsmUser(1111, "their"));
+        User user = User.createOsmUser(1111, "their");
+        theirWay.setUser(user);
         theirWay.setTimestamp(new Date());
         their.addPrimitive(theirWay);
 
@@ -796,7 +793,6 @@ public class MergeVisitorTest {
 
         assertEquals(0,visitor.getConflicts().size());
         assertEquals("their", myWay.getUser().getName());
-        assertEquals(1111, myWay.getUser().getId());
         assertEquals(1111, myWay.getUser().getId());
         assertEquals(theirWay.getTimestamp(), myWay.getTimestamp());
     }
