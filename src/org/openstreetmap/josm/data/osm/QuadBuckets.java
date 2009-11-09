@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.coor.QuadTiling;
 public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
 {
     public static boolean debug = false;
-    static boolean consistency_testing = false;
+    static boolean consistency_testing = true;
 
     static void abort(String s)
     {
@@ -246,6 +246,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             if (this.content.size() == 0) {
                 this.content = null;
             }
+            if (this.canRemove())
+                this.remove_from_parent();
             return ret;
         }
         QBLevel[] newChildren()
@@ -364,7 +366,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                     out("["+level+"] deciding to split");
                 }
                 if (level >= NR_LEVELS-1) {
-                    out("can not split, but too deep: " + level + " size: " + content.size());
+                    if (debug)
+                        out("can not split, but too deep: " + level + " size: " + content.size());
                     return;
                 }
                 int before_size = -1;
@@ -483,48 +486,59 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 return false;
             return true;
         }
+        QBLevel nextSibling()
+        {
+            QBLevel next = this;
+            QBLevel sibling = next.next_sibling();
+            // Walk back up the tree to find the
+            // next sibling node.  It may be either
+            // a leaf or branch.
+            while (sibling == null) {
+                if (debug) {
+                    out("no siblings at level["+next.level+"], moving to parent");
+                    }
+                next = next.parent;
+                if (next == null) {
+                    break;
+                    }
+                sibling = next.next_sibling();
+            }
+            next = sibling;
+            return next;
+        }
         QBLevel nextContentNode()
         {
             QBLevel next = this;
-            if (this.isLeaf()) {
-                QBLevel sibling = next.next_sibling();
-                // Walk back up the tree to find the
-                // next sibling node.  It may be either
-                // a leaf or branch.
-                while (sibling == null) {
-                    if (debug) {
-                        out("no siblings at level["+next.level+"], moving to parent");
-                    }
-                    next = next.parent;
-                    if (next == null) {
-                        break;
-                    }
-                    sibling = next.next_sibling();
-                }
-                next = sibling;
-            }
+            if (this.isLeaf())
+                next = this.nextSibling();
             if (next == null)
                 return null;
-            // all branches are guaranteed to have
-            // at least one leaf.  It may not have
-            // any contents, but there *will* be a
-            // leaf.  So, walk back down the tree
+            // Walk back down the tree
             // and find the first leaf
-            while (!next.isLeaf()) {
-                if (next.hasContent() && next != this) {
+            while (next != null && !next.isLeaf()) {
+                if (next.hasContent() && next != this)
+                    break;
+                if (debug)
+                    out("["+next.level+"] next node ("+next+") is a branch (content: "+next.hasContent()+"), moving down...");
+                boolean progress = false;
+                for (QBLevel child : next.children) {
+                    if (child == null)
+                        continue;
+                    next = child;
+                    progress = true;
                     break;
                 }
-                if (debug) {
-                    out("["+next.level+"] next node ("+next+") is a branch (content: "+next.hasContent()+"), moving down...");
-                }
-                for (QBLevel child : next.children) {
-                    if (child == null) {
-                        continue;
-                    }
-                    next = child;
+                if (!progress) {
+                    // this should out it as not being a branch
+                    next.children = null;
                     break;
                 }
             }
+            // This means that there are no leaves or branches
+            // with content as children.  We must continue to
+            // search siblings.
+            if (next == this)
+                return nextSibling().nextContentNode();
             return next;
         }
         int size()
@@ -782,6 +796,39 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         LatLon coor()
         {
             return QuadTiling.tile2LatLon(this.quad);
+        }
+        void remove_from_parent()
+        {
+            if (parent == null)
+                return;
+
+            int nr_siblings = 0;
+            for (int i = 0; i < parent.children.length; i++) {
+                QBLevel sibling = parent.children[i];
+                if (sibling != null)
+                    nr_siblings++;
+                if (sibling != this)
+                    continue;
+                if (this.content != null ||
+                    this.children != null)
+                    abort("attempt to remove non-empty child");
+                parent.children[i] = null;
+                nr_siblings--;
+            }
+            if (parent.canRemove())
+                parent.remove_from_parent();
+        }
+        boolean canRemove()
+        {
+            if (content != null && content.size() > 0)
+                return false;
+            if (children != null) {
+                for (QBLevel child : children) {
+                    if (child != null)
+                        return false;
+                }
+            }
+            return true;
         }
     }
 
@@ -1072,8 +1119,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             // 2. move the index back since we removed
             //    an element
             content_index--;
-            peek(); //TODO Is the call to peek() necessary?
-            current_node.content.remove(content_index);
+            T object = peek(); //TODO Is the call to peek() necessary?
+            current_node.remove_content(object);
         }
     }
     public Iterator<T> iterator()
