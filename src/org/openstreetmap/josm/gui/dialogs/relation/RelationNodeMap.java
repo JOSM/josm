@@ -1,147 +1,178 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 
+import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.*;
+
 /**
- * A mapping from Node positions to elements in a Relation (currently Nodes and Ways only)
+ * Auxiliary class for relation sorting.
+ *
+ * Constructs two mappings: One that maps each way to its nodes and the inverse mapping that
+ * maps each node to all ways that have this node.
+ * After construction both maps are consistent, but later on objects that are no longer needed
+ * are removed from the value sets.
+ * However the corresponding keys are not deleted even if they map to an empty set.
+ * Note that normal ways have 2 nodes (beginning and end) but roundabouts can have less or more
+ * (that are shared by other members).
  *
  * @author Christiaan Welvaart <cjw@time4t.net>
- *
+ * 
  */
 public class RelationNodeMap {
-    /**
-     * For each way endpoint, list all ways that share this node
+    /*
+     * read only list of all relation members
      */
-    private java.util.HashMap<Node, TreeSet<Integer>> points;
-    /**
-     * Singleton nodes
+    private final List<RelationMember> members;
+    /*
+     * the maps. (Need TreeMap for efficiency.)
      */
-    private java.util.HashMap<Node, Integer> nodes;
-    private java.util.Vector<Integer> remaining;
-    /**
-     * read only list
+    private TreeMap<Node, TreeSet<Integer>> nodesMap;
+    private TreeMap<Integer, TreeSet<Node>> waysMap;
+    /*
+     * Used to keep track of what members are done.
      */
-    private final ArrayList<RelationMember> members;
+    private TreeSet<Integer> remaining;
+
+    /**
+     * All members that are incomplete or not a way
+     */
+    private List<Integer> notSortable = new ArrayList<Integer>();
 
     RelationNodeMap(ArrayList<RelationMember> members) {
-        int i;
-
         this.members = members;
-        points = new java.util.HashMap<Node, TreeSet<Integer>>();
-        nodes = new java.util.HashMap<Node, Integer>();
-        remaining = new java.util.Vector<Integer>();
 
-        for (i = 0; i < members.size(); ++i) {
+        nodesMap = new TreeMap<Node, TreeSet<Integer>>();
+        waysMap = new TreeMap<Integer, TreeSet<Node>>();
+
+        for (int i = 0; i < members.size(); ++i) {
             RelationMember m = members.get(i);
-            if (m.getMember().incomplete)
+            if (m.getMember().incomplete || !m.isWay())
             {
-                remaining.add(Integer.valueOf(i));
+                notSortable.add(i);
             }
-            else
-            {
-                add(i, m);
-            }
-        }
-    }
-
-    Integer find(Node node, int current) {
-        Integer result = null;
-
-        try {
-            result = nodes.get(node);
-            if (result == null) {
-                result = points.get(node).first();
-                if (members.get(current).getMember() == members.get(result).getMember()) {
-                    result = points.get(node).last();
-                }
-            }
-        } catch (NullPointerException f) {
-        } catch (java.util.NoSuchElementException e) {
-        }
-
-        return result;
-    }
-
-    void add(int n, RelationMember m) {
-        if (m.isWay()) {
-            Way w = m.getWay();
-            if (w.lastNode() == w.firstNode())
-            {
-                nodes.put(w.firstNode(), n);
-            }
-            else
-            {
-                if (!points.containsKey(w.firstNode())) {
-                    points.put(w.firstNode(), new TreeSet<Integer>());
-                }
-                points.get(w.firstNode()).add(n);
-
-                if (!points.containsKey(w.lastNode())) {
-                    points.put(w.lastNode(), new TreeSet<Integer>());
-                }
-                points.get(w.lastNode()).add(n);
-            }
-        } else if (m.isNode()) {
-            Node node = m.getNode();
-            nodes.put(node, n);
-        } else {
-            remaining.add(n);
-        }
-    }
-
-    boolean remove(int n, RelationMember a) {
-        boolean result;
-        if (a.isWay()) {
-            Way w = a.getWay();
-            if (w.firstNode() == w.lastNode())
-            {
-                result = (nodes.remove(w.firstNode()) != null);
-            }
-            else
-            {
-                result = points.get(w.firstNode()).remove(n);
-                result &= points.get(w.lastNode()).remove(n);
-            }
-        } else {
-            result = (nodes.remove(a.getMember()) != null);
-        }
-        return result;
-    }
-
-    // no node-mapped entries left
-    boolean isEmpty() {
-        return points.isEmpty() && nodes.isEmpty();
-    }
-
-    java.util.Vector<Integer> getRemaining() {
-        return remaining;
-    }
-
-    Integer pop() {
-        Node node = null;
-        Integer result = null;
-
-        if (!nodes.isEmpty()) {
-            node = nodes.keySet().iterator().next();
-            result = nodes.get(node);
-            nodes.remove(node);
-        } else if (!points.isEmpty()) {
-            for (TreeSet<Integer> set : points.values()) {
-                if (!set.isEmpty()) {
-                    result = set.first();
-                    Way w = members.get(result).getWay();
-                    points.get(w.firstNode()).remove(result);
-                    points.get(w.lastNode()).remove(result);
-                    break;
+            else {
+                Way w = m.getWay();
+                if (MemberTableModel.roundaboutType(w) != NONE) {
+                    for (Node nd : w.getNodes()) {
+                        addPair(nd, i);
+                    }
+                } else {
+                    addPair(w.firstNode(), i);
+                    addPair(w.lastNode(), i);
                 }
             }
         }
 
-        return result;
+        remaining = new TreeSet<Integer>();
+        for (Integer k : waysMap.keySet()) {
+            remaining.add(k);
+        }
+
+        /*
+         * Clean up the maps, i.e. remove nodes from roundabouts and dead ends that
+         * cannot be used in future. (only for performance)
+         */
+        Iterator<Map.Entry<Node,TreeSet<Integer>>> it = nodesMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Node,TreeSet<Integer>> nodeLinks = it.next();
+
+            if (nodeLinks.getValue().size() < 2) {
+//                System.err.println("DELETE: "+nodeLinks.getKey()+" "+nodeLinks.getValue());
+                if (nodeLinks.getValue().size() != 1) throw new AssertionError();
+
+                Integer d_way = nodeLinks.getValue().iterator().next();
+                TreeSet<Node> d_way_nodes = waysMap.get(d_way);
+                d_way_nodes.remove(nodeLinks.getKey());
+
+                it.remove();
+                continue;
+            }
+//            System.err.println(nodeLinks.getKey()+" "+nodeLinks.getValue());
+
+        }
+//        System.err.println("");
+//        System.err.println(remaining);
+//        System.err.println("");
+//        System.err.println(nodesMap);
+//        System.err.println("");
+//        System.err.println(waysMap);
+
+    }
+
+    private void addPair(Node n, int i) {
+        TreeSet<Integer> ts = nodesMap.get(n);
+        if (ts == null) {
+            ts = new TreeSet<Integer>();
+            nodesMap.put(n, ts);
+        }
+        ts.add(i);
+
+        TreeSet<Node> ts2 = waysMap.get(i);
+        if (ts2 == null) {
+            ts2 = new TreeSet<Node>();
+            waysMap.put(i, ts2);
+        }
+        ts2.add(n);
+    }
+
+    /**
+     * Return a relation member that is linked to the
+     * member 'i', but has not been popped jet.
+     * Return null if there is no such member left.
+     */
+    public Integer popAdjacent(Integer i) {
+//        System.err.print("Adjacent["+i+"]:");
+        TreeSet<Node> nodes = waysMap.get(i);
+//        System.err.print(nodes);
+        for (Node n : nodes) {
+//            System.err.print(" {"+n.getId()+"} ");
+            TreeSet<Integer> adj = nodesMap.get(n);
+            if (!adj.isEmpty()) {
+                Integer j = adj.iterator().next();
+                done(j);
+                waysMap.get(j).remove(n);
+//                System.err.println(j);
+                return j;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns some remaining member or null if
+     * every sortable member has been processed.
+     */
+    public Integer pop() {
+        if (remaining.isEmpty()) return null;
+        Integer i = remaining.iterator().next();
+        done(i);
+        return i;
+    }
+
+    /**
+     * This relation member has been processed.
+     * Remove references in the nodesMap.
+     */
+    private void done(Integer i) {
+        remaining.remove(i);
+        TreeSet<Node> nodes = waysMap.get(i);
+        for (Node n : nodes) {
+            boolean result = nodesMap.get(n).remove(i);
+            if (!result) throw new AssertionError();
+        }
+    }
+
+    public List<Integer> getNotSortableMembers() {
+        return notSortable;
     }
 }

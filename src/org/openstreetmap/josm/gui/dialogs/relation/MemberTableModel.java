@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.util.ArrayList;
@@ -206,7 +207,8 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
             listSelectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         }
         return listSelectionModel;
-    }
+    }
+
     public void removeMembersReferringTo(List<? extends OsmPrimitive> primitives) {
         if (primitives == null)
             return;
@@ -567,108 +569,59 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         return result;
     }
 
+    /**
+     * Sort the relation members by the way they are linked.
+     */
     void sort() {
         RelationNodeMap map = new RelationNodeMap(members);
-        Vector<LinkedList<Integer>> segments;
-        LinkedList<Integer> segment;
-        Node startSearchNode;
-        Node endSearchNode;
-        boolean something_done;
 
-        /*
-         * sort any 2 or more connected elements together may be slow with many unconnected members
-         */
+        // List of groups of linked members
+        //
+        ArrayList<LinkedList<Integer>> allGroups = new ArrayList<LinkedList<Integer>>();
 
-        if (map.isEmpty())
-            // empty relation or incomplete members
-            return;
-        segments = new Vector<LinkedList<Integer>>();
+        // current group of members that are linked among each other
+        // Two successive members are always linked i.e. have a common node.
+        // 
+        LinkedList<Integer> group;
 
-        while (!map.isEmpty()) {
-            // find an element for the next segment
-            // try first element in relation if we just started
-            // otherwise, or if first element is another relation, just fetch some element from the
-            // map
-            Integer next;
-            if ((segments.size() == 0) && map.remove(0, members.get(0))) {
-                next = 0;
-            } else {
-                next = map.pop();
-                if (next == null) {
-                    break;
-                }
+        Integer first;
+        while ((first = map.pop()) != null) {
+            group = new LinkedList<Integer>();
+            group.add(first);
+
+            allGroups.add(group);
+
+            Integer next = first;
+            while ((next = map.popAdjacent(next)) != null) {
+                group.addLast(next);
             }
 
-            segment = new LinkedList<Integer>();
-            segment.add(next);
-            segments.add(segment);
-
-            do {
-                something_done = false;
-                startSearchNode = null;
-                endSearchNode = null;
-                if (segment.size() == 1) {
-                    // only one element in segment, so try to link against each linkable node of element
-                    RelationMember m = members.get(segment.getFirst());
-                    if (m.isWay()) {
-                        Way w = m.getWay();
-                        endSearchNode = w.lastNode();
-                        if (w.lastNode() != w.firstNode())
-                        {
-                            startSearchNode = w.firstNode();
-                        }
-                    } else if (m.isNode()) {
-                        Node n = m.getNode();
-                        endSearchNode = n;
-                    }
-                } else {
-                    // add unused node of first element and unused node of last element
-                    // start with the first element (compared to next element)
-                    startSearchNode = getUnusedNode(members.get(segment.getFirst()), members.get(segment.get(1)));
-
-                    // now the same for the last element (compared to previous element)
-                    endSearchNode = getUnusedNode(members.get(segment.getLast()), members.get(segment.get(segment.size() - 2)));
-                }
-
-                // let's see if we can find connected elements for endSearchNode and startSearchNode
-                if (startSearchNode != null) {
-                    Integer m2 = map.find(startSearchNode, segment.getFirst());
-                    if (m2 != null) {
-                        segment.add(0, m2);
-                        map.remove(m2, members.get(m2));
-                        something_done = true;
-                    }
-                }
-                if (endSearchNode != null) {
-                    Integer m2 = map.find(endSearchNode, segment.getLast());
-                    if (m2 != null) {
-                        segment.add(segment.size(), m2);
-                        map.remove(m2, members.get(m2));
-                        something_done = true;
-                    }
-                }
-            } while (something_done);
+            // The first element need not be in front of the list.
+            // So the search goes in both directions
+            //
+            next = first;
+            while ((next = map.popAdjacent(next)) != null) {
+                group.addFirst(next);
+            }
 
         }
 
-        if (segments.size() > 0) {
-            // append map.remaining() to segments list (as a single segment)
-            segment = new LinkedList<Integer>();
-            segment.addAll(map.getRemaining());
-            segments.add(segment);
+        group = new LinkedList<Integer>();
+        group.addAll(map.getNotSortableMembers());
+        allGroups.add(group);
 
-            // now we need to actually re-order the relation members
-            ArrayList<RelationMember> newmembers = new ArrayList<RelationMember>();
-            for (LinkedList<Integer> segment2 : segments) {
-                for (Integer p : segment2) {
-                    newmembers.add(members.get(p));
-                }
+        ArrayList<RelationMember> newMembers = new ArrayList<RelationMember>();
+        for (LinkedList<Integer> tmpGroup : allGroups) {
+            for (Integer p : tmpGroup) {
+                newMembers.add(members.get(p));
             }
-            members.clear();
-            members.addAll(newmembers);
-
-            fireTableDataChanged();
         }
+
+        if (members.size() != newMembers.size()) throw new AssertionError();
+        
+        members.clear();
+        members.addAll(newMembers);
+        fireTableDataChanged();
     }
 
     /**
@@ -677,7 +630,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      * to be the predecessor of k.
      *
      * If both ways are not linked in any way, NONE is returned.
-     * 
+     *
      * Else the direction is given as follows:
      * Let the relation be a route of oneway streets, and someone travels them in the given order.
      * Direction is FORWARD for if it is legel and BACKWARD if it is illegal to do so for the given way.
@@ -709,9 +662,9 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
 
         /** the list of nodes the way k can dock to */
         List<Node> refNodes= new ArrayList<Node>();
-        
+
         switch (ref_direction) {
-            case FORWARD: 
+            case FORWARD:
                 refNodes.add(way_ref.lastNode());
                 break;
             case BACKWARD:
@@ -726,7 +679,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         if (refNodes == null) {
             return NONE;
         }
-        
+
         for (Node n : refNodes) {
             if (n == null) continue;
             if (roundaboutType(k) != NONE) {
@@ -750,15 +703,18 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     /**
      * determine, if the way i is a roundabout and if yes, what type of roundabout
      */
-    private Direction roundaboutType(int i) {
+    private Direction roundaboutType(int i) { //FIXME
         RelationMember m = members.get(i);
         if (m == null || !m.isWay()) return NONE;
         Way w = m.getWay();
-        if (w != null &&        
-                "roundabout".equals(w.get("junction")) && 
+        return roundaboutType(w);
+    }
+    static Direction roundaboutType(Way w) {
+        if (w != null &&
+                "roundabout".equals(w.get("junction")) &&
                 w.getNodesCount() < 200 &&
                 w.getNodesCount() > 2 &&
-                w.getNode(0) != null && 
+                w.getNode(0) != null &&
                 w.getNode(1) != null &&
                 w.getNode(2) != null &&
                 w.firstNode() == w.lastNode()) {
@@ -773,7 +729,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         } else
             return NONE;
     }
-    
+
     private WayConnectionType wayConnection(int i) {
         if (connectionType == null) {
             updateLinks();
