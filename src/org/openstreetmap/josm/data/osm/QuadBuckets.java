@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.coor.QuadTiling;
 public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
 {
     public static boolean debug = false;
-    static boolean consistency_testing = true;
+    static boolean consistency_testing = false;
 
     static void abort(String s)
     {
