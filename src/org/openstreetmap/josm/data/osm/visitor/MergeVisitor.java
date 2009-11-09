@@ -4,9 +4,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
@@ -37,7 +39,11 @@ public class MergeVisitor extends AbstractVisitor {
      * A map of all primitives that got replaced with other primitives.
      * Key is the primitive id in their dataset, the value is the id in my dataset
      */
-    private Map<Long, Long> merged;
+    private Map<Long, Long> mergedMap;
+    /** a set of primitive ids for which we have to fix references (to nodes and
+     * to relation members) after the first phase of merging
+     */
+    private Set<Long> fixReferences;
 
     /**
      * constructor
@@ -51,7 +57,8 @@ public class MergeVisitor extends AbstractVisitor {
         this.myDataSet = myDataSet;
         this.theirDataSet = theirDataSet;
         conflicts = new ConflictCollection();
-        merged = new HashMap<Long, Long>();
+        mergedMap = new HashMap<Long, Long>();
+        fixReferences = new HashSet<Long>();
     }
 
     /**
@@ -90,11 +97,11 @@ public class MergeVisitor extends AbstractVisitor {
                     continue;
                 }
                 if (my.hasEqualSemanticAttributes(other)) {
+                    mergedMap.put(other.getUniqueId(), my.getUniqueId());
                     if (my.isDeleted() != other.isDeleted()) {
                         // differences in deleted state have to be merged manually
                         //
                         conflicts.add(my, other);
-                        merged.put(other.getUniqueId(), my.getUniqueId());
                     } else {
                         // copy the technical attributes from other
                         // version
@@ -102,7 +109,7 @@ public class MergeVisitor extends AbstractVisitor {
                         my.setUser(other.getUser());
                         my.setTimestamp(other.getTimestamp());
                         my.setModified(other.isModified());
-                        merged.put(other.getUniqueId(), my.getUniqueId());
+                        fixReferences.add(other.getUniqueId());
                     }
                     return;
                 }
@@ -119,7 +126,8 @@ public class MergeVisitor extends AbstractVisitor {
         }
         my.mergeFrom(other);
         myDataSet.addPrimitive(my);
-        merged.put(other.getUniqueId(), my.getUniqueId());
+        mergedMap.put(other.getUniqueId(), my.getUniqueId());
+        fixReferences.add(other.getUniqueId());
     }
 
     public void visit(Node other) {
@@ -135,9 +143,9 @@ public class MergeVisitor extends AbstractVisitor {
     }
 
     protected OsmPrimitive getMergeTarget(OsmPrimitive mergeSource) {
-        Long targetId = merged.get(mergeSource.getUniqueId());
+        Long targetId = mergedMap.get(mergeSource.getUniqueId());
         if (targetId == null)
-            throw new RuntimeException("no merge target for merge primitive " + mergeSource.getUniqueId() + " of type " + mergeSource.getType());
+            throw new RuntimeException(tr("Missing merge target for way with id {0}", mergeSource.getUniqueId()));
         return myDataSet.getPrimitiveById(targetId, mergeSource.getType());
     }
 
@@ -159,13 +167,13 @@ public class MergeVisitor extends AbstractVisitor {
      */
     public void fixReferences() {
         for (Way w : theirDataSet.getWays()) {
-            if (!conflicts.hasConflictForTheir(w)) {
+            if (!conflicts.hasConflictForTheir(w) && fixReferences.contains(w.getUniqueId())) {
                 mergeNodeList(w);
                 fixIncomplete(w);
             }
         }
         for (Relation r : theirDataSet.getRelations()) {
-            if (!conflicts.hasConflictForTheir(r)) {
+            if (!conflicts.hasConflictForTheir(r) && fixReferences.contains(r.getUniqueId())) {
                 mergeRelationMembers(r);
             }
         }
@@ -261,97 +269,85 @@ public class MergeVisitor extends AbstractVisitor {
         OsmPrimitive my = myDataSet.getPrimitiveById(other.getId(), other.getType());
         // merge other into an existing primitive with the same id, if possible
         //
-        if (my != null) {
-            if (my.getVersion() <= other.getVersion()) {
-                if (! my.isVisible() && other.isVisible()) {
-                    // should not happen
-                    //
-                    logger.warning(tr("My primitive with id {0} and version {1} is visible although "
-                            + "their primitive with lower version {2} is not visible. "
-                            + "Can't deal with this inconsistency. Keeping my primitive. ",
-                            Long.toString(my.getId()),Long.toString(my.getVersion()), Long.toString(other.getVersion())
-                    ));
-                    merged.put(other.getUniqueId(), my.getUniqueId());
-                } else if (my.isVisible() && ! other.isVisible()) {
-                    // this is always a conflict because the user has to decide whether
-                    // he wants to create a clone of its local primitive or whether he
-                    // wants to purge my from the local dataset. He can't keep it unchanged
-                    // because it was deleted on the server.
-                    //
-                    conflicts.add(my,other);
-                    merged.put(other.getUniqueId(), my.getUniqueId());
-                } else if (my.incomplete && !other.incomplete) {
-                    // my is incomplete, other completes it
-                    // => merge other onto my
-                    //
-                    my.mergeFrom(other);
-                    merged.put(other.getUniqueId(), my.getUniqueId());
-                } else if (!my.incomplete && other.incomplete) {
-                    // my is complete and the other is incomplete
-                    // => keep mine, we have more information already
-                    //
-                    merged.put(other.getUniqueId(), my.getUniqueId());
-                } else if (my.incomplete && other.incomplete) {
-                    // my and other are incomplete. Doesn't matter which one to
-                    // take. We take mine.
-                    //
-                    merged.put(other.getUniqueId(), my.getUniqueId());
-                } else if (my.isDeleted() && ! other.isDeleted() && my.getVersion() == other.getVersion()) {
-                    // same version, but my is deleted. Assume mine takes precedence
-                    // otherwise too many conflicts when refreshing from the server
-                    merged.put(other.getUniqueId(), my.getUniqueId());
-                } else if (my.isDeleted() != other.isDeleted()) {
-                    // differences in deleted state have to be resolved manually
-                    //
-                    conflicts.add(my,other);
-                    merged.put(other.getUniqueId(), my.getUniqueId());
-                } else if (! my.isModified() && other.isModified()) {
-                    // my not modified. We can assume that other is the most recent version.
-                    // clone it onto my. But check first, whether other is deleted. if so,
-                    // make sure that my is not references anymore in myDataSet.
-                    //
-                    if (other.isDeleted()) {
-                        myDataSet.unlinkReferencesToPrimitive(my);
-                    }
-                    my.mergeFrom(other);
-                    merged.put(other.getUniqueId(), my.getUniqueId());
-                } else if (! my.isModified() && !other.isModified() && my.getVersion() == other.getVersion()) {
-                    // both not modified. Keep mine
-                    //
-                    merged.put(other.getUniqueId(),my.getUniqueId());
-                } else if (! my.isModified() && !other.isModified() && my.getVersion() < other.getVersion()) {
-                    // my not modified but other is newer. clone other onto mine.
-                    //
-                    my.mergeFrom(other);
-                    merged.put(other.getUniqueId(),my.getUniqueId());
-                } else if (my.isModified() && ! other.isModified() && my.getVersion() == other.getVersion()) {
-                    // my is same as other but mine is modified
-                    // => keep mine
-                    merged.put(other.getUniqueId(), my.getUniqueId());
-                } else if (! my.hasEqualSemanticAttributes(other)) {
-                    // my is modified and is not semantically equal with other. Can't automatically
-                    // resolve the differences
-                    // =>  create a conflict
-                    conflicts.add(my,other);
-                    merged.put(other.getUniqueId(), my.getUniqueId());
-                } else {
-                    // clone from other, but keep the modified flag. Clone will mainly copy
-                    // technical attributes like timestamp or user information. Semantic
-                    // attributes should already be equal if we get here.
-                    //
-                    my.mergeFrom(other);
-                    my.setModified(true);
-                    merged.put(other.getUniqueId(), my.getUniqueId());
-                }
-            } else {
-                // my.version > other.version => keep my version
-                merged.put(other.getUniqueId(), my.getUniqueId());
-            }
+        if (my == null)
+            return false;
+        mergedMap.put(other.getUniqueId(), my.getUniqueId());
+        if (my.getVersion() > other.getVersion())
+            // my.version > other.version => keep my version
             return true;
+        if (! my.isVisible() && other.isVisible()) {
+            // should not happen
+            //
+            logger.warning(tr("My primitive with id {0} and version {1} is visible although "
+                    + "their primitive with lower version {2} is not visible. "
+                    + "Can't deal with this inconsistency. Keeping my primitive. ",
+                    Long.toString(my.getId()),Long.toString(my.getVersion()), Long.toString(other.getVersion())
+            ));
+        } else if (my.isVisible() && ! other.isVisible()) {
+            // this is always a conflict because the user has to decide whether
+            // he wants to create a clone of its local primitive or whether he
+            // wants to purge my from the local dataset. He can't keep it unchanged
+            // because it was deleted on the server.
+            //
+            conflicts.add(my,other);
+        } else if (my.incomplete && !other.incomplete) {
+            // my is incomplete, other completes it
+            // => merge other onto my
+            //
+            my.mergeFrom(other);
+            fixReferences.add(other.getUniqueId());
+        } else if (!my.incomplete && other.incomplete) {
+            // my is complete and the other is incomplete
+            // => keep mine, we have more information already
+            //
+        } else if (my.incomplete && other.incomplete) {
+            // my and other are incomplete. Doesn't matter which one to
+            // take. We take mine.
+            //
+        } else if (my.isDeleted() && ! other.isDeleted() && my.getVersion() == other.getVersion()) {
+            // same version, but my is deleted. Assume mine takes precedence
+            // otherwise too many conflicts when refreshing from the server
+        } else if (my.isDeleted() != other.isDeleted()) {
+            // differences in deleted state have to be resolved manually
+            //
+            conflicts.add(my,other);
+        } else if (! my.isModified() && other.isModified()) {
+            // my not modified. We can assume that other is the most recent version.
+            // clone it onto my. But check first, whether other is deleted. if so,
+            // make sure that my is not references anymore in myDataSet.
+            //
+            if (other.isDeleted()) {
+                myDataSet.unlinkReferencesToPrimitive(my);
+            }
+            my.mergeFrom(other);
+            fixReferences.add(other.getUniqueId());
+        } else if (! my.isModified() && !other.isModified() && my.getVersion() == other.getVersion()) {
+            // both not modified. Keep mine
+            //
+        } else if (! my.isModified() && !other.isModified() && my.getVersion() < other.getVersion()) {
+            // my not modified but other is newer. clone other onto mine.
+            //
+            my.mergeFrom(other);
+            fixReferences.add(other.getUniqueId());
+        } else if (my.isModified() && ! other.isModified() && my.getVersion() == other.getVersion()) {
+            // my is same as other but mine is modified
+            // => keep mine
+        } else if (! my.hasEqualSemanticAttributes(other)) {
+            // my is modified and is not semantically equal with other. Can't automatically
+            // resolve the differences
+            // =>  create a conflict
+            conflicts.add(my,other);
+        } else {
+            // clone from other, but keep the modified flag. mergeFrom will mainly copy
+            // technical attributes like timestamp or user information. Semantic
+            // attributes should already be equal if we get here.
+            //
+            my.mergeFrom(other);
+            my.setModified(true);
+            fixReferences.add(other.getUniqueId());
         }
-        return false;
+        return true;
     }
-
 
     /**
      * Runs the merge operation. Successfully merged {@see OsmPrimitive}s are in
