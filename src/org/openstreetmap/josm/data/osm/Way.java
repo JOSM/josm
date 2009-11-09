@@ -58,6 +58,7 @@ public final class Way extends OsmPrimitive {
         }
 
         clearCached();
+        reindex();
     }
 
     /**
@@ -286,6 +287,7 @@ public final class Way extends OsmPrimitive {
         System.arraycopy(nodes, 0, newNodes, 0, nodes.length);
         newNodes[nodes.length] = n;
         nodes = newNodes;
+        reindex();
     }
 
     /**
@@ -308,6 +310,7 @@ public final class Way extends OsmPrimitive {
         System.arraycopy(nodes, offs, newNodes, offs + 1, nodes.length - offs);
         newNodes[offs] = n;
         nodes = newNodes;
+        reindex();
     }
 
     @Override
@@ -319,6 +322,7 @@ public final class Way extends OsmPrimitive {
                 n.addReferrer(this);
             }
         }
+        reindex();
         super.setDeleted(deleted);
     }
 
@@ -350,5 +354,11 @@ public final class Way extends OsmPrimitive {
 
     public OsmPrimitiveType getType() {
         return OsmPrimitiveType.WAY;
+    }
+
+    private void reindex() {
+        if (getDataSet() != null) {
+            getDataSet().reindexWay(this);
+        }
     }
 }

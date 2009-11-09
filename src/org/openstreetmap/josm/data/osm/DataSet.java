@@ -755,7 +755,9 @@ public class DataSet implements Cloneable {
     /**
      * Reindex all nodes and ways after their coordinates were changed. This is a temporary solution, reindexing should
      * be automatic in the future
+     * @deprecated Reindexing should be automatic
      */
+    @Deprecated
     public void reindexAll() {
         List<Node> ntmp = new ArrayList<Node>(nodes);
         nodes.clear();
@@ -763,6 +765,20 @@ public class DataSet implements Cloneable {
         List<Way> wtmp = new ArrayList<Way>(ways);
         ways.clear();
         ways.addAll(wtmp);
+    }
+
+    void reindexNode(Node node) {
+        nodes.remove(node);
+        nodes.add(node);
+        for (Way way:OsmPrimitive.getFilteredList(node.getReferrers(), Way.class)) {
+            ways.remove(way);
+            ways.add(way);
+        }
+    }
+
+    void reindexWay(Way way) {
+        ways.remove(way);
+        ways.add(way);
     }
 
     public void clenupDeletedPrimitives() {

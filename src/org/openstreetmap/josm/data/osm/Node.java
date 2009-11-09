@@ -22,6 +22,9 @@ public final class Node extends OsmPrimitive {
             } else {
                 this.coor.setCoor(coor);
             }
+            if (getDataSet() != null) {
+                getDataSet().reindexNode(this);
+            }
         }
     }
 
@@ -36,6 +39,9 @@ public final class Node extends OsmPrimitive {
                 coor.setEastNorth(eastNorth);
             } else {
                 coor = new CachedLatLon(eastNorth);
+            }
+            if (getDataSet() != null) {
+                getDataSet().reindexNode(this);
             }
         }
     }
