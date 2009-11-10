@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.QuadBuckets.BBox;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 
@@ -1005,6 +1006,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
         return builder.toString();
     }
+
+    public abstract BBox getBBox();
 
 }
 

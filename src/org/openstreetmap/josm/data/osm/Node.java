@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.QuadBuckets.BBox;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 
 /**
@@ -173,5 +174,12 @@ public final class Node extends OsmPrimitive {
 
     public OsmPrimitiveType getType() {
         return OsmPrimitiveType.NODE;
+    }
+
+    public BBox getBBox() {
+        if (coor == null)
+            return new BBox(0, 0, 0, 0);
+        else
+            return new BBox(coor, coor);
     }
 }

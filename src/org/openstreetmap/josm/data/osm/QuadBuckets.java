@@ -1,10 +1,10 @@
 package org.openstreetmap.josm.data.osm;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -189,30 +189,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             return ret;
         }
     }
-    /*
-     * This is a quick hack.  The problem is that we need the
-     * way's bounding box a *bunch* of times when it gets
-     * inserted.  It gets expensive if we have to recreate
-     * them each time.
-     *
-     * An alternative would be to calculate it at .add() time
-     * and passing it down the call chain.
-     */
-    HashMap<Way,BBox> way_bbox_cache = new HashMap<Way, BBox>();
-    BBox way_bbox(Way w)
-    {
-        if (way_bbox_cache.size() > 100) {
-            way_bbox_cache.clear();
-        }
-        BBox b = way_bbox_cache.get(w);
-        if (b == null) {
-            b = new BBox(w);
-            way_bbox_cache.put(w, b);
-        }
-        return b;
-        //return new BBox(w);
-    }
-
     class QBLevel
     {
         int level;
@@ -246,8 +222,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             if (this.content.size() == 0) {
                 this.content = null;
             }
-            if (this.canRemove())
+            if (this.canRemove()) {
                 this.remove_from_parent();
+            }
             return ret;
         }
         QBLevel[] newChildren()
@@ -267,50 +244,33 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             if (debug) {
                 out("getting index for " + o + " at level: " + level);
             }
-            if (o instanceof Node) {
-                LatLon coor = ((Node)o).getCoor();
-                if (coor == null)
-                    return -1;
-                return QuadTiling.index(coor, level);
-            }
-            if (o instanceof Way) {
-                Way w = (Way)o;
-                int index = -1;
-                //for (Node n : w.getNodes()) {
-                for (LatLon c : way_bbox(w).points()) {
-                    //    LatLon c = n.getCoor();
-                    if (debug) {
-                        out("getting index for point: " + c);
-                    }
-                    if (index == -1) {
-                        index = QuadTiling.index(c, level);
-                        if (debug) {
-                            out("set initial way index to: " + index);
-                        }
-                        continue;
-                    }
-                    int node_index = QuadTiling.index(c, level);
-                    if (debug) {
-                        out("other node way index: " + node_index);
-                    }
-                    if (node_index != index) {
-                        // This happens at level 0 sometimes when a way has no
-                        // nodes present.
-                        if (debug) {
-                            out("way ("+w.getId()+") would have gone across two quads "
-                                    + node_index + "/" + index + " at level: " + level + "    ");
-                            out("node count: " + w.getNodes().size());
-                            for (LatLon c2 : way_bbox(w).points()) {
-                                out("points: " + c2);
-                            }
-                        }
-                        return -1;
-                    }
+            int index = -1;
+            for (LatLon c : o.getBBox().points()) {
+                if (debug) {
+                    out("getting index for point: " + c);
                 }
-                return index;
+                if (index == -1) {
+                    index = QuadTiling.index(c, level);
+                    if (debug) {
+                        out("set initial index to: " + index);
+                    }
+                    continue;
+                }
+                int another_index = QuadTiling.index(c, level);
+                if (debug) {
+                    out("other point index: " + another_index);
+                }
+                if (another_index != index) {
+                    // This happens at level 0 sometimes when a way has no
+                    // nodes present.
+                    if (debug) {
+                        out("primitive ("+o.getId()+") would have gone across two quads "
+                                + another_index + "/" + index + " at level: " + level + "    ");
+                    }
+                    return -1;
+                }
             }
-            abort("bad primitive: " + o);
-            return -1;
+            return index;
         }
         void split()
         {
@@ -366,8 +326,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                     out("["+level+"] deciding to split");
                 }
                 if (level >= NR_LEVELS-1) {
-                    if (debug)
+                    if (debug) {
                         out("can not split, but too deep: " + level + " size: " + content.size());
+                    }
                     return;
                 }
                 int before_size = -1;
@@ -387,18 +348,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
 
         boolean matches(T o, BBox search_bbox)
         {
-            if (o instanceof Node) {
-                LatLon coor = ((Node)o).getCoor();
-                if (coor == null)
-                    return false;
-                return search_bbox.bounds(coor);
-            }
-            if (o instanceof Way) {
-                BBox bbox = way_bbox((Way)o);
-                return bbox.intersects(search_bbox);
-            }
-            abort("matches() bad primitive: " + o);
-            return false;
+            return o.getBBox().intersects(search_bbox);
         }
         private List<T> search_contents(BBox search_bbox)
         {
@@ -496,11 +446,11 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             while (sibling == null) {
                 if (debug) {
                     out("no siblings at level["+next.level+"], moving to parent");
-                    }
+                }
                 next = next.parent;
                 if (next == null) {
                     break;
-                    }
+                }
                 sibling = next.next_sibling();
             }
             next = sibling;
@@ -509,21 +459,25 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         QBLevel nextContentNode()
         {
             QBLevel next = this;
-            if (this.isLeaf())
+            if (this.isLeaf()) {
                 next = this.nextSibling();
+            }
             if (next == null)
                 return null;
             // Walk back down the tree
             // and find the first leaf
-            while (next != null && !next.isLeaf()) {
-                if (next.hasContent() && next != this)
+            while (!next.isLeaf()) {
+                if (next.hasContent() && next != this) {
                     break;
-                if (debug)
+                }
+                if (debug) {
                     out("["+next.level+"] next node ("+next+") is a branch (content: "+next.hasContent()+"), moving down...");
+                }
                 boolean progress = false;
                 for (QBLevel child : next.children) {
-                    if (child == null)
+                    if (child == null) {
                         continue;
+                    }
                     next = child;
                     progress = true;
                     break;
@@ -816,17 +770,21 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             int nr_siblings = 0;
             for (int i = 0; i < parent.children.length; i++) {
                 QBLevel sibling = parent.children[i];
-                if (sibling != null)
+                if (sibling != null) {
                     nr_siblings++;
-                if (sibling != this)
+                }
+                if (sibling != this) {
                     continue;
-                if (!canRemove())
+                }
+                if (!canRemove()) {
                     abort("attempt to remove non-empty child: " + this.content + " " + this.children);
+                }
                 parent.children[i] = null;
                 nr_siblings--;
             }
-            if (parent.canRemove())
+            if (parent.canRemove()) {
                 parent.remove_from_parent();
+            }
         }
         boolean canRemove()
         {
@@ -910,49 +868,29 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
         return true;
     }
-    boolean canStore(Object o)
-    {
-        if (o instanceof Way)
-            return true;
-        if (o instanceof Node)
-            return true;
-        return false;
-    }
     public boolean removeAll(Collection<?> objects)
     {
+        boolean changed = false;
         for (Object o : objects) {
-            if (!canStore(o))
-                return false;
-            if (!this.remove(o))
-                return false;
+            changed = changed | remove(o);
         }
-        return true;
+        return changed;
     }
     public boolean addAll(Collection<? extends T> objects)
     {
+        boolean changed = false;
         for (Object o : objects) {
-            if (!canStore(o))
-                return false;
-            if (!this.add(convert(o)))
-                return false;
+            changed = changed | this.add(convert(o));
         }
-        return true;
+        return changed;
     }
     public boolean containsAll(Collection<?> objects)
     {
         for (Object o : objects) {
-            if (!canStore(o))
-                return false;
             if (!this.contains(o))
                 return false;
         }
         return true;
-    }
-    private void check_type(Object o)
-    {
-        if (canStore(o))
-            return;
-        unsupported();
     }
     // If anyone has suggestions for how to fix
     // this properly, I'm listening :)
@@ -963,7 +901,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     }
     public boolean remove(Object o)
     {
-        check_type(o);
         return this.remove(convert(o));
     }
     public boolean remove_slow(T removeme)
@@ -990,9 +927,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
          * We first try a locational search
          */
         QBLevel bucket = root.find_exact(o);
-        if (o instanceof Way) {
-            way_bbox_cache.remove(o);
-        }
         /*
          * That may fail because the object was
          * moved or changed in some way, so we
@@ -1008,8 +942,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     }
     public boolean contains(Object o)
     {
-        if (!canStore(o))
-            return false;
         QBLevel bucket = root.find_exact(convert(o));
         if (bucket == null)
             return false;

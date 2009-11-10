@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.openstreetmap.josm.data.osm.QuadBuckets.BBox;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CopyList;
 
@@ -322,5 +323,10 @@ public final class Relation extends OsmPrimitive {
 
     public OsmPrimitiveType getType() {
         return OsmPrimitiveType.RELATION;
+    }
+
+    @Override
+    public BBox getBBox() {
+        return new BBox(0, 0, 0, 0);
     }
 }
