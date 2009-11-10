@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -215,6 +215,7 @@ public class DownloadReferrersAction extends JosmAction{
                     new Runnable() {
                         public void run() {
                             targetLayer.fireDataChange();
+                            targetLayer.onPostDownloadFromServer();
                             Main.map.mapView.repaint();
                         }
                     }
@@ -252,9 +253,9 @@ public class DownloadReferrersAction extends JosmAction{
                         return;
                     String msg = "";
                     switch(entry.getValue()) {
-                        case NODE: msg = tr("({0}/{1}) Loading parents of node {2}", i+1,children.size(), entry.getKey()); break;
-                        case WAY: msg = tr("({0}/{1}) Loading parents of way {2}", i+1,children.size(), entry.getKey()); break;
-                        case RELATION: msg = tr("({0}/{1}) Loading parents of relation {2}", i+1,children.size(), entry.getKey()); break;
+                    case NODE: msg = tr("({0}/{1}) Loading parents of node {2}", i+1,children.size(), entry.getKey()); break;
+                    case WAY: msg = tr("({0}/{1}) Loading parents of way {2}", i+1,children.size(), entry.getKey()); break;
+                    case RELATION: msg = tr("({0}/{1}) Loading parents of relation {2}", i+1,children.size(), entry.getKey()); break;
                     }
                     progressMonitor.subTask(msg);
                     downloadParents(entry.getKey(), entry.getValue(), progressMonitor.createSubTaskMonitor(1, false));

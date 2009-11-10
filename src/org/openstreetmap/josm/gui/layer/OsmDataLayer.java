@@ -48,8 +48,8 @@ import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.BackreferencedDataSet;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
+import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -483,12 +483,12 @@ public class OsmDataLayer extends Layer {
     }
 
     /**
-     * @return The number of not-deleted primitives in the list.
+     * @return The number of not-deleted and visible primitives in the list.
      */
     private int undeletedSize(final Collection<? extends OsmPrimitive> list) {
         int size = 0;
         for (final OsmPrimitive osm : list)
-            if (!osm.isDeleted()) {
+            if (!osm.isDeleted() && osm.isVisible()) {
                 size++;
             }
         return size;
@@ -688,6 +688,11 @@ public class OsmDataLayer extends Layer {
      */
     public void onPostLoadFromFile() {
         setRequiresSaveToFile(false);
+        setRequiresUploadToServer(data.isModified());
+    }
+
+    public void onPostDownloadFromServer() {
+        setRequiresSaveToFile(true);
         setRequiresUploadToServer(data.isModified());
     }
 

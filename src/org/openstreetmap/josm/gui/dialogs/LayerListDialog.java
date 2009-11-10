@@ -304,7 +304,7 @@ public class LayerListDialog extends ToggleDialog {
                     continue;
                 }
                 OsmDataLayer odl = (OsmDataLayer)l;
-                if (odl.requiresSaveToFile() || odl.requiresUploadToServer()) {
+                if ((odl.requiresSaveToFile() || odl.requiresUploadToServer()) && odl.data.isModified()) {
                     layersWithUnmodifiedChanges.add(odl);
                 }
             }
@@ -313,9 +313,9 @@ public class LayerListDialog extends ToggleDialog {
                 dialog.getModel().populate(layersWithUnmodifiedChanges);
                 dialog.setVisible(true);
                 switch(dialog.getUserAction()) {
-                    case CANCEL: return false;
-                    case PROCEED: return true;
-                    default: return false;
+                case CANCEL: return false;
+                case PROCEED: return true;
+                default: return false;
                 }
             }
             return true;

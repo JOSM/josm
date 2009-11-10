@@ -156,6 +156,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                     target = getFirstDataLayer();
                 }
                 target.mergeFrom(dataSet);
+                target.onPostDownloadFromServer();
             }
         }
 

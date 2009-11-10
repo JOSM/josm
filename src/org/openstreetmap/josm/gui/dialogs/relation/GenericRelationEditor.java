@@ -55,8 +55,8 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ConflictAddCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
+import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -1467,6 +1467,7 @@ public class GenericRelationEditor extends RelationEditor {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
                             curLayer.fireDataChange();
+                            curLayer.onPostDownloadFromServer();
                         }
                     });
                 }
