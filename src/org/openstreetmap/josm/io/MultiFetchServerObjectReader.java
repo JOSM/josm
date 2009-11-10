@@ -13,13 +13,13 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
@@ -386,7 +386,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      *
      */
     protected void merge(DataSet from) {
-        final MergeVisitor visitor = new MergeVisitor(outputDataSet,from);
+        final DataSetMerger visitor = new DataSetMerger(outputDataSet,from);
         visitor.merge();
     }
 

@@ -13,8 +13,8 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
+import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
@@ -163,7 +163,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
             OsmServerBackreferenceReader reader = new OsmServerBackreferenceReader(child, full);
             referrers = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
             if (referrers != null) {
-                final MergeVisitor visitor = new MergeVisitor(getLayer().data, referrers);
+                final DataSetMerger visitor = new DataSetMerger(getLayer().data, referrers);
                 visitor.merge();
 
                 // copy the merged layer's data source info

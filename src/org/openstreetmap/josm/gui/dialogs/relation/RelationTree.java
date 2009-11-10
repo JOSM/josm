@@ -17,9 +17,9 @@ import javax.swing.tree.TreePath;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -135,7 +135,7 @@ public class RelationTree extends JTree {
                 lastException.printStackTrace();
                 return;
             }
-            MergeVisitor visitor = new MergeVisitor(Main.main.getEditLayer().data, ds);
+            DataSetMerger visitor = new DataSetMerger(Main.main.getEditLayer().data, ds);
             visitor.merge();
             if (! visitor.getConflicts().isEmpty()) {
                 Main.main.getEditLayer().getConflicts().add(visitor.getConflicts());

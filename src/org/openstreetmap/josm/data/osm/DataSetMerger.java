@@ -1,4 +1,4 @@
-package org.openstreetmap.josm.data.osm.visitor;
+package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -12,20 +12,14 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
-import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.Way;
 
 /**
- * A visitor that gets a data set at construction time and merges every visited object
- * into it.
- *
+ * A dataset merger which takes a target and a source dataset and merges the source data set
+ * onto the target dataset.
+ * 
  */
-public class MergeVisitor extends AbstractVisitor {
-    private static Logger logger = Logger.getLogger(MergeVisitor.class.getName());
+public class DataSetMerger {
+    private static Logger logger = Logger.getLogger(DataSetMerger.class.getName());
 
     /** the collection of conflicts created during merging */
     private ConflictCollection conflicts;
@@ -50,10 +44,13 @@ public class MergeVisitor extends AbstractVisitor {
      *
      * The visitor will merge <code>theirDataSet</code> onto <code>myDataSet</code>
      *
-     * @param myDataSet  dataset with my primitives
-     * @param theirDataSet dataset with their primitives.
+     * @param myDataSet  dataset with my primitives. Must not be null.
+     * @param theirDataSet dataset with their primitives. Ignored, if null.
+     * @throws IllegalArgumentException thrown if myDataSet is null
      */
-    public MergeVisitor(DataSet myDataSet, DataSet theirDataSet) {
+    public DataSetMerger(DataSet myDataSet, DataSet theirDataSet) throws IllegalArgumentException {
+        if (myDataSet == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null"));
         this.myDataSet = myDataSet;
         this.theirDataSet = theirDataSet;
         conflicts = new ConflictCollection();
@@ -81,6 +78,9 @@ public class MergeVisitor extends AbstractVisitor {
             // defined id
             //
             if (mergeById(other))
+                return;
+            if (!other.isVisible())
+                // ignore it
                 return;
         } else {
             // try to merge onto a primitive  which has no id assigned
@@ -115,6 +115,7 @@ public class MergeVisitor extends AbstractVisitor {
                 }
             }
         }
+
         // If we get here we didn't find a suitable primitive in
         // my dataset. Create a clone and add it to my dataset.
         //
@@ -128,18 +129,6 @@ public class MergeVisitor extends AbstractVisitor {
         myDataSet.addPrimitive(my);
         mergedMap.put(other.getUniqueId(), my.getUniqueId());
         fixReferences.add(other.getUniqueId());
-    }
-
-    public void visit(Node other) {
-        mergePrimitive(other);
-    }
-
-    public void visit(Way other) {
-        mergePrimitive(other);
-    }
-
-    public void visit(Relation other) {
-        mergePrimitive(other);
     }
 
     protected OsmPrimitive getMergeTarget(OsmPrimitive mergeSource) {
@@ -356,14 +345,16 @@ public class MergeVisitor extends AbstractVisitor {
      * See {@see #getConflicts()} for a map of conflicts after the merge operation.
      */
     public void merge() {
+        if (theirDataSet == null)
+            return;
         for (Node node: theirDataSet.getNodes()) {
-            node.visit(this);
+            mergePrimitive(node);
         }
         for (Way way: theirDataSet.getWays()) {
-            way.visit(this);
+            mergePrimitive(way);
         }
         for (Relation relation: theirDataSet.getRelations()) {
-            relation.visit(this);
+            mergePrimitive(relation);
         }
         fixReferences();
     }

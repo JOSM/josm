@@ -17,9 +17,9 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -209,7 +209,7 @@ public class DownloadReferrersAction extends JosmAction{
                 return;
             }
 
-            MergeVisitor visitor = new MergeVisitor(targetLayer.data, parents);
+            DataSetMerger visitor = new DataSetMerger(targetLayer.data, parents);
             visitor.merge();
             SwingUtilities.invokeLater(
                     new Runnable() {
@@ -238,7 +238,7 @@ public class DownloadReferrersAction extends JosmAction{
             synchronized(this) { // avoid race condition in cancel()
                 reader = null;
             }
-            MergeVisitor visitor = new MergeVisitor(parents, ds);
+            DataSetMerger visitor = new DataSetMerger(parents, ds);
             visitor.merge();
         }
 

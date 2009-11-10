@@ -14,12 +14,12 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -212,7 +212,7 @@ public class UpdateSelectionAction extends JosmAction {
                 initMultiFetchReaderWithWays(reader);
                 initMultiFetchReaderWithRelations(reader);
                 theirDataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-                MergeVisitor merger = new MergeVisitor(ds, theirDataSet);
+                DataSetMerger merger = new DataSetMerger(ds, theirDataSet);
                 merger.merge();
                 // a ways loaded with MultiFetch may be incomplete because at least one of its
                 // nodes isn't present in the local data set. We therefore fully load all
@@ -222,7 +222,7 @@ public class UpdateSelectionAction extends JosmAction {
                     if (w.incomplete) {
                         OsmServerObjectReader reader = new OsmServerObjectReader(w.getId(), OsmPrimitiveType.WAY, true /* full */);
                         theirDataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-                        merger = new MergeVisitor(ds, theirDataSet);
+                        merger = new DataSetMerger(ds, theirDataSet);
                         merger.merge();
                     }
                 }

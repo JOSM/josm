@@ -29,10 +29,10 @@ import javax.swing.tree.TreePath;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -379,7 +379,7 @@ public class ChildRelationBrowser extends JPanel {
          */
         protected void mergeDataSet(DataSet ds) {
             if (ds != null) {
-                final MergeVisitor visitor = new MergeVisitor(getLayer().data, ds);
+                final DataSetMerger visitor = new DataSetMerger(getLayer().data, ds);
                 visitor.merge();
                 // FIXME: this is necessary because there are dialogs listening
                 // for DataChangeEvents which manipulate Swing components on this
@@ -489,7 +489,7 @@ public class ChildRelationBrowser extends JPanel {
 
         protected void mergeDataSet(DataSet dataSet) {
             if (dataSet != null) {
-                final MergeVisitor visitor = new MergeVisitor(getLayer().data, dataSet);
+                final DataSetMerger visitor = new DataSetMerger(getLayer().data, dataSet);
                 visitor.merge();
                 // FIXME: this is necessary because there are dialogs listening
                 // for DataChangeEvents which manipulate Swing components on this

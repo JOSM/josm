@@ -56,11 +56,11 @@ import org.openstreetmap.josm.command.ConflictAddCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
+import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.visitor.MergeVisitor;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
@@ -1446,7 +1446,7 @@ public class GenericRelationEditor extends RelationEditor {
                             .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
                     if (dataSet != null) {
                         changed = true;
-                        final MergeVisitor visitor = new MergeVisitor(curLayer.data, dataSet);
+                        final DataSetMerger visitor = new DataSetMerger(curLayer.data, dataSet);
                         visitor.merge();
 
                         // copy the merged layer's data source info

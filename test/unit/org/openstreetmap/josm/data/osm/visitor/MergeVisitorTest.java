@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -94,11 +95,12 @@ public class MergeVisitorTest {
         their.addPrimitive(n1);
 
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         Node n2 = (Node)my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertTrue(visitor.getConflicts().isEmpty());
+        assertTrue(n1 != n2); // make sure we have a clone
         assertEquals(1, n2.getId());
         assertEquals(1, n2.getVersion());
         assertEquals(false, n2.isModified());
@@ -130,11 +132,13 @@ public class MergeVisitorTest {
         their.addPrimitive(n1);
 
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         Node n2 = (Node)my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertTrue(visitor.getConflicts().isEmpty());
+        assertTrue(n == n2); // make sure the merged node is still the original node
+        assertTrue(n2.getDataSet() == my);
         assertEquals(1, n2.getId());
         assertEquals(2, n2.getVersion());
         assertEquals(false, n2.isModified());
@@ -143,7 +147,7 @@ public class MergeVisitorTest {
     }
 
     /**
-     * node with same id, my is modified, their has a higher version
+     * Node with same id, my is modified, their has a higher version
      * => results in a conflict
      *
      * Use case: node which is modified locally and updated by another mapper on
@@ -170,12 +174,14 @@ public class MergeVisitorTest {
         their.addPrimitive(n1);
 
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         Node n2 = (Node)my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertEquals(1,visitor.getConflicts().size());
-        assertEquals(n, n2);
+        assertTrue(n == n2);
+        assertTrue(n1 != n2);
+        assertTrue(n1.getDataSet() == their);
     }
 
     /**
@@ -206,12 +212,14 @@ public class MergeVisitorTest {
         their.addPrimitive(n1);
 
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         Node n2 = (Node)my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertEquals(1,visitor.getConflicts().size());
-        assertEquals(n, n2);
+        assertTrue(n == n2);
+        assertTrue(n1 != n2);
+        assertTrue(n1.getDataSet() == their);
     }
 
     /**
@@ -239,12 +247,15 @@ public class MergeVisitorTest {
         their.addPrimitive(n1);
 
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         Node n2 = (Node)my.getPrimitiveById(1,OsmPrimitiveType.NODE);
         assertEquals(1,visitor.getConflicts().size());
         assertEquals(true, n2.isVisible());
+        assertTrue(n == n2);
+        assertTrue(n1 != n2);
+        assertTrue(n1.getDataSet() == their);
     }
 
     /**
@@ -268,12 +279,15 @@ public class MergeVisitorTest {
         their.addPrimitive(n1);
 
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         Node n2 = (Node)my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertEquals(0,visitor.getConflicts().size());
         assertEquals(true, n2.isVisible());
+        assertTrue(n == n2);
+        assertTrue(n.getDataSet() == my);
+        assertTrue(n1.getDataSet() == their);
     }
 
     /**
@@ -296,10 +310,12 @@ public class MergeVisitorTest {
         their.addPrimitive(n1);
 
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         assertEquals(1,visitor.getConflicts().size());
+        assertTrue(n.getDataSet() == my);
+        assertTrue(n1.getDataSet() == their);
     }
 
     /**
@@ -323,10 +339,13 @@ public class MergeVisitorTest {
         their.addPrimitive(n1);
 
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         assertEquals(0,visitor.getConflicts().size());
+        Node n2 = (Node)my.getNodes().toArray()[0];
+        assertTrue(n2 == n);
+        assertTrue(n2.isDeleted());
     }
 
     /**
@@ -351,12 +370,12 @@ public class MergeVisitorTest {
         their.addPrimitive(n1);
 
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         Node n2 = (Node)my.getPrimitiveById(1,OsmPrimitiveType.NODE);
         assertEquals(0,visitor.getConflicts().size());
-        assertEquals(2, my.getNodes().size());
+        assertEquals(1, my.getNodes().size());
         assertEquals(n,n2);
     }
 
@@ -397,7 +416,7 @@ public class MergeVisitorTest {
         their.addPrimitive(n1);
 
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         Node n2 = my.getNodes().iterator().next();
@@ -405,6 +424,9 @@ public class MergeVisitorTest {
         assertEquals("value1",n2.get("key1"));
         assertEquals(true, n1.getTimestamp().equals(n2.getTimestamp()));
         assertEquals(theirUser,n2.getUser());
+        assertTrue(n2 == n);
+        assertTrue(n2 != n1);
+        assertTrue(n2.getDataSet() == my);
     }
 
     /**
@@ -435,7 +457,7 @@ public class MergeVisitorTest {
         their.addPrimitive(n1);
 
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         Node n2 = my.getNodes().iterator().next();
@@ -443,6 +465,7 @@ public class MergeVisitorTest {
         assertEquals("value1",n2.get("key1"));
         assertEquals(true, n1.getTimestamp().equals(n2.getTimestamp()));
         assertEquals(false, n2.incomplete);
+        assertTrue(n2 == n);
     }
 
     /**
@@ -498,7 +521,7 @@ public class MergeVisitorTest {
         their.addPrimitive(theirWay);
 
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         Way merged = (Way)my.getPrimitiveById(3, OsmPrimitiveType.WAY);
@@ -510,7 +533,13 @@ public class MergeVisitorTest {
         assertEquals(2,merged.getNodesCount());
         assertEquals(1,merged.getNode(0).getId());
         assertEquals(2,merged.getNode(1).getId());
+        assertTrue(merged == myWay);
+        assertTrue(merged.getDataSet() == my);
 
+        Node mergedNode = (Node)my.getPrimitiveById(1, OsmPrimitiveType.NODE);
+        assertTrue(mergedNode == n1);
+        mergedNode = (Node)my.getPrimitiveById(2, OsmPrimitiveType.NODE);
+        assertTrue(mergedNode == n2);
     }
 
     /**
@@ -523,6 +552,7 @@ public class MergeVisitorTest {
     @Test
     public void waySimple_AdditionalNodesAndChangedNodes() {
 
+        // -- my data set
         DataSet my = new DataSet();
         my.setVersion("0.6");
 
@@ -539,6 +569,8 @@ public class MergeVisitorTest {
         myWay.addNode(n1);
         myWay.addNode(n2);
         my.addPrimitive(myWay);
+
+        // --- their data set
 
         DataSet their = new DataSet();
         their.setVersion("0.6");
@@ -565,8 +597,7 @@ public class MergeVisitorTest {
         theirWay.addNode(n4); // this one is updated
         their.addPrimitive(theirWay);
 
-
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         Way merged = (Way)my.getPrimitiveById(3, OsmPrimitiveType.WAY);
@@ -578,6 +609,10 @@ public class MergeVisitorTest {
         assertEquals(4,merged.getNode(1).getId());
         assertEquals(2,merged.getNode(2).getId());
         assertEquals("value1",merged.getNode(2).get("key1"));
+
+        assertTrue(merged.getNode(0) == n1);
+        assertTrue(merged.getNode(1) != n5); // must be clone of the original node in their
+        assertTrue(merged.getNode(2) == n2);
     }
 
     /**
@@ -635,7 +670,7 @@ public class MergeVisitorTest {
         their.addPrimitive(theirWay);
 
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         Way merged = (Way)my.getPrimitiveById(3, OsmPrimitiveType.WAY);
@@ -683,7 +718,7 @@ public class MergeVisitorTest {
         theirWay.setVisible(false);
         their.addPrimitive(theirWay);
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         Way merged = (Way)my.getPrimitiveById(3, OsmPrimitiveType.WAY);
@@ -698,12 +733,11 @@ public class MergeVisitorTest {
      * my and  their way are semantically equal. so technical attributes of
      * their way can be merged on my way. No conflict.
      *
-     *
-     *
      */
     @Test
     public void waySimple_twoWaysWithNoId_NodesWithId() {
 
+        // -- my data set
         DataSet my = new DataSet();
         my.setVersion("0.6");
 
@@ -720,6 +754,7 @@ public class MergeVisitorTest {
         myWay.addNode(n2);
         my.addPrimitive(myWay);
 
+        // -- their data set
         DataSet their = new DataSet();
         their.setVersion("0.6");
 
@@ -738,14 +773,18 @@ public class MergeVisitorTest {
         theirWay.setTimestamp(new Date());
         their.addPrimitive(theirWay);
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
+        // -- tests
+        Way merged = (Way)my.getWays().toArray()[0];
         assertEquals(0,visitor.getConflicts().size());
-        assertEquals("their", myWay.getUser().getName());
-        assertEquals(1111, myWay.getUser().getId());
-        assertEquals(1111, myWay.getUser().getId());
-        assertEquals(theirWay.getTimestamp(), myWay.getTimestamp());
+        assertEquals("their", merged.getUser().getName());
+        assertEquals(1111, merged.getUser().getId());
+        assertEquals(theirWay.getTimestamp(), merged.getTimestamp());
+        assertTrue(merged == myWay);
+        assertTrue(merged.getNode(0) == n1);
+        assertTrue(merged.getNode(1) == n2);
     }
 
     /**
@@ -757,6 +796,7 @@ public class MergeVisitorTest {
     @Test
     public void waySimple_twoWaysWithNoId_NodesWithoutId() {
 
+        // -- my data set
         DataSet my = new DataSet();
         my.setVersion("0.6");
 
@@ -771,6 +811,7 @@ public class MergeVisitorTest {
         myWay.addNode(n2);
         my.addPrimitive(myWay);
 
+        // -- their data set
         DataSet their = new DataSet();
         their.setVersion("0.6");
 
@@ -788,13 +829,18 @@ public class MergeVisitorTest {
         theirWay.setTimestamp(new Date());
         their.addPrimitive(theirWay);
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
+        // -- tests
+        Way merged = (Way)my.getWays().toArray()[0];
         assertEquals(0,visitor.getConflicts().size());
-        assertEquals("their", myWay.getUser().getName());
-        assertEquals(1111, myWay.getUser().getId());
-        assertEquals(theirWay.getTimestamp(), myWay.getTimestamp());
+        assertEquals("their", merged.getUser().getName());
+        assertEquals(1111, merged.getUser().getId());
+        assertEquals(theirWay.getTimestamp(), merged.getTimestamp());
+        assertTrue(merged == myWay);
+        assertTrue(merged.getNode(0) == n1);
+        assertTrue(merged.getNode(1) == n2);
     }
 
 
@@ -809,6 +855,7 @@ public class MergeVisitorTest {
     @Test
     public void wayComplex_mergingADeletedNode() {
 
+        // -- my dataset
         DataSet my = new DataSet();
         my.setVersion("0.6");
 
@@ -832,7 +879,7 @@ public class MergeVisitorTest {
         n5.setOsmId(3,1);
         their.addPrimitive(n5);
 
-
+        // -- their data set
         Way theirWay = new Way();
         theirWay.setOsmId(4,1);
         theirWay.addNode(n3);
@@ -842,7 +889,7 @@ public class MergeVisitorTest {
         theirWay.setTimestamp(new Date());
         their.addPrimitive(theirWay);
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         assertEquals(0,visitor.getConflicts().size());
@@ -851,12 +898,13 @@ public class MergeVisitorTest {
         assertEquals(2, myWay.getNodesCount());
 
         Node n = (Node)my.getPrimitiveById(1,OsmPrimitiveType.NODE);
+        assertTrue(!myWay.getNodes().contains(n));
         assertTrue(n != null);
     }
 
     /**
      * My dataset includes a deleted node.
-     * Their dataset includes a relation with thre nodes, the first one being my node.
+     * Their dataset includes a relation with three nodes, the first one being my node.
      *
      * => the merged relation should include two nodes only. the deleted node should still be
      * in the data set
@@ -897,7 +945,7 @@ public class MergeVisitorTest {
         theirRelation.addMember(new RelationMember("", n5));
         their.addPrimitive(theirRelation);
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         assertEquals(0,visitor.getConflicts().size());
@@ -933,7 +981,7 @@ public class MergeVisitorTest {
         DataSet my = new DataSet();
         their.setVersion("0.6");
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         assertEquals(0,visitor.getConflicts().size());
@@ -996,7 +1044,7 @@ public class MergeVisitorTest {
         w6.setNodes(Arrays.asList(n4,n5));
         my.addPrimitive(w6);
 
-        MergeVisitor visitor = new MergeVisitor(my,their);
+        DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
         assertEquals(0,visitor.getConflicts().size());
