@@ -1090,10 +1090,10 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             return true;
         return false;
     }
-    public BBox search_to_bbox(LatLon point, double radius)
+    public static BBox search_to_bbox(LatLon point, double radius)
     {
         BBox bbox = new BBox(point.lon() - radius, point.lat() - radius,
-                point.lon() + radius, point.lat() + radius);
+                             point.lon() + radius, point.lat() + radius);
         if (debug) {
             out("search bbox before sanity: " +  bbox);
         }
