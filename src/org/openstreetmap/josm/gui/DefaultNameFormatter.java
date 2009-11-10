@@ -132,6 +132,9 @@ public class DefaultNameFormatter implements NameFormatter {
             }
 
             int nodesNo = way.getNodesCount();
+            if (nodesNo > 1 && way.isClosed()) {
+                nodesNo--;
+            }
             String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
             name += (name.length() > 0) ? " ("+nodes+")" : nodes;
             if(way.errors != null) {
