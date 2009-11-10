@@ -57,7 +57,7 @@ public class LafPreference implements PreferenceSetting {
             //System.out.println("Failed to load Quaqua: " + ex);
         }
 
-        String laf = Main.pref.get("laf");
+        String laf = Main.pref.get("laf", Main.platform.getDefaultStyle());
         for (int i = 0; i < lafCombo.getItemCount(); ++i) {
             if (((LookAndFeelInfo)lafCombo.getItemAt(i)).getClassName().equals(laf)) {
                 lafCombo.setSelectedIndex(i);
