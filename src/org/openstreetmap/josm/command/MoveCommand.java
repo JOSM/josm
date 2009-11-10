@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.command;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
@@ -91,6 +92,10 @@ public class MoveCommand extends Command {
 
     @Override public boolean executeCommand() {
         for (Node n : nodes) {
+            // in case #3892 happens again
+            //
+            assert n!= null : tr("null detected in node list");
+            assert n.getEastNorth() != null : tr("unexpected null value for n.getEastNorth(). id of n is", n.getUniqueId());
             n.setEastNorth(n.getEastNorth().add(x, y));
             n.setModified(true);
         }
