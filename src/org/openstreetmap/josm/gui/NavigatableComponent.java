@@ -298,8 +298,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     private BBox getSnapDistanceBBox(Point p) {
-        return new BBox(getLatLon(p.x - snapDistance / 2, p.y - snapDistance / 2),
-                getLatLon(p.x + snapDistance / 2, p.y + snapDistance / 2));
+        return new BBox(getLatLon(p.x - snapDistance, p.y - snapDistance),
+                getLatLon(p.x + snapDistance, p.y + snapDistance));
     }
 
     /**
