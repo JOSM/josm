@@ -11,16 +11,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Point2D;
 import java.awt.geom.Line2D;
-import java.awt.geom.Line2D.Double;
-import java.lang.Math;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -187,9 +185,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
                 // Better way of testing list equality non-order-sensitively?
                 if (c instanceof MoveCommand
-                && ((MoveCommand)c).getMovedNodes().contains(n1)
-                && ((MoveCommand)c).getMovedNodes().contains(n2)
-                && ((MoveCommand)c).getMovedNodes().size() == 2) {
+                        && ((MoveCommand)c).getMovedNodes().contains(n1)
+                        && ((MoveCommand)c).getMovedNodes().contains(n2)
+                        && ((MoveCommand)c).getMovedNodes().size() == 2) {
                     // MoveCommand doesn't let us know how much it has already moved the selection
                     // so we have to do some ugly record-keeping.
                     ((MoveCommand)c).moveAgain(difference.getX(), difference.getY());
@@ -267,11 +265,12 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     EastNorth drawnorm;
                     // Check to see if our new N1 is in a positive direction with respect to the normalUnitVector.
                     // Even if the x component is zero, we should still be able to discern using +0.0 and -0.0
-                    if (newN1en == null || (newN1en.getX() > initialN1en.getX() == normalUnitVector.getX() > -0.0))
+                    if (newN1en == null || (newN1en.getX() > initialN1en.getX() == normalUnitVector.getX() > -0.0)) {
                         drawnorm = normalUnitVector;
-                    else
+                    } else {
                         // If not, use a sign-flipped version of the normalUnitVector.
                         drawnorm = new EastNorth(-normalUnitVector.getX(), -normalUnitVector.getY());
+                    }
                     normline = createSemiInfiniteLine(centerpoint, drawnorm, g2);
                     g2.draw(normline);
 
@@ -285,9 +284,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     Point2D ra3 = new Point2D.Double(centerpoint.getX()-raoffsety, centerpoint.getY()+raoffsetx);
                     Point2D ra2 = new Point2D.Double(ra1.getX()-raoffsety, ra1.getY()+raoffsetx);
                     GeneralPath ra = new GeneralPath();
-                    ra.moveTo(ra1.getX(), ra1.getY());
-                    ra.lineTo(ra2.getX(), ra2.getY());
-                    ra.lineTo(ra3.getX(), ra3.getY());
+                    ra.moveTo((float)ra1.getX(), (float)ra1.getY());
+                    ra.lineTo((float)ra2.getX(), (float)ra2.getY());
+                    ra.lineTo((float)ra3.getX(), (float)ra3.getY());
                     g2.draw(ra);
                 }
             }
@@ -352,9 +351,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             // Build the matrix. Takes a mouse position in EastNorth-space and returns the new position of node1
             // based on that.
             normalTransform = new AffineTransform(
-                r*normalUnitVector.getX()*normalUnitVector.getX(), compcoordcoeff,
-                compcoordcoeff, r*normalUnitVector.getY()*normalUnitVector.getY(),
-                initialN1en.getX()-(s*r*normalUnitVector.getX()), initialN1en.getY()+(s*r*normalUnitVector.getY()));
+                    r*normalUnitVector.getX()*normalUnitVector.getX(), compcoordcoeff,
+                    compcoordcoeff, r*normalUnitVector.getY()*normalUnitVector.getY(),
+                    initialN1en.getX()-(s*r*normalUnitVector.getX()), initialN1en.getY()+(s*r*normalUnitVector.getY()));
 
             // Switch mode.
             if ( (e.getModifiers() & ActionEvent.CTRL_MASK) != 0 ) {
