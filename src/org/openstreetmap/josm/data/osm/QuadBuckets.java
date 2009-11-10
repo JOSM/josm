@@ -240,7 +240,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             }
             return "Way??";
         }
-        boolean remove_content(T o)
+        synchronized boolean remove_content(T o)
         {
             boolean ret = this.content.remove(o);
             if (this.content.size() == 0) {
@@ -797,6 +797,17 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         {
             return QuadTiling.tile2LatLon(this.quad);
         }
+        boolean hasChildren()
+        {
+            if (children == null)
+                return false;
+
+            for (QBLevel child : children) {
+                if (child != null)
+                    return true;
+            }
+            return false;
+        }
         void remove_from_parent()
         {
             if (parent == null)
@@ -809,9 +820,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                     nr_siblings++;
                 if (sibling != this)
                     continue;
-                if (this.content != null ||
-                    this.children != null)
-                    abort("attempt to remove non-empty child");
+                if (!canRemove())
+                    abort("attempt to remove non-empty child: " + this.content + " " + this.children);
                 parent.children[i] = null;
                 nr_siblings--;
             }
@@ -822,12 +832,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         {
             if (content != null && content.size() > 0)
                 return false;
-            if (children != null) {
-                for (QBLevel child : children) {
-                    if (child != null)
-                        return false;
-                }
-            }
+            if (this.hasChildren())
+                return false;
             return true;
         }
     }
