@@ -24,7 +24,7 @@ public final class Node extends OsmPrimitive {
                 this.coor.setCoor(coor);
             }
             if (getDataSet() != null) {
-                getDataSet().reindexNode(this);
+                getDataSet().fireNodeMoved(this);
             }
         }
     }
@@ -42,7 +42,7 @@ public final class Node extends OsmPrimitive {
                 coor = new CachedLatLon(eastNorth);
             }
             if (getDataSet() != null) {
-                getDataSet().reindexNode(this);
+                getDataSet().fireNodeMoved(this);
             }
         }
     }
@@ -176,10 +176,16 @@ public final class Node extends OsmPrimitive {
         return OsmPrimitiveType.NODE;
     }
 
+    @Override
     public BBox getBBox() {
         if (coor == null)
             return new BBox(0, 0, 0, 0);
         else
             return new BBox(coor, coor);
+    }
+
+    @Override
+    public void updatePosition() {
+        // Do nothing for now, but in future replace CachedLatLon with simple doubles and update precalculated EastNorth value here
     }
 }

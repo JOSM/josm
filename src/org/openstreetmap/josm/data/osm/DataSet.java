@@ -767,18 +767,29 @@ public class DataSet implements Cloneable {
         ways.addAll(wtmp);
     }
 
-    void reindexNode(Node node) {
+    private void reindexNode(Node node) {
         nodes.remove(node);
         nodes.add(node);
         for (Way way:OsmPrimitive.getFilteredList(node.getReferrers(), Way.class)) {
             ways.remove(way);
+            way.updatePosition();
             ways.add(way);
         }
     }
 
-    void reindexWay(Way way) {
+    private void reindexWay(Way way) {
         ways.remove(way);
         ways.add(way);
+    }
+
+    public void fireNodeMoved(Node node) {
+        // TODO Fire event
+        reindexNode(node);
+    }
+
+    public void fireWayNodesChanged(Way way) {
+        // TODO Fire event
+        reindexWay(way);
     }
 
     public void clenupDeletedPrimitives() {

@@ -25,6 +25,7 @@ public final class Way extends OsmPrimitive {
      *
      */
     private Node[] nodes = new Node[0];
+    private BBox bbox;
 
     /**
      *
@@ -59,7 +60,7 @@ public final class Way extends OsmPrimitive {
         }
 
         clearCached();
-        reindex();
+        fireNodesChanged();
     }
 
     /**
@@ -288,7 +289,7 @@ public final class Way extends OsmPrimitive {
         System.arraycopy(nodes, 0, newNodes, 0, nodes.length);
         newNodes[nodes.length] = n;
         nodes = newNodes;
-        reindex();
+        fireNodesChanged();
     }
 
     /**
@@ -311,7 +312,7 @@ public final class Way extends OsmPrimitive {
         System.arraycopy(nodes, offs, newNodes, offs + 1, nodes.length - offs);
         newNodes[offs] = n;
         nodes = newNodes;
-        reindex();
+        fireNodesChanged();
     }
 
     @Override
@@ -323,7 +324,7 @@ public final class Way extends OsmPrimitive {
                 n.addReferrer(this);
             }
         }
-        reindex();
+        fireNodesChanged();
         super.setDeleted(deleted);
     }
 
@@ -357,15 +358,24 @@ public final class Way extends OsmPrimitive {
         return OsmPrimitiveType.WAY;
     }
 
-    private void reindex() {
+    private void fireNodesChanged() {
         if (getDataSet() != null) {
-            getDataSet().reindexWay(this);
+            getDataSet().fireWayNodesChanged(this);
         }
     }
 
     @Override
     public BBox getBBox() {
-        // TODO Precalculate way bbox (and update it every time nodes are moved or edited)
-        return new BBox(this);
+        if (getDataSet() == null)
+            return new BBox(this);
+        if (bbox == null) {
+            bbox = new BBox(this);
+        }
+        return bbox;
+    }
+
+    @Override
+    public void updatePosition() {
+        bbox = new BBox(this);
     }
 }

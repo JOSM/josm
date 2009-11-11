@@ -1009,5 +1009,10 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     public abstract BBox getBBox();
 
+    /**
+     * Called by Dataset to update cached position information of primitive (bbox, cached EarthNorth, ...)
+     */
+    public abstract void updatePosition();
+
 }
 

@@ -206,16 +206,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         {
             init(parent);
         }
-        String quads(T o)
-        {
-            if (o instanceof Node) {
-                LatLon coor = ((Node)o).getCoor();
-                if (coor == null)
-                    return "null node coordinates";
-                return Long.toHexString(QuadTiling.quadTile(coor));
-            }
-            return "Way??";
-        }
         synchronized boolean remove_content(T o)
         {
             boolean ret = this.content.remove(o);
@@ -301,7 +291,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 }
                 QBLevel child = children[new_index];
                 if (debug) {
-                    out("putting "+o+"(q:"+quads(o)+") into ["+new_index+"] " + child.bbox());
+                    out("putting "+o+"(q:"+Long.toHexString(QuadTiling.quadTile(o.getBBox().points().get(0)))+") into ["+new_index+"] " + child.bbox());
                 }
                 child.add(o);
             }

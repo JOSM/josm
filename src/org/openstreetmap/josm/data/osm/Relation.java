@@ -329,4 +329,9 @@ public final class Relation extends OsmPrimitive {
     public BBox getBBox() {
         return new BBox(0, 0, 0, 0);
     }
+
+    @Override
+    public void updatePosition() {
+        // Do nothing for now
+    }
 }
