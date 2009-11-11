@@ -779,6 +779,7 @@ public class DataSet implements Cloneable {
 
     private void reindexWay(Way way) {
         ways.remove(way);
+        way.updatePosition();
         ways.add(way);
     }
 
