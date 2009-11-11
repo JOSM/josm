@@ -34,16 +34,18 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSetListener;
 import org.openstreetmap.josm.data.osm.NameFormatter;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
-import org.openstreetmap.josm.gui.layer.DataChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
@@ -58,7 +60,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * We don't have such dialogs for nodes, segments, and ways, because those
  * objects are visible on the map and can be selected there. Relations are not.
  */
-public class RelationListDialog extends ToggleDialog implements LayerChangeListener, DataChangeListener {
+public class RelationListDialog extends ToggleDialog implements LayerChangeListener, DataSetListener {
     private static final Logger logger = Logger.getLogger(RelationListDialog.class.getName());
 
     /** The display list. */
@@ -200,19 +202,15 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
     public void layerRemoved(Layer a) {
         if (a instanceof OsmDataLayer) {
-            ((OsmDataLayer)a).listenerDataChanged.remove(this);
+            ((OsmDataLayer)a).data.removeDataSetListener(this);
         }
         updateList();
     }
 
     public void layerAdded(Layer a) {
         if (a instanceof OsmDataLayer) {
-            ((OsmDataLayer)a).listenerDataChanged.add(this);
+            ((OsmDataLayer)a).data.addDataSetListener(this);
         }
-    }
-
-    public void dataChanged(OsmDataLayer l) {
-        updateList();
     }
 
     /**
@@ -675,5 +673,25 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         public RelationDialogPopupMenu() {
             build();
         }
+    }
+
+    public void nodeMoved(Node node) { }
+
+    public void wayNodesChanged(Way way) { }
+
+    public void primtivesAdded(Collection<? extends OsmPrimitive> added) {
+        updateList();
+    }
+
+    public void primtivesRemoved(Collection<? extends OsmPrimitive> removed) {
+        updateList();
+    }
+
+    public void relationMembersChanged(Relation r) {
+        updateList();
+    }
+
+    public void tagsChanged(OsmPrimitive prim) {
+        updateList();
     }
 }

@@ -51,6 +51,7 @@ public final class Relation extends OsmPrimitive {
             rm.getMember().addReferrer(this);
         }
 
+        fireMembersChanged();
     }
 
     /**
@@ -79,6 +80,7 @@ public final class Relation extends OsmPrimitive {
     public void addMember(RelationMember member) {
         members.add(member);
         member.getMember().addReferrer(this);
+        fireMembersChanged();
     }
 
     /**
@@ -90,6 +92,7 @@ public final class Relation extends OsmPrimitive {
     public void addMember(int index, RelationMember member) {
         members.add(index, member);
         member.getMember().addReferrer(this);
+        fireMembersChanged();
     }
 
     /**
@@ -104,6 +107,7 @@ public final class Relation extends OsmPrimitive {
         if (result.getMember() != member.getMember()) {
             member.getMember().addReferrer(this);
             result.getMember().removeReferrer(this);
+            fireMembersChanged();
         }
         return result;
     }
@@ -122,6 +126,7 @@ public final class Relation extends OsmPrimitive {
                 return result;
         }
         result.getMember().removeReferrer(this);
+        fireMembersChanged();
         return result;
     }
 
@@ -263,6 +268,7 @@ public final class Relation extends OsmPrimitive {
         }
         primitive.removeReferrer(this);
         members.removeAll(todelete);
+        fireMembersChanged();
     }
 
     @Override
@@ -297,6 +303,7 @@ public final class Relation extends OsmPrimitive {
         for (OsmPrimitive primitive:primitives) {
             primitive.removeReferrer(this);
         }
+        fireMembersChanged();
     }
 
     @Override
@@ -333,5 +340,11 @@ public final class Relation extends OsmPrimitive {
     @Override
     public void updatePosition() {
         // Do nothing for now
+    }
+
+    private void fireMembersChanged() {
+        if (getDataSet() != null) {
+            getDataSet().fireRelationMembersChanged(this);
+        }
     }
 }

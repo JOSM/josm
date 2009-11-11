@@ -46,6 +46,7 @@ public class DataSet implements Cloneable {
 
     private Storage<OsmPrimitive> allPrimitives = new Storage<OsmPrimitive>(new IdHash());
     private Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives.foreignKey(new IdHash());
+    private List<DataSetListener> listeners = new ArrayList<DataSetListener>();
 
     /**
      * The API version that created this data set, if any.
@@ -190,6 +191,7 @@ public class DataSet implements Cloneable {
         }
         allPrimitives.add(primitive);
         primitive.setDataset(this);
+        firePrimitivesAdded(Collections.singletonList(primitive));
     }
 
     public OsmPrimitive addPrimitive(PrimitiveData data) {
@@ -231,6 +233,7 @@ public class DataSet implements Cloneable {
         selectedPrimitives.remove(primitive);
         allPrimitives.remove(primitive);
         primitive.setDataset(null);
+        firePrimitivesRemoved(Collections.singletonList(primitive));
     }
 
 
@@ -783,14 +786,51 @@ public class DataSet implements Cloneable {
         ways.add(way);
     }
 
+
+    public void addDataSetListener(DataSetListener dsl) {
+        listeners.add(dsl);
+    }
+
+    public void removeDataSetListener(DataSetListener dsl) {
+        listeners.remove(dsl);
+    }
+
+    void firePrimitivesAdded(Collection<? extends OsmPrimitive> added) {
+        for (DataSetListener dsl : listeners) {
+            dsl.primtivesAdded(added);
+        }
+    }
+
+    void firePrimitivesRemoved(Collection<? extends OsmPrimitive> removed) {
+        for (DataSetListener dsl : listeners) {
+            dsl.primtivesRemoved(removed);
+        }
+    }
+
+    void fireTagsChanged(OsmPrimitive prim) {
+        for (DataSetListener dsl : listeners) {
+            dsl.tagsChanged(prim);
+        }
+    }
+
+    void fireRelationMembersChanged(Relation r) {
+        for (DataSetListener dsl : listeners) {
+            dsl.relationMembersChanged(r);
+        }
+    }
+
     public void fireNodeMoved(Node node) {
-        // TODO Fire event
         reindexNode(node);
+        for (DataSetListener dsl : listeners) {
+            dsl.nodeMoved(node);
+        }
     }
 
     public void fireWayNodesChanged(Way way) {
-        // TODO Fire event
         reindexWay(way);
+        for (DataSetListener dsl : listeners) {
+            dsl.wayNodesChanged(way);
+        }
     }
 
     public void clenupDeletedPrimitives() {

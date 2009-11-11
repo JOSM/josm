@@ -491,6 +491,13 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             flags &= ~FLAG_DELETED;
         }
         setModified(deleted);
+        if (dataSet != null) {
+            if (deleted) {
+                dataSet.firePrimitivesRemoved(Collections.singleton(this));
+            } else {
+                dataSet.firePrimitivesAdded(Collections.singleton(this));
+            }
+        }
     }
 
     /**
@@ -773,6 +780,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     private void keysChangedImpl() {
         updateHasDirectionKeys();
         updateTagged();
+        if (dataSet != null) {
+            dataSet.fireTagsChanged(this);
+        }
     }
 
     /**
