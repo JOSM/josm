@@ -360,12 +360,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
         private List<T> search_contents(BBox search_bbox)
         {
-            String size = "null";
-            if (content != null) {
-                size = ""+content.size();
-            }
             if (debug) {
-                out("searching contents (size: "+size+") for " + search_bbox);
+                out("searching contents (size: " + content == null?"<null>":content.size() + ") for " + search_bbox);
             }
             /*
              * It is possible that this was created in a split
@@ -440,9 +436,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
         boolean hasContent()
         {
-            if (content == null)
-                return false;
-            return true;
+            return content != null;
         }
         QBLevel nextSibling()
         {
@@ -468,8 +462,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         {
             QBLevel ret = null;
             for (QBLevel child : this.children) {
-                if (child == null)
+                if (child == null) {
                     continue;
+                }
                 ret = child;
                 break;
             }
@@ -493,8 +488,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 if (debug) {
                     out("["+next.level+"] next node ("+next+") is a branch (content: "+next.hasContent()+"), moving down...");
                 }
-                if (child == null)
+                if (child == null) {
                     abort("branch node had no children");
+                }
                 next = child;
             }
             return next;
@@ -1104,7 +1100,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     public static BBox search_to_bbox(LatLon point, double radius)
     {
         BBox bbox = new BBox(point.lon() - radius, point.lat() - radius,
-                             point.lon() + radius, point.lat() + radius);
+                point.lon() + radius, point.lat() + radius);
         if (debug) {
             out("search bbox before sanity: " +  bbox);
         }
@@ -1168,13 +1164,17 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         } else {
             search_cache = root;
         }
+
+        // Save parent because search_cache might change during search call
+        QBLevel tmp = search_cache.parent;
+
         ret = search_cache.search(search_bbox);
         if (ret == null) {
             ret = new ArrayList<T>();
         }
+
         // A way that spans this bucket may be stored in one
         // of the nodes which is a parent of the search cache
-        QBLevel tmp = search_cache.parent;
         while (tmp != null) {
             List<T> content_result = tmp.search_contents(search_bbox);
             if (content_result != null) {
@@ -1186,5 +1186,34 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             out("search of QuadBuckets for " + search_bbox + " ret len: " + ret.size());
         }
         return ret;
+    }
+
+    public void printTree() {
+        printTreeRecursive(root, 0);
+    }
+
+    private void printTreeRecursive(QBLevel level, int indent) {
+        if (level == null) {
+            printIndented(indent, "<empty child>");
+            return;
+        }
+        printIndented(indent, level);
+        if (level.hasContent()) {
+            for (T o:level.content) {
+                printIndented(indent, o);
+            }
+        }
+        if (level.children != null) {
+            for (QBLevel child:level.children) {
+                printTreeRecursive(child, indent + 2);
+            }
+        }
+    }
+
+    private void printIndented(int indent, Object msg) {
+        for (int i=0; i<indent; i++) {
+            System.out.print(' ');
+        }
+        System.out.println(msg);
     }
 }
