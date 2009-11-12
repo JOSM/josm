@@ -280,10 +280,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                         + content.size() + " entries (my dimensions: "
                         + this.bbox.width()+", "+this.bbox.height()+")");
             }
-            if (children != null) {
-                abort("overwrote children");
-            }
-            children = newChildren();
             // deferring allocation of children until use
             // seems a bit faster
             //for (int i = 0; i < TILES_PER_LEVEL; i++)
@@ -297,6 +293,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                     //out("adding content to branch: " + this);
                     continue;
                 }
+                if (children == null)
+                    children = newChildren();
                 if (children[new_index] == null) {
                     children[new_index] = new QBLevel(this, new_index);
                 }
@@ -356,6 +354,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
 
         boolean matches(T o, BBox search_bbox)
         {
+            // This can be optimized when o is a node
+            //return search_bbox.bounds(coor));
             return o.getBBox().intersects(search_bbox);
         }
         private List<T> search_contents(BBox search_bbox)
@@ -489,7 +489,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                     out("["+next.level+"] next node ("+next+") is a branch (content: "+next.hasContent()+"), moving down...");
                 }
                 if (child == null) {
-                    abort("branch node had no children");
+                    abort("branch node ("+this+" "+next.isLeaf()+") had no children (content: "+next.content+") this: " + this);
                 }
                 next = child;
             }
@@ -567,7 +567,12 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                     out("-----------------------------");
                     debug = true;
                     get_index(n, level);
-                    abort("object " + n + " does not belong in node at level: " + level + " bbox: " + this.bbox());
+                    get_index(n, level-1);
+                    int nr = 0;
+                    for (QBLevel sibling : parent.children) {
+                        out("sibling["+ (nr++) +"]: " + sibling.bbox() + " this: " + (this==sibling));
+                    }
+                    abort("\nobject " + n + " does not belong in node at level: " + level + " bbox: " + this.bbox());
                 }
             }
             synchronized (split_lock) {
