@@ -17,6 +17,11 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
 {
     public static boolean debug = false;
     static boolean consistency_testing = false;
+    /*
+     * Functions prefixed with __ need locking before
+     * being called.
+     */
+    private Object split_lock = new Object();
 
     static void abort(String s)
     {
@@ -262,7 +267,13 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             }
             return index;
         }
-        void split()
+        /*
+         * There is a race between this and qb.nextContentNode().
+         * If nextContentNode() runs into this bucket, it may
+         * attempt to null out 'children' because it thinks this
+         * is a dead end.
+         */
+        void __split()
         {
             if (debug) {
                 out("splitting "+this.bbox()+" level "+level+" with "
@@ -282,7 +293,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             for (T o : tmpcontent) {
                 int new_index = get_index(o, level);
                 if (new_index == -1) {
-                    this.add_content(o);
+                    this.__add_content(o);
                     //out("adding content to branch: " + this);
                     continue;
                 }
@@ -296,9 +307,16 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 child.add(o);
             }
         }
-        boolean add_content(T o)
+        void split() {
+            synchronized(split_lock) {
+                __split();
+            }
+        }
+        boolean __add_content(T o)
         {
             boolean ret = false;
+            // The split_lock will keep two concurrent
+            // calls from overwriting content
             if (content == null) {
                 content = new ArrayList<T>();
             }
@@ -308,9 +326,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             }
             return ret;
         }
-        void add_to_leaf(T o)
+        void __add_to_leaf(T o)
         {
-            add_content(o);
+            __add_content(o);
             if (content.size() > MAX_OBJECTS_PER_LEVEL) {
                 if (debug) {
                     out("["+level+"] deciding to split");
@@ -446,6 +464,17 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             next = sibling;
             return next;
         }
+        QBLevel firstChild()
+        {
+            QBLevel ret = null;
+            for (QBLevel child : this.children) {
+                if (child == null)
+                    continue;
+                ret = child;
+                break;
+            }
+            return ret;
+        }
         QBLevel nextContentNode()
         {
             QBLevel next = this;
@@ -454,35 +483,20 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             }
             if (next == null)
                 return null;
-            // Walk back down the tree
-            // and find the first leaf
+            // Walk back down the tree and find the first leaf
             while (!next.isLeaf()) {
+                QBLevel child;
                 if (next.hasContent() && next != this) {
                     break;
                 }
+                child = next.firstChild();
                 if (debug) {
                     out("["+next.level+"] next node ("+next+") is a branch (content: "+next.hasContent()+"), moving down...");
                 }
-                boolean progress = false;
-                for (QBLevel child : next.children) {
-                    if (child == null) {
-                        continue;
-                    }
-                    next = child;
-                    progress = true;
-                    break;
-                }
-                if (!progress) {
-                    // this should out it as not being a branch
-                    next.children = null;
-                    break;
-                }
+                if (child == null)
+                    abort("branch node had no children");
+                next = child;
             }
-            // This means that there are no leaves or branches
-            // with content as children.  We must continue to
-            // search siblings.
-            if (next == this)
-                return nextSibling().nextContentNode();
             return next;
         }
         int size()
@@ -560,21 +574,23 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                     abort("object " + n + " does not belong in node at level: " + level + " bbox: " + this.bbox());
                 }
             }
-            if (isLeaf()) {
-                add_to_leaf(n);
-            } else {
-                add_to_branch(n);
+            synchronized (split_lock) {
+                if (isLeaf()) {
+                    __add_to_leaf(n);
+                } else {
+                    __add_to_branch(n);
+                }
             }
             return true;
         }
-        QBLevel add_to_branch(T n)
+        QBLevel __add_to_branch(T n)
         {
             int index = get_index(n, level);
             if (index == -1) {
                 if (debug) {
                     out("unable to get index for " + n + "at level: " + level + ", adding content to branch: " + this);
                 }
-                this.add_content(n);
+                this.__add_content(n);
                 return this;
             }
             if (debug) {
@@ -814,7 +830,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         // A way with no nodes will have an infinitely large
         // bounding box.  Just stash it in the root node.
         if (!n.isUsable()) {
-            ret = root.add_content(n);
+            synchronized (split_lock) {
+                ret = root.__add_content(n);
+            }
         } else {
             ret = root.add(n);
         }
@@ -966,7 +984,10 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             if (q == null)
                 return null;
             QBLevel orig = q;
-            QBLevel next = q.nextContentNode();
+            QBLevel next;
+            synchronized (split_lock) {
+                next = q.nextContentNode();
+            }
             //if (consistency_testing && (orig == next))
             if (orig == next) {
                 abort("got same leaf back leaf: " + q.isLeaf());
