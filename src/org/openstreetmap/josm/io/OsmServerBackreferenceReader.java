@@ -268,12 +268,12 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
                 DataSet ds = getReferringWays(progressMonitor.createSubTaskMonitor(1, false));
                 DataSetMerger visitor = new DataSetMerger(ret,ds);
                 visitor.merge();
-                ret = visitor.getMyDataSet();
+                ret = visitor.getTargetDataSet();
             }
             DataSet ds = getReferringRelations(progressMonitor.createSubTaskMonitor(1, false));
             DataSetMerger visitor = new DataSetMerger(ret,ds);
             visitor.merge();
-            ret = visitor.getMyDataSet();
+            ret = visitor.getTargetDataSet();
             readIncompletePrimitives(ret, progressMonitor.createSubTaskMonitor(1, false));
             return ret;
         } finally {

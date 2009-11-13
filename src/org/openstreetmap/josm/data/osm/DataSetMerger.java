@@ -25,9 +25,9 @@ public class DataSetMerger {
     private ConflictCollection conflicts;
 
     /** the target dataset for merging */
-    private final DataSet myDataSet;
+    private final DataSet targetDataSet;
     /** the source dataset where primitives are merged from */
-    private final DataSet theirDataSet;
+    private final DataSet sourceDataSet;
 
     /**
      * A map of all primitives that got replaced with other primitives.
@@ -37,25 +37,28 @@ public class DataSetMerger {
     /** a set of primitive ids for which we have to fix references (to nodes and
      * to relation members) after the first phase of merging
      */
-    private Set<Long> fixReferences;
+    private Set<Long> childrenToMerge;
+
+    private Set<OsmPrimitive> deletedObjectsToUnlink;
 
     /**
      * constructor
      *
      * The visitor will merge <code>theirDataSet</code> onto <code>myDataSet</code>
      *
-     * @param myDataSet  dataset with my primitives. Must not be null.
-     * @param theirDataSet dataset with their primitives. Ignored, if null.
+     * @param targetDataSet  dataset with my primitives. Must not be null.
+     * @param sourceDataSet dataset with their primitives. Ignored, if null.
      * @throws IllegalArgumentException thrown if myDataSet is null
      */
-    public DataSetMerger(DataSet myDataSet, DataSet theirDataSet) throws IllegalArgumentException {
-        if (myDataSet == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null"));
-        this.myDataSet = myDataSet;
-        this.theirDataSet = theirDataSet;
+    public DataSetMerger(DataSet targetDataSet, DataSet sourceDataSet) throws IllegalArgumentException {
+        if (targetDataSet == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "targetDataSet"));
+        this.targetDataSet = targetDataSet;
+        this.sourceDataSet = sourceDataSet;
         conflicts = new ConflictCollection();
         mergedMap = new HashMap<Long, Long>();
-        fixReferences = new HashSet<Long>();
+        childrenToMerge = new HashSet<Long>();
+        deletedObjectsToUnlink = new HashSet<OsmPrimitive>();
     }
 
     /**
@@ -70,16 +73,16 @@ public class DataSetMerger {
      * my primitive.
      *
      * @param <P>  the type of the other primitive
-     * @param other  the other primitive
+     * @param source  the other primitive
      */
-    protected <P extends OsmPrimitive> void mergePrimitive(P other) {
-        if (!other.isNew() ) {
+    protected <P extends OsmPrimitive> void mergePrimitive(P source) {
+        if (!source.isNew() ) {
             // try to merge onto a matching primitive with the same
             // defined id
             //
-            if (mergeById(other))
+            if (mergeById(source))
                 return;
-            if (!other.isVisible())
+            if (!source.isVisible())
                 // ignore it
                 return;
         } else {
@@ -87,29 +90,29 @@ public class DataSetMerger {
             // yet but which is equal in its semantic attributes
             //
             Collection<? extends OsmPrimitive> candidates = null;
-            switch(other.getType()) {
-            case NODE: candidates = myDataSet.getNodes(); break;
-            case WAY: candidates  =myDataSet.getWays(); break;
-            case RELATION: candidates = myDataSet.getRelations(); break;
+            switch(source.getType()) {
+            case NODE: candidates = targetDataSet.getNodes(); break;
+            case WAY: candidates  =targetDataSet.getWays(); break;
+            case RELATION: candidates = targetDataSet.getRelations(); break;
             }
-            for (OsmPrimitive my : candidates) {
-                if (!my.isNew()) {
+            for (OsmPrimitive target : candidates) {
+                if (!target.isNew()) {
                     continue;
                 }
-                if (my.hasEqualSemanticAttributes(other)) {
-                    mergedMap.put(other.getUniqueId(), my.getUniqueId());
-                    if (my.isDeleted() != other.isDeleted()) {
+                if (target.hasEqualSemanticAttributes(source)) {
+                    mergedMap.put(source.getUniqueId(), target.getUniqueId());
+                    if (target.isDeleted() != source.isDeleted()) {
                         // differences in deleted state have to be merged manually
                         //
-                        conflicts.add(my, other);
+                        conflicts.add(target, source);
                     } else {
                         // copy the technical attributes from other
                         // version
-                        my.setVisible(other.isVisible());
-                        my.setUser(other.getUser());
-                        my.setTimestamp(other.getTimestamp());
-                        my.setModified(other.isModified());
-                        fixReferences.add(other.getUniqueId());
+                        target.setVisible(source.isVisible());
+                        target.setUser(source.getUser());
+                        target.setTimestamp(source.getTimestamp());
+                        target.setModified(source.isModified());
+                        childrenToMerge.add(source.getUniqueId());
                     }
                     return;
                 }
@@ -117,25 +120,25 @@ public class DataSetMerger {
         }
 
         // If we get here we didn't find a suitable primitive in
-        // my dataset. Create a clone and add it to my dataset.
+        // the target dataset. Create a clone and add it to the target dataset.
         //
-        OsmPrimitive my = null;
-        switch(other.getType()) {
-        case NODE: my = other.isNew() ? new Node() : new Node(other.getId()); break;
-        case WAY: my = other.isNew() ? new Way() : new Way(other.getId()); break;
-        case RELATION: my = other.isNew() ? new Relation() : new Relation(other.getId()); break;
+        OsmPrimitive target = null;
+        switch(source.getType()) {
+        case NODE: target = source.isNew() ? new Node() : new Node(source.getId()); break;
+        case WAY: target = source.isNew() ? new Way() : new Way(source.getId()); break;
+        case RELATION: target = source.isNew() ? new Relation() : new Relation(source.getId()); break;
         }
-        my.mergeFrom(other);
-        myDataSet.addPrimitive(my);
-        mergedMap.put(other.getUniqueId(), my.getUniqueId());
-        fixReferences.add(other.getUniqueId());
+        target.mergeFrom(source);
+        targetDataSet.addPrimitive(target);
+        mergedMap.put(source.getUniqueId(), target.getUniqueId());
+        childrenToMerge.add(source.getUniqueId());
     }
 
     protected OsmPrimitive getMergeTarget(OsmPrimitive mergeSource) {
         Long targetId = mergedMap.get(mergeSource.getUniqueId());
         if (targetId == null)
             throw new RuntimeException(tr("Missing merge target for way with id {0}", mergeSource.getUniqueId()));
-        return myDataSet.getPrimitiveById(targetId, mergeSource.getType());
+        return targetDataSet.getPrimitiveById(targetId, mergeSource.getType());
     }
 
     protected void fixIncomplete(Way other) {
@@ -155,185 +158,168 @@ public class DataSetMerger {
      * data.
      */
     public void fixReferences() {
-        for (Way w : theirDataSet.getWays()) {
-            if (!conflicts.hasConflictForTheir(w) && fixReferences.contains(w.getUniqueId())) {
+        for (Way w : sourceDataSet.getWays()) {
+            if (!conflicts.hasConflictForTheir(w) && childrenToMerge.contains(w.getUniqueId())) {
                 mergeNodeList(w);
                 fixIncomplete(w);
             }
         }
-        for (Relation r : theirDataSet.getRelations()) {
-            if (!conflicts.hasConflictForTheir(r) && fixReferences.contains(r.getUniqueId())) {
+        for (Relation r : sourceDataSet.getRelations()) {
+            if (!conflicts.hasConflictForTheir(r) && childrenToMerge.contains(r.getUniqueId())) {
                 mergeRelationMembers(r);
             }
         }
-    }
-
-    private void mergeNodeList(Way other) {
-        Way myWay = (Way)getMergeTarget(other);
-        if (myWay == null)
-            throw new RuntimeException(tr("Missing merge target for way with id {0}", other.getUniqueId()));
-
-        List<Node> myNodes = new LinkedList<Node>();
-        for (Node otherNode : other.getNodes()) {
-            Node myNode = (Node)getMergeTarget(otherNode);
-            if (myNode != null) {
-                if (!myNode.isDeleted()) {
-                    myNodes.add(myNode);
-                }
-            } else
-                throw new RuntimeException(tr("Missing merge target for node with id {0}", otherNode.getUniqueId()));
+        for (OsmPrimitive source: deletedObjectsToUnlink) {
+            OsmPrimitive target = getMergeTarget(source);
+            if (target == null)
+                throw new RuntimeException(tr("Missing merge target for object with id {0}", source.getUniqueId()));
+            targetDataSet.unlinkReferencesToPrimitive(target);
         }
-
-        // check whether the node list has changed. If so, set the modified flag on the way
-        //
-        if (myWay.getNodes().size() != myNodes.size()) {
-            myWay.setModified(true);
-        } else {
-            for (int i=0; i< myWay.getNodesCount();i++) {
-                Node n1 = myWay.getNode(i);
-                Node n2 = myNodes.get(i);
-                if (n1.isNew() ^ n2.isNew()) {
-                    myWay.setModified(true);
-                    break;
-                } else if (n1.isNew() && n1 != n2) {
-                    myWay.setModified(true);
-                    break;
-                } else if (! n1.isNew() && n1.getId() != n2.getId()) {
-                    myWay.setModified(true);
-                    break;
-                }
-            }
-        }
-        myWay.setNodes(myNodes);
-    }
-
-    private void mergeRelationMembers(Relation other) {
-        Relation myRelation = (Relation) getMergeTarget(other);
-        if (myRelation == null)
-            throw new RuntimeException(tr("Missing merge target for relation with id {0}", other.getUniqueId()));
-        LinkedList<RelationMember> newMembers = new LinkedList<RelationMember>();
-        for (RelationMember otherMember : other.getMembers()) {
-            OsmPrimitive mergedMember = getMergeTarget(otherMember.getMember());
-            if (mergedMember == null)
-                throw new RuntimeException(tr("Missing merge target of type {0} with id {1}", mergedMember.getType(), mergedMember.getUniqueId()));
-            if (! mergedMember.isDeleted()) {
-                RelationMember newMember = new RelationMember(otherMember.getRole(), mergedMember);
-                newMembers.add(newMember);
-            }
-        }
-
-        // check whether the list of relation members has changed
-        //
-        if (other.getMembersCount() != newMembers.size()) {
-            myRelation.setModified(true);
-        } else {
-            for (int i=0; i<other.getMembersCount();i++) {
-                RelationMember rm1 = other.getMember(i);
-                RelationMember rm2 = newMembers.get(i);
-                if (!rm1.getRole().equals(rm2.getRole())) {
-                    myRelation.setModified(true);
-                    break;
-                } else if (rm1.getMember().isNew() ^ rm2.getMember().isNew()) {
-                    myRelation.setModified(true);
-                    break;
-                } else if (rm1.getMember().isNew() && rm1.getMember() != rm2.getMember()) {
-                    myRelation.setModified(true);
-                    break;
-                } else if (! rm1.getMember().isNew() && rm1.getMember().getId() != rm2.getMember().getId()) {
-                    myRelation.setModified(true);
-                    break;
-                }
-            }
-        }
-        myRelation.setMembers(newMembers);
     }
 
     /**
-     * Tries to merge a primitive <code>other</code> into an existing primitive with the same id.
-     *
-     * @param other  the other primitive which is to be merged onto a primitive in my primitives
-     * @return true, if this method was able to merge <code>other</code> with an existing node; false, otherwise
+     * Merges the node list of a source way onto its target way.
+     * 
+     * @param source the source way
+     * @throws IllegalStateException thrown if no target way can be found for the source way
+     * @throws IllegalStateException thrown if there isn't a target node for one of the nodes in the source way
+     * 
      */
-    private <P extends OsmPrimitive> boolean mergeById(P other) {
-        OsmPrimitive my = myDataSet.getPrimitiveById(other.getId(), other.getType());
+    private void mergeNodeList(Way source) throws IllegalStateException {
+        Way target = (Way)getMergeTarget(source);
+        if (target == null)
+            throw new IllegalStateException(tr("Missing merge target for way with id {0}", source.getUniqueId()));
+
+        List<Node> newNodes = new LinkedList<Node>();
+        for (Node sourceNode : source.getNodes()) {
+            Node targetNode = (Node)getMergeTarget(sourceNode);
+            if (targetNode != null) {
+                if (!targetNode.isDeleted() && targetNode.isVisible()) {
+                    newNodes.add(targetNode);
+                } else {
+                    target.setModified(true);
+                }
+            } else
+                throw new IllegalStateException(tr("Missing merge target for node with id {0}", sourceNode.getUniqueId()));
+        }
+        target.setNodes(newNodes);
+    }
+
+
+    /**
+     * Merges the relation members of a source relation onto the corresponding target relation.
+     * @param source the source relation
+     * @throws IllegalStateException thrown if there is no corresponding target relation
+     * @throws IllegalStateException thrown if there isn't a corresponding target object for one of the relation
+     * members in source
+     */
+    private void mergeRelationMembers(Relation source) throws IllegalStateException {
+        Relation target = (Relation) getMergeTarget(source);
+        if (target == null)
+            throw new IllegalStateException(tr("Missing merge target for relation with id {0}", source.getUniqueId()));
+        LinkedList<RelationMember> newMembers = new LinkedList<RelationMember>();
+        for (RelationMember sourceMember : source.getMembers()) {
+            OsmPrimitive targetMember = getMergeTarget(sourceMember.getMember());
+            if (targetMember == null)
+                throw new IllegalStateException(tr("Missing merge target of type {0} with id {1}", targetMember.getType(), targetMember.getUniqueId()));
+            if (! targetMember.isDeleted() && targetMember.isVisible()) {
+                RelationMember newMember = new RelationMember(sourceMember.getRole(), targetMember);
+                newMembers.add(newMember);
+            } else {
+                target.setModified(true);
+            }
+        }
+        target.setMembers(newMembers);
+    }
+
+    /**
+     * Tries to merge a primitive <code>source</code> into an existing primitive with the same id.
+     *
+     * @param source  the other primitive which is to be merged onto a primitive in my primitives
+     * @return true, if this method was able to merge <code>source</code> into a target object; false, otherwise
+     */
+    private boolean mergeById(OsmPrimitive source) {
+        OsmPrimitive target = targetDataSet.getPrimitiveById(source.getId(), source.getType());
         // merge other into an existing primitive with the same id, if possible
         //
-        if (my == null)
+        if (target == null)
             return false;
-        mergedMap.put(other.getUniqueId(), my.getUniqueId());
-        if (my.getVersion() > other.getVersion())
-            // my.version > other.version => keep my version
+        // found a corresponding target, remember it
+        mergedMap.put(source.getUniqueId(), target.getUniqueId());
+
+        if (target.getVersion() > source.getVersion())
+            // target.version > source.version => keep target version
             return true;
-        if (! my.isVisible() && other.isVisible()) {
+        if (! target.isVisible() && source.isVisible()) {
             // should not happen
             //
-            logger.warning(tr("My primitive with id {0} and version {1} is visible although "
-                    + "their primitive with lower version {2} is not visible. "
-                    + "Can't deal with this inconsistency. Keeping my primitive. ",
-                    Long.toString(my.getId()),Long.toString(my.getVersion()), Long.toString(other.getVersion())
+            logger.warning(tr("Target object with id {0} and version {1} is visible although "
+                    + "source object with lower version {2} is not visible. "
+                    + "Can''t deal with this inconsistency. Keeping target object. ",
+                    Long.toString(target.getId()),Long.toString(target.getVersion()), Long.toString(source.getVersion())
             ));
-        } else if (my.isVisible() && ! other.isVisible()) {
+        } else if (target.isVisible() && ! source.isVisible()) {
             // this is always a conflict because the user has to decide whether
-            // he wants to create a clone of its local primitive or whether he
-            // wants to purge my from the local dataset. He can't keep it unchanged
+            // he wants to create a clone of its target primitive or whether he
+            // wants to purge the target from the local dataset. He can't keep it unchanged
             // because it was deleted on the server.
             //
-            conflicts.add(my,other);
-        } else if (my.incomplete && !other.incomplete) {
-            // my is incomplete, other completes it
-            // => merge other onto my
+            conflicts.add(target,source);
+        } else if (target.incomplete && !source.incomplete) {
+            // target is incomplete, source completes it
+            // => merge source into target
             //
-            my.mergeFrom(other);
-            fixReferences.add(other.getUniqueId());
-        } else if (!my.incomplete && other.incomplete) {
-            // my is complete and the other is incomplete
-            // => keep mine, we have more information already
+            target.mergeFrom(source);
+            childrenToMerge.add(source.getUniqueId());
+        } else if (!target.incomplete && source.incomplete) {
+            // target is complete and source is incomplete
+            // => keep target, it has more information already
             //
-        } else if (my.incomplete && other.incomplete) {
-            // my and other are incomplete. Doesn't matter which one to
-            // take. We take mine.
+        } else if (target.incomplete && source.incomplete) {
+            // target and source are incomplete. Doesn't matter which one to
+            // take. We take target.
             //
-        } else if (my.isDeleted() && ! other.isDeleted() && my.getVersion() == other.getVersion()) {
-            // same version, but my is deleted. Assume mine takes precedence
+        } else if (target.isDeleted() && ! source.isDeleted() && target.getVersion() == source.getVersion()) {
+            // same version, but target is deleted. Assume target takes precedence
             // otherwise too many conflicts when refreshing from the server
-        } else if (my.isDeleted() != other.isDeleted()) {
+        } else if (target.isDeleted() != source.isDeleted()) {
             // differences in deleted state have to be resolved manually
             //
-            conflicts.add(my,other);
-        } else if (! my.isModified() && other.isModified()) {
-            // my not modified. We can assume that other is the most recent version.
-            // clone it onto my. But check first, whether other is deleted. if so,
-            // make sure that my is not references anymore in myDataSet.
+            conflicts.add(target,source);
+        } else if (! target.isModified() && source.isModified()) {
+            // target not modified. We can assume that source is the most recent version.
+            // clone it into target. But check first, whether source is deleted. if so,
+            // make sure that target is not referenced anymore in myDataSet.
             //
-            if (other.isDeleted()) {
-                myDataSet.unlinkReferencesToPrimitive(my);
+            if (source.isDeleted()) {
+                deletedObjectsToUnlink.add(source);
             }
-            my.mergeFrom(other);
-            fixReferences.add(other.getUniqueId());
-        } else if (! my.isModified() && !other.isModified() && my.getVersion() == other.getVersion()) {
+            target.mergeFrom(source);
+            childrenToMerge.add(source.getUniqueId());
+        } else if (! target.isModified() && !source.isModified() && target.getVersion() == source.getVersion()) {
             // both not modified. Keep mine
             //
-        } else if (! my.isModified() && !other.isModified() && my.getVersion() < other.getVersion()) {
+        } else if (! target.isModified() && !source.isModified() && target.getVersion() < source.getVersion()) {
             // my not modified but other is newer. clone other onto mine.
             //
-            my.mergeFrom(other);
-            fixReferences.add(other.getUniqueId());
-        } else if (my.isModified() && ! other.isModified() && my.getVersion() == other.getVersion()) {
+            target.mergeFrom(source);
+            childrenToMerge.add(source.getUniqueId());
+        } else if (target.isModified() && ! source.isModified() && target.getVersion() == source.getVersion()) {
             // my is same as other but mine is modified
             // => keep mine
-        } else if (! my.hasEqualSemanticAttributes(other)) {
+        } else if (! target.hasEqualSemanticAttributes(source)) {
             // my is modified and is not semantically equal with other. Can't automatically
             // resolve the differences
             // =>  create a conflict
-            conflicts.add(my,other);
+            conflicts.add(target,source);
         } else {
             // clone from other, but keep the modified flag. mergeFrom will mainly copy
             // technical attributes like timestamp or user information. Semantic
             // attributes should already be equal if we get here.
             //
-            my.mergeFrom(other);
-            my.setModified(true);
-            fixReferences.add(other.getUniqueId());
+            target.mergeFrom(source);
+            target.setModified(true);
+            childrenToMerge.add(source.getUniqueId());
         }
         return true;
     }
@@ -345,15 +331,15 @@ public class DataSetMerger {
      * See {@see #getConflicts()} for a map of conflicts after the merge operation.
      */
     public void merge() {
-        if (theirDataSet == null)
+        if (sourceDataSet == null)
             return;
-        for (Node node: theirDataSet.getNodes()) {
+        for (Node node: sourceDataSet.getNodes()) {
             mergePrimitive(node);
         }
-        for (Way way: theirDataSet.getWays()) {
+        for (Way way: sourceDataSet.getWays()) {
             mergePrimitive(way);
         }
-        for (Relation relation: theirDataSet.getRelations()) {
+        for (Relation relation: sourceDataSet.getRelations()) {
             mergePrimitive(relation);
         }
         fixReferences();
@@ -364,8 +350,8 @@ public class DataSetMerger {
      *
      * @return
      */
-    public DataSet getMyDataSet() {
-        return myDataSet;
+    public DataSet getTargetDataSet() {
+        return targetDataSet;
     }
 
     /**
