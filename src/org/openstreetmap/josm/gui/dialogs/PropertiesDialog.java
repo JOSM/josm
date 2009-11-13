@@ -151,9 +151,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         String key = propertyData.getValueAt(row, 0).toString();
         objKey=key;
 
-        String msg = "<html>"+trn("This will change up to {0} object.",
+        String msg = "<html>"+trn("This will change {0} object.",
                 "This will change up to {0} objects.", sel.size(), sel.size())
-                +"<br><br>("+tr("An empty value deletes the key.", key)+")</html>";
+                +"<br><br>("+tr("An empty value deletes the tag.", key)+")</html>";
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(new JLabel(msg), BorderLayout.NORTH);
