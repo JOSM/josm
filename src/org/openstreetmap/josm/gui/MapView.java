@@ -157,9 +157,9 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             layers.add(layer);
             return;
         }
-        for (int i=layers.size()-1; i> 0; i--) {
+        for (int i=layers.size()-1; i>= 0; i--) {
             if (layers.get(i) instanceof OsmDataLayer) {
-                if (i == layers.size()) {
+                if (i == layers.size()-1) {
                     layers.add(layer);
                 } else {
                     layers.add(i+1, layer);
@@ -179,10 +179,10 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             playHeadMarker = PlayHeadMarker.create();
         }
 
-        if (layer.isBackgroundLayer() || layers.isEmpty()) {
-            layers.add(layer);
-        } else if (layer instanceof GpxLayer){
+        if (layer instanceof GpxLayer) {
             addGpxLayer((GpxLayer)layer);
+        } else if (layer.isBackgroundLayer() || layers.isEmpty()) {
+            layers.add(layer);
         } else {
             layers.add(0, layer);
         }
