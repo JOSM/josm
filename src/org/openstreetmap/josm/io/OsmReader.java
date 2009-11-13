@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.User;
@@ -427,8 +428,14 @@ public class OsmReader {
                                         id
                                 )
                         );
-                    n = new Node(id);
-                    n.incomplete = true;
+                    // create an incomplete node if necessary
+                    //
+                    n = (Node)ds.getPrimitiveById(id,OsmPrimitiveType.NODE);
+                    if (n == null) {
+                        n = new Node(id);
+                        n.incomplete = true;
+                        ds.addPrimitive(n);
+                    }
                     incomplete = true;
                 }
                 wayNodes.add(n);

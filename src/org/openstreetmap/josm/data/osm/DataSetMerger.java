@@ -134,10 +134,10 @@ public class DataSetMerger {
         childrenToMerge.add(source.getUniqueId());
     }
 
-    protected OsmPrimitive getMergeTarget(OsmPrimitive mergeSource) {
+    protected OsmPrimitive getMergeTarget(OsmPrimitive mergeSource) throws IllegalStateException{
         Long targetId = mergedMap.get(mergeSource.getUniqueId());
         if (targetId == null)
-            throw new RuntimeException(tr("Missing merge target for way with id {0}", mergeSource.getUniqueId()));
+            return null;
         return targetDataSet.getPrimitiveById(targetId, mergeSource.getType());
     }
 
@@ -305,10 +305,10 @@ public class DataSetMerger {
             target.mergeFrom(source);
             childrenToMerge.add(source.getUniqueId());
         } else if (target.isModified() && ! source.isModified() && target.getVersion() == source.getVersion()) {
-            // my is same as other but mine is modified
-            // => keep mine
+            // target is same as source but target is modified
+            // => keep target
         } else if (! target.hasEqualSemanticAttributes(source)) {
-            // my is modified and is not semantically equal with other. Can't automatically
+            // target is modified and is not semantically equal with source. Can't automatically
             // resolve the differences
             // =>  create a conflict
             conflicts.add(target,source);

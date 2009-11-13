@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -66,10 +66,10 @@ public class UpdateSelectionAction extends JosmAction {
     }
 
     /**
-     * Updates the data for for the {@see OsmPrimitive}s with id <code>id</code>
+     * Updates the data for  the {@see OsmPrimitive}s with id <code>id</code>
      * with the data currently kept on the server.
      *
-     * @param id  the id of a primitive in the {@see DataSet} of the current edit layser
+     * @param id  the id of a primitive in the {@see DataSet} of the current edit layer
      * @exception IllegalStateException thrown if there is no primitive with <code>id</code> in
      *   the current dataset
      * @exception IllegalStateException thrown if there is no current dataset
@@ -88,7 +88,7 @@ public class UpdateSelectionAction extends JosmAction {
      * constructor
      */
     public UpdateSelectionAction() {
-        super(tr("Update selections"),
+        super(tr("Update selection"),
                 "updateselection",
                 tr("Updates the currently selected objects from the server (re-downloads data)"),
                 Shortcut.registerShortcut("file:updateselection",
@@ -123,7 +123,7 @@ public class UpdateSelectionAction extends JosmAction {
         if (selection.size() == 0) {
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("There are no selected primitives to update."),
+                    tr("There are no selected objects to update."),
                     tr("Selection empty"),
                     JOptionPane.INFORMATION_MESSAGE
             );
@@ -144,7 +144,7 @@ public class UpdateSelectionAction extends JosmAction {
         private MultiFetchServerObjectReader reader;
 
         public UpdatePrimitivesTask(Collection<? extends OsmPrimitive> toUpdate) {
-            super("Update primitives", false /* don't ignore exception*/);
+            super(tr("Update objects"), false /* don't ignore exception*/);
             canceled = false;
             this.toUpdate = toUpdate;
         }
@@ -167,6 +167,7 @@ public class UpdateSelectionAction extends JosmAction {
             }
             if (ds != null) {
                 Main.map.mapView.getEditLayer().mergeFrom(ds);
+                Main.map.mapView.getEditLayer().onPostDownloadFromServer();
             }
         }
 
@@ -214,7 +215,7 @@ public class UpdateSelectionAction extends JosmAction {
                 theirDataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
                 DataSetMerger merger = new DataSetMerger(ds, theirDataSet);
                 merger.merge();
-                // a ways loaded with MultiFetch may be incomplete because at least one of its
+                // a way loaded with MultiFetch may be incomplete because at least one of its
                 // nodes isn't present in the local data set. We therefore fully load all
                 // incomplete ways.
                 //
