@@ -57,7 +57,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     public static int NR_LEVELS = 24;
     public static double WORLD_PARTS = (1 << NR_LEVELS);
 
-    public static int MAX_OBJECTS_PER_LEVEL = 2;
+    public static int MAX_OBJECTS_PER_LEVEL = 16;
     class QBLevel
     {
         int level;
