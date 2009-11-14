@@ -11,7 +11,6 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Point;
@@ -39,6 +38,7 @@ import javax.swing.JSeparator;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.command.PurgePrimitivesCommand;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -203,7 +203,7 @@ public class OsmDataLayer extends Layer {
      * are drawn by the edit layer).
      * Draw nodes last to overlap the ways they belong to.
      */
-    @Override public void paint(final Graphics g, final MapView mv) {
+    @Override public void paint(final Graphics2D g, final MapView mv, Bounds box) {
         boolean active = mv.getActiveLayer() == this;
         boolean inactive = !active && Main.pref.getBoolean("draw.data.inactive_color", true);
         boolean virtual = !inactive && mv.isVirtualNodesEnabled();
@@ -244,7 +244,7 @@ public class OsmDataLayer extends Layer {
         painter.setGraphics(g);
         painter.setNavigatableComponent(mv);
         painter.inactive = inactive;
-        painter.visitAll(data, virtual);
+        painter.visitAll(data, virtual, box);
         Main.map.conflictDialog.paintConflicts(g, mv);
     }
 

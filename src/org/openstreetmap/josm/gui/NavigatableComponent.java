@@ -3,6 +3,7 @@
 package org.openstreetmap.josm.gui;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -19,12 +20,12 @@ import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.osm.QuadBuckets.BBox;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.help.Helpful;
 
@@ -153,6 +154,34 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public LatLon getLatLon(int x, int y) {
         return getProjection().eastNorth2latlon(getEastNorth(x, y));
+    }
+
+    /**
+     * @param r
+     * @return Minimum bounds that will cover rectangle
+     */
+    public Bounds getLatLonBounds(Rectangle r) {
+        // TODO Maybe this should be (optional) method of Projection implementation
+        EastNorth p1 = getEastNorth(r.x, r.y);
+        EastNorth p2 = getEastNorth(r.x + r.width, r.y + r.height);
+
+        Bounds result = new Bounds(Main.proj.eastNorth2latlon(p1));
+
+        double eastMin = Math.min(p1.east(), p2.east());
+        double eastMax = Math.max(p1.east(), p2.east());
+        double northMin = Math.min(p1.north(), p2.north());
+        double northMax = Math.min(p1.north(), p2.north());
+        double deltaEast = (eastMax - eastMin) / 10;
+        double deltaNorth = (northMax - northMin) / 10;
+
+        for (int i=0; i < 10; i++) {
+            result.extend(Main.proj.eastNorth2latlon(new EastNorth(eastMin + i * deltaEast, northMin)));
+            result.extend(Main.proj.eastNorth2latlon(new EastNorth(eastMin + i * deltaEast, northMax)));
+            result.extend(Main.proj.eastNorth2latlon(new EastNorth(eastMin, northMin  + i * deltaNorth)));
+            result.extend(Main.proj.eastNorth2latlon(new EastNorth(eastMax, northMin  + i * deltaNorth)));
+        }
+
+        return result;
     }
 
     /**

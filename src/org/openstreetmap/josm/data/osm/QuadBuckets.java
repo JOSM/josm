@@ -57,143 +57,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     public static int NR_LEVELS = 24;
     public static double WORLD_PARTS = (1 << NR_LEVELS);
 
-    public static int MAX_OBJECTS_PER_LEVEL = 16;
-    // has to be a power of 2
-    public static int TILES_PER_LEVEL_SHIFT = 2;
-    public static int TILES_PER_LEVEL = 1<<TILES_PER_LEVEL_SHIFT;
-    // Maybe this should just be a Rectangle??
-    public static class BBox
-    {
-        private double xmin = Double.POSITIVE_INFINITY;
-        private double xmax = Double.NEGATIVE_INFINITY;
-        private double ymin = Double.POSITIVE_INFINITY;
-        private double ymax = Double.NEGATIVE_INFINITY;
-        void sanity()
-        {
-            if (xmin < -180.0) {
-                xmin = -180.0;
-            }
-            if (xmax >  180.0) {
-                xmax =  180.0;
-            }
-            if (ymin <  -90.0) {
-                ymin =  -90.0;
-            }
-            if (ymax >   90.0) {
-                ymax =   90.0;
-            }
-            if ((xmin < -180.0) ||
-                    (xmax >  180.0) ||
-                    (ymin <  -90.0) ||
-                    (ymax >   90.0))
-                throw new IllegalArgumentException("bad BBox: " + this);
-        }
-        @Override
-        public String toString()
-        {
-            return "[ x: " + xmin + " -> " + xmax +
-            ", y: " + ymin + " -> " + ymax + " ]";
-        }
-        double min(double a, double b)
-        {
-            if (a < b)
-                return a;
-            return b;
-        }
-        double max(double a, double b)
-        {
-            if (a > b)
-                return a;
-            return b;
-        }
-        private void add(LatLon c)
-        {
-            xmin = min(xmin, c.lon());
-            xmax = max(xmax, c.lon());
-            ymin = min(ymin, c.lat());
-            ymax = max(ymax, c.lat());
-        }
-        public BBox(LatLon a, LatLon b)
-        {
-            add(a);
-            add(b);
-            sanity();
-        }
-        public BBox(double a_x, double a_y, double b_x, double b_y)
-        {
-            xmin = min(a_x, b_x);
-            xmax = max(a_x, b_x);
-            ymin = min(a_y, b_y);
-            ymax = max(a_y, b_y);
-            sanity();
-        }
-        public BBox(Way w)
-        {
-            for (Node n : w.getNodes()) {
-                LatLon coor = n.getCoor();
-                if (coor == null) {
-                    continue;
-                }
-                add(coor);
-            }
-            this.sanity();
-        }
-        public double height()
-        {
-            return ymax-ymin;
-        }
-        public double width()
-        {
-            return xmax-xmin;
-        }
-        boolean bounds(BBox b)
-        {
-            if (!(xmin <= b.xmin) ||
-                    !(xmax >= b.xmax) ||
-                    !(ymin <= b.ymin) ||
-                    !(ymax >= b.ymax))
-                return false;
-            return true;
-        }
-        boolean bounds(LatLon c)
-        {
-            if ((xmin <= c.lon()) &&
-                    (xmax >= c.lon()) &&
-                    (ymin <= c.lat()) &&
-                    (ymax >= c.lat()))
-                return true;
-            return false;
-        }
-        boolean inside(BBox b)
-        {
-            if (xmin >= b.xmax)
-                return false;
-            if (xmax <= b.xmin)
-                return false;
-            if (ymin >= b.ymax)
-                return false;
-            if (ymax <= b.ymin)
-                return false;
-            return true;
-        }
-        boolean intersects(BBox b)
-        {
-            return this.inside(b) || b.inside(this);
-        }
-        List<LatLon> points()
-        {
-            LatLon p1 = new LatLon(ymin, xmin);
-            LatLon p2 = new LatLon(ymin, xmax);
-            LatLon p3 = new LatLon(ymax, xmin);
-            LatLon p4 = new LatLon(ymax, xmax);
-            List<LatLon> ret = new ArrayList<LatLon>();
-            ret.add(p1);
-            ret.add(p2);
-            ret.add(p3);
-            ret.add(p4);
-            return ret;
-        }
-    }
+    public static int MAX_OBJECTS_PER_LEVEL = 2;
     class QBLevel
     {
         int level;
@@ -293,8 +157,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                     //out("adding content to branch: " + this);
                     continue;
                 }
-                if (children == null)
+                if (children == null) {
                     children = newChildren();
+                }
                 if (children[new_index] == null) {
                     children[new_index] = new QBLevel(this, new_index);
                 }
@@ -724,10 +589,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         BBox bbox = null;
         public BBox bbox()
         {
-            if (bbox != null) {
-                bbox.sanity();
+            if (bbox != null)
                 return bbox;
-            }
             if (level == 0) {
                 bbox = new BBox(-180, 90, 180, -90);
             } else {
@@ -737,7 +600,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 LatLon top_right = new LatLon(lat, lon);
                 bbox = new BBox(bottom_left, top_right);
             }
-            bbox.sanity();
             return bbox;
         }
         /*
@@ -1099,7 +961,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         if (debug) {
             out("search bbox before sanity: " +  bbox);
         }
-        bbox.sanity();
         if (debug) {
             out("search bbox after sanity: " +  bbox);
         }
@@ -1123,7 +984,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     public List<T> search(LatLon b1, LatLon b2)
     {
         BBox bbox = new BBox(b1.lon(), b1.lat(), b2.lon(), b2.lat());
-        bbox.sanity();
         return this.search(bbox);
     }
     List<T> search(BBox search_bbox)

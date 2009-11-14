@@ -8,7 +8,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -62,6 +61,7 @@ import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
@@ -640,7 +640,7 @@ public class GeoImageLayer extends Layer {
         data.addAll(l.data);
     }
 
-    @Override public void paint(Graphics g, MapView mv) {
+    @Override public void paint(Graphics2D g, MapView mv, Bounds box) {
         int clickedIndex = -1;
 
         // First select beveled icon (for cases where are more icons on the same spot)

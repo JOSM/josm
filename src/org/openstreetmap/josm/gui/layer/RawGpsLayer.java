@@ -8,7 +8,7 @@ import static org.openstreetmap.josm.tools.I18n.trnc;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -32,6 +32,7 @@ import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -121,7 +122,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
         return ImageProvider.get("layer", "rawgps_small");
     }
 
-    @Override public void paint(Graphics g, MapView mv) {
+    @Override public void paint(Graphics2D g, MapView mv, Bounds box) {
         g.setColor(Main.pref.getColor(marktr("gps point"), "layer "+getName(), Color.gray));
         Point old = null;
 
@@ -243,14 +244,14 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
                         JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.PLAIN_MESSAGE, null,options, options[0]);
                 switch (answer) {
-                    case 0:
-                        Main.pref.putColor("layer "+getName(), c.getColor());
-                        break;
-                    case 1:
-                        return;
-                    case 2:
-                        Main.pref.putColor("layer "+getName(), null);
-                        break;
+                case 0:
+                    Main.pref.putColor("layer "+getName(), c.getColor());
+                    break;
+                case 1:
+                    return;
+                case 2:
+                    Main.pref.putColor("layer "+getName(), null);
+                    break;
                 }
                 Main.map.repaint();
             }

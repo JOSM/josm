@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
-import org.openstreetmap.josm.data.osm.QuadBuckets.BBox;
 
 /**
  * DataSet is the data behind the application. It can consists of only a few points up to the whole

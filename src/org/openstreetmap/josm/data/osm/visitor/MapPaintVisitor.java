@@ -31,8 +31,10 @@ import java.util.List;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -113,11 +115,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(!useStyleCache)
             return (styles != null) ? styles.getIcon(osm) : null;
 
-        if(osm.mappaintStyle == null && styles != null) {
-            osm.mappaintStyle = styles.getIcon(osm);
-        }
+            if(osm.mappaintStyle == null && styles != null) {
+                osm.mappaintStyle = styles.getIcon(osm);
+            }
 
-        return (IconElemStyle)osm.mappaintStyle;
+            return (IconElemStyle)osm.mappaintStyle;
     }
 
     public boolean isPrimitiveArea(Way osm) {
@@ -1444,7 +1446,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
     /* Shows areas before non-areas */
     @Override
-    public void visitAll(DataSet data, Boolean virtual) {
+    public void visitAll(DataSet data, boolean virtual, Bounds bounds) {
+        BBox bbox = new BBox(bounds);
         this.data = data;
         //boolean profiler = Main.pref.getBoolean("mappaint.profiler",false);
         //profilerOmitDraw = Main.pref.getBoolean("mappaint.profiler.omitdraw",false);
@@ -1520,7 +1523,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
             /*** AREAS ***/
             //    profilerN = 0;
-            for (final Way osm : selectedLast(data, data.getWays())) {
+            for (final Way osm : selectedLast(data, data.searchWays(bbox))) {
                 if (drawable(osm)
                         && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid) {
                     if (isPrimitiveArea(osm) && osm.mappaintDrawnAreaCode != paintid) {
@@ -1613,7 +1616,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         /*** NODES ***/
         //profilerN = 0;
-        for (final Node osm: data.getNodes()) {
+        for (final Node osm: data.searchNodes(bbox)) {
             if (!osm.incomplete && !osm.isDeleted() && (data.isSelected(osm) || !osm.isFiltered())
                     && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid)
             {
@@ -1633,7 +1636,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if (virtualNodeSize != 0) {
             //    profilerN = 0;
             currentColor = nodeColor;
-            for (final OsmPrimitive osm: data.getWays()) {
+            for (final OsmPrimitive osm: data.searchWays(bbox)) {
                 if (osm.isUsable() && !osm.isFiltered()
                         && osm.mappaintVisibleCode != viewid )
                 {

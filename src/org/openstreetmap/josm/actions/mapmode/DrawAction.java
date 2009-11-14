@@ -10,7 +10,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.EventQueue;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -40,6 +39,7 @@ import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -878,7 +878,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         return a * d - b * c;
     }
 
-    public void paint(Graphics g, MapView mv) {
+    public void paint(Graphics2D g, MapView mv, Bounds box) {
         if (!drawHelperLine || wayIsFinished || shift) return;
 
         // sanity checks

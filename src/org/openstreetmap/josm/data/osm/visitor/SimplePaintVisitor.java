@@ -18,6 +18,7 @@ import java.awt.geom.GeneralPath;
 import java.util.Iterator;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -128,7 +129,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
     }
 
     DataSet ds;
-    public void visitAll(DataSet data, Boolean virtual) {
+    public void visitAll(DataSet data, boolean virtual, Bounds bounds) {
         this.ds = data;
         //boolean profiler = Main.pref.getBoolean("simplepaint.profiler",false);
         //long profilerStart = java.lang.System.currentTimeMillis();

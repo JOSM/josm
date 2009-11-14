@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 import org.openstreetmap.josm.tools.AudioPlayer;
 
+
 /**
  * This is a component used in the MapFrame for browsing the map. It use is to
  * provide the MapMode's enough capabilities to operate.
@@ -384,11 +385,13 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         tempG.setColor(Main.pref.getColor("background", Color.BLACK));
         tempG.fillRect(0, 0, getWidth(), getHeight());
 
+        Bounds box = getLatLonBounds(g.getClipBounds());
+
         for (Layer l: getVisibleLayersInZOrder()) {
-            l.paint(tempG, this);
+            l.paint(tempG, this, box);
         }
         for (MapViewPaintable mvp : temporaryLayers) {
-            mvp.paint(tempG, this);
+            mvp.paint(tempG, this, box);
         }
 
         // draw world borders

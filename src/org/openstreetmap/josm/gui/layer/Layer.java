@@ -5,7 +5,7 @@ package org.openstreetmap.josm.gui.layer;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -19,6 +19,7 @@ import javax.swing.Icon;
 import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.Destroyable;
@@ -97,7 +98,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
      * Paint the dataset using the engine set.
      * @param mv The object that can translate GeoPoints to screen coordinates.
      */
-    abstract public void paint(Graphics g, MapView mv);
+    abstract public void paint(Graphics2D g, MapView mv, Bounds box);
     /**
      * Return a representative small image for this layer. The image must not
      * be larger than 64 pixel in any dimension.

@@ -7,7 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,6 +28,7 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
@@ -151,7 +152,7 @@ public class MarkerLayer extends Layer {
         return Main.pref.getColor(marktr("gps marker"), name != null ? "layer "+name : null, Color.gray);
     }
 
-    @Override public void paint(Graphics g, MapView mv) {
+    @Override public void paint(Graphics2D g, MapView mv, Bounds box) {
         boolean mousePressedTmp = mousePressed;
         Point mousePos = mv.getMousePosition();
         String mkrTextShow = Main.pref.get("marker.show "+getName(), "show");
@@ -209,14 +210,14 @@ public class MarkerLayer extends Layer {
                         options[0]
                 );
                 switch (answer) {
-                    case 0:
-                        Main.pref.putColor("layer "+getName(), c.getColor());
-                        break;
-                    case 1:
-                        return;
-                    case 2:
-                        Main.pref.putColor("layer "+getName(), null);
-                        break;
+                case 0:
+                    Main.pref.putColor("layer "+getName(), c.getColor());
+                    break;
+                case 1:
+                    return;
+                case 2:
+                    Main.pref.putColor("layer "+getName(), null);
+                    break;
                 }
                 Main.map.repaint();
             }

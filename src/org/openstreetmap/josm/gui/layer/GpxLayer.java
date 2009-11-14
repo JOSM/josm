@@ -9,7 +9,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Point;
@@ -48,6 +47,7 @@ import javax.swing.filechooser.FileFilter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTaskList;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -142,11 +142,11 @@ public class GpxLayer extends Layer {
                 int answer = JOptionPane.showConfirmDialog(Main.parent, panel,
                         tr("Select line drawing options"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                 switch (answer) {
-                    case JOptionPane.CANCEL_OPTION:
-                    case JOptionPane.CLOSED_OPTION:
-                        return;
-                    default:
-                        // continue
+                case JOptionPane.CANCEL_OPTION:
+                case JOptionPane.CLOSED_OPTION:
+                    return;
+                default:
+                    // continue
                 }
                 if (group.getSelection() == r[0].getModel()) {
                     Main.pref.put(propName, null);
@@ -173,14 +173,14 @@ public class GpxLayer extends Layer {
                         options, options[0]
                 );
                 switch (answer) {
-                    case 0:
-                        Main.pref.putColor("layer " + getName(), c.getColor());
-                        break;
-                    case 1:
-                        return;
-                    case 2:
-                        Main.pref.putColor("layer " + getName(), null);
-                        break;
+                case 0:
+                    Main.pref.putColor("layer " + getName(), c.getColor());
+                    break;
+                case 1:
+                    return;
+                case 2:
+                    Main.pref.putColor("layer " + getName(), null);
+                    break;
                 }
                 Main.map.repaint();
             }
@@ -443,7 +443,7 @@ public class GpxLayer extends Layer {
     }
 
     @Override
-    public void paint(Graphics g, MapView mv) {
+    public void paint(Graphics2D g, MapView mv, Bounds box) {
 
         /****************************************************************
          ********** STEP 1 - GET CONFIG VALUES **************************
@@ -489,8 +489,7 @@ public class GpxLayer extends Layer {
 
         if(lineWidth != 0)
         {
-            Graphics2D g2d = (Graphics2D)g;
-            g2d.setStroke(new BasicStroke(lineWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+            g.setStroke(new BasicStroke(lineWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
         }
 
         /****************************************************************
@@ -530,31 +529,31 @@ public class GpxLayer extends Layer {
                             double dist = c.greatCircleDistance(oldWp.getCoor());
 
                             switch (colored) {
-                                case velocity:
-                                    double dtime = trkPnt.time - oldWp.time;
-                                    double vel = dist / dtime;
-                                    double velColor = vel / colorTracksTune * 255;
-                                    // Bad case first
-                                    if (dtime <= 0 || vel < 0 || velColor > 255) {
-                                        trkPnt.customColoring = colors[255];
-                                    } else {
-                                        trkPnt.customColoring = colors[(int) (velColor)];
-                                    }
-                                    break;
+                            case velocity:
+                                double dtime = trkPnt.time - oldWp.time;
+                                double vel = dist / dtime;
+                                double velColor = vel / colorTracksTune * 255;
+                                // Bad case first
+                                if (dtime <= 0 || vel < 0 || velColor > 255) {
+                                    trkPnt.customColoring = colors[255];
+                                } else {
+                                    trkPnt.customColoring = colors[(int) (velColor)];
+                                }
+                                break;
 
-                                case dilution:
-                                    if (trkPnt.attr.get("hdop") != null) {
-                                        float hdop = ((Float) trkPnt.attr.get("hdop")).floatValue();
-                                        if (hdop < 0) {
-                                            hdop = 0;
-                                        }
-                                        int hdoplvl = Math.round(hdop * Main.pref.getInteger("hdop.factor", 25));
-                                        // High hdop is bad, but high values in colors are green.
-                                        // Therefore inverse the logic
-                                        int hdopcolor = 255 - (hdoplvl > 255 ? 255 : hdoplvl);
-                                        trkPnt.customColoring = colors[hdopcolor];
+                            case dilution:
+                                if (trkPnt.attr.get("hdop") != null) {
+                                    float hdop = ((Float) trkPnt.attr.get("hdop")).floatValue();
+                                    if (hdop < 0) {
+                                        hdop = 0;
                                     }
-                                    break;
+                                    int hdoplvl = Math.round(hdop * Main.pref.getInteger("hdop.factor", 25));
+                                    // High hdop is bad, but high values in colors are green.
+                                    // Therefore inverse the logic
+                                    int hdopcolor = 255 - (hdoplvl > 255 ? 255 : hdoplvl);
+                                    trkPnt.customColoring = colors[hdopcolor];
+                                }
+                                break;
                             }
 
                             if (maxLineLength == -1 || dist <= maxLineLength) {
@@ -837,11 +836,11 @@ public class GpxLayer extends Layer {
                     JOptionPane.QUESTION_MESSAGE
             );
             switch(ret) {
-                case JOptionPane.CANCEL_OPTION:
-                case JOptionPane.CLOSED_OPTION:
-                    return;
-                default:
-                    // continue
+            case JOptionPane.CANCEL_OPTION:
+            case JOptionPane.CLOSED_OPTION:
+                return;
+            default:
+                // continue
             }
 
             /*
@@ -935,11 +934,11 @@ public class GpxLayer extends Layer {
                         JOptionPane.PLAIN_MESSAGE
                 );
                 switch(ret) {
-                    case JOptionPane.CANCEL_OPTION:
-                    case JOptionPane.CLOSED_OPTION:
-                        return;
-                    default:
-                        // continue
+                case JOptionPane.CANCEL_OPTION:
+                case JOptionPane.CLOSED_OPTION:
+                    return;
+                default:
+                    // continue
                 }
             }
             final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download data"));
