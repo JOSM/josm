@@ -137,7 +137,7 @@ public class DefaultNameFormatter implements NameFormatter {
             }
             String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
             name += (name.length() > 0) ? " ("+nodes+")" : nodes;
-            if(way.errors != null) {
+            if(way.getErrors() != null) {
                 name = "*"+name;
             }
         }
@@ -188,7 +188,7 @@ public class DefaultNameFormatter implements NameFormatter {
 
             int mbno = relation.getMembersCount();
             name += trn("{0} member", "{0} members", mbno, mbno) + ")";
-            if(relation.errors != null) {
+            if(relation.getErrors() != null) {
                 name = "*"+name;
             }
         }

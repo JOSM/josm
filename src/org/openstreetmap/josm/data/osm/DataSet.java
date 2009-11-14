@@ -232,6 +232,7 @@ public class DataSet implements Cloneable {
         selectedPrimitives.remove(primitive);
         allPrimitives.remove(primitive);
         primitive.setDataset(null);
+        errors.remove(primitive);
         firePrimitivesRemoved(Collections.singletonList(primitive));
     }
 
@@ -869,5 +870,23 @@ public class DataSet implements Cloneable {
         ways.clear();
         relations.clear();
         allPrimitives.clear();
+    }
+
+
+    // TODO Should be part of validator
+    // This used to be OsmPrimitive.errors. I don't really like that such information is kept here,
+    // but at least it's not such memory waste as having it in (every) OsmPrimitive
+    private Map<OsmPrimitive, List<String>> errors = new HashMap<OsmPrimitive, List<String>>();
+
+    void setErrors(OsmPrimitive primitive, List<String> errors) {
+        if (errors != null && !errors.isEmpty()) {
+            this.errors.put(primitive, errors);
+        } else {
+            this.errors.remove(primitive);
+        }
+    }
+
+    public List<String> getErrors(OsmPrimitive primitive) {
+        return errors.get(primitive);
     }
 }

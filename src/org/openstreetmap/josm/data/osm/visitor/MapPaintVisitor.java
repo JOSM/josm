@@ -147,11 +147,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 (n.getEastNorth().north() > maxEN.north()) ||
                 (n.getEastNorth().east()  < minEN.east() ) ||
                 (n.getEastNorth().north() < minEN.north()))
-        {
-            n.mappaintVisibleCode = viewid;
             return;
-        }
-        n.mappaintVisibleCode = 0;
 
         IconElemStyle nodeStyle = (IconElemStyle)getPrimitiveStyle(n);
 
@@ -185,10 +181,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     public void visit(Way w) {}
     public void drawWay(Way w, int fillAreas) {
         if(w.getNodesCount() < 2)
-        {
-            w.mappaintVisibleCode = viewid;
             return;
-        }
 
         /* check, if the way is visible at all */
         double minx = 10000;
@@ -216,20 +209,13 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 (miny > maxEN.north()) ||
                 (maxx < minEN.east()) ||
                 (maxy < minEN.north()))
-        {
-            w.mappaintVisibleCode = viewid;
             return;
-        }
 
         ElemStyle wayStyle = getPrimitiveStyle(w);
 
         if(!isZoomOk(wayStyle))
-        {
-            w.mappaintVisibleCode = viewid;
             return;
-        }
 
-        w.mappaintVisibleCode = 0;
         if(fillAreas > dist) {
             w.clearErrors();
         }
@@ -539,7 +525,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     @Override
     public void visit(Relation r) {};
     public void paintUnselectedRelation(Relation r) {
-        r.mappaintVisibleCode = 0;
 
         if (drawMultipolygon && "multipolygon".equals(r.get("type")))
         {
@@ -1045,17 +1030,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     visible = true;
                 }
             }
-            if(!visible) /* nothing visible, so disable relation and all its ways */
-            {
-                r.mappaintVisibleCode = viewid;
-                for (Way wInner : inner) {
-                    wInner.mappaintVisibleCode = viewid;
-                }
-                for (Way wOuter : outer) {
-                    wOuter.mappaintVisibleCode = viewid;
-                }
+            if(!visible)
                 return drawn;
-            }
             for (Way wInner : inner)
             {
                 ElemStyle innerStyle = getPrimitiveStyle(wInner);
@@ -1509,7 +1485,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             /*** RELATIONS ***/
             //    profilerN = 0;
             for (final Relation osm: data.getRelations()) {
-                if (drawable(osm) && osm.mappaintVisibleCode != viewid) {
+                if (drawable(osm)) {
                     paintUnselectedRelation(osm);
                     //            profilerN++;
                 }
@@ -1524,8 +1500,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             /*** AREAS ***/
             //    profilerN = 0;
             for (final Way osm : selectedLast(data, data.searchWays(bbox))) {
-                if (drawable(osm)
-                        && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid) {
+                if (drawable(osm) && osm.mappaintDrawnCode != paintid) {
                     if (isPrimitiveArea(osm) && osm.mappaintDrawnAreaCode != paintid) {
                         drawWay(osm, fillAreas);
                         //                profilerN++;
@@ -1559,8 +1534,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             /*** WAYS (filling disabled)  ***/
             //    profilerN = 0;
             for (final Way way: data.getWays()) {
-                if (drawable(way) && !data.isSelected(way)
-                        && way.mappaintVisibleCode != viewid) {
+                if (drawable(way) && !data.isSelected(way)) {
                     drawWay(way, 0);
                     //            profilerN++;
                 }
@@ -1578,7 +1552,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         //profilerN = 0;
         for (final OsmPrimitive osm : data.getSelected()) {
             if (!osm.incomplete && !osm.isDeleted() && !(osm instanceof Node)
-                    && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid
+                    && osm.mappaintDrawnCode != paintid
             ) {
                 osm.visit(new AbstractVisitor() {
                     public void visit(Way w) {
@@ -1593,7 +1567,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         /* TODO: is it possible to do this like the nodes/ways code? */
                         //if(profilerOmitDraw)
                         //    return;
-                        r.mappaintVisibleCode = 0;
                         for (RelationMember m : r.getMembers()) {
                             if (m.isNode() && drawable(m.getMember())) {
                                 drawSelectedMember(m.getMember(), styles != null ? getPrimitiveStyle(m.getMember()) : null, true, true);
@@ -1618,7 +1591,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         //profilerN = 0;
         for (final Node osm: data.searchNodes(bbox)) {
             if (!osm.incomplete && !osm.isDeleted() && (data.isSelected(osm) || !osm.isFiltered())
-                    && osm.mappaintVisibleCode != viewid && osm.mappaintDrawnCode != paintid)
+                    && osm.mappaintDrawnCode != paintid)
             {
                 drawNode(osm);
                 //        profilerN++;
@@ -1637,8 +1610,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             //    profilerN = 0;
             currentColor = nodeColor;
             for (final OsmPrimitive osm: data.searchWays(bbox)) {
-                if (osm.isUsable() && !osm.isFiltered()
-                        && osm.mappaintVisibleCode != viewid )
+                if (osm.isUsable() && !osm.isFiltered())
                 {
                     /* TODO: move this into the SimplePaint code? */
                     //            if(!profilerOmitDraw)

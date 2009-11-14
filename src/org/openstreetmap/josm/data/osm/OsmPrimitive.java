@@ -96,28 +96,37 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     /* mappaint data */
     public ElemStyle mappaintStyle = null;
-    public Integer mappaintVisibleCode = 0;
     public Integer mappaintDrawnCode = 0;
-    public Collection<String> errors;
 
-    public void putError(String text, Boolean isError)
+    public void putError(String text, boolean isError)
     {
-        if(errors == null) {
+        checkDataset();
+        List<String> errors = dataSet.getErrors(this);
+        if (errors == null) {
             errors = new ArrayList<String>();
         }
         String s = isError ? tr("Error: {0}", text) : tr("Warning: {0}", text);
         errors.add(s);
+        dataSet.setErrors(this, errors);
     }
     public void clearErrors()
     {
-        errors = null;
+        if (dataSet != null) {
+            dataSet.setErrors(this, null);
+        }
+    }
+
+    public List<String> getErrors() {
+        if (dataSet == null)
+            return null;
+        else
+            return dataSet.getErrors(this);
     }
     /* This should not be called from outside. Fixing the UI to add relevant
        get/set functions calling this implicitely is preferred, so we can have
        transparent cache handling in the future. */
     protected void clearCached()
     {
-        mappaintVisibleCode = 0;
         mappaintDrawnCode = 0;
         mappaintStyle = null;
     }
@@ -797,7 +806,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         flags = osm.flags;
         user= osm.user;
         clearCached();
-        clearErrors();
     }
 
     /**
