@@ -470,30 +470,20 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             }
             return ret;
         }
+        QBLevel nextNode()
+        {
+            if (this.isLeaf())
+                return this.nextSibling();
+            return this.firstChild();
+        }
         QBLevel nextContentNode()
         {
-            QBLevel next = this;
-            if (this.isLeaf()) {
-                next = this.nextSibling();
-            }
+            QBLevel next = this.nextNode();
             if (next == null)
-                return null;
-            // Walk back down the tree and find the first leaf
-            while (!next.isLeaf()) {
-                QBLevel child;
-                if (next.hasContent() && next != this) {
-                    break;
-                }
-                child = next.firstChild();
-                if (debug) {
-                    out("["+next.level+"] next node ("+next+") is a branch (content: "+next.hasContent()+"), moving down...");
-                }
-                if (child == null) {
-                    abort("branch node ("+this+" "+next.isLeaf()+") had no children (content: "+next.content+") this: " + this);
-                }
-                next = child;
-            }
-            return next;
+                return next;
+            if (next.hasContent())
+                return next;
+            return next.nextContentNode();
         }
         int size()
         {
