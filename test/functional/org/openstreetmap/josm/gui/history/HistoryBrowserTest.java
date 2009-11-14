@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import org.junit.BeforeClass;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.projection.Mercator;
@@ -77,7 +78,7 @@ public class HistoryBrowserTest extends JFrame {
             e.printStackTrace();
             return;
         }
-        History h = ds.getHistory(id);
+        History h = ds.getHistory(new SimplePrimitiveId(id, type));
         browser.populate(h);
     }
 

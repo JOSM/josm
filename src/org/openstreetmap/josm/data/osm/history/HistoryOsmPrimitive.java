@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 
 /**
  * Represents an immutable OSM primitive in the context of a historical view on
@@ -44,7 +46,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
      * @param visible whether the primitive is still visible
      * @param user  the user (! null required)
      * @param uid the user id (> 0 required)
-     * @param changesetId the changeset id (> 0 required)
+     * @param changesetId the changeset id (may be null if the changeset isn't known)
      * @param timestamp the timestamp (! null required)
      *
      * @throws IllegalArgumentException thrown if preconditions are violated
@@ -52,9 +54,9 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
     public HistoryOsmPrimitive(long id, long version, boolean visible, String user, long uid, long changesetId, Date timestamp) throws IllegalArgumentException {
         ensurePositiveLong(id, "id");
         ensurePositiveLong(version, "version");
-        if(uid != -1) /* allow -1 for anonymous users */
+        if(uid != -1) {
             ensurePositiveLong(uid, "uid");
-        ensurePositiveLong(changesetId, "changesetId");
+        }
         ensureNotNull(user, "user");
         ensureNotNull(timestamp, "timestamp");
         this.id = id;
@@ -62,6 +64,8 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
         this.visible = visible;
         this.user = user;
         this.uid = uid;
+        // FIXME: restrict to IDs > 0 as soon as OsmPrimitive holds the
+        // changeset id too
         this.changesetId  = changesetId;
         this.timestamp = timestamp;
         tags = new HashMap<String, String>();
@@ -70,6 +74,11 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
     public long getId() {
         return id;
     }
+
+    public PrimitiveId getPrimitiveId() {
+        return new SimplePrimitiveId(id, getType());
+    }
+
     public boolean isVisible() {
         return visible;
     }
@@ -102,7 +111,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
 
     public int compareTo(HistoryOsmPrimitive o) {
         if (this.id != o.id)
-            throw new ClassCastException(tr("Can't compare primitive with ID ''{0}'' to primitive with ID ''{1}''.", o.id, this.id));
+            throw new ClassCastException(tr("Can''t compare primitive with ID ''{0}'' to primitive with ID ''{1}''.", o.id, this.id));
         return new Long(this.version).compareTo(o.version);
     }
 
@@ -120,6 +129,20 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
 
     public Map<String,String> getTags() {
         return Collections.unmodifiableMap(tags);
+    }
+
+    /**
+     * Sets the tags for this history primitive. Removes all
+     * tags if <code>tags</code> is null.
+     * 
+     * @param tags the tags. May be null.
+     */
+    public void setTags(Map<String,String> tags) {
+        if (tags == null) {
+            this.tags = new HashMap<String, String>();
+        } else {
+            this.tags = new HashMap<String, String>(tags);
+        }
     }
 
     @Override

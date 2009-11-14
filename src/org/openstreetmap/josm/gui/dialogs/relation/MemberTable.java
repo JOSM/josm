@@ -19,11 +19,9 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableColumnModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -190,7 +188,7 @@ public class MemberTable extends JTable implements IMemberModelListener {
     class ZoomToAction extends AbstractAction implements LayerChangeListener, ListSelectionListener {
         public ZoomToAction() {
             putValue(NAME, tr("Zoom to"));
-            putValue(SHORT_DESCRIPTION, tr("Zoom to primitive the first selected member refers to"));
+            putValue(SHORT_DESCRIPTION, tr("Zoom to the object the first selected member refers to"));
             updateEnabledState();
         }
 
@@ -219,7 +217,7 @@ public class MemberTable extends JTable implements IMemberModelListener {
                 return;
             }
             setEnabled(true);
-            putValue(SHORT_DESCRIPTION, tr("Zoom to primitive the first selected member refers to"));
+            putValue(SHORT_DESCRIPTION, tr("Zoom to the object the first selected member refers to"));
         }
 
         public void valueChanged(ListSelectionEvent e) {

@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.history;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Observable;
@@ -11,19 +12,31 @@ import java.util.logging.Logger;
 
 import javax.swing.table.DefaultTableModel;
 
-import org.openstreetmap.josm.data.coor.CoordinateFormat;
-import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.DataSetListener;
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
+import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.gui.layer.DataChangeListener;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 
 /**
  * This is the model used by the history browser.
  *
- * The state this model manages consists of the following elements:
+ * The model state consists of the following elements:
  * <ul>
  *   <li>the {@see History} of a specific {@see OsmPrimitive}</li>
  *   <li>a dedicated version in this {@see History} called the {@see PointInTimeType#REFERENCE_POINT_IN_TIME}</li>
@@ -45,7 +58,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryWay;
  *
  * @see HistoryBrowser
  */
-public class HistoryBrowserModel extends Observable {
+public class HistoryBrowserModel extends Observable implements LayerChangeListener, DataSetListener, DataChangeListener {
 
     private static Logger logger = Logger.getLogger(HistoryBrowserModel.class.getName());
 
@@ -53,6 +66,11 @@ public class HistoryBrowserModel extends Observable {
     private History history;
     private HistoryOsmPrimitive reference;
     private HistoryOsmPrimitive current;
+    /**
+     * latest isn't a reference of history. It's a clone of the currently edited
+     * {@see OsmPrimitive} in the current edit layer.
+     */
+    private HistoryOsmPrimitive latest;
 
     private VersionTableModel versionTableModel;
     private TagTableModel currentTagTableModel;
@@ -62,6 +80,9 @@ public class HistoryBrowserModel extends Observable {
     private RelationMemberTableModel currentRelationMemberTableModel;
     private RelationMemberTableModel referenceRelationMemberTableModel;
 
+    /**
+     * constructor
+     */
     public HistoryBrowserModel() {
         versionTableModel = new VersionTableModel();
         currentTagTableModel = new TagTableModel(PointInTimeType.CURRENT_POINT_IN_TIME);
@@ -70,11 +91,40 @@ public class HistoryBrowserModel extends Observable {
         referenceNodeListTableModel = new NodeListTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
         currentRelationMemberTableModel = new RelationMemberTableModel(PointInTimeType.CURRENT_POINT_IN_TIME);
         referenceRelationMemberTableModel = new RelationMemberTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
+
+        if (getEditLayer() != null) {
+            getEditLayer().data.addDataSetListener(this);
+            getEditLayer().listenerDataChanged.add(this);
+        }
+        Layer.listeners.add(this);
+
     }
 
+    /**
+     * Creates a new history browser model for a given history.
+     * 
+     * @param history the history. Must not be null.
+     * @throws IllegalArgumentException thrown if history is null
+     */
     public HistoryBrowserModel(History history) {
         this();
+        if (history == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "history"));
         setHistory(history);
+    }
+
+    /**
+     * Replies the current edit layer; null, if there isn't a current edit layer
+     * of type {@see OsmDataLayer}.
+     * 
+     * @return the current edit layer
+     */
+    protected OsmDataLayer getEditLayer() {
+        try {
+            return Main.map.mapView.getEditLayer();
+        } catch(NullPointerException e) {
+            return null;
+        }
     }
 
     /**
@@ -83,6 +133,27 @@ public class HistoryBrowserModel extends Observable {
      */
     public History getHistory() {
         return history;
+    }
+
+    protected boolean hasNewNodes(Way way) {
+        for (Node n: way.getNodes()) {
+            if (n.isNew()) return true;
+        }
+        return false;
+    }
+    protected boolean canShowAsLatest(OsmPrimitive primitive) {
+        if (primitive == null) return false;
+        if (primitive.isNew()) return false;
+        if (history == null) return false;
+        // only show latest of the same version if it is
+        // modified
+        if (history.getByVersion(primitive.getVersion()) != null)
+            return primitive.isModified();
+
+        // latest has a higher version than one of the primitives
+        // in the history (probably because the history got out of sync
+        // with uploaded data) -> show the primitive as latest
+        return true;
     }
 
     /**
@@ -96,11 +167,18 @@ public class HistoryBrowserModel extends Observable {
         if (history.getNumVersions() > 0) {
             current = history.getEarliest();
             reference = history.getEarliest();
+            setLatest(null);
+            if (getEditLayer() != null) {
+                OsmPrimitive p = getEditLayer().data.getPrimitiveById(history.getId(), history.getType());
+                if (canShowAsLatest(p)) {
+                    HistoryOsmPrimitive latest = new HistoryPrimitiveBuilder().build(p);
+                    setLatest(latest);
+                }
+            }
         }
         initTagTableModels();
         fireModelChange();
     }
-
 
     protected void fireModelChange() {
         setChanged();
@@ -176,6 +254,18 @@ public class HistoryBrowserModel extends Observable {
         return null;
     }
 
+    /**
+     * Sets the {@see HistoryOsmPrimitive} which plays the role of a reference point
+     * in time (see {@see PointInTimeType}).
+     * 
+     * @param reference the reference history primitive. Must not be null.
+     * @throws IllegalArgumentException thrown if reference is null
+     * @throws IllegalStateException thrown if this model isn't a assigned a history yet
+     * @throws IllegalArgumentException if reference isn't an history primitive for the history managed by this mode
+     * 
+     * @see #setHistory(History)
+     * @see PointInTimeType
+     */
     public void setReferencePointInTime(HistoryOsmPrimitive reference) throws IllegalArgumentException, IllegalStateException{
         if (reference == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "reference"));
@@ -195,6 +285,18 @@ public class HistoryBrowserModel extends Observable {
         notifyObservers();
     }
 
+    /**
+     * Sets the {@see HistoryOsmPrimitive} which plays the role of the current point
+     * in time (see {@see PointInTimeType}).
+     * 
+     * @param reference the reference history primitive. Must not be null.
+     * @throws IllegalArgumentException thrown if reference is null
+     * @throws IllegalStateException thrown if this model isn't a assigned a history yet
+     * @throws IllegalArgumentException if reference isn't an history primitive for the history managed by this mode
+     * 
+     * @see #setHistory(History)
+     * @see PointInTimeType
+     */
     public void setCurrentPointInTime(HistoryOsmPrimitive current) throws IllegalArgumentException, IllegalStateException{
         if (current == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "current"));
@@ -251,10 +353,23 @@ public class HistoryBrowserModel extends Observable {
     }
 
     /**
+     * Returns true if <code>primitive</code> is the latest primitive
+     * representing the version currently edited in the current data
+     * layer.
+     * 
+     * @param primitive the primitive to check
+     * @return true if <code>primitive</code> is the latest primitive
+     */
+    public boolean isLatest(HistoryOsmPrimitive primitive) {
+        if (primitive == null) return false;
+        return primitive == latest;
+    }
+
+    /**
      * The table model for the list of versions in the current history
      *
      */
-    public class VersionTableModel extends DefaultTableModel {
+    public class VersionTableModel extends DefaultTableModel{
 
         private VersionTableModel() {
         }
@@ -263,14 +378,22 @@ public class HistoryBrowserModel extends Observable {
         public int getRowCount() {
             if (history == null)
                 return 0;
-            return history.getNumVersions();
+            int ret = history.getNumVersions();
+            if (latest != null) {
+                ret++;
+            }
+            return ret;
         }
 
         @Override
         public Object getValueAt(int row, int column) {
             if(history == null)
                 return null;
-            return history.get(row);
+            if (row < history.getNumVersions())
+                return history.get(row);
+            if (row == history.getNumVersions())
+                return latest;
+            return null;
         }
 
         @Override
@@ -280,6 +403,12 @@ public class HistoryBrowserModel extends Observable {
 
         public void setReferencePointInTime(int row) {
             if (history == null) return;
+            if (row == history.getNumVersions()) {
+                if (latest != null) {
+                    HistoryBrowserModel.this.setReferencePointInTime(latest);
+                }
+                return;
+            }
             if (row < 0 || row > history.getNumVersions()) return;
             HistoryOsmPrimitive reference = history.get(row);
             HistoryBrowserModel.this.setReferencePointInTime(reference);
@@ -287,6 +416,12 @@ public class HistoryBrowserModel extends Observable {
 
         public void setCurrentPointInTime(int row) {
             if (history == null) return;
+            if (row == history.getNumVersions()) {
+                if (latest != null) {
+                    HistoryBrowserModel.this.setCurrentPointInTime(latest);
+                }
+                return;
+            }
             if (row < 0 || row > history.getNumVersions()) return;
             HistoryOsmPrimitive current = history.get(row);
             HistoryBrowserModel.this.setCurrentPointInTime(current);
@@ -294,13 +429,26 @@ public class HistoryBrowserModel extends Observable {
 
         public boolean isReferencePointInTime(int row) {
             if (history == null) return false;
+            if (row == history.getNumVersions())
+                return latest == reference;
             if (row < 0 || row > history.getNumVersions()) return false;
             HistoryOsmPrimitive p = history.get(row);
-            return p.equals(reference);
+            return p == reference;
         }
 
         public HistoryOsmPrimitive getPrimitive(int row) {
             return history.get(row);
+        }
+
+        public boolean isLatest(int row) {
+            return row >= history.getNumVersions();
+        }
+
+        public OsmPrimitive getLatest() {
+            if (latest == null) return null;
+            if (getEditLayer() == null) return null;
+            OsmPrimitive p = getEditLayer().data.getPrimitiveById(latest.getId(), latest.getType());
+            return p;
         }
     }
 
@@ -468,6 +616,13 @@ public class HistoryBrowserModel extends Observable {
             return way.getNodes().get(row);
         }
 
+        public PrimitiveId getNodeId(int row) {
+            HistoryWay way = getWay();
+            if (way == null) return null;
+            if (row > way.getNumNodes()) return null;
+            return new SimplePrimitiveId(way.getNodeId(row), OsmPrimitiveType.NODE);
+        }
+
         @Override
         public boolean isCellEditable(int row, int column) {
             return false;
@@ -584,6 +739,167 @@ public class HistoryBrowserModel extends Observable {
             if (thisRelation == null || oppositeRelation == null)
                 return false;
             return oppositeRelation.getMembers().contains(thisRelation.getMembers().get(row));
+        }
+    }
+
+    protected void setLatest(HistoryOsmPrimitive latest) {
+        if (latest == null) {
+            if (this.current == this.latest) {
+                this.current = history.getLatest();
+            }
+            if (this.reference == this.latest) {
+                this.current = history.getLatest();
+            }
+            this.latest = null;
+        } else {
+            if (this.current == this.latest) {
+                this.current = latest;
+            }
+            if (this.reference == this.latest) {
+                this.reference = latest;
+            }
+            this.latest = latest;
+        }
+        fireModelChange();
+    }
+
+    /**
+     * Removes this model as listener for data change and layer change
+     * events.
+     * 
+     */
+    public void unlinkAsListener() {
+        if (getEditLayer() != null) {
+            getEditLayer().data.removeDataSetListener(this);
+        }
+        Layer.listeners.remove(this);
+
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* DataSetListener                                                        */
+    /* ---------------------------------------------------------------------- */
+    public void nodeMoved(Node node) {
+        if (!node.isNew() && node.getId() == history.getId()) {
+            setLatest(new HistoryPrimitiveBuilder().build(node));
+        }
+    }
+
+    public void primtivesAdded(Collection<? extends OsmPrimitive> added) {
+        if (added == null || added.isEmpty()) return;
+        for (OsmPrimitive p: added) {
+            if (canShowAsLatest(p)) {
+                setLatest(new HistoryPrimitiveBuilder().build(p));
+            }
+        }
+    }
+
+    public void primtivesRemoved(Collection<? extends OsmPrimitive> removed) {
+        if (removed == null || removed.isEmpty()) return;
+        for (OsmPrimitive p: removed) {
+            if (!p.isNew() && p.getId() == history.getId()) {
+                setLatest(null);
+            }
+        }
+    }
+
+    public void relationMembersChanged(Relation r) {
+        if (!r.isNew() && r.getId() == history.getId()) {
+            setLatest(new HistoryPrimitiveBuilder().build(r));
+        }
+    }
+
+    public void tagsChanged(OsmPrimitive prim) {
+        if (!prim.isNew() && prim.getId() == history.getId()) {
+            setLatest(new HistoryPrimitiveBuilder().build(prim));
+        }
+    }
+
+    public void wayNodesChanged(Way way) {
+        if (!way.isNew() && way.getId() == history.getId()) {
+            setLatest(new HistoryPrimitiveBuilder().build(way));
+        }
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* DataChangeListener                                                    */
+    /* ---------------------------------------------------------------------- */
+    public void dataChanged(OsmDataLayer l) {
+        if (l != getEditLayer()) return;
+        OsmPrimitive primitive = l.data.getPrimitiveById(history.getId(), history.getType());
+        HistoryOsmPrimitive latest;
+        if (canShowAsLatest(primitive)) {
+            latest = new HistoryPrimitiveBuilder().build(primitive);
+        } else {
+            latest = null;
+        }
+        setLatest(latest);
+        fireModelChange();
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /* LayerChangeListener                                                    */
+    /* ---------------------------------------------------------------------- */
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        if (oldLayer != null && oldLayer instanceof OsmDataLayer) {
+            OsmDataLayer l = (OsmDataLayer)oldLayer;
+            l.data.removeDataSetListener(this);
+            l.listenerDataChanged.remove(this);
+        }
+        if (newLayer == null || ! (newLayer instanceof OsmDataLayer)) {
+            latest = null;
+            fireModelChange();
+            return;
+        }
+        OsmDataLayer l = (OsmDataLayer)newLayer;
+        l.data.addDataSetListener(this);
+        l.listenerDataChanged.add(this);
+        OsmPrimitive primitive = l.data.getPrimitiveById(history.getId(), history.getType());
+        HistoryOsmPrimitive latest;
+        if (canShowAsLatest(primitive)) {
+            latest = new HistoryPrimitiveBuilder().build(primitive);
+        } else {
+            latest = null;
+        }
+        setLatest(latest);
+        fireModelChange();
+    }
+
+    public void layerAdded(Layer newLayer) {}
+    public void layerRemoved(Layer oldLayer) {}
+
+    /**
+     * Creates a {@see HistoryOsmPrimitive} from a {@see OsmPrimitive}
+     * 
+     */
+    class HistoryPrimitiveBuilder extends AbstractVisitor {
+        private HistoryOsmPrimitive clone;
+
+        public void visit(Node n) {
+            clone = new HistoryNode(n.getId(), n.getVersion(), n.isVisible(),n.getUser().getName(), n.getUser().getId(), 0, n.getTimestamp(), n.getCoor());
+            clone.setTags(n.getKeys());
+        }
+
+        public void visit(Relation r) {
+            clone = new HistoryRelation(r.getId(), r.getVersion(), r.isVisible(),r.getUser().getName(), r.getUser().getId(), 0, r.getTimestamp());
+            clone.setTags(r.getKeys());
+            HistoryRelation hr = (HistoryRelation)clone;
+            for (RelationMember rm : r.getMembers()) {
+                hr.addMember(new org.openstreetmap.josm.data.osm.history.RelationMember(rm.getRole(), rm.getType(), rm.getUniqueId()));
+            }
+        }
+
+        public void visit(Way w) {
+            clone = new HistoryWay(w.getId(), w.getVersion(), w.isVisible(),w.getUser().getName(), w.getUser().getId(), 0, w.getTimestamp());
+            clone.setTags(w.getKeys());
+            for (Node n: w.getNodes()) {
+                ((HistoryWay)clone).addNode(n.getUniqueId());
+            }
+        }
+
+        public HistoryOsmPrimitive build(OsmPrimitive primitive) {
+            primitive.visit(this);
+            return clone;
         }
     }
 }

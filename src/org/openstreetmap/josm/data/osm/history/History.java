@@ -8,10 +8,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 
+/**
+ * Represents the history of an OSM primitive. The history consists
+ * of a list of object snapshots with a specific version.
+ * 
+ */
 public class History{
     private static interface FilterPredicate {
         boolean matches(HistoryOsmPrimitive primitive);
@@ -24,16 +30,36 @@ public class History{
                 out.add(primitive);
             }
         }
-        return new History(history.id, out);
+        return new History(history.id, history.type,out);
     }
 
+    /** the list of object snapshots */
     private ArrayList<HistoryOsmPrimitive> versions;
-    long id;
+    /** the object id */
+    private long id;
+    private OsmPrimitiveType type;
 
-    protected History(long id, List<HistoryOsmPrimitive> versions) {
+    /**
+     * Creates a new history for an OSM primitive
+     * 
+     * @param id the id. >0 required.
+     * @param type the primitive type. Must not be null.
+     * @param versions a list of versions. Can be null.
+     * @throws IllegalArgumentException thrown if id <= 0
+     * @throws IllegalArgumentException if type is null
+     * 
+     */
+    protected History(long id, OsmPrimitiveType type, List<HistoryOsmPrimitive> versions) {
+        if (id <= 0)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected, got {1}", "id", id));
+        if (type == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "type"));
         this.id = id;
+        this.type = type;
         this.versions = new ArrayList<HistoryOsmPrimitive>();
-        this.versions.addAll(versions);
+        if (versions != null) {
+            this.versions.addAll(versions);
+        }
     }
 
     public History sortAscending() {
@@ -46,7 +72,7 @@ public class History{
                     }
                 }
         );
-        return new History(id, copy);
+        return new History(id, type, copy);
     }
 
     public History sortDescending() {
@@ -59,7 +85,7 @@ public class History{
                     }
                 }
         );
-        return new History(id, copy);
+        return new History(id, type,copy);
     }
 
     public History from(final Date fromDate) {
@@ -140,6 +166,15 @@ public class History{
         return id;
     }
 
+    /**
+     * Replies the primitive id for this history.
+     * 
+     * @return the primitive id
+     */
+    public PrimitiveId getPrimitmiveId() {
+        return new SimplePrimitiveId(id, type);
+    }
+
     public boolean contains(long version){
         for (HistoryOsmPrimitive primitive: versions) {
             if (primitive.matches(id,version))
@@ -148,27 +183,34 @@ public class History{
         return false;
     }
 
+    /**
+     * Replies the history primitive with version <code>version</code>. null,
+     * if no such primitive exists.
+     * 
+     * @param version the version
+     * @return the history primitive with version <code>version</code>
+     */
     public HistoryOsmPrimitive getByVersion(long version) {
         for (HistoryOsmPrimitive primitive: versions) {
             if (primitive.matches(id,version))
                 return primitive;
         }
-        throw new NoSuchElementException(tr("There's no primitive with version {0} in this history.", version));
+        return null;
     }
 
     public HistoryOsmPrimitive getByDate(Date date) {
-        sortAscending();
+        History h = sortAscending();
 
-        if (versions.isEmpty())
-            throw new NoSuchElementException(tr("There's no version valid at date ''{0}'' in this history.", date));
-        if (get(0).getTimestamp().compareTo(date)> 0)
-            throw new NoSuchElementException(tr("There's no version valid at date ''{0}'' in this history.", date));
-        for (int i = 1; i < versions.size();i++) {
-            if (get(i-1).getTimestamp().compareTo(date) <= 0
-                    && get(i).getTimestamp().compareTo(date) >= 0)
-                return get(i);
+        if (h.versions.isEmpty())
+            return null;
+        if (h.get(0).getTimestamp().compareTo(date)> 0)
+            return null;
+        for (int i = 1; i < h.versions.size();i++) {
+            if (h.get(i-1).getTimestamp().compareTo(date) <= 0
+                    && h.get(i).getTimestamp().compareTo(date) >= 0)
+                return h.get(i);
         }
-        return getLatest();
+        return h.getLatest();
     }
 
     public HistoryOsmPrimitive get(int idx) {
@@ -179,13 +221,13 @@ public class History{
 
     public HistoryOsmPrimitive getEarliest() {
         if (isEmpty())
-            throw new NoSuchElementException(tr("No earliest version found. History is empty."));
+            return null;
         return sortAscending().versions.get(0);
     }
 
     public HistoryOsmPrimitive getLatest() {
         if (isEmpty())
-            throw new NoSuchElementException(tr("No latest version found. History is empty."));
+            return null;
         return sortDescending().versions.get(0);
     }
 
@@ -198,8 +240,6 @@ public class History{
     }
 
     public OsmPrimitiveType getType() {
-        if (isEmpty())
-            throw new NoSuchElementException(tr("No type found. History is empty."));
-        return versions.get(0).getType();
+        return type;
     }
 }

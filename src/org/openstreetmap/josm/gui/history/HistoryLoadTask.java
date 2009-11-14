@@ -6,11 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
@@ -44,12 +45,12 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     private boolean cancelled = false;
     private Exception lastException  = null;
-    private Map<Long, OsmPrimitiveType> toLoad;
+    private HashSet<PrimitiveId> toLoad;
     private HistoryDataSet loadedData;
 
     public HistoryLoadTask() {
         super(tr("Load history"), true);
-        toLoad = new HashMap<Long, OsmPrimitiveType>();
+        toLoad = new HashSet<PrimitiveId>();
     }
 
     /**
@@ -59,14 +60,28 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      * @param type the object type
      * @return this task
      */
-    public HistoryLoadTask add(long id, OsmPrimitiveType type) {
+    public HistoryLoadTask add(long id, OsmPrimitiveType type) throws IllegalArgumentException {
         if (id <= 0)
-            throw new IllegalArgumentException(tr("ID > 0 expected. Got {0}.", id));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected. Got {1}.", "id", id));
         if (type == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "type"));
-        if (!toLoad.containsKey(id)) {
-            toLoad.put(id, type);
-        }
+        SimplePrimitiveId pid = new SimplePrimitiveId(id, type);
+        toLoad.add(pid);
+        return this;
+    }
+
+    /**
+     * Adds an object whose history is to be loaded.
+     * 
+     * @param pid  the primitive id. Must not be null. Id > 0 required.
+     * @return this task
+     */
+    public HistoryLoadTask add(PrimitiveId pid) throws IllegalArgumentException {
+        if (pid == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "pid"));
+        if (pid.getUniqueId() <= 0)
+            throw new IllegalArgumentException(tr("id in parameter ''{0}'' > 0 expected, got {1}.", "pid", pid.getUniqueId()));
+        toLoad.add(pid);
         return this;
     }
 
@@ -80,9 +95,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     public HistoryLoadTask add(HistoryOsmPrimitive primitive) throws IllegalArgumentException  {
         if (primitive == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitive"));
-        if (!toLoad.containsKey(primitive.getId())) {
-            toLoad.put(primitive.getId(), primitive.getType());
-        }
+        toLoad.add(primitive.getPrimitiveId());
         return this;
     }
 
@@ -96,9 +109,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     public HistoryLoadTask add(History history)throws IllegalArgumentException {
         if (history == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "history"));
-        if (!toLoad.containsKey(history.getId())) {
-            toLoad.put(history.getId(), history.getEarliest().getType());
-        }
+        toLoad.add(history.getPrimitmiveId());
         return this;
     }
 
@@ -115,8 +126,8 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitive"));
         if (primitive.getId() <= 0)
             throw new IllegalArgumentException(tr("Object id > 0 expected. Got {0}", primitive.getId()));
-
-        return add(primitive.getId(), OsmPrimitiveType.from(primitive));
+        toLoad.add(primitive.getPrimitiveId());
+        return this;
     }
 
     /**
@@ -160,25 +171,22 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         loadedData = new HistoryDataSet();
         try {
-            for(Map.Entry<Long, OsmPrimitiveType> entry: toLoad.entrySet()) {
+            for(PrimitiveId pid: toLoad) {
                 if (cancelled) {
                     break;
                 }
-                if (entry.getKey() == 0) {
-                    continue;
-                }
                 String msg = "";
-                switch(entry.getValue()) {
-                    case NODE: msg = marktr("Loading history for node {0}"); break;
-                    case WAY: msg = marktr("Loading history for way {0}"); break;
-                    case RELATION: msg = marktr("Loading history for relation {0}"); break;
+                switch(pid.getType()) {
+                case NODE: msg = marktr("Loading history for node {0}"); break;
+                case WAY: msg = marktr("Loading history for way {0}"); break;
+                case RELATION: msg = marktr("Loading history for relation {0}"); break;
                 }
                 progressMonitor.indeterminateSubTask(tr(msg,
-                        Long.toString(entry.getKey())));
+                        Long.toString(pid.getUniqueId())));
                 OsmServerHistoryReader reader = null;
                 HistoryDataSet ds = null;
                 try {
-                    reader = new OsmServerHistoryReader(entry.getValue(), entry.getKey());
+                    reader = new OsmServerHistoryReader(pid.getType(), pid.getUniqueId());
                     ds = reader.parseHistory(progressMonitor.createSubTaskMonitor(1, false));
                 } catch(OsmTransferException e) {
                     if (cancelled)

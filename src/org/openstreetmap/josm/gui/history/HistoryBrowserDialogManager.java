@@ -3,12 +3,17 @@ package org.openstreetmap.josm.gui.history;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.history.History;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
-public class HistoryBrowserDialogManager {
+public class HistoryBrowserDialogManager implements LayerChangeListener {
     static private HistoryBrowserDialogManager instance;
     static public HistoryBrowserDialogManager getInstance() {
         if (instance == null) {
@@ -21,6 +26,7 @@ public class HistoryBrowserDialogManager {
 
     protected HistoryBrowserDialogManager() {
         dialogs = new HashMap<Long, HistoryBrowserDialog>();
+        Layer.listeners.add(this);
     }
 
     public boolean existsDialog(long id) {
@@ -77,5 +83,43 @@ public class HistoryBrowserDialogManager {
         }
         dialog.setVisible(false);
         dialog.dispose();
+    }
+
+    /**
+     * Hides and destroys all currently visible history browser dialogs
+     * 
+     */
+    public void hideAll() {
+        ArrayList<HistoryBrowserDialog> dialogs = new ArrayList<HistoryBrowserDialog>();
+        dialogs.addAll(this.dialogs.values());
+        for (HistoryBrowserDialog dialog: dialogs) {
+            dialog.unlinkAsListener();
+            hide(dialog);
+        }
+    }
+
+    public void show(History h) {
+        if (h == null)
+            return;
+        if (existsDialog(h.getId())) {
+            show(h.getId());
+        } else {
+            HistoryBrowserDialog dialog = new HistoryBrowserDialog(h);
+            show(h.getId(), dialog);
+        }
+    }
+
+    /* ----------------------------------------------------------------------------- */
+    /* LayerChangeListener                                                           */
+    /* ----------------------------------------------------------------------------- */
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {}
+    public void layerAdded(Layer newLayer) {}
+
+    public void layerRemoved(Layer oldLayer) {
+        // remove all history browsers if the number of layers drops to 0
+        //
+        if (Main.map.mapView.getNumLayers() == 0) {
+            hideAll();
+        }
     }
 }

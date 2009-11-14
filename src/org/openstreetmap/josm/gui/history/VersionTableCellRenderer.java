@@ -14,8 +14,11 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -43,16 +46,13 @@ public class VersionTableCellRenderer extends JLabel implements TableCellRendere
         icons.put(OsmPrimitiveType.RELATION, ImageProvider.get("data", "relation"));
     }
 
-    protected void renderIcon(HistoryOsmPrimitive primitive) {
-        ImageIcon icon = null;
-        if (primitive != null) {
-            icon = icons.get(primitive.getType());
-        }
+    protected void renderIcon(OsmPrimitiveType type) {
+        ImageIcon icon = type == null? null : icons.get(type);
         setIcon(icon);
     }
 
     protected void renderText(HistoryOsmPrimitive primitive) {
-        // render lable text
+        // render label text
         //
         StringBuilder sb = new StringBuilder();
         if (primitive == null) {
@@ -85,6 +85,44 @@ public class VersionTableCellRenderer extends JLabel implements TableCellRendere
         setToolTipText(sb.toString());
     }
 
+    protected OsmDataLayer getEditLayer() {
+        try {
+            return Main.map.mapView.getEditLayer();
+        } catch(NullPointerException e) {
+            return null;
+        }
+    }
+
+    protected void renderLatestText(OsmPrimitive primitive) {
+        // -- label text
+        StringBuffer sb = new StringBuffer();
+        if (primitive == null) {
+            setText("");
+            return;
+        }
+        if (primitive.isModified()) {
+            sb.append("*");
+        }
+        sb.append(tr("Version {0} in editor", primitive.getVersion()));
+        if (primitive.isDeleted()) {
+            sb.append(tr("[deleted]"));
+        }
+        setText(sb.toString());
+
+        // -- tooltip text
+        sb = new StringBuffer();
+        OsmDataLayer l = getEditLayer();
+
+        sb.append(
+                tr(
+                        "Version {0} currently edited in data layer ''{1}''",
+                        primitive.getId(),
+                        l == null ? tr("unknown") : l.getName()
+                )
+        );
+        setToolTipText(sb.toString());
+    }
+
     protected void renderBackground(JTable table, int row, boolean isSelected) {
         Color bgColor = Color.WHITE;
         if (isSelected) {
@@ -95,13 +133,25 @@ public class VersionTableCellRenderer extends JLabel implements TableCellRendere
         setBackground(bgColor);
     }
 
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
-            int row, int column) {
-
-        HistoryOsmPrimitive primitive = (HistoryOsmPrimitive)value;
-        renderIcon(primitive);
+    public void renderVersionFromHistory(HistoryOsmPrimitive primitive, JTable table, int row, boolean isSelected) {
+        renderIcon(primitive.getType());
         renderText(primitive);
         renderBackground(table, row, isSelected);
+    }
+
+    public void renderLatest(OsmPrimitive primitive, JTable table, int row, boolean isSelected) {
+        renderIcon(primitive.getType());
+        renderLatestText(getModel(table).getLatest());
+        renderBackground(table, row, isSelected);
+    }
+
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+            int row, int column) {
+        if (getModel(table).isLatest(row)) {
+            renderLatest(getModel(table).getLatest(),table, row, isSelected);
+        } else {
+            renderVersionFromHistory((HistoryOsmPrimitive)value, table, row, isSelected);
+        }
         return this;
     }
 

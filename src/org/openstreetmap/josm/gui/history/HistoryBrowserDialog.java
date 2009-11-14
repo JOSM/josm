@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -16,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSetListener;
@@ -23,7 +25,6 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
-import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 /**
  * This is non-modal dialog, always showing on top, which displays history information
@@ -34,6 +35,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
 
     /** the embedded browser */
     private HistoryBrowser browser;
+    private CloseAction closeAction;
 
     /**
      * displays the title for this dialog
@@ -43,9 +45,9 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
     protected void renderTitle(History h) {
         String title = "";
         switch(h.getEarliest().getType()) {
-            case NODE:  title = marktr("History for node {0}"); break;
-            case WAY: title = marktr("History for way {0}"); break;
-            case RELATION:  title = marktr("History for relation {0}"); break;
+        case NODE:  title = marktr("History for node {0}"); break;
+        case WAY: title = marktr("History for way {0}"); break;
+        case RELATION:  title = marktr("History for relation {0}"); break;
         }
         setTitle(tr(
                 title,
@@ -69,7 +71,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         btn.setName("btn.reload");
         pnl.add(btn);
 
-        btn = new SideButton(new CloseAction());
+        btn = new SideButton(closeAction = new CloseAction());
         btn.setName("btn.close");
         pnl.add(btn);
 
@@ -105,12 +107,16 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         browser.populate(history);
     }
 
-    public void historyUpdated(HistoryDataSet source, long primitiveId) {
-        if (primitiveId == browser.getHistory().getId()) {
+    public void historyUpdated(HistoryDataSet source, PrimitiveId primitiveId) {
+        if (primitiveId == null) {
+            browser.populate(source.getHistory(browser.getHistory().getPrimitmiveId()));
+        } else if (primitiveId.equals(browser.getHistory().getPrimitmiveId())) {
             browser.populate(source.getHistory(primitiveId));
-        } else if (primitiveId == 0) {
-            browser.populate(source.getHistory(browser.getHistory().getId()));
         }
+    }
+
+    public void unlinkAsListener() {
+        getHistoryBrowser().getModel().unlinkAsListener();
     }
 
     class CloseAction extends AbstractAction {
@@ -120,9 +126,14 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
             putValue(SMALL_ICON, ImageProvider.get("ok"));
         }
 
-        public void actionPerformed(ActionEvent e) {
+        public void run() {
+            getHistoryBrowser().getModel().unlinkAsListener();
             HistoryDataSet.getInstance().removeHistoryDataSetListener(HistoryBrowserDialog.this);
             HistoryBrowserDialogManager.getInstance().hide(HistoryBrowserDialog.this);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            run();
         }
     }
 
@@ -143,8 +154,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
     class WindowClosingAdapter extends WindowAdapter {
         @Override
         public void windowClosing(WindowEvent e) {
-            HistoryDataSet.getInstance().removeHistoryDataSetListener(HistoryBrowserDialog.this);
-            HistoryBrowserDialogManager.getInstance().hide(HistoryBrowserDialog.this);
+            closeAction.run();
         }
     }
 

@@ -174,6 +174,8 @@ public class HelpBrowser extends JFrame {
      * 
      * @return the current URL
      */
+
+
     public String getUrl() {
         return url;
     }

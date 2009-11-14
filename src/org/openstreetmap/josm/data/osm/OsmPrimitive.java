@@ -810,7 +810,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @param other the other primitive. Must not be null.
      * @throws IllegalArgumentException thrown if other is null.
      * @throws DataIntegrityProblemException thrown if either this is new and other is not, or other is new and this is not
-     * @throws DataIntegrityProblemException thrown if other is new and other.getId() != this.getId()
+     * @throws DataIntegrityProblemException thrown if other isn't new and other.getId() != this.getId()
      */
     public void mergeFrom(OsmPrimitive other) {
         if (other == null)
@@ -1024,5 +1024,13 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      */
     public abstract void updatePosition();
 
+    /**
+     * Replies the unique primitive id for this primitive
+     * 
+     * @return the unique primitive id for this primitive
+     */
+    public PrimitiveId getPrimitiveId() {
+        return new SimplePrimitiveId(getUniqueId(), getType());
+    }
 }
 

@@ -36,12 +36,12 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSetListener;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.history.HistoryBrowserDialog;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.gui.history.HistoryLoadTask;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -135,7 +135,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         HistoryDataSet.getInstance().addHistoryDataSetListener(this);
     }
 
-    public void historyUpdated(HistoryDataSet source, long primitiveId) {
+    public void historyUpdated(HistoryDataSet source, PrimitiveId primitiveId) {
         model.refresh();
     }
 
@@ -205,7 +205,17 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         }
 
         public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-            refresh();
+            data.clear();
+            selectionModel.clearSelection();
+            if (newSelection == null || newSelection.isEmpty()) return;
+            for (OsmPrimitive primitive: newSelection) {
+                if (primitive.isNew()) {
+                    continue;
+                }
+                data.add(primitive);
+            }
+            fireTableDataChanged();
+            selectionModel.addSelectionInterval(0, data.size()-1);
         }
 
         public List<OsmPrimitive> getPrimitives(int [] rows) {
@@ -296,28 +306,11 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         protected List<OsmPrimitive> filterPrimitivesWithUnloadedHistory(Collection<OsmPrimitive> primitives) {
             ArrayList<OsmPrimitive> ret = new ArrayList<OsmPrimitive>(primitives.size());
             for (OsmPrimitive p: primitives) {
-                if (HistoryDataSet.getInstance().getHistory(p.getId()) == null) {
+                if (HistoryDataSet.getInstance().getHistory(p.getPrimitiveId()) == null) {
                     ret.add(p);
                 }
             }
             return ret;
-        }
-
-        /**
-         * shows the {@see HistoryBrowserDialog} for a given {@see History}
-         *
-         * @param h the history. Must not be null.
-         * @exception IllegalArgumentException thrown, if h is null
-         */
-        protected void showHistory(History h) throws IllegalArgumentException {
-            if (h == null)
-                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "h"));
-            if (HistoryBrowserDialogManager.getInstance().existsDialog(h.getId())) {
-                HistoryBrowserDialogManager.getInstance().show(h.getId());
-            } else {
-                HistoryBrowserDialog dialog = new HistoryBrowserDialog(h);
-                HistoryBrowserDialogManager.getInstance().show(h.getId(), dialog);
-            }
         }
 
         public void showHistory(final List<OsmPrimitive> primitives) {
@@ -331,11 +324,11 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
             Runnable r = new Runnable() {
                 public void run() {
                     for (OsmPrimitive p : primitives) {
-                        History h = HistoryDataSet.getInstance().getHistory(p.getId());
+                        History h = HistoryDataSet.getInstance().getHistory(p.getPrimitiveId());
                         if (h == null) {
                             continue;
                         }
-                        showHistory(h);
+                        HistoryBrowserDialogManager.getInstance().show(h);
                     }
                 }
             };
