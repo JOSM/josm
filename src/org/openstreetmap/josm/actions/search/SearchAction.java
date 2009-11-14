@@ -7,8 +7,11 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
@@ -16,16 +19,16 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.data.osm.Filter;
-import org.openstreetmap.josm.data.osm.DataSet;
 
 public class SearchAction extends JosmAction{
 
@@ -48,18 +51,9 @@ public class SearchAction extends JosmAction{
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        if (Main.map == null) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("Can't search because there is no loaded data."),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-            );
-            return;
-        }
         SearchSetting s = lastSearch;
         if (s == null) {
-            s = new SearchSetting("", SearchMode.replace, false, false);
+            s = new SearchSetting("", SearchMode.replace, false /* case insensitive */, false /* no regexp */);
         }
         SearchSetting se = showSearchDialog(s);
         if(se != null) {
@@ -67,11 +61,31 @@ public class SearchAction extends JosmAction{
         }
     }
 
+    public static List<String> getSearchExpressionHistory() {
+        ArrayList<String> ret = new ArrayList<String>(searchHistory.size());
+        for (SearchSetting ss: searchHistory) {
+            ret.add(ss.text);
+        }
+        return ret;
+    }
+
     public static SearchSetting showSearchDialog(SearchSetting initialValues) {
+
+        // -- prepare the combo box with the search expressions
+        //
         JLabel label = new JLabel( initialValues instanceof Filter ? tr("Please enter a filter string.") : tr("Please enter a search string."));
-        final JTextField input = new JTextField(initialValues.text);
-        input.selectAll();
-        input.requestFocusInWindow();
+        final HistoryComboBox hcbSearchString = new HistoryComboBox();
+        hcbSearchString.setText(initialValues.text);
+        hcbSearchString.getEditor().selectAll();
+        hcbSearchString.getEditor().getEditorComponent().requestFocusInWindow();
+        hcbSearchString.setToolTipText(tr("Enter the search expression"));
+        // we have to reverse the history, because ComboBoxHistory will reverse it again
+        // in addElement()
+        //
+        List<String> searchExpressionHistory = getSearchExpressionHistory();
+        Collections.reverse(searchExpressionHistory);
+        hcbSearchString.setPossibleItems(searchExpressionHistory);
+
         JRadioButton replace = new JRadioButton(tr("replace selection"), initialValues.mode == SearchMode.replace);
         JRadioButton add = new JRadioButton(tr("add to selection"), initialValues.mode == SearchMode.add);
         JRadioButton remove = new JRadioButton(tr("remove from selection"), initialValues.mode == SearchMode.remove);
@@ -87,9 +101,8 @@ public class SearchAction extends JosmAction{
 
         JPanel left = new JPanel(new GridBagLayout());
         left.add(label, GBC.eop());
-        left.add(input, GBC.eop().fill(GBC.HORIZONTAL));
+        left.add(hcbSearchString, GBC.eop().fill(GBC.HORIZONTAL));
         left.add(replace, GBC.eol());
-        DataSet ds = Main.main.getCurrentDataSet();
         left.add(add, GBC.eol());
         left.add(remove, GBC.eol());
         left.add(in_selection, GBC.eop());
@@ -146,7 +159,7 @@ public class SearchAction extends JosmAction{
         SearchMode mode = replace.isSelected() ? SearchAction.SearchMode.replace
                 : (add.isSelected() ? SearchAction.SearchMode.add
                         : (remove.isSelected() ? SearchAction.SearchMode.remove : SearchAction.SearchMode.in_selection));
-        initialValues.text = input.getText();
+        initialValues.text = hcbSearchString.getText();
         initialValues.mode = mode;
         initialValues.caseSensitive = caseSensitive.isSelected();
         initialValues.regexSearch = regexSearch.isSelected();
@@ -163,7 +176,8 @@ public class SearchAction extends JosmAction{
         if(searchHistory.isEmpty() || !s.equals(searchHistory.getFirst())) {
             searchHistory.addFirst(new SearchSetting(s));
         }
-        while (searchHistory.size() > Main.pref.getInteger("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE)) {
+        int maxsize = Main.pref.getInteger("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE);
+        while (searchHistory.size() > maxsize) {
             searchHistory.removeLast();
         }
         lastSearch = new SearchSetting(s);
