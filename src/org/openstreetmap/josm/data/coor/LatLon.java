@@ -27,7 +27,7 @@ public class LatLon extends Coordinate {
     /**
      * Replies true if lat is in the range [-90,90]
      * 
-     * @param lat the latitude 
+     * @param lat the latitude
      * @return true if lat is in the range [-90,90]
      */
     public static boolean isValidLat(double lat) {
@@ -37,13 +37,13 @@ public class LatLon extends Coordinate {
     /**
      * Replies true if lon is in the range [-180,180]
      * 
-     * @param lon the longitude 
+     * @param lon the longitude
      * @return true if lon is in the range [-180,180]
      */
     public static boolean isValidLon(double lon) {
         return lon >= -180d && lon <= 180d;
     }
-    
+
     public static String dms(double pCoordinate) {
 
         double tAbsCoord = Math.abs(pCoordinate);
@@ -72,8 +72,8 @@ public class LatLon extends Coordinate {
         switch(d) {
         case DECIMAL_DEGREES: return cDdFormatter.format(y);
         case DEGREES_MINUTES_SECONDS: return dms(y) + ((y < 0) ?
-            /* short symbol for South */ tr("S") :
-            /* short symbol for North */ tr("N"));
+                /* short symbol for South */ tr("S") :
+                    /* short symbol for North */ tr("N"));
         default: return "ERR";
         }
     }
@@ -86,8 +86,8 @@ public class LatLon extends Coordinate {
         switch(d) {
         case DECIMAL_DEGREES: return cDdFormatter.format(x);
         case DEGREES_MINUTES_SECONDS: return dms(x) + ((x < 0) ?
-            /* short symbol for West */ tr("W") :
-            /* short symbol for East */ tr("E"));
+                /* short symbol for West */ tr("W") :
+                    /* short symbol for East */ tr("E"));
         default: return "ERR";
         }
     }
@@ -177,5 +177,33 @@ public class LatLon extends Coordinate {
 
     @Override public String toString() {
         return "LatLon[lat="+lat()+",lon="+lon()+"]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        long temp;
+        temp = java.lang.Double.doubleToLongBits(x);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = java.lang.Double.doubleToLongBits(y);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Coordinate other = (Coordinate) obj;
+        if (java.lang.Double.doubleToLongBits(x) != java.lang.Double.doubleToLongBits(other.x))
+            return false;
+        if (java.lang.Double.doubleToLongBits(y) != java.lang.Double.doubleToLongBits(other.y))
+            return false;
+        return true;
     }
 }
