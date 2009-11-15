@@ -254,8 +254,7 @@ public final class Way extends OsmPrimitive {
         }
         i = copy.size();
         if (closed && i > 2) {
-            // TODO Should this be copy.addNode(firstNode)?
-            addNode(firstNode());
+            copy.add(copy.get(0));
         } else if (i >= 2 && i <= 3 && copy.get(0) == copy.get(i-1)) {
             copy.remove(i-1);
         }
