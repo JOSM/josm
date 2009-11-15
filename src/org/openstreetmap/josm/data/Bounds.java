@@ -1,11 +1,11 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.geom.Rectangle2D;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * This is a simple data class for "rectangular" areas of the world, given in
@@ -18,7 +18,7 @@ public class Bounds {
      * The minimum and maximum coordinates.
      */
     private LatLon min, max;
-    
+
     public LatLon getMin() {
         return min;
     }
@@ -39,12 +39,12 @@ public class Bounds {
         this.min = b;
         this.max = b;
     }
-    
+
     public Bounds(double minlat, double minlon, double maxlat, double maxlon) {
         this.min = new LatLon(minlat, minlon);
         this.max = new LatLon(maxlat, maxlon);
     }
-    
+
     public Bounds(double [] coords) {
         if (coords == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "coords"));
@@ -53,14 +53,13 @@ public class Bounds {
         this.min = new LatLon(coords[0], coords[1]);
         this.max = new LatLon(coords[2], coords[3]);
     }
-    
+
     public Bounds(String asString, String separator) throws IllegalArgumentException {
         if (asString == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "asString"));
         String[] components = asString.split(separator);
-        if (components.length != 4) {
+        if (components.length != 4)
             throw new IllegalArgumentException(tr("Exactly four doubles excpected in string, got {0}", components.length));
-        }
         double[] values = new double[4];
         for (int i=0; i<4; i++) {
             try {
@@ -72,7 +71,7 @@ public class Bounds {
         this.min = new LatLon(values[0], values[1]);
         this.max = new LatLon(values[2], values[3]);
     }
-    
+
     public Bounds(Bounds other) {
         this.min = new LatLon(other.min);
         this.max = new LatLon(other.max);
@@ -82,7 +81,37 @@ public class Bounds {
         this.min = new LatLon(rect.getMinY(), rect.getMinX());
         this.max = new LatLon(rect.getMaxY(), rect.getMaxX());
     }
-    
+
+    /**
+     * Creates new bounds around a coordinate pair <code>center</code>. The
+     * new bounds shall have an extension in latitude direction of <code>latExtent</code>,
+     * and in longitude direction of <code>lonExtent</code>.
+     * 
+     * @param center  the center coordinate pair. Must not be null.
+     * @param latExtent the latitude extent. > 0 required.
+     * @param lonExtent the longitude extent. > 0 required.
+     * @throws IllegalArgumentException thrown if center is null
+     * @throws IllegalArgumentException thrown if latExtent <= 0
+     * @throws IllegalArgumentException thrown if lonExtent <= 0
+     */
+    public Bounds(LatLon center, double latExtent, double lonExtent) {
+        if (center == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "center"));
+        if (latExtent <= 0.0)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0.0 exptected, got {1}", "latExtent", latExtent));
+        if (lonExtent <= 0.0)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0.0 exptected, got {1}", "lonExtent", lonExtent));
+
+        this.min = new LatLon(
+                center.lat() - latExtent / 2,
+                center.lon() - lonExtent / 2
+        );
+        this.max = new LatLon(
+                center.lat() + latExtent / 2,
+                center.lon() + lonExtent / 2
+        );
+    }
+
     @Override public String toString() {
         return "Bounds["+min.lat()+","+min.lon()+","+max.lat()+","+max.lon()+"]";
     }
@@ -99,10 +128,12 @@ public class Bounds {
      * Extend the bounds if necessary to include the given point.
      */
     public void extend(LatLon ll) {
-        if (ll.lat() < min.lat() || ll.lon() < min.lon())
+        if (ll.lat() < min.lat() || ll.lon() < min.lon()) {
             min = new LatLon(Math.min(ll.lat(), min.lat()), Math.min(ll.lon(), min.lon()));
-        if (ll.lat() > max.lat() || ll.lon() > max.lon())
+        }
+        if (ll.lat() > max.lat() || ll.lon() > max.lon()) {
             max = new LatLon(Math.max(ll.lat(), max.lat()), Math.max(ll.lon(), max.lon()));
+        }
     }
     /**
      * Is the given point within this bounds?
@@ -122,7 +153,7 @@ public class Bounds {
     public Rectangle2D.Double asRect() {
         return new Rectangle2D.Double(min.lon(), min.lat(), max.lon()-min.lon(), max.lat()-min.lat());
     }
-    
+
     public double getArea() {
         return (max.lon() - min.lon()) * (max.lat() - min.lat());
     }
@@ -134,7 +165,7 @@ public class Bounds {
         .append(max.lon());
         return sb.toString();
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
