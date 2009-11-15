@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,8 +49,13 @@ public class User {
      * @param name the name
      */
     public static User  createOsmUser(long uid, String name) {
-        User user = new User(uid, name);
-        userMap.put(user.getId(), user);
+        User user = userMap.get(uid);
+        if (user == null) {
+            user = new User(uid, name);
+            userMap.put(user.getId(), user);
+        }
+        if (!user.getName().equals(name))
+            throw new DataIntegrityProblemException(tr("User with the same uid but different name found"));
         return user;
     }
 
