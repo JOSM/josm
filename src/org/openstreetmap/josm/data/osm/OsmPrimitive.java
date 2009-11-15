@@ -616,7 +616,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             }
             keys.put(key, value);
         }
-        mappaintStyle = null;
         keysChangedImpl();
     }
     /**
@@ -631,7 +630,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
                 keys = null;
             }
         }
-        mappaintStyle = null;
         keysChangedImpl();
     }
 
@@ -642,7 +640,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      */
     public final void removeAll() {
         keys = null;
-        mappaintStyle = null;
         keysChangedImpl();
     }
 
@@ -786,6 +783,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     private void keysChangedImpl() {
+        clearCached();
         updateHasDirectionKeys();
         updateTagged();
         if (dataSet != null) {
