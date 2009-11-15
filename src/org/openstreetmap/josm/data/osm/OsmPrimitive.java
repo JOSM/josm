@@ -98,30 +98,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     public ElemStyle mappaintStyle = null;
     public Integer mappaintDrawnCode = 0;
 
-    public void putError(String text, boolean isError)
-    {
-        checkDataset();
-        List<String> errors = dataSet.getErrors(this);
-        if (errors == null) {
-            errors = new ArrayList<String>();
-        }
-        String s = isError ? tr("Error: {0}", text) : tr("Warning: {0}", text);
-        errors.add(s);
-        dataSet.setErrors(this, errors);
-    }
-    public void clearErrors()
-    {
-        if (dataSet != null) {
-            dataSet.setErrors(this, null);
-        }
-    }
-
-    public List<String> getErrors() {
-        if (dataSet == null)
-            return null;
-        else
-            return dataSet.getErrors(this);
-    }
     /* This should not be called from outside. Fixing the UI to add relevant
        get/set functions calling this implicitely is preferred, so we can have
        transparent cache handling in the future. */
@@ -153,7 +129,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     /**
-     * 
+     *
      * @return DataSet this primitive is part of.
      */
     public DataSet getDataSet() {
@@ -735,12 +711,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     /**
      * Find primitives that reference this primitive. Returns only primitives that are included in the same
      * dataset as this primitive. <br>
-     * 
+     *
      * For example following code will add wnew as referer to all nodes of existingWay, but this method will
      * not return wnew because it's not part of the dataset <br>
-     * 
+     *
      * <code>Way wnew = new Way(existingWay)</code>
-     * 
+     *
      * @return a collection of all primitives that reference this primitive.
      */
 
@@ -808,10 +784,10 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     /**
      * Merges the technical and semantical attributes from <code>other</code> onto this.
-     * 
+     *
      * Both this and other must be new, or both must be assigned an OSM ID. If both this and <code>other</code>
      * have an assigend OSM id, the IDs have to be the same.
-     * 
+     *
      * @param other the other primitive. Must not be null.
      * @throws IllegalArgumentException thrown if other is null.
      * @throws DataIntegrityProblemException thrown if either this is new and other is not, or other is new and this is not
@@ -1031,7 +1007,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     /**
      * Replies the unique primitive id for this primitive
-     * 
+     *
      * @return the unique primitive id for this primitive
      */
     public PrimitiveId getPrimitiveId() {

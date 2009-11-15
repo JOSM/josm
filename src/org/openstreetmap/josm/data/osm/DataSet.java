@@ -873,20 +873,24 @@ public class DataSet implements Cloneable {
     }
 
 
-    // TODO Should be part of validator
-    // This used to be OsmPrimitive.errors. I don't really like that such information is kept here,
-    // but at least it's not such memory waste as having it in (every) OsmPrimitive
+    // TODO Should be completely part of validator
     private Map<OsmPrimitive, List<String>> errors = new HashMap<OsmPrimitive, List<String>>();
 
-    void setErrors(OsmPrimitive primitive, List<String> errors) {
-        if (errors != null && !errors.isEmpty()) {
-            this.errors.put(primitive, errors);
-        } else {
-            this.errors.remove(primitive);
+    public void addError(OsmPrimitive primitive, String error) {
+        List<String> perrors = errors.get(primitive);
+        if (perrors == null) {
+            perrors = new ArrayList<String>();
         }
+        perrors.add(error);
+        errors.put(primitive, perrors);
     }
 
     public List<String> getErrors(OsmPrimitive primitive) {
         return errors.get(primitive);
+    }
+
+    public void clearErrors()
+    {
+        errors.clear();
     }
 }

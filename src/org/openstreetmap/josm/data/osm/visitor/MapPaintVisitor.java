@@ -216,10 +216,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(!isZoomOk(wayStyle))
             return;
 
-        if(fillAreas > dist) {
-            w.clearErrors();
-        }
-
         if(wayStyle==null)
         {
             /* way without style */
@@ -245,7 +241,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 //    profilerVisibleAreas++;
                 drawArea(w, data.isSelected(w) ? selectedColor : areaStyle.color);
                 if(!w.isClosed()) {
-                    w.putError(tr("Area style way is not closed."), true);
+                    putError(w, tr("Area style way is not closed."), true);
                 }
             }
             drawWay(w, areaStyle.line, areaStyle.color, data.isSelected(w));
@@ -478,7 +474,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             {
                 if(errs != null)
                 {
-                    errs.putError(tr("multipolygon way ''{0}'' is not closed.",
+                    putError(errs, tr("multipolygon way ''{0}'' is not closed.",
                             w.getDisplayName(DefaultNameFormatter.getInstance())), true);
                 }
             }
@@ -555,8 +551,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         //if(restrictionDebug)
         //    System.out.println("Restriction: " + r.keys.get("name") + " restriction " + r.keys.get("restriction"));
 
-        r.clearErrors();
-
         Way fromWay = null;
         Way toWay = null;
         OsmPrimitive via = null;
@@ -568,7 +562,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             //    System.out.println("member " + m.member + " selected " + r.selected);
 
             if (m.getMember().isDeleted()) {
-                r.putError(tr("Deleted member ''{0}'' in relation.",
+                putError(r, tr("Deleted member ''{0}'' in relation.",
                         m.getMember().getDisplayName(DefaultNameFormatter.getInstance())), true);
             } else if(m.getMember().incomplete)
                 return;
@@ -579,29 +573,29 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     Way w = m.getWay();
                     if(w.getNodesCount() < 2)
                     {
-                        r.putError(tr("Way ''{0}'' with less than two points.",
+                        putError(r, tr("Way ''{0}'' with less than two points.",
                                 w.getDisplayName(DefaultNameFormatter.getInstance())), true);
                     }
                     else if("from".equals(m.getRole())) {
                         if(fromWay != null) {
-                            r.putError(tr("More than one \"from\" way found."), true);
+                            putError(r, tr("More than one \"from\" way found."), true);
                         } else {
                             fromWay = w;
                         }
                     } else if("to".equals(m.getRole())) {
                         if(toWay != null) {
-                            r.putError(tr("More than one \"to\" way found."), true);
+                            putError(r, tr("More than one \"to\" way found."), true);
                         } else {
                             toWay = w;
                         }
                     } else if("via".equals(m.getRole())) {
                         if(via != null) {
-                            r.putError(tr("More than one \"via\" found."), true);
+                            putError(r, tr("More than one \"via\" found."), true);
                         } else {
                             via = w;
                         }
                     } else {
-                        r.putError(tr("Unknown role ''{0}''.", m.getRole()), true);
+                        putError(r, tr("Unknown role ''{0}''.", m.getRole()), true);
                     }
                 }
                 else if(m.isNode())
@@ -610,29 +604,29 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     if("via".equals(m.getRole()))
                     {
                         if(via != null) {
-                            r.putError(tr("More than one \"via\" found."), true);
+                            putError(r, tr("More than one \"via\" found."), true);
                         } else {
                             via = n;
                         }
                     } else {
-                        r.putError(tr("Unknown role ''{0}''.", m.getRole()), true);
+                        putError(r, tr("Unknown role ''{0}''.", m.getRole()), true);
                     }
                 } else {
-                    r.putError(tr("Unknown member type for ''{0}''.", m.getMember().getDisplayName(DefaultNameFormatter.getInstance())), true);
+                    putError(r, tr("Unknown member type for ''{0}''.", m.getMember().getDisplayName(DefaultNameFormatter.getInstance())), true);
                 }
             }
         }
 
         if (fromWay == null) {
-            r.putError(tr("No \"from\" way found."), true);
+            putError(r, tr("No \"from\" way found."), true);
             return;
         }
         if (toWay == null) {
-            r.putError(tr("No \"to\" way found."), true);
+            putError(r, tr("No \"to\" way found."), true);
             return;
         }
         if (via == null) {
-            r.putError(tr("No \"via\" node or way found."), true);
+            putError(r, tr("No \"via\" node or way found."), true);
             return;
         }
 
@@ -641,11 +635,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         {
             viaNode = (Node) via;
             if(!fromWay.isFirstLastNode(viaNode)) {
-                r.putError(tr("The \"from\" way doesn't start or end at a \"via\" node."), true);
+                putError(r, tr("The \"from\" way doesn't start or end at a \"via\" node."), true);
                 return;
             }
             if(!toWay.isFirstLastNode(viaNode)) {
-                r.putError(tr("The \"to\" way doesn't start or end at a \"via\" node."), true);
+                putError(r, tr("The \"to\" way doesn't start or end at a \"via\" node."), true);
             }
         }
         else
@@ -672,11 +666,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             } else if (!onewayvia && fromWay.isFirstLastNode(lastNode)) {
                 viaNode = lastNode;
             } else {
-                r.putError(tr("The \"from\" way doesn't start or end at the \"via\" way."), true);
+                putError(r, tr("The \"from\" way doesn't start or end at the \"via\" way."), true);
                 return;
             }
             if(!toWay.isFirstLastNode(viaNode == firstNode ? lastNode : firstNode)) {
-                r.putError(tr("The \"to\" way doesn't start or end at the \"via\" way."), true);
+                putError(r, tr("The \"to\" way doesn't start or end at the \"via\" way."), true);
             }
         }
 
@@ -799,7 +793,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         IconElemStyle nodeStyle = getPrimitiveNodeStyle(r);
 
         if (nodeStyle == null) {
-            r.putError(tr("Style for restriction {0} not found.", r.get("restriction")), true);
+            putError(r, tr("Style for restriction {0} not found.", r.get("restriction")), true);
             return;
         }
 
@@ -893,7 +887,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             {
                 if(c > 1 && pdOuter.way != null && pdOuter.way.isClosed())
                 {
-                    r.putError(tr("Intersection between ways ''{0}'' and ''{1}''.",
+                    putError(r, tr("Intersection between ways ''{0}'' and ''{1}''.",
                             pdOuter.way.getDisplayName(DefaultNameFormatter.getInstance()), wInner.getDisplayName(DefaultNameFormatter.getInstance())), true);
                 }
                 if(o == null || o.contains(pdOuter.poly) > 0) {
@@ -905,7 +899,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         {
             if(!incomplete)
             {
-                r.putError(tr("Inner way ''{0}'' is outside.",
+                putError(r, tr("Inner way ''{0}'' is outside.",
                         wInner.getDisplayName(DefaultNameFormatter.getInstance())), true);
             }
             o = outerPolygons.get(0);
@@ -921,12 +915,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         Boolean incomplete = false;
         Boolean drawn = false;
 
-        r.clearErrors();
-
         for (RelationMember m : r.getMembers())
         {
             if (m.getMember().isDeleted()) {
-                r.putError(tr("Deleted member ''{0}'' in relation.",
+                putError(r, tr("Deleted member ''{0}'' in relation.",
                         m.getMember().getDisplayName(DefaultNameFormatter.getInstance())), true);
             } else if(m.getMember().incomplete) {
                 incomplete = true;
@@ -934,7 +926,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 if(m.isWay()) {
                     Way w = m.getWay();
                     if(w.getNodesCount() < 2) {
-                        r.putError(tr("Way ''{0}'' with less than two points.",
+                        putError(r, tr("Way ''{0}'' with less than two points.",
                                 w.getDisplayName(DefaultNameFormatter.getInstance())), true);
                     }
                     else if("inner".equals(m.getRole())) {
@@ -942,7 +934,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     } else if("outer".equals(m.getRole())) {
                         outer.add(w);
                     } else {
-                        r.putError(tr("No useful role ''{0}'' for Way ''{1}''.",
+                        putError(r, tr("No useful role ''{0}'' for Way ''{1}''.",
                                 m.getRole(), w.getDisplayName(DefaultNameFormatter.getInstance())), true);
                         if(!m.hasRole()) {
                             outer.add(w);
@@ -954,7 +946,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 }
                 else
                 {
-                    r.putError(tr("Non-Way ''{0}'' in multipolygon.",
+                    putError(r, tr("Non-Way ''{0}'' in multipolygon.",
                             m.getMember().getDisplayName(DefaultNameFormatter.getInstance())), true);
                 }
             }
@@ -998,7 +990,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             }
             if(outerclosed.size() == 0 && outerjoin.size() == 0)
             {
-                r.putError(tr("No outer way for multipolygon ''{0}''.",
+                putError(r, tr("No outer way for multipolygon ''{0}''.",
                         r.getDisplayName(DefaultNameFormatter.getInstance())), true);
                 visible = true; /* prevent killing remaining ways */
             }
@@ -1058,7 +1050,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     }
                     if(wayStyle.equals(innerStyle))
                     {
-                        r.putError(tr("Style for inner way ''{0}'' equals multipolygon.",
+                        putError(r, tr("Style for inner way ''{0}'' equals multipolygon.",
                                 wInner.getDisplayName(DefaultNameFormatter.getInstance())), false);
                         if(!data.isSelected(r)) {
                             wInner.mappaintDrawnAreaCode = paintid;
@@ -1088,7 +1080,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     if(outerStyle instanceof AreaElemStyle
                             && !wayStyle.equals(outerStyle))
                     {
-                        r.putError(tr("Style for outer way ''{0}'' mismatches.",
+                        putError(r, tr("Style for outer way ''{0}'' mismatches.",
                                 wOuter.getDisplayName(DefaultNameFormatter.getInstance())), true);
                     }
                     if(data.isSelected(r))
@@ -1463,6 +1455,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         minEN = nc.getEastNorth(0, nc.getHeight() - 1);
         maxEN = nc.getEastNorth(nc.getWidth() - 1, 0);
 
+        data.clearErrors();
 
         ++paintid;
         viewid = nc.getViewID();
@@ -1643,5 +1636,10 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         Point p1 = nc.getPoint(n1);
         Point p2 = nc.getPoint(n2);
         drawOrderNumber(p1, p2, orderNumber);
+    }
+
+    public void putError(OsmPrimitive p, String text, boolean isError)
+    {
+        data.addError(p, isError ? tr("Error: {0}", text) : tr("Warning: {0}", text));
     }
 }
