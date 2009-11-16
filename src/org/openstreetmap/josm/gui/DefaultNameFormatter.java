@@ -13,6 +13,7 @@ import java.util.Set;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -188,7 +189,8 @@ public class DefaultNameFormatter implements NameFormatter {
 
             int mbno = relation.getMembersCount();
             name += trn("{0} member", "{0} members", mbno, mbno) + ")";
-            if(relation.getDataSet().getErrors(relation) != null) {
+            DataSet data = relation.getDataSet();
+            if(data != null && data.getErrors(relation) != null) {
                 name = "*"+name;
             }
         }
