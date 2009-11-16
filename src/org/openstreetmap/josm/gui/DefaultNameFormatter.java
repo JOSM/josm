@@ -138,7 +138,8 @@ public class DefaultNameFormatter implements NameFormatter {
             }
             String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
             name += (name.length() > 0) ? " ("+nodes+")" : nodes;
-            if(way.getDataSet().getErrors(way) != null) {
+            DataSet data = way.getDataSet();
+            if (data != null && data.getErrors(way) != null) {
                 name = "*"+name;
             }
         }
