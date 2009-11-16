@@ -104,7 +104,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
         highlightColor = Main.pref.getColor(marktr("highlight"), lightteal);
     }
 
-    protected void getSettings(Boolean virtual) {
+    protected void getSettings(boolean virtual) {
         showDirectionArrow = Main.pref.getBoolean("draw.segment.direction", true);
         showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only", true);
         showHeadArrowOnly = Main.pref.getBoolean("draw.segment.head_only", false);
@@ -131,7 +131,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
     DataSet ds;
     public void visitAll(DataSet data, boolean virtual, Bounds bounds) {
         this.ds = data;
-        //boolean profiler = Main.pref.getBoolean("simplepaint.profiler",false);
+        //boolean profiler = Main.pref.getboolean("simplepaint.profiler",false);
         //long profilerStart = java.lang.System.currentTimeMillis();
         //long profilerLast = profilerStart;
         //int profilerN = 0;
@@ -263,7 +263,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
         }
     }
 
-    public static Boolean isLargeSegment(Point p1, Point p2, int space)
+    public static boolean isLargeSegment(Point p1, Point p2, int space)
     {
         int xd = p1.x-p2.x; if(xd < 0) {
             xd = -xd;

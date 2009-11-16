@@ -75,9 +75,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected double circum;
     protected double dist;
     protected Collection<String> regionalNameOrder;
-    protected Boolean useStyleCache;
+    protected boolean useStyleCache;
     private static int paintid = 0;
-    private static int viewid = 0;
     private EastNorth minEN;
     private EastNorth maxEN;
 
@@ -249,7 +248,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         }
     }
 
-    public void drawWay(Way w, LineElemStyle l, Color color, Boolean selected) {
+    public void drawWay(Way w, LineElemStyle l, Color color, boolean selected) {
         /* show direction arrows, if draw.segment.relevant_directions_only is not set,
            the way is tagged with a direction key
            (even if the tag is negated as in oneway=false) or the way is selected */
@@ -387,9 +386,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         while(left != 0)
         {
             Way w = null;
-            Boolean selected = false;
+            boolean selected = false;
             List<Node> n = null;
-            Boolean joined = true;
+            boolean joined = true;
             while(joined && left != 0)
             {
                 joined = false;
@@ -486,12 +485,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         return res;
     }
 
-    public void drawSelectedMember(OsmPrimitive osm, ElemStyle style, Boolean area,
-            Boolean areaselected)
+    public void drawSelectedMember(OsmPrimitive osm, ElemStyle style, boolean area,
+            boolean areaselected)
     {
         if(osm instanceof Way)
         {
-            Way w = (Way)osm;
             if(style instanceof AreaElemStyle)
             {
                 Way way = (Way)osm;
@@ -519,7 +517,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     }
 
     @Override
-    public void visit(Relation r) {};
+    public void visit(Relation r) {}
     public void paintUnselectedRelation(Relation r) {
 
         if (drawMultipolygon && "multipolygon".equals(r.get("type")))
@@ -647,7 +645,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             Way viaWay = (Way) via;
             Node firstNode = viaWay.firstNode();
             Node lastNode = viaWay.lastNode();
-            Boolean onewayvia = false;
+            boolean onewayvia = false;
 
             String onewayviastr = viaWay.get("oneway");
             if(onewayviastr != null)
@@ -907,13 +905,13 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         o.addInner(pdInner.poly);
     }
 
-    public Boolean drawMultipolygon(Relation r) {
+    public boolean drawMultipolygon(Relation r) {
         Collection<Way> inner = new LinkedList<Way>();
         Collection<Way> outer = new LinkedList<Way>();
         Collection<Way> innerclosed = new LinkedList<Way>();
         Collection<Way> outerclosed = new LinkedList<Way>();
-        Boolean incomplete = false;
-        Boolean drawn = false;
+        boolean incomplete = false;
+        boolean drawn = false;
 
         for (RelationMember m : r.getMembers())
         {
@@ -966,8 +964,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         if(wayStyle != null && wayStyle instanceof AreaElemStyle)
         {
-            Boolean zoomok = isZoomOk(wayStyle);
-            Boolean visible = false;
+            boolean zoomok = isZoomOk(wayStyle);
+            boolean visible = false;
             Collection<Way> outerjoin = new LinkedList<Way>();
             Collection<Way> innerjoin = new LinkedList<Way>();
 
@@ -1211,7 +1209,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         g.fillPolygon(polygon);
     }
 
-    protected void drawNode(Node n, ImageIcon icon, boolean annotate, Boolean selected) {
+    protected void drawNode(Node n, ImageIcon icon, boolean annotate, boolean selected) {
         Point p = nc.getPoint(n);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
 
@@ -1458,7 +1456,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         data.clearErrors();
 
         ++paintid;
-        viewid = nc.getViewID();
 
         //profilerVisibleNodes = 0;
         //profilerVisibleWays = 0;
@@ -1620,6 +1617,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
             displaySegments(null);
         }
+
 
         //if(profiler)
         //{
