@@ -68,18 +68,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return Main.proj.latlon2eastNorth(new LatLon(lat, lon));
     }
 
-    /**
-     * Return a ID which is unique as long as viewport dimensions are the same
-     */
-    public Integer getViewID()
-    {
-        String x = center.east() + "_" + center.north() + "_" + scale + "_" +
-        getWidth() + "_" + getHeight() + "_" + getProjection().toString();
-        java.util.zip.CRC32 id = new java.util.zip.CRC32();
-        id.update(x.getBytes());
-        return new Long(id.getValue()).intValue();
-    }
-
     public String getDist100PixelText()
     {
         double dist = getDist100Pixel();

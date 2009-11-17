@@ -131,7 +131,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
     DataSet ds;
     public void visitAll(DataSet data, boolean virtual, Bounds bounds) {
         this.ds = data;
-        //boolean profiler = Main.pref.getboolean("simplepaint.profiler",false);
+        //boolean profiler = Main.pref.getBoolean("simplepaint.profiler",false);
         //long profilerStart = java.lang.System.currentTimeMillis();
         //long profilerLast = profilerStart;
         //int profilerN = 0;
