@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions.search;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Font;
@@ -46,6 +47,7 @@ public class SearchAction extends JosmAction{
     public SearchAction() {
         super(tr("Search..."), "dialogs/search", tr("Search for objects."),
                 Shortcut.registerShortcut("system:find", tr("Search..."), KeyEvent.VK_F, Shortcut.GROUP_HOTKEY), true);
+        putValue("help", ht("/Action/Search"));
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -149,6 +151,7 @@ public class SearchAction extends JosmAction{
                             tr("Cancel")}
         );
         dialog.setButtonIcons(new String[] {"dialogs/search.png", "cancel.png"});
+        dialog.configureContextsensitiveHelp("/Action/Search", true /* show help button */);
         dialog.setContent(p);
         dialog.showDialog();
         int result = dialog.getValue();
