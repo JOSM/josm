@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -137,12 +138,18 @@ public class UpdateSelectionAction extends JosmAction {
      *
      */
     static class UpdatePrimitivesTask extends PleaseWaitRunnable {
+        static private final Logger logger = Logger.getLogger(UpdatePrimitivesTask.class.getName());
+
         private DataSet ds;
         private boolean canceled;
         private Exception lastException;
         private Collection<? extends OsmPrimitive> toUpdate;
         private MultiFetchServerObjectReader reader;
 
+        /**
+         * 
+         * @param toUpdate a collection of primitives to update from the server
+         */
         public UpdatePrimitivesTask(Collection<? extends OsmPrimitive> toUpdate) {
             super(tr("Update objects"), false /* don't ignore exception*/);
             canceled = false;
@@ -165,9 +172,9 @@ public class UpdateSelectionAction extends JosmAction {
                 ExceptionDialogUtil.explainException(lastException);
                 return;
             }
-            if (ds != null) {
-                Main.map.mapView.getEditLayer().mergeFrom(ds);
-                Main.map.mapView.getEditLayer().onPostDownloadFromServer();
+            if (ds != null && Main.main.getEditLayer() != null) {
+                Main.main.getEditLayer().mergeFrom(ds);
+                Main.main.getEditLayer().onPostDownloadFromServer();
             }
         }
 
@@ -201,6 +208,7 @@ public class UpdateSelectionAction extends JosmAction {
                 }
             }
         }
+
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {

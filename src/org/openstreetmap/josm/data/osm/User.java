@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A simple class to keep a list of user names.
@@ -17,7 +18,9 @@ import java.util.List;
  *
  */
 public class User {
-    static private long uidCounter = 0;
+
+    static private AtomicLong uidCounter = new AtomicLong();
+
     /**
      * the map of known users
      */
@@ -26,8 +29,7 @@ public class User {
 
     private static long getNextLocalUid() {
         synchronized(User.class) {
-            uidCounter--;
-            return uidCounter;
+            return uidCounter.decrementAndGet();
         }
     }
 
@@ -59,6 +61,13 @@ public class User {
         return user;
     }
 
+    /**
+     * clears the static map of user ids to user objects
+     * 
+     */
+    public static void clearUserMap() {
+        userMap.clear();
+    }
 
     /**
      * Returns the user with user id <code>uid</code> or null if this user doesn't exist

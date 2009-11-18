@@ -82,9 +82,9 @@ public class DataSetMerger {
             //
             if (mergeById(source))
                 return;
-            if (!source.isVisible())
-                // ignore it
-                return;
+            //if (!source.isVisible())
+            // ignore it
+            //    return;
         } else {
             // try to merge onto a primitive  which has no id assigned
             // yet but which is equal in its semantic attributes
@@ -235,7 +235,7 @@ public class DataSetMerger {
     /**
      * Tries to merge a primitive <code>source</code> into an existing primitive with the same id.
      *
-     * @param source  the other primitive which is to be merged onto a primitive in my primitives
+     * @param source  the source primitive which is to be merged into a target primitive
      * @return true, if this method was able to merge <code>source</code> into a target object; false, otherwise
      */
     private boolean mergeById(OsmPrimitive source) {

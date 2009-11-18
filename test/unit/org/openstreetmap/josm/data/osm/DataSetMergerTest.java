@@ -16,6 +16,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
@@ -59,6 +60,11 @@ public class DataSetMergerTest {
 
         // init projection
         Main.proj = new Mercator();
+    }
+
+    @Before
+    public void setUp() {
+        User.clearUserMap();
     }
 
     /**
@@ -347,7 +353,8 @@ public class DataSetMergerTest {
 
     /**
      * their node is not visible and doesn't exist in my data set
-     * => ignore their node
+     * => we can't ignore it because we'd run into troubles in case of multi fetch
+     * which can return invisible objects
      *
      */
     @Test
@@ -372,7 +379,7 @@ public class DataSetMergerTest {
 
         Node n2 = (Node)my.getPrimitiveById(1,OsmPrimitiveType.NODE);
         assertEquals(0,visitor.getConflicts().size());
-        assertEquals(1, my.getNodes().size());
+        assertEquals(2, my.getNodes().size());
         assertEquals(n,n2);
     }
 
@@ -774,7 +781,8 @@ public class DataSetMergerTest {
         Way theirWay = new Way();
         theirWay.addNode(n3);
         theirWay.addNode(n4);
-        theirWay.setUser(User.createOsmUser(1111, "their"));
+        User user = User.createOsmUser(1111, "their");
+        theirWay.setUser(user);
         theirWay.setTimestamp(new Date());
         their.addPrimitive(theirWay);
 
@@ -894,7 +902,11 @@ public class DataSetMergerTest {
         theirWay.addNode(n3);
         theirWay.addNode(n4);
         theirWay.addNode(n5);
-        theirWay.setUser(User.createOsmUser(1111, "their"));
+        User user = User.getById(1111);
+        if (user == null) {
+            User.createOsmUser(1111, "their");
+        }
+        theirWay.setUser(user);
         theirWay.setTimestamp(new Date());
         their.addPrimitive(theirWay);
 
@@ -1080,4 +1092,5 @@ public class DataSetMergerTest {
         assertTrue(!w.getNode(0).incomplete);
         assertTrue(!w.getNode(1).incomplete);
     }
+
 }
