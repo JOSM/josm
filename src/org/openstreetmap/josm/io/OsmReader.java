@@ -100,7 +100,11 @@ public class OsmReader {
             osm.setModified(modified | deleted);
             osm.setTimestamp(timestamp);
             osm.setUser(user);
-            osm.setVisible(visible);
+            if (id > 0) {
+                // ignore visible attribute for objects not yet known to the server
+                //
+                osm.setVisible(visible);
+            }
             osm.mappaintStyle = null;
         }
 
