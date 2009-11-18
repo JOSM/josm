@@ -885,8 +885,20 @@ public class DataSet implements Cloneable {
         errors.put(primitive, perrors);
     }
 
+    /**
+     * Replies the list of errors registered for this primitive.
+     * 
+     * @param primitive the primitive for which errors are queried
+     * @return the list of errors. Never null.
+     * @deprecated should be moved to the validator plugin
+     */
+    @Deprecated
     public List<String> getErrors(OsmPrimitive primitive) {
-        return errors.get(primitive);
+        List<String> ret = errors.get(primitive);
+        if (ret == null) {
+            ret = Collections.emptyList();
+        }
+        return ret;
     }
 
     public void clearErrors()
