@@ -375,8 +375,8 @@ public class OsmReader {
                     System.out.println(tr("WARNING: Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.id, current.version, 1, "0.5"));
                     current.version= 1;
                 } else if (current.id <= 0 && ds.getVersion() != null && ds.getVersion().equals("0.5")) {
-                    // default version in 0.5 files for new primitives
-                    System.out.println(tr("WARNING: Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.", current.id, current.version, 0, "0.5"));
+                    // default version in 0.5 files for new primitives, no warning necessary. This is
+                    // (was) legal in API 0.5
                     current.version= 0;
                 }
             }
