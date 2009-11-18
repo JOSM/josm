@@ -1,8 +1,6 @@
-// License: GPL. See LICENSE file for details.
 
 package org.openstreetmap.josm.gui.dialogs;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -364,6 +362,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         Main.main.getCurrentDataSet().fireSelectionChanged();
         selectionChanged(sel); // update table
         Main.parent.repaint(); // repaint all - drawing could have been changed
+
+        btnAdd.requestFocusInWindow();
     }
 
     /**
@@ -557,39 +557,19 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         presets.setSize(scrollPane.getSize());
 
         JPanel buttonPanel = new JPanel(new GridLayout(1,3));
-        ActionListener buttonAction = new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                int row = membershipTable.getSelectedRow();
-                if (e.getActionCommand().equals("Add")) {
-                    add();
-                } else if(row >= 0)
-                {
-                    if (e.getActionCommand().equals("Edit")) {
-                        membershipEdit(row);
-                    }
-                }
-                else
-                {
-                    int sel = propertyTable.getSelectedRow();
-                    // Although we might edit/delete the wrong tag here, chances are still better
-                    // than just displaying an error message (which always "fails").
-                    if (e.getActionCommand().equals("Edit")) {
-                        propertyEdit(sel >= 0 ? sel : 0);
-                    }
-                }
-            }
-        };
 
-        Shortcut s = Shortcut.registerShortcut("properties:add", tr("Add Properties"), KeyEvent.VK_B,
+        AddAction addAction = new AddAction();
+        Shortcut.registerShortcut("properties:add", tr("Add Properties"), KeyEvent.VK_B,
                 Shortcut.GROUP_MNEMONIC);
-        this.btnAdd = new SideButton(marktr("Add"),"add","Properties",
-                tr("Add a new key/value pair to all objects"), s, buttonAction);
+        this.btnAdd = new SideButton(addAction);
+        btnAdd.setFocusable(true);
         buttonPanel.add(this.btnAdd);
+        btnAdd.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "onEnter");
+        btnAdd.getActionMap().put("onEnter", addAction);
 
-        s = Shortcut.registerShortcut("properties:edit", tr("Edit Properties"), KeyEvent.VK_I,
-                Shortcut.GROUP_MNEMONIC);
-        this.btnEdit = new SideButton(marktr("Edit"),"edit","Properties",
-                tr("Edit the value of the selected key for all objects"), s, buttonAction);
+        EditAction editAction = new EditAction();
+        membershipTable.getSelectionModel().addListSelectionListener(editAction);
+        this.btnEdit = new SideButton(editAction);
         buttonPanel.add(this.btnEdit);
 
         // -- delete action
@@ -894,4 +874,42 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
     }
 
+
+    class AddAction extends AbstractAction {
+        public AddAction() {
+            putValue(NAME, tr("Add"));
+            putValue(SHORT_DESCRIPTION, tr("Add a new key/value pair to all objects"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            add();
+        }
+    }
+
+    class EditAction extends AbstractAction implements ListSelectionListener {
+        public EditAction() {
+            putValue(NAME, tr("Edit"));
+            putValue(SHORT_DESCRIPTION, tr("Edit the value of the selected key for all objects"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
+            updateEnabledState();
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (!isEnabled())
+                return;
+            int row = membershipTable.getSelectedRow();
+            if (e.getActionCommand().equals("Edit")) {
+                propertyEdit(row >= 0 ? row : 0);
+            }
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(membershipTable.getSelectedRowCount() == 1);
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+    }
 }
