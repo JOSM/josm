@@ -636,7 +636,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             Map<String, String> keys = getKeys();
             if (!value.equals(keys.put(key, value))) {
                 setKeys(keys);
-                keysChangedImpl();
             }
         }
     }
@@ -650,7 +649,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         if (keys.remove(key) != null) {
             // TODO More effective implemenation
             setKeys(keys);
-            keysChangedImpl();
         }
     }
 

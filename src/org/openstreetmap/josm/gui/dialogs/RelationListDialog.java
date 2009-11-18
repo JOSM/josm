@@ -692,6 +692,8 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     }
 
     public void tagsChanged(OsmPrimitive prim) {
-        updateList();
+        if (prim instanceof Relation) {
+            updateList();
+        }
     }
 }
