@@ -40,7 +40,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return idCounter.decrementAndGet();
     }
 
-    private static class KeysEntry implements Entry<String, String> {
+    private static class KeysEntry implements Entry<String, String>{
 
         private final String key;
         private final String value;
@@ -62,6 +62,36 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             throw new UnsupportedOperationException();
         }
 
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((key == null) ? 0 : key.hashCode());
+            result = prime * result + ((value == null) ? 0 : value.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            KeysEntry other = (KeysEntry) obj;
+            if (key == null) {
+                if (other.key != null)
+                    return false;
+            } else if (!key.equals(other.key))
+                return false;
+            if (value == null) {
+                if (other.value != null)
+                    return false;
+            } else if (!value.equals(other.value))
+                return false;
+            return true;
+        }
     }
 
 
@@ -141,6 +171,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      */
     private long id = 0;
 
+    /** the parent dataset */
     private DataSet dataSet;
 
     /**
@@ -907,7 +938,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             return false;
         if (incomplete && ! other.incomplete || !incomplete  && other.incomplete)
             return false;
-        return (keys == null ? other.keys==null : keys.equals(other.keys));
+        return keySet().equals(other.keySet());
     }
 
     /**
