@@ -69,7 +69,7 @@ import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.Shortcut;
 
 abstract public class Main {
-    
+
     /**
      * Replies true if JOSM currently displays a map view. False, if it doesn't, i.e. if
      * it only shows the MOTD panel.
@@ -164,7 +164,6 @@ abstract public class Main {
      */
     public final void setMapFrame(final MapFrame map) {
         MapFrame old = Main.map;
-        Main.map = map;
         panel.setVisible(false);
         panel.removeAll();
         if (map != null) {
@@ -175,6 +174,8 @@ abstract public class Main {
         }
         panel.setVisible(true);
         redoUndoListener.commandChanged(0,0);
+
+        Main.map = map;
 
         PluginHandler.setMapFrame(old, map);
     }
@@ -413,9 +414,9 @@ abstract public class Main {
             dialog.getModel().populate(layersWithUnmodifiedChanges);
             dialog.setVisible(true);
             switch(dialog.getUserAction()) {
-                case CANCEL: return false;
-                case PROCEED: return true;
-                default: return false;
+            case CANCEL: return false;
+            case PROCEED: return true;
+            default: return false;
             }
         }
 
@@ -480,9 +481,9 @@ abstract public class Main {
         final StringTokenizer st = new StringTokenizer(s, ",");
         if (st.countTokens() == 4) {
             Bounds b = new Bounds(
-                   new LatLon(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken())),
-                   new LatLon(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()))
-                   );
+                    new LatLon(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken())),
+                    new LatLon(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()))
+            );
             try {
                 DownloadTask task = rawGps ? new DownloadGpsTask() : new DownloadOsmTask();
                 // asynchronously launch the download task ...

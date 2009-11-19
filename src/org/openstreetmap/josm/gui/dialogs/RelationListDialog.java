@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -61,7 +60,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * objects are visible on the map and can be selected there. Relations are not.
  */
 public class RelationListDialog extends ToggleDialog implements LayerChangeListener, DataSetListener {
-    private static final Logger logger = Logger.getLogger(RelationListDialog.class.getName());
+    //private static final Logger logger = Logger.getLogger(RelationListDialog.class.getName());
 
     /** The display list. */
     private JList displaylist;
@@ -72,6 +71,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     private EditAction editAction;
     /** the delete action */
     private DeleteAction deleteAction;
+    private NewAction newAction;
     /** the popup menu */
     private RelationDialogPopupMenu popupMenu;
 
@@ -100,8 +100,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
         // the new action
         //
-        NewAction newAction = new NewAction();
-        Layer.listeners.add(newAction);
+        newAction = new NewAction();
         buttonPanel.add(new SideButton(newAction), GBC.std());
 
         // the edit action
@@ -133,18 +132,24 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         displaylist.getActionMap().put("deleteRelation", deleteAction);
 
         popupMenu = new RelationDialogPopupMenu();
-
-        // register as layer listener
-        //
-        Layer.listeners.add(this);
     }
 
-    @Override public void setVisible(boolean b) {
-        super.setVisible(b);
-        if (b) {
-            updateList();
+    @Override public void showNotify() {
+        Layer.listeners.add(this);
+        Layer.listeners.add(newAction);
+        for (OsmDataLayer layer:Main.map.mapView.getLayersOfType(OsmDataLayer.class)) {
+            layer.data.addDataSetListener(this);
         }
     }
+
+    @Override public void hideNotify() {
+        Layer.listeners.remove(this);
+        Layer.listeners.remove(newAction);
+        for (OsmDataLayer layer:Main.map.mapView.getLayersOfType(OsmDataLayer.class)) {
+            layer.data.removeDataSetListener(this);
+        }
+    }
+
 
     protected int getNumRelations() {
         if (Main.main.getCurrentDataSet() == null) return 0;
@@ -586,10 +591,6 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
         public RelationListModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
-        }
-
-        public ArrayList<Relation> getRelations() {
-            return relations;
         }
 
         public Relation getRelation(int idx) {

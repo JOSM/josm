@@ -653,10 +653,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             remove(key);
         } else if (keys == null || keys.length == 0){
             keys = new String[] {key, value};
+            keysChangedImpl();
         } else {
             for (int i=0; i<keys.length;i+=2) {
                 if (keys[i].equals(key)) {
                     keys[i+1] = value;
+                    keysChangedImpl();
                     return;
                 }
             }
@@ -668,6 +670,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             newKeys[keys.length] = key;
             newKeys[keys.length + 1] = value;
             keys = newKeys;
+            keysChangedImpl();
         }
     }
     /**
@@ -681,6 +684,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             return;
         if (keys.length == 2) {
             keys = null;
+            keysChangedImpl();
             return;
         }
         String[] newKeys = new String[keys.length - 2];
@@ -692,6 +696,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             }
         }
         keys = newKeys;
+        keysChangedImpl();
     }
 
     /**
