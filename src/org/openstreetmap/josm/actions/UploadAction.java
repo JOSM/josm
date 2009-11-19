@@ -37,11 +37,11 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmApiPrimitiveGoneException;
-import org.openstreetmap.josm.io.OsmChangesetCloseException;
 import org.openstreetmap.josm.io.OsmServerWriter;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.DateUtils;
@@ -479,10 +479,6 @@ public class UploadAction extends JosmAction{
             return;
         }
 
-        if (e instanceof OsmChangesetCloseException) {
-            ExceptionDialogUtil.explainOsmChangesetCloseException((OsmChangesetCloseException)e);
-            return;
-        }
         if (e instanceof OsmApiPrimitiveGoneException) {
             handleGone((OsmApiPrimitiveGoneException)e);
             return;
@@ -673,7 +669,11 @@ public class UploadAction extends JosmAction{
                 handleFailedUpload(lastException);
             }
             layer.onPostUploadToServer();
-            UploadDialog.getUploadDialog().setOrUpdateChangeset(changeset);
+            if (lastException != null && lastException instanceof ChangesetClosedException) {
+                UploadDialog.getUploadDialog().removeChangeset(changeset);
+            } else {
+                UploadDialog.getUploadDialog().setOrUpdateChangeset(changeset);
+            }
         }
 
         @Override protected void cancel() {

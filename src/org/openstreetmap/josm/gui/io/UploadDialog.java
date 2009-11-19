@@ -336,6 +336,17 @@ public class UploadDialog extends JDialog {
     }
 
     /**
+     * Removes <code>cs</code> from the list of open changesets in the upload
+     * dialog
+     * 
+     * @param cs the changeset. Ignored if null.
+     */
+    public void removeChangeset(Changeset cs) {
+        if (cs == null) return;
+        pnlChangesetSelection.removeChangeset(cs);
+    }
+
+    /**
      * Replies true if the changeset is to be closed after the
      * next upload
      * 
@@ -841,15 +852,18 @@ public class UploadDialog extends JDialog {
 
         public void setOrUpdateChangeset(Changeset cs) {
             if (cs == null) {
-                tagEditorPanel.getModel().clear();
-                tagEditorPanel.getModel().add("created_by", getDefaultCreatedBy());
+                cs = new Changeset();
+                cs.put("created_by", getDefaultCreatedBy());
+                tagEditorPanel.getModel().initFromPrimitive(cs);
                 tagEditorPanel.getModel().appendNewTag();
+                prepareDialogForNextUpload(cs);
             } else if (cs.getId() == 0) {
                 if (cs.get("created_by") == null) {
                     cs.put("created_by", getDefaultCreatedBy());
                 }
                 tagEditorPanel.getModel().initFromPrimitive(cs);
                 tagEditorPanel.getModel().appendNewTag();
+                prepareDialogForNextUpload(cs);
             } else if (cs.getId() > 0 && cs.isOpen()){
                 if (cs.get("created_by") == null) {
                     cs.put("created_by", getDefaultCreatedBy());
@@ -858,17 +872,35 @@ public class UploadDialog extends JDialog {
                 model.addOrUpdate(cs);
                 cs = model.getChangesetById(cs.getId());
                 cbOpenChangesets.setSelectedItem(cs);
+                prepareDialogForNextUpload(cs);
             } else if (cs.getId() > 0 && !cs.isOpen()){
+                removeChangeset(cs);
+            }
+        }
+
+        /**
+         * Remove a changeset from the list of open changeset
+         * 
+         * @param cs the changeset to be removed. Ignored if null.
+         */
+        public void removeChangeset(Changeset cs) {
+            if (cs ==  null) return;
+            Changeset selected = (Changeset)model.getSelectedItem();
+            model.removeChangeset(cs);
+            if (model.getSize() == 0 || selected == cs) {
+                // no more changesets or removed changeset is the currently selected
+                // changeset? Switch to using a new changeset.
+                //
+                rbUseNew.setSelected(true);
+                model.setSelectedItem(null);
+                southTabbedPane.setTitleAt(1, tr("Tags of new changeset"));
+
+                cs = new Changeset();
                 if (cs.get("created_by") == null) {
                     cs.put("created_by", getDefaultCreatedBy());
+                    cs.put("comment", getUploadComment());
                 }
                 tagEditorPanel.getModel().initFromPrimitive(cs);
-                model.removeChangeset(cs);
-                if (model.getSize() == 0) {
-                    rbUseNew.setSelected(true);
-                    model.setSelectedItem(null);
-                    southTabbedPane.setTitleAt(1, tr("Tags of new changeset"));
-                }
             }
             prepareDialogForNextUpload(cs);
         }

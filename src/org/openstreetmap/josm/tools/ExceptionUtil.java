@@ -13,14 +13,15 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
-import org.openstreetmap.josm.io.OsmChangesetCloseException;
 import org.openstreetmap.josm.io.OsmTransferException;
 
 public class ExceptionUtil {
@@ -38,21 +39,6 @@ public class ExceptionUtil {
                 "<html>Failed to initialize communication with the OSM server {0}.<br>"
                 + "Check the server URL in your preferences and your internet connection.</html>", Main.pref.get(
                         "osm-server.url", "http://api.openstreetmap.org/api"));
-        return msg;
-    }
-
-    /**
-     * handles an exception caught during OSM API initialization
-     *
-     * @param e the exception
-     */
-    public static String explainOsmChangesetCloseException(OsmChangesetCloseException e) {
-        e.printStackTrace();
-        String changsetId = e.getChangeset() == null ? tr("unknown") : Long.toString(e.getChangeset().getId());
-        String msg = tr(
-                "<html>Failed to close changeset ''{0}'' on the OSM server ''{1}''.<br>"
-                + "The changeset will automatically be closed by the server after a timeout.</html>", changsetId,
-                Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api"));
         return msg;
     }
 
@@ -114,8 +100,9 @@ public class ExceptionUtil {
             Matcher m = p.matcher(msg);
             if (m.matches()) {
                 long changesetId = Long.parseLong(m.group(1));
-                // Example: Tue Oct 15 10:00:00 UTC 2009
-                DateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+                // Example: Tue Oct 15 10:00:00 UTC 2009. Always parsed with english locale, regardless
+                // of the current locale in JOSM
+                DateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
                 Date closeDate = null;
                 try {
                     closeDate = formatter.parse(m.group(2));
@@ -148,6 +135,25 @@ public class ExceptionUtil {
         msg = tr(
                 "<html>The server reported that it has detected a conflict.</html>"
         );
+        return msg;
+    }
+
+    /**
+     * Explains an exception thrown during upload because the changeset which data is
+     * uploaded to is already closed.
+     * 
+     * @param e the exception
+     */
+    public static String explainChangesetClosedException(ChangesetClosedException e) {
+        String msg;
+        SimpleDateFormat dateFormat = new SimpleDateFormat();
+        msg = tr(
+                "<html>Failed to upload to changeset <strong>{0}</strong><br>"
+                +"because it has already been closed on {1}.</html>",
+                e.getChangesetId(),
+                dateFormat.format(e.getClosedOn())
+        );
+        e.printStackTrace();
         return msg;
     }
 
@@ -337,8 +343,9 @@ public class ExceptionUtil {
             return explainNestedIOException(e);
         if (e instanceof OsmApiInitializationException)
             return explainOsmApiInitializationException((OsmApiInitializationException) e);
-        if (e instanceof OsmChangesetCloseException)
-            return explainOsmChangesetCloseException((OsmChangesetCloseException) e);
+
+        if (e instanceof ChangesetClosedException)
+            return explainChangesetClosedException((ChangesetClosedException)e);
 
         if (e instanceof OsmApiException) {
             OsmApiException oae = (OsmApiException) e;

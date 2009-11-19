@@ -337,7 +337,7 @@ public class OsmApi extends OsmConnection {
      * 
      * @throws OsmTransferException if something goes wrong.
      * @throws IllegalArgumentException if changeset is null
-     * @throws IllegalArgumentException if changeset.getId() == 0
+     * @throws IllegalArgumentException if changeset.getId() <= 0
      * 
      */
     public void updateChangeset(Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
@@ -358,6 +358,10 @@ public class OsmApi extends OsmConnection {
                     toXml(changeset),
                     monitor
             );
+        } catch(OsmApiException e) {
+            if (e.getResponseCode() == HttpURLConnection.HTTP_CONFLICT)
+                throw new ChangesetClosedException(e.getErrorHeader());
+            throw e;
         } finally {
             monitor.finishTask();
         }

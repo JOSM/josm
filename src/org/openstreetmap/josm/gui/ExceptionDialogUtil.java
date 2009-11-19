@@ -13,9 +13,9 @@ import java.net.UnknownHostException;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
-import org.openstreetmap.josm.io.OsmChangesetCloseException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.ExceptionUtil;
@@ -48,17 +48,17 @@ public class ExceptionDialogUtil {
     }
 
     /**
-     * handles an exception caught during OSM API initialization
+     * handles a ChangesetClosedException
      *
      * @param e the exception
      */
-    public static void explainOsmChangesetCloseException(OsmChangesetCloseException e) {
+    public static void explainChangesetClosedException(ChangesetClosedException e) {
         HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
-                ExceptionUtil.explainOsmChangesetCloseException(e),
+                ExceptionUtil.explainChangesetClosedException(e),
                 tr("Error"),
                 JOptionPane.ERROR_MESSAGE,
-                ht("/ErrorMessages#OsmChangesetCloseException")
+                ht("/ErrorMessages#ChangesetClosedException")
         );
     }
 
@@ -293,8 +293,9 @@ public class ExceptionDialogUtil {
             explainOsmApiInitializationException((OsmApiInitializationException) e);
             return;
         }
-        if (e instanceof OsmChangesetCloseException) {
-            explainOsmChangesetCloseException((OsmChangesetCloseException) e);
+
+        if (e instanceof ChangesetClosedException) {
+            explainChangesetClosedException((ChangesetClosedException)e);
             return;
         }
 
