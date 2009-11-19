@@ -1,8 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -14,7 +14,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -68,7 +68,7 @@ public class AutoScaleAction extends JosmAction {
             putValue("help", ht("/Action/ZoomToConflict"));
         }else if (mode.equals("download")) {
             putValue("help", ht("/Action/ZoomToDownload"));
-        }       		
+        }
     }
 
     public void autoScale()  {
@@ -150,16 +150,8 @@ public class AutoScaleAction extends JosmAction {
         else if (mode.equals("download")) {
             if (Main.pref.hasKey("osm-download.bounds")) {
                 try {
-                    String bounds[] = Main.pref.get("osm-download.bounds").split(";");
-                    double minlat = Double.parseDouble(bounds[0]);
-                    double minlon = Double.parseDouble(bounds[1]);
-                    double maxlat = Double.parseDouble(bounds[2]);
-                    double maxlon = Double.parseDouble(bounds[3]);
-
-                    v.visit(Main.proj.latlon2eastNorth(new LatLon(minlat, minlon)));
-                    v.visit(Main.proj.latlon2eastNorth(new LatLon(maxlat, maxlon)));
-                }
-                catch (Exception e) {
+                    v.visit(new Bounds(Main.pref.get("osm-download.bounds"), ";"));
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

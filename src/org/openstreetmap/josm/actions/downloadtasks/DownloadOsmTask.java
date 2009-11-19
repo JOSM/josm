@@ -13,6 +13,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
+import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -30,7 +31,7 @@ import org.xml.sax.SAXException;
 public class DownloadOsmTask extends AbstractDownloadTask {
     private static final Logger logger = Logger.getLogger(DownloadOsmTask.class.getName());
 
-    private static Bounds currentBounds;
+    private Bounds currentBounds;
     private DataSet downloadedData;
     private DownloadTask downloadTask;
 
@@ -156,6 +157,9 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                     target = getFirstDataLayer();
                 }
                 target.mergeFrom(dataSet);
+                BoundingXYVisitor v = new BoundingXYVisitor();
+                v.visit(currentBounds);
+                Main.map.mapView.recalculateCenterScale(v);
                 target.onPostDownloadFromServer();
             }
         }
