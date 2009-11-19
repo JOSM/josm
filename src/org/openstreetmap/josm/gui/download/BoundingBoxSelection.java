@@ -55,6 +55,14 @@ public class BoundingBoxSelection implements DownloadSelection {
     private DownloadDialog parent;
 
 
+    protected void registerBoundingBoxBuilder() {
+        BoundingBoxBuilder bboxbuilder = new BoundingBoxBuilder();
+        for (int i = 0;i < latlon.length; i++) {
+            latlon[i].addFocusListener(bboxbuilder);
+            latlon[i].addActionListener(bboxbuilder);
+        }
+    }
+
     protected void buildDownloadAreaInputFields() {
         latlon = new JTextField[4];
         for(int i=0; i< 4; i++) {
@@ -77,6 +85,8 @@ public class BoundingBoxSelection implements DownloadSelection {
         lonChecker = new LonValueChecker(latlon[3]);
         latlon[3].addFocusListener(lonChecker);
         latlon[3].addActionListener(lonChecker);
+
+        registerBoundingBoxBuilder();
     }
 
     public void addGui(final DownloadDialog gui) {
@@ -174,8 +184,8 @@ public class BoundingBoxSelection implements DownloadSelection {
         latlon[1].setText(Double.toString(area.getMin().lon()));
         latlon[2].setText(Double.toString(area.getMax().lat()));
         latlon[3].setText(Double.toString(area.getMax().lon()));
-        for (JTextField f : latlon) {
-            f.setCaretPosition(0);
+        for (JTextField tf: latlon) {
+            resetErrorMessage(tf);
         }
     }
 
@@ -184,20 +194,21 @@ public class BoundingBoxSelection implements DownloadSelection {
         showUrl.setText(OsmUrlToBounds.getURL(area));
     }
 
+    private Border errorBorder = BorderFactory.createLineBorder(Color.RED, 1);
+
+    protected void setErrorMessage(JTextField tf, String msg) {
+        tf.setBorder(errorBorder);
+        tf.setToolTipText(msg);
+    }
+
+    protected void resetErrorMessage(JTextField tf) {
+        tf.setBorder(UIManager.getBorder("TextField.border"));
+        tf.setToolTipText("");
+    }
+
 
     class LatValueChecker extends FocusAdapter implements ActionListener{
         private JTextField tfLatValue;
-
-        private Border errorBorder = BorderFactory.createLineBorder(Color.RED, 1);
-        protected void setErrorMessage(String msg) {
-            if (msg != null) {
-                tfLatValue.setBorder(errorBorder);
-                tfLatValue.setToolTipText(msg);
-            } else {
-                tfLatValue.setBorder(UIManager.getBorder("TextField.border"));
-                tfLatValue.setToolTipText("");
-            }
-        }
 
         public LatValueChecker(JTextField tfLatValue) {
             this.tfLatValue = tfLatValue;
@@ -208,14 +219,14 @@ public class BoundingBoxSelection implements DownloadSelection {
             try {
                 value = Double.parseDouble(tfLatValue.getText());
             } catch(NumberFormatException ex) {
-                setErrorMessage(tr("The string ''{0}'' isn''t a valid double value.", tfLatValue.getText()));
+                setErrorMessage(tfLatValue,tr("The string ''{0}'' isn''t a valid double value.", tfLatValue.getText()));
                 return;
             }
             if (!LatLon.isValidLat(value)) {
-                setErrorMessage(tr("Value for latitude in range [-90,90] required.", tfLatValue.getText()));
+                setErrorMessage(tfLatValue,tr("Value for latitude in range [-90,90] required.", tfLatValue.getText()));
                 return;
             }
-            setErrorMessage(null);
+            resetErrorMessage(tfLatValue);
         }
 
         @Override
@@ -230,16 +241,6 @@ public class BoundingBoxSelection implements DownloadSelection {
 
     class LonValueChecker extends FocusAdapter implements ActionListener {
         private JTextField tfLonValue;
-        private Border errorBorder = BorderFactory.createLineBorder(Color.RED, 1);
-        protected void setErrorMessage(String msg) {
-            if (msg != null) {
-                tfLonValue.setBorder(errorBorder);
-                tfLonValue.setToolTipText(msg);
-            } else {
-                tfLonValue.setBorder(UIManager.getBorder("TextField.border"));
-                tfLonValue.setToolTipText("");
-            }
-        }
 
         public LonValueChecker(JTextField tfLonValue) {
             this.tfLonValue = tfLonValue;
@@ -250,14 +251,14 @@ public class BoundingBoxSelection implements DownloadSelection {
             try {
                 value = Double.parseDouble(tfLonValue.getText());
             } catch(NumberFormatException ex) {
-                setErrorMessage(tr("The string ''{0}'' isn''t a valid double value.", tfLonValue.getText()));
+                setErrorMessage(tfLonValue,tr("The string ''{0}'' isn''t a valid double value.", tfLonValue.getText()));
                 return;
             }
             if (!LatLon.isValidLon(value)) {
-                setErrorMessage(tr("Value for longitude in range [-180,180] required.", tfLonValue.getText()));
+                setErrorMessage(tfLonValue,tr("Value for longitude in range [-180,180] required.", tfLonValue.getText()));
                 return;
             }
-            setErrorMessage(null);
+            resetErrorMessage(tfLonValue);
         }
 
         @Override
@@ -333,6 +334,42 @@ public class BoundingBoxSelection implements DownloadSelection {
     class OsmUrlPopup extends JPopupMenu {
         public OsmUrlPopup() {
             add(new PasteUrlAction());
+        }
+    }
+
+    class BoundingBoxBuilder extends FocusAdapter implements ActionListener {
+        protected Bounds build() {
+            double minlon, minlat, maxlon,maxlat;
+            try {
+                minlon = Double.parseDouble(latlon[0].getText().trim());
+                minlat = Double.parseDouble(latlon[1].getText().trim());
+                maxlon = Double.parseDouble(latlon[2].getText().trim());
+                maxlat = Double.parseDouble(latlon[3].getText().trim());
+            } catch(NumberFormatException e) {
+                return null;
+            }
+            if (!LatLon.isValidLon(minlon) || !LatLon.isValidLon(maxlon)
+                    || !LatLon.isValidLat(minlat) || ! LatLon.isValidLat(maxlat))
+                return null;
+            if (minlon > maxlon)
+                return null;
+            if (minlat > maxlat)
+                return null;
+            return new Bounds(minlon,minlat,maxlon,maxlat);
+        }
+
+        protected void refreshBounds() {
+            Bounds  b = build();
+            parent.boundingBoxChanged(b, BoundingBoxSelection.this);
+        }
+
+        @Override
+        public void focusLost(FocusEvent e) {
+            refreshBounds();
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            refreshBounds();
         }
     }
 }
