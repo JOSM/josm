@@ -2,10 +2,7 @@
 
 package org.openstreetmap.josm.gui.dialogs;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.Dimension;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,13 +10,11 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
-import org.openstreetmap.josm.gui.MultiSplitLayout;
-import org.openstreetmap.josm.gui.MultiSplitLayout.Node;
-import org.openstreetmap.josm.gui.MultiSplitLayout.Leaf;
-import org.openstreetmap.josm.gui.MultiSplitLayout.Divider;
-import org.openstreetmap.josm.gui.MultiSplitLayout.Split;
 import org.openstreetmap.josm.gui.MultiSplitPane;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MultiSplitLayout.Divider;
+import org.openstreetmap.josm.gui.MultiSplitLayout.Leaf;
+import org.openstreetmap.josm.gui.MultiSplitLayout.Node;
+import org.openstreetmap.josm.gui.MultiSplitLayout.Split;
 
 public class DialogsPanel extends JPanel {
     protected List<ToggleDialog> allDialogs = new ArrayList<ToggleDialog>();
@@ -30,7 +25,7 @@ public class DialogsPanel extends JPanel {
      * Panels that are added to the multisplitpane.
      */
     private List<JPanel> panels = new ArrayList<JPanel>();
-    
+
     final private JSplitPane parent;
     public DialogsPanel(JSplitPane parent) {
         this.parent = parent;
@@ -38,9 +33,8 @@ public class DialogsPanel extends JPanel {
 
     private boolean initialized = false;
     public void initialize(List<ToggleDialog> allDialogs) {
-        if (initialized) {
+        if (initialized)
             throw new IllegalStateException();
-        }
         initialized = true;
         this.allDialogs = allDialogs;
 
@@ -55,6 +49,7 @@ public class DialogsPanel extends JPanel {
                  * Honoured by the MultiSplitPaneLayout when the
                  * entire Window is resized.
                  */
+                @Override
                 public Dimension getMinimumSize() {
                     return new Dimension(0, 40);
                 }
@@ -87,7 +82,7 @@ public class DialogsPanel extends JPanel {
     public enum Action {
         INVISIBLE_TO_DEFAULT,
         COLLAPSED_TO_DEFAULT,
-    /*  INVISIBLE_TO_COLLAPSED,    does not happen */
+        /*  INVISIBLE_TO_COLLAPSED,    does not happen */
         ELEMENT_SHRINKS         /* else. (Remaining elements have more space.) */
     };
     /**
@@ -156,9 +151,8 @@ public class DialogsPanel extends JPanel {
                 }
             }
         } else {
-            if (triggeredBy == null) {
+            if (triggeredBy == null)
                 throw new IllegalArgumentException();
-            }
 
             int sumP = 0;   // sum of preferred heights of dialogs in default view (without the triggering dialog)
             int sumA = 0;   // sum of actual heights of dialogs in default view (without the triggering dialog)
@@ -284,7 +278,7 @@ public class DialogsPanel extends JPanel {
 
     public void destroy() {
         for (ToggleDialog t : allDialogs) {
-            t.closeDetachedDialog();
+            t.destroy();
         }
     }
 

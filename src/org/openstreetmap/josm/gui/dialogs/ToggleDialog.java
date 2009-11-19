@@ -162,6 +162,7 @@ public class ToggleDialog extends JPanel implements Helpful {
         setIsShowing(true);
         toggleAction.putValue("selected", false);
         toggleAction.putValue("selected", true);
+        showNotify();
     }
 
     /**
@@ -172,6 +173,7 @@ public class ToggleDialog extends JPanel implements Helpful {
         this.setVisible(false);
         setIsShowing(false);
         toggleAction.putValue("selected", false);
+        hideNotify();
     }
 
     /**
@@ -203,23 +205,29 @@ public class ToggleDialog extends JPanel implements Helpful {
      *
      */
     public void collapse() {
-        setContentVisible(false);
-        setIsCollapsed(true);
-        setPreferredSize(new Dimension(0,20));
-        setMaximumSize(new Dimension(Integer.MAX_VALUE,20));
-        setMinimumSize(new Dimension(Integer.MAX_VALUE,20));
-        lblMinimized.setIcon(ImageProvider.get("misc", "minimized"));
+        if (isShowing && isDocked && !isCollapsed) {
+            setContentVisible(false);
+            setIsCollapsed(true);
+            setPreferredSize(new Dimension(0,20));
+            setMaximumSize(new Dimension(Integer.MAX_VALUE,20));
+            setMinimumSize(new Dimension(Integer.MAX_VALUE,20));
+            lblMinimized.setIcon(ImageProvider.get("misc", "minimized"));
+            hideNotify();
+        }
     }
 
     /**
      * Expands the toggle dialog
      */
     protected void expand() {
-        setContentVisible(true);
-        setIsCollapsed(false);
-        setPreferredSize(new Dimension(0,preferredHeight));
-        setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
-        lblMinimized.setIcon(ImageProvider.get("misc", "normal"));
+        if (isShowing && isDocked && isCollapsed) {
+            setContentVisible(true);
+            setIsCollapsed(false);
+            setPreferredSize(new Dimension(0,preferredHeight));
+            setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+            lblMinimized.setIcon(ImageProvider.get("misc", "normal"));
+            showNotify();
+        }
     }
 
     /**
@@ -236,6 +244,11 @@ public class ToggleDialog extends JPanel implements Helpful {
         }
     }
 
+    public void destroy() {
+        closeDetachedDialog();
+        hideNotify();
+    }
+
     /**
      * Closes the the detached dialog if this toggle dialog is currently displayed
      * in a detached dialog.
@@ -247,6 +260,22 @@ public class ToggleDialog extends JPanel implements Helpful {
             detachedDialog.getContentPane().removeAll();
             detachedDialog.dispose();
         }
+    }
+
+    /**
+     * Called when toggle dialog is shown (after it was created or expanded). Descendants may overwrite this
+     * method, it's a good place to register listeners needed to keep dialog updated
+     */
+    public void showNotify() {
+
+    }
+
+    /**
+     * Called when toggle dialog is hidden (collapsed, removed, MapFrame is removed, ...). Good place to unregister
+     * listeners
+     */
+    public void hideNotify() {
+
     }
 
 
