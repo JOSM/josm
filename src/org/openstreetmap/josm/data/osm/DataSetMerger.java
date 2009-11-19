@@ -38,7 +38,6 @@ public class DataSetMerger {
      * to relation members) after the first phase of merging
      */
     private Set<Long> childrenToMerge;
-
     private Set<OsmPrimitive> deletedObjectsToUnlink;
 
     /**

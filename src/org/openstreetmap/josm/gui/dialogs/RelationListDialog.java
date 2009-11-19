@@ -601,6 +601,24 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             fireIntervalAdded(this, 0, getSize());
         }
 
+        public void addRelations(Collection<? extends OsmPrimitive> addedPrimitives) {
+            if (addedPrimitives == null || addedPrimitives.isEmpty()) return;
+            boolean added = false;
+            for (OsmPrimitive p: addedPrimitives) {
+                if (! (p instanceof Relation)) {
+                    continue;
+                }
+                if (relations.contains(p)) {
+                    continue;
+                }
+                relations.add((Relation)p);
+                added = true;
+            }
+            if (added) {
+                fireIntervalAdded(this, 0, getSize());
+            }
+        }
+
         public Object getElementAt(int index) {
             if (relations == null) return null;
             return relations.get(index);
@@ -680,7 +698,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     public void wayNodesChanged(Way way) { }
 
     public void primtivesAdded(Collection<? extends OsmPrimitive> added) {
-        updateList();
+        model.addRelations(added);
     }
 
     public void primtivesRemoved(Collection<? extends OsmPrimitive> removed) {
@@ -688,12 +706,14 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     }
 
     public void relationMembersChanged(Relation r) {
-        updateList();
+        // trigger a repaint of the relation list
+        displaylist.repaint();
     }
 
     public void tagsChanged(OsmPrimitive prim) {
         if (prim instanceof Relation) {
-            updateList();
+            // trigger a repaint of the relation list
+            displaylist.repaint();
         }
     }
 }

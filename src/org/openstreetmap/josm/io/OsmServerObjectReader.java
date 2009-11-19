@@ -33,7 +33,7 @@ public class OsmServerObjectReader extends OsmServerReader {
         progressMonitor.beginTask("", 1);
         InputStream in = null;
         try {
-            progressMonitor.subTask(tr("Downloading OSM data..."));
+            progressMonitor.indeterminateSubTask(tr("Downloading OSM data..."));
             StringBuffer sb = new StringBuffer();
             sb.append(type.getAPIName());
             sb.append("/");

@@ -55,8 +55,6 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ConflictAddCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.DataSetMerger;
-import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -1378,29 +1376,20 @@ public class GenericRelationEditor extends RelationEditor {
      */
     public static class DownloadTask extends PleaseWaitRunnable {
         private boolean cancelled;
-        private int conflictsCount;
         private Exception lastException;
         private List<Relation> relations;
         private OsmDataLayer curLayer;
         private MemberTableModel memberTableModel;
 
         public DownloadTask(List<Relation> relations, OsmDataLayer curLayer, MemberTableModel memberTableModel, Dialog parent) {
-            super(tr("Download relation members"), new PleaseWaitProgressMonitor(parent), false /*
-             * don't
-             * ignore
-             * exception
-             */);
+            super(tr("Download relation members"), new PleaseWaitProgressMonitor(parent), false /* don't ignore exception */);
             this.relations = relations;
             this.curLayer = curLayer;
             this.memberTableModel = memberTableModel;
         }
 
         public DownloadTask(List<Relation> relations, OsmDataLayer curLayer, MemberTableModel memberTableModel) {
-            super(tr("Download relation members"), new PleaseWaitProgressMonitor(), false /*
-             * don't
-             * ignore
-             * exception
-             */);
+            super(tr("Download relation members"), new PleaseWaitProgressMonitor(), false /* don't ignore exception */);
             this.relations = relations;
             this.curLayer = curLayer;
             this.memberTableModel = memberTableModel;
@@ -1423,53 +1412,32 @@ public class GenericRelationEditor extends RelationEditor {
             if (lastException != null) {
                 ExceptionDialogUtil.explainException(lastException);
             }
-
-            if (conflictsCount > 0) {
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("There were {0} conflicts during import.", conflictsCount),
-                        tr("Warning"),
-                        JOptionPane.WARNING_MESSAGE
-                );
-            }
         }
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
-                boolean changed = false;
                 for (Relation relation : relations) {
                     progressMonitor.indeterminateSubTask("");
                     OsmServerObjectReader reader = new OsmServerObjectReader(relation.getId(), OsmPrimitiveType.RELATION,
                             true);
-                    DataSet dataSet = reader.parseOsm(progressMonitor
+                    final DataSet dataSet = reader.parseOsm(progressMonitor
                             .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-                    if (dataSet != null) {
-                        changed = true;
-                        final DataSetMerger visitor = new DataSetMerger(curLayer.data, dataSet);
-                        visitor.merge();
+                    if (dataSet == null)
+                        return;
+                    // has to run on the EDT because mergeFrom may trigger events
+                    // which update the UI
+                    //
+                    SwingUtilities.invokeAndWait(
+                            new Runnable() {
+                                public void run() {
+                                    curLayer.mergeFrom(dataSet);
+                                    curLayer.fireDataChange();
+                                    curLayer.onPostDownloadFromServer();
+                                }
+                            }
+                    );
 
-                        // copy the merged layer's data source info
-                        for (DataSource src : dataSet.dataSources) {
-                            curLayer.data.dataSources.add(src);
-                        }
-                        if (!visitor.getConflicts().isEmpty()) {
-                            curLayer.getConflicts().add(visitor.getConflicts());
-                            conflictsCount = visitor.getConflicts().size();
-                        }
-                    }
-                }
-                // FIXME: this is necessary because there are dialogs listening
-                // for DataChangeEvents which manipulate Swing components on this
-                // thread.
-                //
-                if (changed) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            curLayer.fireDataChange();
-                            curLayer.onPostDownloadFromServer();
-                        }
-                    });
                 }
             } catch (Exception e) {
                 if (cancelled) {
