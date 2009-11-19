@@ -9,11 +9,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -594,29 +596,20 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * The key/value list for this primitive.
      *
      */
-    private Object keys;
-    private static final String DEFAULT_KEY = "created_by";
+    private String[] keys;
 
     /**
      * Replies the map of key/value pairs. Never replies null. The map can be empty, though.
      *
-     * @return Keys of this primitive. Changes made in returned map are not mapped
+     * @return tags of this primitive. Changes made in returned map are not mapped
      * back to the primitive, use setKeys() to modify the keys
      * @since 1924
      */
     public Map<String, String> getKeys() {
         Map<String, String> result = new HashMap<String, String>();
         if (keys != null) {
-            if (keys instanceof String) {
-                result.put(DEFAULT_KEY, (String)keys);
-            } else {
-                String[] map = (String[])keys;
-                if (map[0] != null) {
-                    result.put(DEFAULT_KEY, map[0]);
-                }
-                for (int i=0; i<map.length / 2; i++) {
-                    result.put(map[i * 2 + 1], map[i * 2 + 2]);
-                }
+            for (int i=0; i<keys.length ; i+=2) {
+                result.put(keys[i], keys[i + 1]);
             }
         }
         return result;
@@ -632,19 +625,15 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     public void setKeys(Map<String, String> keys) {
         if (keys == null) {
             this.keys = null;
-        } else {
-            String[] newKeys = new String[keys.size() * 2 + (keys.containsKey(DEFAULT_KEY)?-1:1)];
-            int index = 1;
-            for (Entry<String, String> entry:keys.entrySet()) {
-                if (DEFAULT_KEY.equals(entry.getKey())) {
-                    newKeys[0] = entry.getValue();
-                } else {
-                    newKeys[index++] = entry.getKey();
-                    newKeys[index++] = entry.getValue();
-                }
-            }
-            this.keys = newKeys;
+            return;
         }
+        String[] newKeys = new String[keys.size() * 2];
+        int index = 0;
+        for (Entry<String, String> entry:keys.entrySet()) {
+            newKeys[index++] = entry.getKey();
+            newKeys[index++] = entry.getValue();
+        }
+        this.keys = newKeys;
         keysChangedImpl();
     }
 
@@ -662,12 +651,23 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             return;
         else if (value == null) {
             remove(key);
+        } else if (keys == null || keys.length == 0){
+            keys = new String[] {key, value};
         } else {
-            // TODO More effective implementation
-            Map<String, String> keys = getKeys();
-            if (!value.equals(keys.put(key, value))) {
-                setKeys(keys);
+            for (int i=0; i<keys.length;i+=2) {
+                if (keys[i].equals(key)) {
+                    keys[i+1] = value;
+                    return;
+                }
             }
+            String[] newKeys = new String[keys.length + 2];
+            for (int i=0; i< keys.length;i+=2) {
+                newKeys[i] = keys[i];
+                newKeys[i+1] = keys[i+1];
+            }
+            newKeys[keys.length] = key;
+            newKeys[keys.length + 1] = value;
+            keys = newKeys;
         }
     }
     /**
@@ -676,11 +676,22 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @param key  the key to be removed. Ignored, if key is null.
      */
     public final void remove(String key) {
-        Map<String, String> keys = getKeys();
-        if (keys.remove(key) != null) {
-            // TODO More effective implemenation
-            setKeys(keys);
+        if (key == null || keys == null || keys.length == 0 ) return;
+        if (!hasKey(key))
+            return;
+        if (keys.length == 2) {
+            keys = null;
+            return;
         }
+        String[] newKeys = new String[keys.length - 2];
+        int j=0;
+        for (int i=0; i < keys.length; i+=2) {
+            if (!keys[i].equals(key)) {
+                newKeys[j++] = keys[i];
+                newKeys[j++] = keys[i+1];
+            }
+        }
+        keys = newKeys;
     }
 
     /**
@@ -703,59 +714,35 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     public final String get(String key) {
         if (key == null)
             return null;
-
-        if (keys == null)
+        if (keys == null || keys.length == 0)
             return null;
-
-        if (keys instanceof String)
-            return DEFAULT_KEY.equals(key)?(String)keys:null;
-
-            String[] map = (String[])keys;
-            if (DEFAULT_KEY.equals(key))
-                return map[0];
-            else {
-                for (int i=0; i<map.length/2; i++) {
-                    if (key.equals(map[i * 2 + 1]))
-                        return map[i * 2 + 2];
-                }
-            }
-            return null;
+        for (int i=0; i<keys.length;i+=2) {
+            if (keys[i].equals(key)) return keys[i+1];
+        }
+        return null;
     }
 
+    // FIXME: why replying a collection of entries? Should be replaced by
+    // a method Map<String,String> getTags()
+    //
     public final Collection<Entry<String, String>> entrySet() {
-        if (keys == null)
+        if (keys == null || keys.length ==0)
             return Collections.emptySet();
-        else if (keys instanceof String)
-            return Collections.<Entry<String, String>>singleton(new KeysEntry(DEFAULT_KEY, (String)keys));
-        else {
-            String[] map = (String[])keys;
-            List<Entry<String, String>> result = new ArrayList<Entry<String,String>>();
-            if (map[0] != null) {
-                result.add(new KeysEntry(DEFAULT_KEY, map[0]));
-            }
-            for (int i=0; i<map.length / 2; i++) {
-                result.add(new KeysEntry(map[i * 2 + 1], map[i * 2 + 2]));
-            }
-            return result;
+        Set<Entry<String, String>> result = new HashSet<Entry<String,String>>();
+        for (int i=0; i<keys.length; i+=2) {
+            result.add(new KeysEntry(keys[i], keys[i+1]));
         }
+        return result;
     }
 
     public final Collection<String> keySet() {
-        if (keys == null)
+        if (keys == null || keys.length == 0)
             return Collections.emptySet();
-        else if (keys instanceof String)
-            return Collections.singleton(DEFAULT_KEY);
-        else {
-            String[] map = (String[])keys;
-            List<String> result = new ArrayList<String>(map.length / 2 + 1);
-            if (map[0] != null) {
-                result.add(DEFAULT_KEY);
-            }
-            for (int i=0; i<map.length / 2; i++) {
-                result.add(map[i * 2 + 1]);
-            }
-            return result;
+        Set<String> result = new HashSet<String>(keys.length / 2);
+        for (int i=0; i<keys.length; i+=2) {
+            result.add(keys[i]);
         }
+        return result;
     }
 
     /**
@@ -765,7 +752,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      *   otherwise
      */
     public final boolean hasKeys() {
-        return keys != null;
+        return keys != null && keys.length != 0;
     }
 
     private void keysChangedImpl() {
@@ -777,6 +764,30 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         }
     }
 
+    /**
+     * Replies true if this primitive has a tag with key <code>key</code>
+     * 
+     * @param key the key
+     * @return true, if his primitive has a tag with key <code>key</code>
+     */
+    public boolean hasKey(String key) {
+        if (key == null) return false;
+        if (keys == null) return false;
+        for (int i=0; i< keys.length;i+=2) {
+            if (keys[i].equals(key)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Replies true if other isn't null and has the same tags (key/value-pairs) as this.
+     * 
+     * @param other the other object primitive
+     * @return true if other isn't null and has the same tags (key/value-pairs) as this.
+     */
+    public boolean hasSameTags(OsmPrimitive other) {
+        return entrySet().equals(other.entrySet());
+    }
 
     /*------------
      * Referrers
@@ -938,7 +949,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             return false;
         if (incomplete && ! other.incomplete || !incomplete  && other.incomplete)
             return false;
-        return keySet().equals(other.keySet());
+        // can't do an equals check on the internal keys array because it is not ordered
+        //
+        return hasSameTags(other);
     }
 
     /**
