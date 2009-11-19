@@ -472,6 +472,9 @@ public class OsmApi extends OsmConnection {
      * @param urlSuffix The suffix to add at the server url, not including the version number,
      *    but including any object ids (e.g. "/way/1234/history").
      * @param requestBody the body of the HTTP request, if any.
+     * @param monitor the progress monitor
+     * @param doAuthenticate  set to true, if the request sent to the server shall include authentication
+     * credentials;
      *
      * @return the body of the HTTP response, if and only if the response code was "200 OK".
      * @exception OsmTransferException if the HTTP return code was not 200 (and retries have
@@ -498,7 +501,7 @@ public class OsmApi extends OsmConnection {
                     OutputStream out = activeConnection.getOutputStream();
 
                     // It seems that certain bits of the Ruby API are very unhappy upon
-                    // receipt of a PUT/POST message withtout a Content-length header,
+                    // receipt of a PUT/POST message without a Content-length header,
                     // even if the request has no payload.
                     // Since Java will not generate a Content-length header unless
                     // we use the output stream, we create an output stream for PUT/POST
@@ -534,12 +537,17 @@ public class OsmApi extends OsmConnection {
                 } catch (IOException ioe) {
                     i = activeConnection.getErrorStream();
                 }
-                BufferedReader in = new BufferedReader(new InputStreamReader(i));
-
-                String s;
-                while((s = in.readLine()) != null) {
-                    responseBody.append(s);
-                    responseBody.append("\n");
+                if (i != null) {
+                    // the input stream can be null if both the input and the error stream
+                    // are null. Seems to be the case if the OSM server replies a 401
+                    // Unauthorized, see #3887.
+                    //
+                    BufferedReader in = new BufferedReader(new InputStreamReader(i));
+                    String s;
+                    while((s = in.readLine()) != null) {
+                        responseBody.append(s);
+                        responseBody.append("\n");
+                    }
                 }
                 String errorHeader = null;
                 // Look for a detailed error message from the server
@@ -552,17 +560,15 @@ public class OsmApi extends OsmConnection {
                 activeConnection.disconnect();
 
                 errorHeader = errorHeader == null? null : errorHeader.trim();
-                String errorBody = responseBody == null ? null : responseBody.toString().trim();
+                String errorBody = responseBody.length() == 0? null : responseBody.toString().trim();
                 switch(retCode) {
                 case HttpURLConnection.HTTP_OK:
-                    break; // do nothing
+                    return responseBody.toString();
                 case HttpURLConnection.HTTP_GONE:
                     throw new OsmApiPrimitiveGoneException(errorHeader, errorBody);
                 default:
                     throw new OsmApiException(retCode, errorHeader, errorBody);
-
                 }
-                return responseBody.toString();
             } catch (UnknownHostException e) {
                 throw new OsmTransferException(e);
             } catch (SocketTimeoutException e) {
