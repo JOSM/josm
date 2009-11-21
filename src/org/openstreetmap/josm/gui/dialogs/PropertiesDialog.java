@@ -558,15 +558,22 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         JPanel buttonPanel = new JPanel(new GridLayout(1,3));
 
+        // -- add action and shortcut
         AddAction addAction = new AddAction();
-        Shortcut.registerShortcut("properties:add", tr("Add Properties"), KeyEvent.VK_B,
-                Shortcut.GROUP_MNEMONIC);
         this.btnAdd = new SideButton(addAction);
         btnAdd.setFocusable(true);
         buttonPanel.add(this.btnAdd);
         btnAdd.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "onEnter");
         btnAdd.getActionMap().put("onEnter", addAction);
 
+        Shortcut sc = Shortcut.registerShortcut("properties:add", tr("Add Properties"), KeyEvent.VK_B,
+                Shortcut.GROUP_MNEMONIC);
+        Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), "properties:add");
+        Main.contentPane.getActionMap().put("properties:add", addAction);
+
+
+        // -- edit action
+        //
         EditAction editAction = new EditAction();
         propertyTable.getSelectionModel().addListSelectionListener(editAction);
         membershipTable.getSelectionModel().addListSelectionListener(editAction);
@@ -574,6 +581,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         buttonPanel.add(this.btnEdit);
 
         // -- delete action
+        //
         DeleteAction deleteAction = new DeleteAction();
         this.btnDel = new SideButton(deleteAction);
         membershipTable.getSelectionModel().addListSelectionListener(deleteAction);
