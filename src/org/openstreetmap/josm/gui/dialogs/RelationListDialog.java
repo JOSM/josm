@@ -665,7 +665,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
          */
         public synchronized void setSelectedRelations(List<Relation> sel) {
             selectionModel.clearSelection();
-            if (sel == null || sel.isEmpty())
+            if (sel == null || sel.isEmpty() || relations == null)
                 return;
             for (Relation r: sel) {
                 int i = relations.indexOf(r);
