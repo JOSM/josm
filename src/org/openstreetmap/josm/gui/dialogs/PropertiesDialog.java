@@ -568,7 +568,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         btnAdd.getActionMap().put("onEnter", addAction);
 
         EditAction editAction = new EditAction();
-        membershipTable.getSelectionModel().addListSelectionListener(editAction);
+        propertyTable.getSelectionModel().addListSelectionListener(editAction);
         this.btnEdit = new SideButton(editAction);
         buttonPanel.add(this.btnEdit);
 
@@ -787,6 +787,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
     }
 
+    /* ---------------------------------------------------------------------------------- */
+    /* LayerChangeListener                                                                */
+    /* ---------------------------------------------------------------------------------- */
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
         if (newLayer instanceof OsmDataLayer) {
             OsmDataLayer dataLayer = (OsmDataLayer)newLayer;
@@ -804,7 +807,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     public void layerRemoved(Layer oldLayer) {
         // do nothing
     }
-
 
     class DeleteAction extends AbstractAction implements ListSelectionListener {
 
@@ -898,14 +900,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
-            int row = membershipTable.getSelectedRow();
-            if (e.getActionCommand().equals("Edit")) {
-                propertyEdit(row >= 0 ? row : 0);
-            }
+            int row = propertyTable.getSelectedRow();
+            propertyEdit(row >= 0 ? row : 0);
         }
 
         protected void updateEnabledState() {
-            setEnabled(membershipTable.getSelectedRowCount() == 1);
+            setEnabled(propertyTable.getSelectedRowCount() == 1);
         }
 
         public void valueChanged(ListSelectionEvent e) {
