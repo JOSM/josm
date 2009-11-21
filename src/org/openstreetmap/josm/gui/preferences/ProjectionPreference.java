@@ -163,6 +163,7 @@ public class ProjectionPreference implements PreferenceSetting {
             );
             coll = null;
             Main.proj = new Mercator();
+            name = Main.proj.getClass().getName();
         }
         if(!Main.proj.equals(oldProj) && b != null)
         {
@@ -170,7 +171,9 @@ public class ProjectionPreference implements PreferenceSetting {
             /* TODO - remove layers with fixed projection */
         }
         Main.pref.putCollection("projection.sub", coll);
-        if(coll != null && projHasPrefs(Main.proj))
+        String sname = name.substring(name.lastIndexOf(".")+1);
+        Main.pref.putCollection("projection.sub."+sname, coll);
+        if(projHasPrefs(Main.proj))
             ((ProjectionSubPrefs) Main.proj).setPreferences(coll);
     }
 
@@ -204,7 +207,11 @@ public class ProjectionPreference implements PreferenceSetting {
     private void setupProjectionCombo() {
         for (int i = 0; i < projectionCombo.getItemCount(); ++i) {
             Projection proj = (Projection)projectionCombo.getItemAt(i);
-            if (proj.getClass().getName().equals(Main.pref.get("projection", Mercator.class.getName()))) {
+            String name = proj.getClass().getName();
+            String sname = name.substring(name.lastIndexOf(".")+1);
+            if(projHasPrefs(proj))
+                ((ProjectionSubPrefs) proj).setPreferences(Main.pref.getCollection("projection.sub."+sname, null));
+            if (name.equals(Main.pref.get("projection", Mercator.class.getName()))) {
                 projectionCombo.setSelectedIndex(i);
                 selectedProjectionChanged(proj);
                 break;

@@ -36,6 +36,7 @@ public interface ProjectionSubPrefs {
 
     /**
      * Will be called if the preference dialog is dismissed.
+     * argument may be null to reset everything
      */
     public void setPreferences(Collection<String> args);
 

@@ -25,7 +25,8 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class UTM implements Projection, ProjectionSubPrefs {
 
-    private int zone = 33;
+    public static final int DEFAULT_ZONE = 30;
+    private int zone = DEFAULT_ZONE;
 
     final private double UTMScaleFactor = 0.9996;
 
@@ -409,13 +410,31 @@ public class UTM implements Projection, ProjectionSubPrefs {
 
     public void setPreferences(Collection<String> args)
     {
-        /* TODO: parse args instead of fixed value */
-        zone = 33;
+        zone = DEFAULT_ZONE;
+        try {
+            for(String s : args)
+            {
+                zone = Integer.parseInt(s);
+                if(zone <= 0 || zone > 60)
+                    zone = DEFAULT_ZONE;
+                break;
+            }
+        } catch(NumberFormatException e) {}
     }
 
     public Collection<String> getPreferencesFromCode(String code)
     {
-        /* TODO: implement */
+        if(code.startsWith("EPSG:3258"))
+        {
+            try {
+                String zonestring = code.substring(9);
+                int zoneval = Integer.parseInt(zonestring);
+                if(zoneval > 0 && zone <= 60)
+                {
+                    return Collections.singleton(zonestring);
+                }
+            } catch(NumberFormatException e) {}
+        }
         return null;
     }
 }
