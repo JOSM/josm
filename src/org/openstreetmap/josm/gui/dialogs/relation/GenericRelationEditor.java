@@ -75,7 +75,7 @@ import org.openstreetmap.josm.gui.tagging.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
-import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.io.OsmServerBackreferenceReader;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -86,7 +86,7 @@ import org.xml.sax.SAXException;
  * This dialog is for editing relations.
  *
  */
-public class GenericRelationEditor extends RelationEditor {
+public class GenericRelationEditor extends RelationEditor  {
 
     static private final Logger logger = Logger.getLogger(GenericRelationEditor.class.getName());
 
@@ -1380,6 +1380,8 @@ public class GenericRelationEditor extends RelationEditor {
         private List<Relation> relations;
         private OsmDataLayer curLayer;
         private MemberTableModel memberTableModel;
+        private OsmServerObjectReader objectReader;
+        private OsmServerBackreferenceReader parentReader;
 
         public DownloadTask(List<Relation> relations, OsmDataLayer curLayer, MemberTableModel memberTableModel, Dialog parent) {
             super(tr("Download relation members"), new PleaseWaitProgressMonitor(parent), false /* don't ignore exception */);
@@ -1398,7 +1400,13 @@ public class GenericRelationEditor extends RelationEditor {
         @Override
         protected void cancel() {
             cancelled = true;
-            OsmApi.getOsmApi().cancel();
+            synchronized(this) {
+                if (objectReader != null) {
+                    objectReader.cancel();
+                } else if (parentReader != null) {
+                    parentReader.cancel();
+                }
+            }
         }
 
         @Override
@@ -1418,13 +1426,42 @@ public class GenericRelationEditor extends RelationEditor {
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
                 for (Relation relation : relations) {
-                    progressMonitor.indeterminateSubTask("");
-                    OsmServerObjectReader reader = new OsmServerObjectReader(relation.getId(), OsmPrimitiveType.RELATION,
-                            true);
-                    final DataSet dataSet = reader.parseOsm(progressMonitor
+                    // download the relation
+                    //
+                    progressMonitor.indeterminateSubTask(tr("Downloading relation ''{0}''", relation.getDisplayName(DefaultNameFormatter.getInstance())));
+                    synchronized(this) {
+                        if (cancelled) return;
+                        objectReader = new OsmServerObjectReader(relation.getId(), OsmPrimitiveType.RELATION, true /* full download */);
+                    }
+                    final DataSet dataSet = objectReader.parseOsm(progressMonitor
                             .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
                     if (dataSet == null)
                         return;
+                    synchronized (this) {
+                        if (cancelled) return;
+                        objectReader = null;
+                    }
+
+                    // download referring objects of the downloaded member objects
+                    //
+                    // asked for in #3999, but uncommented for the time being. Could be used
+                    // later, perhaps if user explicity requests so (for instance by checking
+                    // a checkbox)
+                    //                    for (OsmPrimitive p: relation.getMemberPrimitives()) {
+                    //                        synchronized(this) {
+                    //                            if (cancelled) return;
+                    //                            parentReader = new OsmServerBackreferenceReader(p);
+                    //                        }
+                    //                        DataSet parents = parentReader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
+                    //                        synchronized(this) {
+                    //                            if (cancelled) return;
+                    //                            parentReader = null;
+                    //                        }
+                    //                        DataSetMerger merger = new DataSetMerger(dataSet, parents);
+                    //                        merger.merge();
+                    //                    }
+                    //                    if (cancelled) return;
+
                     // has to run on the EDT because mergeFrom may trigger events
                     // which update the UI
                     //
@@ -1437,7 +1474,6 @@ public class GenericRelationEditor extends RelationEditor {
                                 }
                             }
                     );
-
                 }
             } catch (Exception e) {
                 if (cancelled) {

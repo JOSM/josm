@@ -1,6 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
+import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.BACKWARD;
+import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.FORWARD;
+import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.NONE;
+import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.ROUNDABOUT_LEFT;
+import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.ROUNDABOUT_RIGHT;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,14 +16,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ListSelectionModel;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.event.TableModelListener;
 import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -29,8 +34,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
-import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.*;
-
 public class MemberTableModel extends AbstractTableModel implements TableModelListener {
 
     /**
@@ -38,7 +41,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      **/
     private ArrayList<RelationMember> members;
     private ArrayList<WayConnectionType> connectionType = null;
-    
+
     private DefaultListSelectionModel listSelectionModel;
     private CopyOnWriteArrayList<IMemberModelListener> listeners;
     private OsmDataLayer layer;
@@ -97,12 +100,12 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
 
     public Object getValueAt(int rowIndex, int columnIndex) {
         switch (columnIndex) {
-            case 0:
-                return members.get(rowIndex).getRole();
-            case 1:
-                return members.get(rowIndex).getMember();
-            case 2:
-                return wayConnection(rowIndex);
+        case 0:
+            return members.get(rowIndex).getRole();
+        case 1:
+            return members.get(rowIndex).getMember();
+        case 2:
+            return wayConnection(rowIndex);
         }
         // should not happen
         return null;
@@ -581,7 +584,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
 
         // current group of members that are linked among each other
         // Two successive members are always linked i.e. have a common node.
-        // 
+        //
         LinkedList<Integer> group;
 
         Integer first;
@@ -618,7 +621,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         }
 
         if (members.size() != newMembers.size()) throw new AssertionError();
-        
+
         members.clear();
         members.addAll(newMembers);
         fireTableDataChanged();
@@ -637,13 +640,11 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      *
      **/
     private Direction determineDirection(int ref_i,Direction ref_direction, int k) {
-        if (ref_i < 0 || k < 0 || ref_i >= members.size() || k >= members.size()) {
+        if (ref_i < 0 || k < 0 || ref_i >= members.size() || k >= members.size())
             return NONE;
-        }
-        if (ref_direction == NONE) {
+        if (ref_direction == NONE)
             return NONE;
-        }
-        
+
         RelationMember m_ref = members.get(ref_i);
         RelationMember m = members.get(k);
         Way way_ref = null;
@@ -655,46 +656,43 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         if (m.isWay()) {
             way = m.getWay();
         }
-        
-        if (way_ref == null || way == null) {
+
+        if (way_ref == null || way == null)
             return NONE;
-        }
 
         /** the list of nodes the way k can dock to */
         List<Node> refNodes= new ArrayList<Node>();
 
         switch (ref_direction) {
-            case FORWARD:
-                refNodes.add(way_ref.lastNode());
-                break;
-            case BACKWARD:
-                refNodes.add(way_ref.firstNode());
-                break;
-            case ROUNDABOUT_LEFT:
-            case ROUNDABOUT_RIGHT:
-                refNodes = way_ref.getNodes();
-                break;
-        }
-                    
-        if (refNodes == null) {
-            return NONE;
+        case FORWARD:
+            refNodes.add(way_ref.lastNode());
+            break;
+        case BACKWARD:
+            refNodes.add(way_ref.firstNode());
+            break;
+        case ROUNDABOUT_LEFT:
+        case ROUNDABOUT_RIGHT:
+            refNodes = way_ref.getNodes();
+            break;
         }
 
+        if (refNodes == null)
+            return NONE;
+
         for (Node n : refNodes) {
-            if (n == null) continue;
+            if (n == null) {
+                continue;
+            }
             if (roundaboutType(k) != NONE) {
                 for (Node nn : way.getNodes()) {
-                    if (n == nn) {
+                    if (n == nn)
                         return roundaboutType(k);
-                    }
                 }
             } else {
-                if (n == way.firstNode()) {
+                if (n == way.firstNode())
                     return FORWARD;
-                }
-                if (n == way.lastNode()) {
+                if (n == way.lastNode())
                     return BACKWARD;
-                }
             }
         }
         return NONE;
@@ -748,7 +746,9 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         connectionType = null;
         ArrayList<WayConnectionType> con = new ArrayList<WayConnectionType>();
 
-        for (int i=0; i<members.size(); ++i) con.add(null);
+        for (int i=0; i<members.size(); ++i) {
+            con.add(null);
+        }
 
         int firstGroupIdx=0;
         boolean resetFirstGoupIdx=false;
@@ -795,7 +795,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
                         dir = roundaboutType(i);
                     }
                 }
-                    
+
             }
 
             con.set(i, new WayConnectionType(linkPrev, linkNext, dir));
@@ -816,8 +816,8 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
             }
         }
         connectionType = con;
-//        for (int i=0; i<con.size(); ++i) {
-//            System.err.println(con.get(i));
-//        }
+        //        for (int i=0; i<con.size(); ++i) {
+        //            System.err.println(con.get(i));
+        //        }
     }
 }
