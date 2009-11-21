@@ -569,6 +569,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         EditAction editAction = new EditAction();
         propertyTable.getSelectionModel().addListSelectionListener(editAction);
+        membershipTable.getSelectionModel().addListSelectionListener(editAction);
         this.btnEdit = new SideButton(editAction);
         buttonPanel.add(this.btnEdit);
 
@@ -900,12 +901,20 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
-            int row = propertyTable.getSelectedRow();
-            propertyEdit(row >= 0 ? row : 0);
+            if (propertyTable.getSelectedRowCount() == 1) {
+                int row = propertyTable.getSelectedRow();
+                propertyEdit(row);
+            } else if (membershipTable.getSelectedRowCount() == 1) {
+                int row = membershipTable.getSelectedRow();
+                membershipEdit(row);
+            }
         }
 
         protected void updateEnabledState() {
-            setEnabled(propertyTable.getSelectedRowCount() == 1);
+            setEnabled(
+                    propertyTable.getSelectedRowCount() == 1
+                    ^ membershipTable.getSelectedRowCount() == 1
+            );
         }
 
         public void valueChanged(ListSelectionEvent e) {

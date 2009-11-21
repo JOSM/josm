@@ -619,11 +619,6 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             return relations.size();
         }
 
-        public int getIndexOfRelation(Relation relation) {
-            if (relation == null) return -1;
-            return relations.indexOf(relation);
-        }
-
         /**
          * Replies the list of selected, non-new relations. Empty list,
          * if there are no selected, non-new relations.
