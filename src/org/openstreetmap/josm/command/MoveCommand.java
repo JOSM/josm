@@ -94,8 +94,9 @@ public class MoveCommand extends Command {
         for (Node n : nodes) {
             // in case #3892 happens again
             //
-            assert n!= null : tr("null detected in node list");
-            assert n.getEastNorth() != null : tr("unexpected null value for n.getEastNorth(). id of n is", n.getUniqueId());
+            assert n!= null : "null detected in node list";
+            assert n.getEastNorth() != null : "unexpected null value for n.getEastNorth(). id of n is" + n.getUniqueId();
+
             n.setEastNorth(n.getEastNorth().add(x, y));
             n.setModified(true);
         }
