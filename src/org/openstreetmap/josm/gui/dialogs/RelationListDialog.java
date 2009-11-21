@@ -44,6 +44,7 @@ import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
+import org.openstreetmap.josm.gui.layer.DataChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
@@ -58,7 +59,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * We don't have such dialogs for nodes, segments, and ways, because those
  * objects are visible on the map and can be selected there. Relations are not.
  */
-public class RelationListDialog extends ToggleDialog implements LayerChangeListener, DataSetListener {
+public class RelationListDialog extends ToggleDialog implements LayerChangeListener, DataSetListener, DataChangeListener {
     //private static final Logger logger = Logger.getLogger(RelationListDialog.class.getName());
 
     /** The display list. */
@@ -521,6 +522,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
 
         public synchronized void setRelations(Collection<Relation> relations) {
+            List<Relation> sel =  getSelectedRelations();
             if (relations == null) {
                 this.relations = null;
             } else {
@@ -533,7 +535,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             }
             sort();
             fireIntervalAdded(this, 0, getSize());
-            selectionModel.clearSelection();
+            setSelectedRelations(sel);
         }
 
         public synchronized void sort() {
@@ -630,6 +632,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
          */
         public List<Relation> getSelectedNonNewRelations() {
             ArrayList<Relation> ret = new ArrayList<Relation>();
+            if (relations == null) return ret;
             for (int i=0; i<getSize();i++) {
                 if (!selectionModel.isSelectedIndex(i)) {
                     continue;
@@ -650,6 +653,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
          */
         public List<Relation> getSelectedRelations() {
             ArrayList<Relation> ret = new ArrayList<Relation>();
+            if (relations == null) return ret;
             for (int i=0; i<getSize();i++) {
                 if (!selectionModel.isSelectedIndex(i)) {
                     continue;
@@ -705,9 +709,11 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         initFromLayer(b);
         if (a != null && a instanceof OsmDataLayer) {
             ((OsmDataLayer)a).data.removeDataSetListener(this);
+            ((OsmDataLayer)a).listenerDataChanged.remove(this);
         }
         if (b != null && b instanceof OsmDataLayer) {
             ((OsmDataLayer)b).data.addDataSetListener(this);
+            ((OsmDataLayer)b).listenerDataChanged.add(this);
         }
 
     }
@@ -783,6 +789,15 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             task.run();
         } else {
             SwingUtilities.invokeLater(task);
+        }
+    }
+
+    /* ---------------------------------------------------------------------------------- */
+    /* DataSetListener                                                                    */
+    /* ---------------------------------------------------------------------------------- */
+    public void dataChanged(OsmDataLayer l) {
+        if (l != null && l == Main.main.getEditLayer()) {
+            initFromLayer(l);
         }
     }
 }
