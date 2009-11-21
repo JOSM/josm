@@ -11,12 +11,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -32,7 +32,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetListener;
 import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
@@ -74,7 +73,6 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     private NewAction newAction;
     /** the popup menu */
     private RelationDialogPopupMenu popupMenu;
-
 
     /**
      * constructor
@@ -128,6 +126,8 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         buttonPanel.add(new SideButton(selectAction), GBC.eol());
 
         add(buttonPanel, BorderLayout.SOUTH);
+
+        // activate DEL in the list of relations
         displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "deleteRelation");
         displaylist.getActionMap().put("deleteRelation", deleteAction);
 
@@ -137,94 +137,44 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     @Override public void showNotify() {
         Layer.listeners.add(this);
         Layer.listeners.add(newAction);
-        for (OsmDataLayer layer:Main.map.mapView.getLayersOfType(OsmDataLayer.class)) {
-            layer.data.addDataSetListener(this);
+        // Register as a data set listener for the current edit layer only.
+        // See also activeLayerChanged
+        if (Main.main.getEditLayer() != null) {
+            Main.main.getEditLayer().data.addDataSetListener(this);
         }
     }
 
     @Override public void hideNotify() {
         Layer.listeners.remove(this);
         Layer.listeners.remove(newAction);
+        Layer.listeners.add(newAction);
+        // unregistering from *all* data layer is somewhat overkill but it
+        // doesn't harm either.
         for (OsmDataLayer layer:Main.map.mapView.getLayersOfType(OsmDataLayer.class)) {
             layer.data.removeDataSetListener(this);
         }
     }
 
-
-    protected int getNumRelations() {
-        if (Main.main.getCurrentDataSet() == null) return 0;
-        return Main.main.getCurrentDataSet().getRelations().size();
-    }
-
     /**
-     * Replies the list of complete, non-deleted relations in the dataset <code>ds</code>,
-     * sorted by display name.
+     * Initializes the relation list dialog from a layer. If <code>layer</code> is null
+     * or if it isn't an {@see OsmDataLayer} the dialog is reset to an empty dialog.
+     * Otherwise it is initialized with the list of non-deleted and visible relations
+     * in the layer's dataset.
      * 
-     * @param ds the dataset
-     * @return the list of relations
+     * @param layer the layer. May be null.
      */
-    protected ArrayList<Relation> getDisplayedRelationsInSortOrder(DataSet ds) {
-        ArrayList<Relation> relations = new ArrayList<Relation>(ds.getRelations().size());
-        for (Relation r : ds.getRelations()) {
-            if (!r.isUsable() || !r.isVisible()) {
-                continue;
-            }
-            relations.add(r);
-        }
-
-        Collections.sort(
-                relations,
-                new Comparator<Relation>() {
-                    NameFormatter formatter = DefaultNameFormatter.getInstance();
-
-                    public int compare(Relation r1, Relation r2) {
-                        return r1.getDisplayName(formatter).compareTo(r2.getDisplayName(formatter));
-                    }
-                }
-        );
-        return relations;
-    }
-
-    public void updateList() {
-        if (Main.main.getCurrentDataSet() == null) {
+    protected void initFromLayer(Layer layer) {
+        if (layer == null || ! (layer instanceof OsmDataLayer)) {
             model.setRelations(null);
             return;
         }
-        Relation[] selected = getAllSelected();
-
-        model.setRelations(getDisplayedRelationsInSortOrder(Main.main.getCurrentDataSet()));
+        OsmDataLayer l = (OsmDataLayer)layer;
+        model.setRelations(l.data.getRelations());
         if(model.getSize() > 0) {
             setTitle(tr("Relations: {0}", model.getSize()));
         } else {
             setTitle(tr("Relations"));
         }
-        selectRelations(selected);
-    }
-
-    public void activeLayerChange(Layer a, Layer b) {
-        updateList();
-    }
-
-    public void layerRemoved(Layer a) {
-        if (a instanceof OsmDataLayer) {
-            ((OsmDataLayer)a).data.removeDataSetListener(this);
-        }
-        updateList();
-    }
-
-    public void layerAdded(Layer a) {
-        if (a instanceof OsmDataLayer) {
-            ((OsmDataLayer)a).data.addDataSetListener(this);
-        }
-    }
-
-    /**
-     * Returns the currently selected relation, or null.
-     *
-     * @return the currently selected relation, or null
-     */
-    public Relation getCurrentRelation() {
-        return (Relation) displaylist.getSelectedValue();
     }
 
     /**
@@ -256,51 +206,16 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     }
 
     /**
-     * @return All selected relations in the list, possibly empty List
-     */
-    private Relation[] getAllSelected() {
-        return Arrays.asList(displaylist.getSelectedValues()).toArray(new Relation[0]);
-    }
-
-    /**
      * Selects the relation <code>relation</code> in the list of relations.
      *
      * @param relation  the relation
      */
     public void selectRelation(Relation relation) {
-        selectRelations(new Relation[] {relation});
-    }
-
-    /**
-     * Selects the relations <code>relations</code> in the list of relations.
-     *
-     * @param relations  the relations (may be empty)
-     */
-    public void selectRelations(Relation[] relations) {
-        List<Integer> sel = new ArrayList<Integer>();
-        for (Relation r : relations) {
-            if (r == null) {
-                continue;
-            }
-            int idx = model.getIndexOfRelation(r);
-            if (idx != -1) {
-                sel.add(idx);
-            }
-        }
-        if (sel.isEmpty()) {
-            displaylist.clearSelection();
-            return;
+        if (relation == null) {
+            model.setSelectedRelations(null);
         } else {
-            int fst = Collections.min(sel);
-            displaylist.scrollRectToVisible(displaylist.getCellBounds(fst, fst));
+            model.setSelectedRelations(Collections.singletonList(relation));
         }
-
-        int[] aSel = new int[sel.size()];       //FIXME: how to cast Integer[] -> int[] ?
-        for (int i=0; i<sel.size(); ++i) {
-            aSel[i] = sel.get(i);
-        }
-
-        displaylist.setSelectedIndices(aSel);
     }
 
     class MouseEventHandler extends MouseAdapter {
@@ -424,7 +339,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     }
 
     /**
-     * The edit action
+     * The action for creating a new relation
      *
      */
     class NewAction extends AbstractAction implements LayerChangeListener{
@@ -436,7 +351,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
 
         public void run() {
-            RelationEditor.getEditor(Main.map.mapView.getEditLayer(),null, null).setVisible(true);
+            RelationEditor.getEditor(Main.main.getEditLayer(),null, null).setVisible(true);
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -556,7 +471,10 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
     }
 
-
+    /**
+     * The action for downloading members of all selected relations
+     * 
+     */
     class DownloadMembersAction extends AbstractAction implements ListSelectionListener{
 
         public DownloadMembersAction() {
@@ -585,6 +503,11 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
     }
 
+    /**
+     * The list model for the list of relations displayed in the relation list
+     * dialog.
+     *
+     */
     private static  class RelationListModel extends AbstractListModel {
         private ArrayList<Relation> relations;
         private DefaultListSelectionModel selectionModel;
@@ -597,12 +520,44 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             return relations.get(idx);
         }
 
-        public void setRelations(ArrayList<Relation> relations) {
-            this.relations = relations;
+        public synchronized void setRelations(Collection<Relation> relations) {
+            if (relations == null) {
+                this.relations = null;
+            } else {
+                this.relations = new ArrayList<Relation>(relations.size());
+                for (Relation r: relations) {
+                    if (! r.isDeleted() && r.isVisible() && !r.incomplete) {
+                        this.relations.add(r);
+                    }
+                }
+            }
+            sort();
             fireIntervalAdded(this, 0, getSize());
+            selectionModel.clearSelection();
         }
 
-        public void addRelations(Collection<? extends OsmPrimitive> addedPrimitives) {
+        public synchronized void sort() {
+            if (relations == null) return;
+            Collections.sort(
+                    relations,
+                    new Comparator<Relation>() {
+                        NameFormatter formatter = DefaultNameFormatter.getInstance();
+
+                        public int compare(Relation r1, Relation r2) {
+                            return r1.getDisplayName(formatter).compareTo(r2.getDisplayName(formatter));
+                        }
+                    }
+            );
+        }
+
+        /**
+         * Add all relations in <code>addedPrimitives</code> to the model for the
+         * relation list dialog
+         * 
+         * @param addedPrimitives the collection of added primitives. May include nodes,
+         * ways, and relations.
+         */
+        public synchronized void addRelations(Collection<? extends OsmPrimitive> addedPrimitives) {
             if (addedPrimitives == null || addedPrimitives.isEmpty()) return;
             boolean added = false;
             for (OsmPrimitive p: addedPrimitives) {
@@ -616,7 +571,39 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
                 added = true;
             }
             if (added) {
+                List<Relation> sel = getSelectedRelations();
+                sort();
                 fireIntervalAdded(this, 0, getSize());
+                setSelectedRelations(sel);
+            }
+        }
+
+        /**
+         * Removes all relations in <code>removedPrimitives</code> from the model
+         * 
+         * @param removedPrimitives the removed primitives. May include nodes, ways,
+         *   and relations
+         */
+        public synchronized void removeRelations(Collection<? extends OsmPrimitive> removedPrimitives) {
+            if (removedPrimitives == null) return;
+            // extract the removed relations
+            //
+            Set<Relation> removedRelations = new HashSet<Relation>();
+            for (OsmPrimitive p: removedPrimitives) {
+                if (! (p instanceof Relation)) {
+                    continue;
+                }
+                removedRelations.add((Relation)p);
+            }
+            if (removedRelations.isEmpty())
+                return;
+            int size = relations.size();
+            relations.removeAll(removedRelations);
+            if (size != relations.size()) {
+                List<Relation> sel = getSelectedRelations();
+                sort();
+                fireContentsChanged(this, 0, getSize());
+                setSelectedRelations(sel);
             }
         }
 
@@ -671,10 +658,27 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             }
             return ret;
         }
+
+        /**
+         * Sets the selected relations.
+         * 
+         * @return sel the list of selected relations
+         */
+        public synchronized void setSelectedRelations(List<Relation> sel) {
+            selectionModel.clearSelection();
+            if (sel == null || sel.isEmpty())
+                return;
+            for (Relation r: sel) {
+                int i = relations.indexOf(r);
+                if (i<0) {
+                    continue;
+                }
+                selectionModel.addSelectionInterval(i,i);
+            }
+        }
     }
 
     class RelationDialogPopupMenu extends JPopupMenu {
-
         protected void build() {
             // -- download members action
             //
@@ -694,27 +698,91 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
     }
 
-    public void nodeMoved(Node node) { }
+    /* ---------------------------------------------------------------------------------- */
+    /* LayerChangeListener                                                                */
+    /* ---------------------------------------------------------------------------------- */
+    public void activeLayerChange(Layer a, Layer b) {
+        initFromLayer(b);
+        if (a != null && a instanceof OsmDataLayer) {
+            ((OsmDataLayer)a).data.removeDataSetListener(this);
+        }
+        if (b != null && b instanceof OsmDataLayer) {
+            ((OsmDataLayer)b).data.addDataSetListener(this);
+        }
 
-    public void wayNodesChanged(Way way) { }
+    }
+    public void layerRemoved(Layer a) {/* irrelevant in this context */}
+    public void layerAdded(Layer a) {/* irrelevant in this context */}
 
-    public void primtivesAdded(Collection<? extends OsmPrimitive> added) {
-        model.addRelations(added);
+
+    /* ---------------------------------------------------------------------------------- */
+    /* DataSetListener                                                                    */
+    /* ---------------------------------------------------------------------------------- */
+
+    public void nodeMoved(Node node) {/* irrelevant in this context */}
+
+    public void wayNodesChanged(Way way) {/* irrelevant in this context */}
+
+    public void primtivesAdded(final Collection<? extends OsmPrimitive> added) {
+        Runnable task = new Runnable() {
+            public void run() {
+                model.addRelations(added);
+            }
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            task.run();
+        } else {
+            SwingUtilities.invokeLater(task);
+        }
     }
 
-    public void primtivesRemoved(Collection<? extends OsmPrimitive> removed) {
-        updateList();
+    public void primtivesRemoved(final Collection<? extends OsmPrimitive> removed) {
+        Runnable task = new Runnable() {
+            public void run() {
+                model.removeRelations(removed);
+            }
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            task.run();
+        } else {
+            SwingUtilities.invokeLater(task);
+        }
     }
 
-    public void relationMembersChanged(Relation r) {
-        // trigger a repaint of the relation list
-        displaylist.repaint();
+    public void relationMembersChanged(final Relation r) {
+        Runnable task = new Runnable() {
+            public void run() {
+                List<Relation> sel = model.getSelectedRelations();
+                model.sort();
+                model.setSelectedRelations(sel);
+                displaylist.repaint();
+            }
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            task.run();
+        } else {
+            SwingUtilities.invokeLater(task);
+        }
     }
 
     public void tagsChanged(OsmPrimitive prim) {
-        if (prim instanceof Relation) {
-            // trigger a repaint of the relation list
-            displaylist.repaint();
+        if (prim == null || ! (prim instanceof Relation))
+            return;
+        Runnable task = new Runnable() {
+            public void run() {
+                // trigger a sort of the relation list because the display name may
+                // have changed
+                //
+                List<Relation> sel = model.getSelectedRelations();
+                model.sort();
+                model.setSelectedRelations(sel);
+                displaylist.repaint();
+            }
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            task.run();
+        } else {
+            SwingUtilities.invokeLater(task);
         }
     }
 }

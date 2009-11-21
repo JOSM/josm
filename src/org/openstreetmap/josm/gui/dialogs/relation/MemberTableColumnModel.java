@@ -15,6 +15,7 @@ public class MemberTableColumnModel extends DefaultTableColumnModel {
         col = new TableColumn(0);
         col.setHeaderValue(tr("Role"));
         col.setResizable(true);
+        col.setPreferredWidth(100);
         col.setCellRenderer(new MemberTableRoleCellRenderer());
         col.setCellEditor(new MemberRoleCellEditor());
         addColumn(col);
@@ -23,14 +24,16 @@ public class MemberTableColumnModel extends DefaultTableColumnModel {
         col = new TableColumn(1);
         col.setHeaderValue(tr("Refers to"));
         col.setResizable(true);
+        col.setPreferredWidth(300);
         // col.setCellRenderer(new OsmPrimitivRenderer());
         col.setCellRenderer(new MemberTableMemberCellRenderer());
         addColumn(col);
 
         // column 2 -
         col = new TableColumn(2);
-        col.setHeaderValue(tr("Linked"));
-        col.setResizable(true);
+        col.setHeaderValue("");
+        col.setResizable(false);
+        col.setPreferredWidth(20);
         col.setCellRenderer(new MemberTableLinkedCellRenderer());
         addColumn(col);
     }
