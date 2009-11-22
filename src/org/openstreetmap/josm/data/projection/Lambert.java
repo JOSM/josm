@@ -1,19 +1,33 @@
-//License: GPL. For details, see LICENSE file.
-//Thanks to Johan Montagnat and its geoconv java converter application
-//(http://www.i3s.unice.fr/~johan/gps/ , published under GPL license)
-//from which some code and constants have been reused here.
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import javax.swing.JOptionPane;
+import java.awt.GridBagLayout;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Collections;
+
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.tools.GBC;
 
-public class Lambert implements Projection {
+/**
+ * This class provides the two methods <code>latlon2eastNorth</code> and <code>eastNorth2latlon</code>
+ * converting the JOSM LatLon coordinates in WGS84 system (GPS) to and from East North values in
+ * the projection Lambert conic conform 4 zones using the French geodetic system NTF.
+ * This newer version uses the grid translation NTF<->RGF93 provided by IGN for a submillimetric accuracy.
+ * (RGF93 is the French geodetic system similar to WGS84 but not mathematically equal)
+ * @author Pieren
+ */
+public class Lambert implements Projection, ProjectionSubPrefs {
     /**
      * Lambert I, II, III, and IV projection exponents
      */
@@ -48,95 +62,71 @@ public class Lambert implements Projection {
     /**
      * France is divided in 4 Lambert projection zones (1,2,3 + 4th for Corsica)
      */
-    public static final double cMaxLatZone1 = Math.toRadians(57 * 0.9);
+    public static final double cMaxLatZone1Radian = Math.toRadians(57 * 0.9);
+    public static final double cMinLatZone1Radian = Math.toRadians(46.1 * 0.9);// lowest latitude of Zone 4 (South Corsica)
 
-    public static final double zoneLimits[] = { Math.toRadians(53.5 * 0.9), // between Zone 1 and Zone 2 (in grad *0.9)
-        Math.toRadians(50.5 * 0.9), // between Zone 2 and Zone 3
-        Math.toRadians(47.51963 * 0.9), // between Zone 3 and Zone 4
-        Math.toRadians(46.17821 * 0.9) };// lowest latitude of Zone 4
+    public static final double zoneLimitsDegree[][] = {
+        {Math.toDegrees(cMaxLatZone1Radian), (53.5 * 0.9)}, // Zone 1  (reference values in grad *0.9)
+        {(53.5 * 0.9), (50.5 * 0.9)}, // Zone 2
+        {(50.5 * 0.9), (47.0 * 0.9)}, // Zone 3
+        {(47.51963 * 0.9), Math.toDegrees(cMinLatZone1Radian)} // Zone 4
+    };
 
-    public static final double cMinLonZones = Math.toRadians(-4.9074074074074059 * 0.9);
+    public static final double cMinLonZonesRadian = Math.toRadians(-4.9074074074074059 * 0.9);
 
-    public static final double cMaxLonZones = Math.toRadians(10.2 * 0.9);
+    public static final double cMaxLonZonesRadian = Math.toRadians(10.2 * 0.9);
 
     /**
-     *  Because josm cannot work correctly if two zones are displayed, we allow some overlapping
+     *  Allow some extension beyond the theoretical limits
      */
-    public static final double cMaxOverlappingZones = Math.toRadians(1.5 * 0.9);
+    public static final double cMaxOverlappingZonesDegree = 1.5;
 
-    public static int layoutZone = -1;
+    public static final int DEFAULT_ZONE = 0;
 
-    private static int currentZone = 0;
+    private static int layoutZone = DEFAULT_ZONE;
+
+    private static NTV2GridShiftFile ntf_rgf93Grid = null;
+
+    public static NTV2GridShiftFile getNtf_rgf93Grid() {
+        return ntf_rgf93Grid;
+    }
+
+    public Lambert() {
+        if (ntf_rgf93Grid == null) {
+            try {
+                String gridFileName = "ntf_r93_b.gsb";
+                InputStream is = Main.class.getResourceAsStream("/data/"+gridFileName);
+                ntf_rgf93Grid = new NTV2GridShiftFile();
+                ntf_rgf93Grid.loadGridShiftFile(is, false);
+                //System.out.println("NTF<->RGF93 grid loaded.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     /**
      * @param p  WGS84 lat/lon (ellipsoid GRS80) (in degree)
      * @return eastnorth projection in Lambert Zone (ellipsoid Clark)
+     * @throws IOException
      */
     public EastNorth latlon2eastNorth(LatLon p) {
         // translate ellipsoid GRS80 (WGS83) => Clark
-        LatLon geo = GRS802Clark(p);
-        double lt = geo.lat(); // in radian
-        double lg = geo.lon();
+        LatLon geo = WGS84_to_NTF(p);
+        double lt = Math.toRadians(geo.lat()); // in radian
+        double lg = Math.toRadians(geo.lon());
 
         // check if longitude and latitude are inside the French Lambert zones
-        currentZone = 0;
-        boolean outOfLambertZones = false;
-        if (lt >= zoneLimits[3] && lt <= cMaxLatZone1 && lg >= cMinLonZones && lg <= cMaxLonZones) {
-            // zone I
-            if (lt > zoneLimits[0]) {
-                currentZone = 0;
-            } else if (lt > zoneLimits[1]) {
-                currentZone = 1;
-            } else if (lt > zoneLimits[2]) {
-                currentZone = 2;
-            } else if (lt > zoneLimits[3])
-                // Note: zone IV is dedicated to Corsica island and extends from 47.8 to
-                // 45.9 degrees of latitude. There is an overlap with zone III that can be
-                // solved only with longitude (covers Corsica if lon > 7.2 degree)
-                if (lg < Math.toRadians(8 * 0.9)) {
-                    currentZone = 2;
-                } else {
-                    currentZone = 3;
-                }
-        } else {
-            outOfLambertZones = true; // possible when MAX_LAT is used
-        }
-        if (!outOfLambertZones) {
-            if (layoutZone == -1) {
-                layoutZone = currentZone;
-            } else if (layoutZone != currentZone) {
-                if (farawayFromLambertZoneFrance(lt,lg)) {
-                    JOptionPane.showMessageDialog(Main.parent,
-                            tr("IMPORTANT : data positioned far away from\n"
-                                    + "the current Lambert zone limits.\n"
-                                    + "Do not upload any data after this message.\n"
-                                    + "Undo your last action, save your work\n"
-                                    + "and start a new layer on the new zone."),
-                                    tr("Warning"),
-                                    JOptionPane.WARNING_MESSAGE);
-                    layoutZone = -1;
-                } else {
-                    System.out.println("temporarily extend Lambert zone " + layoutZone + " projection at lat,lon:"
-                            + lt + "," + lg);
-                }
-            }
-        }
-        if (layoutZone == -1)
-            return ConicProjection(lt, lg, Xs[currentZone], Ys[currentZone], c[currentZone], n[currentZone]);
-        return ConicProjection(lt, lg, Xs[layoutZone], Ys[layoutZone], c[layoutZone], n[layoutZone]);
+        if (lt >= cMinLatZone1Radian && lt <= cMaxLatZone1Radian && lg >= cMinLonZonesRadian && lg <= cMaxLonZonesRadian)
+            return ConicProjection(lt, lg, Xs[layoutZone], Ys[layoutZone], c[layoutZone], n[layoutZone]);
+        return ConicProjection(lt, lg, Xs[0], Ys[0], c[0], n[0]);
     }
 
     public LatLon eastNorth2latlon(EastNorth p) {
         LatLon geo;
-        if (layoutZone == -1) {
-            // possible until the Lambert zone is determined by latlon2eastNorth() with a valid LatLon
-            geo = Geographic(p, Xs[currentZone], Ys[currentZone], c[currentZone], n[currentZone]);
-        } else {
-            geo = Geographic(p, Xs[layoutZone], Ys[layoutZone], c[layoutZone], n[layoutZone]);
-        }
-        // translate ellipsoid Clark => GRS80 (WGS83)
-        LatLon wgs = Clark2GRS80(geo);
-        return new LatLon(Math.toDegrees(wgs.lat()), Math.toDegrees(wgs.lon()));
+        geo = Geographic(p, Xs[layoutZone], Ys[layoutZone], c[layoutZone], n[layoutZone]);
+        // translate geodetic system from NTF (ellipsoid Clark) to RGF93/WGS84 (ellipsoid GRS80)
+        return NTF_to_WGS84(geo);
     }
 
     @Override public String toString() {
@@ -144,7 +134,7 @@ public class Lambert implements Projection {
     }
 
     public String toCode() {
-        return "EPSG:"+(27561+currentZone);
+        return "EPSG:"+(27561+layoutZone);
     }
 
     public String getCacheDirectoryName() {
@@ -181,7 +171,7 @@ public class Lambert implements Projection {
      * @param Ys        false north (coordinate system origin) in meters
      * @param c         projection constant
      * @param n         projection exponent
-     * @return LatLon in radian
+     * @return LatLon in degree
      */
     private LatLon Geographic(EastNorth eastNorth, double Xs, double Ys, double c, double n) {
         double dx = eastNorth.east() - Xs;
@@ -200,97 +190,105 @@ public class Lambert implements Projection {
             delta = Math.abs(nlt - lat);
             lat = nlt;
         }
-        return new LatLon(lat, lon); // in radian
+        return new LatLon(Math.toDegrees(lat), Math.toDegrees(lon)); // in radian
     }
 
     /**
      * Translate latitude/longitude in WGS84, (ellipsoid GRS80) to Lambert
      * geographic, (ellipsoid Clark)
+     * @throws IOException
      */
-    private LatLon GRS802Clark(LatLon wgs) {
-        double lat = Math.toRadians(wgs.lat()); // degree to radian
-        double lon = Math.toRadians(wgs.lon());
-        // WGS84 geographic => WGS84 cartesian
-        double N = Ellipsoid.GRS80.a / (Math.sqrt(1.0 - Ellipsoid.GRS80.e2 * Math.sin(lat) * Math.sin(lat)));
-        double X = (N/* +height */) * Math.cos(lat) * Math.cos(lon);
-        double Y = (N/* +height */) * Math.cos(lat) * Math.sin(lon);
-        double Z = (N * (1.0 - Ellipsoid.GRS80.e2)/* + height */) * Math.sin(lat);
-        // WGS84 => Lambert ellipsoide similarity
-        X += 168.0;
-        Y += 60.0;
-        Z += -320.0;
-        // Lambert cartesian => Lambert geographic
-        return Geographic(X, Y, Z, Ellipsoid.clarke);
-    }
-
-    private LatLon Clark2GRS80(LatLon lambert) {
-        double lat = lambert.lat(); // in radian
-        double lon = lambert.lon();
-        // Lambert geographic => Lambert cartesian
-        double N = Ellipsoid.clarke.a / (Math.sqrt(1.0 - Ellipsoid.clarke.e2 * Math.sin(lat) * Math.sin(lat)));
-        double X = (N/* +height */) * Math.cos(lat) * Math.cos(lon);
-        double Y = (N/* +height */) * Math.cos(lat) * Math.sin(lon);
-        double Z = (N * (1.0 - Ellipsoid.clarke.e2)/* + height */) * Math.sin(lat);
-        // Lambert => WGS84 ellipsoide similarity
-        X += -168.0;
-        Y += -60.0;
-        Z += 320.0;
-        // WGS84 cartesian => WGS84 geographic
-        return Geographic(X, Y, Z, Ellipsoid.GRS80);
-    }
-
-    /**
-     * initializes from cartesian coordinates
-     *
-     * @param X
-     *            1st coordinate in meters
-     * @param Y
-     *            2nd coordinate in meters
-     * @param Z
-     *            3rd coordinate in meters
-     * @param ell
-     *            reference ellipsoid
-     */
-    private LatLon Geographic(double X, double Y, double Z, Ellipsoid ell) {
-        double norm = Math.sqrt(X * X + Y * Y);
-        double lg = 2.0 * Math.atan(Y / (X + norm));
-        double lt = Math.atan(Z / (norm * (1.0 - (ell.a * ell.e2 / Math.sqrt(X * X + Y * Y + Z * Z)))));
-        double delta = 1.0;
-        while (delta > epsilon) {
-            double s2 = Math.sin(lt);
-            s2 *= s2;
-            double l = Math.atan((Z / norm)
-                    / (1.0 - (ell.a * ell.e2 * Math.cos(lt) / (norm * Math.sqrt(1.0 - ell.e2 * s2)))));
-            delta = Math.abs(l - lt);
-            lt = l;
+    private LatLon WGS84_to_NTF(LatLon wgs) {
+        NTV2GridShift gs = new NTV2GridShift(wgs);
+        if (ntf_rgf93Grid != null) {
+            ntf_rgf93Grid.gridShiftReverse(gs);
+            return new LatLon(wgs.lat()+gs.getLatShiftDegrees(), wgs.lon()+gs.getLonShiftPositiveEastDegrees());
         }
-        double s2 = Math.sin(lt);
-        s2 *= s2;
-        // h = norm / Math.cos(lt) - ell.a / Math.sqrt(1.0 - ell.e2 * s2);
-        return new LatLon(lt, lg);
+        return new LatLon(0,0);
     }
 
-    private boolean farawayFromLambertZoneFrance(double lat, double lon) {
-        if (lat < (zoneLimits[3] - cMaxOverlappingZones) || (lat > (cMaxLatZone1 + cMaxOverlappingZones))
-                || (lon < (cMinLonZones - cMaxOverlappingZones)) || (lon > (cMaxLonZones + cMaxOverlappingZones)))
-            return true;
-        return false;
+    private LatLon NTF_to_WGS84(LatLon ntf) {
+        NTV2GridShift gs = new NTV2GridShift(ntf);
+        if (ntf_rgf93Grid != null) {
+            ntf_rgf93Grid.gridShiftForward(gs);
+            return new LatLon(ntf.lat()+gs.getLatShiftDegrees(), ntf.lon()+gs.getLonShiftPositiveEastDegrees());
+        }
+        return new LatLon(0,0);
     }
 
     public Bounds getWorldBoundsLatLon()
     {
-        // These are not the Lambert Zone boundaries but we keep these values until coordinates outside the
-        // projection boundaries are handled correctly.
-        return new Bounds(
-                new LatLon(-85.05112877980659, -180.0),
-                new LatLon(85.05112877980659, 180.0));
-        /*return new Bounds(
-                new LatLon(45.0, -4.9074074074074059),
-                new LatLon(57.0, 10.2));*/
+        Bounds b= new Bounds(
+                new LatLon(zoneLimitsDegree[layoutZone][1] - cMaxOverlappingZonesDegree, -4.9074074074074059),
+                new LatLon(zoneLimitsDegree[layoutZone][0] + cMaxOverlappingZonesDegree, 10.2));
+        return b;
     }
 
+    /**
+     * Returns the default zoom scale in pixel per degree ({@see #NavigatableComponent#scale}))
+     */
     public double getDefaultZoomInPPD() {
-        // TODO FIXME
-        return 0;
+        // this will set the map scaler to about 1000 m (in default scale, 1 pixel will be 10 meters)
+        return 10.0;
     }
+
+    public int getLayoutZone() {
+        return layoutZone;
+    }
+
+    public static String[] lambert4zones = {
+        tr("{0} ({1} to {2} degrees)", 1,"51.30","48.15"),
+        tr("{0} ({1} to {2} degrees)", 1,"48.15","45.45"),
+        tr("{0} ({1} to {2} degrees)", 1,"45.45","42.76"),
+        tr("{0} (Corsica)", 4)
+    };
+
+    public void setupPreferencePanel(JPanel p) {
+        JComboBox prefcb = new JComboBox(lambert4zones);
+
+        prefcb.setSelectedIndex(layoutZone);
+        p.setLayout(new GridBagLayout());
+        p.add(new JLabel(tr("Lambert CC Zone")), GBC.std().insets(5,5,0,5));
+        p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
+        /* Note: we use component position 2 below to find this again */
+        p.add(prefcb, GBC.eop().fill(GBC.HORIZONTAL));
+        p.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
+    }
+
+    public Collection<String> getPreferences(JPanel p) {
+        Object prefcb = p.getComponent(2);
+        if(!(prefcb instanceof JComboBox))
+            return null;
+        layoutZone = ((JComboBox)prefcb).getSelectedIndex();
+        return Collections.singleton(Integer.toString(layoutZone+1));
+    }
+
+    public void setPreferences(Collection<String> args) {
+        layoutZone = DEFAULT_ZONE;
+        if (args != null) {
+            try {
+                for(String s : args)
+                {
+                    layoutZone = Integer.parseInt(s)-1;
+                    if(layoutZone < 0 || layoutZone > 3) {
+                        layoutZone = DEFAULT_ZONE;
+                    }
+                    break;
+                }
+            } catch(NumberFormatException e) {}
+        }
+    }
+
+    public Collection<String> getPreferencesFromCode(String code) {
+        if (code.startsWith("EPSG:2756") && code.length() == 9) {
+            try {
+                String zonestring = code.substring(9);
+                int zoneval = Integer.parseInt(zonestring);
+                if(zoneval >= 1 && zoneval <= 4)
+                    return Collections.singleton(zonestring);
+            } catch(NumberFormatException e) {}
+        }
+        return null;
+    }
+
 }

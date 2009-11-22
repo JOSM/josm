@@ -3,14 +3,21 @@ package org.openstreetmap.josm.data.projection;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import javax.swing.JOptionPane;
+import java.awt.GridBagLayout;
+import java.util.Collection;
+import java.util.Collections;
 
-import org.openstreetmap.josm.Main;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
+import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This class implements the Lambert Conic Conform 9 Zones projection as specified by the IGN
@@ -18,7 +25,7 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
  * @author Pieren
  *
  */
-public class LambertCC9Zones implements Projection {
+public class LambertCC9Zones implements Projection, ProjectionSubPrefs {
 
     /**
      * Lambert 9 zones projection exponents
@@ -57,24 +64,25 @@ public class LambertCC9Zones implements Projection {
     /**
      * France is divided in 9 Lambert projection zones, CC42 to CC50.
      */
-    public static final double cMaxLatZones = Math.toRadians(51.1);
+    public static final double cMaxLatZonesRadian = Math.toRadians(51.1);
 
-    public static final double cMinLatZones = Math.toRadians(41.0);
+    public static final double cMinLatZonesDegree = 41.0;
+    public static final double cMinLatZonesRadian = Math.toRadians(cMinLatZonesDegree);
 
-    public static final double cMinLonZones = Math.toRadians(-5.0);
+    public static final double cMinLonZonesRadian = Math.toRadians(-5.0);
 
-    public static final double cMaxLonZones = Math.toRadians(10.2);
+    public static final double cMaxLonZonesRadian = Math.toRadians(10.2);
 
     public static final double lambda0 = Math.toRadians(3);
     public static final double e = Ellipsoid.GRS80.e; // but in doc=0.08181919112
     public static final double e2 =Ellipsoid.GRS80.e2;
     public static final double a = Ellipsoid.GRS80.a;
-    /**
-     *  Because josm cannot work correctly if two zones are displayed, we allow some overlapping
-     */
-    public static final double cMaxOverlappingZones = Math.toRadians(1.5);
 
-    public static int layoutZone = -1;
+    public static final double cMaxOverlappingZones = 1.5;
+
+    public static final int DEFAULT_ZONE = 0;
+
+    private static int layoutZone = DEFAULT_ZONE;
 
     private double L(double phi, double e) {
         double sinphi = Math.sin(phi);
@@ -88,53 +96,13 @@ public class LambertCC9Zones implements Projection {
     public EastNorth latlon2eastNorth(LatLon p) {
         double lt = Math.toRadians(p.lat());
         double lg = Math.toRadians(p.lon());
-        // check if longitude and latitude are inside the French Lambert zones and seek a zone number
-        // if it is not already defined in layoutZone
-        int possibleZone = 0;
-        boolean outOfLambertZones = false;
-        if (lt >= cMinLatZones && lt <= cMaxLatZones && lg >= cMinLonZones && lg <= cMaxLonZones) {
-            /* with Lambert CC9 zones, each latitude is present in two zones. If the layout
-               zone is not already set, we choose arbitrary the first possible zone */
-            possibleZone = (int)p.lat()-42;
-            if (possibleZone > 8) {
-                possibleZone = 8;
-            }
-            if (possibleZone < 0) {
-                possibleZone = 0;
-            }
-        } else {
-            outOfLambertZones = true; // possible when MAX_LAT is used
-        }
-        if (!outOfLambertZones) {
-            if (layoutZone == -1) {
-                if (layoutZone != possibleZone) {
-                    System.out.println("change Lambert zone from "+layoutZone+" to "+possibleZone);
-                }
-                layoutZone = possibleZone;
-            } else if (Math.abs(layoutZone - possibleZone) > 1) {
-                if (farawayFromLambertZoneFrance(lt, lg)) {
-                    JOptionPane.showMessageDialog(Main.parent,
-                            tr("IMPORTANT : data positioned far away from\n"
-                                    + "the current Lambert zone limits.\n"
-                                    + "Do not upload any data after this message.\n"
-                                    + "Undo your last action, save your work\n"
-                                    + "and start a new layer on the new zone."),
-                                    tr("Warning"),
-                                    JOptionPane.WARNING_MESSAGE);
-                    layoutZone = -1;
-                } else {
-                    System.out.println("temporarily extend Lambert zone " + layoutZone + " projection at lat,lon:"
-                            + lt + "," + lg);
-                }
-            }
-        }
-        if (layoutZone == -1)
-            return ConicProjection(lt, lg, possibleZone);
-        return ConicProjection(lt, lg, layoutZone);
+        if (lt >= cMinLatZonesRadian && lt <= cMaxLatZonesRadian && lg >= cMinLonZonesRadian && lg <= cMaxLonZonesRadian)
+            return ConicProjection(lt, lg, layoutZone);
+        return ConicProjection(lt, lg, 0);
     }
 
     /**
-     * 
+     *
      * @param lat latitude in grad
      * @param lon longitude in grad
      * @param nz Lambert CC zone number (from 1 to 9) - 1 !
@@ -149,7 +117,6 @@ public class LambertCC9Zones implements Projection {
     }
 
     public LatLon eastNorth2latlon(EastNorth p) {
-        layoutZone  = north2ZoneNumber(p.north());
         return Geographic(p, layoutZone);
     }
 
@@ -173,47 +140,101 @@ public class LambertCC9Zones implements Projection {
         else return nz;
     }
 
-    public static boolean isInL9CCZones(LatLon p) {
-        double lt = Math.toRadians(p.lat());
-        double lg = Math.toRadians(p.lon());
-        if (lg >= cMinLonZones && lg <= cMaxLonZones && lt >= cMinLatZones && lt <= cMaxLatZones)
-            return true;
-        return false;
-    }
-
     public String toCode() {
-        if (layoutZone == -1)
-            return "EPSG:"+(3942);
-        return "EPSG:"+(3942+layoutZone); //CC42 is EPSG:3842 (up to EPSG:3950 for CC50)
+        return "EPSG:"+(3942+layoutZone); //CC42 is EPSG:3942 (up to EPSG:3950 for CC50)
     }
 
     public String getCacheDirectoryName() {
         return "lambert";
     }
 
-    private boolean farawayFromLambertZoneFrance(double lat, double lon) {
-        if (lat < (cMinLatZones - cMaxOverlappingZones) || (lat > (cMaxLatZones + cMaxOverlappingZones))
-                || (lon < (cMinLonZones - cMaxOverlappingZones)) || (lon > (cMaxLonZones + cMaxOverlappingZones)))
-            return true;
-        return false;
-    }
-
+    /**
+     * Returns the default zoom scale in pixel per degree ({@see #NavigatableComponent#scale}))
+     */
     public double getDefaultZoomInPPD() {
-        // TODO Auto-generated method stub
-        return 0;
+        // this will set the map scaler to about 1000 m (in default scale, 1 pixel will be 10 meters)
+        return 10.0;
     }
 
     public Bounds getWorldBoundsLatLon()
     {
-        // These are not the Lambert Zone boundaries but we keep these values until coordinates outside the
-        // projection boundaries are handled correctly.
+        double medLatZone = cMinLatZonesDegree + (layoutZone+1);
         return new Bounds(
-                new LatLon(-85.05112877980659, -180.0),
-                new LatLon(85.05112877980659, 180.0));
-        /*return new Bounds(
-                new LatLon(45.0, -4.9074074074074059),
-                new LatLon(57.0, 10.2));*/
+                new LatLon(medLatZone - 1.0 - cMaxOverlappingZones, -4.9),
+                new LatLon(medLatZone + 1.0 + cMaxOverlappingZones, 10.2));
     }
 
-}
+    public int getLayoutZone() {
+        return layoutZone;
+    }
 
+    private static String[] lambert9zones = {
+        tr("{0} ({1} to {2} degrees)", 1,41,43),
+        tr("{0} ({1} to {2} degrees)", 2,42,44),
+        tr("{0} ({1} to {2} degrees)", 3,43,45),
+        tr("{0} ({1} to {2} degrees)", 4,44,46),
+        tr("{0} ({1} to {2} degrees)", 5,45,47),
+        tr("{0} ({1} to {2} degrees)", 6,46,48),
+        tr("{0} ({1} to {2} degrees)", 7,47,49),
+        tr("{0} ({1} to {2} degrees)", 8,48,50),
+        tr("{0} ({1} to {2} degrees)", 9,49,51)
+    };
+
+    public void setupPreferencePanel(JPanel p) {
+        JComboBox prefcb = new JComboBox(lambert9zones);
+
+        prefcb.setSelectedIndex(layoutZone);
+        p.setLayout(new GridBagLayout());
+        p.add(new JLabel(tr("Lambert CC Zone")), GBC.std().insets(5,5,0,5));
+        p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
+        /* Note: we use component position 2 below to find this again */
+        p.add(prefcb, GBC.eop().fill(GBC.HORIZONTAL));
+        p.add(new JLabel(ImageProvider.get("data/projection", "LambertCC9Zones.png")), GBC.eol().fill(GBC.HORIZONTAL));
+        p.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
+    }
+
+    public Collection<String> getPreferences(JPanel p) {
+        Object prefcb = p.getComponent(2);
+        if(!(prefcb instanceof JComboBox))
+            return null;
+        layoutZone = ((JComboBox)prefcb).getSelectedIndex();
+        if (layoutZone == 0) {
+            layoutZone = layoutZone +1 -1;
+        }
+        return Collections.singleton(Integer.toString(layoutZone+1));
+    }
+
+    public void setPreferences(Collection<String> args)
+    {
+        layoutZone = DEFAULT_ZONE;
+        if (args != null) {
+            try {
+                for(String s : args)
+                {
+                    layoutZone = Integer.parseInt(s)-1;
+                    if(layoutZone < 0 || layoutZone > 8) {
+                        layoutZone = DEFAULT_ZONE;
+                    }
+                    break;
+                }
+            } catch(NumberFormatException e) {}
+        }
+        if (layoutZone == 0) {
+            layoutZone = layoutZone +1 -1;
+        }
+    }
+
+    public Collection<String> getPreferencesFromCode(String code)
+    {
+        //zone 1=CC42=EPSG:3942 up to zone 9=CC50=EPSG:3950
+        if (code.startsWith("EPSG:39") && code.length() == 9) {
+            try {
+                String zonestring = code.substring(5,4);
+                int zoneval = Integer.parseInt(zonestring)-3942;
+                if(zoneval >= 0 && zoneval <= 8)
+                    return Collections.singleton(zonestring);
+            } catch(NumberFormatException e) {}
+        }
+        return null;
+    }
+}

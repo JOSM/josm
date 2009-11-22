@@ -2,14 +2,40 @@
 package org.openstreetmap.josm.data.projection;
 
 /**
- * This class is not a direct implementation of Projection. It collects all methods used
- * for the projection of the French departements in the Caribbean Sea UTM zone 20N
- * but using each time different local geodesic settings for the 7 parameters transformation algorithm.
+ * This class implements all projections for French departements in the Caribbean Sea using
+ * UTM zone 20N transvers Mercator and specific geodesic settings (7 parameters transformation algorithm).
  */
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.GridBagLayout;
+import java.util.Collection;
+import java.util.Collections;
+
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.tools.GBC;
 
-public class UTM_20N_France_DOM {
+public class UTM_20N_France_DOM implements Projection, ProjectionSubPrefs {
+
+    private static String FortMarigotName = tr("Guadeloupe Fort-Marigot 1949");
+    private static String SainteAnneName = tr("Guadeloupe Ste-Anne 1948");
+    private static String MartiniqueName = tr("Martinique Fort Desaix 1952");
+    public static String[] utmGeodesicsNames = { FortMarigotName, SainteAnneName, MartiniqueName};
+
+    private Bounds FortMarigotBounds = new Bounds( new LatLon(17.6,-63.25), new LatLon(18.5,-62.5));
+    private Bounds SainteAnneBounds = new Bounds( new LatLon(15.8,-61.9), new LatLon(16.6,-60.9));
+    private Bounds MartiniqueBounds = new Bounds( new LatLon(14.25,-61.25), new LatLon(15.025,-60.725));
+    private Bounds[] utmBounds = { FortMarigotBounds, SainteAnneBounds, MartiniqueBounds};
+
+    private String FortMarigotEPSG = "EPSG::2969";
+    private String SainteAnneEPSG = "EPSG::2970";
+    private String MartiniqueEPSG = "EPSG::2973";
+    private String[] utmEPSGs = { FortMarigotEPSG, SainteAnneEPSG, MartiniqueEPSG};
 
     /**
      * false east in meters (constant)
@@ -27,21 +53,26 @@ public class UTM_20N_France_DOM {
     /**
      * UTM zone (from 1 to 60)
      */
-    int zone = 20;
+    private static int ZONE = 20;
     /**
      * whether north or south hemisphere
      */
     private boolean isNorth = true;
+
+    public static final int DEFAULT_GEODESIC = 0;
+
+    private static int currentGeodesic = DEFAULT_GEODESIC;
+
     /**
      * 7 parameters transformation
      */
-    double tx = 0.0;
-    double ty = 0.0;
-    double tz = 0.0;
-    double rx = 0;
-    double ry = 0;
-    double rz = 0;
-    double scaleDiff = 0;
+    private static double tx = 0.0;
+    private static double ty = 0.0;
+    private static double tz = 0.0;
+    private static double rx = 0;
+    private static double ry = 0;
+    private static double rz = 0;
+    private static double scaleDiff = 0;
     /**
      * precision in iterative schema
      */
@@ -49,15 +80,33 @@ public class UTM_20N_France_DOM {
     public final static double DEG_TO_RAD = Math.PI / 180;
     public final static double RAD_TO_DEG = 180 / Math.PI;
 
-    public UTM_20N_France_DOM(double[] translation, double[] rotation, double scaleDiff) {
-        this.tx = translation[0];
-        this.ty = translation[1];
-        this.tz = translation[2];
-        this.rx = rotation[0]/206264.806247096355; // seconds to radian
-        this.ry = rotation[1]/206264.806247096355;
-        this.rz = rotation[2]/206264.806247096355;
-        this.scaleDiff = scaleDiff;
+    private void refresh7ParametersTranslation() {
+        //System.out.println("Current UTM geodesic system: " + utmGeodesicsNames[currentGeodesic]);
+        if (currentGeodesic == 0) { // UTM_20N_Guadeloupe_Fort_Marigot
+            set7ParametersTranslation(new double[]{136.596, 248.148, -429.789},
+                    new double[]{0, 0, 0},
+                    0);
+        } else if (currentGeodesic == 1) { // UTM_20N_Guadeloupe_Ste_Anne
+            set7ParametersTranslation(new double[]{-472.29, -5.63, -304.12},
+                    new double[]{0.4362, -0.8374, 0.2563},
+                    1.8984E-6);
+        } else { // UTM_20N_Martinique_Fort_Desaix
+            set7ParametersTranslation(new double[]{126.926, 547.939, 130.409},
+                    new double[]{-2.78670, 5.16124,  -0.85844},
+                    13.82265E-6);
+        }
     }
+
+    private void set7ParametersTranslation(double[] translation, double[] rotation, double scalediff) {
+        tx = translation[0];
+        ty = translation[1];
+        tz = translation[2];
+        rx = rotation[0]/206264.806247096355; // seconds to radian
+        ry = rotation[1]/206264.806247096355;
+        rz = rotation[2]/206264.806247096355;
+        scaleDiff = scalediff;
+    }
+
     public EastNorth latlon2eastNorth(LatLon p) {
         // translate ellipsoid GRS80 (WGS83) => reference ellipsoid geographic
         LatLon geo = GRS802Hayford(p);
@@ -127,7 +176,7 @@ public class UTM_20N_France_DOM {
         Ys = (coord.lat() >= 0.0) ? 0.0 : 10000000.0;
         double r6d = Math.PI / 30.0;
         //zone = (int) Math.floor((coord.lon() + Math.PI) / r6d) + 1;
-        lg0 = r6d * (zone - 0.5) - Math.PI;
+        lg0 = r6d * (ZONE - 0.5) - Math.PI;
         double e2 = e * e;
         double e4 = e2 * e2;
         double e6 = e4 * e2;
@@ -168,11 +217,10 @@ public class UTM_20N_France_DOM {
     }
 
     public LatLon eastNorth2latlon(EastNorth p) {
-        MTProjection(p.east(), p.north(), zone, isNorth);
+        MTProjection(p.east(), p.north(), ZONE, isNorth);
         LatLon geo = Geographic(p, Ellipsoid.hayford.a, Ellipsoid.hayford.e, 0.0 /* z */);
 
         // reference ellipsoid geographic => reference ellipsoid cartesian
-        //Hayford2GRS80(ellipsoid, geo);
         double N = Ellipsoid.hayford.a / (Math.sqrt(1.0 - Ellipsoid.hayford.e2 * Math.sin(geo.lat()) * Math.sin(geo.lat())));
         double X = (N /*+ h*/) * Math.cos(geo.lat()) * Math.cos(geo.lon());
         double Y = (N /*+ h*/) * Math.cos(geo.lat()) * Math.sin(geo.lon());
@@ -307,6 +355,78 @@ public class UTM_20N_France_DOM {
         double Yb = (1-scaleDiff)*(-ty + Ya + ((-tx+Xa)*(-rz) - (-tz+Za)*(-rx)));
         double Zb = (1-scaleDiff)*(-tz + Za + ((-ty+Ya)*(-rx) - (-tx+Xa)*(-ry)));
         return new double[]{Xb, Yb, Zb};
+    }
+
+    public String getCacheDirectoryName() {
+        return this.toString();
+    }
+
+    /**
+     * Returns the default zoom scale in pixel per degree ({@see #NavigatableComponent#scale}))
+     */
+    public double getDefaultZoomInPPD() {
+        // this will set the map scaler to about 1000 m (in default scale, 1 pixel will be 10 meters)
+        return 10.0;
+    }
+
+    public Bounds getWorldBoundsLatLon() {
+        return utmBounds[currentGeodesic];
+    }
+
+    public String toCode() {
+        return utmEPSGs[currentGeodesic];
+    }
+
+    @Override public String toString() {
+        return (tr("UTM 20N (France)"));
+    }
+
+    public int getCurrentGeodesic() {
+        return currentGeodesic;
+    }
+
+    public void setupPreferencePanel(JPanel p) {
+        JComboBox prefcb = new JComboBox(utmGeodesicsNames);
+
+        prefcb.setSelectedIndex(currentGeodesic);
+        p.setLayout(new GridBagLayout());
+        p.add(new JLabel(tr("UTM20 North Geodesic system")), GBC.std().insets(5,5,0,5));
+        p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
+        p.add(prefcb, GBC.eop().fill(GBC.HORIZONTAL));
+        p.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
+    }
+
+    public Collection<String> getPreferences(JPanel p) {
+        Object prefcb = p.getComponent(2);
+        if(!(prefcb instanceof JComboBox))
+            return null;
+        currentGeodesic = ((JComboBox)prefcb).getSelectedIndex();
+        refresh7ParametersTranslation();
+        return Collections.singleton(Integer.toString(currentGeodesic+1));
+    }
+
+    public Collection<String> getPreferencesFromCode(String code) {
+        for (int i=0; i < utmEPSGs.length; i++ )
+            if (utmEPSGs[i].endsWith(code))
+                return Collections.singleton(Integer.toString(i));
+        return null;
+    }
+
+    public void setPreferences(Collection<String> args) {
+        currentGeodesic = DEFAULT_GEODESIC;
+        if (args != null) {
+            try {
+                for(String s : args)
+                {
+                    currentGeodesic = Integer.parseInt(s)-1;
+                    if(currentGeodesic < 0 || currentGeodesic > 2) {
+                        currentGeodesic = DEFAULT_GEODESIC;
+                    }
+                    break;
+                }
+            } catch(NumberFormatException e) {}
+        }
+        refresh7ParametersTranslation();
     }
 
 }

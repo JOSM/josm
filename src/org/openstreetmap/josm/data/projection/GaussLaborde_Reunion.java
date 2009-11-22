@@ -216,7 +216,7 @@ public class GaussLaborde_Reunion implements Projection {
     }
 
     public double getDefaultZoomInPPD() {
-        // this will set the map scaler to about 1000 m
-        return 10.02;
+        // this will set the map scaler to about 1000 m (in default scale, 1 pixel will be 10 meters)
+        return 10.0;
     }
 }

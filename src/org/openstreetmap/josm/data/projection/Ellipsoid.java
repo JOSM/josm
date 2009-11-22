@@ -164,6 +164,3 @@ public class Ellipsoid {
         return lati1;
     }
 }
-
-
-

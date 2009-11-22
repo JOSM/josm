@@ -99,6 +99,7 @@ Build-Date: ${build.tstamp}
 			</manifest>
 			<zipfileset dir="presets" prefix="presets" />
 			<zipfileset dir="images" prefix="images" />
+			<zipfileset dir="data" prefix="data" />
 			<zipfileset src="lib/josm-translation.jar" />
 
 			<!-- All jar files necessary to run only JOSM (no tests) -->
