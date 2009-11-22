@@ -101,13 +101,13 @@ public class BBox {
     }
 
     public boolean inside(BBox b) {
-        if (xmin >= b.xmax)
+        if (xmin > b.xmax)
             return false;
-        if (xmax <= b.xmin)
+        if (xmax < b.xmin)
             return false;
-        if (ymin >= b.ymax)
+        if (ymin > b.ymax)
             return false;
-        if (ymax <= b.ymin)
+        if (ymax < b.ymin)
             return false;
         return true;
     }

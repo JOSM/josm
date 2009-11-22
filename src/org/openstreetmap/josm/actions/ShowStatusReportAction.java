@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -21,6 +21,8 @@ import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -58,8 +60,21 @@ public final class ShowStatusReportAction extends JosmAction {
         text.append("\n");
         text.append("Java version: " + System.getProperty("java.version"));
         text.append("\n\n");
+        DataSet dataset = Main.main.getCurrentDataSet();
+        if (dataset != null) {
+            text.append("Dataset consistency test:\n");
+            String result = DatasetConsistencyTest.runTests(dataset);
+            if (result.length() == 0) {
+                text.append("No problems found\n");
+            } else {
+                text.append(result);
+            }
+            text.append("\n");
+        }
+        text.append("\n");
         text.append(PluginHandler.getBugReportText());
-        text.append("\n\n");
+        text.append("\n");
+
         return text.toString();
     }
 

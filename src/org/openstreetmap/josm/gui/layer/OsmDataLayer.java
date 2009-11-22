@@ -33,7 +33,9 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
@@ -50,6 +52,7 @@ import org.openstreetmap.josm.data.osm.BackreferencedDataSet;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.DataSource;
+import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -231,8 +234,8 @@ public class OsmDataLayer extends Layer {
             }
 
             // paint remainder
-            ((Graphics2D)g).setPaint(hatched);
-            ((Graphics2D)g).fill(a);
+            g.setPaint(hatched);
+            g.fill(a);
         }
 
         SimplePaintVisitor painter;
@@ -535,6 +538,7 @@ public class OsmDataLayer extends Layer {
                 new JMenuItem(LayerListDialog.getInstance().createMergeLayerAction(this)),
                 new JSeparator(),
                 new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)),
+                new JMenuItem(new ConsistencyTestAction()),
                 new JSeparator(),
                 new JMenuItem(new LayerListPopup.InfoAction(this))};
         return new Component[]{
@@ -549,6 +553,7 @@ public class OsmDataLayer extends Layer {
                 new JMenuItem(new ConvertToGpxLayerAction()),
                 new JSeparator(),
                 new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)),
+                new JMenuItem(new ConsistencyTestAction()),
                 new JSeparator(),
                 new JMenuItem(new LayerListPopup.InfoAction(this))};
     }
@@ -613,7 +618,6 @@ public class OsmDataLayer extends Layer {
             if (name != null) {
                 wpt.attr.put("name", name);
             }
-            ;
         }
         return gpxData;
     }
@@ -712,5 +716,29 @@ public class OsmDataLayer extends Layer {
     public void onPostUploadToServer() {
         setRequiresUploadToServer(data.isModified());
         // keep requiresSaveToDisk unchanged
+    }
+
+    private class ConsistencyTestAction extends AbstractAction {
+
+        public ConsistencyTestAction() {
+            super(tr("Dataset consistency test"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            String result = DatasetConsistencyTest.runTests(data);
+            if (result.length() == 0) {
+                JOptionPane.showMessageDialog(Main.parent, tr("No problems found"));
+            } else {
+                JPanel p = new JPanel(new GridBagLayout());
+                p.add(new JLabel(tr("Following problems found:")), GBC.eol());
+                JTextArea info = new JTextArea(result, 20, 60);
+                info.setCaretPosition(0);
+                info.setEditable(false);
+                p.add(new JScrollPane(info), GBC.eop());
+
+                JOptionPane.showMessageDialog(Main.parent, p, tr("Warning"), JOptionPane.WARNING_MESSAGE);
+            }
+        }
+
     }
 }
