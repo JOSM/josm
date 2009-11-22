@@ -90,14 +90,19 @@ public class ProjectionPreference implements PreferenceSetting {
         projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
         projPanel.add(bounds, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
         projPanel.add(projSubPrefPanel, projSubPrefPanelGBC);
+
         JScrollPane scrollpane = new JScrollPane(projPanel);
         gui.mapcontent.addTab(tr("Map Projection"), scrollpane);
 
-        projectionCode.setText(Main.proj.toCode());
-        Bounds b = Main.proj.getWorldBoundsLatLon();
+        updateMeta(Main.proj);
+    }
+
+    private void updateMeta(Projection proj)
+    {
+        projectionCode.setText(proj.toCode());
+        Bounds b = proj.getWorldBoundsLatLon();
         CoordinateFormat cf = CoordinateFormat.getDefaultFormat();
         bounds.setText(b.getMin().latToString(cf)+"; "+b.getMin().lonToString(cf)+" : "+b.getMax().latToString(cf)+"; "+b.getMax().lonToString(cf));
-        /* TODO: Fix bugs, refresh code line and world bounds, fix design (e.g. add border around sub-prefs-stuff */
     }
 
     public boolean ok() {
@@ -108,9 +113,8 @@ public class ProjectionPreference implements PreferenceSetting {
         if(projHasPrefs(proj))
             prefs = ((ProjectionSubPrefs) proj).getPreferences();
 
-        if(Main.pref.put("projection", projname)) {
-            setProjection(projname, prefs);
-        }
+        Main.pref.put("projection", projname);
+        setProjection(projname, prefs);
 
         if(Main.pref.put("coordinates",
                 ((CoordinateFormat)coordinatesCombo.getSelectedItem()).name())) {
@@ -199,6 +203,8 @@ public class ProjectionPreference implements PreferenceSetting {
         projPanel.remove(size - 1);
         projPanel.add(projSubPrefPanel, projSubPrefPanelGBC);
         projPanel.revalidate();
+        projSubPrefPanel.repaint();
+        updateMeta(proj);
     }
 
     /**

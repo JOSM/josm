@@ -429,7 +429,7 @@ public class UTM implements Projection, ProjectionSubPrefs {
             try {
                 String zonestring = code.substring(9);
                 int zoneval = Integer.parseInt(zonestring);
-                if(zoneval > 0 && zone <= 60)
+                if(zoneval > 0 && zoneval <= 60)
                 {
                     return Collections.singleton(zonestring);
                 }
