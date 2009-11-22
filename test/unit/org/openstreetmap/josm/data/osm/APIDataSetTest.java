@@ -1,11 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.util.List;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
-
 import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
 import org.openstreetmap.josm.data.APIDataSet;
 
@@ -17,7 +18,6 @@ public class APIDataSetTest {
     public void oneNewRelationOnly() {
         Relation r = new Relation();
         r.put("name", "r1");
-        r.incomplete = false;
         DataSet ds = new DataSet();
         ds.addPrimitive(r);
 
@@ -38,11 +38,9 @@ public class APIDataSetTest {
     public void newParentChildPair() {
         Relation r1 = new Relation();
         r1.put("name", "r1");
-        r1.incomplete = false;
 
         Relation r2 = new Relation();
         r2.put("name", "r2");
-        r2.incomplete = false;
 
         r1.addMember(new RelationMember("", r2));
 
@@ -68,15 +66,12 @@ public class APIDataSetTest {
     public void oneExistingAndThreNewInAChain() {
         Relation r1 = new Relation();
         r1.put("name", "r1");
-        r1.incomplete = false;
 
         Relation r2 = new Relation();
         r2.put("name", "r2");
-        r2.incomplete = false;
 
         Relation r3 = new Relation();
         r3.put("name", "r3");
-        r3.incomplete = false;
 
         Relation r4 = new Relation(1);
         r4.put("name", "r4");
@@ -115,15 +110,12 @@ public class APIDataSetTest {
     public void oneParentTwoNewChildren() {
         Relation r1 = new Relation();
         r1.put("name", "r1");
-        r1.incomplete = false;
 
         Relation r2 = new Relation();
         r2.put("name", "r2");
-        r2.incomplete = false;
 
         Relation r3 = new Relation();
         r3.put("name", "r3");
-        r3.incomplete = false;
 
         r1.addMember(new RelationMember("", r2));
         r1.addMember(new RelationMember("", r3));
@@ -151,15 +143,12 @@ public class APIDataSetTest {
     public void oneCycle() {
         Relation r1 = new Relation();
         r1.put("name", "r1");
-        r1.incomplete = false;
 
         Relation r2 = new Relation();
         r2.put("name", "r2");
-        r2.incomplete = false;
 
         Relation r3 = new Relation();
         r3.put("name", "r3");
-        r3.incomplete = false;
 
         r1.addMember(new RelationMember("", r2));
         r2.addMember(new RelationMember("", r3));

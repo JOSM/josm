@@ -1000,7 +1000,6 @@ public class DataSetMergerTest {
         their.addPrimitive(n2);
 
         Way w3 = new Way(3);
-        w3.incomplete = true;
         w3.setNodes(Arrays.asList(n1,n2));
         their.addPrimitive(w3);
 
@@ -1050,7 +1049,6 @@ public class DataSetMergerTest {
 
         // an incomplete way with two incomplete nodes
         Way w3 = new Way(3);
-        w3.incomplete = true;
         w3.setNodes(Arrays.asList(n1,n2));
         their.addPrimitive(w3);
 

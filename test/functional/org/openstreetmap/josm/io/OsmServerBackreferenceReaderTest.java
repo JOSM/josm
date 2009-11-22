@@ -61,18 +61,16 @@ public class OsmServerBackreferenceReaderTest {
 
     protected static void populateTestDataSetWithNodes(DataSet ds) {
         for (int i=0;i<100;i++) {
-            Node n = new Node(0);
+            Node n = new Node();
             n.setCoor(new LatLon(-36.6,47.6));
             n.put("name", "node-"+i);
-            n.incomplete = false;
             ds.addPrimitive(n);
         }
     }
 
     protected static void populateTestDataSetWithWays(DataSet ds) {
         for (int i=0;i<20;i++) {
-            Way w = new Way(0);
-            w.incomplete = false;
+            Way w = new Way();
             for (int j = 0; j < 10;j++) {
                 w.addNode(lookupNode(ds, i+j));
             }
@@ -83,8 +81,7 @@ public class OsmServerBackreferenceReaderTest {
 
     protected static void populateTestDataSetWithRelations(DataSet ds) {
         for (int i=0;i<10;i++) {
-            Relation r = new Relation(0);
-            r.incomplete = false;
+            Relation r = new Relation();
             r.put("name", "relation-" +i);
             for (int j =0; j < 10; j++) {
                 RelationMember member = new RelationMember("node-" + j, lookupNode(ds, i + j));
@@ -138,7 +135,7 @@ public class OsmServerBackreferenceReaderTest {
     static DataSet testDataSet;
 
     @BeforeClass
-    public static void  init() throws OsmTransferException, InterruptedException{
+    public static void  init() throws OsmTransferException {
         logger.info("initializing ...");
         testProperties = new Properties();
 

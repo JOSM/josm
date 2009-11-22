@@ -62,8 +62,6 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     private HashSet<Long> missingPrimitives;
     private DataSet outputDataSet;
 
-    private boolean cancelled = false;
-
     /**
      * constructor
      *

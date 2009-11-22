@@ -55,10 +55,9 @@ public class MultiFetchServerObjectReaderTest {
         // create a set of nodes
         //
         for (int i=0; i< numNodes; i++) {
-            Node n = new Node(0);
+            Node n = new Node();
             n.setCoor(new LatLon(-36.6,47.6));
             n.put("name", "node-"+i);
-            n.incomplete = false;
             ds.addPrimitive(n);
             nodes.add(n);
         }
@@ -67,8 +66,7 @@ public class MultiFetchServerObjectReaderTest {
         // nodes
         //
         for (int i=0; i< numWays; i++) {
-            Way w = new Way(0);
-            w.incomplete = false;
+            Way w = new Way();
             int numNodesInWay = 2 + (int)Math.round(Math.random() * 5);
             int start = (int)Math.round(Math.random() * numNodes);
             for (int j = 0; j < numNodesInWay;j++) {
@@ -85,8 +83,7 @@ public class MultiFetchServerObjectReaderTest {
         // and ways
         //
         for (int i=0; i< numRelations; i++) {
-            Relation r = new Relation(0);
-            r.incomplete = false;
+            Relation r = new Relation();
             r.put("name", "relation-" +i);
             int numNodesInRelation = (int)Math.round(Math.random() * 10);
             int start = (int)Math.round(Math.random() * numNodes);
@@ -131,7 +128,7 @@ public class MultiFetchServerObjectReaderTest {
     }
 
     @BeforeClass
-    public static void  init() throws OsmTransferException, InterruptedException{
+    public static void  init() throws OsmTransferException {
         logger.info("initializing ...");
         testProperties = new Properties();
 

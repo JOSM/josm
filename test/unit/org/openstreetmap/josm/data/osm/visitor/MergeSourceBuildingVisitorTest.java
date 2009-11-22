@@ -135,7 +135,6 @@ public class MergeSourceBuildingVisitorTest {
     public void test_OneWay_Incomplete() {
         DataSet source = new DataSet();
         Way w1 = new Way(3);
-        w1.incomplete = true;
         source.addPrimitive(w1);
         source.setSelected(w1);
 

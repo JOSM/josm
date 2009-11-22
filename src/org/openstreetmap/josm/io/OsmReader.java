@@ -437,7 +437,6 @@ public class OsmReader {
                     n = (Node)ds.getPrimitiveById(id,OsmPrimitiveType.NODE);
                     if (n == null) {
                         n = new Node(id);
-                        n.incomplete = true;
                         ds.addPrimitive(n);
                     }
                     incomplete = true;
