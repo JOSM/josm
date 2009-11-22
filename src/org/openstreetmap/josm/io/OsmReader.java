@@ -562,9 +562,14 @@ public class OsmReader {
             progressMonitor.worked(1);
 
             progressMonitor.subTask(tr("Preparing data set..."));
-            reader.processNodesAfterParsing();
-            reader.processWaysAfterParsing();
-            reader.processRelationsAfterParsing();
+            reader.ds.beginUpdate();
+            try {
+                reader.processNodesAfterParsing();
+                reader.processWaysAfterParsing();
+                reader.processRelationsAfterParsing();
+            } finally {
+                reader.ds.endUpdate();
+            }
             progressMonitor.worked(1);
             return reader.getDataSet();
         } catch(IllegalDataException e) {

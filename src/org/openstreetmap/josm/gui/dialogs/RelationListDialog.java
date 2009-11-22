@@ -787,6 +787,13 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
     }
 
+    public void dataChanged() {
+        Layer l = Main.main.getEditLayer();
+        if (l != null) {
+            initFromLayer(l);
+        }
+    }
+
     /* ---------------------------------------------------------------------------------- */
     /* DataSetListener                                                                    */
     /* ---------------------------------------------------------------------------------- */

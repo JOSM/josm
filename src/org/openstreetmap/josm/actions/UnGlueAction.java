@@ -89,7 +89,7 @@ public class UnGlueAction extends JosmAction {
             for (Node n : selectedNodes) {
                 int count = 0;
                 for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
-                    if (w.isDeleted() || w.incomplete || w.getNodesCount() < 1) {
+                    if (w.isDeleted() || w.incomplete) {
                         continue;
                     }
                     count++;
@@ -352,7 +352,7 @@ public class UnGlueAction extends JosmAction {
             boolean firstway = true;
             // modify all ways containing the nodes
             for (Way w : OsmPrimitive.getFilteredList(selectedNode.getReferrers(), Way.class)) {
-                if (w.isDeleted() || w.incomplete || w.getNodesCount() < 1) {
+                if (w.isDeleted() || w.incomplete) {
                     continue;
                 }
                 if (!firstway) {

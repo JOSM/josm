@@ -332,16 +332,21 @@ public class DataSetMerger {
     public void merge() {
         if (sourceDataSet == null)
             return;
-        for (Node node: sourceDataSet.getNodes()) {
-            mergePrimitive(node);
+        targetDataSet.beginUpdate();
+        try {
+            for (Node node: sourceDataSet.getNodes()) {
+                mergePrimitive(node);
+            }
+            for (Way way: sourceDataSet.getWays()) {
+                mergePrimitive(way);
+            }
+            for (Relation relation: sourceDataSet.getRelations()) {
+                mergePrimitive(relation);
+            }
+            fixReferences();
+        } finally {
+            targetDataSet.endUpdate();
         }
-        for (Way way: sourceDataSet.getWays()) {
-            mergePrimitive(way);
-        }
-        for (Relation relation: sourceDataSet.getRelations()) {
-            mergePrimitive(relation);
-        }
-        fixReferences();
     }
 
     /**

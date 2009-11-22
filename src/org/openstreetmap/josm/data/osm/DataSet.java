@@ -46,6 +46,8 @@ public class DataSet implements Cloneable {
     private Storage<OsmPrimitive> allPrimitives = new Storage<OsmPrimitive>(new IdHash());
     private Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives.foreignKey(new IdHash());
     private List<DataSetListener> listeners = new ArrayList<DataSetListener>();
+    // Number of open calls to beginUpdate
+    private int updateCount;
 
     /**
      * The API version that created this data set, if any.
@@ -795,41 +797,92 @@ public class DataSet implements Cloneable {
         listeners.remove(dsl);
     }
 
+    /**
+     * Can be called before bigger changes on dataset. Events are disabled until {@link #endUpdate()}.
+     * {@link DataSetListener#dataChanged()} event is triggered after end of changes
+     * <br>
+     * Typical usecase should look like this:
+     * <pre>
+     * ds.beginUpdate();
+     * try {
+     *   ...
+     * } finally {
+     *   ds.endUpdate();
+     * }
+     * </pre>
+     */
+    public void beginUpdate() {
+        updateCount++;
+    }
+
+    /**
+     * @see DataSet#beginUpdate()
+     */
+    public void endUpdate() {
+        if (updateCount > 0) {
+            updateCount--;
+            if (updateCount == 0) {
+                fireDataChanged();
+            }
+        } else
+            throw new AssertionError("endUpdate called without beginUpdate");
+    }
+
+    private void fireDataChanged() {
+        if (updateCount == 0) {
+            for (DataSetListener dsl : listeners) {
+                dsl.dataChanged();
+            }
+        }
+    }
+
     void firePrimitivesAdded(Collection<? extends OsmPrimitive> added) {
-        for (DataSetListener dsl : listeners) {
-            dsl.primtivesAdded(added);
+        if (updateCount == 0) {
+            for (DataSetListener dsl : listeners) {
+                dsl.primtivesAdded(added);
+            }
         }
     }
 
     void firePrimitivesRemoved(Collection<? extends OsmPrimitive> removed) {
-        for (DataSetListener dsl : listeners) {
-            dsl.primtivesRemoved(removed);
+        if (updateCount == 0) {
+            for (DataSetListener dsl : listeners) {
+                dsl.primtivesRemoved(removed);
+            }
         }
     }
 
     void fireTagsChanged(OsmPrimitive prim) {
-        for (DataSetListener dsl : listeners) {
-            dsl.tagsChanged(prim);
+        if (updateCount == 0) {
+            for (DataSetListener dsl : listeners) {
+                dsl.tagsChanged(prim);
+            }
         }
     }
 
     void fireRelationMembersChanged(Relation r) {
-        for (DataSetListener dsl : listeners) {
-            dsl.relationMembersChanged(r);
+        if (updateCount == 0) {
+            for (DataSetListener dsl : listeners) {
+                dsl.relationMembersChanged(r);
+            }
         }
     }
 
-    public void fireNodeMoved(Node node) {
+    void fireNodeMoved(Node node) {
         reindexNode(node);
-        for (DataSetListener dsl : listeners) {
-            dsl.nodeMoved(node);
+        if (updateCount == 0) {
+            for (DataSetListener dsl : listeners) {
+                dsl.nodeMoved(node);
+            }
         }
     }
 
-    public void fireWayNodesChanged(Way way) {
+    void fireWayNodesChanged(Way way) {
         reindexWay(way);
-        for (DataSetListener dsl : listeners) {
-            dsl.wayNodesChanged(way);
+        if (updateCount == 0) {
+            for (DataSetListener dsl : listeners) {
+                dsl.wayNodesChanged(way);
+            }
         }
     }
 

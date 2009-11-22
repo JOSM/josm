@@ -821,6 +821,10 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
     }
 
+    public void dataChanged() {
+        dataChanged(getEditLayer());
+    }
+
     /* ---------------------------------------------------------------------- */
     /* DataChangeListener                                                    */
     /* ---------------------------------------------------------------------- */
