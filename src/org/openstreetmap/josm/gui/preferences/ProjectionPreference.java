@@ -65,7 +65,6 @@ public class ProjectionPreference implements PreferenceSetting {
     static private GBC projSubPrefPanelGBC = GBC.eol().fill(GBC.BOTH).insets(20,5,5,5);
 
     public void addGui(PreferenceDialog gui) {
-        clearSubProjPrefs();
         setupProjectionCombo();
 
         for (int i = 0; i < coordinatesCombo.getItemCount(); ++i) {
@@ -111,7 +110,7 @@ public class ProjectionPreference implements PreferenceSetting {
         String projname = proj.getClass().getName();
         Collection<String> prefs = null;
         if(projHasPrefs(proj))
-            prefs = ((ProjectionSubPrefs) proj).getPreferences();
+            prefs = ((ProjectionSubPrefs) proj).getPreferences(projSubPrefPanel);
 
         Main.pref.put("projection", projname);
         setProjection(projname, prefs);
@@ -120,11 +119,6 @@ public class ProjectionPreference implements PreferenceSetting {
                 ((CoordinateFormat)coordinatesCombo.getSelectedItem()).name())) {
             CoordinateFormat.setCoordinateFormat((CoordinateFormat)coordinatesCombo.getSelectedItem());
         }
-
-        // We get the change to remove these panels on closing the preferences
-        // dialog, so take it. TODO: Make this work always, even when canceling
-        // the dialog
-        clearSubProjPrefs();
 
         return false;
     }
@@ -181,6 +175,23 @@ public class ProjectionPreference implements PreferenceSetting {
             ((ProjectionSubPrefs) Main.proj).setPreferences(coll);
     }
 
+    private class SBPanel extends JPanel
+    {
+        private Projection p;
+        public SBPanel(Projection pr)
+        {
+          super();
+          p = pr;
+        }
+        @Override
+        public void paint(java.awt.Graphics g)
+        {
+          super.paint(g);
+          ((ProjectionSubPrefs) p).setPreferences(((ProjectionSubPrefs) p).getPreferences(this));
+          updateMeta(p);
+        }
+    };
+
     /**
      * Handles all the work related to update the projection-specific
      * preferences
@@ -191,7 +202,8 @@ public class ProjectionPreference implements PreferenceSetting {
             projSubPrefPanel = new JPanel();
         } else {
             ProjectionSubPrefs projPref = (ProjectionSubPrefs) proj;
-            projSubPrefPanel = projPref.getPreferencePanel();
+            projSubPrefPanel = new SBPanel(proj);
+            projPref.setupPreferencePanel(projSubPrefPanel);
         }
 
         // Don't try to update if we're still starting up
@@ -231,19 +243,5 @@ public class ProjectionPreference implements PreferenceSetting {
                 selectedProjectionChanged(proj);
             }
         });
-    }
-
-    /**
-     * Method to clean up the preference panels made by each projection. This
-     * requires them to be regenerated when the prefs dialog is opened again,
-     * but this also makes them react to changes to their preferences from the
-     * outside
-     */
-    static private void clearSubProjPrefs() {
-        for(Projection proj : Projection.allProjections) {
-            if(projHasPrefs(proj)) {
-                ((ProjectionSubPrefs) proj).destroyCachedPanel();
-            }
-        }
     }
 }

@@ -22,12 +22,12 @@ public interface ProjectionSubPrefs {
      *      </li>
      * @return
      */
-    public JPanel getPreferencePanel();
+    public void setupPreferencePanel(JPanel p);
 
     /**
      * Will be called if the preference dialog is dismissed.
      */
-    public Collection<String> getPreferences();
+    public Collection<String> getPreferences(JPanel p);
 
     /**
      * Return null when code is not part of this projection.
@@ -39,10 +39,4 @@ public interface ProjectionSubPrefs {
      * argument may be null to reset everything
      */
     public void setPreferences(Collection<String> args);
-
-    /**
-     * Resets all variables related to the projection preferences so they may
-     * update the next time getPreferencePanel is called.
-     */
-    public void destroyCachedPanel();
 }
