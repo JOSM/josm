@@ -510,13 +510,11 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
      *
      */
     private static  class RelationListModel extends AbstractListModel {
-        /** the list of relations managaged by this model. Should never be null */
-        private ArrayList<Relation> relations;
+        private final ArrayList<Relation> relations = new ArrayList<Relation>();
         private DefaultListSelectionModel selectionModel;
 
         public RelationListModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
-            relations = new ArrayList<Relation>();
         }
 
         public Relation getRelation(int idx) {
@@ -525,14 +523,10 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
         public synchronized void setRelations(Collection<Relation> relations) {
             List<Relation> sel =  getSelectedRelations();
-            if (relations == null) {
-                this.relations.clear();
-            } else {
-                this.relations = new ArrayList<Relation>(relations.size());
-                for (Relation r: relations) {
-                    if (! r.isDeleted() && r.isVisible() && !r.incomplete) {
-                        this.relations.add(r);
-                    }
+            this.relations.clear();
+            for (Relation r: relations) {
+                if (! r.isDeleted() && r.isVisible() && !r.incomplete) {
+                    this.relations.add(r);
                 }
             }
             sort();
@@ -563,9 +557,6 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         public synchronized void addRelations(Collection<? extends OsmPrimitive> addedPrimitives) {
             if (addedPrimitives == null || addedPrimitives.isEmpty()) return;
             boolean added = false;
-            if (relations == null) {
-                relations = new ArrayList<Relation>();
-            }
             for (OsmPrimitive p: addedPrimitives) {
                 if (! (p instanceof Relation)) {
                     continue;
