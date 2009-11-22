@@ -158,7 +158,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         double eastMin = Math.min(p1.east(), p2.east());
         double eastMax = Math.max(p1.east(), p2.east());
         double northMin = Math.min(p1.north(), p2.north());
-        double northMax = Math.min(p1.north(), p2.north());
+        double northMax = Math.max(p1.north(), p2.north());
         double deltaEast = (eastMax - eastMin) / 10;
         double deltaNorth = (northMax - northMin) / 10;
 
