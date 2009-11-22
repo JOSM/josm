@@ -524,6 +524,12 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         public synchronized void setRelations(Collection<Relation> relations) {
             List<Relation> sel =  getSelectedRelations();
             this.relations.clear();
+            if (relations == null) {
+                selectionModel.clearSelection();
+                fireContentsChanged(this,0,getSize());
+                return;
+
+            }
             for (Relation r: relations) {
                 if (! r.isDeleted() && r.isVisible() && !r.incomplete) {
                     this.relations.add(r);
@@ -656,7 +662,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
          */
         public synchronized void setSelectedRelations(List<Relation> sel) {
             selectionModel.clearSelection();
-            if (sel == null || sel.isEmpty() || relations == null)
+            if (sel == null || sel.isEmpty())
                 return;
             for (Relation r: sel) {
                 int i = relations.indexOf(r);
