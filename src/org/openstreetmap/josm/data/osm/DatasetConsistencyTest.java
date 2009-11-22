@@ -81,12 +81,44 @@ public class DatasetConsistencyTest {
         }
     }
 
+    private void checkReferredPrimitive(OsmPrimitive primitive, OsmPrimitive parent) {
+        if (dataSet.getPrimitiveById(primitive) == null) {
+            writer.println(String.format("%s is referenced by %s but not found in dataset", primitive, parent));
+        }
+        if (dataSet.getPrimitiveById(primitive) != primitive) {
+            writer.println(String.format("%s is different instance that reffered by %s", primitive, parent));
+        }
+        if (primitive.isDeleted()) {
+            writer.println(String.format("%s reffers to deleted primitive %s", parent, primitive));
+        }
+    }
+
+    private void refferedPrimitiveNotInDataset() {
+        for (Way way:dataSet.getWays()) {
+            for (Node node:way.getNodes()) {
+                checkReferredPrimitive(node, way);
+            }
+        }
+
+        for (Relation relation:dataSet.getRelations()) {
+            for (RelationMember member:relation.getMembers()) {
+                checkReferredPrimitive(member.getMember(), relation);
+            }
+        }
+    }
+
     public void runTest() {
-        checkReferrers();
-        checkCompleteWaysWithIncompleteNodes();
-        checkCompleteNodesWithoutCoordinates();
-        searchNodes();
-        searchWays();
+        try {
+            checkReferrers();
+            checkCompleteWaysWithIncompleteNodes();
+            checkCompleteNodesWithoutCoordinates();
+            searchNodes();
+            searchWays();
+            refferedPrimitiveNotInDataset();
+        } catch (Exception e) {
+            writer.println("Exception during dataset integrity test:");
+            e.printStackTrace(writer);
+        }
     }
 
     public static String runTests(DataSet dataSet) {
