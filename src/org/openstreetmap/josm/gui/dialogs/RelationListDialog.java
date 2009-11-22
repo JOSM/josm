@@ -510,11 +510,13 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
      *
      */
     private static  class RelationListModel extends AbstractListModel {
+        /** the list of relations managaged by this model. Should never be null */
         private ArrayList<Relation> relations;
         private DefaultListSelectionModel selectionModel;
 
         public RelationListModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
+            relations = new ArrayList<Relation>();
         }
 
         public Relation getRelation(int idx) {
@@ -524,7 +526,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         public synchronized void setRelations(Collection<Relation> relations) {
             List<Relation> sel =  getSelectedRelations();
             if (relations == null) {
-                this.relations = null;
+                this.relations.clear();
             } else {
                 this.relations = new ArrayList<Relation>(relations.size());
                 for (Relation r: relations) {
@@ -539,7 +541,6 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
 
         public synchronized void sort() {
-            if (relations == null) return;
             Collections.sort(
                     relations,
                     new Comparator<Relation>() {
@@ -562,6 +563,9 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         public synchronized void addRelations(Collection<? extends OsmPrimitive> addedPrimitives) {
             if (addedPrimitives == null || addedPrimitives.isEmpty()) return;
             boolean added = false;
+            if (relations == null) {
+                relations = new ArrayList<Relation>();
+            }
             for (OsmPrimitive p: addedPrimitives) {
                 if (! (p instanceof Relation)) {
                     continue;
@@ -610,12 +614,10 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         }
 
         public Object getElementAt(int index) {
-            if (relations == null) return null;
             return relations.get(index);
         }
 
         public int getSize() {
-            if (relations == null) return 0;
             return relations.size();
         }
 
@@ -627,7 +629,6 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
          */
         public List<Relation> getSelectedNonNewRelations() {
             ArrayList<Relation> ret = new ArrayList<Relation>();
-            if (relations == null) return ret;
             for (int i=0; i<getSize();i++) {
                 if (!selectionModel.isSelectedIndex(i)) {
                     continue;
@@ -648,7 +649,6 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
          */
         public List<Relation> getSelectedRelations() {
             ArrayList<Relation> ret = new ArrayList<Relation>();
-            if (relations == null) return ret;
             for (int i=0; i<getSize();i++) {
                 if (!selectionModel.isSelectedIndex(i)) {
                     continue;
