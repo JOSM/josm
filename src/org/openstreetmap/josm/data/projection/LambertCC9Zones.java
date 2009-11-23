@@ -198,9 +198,6 @@ public class LambertCC9Zones implements Projection, ProjectionSubPrefs {
         if(!(prefcb instanceof JComboBox))
             return null;
         layoutZone = ((JComboBox)prefcb).getSelectedIndex();
-        if (layoutZone == 0) {
-            layoutZone = layoutZone +1 -1;
-        }
         return Collections.singleton(Integer.toString(layoutZone+1));
     }
 
@@ -218,9 +215,6 @@ public class LambertCC9Zones implements Projection, ProjectionSubPrefs {
                     break;
                 }
             } catch(NumberFormatException e) {}
-        }
-        if (layoutZone == 0) {
-            layoutZone = layoutZone +1 -1;
         }
     }
 

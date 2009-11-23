@@ -402,15 +402,18 @@ public class UTM implements Projection, ProjectionSubPrefs {
     public void setPreferences(Collection<String> args)
     {
         zone = DEFAULT_ZONE;
-        try {
-            for(String s : args)
-            {
-                zone = Integer.parseInt(s);
-                if(zone <= 0 || zone > 60)
-                    zone = DEFAULT_ZONE;
-                break;
-            }
-        } catch(NumberFormatException e) {}
+        if(args != null)
+        {
+            try {
+                for(String s : args)
+                {
+                    zone = Integer.parseInt(s);
+                    if(zone <= 0 || zone > 60)
+                        zone = DEFAULT_ZONE;
+                    break;
+                }
+            } catch(NumberFormatException e) {}
+        }
     }
 
     public Collection<String> getPreferencesFromCode(String code)
