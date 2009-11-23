@@ -30,7 +30,7 @@ public class SearchCompiler {
 
     private boolean caseSensitive = false;
     private boolean regexSearch = false;
-    private String  rxErrorMsg = marktr("The regex \"{0}\" had a parse error at offset {1}, full error:\n\n{2}");
+    private static String  rxErrorMsg = marktr("The regex \"{0}\" had a parse error at offset {1}, full error:\n\n{2}");
     private PushbackTokenizer tokenizer;
     private CollectBackReferencesVisitor childBackRefs;
 
@@ -42,7 +42,7 @@ public class SearchCompiler {
     }
 
     abstract public static class Match {
-        abstract public boolean match(OsmPrimitive osm) throws ParseError;
+        abstract public boolean match(OsmPrimitive osm);
     }
 
     private static class Always extends Match {
@@ -54,7 +54,7 @@ public class SearchCompiler {
     private static class Not extends Match {
         private final Match match;
         public Not(Match match) {this.match = match;}
-        @Override public boolean match(OsmPrimitive osm) throws ParseError {
+        @Override public boolean match(OsmPrimitive osm) {
             return !match.match(osm);
         }
         @Override public String toString() {return "!"+match;}
@@ -64,7 +64,7 @@ public class SearchCompiler {
         private Match lhs;
         private Match rhs;
         public And(Match lhs, Match rhs) {this.lhs = lhs; this.rhs = rhs;}
-        @Override public boolean match(OsmPrimitive osm) throws ParseError {
+        @Override public boolean match(OsmPrimitive osm) {
             return lhs.match(osm) && rhs.match(osm);
         }
         @Override public String toString() {return lhs+" && "+rhs;}
@@ -74,7 +74,7 @@ public class SearchCompiler {
         private Match lhs;
         private Match rhs;
         public Or(Match lhs, Match rhs) {this.lhs = lhs; this.rhs = rhs;}
-        @Override public boolean match(OsmPrimitive osm) throws ParseError {
+        @Override public boolean match(OsmPrimitive osm) {
             return lhs.match(osm) || rhs.match(osm);
         }
         @Override public String toString() {return lhs+" || "+rhs;}
@@ -89,13 +89,43 @@ public class SearchCompiler {
         @Override public String toString() {return "id="+id;}
     }
 
-    private class KeyValue extends Match {
-        private String key;
-        private String value;
-        public KeyValue(String key, String value) {this.key = key; this.value = value; }
-        @Override public boolean match(OsmPrimitive osm) throws ParseError {
+    private static class KeyValue extends Match {
+        private final String key;
+        private final Pattern keyPattern;
+        private final String value;
+        private final Pattern valuePattern;
+        private final boolean caseSensitive;
 
+        public KeyValue(String key, String value, boolean regexSearch, boolean caseSensitive) throws ParseError {
+            this.caseSensitive = caseSensitive;
             if (regexSearch) {
+                int searchFlags = regexFlags(caseSensitive);
+
+                try {
+                    this.keyPattern = Pattern.compile(key, searchFlags);
+                    this.valuePattern = Pattern.compile(value, searchFlags);
+                } catch (PatternSyntaxException e) {
+                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
+                }
+                this.key = key;
+                this.value = value;
+
+            } else if (caseSensitive) {
+                this.key = key;
+                this.value = value;
+                this.keyPattern = null;
+                this.valuePattern = null;
+            } else {
+                this.key = key.toLowerCase();
+                this.value = value;
+                this.keyPattern = null;
+                this.valuePattern = null;
+            }
+        }
+
+        @Override public boolean match(OsmPrimitive osm) {
+
+            if (keyPattern != null) {
                 if (!osm.hasKeys())
                     return false;
 
@@ -106,26 +136,15 @@ public class SearchCompiler {
                  * and only then try to match against the value
                  */
 
-                Pattern searchKey   = null;
-                Pattern searchValue = null;
-                int searchFlags = regexFlags();
-
-                try {
-                    searchKey = Pattern.compile(key, searchFlags);
-                    searchValue = Pattern.compile(value, searchFlags);
-                } catch (PatternSyntaxException e) {
-                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
-                }
-
                 for (Entry<String, String> e : osm.entrySet()) {
                     String k = e.getKey();
                     String v = e.getValue();
 
-                    Matcher matcherKey = searchKey.matcher(k);
+                    Matcher matcherKey = keyPattern.matcher(k);
                     boolean matchedKey = matcherKey.find();
 
                     if (matchedKey) {
-                        Matcher matcherValue = searchValue.matcher(v);
+                        Matcher matcherValue = valuePattern.matcher(v);
                         boolean matchedValue = matcherValue.find();
 
                         if (matchedValue)
@@ -145,12 +164,11 @@ public class SearchCompiler {
                     return false;
 
                 String v1 = caseSensitive ? value : value.toLowerCase();
-                String v2 = caseSensitive ? this.value : this.value.toLowerCase();
 
                 // is not Java 1.5
                 //v1 = java.text.Normalizer.normalize(v1, java.text.Normalizer.Form.NFC);
                 //v2 = java.text.Normalizer.normalize(v2, java.text.Normalizer.Form.NFC);
-                return v1.indexOf(v2) != -1;
+                return v1.indexOf(value) != -1;
             }
 
             return false;
@@ -223,7 +241,7 @@ public class SearchCompiler {
         }
 
         @Override
-        public boolean match(OsmPrimitive osm) throws ParseError {
+        public boolean match(OsmPrimitive osm) {
 
             if (!osm.hasKeys())
                 return mode == Mode.NONE;
@@ -278,33 +296,37 @@ public class SearchCompiler {
 
     }
 
-    private class Any extends Match {
-        private String s;
-        public Any(String s) {this.s = s;}
-        @Override public boolean match(OsmPrimitive osm) throws ParseError {
-            if (!osm.hasKeys())
-                return s.equals("");
+    private static class Any extends Match {
+        private final String search;
+        private final Pattern searchRegex;
+        private final boolean caseSensitive;
 
-            String search;
-            Pattern searchRegex = null;
-
+        public Any(String s, boolean regexSearch, boolean caseSensitive) throws ParseError {
+            this.caseSensitive = caseSensitive;
             if (regexSearch) {
-                search = s;
-                int searchFlags = regexFlags();
-
                 try {
-                    searchRegex = Pattern.compile(search, searchFlags);
+                    this.searchRegex = Pattern.compile(s, regexFlags(caseSensitive));
                 } catch (PatternSyntaxException e) {
                     throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
                 }
+                this.search = s;
+            } else if (caseSensitive) {
+                this.search = s;
+                this.searchRegex = null;
             } else {
-                search = caseSensitive ? s : s.toLowerCase();
+                this.search = s.toLowerCase();
+                this.searchRegex = null;
             }
+        }
+
+        @Override public boolean match(OsmPrimitive osm) {
+            if (!osm.hasKeys())
+                return search.equals("");
 
             // is not Java 1.5
             //search = java.text.Normalizer.normalize(search, java.text.Normalizer.Form.NFC);
             for (Entry<String, String> e : osm.entrySet()) {
-                if (regexSearch) {
+                if (searchRegex != null) {
                     String key = e.getKey();
                     String value = e.getValue();
 
@@ -342,7 +364,9 @@ public class SearchCompiler {
             }
             return false;
         }
-        @Override public String toString() {return s;}
+        @Override public String toString() {
+            return search;
+        }
     }
 
     private static class ExactType extends Match {
@@ -474,7 +498,7 @@ public class SearchCompiler {
     private static class Parent extends Match {
         private Match child;
         public Parent(Match m) { child = m; }
-        @Override public boolean match(OsmPrimitive osm) throws ParseError {
+        @Override public boolean match(OsmPrimitive osm) {
             boolean isParent = false;
 
             // "parent" (null) should mean the same as "parent()"
@@ -515,7 +539,7 @@ public class SearchCompiler {
             this.childBackRefs = childBackRefs;
         }
 
-        @Override public boolean match(OsmPrimitive osm) throws ParseError {
+        @Override public boolean match(OsmPrimitive osm) {
             boolean isChild = false;
             childBackRefs.initialize();
             osm.visit(childBackRefs);
@@ -630,7 +654,7 @@ public class SearchCompiler {
         else if (tok.equals("parent"))
             return new Parent(parseParens());
         else
-            return new Any(tok);
+            return new Any(tok, regexSearch, caseSensitive);
     }
 
     private Match parseKV(String key, String value) throws ParseError {
@@ -638,7 +662,7 @@ public class SearchCompiler {
             return new ExactType(value);
         else if (key.equals("user"))
             return new UserMatch(value);
-        else if (key.equals("tags"))
+        else if (key.equals("tags")) {
             try {
                 String[] range = value.split("-");
                 if (range.length == 1)
@@ -650,7 +674,7 @@ public class SearchCompiler {
             } catch (NumberFormatException e) {
                 throw new ParseError(tr("Incorrect value of tags operator: {0}. Tags operator expects number of tags or range, for example tags:1 or tags:2-5", value));
             }
-        else if (key.equals("nodes")) {
+        } else if (key.equals("nodes")) {
             try {
                 String[] range = value.split("-");
                 if (range.length == 1)
@@ -670,10 +694,10 @@ public class SearchCompiler {
                 throw new ParseError(tr("Incorrect value of id operator: {0}. Number is expected.", value));
             }
         } else
-            return new KeyValue(key, value);
+            return new KeyValue(key, value, regexSearch, caseSensitive);
     }
 
-    private int regexFlags() {
+    private static int regexFlags(boolean caseSensitive) {
         int searchFlags = 0;
 
         // Enables canonical Unicode equivalence so that e.g. the two
