@@ -55,7 +55,6 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      */
     static private int MAX_IDS_PER_REQUEST = 200;
 
-
     private HashSet<Long> nodes;
     private HashSet<Long> ways;
     private HashSet<Long> relations;
@@ -253,7 +252,6 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         }
         return pkg;
     }
-
 
     /**
      * builds the Multi Get request string for a set of ids and a given

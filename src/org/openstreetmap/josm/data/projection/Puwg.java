@@ -120,7 +120,7 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
     public void setPreferences(Collection<String> args)
     {
         zone = DEFAULT_ZONE;
-        if(!args != null)
+        if(args != null)
         {
             try {
                 for(String s : args)

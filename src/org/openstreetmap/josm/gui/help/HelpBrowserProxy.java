@@ -14,7 +14,7 @@ import org.openstreetmap.josm.Main;
 
 /**
  * This is the proxy class for the help browser running in its own process.
- * 
+ *
  *
  */
 public class HelpBrowserProxy {
@@ -24,7 +24,7 @@ public class HelpBrowserProxy {
 
     /**
      * replies the unique instance of the proxy
-     * 
+     *
      * @return the unique instance of the proxy
      */
     static public HelpBrowserProxy getInstance() {
@@ -41,7 +41,7 @@ public class HelpBrowserProxy {
 
     /**
      * launches the help browser in its own process
-     * 
+     *
      */
     protected void launch() {
         ArrayList<String> cmdLine = new ArrayList<String>();
@@ -77,7 +77,7 @@ public class HelpBrowserProxy {
     /**
      * Direct the help browser to the help page for help topic
      * <code>relativeHelpTopic</code>
-     * 
+     *
      * @param relativeHelpTopic the help topic
      */
     public void setUrlForHelpTopic(String relativeHelpTopic) {

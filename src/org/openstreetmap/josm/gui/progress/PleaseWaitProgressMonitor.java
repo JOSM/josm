@@ -17,7 +17,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-
 public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
     private static final int PROGRESS_BAR_MAX = 100;

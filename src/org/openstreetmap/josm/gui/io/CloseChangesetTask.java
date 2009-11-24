@@ -18,7 +18,7 @@ import org.xml.sax.SAXException;
 
 /**
  * A task for closing a collection of changesets.
- * 
+ *
  */
 public class CloseChangesetTask extends PleaseWaitRunnable {
     private boolean cancelled;
@@ -30,7 +30,7 @@ public class CloseChangesetTask extends PleaseWaitRunnable {
      * Closes all changesets in <code>changesets</code> if they are not null, if they
      * are still open and if they have an id > 0. Other changesets in the collection
      * are ignored.
-     * 
+     *
      * @param changesets  the collection of changesets. Empty collection assumes, if null.
      */
     public CloseChangesetTask(Collection<Changeset> changesets) {

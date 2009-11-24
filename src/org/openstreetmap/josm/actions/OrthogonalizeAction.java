@@ -170,7 +170,7 @@ public final class OrthogonalizeAction extends JosmAction {
             }
             else {
                 JOptionPane.showMessageDialog(
-                    Main.parent, 
+                    Main.parent,
                     "<html><h3>"+tr(ex.getMessage())+"<br><hr><h3>"+tr("Usage")+tr(USAGE),
                     tr("Selected Elements cannot be orthogonalized"),
                     JOptionPane.INFORMATION_MESSAGE);
@@ -195,11 +195,11 @@ public final class OrthogonalizeAction extends JosmAction {
      *  4. If nodes are connected by a horizontal segment: Replace their y-Coordinate by
      *      the mean value of their y-Coordinates.
      *      - The same for vertical segments.
-     *  5. Rotate back. 
+     *  5. Rotate back.
      *
      **/
-    private static void orthogonalize(ArrayList<WayData> wayDataList, ArrayList<Node> headingNodes) 
-        throws InvalidUserInputException 
+    private static void orthogonalize(ArrayList<WayData> wayDataList, ArrayList<Node> headingNodes)
+        throws InvalidUserInputException
     {
         // find average heading
         double headingAll;
@@ -268,8 +268,8 @@ public final class OrthogonalizeAction extends JosmAction {
         for (Direction[] orientation : ORIENTATIONS){
             final HashSet<Node> s = new HashSet<Node>(allNodes);
             int s_size = s.size();
-            for (int dummy = 0; dummy < s_size; ++ dummy) {     
-                if (s.isEmpty()) break;                         
+            for (int dummy = 0; dummy < s_size; ++ dummy) {
+                if (s.isEmpty()) break;
                 final Node dummy_n = s.iterator().next();     // pick arbitrary element of s
 
                 final HashSet<Node> cs = new HashSet<Node>(); // will contain each node that can be reached from dummy_n
@@ -332,11 +332,11 @@ public final class OrthogonalizeAction extends JosmAction {
             final double dy = tmp.north() - n.getEastNorth().north();
             if (headingNodes.contains(n)) { // The heading nodes should not have changed
                 final double EPSILON = 1E-6;
-                if (Math.abs(dx) > Math.abs(EPSILON * tmp.east()) || 
+                if (Math.abs(dx) > Math.abs(EPSILON * tmp.east()) ||
                     Math.abs(dy) > Math.abs(EPSILON * tmp.east())) {
                     throw new AssertionError();
                 }
-            } 
+            }
             else {
                 OrthogonalizeAction.rememberMovements.put(n, new EastNorth(dx, dy));
                 commands.add(new MoveCommand(n, dx, dy));
@@ -345,7 +345,6 @@ public final class OrthogonalizeAction extends JosmAction {
         Main.main.undoRedo.add(new SequenceCommand(tr("Orthogonalize"), commands));
         Main.map.repaint();
     }
-    
 
     /**
      * Class contains everything we need to know about a singe way.
@@ -509,7 +508,7 @@ public final class OrthogonalizeAction extends JosmAction {
     /**
      * Exception: unsuited user input
      */
-    private static class InvalidUserInputException extends Exception {       
+    private static class InvalidUserInputException extends Exception {
         InvalidUserInputException(String message) {
             super(message);
         }

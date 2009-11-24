@@ -8,7 +8,6 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-
 class SaveLayersTableColumnModel extends DefaultTableColumnModel {
     protected void build() {
         TableColumn col = null;

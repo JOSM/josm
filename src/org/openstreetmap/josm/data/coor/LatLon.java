@@ -1,7 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.coor;
 
-
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.DecimalFormat;
@@ -26,7 +25,7 @@ public class LatLon extends Coordinate {
 
     /**
      * Replies true if lat is in the range [-90,90]
-     * 
+     *
      * @param lat the latitude
      * @return true if lat is in the range [-90,90]
      */
@@ -36,7 +35,7 @@ public class LatLon extends Coordinate {
 
     /**
      * Replies true if lon is in the range [-180,180]
-     * 
+     *
      * @param lon the longitude
      * @return true if lon is in the range [-180,180]
      */

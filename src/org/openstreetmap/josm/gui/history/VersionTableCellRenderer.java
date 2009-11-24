@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * The {@see TableCellRenderer} for a list of versions in {@see HistoryBrower}
- * 
+ *
  */
 public class VersionTableCellRenderer extends JLabel implements TableCellRenderer {
 

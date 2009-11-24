@@ -49,7 +49,7 @@ public class DeleteCommand extends Command {
 
     /**
      * Constructor. Deletes a collection of primitives in the current edit layer.
-     * 
+     *
      * @param data the primitives to delete. Must neither be null nor empty.
      * @throws IllegalArgumentException thrown if data is null or empty
      */
@@ -63,7 +63,7 @@ public class DeleteCommand extends Command {
 
     /**
      * Constructor. Deletes a single primitive in the current edit layer.
-     * 
+     *
      * @param data  the primitive to delete. Must not be null.
      * @throws IllegalArgumentException thrown if data is null
      */

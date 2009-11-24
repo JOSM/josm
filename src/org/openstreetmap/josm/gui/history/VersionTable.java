@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * VersionTable shows a list of version in a {@see History} of an {@see OsmPrimitive}.
- * 
+ *
  *
  */
 public class VersionTable extends JTable implements Observer{

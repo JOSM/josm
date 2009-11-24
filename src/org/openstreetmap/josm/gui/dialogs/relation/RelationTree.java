@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
 
 /**
  * This is a {@se JTree} rendering the hierarchical structure of {@see Relation}s.
- * 
+ *
  * @see RelationTreeModel
  */
 public class RelationTree extends JTree {
@@ -64,7 +64,7 @@ public class RelationTree extends JTree {
 
     /**
      * replies the parent dialog this tree is embedded in.
-     * 
+     *
      * @return the parent dialog; null, if there is no parent dialog
      */
     protected Dialog getParentDialog() {

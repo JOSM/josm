@@ -86,7 +86,6 @@ public class ReferringRelationsBrowserModel extends AbstractListModel {
         fireModelUpdate();
     }
 
-
     public boolean canReload() {
         return relation != null && !relation.isNew();
     }

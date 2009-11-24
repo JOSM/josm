@@ -182,7 +182,6 @@ public class MapStatus extends JPanel implements Helpful {
                             && popup != null);
                     boolean middleMouseDown = (ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0;
 
-
                     // Popup Information
                     // display them if the middle mouse button is pressed and
                     // keep them until the mouse is moved

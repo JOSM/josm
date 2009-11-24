@@ -62,13 +62,11 @@ public class FileDrop
     private transient javax.swing.border.Border normalBorder;
     private transient java.awt.dnd.DropTargetListener dropListener;
 
-
     /** Discover if the running JVM is modern enough to have drag and drop. */
     private static Boolean supportsDnD;
 
     // Default border color
     private static java.awt.Color defaultBorderColor = new java.awt.Color( 0f, 0f, 1f, 0.25f );
-
 
     /* Constructor for JOSM file drop */
     public FileDrop(final java.awt.Component c){
@@ -107,9 +105,6 @@ public class FileDrop
             listener );
     }   // end constructor
 
-
-
-
     /**
      * Constructor with a default border and the option to recursively set drop targets.
      * If your component is a <tt>java.awt.Container</tt>, then each of its children
@@ -130,7 +125,6 @@ public class FileDrop
             recursive, // Recursive
             listener );
     }   // end constructor
-
 
     /**
      * Constructor with a default border and debugging optionally turned on.
@@ -155,8 +149,6 @@ public class FileDrop
             false, // Recursive
             listener );
     }   // end constructor
-
-
 
     /**
      * Constructor with a default border, debugging optionally turned on
@@ -187,9 +179,6 @@ public class FileDrop
             listener );
     }   // end constructor
 
-
-
-
     /**
      * Constructor with a specified border
      *
@@ -209,9 +198,6 @@ public class FileDrop
             false,  // Recursive
             listener );
     }   // end constructor
-
-
-
 
     /**
      * Constructor with a specified border and the option to recursively set drop targets.
@@ -236,8 +222,6 @@ public class FileDrop
             recursive,
             listener );
     }   // end constructor
-
-
 
     /**
      * Constructor with a specified border and debugging optionally turned on.
@@ -264,10 +248,6 @@ public class FileDrop
             false,  // Recursive
             listener );
     }   // end constructor
-
-
-
-
 
     /**
      * Full constructor with a specified border and debugging optionally turned on.
@@ -445,7 +425,6 @@ public class FileDrop
         }   // end else: does not support DnD
     }   // end constructor
 
-
     private static boolean supportsDnD()
     {   // Static Boolean
         if( supportsDnD == null )
@@ -462,7 +441,6 @@ public class FileDrop
         }   // end if: first time through
         return supportsDnD.booleanValue();
     }   // end supportsDnD
-
 
     // BEGIN 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
     private static String ZERO_CHAR_STRING = "" + (char)0;
@@ -492,7 +470,6 @@ public class FileDrop
         return new File[0];
     }
     // END 2007-09-12 Nathan Blomquist -- Linux (KDE/Gnome) support added.
-
 
     private void makeDropTarget( final java.io.PrintStream out, final java.awt.Component c, boolean recursive )
     {
@@ -540,8 +517,6 @@ public class FileDrop
         }   // end if: recursively set components as listener
     }   // end dropListener
 
-
-
     /** Determine if the dragged data is a file list. */
     private boolean isDragOk( final java.io.PrintStream out, final java.awt.dnd.DropTargetDragEvent evt )
     {   boolean ok = false;
@@ -577,7 +552,6 @@ public class FileDrop
     return ok;
     }   // end isDragOk
 
-
     /** Outputs <tt>message</tt> to <tt>out</tt> if it's not null. */
     private static void log( java.io.PrintStream out, String message )
     {   // Log message if requested
@@ -585,9 +559,6 @@ public class FileDrop
             out.println( message );
         }
     }   // end log
-
-
-
 
     /**
      * Removes the drag-and-drop hooks from the component and optionally
@@ -602,8 +573,6 @@ public class FileDrop
     public static boolean remove( java.awt.Component c)
     {   return remove( null, c, true );
     }   // end remove
-
-
 
     /**
      * Removes the drag-and-drop hooks from the component and optionally
@@ -632,11 +601,7 @@ public class FileDrop
         else return false;
     }   // end remove
 
-
-
-
     /* ********  I N N E R   I N T E R F A C E   L I S T E N E R  ******** */
-
 
     /**
      * Implement this inner interface to listen for when files are dropped. For example
@@ -663,12 +628,9 @@ public class FileDrop
          */
         public abstract void filesDropped( java.io.File[] files );
 
-
     }   // end inner-interface Listener
 
-
     /* ********  I N N E R   C L A S S  ******** */
-
 
     /**
      * This is the event that is passed to the
@@ -677,7 +639,7 @@ public class FileDrop
      * a registered drop target.
      *
      * <p>I'm releasing this code into the Public Domain. Enjoy.</p>
-     * 
+     *
      * @author  Robert Harder
      * @author  rob@iharder.net
      * @version 1.2
@@ -713,10 +675,7 @@ public class FileDrop
 
     }   // end inner class Event
 
-
-
     /* ********  I N N E R   C L A S S  ******** */
-
 
     /**
      * At last an easy way to encapsulate your custom objects for dragging and dropping
@@ -755,7 +714,7 @@ public class FileDrop
      *
      *
      * <p>I'm releasing this code into the Public Domain. Enjoy.</p>
-     * 
+     *
      * @author  Robert Harder
      * @author  rob@iharder.net
      * @version 1.2
@@ -770,7 +729,6 @@ public class FileDrop
          */
         public final static String MIME_TYPE = "application/x-net.iharder.dnd.TransferableObject";
 
-
         /**
          * The default {@link java.awt.datatransfer.DataFlavor} for
          * {@link TransferableObject} has the representation class
@@ -783,13 +741,10 @@ public class FileDrop
         public final static java.awt.datatransfer.DataFlavor DATA_FLAVOR =
             new java.awt.datatransfer.DataFlavor( FileDrop.TransferableObject.class, MIME_TYPE );
 
-
         private Fetcher fetcher;
         private Object data;
 
         private java.awt.datatransfer.DataFlavor customFlavor;
-
-
 
         /**
          * Creates a new {@link TransferableObject} that wraps <var>data</var>.
@@ -806,8 +761,6 @@ public class FileDrop
         this.customFlavor = new java.awt.datatransfer.DataFlavor( data.getClass(), MIME_TYPE );
         }   // end constructor
 
-
-
         /**
          * Creates a new {@link TransferableObject} that will return the
          * object that is returned by <var>fetcher</var>.
@@ -821,8 +774,6 @@ public class FileDrop
         public TransferableObject( Fetcher fetcher )
         {   this.fetcher = fetcher;
         }   // end constructor
-
-
 
         /**
          * Creates a new {@link TransferableObject} that will return the
@@ -854,9 +805,7 @@ public class FileDrop
         {   return customFlavor;
         }   // end getCustomDataFlavor
 
-
         /* ********  T R A N S F E R A B L E   M E T H O D S  ******** */
-
 
         /**
          * Returns a two- or three-element array containing first
@@ -882,8 +831,6 @@ public class FileDrop
                     java.awt.datatransfer.DataFlavor.stringFlavor
                                                             };  // end flavors array
         }   // end getTransferDataFlavors
-
-
 
         /**
          * Returns the data encapsulated in this {@link TransferableObject}.
@@ -911,9 +858,6 @@ public class FileDrop
                 throw new java.awt.datatransfer.UnsupportedFlavorException(flavor);
         }   // end getTransferData
 
-
-
-
         /**
          * Returns <tt>true</tt> if <var>flavor</var> is one of the supported
          * flavors. Flavors are supported using the <code>equals(...)</code> method.
@@ -935,7 +879,6 @@ public class FileDrop
             // We can't do anything else
             return false;
         }   // end isDataFlavorSupported
-
 
         /* ********  I N N E R   I N T E R F A C E   F E T C H E R  ******** */
 
@@ -964,12 +907,6 @@ public class FileDrop
             public abstract Object getObject();
         }   // end inner interface Fetcher
 
-
-
     }   // end class TransferableObject
-
-
-
-
 
 }   // end class FileDrop

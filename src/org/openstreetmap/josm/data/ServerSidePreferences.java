@@ -200,11 +200,11 @@ public class ServerSidePreferences extends Preferences {
                 double[] values= new double[4];
                 for (int i = 0; i < 4; ++i) {
                     String token = st.nextToken();
-                    try {                        
+                    try {
                         values[i] = Double.parseDouble(token);
                     } catch(NumberFormatException e) {
                         System.err.println(tr("Error: Illegal double value ''{0}'' on line ''{1}'' in bookmark list from server",token,line));
-                        continue;                    
+                        continue;
                     }
                 }
                 b.setArea(new Bounds(values));

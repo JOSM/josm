@@ -143,9 +143,9 @@ public class Storage<T> extends AbstractSet<T> {
     }
 
     public @Override int hashCode() {
-	int h = 0;
+        int h = 0;
         for (T t : this) h += hash.getHashCode(t);
-	return h;
+        return h;
     }
 
     // ----------------- Extended API ----------------------------
@@ -258,8 +258,6 @@ public class Storage<T> extends AbstractSet<T> {
         data[hole] = null;
     }
 
-
-
     private void ensureSpace() {
         if (size > data.length*loadFactor) { // rehash
             Object[] big = new Object[data.length * 2];
@@ -276,7 +274,6 @@ public class Storage<T> extends AbstractSet<T> {
             mask = nMask;
         }
     }
-
 
     // -------------- factories --------------------
     /**

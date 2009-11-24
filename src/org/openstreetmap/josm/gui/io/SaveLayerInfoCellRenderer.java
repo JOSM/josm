@@ -19,7 +19,7 @@ import org.openstreetmap.josm.io.OsmApi;
 /**
  * This is a {@see TableCellRenderer} for rendering the various fields of a
  * {@see SaveLayerInfo} in the table {@see SaveLayersTable}.
- * 
+ *
  *
  */
 class SaveLayerInfoCellRenderer implements TableCellRenderer {

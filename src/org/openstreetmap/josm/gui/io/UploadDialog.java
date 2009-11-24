@@ -76,7 +76,7 @@ public class UploadDialog extends JDialog {
 
     /**
      * Replies the unique instance of the upload dialog
-     * 
+     *
      * @return the unique instance of the upload dialog
      */
     static public UploadDialog getUploadDialog() {
@@ -112,7 +112,7 @@ public class UploadDialog extends JDialog {
 
     /**
      * builds the panel with the lists of primitives
-     * 
+     *
      * @return the panel with the lists of primitives
      */
     protected JPanel buildListsPanel() {
@@ -125,7 +125,7 @@ public class UploadDialog extends JDialog {
 
     /**
      * builds the content panel for the upload dialog
-     * 
+     *
      * @return the content panel
      */
     protected JPanel buildContentPanel() {
@@ -167,7 +167,7 @@ public class UploadDialog extends JDialog {
 
     /**
      * builds the panel with the OK and CANCEL buttons
-     * 
+     *
      * @return
      */
     protected JPanel buildActionPanel() {
@@ -242,7 +242,7 @@ public class UploadDialog extends JDialog {
 
     /**
      * sets the collection of primitives which will be uploaded
-     * 
+     *
      * @param add  the collection of primitives to add
      * @param update the collection of primitives to update
      * @param delete the collection of primitives to delete
@@ -311,7 +311,7 @@ public class UploadDialog extends JDialog {
 
     /**
      * Replies the current changeset
-     * 
+     *
      * @return the current changeset
      */
     public Changeset getChangeset() {
@@ -328,7 +328,7 @@ public class UploadDialog extends JDialog {
      * If cs.getId() > 0 and cs is open, adds it to the list of open
      * changesets. If it is closed, removes it from the list of open
      * changesets.
-     * 
+     *
      * @param cs the changeset
      */
     public void setOrUpdateChangeset(Changeset cs) {
@@ -338,7 +338,7 @@ public class UploadDialog extends JDialog {
     /**
      * Removes <code>cs</code> from the list of open changesets in the upload
      * dialog
-     * 
+     *
      * @param cs the changeset. Ignored if null.
      */
     public void removeChangeset(Changeset cs) {
@@ -349,7 +349,7 @@ public class UploadDialog extends JDialog {
     /**
      * Replies true if the changeset is to be closed after the
      * next upload
-     * 
+     *
      * @return true if the changeset is to be closed after the
      * next upload; false, otherwise
      */
@@ -359,7 +359,7 @@ public class UploadDialog extends JDialog {
 
     /**
      * Replies the default value for "created_by"
-     * 
+     *
      * @return the default value for "created_by"
      */
     protected String getDefaultCreatedBy() {
@@ -369,7 +369,7 @@ public class UploadDialog extends JDialog {
 
     /**
      * Replies the current value for the upload comment
-     * 
+     *
      * @return the current value for the upload comment
      */
     protected String getUploadComment() {
@@ -385,7 +385,7 @@ public class UploadDialog extends JDialog {
 
     /**
      * Replies true, if the dialog was canceled
-     * 
+     *
      * @return true, if the dialog was canceled
      */
     public boolean isCanceled() {
@@ -394,7 +394,7 @@ public class UploadDialog extends JDialog {
 
     /**
      * Sets whether the dialog was canceld
-     * 
+     *
      * @param canceled true, if the dialog is canceled
      */
     protected void setCanceled(boolean canceled) {
@@ -420,7 +420,7 @@ public class UploadDialog extends JDialog {
     /**
      * This change listener is triggered when current tab in the tabbed pane in
      * the lower half of the dialog is changed.
-     * 
+     *
      * It's main purpose is to keep the content in the text field for the changeset
      * comment in sync with the changeset tag "comment".
      *
@@ -518,7 +518,6 @@ public class UploadDialog extends JDialog {
             putValue(SHORT_DESCRIPTION, tr("Cancel the upload and resume editing"));
         }
 
-
         public void actionPerformed(ActionEvent e) {
             setCanceled(true);
             setVisible(false);
@@ -612,7 +611,7 @@ public class UploadDialog extends JDialog {
         /**
          * build the panel with the widgets for controlling whether an atomic upload
          * should be used or not
-         * 
+         *
          * @return the panel
          */
         protected JPanel buildAtomicUploadControlPanel() {
@@ -797,7 +796,7 @@ public class UploadDialog extends JDialog {
 
         /**
          * Replies the current upload comment
-         * 
+         *
          * @return
          */
         public String getUploadComment() {
@@ -806,7 +805,7 @@ public class UploadDialog extends JDialog {
 
         /**
          * Replies the current upload comment
-         * 
+         *
          * @return
          */
         public void setUploadComment(String uploadComment) {
@@ -880,7 +879,7 @@ public class UploadDialog extends JDialog {
 
         /**
          * Remove a changeset from the list of open changeset
-         * 
+         *
          * @param cs the changeset to be removed. Ignored if null.
          */
         public void removeChangeset(Changeset cs) {
@@ -907,7 +906,7 @@ public class UploadDialog extends JDialog {
 
         /**
          * Sets whether a new changeset is to be used
-         * 
+         *
          */
         public void setUseNewChangeset() {
             rbUseNew.setSelected(true);
@@ -926,7 +925,7 @@ public class UploadDialog extends JDialog {
         /**
          * Replies true if the selected changeset should be closed after the
          * next upload
-         * 
+         *
          * @return true if the selected changeset should be closed after the
          * next upload
          */
@@ -993,7 +992,7 @@ public class UploadDialog extends JDialog {
 
         /**
          * Refreshes the list of open changesets
-         * 
+         *
          */
         class RefreshAction extends AbstractAction {
             public RefreshAction() {

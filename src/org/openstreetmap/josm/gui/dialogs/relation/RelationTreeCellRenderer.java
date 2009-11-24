@@ -41,7 +41,7 @@ public class RelationTreeCellRenderer extends JLabel implements TreeCellRenderer
 
     /**
      * renders the textual value. Uses the relations names as value
-     * 
+     *
      * @param relation the relation
      */
     protected void renderValue(Relation relation) {
@@ -50,7 +50,7 @@ public class RelationTreeCellRenderer extends JLabel implements TreeCellRenderer
 
     /**
      * renders the background
-     * 
+     *
      * @param selected true, if the current node is selected
      */
     protected void renderBackground(boolean selected) {

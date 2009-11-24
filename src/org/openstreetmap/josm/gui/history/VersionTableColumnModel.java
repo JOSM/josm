@@ -8,7 +8,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 /**
  * The {@see TableColumnModel} for the table with the list of versions
- * 
+ *
  */
 public class VersionTableColumnModel extends DefaultTableColumnModel {
     protected void createColumns() {

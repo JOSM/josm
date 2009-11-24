@@ -406,7 +406,6 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         return ret;
     }
 
-
     /**
      * Replies true, if the selected {@see OsmPrimitive}s in the layer belonging
      * to this model are in sync with the selected referers in this model.

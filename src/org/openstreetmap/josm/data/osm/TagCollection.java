@@ -678,7 +678,6 @@ public class TagCollection implements Iterable<Tag> {
         return ret;
     }
 
-
     public TagCollection emptyTagsForKeysMissingIn(TagCollection other) {
         TagCollection ret = new TagCollection();
         for(String key: this.minus(other).getKeys()) {

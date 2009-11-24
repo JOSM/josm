@@ -132,7 +132,6 @@ public final class Way extends OsmPrimitive {
         return chunkSet;
     }
 
-
     @Override public void visit(Visitor visitor) {
         visitor.visit(this);
     }
@@ -150,7 +149,7 @@ public final class Way extends OsmPrimitive {
     }
 
     /**
-     * 
+     *
      * @param original
      * @param clearId
      */
@@ -325,7 +324,6 @@ public final class Way extends OsmPrimitive {
         fireNodesChanged();
         super.setDeleted(deleted);
     }
-
 
     public boolean isClosed() {
         if (incomplete) return false;

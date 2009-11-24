@@ -46,7 +46,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * This dialog can be used to select individual object for uploading.
- * 
+ *
  *
  */
 public class UploadSelectionDialog extends JDialog {

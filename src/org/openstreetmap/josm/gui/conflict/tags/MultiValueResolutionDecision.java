@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
 /**
  * Represents a decision for a conflict due to multiple possible value for a tag.
- * 
+ *
  *
  */
 public class MultiValueResolutionDecision {
@@ -40,7 +40,7 @@ public class MultiValueResolutionDecision {
     /**
      * Creates a new decision for the tag collection <code>tags</code>.
      * All tags must have the same key.
-     * 
+     *
      * @param tags the tags. Must not be null.
      * @exception IllegalArgumentException  thrown if tags is null
      * @exception IllegalArgumentException thrown if there are more than one keys
@@ -89,7 +89,7 @@ public class MultiValueResolutionDecision {
 
     /**
      * Apply the decision to keep exactly one value
-     * 
+     *
      * @param value  the value to keep
      * @throws IllegalArgumentException thrown if value is null
      * @throws IllegalStateException thrown if value is not in the list of known values for this tag
@@ -105,7 +105,7 @@ public class MultiValueResolutionDecision {
 
     /**
      * sets a new value for this
-     * 
+     *
      * @param value the new vlaue
      */
     public void setNew(String value) {
@@ -119,7 +119,7 @@ public class MultiValueResolutionDecision {
 
     /**
      * marks this as undecided
-     * 
+     *
      */
     public void undecide() {
         this.type = MultiValueDecisionType.UNDECIDED;
@@ -127,7 +127,7 @@ public class MultiValueResolutionDecision {
 
     /**
      * Replies the chosen value
-     * 
+     *
      * @return the chosen value
      * @throws IllegalStateException thrown if this resolution is not yet decided
      */
@@ -144,7 +144,7 @@ public class MultiValueResolutionDecision {
 
     /**
      * Replies the list of possible, non empty values
-     * 
+     *
      * @return the list of possible, non empty values
      */
     public List<String> getValues() {
@@ -157,7 +157,7 @@ public class MultiValueResolutionDecision {
 
     /**
      * Replies the key of the tag to be resolved by this resolution
-     * 
+     *
      * @return the key of the tag to be resolved by this resolution
      */
     public String getKey() {
@@ -166,7 +166,7 @@ public class MultiValueResolutionDecision {
 
     /**
      * Replies true if the empty value is a possible value in this resolution
-     * 
+     *
      * @return true if the empty value is a possible value in this resolution
      */
     public boolean canKeepNone() {
@@ -175,7 +175,7 @@ public class MultiValueResolutionDecision {
 
     /**
      * Replies true, if this resolution has more than 1 possible non-empty values
-     * 
+     *
      * @return true, if this resolution has more than 1 possible non-empty values
      */
     public boolean canKeepAll() {
@@ -184,7 +184,7 @@ public class MultiValueResolutionDecision {
 
     /**
      * Replies  true if this resolution is decided
-     * 
+     *
      * @return true if this resolution is decided
      */
     public boolean isDecided() {
@@ -193,7 +193,7 @@ public class MultiValueResolutionDecision {
 
     /**
      * Replies the type of the resolution
-     * 
+     *
      * @return the type of the resolution
      */
     public MultiValueDecisionType getDecisionType() {
@@ -202,10 +202,10 @@ public class MultiValueResolutionDecision {
 
     /**
      * Applies the resolution to an {@see OsmPrimitive}
-     * 
+     *
      * @param primitive the primitive
      * @throws IllegalStateException thrown if this resolution is not resolved yet
-     * 
+     *
      */
     public void applyTo(OsmPrimitive primitive) throws IllegalStateException{
         if (primitive == null) return;
@@ -222,7 +222,7 @@ public class MultiValueResolutionDecision {
 
     /**
      * Applies this resolution to a collection of primitives
-     * 
+     *
      * @param primtives the collection of primitives
      * @throws IllegalStateException thrown if this resolution is not resolved yet
      */
@@ -238,7 +238,7 @@ public class MultiValueResolutionDecision {
 
     /**
      * Builds a change command for applying this resolution to a primitive
-     * 
+     *
      * @param primitive  the primitive
      * @return the change command
      * @throws IllegalArgumentException thrown if primitive is null
@@ -257,7 +257,7 @@ public class MultiValueResolutionDecision {
 
     /**
      * Builds a change command for applying this resolution to a collection of primitives
-     * 
+     *
      * @param primitives  the collection of primitives
      * @return the change command
      * @throws IllegalArgumentException thrown if primitives is null
@@ -277,7 +277,7 @@ public class MultiValueResolutionDecision {
     /**
      * Replies a tag representing the current resolution. Null, if this resolution is not resolved
      * yet.
-     * 
+     *
      * @return a tag representing the current resolution. Null, if this resolution is not resolved
      * yet
      */

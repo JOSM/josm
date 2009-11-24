@@ -151,7 +151,6 @@ public class TaggingPreset extends AbstractAction implements LayerChangeListener
 
         private JComponent value;
 
-
         @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
 
             // find out if our key is already used in the selection.

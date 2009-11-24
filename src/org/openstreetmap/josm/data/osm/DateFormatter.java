@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-
 /**
  * Outputs a date in a format suitable for an OSM XML file.
  *
@@ -15,14 +14,12 @@ public class DateFormatter {
 
     private GregorianCalendar calendar;
 
-
     /**
      * Creates a new instance.
      */
     public DateFormatter() {
         calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
     }
-
 
     /**
      * Formats a date in XML format.

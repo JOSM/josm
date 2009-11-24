@@ -102,7 +102,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
 
     /**
      * Creates a new history browser model for a given history.
-     * 
+     *
      * @param history the history. Must not be null.
      * @throws IllegalArgumentException thrown if history is null
      */
@@ -116,7 +116,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     /**
      * Replies the current edit layer; null, if there isn't a current edit layer
      * of type {@see OsmDataLayer}.
-     * 
+     *
      * @return the current edit layer
      */
     protected OsmDataLayer getEditLayer() {
@@ -257,12 +257,12 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     /**
      * Sets the {@see HistoryOsmPrimitive} which plays the role of a reference point
      * in time (see {@see PointInTimeType}).
-     * 
+     *
      * @param reference the reference history primitive. Must not be null.
      * @throws IllegalArgumentException thrown if reference is null
      * @throws IllegalStateException thrown if this model isn't a assigned a history yet
      * @throws IllegalArgumentException if reference isn't an history primitive for the history managed by this mode
-     * 
+     *
      * @see #setHistory(History)
      * @see PointInTimeType
      */
@@ -288,12 +288,12 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     /**
      * Sets the {@see HistoryOsmPrimitive} which plays the role of the current point
      * in time (see {@see PointInTimeType}).
-     * 
+     *
      * @param reference the reference history primitive. Must not be null.
      * @throws IllegalArgumentException thrown if reference is null
      * @throws IllegalStateException thrown if this model isn't a assigned a history yet
      * @throws IllegalArgumentException if reference isn't an history primitive for the history managed by this mode
-     * 
+     *
      * @see #setHistory(History)
      * @see PointInTimeType
      */
@@ -356,7 +356,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      * Returns true if <code>primitive</code> is the latest primitive
      * representing the version currently edited in the current data
      * layer.
-     * 
+     *
      * @param primitive the primitive to check
      * @return true if <code>primitive</code> is the latest primitive
      */
@@ -451,7 +451,6 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             return p;
         }
     }
-
 
     /**
      * The table model for the tags of the version at {@see PointInTimeType#REFERENCE_POINT_IN_TIME}
@@ -766,7 +765,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     /**
      * Removes this model as listener for data change and layer change
      * events.
-     * 
+     *
      */
     public void unlinkAsListener() {
         if (getEditLayer() != null) {
@@ -874,7 +873,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
 
     /**
      * Creates a {@see HistoryOsmPrimitive} from a {@see OsmPrimitive}
-     * 
+     *
      */
     class HistoryPrimitiveBuilder extends AbstractVisitor {
         private HistoryOsmPrimitive clone;

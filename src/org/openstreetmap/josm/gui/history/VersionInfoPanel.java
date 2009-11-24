@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.UrlLabel;
 /**
  * VersionInfoPanel is an UI component which displays the basic properties of a version
  * of a {@see OsmPrimitive}.
- * 
+ *
  */
 public class VersionInfoPanel extends JPanel implements Observer{
     static private final Logger logger = Logger.getLogger(VersionInfoPanel.class.getName());
@@ -109,7 +109,7 @@ public class VersionInfoPanel extends JPanel implements Observer{
 
     /**
      * constructor
-     * 
+     *
      * @param model  the model (must not be null)
      * @param pointInTimeType the point in time this panel visualizes (must not be null)
      * @exception IllegalArgumentException thrown, if model is null

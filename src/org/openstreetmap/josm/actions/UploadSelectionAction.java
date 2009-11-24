@@ -141,10 +141,10 @@ public class UploadSelectionAction extends JosmAction{
     /**
      * Uploads the primitives in <code>toUpload</code> to the server. Only
      * uploads primitives which are either new, modified or deleted.
-     * 
+     *
      * Also checks whether <code>toUpload</code> has to be extended with
      * deleted parents in order to avoid precondition violations on the server.
-     * 
+     *
      * @param layer the data layer from which we upload a subset of primitives
      * @param toUpload the primitives to upload. If null or empty returns immediatelly
      */
@@ -177,7 +177,7 @@ public class UploadSelectionAction extends JosmAction{
      * which is referred by a modified relation. In order to upload the relation the
      * new primitive has to be uploaded as well, even if it isn't included in the
      * list of candidate primitives.
-     * 
+     *
      */
     static class UploadHullBuilder implements Visitor {
         private Set<OsmPrimitive> hull;
@@ -227,7 +227,7 @@ public class UploadSelectionAction extends JosmAction{
         /**
          * Builds the "hull" of primitives to be uploaded given a base collection
          * of osm primitives.
-         * 
+         *
          * @param base the base collection. Must not be null.
          * @return the "hull"
          * @throws IllegalArgumentException thrown if base is null
@@ -251,7 +251,7 @@ public class UploadSelectionAction extends JosmAction{
         private OsmServerBackreferenceReader reader;
 
         /**
-         * 
+         *
          * @param layer the data layer for which a collection of selected primitives is uploaded
          * @param toUpload the collection of primitives to upload
          */
@@ -290,7 +290,7 @@ public class UploadSelectionAction extends JosmAction{
         /**
          * Replies the collection of deleted OSM primitives for which we have to check whether
          * there are dangling references on the server.
-         * 
+         *
          * @return
          */
         protected Set<OsmPrimitive> getPrimitivesToCheckForParents() {

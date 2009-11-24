@@ -50,7 +50,6 @@ public class RelationMemberConflictResolverCommand extends Command {
         this.mergedMembers = mergedMembers;
     }
 
-
     @Override
     public MutableTreeNode description() {
         return new DefaultMutableTreeNode(

@@ -38,7 +38,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
 
     /**
      * Create the runnable object with a given message for the user.
-     * 
+     *
      * @param title message for the user
      * @param ignoreException If true, exception will be propagated to calling code. If false then
      * exception will be thrown directly in EDT. When this runnable is executed using executor framework

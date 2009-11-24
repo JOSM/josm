@@ -14,7 +14,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 
-
 public class PostDownloadHandler implements Runnable {
     private DownloadTask task;
     private List<Future<?>> futures;
@@ -45,7 +44,6 @@ public class PostDownloadHandler implements Runnable {
             this.futures.add(future);
         }
     }
-    
 
     /**
      * constructor
@@ -58,7 +56,7 @@ public class PostDownloadHandler implements Runnable {
         if (futures == null) return;
         this.futures.addAll(futures);
     }
-    
+
     public void run() {
         // wait for all downloads task to finish (by waiting for the futures
         // to return a value)

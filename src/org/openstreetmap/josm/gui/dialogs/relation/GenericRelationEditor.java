@@ -117,7 +117,6 @@ public class GenericRelationEditor extends RelationEditor  {
     public GenericRelationEditor(OsmDataLayer layer, Relation relation, Collection<RelationMember> selectedMembers) {
         super(layer, relation, selectedMembers);
 
-
         // initialize the autocompletion infrastructure
         //
         AutoCompletionCache.getCacheForLayer(getLayer()).initFromDataSet();
@@ -323,7 +322,6 @@ public class GenericRelationEditor extends RelationEditor  {
             }
         });
 
-
         JPanel pnl3 = new JPanel();
         pnl3.setLayout(new BorderLayout());
         pnl3.add(splitPane, BorderLayout.CENTER);
@@ -410,7 +408,6 @@ public class GenericRelationEditor extends RelationEditor  {
         RemoveAction removeSelectedAction = new RemoveAction();
         memberTable.getSelectionModel().addListSelectionListener(removeSelectedAction);
         pnl.add(new JButton(removeSelectedAction), gc);
-
 
         // ------
         gc.gridy = 4;
@@ -754,7 +751,6 @@ public class GenericRelationEditor extends RelationEditor  {
             } catch(AddAbortException ex) {
                 // do nothing
             }
-
 
         }
 

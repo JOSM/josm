@@ -66,14 +66,12 @@ public class AutoCompletionCache {
         return cache;
     }
 
-
     /** the cached tags give by a tag key and a list of values for this tag*/
     private HashMap<String, Set<String>> tagCache;
     /** the cached list of member roles */
     private  Set<String> roleCache;
     /**  the layer this cache is built for */
     private OsmDataLayer layer;
-
 
     /**
      * constructor

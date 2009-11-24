@@ -27,18 +27,18 @@ import org.xml.sax.SAXException;
  * server.
  *
  * It provides a fluent API for configuration.
- * 
+ *
  * Sample usage:
- * 
+ *
  * <pre>
  *   HistoryLoadTask task  = new HistoryLoadTask()
  *      .add(1, OsmPrimitiveType.NODE)
  *      .add(1233, OsmPrimitiveType.WAY)
  *      .add(37234, OsmPrimitveType.RELATION)
  *      .add(aHistoryItem);
- * 
+ *
  *   Main.worker.execute(task);
- * 
+ *
  * </pre>
  */
 public class HistoryLoadTask extends PleaseWaitRunnable {
@@ -55,7 +55,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     /**
      * Adds an object whose history is to be loaded.
-     * 
+     *
      * @param id the object id
      * @param type the object type
      * @return this task
@@ -72,7 +72,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     /**
      * Adds an object whose history is to be loaded.
-     * 
+     *
      * @param pid  the primitive id. Must not be null. Id > 0 required.
      * @return this task
      */
@@ -87,7 +87,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     /**
      * Adds an object to be loaded, the object is specified by a history item.
-     * 
+     *
      * @param primitive the history item
      * @return this task
      * @throws IllegalArgumentException thrown if primitive is null
@@ -101,7 +101,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     /**
      * Adds an object to be loaded, the object is specified by an already loaded object history.
-     * 
+     *
      * @param history the history. Must not be null.
      * @return this task
      * @throws IllegalArgumentException thrown if history is null
@@ -115,7 +115,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     /**
      * Adds an object to be loaded, the object is specified by an OSM primitive.
-     * 
+     *
      * @param primitive the OSM primitive. Must not be null. primitive.getId() > 0 required.
      * @return this task
      * @throws IllegalArgumentException thrown if the primitive is null
@@ -132,7 +132,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     /**
      * Adds a collection of objects to loaded, specified by a collection of OSM primitives.
-     * 
+     *
      * @param primitive the OSM primitive. Must not be null. primitive.getId() > 0 required.
      * @return this task
      * @throws IllegalArgumentException thrown if primitives is null

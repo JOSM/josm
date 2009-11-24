@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 /**
  * This is the {@see TableCellRenderer} used in the tables of {@see RelationMemberMerger}.
- * 
+ *
  */
 public abstract class MemberTableCellRenderer extends JLabel implements TableCellRenderer {
     public final static Color BGCOLOR_SELECTED = new Color(143, 170, 255);

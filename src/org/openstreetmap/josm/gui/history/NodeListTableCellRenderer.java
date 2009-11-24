@@ -15,7 +15,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * The {@see TableCellRenderer} for a list of nodes in [@see HistoryBrower}
- * 
+ *
  *
  */
 public class NodeListTableCellRenderer extends JLabel implements TableCellRenderer {

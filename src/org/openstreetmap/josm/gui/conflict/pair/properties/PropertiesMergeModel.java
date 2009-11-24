@@ -179,7 +179,6 @@ public class PropertiesMergeModel extends Observable {
         fireCompletelyResolved();
     }
 
-
     /**
      * replies the coordinates of my {@see OsmPrimitive}. null, if my primitive hasn't
      * coordinates (i.e. because it is a {@see Way}).
@@ -252,7 +251,6 @@ public class PropertiesMergeModel extends Observable {
         // should not happen
         return null;
     }
-
 
     /**
      * replies my visible state,

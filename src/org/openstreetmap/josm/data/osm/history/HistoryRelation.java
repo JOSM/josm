@@ -21,7 +21,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
 
     /**
      * constructor
-     * 
+     *
      * @param id the id (>0 required)
      * @param version the version (> 0 required)
      * @param visible whether the primitive is still visible
@@ -29,7 +29,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      * @param uid the user id (> 0 required)
      * @param changesetId the changeset id (> 0 required)
      * @param timestamp the timestamp (! null required)
-     * 
+     *
      * @throws IllegalArgumentException thrown if preconditions are violated
      */
     public HistoryRelation(long id, long version, boolean visible, String user, long uid, long changesetId,
@@ -39,7 +39,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
     }
     /**
      * constructor
-     * 
+     *
      * @param id the id (>0 required)
      * @param version the version (> 0 required)
      * @param visible whether the primitive is still visible
@@ -48,7 +48,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      * @param changesetId the changeset id (> 0 required)
      * @param timestamp the timestamp (! null required)
      * @param members list of members for this relation
-     * 
+     *
      * @throws IllegalArgumentException thrown if preconditions are violated
      */
     public HistoryRelation(long id, long version, boolean visible, String user, long uid, long changesetId,
@@ -61,7 +61,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
 
     /**
      * replies an immutable list of members of this relation
-     * 
+     *
      * @return an immutable list of members of this relation
      */
     public List<RelationMember> getMembers() {
@@ -70,9 +70,9 @@ public class HistoryRelation extends HistoryOsmPrimitive{
 
     /**
      * replies the number of members
-     * 
+     *
      * @return the number of members
-     * 
+     *
      */
     public int getNumMembers() {
         return members.size();
@@ -92,7 +92,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
 
     /**
      * replies the type, i.e. {@see OsmPrimitiveType#RELATION}
-     * 
+     *
      */
     @Override
     public OsmPrimitiveType getType() {
@@ -101,7 +101,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
 
     /**
      * adds a member to the list of members
-     * 
+     *
      * @param member the member (must not be null)
      * @exception IllegalArgumentException thrown, if member is null
      */

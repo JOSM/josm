@@ -37,7 +37,7 @@ public class OpenFileAction extends DiskAccessAction {
         super(tr("Open..."), "open", tr("Open a file."),
                 Shortcut.registerShortcut("system:open", tr("File: {0}", tr("Open...")), KeyEvent.VK_O, Shortcut.GROUP_MENU));
         putValue("help", ht("/Action/OpenFile"));
-        
+
     }
 
     public void actionPerformed(ActionEvent e) {

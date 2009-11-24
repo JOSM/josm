@@ -16,10 +16,9 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.RelationMember;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-
 /**
  * The {@see TableCellRenderer} for a list of relation members in {@see HistoryBrower}
- * 
+ *
  *
  */
 public class RelationMemberListTableCellRenderer extends JLabel implements TableCellRenderer {
@@ -38,7 +37,6 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         icons.put(OsmPrimitiveType.WAY, ImageProvider.get("data", "way"));
         icons.put(OsmPrimitiveType.RELATION, ImageProvider.get("data", "relation"));
     }
-
 
     protected void renderIcon(RelationMember member) {
         if (member == null) {
@@ -92,7 +90,6 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
         setToolTipText(text);
         setBackground(bgColor);
     }
-
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {

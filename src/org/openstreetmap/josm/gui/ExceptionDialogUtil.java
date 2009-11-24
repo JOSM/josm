@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.ExceptionUtil;
 
 /**
  * This utility class provides static methods which explain various exceptions to the user.
- * 
+ *
  */
 public class ExceptionDialogUtil {
 
@@ -79,7 +79,7 @@ public class ExceptionDialogUtil {
 
     /**
      * Explains an exception with a generic message dialog
-     * 
+     *
      * @param e the exception
      */
     public static void explainGeneric(Exception e) {
@@ -97,7 +97,7 @@ public class ExceptionDialogUtil {
      * Explains a {@see SecurityException} which has caused an {@see OsmTransferException}.
      * This is most likely happening when user tries to access the OSM API from within an
      * applet which wasn't loaded from the API server.
-     * 
+     *
      * @param e the exception
      */
 
@@ -115,7 +115,7 @@ public class ExceptionDialogUtil {
      * Explains a {@see SocketException} which has caused an {@see OsmTransferException}.
      * This is most likely because there's not connection to the Internet or because
      * the remote server is not reachable.
-     * 
+     *
      * @param e the exception
      */
 
@@ -133,7 +133,7 @@ public class ExceptionDialogUtil {
      * Explains a {@see IOException} which has caused an {@see OsmTransferException}.
      * This is most likely happening when the communication with the remote server is
      * interrupted for any reason.
-     * 
+     *
      * @param e the exception
      */
 
@@ -149,7 +149,7 @@ public class ExceptionDialogUtil {
 
     /**
      * Explains a {@see InvocationTargetException }
-     * 
+     *
      * @param e the exception
      */
 
@@ -166,7 +166,7 @@ public class ExceptionDialogUtil {
     /**
      * Explains a {@see OsmApiException} which was thrown because of an internal server
      * error in the OSM API server.
-     * 
+     *
      * @param e the exception
      */
 
@@ -183,7 +183,7 @@ public class ExceptionDialogUtil {
     /**
      * Explains a {@see OsmApiException} which was thrown because of a bad
      * request
-     * 
+     *
      * @param e the exception
      */
     public static void explainBadRequest(OsmApiException e) {
@@ -199,7 +199,7 @@ public class ExceptionDialogUtil {
     /**
      * Explains a {@see OsmApiException} which was thrown because a resource wasn't found
      * on the server
-     * 
+     *
      * @param e the exception
      */
     public static void explainNotFound(OsmApiException e) {
@@ -214,7 +214,7 @@ public class ExceptionDialogUtil {
 
     /**
      * Explains a {@see OsmApiException} which was thrown because of a conflict
-     * 
+     *
      * @param e the exception
      */
     public static void explainConflict(OsmApiException e) {
@@ -231,7 +231,7 @@ public class ExceptionDialogUtil {
      * Explains a {@see UnknownHostException} which has caused an {@see OsmTransferException}.
      * This is most likely happening when there is an error in the API URL or when
      * local DNS services are not working.
-     * 
+     *
      * @param e the exception
      */
 
@@ -248,7 +248,7 @@ public class ExceptionDialogUtil {
     /**
      * Replies the first nested exception of type <code>nestedClass</code> (including
      * the root exception <code>e</code>) or null, if no such exception is found.
-     * 
+     *
      * @param <T>
      * @param e the root exception
      * @param nestedClass the type of the nested exception
@@ -269,7 +269,7 @@ public class ExceptionDialogUtil {
 
     /**
      * Explains an {@see OsmTransferException} to the user.
-     * 
+     *
      * @param e the {@see OsmTransferException}
      */
     public static void explainOsmTransferException(OsmTransferException e) {
@@ -349,7 +349,7 @@ public class ExceptionDialogUtil {
 
     /**
      * Explains an {@see Exception} to the user.
-     * 
+     *
      * @param e the {@see Exception}
      */
     public static void explainException(Exception e) {

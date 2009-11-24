@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This is the {@see TableCellRenderer} used in the node tables of {@see NodeListMerger}.
- * 
+ *
  */
 public  class NodeListTableCellRenderer extends JLabel implements TableCellRenderer {
     //static private final Logger logger = Logger.getLogger(NodeListTableCellRenderer.class.getName());
@@ -53,7 +53,7 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
     /**
      * build the tool tip text for an {@see OsmPrimitive}. It consist of the formatted
      * key/value pairs for this primitive.
-     * 
+     *
      * @param primitive
      * @return the tool tip text
      */

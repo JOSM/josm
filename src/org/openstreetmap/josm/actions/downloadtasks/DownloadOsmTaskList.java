@@ -37,7 +37,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * large to download in one go. Error messages will be collected for all downloads and displayed as
  * a list in the end.
  * @author xeen
- * 
+ *
  */
 public class DownloadOsmTaskList {
     private List<DownloadTask> osmTasks = new LinkedList<DownloadTask>();
@@ -100,7 +100,7 @@ public class DownloadOsmTaskList {
     /**
      * Replies the set of ids of all complete, non-new primitives (i.e. those with !
      * primitive.incomplete)
-     * 
+     *
      * @return the set of ids of all complete, non-new primitives
      */
     protected Set<OsmPrimitive> getCompletePrimitives(DataSet ds) {
@@ -126,7 +126,7 @@ public class DownloadOsmTaskList {
     /**
      * Updates the local state of a set of primitives (given by a set of primitive ids) with the
      * state currently held on the server.
-     * 
+     *
      * @param potentiallyDeleted a set of ids to check update from the server
      */
     protected void updatePotentiallyDeletedPrimitives(Set<OsmPrimitive> potentiallyDeleted) {
@@ -148,7 +148,7 @@ public class DownloadOsmTaskList {
      * server. First prompts the user whether he wants to check the current state on the server. If
      * yes, retrieves the current state on the server and checks whether the primitives are indeed
      * deleted on the server.
-     * 
+     *
      * @param potentiallyDeleted a set of primitives (given by their ids)
      */
     protected void handlePotentiallyDeletedPrimitives(Set<OsmPrimitive> potentiallyDeleted) {
@@ -195,7 +195,7 @@ public class DownloadOsmTaskList {
 
     /**
      * Replies the set of primitive ids which have been downloaded by this task list
-     * 
+     *
      * @return the set of primitive ids which have been downloaded by this task list
      */
     public Set<OsmPrimitive> getDownloadedPrimitives() {

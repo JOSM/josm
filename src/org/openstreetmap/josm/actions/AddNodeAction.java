@@ -80,4 +80,3 @@ public final class AddNodeAction extends JosmAction {
     }
 
 }
-

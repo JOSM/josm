@@ -49,7 +49,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
-
 /**
  * Action that opens a connection to the osm server and uploads all changes.
  *
@@ -93,7 +92,7 @@ public class UploadAction extends JosmAction{
 
     /**
      * Registers an upload hook. Adds the hook at the first position of the upload hooks.
-     * 
+     *
      * @param hook the upload hook. Ignored if null.
      */
     public static void registerUploadHook(UploadHook hook) {
@@ -105,7 +104,7 @@ public class UploadAction extends JosmAction{
 
     /**
      * Unregisters an upload hook. Removes the hook from the list of upload hooks.
-     * 
+     *
      * @param hook the upload hook. Ignored if null.
      */
     public static void unregisterUploadHook(UploadHook hook) {
@@ -341,7 +340,6 @@ public class UploadAction extends JosmAction{
         );
     }
 
-
     /**
      * Handles the case where deleting a node failed because it is still in use in
      * a non-deleted way on the server.
@@ -465,7 +463,6 @@ public class UploadAction extends JosmAction{
         }
     }
 
-
     /**
      * error handler for any exception thrown during upload
      *
@@ -573,7 +570,7 @@ public class UploadAction extends JosmAction{
         private HashSet<OsmPrimitive> processedPrimitives;
 
         /**
-         * 
+         *
          * @param layer  the OSM data layer for which data is uploaded
          * @param toUpload the collection of primitives to upload
          * @param changeset the changeset to use for uploading
@@ -599,7 +596,7 @@ public class UploadAction extends JosmAction{
         /**
          * Retries to recover the upload operation from an exception which was thrown because
          * an uploaded primitive was already deleted on the server.
-         * 
+         *
          * @param e the exception throw by the API
          * @param monitor a progress monitor
          * @throws OsmTransferException  thrown if we can't recover from the exception

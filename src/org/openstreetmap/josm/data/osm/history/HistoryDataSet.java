@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 
 /**
  * A data set holding histories of OSM primitives.
- * 
+ *
  *
  */
 public class HistoryDataSet {
@@ -25,7 +25,7 @@ public class HistoryDataSet {
 
     /**
      * Replies the unique instance of the history data set
-     * 
+     *
      * @return the unique instance of the history data set
      */
     public static HistoryDataSet getInstance() {
@@ -69,7 +69,7 @@ public class HistoryDataSet {
     /**
      * Replies the history primitive for the primitive with id <code>id</code>
      * and version <code>version</code>. null, if no such primitive exists.
-     * 
+     *
      * @param id the id of the primitive. > 0 required.
      * @param type the primitive type. Must not be null.
      * @param version the version of the primitive. > 0 required
@@ -97,7 +97,7 @@ public class HistoryDataSet {
 
     /**
      * Adds a history primitive to the data set
-     * 
+     *
      * @param primitive  the history primitive to add
      */
     public void put(HistoryOsmPrimitive primitive) {
@@ -112,7 +112,7 @@ public class HistoryDataSet {
     /**
      * Replies the history for a given primitive with id <code>id</code>
      * and type <code>type</code>.
-     * 
+     *
      * @param id the id the if of the primitive. > 0 required
      * @param type the type of the primitive. Must not be null.
      * @return the history. null, if there isn't a history for <code>id</code> and
@@ -132,7 +132,7 @@ public class HistoryDataSet {
     /**
      * Replies the history for a primitive with id <code>id</code>. null, if no
      * such history exists.
-     * 
+     *
      * @param pid the primitive id. Must not be null.
      * @return the history for a primitive with id <code>id</code>. null, if no
      * such history exists
@@ -149,7 +149,7 @@ public class HistoryDataSet {
 
     /**
      * merges the histories from the {@see HistoryDataSet} other in this history data set
-     * 
+     *
      * @param other the other history data set. Ignored if null.
      */
     public void mergeInto(HistoryDataSet other) {

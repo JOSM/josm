@@ -37,9 +37,9 @@ public class ExtensionFileFilter extends FileFilter {
      * list of supported formats
      */
     public static ArrayList<FileImporter> importers;
-    
+
     public static ArrayList<FileExporter> exporters;
-    
+
     // add some file types only if the relevant classes are there;
     // this gives us the option to painlessly drop them from the .jar
     // and build JOSM versions without support for these formats
@@ -47,7 +47,7 @@ public class ExtensionFileFilter extends FileFilter {
     static {
 
         importers = new ArrayList<FileImporter>();
-        
+
         String[] importerNames = {
             "org.openstreetmap.josm.io.OsmImporter",
             "org.openstreetmap.josm.io.OsmGzipImporter",
@@ -61,7 +61,7 @@ public class ExtensionFileFilter extends FileFilter {
             try {
                 Class klass = Class.forName(classname);
                 importers.add((FileImporter)klass.newInstance());
-            } catch (Exception e) {} 
+            } catch (Exception e) {}
         }
 
         exporters = new ArrayList<FileExporter>();
@@ -77,14 +77,13 @@ public class ExtensionFileFilter extends FileFilter {
             try {
                 Class klass = Class.forName(classname);
                 exporters.add((FileExporter)klass.newInstance());
-            } catch (Exception e) {} 
+            } catch (Exception e) {}
         }
     }
 
     private final String extensions;
     private final String description;
     private final String defaultExtension;
-
 
     static protected void sort(List<ExtensionFileFilter> filters) {
         Collections.sort(
@@ -104,7 +103,7 @@ public class ExtensionFileFilter extends FileFilter {
      * Replies an ordered list of {@see ExtensionFileFilter}s for importing.
      * The list is ordered according to their description, an {@see AllFormatsImporter}
      * is append at the end.
-     * 
+     *
      * @return an ordered list of {@see ExtensionFileFilter}s for importing.
      */
     public static List<ExtensionFileFilter> getImportExtensionFileFilters() {
@@ -123,7 +122,7 @@ public class ExtensionFileFilter extends FileFilter {
      * Replies an ordered list of {@see ExtensionFileFilter}s for exporting.
      * The list is ordered according to their description, an {@see AllFormatsImporter}
      * is append at the end.
-     * 
+     *
      * @return an ordered list of {@see ExtensionFileFilter}s for exporting.
      */
     public static List<ExtensionFileFilter> getExportExtensionFileFilters() {
@@ -140,7 +139,7 @@ public class ExtensionFileFilter extends FileFilter {
 
     /**
      * Replies the default {@see ExtensionFileFilter} for a given extension
-     * 
+     *
      * @param extension the extension
      * @return the default {@see ExtensionFileFilter} for a given extension
      */
@@ -155,7 +154,7 @@ public class ExtensionFileFilter extends FileFilter {
 
     /**
      * Replies the default {@see ExtensionFileFilter} for a given extension
-     * 
+     *
      * @param extension the extension
      * @return the default {@see ExtensionFileFilter} for a given extension
      */
@@ -171,7 +170,7 @@ public class ExtensionFileFilter extends FileFilter {
     /**
      * Applies the choosable {@see FileFilter} to a {@see JFileChooser} before using the
      * file chooser for selecting a file for reading.
-     * 
+     *
      * @param fileChooser the file chooser
      * @param extension the default extension
      */
@@ -185,7 +184,7 @@ public class ExtensionFileFilter extends FileFilter {
     /**
      * Applies the choosable {@see FileFilter} to a {@see JFileChooser} before using the
      * file chooser for selecting a file for writing.
-     * 
+     *
      * @param fileChooser the file chooser
      * @param extension the default extension
      */

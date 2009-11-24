@@ -161,7 +161,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
      * or if it isn't an {@see OsmDataLayer} the dialog is reset to an empty dialog.
      * Otherwise it is initialized with the list of non-deleted and visible relations
      * in the layer's dataset.
-     * 
+     *
      * @param layer the layer. May be null.
      */
     protected void initFromLayer(Layer layer) {
@@ -474,7 +474,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
     /**
      * The action for downloading members of all selected relations
-     * 
+     *
      */
     class DownloadMembersAction extends AbstractAction implements ListSelectionListener{
 
@@ -556,7 +556,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         /**
          * Add all relations in <code>addedPrimitives</code> to the model for the
          * relation list dialog
-         * 
+         *
          * @param addedPrimitives the collection of added primitives. May include nodes,
          * ways, and relations.
          */
@@ -583,7 +583,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
         /**
          * Removes all relations in <code>removedPrimitives</code> from the model
-         * 
+         *
          * @param removedPrimitives the removed primitives. May include nodes, ways,
          *   and relations
          */
@@ -621,7 +621,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         /**
          * Replies the list of selected, non-new relations. Empty list,
          * if there are no selected, non-new relations.
-         * 
+         *
          * @return the list of selected, non-new relations.
          */
         public List<Relation> getSelectedNonNewRelations() {
@@ -641,7 +641,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         /**
          * Replies the list of selected relations. Empty list,
          * if there are no selected relations.
-         * 
+         *
          * @return the list of selected, non-new relations.
          */
         public List<Relation> getSelectedRelations() {
@@ -657,7 +657,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
         /**
          * Sets the selected relations.
-         * 
+         *
          * @return sel the list of selected relations
          */
         public synchronized void setSelectedRelations(List<Relation> sel) {
@@ -711,7 +711,6 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     }
     public void layerRemoved(Layer a) {/* irrelevant in this context */}
     public void layerAdded(Layer a) {/* irrelevant in this context */}
-
 
     /* ---------------------------------------------------------------------------------- */
     /* DataSetListener                                                                    */

@@ -123,7 +123,6 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         } catch (SecurityException ex) {}
     }
 
-
     @Override public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
         if(!Main.map.mapView.isActiveLayerDrawable())
@@ -164,13 +163,13 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      * This function handles all work related to updating the cursor and
      * highlights. For now, only the cursor is enabled because highlighting
      * requires WaySegment to be highlightable.
-     * 
+     *
      * Normally the mouse event also contains the modifiers. However, when the
      * mouse is not moved and only modifier keys are pressed, no mouse event
      * occurs. We can use AWTEvent to catch those but still lack a proper
      * mouseevent. Instead we copy the previous event and only update the
      * modifiers.
-     * 
+     *
      * @param MouseEvent
      * @parm int modifiers
      */
@@ -285,7 +284,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
     /**
      * Deletes the relation in the context of the given layer. Also notifies
      * {@see RelationDialogManager} and {@see OsmDataLayer#fireDataChange()} events.
-     * 
+     *
      * @param layer the layer in whose context the relation is deleted. Must not be null.
      * @param toDelete  the relation to be deleted. Must  not be null.
      * @exception IllegalArgumentException thrown if layer is null

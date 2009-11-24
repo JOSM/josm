@@ -54,7 +54,6 @@ public class BoundingBoxSelection implements DownloadSelection {
     private final JTextArea showUrl = new JTextArea();
     private DownloadDialog parent;
 
-
     protected void registerBoundingBoxBuilder() {
         BoundingBoxBuilder bboxbuilder = new BoundingBoxBuilder();
         for (int i = 0;i < latlon.length; i++) {
@@ -147,7 +146,6 @@ public class BoundingBoxSelection implements DownloadSelection {
         this.parent = gui;
     }
 
-
     public void setDownloadArea(Bounds area) {
         updateBboxFields(area);
         updateUrl(area);
@@ -205,7 +203,6 @@ public class BoundingBoxSelection implements DownloadSelection {
         tf.setBorder(UIManager.getBorder("TextField.border"));
         tf.setToolTipText("");
     }
-
 
     class LatValueChecker extends FocusAdapter implements ActionListener{
         private JTextField tfLatValue;

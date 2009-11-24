@@ -14,7 +14,6 @@ public class MergedTableCellRenderer extends TagMergeTableCellRenderer {
     public final static Color BGCOLOR_THEIR = new Color(217,255,217);
     public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
 
-    
     protected void setBackgroundColor(TagMergeItem item, boolean isSelected) {
         if (isSelected) {
             setBackground(BGCOLOR_SELECTED);
@@ -23,13 +22,12 @@ public class MergedTableCellRenderer extends TagMergeTableCellRenderer {
         if (MergeDecisionType.KEEP_MINE.equals(item.getMergeDecision())) {
             setBackground(BGCOLOR_MINE);
         } else if (MergeDecisionType.KEEP_THEIR.equals(item.getMergeDecision())) {
-            setBackground(BGCOLOR_THEIR); 
+            setBackground(BGCOLOR_THEIR);
         } else if (MergeDecisionType.UNDECIDED.equals(item.getMergeDecision())) {
             setBackground(BGCOLOR_UNDECIDED);
-        }        
+        }
     }
-    
-    
+
     @Override
     protected void renderKey(TagMergeItem item, boolean isSelected) {
         setBackgroundColor(item,isSelected);
@@ -66,7 +64,7 @@ public class MergedTableCellRenderer extends TagMergeTableCellRenderer {
                 setText(item.getTheirTagValue());
                 setToolTipText(item.getTheirTagValue());
             } else {
-                // should not happen 
+                // should not happen
             }
         }
     }

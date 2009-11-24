@@ -29,7 +29,7 @@ public class DefaultNameFormatter implements NameFormatter {
 
     /**
      * Replies the unique instance of this formatter
-     * 
+     *
      * @return the unique instance of this formatter
      */
     static public DefaultNameFormatter getInstance() {
@@ -51,7 +51,7 @@ public class DefaultNameFormatter implements NameFormatter {
      *   <li>by the tag names in the preference <tt>relation.nameOrder</tt></li>
      *   <li>by the default tags in {@see #DEFAULT_NAMING_TAGS_FOR_RELATIONS}
      * </ul>
-     * 
+     *
      * @return the list of naming tags used in relations
      */
     static public List<String> getNamingtagsForRelations() {
@@ -63,11 +63,10 @@ public class DefaultNameFormatter implements NameFormatter {
         return namingTagsForRelations;
     }
 
-
     /**
      * Decorates the name of primitive with its id, if the preference
      * <tt>osm-primitives.showid</tt> is set.
-     * 
+     *
      * @param name  the name without the id
      * @param primitive the primitive
      * @return the decorated name
@@ -81,7 +80,7 @@ public class DefaultNameFormatter implements NameFormatter {
 
     /**
      * Formats a name for a node
-     * 
+     *
      * @param node the node
      * @return the name
      */
@@ -106,7 +105,7 @@ public class DefaultNameFormatter implements NameFormatter {
 
     /**
      * Formats a name for a way
-     * 
+     *
      * @param way the way
      * @return the name
      */
@@ -144,7 +143,7 @@ public class DefaultNameFormatter implements NameFormatter {
 
     /**
      * Formats a name for a relation
-     * 
+     *
      * @param relation the relation
      * @return the name
      */
@@ -192,7 +191,7 @@ public class DefaultNameFormatter implements NameFormatter {
 
     /**
      * Formats a name for a changeset
-     * 
+     *
      * @param changeset the changeset
      * @return the name
      */

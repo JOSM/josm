@@ -39,7 +39,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 /**
  * Merges a collection of nodes into one node.
- * 
+ *
  */
 public class MergeNodesAction extends JosmAction {
 
@@ -76,7 +76,7 @@ public class MergeNodesAction extends JosmAction {
      * Find which node to merge into (i.e. which one will be left)
      * The last selected node will become the target node the remaining
      * nodes are merged to.
-     * 
+     *
      * @param candidates the collection of candidate nodes
      * @return the selected target node
      */
@@ -91,13 +91,13 @@ public class MergeNodesAction extends JosmAction {
     /**
      * Merges the nodes in <code>node</code> onto one of the nodes. Uses the dataset
      * managed by <code>layer</code> as reference.
-     * 
+     *
      * @param layer the reference data layer. Must not be null.
      * @param nodes the collection of nodes. Ignored if null.
      * @param targetNode the target node the collection of nodes is merged to. Must not be null.
      * @throws IllegalArgumentException thrown if layer is null
      * @throws IllegalArgumentException thrown if targetNode is null
-     * 
+     *
      */
     public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetNode) throws IllegalArgumentException{
         if (layer == null)
@@ -114,10 +114,10 @@ public class MergeNodesAction extends JosmAction {
 
     /**
      * Fixes the parent ways referring to one of the nodes.
-     * 
+     *
      * Replies null, if the ways could not be fixed, i.e. because a way would have to be deleted
      * which is referred to by a relation.
-     * 
+     *
      * @param backreferences the backreference data set
      * @param nodesToDelete the collection of nodes to be deleted
      * @param targetNode the target node the other nodes are merged to

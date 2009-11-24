@@ -26,17 +26,15 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class TagConflictResolveCommand extends ConflictResolveCommand {
     private static final Logger logger = Logger.getLogger(TagConflictResolveCommand.class.getName());
 
-
     /** the conflict to resolve */
     private Conflict<OsmPrimitive> conflict;
 
     /** the list of merge decisions, represented as {@see TagMergeItem}s */
     private final List<TagMergeItem> mergeItems;
 
-
     /**
      * replies the number of decided conflicts
-     * 
+     *
      * @return the number of decided conflicts
      */
     public int getNumDecidedConflicts() {
@@ -51,7 +49,7 @@ public class TagConflictResolveCommand extends ConflictResolveCommand {
 
     /**
      * constructor
-     * 
+     *
      * @param my  my primitive
      * @param their  their primitive
      * @param mergeItems the list of merge decisions, represented as {@see TagMergeItem}s
@@ -60,7 +58,6 @@ public class TagConflictResolveCommand extends ConflictResolveCommand {
         this.conflict = new Conflict<OsmPrimitive>(my,their);
         this.mergeItems = mergeItems;
     }
-
 
     @Override
     public MutableTreeNode description() {

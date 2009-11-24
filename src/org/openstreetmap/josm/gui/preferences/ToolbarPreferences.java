@@ -423,7 +423,6 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         control.setFloatable(false);
     }
 
-
     private void loadAction(DefaultMutableTreeNode node, MenuElement menu) {
         Object userObject = null;
         MenuElement menuElement = menu;

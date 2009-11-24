@@ -155,7 +155,6 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
     public void mouseDragged(MouseEvent e) {
         int buttonPressed = e.getModifiersEx() & (MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK);
 
-
         if (buttonPressed != 0) {
             if (mousePosStart == null) {
                 mousePosStart = mousePos = e.getPoint();
@@ -196,7 +195,6 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
             selectionEndedListener.selectionEnded(r, alt, shift, ctrl);
         }
     }
-
 
     /**
      * Draw a selection rectangle on screen. If already a rectangle is drawn,

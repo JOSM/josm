@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 /**
  * Represents the history of an OSM primitive. The history consists
  * of a list of object snapshots with a specific version.
- * 
+ *
  */
 public class History{
     private static interface FilterPredicate {
@@ -41,13 +41,13 @@ public class History{
 
     /**
      * Creates a new history for an OSM primitive
-     * 
+     *
      * @param id the id. >0 required.
      * @param type the primitive type. Must not be null.
      * @param versions a list of versions. Can be null.
      * @throws IllegalArgumentException thrown if id <= 0
      * @throws IllegalArgumentException if type is null
-     * 
+     *
      */
     protected History(long id, OsmPrimitiveType type, List<HistoryOsmPrimitive> versions) {
         if (id <= 0)
@@ -168,7 +168,7 @@ public class History{
 
     /**
      * Replies the primitive id for this history.
-     * 
+     *
      * @return the primitive id
      */
     public PrimitiveId getPrimitmiveId() {
@@ -186,7 +186,7 @@ public class History{
     /**
      * Replies the history primitive with version <code>version</code>. null,
      * if no such primitive exists.
-     * 
+     *
      * @param version the version
      * @return the history primitive with version <code>version</code>
      */

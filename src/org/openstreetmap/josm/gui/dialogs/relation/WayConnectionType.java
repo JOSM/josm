@@ -14,9 +14,9 @@ public class WayConnectionType {
     public final boolean linkPrev;
     public final boolean linkNext;
 
-    /** 
-     * direction is FORWARD if the first node of this way is connected to the previous way 
-     * and / or the last node of this way is connected to the next way. 
+    /**
+     * direction is FORWARD if the first node of this way is connected to the previous way
+     * and / or the last node of this way is connected to the next way.
      * direction is BACKWARD if it is the other way around.
      * direction has a ROUNDABOUT value, if it is tagged as such and it is somehow
      * connected to the previous / next member.
@@ -24,20 +24,20 @@ public class WayConnectionType {
      * direction has the value NONE.
      */
     public final Direction direction;
-    
+
     public enum Direction {
         FORWARD, BACKWARD, ROUNDABOUT_LEFT, ROUNDABOUT_RIGHT, NONE;
-        
+
         public boolean isRoundabout() {
             return this == ROUNDABOUT_RIGHT || this == ROUNDABOUT_LEFT;
-        }    
+        }
     };
 
     /** True, if the element is part of a closed loop of ways. */
     public boolean isLoop;
 
     public boolean isRoundabout = false;
-    
+
     public WayConnectionType(boolean linkPrev, boolean linkNext, Direction direction) {
         this.linkPrev = linkPrev;
         this.linkNext = linkNext;
@@ -54,9 +54,9 @@ public class WayConnectionType {
         this.direction = NONE;
         invalid = true;
     }
-    
+
     public boolean isValid() {
-        return !invalid;    
+        return !invalid;
     }
 
     @Override

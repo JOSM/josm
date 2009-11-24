@@ -107,7 +107,7 @@ public class PleaseWaitDialog extends JDialog {
     /**
      * Appends a log message to the progress dialog. If the log area isn't visible yet
      * it becomes visible. The height of the progress dialog is slightly increased too.
-     * 
+     *
      * @param message the message to append to the log. Ignore if null or white space only.
      */
     public void appendLogMessage(String message) {
@@ -125,7 +125,7 @@ public class PleaseWaitDialog extends JDialog {
 
     /**
      * Sets whether the cancel button is enabled or not
-     * 
+     *
      * @param enabled true, if the cancel button is enabled; false otherwise
      */
     public void setCancelEnabled(boolean enabled) {
@@ -135,7 +135,7 @@ public class PleaseWaitDialog extends JDialog {
     /**
      * Installs a callback for the cancel button. If callback is null, all action listeners
      * are removed from the cancel button.
-     * 
+     *
      * @param callback the cancel callback
      */
     public void setCancelCallback(ActionListener callback) {

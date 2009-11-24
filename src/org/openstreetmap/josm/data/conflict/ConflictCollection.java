@@ -18,7 +18,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
  * it can be used in <code>for</code>-loops as follows:
  * <pre>
  *    ConflictCollection conflictCollection = ....
- * 
+ *
  *    for(Conflict c : conflictCollection) {
  *      // do something
  *    }
@@ -67,7 +67,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
 
     /**
      * Adds a conflict to the collection
-     * 
+     *
      * @param conflict the conflict
      * @exception IllegalStateException thrown, if this collection already includes a
      * conflict for conflict.getMy()
@@ -82,11 +82,11 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
 
     /**
      * Adds a conflict to the collection of conflicts.
-     * 
+     *
      * @param conflict the conflict to to add. Must not be null.
      * @throws IllegalArgumentException thrown, if conflict is null
      * @throws IllegalStateException thrown if this collection already includes a conflict for conflict.getMy()
-     * 
+     *
      */
     public void add(Conflict<?> conflict) throws IllegalStateException, IllegalArgumentException {
         if (conflict == null)
@@ -97,7 +97,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
 
     /**
      * Add the conflicts in <code>otherConflicts</code> to this collection of conflicts
-     * 
+     *
      * @param otherConflicts the collection of conflicts. Does nothing is conflicts is null.
      */
     public void add(Collection<Conflict<?>> otherConflicts) {
@@ -111,7 +111,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
     /**
      * Adds a conflict for the pair of {@see OsmPrimitive}s given by <code>my</code> and
      * <code>their</code>.
-     * 
+     *
      * @param my  my primitive
      * @param their their primitive
      */
@@ -122,7 +122,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
 
     /**
      * removes a conflict from this collection
-     * 
+     *
      * @param conflict the conflict
      */
     public void remove(Conflict<?> conflict) {
@@ -132,7 +132,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
 
     /**
      * removes the conflict registered for {@see OsmPrimitive} <code>my</code> if any
-     * 
+     *
      * @param my  the primitive
      */
     public void remove(OsmPrimitive my) {
@@ -148,7 +148,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
     /**
      * Replies the conflict for the {@see OsmPrimitive} <code>my</code>, null
      * if no such conflict exists.
-     * 
+     *
      * @param my  my primitive
      * @return the conflict for the {@see OsmPrimitive} <code>my</code>, null
      * if no such conflict exists.
@@ -163,7 +163,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
     /**
      * Replies the conflict for the {@see OsmPrimitive} <code>their</code>, null
      * if no such conflict exists.
-     * 
+     *
      * @param my  my primitive
      * @return the conflict for the {@see OsmPrimitive} <code>their</code>, null
      * if no such conflict exists.
@@ -178,7 +178,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
 
     /**
      * Replies true, if this collection includes a conflict for <code>my</code>.
-     * 
+     *
      * @param my my primitive
      * @return true, if this collection includes a conflict for <code>my</code>; false, otherwise
      */
@@ -188,7 +188,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
 
     /**
      * Replies true, if this collection includes a given conflict
-     * 
+     *
      * @param c the conflict
      * @return true, if this collection includes the conflict; false, otherwise
      */
@@ -198,7 +198,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
 
     /**
      * Replies true, if this collection includes a conflict for <code>their</code>.
-     * 
+     *
      * @param their their primitive
      * @return true, if this collection includes a conflict for <code>their</code>; false, otherwise
      */
@@ -208,7 +208,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
 
     /**
      * Removes any conflicts for the {@see OsmPrimitive} <code>my</code>.
-     * 
+     *
      * @param my the primitive
      */
     public void removeForMy(OsmPrimitive my) {
@@ -222,7 +222,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
 
     /**
      * Removes any conflicts for the {@see OsmPrimitive} <code>their</code>.
-     * 
+     *
      * @param their the primitive
      */
     public void removeForTheir(OsmPrimitive their) {
@@ -236,7 +236,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
 
     /**
      * Replies the conflicts as list.
-     * 
+     *
      * @return the list of conflicts
      */
     public List<Conflict<?>> get() {
@@ -245,7 +245,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
 
     /**
      * Replies the size of the collection
-     * 
+     *
      * @return the size of the collection
      */
     public int size() {
@@ -254,7 +254,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
 
     /**
      * Replies the conflict at position <code>idx</code>
-     * 
+     *
      * @param idx  the index
      * @return the conflict at position <code>idx</code>
      */
@@ -264,7 +264,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
 
     /**
      * Replies the iterator for this collection.
-     * 
+     *
      * @return the iterator
      */
     public Iterator<Conflict<?>> iterator() {
@@ -280,7 +280,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
     /**
      * Replies the set of  {@see OsmPrimitive} which participate in the role
      * of "my" in the conflicts managed by this collection.
-     * 
+     *
      * @return the set of  {@see OsmPrimitive} which participate in the role
      * of "my" in the conflicts managed by this collection.
      */
@@ -294,7 +294,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
     /**
      * Replies the set of  {@see OsmPrimitive} which participate in the role
      * of "their" in the conflicts managed by this collection.
-     * 
+     *
      * @return the set of  {@see OsmPrimitive} which participate in the role
      * of "their" in the conflicts managed by this collection.
      */
@@ -308,7 +308,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
 
     /**
      * Replies true if this collection is empty
-     * 
+     *
      * @return true, if this collection is empty; false, otherwise
      */
     public boolean isEmpty() {

@@ -15,8 +15,8 @@ import javax.swing.table.TableCellRenderer;
 
 public class RelationMemberConflictDecisionRenderer extends JLabel implements TableCellRenderer, ListCellRenderer{
 
-    private JComboBox cbDecisionTypes; 
-    
+    private JComboBox cbDecisionTypes;
+
     protected void resetTableRenderer() {
         setOpaque(true);
         setFont(UIManager.getFont("Table.font"));

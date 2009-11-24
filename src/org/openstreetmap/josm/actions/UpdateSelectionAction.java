@@ -147,7 +147,7 @@ public class UpdateSelectionAction extends JosmAction {
         private MultiFetchServerObjectReader reader;
 
         /**
-         * 
+         *
          * @param toUpdate a collection of primitives to update from the server
          */
         public UpdatePrimitivesTask(Collection<? extends OsmPrimitive> toUpdate) {
@@ -208,7 +208,6 @@ public class UpdateSelectionAction extends JosmAction {
                 }
             }
         }
-
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {

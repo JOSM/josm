@@ -23,7 +23,6 @@ public class CollectBackReferencesVisitor extends AbstractVisitor {
 
     private Collection<OsmPrimitive> data = new HashSet<OsmPrimitive>();
 
-
     /**
      * @param ds This parameter is ignored
      */
@@ -42,7 +41,6 @@ public class CollectBackReferencesVisitor extends AbstractVisitor {
     public CollectBackReferencesVisitor(boolean indirectRefs) {
         this.indirectRefs = indirectRefs;
     }
-
 
     /**
      * Get the result collection

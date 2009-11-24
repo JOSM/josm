@@ -54,7 +54,6 @@ public class MoveCommand extends Command {
      */
     private List<OldState> oldState = new LinkedList<OldState>();
 
-
     public MoveCommand(OsmPrimitive osm, double x, double y) {
         this(Collections.singleton(osm), x, y);
     }

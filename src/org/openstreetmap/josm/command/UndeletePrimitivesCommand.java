@@ -54,7 +54,6 @@ public class UndeletePrimitivesCommand extends ConflictResolveCommand {
         this.toUndelete.addAll(toUndelete);
     }
 
-
     @Override
     public MutableTreeNode description() {
         return new DefaultMutableTreeNode(

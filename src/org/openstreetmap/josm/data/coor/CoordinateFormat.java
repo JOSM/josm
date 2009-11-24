@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * An enumeration  of coordinate formats
- * 
+ *
  */
 public enum CoordinateFormat {
 
@@ -26,7 +26,7 @@ public enum CoordinateFormat {
 
     /**
      * Replies the display name of the format
-     * 
+     *
      * @return the display name
      */
     public String getDisplayName() {
@@ -42,7 +42,7 @@ public enum CoordinateFormat {
 
     /**
      * Replies the default coordinate format to be use
-     * 
+     *
      * @return the default coordinate format
      */
     static public CoordinateFormat getDefaultFormat() {
@@ -51,7 +51,7 @@ public enum CoordinateFormat {
 
     /**
      * Sets the default coordinate format
-     * 
+     *
      * @param format the default coordinate format
      */
     static public void setCoordinateFormat(CoordinateFormat format) {

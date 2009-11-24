@@ -65,20 +65,20 @@ public class PlaceSelection implements DownloadSelection {
     private NamedResultTableModel model;
     private JTable tblSearchResults;
     private DownloadDialog parent;
-  
+
     protected JPanel buildSearchPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
-        
-        // the label for the search field 
+
+        // the label for the search field
         //
         gc.gridwidth = 2;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx  =1.0;
         gc.insets = new Insets(5, 5, 0, 5);
         panel.add(new JLabel(tr("Enter a place name to search for:")), gc);
-        
+
         // the search expression field
         //
         cbSearchExpression = new HistoryComboBox();
@@ -103,8 +103,8 @@ public class PlaceSelection implements DownloadSelection {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weightx = 0.0;
         panel.add(btnSearch,  gc);
-   
-        return panel;   
+
+        return panel;
     }
 
     /**
@@ -124,10 +124,10 @@ public class PlaceSelection implements DownloadSelection {
         JScrollPane scrollPane = new JScrollPane(tblSearchResults);
         scrollPane.setPreferredSize(new Dimension(200,200));
         panel.add(scrollPane, BorderLayout.CENTER);
-        
+
         gui.addDownloadAreaSelector(panel, tr("Areas around places"));
 
-        scrollPane.setPreferredSize(scrollPane.getPreferredSize());        
+        scrollPane.setPreferredSize(scrollPane.getPreferredSize());
         tblSearchResults.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tblSearchResults.getSelectionModel().addListSelectionListener(new ListSelectionHandler());
         tblSearchResults.addMouseListener(new MouseAdapter() {
@@ -138,14 +138,14 @@ public class PlaceSelection implements DownloadSelection {
                     parent.startDownload(sr.getDownloadArea());
                 }
             }
-        });        
+        });
         parent = gui;
     }
 
     public void setDownloadArea(Bounds area) {
        tblSearchResults.clearSelection();
     }
-        
+
     /**
      * Data storage for search results.
      */
@@ -159,18 +159,17 @@ public class PlaceSelection implements DownloadSelection {
         public int zoom;
         public int osmId;
         public OsmPrimitiveType type;
-        
+
         public Bounds getDownloadArea() {
             double size = 180.0 / Math.pow(2, zoom);
             Bounds b = new Bounds(
-                    new LatLon(lat - size / 2, lon - size), 
+                    new LatLon(lat - size / 2, lon - size),
                     new LatLon(lat + size / 2, lon+ size)
                     );
             return b;
         }
     }
-    
-    
+
     /**
      * A very primitive parser for the name finder's output.
      * Structure of xml described here:  http://wiki.openstreetmap.org/index.php/Name_finder
@@ -184,7 +183,7 @@ public class PlaceSelection implements DownloadSelection {
 
         /**
          * Detect starting elements.
-         * 
+         *
          */
         @Override
         public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
@@ -244,12 +243,12 @@ public class PlaceSelection implements DownloadSelection {
                 description.append(data, start, length);
             }
         }
-        
+
         public List<SearchResult> getResult() {
             return data;
         }
     }
-    
+
     class SearchAction extends AbstractAction implements DocumentListener {
 
         public SearchAction() {
@@ -258,7 +257,7 @@ public class PlaceSelection implements DownloadSelection {
             putValue(SHORT_DESCRIPTION, tr("Click to start searching for places"));
             updateEnabledState();
         }
-        
+
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled() || cbSearchExpression.getText().trim().length() == 0)
                 return;
@@ -267,7 +266,7 @@ public class PlaceSelection implements DownloadSelection {
             NameQueryTask task = new NameQueryTask(cbSearchExpression.getText());
             Main.worker.submit(task);
         }
-        
+
         protected void updateEnabledState() {
             setEnabled(cbSearchExpression.getText().trim().length() > 0);
         }
@@ -284,45 +283,43 @@ public class PlaceSelection implements DownloadSelection {
             updateEnabledState();
         }
     }
-    
-    
+
     class NameQueryTask extends PleaseWaitRunnable {
-        
+
         private String searchExpression;
         private HttpURLConnection connection;
         private List<SearchResult> data;
         private boolean canceled = false;
         private Exception lastException;
-        
+
         public NameQueryTask(String searchExpression) {
             super(tr("Querying name server"),false /* don't ignore exceptions */);
             this.searchExpression = searchExpression;
         }
-        
-        
+
         @Override
         protected void cancel() {
             this.canceled = true;
             synchronized (this) {
                 if (connection != null) {
-                    connection.disconnect();                    
-                }                
-            }            
+                    connection.disconnect();
+                }
+            }
         }
 
         @Override
         protected void finish() {
-            if (canceled) 
+            if (canceled)
                 return;
             if (lastException != null) {
                 ExceptionDialogUtil.explainException(lastException);
                 return;
             }
-            model.setData(this.data);            
+            model.setData(this.data);
         }
 
         @Override
-        protected void realRun() throws SAXException, IOException, OsmTransferException {            
+        protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
                 getProgressMonitor().indeterminateSubTask(tr("Querying name server ..."));
                     URL url = new URL("http://gazetteer.openstreetmap.org/namefinder/search.xml?find="
@@ -338,18 +335,18 @@ public class PlaceSelection implements DownloadSelection {
                     this.data = parser.getResult();
             } catch(Exception e) {
                 if (canceled) {
-                    // ignore exception 
+                    // ignore exception
                     return;
                 }
                 lastException = e;
             }
         }
     }
-    
+
     class NamedResultTableModel extends DefaultTableModel {
         private ArrayList<SearchResult> data;
         private ListSelectionModel selectionModel;
-        
+
         public NamedResultTableModel(ListSelectionModel selectionModel) {
             data = new ArrayList<SearchResult>();
             this.selectionModel = selectionModel;
@@ -365,7 +362,7 @@ public class PlaceSelection implements DownloadSelection {
             if (data == null) return null;
             return data.get(row);
         }
-        
+
         public void setData(List<SearchResult> data) {
             if (data == null) {
                 this.data.clear();
@@ -376,9 +373,9 @@ public class PlaceSelection implements DownloadSelection {
         }
         @Override
         public boolean isCellEditable(int row, int column) {
-            return false; 
+            return false;
         }
-        
+
         public SearchResult getSelectedSearchResult() {
             if (selectionModel.getMinSelectionIndex() < 0) {
                 return null;
@@ -386,7 +383,7 @@ public class PlaceSelection implements DownloadSelection {
             return data.get(selectionModel.getMinSelectionIndex());
         }
     }
-    
+
     class NamedResultTableColumnModel extends DefaultTableColumnModel {
         protected void createColumns() {
             TableColumn col = null;
@@ -399,7 +396,7 @@ public class PlaceSelection implements DownloadSelection {
             col.setPreferredWidth(200);
             col.setCellRenderer(renderer);
             addColumn(col);
-            
+
             // column 1 - Version
             col = new TableColumn(1);
             col.setHeaderValue(tr("Type"));
@@ -407,7 +404,7 @@ public class PlaceSelection implements DownloadSelection {
             col.setPreferredWidth(100);
             col.setCellRenderer(renderer);
             addColumn(col);
-            
+
             // column 2 - Near
             col = new TableColumn(2);
             col.setHeaderValue(tr("Near"));
@@ -415,7 +412,6 @@ public class PlaceSelection implements DownloadSelection {
             col.setPreferredWidth(100);
             col.setCellRenderer(renderer);
             addColumn(col);
-            
 
             // column 3 - Zoom
             col = new TableColumn(3);
@@ -430,7 +426,7 @@ public class PlaceSelection implements DownloadSelection {
             createColumns();
         }
     }
-    
+
     class ListSelectionHandler implements ListSelectionListener {
         public void valueChanged(ListSelectionEvent lse) {
             SearchResult r = null;
@@ -444,29 +440,29 @@ public class PlaceSelection implements DownloadSelection {
             }
         }
     }
-    
+
     class NamedResultCellRenderer extends JLabel implements TableCellRenderer {
-        
+
         public NamedResultCellRenderer() {
             setOpaque(true);
             setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
         }
-        
+
         protected void reset() {
             setText("");
             setIcon(null);
         }
-        
+
         protected void renderColor(boolean selected) {
             if (selected) {
                 setForeground(UIManager.getColor("Table.selectionForeground"));
                 setBackground(UIManager.getColor("Table.selectionBackground"));
             } else {
                 setForeground(UIManager.getColor("Table.foreground"));
-                setBackground(UIManager.getColor("Table.background"));                
+                setBackground(UIManager.getColor("Table.background"));
             }
         }
-        
+
         protected String lineWrapDescription(String description) {
             StringBuffer ret = new StringBuffer();
             StringBuffer line = new StringBuffer();
@@ -487,13 +483,13 @@ public class PlaceSelection implements DownloadSelection {
             ret.append("</html>");
             return ret.toString();
         }
-        
+
         public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int column) {
-            
+
             reset();
             renderColor(isSelected);
-            
+
             if (value == null) return this;
             SearchResult sr = (SearchResult) value;
             switch(column) {

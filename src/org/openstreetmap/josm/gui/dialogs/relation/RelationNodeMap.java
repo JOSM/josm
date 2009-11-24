@@ -26,7 +26,7 @@ import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Dire
  * (that are shared by other members).
  *
  * @author Christiaan Welvaart <cjw@time4t.net>
- * 
+ *
  */
 public class RelationNodeMap {
     /*

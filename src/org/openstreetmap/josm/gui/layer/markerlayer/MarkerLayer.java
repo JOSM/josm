@@ -445,7 +445,6 @@ public class MarkerLayer extends Layer {
         }
     }
 
-
     public final  class ShowHideMarkerText extends AbstractAction {
         private final Layer layer;
 

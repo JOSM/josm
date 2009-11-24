@@ -214,7 +214,6 @@ public class AdvancedPreference implements PreferenceSetting {
         return false;
     }
 
-
     private void editPreference(final PreferenceDialog gui, final JTable list) {
         if (list.getSelectedRowCount() != 1) {
             JOptionPane.showMessageDialog(

@@ -26,7 +26,7 @@ import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
  * Represents a collection of {@see OsmPrimitive}s which should be uploaded to the
  * API.
  * The collection is derived from the modified primitives of an {@see DataSet}.
- * 
+ *
  */
 public class APIDataSet {
     private LinkedList<OsmPrimitive> toAdd;
@@ -44,7 +44,7 @@ public class APIDataSet {
 
     /**
      * initializes the API data set with the modified primitives in <code>ds</code>
-     * 
+     *
      * @param ds the data set. Ignored, if null.
      */
     public void init(DataSet ds) {
@@ -72,7 +72,7 @@ public class APIDataSet {
     /**
      * Ensures that primitives are deleted in the following order: Relations, then Ways,
      * then Nodes.
-     * 
+     *
      */
     protected void sortDeleted() {
         Collections.sort(
@@ -102,7 +102,7 @@ public class APIDataSet {
     /**
      * Ensures that primitives are added in the following order: Nodes, then Ways,
      * then Relations.
-     * 
+     *
      */
     protected void sortNew() {
         Collections.sort(
@@ -130,7 +130,7 @@ public class APIDataSet {
     }
     /**
      * initializes the API data set with the modified primitives in <code>ds</code>
-     * 
+     *
      * @param ds the data set. Ignored, if null.
      */
     public APIDataSet(DataSet ds) {
@@ -140,7 +140,7 @@ public class APIDataSet {
 
     /**
      * initializes the API data set with the primitives in <code>primitives</code>
-     * 
+     *
      * @param primitives the collection of primitives
      */
     public APIDataSet(Collection<OsmPrimitive> primitives) {
@@ -163,7 +163,7 @@ public class APIDataSet {
 
     /**
      * Replies true if there are no primitives to upload
-     * 
+     *
      * @return true if there are no primitives to upload
      */
     public boolean isEmpty() {
@@ -172,7 +172,7 @@ public class APIDataSet {
 
     /**
      * Replies the primitives which should be added to the OSM database
-     * 
+     *
      * @return the primitives which should be added to the OSM database
      */
     public List<OsmPrimitive> getPrimitivesToAdd() {
@@ -181,7 +181,7 @@ public class APIDataSet {
 
     /**
      * Replies the primitives which should be updated in the OSM database
-     * 
+     *
      * @return the primitives which should be updated in the OSM database
      */
     public List<OsmPrimitive> getPrimitivesToUpdate() {
@@ -190,7 +190,7 @@ public class APIDataSet {
 
     /**
      * Replies the primitives which should be deleted in the OSM database
-     * 
+     *
      * @return the primitives which should be deleted in the OSM database
      */
     public List<OsmPrimitive> getPrimitivesToDelete() {
@@ -199,7 +199,7 @@ public class APIDataSet {
 
     /**
      * Replies all primitives
-     * 
+     *
      * @return all primitives
      */
     public List<OsmPrimitive> getPrimitives() {
@@ -213,10 +213,10 @@ public class APIDataSet {
     /**
      * Adjusts the upload order for new relations. Child relations are uploaded first,
      * parent relations second.
-     * 
+     *
      * This method detects cyclic dependencies in new relation. Relations with cyclic
      * dependencies can't be uploaded.
-     * 
+     *
      * @throws CyclicUploadDependencyException thrown, if a cyclic dependency is detected
      */
     public void adjustRelationUploadOrder() throws CyclicUploadDependencyException{
@@ -237,7 +237,7 @@ public class APIDataSet {
     /**
      * Replies the subset of relations in <code>relations</code> which are not referring to any
      * new relation
-     * 
+     *
      * @param relations a list of relations
      * @return the subset of relations in <code>relations</code> which are not referring to any
      * new relation
@@ -262,7 +262,7 @@ public class APIDataSet {
     /**
      * Utility class to sort a collection of of new relations with their dependencies
      * topologically.
-     * 
+     *
      */
     private class RelationUploadDependencyGraph {
         private final Logger logger = Logger.getLogger(RelationUploadDependencyGraph.class.getName());

@@ -236,7 +236,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     /**
      * Action for selecting the primitives contributed by the currently selected
      * users.
-     * 
+     *
      */
     private static class UserInfo implements Comparable<UserInfo> {
         public User user;

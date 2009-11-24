@@ -86,7 +86,7 @@ public class Bounds {
      * Creates new bounds around a coordinate pair <code>center</code>. The
      * new bounds shall have an extension in latitude direction of <code>latExtent</code>,
      * and in longitude direction of <code>lonExtent</code>.
-     * 
+     *
      * @param center  the center coordinate pair. Must not be null.
      * @param latExtent the latitude extent. > 0 required.
      * @param lonExtent the longitude extent. > 0 required.

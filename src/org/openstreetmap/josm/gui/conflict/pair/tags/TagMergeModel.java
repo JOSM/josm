@@ -16,16 +16,16 @@ import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 
 /**
  * This is the {@see TableModel} used in the tables of the {@see TagMerger}.
- * 
+ *
  * The model can {@see #populate(OsmPrimitive, OsmPrimitive)} itself from the conflicts
  * in the tag sets of two {@see OsmPrimitive}s. Internally, it keeps a list of {@see TagMergeItem}s.
- * 
+ *
  *  {@see #decide(int, MergeDecisionType)} and {@see #decide(int[], MergeDecisionType)} can be used
  *  to remember a merge decision for a specific row in the model.
- * 
+ *
  *  The model notifies {@see PropertyChangeListener}s about updates of the number of
  *  undecided tags (see {@see #PROP_NUM_UNDECIDED_TAGS}).
- * 
+ *
  */
 public class TagMergeModel extends DefaultTableModel {
     private static final Logger logger = Logger.getLogger(TagMergeModel.class.getName());
@@ -39,7 +39,6 @@ public class TagMergeModel extends DefaultTableModel {
     private final ArrayList<PropertyChangeListener> listeners;
 
     private int numUndecidedTags = 0;
-
 
     public TagMergeModel() {
         tagMergeItems = new ArrayList<TagMergeItem>();
@@ -80,7 +79,7 @@ public class TagMergeModel extends DefaultTableModel {
     /**
      * refreshes the number of undecided tag conflicts after an update in the list of
      * {@see TagMergeItem}s. Notifies {@see PropertyChangeListener} if necessary.
-     * 
+     *
      */
     protected void refreshNumUndecidedTags() {
         int newValue=0;
@@ -98,10 +97,10 @@ public class TagMergeModel extends DefaultTableModel {
     /**
      * Populate the model with conflicts between the tag sets of the two
      * {@see OsmPrimitive} <code>my</code> and <code>their</code>.
-     * 
+     *
      * @param my  my primitive (i.e. the primitive from the local dataset)
      * @param their their primitive (i.e. the primitive from the server dataset)
-     * 
+     *
      */
     public void populate(OsmPrimitive my, OsmPrimitive their) {
         tagMergeItems.clear();
@@ -123,7 +122,7 @@ public class TagMergeModel extends DefaultTableModel {
 
     /**
      * add a {@see TagMergeItem} to the model
-     * 
+     *
      * @param item the item
      */
     public void addItem(TagMergeItem item) {
@@ -142,7 +141,7 @@ public class TagMergeModel extends DefaultTableModel {
     /**
      * set the merge decision of the {@see TagMergeItem} in row <code>row</code>
      * to <code>decision</code>.
-     * 
+     *
      * @param row  the row
      * @param decision the decision
      */
@@ -155,7 +154,7 @@ public class TagMergeModel extends DefaultTableModel {
     /**
      * set the merge decision of all {@see TagMergeItem} given by indices in <code>rows</code>
      * to <code>decision</code>.
-     * 
+     *
      * @param row  the array of row indices
      * @param decision the decision
      */
@@ -174,7 +173,6 @@ public class TagMergeModel extends DefaultTableModel {
     public int getRowCount() {
         return tagMergeItems == null ? 0 : tagMergeItems.size();
     }
-
 
     @Override
     public Object getValueAt(int row, int column) {

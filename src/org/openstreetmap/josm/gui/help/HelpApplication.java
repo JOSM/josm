@@ -30,7 +30,7 @@ import org.openstreetmap.josm.tools.I18n;
 /**
  * The JOSM help browser wrapped in its own application. It is listening to commands
  * on standard in.
- * 
+ *
  */
 public class HelpApplication {
     static private final Logger logger = Logger.getLogger(HelpApplication.class.getName());
@@ -56,7 +56,6 @@ public class HelpApplication {
         commandProcessor = new HelpBrowserCommandProcessor(browser);
         new Thread(commandProcessor).start();
     }
-
 
     static public void main(String argArray[]) {
         I18n.init();

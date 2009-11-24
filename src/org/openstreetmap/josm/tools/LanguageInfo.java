@@ -10,7 +10,7 @@ public class LanguageInfo {
      * Replies the wiki language prefix for the given locale. The wiki language
      * prefix has the form 'Xy:' where 'Xy' is a ISO 639 language code in title
      * case.
-     * 
+     *
      * @param locale  the locale
      * @return the wiki language prefix
      */
@@ -29,7 +29,7 @@ public class LanguageInfo {
 
     /**
      * Replies the wiki language prefix for the current locale.
-     * 
+     *
      * @return the wiki language prefix
      * @see Locale#getDefault()
      * @see #getWikiLanguagePrefix(Locale)
@@ -40,7 +40,7 @@ public class LanguageInfo {
 
     /**
      * Replies the JOSM locale code for the default locale.
-     * 
+     *
      * @return the JOSM locale code for the default locale
      * @see #getJOSMLocaleCode(Locale)
      */
@@ -50,11 +50,11 @@ public class LanguageInfo {
 
     /**
      * Replies the local code used by JOSM for a given locale.
-     * 
+     *
      * In most cases JOSM uses the 2-character ISO 639 language code ({@see Locale#getLanguage()}
      * to identify the locale of a localized resource, but in some cases it may use the
      * programmatic name for locales, as replied by {@see Locale#toString()}.
-     * 
+     *
      * @param locale the locale. Replies "en" if null.
      * @return the JOSM code for the given locale
      */
@@ -69,7 +69,6 @@ public class LanguageInfo {
 
         return locale.getLanguage();
     }
-
 
     static public String getLanguageCodeXML()
     {

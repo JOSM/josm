@@ -28,7 +28,6 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
-
 public class ExtendedDialog extends JDialog {
     private int result = 0;
     public static final int DialogNotShown = -99;
@@ -72,11 +71,11 @@ public class ExtendedDialog extends JDialog {
      *   <li><code>setToggleCheckboxText</code></li>
      *   <li><code>setRememberWindowGeometry</code></li>
      * </ul>
-     * 
+     *
      * When done, call <code>showDialog</code> to display it. You can receive
      * the user's choice using <code>getValue</code>. Have a look at this function
      * for possible return values.
-     * 
+     *
      * @param parent       The parent element that will be used for position and maximum size
      * @param title        The text that will be shown in the window titlebar
      * @param buttonTexts  String Array of the text that will appear on the buttons. The first button is the default one.
@@ -109,7 +108,7 @@ public class ExtendedDialog extends JDialog {
     /**
      * Allows decorating the buttons with tooltips. Expects an String[] with translated
      * tooltip texts.
-     * 
+     *
      * @param toolTipTexts the tool tip texts. Ignored, if null.
      */
     public void setToolTipTexts(String[] toolTipTexts) {
@@ -118,10 +117,10 @@ public class ExtendedDialog extends JDialog {
 
     /**
      * Sets the content that will be displayed in the message dialog.
-     * 
+     *
      * Note that depending on your other settings more UI elements may appear.
      * The content is played on top of the other elements though.
-     * 
+     *
      * @param content Any element that can be displayed in the message dialog
      */
     public void setContent(Component content) {
@@ -130,13 +129,13 @@ public class ExtendedDialog extends JDialog {
 
     /**
      * Sets the content that will be displayed in the message dialog.
-     * 
+     *
      * Note that depending on your other settings more UI elements may appear.
      * The content is played on top of the other elements though.
-     * 
+     *
      * @param content Any element that can be displayed in the message dialog
      * @param placeContentInScrollPane if  true, places  the content in a JScrollPane
-     * 
+     *
      */
     public void setContent(Component content, boolean placeContentInScrollPane) {
         this.content = content;
@@ -146,10 +145,10 @@ public class ExtendedDialog extends JDialog {
     /**
      * Sets the message that will be displayed. The String will be automatically
      * wrapped if it is too long.
-     * 
+     *
      * Note that depending on your other settings more UI elements may appear.
      * The content is played on top of the other elements though.
-     * 
+     *
      * @param message The text that should be shown to the user
      */
     public void setContent(String message) {
@@ -332,15 +331,15 @@ public class ExtendedDialog extends JDialog {
      * Call this if you want the dialog to remember the size set by the user.
      * Set the pref to <code>null</code> or to an empty string to disable again.
      * By default, it's disabled.
-     * 
+     *
      * Note: If you want to set the width of this dialog directly use the usual
      * setSize, setPreferredSize, setMaxSize, setMinSize
-     * 
+     *
      * @param pref  The preference to save the dimension to
      * @param wg    The default window geometry that should be used if no
      *              existing preference is found (only takes effect if
      *              <code>pref</code> is not null or empty
-     * 
+     *
      */
     public void setRememberWindowGeometry(String pref, WindowGeometry wg) {
         rememberSizePref = pref == null ? "" : pref;
@@ -425,7 +424,7 @@ public class ExtendedDialog extends JDialog {
      *  <li>if showHelpButton is true, the dialog displays "Help" button (rightmost button in
      *  the button row)</li>
      * </ul>
-     * 
+     *
      * @param helpTopic the help topic
      * @param showHelpButton true, if the dialog displays a help button
      */
@@ -433,7 +432,6 @@ public class ExtendedDialog extends JDialog {
         this.helpTopic = helpTopic;
         this.showHelpButton = showHelpButton;
     }
-
 
     class HelpAction extends AbstractAction {
         public HelpAction() {

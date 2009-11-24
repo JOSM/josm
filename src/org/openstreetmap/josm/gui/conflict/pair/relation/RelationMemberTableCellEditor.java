@@ -18,7 +18,6 @@ import org.openstreetmap.josm.data.osm.RelationMember;
  */
 public class RelationMemberTableCellEditor extends AbstractCellEditor implements TableCellEditor{
 
-
     private final JTextField editor;
 
     public RelationMemberTableCellEditor() {
@@ -40,7 +39,6 @@ public class RelationMemberTableCellEditor extends AbstractCellEditor implements
         editor.selectAll();
         return editor;
     }
-
 
     public Object getCellEditorValue() {
         return editor.getText();

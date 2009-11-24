@@ -665,7 +665,6 @@ public class GpxLayer extends Layer {
             } // end for trk
         } // end if lines
 
-
         /****************************************************************
          ********** STEP 3d - DRAW LARGE POINTS AND HDOP CIRCLE *********
          ****************************************************************/

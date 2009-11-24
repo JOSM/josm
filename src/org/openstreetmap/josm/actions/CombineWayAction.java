@@ -89,7 +89,6 @@ public class CombineWayAction extends JosmAction {
         return targetWay;
     }
 
-
     public void combineWays(Collection<Way> ways) {
 
         // prepare and clean the list of ways to combine
@@ -218,7 +217,7 @@ public class CombineWayAction extends JosmAction {
     /**
      * This is a collection of relations referring to at least one out of a set of
      * ways.
-     * 
+     *
      *
      */
     static private class WayReferringRelations {
@@ -229,7 +228,7 @@ public class CombineWayAction extends JosmAction {
         private Map<Way, Set<Relation>> wayRelationMap;
 
         /**
-         * 
+         *
          * @param ways  a collection of ways
          */
         public WayReferringRelations(Collection<Way> ways) {
@@ -245,7 +244,7 @@ public class CombineWayAction extends JosmAction {
 
         /**
          * build the sets of referring relations from the relations in the dataset <code>ds</code>
-         * 
+         *
          * @param ds the data set
          */
         public void build(DataSet ds) {
@@ -272,7 +271,7 @@ public class CombineWayAction extends JosmAction {
 
         /**
          * Replies the set of referring relations
-         * 
+         *
          * @return the set of referring relations
          */
         public Set<Relation> getRelations() {
@@ -285,7 +284,7 @@ public class CombineWayAction extends JosmAction {
 
         /**
          * Replies the set of referring relations for a specific way
-         * 
+         *
          * @return the set of referring relations
          */
         public Set<Relation> getRelations(Way way) {
@@ -411,7 +410,6 @@ public class CombineWayAction extends JosmAction {
         }
     }
 
-
     static public class NodeGraph {
         static public List<NodePair> buildNodePairs(Way way, boolean directed) {
             ArrayList<NodePair> pairs = new ArrayList<NodePair>();
@@ -479,7 +477,6 @@ public class CombineWayAction extends JosmAction {
         private int numUndirectedEges = 0;
         private HashMap<Node, List<NodePair>> successors;
         private HashMap<Node, List<NodePair>> predecessors;
-
 
         protected void rememberSuccessor(NodePair pair) {
             if (successors.containsKey(pair.getA())) {
@@ -611,9 +608,9 @@ public class CombineWayAction extends JosmAction {
 
         /**
          * Tries to find a spanning path starting from node <code>startNode</code>.
-         * 
+         *
          * Traverses the path in depth-first order.
-         * 
+         *
          * @param startNode the start node
          * @return the spanning path; null, if no path is found
          */
@@ -640,7 +637,7 @@ public class CombineWayAction extends JosmAction {
         /**
          * Tries to find a path through the graph which visits each edge (i.e.
          * the segment of a way) exactly one.
-         * 
+         *
          * @return the path; null, if no path was found
          */
         public List<Node> buildSpanningPath() {

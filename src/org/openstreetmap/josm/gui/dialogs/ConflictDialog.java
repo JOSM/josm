@@ -76,7 +76,6 @@ public final class ConflictDialog extends ToggleDialog implements LayerChangeLis
 
     private OsmDataLayer layer = null;
 
-
     /**
      * builds the GUI
      */
@@ -152,7 +151,6 @@ public final class ConflictDialog extends ToggleDialog implements LayerChangeLis
         Main.map.mapView.repaint();
     }
 
-
     /**
      * refreshes the view of this dialog
      */
@@ -202,7 +200,6 @@ public final class ConflictDialog extends ToggleDialog implements LayerChangeLis
             conflicts.getConflictForMy((OsmPrimitive)o).getTheir().visit(conflictPainter);
         }
     }
-
 
     /**
      * replies the conflict collection currently held by this dialog; may be null

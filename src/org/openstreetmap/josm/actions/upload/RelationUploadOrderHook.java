@@ -27,7 +27,7 @@ import org.openstreetmap.josm.actions.upload.UploadHook;
  * This upload hook reorders the list of new relations to upload such that child
  * relations are uploaded before parent relations. It also checks for cyclic
  * dependencies in the list of new relations.
- * 
+ *
  *
  */
 public class RelationUploadOrderHook implements UploadHook {
@@ -37,7 +37,7 @@ public class RelationUploadOrderHook implements UploadHook {
 
     /**
      * builds the panel which warns users about a cyclic dependency
-     * 
+     *
      * @param dep  the list of relations with a cyclic dependency
      * @return the panel
      */
@@ -67,7 +67,7 @@ public class RelationUploadOrderHook implements UploadHook {
 
     /**
      * Warns the user if a cyclic dependency is detected
-     * 
+     *
      * @param e the cyclic dependency exception
      */
     protected void warnCyclicUploadDependency(CyclicUploadDependencyException e) {

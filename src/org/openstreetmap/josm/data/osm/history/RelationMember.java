@@ -17,11 +17,11 @@ public class RelationMember {
     private long primitiveId;
 
     /**
-     * 
+     *
      * @param role  the role
      * @param primitiveType  the type (must not be null)
      * @param primitiveId the id (>0 required)
-     * 
+     *
      * @exception IllegalArgumentException thrown, if primitiveType is null
      * @exception IllegalArgumentException thrown, if primitiveId <= 0
      */
@@ -45,7 +45,7 @@ public class RelationMember {
 
     /**
      * replies the type of the referenced OSM primitive
-     * 
+     *
      * @return the type of the referenced OSM primitive
      */
     public OsmPrimitiveType getPrimitiveType() {
@@ -54,7 +54,7 @@ public class RelationMember {
 
     /**
      * replies the id of the referenced OSM primitive
-     * 
+     *
      * @return the id of the referenced OSM primitive
      */
     public long getPrimitiveId() {

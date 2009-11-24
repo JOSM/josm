@@ -22,7 +22,7 @@ public class MemberTableMemberCellRenderer extends MemberTableCellRenderer {
 
     /**
      * Load the image icon for an OSM primitive of type node
-     * 
+     *
      * @return the icon; null, if not found
      */
     protected void loadIcons() {

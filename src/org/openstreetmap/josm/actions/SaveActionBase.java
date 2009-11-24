@@ -129,7 +129,6 @@ public abstract class SaveActionBase extends DiskAccessAction {
         return createAndOpenSaveFileChooser(tr("Save Layer"), "lay");
     }
 
-
     /**
      * Check the data set if it would be empty on save. It is empty, if it contains
      * no objects (after all objects that are created and deleted without being

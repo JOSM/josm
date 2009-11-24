@@ -1,7 +1,6 @@
 // License: GPL. Copyright 2009 by Dave Hansen, others
 package org.openstreetmap.josm.data.coor;
 
-
 public class QuadTiling
 {
     public static int NR_LEVELS = 24;

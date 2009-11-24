@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
  *   it was tried to merge it onto <code>my</code>. <code>their</code> is usually the
  *   {@see OsmPrimitive} from the dataset in another layer or the one retrieved from the server.</li>
  * </ul>
- * 
+ *
  *
  */
 public class  Conflict<T extends OsmPrimitive> {

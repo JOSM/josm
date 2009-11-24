@@ -31,7 +31,7 @@ public class Capabilities {
     /**
      * replies the value of configuration item in the capabilities as
      * double value
-     * 
+     *
      * @param element  the name of the element
      * @param attribute the name of the attribute
      * @return the value; null, if the respective configuration item doesn't exist

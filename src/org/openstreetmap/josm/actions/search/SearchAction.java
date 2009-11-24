@@ -35,7 +35,6 @@ public class SearchAction extends JosmAction{
 
     public static final int DEFAULT_SEARCH_HISTORY_SIZE = 10;
 
-
     public static enum SearchMode {
         replace, add, remove, in_selection
     }
@@ -330,7 +329,7 @@ public class SearchAction extends JosmAction{
 
     /**
      * Refreshes the enabled state
-     * 
+     *
      */
     @Override
     protected void updateEnabledState() {

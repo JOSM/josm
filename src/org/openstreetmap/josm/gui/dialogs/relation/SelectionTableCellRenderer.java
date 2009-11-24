@@ -19,12 +19,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This is the {@see TableCellRenderer} used in the tables of {@see RelationMemberMerger}.
- * 
+ *
  */
 public  class SelectionTableCellRenderer extends JLabel implements TableCellRenderer {
     public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
     public final static Color BGCOLOR_DOUBLE_ENTRY = new Color(255,234,213);
-
 
     private HashMap<OsmPrimitiveType, ImageIcon>  icons;
     /**
@@ -36,7 +35,7 @@ public  class SelectionTableCellRenderer extends JLabel implements TableCellRend
 
     /**
      * Load the image icon for an OSM primitive of type node
-     * 
+     *
      * @return the icon; null, if not found
      */
     protected void loadIcons() {

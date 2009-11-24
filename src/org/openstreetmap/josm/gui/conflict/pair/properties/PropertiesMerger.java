@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * This class represents a UI component for resolving conflicts in some properties
  * of {@see OsmPrimitive}.
- * 
+ *
  */
 public class PropertiesMerger extends JPanel implements Observer {
     private static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000");
@@ -126,7 +126,6 @@ public class PropertiesMerger extends JPanel implements Observer {
         btnKeepMyCoordinates.setName("button.keepmycoordinates");
         add(btnKeepMyCoordinates, gc);
 
-
         gc.gridx = 3;
         gc.gridy = 1;
         gc.fill = GridBagConstraints.BOTH;
@@ -201,7 +200,6 @@ public class PropertiesMerger extends JPanel implements Observer {
         JButton btnKeepMyDeletedState = new JButton(actKeepMyDeletedState);
         btnKeepMyDeletedState.setName("button.keepmydeletedstate");
         add(btnKeepMyDeletedState, gc);
-
 
         gc.gridx = 3;
         gc.gridy = 3;

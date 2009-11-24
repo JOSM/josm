@@ -22,7 +22,7 @@ import org.openstreetmap.josm.io.OsmTransferException;
 
 /**
  * UploadLayerTask uploads the data managed by an {@see OsmDataLayer} asynchronously.
- * 
+ *
  * <pre>
  *     ExecutorService executorService = ...
  *     UploadLayerTask task = new UploadLayerTask(layer, monitor);
@@ -45,7 +45,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
     private HashSet<OsmPrimitive> processedPrimitives;
 
     /**
-     * 
+     *
      * @param layer the layer. Must not be null.
      * @param monitor  a progress monitor. If monitor is null, uses {@see NullProgressMonitor#INSTANCE}
      * @param changeset the changeset to be used
@@ -76,7 +76,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
     /**
      * Retries to recover the upload operation from an exception which was thrown because
      * an uploaded primitive was already deleted on the server.
-     * 
+     *
      * @param e the exception throw by the API
      * @param monitor a progress monitor
      * @throws OsmTransferException  thrown if we can't recover from the exception

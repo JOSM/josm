@@ -97,7 +97,7 @@ public class AutoScaleAction extends JosmAction {
      * Replies the first selected layer in the layer list dialog. null, if no
      * such layer exists, either because the layer list dialog is not yet created
      * or because no layer is selected.
-     * 
+     *
      * @return the first selected layer in the layer list dialog
      */
     protected Layer getFirstSelectedLayer() {

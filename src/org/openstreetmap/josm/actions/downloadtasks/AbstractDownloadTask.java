@@ -29,7 +29,6 @@ public abstract class AbstractDownloadTask implements DownloadTask {
         this.failed = failed;
     }
 
-
     protected void rememberErrorMessage(String message) {
         errorMessages.add(message);
     }
@@ -37,7 +36,6 @@ public abstract class AbstractDownloadTask implements DownloadTask {
     protected void rememberException(Exception exception) {
         errorMessages.add(exception);
     }
-
 
     public List<Object> getErrorObjects() {
         return errorMessages;

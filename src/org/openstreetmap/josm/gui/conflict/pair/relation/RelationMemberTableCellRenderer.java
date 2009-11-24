@@ -65,7 +65,6 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         rowNumberBorder = BorderFactory.createEmptyBorder(0,4,0,0);
     }
 
-
     public String buildToolTipText(OsmPrimitive primitive) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
@@ -108,7 +107,6 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         setIcon(null);
         setToolTipText(null);
     }
-
 
     protected void renderBackground(ListMergeModel<Node>.EntriesTableModel model, RelationMember member, int row, int col, boolean isSelected) {
         Color bgc = Color.WHITE;
@@ -186,7 +184,6 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         setBackground(BGCOLOR_EMPTY_ROW);
         setText("");
     }
-
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {

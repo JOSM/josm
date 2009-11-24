@@ -18,7 +18,6 @@ import javax.swing.text.PlainDocument;
  */
 public class AutoCompleteComboBox extends JComboBox {
 
-
     private boolean autocompleteEnabled = true;
 
     /**

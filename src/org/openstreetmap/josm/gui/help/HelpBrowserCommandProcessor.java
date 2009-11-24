@@ -12,7 +12,7 @@ import javax.swing.SwingUtilities;
 
 /**
  * Listens to commands on an input stream and delegates them to the help browser.
- * 
+ *
  *
  */
 public class HelpBrowserCommandProcessor implements Runnable {
@@ -22,7 +22,7 @@ public class HelpBrowserCommandProcessor implements Runnable {
     private HelpBrowser browser;
 
     /**
-     * 
+     *
      * @param browser the controlled help browser
      */
     public HelpBrowserCommandProcessor(HelpBrowser browser) {
@@ -31,7 +31,7 @@ public class HelpBrowserCommandProcessor implements Runnable {
 
     /**
      * Show the help page for help topic <code>helpTopic</code>.
-     * 
+     *
      * @param helpTopic the help topic
      */
     protected void setUrlForHelpTopic(final String helpTopic) {
@@ -82,4 +82,3 @@ public class HelpBrowserCommandProcessor implements Runnable {
         }
     }
 }
-

@@ -13,7 +13,7 @@ import org.openstreetmap.josm.Main;
 
 /**
  * Read a trac-wiki page.
- * 
+ *
  * @author imi
  */
 public class WikiReader {
@@ -30,10 +30,10 @@ public class WikiReader {
 
     /**
      * Read the page specified by the url and return the content.
-     * 
+     *
      * If the url is within the baseurl path, parse it as an trac wikipage and replace relative
      * pathes etc..
-     * 
+     *
      * @return
      * @throws IOException Throws, if the page could not be loaded.
      */

@@ -121,7 +121,7 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
         slipyyMapTabPanel.add(this, BorderLayout.CENTER);
         String labelText = tr("<b>Zoom:</b> Mousewheel, double click or Ctrl + Up/Down "
                 + "<b>Move map:</b> Hold right mousebutton and move mouse or use cursor keys. <b>Select:</b> Hold left mousebutton and draw a frame.");
-        slipyyMapTabPanel.add(new JLabel("<html>" + labelText + "</html>"), BorderLayout.SOUTH);        
+        slipyyMapTabPanel.add(new JLabel("<html>" + labelText + "</html>"), BorderLayout.SOUTH);
         iGui.addDownloadAreaSelector(slipyyMapTabPanel, tr("Slippy map"));
         new OsmMapControl(this, slipyyMapTabPanel, iSizeButton, iSourceButton);
     }
@@ -168,7 +168,7 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
     public void setDownloadArea(Bounds area) {
         if (area == null)
             return;
-        
+
         // test if a bounding box has been set set
         if (area.getMin().lat() == 0.0 && area.getMin().lon() == 0.0 && area.getMax().lat() == 0.0 && area.getMax().lon() == 0.0)
             return;
@@ -223,11 +223,11 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
         Coordinate l2 = getPosition(p_min);
         Bounds b = new Bounds(
                 new LatLon(
-                        Math.min(l2.getLat(), l1.getLat()), 
+                        Math.min(l2.getLat(), l1.getLat()),
                         Math.min(l1.getLon(), l2.getLon())
                         ),
                 new LatLon(
-                        Math.max(l2.getLat(), l1.getLat()), 
+                        Math.max(l2.getLat(), l1.getLat()),
                         Math.max(l1.getLon(), l2.getLon()))
                 );
         iGui.boundingBoxChanged(b, this);

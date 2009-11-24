@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.progress;
 
-
 public class NullProgressMonitor implements ProgressMonitor {
 
     public static final ProgressMonitor INSTANCE = new NullProgressMonitor();

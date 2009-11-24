@@ -14,7 +14,6 @@ public class TheirTableCellRenderer extends TagMergeTableCellRenderer {
     public final static Color BGCOLOR_THEIR = new Color(217,255,217);
     public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
 
-    
     protected void setBackgroundColor(TagMergeItem item, boolean isSelected) {
         if (isSelected) {
             setBackground(BGCOLOR_SELECTED);
@@ -23,22 +22,22 @@ public class TheirTableCellRenderer extends TagMergeTableCellRenderer {
         if (MergeDecisionType.KEEP_MINE.equals(item.getMergeDecision())) {
             setBackground(BGCOLOR_MINE);
         } else if (MergeDecisionType.KEEP_THEIR.equals(item.getMergeDecision())) {
-            setBackground(BGCOLOR_THEIR); 
+            setBackground(BGCOLOR_THEIR);
         } else if (MergeDecisionType.UNDECIDED.equals(item.getMergeDecision())) {
             setBackground(BGCOLOR_UNDECIDED);
-        }        
+        }
     }
-    
+
     protected void setTextColor(TagMergeItem item) {
         if (MergeDecisionType.KEEP_THEIR.equals(item.getMergeDecision())) {
             setForeground(Color.black);
         } else if (MergeDecisionType.KEEP_MINE.equals(item.getMergeDecision())) {
-            setForeground(Color.LIGHT_GRAY); 
+            setForeground(Color.LIGHT_GRAY);
         } else if (MergeDecisionType.UNDECIDED.equals(item.getMergeDecision())) {
             setForeground(Color.black);
-        }                
+        }
     }
-    
+
     @Override
     protected void renderKey(TagMergeItem item, boolean isSelected) {
         setBackgroundColor(item, isSelected);
@@ -47,7 +46,7 @@ public class TheirTableCellRenderer extends TagMergeTableCellRenderer {
             setText(tr("<undefined>"));
             setToolTipText(tr("Their dataset does not include a tag with key {0}", item.getKey()));
         } else {
-            setText(item.getKey());    
+            setText(item.getKey());
             setToolTipText(item.getKey());
         }
     }
@@ -60,8 +59,8 @@ public class TheirTableCellRenderer extends TagMergeTableCellRenderer {
             setText(tr("<undefined>"));
             setToolTipText(tr("Their dataset does not include a tag with key {0}", item.getKey()));
         } else {
-            setText(item.getTheirTagValue());    
+            setText(item.getTheirTagValue());
             setToolTipText(item.getTheirTagValue());
-        }        
+        }
     }
 }

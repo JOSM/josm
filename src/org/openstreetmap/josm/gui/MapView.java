@@ -50,7 +50,6 @@ import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 import org.openstreetmap.josm.tools.AudioPlayer;
 
-
 /**
  * This is a component used in the MapFrame for browsing the map. It use is to
  * provide the MapMode's enough capabilities to operate.
@@ -150,7 +149,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
     /**
      * Adds a GPX layer. A GPX layer is added below the lowest data layer.
-     * 
+     *
      * @param layer the GPX layer
      */
     protected void addGpxLayer(GpxLayer layer) {
@@ -213,7 +212,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
     /**
      * Replies true if the active layer is drawable.
-     * 
+     *
      * @return true if the active layer is drawable, false otherwise
      */
     public boolean isActiveLayerDrawable() {
@@ -222,7 +221,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
     /**
      * Replies true if the active layer is visible.
-     * 
+     *
      * @return true if the active layer is visible, false otherwise
      */
     public boolean isActiveLayerVisible() {
@@ -243,7 +242,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      *     becomes active</li>
      *   <li>otherwise, the top most layer of any type becomes active</li>
      * </ul>
-     * 
+     *
      * @return the next active data layer
      */
     protected Layer determineNextActiveLayer() {
@@ -303,7 +302,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     /**
      * Moves the layer to the given new position. No event is fired, but repaints
      * according to the new Z-Order of the layers.
-     * 
+     *
      * @param layer     The layer to move
      * @param pos       The new position of the layer
      */
@@ -323,7 +322,6 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         repaint();
     }
 
-
     public int getLayerPos(Layer layer) {
         int curLayerPos = layers.indexOf(layer);
         if (curLayerPos == -1)
@@ -334,7 +332,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     /**
      * Creates a list of the visible layers in Z-Order, the layer with the lowest Z-Order
      * first, layer with the highest Z-Order last.
-     * 
+     *
      * @return a list of the visible in Z-Order, the layer with the lowest Z-Order
      * first, layer with the highest Z-Order last.
      */
@@ -482,12 +480,12 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
     /**
      * Replies an unmodifiable list of layers of a certain type.
-     * 
+     *
      * Example:
      * <pre>
      *     List<WMSLayer> wmsLayers = getLayersOfType(WMSLayer.class);
      * </pre>
-     * 
+     *
      * @return an unmodifiable list of layers of a certain type.
      */
     public <T> List<T>  getLayersOfType(Class<T> ofType) {
@@ -502,7 +500,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
     /**
      * Replies the number of layers managed by this mav view
-     * 
+     *
      * @return the number of layers managed by this mav view
      */
     public int getNumLayers() {
@@ -511,7 +509,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
     /**
      * Replies true if there is at least one layer in this map view
-     * 
+     *
      * @return true if there is at least one layer in this map view
      */
     public boolean hasLayers() {
@@ -521,7 +519,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     /**
      * Sets the active layer to <code>layer</code>. If <code>layer</code> is an instance
      * of {@see OsmDataLayer} also sets {@see #editLayer} to <code>layer</code>.
-     * 
+     *
      * @param layer the layer to be activate; must be one of the layers in the list of layers
      * @exception IllegalArgumentException thrown if layer is not in the lis of layers
      */
@@ -558,7 +556,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
     /**
      * Replies the currently active layer
-     * 
+     *
      * @return the currently active layer (may be null)
      */
     public Layer getActiveLayer() {
@@ -567,7 +565,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
     /**
      * Replies the current edit layer, if any
-     * 
+     *
      * @return the current edit layer. May be null.
      */
     public OsmDataLayer getEditLayer() {
@@ -585,7 +583,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
     /**
      * replies true if the list of layers managed by this map view contain layer
-     * 
+     *
      * @param layer the layer
      * @return true if the list of layers managed by this map view contain layer
      */

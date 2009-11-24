@@ -34,7 +34,6 @@ public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
      */
     private final List<Node> mergedNodeList;
 
-
     /**
      *
      * @param my my may
@@ -45,7 +44,6 @@ public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
         conflict = new Conflict<Way>(my,their);
         this.mergedNodeList = mergedNodeList;
     }
-
 
     @Override
     public MutableTreeNode description() {

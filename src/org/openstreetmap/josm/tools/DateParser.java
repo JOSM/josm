@@ -4,7 +4,6 @@ package org.openstreetmap.josm.tools;
 import java.text.ParseException;
 import java.util.Date;
 
-
 /**
  * Tries to parse a date as good as it can.
  *

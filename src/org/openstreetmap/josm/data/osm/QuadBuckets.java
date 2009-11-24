@@ -12,7 +12,6 @@ import java.util.List;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.QuadTiling;
 
-
 public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
 {
     public static boolean debug = false;

@@ -24,15 +24,14 @@ import javax.swing.table.TableCellEditor;
  * This is a table cell editor for selecting a possible tag value from a list of
  * proposed tag values. The editor also allows to select all proposed valued or
  * to remove the tag.
- * 
+ *
  * The editor responds intercepts some keys and interprets them as navigation keys. It
  * forwards navigation events to {@see NavigationListener}s registred with this editor.
  * You should register the parent table using this editor as {@see NavigationListener}.
- * 
+ *
  * {@see KeyEvent#VK_ENTER} and {@see KeyEvent#VK_TAB} trigger a {@see NavigationListener#gotoNextDecision()}.
  */
 public class MultiValueCellEditor extends AbstractCellEditor implements TableCellEditor{
-
 
     public static interface NavigationListener {
         void gotoNextDecision();
@@ -141,7 +140,6 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
         return editor.getSelectedItem();
     }
 
-
     /**
      * The cell renderer used in the combo box
      *
@@ -190,4 +188,3 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
         }
     }
 }
-

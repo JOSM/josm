@@ -18,7 +18,7 @@ public class HelpUtil {
 
     /**
      * Replies the base wiki URL.
-     * 
+     *
      * @return the base wiki URL
      */
     static public String getWikiBaseUrl() {
@@ -27,7 +27,7 @@ public class HelpUtil {
 
     /**
      * Replies the base wiki URL for help pages
-     * 
+     *
      * @return the base wiki URL for help pages
      */
     static public String getWikiBaseHelpUrl() {
@@ -36,7 +36,7 @@ public class HelpUtil {
 
     /**
      * Replies the URL on the wiki for an absolute help topic. The URL is encoded in UTF-8.
-     * 
+     *
      * @param absoluteHelpTopic the absolute help topic
      * @return the url
      * @see #buildAbsoluteHelpTopic(String)
@@ -52,7 +52,7 @@ public class HelpUtil {
 
     /**
      * Replies the URL to the edit page for the absolute help topic.
-     * 
+     *
      * @param absoluteHelpTopic the absolute help topic
      * @return the URL to the edit page
      */
@@ -65,7 +65,7 @@ public class HelpUtil {
     /**
      * Extracts the relative help topic from an URL. Replies null, if
      * no relative help topic is found.
-     * 
+     *
      * @param url the url
      * @return the relative help topic in the URL, i.e. "/Action/New"
      */
@@ -81,7 +81,7 @@ public class HelpUtil {
     /**
      * Extracts the absolute help topic from an URL. Replies null, if
      * no absolute help topic is found.
-     * 
+     *
      * @param url the url
      * @return the absolute help topic in the URL, i.e. "/De:Help/Action/New"
      */
@@ -105,7 +105,7 @@ public class HelpUtil {
      *   <li>/Help if the current locale is a locale with language "en"</li>
      *   <li>/De:Help if the current locale is a locale with language "de"</li>
      * </ul>
-     * 
+     *
      * @return the help topic prefix
      * @see #getHelpTopicPrefix(Locale)
      */
@@ -119,7 +119,7 @@ public class HelpUtil {
      *   <li>/Help if the  locale is a locale with language "en"</li>
      *   <li>/De:Help if the  locale is a locale with language "de"</li>
      * </ul>
-     * 
+     *
      * @param locale the locale. {@see Locale#ENGLISH} assumed, if null.
      * @return the help topic prefix
      * @see #getHelpTopicPrefix(Locale)
@@ -136,10 +136,10 @@ public class HelpUtil {
 
     /**
      * Replies the absolute, localized help topic for the given topic.
-     * 
+     *
      * Example: for a topic "/Dialog/RelationEditor" and the locale "de", this method
      * replies "/De:Help/Dialog/RelationEditor"
-     * 
+     *
      * @param topic the relative help topic. Home help topic assumed, if null.
      * @param locale the locale. {@see Locale#ENGLISH} assumed, if null.
      * @return the absolute, localized help topic
@@ -163,7 +163,7 @@ public class HelpUtil {
     /**
      * Replies the absolute, localized help topic for the given topic and the
      * current locale.
-     * 
+     *
      * @param topic the relative help topic. Home help topic assumed, if null.
      * @return the absolute, localized help topic
      * @see Locale#getDefault()
@@ -175,7 +175,7 @@ public class HelpUtil {
 
     /**
      * Replies the context specific help topic configured for <code>context</code>.
-     * 
+     *
      * @return the help topic. null, if no context specific help topic is found
      */
     static public String getContextSpecificHelpTopic(Object context) {
@@ -207,7 +207,7 @@ public class HelpUtil {
     /**
      * Replies the global help action, if available. Otherwise, creates an instance
      * of {@see HelpAction}.
-     * 
+     *
      * @return
      */
     static private Action getHelpAction() {
@@ -220,11 +220,11 @@ public class HelpUtil {
 
     /**
      * Makes a component aware of context sensitive help.
-     * 
+     *
      * A relative help topic doesn't start with /Help and doesn't include a locale
      * code. Example: /Dialog/RelationEditor is a relative help topic, /De:Help/Dialog/RelationEditor
      * is not.
-     * 
+     *
      * @param component the component  the component
      * @param topic the help topic. Set to the default help topic if null.
      */
@@ -240,15 +240,15 @@ public class HelpUtil {
     /**
      * This is a simple marker method for help topic literals. If you declare a help
      * topic literal in the source you should enclose it in ht(...).
-     * 
+     *
      *  <strong>Example</strong>
      *  <pre>
      *     String helpTopic = ht("/Dialog/RelationEditor");
      *  or
      *     putValue("help", ht("/Dialog/RelationEditor"));
      *  </pre>
-     * 
-     * 
+     *
+     *
      * @param helpTopic
      */
     static public String ht(String helpTopic) {

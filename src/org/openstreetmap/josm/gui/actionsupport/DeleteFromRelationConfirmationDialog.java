@@ -50,7 +50,7 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 /**
  * This dialog is used to get a user confirmation that a collection of primitives can be removed
  * from their parent relations.
- * 
+ *
  */
 public class DeleteFromRelationConfirmationDialog extends JDialog implements TableModelListener {
     /** the unique instance of this dialog */
@@ -58,7 +58,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
 
     /**
      * Replies the unique instance of this dialog
-     * 
+     *
      * @return
      */
     static public DeleteFromRelationConfirmationDialog getInstance() {
@@ -150,7 +150,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
 
     /**
      * Replies the data model used in this dialog
-     * 
+     *
      * @return the data model
      */
     public RelationMemberTableModel getModel() {
@@ -159,7 +159,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
 
     /**
      * Replies true if the dialog was canceled
-     * 
+     *
      * @return true if the dialog was canceled
      */
     public boolean isCanceled() {

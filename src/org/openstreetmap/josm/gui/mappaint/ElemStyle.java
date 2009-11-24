@@ -44,6 +44,3 @@ abstract public class ElemStyle
         return true;
     }
 }
-
-
-

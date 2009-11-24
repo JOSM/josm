@@ -43,7 +43,7 @@ public class TagMerger extends JPanel {
 
     /**
      * embeds table in a new {@see JScrollPane} and returns th scroll pane
-     * 
+     *
      * @param table the table
      * @return the scroll pane embedding the table
      */
@@ -58,7 +58,7 @@ public class TagMerger extends JPanel {
 
     /**
      * builds the table for my tag set (table already embedded in a scroll pane)
-     * 
+     *
      * @return the table (embedded in a scroll pane)
      */
     protected JScrollPane buildMineTagTable() {
@@ -74,7 +74,7 @@ public class TagMerger extends JPanel {
 
     /**
      * builds the table for their tag set (table already embedded in a scroll pane)
-     * 
+     *
      * @return the table (embedded in a scroll pane)
      */
     protected JScrollPane buildTheirTable() {
@@ -90,7 +90,7 @@ public class TagMerger extends JPanel {
 
     /**
      * builds the table for the merged tag set (table already embedded in a scroll pane)
-     * 
+     *
      * @return the table (embedded in a scroll pane)
      */
 
@@ -207,11 +207,9 @@ public class TagMerger extends JPanel {
         add(buildTheirTable(), gc);
         theirTable.getSelectionModel().addListSelectionListener(keepTheirAction);
 
-
         DoubleClickAdapter dblClickAdapter = new DoubleClickAdapter();
         mineTable.addMouseListener(dblClickAdapter);
         theirTable.addMouseListener(dblClickAdapter);
-
 
         gc.gridx = 2;
         gc.gridy = 2;
@@ -236,7 +234,7 @@ public class TagMerger extends JPanel {
 
     /**
      * replies the model used by this tag merger
-     * 
+     *
      * @return the model
      */
     public TagMergeModel getModel() {
@@ -306,7 +304,7 @@ public class TagMerger extends JPanel {
      * {@see Adjustable}s. Whenever the adjustment of one of
      * the registerd Adjustables is updated the adjustment of
      * the other registered Adjustables is adjusted too.
-     * 
+     *
      */
     class AdjustmentSynchronizer implements AdjustmentListener {
         private final ArrayList<Adjustable> synchronizedAdjustables;
@@ -335,7 +333,7 @@ public class TagMerger extends JPanel {
 
     /**
      * Handler for double clicks on entries in the three tag tables.
-     * 
+     *
      */
     class DoubleClickAdapter extends MouseAdapter {
 
@@ -367,7 +365,7 @@ public class TagMerger extends JPanel {
     /**
      * Sets the currently selected tags in the table of merged tags to state
      * {@see MergeDecisionType#UNDECIDED}
-     * 
+     *
      */
     class UndecideAction extends AbstractAction implements ListSelectionListener  {
 

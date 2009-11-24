@@ -13,7 +13,7 @@ import javax.swing.text.View;
  * Creates a normal label that will wrap its contents if there less width than
  * required to print it in one line. Additionally the maximum width of the text
  * can be set using <code>setMaxWidth</code>.
- * 
+ *
  * Note that this won't work if JMultilineLabel is put into a JScrollBox or
  * similar as the bounds will never change. Instead scrollbars will be displayed.
  */
@@ -27,7 +27,7 @@ public class JMultilineLabel extends JLabel {
      * Constructs a normal label but adds HTML tags if not already done so.
      * Supports both newline characters (<code>\n</code>) as well as the HTML
      * <code>&lt;br&gt;</code> to insert new lines.
-     * 
+     *
      * Use setMaxWidth to limit the width of the label.
      * @param text
      */
@@ -44,7 +44,7 @@ public class JMultilineLabel extends JLabel {
     /**
      * Set the maximum width. Use this method instead of setMaximumSize because
      * this saves a little bit of overhead and is actually taken into account.
-     * 
+     *
      * @param width
      */
     public void setMaxWidth(int width) {

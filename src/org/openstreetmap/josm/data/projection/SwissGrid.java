@@ -32,7 +32,6 @@ public class SwissGrid implements Projection {
             double lambdaprime_2 = Math.pow(lambdaprime,2);
             double phiprime_2 = Math.pow(phiprime,2);
 
-
             double north =
                   200147.07d
                 + 308807.95d                           * phiprime
@@ -40,7 +39,6 @@ public class SwissGrid implements Projection {
                 +     76.63d                           * phiprime_2
                 -    194.56d    * lambdaprime_2        * phiprime
                 +    119.79d                           * Math.pow(phiprime,3);
-
 
             double east =
                   600072.37d

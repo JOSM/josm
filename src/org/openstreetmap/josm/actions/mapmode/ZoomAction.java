@@ -38,7 +38,6 @@ public class ZoomAction extends MapMode implements SelectionEnded {
      */
     private final SelectionManager selectionManager;
 
-
     /**
      * Construct a ZoomAction without a label.
      * @param mapFrame The MapFrame, whose zoom mode should be enabled.

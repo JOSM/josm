@@ -59,7 +59,6 @@ public class TagTable extends JTable  {
             TableColumn col = null;
             TagCellRenderer renderer = new TagCellRenderer();
 
-
             // column 0 - tag key
             col = new TableColumn(0);
             col.setHeaderValue(tr("Key"));
@@ -119,7 +118,6 @@ public class TagTable extends JTable  {
         }
     }
 
-
     /**
      * Action to be run when the user navigates to the previous cell in the table,
      * for instance by pressing Shift-TAB
@@ -133,7 +131,6 @@ public class TagTable extends JTable  {
             if (getCellEditor() != null) {
                 getCellEditor().stopCellEditing();
             }
-
 
             if (col <= 0 && row <= 0) {
                 // change nothing
@@ -206,8 +203,6 @@ public class TagTable extends JTable  {
             getColumnModel().getSelectionModel().addListSelectionListener(this);
         }
 
-
-
         @Override
         public void run() {
             if (!isEnabled())
@@ -268,7 +263,6 @@ public class TagTable extends JTable  {
             requestFocusInCell(rowIdx, 0);
         }
     }
-
 
     /** the delete action */
     private RunnableAction deleteAction = null;
@@ -363,7 +357,6 @@ public class TagTable extends JTable  {
         return super.processKeyBinding(ks, e, condition, pressed);
     }
 
-
     /**
      * @param autoCompletionList
      */
@@ -413,7 +406,7 @@ public class TagTable extends JTable  {
         //
         // tblTagEditor.editCellAt(row, col);
         // if (tblTagEditor.getEditorComponent() != null) {
-        //	tblTagEditor.getEditorComponent().requestFocusInWindow();
+        //  tblTagEditor.getEditorComponent().requestFocusInWindow();
         // }
 
         // this is a workaround. We move the focus to the respective cell

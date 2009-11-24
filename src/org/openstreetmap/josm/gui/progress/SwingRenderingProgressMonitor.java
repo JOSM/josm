@@ -16,10 +16,10 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
     private ProgressRenderer delegate;
 
     /**
-     * 
+     *
      * @param delegate the delegate which renders the progress information. Must not be null.
      * @throws IllegalArgumentException thrown if delegate is null
-     * 
+     *
      */
     public SwingRenderingProgressMonitor(ProgressRenderer delegate) {
         super(new CancelHandler());

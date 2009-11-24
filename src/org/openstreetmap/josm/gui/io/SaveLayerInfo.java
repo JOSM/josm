@@ -9,7 +9,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 /**
  * SaveLayerInfo represents the information, user preferences and save/upload states of
  * a layer which might be uploaded/saved.
- * 
+ *
  */
 class SaveLayerInfo implements Comparable<SaveLayerInfo> {
 
@@ -22,7 +22,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
     private UploadOrSaveState saveState;
 
     /**
-     * 
+     *
      * @param layer the layer. Must not be null.
      * @throws IllegalArgumentException thrown if layer is null
      */
@@ -37,7 +37,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
 
     /**
      * Replies the layer this info objects holds information for
-     * 
+     *
      * @return the layer this info objects holds information for
      */
     public OsmDataLayer getLayer() {
@@ -46,7 +46,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
 
     /**
      * Replies true if this layer should be saved to a file; false, otherwise
-     * 
+     *
      * @return true if this layers should be saved to a file; false, otherwise
      */
     public boolean isDoSaveToFile() {
@@ -55,7 +55,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
 
     /**
      * Sets whether this layer should be saved to a file
-     * 
+     *
      * @param doSaveToFile true to save; false, to skip saving
      */
     public void setDoSaveToFile(boolean doSaveToFile) {
@@ -64,7 +64,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
 
     /**
      * Replies true if this layer should be uploaded to the server; false, otherwise
-     * 
+     *
      * @return true if this layer should be uploaded to the server; false, otherwise
      */
     public boolean isDoUploadToServer() {
@@ -73,7 +73,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
 
     /**
      * Sets whether this layer should be uploaded to a file
-     * 
+     *
      * @param doSaveToFile true to upload; false, to skip uploading
      */
 
@@ -83,7 +83,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
 
     /**
      * Replies true if this layer should be uploaded to the server and saved to file.
-     * 
+     *
      * @return true if this layer should be uploaded to the server and saved to file
      */
     public boolean isDoSaveAndUpload() {
@@ -92,7 +92,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
 
     /**
      * Replies the name of the layer
-     * 
+     *
      * @return the name of the layer
      */
     public String getName() {
@@ -101,7 +101,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
 
     /**
      * Replies the file this layer should be saved to, if {@see #isDoSaveToFile()} is true
-     * 
+     *
      * @return the file this layer should be saved to, if {@see #isDoSaveToFile()} is true
      */
     public File getFile() {
@@ -110,7 +110,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
 
     /**
      * Sets the file this layer should be saved to, if {@see #isDoSaveToFile()} is true
-     * 
+     *
      * @param file the file
      */
     public void setFile(File file) {
@@ -146,7 +146,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
      *   <li>{@see UploadOrSaveState#CANCELLED} if uploading {@see #getLayer() was cancelled</li>
      *   <li>{@see UploadOrSaveState#FAILED} if uploading {@see #getLayer() has failed</li>
      * </ul>
-     * 
+     *
      * @return the upload state
      */
     public UploadOrSaveState getUploadState() {
@@ -155,7 +155,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
 
     /**
      * Sets the upload state for {@see #getLayer()}
-     * 
+     *
      * @param uploadState the upload state
      */
     public void setUploadState(UploadOrSaveState uploadState) {
@@ -169,7 +169,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
      *   <li>{@see UploadOrSaveState#CANCELLED} if saving {@see #getLayer() was cancelled</li>
      *   <li>{@see UploadOrSaveState#FAILED} if saving {@see #getLayer() has failed</li>
      * </ul>
-     * 
+     *
      * @return the save state
      */
     public UploadOrSaveState getSaveState() {
@@ -178,7 +178,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
 
     /**
      * Sets the save state for {@see #getLayer()}
-     * 
+     *
      * @param saveState save the upload state
      */
     public void setSaveState(UploadOrSaveState saveState) {
@@ -187,7 +187,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
 
     /**
      * Resets the upload and save state
-     * 
+     *
      * @see #setUploadState(UploadOrSaveState)
      * @see #setSaveState(UploadOrSaveState)
      * @see #getUploadState()

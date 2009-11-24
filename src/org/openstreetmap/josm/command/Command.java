@@ -21,7 +21,6 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
-
 /**
  * Classes implementing Command modify a dataset in a specific way. A command is
  * one atomic action on a specific dataset, such as move or delete.
@@ -149,7 +148,5 @@ abstract public class Command {
             Collection<OsmPrimitive> added);
 
     abstract public MutableTreeNode description();
-
-
 
 }

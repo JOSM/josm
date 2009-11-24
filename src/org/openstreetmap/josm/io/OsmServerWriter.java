@@ -63,7 +63,7 @@ public class OsmServerWriter {
 
     /**
      * Uploads the changes individually. Invokes one API call per uploaded primitmive.
-     * 
+     *
      * @param primitives the collection of primitives to upload
      * @param progressMonitor the progress monitor
      * @throws OsmTransferException thrown if an exception occurs
@@ -105,7 +105,7 @@ public class OsmServerWriter {
 
     /**
      * Upload all changes in one diff upload
-     * 
+     *
      * @param primitives the collection of primitives to upload
      * @param progressMonitor  the progress monitor
      * @throws OsmTransferException thrown if an exception occurs
@@ -192,7 +192,7 @@ public class OsmServerWriter {
 
     /**
      * Replies the collection of successfully processed primitives
-     * 
+     *
      * @return the collection of successfully processed primitives
      */
     public Collection<OsmPrimitive> getProcessedPrimitives() {

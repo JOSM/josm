@@ -69,8 +69,6 @@ public final class PasteAction extends JosmAction {
         double offsetEast  = mPosition.east() - (maxEast + minEast)/2.0;
         double offsetNorth = mPosition.north() - (maxNorth + minNorth)/2.0;
 
-
-
         // Make a copy of pasteBuffer and map from old id to copied data id
         List<PrimitiveData> bufferCopy = new ArrayList<PrimitiveData>();
         Map<Long, Long> newIds = new HashMap<Long, Long>();

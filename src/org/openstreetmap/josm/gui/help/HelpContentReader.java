@@ -13,13 +13,13 @@ import org.openstreetmap.josm.tools.WikiReader;
 /**
  * Reads help content from the JOSM Wiki and prepares it for rendering in the internal
  * help browser.
- * 
+ *
  * The help content has to be <strong>filtered</strong> because only the main content <tt>&lt;div&gt;</tt>
  * of a Wiki help page is displayed in the internal help browser.
- * 
+ *
  * It also has to be <strong>transformed</strong> because the internal help browser required slightly
  * different HTML than what is provided by the Wiki.
- * 
+ *
  * @see WikiReader
  */
 public class HelpContentReader {
@@ -29,7 +29,7 @@ public class HelpContentReader {
 
     /**
      * constructor
-     * 
+     *
      * @param baseUrl the base url of the JOSM help wiki, i.e. http://josm.openstreetmap.org
      */
     public HelpContentReader(String baseUrl) {
@@ -38,7 +38,7 @@ public class HelpContentReader {
 
     /**
      * Fetches the content of a help topic from the JOSM wiki.
-     * 
+     *
      * @param helpTopicUrl  the absolute help topic URL
      * @return the content, filtered and transformed for being displayed in the internal help browser
      * @throws HelpContentReaderException thrown if problem occurs
@@ -80,10 +80,10 @@ public class HelpContentReader {
     /**
      * Reads help content from the input stream and prepares it to be rendered later
      * in the internal help browser.
-     * 
+     *
      * Throws a {@see MissingHelpContentException} if the content read from the stream
      * most likely represents a stub help page.
-     * 
+     *
      * @param in the input stream
      * @return the content
      * @throws HelpContentReaderException thrown if an exception occurs

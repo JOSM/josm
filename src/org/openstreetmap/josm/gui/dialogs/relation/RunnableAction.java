@@ -6,12 +6,12 @@ import javax.swing.AbstractAction;
 
 public abstract class RunnableAction extends AbstractAction implements Runnable {
 
-	public RunnableAction() {
-	}
+    public RunnableAction() {
+    }
 
-	public abstract void run();
+    public abstract void run();
 
-	public void actionPerformed(ActionEvent arg0) {
-		run();
-	}
+    public void actionPerformed(ActionEvent arg0) {
+        run();
+    }
 }

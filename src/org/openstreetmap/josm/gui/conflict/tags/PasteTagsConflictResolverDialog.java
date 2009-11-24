@@ -135,7 +135,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
 
     /**
      * Initializes the conflict resolver for a specific type of primitives
-     * 
+     *
      * @param type the type of primitives
      * @param tc the tags belonging to this type of primitives
      * @param targetStatistics histogram of paste targets, number of primitives of each type in the paste target
@@ -150,7 +150,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
 
     /**
      * Populates the conflict resolver with one tag collection
-     * 
+     *
      * @param tagsForAllPrimitives  the tag collection
      * @param sourceStatistics histogram of tag source, number of primitives of each type in the source
      * @param targetStatistics histogram of paste targets, number of primitives of each type in the paste target
@@ -194,7 +194,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
 
     /**
      * Populate the tag conflict resolver with tags for each type of primitives
-     * 
+     *
      * @param tagsForNodes the tags belonging to nodes in the paste source
      * @param tagsForWays the tags belonging to way in the paste source
      * @param tagsForRelations the tags belonging to relations in the paste source

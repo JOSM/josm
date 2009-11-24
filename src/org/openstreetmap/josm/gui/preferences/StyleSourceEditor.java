@@ -78,9 +78,8 @@ public class StyleSourceEditor extends JPanel {
     private boolean stylesInitiallyLoaded;
     private String availableStylesUrl;
 
-
     /**
-     * 
+     *
      * @param stylesPreferencesKey the preferences key with the list of active style sources (filenames and URLs)
      * @param iconsPreferenceKey the preference key with the list of icon sources (can be null)
      * @param availableStylesUrl the URL to the list of available style sources
@@ -144,7 +143,6 @@ public class StyleSourceEditor extends JPanel {
         tblActiveStyles.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "delete");
         tblActiveStyles.getActionMap().put("delete", removeActiveStylesAction);
         JButton delete = new JButton(removeActiveStylesAction);
-
 
         ActivateStylesAction activateStylesAction = new ActivateStylesAction();
         lstAvailableStyles.addListSelectionListener(activateStylesAction);
@@ -269,7 +267,6 @@ public class StyleSourceEditor extends JPanel {
             return ret;
         }
     }
-
 
     class ActiveStylesModel extends AbstractTableModel {
         private ArrayList<String> data;
@@ -838,7 +835,6 @@ public class StyleSourceEditor extends JPanel {
             gc.weighty = 1.0;
             add(tfFileName = new JTextField(), gc);
 
-
             gc.gridx = 1;
             gc.gridy = 0;
             gc.fill = GridBagConstraints.BOTH;
@@ -860,7 +856,6 @@ public class StyleSourceEditor extends JPanel {
             listeners = new CopyOnWriteArrayList<CellEditorListener>();
             build();
         }
-
 
         public void addCellEditorListener(CellEditorListener l) {
             if (!listeners.contains(l)) {
@@ -924,7 +919,6 @@ public class StyleSourceEditor extends JPanel {
             tfFileName.selectAll();
             return this;
         }
-
 
         class LaunchFileChooserAction extends AbstractAction {
             public LaunchFileChooserAction() {

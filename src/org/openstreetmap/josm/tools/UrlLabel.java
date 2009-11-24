@@ -50,7 +50,7 @@ public class UrlLabel extends JEditorPane implements HyperlinkListener {
     /**
      * Sets the URL to be visited if the user clicks on this URL label. If null, the
      * label turns into a normal label without hyperlink.
-     * 
+     *
      * @param url the url. Can be null.
      */
     public void setUrl(String url) {
@@ -60,7 +60,7 @@ public class UrlLabel extends JEditorPane implements HyperlinkListener {
 
     /**
      * Sets the text part of the URL label. Defaults to the empty string if description is null.
-     * 
+     *
      * @param description the description
      */
     public void setDescription(String description) {

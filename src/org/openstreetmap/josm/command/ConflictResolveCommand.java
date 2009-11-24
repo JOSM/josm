@@ -13,7 +13,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 /**
  * This is the common base class for {@see Command}s which manipulate {@see Conflict}s in
  * addition to {@see OsmPrimitive}s.
- * 
+ *
  * A ConflictResolverCommand can remember a collection of conflicts it resolves. Upon undoing
  * it reconstitutes them.
  *
@@ -36,7 +36,7 @@ public abstract class ConflictResolveCommand extends Command {
 
     /**
      * remembers a conflict in the internal list of remembered conflicts
-     * 
+     *
      * @param c the remembered conflict
      */
     protected void rememberConflict(Conflict<?> c) {
@@ -48,7 +48,7 @@ public abstract class ConflictResolveCommand extends Command {
     /**
      * reconstitutes all remembered conflicts. Add the remembered conflicts to the
      * set of conflicts of the {@see OsmDataLayer} this command was applied to.
-     * 
+     *
      */
     protected void reconstituteConflicts() {
         OsmDataLayer editLayer = getLayer();

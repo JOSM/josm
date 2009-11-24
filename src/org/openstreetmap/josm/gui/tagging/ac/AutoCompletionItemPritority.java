@@ -11,7 +11,6 @@ public enum AutoCompletionItemPritority implements Comparable<AutoCompletionItem
      */
     IS_IN_STANDARD,
 
-
     /**
      * indicates that this is an arbitrary value from the data set, i.e.
      * the value of a tag name=xxx

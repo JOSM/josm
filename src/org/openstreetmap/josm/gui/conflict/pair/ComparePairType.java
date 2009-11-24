@@ -37,7 +37,7 @@ public enum ComparePairType {
 
     /**
      * replies the display name
-     * 
+     *
      * @return the display name
      */
     public String getDisplayName() {
@@ -47,7 +47,7 @@ public enum ComparePairType {
     /**
      * replies true, if <code>role</code> is participating in this comparison
      * pair
-     * 
+     *
      * @param role  the list role
      * @return true, if <code>role</code> is participating in this comparison
      * pair; false, otherwise
@@ -62,7 +62,7 @@ public enum ComparePairType {
     /**
      * replies the pair of {@see ListRole}s participating in this comparison
      * pair
-     * 
+     *
      * @return  the pair of list roles
      */
     public ListRole[] getParticipatingRoles() {
@@ -72,7 +72,7 @@ public enum ComparePairType {
     /**
      * replies the opposite role of <code>role</code> participating in this comparison
      * pair
-     * 
+     *
      * @param role one of the two roles in this pair
      * @return the opposite role
      * @exception IllegalStateException  if role is not participating in this pair

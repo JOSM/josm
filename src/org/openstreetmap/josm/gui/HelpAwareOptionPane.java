@@ -35,7 +35,7 @@ public class HelpAwareOptionPane {
         public String helpTopic;
 
         /**
-         * 
+         *
          * @param text  the button text
          * @param icon  the icon to display. Can be null
          * @param tooltipText  the tooltip text. Can be null.
@@ -68,7 +68,7 @@ public class HelpAwareOptionPane {
 
     /**
      * Creates the list buttons to be displayed in the option pane dialog.
-     * 
+     *
      * @param options the option. If null, just creates an OK button and a help button
      * @param helpTopic the help topic. The context sensitive help of all buttons is equal
      * to the context sensitive help of the whole dialog
@@ -99,7 +99,7 @@ public class HelpAwareOptionPane {
 
     /**
      * Creates the help button
-     * 
+     *
      * @param helpTopic the help topic
      * @return the help button
      */
@@ -124,11 +124,11 @@ public class HelpAwareOptionPane {
      * the dialog includes a "Help" button and launches the help browser if the user presses F1. If the
      * user clicks on the "Help" button the option dialog remains open and JOSM launches the help
      * browser.
-     * 
+     *
      * <code>helpTopic</code> is the trailing part of a JOSM online help URL, i.e. the part after the leading
      * <code>http://josm.openstreetmap.de/wiki/Help</code>. It should start with a leading '/' and it
      * may include an anchor after a '#'.
-     * 
+     *
      * <strong>Examples</strong>
      * <ul>
      *    <li>/Dialogs/RelationEditor</li>
@@ -136,7 +136,7 @@ public class HelpAwareOptionPane {
      * </ul>
      *
      * In addition, the option buttons display JOSM icons, similar to ExtendedDialog.
-     * 
+     *
      * @param parentComponent the parent component
      * @param msg the message
      * @param title the title
@@ -243,7 +243,7 @@ public class HelpAwareOptionPane {
     }
 
     /**
-     * 
+     *
      * @param parentComponent
      * @param msg
      * @param title

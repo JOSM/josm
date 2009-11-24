@@ -15,7 +15,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 
 /**
  * This is the table cell editor for the tag editor dialog.
- * 
+ *
  */
 @SuppressWarnings("serial")
 public class TagCellEditor extends AbstractCellEditor implements TableCellEditor{
@@ -48,7 +48,7 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
      * initialized with the set of standard key values and the set of current key
      * values from the the current JOSM data set. Keys already present in the
      * current tag model are removed from the auto completion list.
-     * 
+     *
      * @param model  the tag editor model
      * @param currentTag  the current tag
      */
@@ -77,13 +77,12 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
         autoCompletionList.fireTableDataChanged();
     }
 
-
     /**
      * initializes the auto completion list when the cell editor starts to edit
      * a tag value. In this case the auto completion list is initialized with the
      * set of standard values for a given key and the set of values present in the
      * current data set for the given key.
-     * 
+     *
      * @param forKey the key
      */
     protected void initAutoCompletionListForValues(String forKey) {
@@ -98,7 +97,6 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
             );
         }
     }
-
 
     /**
      * replies the table cell editor
@@ -162,7 +160,7 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
 
     /**
      * replies the {@link AutoCompletionList} this table cell editor synchronizes with
-     * 
+     *
      * @return the auto completion list
      */
     public AutoCompletionList getAutoCompletionList() {
@@ -194,7 +192,7 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
 
     /**
      * sets the tag editor model
-     * 
+     *
      * @param tagEditorModel  the tag editor model
      */
     public void setTagEditorModel(TagEditorModel tagEditorModel) {

@@ -273,4 +273,3 @@ public class PluginInformation {
         return all;
     }
 }
-

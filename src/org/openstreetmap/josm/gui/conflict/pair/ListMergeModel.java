@@ -30,7 +30,7 @@ import javax.swing.table.TableModel;
  *   <li>the list of <em>their</em> entries</li>
  *   <li>the list of <em>merged</em> entries</li>
  * </ol>
- * 
+ *
  * A ListMergeModel is a factory for three {@see TableModel}s and three {@see ListSelectionModel}s:
  * <ol>
  *   <li>the table model and the list selection for for a  {@see JTable} which shows my entries.
@@ -41,7 +41,7 @@ import javax.swing.table.TableModel;
  * A ListMergeModel can be ''frozen''. If it's frozen, it doesn't accept additional merge
  * decisions. {@see PropertyChangeListener}s can register for property value changes of
  * {@see #PROP_FROZEN}.
- * 
+ *
  * ListMergeModel is an abstract class. Three methods have to be implemented by subclasses:
  * <ul>
  *   <li>{@see ListMergeModel#cloneEntryForMergedList(Object)} - clones an entry of type T</li>
@@ -73,12 +73,10 @@ public abstract class ListMergeModel<T> extends Observable {
     private boolean isFrozen = false;
     private final ComparePairListModel comparePairListModel;
 
-
-
     /**
      * Creates a clone of an entry of type T suitable to be included in the
      * list of merged entries
-     * 
+     *
      * @param entry the entry
      * @return the cloned entry
      */
@@ -87,7 +85,7 @@ public abstract class ListMergeModel<T> extends Observable {
     /**
      * checks whether two entries are equal. This is not necessarily the same as
      * e1.equals(e2).
-     * 
+     *
      * @param e1  the first entry
      * @param e2  the second entry
      * @return true, if the entries are equal, false otherwise.
@@ -96,17 +94,15 @@ public abstract class ListMergeModel<T> extends Observable {
 
     /**
      * Handles method dispatches from {@see TableModel#setValueAt(Object, int, int)}.
-     * 
+     *
      * @param model the table model
      * @param value  the value to be set
      * @param row  the row index
      * @param col the column index
-     * 
+     *
      * @see TableModel#setValueAt(Object, int, int)
      */
     protected abstract void setValueAt(DefaultTableModel model, Object value, int row, int col);
-
-
 
     protected void buildMyEntriesTableModel() {
         myEntriesTableModel = new EntriesTableModel(MY_ENTRIES);
@@ -245,7 +241,7 @@ public abstract class ListMergeModel<T> extends Observable {
      * Copies the nodes given by indices in rows from the list of my nodes to the
      * list of merged nodes. Inserts the nodes at the top of the list of merged
      * nodes.
-     * 
+     *
      * @param rows the indices
      */
     public void copyMyToTop(int [] rows) {
@@ -256,7 +252,7 @@ public abstract class ListMergeModel<T> extends Observable {
      * Copies the nodes given by indices in rows from the list of their nodes to the
      * list of merged nodes. Inserts the nodes at the top of the list of merged
      * nodes.
-     * 
+     *
      * @param rows the indices
      */
     public void copyTheirToTop(int [] rows) {
@@ -267,7 +263,7 @@ public abstract class ListMergeModel<T> extends Observable {
      * Copies the nodes given by indices in rows from the list of  nodes in source to the
      * list of merged nodes. Inserts the nodes at the end of the list of merged
      * nodes.
-     * 
+     *
      * @param source the list of nodes to copy from
      * @param rows the indices
      */
@@ -289,7 +285,7 @@ public abstract class ListMergeModel<T> extends Observable {
      * Copies the nodes given by indices in rows from the list of my nodes to the
      * list of merged nodes. Inserts the nodes at the end of the list of merged
      * nodes.
-     * 
+     *
      * @param rows the indices
      */
     public void copyMyToEnd(int [] rows) {
@@ -300,7 +296,7 @@ public abstract class ListMergeModel<T> extends Observable {
      * Copies the nodes given by indices in rows from the list of their nodes to the
      * list of merged nodes. Inserts the nodes at the end of the list of merged
      * nodes.
-     * 
+     *
      * @param rows the indices
      */
     public void copyTheirToEnd(int [] rows) {
@@ -310,12 +306,12 @@ public abstract class ListMergeModel<T> extends Observable {
     /**
      * Copies the nodes given by indices in rows from the list of  nodes <code>source</code> to the
      * list of merged nodes. Inserts the nodes before row given by current.
-     * 
+     *
      * @param source the list of nodes to copy from
      * @param rows the indices
      * @param current the row index before which the nodes are inserted
      * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
-     * 
+     *
      */
     protected void copyBeforeCurrent(ListRole source, int [] rows, int current) {
         if (rows == null || rows.length == 0)
@@ -335,11 +331,11 @@ public abstract class ListMergeModel<T> extends Observable {
     /**
      * Copies the nodes given by indices in rows from the list of my nodes to the
      * list of merged nodes. Inserts the nodes before row given by current.
-     * 
+     *
      * @param rows the indices
      * @param current the row index before which the nodes are inserted
      * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
-     * 
+     *
      */
     public void copyMyBeforeCurrent(int [] rows, int current) {
         copyBeforeCurrent(MY_ENTRIES,rows,current);
@@ -348,11 +344,11 @@ public abstract class ListMergeModel<T> extends Observable {
     /**
      * Copies the nodes given by indices in rows from the list of their nodes to the
      * list of merged nodes. Inserts the nodes before row given by current.
-     * 
+     *
      * @param rows the indices
      * @param current the row index before which the nodes are inserted
      * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
-     * 
+     *
      */
     public void copyTheirBeforeCurrent(int [] rows, int current) {
         copyBeforeCurrent(THEIR_ENTRIES,rows,current);
@@ -361,12 +357,12 @@ public abstract class ListMergeModel<T> extends Observable {
     /**
      * Copies the nodes given by indices in rows from the list of  nodes <code>source</code> to the
      * list of merged nodes. Inserts the nodes after the row given by current.
-     * 
+     *
      * @param source the list of nodes to copy from
      * @param rows the indices
      * @param current the row index after which the nodes are inserted
      * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
-     * 
+     *
      */
     protected void copyAfterCurrent(ListRole source, int [] rows, int current) {
         if (rows == null || rows.length == 0)
@@ -392,11 +388,11 @@ public abstract class ListMergeModel<T> extends Observable {
     /**
      * Copies the nodes given by indices in rows from the list of my nodes to the
      * list of merged nodes. Inserts the nodes after the row given by current.
-     * 
+     *
      * @param rows the indices
      * @param current the row index after which the nodes are inserted
      * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
-     * 
+     *
      */
     public void copyMyAfterCurrent(int [] rows, int current) {
         copyAfterCurrent(MY_ENTRIES, rows, current);
@@ -405,11 +401,11 @@ public abstract class ListMergeModel<T> extends Observable {
     /**
      * Copies the nodes given by indices in rows from the list of my nodes to the
      * list of merged nodes. Inserts the nodes after the row given by current.
-     * 
+     *
      * @param rows the indices
      * @param current the row index after which the nodes are inserted
      * @exception IllegalArgumentException thrown, if current < 0 or >= #nodes in list of merged nodes
-     * 
+     *
      */
     public void copyTheirAfterCurrent(int [] rows, int current) {
         copyAfterCurrent(THEIR_ENTRIES, rows, current);
@@ -418,9 +414,9 @@ public abstract class ListMergeModel<T> extends Observable {
     /**
      * Moves the nodes given by indices in rows  up by one position in the list
      * of merged nodes.
-     * 
+     *
      * @param rows the indices
-     * 
+     *
      */
     public void moveUpMerged(int [] rows) {
         if (rows == null || rows.length == 0)
@@ -445,7 +441,7 @@ public abstract class ListMergeModel<T> extends Observable {
     /**
      * Moves the nodes given by indices in rows down by one position in the list
      * of merged nodes.
-     * 
+     *
      * @param rows the indices
      */
     public void moveDownMerged(int [] rows) {
@@ -472,7 +468,7 @@ public abstract class ListMergeModel<T> extends Observable {
     /**
      * Removes the nodes given by indices in rows from the list
      * of merged nodes.
-     * 
+     *
      * @param rows the indices
      */
     public void removeMerged(int [] rows) {
@@ -489,11 +485,10 @@ public abstract class ListMergeModel<T> extends Observable {
         mergedEntriesSelectionModel.clearSelection();
     }
 
-
     /**
      * Replies true if the list of my entries and the list of their
      * entries are equal
-     * 
+     *
      * @return true, if the lists are equal; false otherwise
      */
     protected boolean myAndTheirEntriesEqual() {
@@ -507,11 +502,10 @@ public abstract class ListMergeModel<T> extends Observable {
         return true;
     }
 
-
     /**
      * This an adapter between a {@see JTable} and one of the three entry lists
      * in the role {@see ListRole} managed by the {@see ListMergeModel}.
-     * 
+     *
      * From the point of view of the {@see JTable} it is a {@see TableModel}.
      *
      * @param <T>
@@ -523,7 +517,7 @@ public abstract class ListMergeModel<T> extends Observable {
         private final ListRole role;
 
         /**
-         * 
+         *
          * @param role the role
          */
         public EntriesTableModel(ListRole role) {
@@ -561,10 +555,10 @@ public abstract class ListMergeModel<T> extends Observable {
         /**
          * replies true if the {@see ListRole} of this {@see EntriesTableModel}
          * participates in the current {@see ComparePairType}
-         * 
+         *
          * @return true, if the if the {@see ListRole} of this {@see EntriesTableModel}
          * participates in the current {@see ComparePairType}
-         * 
+         *
          * @see ComparePairListModel#getSelectedComparePair()
          */
         public boolean isParticipatingInCurrentComparePair() {
@@ -576,7 +570,7 @@ public abstract class ListMergeModel<T> extends Observable {
         /**
          * replies true if the entry at <code>row</code> is equal to the entry at the
          * same position in the opposite list of the current {@see ComparePairType}.
-         * 
+         *
          * @param row  the row number
          * @return true if the entry at <code>row</code> is equal to the entry at the
          * same position in the opposite list of the current {@see ComparePairType}
@@ -600,7 +594,7 @@ public abstract class ListMergeModel<T> extends Observable {
         /**
          * replies true if the entry at the current position is present in the opposite list
          * of the current {@see ComparePairType}.
-         * 
+         *
          * @param row the current row
          * @return true if the entry at the current position is present in the opposite list
          * of the current {@see ComparePairType}.
@@ -628,7 +622,7 @@ public abstract class ListMergeModel<T> extends Observable {
 
         /**
          * replies the opposite list of entries with respect to the current {@see ComparePairType}
-         * 
+         *
          * @return the opposite list of entries
          */
         protected ArrayList<T> getOppositeEntries() {
@@ -644,10 +638,10 @@ public abstract class ListMergeModel<T> extends Observable {
     /**
      * This is the selection model to be used in a {@see JTable} which displays
      * an entry list managed by {@see ListMergeModel}.
-     * 
+     *
      * The model ensures that only rows displaying an entry in the entry list
      * can be selected. "Empty" rows can't be selected.
-     * 
+     *
      * @see ListMergeModel#getMySelectionModel()
      * @see ListMergeModel#getMergedSelectionModel()
      * @see ListMergeModel#getTheirSelectionModel()

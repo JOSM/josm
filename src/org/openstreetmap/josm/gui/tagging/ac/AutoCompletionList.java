@@ -12,19 +12,19 @@ import javax.swing.table.AbstractTableModel;
 
 /**
  * AutoCompletionList manages a list of {@see AutoCompletionListItem}s.
- * 
+ *
  * The list is sorted, items with higher priority first, then according to lexicographic order
  * on the value of the {@see AutoCompletionListItem}.
- * 
+ *
  * AutoCompletionList maintains two views on the list of {@see AutoCompletionListItem}s.
  * <ol>
  *   <li>the bare, unfiltered view which includes all items</li>
  *   <li>a filtered view, which includes only items which match a current filter expression</li>
  * </ol>
- * 
+ *
  * AutoCompletionList is an {@link AbstractTableModel} which serves the list of filtered
  * items to a {@link JTable}.
- * 
+ *
  */
 public class AutoCompletionList extends AbstractTableModel {
 
@@ -46,14 +46,13 @@ public class AutoCompletionList extends AbstractTableModel {
         valutToItemMap = new HashMap<String, AutoCompletionListItem>();
     }
 
-
     /**
      * applies a filter expression to the list of {@see AutoCompletionListItem}s.
-     * 
+     *
      * The matching criterion is a case insensitive substring match.
-     * 
+     *
      * @param filter  the filter expression; must not be null
-     * 
+     *
      * @exception IllegalArgumentException thrown, if filter is null
      */
     public void applyFilter(String filter) {
@@ -65,7 +64,7 @@ public class AutoCompletionList extends AbstractTableModel {
 
     /**
      * clears the current filter
-     * 
+     *
      */
     public void clearFilter() {
         filter = null;
@@ -79,11 +78,10 @@ public class AutoCompletionList extends AbstractTableModel {
         return filter;
     }
 
-
     /**
      * adds an AutoCompletionListItem to the list. Only adds the item if it
      * is not null and if not in the list yet.
-     * 
+     *
      * @param item the item
      */
     public void add(AutoCompletionListItem item) {
@@ -94,11 +92,10 @@ public class AutoCompletionList extends AbstractTableModel {
         filter();
     }
 
-
     /**
      * adds another AutoCompletionList to this list. An item is only
      * added it is not null and if it does not exist in the list yet.
-     * 
+     *
      * @param other another auto completion list; must not be null
      * @exception IllegalArgumentException thrown, if other is null
      */
@@ -112,11 +109,10 @@ public class AutoCompletionList extends AbstractTableModel {
         filter();
     }
 
-
     /**
      * adds a list of AutoCompletionListItem to this list. Only items which
      * are not null and which do not exist yet in the list are added.
-     * 
+     *
      * @param other a list of AutoCompletionListItem; must not be null
      * @exception IllegalArgumentException thrown, if other is null
      */
@@ -133,7 +129,7 @@ public class AutoCompletionList extends AbstractTableModel {
     /**
      * adds a list of strings to this list. Only strings which
      * are not null and which do not exist yet in the list are added.
-     * 
+     *
      * @param value a list of strings to add
      * @param priority the priority to use
      */
@@ -170,7 +166,7 @@ public class AutoCompletionList extends AbstractTableModel {
     /**
      * checks whether a specific item is already in the list. Matches for the
      * the value <strong>and</strong> the priority of the item
-     * 
+     *
      * @param item the item to check
      * @return true, if item is in the list; false, otherwise
      */
@@ -183,7 +179,7 @@ public class AutoCompletionList extends AbstractTableModel {
     /**
      * checks whether an item with the given value is already in the list. Ignores
      * priority of the items.
-     * 
+     *
      * @param value the value of an auto completion item
      * @return true, if value is in the list; false, otherwise
      */
@@ -245,7 +241,7 @@ public class AutoCompletionList extends AbstractTableModel {
 
     /**
      * replies the number of filtered items
-     * 
+     *
      * @return the number of filtered items
      */
     public int getFilteredSize() {
@@ -256,7 +252,7 @@ public class AutoCompletionList extends AbstractTableModel {
      * replies the idx-th item from the list of filtered items
      * @param idx the index; must be in the range 0<= idx < {@see #getFilteredSize()}
      * @return the item
-     * 
+     *
      * @exception IndexOutOfBoundsException thrown, if idx is out of bounds
      */
     public AutoCompletionListItem getFilteredItem(int idx) {
@@ -265,17 +261,15 @@ public class AutoCompletionList extends AbstractTableModel {
         return filtered.get(idx);
     }
 
-
     /**
      * removes all elements from the auto completion list
-     * 
+     *
      */
     public void clear() {
         valutToItemMap.clear();
         list.clear();
         fireTableDataChanged();
     }
-
 
     public int getColumnCount() {
         return 1;

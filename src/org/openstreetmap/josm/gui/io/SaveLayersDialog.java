@@ -83,7 +83,7 @@ public class SaveLayersDialog extends JDialog {
 
     /**
      * builds the button row
-     * 
+     *
      * @return the panel with the button row
      */
     protected JPanel buildButtonRow() {
@@ -376,7 +376,7 @@ public class SaveLayersDialog extends JDialog {
     /**
      * This is the asynchronous task which uploads modified layers to the server and
      * saves them to files, if requested by the user.
-     * 
+     *
      */
     protected class SaveAndUploadTask implements Runnable {
 

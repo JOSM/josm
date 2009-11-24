@@ -24,10 +24,9 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public abstract class AbstractMergeAction extends JosmAction {
 
-
     /**
      * the list cell renderer used to render layer list entries
-     * 
+     *
      */
     static public class LayerListCellRenderer extends DefaultListCellRenderer {
 

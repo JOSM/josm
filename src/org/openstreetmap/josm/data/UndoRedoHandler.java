@@ -26,11 +26,9 @@ public class UndoRedoHandler implements LayerChangeListener {
 
     public final LinkedList<CommandQueueListener> listenerCommands = new LinkedList<CommandQueueListener>();
 
-
     public UndoRedoHandler() {
         Layer.listeners.add(this);
     }
-
 
     /**
      * Execute the command and add it to the intern command queue.

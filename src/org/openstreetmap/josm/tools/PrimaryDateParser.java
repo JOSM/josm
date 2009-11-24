@@ -9,7 +9,6 @@ import java.util.TimeZone;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
-
 /**
  * Handles a number of different date formats encountered in OSM. This is built
  * based on similar code in JOSM. This class is not threadsafe, a separate
@@ -21,7 +20,6 @@ public class PrimaryDateParser {
     private DatatypeFactory datatypeFactory;
     private FallbackDateParser fallbackDateParser;
     private Calendar calendar;
-
 
     /**
      * Creates a new instance.
@@ -39,7 +37,6 @@ public class PrimaryDateParser {
 
         calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
     }
-
 
     private boolean isDateInShortStandardFormat(String date) {
         char[] dateChars;
@@ -107,7 +104,6 @@ public class PrimaryDateParser {
         // No problems found so it is in the special case format.
         return true;
     }
-
 
     private boolean isDateInLongStandardFormat(String date) {
         char[] dateChars;
@@ -184,7 +180,6 @@ public class PrimaryDateParser {
         return true;
     }
 
-
     private Date parseShortStandardDate(String date) {
         int year;
         int month;
@@ -210,7 +205,6 @@ public class PrimaryDateParser {
 
         return calendar.getTime();
     }
-
 
     private Date parseLongStandardDate(String date) {
         int year;
@@ -240,7 +234,6 @@ public class PrimaryDateParser {
 
         return calendar.getTime();
     }
-
 
     /**
      * Attempts to parse the specified date.

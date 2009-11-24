@@ -80,7 +80,6 @@ public class NTV2Util {
         return Float.intBitsToFloat(i);
     }
 
-
     /**
      * Get a double from the first 8 bytes of a byte array,
      * in either Big Endian or Little Endian format.

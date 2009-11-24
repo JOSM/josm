@@ -86,7 +86,7 @@ public class BackreferencedDataSet {
     /**
      * Replies the set of parent primitives for a given child primitive. Replies
      * an empty set if no parents refer to the child.
-     * 
+     *
      * @param child the child primitive
      * @return  the set of parent primitives for a given child primitive.
      */
@@ -108,7 +108,7 @@ public class BackreferencedDataSet {
     /**
      * Replies true if there is at least one parent referring to child;
      * false otherwise
-     * 
+     *
      * @param child the child primitive
      * @return true if there is at least one parent referring to child;
      */
@@ -118,7 +118,7 @@ public class BackreferencedDataSet {
 
     /**
      * Replies a set of all {@see RelationToChildReference}s for a given child primitive.
-     * 
+     *
      * @param child the child primitive
      * @return  a set of all {@see RelationToChildReference}s for a given child primitive
      */
@@ -137,7 +137,7 @@ public class BackreferencedDataSet {
 
     /**
      * Replies a set of all {@see RelationToChildReference}s for a collection of child primitives
-     * 
+     *
      * @param children the collection of child primitives
      * @return  a set of all {@see RelationToChildReference}s to the children in the collection of child
      * primitives

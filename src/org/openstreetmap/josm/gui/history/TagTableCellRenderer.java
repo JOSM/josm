@@ -15,7 +15,7 @@ import javax.swing.table.TableCellRenderer;
 
 /**
  * The {@see TableCellRenderer} for a list of tagsin {@see HistoryBrower}
- * 
+ *
  */
 public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
 

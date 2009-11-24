@@ -181,7 +181,6 @@ public class MultiSplitLayout implements LayoutManager {
      */
     public boolean getFloatingDividers() { return floatingDividers; }
 
-
     /**
      * If true, Leaf node bounds match the corresponding component's
      * preferred size and Splits/Dividers are resized accordingly.
@@ -196,7 +195,6 @@ public class MultiSplitLayout implements LayoutManager {
         this.floatingDividers = floatingDividers;
         firePCS("floatingDividers", oldFloatingDividers, floatingDividers);
     }
-
 
     /**
      * Add a component to this MultiSplitLayout.  The
@@ -240,7 +238,6 @@ public class MultiSplitLayout implements LayoutManager {
         }
         return null;
     }
-
 
     private Dimension preferredComponentSize(Node node) {
         Component child = childForNode(node);
@@ -334,7 +331,6 @@ public class MultiSplitLayout implements LayoutManager {
         return sizeWithInsets(parent, size);
     }
 
-
     private Rectangle boundsWithYandHeight(Rectangle bounds, double y, double height) {
         Rectangle r = new Rectangle();
         r.setBounds((int)(bounds.getX()), (int)y, (int)(bounds.getWidth()), (int)height);
@@ -346,7 +342,6 @@ public class MultiSplitLayout implements LayoutManager {
         r.setBounds((int)x, (int)(bounds.getY()), (int)width, (int)(bounds.getHeight()));
         return r;
     }
-
 
     private void minimizeSplitBounds(Split split, Rectangle bounds) {
         Rectangle splitBounds = new Rectangle(bounds.x, bounds.y, 0, 0);
@@ -363,7 +358,6 @@ public class MultiSplitLayout implements LayoutManager {
         }
         split.setBounds(splitBounds);
     }
-
 
     private void layoutShrink(Split split, Rectangle bounds) {
         Rectangle splitBounds = split.getBounds();
@@ -482,7 +476,6 @@ public class MultiSplitLayout implements LayoutManager {
         minimizeSplitBounds(split, bounds);
     }
 
-
     private void layoutGrow(Split split, Rectangle bounds) {
         Rectangle splitBounds = split.getBounds();
         ListIterator<Node> splitChildren = split.getChildren().listIterator();
@@ -573,7 +566,6 @@ public class MultiSplitLayout implements LayoutManager {
         }
     }
 
-
     /* Second pass of the layout algorithm: branch to layoutGrow/Shrink
      * as needed.
      */
@@ -603,7 +595,6 @@ public class MultiSplitLayout implements LayoutManager {
             }
         }
     }
-
 
     /* First pass of the layout algorithm.
      *
@@ -781,7 +772,6 @@ public class MultiSplitLayout implements LayoutManager {
         layout2(getModel(), bounds);
     }
 
-
     private Divider dividerAt(Node root, int x, int y) {
         if (root instanceof Divider) {
             Divider divider = (Divider)root;
@@ -851,7 +841,6 @@ public class MultiSplitLayout implements LayoutManager {
         }
         return dividersThatOverlap(getModel(), r);
     }
-
 
     /**
      * Base class for the nodes that model a MultiSplitLayout.
@@ -1072,7 +1061,6 @@ public class MultiSplitLayout implements LayoutManager {
         }
     }
 
-
     /**
      * Models a java.awt Component child.
      */
@@ -1132,7 +1120,6 @@ public class MultiSplitLayout implements LayoutManager {
         }
     }
 
-
     /**
      * Models a single vertical/horiztonal divider.
      */
@@ -1162,7 +1149,6 @@ public class MultiSplitLayout implements LayoutManager {
             return "MultiSplitLayout.Divider " + getBounds().toString();
         }
     }
-
 
     private static void throwParseException(StreamTokenizer st, String msg) throws Exception {
         throw new Exception("MultiSplitLayout.parseModel Error: " + msg);
@@ -1327,7 +1313,6 @@ public class MultiSplitLayout implements LayoutManager {
     public static Node parseModel(String s) {
         return parseModel(new StringReader(s));
     }
-
 
     private static void printModel(String indent, Node root) {
         if (root instanceof Split) {

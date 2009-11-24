@@ -38,7 +38,6 @@ public final class Changeset implements Tagged {
      */
     private boolean incomplete;
 
-
     /**
      * Creates a new changeset with id 0.
      */
@@ -195,7 +194,6 @@ public final class Changeset implements Tagged {
     public void removeAll() {
         this.tags.clear();
     }
-
 
     public boolean hasEqualSemanticAttributes(Changeset other) {
         if (other == null)

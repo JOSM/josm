@@ -7,7 +7,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 public class OsmUrlToBounds {
-    
+
     public static Bounds parse(String url) {
         int i = url.indexOf('?');
         if (i == -1)

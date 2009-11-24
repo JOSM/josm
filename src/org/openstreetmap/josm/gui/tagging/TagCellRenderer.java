@@ -16,11 +16,10 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 
-
 /**
  * This is the table cell renderer for cells for the table of tags
  * in the tag editor dialog.
- * 
+ *
  *
  */
 public class TagCellRenderer extends JLabel implements TableCellRenderer  {
@@ -48,7 +47,7 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
     /**
      * renders the name of a tag in the second column of
      * the table
-     * 
+     *
      * @param tag  the tag
      */
     protected void renderTagName(TagModel tag) {
@@ -58,7 +57,7 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
     /**
      * renders the value of a a tag in the third column of
      * the table
-     * 
+     *
      * @param tag  the  tag
      */
     protected void renderTagValue(TagModel tag) {
@@ -71,8 +70,6 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
             setFont(fontItalic);
         }
     }
-
-
 
     /**
      * resets the renderer
@@ -92,7 +89,7 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
      * set to {@see TableCellRenderer#BG_COLOR_HIGHLIGHTED} if this cell
      * displays the tag which is suggested by the currently selected
      * preset.
-     * 
+     *
      * @param tagModel the tag model
      * @param model the tag editor model
      */
@@ -100,17 +97,16 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
         setBackground(Color.WHITE); // standard color
     }
 
-
     /**
      * replies the cell renderer component for a specific cell
-     * 
+     *
      * @param table  the table
      * @param value the value to be rendered
      * @param isSelected  true, if the value is selected
      * @param hasFocus true, if the cell has focus
      * @param rowIndex the row index
      * @param vColIndex the column index
-     * 
+     *
      * @return the renderer component
      */
     public Component getTableCellRendererComponent(JTable table, Object value,
@@ -124,7 +120,6 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
         } else {
             renderBackgroundColor(getModel(table).get(rowIndex), getModel(table));
         }
-
 
         switch(vColIndex) {
         case 0: renderTagName((TagModel)value); break;

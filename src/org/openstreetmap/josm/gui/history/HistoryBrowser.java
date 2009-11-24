@@ -30,7 +30,6 @@ public class HistoryBrowser extends JPanel {
     private CoordinateInfoViewer coordinateInfoViewer;
     private JTabbedPane tpViewers;
 
-
     /**
      * embedds table in a {@see JScrollPane}
      *

@@ -27,7 +27,7 @@ import org.openstreetmap.josm.actions.SaveActionBase;
 /**
  * This is a {@see TableCellEditor} for filenames. It provides a text input field and
  * a button for launchinig a {@see JFileChooser}.
- * 
+ *
  *
  */
 class FilenameCellEditor extends JPanel implements TableCellEditor {
@@ -47,7 +47,6 @@ class FilenameCellEditor extends JPanel implements TableCellEditor {
         gc.weightx = 1.0;
         gc.weighty = 1.0;
         add(tfFileName = new JTextField(), gc);
-
 
         gc.gridx = 1;
         gc.gridy = 0;
@@ -70,7 +69,6 @@ class FilenameCellEditor extends JPanel implements TableCellEditor {
         listeners = new CopyOnWriteArrayList<CellEditorListener>();
         build();
     }
-
 
     public void addCellEditorListener(CellEditorListener l) {
         if (!listeners.contains(l)) {

@@ -102,7 +102,6 @@ public class GeoImageLayer extends Layer {
 
             volatile Image scaledImage;
 
-
             public Entry(File file, int width, int height, int maxSize, ImageLoadedListener listener) {
                 this.file = file;
                 this.height = height;
@@ -222,7 +221,6 @@ public class GeoImageLayer extends Layer {
             }
         }
 
-
         public synchronized boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
             if ((infoflags & ImageObserver.ALLBITS) != 0) {
                 finishImage(img, currentEntry);
@@ -321,7 +319,6 @@ public class GeoImageLayer extends Layer {
             } finally {
                 gpxSubTask.finishTask();
             }
-
 
             if (gps.isEmpty())
                 return;

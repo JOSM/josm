@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.history;
 
-
 /**
  * PointInTimeType enumerates two points in time in the {@see History} of an {@see OsmPrimitive}.
  * @author karl

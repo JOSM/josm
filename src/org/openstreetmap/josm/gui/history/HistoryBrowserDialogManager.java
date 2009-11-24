@@ -87,7 +87,7 @@ public class HistoryBrowserDialogManager implements LayerChangeListener {
 
     /**
      * Hides and destroys all currently visible history browser dialogs
-     * 
+     *
      */
     public void hideAll() {
         ArrayList<HistoryBrowserDialog> dialogs = new ArrayList<HistoryBrowserDialog>();

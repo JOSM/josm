@@ -273,7 +273,6 @@ public class SelectAction extends MapMode implements SelectionEnded {
         didMove = true;
     }
 
-
     @Override public void mouseMoved(MouseEvent e) {
         // Mac OSX simulates with  ctrl + mouse 1  the second mouse button hence no dragging events get fired.
         //

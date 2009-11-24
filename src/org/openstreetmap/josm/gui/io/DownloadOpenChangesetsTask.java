@@ -35,7 +35,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
     private UserInfo userInfo;
 
     /**
-     * 
+     *
      * @param model provides the user id of the current user and accepts the changesets
      * after download
      */
@@ -78,7 +78,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
     /**
      * Fetch the user info from the server. This is necessary if we don't know
      * the users id yet
-     * 
+     *
      * @return the user info
      * @throws OsmTransferException thrown in case of any communication exception
      */

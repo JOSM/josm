@@ -15,7 +15,6 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 
-
 /**
  * RelationDialogManager keeps track of the open relation editors.
  *
@@ -27,7 +26,7 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
 
     /**
      * Replies the singleton {@see RelationDialogManager}
-     * 
+     *
      * @return the singleton {@see RelationDialogManager}
      */
     static public RelationDialogManager getRelationDialogManager() {
@@ -105,7 +104,7 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
     /**
      * Register the relation editor for a relation managed by a
      * {@see OsmDataLayer}.
-     * 
+     *
      * @param layer the layer
      * @param relation the relation
      * @param editor the editor
@@ -136,7 +135,7 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
 
     /**
      * Closes the editor open for a specific layer and a specific relation.
-     * 
+     *
      * @param layer  the layer
      * @param relation the relation
      */
@@ -151,7 +150,7 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
     /**
      * Replies true if there is an open relation editor for the relation managed
      * by the given layer. Replies false if relation is null.
-     * 
+     *
      * @param layer  the layer
      * @param relation  the relation. May be null.
      * @return true if there is an open relation editor for the relation managed
@@ -167,12 +166,12 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
     /**
      * Replies the editor for the relation managed by layer. Null, if no such editor
      * is currently open. Returns null, if relation is null.
-     * 
+     *
      * @param layer the layer
      * @param relation the relation
      * @return the editor for the relation managed by layer. Null, if no such editor
      * is currently open.
-     * 
+     *
      * @see #isOpenInEditor(OsmDataLayer, Relation)
      */
     public RelationEditor getEditorForRelation(OsmDataLayer layer, Relation relation) {
@@ -183,7 +182,7 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
 
     /**
      * called when a layer is removed
-     * 
+     *
      */
     public void layerRemoved(Layer oldLayer) {
         if (oldLayer == null || ! (oldLayer instanceof OsmDataLayer))
@@ -227,7 +226,7 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
 
     /**
      * Positions an {@see RelationEditor} centered on the screen
-     * 
+     *
      * @param editor the editor
      */
     protected void centerOnScreen(RelationEditor editor) {
@@ -243,7 +242,7 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
     /**
      * Replies true, if there is another open {@see RelationEditor} whose
      * upper left corner is close to <code>p</code>.
-     * 
+     *
      * @param p  the reference point to check
      * @return true, if there is another open {@see RelationEditor} whose
      * upper left corner is close to <code>p</code>.
@@ -261,7 +260,7 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
     /**
      * Positions a {@see RelationEditor} close to the center of the screen, in such
      * a way, that it doesn't entirely cover another {@see RelationEditor}
-     * 
+     *
      * @param editor
      */
     protected void positionCloseToScreenCenter(RelationEditor editor) {
@@ -283,7 +282,7 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
      * screen. If it hide another instance of an editor at the same position this
      * method tries to reposition <code>editor</code> by moving it slightly down and
      * slightly to the right.
-     * 
+     *
      * @param editor the editor
      */
     public void positionOnScreen(RelationEditor editor) {

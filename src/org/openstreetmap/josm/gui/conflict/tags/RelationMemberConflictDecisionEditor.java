@@ -36,7 +36,6 @@ public class RelationMemberConflictDecisionEditor extends JComboBox implements T
     private TableCellEditorSupport tableCellEditorSupport;
     private RelationMemberConflictDecisionType originalValue;
 
-
     public void addCellEditorListener(CellEditorListener l) {
         tableCellEditorSupport.addCellEditorListener(l);
     }

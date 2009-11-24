@@ -25,7 +25,7 @@ import org.xml.sax.SAXException;
 
 /**
  * This is an asynchronous task for loading the parents of a given relation.
- * 
+ *
  * Typical usage:
  * <pre>
  *  final ParentRelationLoadingTask task = new ParentRelationLoadingTask(
@@ -61,12 +61,12 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
 
     /**
      * Creates a new task for asynchronously downloading the parents of a child relation.
-     * 
+     *
      * @param child the child relation. Must not be null. Must have an id > 0.
      * @param layer  the OSM data layer. Must not be null.
      * @param full if true, parent relations are fully downloaded (i.e. with their members)
      * @param monitor the progress monitor to be used
-     * 
+     *
      * @exception IllegalArgumentException thrown if child is null
      * @exception IllegalArgumentException thrown if layer is null
      * @exception IllegalArgumentException thrown if child.getId() == 0
@@ -87,7 +87,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
 
     /**
      * Set a continuation which is called upon the job finished.
-     * 
+     *
      * @param continuation the continuation
      */
     public void setContinuation(Runnable continuation) {
@@ -96,7 +96,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
 
     /**
      * Replies true if this has been cancelled by the user.
-     * 
+     *
      * @return true if this has been cancelled by the user.
      */
     public boolean isCancelled() {
@@ -105,13 +105,12 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
 
     /**
      * Replies true if an exception has been caught during the execution of this task.
-     * 
+     *
      * @return true if an exception has been caught during the execution of this task.
      */
     public boolean hasError() {
         return lastException != null;
     }
-
 
     protected OsmDataLayer getLayer() {
         return layer;

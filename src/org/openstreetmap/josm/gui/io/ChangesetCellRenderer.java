@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * A {@see ListCellRenderer} for the list of changesets in the upload dialog.
- * 
+ *
  *
  */
 public class ChangesetCellRenderer extends JLabel implements ListCellRenderer {

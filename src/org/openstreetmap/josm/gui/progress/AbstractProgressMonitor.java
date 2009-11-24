@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
-
 public abstract class AbstractProgressMonitor implements ProgressMonitor {
 
     private static class Request {

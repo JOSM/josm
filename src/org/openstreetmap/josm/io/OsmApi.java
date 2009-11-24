@@ -295,14 +295,13 @@ public class OsmApi extends OsmConnection {
         uploadDiff(Collections.singleton(osm), monitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
     }
 
-
     /**
      * Creates a new changeset based on the keys in <code>changeset</code>. If this
      * method succeeds, changeset.getId() replies the id the server assigned to the new
      * changeset
-     * 
+     *
      * The changeset must not be null, but its key/value-pairs may be empty.
-     * 
+     *
      * @param changeset the changeset toe be created. Must not be null.
      * @param progressMonitor the progress monitor
      * @throws OsmTransferException signifying a non-200 return code, or connection errors
@@ -334,11 +333,11 @@ public class OsmApi extends OsmConnection {
      *
      * @param changeset the changeset to update. Must not be null.
      * @param monitor the progress monitor. If null, uses the {@see NullProgressMonitor#INSTANCE}.
-     * 
+     *
      * @throws OsmTransferException if something goes wrong.
      * @throws IllegalArgumentException if changeset is null
      * @throws IllegalArgumentException if changeset.getId() <= 0
-     * 
+     *
      */
     public void updateChangeset(Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
         if (changeset == null)
@@ -367,14 +366,13 @@ public class OsmApi extends OsmConnection {
         }
     }
 
-
     /**
      * Closes a changeset on the server. Sets changeset.setOpen(false) if this operation
      * succeeds.
      *
      * @param changeset the changeset to be closed. Must not be null. changeset.getId() > 0 required.
      * @param monitor the progress monitor. If null, uses {@see NullProgressMonitor#INSTANCE}
-     * 
+     *
      * @throws OsmTransferException if something goes wrong.
      * @throws IllegalArgumentException thrown if changeset is null
      * @throws IllegalArgumentException thrown if changeset.getId() <= 0
@@ -454,7 +452,7 @@ public class OsmApi extends OsmConnection {
 
     /**
      * Replies the max. number of retries in case of 5XX errors on the server
-     * 
+     *
      * @return the max number of retries
      */
     protected int getMaxRetries() {
@@ -602,10 +600,9 @@ public class OsmApi extends OsmConnection {
         return capabilities;
     }
 
-
     /**
      * Ensures that the current changeset can be used for uploading data
-     * 
+     *
      * @throws OsmTransferException thrown if the current changeset can't be used for
      * uploading data
      */
@@ -617,7 +614,7 @@ public class OsmApi extends OsmConnection {
     }
     /**
      * Replies the changeset data uploads are currently directed to
-     * 
+     *
      * @return the changeset data uploads are currently directed to
      */
     public Changeset getChangeset() {
@@ -628,7 +625,7 @@ public class OsmApi extends OsmConnection {
      * Sets the changesets to which further data uploads are directed. The changeset
      * can be null. If it isn't null it must have been created, i.e. id > 0 is required. Furthermore,
      * it must be open.
-     * 
+     *
      * @param changeset the changeset
      * @throws IllegalArgumentException thrown if changeset.getId() <= 0
      * @throws IllegalArgumentException thrown if !changeset.isOpen()

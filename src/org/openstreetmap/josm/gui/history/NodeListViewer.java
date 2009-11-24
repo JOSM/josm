@@ -31,7 +31,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * NodeListViewer is a UI component which displays the node list of two
  * version of a {@see OsmPrimitive} in a {@see History}.
- * 
+ *
  * <ul>
  *   <li>on the left, it displays the node list for the version at {@see PointInTimeType#REFERENCE_POINT_IN_TIME}</li>
  *   <li>on the right, it displays the node list for the version at {@see PointInTimeType#CURRENT_POINT_IN_TIME}</li>
@@ -167,7 +167,6 @@ public class NodeListViewer extends JPanel {
             registerAsObserver(model);
         }
     }
-
 
     class NodeListPopupMenu extends JPopupMenu {
         private ZoomToNodeAction zoomToNodeAction;

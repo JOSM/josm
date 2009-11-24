@@ -134,7 +134,7 @@ public abstract class OsmServerReader extends OsmConnection {
     /**
      * Returns true if this reader is adding authentication credentials to the read
      * request sent to the server.
-     * 
+     *
      * @return true if this reader is adding authentication credentials to the read
      * request sent to the server
      */
@@ -145,7 +145,7 @@ public abstract class OsmServerReader extends OsmConnection {
     /**
      * Sets whether this reader adds authentication credentials to the read
      * request sent to the server.
-     * 
+     *
      * @param doAuthenticate  true if  this reader adds authentication credentials to the read
      * request sent to the server
      */

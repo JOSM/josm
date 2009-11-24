@@ -22,7 +22,6 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tagged;
 
-
 /**
  * TagEditorModel is a table model.
  *
@@ -117,7 +116,6 @@ public class TagEditorModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-
     public void prepend(TagModel tag) {
         if (tag == null)
             throw new IllegalArgumentException("argument 'tag' must not be null");
@@ -125,7 +123,6 @@ public class TagEditorModel extends AbstractTableModel {
         setDirty(true);
         fireTableDataChanged();
     }
-
 
     /**
      * adds a tag given by a name/value pair to the tag editor model.
@@ -153,7 +150,6 @@ public class TagEditorModel extends AbstractTableModel {
         setDirty(true);
     }
 
-
     /**
      * replies the tag with name <code>name</code>; null, if no such tag exists
      * @param name the tag name
@@ -173,13 +169,10 @@ public class TagEditorModel extends AbstractTableModel {
         return tagModel;
     }
 
-
-
     @Override public boolean isCellEditable(int row, int col) {
         // all cells are editable
         return true;
     }
-
 
     /**
      * deletes the names of the tags given by tagIndices
@@ -219,7 +212,7 @@ public class TagEditorModel extends AbstractTableModel {
 
     /**
      * Deletes all tags with name <code>name</code>
-     * 
+     *
      * @param name the name. Ignored if null.
      */
     public void delete(String name) {
@@ -255,7 +248,6 @@ public class TagEditorModel extends AbstractTableModel {
         fireTableDataChanged();
         setDirty(true);
     }
-
 
     /**
      * creates a new tag and appends it to the model
@@ -371,7 +363,6 @@ public class TagEditorModel extends AbstractTableModel {
         }
         return false;
     }
-
 
     protected Command createUpdateTagCommand(Collection<OsmPrimitive> primitives, TagModel tag) {
 

@@ -38,7 +38,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
 
     /**
      * replies the idx-th node id in the list of node ids of this way
-     * 
+     *
      * @param idx the index
      * @return the idx-th node id
      * @exception IndexOutOfBoundsException thrown, if  idx <0 || idx >= {#see {@link #getNumNodes()}
@@ -51,7 +51,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
 
     /**
      * replies an immutable list of the ways node ids
-     * 
+     *
      * @return the ways node ids
      */
     public List<Long> getNodes() {
@@ -60,7 +60,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
 
     /**
      * replies the ways type, i.e. {@see OsmPrimitiveType#WAY}
-     * 
+     *
      * @return the ways type
      */
     @Override
@@ -70,7 +70,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
 
     /**
      * adds a node id to the list nodes of this way
-     * 
+     *
      * @param ref the node id to add
      */
     public void addNode(long ref) {

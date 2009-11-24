@@ -42,14 +42,14 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 /**
  * This dialog helps to resolve conflicts occurring when ways are combined or
  * nodes are merged.
- * 
+ *
  * There is a singleton instance of this dialog which can be retrieved using
  * {@see #getInstance()}.
- * 
+ *
  * The dialog uses two models: one  for resolving tag conflicts, the other
  * for resolving conflicts in relation memberships. For both models there are accessors,
  * i.e {@see #getTagConflictResolverModel()} and {@see #getRelationMemberConflictResolverModel()}.
- * 
+ *
  * Models have to be <strong>populated</strong> before the dialog is launched. Example:
  * <pre>
  *    CombinePrimitiveResolverDialog dialog = CombinePrimitiveResolverDialog.getInstance();
@@ -57,15 +57,15 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  *    dialog.getRelationMemberConflictResolverModel().populate(aRelationLinkCollection);
  *    dialog.prepareDefaultDecisions();
  * </pre>
- * 
+ *
  * You should also set the target primitive which other primitives (ways or nodes) are
  * merged to, see {@see #setTargetPrimitive(OsmPrimitive)}.
- * 
+ *
  * After the dialog is closed use {@see #isCancelled()} to check whether the user canceled
  * the dialog. If it wasn't canceled you may build a collection of {@see Command} objects
  * which reflect the conflict resolution decisions the user made in the dialog:
  * see {@see #buildResolutionCommands()}
- * 
+ *
  *
  */
 public class CombinePrimitiveResolverDialog extends JDialog {
@@ -75,7 +75,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
     /**
      * Replies the unique instance of the dialog
-     * 
+     *
      * @return the unique instance of the dialog
      */
     public static CombinePrimitiveResolverDialog getInstance() {
@@ -91,7 +91,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     private boolean cancelled;
     private JPanel pnlButtons;
     private OsmPrimitive targetPrimitive;
-    
+
     /** the private help action */
     private ContextSensitiveHelpAction helpAction;
     /** the apply button */
@@ -100,7 +100,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     /**
      * Replies the target primitive the collection of primitives is merged
      * or combined to.
-     * 
+     *
      * @return the target primitive
      */
     public OsmPrimitive getTargetPrimitmive() {
@@ -110,14 +110,14 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     /**
      * Sets the primitive the collection of primitives is merged or combined
      * to.
-     * 
+     *
      * @param primitive the target primitive
      */
     public void setTargetPrimitive(OsmPrimitive primitive) {
         this.targetPrimitive = primitive;
         updateTitle();
         if (primitive instanceof Way) {
-            pnlRelationMemberConflictResolver.initForWayCombining();            
+            pnlRelationMemberConflictResolver.initForWayCombining();
         } else if (primitive instanceof Node) {
             pnlRelationMemberConflictResolver.initForNodeMerging();
         }
@@ -341,7 +341,6 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         }
         super.setVisible(visible);
     }
-
 
     class CancelAction extends AbstractAction {
 

@@ -86,7 +86,7 @@ public class CoordinateInfoViewer extends JPanel {
     }
 
     /**
-     * 
+     *
      * @param model the model. Must not be null.
      * @throws IllegalArgumentException thrown if model is null
      */
@@ -130,7 +130,7 @@ public class CoordinateInfoViewer extends JPanel {
 
     /**
      * Sets the model for this viewer
-     * 
+     *
      * @param model the model.
      */
     public void setModel(HistoryBrowserModel model) {
@@ -146,7 +146,7 @@ public class CoordinateInfoViewer extends JPanel {
     /**
      * A UI widgets which displays the Lan/Lon-coordinates of a
      * {@see HistoryNode}.
-     * 
+     *
      */
     private static class LatLonViewer extends JPanel implements Observer{
 
@@ -209,7 +209,6 @@ public class CoordinateInfoViewer extends JPanel {
             lblLon.setOpaque(true);
             lblLon.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
 
-
             // fill the remaining space
             gc.gridx = 0;
             gc.gridy = 2;
@@ -221,7 +220,7 @@ public class CoordinateInfoViewer extends JPanel {
         }
 
         /**
-         * 
+         *
          * @param model a model
          * @param role the role for this viewer.
          */

@@ -36,7 +36,7 @@ public class UnselectAllAction extends JosmAction {
                 Shortcut.registerShortcut("edit:unselectallescape", tr("Edit: {0}", tr("Unselect All (Escape)")),
                         KeyEvent.VK_ESCAPE, Shortcut.GROUP_DIRECT).getKeyStroke(),
                         tr("Unselect All"));
-        
+
         putValue("help", ht("/Action/UnselectAll"));
     }
 
@@ -47,7 +47,7 @@ public class UnselectAllAction extends JosmAction {
     }
     /**
      * Refreshes the enabled state
-     * 
+     *
      */
     @Override
     protected void updateEnabledState() {

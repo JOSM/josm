@@ -48,7 +48,6 @@ public class ColorPreference implements PreferenceSetting {
         }
     }
 
-
     private DefaultTableModel tableModel;
     private JTable colors;
     private ArrayList<String> del = new ArrayList<String>();

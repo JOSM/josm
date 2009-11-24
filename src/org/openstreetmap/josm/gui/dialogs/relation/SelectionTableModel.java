@@ -24,7 +24,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
 
     /**
      * constructor
-     * 
+     *
      * @param layer  the data layer. Must not be null.
      * @exception IllegalArgumentException thrown if layer is null
      */
@@ -37,7 +37,6 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
         Layer.listeners.add(this);
         populateSelectedPrimitives(layer);
     }
-
 
     public void unregister() {
         DataSet.selListeners.remove(this);
@@ -97,7 +96,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
     /**
      * populates the model with the primitives currently selected in
      * <code>layer</code>
-     * 
+     *
      * @param layer  the data layer
      */
     protected void populateSelectedPrimitives(OsmDataLayer layer) {

@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-
 /**
  * Tag represents an immutable key/value-pair. Both the key and the value may
  * be empty, but not null.

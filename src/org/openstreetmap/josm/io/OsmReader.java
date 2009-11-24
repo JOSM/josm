@@ -49,7 +49,7 @@ public class OsmReader {
 
     /**
      * Replies the parsed data set
-     * 
+     *
      * @return the parsed data set
      */
     public DataSet getDataSet() {
@@ -59,7 +59,7 @@ public class OsmReader {
     /** the map from external ids to read OsmPrimitives. External ids are
      * longs too, but in contrast to internal ids negative values are used
      * to identify primitives unknown to the OSM server
-     * 
+     *
      * The keys are strings composed as follows
      * <ul>
      *   <li>"n" + id  for nodes</li>
@@ -68,7 +68,6 @@ public class OsmReader {
      * </ul>
      */
     private Map<String, OsmPrimitive> externalIdMap = new HashMap<String, OsmPrimitive>();
-
 
     /**
      * constructor (for private use only)
@@ -170,7 +169,6 @@ public class OsmReader {
          */
         private OsmPrimitiveData current;
         private String generator;
-
 
         @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
             if (qName.equals("osm")) {
@@ -409,11 +407,10 @@ public class OsmReader {
         }
     }
 
-
     /**
      * Processes the ways after parsing. Rebuilds the list of nodes of each way and
      * adds the way to the dataset
-     * 
+     *
      * @throws IllegalDataException thrown if a data integrity problem is detected
      */
     protected void processWaysAfterParsing() throws IllegalDataException{
@@ -459,7 +456,7 @@ public class OsmReader {
     /**
      * Processes the parsed nodes after parsing. Just adds them to
      * the dataset
-     * 
+     *
      */
     protected void processNodesAfterParsing() {
         for (OsmPrimitive primitive: externalIdMap.values()) {
@@ -471,10 +468,10 @@ public class OsmReader {
 
     /**
      * Completes the parsed relations with its members.
-     * 
+     *
      * @throws IllegalDataException thrown if a data integrity problem is detected, i.e. if a
      * relation member refers to a local primitive which wasn't available in the data
-     * 
+     *
      */
     private void processRelationsAfterParsing() throws IllegalDataException {
         for (Long externalRelationId : relations.keySet()) {
@@ -544,10 +541,10 @@ public class OsmReader {
 
     /**
      * Parse the given input source and return the dataset.
-     * 
+     *
      * @param source the source input stream
      * @param progressMonitor  the progress monitor
-     * 
+     *
      * @return the dataset with the parsed data
      * @throws IllegalDataException thrown if the an error was found while parsing the data from the source
      */

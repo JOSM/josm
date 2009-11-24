@@ -299,7 +299,7 @@ public class PluginSelection {
             final String lc_bit = bit.toLowerCase();
             if (!name_lc.contains(lc_bit) &&
                 !description_lc.contains(lc_bit) &&
-                !remoteversion_lc.contains(lc_bit) && 
+                !remoteversion_lc.contains(lc_bit) &&
                 !localversion_lc.contains(lc_bit)) {
                 canHas = false;
             }

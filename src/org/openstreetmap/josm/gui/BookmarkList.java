@@ -81,17 +81,17 @@ public class BookmarkList extends JList {
             );
         }
     }
-    
+
     class BookmarkCellRenderer extends JLabel implements ListCellRenderer {
 
         private ImageIcon icon;
-        
+
         public BookmarkCellRenderer() {
             setOpaque(true);
             icon = ImageProvider.get("dialogs", "bookmark");
             setIcon(icon);
         }
-        
+
         protected void renderColor(boolean selected) {
             if (selected) {
                 setBackground(UIManager.getColor("List.selectionBackground"));
@@ -101,7 +101,7 @@ public class BookmarkList extends JList {
                 setForeground(UIManager.getColor("List.foreground"));
             }
         }
-        
+
         protected String buildToolTipText(Bookmark b) {
             Bounds area = b.getArea();
             StringBuffer sb = new StringBuffer();
@@ -112,16 +112,16 @@ public class BookmarkList extends JList {
             .append(area.getMax().lat()).append(",").append(area.getMax().lon()).append("]</strong>")
             .append("</html>");
             return sb.toString();
-            
+
         }
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {
-            
+
             Bookmark b = (Bookmark) value;
             renderColor(isSelected);
             setText(b.getName());
             setToolTipText(buildToolTipText(b));
             return this;
-        }        
+        }
     }
 }

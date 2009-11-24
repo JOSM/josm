@@ -73,7 +73,7 @@ abstract public class Main {
     /**
      * Replies true if JOSM currently displays a map view. False, if it doesn't, i.e. if
      * it only shows the MOTD panel.
-     * 
+     *
      * @return true if JOSM currently displays a map view
      */
     static public boolean isDisplayingMapView() {
@@ -127,7 +127,6 @@ abstract public class Main {
      * The toolbar preference control to register new actions.
      */
     public static ToolbarPreferences toolbar;
-
 
     public UndoRedoHandler undoRedo = new UndoRedoHandler();
 
@@ -335,7 +334,6 @@ abstract public class Main {
         } catch (IllegalArgumentException iae) {
             CoordinateFormat.setCoordinateFormat(CoordinateFormat.DECIMAL_DEGREES);
         }
-
 
         Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
         String geometry = Main.pref.get("gui.geometry");

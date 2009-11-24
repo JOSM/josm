@@ -338,7 +338,6 @@ public class UnGlueAction extends JosmAction {
         }
     }
 
-
     /**
      * dupe a single node into as many nodes as there are ways using it, OR
      *

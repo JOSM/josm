@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.conflict.ConflictCollection;
 /**
  * A dataset merger which takes a target and a source dataset and merges the source data set
  * onto the target dataset.
- * 
+ *
  */
 public class DataSetMerger {
     private static Logger logger = Logger.getLogger(DataSetMerger.class.getName());
@@ -178,11 +178,11 @@ public class DataSetMerger {
 
     /**
      * Merges the node list of a source way onto its target way.
-     * 
+     *
      * @param source the source way
      * @throws IllegalStateException thrown if no target way can be found for the source way
      * @throws IllegalStateException thrown if there isn't a target node for one of the nodes in the source way
-     * 
+     *
      */
     private void mergeNodeList(Way source) throws IllegalStateException {
         Way target = (Way)getMergeTarget(source);
@@ -203,7 +203,6 @@ public class DataSetMerger {
         }
         target.setNodes(newNodes);
     }
-
 
     /**
      * Merges the relation members of a source relation onto the corresponding target relation.

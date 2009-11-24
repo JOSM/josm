@@ -71,7 +71,7 @@ public class OsmPrimitivRenderer implements ListCellRenderer, TableCellRenderer 
     /**
      * build the tool tip text for an {@see OsmPrimitive}. It consist of the formatted
      * key/value pairs for this primitive.
-     * 
+     *
      * @param primitive
      * @return the tool tip text
      */

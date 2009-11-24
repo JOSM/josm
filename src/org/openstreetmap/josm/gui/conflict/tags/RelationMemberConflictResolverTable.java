@@ -37,7 +37,7 @@ public class RelationMemberConflictResolverTable extends JTable implements Multi
         selectPreviousColumnCellAction = new SelectPreviousColumnCellAction();
         getActionMap().put("selectNextColumnCell", selectNextColumnCellAction);
         getActionMap().put("selectPreviousColumnCell", selectPreviousColumnCellAction);
-        
+
         setRowHeight((int)new JComboBox().getPreferredSize().getHeight());
     }
 

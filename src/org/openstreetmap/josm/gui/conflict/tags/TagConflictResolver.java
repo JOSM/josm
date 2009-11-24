@@ -20,7 +20,7 @@ import org.openstreetmap.josm.Main;
 /**
  * This is a UI widget for resolving tag conflicts, i.e. differences of the tag values
  * of multiple {@see OsmPrimitive}s.
- * 
+ *
  *
  */
 public class TagConflictResolver extends JPanel {
@@ -60,7 +60,7 @@ public class TagConflictResolver extends JPanel {
 
     /**
      * Remembers the current settings in the global preferences
-     * 
+     *
      */
     public void rememberPreferences() {
         Main.pref.put(getClass().getName() + ".showTagsWithConflictsOnly", cbShowTagsWithConflictsOnly.isSelected());
@@ -79,7 +79,7 @@ public class TagConflictResolver extends JPanel {
 
     /**
      * Replies the model used by this dialog
-     * 
+     *
      * @return the model
      */
     public TagConflictResolverModel getModel() {

@@ -110,7 +110,7 @@ public class FilterDialog extends ToggleDialog implements DataChangeListener, La
                  }
               });
         pnl.add(upButton);
-        
+
         downButton = new SideButton(marktr("Down"), "down", "SelectionList", tr("Move filter down."),
               new ActionListener(){
                  public void actionPerformed(ActionEvent evt){
@@ -148,7 +148,7 @@ public class FilterDialog extends ToggleDialog implements DataChangeListener, La
                    }
                };
            }
-        };   
+        };
 
         filters.addTableModelListener(this);
 

@@ -1,14 +1,12 @@
 // License: GPL. Copyright 2007 by Tim Haussmann
 package org.openstreetmap.josm.gui.download;
 
-
 import java.awt.Graphics;
 import java.awt.Point;
 
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.tools.ImageProvider;
-
 
 /**
  * @author Tim Haussmann
@@ -21,7 +19,6 @@ public class SizeButton{
     private ImageIcon enlargeImage;
     private ImageIcon shrinkImage;
     private boolean isEnlarged = false;
-
 
     public SizeButton(){
         enlargeImage = ImageProvider.get("view-fullscreen.png");

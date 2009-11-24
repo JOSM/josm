@@ -97,7 +97,6 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         Main.pref.put("conflictresolutiondialog.height", Integer.toString(d.height));
     }
 
-
     @Override
     public void setVisible(boolean isVisible) {
         if (isVisible){
@@ -152,7 +151,6 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         HelpUtil.setHelpContext(this.getRootPane(), "Dialog/ConflictDialog");
     }
 
-
     public ConflictResolutionDialog(Component parent) {
         super(JOptionPane.getFrameForComponent(parent), true /* modal */);
         build();
@@ -172,7 +170,6 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
             putValue(Action.SMALL_ICON, ImageProvider.get("", "cancel"));
             setEnabled(true);
         }
-
 
         public void actionPerformed(ActionEvent arg0) {
             setVisible(false);
@@ -197,7 +194,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
 
     /**
      * Action for applying resolved differences in a conflict
-     * 
+     *
      */
     class ApplyResolutionAction extends AbstractAction implements PropertyChangeListener {
         public ApplyResolutionAction() {

@@ -77,7 +77,7 @@ public class OsmApiException extends OsmTransferException {
 
     /**
      * Replies a message suitable to be displayed in a message dialog
-     * 
+     *
      * @return a message which is suitable to be displayed in a message dialog
      */
     public String getDisplayMessage() {

@@ -100,8 +100,6 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         }
     }
 
-
-
     /**
      * needs to be overridden to be useful
      */

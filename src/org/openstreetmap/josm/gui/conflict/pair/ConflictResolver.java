@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * An UI component for resolving conflicts between two {@see OsmPrimitive}s.
- * 
+ *
  * This component emits {@see PropertyChangeEvent}s for three properties:
  * <ul>
  *   <li>{@see #RESOLVED_COMPLETELY_PROP} - new value is <code>true</code>, if the conflict is
@@ -43,7 +43,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *   <li>{@see #THEIR_PRIMITIVE_PROP} - new value is the {@see OsmPrimitive} in the role of
  *   their primitive</li>
  * </ul>
- * 
+ *
  */
 public class ConflictResolver extends JPanel implements PropertyChangeListener  {
 
@@ -63,7 +63,6 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
      * name of the property for the {@see OsmPrimitive} in the role "my"
      */
     static public final String THEIR_PRIMITIVE_PROP = ConflictResolver.class.getName() + ".theirPrimitive";
-
 
     private static final Logger logger = Logger.getLogger(ConflictResolver.class.getName());
 
@@ -130,7 +129,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
 
     /**
      * Sets the {@see OsmPrimitive} in the role "my"
-     * 
+     *
      * @param my the primitive in the role "my"
      */
     protected void setMy(OsmPrimitive my) {
@@ -143,7 +142,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
 
     /**
      * Sets the {@see OsmPrimitive} in the role "their".
-     * 
+     *
      * @param their the primitive in the role "their"
      */
     protected void setTheir(OsmPrimitive their) {
@@ -208,10 +207,10 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
 
     /**
      * populates the conflict resolver with the conflicts between my and their
-     * 
+     *
      * @param my   my primitive (i.e. the primitive in the local dataset)
      * @param their their primitive (i.e. the primitive in the server dataset)
-     * 
+     *
      */
     public void populate(OsmPrimitive my, OsmPrimitive their) {
         setMy(my);
@@ -249,7 +248,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
     /**
      * Builds the resolution command(s) for the resolved conflicts in this
      * ConflictResolver
-     * 
+     *
      * @return the resolution command
      */
     public Command buildResolveCommand() throws OperationCancelledException {
@@ -281,7 +280,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
 
     /**
      * Updates the state of the property {@see #RESOLVED_COMPLETELY_PROP}
-     * 
+     *
      */
     protected void updateResolvedCompletely() {
         boolean oldValueResolvedCompletely = resolvedCompletely;
@@ -318,7 +317,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
 
     /**
      * Replies true all differences in this conflicts are resolved
-     * 
+     *
      * @return true all differences in this conflicts are resolved
      */
     public boolean isResolvedCompletely() {

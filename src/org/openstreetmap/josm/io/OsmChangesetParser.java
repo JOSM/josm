@@ -202,10 +202,10 @@ public class OsmChangesetParser {
 
     /**
      * Parse the given input source and return the list of changesets
-     * 
+     *
      * @param source the source input stream
      * @param progressMonitor  the progress monitor
-     * 
+     *
      * @return the list of changesets
      * @throws IllegalDataException thrown if the an error was found while parsing the data from the source
      */

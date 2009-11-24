@@ -19,14 +19,14 @@ import org.openstreetmap.josm.Main;
 /**
  * This is a helper class for persisting the geometry of a JOSM window to the preference store
  * and for restoring it from the preference store.
- * 
+ *
  */
 public class WindowGeometry {
 
     /**
      * Replies a window geometry object for a window with a specific size which is
      * centered on screen
-     * 
+     *
      * @param extent  the size
      * @return the geometry object
      */
@@ -41,7 +41,7 @@ public class WindowGeometry {
     /**
      * Replies a window geometry object for a window which a specific size which is centered
      * relative to a parent window
-     * 
+     *
      * @param parent the parent window
      * @param extent the size
      * @return the geometry object
@@ -59,7 +59,7 @@ public class WindowGeometry {
 
     /**
      * Exception thrown by the WindowGeometry class if something goes wrong
-     * 
+     *
      */
     static public class WindowGeometryException extends Exception {
         public WindowGeometryException(String message, Throwable cause) {
@@ -77,7 +77,7 @@ public class WindowGeometry {
     private Dimension extent;
 
     /**
-     * 
+     *
      * @param topLeft the top left point
      * @param extent the extent
      */
@@ -88,7 +88,7 @@ public class WindowGeometry {
 
     /**
      * Creates a window geometry from the position and the size of a window.
-     * 
+     *
      * @param window the window
      */
     public WindowGeometry(Window window)  {
@@ -133,7 +133,7 @@ public class WindowGeometry {
     /**
      * Creates a window geometry from the values kept in the preference store under the
      * key <code>preferenceKey</code>
-     * 
+     *
      * @param preferenceKey the preference key
      * @throws WindowGeometryException thrown if no such key exist or if the preference value has
      * an illegal format
@@ -146,10 +146,10 @@ public class WindowGeometry {
      * Creates a window geometry from the values kept in the preference store under the
      * key <code>preferenceKey</code>. Falls back to the <code>defaultGeometry</code> if
      * something goes wrong.
-     * 
+     *
      * @param preferenceKey the preference key
      * @param defaultGeometry the default geometry
-     * 
+     *
      */
     public WindowGeometry(String preferenceKey, WindowGeometry defaultGeometry) {
         try {
@@ -162,7 +162,7 @@ public class WindowGeometry {
 
     /**
      * Remembers a window geometry under a specific preference key
-     * 
+     *
      * @param preferenceKey the preference key
      */
     public void remember(String preferenceKey) {
@@ -176,7 +176,7 @@ public class WindowGeometry {
 
     /**
      * Replies the top left point for the geometry
-     * 
+     *
      * @return  the top left point for the geometry
      */
     public Point getTopLeft() {
@@ -185,7 +185,7 @@ public class WindowGeometry {
 
     /**
      * Replies the size spezified by the geometry
-     * 
+     *
      * @return the size spezified by the geometry
      */
     public Dimension getSize() {
@@ -194,7 +194,7 @@ public class WindowGeometry {
 
     /**
      * Applies this geometry to a window
-     * 
+     *
      * @param window the window
      */
     public void apply(Window window) {
@@ -205,7 +205,7 @@ public class WindowGeometry {
     /**
      * Applies this geometry to a window. Makes sure that the window is not placed outside
      * of the coordinate range of the current screen.
-     * 
+     *
      * @param window the window
      */
     public void applySafe(Window window) {

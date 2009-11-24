@@ -24,7 +24,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class GpxExportAction extends DiskAccessAction {
 
-
     public GpxExportAction() {
         super(tr("Export to GPX..."), "exportgpx", tr("Export the data to GPX file."),
                 Shortcut.registerShortcut("file:exportgpx", tr("Export to GPX..."), KeyEvent.VK_E, Shortcut.GROUP_MENU));
@@ -60,7 +59,7 @@ public class GpxExportAction extends DiskAccessAction {
      *
      * <code>layer</code> must not be null. <code>layer</code> must be an instance of
      * {@see OsmDataLayer} or {@see GpxLayer}.
-     * 
+     *
      * @param layer the layer
      * @exception IllegalArgumentException thrown if layer is null
      * @exception IllegalArgumentException thrown if layer is neither an instance of {@see OsmDataLayer}
@@ -93,8 +92,8 @@ public class GpxExportAction extends DiskAccessAction {
      */
     @Override
     protected void updateEnabledState() {
-        boolean check =            
-        Main.isDisplayingMapView() 
+        boolean check =
+        Main.isDisplayingMapView()
         && Main.map.mapView.getActiveLayer() != null;
         if(!check) {
             setEnabled(false);

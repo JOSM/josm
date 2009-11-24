@@ -68,7 +68,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
 
     /**
      * Reads teh changeset with id <code>id</code> from the server
-     * 
+     *
      * @param id  the changeset id. id > 0 required.
      * @param monitor the progress monitor. Set to {@see NullProgressMonitor#INSTANCE} if null
      * @return the changeset read
@@ -104,7 +104,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
 
     /**
      * not implemented yet
-     * 
+     *
      * @param id
      * @param monitor
      * @return

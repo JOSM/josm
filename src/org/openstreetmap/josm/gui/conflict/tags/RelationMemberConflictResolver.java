@@ -49,7 +49,7 @@ public class RelationMemberConflictResolver extends JPanel {
 
     protected void build() {
         setLayout(new GridBagLayout());
-        JPanel pnl = new JPanel();        
+        JPanel pnl = new JPanel();
         pnl.setLayout(new BorderLayout());
         pnl.add(lblHeader = new JMultilineLabel(""));
         GridBagConstraints gc = new GridBagConstraints();
@@ -59,7 +59,7 @@ public class RelationMemberConflictResolver extends JPanel {
         gc.insets = new Insets(5,5,5,5);
         add(pnl, gc);
         model = new RelationMemberConflictResolverModel();
-        
+
         gc.gridy = 1;
         gc.weighty = 1.0;
         gc.fill = GridBagConstraints.BOTH;
@@ -88,7 +88,7 @@ public class RelationMemberConflictResolver extends JPanel {
                     @Override
                     public void focusGained(FocusEvent e) {
                         tfRole.selectAll();
-                    }                    
+                    }
                 }
         );
         return pnl;
@@ -103,7 +103,7 @@ public class RelationMemberConflictResolver extends JPanel {
                 tr("<html>Select to enable entering a tag which will be applied<br>"
                         + "to all modified relations.</html>"));
         pnl.add(cbTagRelations);
-        pnl.add(new JLabel(trc("tag", "Key:")));        
+        pnl.add(new JLabel(trc("tag", "Key:")));
         pnl.add(tfKey = new AutoCompletingTextField(10));
         tfKey.setToolTipText(tr("<html>Enter a tag key, i.e. <strong><tt>fixme</tt></strong></html>"));
         pnl.add(new JLabel(tr("Value:")));
@@ -118,11 +118,11 @@ public class RelationMemberConflictResolver extends JPanel {
     public RelationMemberConflictResolver() {
         build();
     }
-    
+
     public void initForWayCombining() {
        lblHeader.setText(tr("<html>The combined ways are members in one ore more relations. "
                 + "Please decide whether your want to <strong>keep</strong> these memberships "
-                + "for the combined way or whether you want to <strong>remove</strong> them.<br>" 
+                + "for the combined way or whether you want to <strong>remove</strong> them.<br>"
                 + "The default is to <strong>keep</strong> them: the combined way will take the place of the original way in the membership."
                         + "</html>"));
        invalidate();
@@ -131,7 +131,7 @@ public class RelationMemberConflictResolver extends JPanel {
     public void initForNodeMerging() {
         lblHeader.setText(tr("<html>The merged nodes are members in one ore more relations. "
                  + "Please decide whether your want to <strong>keep</strong> these memberships "
-                 + "for the target node or whether you want to <strong>remove</strong> them.<br>" 
+                 + "for the target node or whether you want to <strong>remove</strong> them.<br>"
                  + "The default is to <strong>keep</strong> them: the target node will take the place of the original node in the membership."
                          + "</html>"));
         invalidate();

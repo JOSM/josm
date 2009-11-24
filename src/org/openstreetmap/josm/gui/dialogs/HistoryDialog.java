@@ -51,7 +51,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * HistoryDialog displays a list of the currently selected primitives and provides
  * two actions for (1) (re)loading the history of the selected primitives and (2)
  * for launching a history browser for each selected primitive.
- * 
+ *
  */
 public class HistoryDialog extends ToggleDialog implements HistoryDataSetListener {
 

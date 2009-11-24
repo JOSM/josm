@@ -282,7 +282,6 @@ public final class Relation extends OsmPrimitive {
         super.setDeleted(deleted);
     }
 
-
     /**
      * removes all members with member.member == primitive
      *

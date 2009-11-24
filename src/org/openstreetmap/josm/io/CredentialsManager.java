@@ -4,13 +4,13 @@ package org.openstreetmap.josm.io;
 import org.openstreetmap.josm.io.OsmConnection.OsmAuth;
 
 /**
- * Manages how username and password are stored. In addition all 
+ * Manages how username and password are stored. In addition all
  * username/password-related user interaction is encapsulated here.
  */
 public interface CredentialsManager {
     enum Key {
-        OSM_SERVER_URL("url"), 
-        USERNAME("username"), 
+        OSM_SERVER_URL("url"),
+        USERNAME("username"),
         PASSWORD("password");
         final private String pname;
         private Key(String name) {
@@ -20,7 +20,7 @@ public interface CredentialsManager {
             return pname;
         }
     };
-    
+
     /**
      * Should throw or return non-null, possibly empty String.
      */

@@ -10,7 +10,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 /**
  * SaveLayerTask saves the data managed by an {@see OsmDataLayer} to the
  * {@see OsmDataLayer#getAssociatedFile()}.
- * 
+ *
  * <pre>
  *     ExecutorService executorService = ...
  *     SaveLayerTask task = new SaveLayerTask(layer, monitor);
@@ -28,7 +28,7 @@ class SaveLayerTask extends AbstractIOTask {
     private ProgressMonitor parentMonitor;
 
     /**
-     * 
+     *
      * @param layerInfo information about the layer to be saved to save. Must not be null.
      * @param monitor the monitor. Set to {@see NullProgressMonitor#INSTANCE} if null
      * @throws IllegalArgumentException thrown if layer is null

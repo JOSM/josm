@@ -23,7 +23,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 
-
 /**
  * An OSM primitive can be associated with a key/value pair. It can be created, deleted
  * and updated within the OSM-Server.
@@ -96,7 +95,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         }
     }
 
-
     private static final int FLAG_MODIFIED = 1 << 0;
     private static final int FLAG_VISIBLE  = 1 << 1;
     private static final int FLAG_DISABLED = 1 << 2;
@@ -149,7 +147,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         }
         return ret;
     }
-
 
     /* mappaint data */
     public ElemStyle mappaintStyle = null;
@@ -496,7 +493,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return uninteresting;
     }
 
-
     private static Collection<String> directionKeys = null;
 
     /**
@@ -771,7 +767,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     /**
      * Replies true if this primitive has a tag with key <code>key</code>
-     * 
+     *
      * @param key the key
      * @return true, if his primitive has a tag with key <code>key</code>
      */
@@ -786,7 +782,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     /**
      * Replies true if other isn't null and has the same tags (key/value-pairs) as this.
-     * 
+     *
      * @param other the other object primitive
      * @return true if other isn't null and has the same tags (key/value-pairs) as this.
      */
@@ -799,7 +795,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      ------------*/
 
     private Object referrers;
-
 
     /**
      * Add new referrer. If referrer is already included then no action is taken
@@ -894,7 +889,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
         return result;
     }
-
 
     /**
      * Get and write all attributes from the parameter. Does not fire any listener, so
@@ -1029,7 +1023,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return (flags & FLAG_HAS_DIRECTIONS) != 0;
     }
 
-
     /**
      * Replies the name of this primitive. The default implementation replies the value
      * of the tag <tt>name</tt> or null, if this tag is not present.
@@ -1145,4 +1138,3 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return new SimplePrimitiveId(getUniqueId(), getType());
     }
 }
-

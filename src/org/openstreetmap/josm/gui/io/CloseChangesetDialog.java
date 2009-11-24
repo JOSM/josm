@@ -142,7 +142,7 @@ public class CloseChangesetDialog extends JDialog {
 
     /**
      * Sets whether this dialog is canceled
-     * 
+     *
      * @param canceled true, if this dialog is canceld
      */
     protected void setCanceled(boolean canceled) {
@@ -151,7 +151,7 @@ public class CloseChangesetDialog extends JDialog {
 
     /**
      * Sets the collection of changesets to be displayed
-     * 
+     *
      * @param changesets the collection of changesets. Assumes an empty collection if null
      */
     public void setChangesets(Collection<Changeset> changesets) {
@@ -167,7 +167,7 @@ public class CloseChangesetDialog extends JDialog {
     /**
      * Replies a collection with the changesets the user selected.
      * Never null, but may be empty.
-     * 
+     *
      * @return a collection with the changesets the user selected.
      */
     public Collection<Changeset> getSelectedChangesets() {

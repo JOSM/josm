@@ -13,7 +13,6 @@ import javax.swing.JTable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction;
 
-
 public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
 
     final static Image arrowUp = ImageProvider.get("dialogs/relation", "arrowup").getImage();
@@ -53,7 +52,6 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         int y1 = 0;
         int y2 = 0;
 
-
         if (value.linkPrev) {
             g.setColor(Color.black);
             g.fillRect(xoff - 1, 0, 3, 1);
@@ -65,7 +63,7 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
                 g.drawImage(corners,xoff,y1-3,xoff+3,y1, 0,0,3,3, new Color(0,0,0,0), null);
                 g.drawImage(corners,xoff+xloop-2,y1-3,xoff+xloop+1,y1, 2,0,5,3, new Color(0,0,0,0), null);
                 g.drawLine(xoff+3,y1-3,xoff+xloop-3,y1-3);
-            } 
+            }
             else {
                 g.setColor(Color.red);
                 g.drawRect(xoff-1, p - 1 - w, w, w);
@@ -85,7 +83,7 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
                 g.drawLine(xoff, y2, xoff, y2+2);
                 g.drawImage(corners,xoff+xloop-2,y2+1,xoff+xloop+1,y2+4, 2,2,5,5, new Color(0,0,0,0), null);
                 g.drawLine(xoff+3-1,y2+3,xoff+xloop-3,y2+3);
-            } 
+            }
             else {
                 g.setColor(Color.red);
                 g.drawRect(xoff-1, ymax - p + 1, w, w);
@@ -117,6 +115,6 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
             g.drawImage(roundabout_left, xoff-6, 1, null);
         } else if (value.direction == Direction.ROUNDABOUT_RIGHT) {
             g.drawImage(roundabout_right, xoff-6, 1, null);
-        }        
+        }
     }
 }

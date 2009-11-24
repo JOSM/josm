@@ -43,7 +43,7 @@ public class OpenLocationAction extends JosmAction {
 
     /**
      * Restore the current history from the preferences
-     * 
+     *
      * @param cbHistory
      */
     protected void restoreUploadAddressHistory(HistoryComboBox cbHistory) {

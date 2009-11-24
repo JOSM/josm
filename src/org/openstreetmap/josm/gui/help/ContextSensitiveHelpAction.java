@@ -12,7 +12,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * This is the standard help action to be used with help buttons for
  * context sensitive help
- * 
+ *
  */
 public class ContextSensitiveHelpAction extends AbstractAction {
 
@@ -20,8 +20,8 @@ public class ContextSensitiveHelpAction extends AbstractAction {
     private String helpTopic;
 
     /**
-     * Sets the help topic 
-     * 
+     * Sets the help topic
+     *
      * @param relativeHelpTopic the relative help topic
      */
     public void setHelpTopic(String relativeHelpTopic) {
@@ -29,17 +29,17 @@ public class ContextSensitiveHelpAction extends AbstractAction {
             relativeHelpTopic = "/";
         this.helpTopic = relativeHelpTopic;
     }
-    
+
     /**
      * Creates a help topic for the root help topic
-     * 
+     *
      */
     public ContextSensitiveHelpAction() {
         this(ht("/"));
     }
-    
+
     /**
-     * 
+     *
      * @param helpTopic
      */
     public ContextSensitiveHelpAction(String helpTopic) {

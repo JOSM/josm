@@ -152,7 +152,6 @@ public class SaveLayersModel extends DefaultTableModel {
         return ret;
     }
 
-
     public void setUploadState(OsmDataLayer layer, UploadOrSaveState state) {
         SaveLayerInfo info = getSaveLayerInfo(layer);
         if (info != null) {

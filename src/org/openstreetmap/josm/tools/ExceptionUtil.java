@@ -45,7 +45,7 @@ public class ExceptionUtil {
     /**
      * Explains a precondition exception when a child relation could not be deleted because
      * it is still referred to by an undeleted parent relation.
-     * 
+     *
      * @param e the exception
      * @param childRelation the child relation
      * @param parentRelation the parent relation
@@ -141,7 +141,7 @@ public class ExceptionUtil {
     /**
      * Explains an exception thrown during upload because the changeset which data is
      * uploaded to is already closed.
-     * 
+     *
      * @param e the exception
      */
     public static String explainChangesetClosedException(ChangesetClosedException e) {
@@ -159,7 +159,7 @@ public class ExceptionUtil {
 
     /**
      * Explains an exception with a generic message dialog
-     * 
+     *
      * @param e the exception
      */
     public static String explainGeneric(Exception e) {
@@ -175,7 +175,7 @@ public class ExceptionUtil {
      * Explains a {@see SecurityException} which has caused an {@see OsmTransferException}.
      * This is most likely happening when user tries to access the OSM API from within an
      * applet which wasn't loaded from the API server.
-     * 
+     *
      * @param e the exception
      */
 
@@ -198,7 +198,7 @@ public class ExceptionUtil {
      * Explains a {@see SocketException} which has caused an {@see OsmTransferException}.
      * This is most likely because there's not connection to the Internet or because
      * the remote server is not reachable.
-     * 
+     *
      * @param e the exception
      */
 
@@ -214,7 +214,7 @@ public class ExceptionUtil {
      * Explains a {@see IOException} which has caused an {@see OsmTransferException}.
      * This is most likely happening when the communication with the remote server is
      * interrupted for any reason.
-     * 
+     *
      * @param e the exception
      */
 
@@ -231,7 +231,7 @@ public class ExceptionUtil {
     /**
      * Explains a {@see OsmApiException} which was thrown because of an internal server
      * error in the OSM API server..
-     * 
+     *
      * @param e the exception
      */
 
@@ -246,7 +246,7 @@ public class ExceptionUtil {
     /**
      * Explains a {@see OsmApiException} which was thrown because of a bad
      * request
-     * 
+     *
      * @param e the exception
      */
     public static String explainBadRequest(OsmApiException e) {
@@ -266,7 +266,7 @@ public class ExceptionUtil {
 
     /**
      * Explains a {@see OsmApiException} which was thrown because a resource wasn't found.
-     * 
+     *
      * @param e the exception
      */
     public static String explainNotFound(OsmApiException e) {
@@ -285,7 +285,7 @@ public class ExceptionUtil {
      * Explains a {@see UnknownHostException} which has caused an {@see OsmTransferException}.
      * This is most likely happening when there is an error in the API URL or when
      * local DNS services are not working.
-     * 
+     *
      * @param e the exception
      */
 
@@ -308,7 +308,7 @@ public class ExceptionUtil {
     /**
      * Replies the first nested exception of type <code>nestedClass</code> (including
      * the root exception <code>e</code>) or null, if no such exception is found.
-     * 
+     *
      * @param <T>
      * @param e the root exception
      * @param nestedClass the type of the nested exception
@@ -329,7 +329,7 @@ public class ExceptionUtil {
 
     /**
      * Explains an {@see OsmTransferException} to the user.
-     * 
+     *
      * @param e the {@see OsmTransferException}
      */
     public static String explainOsmTransferException(OsmTransferException e) {
@@ -382,7 +382,7 @@ public class ExceptionUtil {
 
     /**
      * Explains an {@see Exception} to the user.
-     * 
+     *
      * @param e the {@see Exception}
      */
     public static String explainException(Exception e) {

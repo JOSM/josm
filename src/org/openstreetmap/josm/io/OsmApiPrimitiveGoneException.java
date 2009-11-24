@@ -10,7 +10,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 /**
  * Represents an exception thrown by the OSM API if JOSM tries to update or delete a primitive
  * which is already deleted on the server.
- * 
+ *
  */
 public class OsmApiPrimitiveGoneException extends OsmApiException{
     /**
@@ -21,7 +21,6 @@ public class OsmApiPrimitiveGoneException extends OsmApiException{
     private OsmPrimitiveType type;
     /** the id of the primitive */
     private long id;
-
 
     public OsmApiPrimitiveGoneException(String errorHeader, String errorBody) {
         super(HttpURLConnection.HTTP_GONE, errorHeader, errorBody);
@@ -36,7 +35,7 @@ public class OsmApiPrimitiveGoneException extends OsmApiException{
 
     /**
      * Replies true if we know what primitive this exception was thrown for
-     * 
+     *
      * @return true if we know what primitive this exception was thrown for
      */
     public boolean isKnownPrimitive() {
@@ -46,7 +45,7 @@ public class OsmApiPrimitiveGoneException extends OsmApiException{
     /**
      * Replies the type of the primitive this exception was thrown for. null,
      * if the type is not known.
-     * 
+     *
      * @return the type of the primitive this exception was thrown for
      */
     public OsmPrimitiveType getPrimitiveType() {
@@ -56,7 +55,7 @@ public class OsmApiPrimitiveGoneException extends OsmApiException{
     /**
      * Replies the id of the primitive this exception was thrown for. 0, if
      * the id is not known.
-     * 
+     *
      * @return the id of the primitive this exception was thrown for
      */
     public long getPrimitiveId() {

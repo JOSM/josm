@@ -26,7 +26,6 @@ public class User {
      */
     private static HashMap<Long,User> userMap = new HashMap<Long,User>();
 
-
     private static long getNextLocalUid() {
         synchronized(User.class) {
             return uidCounter.decrementAndGet();
@@ -35,7 +34,7 @@ public class User {
 
     /**
      * Creates a local user with the given name
-     * 
+     *
      * @param name the name
      */
     public static User createLocalUser(String name) {
@@ -46,7 +45,7 @@ public class User {
 
     /**
      * Creates a user known to the OSM server
-     * 
+     *
      * @param uid  the user id
      * @param name the name
      */
@@ -63,7 +62,7 @@ public class User {
 
     /**
      * clears the static map of user ids to user objects
-     * 
+     *
      */
     public static void clearUserMap() {
         userMap.clear();
@@ -71,7 +70,7 @@ public class User {
 
     /**
      * Returns the user with user id <code>uid</code> or null if this user doesn't exist
-     * 
+     *
      * @param uid the user id
      * @return the user; null, if there is no user with  this id
      */
@@ -82,7 +81,7 @@ public class User {
     /**
      * Returns the list of users with name <code>name</code> or the empty list if
      * no such users exist
-     * 
+     *
      * @param name the user name
      * @return the list of users with name <code>name</code> or the empty list if
      * no such users exist
@@ -107,7 +106,7 @@ public class User {
 
     /**
      * Replies the user name
-     * 
+     *
      * @return the user name. Never null, but may be the empty string
      */
     public String getName() {
@@ -117,11 +116,11 @@ public class User {
     /**
      * Replies the user id. If this user is known to the OSM server the positive user id
      * from the server is replied. Otherwise, a negative local value is replied.
-     * 
+     *
      * A negative local is only unique during an editing session. It is lost when the
      * application is closed and there is no guarantee that a negative local user id is
      * always bound to a user with the same name.
-     * 
+     *
      */
     public long getId() {
         return uid;

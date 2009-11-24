@@ -66,7 +66,7 @@ public class ScrollViewport extends JPanel {
 
     private JViewport vp = new JViewport();
     private JComponent component = null;
-    
+
     private List<JButton> buttons = new ArrayList<JButton>();
 
     private Timer timer = new Timer(100, new ActionListener() {
@@ -84,7 +84,7 @@ public class ScrollViewport extends JPanel {
 
     public ScrollViewport(int direction) {
         setLayout(new BorderLayout());
-        
+
         JButton button;
 
         // UP
@@ -136,7 +136,7 @@ public class ScrollViewport extends JPanel {
         });
 
         showOrHideButtons();
-        
+
         timer.setRepeats(true);
         timer.setInitialDelay(400);
     }
@@ -202,13 +202,13 @@ public class ScrollViewport extends JPanel {
      * Only show them if the Viewport is too small for the content.
      */
     public void showOrHideButtons() {
-        boolean needButtons = vp.getViewSize().height > vp.getViewRect().height || 
+        boolean needButtons = vp.getViewSize().height > vp.getViewRect().height ||
                               vp.getViewSize().width > vp.getViewRect().width;
         for (JButton b : buttons) {
             b.setVisible(needButtons);
         }
     }
-    
+
     public Rectangle getViewRect() {
         return vp.getViewRect();
     }

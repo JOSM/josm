@@ -1170,9 +1170,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 //// Draw name bounding box for debugging:
                 // g.setColor(new Color(255,255,0,128));
                 // g.drawRect((int)centeredNBounds.getMinX(),
-                //	   (int)centeredNBounds.getMinY(),
-                //	   (int)centeredNBounds.getWidth(),
-                //	   (int)centeredNBounds.getHeight());
+                //     (int)centeredNBounds.getMinY(),
+                //     (int)centeredNBounds.getWidth(),
+                //     (int)centeredNBounds.getHeight());
 
                 if ((pb.width >= nb.getWidth() && pb.height >= nb.getHeight()) && // quick check
                         polygon.contains(centeredNBounds) // slow but nice
@@ -1617,7 +1617,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
             displaySegments(null);
         }
-
 
         //if(profiler)
         //{

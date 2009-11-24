@@ -73,7 +73,7 @@ public class DownloadReferrersAction extends JosmAction{
     /**
      * Downloads the primitives referring to the primitive given by <code>id</code> and
      * <code>type</code>.
-     * 
+     *
      *
      * @param targetLayer  the target layer. Must not be null.
      * @param id the primitive id. id > 0 required.
@@ -117,10 +117,10 @@ public class DownloadReferrersAction extends JosmAction{
 
         /**
          * constructor
-         * 
+         *
          * @param targetLayer  the target layer for the downloaded primitives. Must not be null.
          * @param children the collection of child primitives for which parents are to be downloaded
-         * 
+         *
          */
         public DownloadReferrersTask(OsmDataLayer targetLayer, Collection<OsmPrimitive> children) {
             super("Download referrers", false /* don't ignore exception*/);
@@ -141,11 +141,11 @@ public class DownloadReferrersAction extends JosmAction{
 
         /**
          * constructor
-         * 
+         *
          * @param targetLayer  the target layer for the downloaded primitives. Must not be null.
          * @param primitives  the collection of children for which parents are to be downloaded. Children
          * are specified by their id and  their type.
-         * 
+         *
          */
         public DownloadReferrersTask(OsmDataLayer targetLayer, Map<Long, OsmPrimitiveType> children) {
             super("Download referrers", false /* don't ignore exception*/);
@@ -166,14 +166,14 @@ public class DownloadReferrersAction extends JosmAction{
 
         /**
          * constructor
-         * 
+         *
          * @param targetLayer  the target layer. Must not be null.
          * @param id the primitive id. id > 0 required.
          * @param type the primitive type. type != null required
          * @exception IllegalArgumentException thrown if id <= 0
          * @exception IllegalArgumentException thrown if type == null
          * @exception IllegalArgumentException thrown if targetLayer == null
-         * 
+         *
          */
         public DownloadReferrersTask(OsmDataLayer targetLayer, long id, OsmPrimitiveType type) throws IllegalArgumentException {
             super("Download referrers", false /* don't ignore exception*/);

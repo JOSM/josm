@@ -147,7 +147,6 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
         this.keys.putAll(keys);
     }
 
-
     @SuppressWarnings("unchecked")
     static public <T extends PrimitiveData>  List<T> getFilteredList(Collection<T> list, OsmPrimitiveType type) {
         List<T> ret = new ArrayList<T>();
@@ -172,7 +171,5 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
     public long getUniqueId() {
         return id;
     }
-
-
 
 }

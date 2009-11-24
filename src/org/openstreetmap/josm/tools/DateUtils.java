@@ -29,7 +29,6 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-
 /**
  * A static utility class dealing with parsing XML date quickly and formatting
  * a date to the XML UTC format regardless of current locale.

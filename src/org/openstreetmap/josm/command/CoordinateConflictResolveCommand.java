@@ -29,7 +29,7 @@ public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
 
     /**
      * constructor
-     * 
+     *
      * @param my  my node
      * @param their  their node
      * @param decision the merge decision
@@ -38,7 +38,6 @@ public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
         this.conflict = new Conflict<Node>(my,their);
         this.decision = decision;
     }
-
 
     @Override
     public MutableTreeNode description() {

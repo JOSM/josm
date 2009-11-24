@@ -23,7 +23,7 @@ public abstract class RelationEditor extends ExtendedDialog {
      * Registers a relation editor class. Depending on the type of relation to be edited
      * {@see #getEditor(OsmDataLayer, Relation, Collection)} will create an instance of
      * this class.
-     * 
+     *
      * @param clazz the class
      */
     public void registerRelationEditor(Class<RelationEditor> clazz) {
@@ -54,7 +54,7 @@ public abstract class RelationEditor extends ExtendedDialog {
      * This method is guaranteed to return a working RelationEditor. If no
      * specific editor has been registered for the type of relation, then
      * a generic editor will be returned.
-     * 
+     *
      * Editors can be registered by adding their class to the static list "editors"
      * in the RelationEditor class. When it comes to editing a relation, all
      * registered editors are queried via their static "canEdit" method whether they
@@ -90,7 +90,7 @@ public abstract class RelationEditor extends ExtendedDialog {
 
     /**
      * Creates a new relation editor
-     * 
+     *
      * @param layer  the {@see OsmDataLayer} in whose context a relation is edited. Must not be null.
      * @param relation the relation. Can be null if a new relation is to be edited.
      * @param selectedMembers  a collection of members in <code>relation</code> which the editor
@@ -124,7 +124,7 @@ public abstract class RelationEditor extends ExtendedDialog {
     }
     /**
      * Replies the currently edited relation
-     * 
+     *
      * @return the currently edited relation
      */
     protected Relation getRelation() {
@@ -134,7 +134,7 @@ public abstract class RelationEditor extends ExtendedDialog {
     /**
      * Sets the currently edited relation. Creates a snapshot of the current
      * state of the relation. See {@see #getRelationSnapshot()}
-     * 
+     *
      * @param relation the relation
      */
     protected void setRelation(Relation relation) {
@@ -146,7 +146,7 @@ public abstract class RelationEditor extends ExtendedDialog {
     /**
      * Replies the {@see OsmDataLayer} in whose context this relation editor is
      * open
-     * 
+     *
      * @return the {@see OsmDataLayer} in whose context this relation editor is
      * open
      */
@@ -156,7 +156,7 @@ public abstract class RelationEditor extends ExtendedDialog {
 
     /**
      * Replies the state of the edited relation when the editor has been launched
-     * 
+     *
      * @return the state of the edited relation when the editor has been launched
      */
     protected Relation getRelationSnapshot() {
@@ -165,10 +165,10 @@ public abstract class RelationEditor extends ExtendedDialog {
 
     /**
      * Replies true if the currently edited relation has been changed elsewhere.
-     * 
+     *
      * In this case a relation editor can't apply updates to the relation directly. Rather,
      * it has to create a conflict.
-     * 
+     *
      * @return true if the currently edited relation has been changed elsewhere.
      */
     protected boolean isDirtyRelation() {

@@ -64,7 +64,7 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
     /**
      * constructor
      * @param primitive the primitive to purge
-     * 
+     *
      */
     public PurgePrimitivesCommand(OsmPrimitive primitive) {
         init(Collections.singleton(primitive));
@@ -74,7 +74,7 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
      * constructor
      * @param layer the OSM data layer
      * @param primitive the primitive to purge
-     * 
+     *
      */
     public PurgePrimitivesCommand(OsmDataLayer layer, OsmPrimitive primitive) {
         super(layer);
@@ -85,7 +85,7 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
      * constructor
      * @param layer the OSM data layer
      * @param primitives the primitives to purge
-     * 
+     *
      */
     public PurgePrimitivesCommand(OsmDataLayer layer, Collection<OsmPrimitive> primitives) {
         super(layer);
@@ -94,7 +94,7 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
 
     /**
      * Replies a collection with the purged primitives
-     * 
+     *
      * @return a collection with the purged primitives
      */
     public Collection<OsmPrimitive> getPurgedPrimitives() {
@@ -234,7 +234,7 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
     /**
      * Use to inject a backreference data set used when the command
      * is executed.
-     * 
+     *
      * @param ds the backreference data set
      */
     public void setBackreferenceDataSet(BackreferencedDataSet ds) {

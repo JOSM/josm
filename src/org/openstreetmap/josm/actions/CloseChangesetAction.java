@@ -48,7 +48,6 @@ public class CloseChangesetAction extends JosmAction{
         Main.worker.submit(new DownloadOpenChangesetsTask());
     }
 
-
     protected void onPostDownloadOpenChangesets(DownloadOpenChangesetsTask task) {
         if (task.isCancelled() || task.getLastException() != null) return;
 
@@ -74,7 +73,6 @@ public class CloseChangesetAction extends JosmAction{
         Main.worker.submit(closeChangesetTask);
     }
 
-
     private class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
 
         private boolean cancelled;
@@ -84,7 +82,7 @@ public class CloseChangesetAction extends JosmAction{
         private UserInfo userInfo;
 
         /**
-         * 
+         *
          * @param model provides the user id of the current user and accepts the changesets
          * after download
          */
@@ -115,7 +113,7 @@ public class CloseChangesetAction extends JosmAction{
         /**
          * Fetch the user info from the server. This is necessary if we don't know
          * the users id yet
-         * 
+         *
          * @return the user info
          * @throws OsmTransferException thrown in case of any communication exception
          */

@@ -24,7 +24,7 @@ public class IconElemStyle extends ElemStyle
         priority = 0;
         annotate = true;
     }
-    
+
     public ImageIcon getDisabledIcon() {
         if (disabledIcon != null)
             return disabledIcon;

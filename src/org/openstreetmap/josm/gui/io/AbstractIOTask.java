@@ -3,7 +3,7 @@ package org.openstreetmap.josm.gui.io;
 
 /**
  * This is an abstract task for uploading or saving a data layer.
- * 
+ *
  */
 public abstract class AbstractIOTask implements Runnable {
 
@@ -22,7 +22,7 @@ public abstract class AbstractIOTask implements Runnable {
 
     /**
      * Replies true if the task has been cancelled
-     * 
+     *
      * @return true if the task has been cancelled
      */
     public boolean isCancelled() {
@@ -31,7 +31,7 @@ public abstract class AbstractIOTask implements Runnable {
 
     /**
      * Set whether this task has been cancelled
-     * 
+     *
      * @param cancelled true, if the task has been cancelled; false otherwise
      */
     protected void setCancelled(boolean cancelled) {
@@ -40,7 +40,7 @@ public abstract class AbstractIOTask implements Runnable {
 
     /**
      * Replies true if the task has been failed
-     * 
+     *
      * @return true if the task has been failed
      */
     public boolean isFailed() {
@@ -49,7 +49,7 @@ public abstract class AbstractIOTask implements Runnable {
 
     /**
      * Sets whether the task has been failed
-     * 
+     *
      * @param failed whether the task has been failed
      */
     protected void setFailed(boolean failed) {
@@ -58,7 +58,7 @@ public abstract class AbstractIOTask implements Runnable {
 
     /**
      * Replies the last exception caught
-     * 
+     *
      * @return the last exception caught; null, if no exception was caught
      */
     public Exception getLastException() {
@@ -67,7 +67,7 @@ public abstract class AbstractIOTask implements Runnable {
 
     /**
      * Sets the last exception caught
-     * 
+     *
      * @param lastException the last exception
      */
     protected void setLastException(Exception lastException) {
@@ -77,7 +77,7 @@ public abstract class AbstractIOTask implements Runnable {
     /**
      * Replies true if this  task was successful, i.e. if it wasn't
      * cancelled and didn't fail
-     * 
+     *
      * @return true if this  task was successful
      */
     public boolean isSuccessful() {

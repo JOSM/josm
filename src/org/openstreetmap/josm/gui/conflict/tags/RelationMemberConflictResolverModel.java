@@ -21,7 +21,7 @@ import org.openstreetmap.josm.data.osm.BackreferencedDataSet.RelationToChildRefe
 
 /**
  * This model manages a list of conflicting relation members.
- * 
+ *
  * It can be used as {@see TableModel}.
  *
  *
@@ -38,10 +38,9 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     private int numConflicts;
     private PropertyChangeSupport support;
 
-
     /**
      * Replies the current number of conflicts
-     * 
+     *
      * @return the current number of conflicts
      */
     public int getNumConflicts() {
@@ -51,7 +50,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     /**
      * Updates the current number of conflicts from list of decisions and emits
      * a property change event if necessary.
-     * 
+     *
      */
     protected void updateNumConflicts() {
         int count = 0;
@@ -119,7 +118,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     /**
      * Populates the model with the members of the relation <code>relation</code>
      * referring to <code>primitive</code>.
-     * 
+     *
      * @param relation the parent relation
      * @param primitive the child primitive
      */
@@ -134,7 +133,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     /**
      * Populates the model with the relation members belonging to one of the relations in <code>relations</code>
      * and referring to one of the primitives in <code>memberPrimitives</code>.
-     * 
+     *
      * @param relations  the parent relations. Empty list assumed if null.
      * @param memberPrimitives the child primitives. Empty list assumed if null.
      */
@@ -154,7 +153,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     /**
      * Populates the model with the relation members represented as a collection of
      * {@see RelationToChildReference}s.
-     * 
+     *
      * @param references the references. Empty list assumed if null.
      */
     public void populate(Collection<RelationToChildReference> references) {
@@ -174,7 +173,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
 
     /**
      * Replies the decision at position <code>row</code>
-     * 
+     *
      * @param row
      * @return the decision at position <code>row</code>
      */
@@ -184,7 +183,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
 
     /**
      * Replies the number of decisions managed by this model
-     * 
+     *
      * @return the number of decisions managed by this model
      */
     public int getNumDecisions() {
@@ -194,7 +193,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     /**
      * Refreshes the model state. Invoke this method to trigger necessary change
      * events after an update of the model data.
-     * 
+     *
      */
     public void refresh() {
         updateNumConflicts();
@@ -203,7 +202,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
 
     /**
      * Apply a role to all member managed by this model.
-     * 
+     *
      * @param role the role. Empty string assumed if null.
      */
     public void applyRole(String role) {
@@ -255,7 +254,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
 
     /**
      * Builds a collection of commands executing the decisions made in this model.
-     * 
+     *
      * @param newPrimitive the primitive which members shall refer to if the
      * decision is {@see RelationMemberConflictDecisionType#REPLACE}
      * @return a list of commands
@@ -294,10 +293,10 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     /**
      * Replies the set of relations which have to be modified according
      * to the decisions managed by this model.
-     * 
+     *
      * @param newPrimitive the primitive which members shall refer to if the
      * decision is {@see RelationMemberConflictDecisionType#REPLACE}
-     * 
+     *
      * @return the set of relations which have to be modified according
      * to the decisions managed by this model
      */

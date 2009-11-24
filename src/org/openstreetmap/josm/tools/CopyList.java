@@ -97,7 +97,6 @@ public class CopyList<E> extends AbstractList<E> implements RandomAccess, Clonea
         return element;
     }
 
-
     // speed optimizations:
     public @Override boolean add(E element) {
         ensureCapacity(size+1);

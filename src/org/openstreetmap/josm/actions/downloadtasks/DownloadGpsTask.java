@@ -28,7 +28,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
         // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
         return Main.worker.submit(downloadTask);
     }
-    
+
     public Future<?> loadUrl(boolean a,java.lang.String b,  ProgressMonitor progressMonitor) {
         return null;
         // FIXME this is not currently used
@@ -39,7 +39,6 @@ public class DownloadGpsTask extends AbstractDownloadTask {
             downloadTask.cancel();
         }
     }
-
 
     class DownloadTask extends PleaseWaitRunnable {
         private BoundingBoxDownloader reader;
@@ -86,7 +85,7 @@ public class DownloadGpsTask extends AbstractDownloadTask {
 
         private Layer findMergeLayer() {
             boolean merge = Main.pref.getBoolean("download.gps.mergeWithLocal", false);
-            if (!Main.isDisplayingMapView())    
+            if (!Main.isDisplayingMapView())
                 return null;
             Layer active = Main.map.mapView.getActiveLayer();
             if (active != null && active instanceof GpxLayer && (merge || ((GpxLayer)active).data.fromServer))

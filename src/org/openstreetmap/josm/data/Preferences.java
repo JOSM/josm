@@ -375,7 +375,6 @@ public class Preferences {
         }
     }
 
-
     public void load() throws IOException {
         properties.clear();
         final BufferedReader in = new BufferedReader(new InputStreamReader(

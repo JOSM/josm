@@ -10,5 +10,4 @@ public class PresetTextComparator implements Comparator<JMenuItem> {
         return arg0.getText().compareTo(arg1.getText());
     }
 
-
 }

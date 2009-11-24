@@ -15,7 +15,6 @@ import java.util.Observer;
 
 import javax.swing.JCheckBox;
 
-
 /**
  * Synchronizes scrollbar adjustments between a set of
  * {@see Adjustable}s. Whenever the adjustment of one of
@@ -35,7 +34,6 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
         enabledMap = new HashMap<Adjustable, Boolean>();
         observable = new Observable();
     }
-
 
     /**
      * registers an {@see Adjustable} for participation in synchronized

@@ -56,7 +56,7 @@ public class HelpBrowser extends JFrame {
 
     /**
      * Replies the unique instance of the help browser
-     * 
+     *
      * @return the unique instance of the help browser
      */
     static public HelpBrowser getInstance() {
@@ -69,7 +69,7 @@ public class HelpBrowser extends JFrame {
     /**
      * Launches the internal help browser and directs it to the help page for
      * <code>helpTopic</code>.
-     * 
+     *
      * @param helpTopic the help topic
      */
     static public void launchBrowser(String helpTopic) {
@@ -93,7 +93,7 @@ public class HelpBrowser extends JFrame {
 
     /**
      * Builds the style sheet used in the internal help browser
-     * 
+     *
      * @return the style sheet
      */
     protected StyleSheet buildStyleSheet() {
@@ -171,10 +171,9 @@ public class HelpBrowser extends JFrame {
 
     /**
      * Replies the current URL
-     * 
+     *
      * @return the current URL
      */
-
 
     public String getUrl() {
         return url;
@@ -182,7 +181,7 @@ public class HelpBrowser extends JFrame {
 
     /**
      * Displays a warning page when a help topic doesn't exist yet.
-     * 
+     *
      * @param relativeHelpTopic the help topic
      */
     protected void handleMissingHelpContent(String relativeHelpTopic) {
@@ -203,7 +202,7 @@ public class HelpBrowser extends JFrame {
 
     /**
      * Displays a error page if a help topic couldn't be loaded because of network or IO error.
-     * 
+     *
      * @param relativeHelpTopic the help topic
      * @param e the exception
      */
@@ -226,10 +225,10 @@ public class HelpBrowser extends JFrame {
 
     /**
      * Loads a help topic given by a relative help topic name (i.e. "/Action/New")
-     * 
+     *
      * First tries to load the language specific help topic. If it is missing, tries to
      * load the topic in english.
-     * 
+     *
      * @param relativeHelpTopic the relative help topic
      */
     protected void loadRelativeHelpTopic(String relativeHelpTopic) {
@@ -264,7 +263,7 @@ public class HelpBrowser extends JFrame {
     /**
      * Loads a help topic given by an absolute help topic name, i.e.
      * "/De:Help/Action/New"
-     * 
+     *
      * @param absoluteHelpTopic the absolute help topic name
      */
     protected void loadAbsoluteHelpTopic(String absoluteHelpTopic) {
@@ -288,10 +287,10 @@ public class HelpBrowser extends JFrame {
 
     /**
      * Opens an URL and displays the content.
-     * 
+     *
      *  If the URL is the locator of an absolute help topic, help content is loaded from
      *  the JOSM wiki. Otherwise, the help browser loads the page from the given URL
-     * 
+     *
      * @param url the url
      */
     public void openUrl(String url) {
@@ -332,7 +331,7 @@ public class HelpBrowser extends JFrame {
     /**
      * Loads and displays the help information for a help topic given
      * by a relative help topic name, i.e. "/Action/New"
-     * 
+     *
      * @param relativeHelpTopic the relative help topic
      */
     public void openHelpTopic(String relativeHelpTopic) {
@@ -454,7 +453,7 @@ public class HelpBrowser extends JFrame {
 
         /**
          * Scrolls the help browser to the element with id <code>id</code>
-         * 
+         *
          * @param id the id
          * @return true, if an element with this id was found and scrolling was successful; false, otherwise
          */
@@ -484,9 +483,9 @@ public class HelpBrowser extends JFrame {
          * a relative href consisting of a URL fragment only, i.e.
          * <a href="#thisIsALocalFragment">. If so, replies the fragment, i.e.
          * "thisIsALocalFragment".
-         * 
+         *
          * Otherwise, replies null
-         * 
+         *
          * @param e the hyperlink event
          * @return the local fragment
          */

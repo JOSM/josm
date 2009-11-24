@@ -60,7 +60,7 @@ public class ImageProvider {
 
     /**
      * Return an image from the specified location.
-     * 
+     *
      * @param subdir The position of the directory, e.g. "layer"
      * @param name The icons name (without the ending of ".png")
      * @return The requested Image.
@@ -276,13 +276,13 @@ public class ImageProvider {
 
     /**
      * Creates a rotated version of the input image.
-     * 
+     *
      * @param c The component to get properties useful for painting, e.g. the foreground or
      * background color.
      * @param icon the image to be rotated.
      * @param rotatedAngle the rotated angle, in degree, clockwise. It could be any double but we
      * will mod it with 360 before using it.
-     * 
+     *
      * @return the image after rotating.
      */
     public static ImageIcon createRotatedImage(Component c, Icon icon, double rotatedAngle) {

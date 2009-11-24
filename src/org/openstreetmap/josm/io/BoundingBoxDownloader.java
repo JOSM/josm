@@ -12,7 +12,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.xml.sax.SAXException;
 
-
 public class BoundingBoxDownloader extends OsmServerReader {
 
     /**
@@ -40,7 +39,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
         progressMonitor.beginTask("", 1);
         try {
             progressMonitor.indeterminateSubTask(tr("Contacting OSM Server..."));
-            String url = "trackpoints?bbox="+lon1+","+lat1+","+lon2+","+lat2+"&page=";            
+            String url = "trackpoints?bbox="+lon1+","+lat1+","+lon2+","+lat2+"&page=";
 
             boolean done = false;
             GpxData result = null;

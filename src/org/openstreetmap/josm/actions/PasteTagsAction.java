@@ -253,7 +253,6 @@ public final class PasteTagsAction extends JosmAction {
 
     }
 
-
     public void actionPerformed(ActionEvent e) {
         if (getCurrentDataSet().getSelected().isEmpty())
             return;

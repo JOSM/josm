@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 /**
  * Handles a number of different date formats encountered in OSM. This is built
  * based on similar code in JOSM. This class is not threadsafe, a separate
@@ -33,10 +32,8 @@ public class FallbackDateParser {
         "yyyy:MM:dd HH:mm:ss"
     };
 
-
     private List<DateFormat> dateParsers;
     private int activeDateParser;
-
 
     /**
      * Creates a new instance.
@@ -51,7 +48,6 @@ public class FallbackDateParser {
         // We haven't selected a date parser yet.
         activeDateParser = -1;
     }
-
 
     /**
      * Attempts to parse the specified date.

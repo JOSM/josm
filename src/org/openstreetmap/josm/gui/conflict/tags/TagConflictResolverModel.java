@@ -76,7 +76,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
 
     /**
      * initializes the model from the current tags
-     * 
+     *
      */
     protected void rebuild() {
         if (tags == null) return;
@@ -104,7 +104,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
 
     /**
      * Populates the model with the tags for which conflicts are to be resolved.
-     * 
+     *
      * @param tags  the tag collection with the tags. Must not be null.
      * @param keysWithConflicts the set of tag keys with conflicts
      * @throws IllegalArgumentException thrown if tags is null
@@ -157,7 +157,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
 
     /**
      * Replies true if each {@see MultiValueResolutionDecision} is decided.
-     * 
+     *
      * @return true if each {@see MultiValueResolutionDecision} is decided; false
      * otherwise
      */
@@ -187,7 +187,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
 
     /**
      * Sets whether all tags or only tags with conflicts are displayed
-     * 
+     *
      * @param showTagsWithConflictsOnly if true, only tags with conflicts are displayed
      */
     public void setShowTagsWithConflictsOnly(boolean showTagsWithConflictsOnly) {
@@ -197,7 +197,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
 
     /**
      * Prepare the default decisions for the current model
-     * 
+     *
      */
     public void prepareDefaultTagDecisions() {
         for (MultiValueResolutionDecision decision: decisions.values()) {

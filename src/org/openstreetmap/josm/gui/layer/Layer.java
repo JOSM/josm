@@ -65,19 +65,19 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
 
     /**
      * The visibility state of the layer.
-     * 
+     *
      */
     private boolean visible = true;
 
     /**
      * The layer should be handled as a background layer in automatic handling
-     * 
+     *
      */
     private boolean background = false;
 
     /**
      * The name of this layer.
-     * 
+     *
      */
     private  String name;
 
@@ -144,10 +144,9 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
     public File getAssociatedFile() { return associatedFile; }
     public void setAssociatedFile(File file) { associatedFile = file; }
 
-
     /**
      * Replies the name of the layer
-     * 
+     *
      * @return the name of the layer
      */
     public String getName() {
@@ -173,7 +172,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
 
     /**
      * Replies true if this layer is a background layer
-     * 
+     *
      * @return true if this layer is a background layer
      */
     public boolean isBackgroundLayer() {
@@ -182,7 +181,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
 
     /**
      * Sets whether this layer is a background layer
-     * 
+     *
      * @param background true, if this layer is a background layer
      */
     public void setBackgroundLayer(boolean background) {
@@ -192,7 +191,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
     /**
      * Sets the visibility of this layer. Emits property change event for
      * property {@see #VISIBLE_PROP}.
-     * 
+     *
      * @param visible true, if the layer is visible; false, otherwise.
      */
     public void setVisible(boolean visible) {
@@ -220,7 +219,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
 
     /**
      * Adds a {@see PropertyChangeListener}
-     * 
+     *
      * @param listener the listener
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -229,7 +228,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
 
     /**
      * Removes a {@see PropertyChangeListener}
-     * 
+     *
      * @param listener the listener
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
@@ -238,7 +237,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
 
     /**
      * fires a property change for the property {@see #VISIBLE_PROP}
-     * 
+     *
      * @param oldValue the old value
      * @param newValue the new value
      */
@@ -248,7 +247,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
 
     /**
      * The action to save a layer
-     * 
+     *
      */
     public static class LayerSaveAction extends AbstractAction {
         private Layer layer;

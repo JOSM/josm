@@ -27,7 +27,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class DownloadAction extends JosmAction {
     private static final Logger logger = Logger.getLogger(DownloadAction.class.getName());
- 
+
     public DownloadAction() {
         super(tr("Download from OSM..."), "download", tr("Download map data from the OSM server."),
                 Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download from OSM...")), KeyEvent.VK_D, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY), true);
@@ -40,7 +40,7 @@ public class DownloadAction extends JosmAction {
         dialog.setVisible(true);
         if (! dialog.isCanceled()) {
             dialog.rememberSettings();
-            Bounds area = dialog.getSelectedDownloadArea();            
+            Bounds area = dialog.getSelectedDownloadArea();
             if (dialog.isDownloadOsmData()) {
                 DownloadOsmTask task = new DownloadOsmTask();
                 Future<?> future = task.download(dialog.isNewLayerRequired(), area, null);
@@ -51,6 +51,6 @@ public class DownloadAction extends JosmAction {
                 Future<?> future = task.download(dialog.isNewLayerRequired(),area, null);
                 Main.worker.submit(new PostDownloadHandler(task, future));
             }
-        } 
-    }    
+        }
+    }
 }

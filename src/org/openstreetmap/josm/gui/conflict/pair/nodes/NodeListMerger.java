@@ -11,11 +11,10 @@ import org.openstreetmap.josm.gui.conflict.pair.ListMerger;
 
 /**
  * A UI component for resolving conflicts in the node lists of two {@see Way}s.
- * 
+ *
  */
 public class NodeListMerger extends ListMerger<Node> {
     private static final Logger logger = Logger.getLogger(NodeListMerger.class.getName());
-
 
     public NodeListMerger() {
         super(new NodeListMergeModel());
@@ -62,7 +61,6 @@ public class NodeListMerger extends ListMerger<Node> {
         theirEntriesTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         return embeddInScrollPane(theirEntriesTable);
     }
-
 
     public void populate(Way my, Way their) {
         ((NodeListMergeModel)model).populate(my, their);

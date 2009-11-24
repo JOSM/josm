@@ -571,7 +571,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), "properties:add");
         Main.contentPane.getActionMap().put("properties:add", addAction);
 
-
         // -- edit action
         //
         EditAction editAction = new EditAction();
@@ -884,7 +883,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             updateEnabledState();
         }
     }
-
 
     class AddAction extends AbstractAction {
         public AddAction() {

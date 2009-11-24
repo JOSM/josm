@@ -255,7 +255,6 @@ public class LayerListDialog extends ToggleDialog {
         );
     }
 
-
     private enum DeleteDecision {
         deleteCurrent,
         dontDeleteCurrent,

@@ -39,7 +39,6 @@ public class MergeSelectionAction extends AbstractMergeAction {
         ((OsmDataLayer)targetLayer).mergeFrom(builder.build());
     }
 
-
     public void actionPerformed(ActionEvent e) {
         if (getEditLayer() == null || getEditLayer().data.getSelected().isEmpty())
             return;

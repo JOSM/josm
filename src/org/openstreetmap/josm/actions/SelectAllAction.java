@@ -25,7 +25,7 @@ public class SelectAllAction extends JosmAction {
 
     /**
      * Refreshes the enabled state
-     * 
+     *
      */
     @Override
     protected void updateEnabledState() {

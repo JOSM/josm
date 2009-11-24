@@ -434,7 +434,6 @@ public class ChildRelationBrowser extends JPanel {
         }
     }
 
-
     /**
      * The asynchronous task for downloading a set of relations
      */

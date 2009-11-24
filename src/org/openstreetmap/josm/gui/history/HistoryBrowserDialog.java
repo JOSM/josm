@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * This is non-modal dialog, always showing on top, which displays history information
  * about a given {@see OsmPrimitive}.
- * 
+ *
  */
 public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListener{
 
@@ -39,7 +39,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
 
     /**
      * displays the title for this dialog
-     * 
+     *
      * @param h the current history
      */
     protected void renderTitle(History h) {
@@ -57,7 +57,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
 
     /**
      * builds the GUI
-     * 
+     *
      */
     protected void build() {
         setLayout(new BorderLayout());
@@ -87,7 +87,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
 
     /**
      * constructor
-     * 
+     *
      * @param history  the history to be displayed
      */
     public HistoryBrowserDialog(History history) {

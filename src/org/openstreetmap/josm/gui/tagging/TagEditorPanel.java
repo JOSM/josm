@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * and tag values. Two action buttons are placed on the left, one for additing
  * a new tag and one for deleting the currently selected tags.
  *
- * 
+ *
  */
 public class TagEditorPanel extends JPanel {
     /** the tag editor model */
@@ -40,10 +40,9 @@ public class TagEditorPanel extends JPanel {
     private AutoCompletionCache acCache;
     private AutoCompletionList acList;
 
-
     /**
      * builds the panel with the table for editing tags
-     * 
+     *
      * @return the panel
      */
     protected JPanel buildTagTableEditorPanel() {
@@ -59,7 +58,7 @@ public class TagEditorPanel extends JPanel {
 
     /**
      * builds the panel with the button row
-     * 
+     *
      * @return the panel
      */
     protected JPanel buildButtonsPanel() {
@@ -118,7 +117,7 @@ public class TagEditorPanel extends JPanel {
 
     /**
      * Replies the tag editor model used by this panel.
-     * 
+     *
      * @return the tag editor model used by this panel
      */
     public TagEditorModel getModel() {
@@ -151,7 +150,7 @@ public class TagEditorPanel extends JPanel {
 
     /**
      * The action for deleting the currently selected tags
-     * 
+     *
      *
      */
     class DeleteAction extends AbstractAction implements ListSelectionListener, PropertyChangeListener {

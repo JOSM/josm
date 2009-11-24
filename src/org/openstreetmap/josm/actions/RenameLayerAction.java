@@ -37,7 +37,7 @@ public class RenameLayerAction extends AbstractAction {
         super(tr("Rename layer"), ImageProvider.get("dialogs", "edit"));
         this.file = file;
         this.layer = layer;
-        this.putValue("help", ht("/Action/RenameLayer"));       
+        this.putValue("help", ht("/Action/RenameLayer"));
     }
 
     public void actionPerformed(ActionEvent e) {

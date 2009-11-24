@@ -3,16 +3,16 @@ package org.openstreetmap.josm.gui.tagging.ac;
 
 /**
  * Represents an entry in the list of auto completion values.
- * 
+ *
  *  An AutoCompletionListItem has a <em>priority</em> and a <em>value</em>.
- * 
+ *
  *  The priority helps to sort the auto completion items according to their importance. For instance,
  *  in an auto completion list for tag names, standard tag names would be assigned a higher
  *  priority than arbitrary tag names present in the current data set. There are three priority levels,
  *  {@see AutoCompletionItemPritority}.
  *
  * The value is a string which will be displayed in the auto completion list.
- * 
+ *
  */
 public class AutoCompletionListItem implements Comparable<AutoCompletionListItem>{
 
@@ -35,7 +35,7 @@ public class AutoCompletionListItem implements Comparable<AutoCompletionListItem
     }
 
     /**
-     * 
+     *
      * @return the priority
      */
     public AutoCompletionItemPritority getPriority() {
@@ -51,7 +51,7 @@ public class AutoCompletionListItem implements Comparable<AutoCompletionListItem
     }
 
     /**
-     * 
+     *
      * @return the value
      */
     public String getValue() {
@@ -110,7 +110,6 @@ public class AutoCompletionListItem implements Comparable<AutoCompletionListItem
             return false;
         return true;
     }
-
 
     public int compareTo(AutoCompletionListItem other) {
         int ret = this.priority.compareTo(other.priority);

@@ -323,7 +323,7 @@ public class OsmDataLayer extends Layer {
 
     /**
      * Warns the user about the number of detected conflicts
-     * 
+     *
      * @param numNewConflicts the number of detected conflicts
      * @param numPurgedPrimitives the number of automatically purged objects
      */
@@ -388,7 +388,7 @@ public class OsmDataLayer extends Layer {
      * Builds the purge command for primitives which can be purged automatically
      * from the local dataset because they've been deleted on the
      * server.
-     * 
+     *
      * @return the purge command. <code>null</code> if no primitives have to
      * be purged
      */
@@ -664,7 +664,7 @@ public class OsmDataLayer extends Layer {
     /**
      * Replies true if the data managed by this layer needs to be uploaded to
      * the server because it contains at least one modified primitive.
-     * 
+     *
      * @return true if the data managed by this layer needs to be uploaded to
      * the server because it contains at least one modified primitive; false,
      * otherwise
@@ -678,7 +678,7 @@ public class OsmDataLayer extends Layer {
      * a file. Only replies true if a file is assigned to this layer and
      * if the data managed by this layer has been modified since the last
      * save operation to the file.
-     * 
+     *
      * @return true if the data managed by this layer needs to be saved to
      * a file
      */
@@ -688,7 +688,7 @@ public class OsmDataLayer extends Layer {
 
     /**
      * Initializes the layer after a successful load of OSM data from a file
-     * 
+     *
      */
     public void onPostLoadFromFile() {
         setRequiresSaveToFile(false);
@@ -702,7 +702,7 @@ public class OsmDataLayer extends Layer {
 
     /**
      * Initializes the layer after a successful save of OSM data to a file
-     * 
+     *
      */
     public void onPostSaveToFile() {
         setRequiresSaveToFile(false);
@@ -711,7 +711,7 @@ public class OsmDataLayer extends Layer {
 
     /**
      * Initializes the layer after a successful upload to the server
-     * 
+     *
      */
     public void onPostUploadToServer() {
         setRequiresUploadToServer(data.isModified());

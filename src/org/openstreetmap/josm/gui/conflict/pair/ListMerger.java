@@ -77,7 +77,6 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
     private  JLabel lblMergedVersion;
     private  JLabel lblTheirVersion;
 
-
     private  JLabel lblFrozenState;
 
     abstract protected JScrollPane buildMyElementsTable();
@@ -104,7 +103,6 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         mergedEntriesTable.getSelectionModel().addListSelectionListener(copyAfterCurrentLeftAction);
 
         myEntriesTable.getSelectionModel().addListSelectionListener(copyEndLeftAction);
-
 
         theirEntriesTable.getSelectionModel().addListSelectionListener(copyStartRightAction);
 
@@ -384,7 +382,6 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         gc.weighty = 0.0;
         add(buildFrozeStateControlPanel(), gc);
 
-
         wireActionsToSelectionModels();
     }
 
@@ -517,7 +514,6 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         }
     }
 
-
     class CopyStartRightAction extends AbstractAction implements ListSelectionListener {
 
         public CopyStartRightAction() {
@@ -539,7 +535,6 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
             setEnabled(!theirEntriesTable.getSelectionModel().isSelectionEmpty());
         }
     }
-
 
     class CopyEndRightAction extends AbstractAction implements ListSelectionListener {
 
@@ -592,7 +587,6 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         }
     }
 
-
     class CopyAfterCurrentRightAction extends AbstractAction implements ListSelectionListener {
 
         public CopyAfterCurrentRightAction() {
@@ -621,7 +615,6 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
             );
         }
     }
-
 
     class MoveUpMergedAction extends AbstractAction implements ListSelectionListener {
 
@@ -806,7 +799,6 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         return model;
     }
 
-
     public void update(Observable o, Object arg) {
         lblMyVersion.setText(
                 trn("My version ({0} entry)", "My version ({0} entries)", model.getMyEntriesSize(), model.getMyEntriesSize())
@@ -838,7 +830,6 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
             enabledMap = new HashMap<Adjustable, Boolean>();
             observable = new Observable();
         }
-
 
         /**
          * registers an {@see Adjustable} for participation in synchronized
@@ -945,7 +936,6 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
                     }
                 }
             });
-
 
             observable.addObserver(
                     new Observer() {

@@ -174,7 +174,6 @@ public class CacheFiles {
         checkCleanUp();
     }
 
-
     /**
      * Sets the amount of time data is stored before it gets expired
      * @param amount of time in seconds

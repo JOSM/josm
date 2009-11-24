@@ -56,7 +56,7 @@ public class DataSet implements Cloneable {
 
     /**
      * Replies the API version this dataset was created from. May be null.
-     * 
+     *
      * @return the API version this dataset was created from. May be null.
      */
     public String getVersion() {
@@ -65,7 +65,7 @@ public class DataSet implements Cloneable {
 
     /**
      * Sets the API version this dataset was created from.
-     * 
+     *
      * @param version the API version, i.e. "0.5" or "0.6"
      */
     public void setVersion(String version) {
@@ -80,7 +80,7 @@ public class DataSet implements Cloneable {
 
     /**
      * Replies an unmodifiable collection of nodes in this dataset
-     * 
+     *
      * @return an unmodifiable collection of nodes in this dataset
      */
     public Collection<Node> getNodes() {
@@ -100,7 +100,7 @@ public class DataSet implements Cloneable {
 
     /**
      * Replies an unmodifiable collection of ways in this dataset
-     * 
+     *
      * @return an unmodifiable collection of ways in this dataset
      */
     public Collection<Way> getWays() {
@@ -118,7 +118,7 @@ public class DataSet implements Cloneable {
 
     /**
      * Replies an unmodifiable collection of relations in this dataset
-     * 
+     *
      * @return an unmodifiable collection of relations in this dataset
      */
     public Collection<Relation> getRelations() {
@@ -238,7 +238,6 @@ public class DataSet implements Cloneable {
         firePrimitivesRemoved(Collections.singletonList(primitive));
     }
 
-
     /*---------------------------------------------------
      *   SELECTION HANDLING
      *---------------------------------------------------*/
@@ -253,7 +252,7 @@ public class DataSet implements Cloneable {
     /**
      * notifies all registered selection change listeners about the current selection of
      * primitives
-     * 
+     *
      * @param sel the current selection
      */
     private static void notifySelectionChangeListeners(Collection<? extends OsmPrimitive> sel) {
@@ -265,12 +264,11 @@ public class DataSet implements Cloneable {
     /**
      * Notifies all registered {@see SelectionChangedListener} about the current selection in
      * this dataset.
-     * 
+     *
      */
     public void fireSelectionChanged(){
         notifySelectionChangeListeners(selectedPrimitives);
     }
-
 
     LinkedHashSet<OsmPrimitive> selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
 
@@ -284,7 +282,6 @@ public class DataSet implements Cloneable {
         }
         return sel;
     }
-
 
     /**
      * Return a list of all selected objects. Even keys are returned.
@@ -337,7 +334,6 @@ public class DataSet implements Cloneable {
     public boolean isSelected(OsmPrimitive osm) {
         return selectedPrimitives.contains(osm);
     }
-
 
     public void toggleSelected(Collection<? extends PrimitiveId> osm) {
         boolean changed = false;
@@ -456,7 +452,6 @@ public class DataSet implements Cloneable {
         }
     }
 
-
     /*------------------------------------------------------
      * FILTERED / DISABLED HANDLING
      *-----------------------------------------------------*/
@@ -507,7 +502,6 @@ public class DataSet implements Cloneable {
         }
     }
 
-
     /**
      * Remove the filtered parameter from every value in the collection.
      * @param list The collection to remove the filtered parameter from.
@@ -530,7 +524,6 @@ public class DataSet implements Cloneable {
             osm.setDisabled(false);
         }
     }
-
 
     @Override public DataSet clone() {
         DataSet ds = new DataSet();
@@ -788,7 +781,6 @@ public class DataSet implements Cloneable {
         ways.add(way);
     }
 
-
     public void addDataSetListener(DataSetListener dsl) {
         listeners.add(dsl);
     }
@@ -912,7 +904,7 @@ public class DataSet implements Cloneable {
     /**
      * Removes all primitives from the dataset and resets the currently selected primitives
      * to the empty collection. Also notifies selection change listeners if necessary.
-     * 
+     *
      */
     public void clear() {
         clearSelection();
@@ -924,7 +916,6 @@ public class DataSet implements Cloneable {
         relations.clear();
         allPrimitives.clear();
     }
-
 
     // TODO Should be completely part of validator
     private Map<OsmPrimitive, List<String>> errors = new HashMap<OsmPrimitive, List<String>>();
@@ -940,7 +931,7 @@ public class DataSet implements Cloneable {
 
     /**
      * Replies the list of errors registered for this primitive.
-     * 
+     *
      * @param primitive the primitive for which errors are queried
      * @return the list of errors. Never null.
      * @deprecated should be moved to the validator plugin

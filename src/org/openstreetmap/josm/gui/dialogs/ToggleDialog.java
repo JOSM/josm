@@ -278,7 +278,6 @@ public class ToggleDialog extends JPanel implements Helpful {
 
     }
 
-
     /**
      * The title bar displayed in docked mode
      *

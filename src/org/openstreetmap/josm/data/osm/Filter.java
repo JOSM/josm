@@ -38,12 +38,12 @@ public class Filter extends SearchSetting {
       inverted = Boolean.parseBoolean(prfs[8]);
       applyForChildren = Boolean.parseBoolean(prfs[9]);
 
-   }  
+   }
 
    public String getPrefString(){
-      return version + ";" + 
+      return version + ";" +
           text + ";" + mode + ";" + caseSensitive + ";" + regexSearch + ";" +
-          "legacy" + ";" + enable + ";" + hide + ";" + 
+          "legacy" + ";" + enable + ";" + hide + ";" +
           inverted + ";" + applyForChildren;
    }
 }

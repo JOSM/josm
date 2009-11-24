@@ -25,10 +25,10 @@ import org.openstreetmap.josm.gui.util.TableCellEditorSupport;
 /**
  * AutoCompletingTextField is an text field with autocompletion behaviour. It
  * can be used as table cell editor in {@see JTable}s.
- * 
+ *
  * Autocompletion is controlled by a list of {@see AutoCompletionListItem}s
  * managed in a {@see AutoCompletionList}.
- * 
+ *
  *
  */
 public class AutoCompletingTextField extends JTextField implements ComboBoxEditor, TableCellEditor {
@@ -42,7 +42,7 @@ public class AutoCompletingTextField extends JTextField implements ComboBoxEdito
 
         /**
          * inserts a string at a specific position
-         * 
+         *
          */
         @Override
         public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
@@ -109,7 +109,7 @@ public class AutoCompletingTextField extends JTextField implements ComboBoxEdito
 
     /**
      * creates the default document model for this editor
-     * 
+     *
      */
     @Override
     protected Document createDefaultModel() {
@@ -159,7 +159,7 @@ public class AutoCompletingTextField extends JTextField implements ComboBoxEdito
     }
 
     /**
-     * 
+     *
      * @return the auto completion list; may be null, if no auto completion list is set
      */
     public AutoCompletionList getAutoCompletionList() {
@@ -226,7 +226,6 @@ public class AutoCompletingTextField extends JTextField implements ComboBoxEdito
     public boolean isCellEditable(EventObject anEvent) {
         return true;
     }
-
 
     public boolean shouldSelectCell(EventObject anEvent) {
         return true;

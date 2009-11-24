@@ -18,7 +18,6 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
 
     private static final Logger logger = Logger.getLogger(NodeListMergeModel.class.getName());
 
-
     /**
      * Populates the model with the nodes in the two {@see Way}s <code>my</code> and
      * <code>their</code>.
@@ -71,7 +70,6 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
             throw new IllegalArgumentException(tr("Merged nodes not frozen yet. Can't build resolution command."));
         return new WayNodesConflictResolverCommand(my, their, getMergedEntries());
     }
-
 
     @Override
     public boolean isEqualEntry(Node e1, Node e2) {

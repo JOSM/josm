@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This is a {@see TableCellRenderer} for {@see MultiValueResolutionDecision}s.
- * 
+ *
  */
 public class MultiValueCellRenderer extends JLabel implements TableCellRenderer {
 
