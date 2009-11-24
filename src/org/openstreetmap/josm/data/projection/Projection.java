@@ -25,6 +25,7 @@ public interface Projection {
         new Mercator(),
         new LambertEST(), // Still needs proper default zoom
         new Lambert(),    // Still needs proper default zoom
+        new Puwg(),
         new SwissGrid(),
         new UTM(),
         new UTM_20N_France_DOM(),
