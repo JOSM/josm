@@ -238,8 +238,8 @@ public class Lambert implements Projection, ProjectionSubPrefs {
 
     public static String[] lambert4zones = {
         tr("{0} ({1} to {2} degrees)", 1,"51.30","48.15"),
-        tr("{0} ({1} to {2} degrees)", 1,"48.15","45.45"),
-        tr("{0} ({1} to {2} degrees)", 1,"45.45","42.76"),
+        tr("{0} ({1} to {2} degrees)", 2,"48.15","45.45"),
+        tr("{0} ({1} to {2} degrees)", 3,"45.45","42.76"),
         tr("{0} (Corsica)", 4)
     };
 
