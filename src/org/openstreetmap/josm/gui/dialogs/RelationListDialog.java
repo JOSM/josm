@@ -143,6 +143,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
         if (Main.main.getEditLayer() != null) {
             Main.main.getEditLayer().data.addDataSetListener(this);
         }
+        dataChanged();
     }
 
     @Override public void hideNotify() {
