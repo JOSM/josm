@@ -66,6 +66,11 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
         return Zones[zone].toCode();
     }
 
+    @Override
+    public int hashCode() {
+        return getClass().getName().hashCode()+zone; // our only real variable
+    }
+
     public String getCacheDirectoryName() {
         return Zones[zone].getCacheDirectoryName();
     }

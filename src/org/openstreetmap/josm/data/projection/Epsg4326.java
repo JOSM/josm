@@ -30,6 +30,11 @@ public class Epsg4326 implements Projection {
         return "EPSG:4326";
     }
 
+    @Override
+    public int hashCode() {
+        return getClass().getName().hashCode(); // we have no variables
+    }
+
     public String getCacheDirectoryName() {
         return "epsg4326";
     }

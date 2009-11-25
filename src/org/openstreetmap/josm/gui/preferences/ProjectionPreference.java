@@ -163,16 +163,16 @@ public class ProjectionPreference implements PreferenceSetting {
             Main.proj = new Mercator();
             name = Main.proj.getClass().getName();
         }
-        if(!Main.proj.equals(oldProj) && b != null)
-        {
-            Main.map.mapView.zoomTo(b);
-            /* TODO - remove layers with fixed projection */
-        }
         Main.pref.putCollection("projection.sub", coll);
         String sname = name.substring(name.lastIndexOf(".")+1);
         Main.pref.putCollection("projection.sub."+sname, coll);
         if(projHasPrefs(Main.proj))
             ((ProjectionSubPrefs) Main.proj).setPreferences(coll);
+        if(b != null && (!Main.proj.getClass().getName().equals(oldProj.getClass().getName()) || Main.proj.hashCode() != oldProj.hashCode()))
+        {
+            Main.map.mapView.zoomTo(b);
+            /* TODO - remove layers with fixed projection */
+        }
     }
 
     private class SBPanel extends JPanel

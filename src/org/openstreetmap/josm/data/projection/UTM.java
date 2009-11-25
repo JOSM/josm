@@ -360,6 +360,11 @@ public class UTM implements Projection, ProjectionSubPrefs {
         return "EPSG:"+ (325800 + getzone());
     }
 
+    @Override
+    public int hashCode() {
+        return getClass().getName().hashCode()+zone; // our only real variable
+    }
+
     public String getCacheDirectoryName() {
         return "epsg"+ (325800 + getzone());
     }

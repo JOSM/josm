@@ -144,6 +144,11 @@ public class LambertCC9Zones implements Projection, ProjectionSubPrefs {
         return "EPSG:"+(3942+layoutZone); //CC42 is EPSG:3942 (up to EPSG:3950 for CC50)
     }
 
+    @Override
+    public int hashCode() {
+        return getClass().getName().hashCode()+layoutZone; // our only real variable
+    }
+
     public String getCacheDirectoryName() {
         return "lambert";
     }

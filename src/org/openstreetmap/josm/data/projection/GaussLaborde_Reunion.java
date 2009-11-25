@@ -211,6 +211,11 @@ public class GaussLaborde_Reunion implements Projection {
         return "EPSG::3727";
     }
 
+    @Override
+    public int hashCode() {
+        return getClass().getName().hashCode(); // we have no variables
+    }
+
     @Override public String toString() {
         return tr("Gauss-Laborde R\u00E9union 1947");
     }

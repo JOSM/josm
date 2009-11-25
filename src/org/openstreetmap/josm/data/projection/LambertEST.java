@@ -100,6 +100,11 @@ public class LambertEST implements Projection {
         return "EPSG:3301";
     }
 
+    @Override
+    public int hashCode() {
+        return getClass().getName().hashCode(); // we have no variables
+    }
+
     public String getCacheDirectoryName() {
         return "lambertest";
     }

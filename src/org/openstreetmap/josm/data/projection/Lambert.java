@@ -137,6 +137,11 @@ public class Lambert implements Projection, ProjectionSubPrefs {
         return "EPSG:"+(27561+layoutZone);
     }
 
+    @Override
+    public int hashCode() {
+        return getClass().getName().hashCode()+layoutZone; // our only real variable
+    }
+
     public String getCacheDirectoryName() {
         return "lambert";
     }

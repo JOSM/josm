@@ -92,6 +92,11 @@ public class SwissGrid implements Projection {
         return "EPSG:21781";
     }
 
+    @Override
+    public int hashCode() {
+        return getClass().getName().hashCode(); // we have no variables
+    }
+
     public String getCacheDirectoryName() {
         return "swissgrid";
     }

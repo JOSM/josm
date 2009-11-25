@@ -41,6 +41,11 @@ public class Mercator implements Projection {
         return "EPSG:3857"; /* TODO: Check if that is correct */
     }
 
+    @Override
+    public int hashCode() {
+        return getClass().getName().hashCode(); // we have no variables
+    }
+
     public String getCacheDirectoryName() {
         return "mercator";
     }

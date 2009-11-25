@@ -377,6 +377,11 @@ public class UTM_20N_France_DOM implements Projection, ProjectionSubPrefs {
         return utmEPSGs[currentGeodesic];
     }
 
+    @Override
+    public int hashCode() {
+        return getClass().getName().hashCode()+currentGeodesic; // our only real variable
+    }
+
     @Override public String toString() {
         return (tr("UTM 20N (France)"));
     }
