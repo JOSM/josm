@@ -652,8 +652,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             {
                 if("-1".equals(onewayviastr)) {
                     onewayvia = true;
+                    Node tmp = firstNode;
                     firstNode = lastNode;
-                    lastNode = firstNode;
+                    lastNode = tmp;
                 } else {
                     onewayvia = OsmUtils.getOsmBoolean(onewayviastr);
                 }
