@@ -247,22 +247,8 @@ public class DataSet implements Cloneable {
      * themselves for any dataset selection changes that occur, regardless of the current active
      * dataset. (However, the selection does only change in the active layer)
      */
-    public static Collection<SelectionChangedListener> selListeners = 
+    public static Collection<SelectionChangedListener> selListeners =
         Collections.synchronizedList(new LinkedList<SelectionChangedListener>());
-
-    /**
-     * notifies all registered selection change listeners about the current selection of
-     * primitives
-     *
-     * @param sel the current selection
-     */
-    private static void notifySelectionChangeListeners(Collection<? extends OsmPrimitive> sel) {
-        synchronized (selListeners) {
-            for (SelectionChangedListener l : selListeners) {
-                l.selectionChanged(sel);
-            }
-        }
-    }
 
     /**
      * Notifies all registered {@see SelectionChangedListener} about the current selection in
@@ -270,7 +256,12 @@ public class DataSet implements Cloneable {
      *
      */
     public void fireSelectionChanged(){
-        notifySelectionChangeListeners(selectedPrimitives);
+        synchronized (selListeners) {
+            List<? extends OsmPrimitive> currentSelection = Collections.unmodifiableList(new ArrayList<OsmPrimitive>(selectedPrimitives));
+            for (SelectionChangedListener l : selListeners) {
+                l.selectionChanged(currentSelection);
+            }
+        }
     }
 
     LinkedHashSet<OsmPrimitive> selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
