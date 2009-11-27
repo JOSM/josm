@@ -55,6 +55,27 @@ public class ConditionalOptionPaneUtil {
     }
 
     /**
+     * Returns the preference value for the preference key "message." + <code>prefKey</code> + ".value".
+     * The default value if the preference key is missing is -1.
+     *
+     * @param  the preference key
+     * @return prefKey the preference value for the preference key "message." + <code>prefKey</code> + ".value"
+     */
+    public static Integer getDialogReturnValue(String prefKey) {
+        return Main.pref.getInteger("message."+prefKey+".value", -1);
+    }
+
+    /**
+     * sets the value for the preference key "message." + <code>prefKey</code> + ".value".
+     *
+     * @param prefKey the key
+     * @param value the value
+     */
+    public static void setDialogReturnValue(String prefKey, Integer value) {
+        Main.pref.putInteger("message."+prefKey+".value", value);
+    }
+
+    /**
      * Displays an confirmation dialog with some option buttons given by <code>optionType</code>.
      * It is always on top even if there are other open windows like detached dialogs,
      * relation editors, history browsers and the like.
@@ -88,7 +109,9 @@ public class ConditionalOptionPaneUtil {
             return DIALOG_DISABLED_OPTION;
         MessagePanel pnl = new MessagePanel(preferenceKey, message);
         int ret = JOptionPane.showOptionDialog(parent, pnl, title, optionType, messageType, null,options,defaultOption);
-        pnl.remeberDialogShowingEnabled();
+
+        if(!pnl.getDialogShowingEnabled())
+            setDialogShowingEnabled(preferenceKey, false);
         return ret;
     }
 
@@ -123,11 +146,14 @@ public class ConditionalOptionPaneUtil {
      * @see JOptionPane#ERROR_MESSAGE
      */
     static public boolean showConfirmationDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, int trueOption) throws HeadlessException {
-        if (!getDialogShowingEnabled(preferenceKey))
-            return true;
+        if (!getDialogShowingEnabled(preferenceKey) && (getDialogReturnValue(preferenceKey) >= 0))
+            return getDialogReturnValue(preferenceKey) == trueOption;
         MessagePanel pnl = new MessagePanel(preferenceKey, message);
         int ret = JOptionPane.showConfirmDialog(parent, pnl, title, optionType, messageType);
-        pnl.remeberDialogShowingEnabled();
+        if ((ret >= 0) && !pnl.getDialogShowingEnabled()) {
+            setDialogShowingEnabled(preferenceKey, false);
+            setDialogReturnValue(preferenceKey, ret);
+        }
         return ret == trueOption;
     }
 
@@ -154,7 +180,8 @@ public class ConditionalOptionPaneUtil {
             return;
         MessagePanel pnl = new MessagePanel(preferenceKey, message);
         JOptionPane.showMessageDialog(parent, pnl, title, messageType);
-        pnl.remeberDialogShowingEnabled();
+        if(!pnl.getDialogShowingEnabled())
+            setDialogShowingEnabled(preferenceKey, false);
     }
 
     /**
@@ -183,11 +210,7 @@ public class ConditionalOptionPaneUtil {
         }
 
         public boolean getDialogShowingEnabled() {
-            return cbShowDialog.isSelected();
-        }
-
-        public void remeberDialogShowingEnabled() {
-            ConditionalOptionPaneUtil.setDialogShowingEnabled(preferenceKey, !getDialogShowingEnabled());
+            return !cbShowDialog.isSelected();
         }
     }
 }
