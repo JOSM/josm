@@ -237,26 +237,28 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
      * map.
      */
     public void resizeSlippyMap() {
+        int w, h;
+
+        // retrieve the size of the display
         Dimension iScreenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
         // enlarge
         if(iDownloadDialogDimension == null) {
+            // make the each dimension 90% of the absolute display size
+            w = iScreenSize.width * 90 / 100;
+            h = iScreenSize.height * 90 / 100;
             iDownloadDialogDimension = iGui.getSize();
-            // make the each dimension 90% of the absolute display size and
-            // center the DownloadDialog
-            // retrieve the size of the display
-            int w = iScreenSize.width * 90 / 100;
-            int h = iScreenSize.height * 90 / 100;
-            iGui.setBounds((iScreenSize.width - w) / 2, (iScreenSize.height - h) / 2, w, h);
         }
         // shrink
         else {
-            // set the size back to the initial dimensions and center the
-            // DownloadDialog
-            int w = iDownloadDialogDimension.width;
-            int h = iDownloadDialogDimension.height;
-            iGui.setBounds((iScreenSize.width - w) / 2, (iScreenSize.height - h) / 2, w, h);
+            // set the size back to the initial dimensions
+            w = iDownloadDialogDimension.width;
+            h = iDownloadDialogDimension.height;
             iDownloadDialogDimension = null;
         }
+
+        // resize and center the DownloadDialog
+        iGui.setBounds((iScreenSize.width - w) / 2, (iScreenSize.height - h) / 2, w, h);
 
         repaint();
     }
