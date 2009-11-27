@@ -52,8 +52,6 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
 
     // standard dimension
     private Dimension iDownloadDialogDimension;
-    // screen size
-    private Dimension iScreenSize;
 
     private TileSource[] sources = { new OsmTileSource.Mapnik(), new OsmTileSource.TilesAtHome(),
             new OsmTileSource.CycleMap() };
@@ -239,28 +237,16 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
      * map.
      */
     public void resizeSlippyMap() {
-        if (iScreenSize == null) {
-            Component c = iGui.getParent().getParent().getParent().getParent().getParent().getParent().getParent()
-            .getParent().getParent();
-            // remember the initial set screen dimensions
-            iDownloadDialogDimension = c.getSize();
-            // retrive the size of the display
-            iScreenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        }
-
-        // resize
-        Component co = iGui.getParent().getParent().getParent().getParent().getParent().getParent().getParent()
-        .getParent().getParent();
-        Dimension currentDimension = co.getSize();
-
+        Dimension iScreenSize = Toolkit.getDefaultToolkit().getScreenSize();
         // enlarge
-        if (currentDimension.equals(iDownloadDialogDimension)) {
+        if(iDownloadDialogDimension == null) {
+            iDownloadDialogDimension = iGui.getSize();
             // make the each dimension 90% of the absolute display size and
             // center the DownloadDialog
+            // retrieve the size of the display
             int w = iScreenSize.width * 90 / 100;
             int h = iScreenSize.height * 90 / 100;
-            co.setBounds((iScreenSize.width - w) / 2, (iScreenSize.height - h) / 2, w, h);
-
+            iGui.setBounds((iScreenSize.width - w) / 2, (iScreenSize.height - h) / 2, w, h);
         }
         // shrink
         else {
@@ -268,8 +254,8 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
             // DownloadDialog
             int w = iDownloadDialogDimension.width;
             int h = iDownloadDialogDimension.height;
-            co.setBounds((iScreenSize.width - w) / 2, (iScreenSize.height - h) / 2, w, h);
-
+            iGui.setBounds((iScreenSize.width - w) / 2, (iScreenSize.height - h) / 2, w, h);
+            iDownloadDialogDimension = null;
         }
 
         repaint();
