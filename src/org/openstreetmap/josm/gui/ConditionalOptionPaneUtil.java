@@ -107,7 +107,7 @@ public class ConditionalOptionPaneUtil {
     static public int showOptionDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, Object [] options, Object defaultOption) throws HeadlessException {
         if (!getDialogShowingEnabled(preferenceKey))
             return DIALOG_DISABLED_OPTION;
-        MessagePanel pnl = new MessagePanel(preferenceKey, message);
+        MessagePanel pnl = new MessagePanel(false, message);
         int ret = JOptionPane.showOptionDialog(parent, pnl, title, optionType, messageType, null,options,defaultOption);
 
         if(!pnl.getDialogShowingEnabled())
@@ -146,9 +146,10 @@ public class ConditionalOptionPaneUtil {
      * @see JOptionPane#ERROR_MESSAGE
      */
     static public boolean showConfirmationDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, int trueOption) throws HeadlessException {
-        if (!getDialogShowingEnabled(preferenceKey) && (getDialogReturnValue(preferenceKey) >= 0))
+        boolean donotshow = getDialogShowingEnabled(preferenceKey);
+        if (donotshow && (getDialogReturnValue(preferenceKey) >= 0))
             return getDialogReturnValue(preferenceKey) == trueOption;
-        MessagePanel pnl = new MessagePanel(preferenceKey, message);
+        MessagePanel pnl = new MessagePanel(donotshow, message);
         int ret = JOptionPane.showConfirmDialog(parent, pnl, title, optionType, messageType);
         if ((ret >= 0) && !pnl.getDialogShowingEnabled()) {
             setDialogShowingEnabled(preferenceKey, false);
@@ -178,7 +179,7 @@ public class ConditionalOptionPaneUtil {
     static public void showMessageDialog(String preferenceKey, Component parent, Object message, String title,int messageType) {
         if (!getDialogShowingEnabled(preferenceKey))
             return;
-        MessagePanel pnl = new MessagePanel(preferenceKey, message);
+        MessagePanel pnl = new MessagePanel(false, message);
         JOptionPane.showMessageDialog(parent, pnl, title, messageType);
         if(!pnl.getDialogShowingEnabled())
             setDialogShowingEnabled(preferenceKey, false);
@@ -193,12 +194,10 @@ public class ConditionalOptionPaneUtil {
      */
     private static class MessagePanel extends JPanel {
         JCheckBox cbShowDialog;
-        String preferenceKey;
 
-        public MessagePanel(String preferenceKey, Object message) {
-            this.preferenceKey = preferenceKey;
+        public MessagePanel(boolean donotshow, Object message) {
             cbShowDialog = new JCheckBox(tr("Do not show again"));
-            cbShowDialog.setSelected(!ConditionalOptionPaneUtil.getDialogShowingEnabled(preferenceKey));
+            cbShowDialog.setSelected(donotshow);
             setLayout(new GridBagLayout());
 
             if (message instanceof Component) {
