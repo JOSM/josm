@@ -167,7 +167,7 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
         if (area == null)
             return;
 
-        // test if a bounding box has been set set
+        // test if a bounding box has been set
         if (area.getMin().lat() == 0.0 && area.getMin().lon() == 0.0 && area.getMax().lat() == 0.0 && area.getMax().lon() == 0.0)
             return;
 
@@ -199,8 +199,9 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
      * @param aEnd
      */
     public void setSelection(Point aStart, Point aEnd) {
-        if (aStart == null || aEnd == null)
+        if (aStart == null || aEnd == null || aStart.x == aEnd.x || aStart.y == aEnd.y)
             return;
+
         Point p_max = new Point(Math.max(aEnd.x, aStart.x), Math.max(aEnd.y, aStart.y));
         Point p_min = new Point(Math.min(aEnd.x, aStart.x), Math.min(aEnd.y, aStart.y));
 
