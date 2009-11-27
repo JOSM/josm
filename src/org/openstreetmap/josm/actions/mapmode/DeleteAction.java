@@ -12,17 +12,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationDialogManager;
@@ -62,27 +58,32 @@ public class DeleteAction extends MapMode implements AWTEventListener {
     // pressed but the mouse isn't moved)
     private MouseEvent oldEvent = null;
 
-    private enum Cursors {
-        none,
-        node,
-        segment,
-        way_node_only,
-        way_normal,
-        way_only;
+    private enum DeleteMode {
+        none("delete"),
+        segment("delete_segment"),
+        node("delete_node"),
+        node_with_references("delete_node"),
+        way("delete_way_only"),
+        way_with_references("delete_way_normal"),
+        way_with_nodes("delete_way_node_only");
 
-        private Cursor c = null;
-        // This loads and caches the cursor for each
+        private final Cursor c;
+
+        private DeleteMode(String cursorName) {
+            c = ImageProvider.getCursor("normal", cursorName);
+        }
+
         public Cursor cursor() {
-            if(c == null) {
-                String nm = "delete_" + this.name().toLowerCase();
-                // "None" has no special icon
-                nm = nm.equals("delete_none") ? "delete" : nm;
-                this.c = ImageProvider.getCursor("normal", nm);
-            }
             return c;
         }
     }
-    private Cursors currCursor = Cursors.none;
+    private DeleteMode currentMode = DeleteMode.none;
+
+    private static class DeleteParameters {
+        DeleteMode mode;
+        Node nearestNode;
+        WaySegment nearestSegment;
+    }
 
     /**
      * Construct a new DeleteAction. Mnemonic is the delete - key.
@@ -109,9 +110,11 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         // This is required to update the cursors when ctrl/shift/alt is pressed
         try {
             Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
-        } catch (SecurityException ex) {}
+        } catch (SecurityException ex) {
+            System.out.println(ex);
+        }
 
-        currCursor = Cursors.none;
+        currentMode = DeleteMode.none;
     }
 
     @Override public void exitMode() {
@@ -120,7 +123,9 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         Main.map.mapView.removeMouseMotionListener(this);
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
-        } catch (SecurityException ex) {}
+        } catch (SecurityException ex) {
+            System.out.println(ex);
+        }
     }
 
     @Override public void actionPerformed(ActionEvent e) {
@@ -171,55 +176,19 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      * modifiers.
      *
      * @param MouseEvent
-     * @parm int modifiers
+     * @param int modifiers
      */
     private void updateCursor(MouseEvent e, int modifiers) {
-        if (!Main.isDisplayingMapView()) {
+        if (!Main.isDisplayingMapView())
             return;
-        }
         if(!Main.map.mapView.isActiveLayerVisible() || e == null)
             return;
 
         // Clean old highlights
         //cleanOldHighlights();
 
-        Command c = buildDeleteCommands(e, modifiers, true);
-        if(c == null) {
-            setCursor(Cursors.none);
-            return;
-        }
-
-        Collection<OsmPrimitive> prims = new HashSet<OsmPrimitive>();
-        Collection<OsmPrimitive> mods = new HashSet<OsmPrimitive>();
-        c.fillModifiedData(mods, prims, prims);
-
-        if(prims.size() == 0 && mods.size() == 0) {
-            // Default-Cursor
-            setCursor(Cursors.none);
-            return;
-        }
-
-        // There are no deleted parts if solely a way segment is deleted
-        // This is no the case when actually deleting only a segment but that
-        // segment happens to be the whole way. This is an acceptable error
-        // though
-        if(prims.size() == 0) {
-            setCursor(Cursors.segment);
-        } else if(prims.size() == 1 && prims.toArray()[0] instanceof Node) {
-            setCursor(Cursors.node);
-        } else if(prims.size() == 1 && prims.toArray()[0] instanceof Way) {
-            setCursor(Cursors.way_only);
-        } else {
-            // Decide between non-accel click where "useless" nodes are deleted
-            // and ctrl-click where nodes and ways are deleted
-            boolean ctrl = (modifiers & ActionEvent.CTRL_MASK) != 0;
-            if(ctrl) {
-                setCursor(Cursors.way_node_only);
-            } else {
-                setCursor(Cursors.way_normal);
-            }
-
-        }
+        DeleteParameters parameters = getDeleteParameters(e, modifiers);
+        setCursor(parameters.mode);
 
         // Needs to implement WaySegment highlight first
         /*if(drawTargetHighlight) {
@@ -305,6 +274,38 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         }
     }
 
+    private DeleteParameters getDeleteParameters(MouseEvent e, int modifiers) {
+        // Note: CTRL is the only modifier that is checked in MouseMove, don't
+        // forget updating it there
+        boolean ctrl = (modifiers & ActionEvent.CTRL_MASK) != 0;
+        boolean shift = (modifiers & ActionEvent.SHIFT_MASK) != 0;
+        boolean alt = (modifiers & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
+
+        DeleteParameters result = new DeleteParameters();
+
+        result.nearestNode = Main.map.mapView.getNearestNode(e.getPoint());
+        if (result.nearestNode == null) {
+            result.nearestSegment = Main.map.mapView.getNearestWaySegment(e.getPoint());
+            if (result.nearestSegment != null) {
+                if (shift) {
+                    result.mode = DeleteMode.segment;
+                } else if (ctrl) {
+                    result.mode = DeleteMode.way_with_references;
+                } else {
+                    result.mode = alt?DeleteMode.way:DeleteMode.way_with_nodes;
+                }
+            } else {
+                result.mode = DeleteMode.none;
+            }
+        } else if (ctrl) {
+            result.mode = DeleteMode.node_with_references;
+        } else {
+            result.mode = DeleteMode.node;
+        }
+
+        return result;
+    }
+
     /**
      * This function takes any mouse event argument and builds the list of elements
      * that should be deleted but does not actually delete them.
@@ -315,32 +316,23 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      * @return
      */
     private Command buildDeleteCommands(MouseEvent e, int modifiers, boolean silent) {
-        // Note: CTRL is the only modifier that is checked in MouseMove, don't
-        // forget updating it there
-        boolean ctrl = (modifiers & ActionEvent.CTRL_MASK) != 0;
-        boolean shift = (modifiers & ActionEvent.SHIFT_MASK) != 0;
-        boolean alt = (modifiers & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
-
-        OsmPrimitive sel = Main.map.mapView.getNearestNode(e.getPoint());
-        Command c = null;
-        if (sel == null) {
-            WaySegment ws = Main.map.mapView.getNearestWaySegment(e.getPoint());
-            if (ws != null) {
-                if (shift) {
-                    c = DeleteCommand.deleteWaySegment(getEditLayer(),ws);
-                } else if (ctrl) {
-                    c = DeleteCommand.deleteWithReferences(getEditLayer(),Collections.singleton((OsmPrimitive)ws.way),true);
-                } else {
-                    c = DeleteCommand.delete(getEditLayer(),Collections.singleton((OsmPrimitive)ws.way), !alt, silent);
-                }
-            }
-        } else if (ctrl) {
-            c = DeleteCommand.deleteWithReferences(getEditLayer(),Collections.singleton(sel));
-        } else {
-            c = DeleteCommand.delete(getEditLayer(),Collections.singleton(sel), !alt, silent);
+        DeleteParameters parameters = getDeleteParameters(e, modifiers);
+        switch (parameters.mode) {
+        case node:
+            return DeleteCommand.delete(getEditLayer(),Collections.singleton(parameters.nearestNode), false, silent);
+        case node_with_references:
+            return DeleteCommand.deleteWithReferences(getEditLayer(),Collections.singleton(parameters.nearestNode));
+        case segment:
+            return DeleteCommand.deleteWaySegment(getEditLayer(), parameters.nearestSegment);
+        case way:
+            return DeleteCommand.delete(getEditLayer(), Collections.singleton(parameters.nearestSegment.way), false, silent);
+        case way_with_nodes:
+            return DeleteCommand.delete(getEditLayer(), Collections.singleton(parameters.nearestSegment.way), true, silent);
+        case way_with_references:
+            return DeleteCommand.deleteWithReferences(getEditLayer(),Collections.singleton(parameters.nearestSegment.way),true);
+        default:
+            return null;
         }
-
-        return c;
     }
 
     /**
@@ -350,8 +342,8 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      * to MapMode.
      * @param c
      */
-    private void setCursor(final Cursors c) {
-        if(currCursor.equals(c) || (!drawTargetCursor && currCursor.equals(Cursors.none)))
+    private void setCursor(final DeleteMode c) {
+        if(currentMode.equals(c) || (!drawTargetCursor && currentMode.equals(DeleteMode.none)))
             return;
         try {
             // We invoke this to prevent strange things from happening
@@ -365,7 +357,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
                     //System.out.println("Set cursor to: " + c.name());
                 }
             });
-            currCursor = c;
+            currentMode = c;
         } catch(Exception e) {}
     }
 

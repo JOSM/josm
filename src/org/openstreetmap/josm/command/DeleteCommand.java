@@ -22,6 +22,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.SplitWayAction;
 import org.openstreetmap.josm.data.osm.BackreferencedDataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -252,14 +253,11 @@ public class DeleteCommand extends Command {
      */
     protected static Collection<Node> computeNodesToDelete(BackreferencedDataSet backreferences, OsmDataLayer layer, Collection<OsmPrimitive> primitivesToDelete) {
         Collection<Node> nodesToDelete = new HashSet<Node>();
-        //CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(layer.data, false);
         for (Way way : OsmPrimitive.getFilteredList(primitivesToDelete, Way.class)) {
             for (Node n : way.getNodes()) {
                 if (n.isTagged()) {
                     continue;
                 }
-                //v.initialize();
-                //n.visit(v);
                 Collection<OsmPrimitive> referringPrimitives = backreferences.getParents(n);
                 referringPrimitives.removeAll(primitivesToDelete);
                 int count = 0;
@@ -384,7 +382,7 @@ public class DeleteCommand extends Command {
 
     public static Command deleteWaySegment(OsmDataLayer layer, WaySegment ws) {
         if (ws.way.getNodesCount() < 3)
-            return new DeleteCommand(layer, Collections.singleton(ws.way));
+            return delete(layer, Collections.singleton(ws.way));
 
         if (ws.way.firstNode() == ws.way.lastNode()) {
             // If the way is circular (first and last nodes are the same),
@@ -415,19 +413,10 @@ public class DeleteCommand extends Command {
             wnew.setNodes(n1);
             return new ChangeCommand(ws.way, wnew);
         } else {
-            Collection<Command> cmds = new LinkedList<Command>();
-
-            wnew.setNodes(n1);
-            cmds.add(new ChangeCommand(ws.way, wnew));
-
-            Way wnew2 = new Way();
-            wnew2.setKeys(wnew.getKeys());
-            wnew2.setNodes(n2);
-            cmds.add(new AddCommand(wnew2));
-
-            // FIXME: relation memberships are not handled
-
-            return new SequenceCommand(tr("Split way segment"), cmds);
+            List<List<Node>> chunks = new ArrayList<List<Node>>(2);
+            chunks.add(n1);
+            chunks.add(n2);
+            return SplitWayAction.splitWay(ws.way, chunks).getCommand();
         }
     }
 

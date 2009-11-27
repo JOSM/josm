@@ -27,6 +27,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -46,6 +47,24 @@ public class SplitWayAction extends JosmAction {
 
     private Way selectedWay;
     private List<Node> selectedNodes;
+
+    public static class SplitWayResult {
+        private final Command command;
+        private final List<? extends PrimitiveId> newSelection;
+
+        public SplitWayResult(Command command, List<? extends PrimitiveId> newSelection) {
+            this.command = command;
+            this.newSelection = newSelection;
+        }
+
+        public Command getCommand() {
+            return command;
+        }
+
+        public List<? extends PrimitiveId> getNewSelection() {
+            return newSelection;
+        }
+    }
 
     /**
      * Create a new SplitWayAction.
@@ -266,23 +285,29 @@ public class SplitWayAction extends JosmAction {
         //Main.debug("wayChunks.size(): " + wayChunks.size());
         //Main.debug("way id: " + selectedWay.id);
 
+        SplitWayResult result = splitWay(selectedWay, wayChunks);
+        Main.main.undoRedo.add(result.getCommand());
+        getCurrentDataSet().setSelected(result.getNewSelection());
+    }
+
+    public static SplitWayResult splitWay(Way way, List<List<Node>> wayChunks) {
         // build a list of commands, and also a new selection list
         Collection<Command> commandList = new ArrayList<Command>(wayChunks.size());
-        Collection<Way> newSelection = new ArrayList<Way>(wayChunks.size());
+        List<Way> newSelection = new ArrayList<Way>(wayChunks.size());
 
         Iterator<List<Node>> chunkIt = wayChunks.iterator();
 
         // First, change the original way
-        Way changedWay = new Way(selectedWay);
+        Way changedWay = new Way(way);
         changedWay.setNodes(chunkIt.next());
-        commandList.add(new ChangeCommand(selectedWay, changedWay));
-        newSelection.add(selectedWay);
+        commandList.add(new ChangeCommand(way, changedWay));
+        newSelection.add(way);
 
         Collection<Way> newWays = new ArrayList<Way>();
         // Second, create new ways
         while (chunkIt.hasNext()) {
             Way wayToAdd = new Way();
-            wayToAdd.setKeys(selectedWay.getKeys());
+            wayToAdd.setKeys(way.getKeys());
             newWays.add(wayToAdd);
             wayToAdd.setNodes(chunkIt.next());
             commandList.add(new AddCommand(wayToAdd));
@@ -294,7 +319,7 @@ public class SplitWayAction extends JosmAction {
         Boolean warnme = false;
         // now copy all relations to new way also
 
-        for (Relation r : OsmPrimitive.getFilteredList(selectedWay.getReferrers(), Relation.class)) {
+        for (Relation r : OsmPrimitive.getFilteredList(way.getReferrers(), Relation.class)) {
             if (!r.isUsable()) {
                 continue;
             }
@@ -307,7 +332,7 @@ public class SplitWayAction extends JosmAction {
 
             for (RelationMember rm : r.getMembers()) {
                 if (rm.isWay()) {
-                    if (rm.getMember() == selectedWay) {
+                    if (rm.getMember() == way) {
                         if (!("route".equals(type)) && !("multipolygon".equals(type))) {
                             warnme = true;
                         }
@@ -354,12 +379,11 @@ public class SplitWayAction extends JosmAction {
                     JOptionPane.WARNING_MESSAGE);
         }
 
-        Main.main.undoRedo.add(
-                new SequenceCommand(tr("Split way {0} into {1} parts",
-                        selectedWay.getDisplayName(DefaultNameFormatter.getInstance()),
-                        wayChunks.size()),
-                        commandList));
-        getCurrentDataSet().setSelected(newSelection);
+
+        return new SplitWayResult(new SequenceCommand(tr("Split way {0} into {1} parts",
+                way.getDisplayName(DefaultNameFormatter.getInstance()),
+                wayChunks.size()),
+                commandList), newSelection);
     }
 
     @Override

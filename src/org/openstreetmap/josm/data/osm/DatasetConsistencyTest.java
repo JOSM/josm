@@ -25,17 +25,21 @@ public class DatasetConsistencyTest {
 
     private void checkReferrers() {
         for (Way way:dataSet.getWays()) {
-            for (Node n:way.getNodes()) {
-                if (!n.getReferrers().contains(way)) {
-                    writer.println(String.format("%s is part of %s but is not in referrers", n, way));
+            if (!way.isDeleted()) {
+                for (Node n:way.getNodes()) {
+                    if (!n.getReferrers().contains(way)) {
+                        writer.println(String.format("%s is part of %s but is not in referrers", n, way));
+                    }
                 }
             }
         }
 
         for (Relation relation:dataSet.getRelations()) {
-            for (RelationMember m:relation.getMembers()) {
-                if (!m.getMember().getReferrers().contains(relation)) {
-                    writer.println(String.format("%s is part of %s but is not in referrers", m.getMember(), relation));
+            if (!relation.isDeleted()) {
+                for (RelationMember m:relation.getMembers()) {
+                    if (!m.getMember().getReferrers().contains(relation)) {
+                        writer.println(String.format("%s is part of %s but is not in referrers", m.getMember(), relation));
+                    }
                 }
             }
         }
