@@ -1,13 +1,16 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -31,6 +34,12 @@ public final class AddNodeAction extends JosmAction {
                 Shortcut.registerShortcut("addnode", tr("Edit: {0}", tr("Add Node...")), KeyEvent.VK_D, Shortcut.GROUP_EDIT,
                         Shortcut.SHIFT_DEFAULT), true);
         putValue("help", ht("/Action/AddNode"));
+    }
+
+    private String normalizeUserInputForLatLonValue(String value) {
+        if (value == null) return null;
+        value = value.trim();
+        return value.replaceAll("\u00B0", ""); // the degree symbol
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -57,15 +66,40 @@ public final class AddNodeAction extends JosmAction {
 
         while(nnew == null) {
             JOptionPane pane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
-            pane.createDialog(Main.parent, tr("Add Node...")).setVisible(true);
+            JDialog dialog = pane.createDialog(Main.parent, tr("Add Node..."));
+            dialog.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowGainedFocus(WindowEvent e) {
+                    lat.selectAll();
+                    lat.requestFocusInWindow();
+                }
+            }
+            );
+            dialog.setVisible(true);
+
             if (!Integer.valueOf(JOptionPane.OK_OPTION).equals(pane.getValue()))
                 return;
             try {
-                LatLon ll = new LatLon(Double.parseDouble(lat.getText()), Double.parseDouble(lon.getText()));
+                LatLon ll = new LatLon(
+                        Double.parseDouble(
+                                normalizeUserInputForLatLonValue(lat.getText())
+                        ),
+                        Double.parseDouble(
+                                normalizeUserInputForLatLonValue(lon.getText())
+                        )
+                );
                 if (!ll.isOutSideWorld()) {
                     nnew = new Node(ll);
                 }
-            } catch (Exception ex) { }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("Could not create a node with the entered latitude/longitude."),
+                        tr("Illegal lat/lon value"),
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
         }
 
         /* Now execute the commands to add the dupicated contents of the paste buffer to the map */
@@ -78,5 +112,4 @@ public final class AddNodeAction extends JosmAction {
     protected void updateEnabledState() {
         setEnabled(getEditLayer() != null);
     }
-
 }
