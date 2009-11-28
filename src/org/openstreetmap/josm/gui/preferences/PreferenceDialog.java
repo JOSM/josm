@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -35,6 +36,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 public class PreferenceDialog extends JTabbedPane implements MouseWheelListener {
+    static private final Logger logger = Logger.getLogger(PreferenceDialog.class.getName());
 
     private final static Collection<PreferenceSettingFactory> settingsFactory = new LinkedList<PreferenceSettingFactory>();
     private final List<PreferenceSetting> settings = new ArrayList<PreferenceSetting>();
@@ -121,7 +123,7 @@ public class PreferenceDialog extends JTabbedPane implements MouseWheelListener 
         super.addMouseWheelListener(this);
 
         for (PreferenceSettingFactory factory:settingsFactory) {
-
+            // logger.info("creating settings: " + factory);
             PreferenceSetting setting = factory.createPreferenceSetting();
             if (setting != null) {
                 settings.add(factory.createPreferenceSetting());
@@ -132,7 +134,9 @@ public class PreferenceDialog extends JTabbedPane implements MouseWheelListener 
         map.add(mapcontent, GBC.eol().fill(GBC.BOTH));
         for (Iterator<PreferenceSetting> it = settings.iterator(); it.hasNext();) {
             try {
-                it.next().addGui(this);
+                PreferenceSetting settings = it.next();
+                //logger.info("adding gui: " + settings);
+                settings.addGui(this);
             } catch (SecurityException e) {
                 it.remove();
             } catch (Throwable e) {
