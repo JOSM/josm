@@ -615,6 +615,13 @@ public class Preferences {
         return 0.0;
     }
 
+    synchronized public String getCollectionAsString(final String key) {
+        String s = get(key);
+        if(s != null && s.length() != 0)
+            s = s.replaceAll("\u001e",",");
+        return s;
+    }
+
     synchronized public Collection<String> getCollection(String key, Collection<String> def) {
         String s = get(key);
         if(def != null)

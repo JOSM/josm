@@ -94,7 +94,7 @@ public class PluginDownloader {
         }
     }
 
-    private final static String[] pluginSites = {"http://josm.openstreetmap.de/plugin"};
+    private final static String[] pluginSites = {"http://josm.openstreetmap.de/plugin%<?plugins=>"};
 
     public static Collection<String> getSites() {
         return Main.pref.getCollection("pluginmanager.sites", Arrays.asList(pluginSites));
@@ -108,6 +108,12 @@ public class PluginDownloader {
         for (String site : getSites()) {
             /* TODO: remove old site files (everything except .jar) */
             try {
+                /* replace %<x> with empty string or x=plugins (separated with comma) */
+                String pl = Main.pref.getCollectionAsString("plugins");
+                if(pl != null && pl.length() != 0)
+                    site = site.replaceAll("%<(.*)>", "$1"+pl);
+                else
+                    site = site.replaceAll("%<(.*)>", "");
                 BufferedReader r = new BufferedReader(new InputStreamReader(new URL(site).openStream(), "utf-8"));
                 new File(Main.pref.getPreferencesDir()+"plugins").mkdir();
                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(

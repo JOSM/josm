@@ -351,7 +351,7 @@ public class PluginHandler {
     public static String getBugReportText()
     {
         String text = "";
-        String pl = Main.pref.get("plugins");
+        String pl = Main.pref.getCollectionAsString("plugins");
         if(pl != null && pl.length() != 0) {
             text += "Plugins: "+pl+"\n";
         }
