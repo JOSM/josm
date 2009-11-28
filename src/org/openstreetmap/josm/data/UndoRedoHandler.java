@@ -24,10 +24,6 @@ public class UndoRedoHandler implements LayerChangeListener {
      */
     public final LinkedList<Command> commands = new LinkedList<Command>();
     /**
-     * Selection to be restored on undo
-     */
-    public Collection<? extends OsmPrimitive> lastSelection = new ArrayList<OsmPrimitive>();
-    /**
      * The stack for redoing commands
      */
     private final Stack<Command> redoCommands = new Stack<Command>();
@@ -42,7 +38,6 @@ public class UndoRedoHandler implements LayerChangeListener {
      * Execute the command and add it to the intern command queue.
      */
     public void addNoRedraw(final Command c) {
-        lastSelection = Main.main.getCurrentDataSet().getSelected();
         c.executeCommand();
         commands.add(c);
         redoCommands.clear();
@@ -71,6 +66,7 @@ public class UndoRedoHandler implements LayerChangeListener {
      * Undoes the last added command.
      */
     public void undo() {
+        Collection<? extends OsmPrimitive> lastSelection = Main.main.getCurrentDataSet().getSelected();
         if (commands.isEmpty())
             return;
         final Command c = commands.removeLast();
