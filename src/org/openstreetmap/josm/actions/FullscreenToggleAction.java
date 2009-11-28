@@ -45,28 +45,6 @@ public class FullscreenToggleAction extends JosmAction {
          */
         return Main.platform instanceof PlatformHookUnixoid && gd.isFullScreenSupported();
     }
-         /*
-            final JCheckBoxMenuItem fullscreen = new JCheckBoxMenuItem(tr("Full Screen"));
-            fullscreen.setSelected(Main.pref.getBoolean("draw.fullscreen", false));
-            fullscreen.setAccelerator(Shortcut.registerShortcut("menu:view:fullscreen", tr("Toggle Full Screen view"),
-                    KeyEvent.VK_F11, Shortcut.GROUP_DIRECT).getKeyStroke());
-
-            fullscreen.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ev) {
-                    Main.pref.put("draw.fullscreen", fullscreen.isSelected());
-
-                    if (Main.pref.getBoolean("draw.fullscreen")) {
-                        Frame frame = (Frame)Main.parent;
-                        gd.setFullScreenWindow(frame);
-                    } else {
-                        gd.setFullScreenWindow(null);
-                    }
-                }
-            });
-            viewMenu.addSeparator();
-            viewMenu.add(fullscreen);
-        }
-        */
 
     public void addButtonModel(ButtonModel model) {
         if (model != null && !buttonModels.contains(model)) {
