@@ -65,7 +65,7 @@ public class ToggleDialog extends JPanel implements Helpful {
      * If isShowing and isDocked are true, indicates whether the dialog is
      * currently minimized or not.
      */
-    private boolean isCollapsed;
+    boolean isCollapsed;
 
     /** the preferred height if the toggle dialog is expanded */
     private int preferredHeight;
@@ -118,6 +118,7 @@ public class ToggleDialog extends JPanel implements Helpful {
         isShowing = Main.pref.getBoolean(preferencePrefix+".visible", defShow);
         isDocked = Main.pref.getBoolean(preferencePrefix+".docked", true);
         isCollapsed = Main.pref.getBoolean(preferencePrefix+".minimized", false);
+        //System.err.println(name+": showing="+isShowing+" docked="+isDocked+" collapsed="+isCollapsed);
     }
 
     /**
@@ -141,8 +142,12 @@ public class ToggleDialog extends JPanel implements Helpful {
                 dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
             } else {
                 showDialog();
-                expand();
-                dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, ToggleDialog.this);
+                if (isDocked && isCollapsed) {
+                    expand();
+                }
+                if (isDocked) {
+                    dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, ToggleDialog.this);
+                }
             }
         }
     }
@@ -205,7 +210,7 @@ public class ToggleDialog extends JPanel implements Helpful {
      *
      */
     public void collapse() {
-        if (isShowing && isDocked && !isCollapsed) {
+//        if (isShowing && isDocked && !isCollapsed) {
             setContentVisible(false);
             setIsCollapsed(true);
             setPreferredSize(new Dimension(0,20));
@@ -213,21 +218,23 @@ public class ToggleDialog extends JPanel implements Helpful {
             setMinimumSize(new Dimension(Integer.MAX_VALUE,20));
             lblMinimized.setIcon(ImageProvider.get("misc", "minimized"));
             hideNotify();
-        }
+//        }
+//        else throw ...
     }
 
     /**
      * Expands the toggle dialog
      */
     protected void expand() {
-        if (isShowing && isDocked && isCollapsed) {
+//        if (isShowing && isDocked && isCollapsed) {
             setContentVisible(true);
             setIsCollapsed(false);
             setPreferredSize(new Dimension(0,preferredHeight));
             setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
             lblMinimized.setIcon(ImageProvider.get("misc", "normal"));
             showNotify();
-        }
+//        }
+//        else throw ...
     }
 
     /**
@@ -317,7 +324,7 @@ public class ToggleDialog extends JPanel implements Helpful {
                     new MouseAdapter() {
                         @Override
                         public void mouseClicked(MouseEvent e) {
-                            //                            toggleExpandedState();
+                            // toggleExpandedState();
                             if (isCollapsed) {
                                 expand();
                                 dialogsPanel.reconstruct(Action.COLLAPSED_TO_DEFAULT, ToggleDialog.this);

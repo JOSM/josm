@@ -66,6 +66,7 @@ public class DialogsPanel extends JPanel {
             if (dlg.isDialogShowing()) {
                 dlg.showDialog();
                 if (dlg.isDialogInCollapsedView()) {
+                    dlg.isCollapsed = false;    // pretend to be in Default view, this will be set back by collapse()
                     dlg.collapse();
                 }
             } else {
