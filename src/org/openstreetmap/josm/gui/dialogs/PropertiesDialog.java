@@ -657,12 +657,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     String key = ((TaggingPreset.Key)i).key;
                     // we subtract 100 if not found and add 1 if found
                     found -= 100;
-                    if(!valueCount.containsKey(key)) {
+                    if(key == null || !valueCount.containsKey(key)) {
                         continue;
                     }
 
                     Map<String, Integer> v = valueCount.get(key);
-                    if(v.size() == 1 && v.containsKey(val) && v.get(val) == total) {
+                    if(v.size() == 1 && val != null && v.containsKey(val) && v.get(val) == total) {
                         found += 101;
                     }
                 }
