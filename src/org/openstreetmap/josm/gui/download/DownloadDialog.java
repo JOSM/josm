@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.download;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
@@ -44,7 +45,6 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.WindowGeometry;
-import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 /**
  *
@@ -61,8 +61,9 @@ public class DownloadDialog extends JDialog  {
      * @return the unique instance of the download dialog
      */
     static public DownloadDialog getInstance() {
-        if (instance == null)
+        if (instance == null) {
             instance = new DownloadDialog(Main.parent);
+        }
         return instance;
     }
 
@@ -78,6 +79,11 @@ public class DownloadDialog extends JDialog  {
     /** the download action and button */
     private DownloadAction actDownload;
     private SideButton btnDownload;
+
+    private void makeCheckBoxRespondToEnter(JCheckBox cb) {
+        cb.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "doDownload");
+        cb.getActionMap().put("doDownload", actDownload);
+    }
 
     public JPanel buildMainPanel() {
         JPanel pnl = new JPanel();
@@ -139,6 +145,9 @@ public class DownloadDialog extends JDialog  {
         btnDownload.setFocusable(true);
         btnDownload.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "download");
         btnDownload.getActionMap().put("download",actDownload);
+        makeCheckBoxRespondToEnter(cbDownloadGpxData);
+        makeCheckBoxRespondToEnter(cbDownloadOsmData);
+        makeCheckBoxRespondToEnter(cbNewLayer);
 
         // -- cancel button
         SideButton btnCancel;
@@ -306,7 +315,7 @@ public class DownloadDialog extends JDialog  {
             currentBounds = new Bounds(
                     mv.getLatLon(0, mv.getHeight()),
                     mv.getLatLon(mv.getWidth(), 0)
-                    );
+            );
             boundingBoxChanged(currentBounds,null);
         }
         else if (Main.pref.hasKey("osm-download.bounds")) {
@@ -397,8 +406,8 @@ public class DownloadDialog extends JDialog  {
                         DownloadDialog.this,
                         tr("<html>Neither <strong>{0}</strong> nor <strong>{1}</strong> is enabled.<br>"
                                 + "Please chose to either download OSM data, or GPX data, or both.</html>",
-                        cbDownloadOsmData.getText(),
-                        cbDownloadGpxData.getText()
+                                cbDownloadOsmData.getText(),
+                                cbDownloadGpxData.getText()
                         ),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
