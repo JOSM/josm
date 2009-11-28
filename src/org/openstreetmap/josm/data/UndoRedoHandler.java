@@ -1,13 +1,17 @@
 //License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.LinkedList;
 import java.util.Stack;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
@@ -19,6 +23,10 @@ public class UndoRedoHandler implements LayerChangeListener {
      * All commands that were made on the dataset. Don't write from outside!
      */
     public final LinkedList<Command> commands = new LinkedList<Command>();
+    /**
+     * Selection to be restored on undo
+     */
+    public Collection<? extends OsmPrimitive> lastSelection = new ArrayList<OsmPrimitive>();
     /**
      * The stack for redoing commands
      */
@@ -34,6 +42,7 @@ public class UndoRedoHandler implements LayerChangeListener {
      * Execute the command and add it to the intern command queue.
      */
     public void addNoRedraw(final Command c) {
+        lastSelection = Main.main.getCurrentDataSet().getSelected();
         c.executeCommand();
         commands.add(c);
         redoCommands.clear();
@@ -72,7 +81,12 @@ public class UndoRedoHandler implements LayerChangeListener {
             data.fireDataChange();
         }
         fireCommandsChanged();
-        Main.main.getCurrentDataSet().setSelected();
+        List<OsmPrimitive> all = Main.main.getCurrentDataSet().allPrimitives();
+        for (OsmPrimitive op : lastSelection) {
+            if (all.contains(op)) {
+                Main.main.getCurrentDataSet().addSelected(op);
+            }
+        }
     }
 
     /**
