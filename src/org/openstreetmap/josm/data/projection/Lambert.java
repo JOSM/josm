@@ -96,6 +96,10 @@ public class Lambert implements Projection, ProjectionSubPrefs {
             try {
                 String gridFileName = "ntf_r93_b.gsb";
                 InputStream is = Main.class.getResourceAsStream("/data/"+gridFileName);
+                if (is == null) {
+                    System.err.println(tr("Warning: failed to open input stream for resource ''/data/{0}''. Cannot load NTF<->RGF93 grid", gridFileName));
+                    return;
+                }
                 ntf_rgf93Grid = new NTV2GridShiftFile();
                 ntf_rgf93Grid.loadGridShiftFile(is, false);
                 //System.out.println("NTF<->RGF93 grid loaded.");
