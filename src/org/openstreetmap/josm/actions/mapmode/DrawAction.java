@@ -312,6 +312,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             // A double click equals "user clicked last node again, finish way"
             // Change draw tool only if mouse position is nearly the same, as
             // otherwise fast clicks will count as a double click
+            getCurrentDataSet().setSelected(Collections.singleton(lastUsedNode));
             finishDrawing();
             return;
         }
@@ -462,8 +463,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 tryAgain(e);
                 return;
             }
-            if(!wayIsFinishedTemp)
-            {
+            if(!wayIsFinishedTemp){
                 if(isSelfContainedWay(selectedWay, n0, n))
                     return;
 
@@ -891,7 +891,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // don't draw line if mouse is outside window
         if (!Main.map.mapView.getBounds().contains(mousePos)) return;
 
-        Graphics2D g2 = (Graphics2D) g;
+        Graphics2D g2 = g;
         g2.setColor(selectedColor);
         g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         GeneralPath b = new GeneralPath();
