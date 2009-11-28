@@ -6,9 +6,6 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Frame;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -68,6 +65,7 @@ import org.openstreetmap.josm.actions.UpdateSelectionAction;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.actions.UploadSelectionAction;
 import org.openstreetmap.josm.actions.WireframeToggleAction;
+import org.openstreetmap.josm.actions.FullscreenToggleAction;
 import org.openstreetmap.josm.actions.ZoomInAction;
 import org.openstreetmap.josm.actions.ZoomOutAction;
 import org.openstreetmap.josm.actions.audio.AudioBackAction;
@@ -80,7 +78,6 @@ import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
-import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.Shortcut;
 /**
  * This is the JOSM main menu bar. It is overwritten to initialize itself and provide all menu
@@ -253,31 +250,14 @@ public class MainMenu extends JMenuBar {
             add(viewMenu, autoScaleAction);
         }
 
-        //
-        // Full Screen action
-        //
-        final GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-
-        if (Main.platform instanceof PlatformHookUnixoid && gd.isFullScreenSupported()) {
-            final JCheckBoxMenuItem fullscreen = new JCheckBoxMenuItem(tr("Full Screen"));
-            fullscreen.setSelected(Main.pref.getBoolean("draw.fullscreen", false));
-            fullscreen.setAccelerator(Shortcut.registerShortcut("menu:view:fullscreen", tr("Toggle Full Screen view"),
-                    KeyEvent.VK_F11, Shortcut.GROUP_DIRECT).getKeyStroke());
-
-            fullscreen.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent ev) {
-                    Main.pref.put("draw.fullscreen", fullscreen.isSelected());
-
-                    if (Main.pref.getBoolean("draw.fullscreen")) {
-                        Frame frame = (Frame)Main.parent;
-                        gd.setFullScreenWindow(frame);
-                    } else {
-                        gd.setFullScreenWindow(null);
-                    }
-                }
-            });
+        // -- fullscreen toggle action
+        FullscreenToggleAction fullscreenToggleAction = new FullscreenToggleAction();
+        if (fullscreenToggleAction.canFullscreen()) {
+            final JCheckBoxMenuItem fullscreen = new JCheckBoxMenuItem(fullscreenToggleAction);
             viewMenu.addSeparator();
             viewMenu.add(fullscreen);
+            fullscreen.setAccelerator(fullscreenToggleAction.getShortcut().getKeyStroke());
+            fullscreenToggleAction.addButtonModel(fullscreen.getModel());
         }
 
         add(toolsMenu, splitWay);
