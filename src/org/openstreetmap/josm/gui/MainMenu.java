@@ -2,6 +2,7 @@
 
 package org.openstreetmap.josm.gui;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -24,6 +25,7 @@ import org.openstreetmap.josm.actions.AddNodeAction;
 import org.openstreetmap.josm.actions.AlignInCircleAction;
 import org.openstreetmap.josm.actions.AlignInLineAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.CloseChangesetAction;
 import org.openstreetmap.josm.actions.CombineWayAction;
 import org.openstreetmap.josm.actions.CopyAction;
 import org.openstreetmap.josm.actions.CreateCircleAction;
@@ -57,7 +59,6 @@ import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.actions.SelectAllAction;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.actions.SplitWayAction;
-import org.openstreetmap.josm.actions.CloseChangesetAction;
 import org.openstreetmap.josm.actions.ToggleGPXLinesAction;
 import org.openstreetmap.josm.actions.UnGlueAction;
 import org.openstreetmap.josm.actions.UndoAction;
@@ -66,6 +67,7 @@ import org.openstreetmap.josm.actions.UpdateDataAction;
 import org.openstreetmap.josm.actions.UpdateSelectionAction;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.actions.UploadSelectionAction;
+import org.openstreetmap.josm.actions.WireframeToggleAction;
 import org.openstreetmap.josm.actions.ZoomInAction;
 import org.openstreetmap.josm.actions.ZoomOutAction;
 import org.openstreetmap.josm.actions.audio.AudioBackAction;
@@ -80,7 +82,6 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.Shortcut;
-import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 /**
  * This is the JOSM main menu bar. It is overwritten to initialize itself and provide all menu
  * entries as member variables (sort of collect them).
@@ -236,20 +237,13 @@ public class MainMenu extends JMenuBar {
         editMenu.addSeparator();
         add(editMenu, preferences);
 
-        // TODO move code to an "action" like the others?
-        final JCheckBoxMenuItem wireframe = new JCheckBoxMenuItem(tr("Wireframe View"));
-        wireframe.setSelected(Main.pref.getBoolean("draw.wireframe", false));
-        wireframe.setAccelerator(Shortcut.registerShortcut("menu:view:wireframe", tr("Toggle Wireframe view"),
-                KeyEvent.VK_W, Shortcut.GROUP_MENU).getKeyStroke());
-        wireframe.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ev) {
-                Main.pref.put("draw.wireframe", wireframe.isSelected());
-                if (Main.map != null) {
-                    Main.map.mapView.repaint();
-                }
-            }
-        });
+        // -- wireframe toggle action
+        WireframeToggleAction wireFrameToggleAction = new WireframeToggleAction();
+        final JCheckBoxMenuItem wireframe = new JCheckBoxMenuItem(wireFrameToggleAction);
         viewMenu.add(wireframe);
+        wireframe.setAccelerator(wireFrameToggleAction.getShortcut().getKeyStroke());
+        wireFrameToggleAction.addButtonModel(wireframe.getModel());
+
         viewMenu.addSeparator();
         add(viewMenu, new ZoomInAction());
         add(viewMenu, new ZoomOutAction());
