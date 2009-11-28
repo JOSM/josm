@@ -111,6 +111,16 @@ public class DatasetConsistencyTest {
         }
     }
 
+    private void checkZeroNodesWays() {
+        for (Way way:dataSet.getWays()) {
+            if (way.isUsable() && way.getNodesCount() == 0) {
+                writer.println(String.format("Way %s has zero nodes", way));
+            } else if (way.isUsable() && way.getNodesCount() == 1) {
+                writer.println(String.format("Way %s has only one node", way));
+            }
+        }
+    }
+
     public void runTest() {
         try {
             checkReferrers();
@@ -119,6 +129,7 @@ public class DatasetConsistencyTest {
             searchNodes();
             searchWays();
             refferedPrimitiveNotInDataset();
+            checkZeroNodesWays();
         } catch (Exception e) {
             writer.println("Exception during dataset integrity test:");
             e.printStackTrace(writer);
