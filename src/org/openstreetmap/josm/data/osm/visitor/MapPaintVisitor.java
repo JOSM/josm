@@ -799,7 +799,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         /* rotate icon with direction last node in from to */
         //if(restrictionDebug)
         //    System.out.println("Deg1 " + fromAngleDeg + " Deg2 " + (fromAngleDeg + 180) + " Icon " + iconAngle);
-        ImageIcon rotatedIcon = ImageProvider.createRotatedImage(null /*icon2*/, nodeStyle.icon, iconAngle);
+        ImageIcon rotatedIcon = ImageProvider.createRotatedImage(null /*icon2*/, inactive || r.isDisabled() ? 
+                                                                                    nodeStyle.getDisabledIcon() :
+                                                                                    nodeStyle.icon, iconAngle);
 
         /* scale down icon to 16*16 pixels */
         ImageIcon smallIcon = new ImageIcon(rotatedIcon.getImage().getScaledInstance(16 , 16, Image.SCALE_SMOOTH));
