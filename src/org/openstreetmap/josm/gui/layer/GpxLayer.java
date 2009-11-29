@@ -2,6 +2,7 @@
 
 package org.openstreetmap.josm.gui.layer;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
@@ -58,6 +59,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
@@ -279,9 +281,28 @@ public class GpxLayer extends Layer {
         });
 
         JMenuItem tagimage = new JMenuItem(tr("Import images"), ImageProvider.get("tagimages"));
-        tagimage.putClientProperty("help", "Action/ImportImages");
+        tagimage.putClientProperty("help", ht("/Action/ImportImages"));
         tagimage.addActionListener(new ActionListener() {
+
+            private void warnCantImportIntoServerLayer(GpxLayer layer) {
+                String msg = tr("<html>The data in the GPX layer ''{0}'' has been downloaded from the server.<br>"
+                        + "Because its way points don''t include a timestamp we can''t correlate them with images.</html>",
+                        layer.getName()
+                );
+                HelpAwareOptionPane.showOptionDialog(
+                        Main.parent,
+                        msg,
+                        tr("Import not possible"),
+                        JOptionPane.WARNING_MESSAGE,
+                        ht("/Action/ImportImages#CantImportIntoGpxLayerFromServer")
+                );
+            }
+
             public void actionPerformed(ActionEvent e) {
+                if (GpxLayer.this.data.fromServer) {
+                    warnCantImportIntoServerLayer(GpxLayer.this);
+                    return;
+                }
                 JFileChooser fc = new JFileChooser(Main.pref.get("tagimages.lastdirectory"));
                 fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
                 fc.setMultiSelectionEnabled(true);

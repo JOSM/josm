@@ -134,7 +134,7 @@ public final class AddNodeAction extends JosmAction {
             makeButtonRespondToEnter(btn);
             pnl.add(btn = new SideButton(actCancel = new CancelAction()));
             makeButtonRespondToEnter(btn);
-            pnl.add(new SideButton(new ContextSensitiveHelpAction(ht("/Actions/AddNode"))));
+            pnl.add(new SideButton(new ContextSensitiveHelpAction(ht("/Action/AddNode"))));
             return pnl;
         }
 
@@ -157,7 +157,7 @@ public final class AddNodeAction extends JosmAction {
 
             // make dialog respond to F1
             //
-            HelpUtil.setHelpContext(getRootPane(), ht("/Actions/AddNode"));
+            HelpUtil.setHelpContext(getRootPane(), ht("/Action/AddNode"));
         }
 
         public LatLonDialog(Component parent) {
