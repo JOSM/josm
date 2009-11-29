@@ -214,7 +214,24 @@ public class GpxLayer extends Layer {
         JMenuItem importAudio = new JMenuItem(tr("Import Audio"), ImageProvider.get("importaudio"));
         importAudio.putClientProperty("help", "ImportAudio");
         importAudio.addActionListener(new ActionListener() {
+            private void warnCantImportIntoServerLayer(GpxLayer layer) {
+                String msg = tr("<html>The data in the GPX layer ''{0}'' has been downloaded from the server.<br>"
+                        + "Because its way points don''t include a timestamp we can''t correlate them with audio data.</html>",
+                        layer.getName()
+                );
+                HelpAwareOptionPane.showOptionDialog(
+                        Main.parent,
+                        msg,
+                        tr("Import not possible"),
+                        JOptionPane.WARNING_MESSAGE,
+                        ht("/Action/ImportImages#CantImportIntoGpxLayerFromServer")
+                );
+            }
             public void actionPerformed(ActionEvent e) {
+                if (GpxLayer.this.data.fromServer) {
+                    warnCantImportIntoServerLayer(GpxLayer.this);
+                    return;
+                }
                 String dir = Main.pref.get("markers.lastaudiodirectory");
                 JFileChooser fc = new JFileChooser(dir);
                 fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
