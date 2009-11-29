@@ -1,7 +1,6 @@
 //License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -66,9 +65,9 @@ public class UndoRedoHandler implements LayerChangeListener {
      * Undoes the last added command.
      */
     public void undo() {
-        Collection<? extends OsmPrimitive> lastSelection = Main.main.getCurrentDataSet().getSelected();
         if (commands.isEmpty())
             return;
+        Collection<? extends OsmPrimitive> oldSelection = Main.main.getCurrentDataSet().getSelected();
         final Command c = commands.removeLast();
         c.undoCommand();
         redoCommands.push(c);
@@ -77,11 +76,9 @@ public class UndoRedoHandler implements LayerChangeListener {
             data.fireDataChange();
         }
         fireCommandsChanged();
-        List<OsmPrimitive> all = Main.main.getCurrentDataSet().allPrimitives();
-        for (OsmPrimitive op : lastSelection) {
-            if (all.contains(op)) {
-                Main.main.getCurrentDataSet().addSelected(op);
-            }
+        Collection<? extends OsmPrimitive> newSelection = Main.main.getCurrentDataSet().getSelected();
+        if (!oldSelection.equals(newSelection)) {
+            Main.main.getCurrentDataSet().fireSelectionChanged();
         }
     }
 
@@ -92,6 +89,7 @@ public class UndoRedoHandler implements LayerChangeListener {
     public void redo() {
         if (redoCommands.isEmpty())
             return;
+        Collection<? extends OsmPrimitive> oldSelection = Main.main.getCurrentDataSet().getSelected();
         final Command c = redoCommands.pop();
         c.executeCommand();
         commands.add(c);
@@ -100,6 +98,10 @@ public class UndoRedoHandler implements LayerChangeListener {
             data.fireDataChange();
         }
         fireCommandsChanged();
+        Collection<? extends OsmPrimitive> newSelection = Main.main.getCurrentDataSet().getSelected();
+        if (!oldSelection.equals(newSelection)) {
+            Main.main.getCurrentDataSet().fireSelectionChanged();
+        }
     }
 
     public void fireCommandsChanged() {
