@@ -236,7 +236,7 @@ public final class AddNodeAction extends JosmAction {
                 setErrorFeedback(tfLon, tr("Please enter a valid longitude in the range -180..180"));
                 return null;
             } else {
-                clearErrorFeedback(tfLon,tr("Please enter a longitude in the range -180..178"));
+                clearErrorFeedback(tfLon,tr("Please enter a longitude in the range -180..180"));
             }
             return d;
         }
