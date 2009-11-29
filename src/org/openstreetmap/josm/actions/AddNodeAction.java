@@ -232,7 +232,7 @@ public final class AddNodeAction extends JosmAction {
 
         protected Double parseLonFromUserInput() {
             Double d = parseDoubleFromUserInput(tfLon.getText());
-            if (d == null || ! LatLon.isValidLat(d)) {
+            if (d == null || ! LatLon.isValidLon(d)) {
                 setErrorFeedback(tfLon, tr("Please enter a valid longitude in the range -180..180"));
                 return null;
             } else {
