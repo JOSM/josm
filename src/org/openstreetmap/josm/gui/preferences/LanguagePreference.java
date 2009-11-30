@@ -13,6 +13,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 import javax.swing.Box;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -39,27 +40,17 @@ public class LanguagePreference implements PreferenceSetting {
         }
     }
 
-    /**
-     * ComboBox with all available Translations
-     */
+    /** the combo box with the available locales */
     private JComboBox langCombo;
+    /** the model for the combo box */
+    private LanguageComboBoxModel model;
+    /** true, if the available translations have been loaded; false otherwise */
     private boolean translationsLoaded = false;
 
     public void addGui(final PreferenceDialog gui) {
-        //langCombo = new JComboBox(I18n.getAvailableTranslations());
-        langCombo = new JComboBox(new Locale[0]);
-
-        final ListCellRenderer oldRenderer = langCombo.getRenderer();
-        langCombo.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
-                    boolean cellHasFocus) {
-                Locale l = (Locale) value;
-                return oldRenderer.getListCellRendererComponent(list,
-                        l == null ? tr("Default (Auto determined)") : l.getDisplayName(),
-                                index, isSelected, cellHasFocus);
-            }
-        });
+        model = new LanguageComboBoxModel();
+        langCombo = new JComboBox(model);
+        langCombo.setRenderer(new LanguageCellRenderer(langCombo.getRenderer()));
 
         LafPreference lafPreference = gui.getSetting(LafPreference.class);
         final JPanel panel = lafPreference.panel;
@@ -85,6 +76,9 @@ public class LanguagePreference implements PreferenceSetting {
     }
 
     public boolean ok() {
+        if (!translationsLoaded)
+            // keep the current language, don't update preferences
+            return true;
         if(langCombo.getSelectedItem() == null)
             return Main.pref.put("language", null);
         else
@@ -92,6 +86,9 @@ public class LanguagePreference implements PreferenceSetting {
                     ((Locale)langCombo.getSelectedItem()).toString());
     }
 
+    /**
+     * Load available translations if not loaded yet.
+     */
     public void initiallyLoadAvailableTranslations() {
         if (!translationsLoaded) {
             reloadAvailableTranslations();
@@ -99,6 +96,10 @@ public class LanguagePreference implements PreferenceSetting {
         translationsLoaded = true;
     }
 
+    /**
+     * Asynchronously loads available translations
+     * 
+     */
     protected void reloadAvailableTranslations() {
         Main.worker.submit(new AvailableTranslationsLoader());
     }
@@ -125,21 +126,8 @@ public class LanguagePreference implements PreferenceSetting {
             locales.add(0,Locale.ENGLISH);
             Runnable r = new Runnable() {
                 public void run() {
-                    langCombo.removeAll();
-                    langCombo.addItem(null); // the default enry
-                    for (Locale locale : locales) {
-                        langCombo.addItem(locale);
-                    }
-                    String ln = Main.pref.get("language");
-                    langCombo.setSelectedIndex(0);
-                    if (ln != null) {
-                        for (int i = 1; i < langCombo.getItemCount(); ++i) {
-                            if (((Locale) langCombo.getItemAt(i)).toString().equals(ln)) {
-                                langCombo.setSelectedIndex(i);
-                                break;
-                            }
-                        }
-                    }
+                    model.setAvailableLocales(locales);
+                    model.selectLanguage(Main.pref.get("language"));
                 }
             };
             try {
@@ -153,5 +141,60 @@ public class LanguagePreference implements PreferenceSetting {
 
         @Override
         protected void finish() {}
+    }
+
+    private static class LanguageComboBoxModel extends DefaultComboBoxModel {
+        private final List<Locale> data = new ArrayList<Locale>();
+
+        public LanguageComboBoxModel() {}
+
+        public void setAvailableLocales(List<Locale> locales) {
+            data.clear();
+            if (locales != null) {
+                data.add(null); // the default locale
+                data.addAll(locales);
+            }
+            fireContentsChanged(this, 0, getSize());
+        }
+
+        public void selectLanguage(String language) {
+            setSelectedItem(null);
+            if (language != null) {
+                for (Locale locale: data) {
+                    if (locale == null) {
+                        continue;
+                    }
+                    if (locale.toString().equals(language)) {
+                        setSelectedItem(locale);
+                        return;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public Object getElementAt(int index) {
+            return data.get(index);
+        }
+
+        @Override
+        public int getSize() {
+            return data.size();
+        }
+    }
+
+    static private class LanguageCellRenderer extends DefaultListCellRenderer {
+        private ListCellRenderer dispatch;
+        public LanguageCellRenderer(ListCellRenderer dispatch) {
+            this.dispatch = dispatch;
+        }
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+                boolean cellHasFocus) {
+            Locale l = (Locale) value;
+            return dispatch.getListCellRendererComponent(list,
+                    l == null ? tr("Default (Auto determined)") : l.getDisplayName(),
+                            index, isSelected, cellHasFocus);
+        }
     }
 }
