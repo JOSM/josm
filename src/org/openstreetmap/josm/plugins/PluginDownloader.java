@@ -105,20 +105,22 @@ public class PluginDownloader {
 
     public static int downloadDescription() {
         int count = 0;
+        LinkedList<String> sitenames = new LinkedList<String>();
         for (String site : getSites()) {
-            /* TODO: remove old site files (everything except .jar) */
             try {
+                String filesite = site.replaceAll("%<(.*)>", "");
                 /* replace %<x> with empty string or x=plugins (separated with comma) */
                 String pl = Main.pref.getCollectionAsString("plugins");
                 if(pl != null && pl.length() != 0)
                     site = site.replaceAll("%<(.*)>", "$1"+pl);
                 else
-                    site = site.replaceAll("%<(.*)>", "");
+                    site = filesite;
                 BufferedReader r = new BufferedReader(new InputStreamReader(new URL(site).openStream(), "utf-8"));
                 new File(Main.pref.getPreferencesDir()+"plugins").mkdir();
+                String sname = count + "-site-" + filesite.replaceAll("[/:\\\\ <>|]", "_") + ".txt";
+                sitenames.add(sname);
                 BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
-                        new FileOutputStream(new File(Main.pref.getPluginsDirFile(),
-                                count + "-site-" + site.replaceAll("[/:\\\\ <>|]", "_") + ".txt")), "utf-8"));
+                        new FileOutputStream(new File(Main.pref.getPluginsDirFile(), sname)), "utf-8"));
                 for (String line = r.readLine(); line != null; line = r.readLine()) {
                     out.append(line+"\n");
                 }
@@ -126,6 +128,30 @@ public class PluginDownloader {
                 out.close();
                 count++;
             } catch (IOException x) {
+            }
+        }
+        /* remove old files */
+        File[] pluginFiles = Main.pref.getPluginsDirFile().listFiles();
+        if (pluginFiles != null) {
+            for (File f : pluginFiles) {
+                if (!f.isFile())
+                    continue;
+                String fname = f.getName();
+                if(fname.endsWith(".jar"))
+                {
+                    for(String s : PluginHandler.oldplugins)
+                    {
+                        if(fname.equals(s+".jar"))
+                        {
+                            System.out.println(tr("Delete old plugin {0}",fname));
+                            f.delete();
+                        }
+                    }
+                }
+                else if(!fname.endsWith(".jar.new") && !sitenames.contains(fname))
+                {
+                    System.out.println(tr("Delete old plugin file {0}",fname));
+                }
             }
         }
         return count;

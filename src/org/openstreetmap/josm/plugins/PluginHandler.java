@@ -41,6 +41,12 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 public class PluginHandler {
 
+    public static String [] oldplugins = new String[] {"mappaint", "unglueplugin",
+                "lang-de", "lang-en_GB", "lang-fr", "lang-it", "lang-pl", "lang-ro",
+                "lang-ru", "ewmsplugin", "ywms", "tways-0.2", "geotagged", "landsat",
+                "namefinder", "waypoints", "slippy_map_chooser", "tcx-support", "usertools"};
+    public static String [] unmaintained = new String[] {"gpsbabelgui", "Intersect_way"};
+
     /**
      * All installed and loaded plugins (resp. their main classes)
      */
@@ -58,12 +64,6 @@ public class PluginHandler {
         if (System.getProperty("josm.plugins") != null) {
             plugins.addAll(Arrays.asList(System.getProperty("josm.plugins").split(",")));
         }
-
-        String [] oldplugins = new String[] {"mappaint", "unglueplugin",
-                "lang-de", "lang-en_GB", "lang-fr", "lang-it", "lang-pl", "lang-ro",
-                "lang-ru", "ewmsplugin", "ywms", "tways-0.2", "geotagged", "landsat",
-                "namefinder", "waypoints", "slippy_map_chooser", "tcx-support", "usertools"};
-        String [] unmaintained = new String[] {"gpsbabelgui", "Intersect_way"};
 
         for (String p : oldplugins) {
             if (plugins.contains(p)) {
