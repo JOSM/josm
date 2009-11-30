@@ -240,7 +240,7 @@ public final class Way extends OsmPrimitive {
     public int compareTo(OsmPrimitive o) {
         if (o instanceof Relation)
             return 1;
-        return o instanceof Way ? Long.valueOf(getId()).compareTo(o.getId()) : -1;
+        return o instanceof Way ? Long.valueOf(getUniqueId()).compareTo(o.getUniqueId()) : -1;
     }
 
     public void removeNode(Node n) {

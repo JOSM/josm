@@ -160,7 +160,7 @@ public final class Node extends OsmPrimitive {
     }
 
     public int compareTo(OsmPrimitive o) {
-        return o instanceof Node ? Long.valueOf(getId()).compareTo(o.getId()) : 1;
+        return o instanceof Node ? Long.valueOf(getUniqueId()).compareTo(o.getUniqueId()) : 1;
     }
 
     @Override

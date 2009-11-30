@@ -230,7 +230,7 @@ public final class Relation extends OsmPrimitive {
     }
 
     public int compareTo(OsmPrimitive o) {
-        return o instanceof Relation ? Long.valueOf(getId()).compareTo(o.getId()) : -1;
+        return o instanceof Relation ? Long.valueOf(getUniqueId()).compareTo(o.getUniqueId()) : -1;
     }
 
     // seems to be different from member "incomplete" - FIXME
