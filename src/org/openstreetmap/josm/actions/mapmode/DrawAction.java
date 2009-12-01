@@ -312,7 +312,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             // A double click equals "user clicked last node again, finish way"
             // Change draw tool only if mouse position is nearly the same, as
             // otherwise fast clicks will count as a double click
-            getCurrentDataSet().setSelected(Collections.singleton(lastUsedNode));
             finishDrawing();
             return;
         }
@@ -540,7 +539,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                     newSelection.remove(w);
                 }
             }
-
+            newSelection.clear();
             newSelection.add(n);
         } else if (!newNode) {
             title = tr("Connect existing way to node");
