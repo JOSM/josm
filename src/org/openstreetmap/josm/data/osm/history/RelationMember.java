@@ -20,18 +20,15 @@ public class RelationMember {
      *
      * @param role  the role
      * @param primitiveType  the type (must not be null)
-     * @param primitiveId the id (>0 required)
+     * @param primitiveId the id
      *
      * @exception IllegalArgumentException thrown, if primitiveType is null
-     * @exception IllegalArgumentException thrown, if primitiveId <= 0
      */
     public RelationMember(String role, OsmPrimitiveType primitiveType, long primitiveId) {
         this.role = (role == null ? "" : role);
         if (primitiveType == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitiveType"));
         this.primitiveType = primitiveType;
-        if (primitiveId <=0)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected. Got ''{1}''.", "primitiveId", primitiveId));
         this.primitiveId = primitiveId;
     }
 
