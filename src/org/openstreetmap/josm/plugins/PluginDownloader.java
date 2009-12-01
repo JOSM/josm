@@ -151,6 +151,7 @@ public class PluginDownloader {
                 else if(!fname.endsWith(".jar.new") && !sitenames.contains(fname))
                 {
                     System.out.println(tr("Delete old plugin file {0}",fname));
+                    f.delete();
                 }
             }
         }
