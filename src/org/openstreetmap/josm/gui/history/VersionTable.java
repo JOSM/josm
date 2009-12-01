@@ -66,7 +66,7 @@ public class VersionTable extends JTable implements Observer{
         @Override
         public void mouseClicked(MouseEvent e) {
             switch(e.getClickCount()) {
-                case 2: handleDoubleClick(e); break;
+            case 2: handleDoubleClick(e); break;
             }
         }
     }
@@ -90,9 +90,11 @@ public class VersionTable extends JTable implements Observer{
         if (row == -1) {
             row = rowAtPoint(evt.getPoint());
         }
-        HistoryOsmPrimitive primitive = model.getPrimitive(row);
-        popupMenu.prepare(primitive);
-        popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+        if (!model.isLatest(row)) {
+            HistoryOsmPrimitive primitive = model.getPrimitive(row);
+            popupMenu.prepare(primitive);
+            popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+        }
     }
 
     class PopupMenuTrigger extends MouseAdapter {

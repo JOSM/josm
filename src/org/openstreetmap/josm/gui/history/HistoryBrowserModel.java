@@ -437,7 +437,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
 
         public HistoryOsmPrimitive getPrimitive(int row) {
-            return history.get(row);
+            return isLatest(row) ? latest : history.get(row);
         }
 
         public boolean isLatest(int row) {
