@@ -78,7 +78,7 @@ public class LanguagePreference implements PreferenceSetting {
     public boolean ok() {
         if (!translationsLoaded)
             // keep the current language, don't update preferences
-            return true;
+            return false;
         if(langCombo.getSelectedItem() == null)
             return Main.pref.put("language", null);
         else
