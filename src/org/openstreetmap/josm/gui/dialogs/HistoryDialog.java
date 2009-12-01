@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -44,6 +45,7 @@ import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.gui.history.HistoryLoadTask;
+import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -323,13 +325,22 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
 
             Runnable r = new Runnable() {
                 public void run() {
-                    for (OsmPrimitive p : primitives) {
-                        History h = HistoryDataSet.getInstance().getHistory(p.getPrimitiveId());
-                        if (h == null) {
-                            continue;
+                    try {
+                        for (OsmPrimitive p : primitives) {
+                            History h = HistoryDataSet.getInstance().getHistory(p.getPrimitiveId());
+                            if (h == null) {
+                                continue;
+                            }
+                            HistoryBrowserDialogManager.getInstance().show(h);
                         }
-                        HistoryBrowserDialogManager.getInstance().show(h);
+                    } catch (final Exception e) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                BugReportExceptionHandler.handleException(e);
+                            }
+                        });
                     }
+
                 }
             };
             Main.worker.submit(r);
