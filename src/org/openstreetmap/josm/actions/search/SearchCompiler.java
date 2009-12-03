@@ -388,19 +388,25 @@ public class SearchCompiler {
     private static class UserMatch extends Match {
         private User user;
         public UserMatch(String user) {
-            List<User> users = User.getByName(user);
-            if (!users.isEmpty()) {
-                // selecting an arbitrary user
-                this.user = users.get(0);
+            if (user.equals("anonymous")) {
+                this.user = null;
             } else {
-                user = null;
+                List<User> users = User.getByName(user);
+                if (!users.isEmpty()) {
+                    // selecting an arbitrary user
+                    this.user = users.get(0);
+                } else {
+                    this.user = User.createLocalUser(user);
+                }
             }
         }
+
         @Override public boolean match(OsmPrimitive osm) {
             if (osm.getUser() == null && user == null) return true;
             if (osm.getUser() == null) return false;
             return osm.getUser().equals(user);
         }
+
         @Override public String toString() {
             return "user=" + user == null ? "" : user.getName();
         }

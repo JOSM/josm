@@ -123,6 +123,7 @@ public class SearchAction extends JosmAction{
                     + "<li>"+tr("<u>Special targets:</u>")+"</li>"
                     + "<li>"+tr("<b>type:</b> - type of the object (<b>node</b>, <b>way</b>, <b>relation</b>)")+"</li>"
                     + "<li>"+tr("<b>user:</b>... - all objects changed by user")+"</li>"
+                    + "<li>"+tr("<b>user:anonymous</b> - all objects changed by anonymous users")+"</li>"
                     + "<li>"+tr("<b>id:</b>... - object with given ID (0 for new objects)")+"</li>"
                     + "<li>"+tr("<b>nodes:</b>... - object with given number of nodes")+"</li>"
                     + "<li>"+tr("<b>tags:</b>... - object with given number of tags (tags:count or tags:min-max)")+"</li>"
