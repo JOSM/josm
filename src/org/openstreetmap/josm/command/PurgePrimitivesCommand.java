@@ -16,7 +16,6 @@ import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
-import org.openstreetmap.josm.data.osm.BackreferencedDataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -49,11 +48,6 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
     private Set<OsmPrimitive> purgedPrimitives;
 
     private Set<OsmPrimitive> origVersionsOfTouchedPrimitives;
-
-    /**
-     * the data structure with child->parent references
-     */
-    private BackreferencedDataSet backreferenceDataSet;
 
     protected void init(Collection<OsmPrimitive> toPurge) {
         this.toPurge = toPurge;
@@ -140,7 +134,7 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
      */
     protected void removeReferecesToPrimitive(OsmPrimitive child, Set<OsmPrimitive> hive) {
         hive.remove(child);
-        for (OsmPrimitive parent: this.backreferenceDataSet.getParents(child)) {
+        for (OsmPrimitive parent: child.getReferrers()) {
             if (toPurge.contains(parent))
                 // parent itself is to be purged. This method is going to be
                 // invoked for parent later
@@ -176,9 +170,6 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
 
     @Override
     public boolean executeCommand() {
-        if (backreferenceDataSet == null) {
-            backreferenceDataSet = new BackreferencedDataSet();
-        }
         HashSet<OsmPrimitive> hive = new HashSet<OsmPrimitive>();
 
         // iteratively purge the primitive and all primitives
@@ -197,8 +188,6 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
                 conflicts.remove(p);
             }
         }
-        // we don't need this any more
-        backreferenceDataSet = null;
         return super.executeCommand();
     }
 
@@ -229,15 +218,5 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
         // will restore the primitives referring to one
         // of the purged primitives
         super.undoCommand();
-    }
-
-    /**
-     * Use to inject a backreference data set used when the command
-     * is executed.
-     *
-     * @param ds the backreference data set
-     */
-    public void setBackreferenceDataSet(BackreferencedDataSet ds) {
-        this.backreferenceDataSet = ds;
     }
 }

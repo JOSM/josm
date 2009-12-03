@@ -19,7 +19,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.tools.DateUtils;
 
 /**
@@ -32,13 +31,11 @@ public class SearchCompiler {
     private boolean regexSearch = false;
     private static String  rxErrorMsg = marktr("The regex \"{0}\" had a parse error at offset {1}, full error:\n\n{2}");
     private PushbackTokenizer tokenizer;
-    private CollectBackReferencesVisitor childBackRefs;
 
     public SearchCompiler(boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) {
         this.caseSensitive = caseSensitive;
         this.regexSearch = regexSearch;
         this.tokenizer = tokenizer;
-        childBackRefs = new CollectBackReferencesVisitor(true);
     }
 
     abstract public static class Match {
@@ -526,9 +523,8 @@ public class SearchCompiler {
 
     private static class Child extends Match {
         private final Match parent;
-        private final CollectBackReferencesVisitor childBackRefs;
 
-        public Child(Match m, CollectBackReferencesVisitor childBackRefs) {
+        public Child(Match m) {
             // "child" (null) should mean the same as "child()"
             // (Always). I.e. match everything
             if (m == null) {
@@ -536,14 +532,11 @@ public class SearchCompiler {
             } else {
                 parent = m;
             }
-            this.childBackRefs = childBackRefs;
         }
 
         @Override public boolean match(OsmPrimitive osm) {
             boolean isChild = false;
-            childBackRefs.initialize();
-            osm.visit(childBackRefs);
-            for (OsmPrimitive p : childBackRefs.getData()) {
+            for (OsmPrimitive p : osm.getReferrers()) {
                 isChild |= parent.match(p);
             }
             return isChild;
@@ -650,7 +643,7 @@ public class SearchCompiler {
         else if (tok.equals("selected"))
             return new Selected();
         else if (tok.equals("child"))
-            return new Child(parseParens(), childBackRefs);
+            return new Child(parseParens());
         else if (tok.equals("parent"))
             return new Parent(parseParens());
         else

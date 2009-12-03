@@ -23,15 +23,13 @@ import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SplitWayAction;
-import org.openstreetmap.josm.data.osm.BackreferencedDataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationToChildReference;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.osm.BackreferencedDataSet.RelationToChildReference;
-import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.actionsupport.DeleteFromRelationConfirmationDialog;
@@ -217,17 +215,14 @@ public class DeleteCommand extends Command {
         if (layer == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "layer"));
         if (selection == null || selection.isEmpty()) return null;
-        CollectBackReferencesVisitor v = new CollectBackReferencesVisitor(layer.data);
-        v.initialize();
-        for (OsmPrimitive osm : selection) {
-            osm.visit(v);
-        }
-        v.getData().addAll(selection);
-        if (v.getData().isEmpty())
+        Set<OsmPrimitive> parents = OsmPrimitive.getReferrer(selection);
+        parents.addAll(selection);
+
+        if (parents.isEmpty())
             return null;
-        if (!checkAndConfirmOutlyingDeletes(layer,v.getData()) && !silent)
+        if (!checkAndConfirmOutlyingDeletes(layer,parents) && !silent)
             return null;
-        return new DeleteCommand(layer,v.getData());
+        return new DeleteCommand(layer,parents);
     }
 
     public static Command deleteWithReferences(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection) {
@@ -245,20 +240,19 @@ public class DeleteCommand extends Command {
      *    <li>it is untagged (see {@see Node#isTagged()}</li>
      *    <li>it is not referred to by other non-deleted primitives outside of  <code>primitivesToDelete</code></li>
      * <ul>
-     * @param backreferences backreference data structure
      * @param layer  the layer in whose context primitives are deleted
      * @param primitivesToDelete  the primitives to delete
      * @return the collection of nodes referred to by primitives in <code>primitivesToDelete</code> which
      * can be deleted too
      */
-    protected static Collection<Node> computeNodesToDelete(BackreferencedDataSet backreferences, OsmDataLayer layer, Collection<OsmPrimitive> primitivesToDelete) {
+    protected static Collection<Node> computeNodesToDelete(OsmDataLayer layer, Collection<OsmPrimitive> primitivesToDelete) {
         Collection<Node> nodesToDelete = new HashSet<Node>();
         for (Way way : OsmPrimitive.getFilteredList(primitivesToDelete, Way.class)) {
             for (Node n : way.getNodes()) {
                 if (n.isTagged()) {
                     continue;
                 }
-                Collection<OsmPrimitive> referringPrimitives = backreferences.getParents(n);
+                Collection<OsmPrimitive> referringPrimitives = n.getReferrers();
                 referringPrimitives.removeAll(primitivesToDelete);
                 int count = 0;
                 for (OsmPrimitive p : referringPrimitives) {
@@ -313,21 +307,20 @@ public class DeleteCommand extends Command {
         if (selection == null || selection.isEmpty())
             return null;
 
-        BackreferencedDataSet backreferences = new BackreferencedDataSet();
         Set<OsmPrimitive> primitivesToDelete = new HashSet<OsmPrimitive>(selection);
         Collection<Way> waysToBeChanged = new HashSet<Way>();
 
         if (alsoDeleteNodesInWay) {
             // delete untagged nodes only referenced by primitives in primitivesToDelete,
             // too
-            Collection<Node> nodesToDelete = computeNodesToDelete(backreferences, layer, primitivesToDelete);
+            Collection<Node> nodesToDelete = computeNodesToDelete(layer, primitivesToDelete);
             primitivesToDelete.addAll(nodesToDelete);
         }
 
         if (!silent && !checkAndConfirmOutlyingDeletes(layer,primitivesToDelete))
             return null;
 
-        waysToBeChanged.addAll(OsmPrimitive.getFilteredSet(backreferences.getParents(primitivesToDelete), Way.class));
+        waysToBeChanged.addAll(OsmPrimitive.getFilteredSet(OsmPrimitive.getReferrer(primitivesToDelete), Way.class));
 
         Collection<Command> cmds = new LinkedList<Command>();
         for (Way w : waysToBeChanged) {
@@ -344,7 +337,7 @@ public class DeleteCommand extends Command {
         // relations
         //
         if (!silent) {
-            Set<RelationToChildReference> references = backreferences.getRelationToChildReferences(primitivesToDelete);
+            Set<RelationToChildReference> references = RelationToChildReference.getRelationToChildReferences(primitivesToDelete);
             Iterator<RelationToChildReference> it = references.iterator();
             while(it.hasNext()) {
                 RelationToChildReference ref = it.next();
@@ -363,7 +356,7 @@ public class DeleteCommand extends Command {
 
         // remove the objects from their parent relations
         //
-        Iterator<Relation> iterator = OsmPrimitive.getFilteredSet(backreferences.getParents(primitivesToDelete), Relation.class).iterator();
+        Iterator<Relation> iterator = OsmPrimitive.getFilteredSet(OsmPrimitive.getReferrer(primitivesToDelete), Relation.class).iterator();
         while (iterator.hasNext()) {
             Relation cur = iterator.next();
             Relation rel = new Relation(cur);

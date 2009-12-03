@@ -148,6 +148,23 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return ret;
     }
 
+    /**
+     * Replies the collection of referring primitives for the primitives in <code>primitives</code>.
+     * 
+     * @param primitives the collection of primitives.
+     * @return the collection of referring primitives for the primitives in <code>primitives</code>;
+     * empty set if primitives is null or if there are no referring primitives
+     */
+    static public Set<OsmPrimitive> getReferrer(Collection<? extends OsmPrimitive> primitives) {
+        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        if (primitives == null || primitives.isEmpty()) return ret;
+        for (OsmPrimitive p: primitives) {
+            ret.addAll(p.getReferrers());
+        }
+        return ret;
+    }
+
+
     /* mappaint data */
     public ElemStyle mappaintStyle = null;
     public Integer mappaintDrawnCode = 0;

@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.actionsupport;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -37,7 +38,7 @@ import javax.swing.table.TableColumn;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.BackreferencedDataSet.RelationToChildReference;
+import org.openstreetmap.josm.data.osm.RelationToChildReference;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
@@ -45,7 +46,6 @@ import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
-import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 /**
  * This dialog is used to get a user confirmation that a collection of primitives can be removed
@@ -263,12 +263,12 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
             if (data == null) return null;
             RelationToChildReference ref = data.get(rowIndex);
             switch(columnIndex) {
-                case 0: return ref.getChild();
-                case 1: return ref.getParent();
-                case 2: return ref.getPosition();
-                case 3: return ref.getRole();
-                default:
-                    assert false: "Illegal column index";
+            case 0: return ref.getChild();
+            case 1: return ref.getParent();
+            case 2: return ref.getPosition();
+            case 3: return ref.getRole();
+            default:
+                assert false: "Illegal column index";
             }
             return null;
         }

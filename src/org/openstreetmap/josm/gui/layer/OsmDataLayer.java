@@ -48,7 +48,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.data.osm.BackreferencedDataSet;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.DataSource;
@@ -393,7 +392,6 @@ public class OsmDataLayer extends Layer {
      * be purged
      */
     protected PurgePrimitivesCommand buildPurgeCommand() {
-        BackreferencedDataSet ds = new BackreferencedDataSet();
         ArrayList<OsmPrimitive> toPurge = new ArrayList<OsmPrimitive>();
         conflictLoop: for (Conflict<?> c: conflicts) {
             if (c.getMy().isDeleted() && !c.getTheir().isVisible()) {
@@ -415,7 +413,7 @@ public class OsmDataLayer extends Layer {
                 // below 2 and we would lose the modified data when the way
                 // gets purged.
                 //
-                for (OsmPrimitive parent: ds.getParents(c.getMy())) {
+                for (OsmPrimitive parent: c.getMy().getReferrers()) {
                     if (parent.isModified() && parent instanceof Way) {
                         continue conflictLoop;
                     }
@@ -425,7 +423,6 @@ public class OsmDataLayer extends Layer {
         }
         if (toPurge.isEmpty()) return null;
         PurgePrimitivesCommand cmd = new PurgePrimitivesCommand(this, toPurge);
-        cmd.setBackreferenceDataSet(ds);
         return cmd;
     }
 

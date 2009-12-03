@@ -1,8 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -23,7 +23,6 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.CollectBackReferencesVisitor;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -172,10 +171,8 @@ public final class CreateCircleAction extends JosmAction {
             // the first node may be unused/abandoned if createcircle.nodecount is odd
             if (a1 < 999) {
                 // if it is, delete it
-                CollectBackReferencesVisitor refs = new CollectBackReferencesVisitor(getCurrentDataSet());
-                refs.initialize();
-                refs.visit(n1);
-                if (refs.getData().isEmpty() || ((refs.getData().size() == 1) && (refs.getData().contains(existingWay)))) {
+                List<OsmPrimitive> parents = n1.getReferrers();
+                if (parents.isEmpty() || ((parents.size() == 1) && (parents.contains(existingWay)))) {
                     cmds.add(new DeleteCommand(n1));
                 }
 

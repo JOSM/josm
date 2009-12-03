@@ -24,12 +24,11 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.osm.BackreferencedDataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.RelationToChildReference;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.BackreferencedDataSet.RelationToChildReference;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
@@ -89,45 +88,20 @@ public class MergeNodesAction extends JosmAction {
     }
 
     /**
-     * Merges the nodes in <code>node</code> onto one of the nodes. Uses the dataset
-     * managed by <code>layer</code> as reference.
-     *
-     * @param layer the reference data layer. Must not be null.
-     * @param nodes the collection of nodes. Ignored if null.
-     * @param targetNode the target node the collection of nodes is merged to. Must not be null.
-     * @throws IllegalArgumentException thrown if layer is null
-     * @throws IllegalArgumentException thrown if targetNode is null
-     *
-     */
-    public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetNode) throws IllegalArgumentException{
-        if (layer == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "nodes"));
-        if (targetNode == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "targetNode"));
-
-        if (nodes == null)
-            return null;
-        nodes.remove(null); // just in case
-        BackreferencedDataSet backreferences = new BackreferencedDataSet();
-        return mergeNodes(layer,backreferences, nodes, targetNode);
-    }
-
-    /**
      * Fixes the parent ways referring to one of the nodes.
      *
      * Replies null, if the ways could not be fixed, i.e. because a way would have to be deleted
      * which is referred to by a relation.
      *
-     * @param backreferences the backreference data set
      * @param nodesToDelete the collection of nodes to be deleted
      * @param targetNode the target node the other nodes are merged to
      * @return a list of commands; null, if the ways could not be fixed
      */
-    protected static List<Command> fixParentWays(BackreferencedDataSet backreferences, Collection<OsmPrimitive> nodesToDelete, Node targetNode) {
+    protected static List<Command> fixParentWays(Collection<OsmPrimitive> nodesToDelete, Node targetNode) {
         List<Command> cmds = new ArrayList<Command>();
         Set<Way> waysToDelete = new HashSet<Way>();
 
-        for (Way w: OsmPrimitive.getFilteredList(backreferences.getParents(nodesToDelete), Way.class)) {
+        for (Way w: OsmPrimitive.getFilteredList(OsmPrimitive.getReferrer(nodesToDelete), Way.class)) {
             ArrayList<Node> newNodes = new ArrayList<Node>(w.getNodesCount());
             for (Node n: w.getNodes()) {
                 if (! nodesToDelete.contains(n) && n != targetNode) {
@@ -144,7 +118,7 @@ public class MergeNodesAction extends JosmAction {
                 }
             }
             if (newNodes.size() < 2) {
-                if (backreferences.getParents(w).isEmpty()) {
+                if (w.getReferrers().isEmpty()) {
                     waysToDelete.add(w);
                 } else {
                     ButtonSpec[] options = new ButtonSpec[] {
@@ -170,7 +144,7 @@ public class MergeNodesAction extends JosmAction {
                     );
                     return null;
                 }
-            } else if(newNodes.size() < 2 && backreferences.getParents(w).isEmpty()) {
+            } else if(newNodes.size() < 2 && w.getReferrers().isEmpty()) {
                 waysToDelete.add(w);
             } else {
                 Way newWay = new Way(w);
@@ -186,29 +160,23 @@ public class MergeNodesAction extends JosmAction {
 
     /**
      * Merges the nodes in <code>nodes</code> onto one of the nodes. Uses the dataset
-     * managed by <code>layer</code> as reference. <code>backreferences</code> is a precomputed
-     * collection of all parent/child references in the dataset.
+     * managed by <code>layer</code> as reference.
      *
      * @param layer layer the reference data layer. Must not be null.
-     * @param backreferences if null, backreferences are first computed from layer.data; otherwise
-     *    backreferences.getSource() == layer.data must be true
      * @param nodes the collection of nodes. Ignored if null.
      * @param targetNode the target node the collection of nodes is merged to. Must not be null.
      * @throw IllegalArgumentException thrown if layer is null
-     * @throw IllegalArgumentException thrown if  backreferences.getSource() != layer.data
      */
-    public static Command mergeNodes(OsmDataLayer layer, BackreferencedDataSet backreferences, Collection<Node> nodes, Node targetNode) {
+    public static Command mergeNodes(OsmDataLayer layer,Collection<Node> nodes, Node targetNode) {
         if (layer == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "nodes"));
         if (targetNode == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "targetNode"));
         if (nodes == null)
             return null;
-        if (backreferences == null) {
-            backreferences = new BackreferencedDataSet();
-        }
 
-        Set<RelationToChildReference> relationToNodeReferences = backreferences.getRelationToChildReferences(nodes);
+
+        Set<RelationToChildReference> relationToNodeReferences = RelationToChildReference.getRelationToChildReferences(nodes);
 
         // build the tag collection
         //
@@ -244,7 +212,6 @@ public class MergeNodesAction extends JosmAction {
         //
         Collection<Way> waysToDelete= new HashSet<Way>();
         List<Command> wayFixCommands = fixParentWays(
-                backreferences,
                 nodesToDelete,
                 targetNode
         );
