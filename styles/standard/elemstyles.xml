@@ -680,7 +680,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="highway" v="cycleway"/>
-		<line width="1" realwidth="2" colour="bicycle#ff00ff"/>
+		<line width="1" realwidth="2" colour="bicycle#b100ff"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -903,15 +903,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="cycleway" v="lane"/>
-		<line width="1" realwidth="2" colour="bicycle#ff00ff"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="cycleway" v="track"/>
-		<line width="1" realwidth="2" colour="bicycle#ff00ff"/>
+		<linemod width="+0" mode="over" colour="bicycle#b100ff" dashed="8,14"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -919,7 +911,15 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="cycleway" v="opposite_lane"/>
-		<line width="1" realwidth="2" colour="bicycle#ff00ff"/>
+		<linemod width="+0" mode="over" colour="bicycle#b100ff" dashed="8,14"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="cycleway" v="track"/>
+		<linemod width="+0" mode="over" colour="bicycle#b100ff" dashed="14,14"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -927,7 +927,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="cycleway" v="opposite_track"/>
-		<line width="1" realwidth="2" colour="bicycle#ff00ff"/>
+		<linemod width="+0" mode="over" colour="bicycle#b100ff" dashed="14,14"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -935,7 +935,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="cycleway" v="opposite"/>
-		<line width="1" realwidth="2" colour="bicycle#ff00ff"/>
+		<linemod width="+0" mode="over" colour="bicycle#b100ff" dashed="4,10"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
