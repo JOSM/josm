@@ -25,16 +25,19 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.osm.DataSetListener;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction;
+import org.openstreetmap.josm.gui.layer.DataChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
-public class MemberTableModel extends AbstractTableModel implements TableModelListener {
+public class MemberTableModel extends AbstractTableModel implements TableModelListener, SelectionChangedListener, DataChangeListener, DataSetListener{
 
     /**
      * data of the table model: The list of members and the cached WayConnectionType of each member.
@@ -55,6 +58,72 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         this.layer = layer;
         addTableModelListener(this);
     }
+
+    public OsmDataLayer getLayer() {
+        return layer;
+    }
+
+    /* --------------------------------------------------------------------------- */
+    /* Interface SelectionChangedListener                                          */
+    /* --------------------------------------------------------------------------- */
+    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+        if (Main.main.getEditLayer() != this.layer) return;
+        // just trigger a repaint
+        Collection<RelationMember> sel = getSelectedMembers();
+        fireTableDataChanged();
+        setSelectedMembers(sel);
+    }
+
+    /* --------------------------------------------------------------------------- */
+    /* Interface DataChangeListener                                                */
+    /* --------------------------------------------------------------------------- */
+    public void dataChanged(OsmDataLayer l) {
+        if (l != this.layer) return;
+        // just trigger a repaint
+        Collection<RelationMember> sel = getSelectedMembers();
+        fireTableDataChanged();
+        setSelectedMembers(sel);
+    }
+    /* --------------------------------------------------------------------------- */
+    /* Interface DataSetListener                                                   */
+    /* --------------------------------------------------------------------------- */
+    public void dataChanged() {
+        // just trigger a repaint - the display name of the relation members may
+        // have changed
+        Collection<RelationMember> sel = getSelectedMembers();
+        fireTableDataChanged();
+        setSelectedMembers(sel);
+    }
+
+    public void nodeMoved(Node node) {/* ignore */}
+    public void primtivesAdded(Collection<? extends OsmPrimitive> added) {/* ignore */}
+
+    public void primtivesRemoved(Collection<? extends OsmPrimitive> removed) {
+        // ignore - the relation in the editor might become out of sync with the relation
+        // in the dataset. We will deal with it when the relation editor is closed or
+        // when the changes in the editor are applied.
+    }
+
+    public void relationMembersChanged(Relation r) {
+        // ignore - the relation in the editor might become out of sync with the relation
+        // in the dataset. We will deal with it when the relation editor is closed or
+        // when the changes in the editor are applied.
+    }
+
+    public void tagsChanged(OsmPrimitive prim) {
+        // just refresh the respective table cells
+        //
+        Collection<RelationMember> sel = getSelectedMembers();
+        for (int i=0; i < members.size();i++) {
+            if (members.get(i).getMember() == prim) {
+                fireTableCellUpdated(i, 1 /* the column with the primitive name */);
+            }
+        }
+        setSelectedMembers(sel);
+    }
+
+    public void wayNodesChanged(Way way) {/* ignore */}
+    /* --------------------------------------------------------------------------- */
 
     public void addMemberModelListener(IMemberModelListener listener) {
         synchronized (listeners) {
@@ -241,8 +310,56 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         return true;
     }
 
+    /**
+     * Replies the set of incomplete primitives
+     * 
+     * @return the set of incomplete primitives
+     */
+    public Set<OsmPrimitive> getIncompleteMemberPrimitives() {
+        Set<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        for (RelationMember member : members) {
+            if (member.getMember().incomplete) {
+                ret.add(member.getMember());
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Replies the set of selected incomplete primitives
+     * 
+     * @return the set of selected incomplete primitives
+     */
+    public Set<OsmPrimitive> getSelectedIncompleteMemberPrimitives() {
+        Set<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        for (RelationMember member : getSelectedMembers()) {
+            if (member.getMember().incomplete) {
+                ret.add(member.getMember());
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Replies true if at least one the relation members is incomplete
+     * 
+     * @return true if at least one the relation members is incomplete
+     */
     public boolean hasIncompleteMembers() {
         for (RelationMember member : members) {
+            if (member.getMember().incomplete)
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Replies true if at least one of the selected members is incomplete
+     * 
+     * @return true if at least one of the selected members is incomplete
+     */
+    public boolean hasIncompleteSelectedMembers() {
+        for (RelationMember member : getSelectedMembers()) {
             if (member.getMember().incomplete)
                 return true;
         }
@@ -407,53 +524,38 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     }
 
     /**
-     * Replies true, if the selected {@see OsmPrimitive}s in the layer belonging
-     * to this model are in sync with the selected referers in this model.
-     *
-     * @return
-     */
-    public boolean selectionsAreInSync() {
-        HashSet<OsmPrimitive> s1 = new HashSet<OsmPrimitive>(getSelectedChildPrimitives());
-        if (s1.size() != layer.data.getSelected().size()) return false;
-        s1.removeAll(layer.data.getSelected());
-        return s1.isEmpty();
-    }
-    /**
      * Selects the members in the collection selectedMembers
      *
      * @param selectedMembers the collection of selected members
      */
     public void setSelectedMembers(Collection<RelationMember> selectedMembers) {
-        if (selectedMembers == null || selectedMembers.isEmpty())
+        if (selectedMembers == null || selectedMembers.isEmpty()) {
+            getSelectionModel().clearSelection();
             return;
+        }
 
         // lookup the indices for the respective members
         //
-        ArrayList<Integer> selectedIndices = new ArrayList<Integer>();
+        Set<Integer> selectedIndices = new HashSet<Integer>();
         for (RelationMember member : selectedMembers) {
-            for (int idx = 0; idx < members.size(); idx ++) {
-                if (members.get(idx).equals(member)) {
-                    if (!selectedIndices.contains(idx)) {
-                        selectedIndices.add(idx);
-                    }
-                }
+            int idx = members.indexOf(member);
+            if ( idx >= 0) {
+                selectedIndices.add(idx);
             }
         }
 
         // select the members
         //
-        Collections.sort(selectedIndices);
         getSelectionModel().setValueIsAdjusting(true);
         getSelectionModel().clearSelection();
         for (int row : selectedIndices) {
             getSelectionModel().addSelectionInterval(row, row);
         }
         getSelectionModel().setValueIsAdjusting(false);
-
         // make the first selected member visible
         //
         if (selectedIndices.size() > 0) {
-            fireMakeMemberVisible(selectedIndices.get(0));
+            fireMakeMemberVisible(Collections.min(selectedIndices));
         }
     }
 
@@ -522,6 +624,18 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         if (getSelectedIndices().size() > 0) {
             fireMakeMemberVisible(getSelectedIndices().get(0));
         }
+    }
+
+    /**
+     * Replies true if <code>primitive</code> is currently selected in the layer this
+     * model is attached to
+     * 
+     * @param primitive the primitive
+     * @return true if <code>primitive</code> is currently selected in the layer this
+     * model is attached to, false otherwise
+     */
+    public boolean isInJosmSelection(OsmPrimitive primitive) {
+        return layer.data.isSelected(primitive);
     }
 
     /**

@@ -37,7 +37,7 @@ public class DataSetMerger {
     /** a set of primitive ids for which we have to fix references (to nodes and
      * to relation members) after the first phase of merging
      */
-    private Set<Long> childrenToMerge;
+    private Set<PrimitiveId> objectsWithChildrenToMerge;
     private Set<OsmPrimitive> deletedObjectsToUnlink;
 
     /**
@@ -56,7 +56,7 @@ public class DataSetMerger {
         this.sourceDataSet = sourceDataSet;
         conflicts = new ConflictCollection();
         mergedMap = new HashMap<Long, Long>();
-        childrenToMerge = new HashSet<Long>();
+        objectsWithChildrenToMerge = new HashSet<PrimitiveId>();
         deletedObjectsToUnlink = new HashSet<OsmPrimitive>();
     }
 
@@ -74,7 +74,7 @@ public class DataSetMerger {
      * @param <P>  the type of the other primitive
      * @param source  the other primitive
      */
-    protected <P extends OsmPrimitive> void mergePrimitive(P source) {
+    protected void mergePrimitive(OsmPrimitive source) {
         if (!source.isNew() ) {
             // try to merge onto a matching primitive with the same
             // defined id
@@ -111,7 +111,7 @@ public class DataSetMerger {
                         target.setUser(source.getUser());
                         target.setTimestamp(source.getTimestamp());
                         target.setModified(source.isModified());
-                        childrenToMerge.add(source.getUniqueId());
+                        objectsWithChildrenToMerge.add(source.getPrimitiveId());
                     }
                     return;
                 }
@@ -130,7 +130,7 @@ public class DataSetMerger {
         target.mergeFrom(source);
         targetDataSet.addPrimitive(target);
         mergedMap.put(source.getUniqueId(), target.getUniqueId());
-        childrenToMerge.add(source.getUniqueId());
+        objectsWithChildrenToMerge.add(source.getPrimitiveId());
     }
 
     protected OsmPrimitive getMergeTarget(OsmPrimitive mergeSource) throws IllegalStateException{
@@ -153,18 +153,47 @@ public class DataSetMerger {
     }
 
     /**
+     * A way in the target dataset might be incomplete because at least of of its nodes is incomplete.
+     * The nodes might have become complete because a complete node was merged onto into in the
+     * merge operation.
+     * 
+     * This method loops over all parent ways of such nodes and turns them into complete ways
+     * if necessary.
+     * 
+     * @param other
+     */
+    protected void fixIncompleteParentWays(Node other) {
+        Node myNode = (Node)getMergeTarget(other);
+        if (myNode == null)
+            throw new RuntimeException(tr("Missing merge target for node with id {0}", other.getUniqueId()));
+        if (myNode.incomplete || myNode.isDeleted() || !myNode.isVisible()) return;
+        wayloop: for (Way w: OsmPrimitive.getFilteredList(myNode.getReferrers(), Way.class)) {
+            if (w.isDeleted() || ! w.isVisible() || ! w.incomplete) {
+                continue;
+            }
+            for (Node n: w.getNodes()) {
+                if (n.incomplete) {
+                    continue wayloop;
+                }
+            }
+            // all nodes are complete - set the way complete too
+            w.incomplete = false;
+        }
+    }
+
+    /**
      * Postprocess the dataset and fix all merged references to point to the actual
      * data.
      */
     public void fixReferences() {
         for (Way w : sourceDataSet.getWays()) {
-            if (!conflicts.hasConflictForTheir(w) && childrenToMerge.contains(w.getUniqueId())) {
+            if (!conflicts.hasConflictForTheir(w) && objectsWithChildrenToMerge.contains(w.getPrimitiveId())) {
                 mergeNodeList(w);
                 fixIncomplete(w);
             }
         }
         for (Relation r : sourceDataSet.getRelations()) {
-            if (!conflicts.hasConflictForTheir(r) && childrenToMerge.contains(r.getUniqueId())) {
+            if (!conflicts.hasConflictForTheir(r) && objectsWithChildrenToMerge.contains(r.getPrimitiveId())) {
                 mergeRelationMembers(r);
             }
         }
@@ -174,6 +203,19 @@ public class DataSetMerger {
                 throw new RuntimeException(tr("Missing merge target for object with id {0}", source.getUniqueId()));
             targetDataSet.unlinkReferencesToPrimitive(target);
         }
+        // objectsWithChildrenToMerge also includes complete nodes which have
+        // been merged into their incomplete equivalents.
+        //
+        for (PrimitiveId id: objectsWithChildrenToMerge) {
+            if (!id.getType().equals(OsmPrimitiveType.NODE)) {
+                continue;
+            }
+            Node n = (Node)sourceDataSet.getPrimitiveById(id);
+            if (!conflicts.hasConflictForTheir(n)) {
+                fixIncompleteParentWays(n);
+            }
+        }
+
     }
 
     /**
@@ -268,7 +310,7 @@ public class DataSetMerger {
             // => merge source into target
             //
             target.mergeFrom(source);
-            childrenToMerge.add(source.getUniqueId());
+            objectsWithChildrenToMerge.add(source.getPrimitiveId());
         } else if (!target.incomplete && source.incomplete) {
             // target is complete and source is incomplete
             // => keep target, it has more information already
@@ -281,19 +323,20 @@ public class DataSetMerger {
             // same version, but target is deleted. Assume target takes precedence
             // otherwise too many conflicts when refreshing from the server
         } else if (target.isDeleted() != source.isDeleted()) {
-            // differences in deleted state have to be resolved manually
+            // differences in deleted state have to be resolved manually. This can
+            // happen if one layer is merged onto another layer
             //
             conflicts.add(target,source);
         } else if (! target.isModified() && source.isModified()) {
             // target not modified. We can assume that source is the most recent version.
             // clone it into target. But check first, whether source is deleted. if so,
-            // make sure that target is not referenced anymore in myDataSet.
+            // make sure that target is not referenced any more in myDataSet.
             //
             if (source.isDeleted()) {
                 deletedObjectsToUnlink.add(source);
             }
             target.mergeFrom(source);
-            childrenToMerge.add(source.getUniqueId());
+            objectsWithChildrenToMerge.add(source.getPrimitiveId());
         } else if (! target.isModified() && !source.isModified() && target.getVersion() == source.getVersion()) {
             // both not modified. Keep mine
             //
@@ -301,7 +344,7 @@ public class DataSetMerger {
             // my not modified but other is newer. clone other onto mine.
             //
             target.mergeFrom(source);
-            childrenToMerge.add(source.getUniqueId());
+            objectsWithChildrenToMerge.add(source.getPrimitiveId());
         } else if (target.isModified() && ! source.isModified() && target.getVersion() == source.getVersion()) {
             // target is same as source but target is modified
             // => keep target
@@ -317,7 +360,7 @@ public class DataSetMerger {
             //
             target.mergeFrom(source);
             target.setModified(true);
-            childrenToMerge.add(source.getUniqueId());
+            objectsWithChildrenToMerge.add(source.getPrimitiveId());
         }
         return true;
     }

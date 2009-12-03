@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -15,6 +17,16 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 public abstract class RelationEditor extends ExtendedDialog {
+    /** the property name for the current relation.
+     * @see #setRelation(Relation)
+     * @see #getRelation()
+     */
+    static public final String RELATION_PROP = RelationEditor.class.getName() + ".relation";
+
+    /** the property name for the current relation snapshot
+     * @see #getRelationSnapshot()
+     */
+    static public final String RELATION_SNAPSHOT_PROP = RelationEditor.class.getName() + ".relationSnapshot";
 
     /** the list of registered relation editor classes */
     private static ArrayList<Class<RelationEditor>> editors = new ArrayList<Class<RelationEditor>>();
@@ -61,7 +73,10 @@ public abstract class RelationEditor extends ExtendedDialog {
      * feel responsible for that kind of relation, and if they return true
      * then an instance of that class will be used.
      *
+     * @param layer the data layer the relation is a member of
      * @param r the relation to be edited
+     * @param selectedMembers a collection of relation members which shall be selected when the
+     * editor is first launched
      * @return an instance of RelationEditor suitable for editing that kind of relation
      */
     public static RelationEditor getEditor(OsmDataLayer layer, Relation r, Collection<RelationMember> selectedMembers) {
@@ -138,8 +153,12 @@ public abstract class RelationEditor extends ExtendedDialog {
      * @param relation the relation
      */
     protected void setRelation(Relation relation) {
-        this.relationSnapshot = (relation == null) ? null : new Relation(relation);
+        setRelationSnapshot((relation == null) ? null : new Relation(relation));
+        Relation oldValue = this.relation;
         this.relation = relation;
+        if (this.relation != oldValue) {
+            support.firePropertyChange(RELATION_PROP, oldValue, this.relation);
+        }
         updateTitle();
     }
 
@@ -163,6 +182,14 @@ public abstract class RelationEditor extends ExtendedDialog {
         return relationSnapshot;
     }
 
+    protected void setRelationSnapshot(Relation snapshot) {
+        Relation oldValue = relationSnapshot;
+        relationSnapshot = snapshot;
+        if (relationSnapshot != oldValue) {
+            support.firePropertyChange(RELATION_SNAPSHOT_PROP, oldValue, relationSnapshot);
+        }
+    }
+
     /**
      * Replies true if the currently edited relation has been changed elsewhere.
      *
@@ -173,5 +200,21 @@ public abstract class RelationEditor extends ExtendedDialog {
      */
     protected boolean isDirtyRelation() {
         return ! relation.hasEqualSemanticAttributes(relationSnapshot);
+    }
+
+
+    /* ----------------------------------------------------------------------- */
+    /* property change support                                                 */
+    /* ----------------------------------------------------------------------- */
+    final private PropertyChangeSupport support = new PropertyChangeSupport(this);
+
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.support.addPropertyChangeListener(listener);
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.support.removePropertyChangeListener(listener);
     }
 }

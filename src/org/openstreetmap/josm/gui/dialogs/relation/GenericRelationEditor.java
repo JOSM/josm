@@ -4,12 +4,10 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -18,7 +16,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,7 +28,6 @@ import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -37,9 +35,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
+import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -56,31 +53,22 @@ import org.openstreetmap.josm.command.ConflictAddCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
-import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
-import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
-import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
-import org.openstreetmap.josm.io.OsmServerBackreferenceReader;
-import org.openstreetmap.josm.io.OsmServerObjectReader;
-import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.xml.sax.SAXException;
 
 /**
  * This dialog is for editing relations.
@@ -124,7 +112,11 @@ public class GenericRelationEditor extends RelationEditor  {
         // init the various models
         //
         memberTableModel = new MemberTableModel(getLayer());
+        DataSet.selListeners.add(memberTableModel);
+        getLayer().data.addDataSetListener(memberTableModel);
+        getLayer().listenerDataChanged.add(memberTableModel);
         selectionTableModel = new SelectionTableModel(getLayer());
+        DataSet.selListeners.add(selectionTableModel);
         referrerModel = new ReferringRelationsBrowserModel(relation);
 
         tagEditorPanel = new TagEditorPanel();
@@ -172,6 +164,7 @@ public class GenericRelationEditor extends RelationEditor  {
                 }
         );
 
+        getContentPane().add(buildToolBar(), BorderLayout.NORTH);
         getContentPane().add(tabbedPane, BorderLayout.CENTER);
         getContentPane().add(buildOkCancelButtonPanel(), BorderLayout.SOUTH);
 
@@ -188,6 +181,22 @@ public class GenericRelationEditor extends RelationEditor  {
 
         memberTableModel.setSelectedMembers(selectedMembers);
         HelpUtil.setHelpContext(getRootPane(),ht("/Dialog/RelationEditor"));
+    }
+
+    /**
+     * Creates the toolbar
+     * 
+     * @return the toolbar
+     */
+    protected JToolBar buildToolBar() {
+        JToolBar tb  = new JToolBar();
+        tb.setFloatable(false);
+        tb.add(new ApplyAction());
+        tb.add(new DuplicateRelationAction());
+        DeleteCurrentRelationAction deleteAction = new DeleteCurrentRelationAction();
+        addPropertyChangeListener(deleteAction);
+        tb.add(deleteAction);
+        return tb;
     }
 
     /**
@@ -279,6 +288,49 @@ public class GenericRelationEditor extends RelationEditor  {
         gc.weighty = 1.0;
         pnl.add(scrollPane, gc);
 
+        // --- role editing
+        JPanel p3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        p3.add(new JLabel(tr("Apply Role:")));
+        tfRole = new AutoCompletingTextField(10);
+        tfRole.setToolTipText(tr("Enter a role and apply it to the selected relation members"));
+        tfRole.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                tfRole.selectAll();
+            }
+        });
+        tfRole.setAutoCompletionList(new AutoCompletionList());
+        tfRole.addFocusListener(
+                new FocusAdapter() {
+                    @Override
+                    public void focusGained(FocusEvent e) {
+                        AutoCompletionList list = tfRole.getAutoCompletionList();
+                        AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).populateWithMemberRoles(list);
+                    }
+                }
+        );
+        p3.add(tfRole);
+        SetRoleAction setRoleAction = new SetRoleAction();
+        memberTableModel.getSelectionModel().addListSelectionListener(setRoleAction);
+        tfRole.getDocument().addDocumentListener(setRoleAction);
+        tfRole.addActionListener(setRoleAction);
+        memberTableModel.getSelectionModel().addListSelectionListener(
+                new ListSelectionListener() {
+                    public void valueChanged(ListSelectionEvent e) {
+                        tfRole.setEnabled(memberTable.getSelectedRowCount() > 0);
+                    }
+                }
+        );
+        tfRole.setEnabled(memberTable.getSelectedRowCount() > 0);
+
+        gc.gridx = 1;
+        gc.gridy = 2;
+        gc.fill = GridBagConstraints.BOTH;
+        gc.anchor = GridBagConstraints.CENTER;
+        gc.weightx = 1.0;
+        gc.weighty = 0.0;
+        pnl.add(p3, gc);
+
         JPanel pnl2 = new JPanel();
         pnl2.setLayout(new GridBagLayout());
 
@@ -325,7 +377,6 @@ public class GenericRelationEditor extends RelationEditor  {
         JPanel pnl3 = new JPanel();
         pnl3.setLayout(new BorderLayout());
         pnl3.add(splitPane, BorderLayout.CENTER);
-        pnl3.add(buildButtonPanel(), BorderLayout.SOUTH);
         return pnl3;
     }
 
@@ -337,8 +388,8 @@ public class GenericRelationEditor extends RelationEditor  {
     protected JPanel buildSelectionTablePanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new BorderLayout());
-        JTable tbl = new JTable(selectionTableModel, new SelectionTableColumnModel(memberTableModel));
-        tbl.setEnabled(false);
+        SelectionTable tbl = new SelectionTable(selectionTableModel, new SelectionTableColumnModel(memberTableModel));
+        tbl.setMemberTableModel(memberTableModel);
         JScrollPane pane = new JScrollPane(tbl);
         pnl.add(pane, BorderLayout.CENTER);
         return pnl;
@@ -370,63 +421,52 @@ public class GenericRelationEditor extends RelationEditor  {
      *
      * @return
      */
-    protected JPanel buildLeftButtonPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
+    protected JToolBar buildLeftButtonPanel() {
+        JToolBar tb = new JToolBar();
+        tb.setOrientation(JToolBar.VERTICAL);
+        tb.setFloatable(false);
 
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.gridx = 0;
-        gc.gridy = 0;
-        gc.gridheight = 1;
-        gc.gridwidth = 1;
-        gc.insets = new Insets(0, 5, 0, 5);
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-
-        // -----
-        gc.gridy = 0;
+        // -- move up action
         MoveUpAction moveUpAction = new MoveUpAction();
         memberTableModel.getSelectionModel().addListSelectionListener(moveUpAction);
-        pnl.add(new JButton(moveUpAction), gc);
+        tb.add(moveUpAction);
 
-        // -----
-        gc.gridy = 1;
+        // -- move down action
         MoveDownAction moveDownAction = new MoveDownAction();
         memberTableModel.getSelectionModel().addListSelectionListener(moveDownAction);
-        pnl.add(new JButton(moveDownAction), gc);
+        tb.add(moveDownAction);
+
+        tb.addSeparator();
 
         // -- edit action
-        gc.gridy = 2;
         EditAction editAction = new EditAction();
         memberTableModel.getSelectionModel().addListSelectionListener(editAction);
-        pnl.add(new JButton(editAction),gc);
+        tb.add(editAction);
 
-        // ------
-        gc.gridy = 3;
+        // -- delete action
         RemoveAction removeSelectedAction = new RemoveAction();
         memberTable.getSelectionModel().addListSelectionListener(removeSelectedAction);
-        pnl.add(new JButton(removeSelectedAction), gc);
+        tb.add(removeSelectedAction);
 
-        // ------
-        gc.gridy = 4;
-        SelectPrimitivesForSelectedMembersAction selectAction = new SelectPrimitivesForSelectedMembersAction();
-        memberTable.getSelectionModel().addListSelectionListener(selectAction);
-        pnl.add(new JButton(selectAction), gc);
-
-        // ------
-        gc.gridy = 5;
+        tb.addSeparator();
+        // -- sort action
         SortAction sortAction = new SortAction();
-        pnl.add(new JButton(sortAction), gc);
+        tb.add(sortAction);
 
-        // ------
-        // just grab the remaining space
-        gc.gridy = 6;
-        gc.weighty = 1.0;
-        gc.fill = GridBagConstraints.BOTH;
-        pnl.add(new JPanel(), gc);
-        return pnl;
+        tb.addSeparator();
+
+        // -- download action
+        DownloadIncompleteMembersAction downloadIncompleteMembersAction = new DownloadIncompleteMembersAction();
+        memberTable.getModel().addTableModelListener(downloadIncompleteMembersAction);
+        tb.add(downloadIncompleteMembersAction);
+
+        // -- download selected action
+        DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembersAction = new DownloadSelectedIncompleteMembersAction();
+        memberTable.getModel().addTableModelListener(downloadSelectedIncompleteMembersAction);
+        memberTable.getSelectionModel().addListSelectionListener(downloadSelectedIncompleteMembersAction);
+        tb.add(downloadSelectedIncompleteMembersAction);
+
+        return tb;
     }
 
     /**
@@ -434,136 +474,76 @@ public class GenericRelationEditor extends RelationEditor  {
      *
      * @return
      */
-    protected JPanel buildSelectionControlButtonPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
+    protected JToolBar buildSelectionControlButtonPanel() {
+        JToolBar tb = new JToolBar(JToolBar.VERTICAL);
+        tb.setFloatable(false);
 
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.gridx = 0;
-        gc.gridy = 0;
-        gc.gridheight = 1;
-        gc.gridwidth = 1;
-        gc.insets = new Insets(0, 5, 0, 5);
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
+
+        // -- add at end action
         AddSelectedAtEndAction addSelectedAtEndAction = new AddSelectedAtEndAction();
         selectionTableModel.addTableModelListener(addSelectedAtEndAction);
-        pnl.add(new JButton(addSelectedAtEndAction), gc);
+        tb.add(addSelectedAtEndAction);
 
-        // -----
-        gc.gridy = 1;
+        // -- select members action
         SelectedMembersForSelectionAction selectMembersForSelectionAction = new SelectedMembersForSelectionAction();
         selectionTableModel.addTableModelListener(selectMembersForSelectionAction);
         memberTableModel.addTableModelListener(selectMembersForSelectionAction);
-        pnl.add(new JButton(selectMembersForSelectionAction), gc);
+        tb.add(selectMembersForSelectionAction);
 
-        // -----
-        gc.gridy = 2;
+        tb.addSeparator();
+
+        // -- remove selected action
         RemoveSelectedAction removeSelectedAction = new RemoveSelectedAction();
         selectionTableModel.addTableModelListener(removeSelectedAction);
-        pnl.add(new JButton(removeSelectedAction), gc);
+        tb.add(removeSelectedAction);
 
-        // ------
-        // just grab the remaining space
-        gc.gridy = 3;
-        gc.weighty = 1.0;
-        gc.fill = GridBagConstraints.BOTH;
-        pnl.add(new JPanel(), gc);
+        // -- select action
+        SelectPrimitivesForSelectedMembersAction selectAction = new SelectPrimitivesForSelectedMembersAction();
+        memberTable.getSelectionModel().addListSelectionListener(selectAction);
+        tb.add(selectAction);
 
-        // -----
-        gc.gridy = 4;
-        gc.weighty = 0.0;
+        tb.addSeparator();
+
+        // -- add at start action
         AddSelectedAtStartAction addSelectionAction = new AddSelectedAtStartAction();
         selectionTableModel.addTableModelListener(addSelectionAction);
-        pnl.add(new JButton(addSelectionAction), gc);
+        tb.add(addSelectionAction);
 
-        // -----
-        gc.gridy = 5;
+        // -- add before selected action
         AddSelectedBeforeSelection addSelectedBeforeSelectionAction = new AddSelectedBeforeSelection();
         selectionTableModel.addTableModelListener(addSelectedBeforeSelectionAction);
         memberTableModel.getSelectionModel().addListSelectionListener(addSelectedBeforeSelectionAction);
-        pnl.add(new JButton(addSelectedBeforeSelectionAction), gc);
+        tb.add(addSelectedBeforeSelectionAction);
 
-        // -----
-        gc.gridy = 6;
+        // -- add after selected action
         AddSelectedAfterSelection addSelectedAfterSelectionAction = new AddSelectedAfterSelection();
         selectionTableModel.addTableModelListener(addSelectedAfterSelectionAction);
         memberTableModel.getSelectionModel().addListSelectionListener(addSelectedAfterSelectionAction);
-        pnl.add(new JButton(addSelectedAfterSelectionAction), gc);
+        tb.add(addSelectedAfterSelectionAction);
 
-        return pnl;
-    }
-
-    /**
-     * Creates the buttons for the basic editing layout
-     * @return {@see JPanel} with basic buttons
-     */
-    protected JPanel buildButtonPanel() {
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-        // --- download members
-        buttonPanel.add(new SideButton(new DownlaodAction()));
-
-        // --- role editing
-        buttonPanel.add(new JLabel(tr("Role:")));
-        tfRole = new AutoCompletingTextField(10);
-        tfRole.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                tfRole.selectAll();
-            }
-        });
-        tfRole.setAutoCompletionList(new AutoCompletionList());
-        tfRole.addFocusListener(
-                new FocusAdapter() {
-                    @Override
-                    public void focusGained(FocusEvent e) {
-                        AutoCompletionList list = tfRole.getAutoCompletionList();
-                        AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).populateWithMemberRoles(list);
-                    }
-                }
-        );
-
-        buttonPanel.add(tfRole);
-        SetRoleAction setRoleAction = new SetRoleAction();
-        memberTableModel.getSelectionModel().addListSelectionListener(setRoleAction);
-        buttonPanel.add(new SideButton(setRoleAction));
-        tfRole.getDocument().addDocumentListener(setRoleAction);
-        tfRole.addActionListener(setRoleAction);
-
-        // --- copy relation action
-        buttonPanel.add(new SideButton(new DuplicateRelationAction()));
-
-        // --- apply relation action
-        buttonPanel.add(new SideButton(new ApplyAction()));
-
-        // --- delete relation action
-        buttonPanel.add(new SideButton(new DeleteCurrentRelationAction()));
-        return buttonPanel;
+        return tb;
     }
 
     @Override
     protected Dimension findMaxDialogSize() {
         // FIXME: Make it remember dialog size
-        return new Dimension(700, 500);
-    }
-
-    @Override
-    public void dispose() {
-        selectionTableModel.unregister();
-        DataSet.selListeners.remove(memberTableModel);
-        super.dispose();
+        return new Dimension(700, 650);
     }
 
     @Override
     public void setVisible(boolean visible) {
         if (visible) {
-            tagEditorPanel.initAutoCompletion(Main.main.getEditLayer());
+            tagEditorPanel.initAutoCompletion(getLayer());
         }
         super.setVisible(visible);
         if (!visible) {
+            // make sure all registered listeners are unregistered
+            //
+            selectionTableModel.unregister();
+            DataSet.selListeners.remove(memberTableModel);
+            DataSet.selListeners.remove(selectionTableModel);
+            getLayer().data.removeDataSetListener(memberTableModel);
+            getLayer().listenerDataChanged.remove(memberTableModel);
             dispose();
         }
     }
@@ -887,18 +867,26 @@ public class GenericRelationEditor extends RelationEditor  {
         }
     }
 
-    class SortAction extends AbstractAction {
+    class SortAction extends AbstractAction implements ListSelectionListener {
         public SortAction() {
             putValue(SHORT_DESCRIPTION, tr("Sort the relation members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "sort"));
-            // putValue(NAME, tr("Sort"));
+            putValue(NAME, tr("Sort"));
             Shortcut.registerShortcut("relationeditor:sort", tr("Relation Editor: Sort"), KeyEvent.VK_T,
                     Shortcut.GROUP_MNEMONIC);
-            //setEnabled(false);
+            updateEnabledState();
         }
 
         public void actionPerformed(ActionEvent e) {
             memberTableModel.sort();
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(memberTable.getSelectedRowCount() > 0);
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
         }
     }
 
@@ -959,7 +947,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
     }
 
-    class DeleteCurrentRelationAction extends AbstractAction {
+    class DeleteCurrentRelationAction extends AbstractAction implements PropertyChangeListener{
         public DeleteCurrentRelationAction() {
             putValue(SHORT_DESCRIPTION, tr("Delete the currently edited relation"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
@@ -982,7 +970,13 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         protected void updateEnabledState() {
-            setEnabled(getRelation() != null);
+            setEnabled(getRelationSnapshot() != null);
+        }
+
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (evt.getPropertyName().equals(RELATION_SNAPSHOT_PROP)) {
+                updateEnabledState();
+            }
         }
     }
 
@@ -1186,10 +1180,10 @@ public class GenericRelationEditor extends RelationEditor  {
         }
     }
 
-    class DownlaodAction extends AbstractAction {
-        public DownlaodAction() {
-            putValue(SHORT_DESCRIPTION, tr("Download all incomplete ways and nodes in relation"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "downloadincomplete"));
+    class DownloadIncompleteMembersAction extends AbstractAction implements TableModelListener {
+        public DownloadIncompleteMembersAction() {
+            putValue(SHORT_DESCRIPTION, tr("Download all incomplete members"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincomplete"));
             putValue(NAME, tr("Download Members"));
             Shortcut.registerShortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"),
                     KeyEvent.VK_K, Shortcut.GROUP_MNEMONIC);
@@ -1199,8 +1193,9 @@ public class GenericRelationEditor extends RelationEditor  {
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
                 return;
-            Main.worker.submit(new DownloadTask(
-                    Collections.singletonList(getRelation()),
+            Main.worker.submit(new DownloadRelationMemberTask(
+                    getRelation(),
+                    memberTableModel.getIncompleteMemberPrimitives(),
                     getLayer(),
                     memberTableModel,
                     GenericRelationEditor.this)
@@ -1208,7 +1203,54 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         protected void updateEnabledState() {
-            setEnabled(getRelation() != null && !getRelation().isNew());
+            setEnabled(
+                    getRelation() != null
+                    && !getRelation().isNew()
+                    && memberTableModel.hasIncompleteMembers()
+            );
+        }
+
+        public void tableChanged(TableModelEvent e) {
+            updateEnabledState();
+        }
+    }
+
+    class DownloadSelectedIncompleteMembersAction extends AbstractAction implements ListSelectionListener, TableModelListener{
+        public DownloadSelectedIncompleteMembersAction() {
+            putValue(SHORT_DESCRIPTION, tr("Download selected incomplete members"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));
+            putValue(NAME, tr("Download Members"));
+            Shortcut.registerShortcut("relationeditor:downloadincomplete", tr("Relation Editor: Download Members"),
+                    KeyEvent.VK_K, Shortcut.GROUP_MNEMONIC);
+            updateEnabledState();
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (!isEnabled())
+                return;
+            Main.worker.submit(new DownloadRelationMemberTask(
+                    getRelation(),
+                    memberTableModel.getSelectedIncompleteMemberPrimitives(),
+                    getLayer(),
+                    memberTableModel,
+                    GenericRelationEditor.this)
+            );
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(
+                    getRelation() != null
+                    && !getRelation().isNew()
+                    && memberTableModel.hasIncompleteSelectedMembers()
+            );
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+
+        public void tableChanged(TableModelEvent e) {
+            updateEnabledState();
         }
     }
 
@@ -1362,122 +1404,6 @@ public class GenericRelationEditor extends RelationEditor  {
         public void mouseClicked(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
                 new EditAction().run();
-            }
-        }
-    }
-
-    /**
-     * The asynchronous task for downloading relation members.
-     *
-     */
-    public static class DownloadTask extends PleaseWaitRunnable {
-        private boolean cancelled;
-        private Exception lastException;
-        private List<Relation> relations;
-        private OsmDataLayer curLayer;
-        private MemberTableModel memberTableModel;
-        private OsmServerObjectReader objectReader;
-        private OsmServerBackreferenceReader parentReader;
-
-        public DownloadTask(List<Relation> relations, OsmDataLayer curLayer, MemberTableModel memberTableModel, Dialog parent) {
-            super(tr("Download relation members"), new PleaseWaitProgressMonitor(parent), false /* don't ignore exception */);
-            this.relations = relations;
-            this.curLayer = curLayer;
-            this.memberTableModel = memberTableModel;
-        }
-
-        public DownloadTask(List<Relation> relations, OsmDataLayer curLayer, MemberTableModel memberTableModel) {
-            super(tr("Download relation members"), new PleaseWaitProgressMonitor(), false /* don't ignore exception */);
-            this.relations = relations;
-            this.curLayer = curLayer;
-            this.memberTableModel = memberTableModel;
-        }
-
-        @Override
-        protected void cancel() {
-            cancelled = true;
-            synchronized(this) {
-                if (objectReader != null) {
-                    objectReader.cancel();
-                } else if (parentReader != null) {
-                    parentReader.cancel();
-                }
-            }
-        }
-
-        @Override
-        protected void finish() {
-            Main.map.repaint();
-            if (cancelled)
-                return;
-            if (memberTableModel != null) {
-                memberTableModel.fireTableDataChanged();
-            }
-            if (lastException != null) {
-                ExceptionDialogUtil.explainException(lastException);
-            }
-        }
-
-        @Override
-        protected void realRun() throws SAXException, IOException, OsmTransferException {
-            try {
-                for (Relation relation : relations) {
-                    // download the relation
-                    //
-                    progressMonitor.indeterminateSubTask(tr("Downloading relation ''{0}''", relation.getDisplayName(DefaultNameFormatter.getInstance())));
-                    synchronized(this) {
-                        if (cancelled) return;
-                        objectReader = new OsmServerObjectReader(relation.getId(), OsmPrimitiveType.RELATION, true /* full download */);
-                    }
-                    final DataSet dataSet = objectReader.parseOsm(progressMonitor
-                            .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-                    if (dataSet == null)
-                        return;
-                    synchronized (this) {
-                        if (cancelled) return;
-                        objectReader = null;
-                    }
-
-                    // download referring objects of the downloaded member objects
-                    //
-                    // asked for in #3999, but uncommented for the time being. Could be used
-                    // later, perhaps if user explicity requests so (for instance by checking
-                    // a checkbox)
-                    //                    for (OsmPrimitive p: relation.getMemberPrimitives()) {
-                    //                        synchronized(this) {
-                    //                            if (cancelled) return;
-                    //                            parentReader = new OsmServerBackreferenceReader(p);
-                    //                        }
-                    //                        DataSet parents = parentReader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
-                    //                        synchronized(this) {
-                    //                            if (cancelled) return;
-                    //                            parentReader = null;
-                    //                        }
-                    //                        DataSetMerger merger = new DataSetMerger(dataSet, parents);
-                    //                        merger.merge();
-                    //                    }
-                    //                    if (cancelled) return;
-
-                    // has to run on the EDT because mergeFrom may trigger events
-                    // which update the UI
-                    //
-                    SwingUtilities.invokeAndWait(
-                            new Runnable() {
-                                public void run() {
-                                    curLayer.mergeFrom(dataSet);
-                                    curLayer.fireDataChange();
-                                    curLayer.onPostDownloadFromServer();
-                                }
-                            }
-                    );
-                }
-            } catch (Exception e) {
-                if (cancelled) {
-                    System.out.println(tr("Warning: ignoring exception because task is cancelled. Exception: {0}", e
-                            .toString()));
-                    return;
-                }
-                lastException = e;
             }
         }
     }

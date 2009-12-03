@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -307,10 +308,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         if (in == null) return;
         progressMonitor.subTask(tr("Downloading OSM data..."));
         try {
-
-            merge(
-                    OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false))
-            );
+            DataSet loaded = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+            rememberNodesOfIncompleteWaysToLoad(loaded);
+            merge(loaded);
         } catch(Exception e) {
             throw new OsmTransferException(e);
         }
@@ -332,9 +332,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
             return;
         progressMonitor.subTask(tr("Downloading OSM data..."));
         try {
-            merge(
-                    OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false))
-            );
+            DataSet loaded = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+            rememberNodesOfIncompleteWaysToLoad(loaded);
+            merge(loaded);
         } catch(Exception e) {
             throw new OsmTransferException(e);
         }
@@ -375,6 +375,18 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         }
     }
 
+    protected void rememberNodesOfIncompleteWaysToLoad(DataSet from) {
+        for (Way w: from.getWays()) {
+            if (w.incomplete) {
+                for (Node n: w.getNodes()) {
+                    if (n.incomplete) {
+                        nodes.add(n.getId());
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * merges the dataset <code>from</code> to {@see #outputDataSet}.
      *
@@ -400,7 +412,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         case WAY:  msg = tr("Fetching a package of ways from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
         case RELATION:  msg = tr("Fetching a package of relations from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
         }
-        progressMonitor.setCustomText(msg);
+        progressMonitor.indeterminateSubTask(msg);
         Set<Long> toFetch = new HashSet<Long>(ids);
         toFetch.addAll(ids);
         while(! toFetch.isEmpty() && !isCanceled()) {
@@ -427,25 +439,21 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      * Invoke {@see #getMissingPrimitives()} to get a list of primitives which have not been
      * found on  the server (the server response code was 404)
      *
-     * Invoke {@see #getSkippedWay()} to get a list of ways which this reader could not build from
-     * the fetched data because the ways refer to nodes which don't exist on the server.
-     *
      * @return the parsed data
      * @exception OsmTransferException thrown if an error occurs while communicating with the API server
      * @see #getMissingPrimitives()
-     * @see #getSkippedWays()
      *
-
      */
     @Override
     public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
-        progressMonitor.beginTask("");
+        int n = nodes.size() + ways.size() + relations.size();
+        progressMonitor.beginTask(trn("Downloading {0} object from ''{1}''", "Downloading {0} objects from ''{1}''", n, n, OsmApi.getOsmApi().getBaseUrl()));
         try {
             missingPrimitives = new HashSet<Long>();
             if (isCanceled())return null;
-            fetchPrimitives(nodes,OsmPrimitiveType.NODE, progressMonitor);
-            if (isCanceled())return null;
             fetchPrimitives(ways,OsmPrimitiveType.WAY, progressMonitor);
+            if (isCanceled())return null;
+            fetchPrimitives(nodes,OsmPrimitiveType.NODE, progressMonitor);
             if (isCanceled())return null;
             fetchPrimitives(relations,OsmPrimitiveType.RELATION, progressMonitor);
             return outputDataSet;

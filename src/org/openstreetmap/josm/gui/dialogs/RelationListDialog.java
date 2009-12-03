@@ -42,7 +42,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
+import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.DataChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -247,7 +247,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             if (! displaylist.isSelectedIndex(index)) {
                 displaylist.setSelectedIndex(index);
             }
-            popupMenu.show(RelationListDialog.this, p.x, p.y-3);
+            popupMenu.show(displaylist, p.x, p.y-3);
         }
         @Override public void mousePressed(MouseEvent e) {
             if (e.isPopupTrigger()) {
@@ -499,9 +499,10 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
             List<Relation> relations = model.getSelectedNonNewRelations();
             if (relations.isEmpty())
                 return;
-            Main.worker.submit(new GenericRelationEditor.DownloadTask(
+            Main.worker.submit(new DownloadRelationTask(
                     model.getSelectedNonNewRelations(),
-                    Main.map.mapView.getEditLayer(), null));
+                    Main.map.mapView.getEditLayer())
+            );
         }
     }
 

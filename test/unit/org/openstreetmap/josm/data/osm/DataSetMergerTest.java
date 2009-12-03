@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -990,38 +991,39 @@ public class DataSetMergerTest {
      */
     @Test
     public void newIncompleteWay() {
-        DataSet their = new DataSet();
-        their.setVersion("0.6");
+        DataSet source = new DataSet();
+        source.setVersion("0.6");
 
         Node n1 = new Node(1);
-        their.addPrimitive(n1);
+        source.addPrimitive(n1);
 
         Node n2 = new Node(2);
-        their.addPrimitive(n2);
+        source.addPrimitive(n2);
 
         Way w3 = new Way(3);
         w3.setNodes(Arrays.asList(n1,n2));
-        their.addPrimitive(w3);
+        source.addPrimitive(w3);
+        assertTrue(w3.incomplete);
 
-        DataSet my = new DataSet();
-        their.setVersion("0.6");
+        DataSet target = new DataSet();
+        target.setVersion("0.6");
 
-        DataSetMerger visitor = new DataSetMerger(my,their);
+        DataSetMerger visitor = new DataSetMerger(target,source);
         visitor.merge();
 
         assertEquals(0,visitor.getConflicts().size());
 
-        OsmPrimitive p= my.getPrimitiveById(1, OsmPrimitiveType.NODE);
+        OsmPrimitive p= target.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertNotNull(p);
         assertTrue(p.incomplete);
-        p= my.getPrimitiveById(2, OsmPrimitiveType.NODE);
+        p= target.getPrimitiveById(2, OsmPrimitiveType.NODE);
         assertNotNull(p);
         assertTrue(p.incomplete);
-        p= my.getPrimitiveById(3, OsmPrimitiveType.WAY);
+        p= target.getPrimitiveById(3, OsmPrimitiveType.WAY);
         assertNotNull(p);
         assertTrue(p.incomplete);
 
-        Way w = (Way)my.getPrimitiveById(3, OsmPrimitiveType.WAY);
+        Way w = (Way)target.getPrimitiveById(3, OsmPrimitiveType.WAY);
         assertNotNull(w);
         assertTrue(p.incomplete);
         assertEquals(2, w.getNodesCount());
@@ -1053,7 +1055,7 @@ public class DataSetMergerTest {
         their.addPrimitive(w3);
 
         DataSet my = new DataSet();
-        their.setVersion("0.6");
+        my.setVersion("0.6");
 
         Node n4 = new Node(new LatLon(0,0));
         n4.setOsmId(1,1);
@@ -1091,4 +1093,66 @@ public class DataSetMergerTest {
         assertTrue(!w.getNode(1).incomplete);
     }
 
+    /**
+     * merge to complete nodes onto an incomplete way with the same two nodes, but incomplete.
+     * => both the nodes and the way should be complete in the target dataset after merging
+     */
+    @Test
+    public void twoCompleteNodesOntoAnIncompleteWay() {
+
+        // -- source dataset
+        DataSet source = new DataSet();
+        source.setVersion("0.6");
+
+        // an complete node
+        Node n1 = new Node(1);
+        n1.setCoor(new LatLon(1,1));
+        n1.incomplete = false;
+        source.addPrimitive(n1);
+
+        // another complete node
+        Node n2 = new Node(2);
+        n2.setCoor(new LatLon(2,2));
+        n2.incomplete = false;
+        source.addPrimitive(n2);
+
+        // --- target daset
+        DataSet target = new DataSet();
+        target.setVersion("0.6");
+
+        Node n4 = new Node(1);
+        target.addPrimitive(n4);
+
+        Node n5 = new Node(2);
+        target.addPrimitive(n5);
+
+        Way w6 = new Way(3);
+        w6.incomplete = false;
+        w6.addNode(n4);
+        w6.addNode(n5);
+        w6.incomplete = true;
+        target.addPrimitive(w6);
+
+        //-- merge it
+        DataSetMerger visitor = new DataSetMerger(target,source);
+        visitor.merge();
+
+        // -- test it
+        assertEquals(0,visitor.getConflicts().size());
+
+        Node n = (Node)target.getPrimitiveById(1, OsmPrimitiveType.NODE);
+        assertNotNull(n);
+        assertFalse(n.incomplete);
+
+        n = (Node)target.getPrimitiveById(2, OsmPrimitiveType.NODE);
+        assertNotNull(n);
+        assertFalse(n.incomplete);
+
+        Way w = (Way)target.getPrimitiveById(3, OsmPrimitiveType.WAY);
+        assertNotNull(w);
+        assertFalse(w.incomplete);
+        assertEquals(2, w.getNodesCount());
+        assertEquals(1, w.getNode(0).getId());
+        assertEquals(2, w.getNode(1).getId());
+    }
 }

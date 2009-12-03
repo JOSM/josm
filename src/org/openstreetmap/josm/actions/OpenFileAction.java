@@ -1,8 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -85,7 +85,7 @@ public class OpenFileAction extends DiskAccessAction {
             getProgressMonitor().setTicks(files.size());
             for (File f : files) {
                 if (cancelled) return;
-                getProgressMonitor().subTask(tr("Opening file ''{0}'' ...", f.getAbsolutePath()));
+                getProgressMonitor().indeterminateSubTask(tr("Opening file ''{0}'' ...", f.getAbsolutePath()));
                 try {
                     System.out.println("Open file: " + f.getAbsolutePath() + " (" + f.length() + " bytes)");
                     openFile(f);

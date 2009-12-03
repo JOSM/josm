@@ -3,11 +3,10 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.util.ArrayList;
-import java.util.Collections;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -17,11 +16,11 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
  *
  */
 public abstract class MemberTableCellRenderer extends JLabel implements TableCellRenderer {
-    public final static Color BGCOLOR_SELECTED = new Color(143, 170, 255);
     public final static Color BGCOLOR_EMPTY_ROW = new Color(234, 234, 234);
+    public final static Color BGCOLOR_IN_JOSM_SELECTION = new Color(235,255,177);
 
     public final static Color BGCOLOR_NOT_IN_OPPOSITE = new Color(255, 197, 197);
-    public final static Color BGCOLOR_DOUBLE_ENTRY = new Color(255, 234, 213);
+    public final static Color BGCOLOR_DOUBLE_ENTRY = new Color(254,226,214);
 
     /**
      * constructor
@@ -31,48 +30,23 @@ public abstract class MemberTableCellRenderer extends JLabel implements TableCel
         setOpaque(true);
     }
 
-    public String buildToolTipText(OsmPrimitive primitive) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<html>");
-        sb.append("<strong>id</strong>=").append(primitive.getId()).append("<br>");
-        ArrayList<String> keyList = new ArrayList<String>(primitive.keySet());
-        Collections.sort(keyList);
-        for (int i = 0; i < keyList.size(); i++) {
-            if (i > 0) {
-                sb.append("<br>");
-            }
-            String key = keyList.get(i);
-            sb.append("<strong>").append(key).append("</strong>").append("=");
-            String value = primitive.get(key);
-            while (value.length() != 0) {
-                sb.append(value.substring(0, Math.min(50, value.length())));
-                if (value.length() > 50) {
-                    sb.append("<br>");
-                    value = value.substring(50);
-                } else {
-                    value = "";
-                }
-            }
-        }
-        sb.append("</html>");
-        return sb.toString();
-    }
-
     /**
      * reset the renderer
      */
     protected void reset() {
-        setBackground(Color.WHITE);
-        setForeground(Color.BLACK);
+        setBackground(UIManager.getColor("Table.background"));
+        setForeground(UIManager.getColor("Table.foreground"));
         setBorder(null);
         setIcon(null);
         setToolTipText(null);
     }
 
     protected void renderBackground(MemberTableModel model, OsmPrimitive primitive, boolean isSelected) {
-        Color bgc = Color.WHITE;
+        Color bgc = UIManager.getColor("Table.background");
         if (isSelected) {
-            bgc = BGCOLOR_SELECTED;
+            bgc = UIManager.getColor("Table.selectionBackground");
+        } else if (primitive != null && model.isInJosmSelection(primitive)) {
+            bgc = BGCOLOR_IN_JOSM_SELECTION;
         } else if (primitive != null && model.getNumMembersWithPrimitive(primitive) > 1) {
             bgc = BGCOLOR_DOUBLE_ENTRY;
         }
@@ -80,7 +54,12 @@ public abstract class MemberTableCellRenderer extends JLabel implements TableCel
     }
 
     protected void renderForeground(boolean isSelected) {
-        Color fgc = Color.BLACK;
+        Color fgc;
+        if (isSelected) {
+            fgc = UIManager.getColor("Table.selectionForeground");
+        } else {
+            fgc = UIManager.getColor("Table.foreground");
+        }
         setForeground(fgc);
     }
 

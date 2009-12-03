@@ -33,7 +33,6 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
         this.layer = layer;
         cache = new ArrayList<OsmPrimitive>();
-        DataSet.selListeners.add(this);
         Layer.listeners.add(this);
         populateSelectedPrimitives(layer);
     }
@@ -101,5 +100,15 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
      */
     protected void populateSelectedPrimitives(OsmDataLayer layer) {
         selectionChanged(layer.data.getSelected());
+    }
+
+    /**
+     * Replies the primitive at row <code>row</code> in this model
+     * 
+     * @param row the row
+     * @return  the primitive at row <code>row</code> in this model
+     */
+    public OsmPrimitive getPrimitive(int row) {
+        return cache.get(row);
     }
 }

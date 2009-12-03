@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -197,5 +198,43 @@ public class DefaultNameFormatter implements NameFormatter {
      */
     public String format(Changeset changeset) {
         return tr("Changeset {0}",changeset.getId());
+    }
+
+    /**
+     * Builds a default tooltip text for the primitive <code>primitive</code>.
+     * 
+     * @param primitive the primitmive
+     * @return the tooltip text
+     */
+    public String buildDefaultToolTip(OsmPrimitive primitive) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<html>");
+        sb.append("<strong>id</strong>=")
+        .append(primitive.getId())
+        .append("<br>");
+        ArrayList<String> keyList = new ArrayList<String>(primitive.keySet());
+        Collections.sort(keyList);
+        for (int i = 0; i < keyList.size(); i++) {
+            if (i > 0) {
+                sb.append("<br>");
+            }
+            String key = keyList.get(i);
+            sb.append("<strong>")
+            .append(key)
+            .append("</strong>")
+            .append("=");
+            String value = primitive.get(key);
+            while(value.length() != 0) {
+                sb.append(value.substring(0,Math.min(50, value.length())));
+                if (value.length() > 50) {
+                    sb.append("<br>");
+                    value = value.substring(50);
+                } else {
+                    value = "";
+                }
+            }
+        }
+        sb.append("</html>");
+        return sb.toString();
     }
 }

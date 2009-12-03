@@ -168,10 +168,6 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
     private BasicArrowButton createArrowButton(SideButton parentButton) {
         BasicArrowButton arrowButton = new BasicArrowButton(SwingConstants.SOUTH, null, null, Color.BLACK, null);
         arrowButton.setBorder(BorderFactory.createEmptyBorder());
-        //        selectionHistoryMenuButton.setContentAreaFilled(false);
-        //        selectionHistoryMenuButton.setOpaque(false);
-        //        selectionHistoryMenuButton.setBorderPainted(false);
-        //        selectionHistoryMenuButton.setBackground(null);
         parentButton.setLayout(new BorderLayout());
         parentButton.add(arrowButton, BorderLayout.EAST);
         return arrowButton;

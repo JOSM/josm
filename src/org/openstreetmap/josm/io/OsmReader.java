@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -442,8 +443,10 @@ public class OsmReader {
             }
             w.setNodes(wayNodes);
             if (incomplete) {
-                logger.warning(tr("Marked way {0} with {1} nodes incomplete because at least one node was missing in the " +
-                        "loaded data and is therefore incomplete too.", externalWayId, w.getNodesCount()));
+                if (logger.isLoggable(Level.FINE)) {
+                    logger.fine(tr("Marked way {0} with {1} nodes incomplete because at least one node was missing in the " +
+                            "loaded data and is therefore incomplete too.", externalWayId, w.getNodesCount()));
+                }
                 w.incomplete = true;
                 ds.addPrimitive(w);
             } else {

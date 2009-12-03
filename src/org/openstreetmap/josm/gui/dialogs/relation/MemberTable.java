@@ -17,6 +17,7 @@ import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -70,6 +71,7 @@ public class MemberTable extends JTable implements IMemberModelListener {
         getActionMap().put("selectPreviousColumnCell", new SelectPreviousColumnCellAction());
 
         addMouseListener(new PopupListener());
+        addMouseListener(new DblClickHandler());
     }
 
     @Override
@@ -239,5 +241,34 @@ public class MemberTable extends JTable implements IMemberModelListener {
 
     protected MemberTableModel getMemberTableModel() {
         return (MemberTableModel) getModel();
+    }
+
+    class DblClickHandler extends MouseAdapter {
+        protected void setSelection(MouseEvent e) {
+            int row = rowAtPoint(e.getPoint());
+            if (row < 0) return;
+            OsmPrimitive primitive = getMemberTableModel().getReferredPrimitive(row);
+            getMemberTableModel().getLayer().data.setSelected(primitive.getPrimitiveId());
+        }
+
+        protected void addSelection(MouseEvent e) {
+            int row = rowAtPoint(e.getPoint());
+            if (row < 0) return;
+            OsmPrimitive primitive = getMemberTableModel().getReferredPrimitive(row);
+            getMemberTableModel().getSelectionModel().addSelectionInterval(row, row);
+            getMemberTableModel().getLayer().data.addSelected(primitive.getPrimitiveId());
+
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() > 1) {
+                if (e.isControlDown()) {
+                    addSelection(e);
+                } else {
+                    setSelection(e);
+                }
+            }
+        }
     }
 }
