@@ -31,50 +31,59 @@ public class DialogsPanel extends JPanel {
         this.parent = parent;
     }
 
-    private boolean initialized = false;
-    public void initialize(List<ToggleDialog> allDialogs) {
+    public boolean initialized = false; // read only from outside
+    
+    public void initialize(List<ToggleDialog> pAllDialogs) {
         if (initialized)
             throw new IllegalStateException();
         initialized = true;
-        this.allDialogs = allDialogs;
+        allDialogs = new ArrayList<ToggleDialog>();
 
-        for (Integer i=0; i < allDialogs.size(); ++i) {
-            final ToggleDialog dlg = allDialogs.get(i);
-            dlg.setDialogsPanel(this);
-            dlg.setVisible(false);
+        for (Integer i=0; i < pAllDialogs.size(); ++i) {
+            add(pAllDialogs.get(i), false);
         }
-        for (int i=0; i < allDialogs.size() + 1; ++i) {
-            final JPanel p = new JPanel() {
-                /**
-                 * Honoured by the MultiSplitPaneLayout when the
-                 * entire Window is resized.
-                 */
-                @Override
-                public Dimension getMinimumSize() {
-                    return new Dimension(0, 40);
-                }
-            };
-            p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-            p.setVisible(false);
-
-            mSpltPane.add(p, "L"+i);
-            panels.add(p);
-        }
-
-        for (Integer i=0; i < allDialogs.size(); ++i) {
-            final ToggleDialog dlg = allDialogs.get(i);
-            if (dlg.isDialogShowing()) {
-                dlg.showDialog();
-                if (dlg.isDialogInCollapsedView()) {
-                    dlg.isCollapsed = false;    // pretend to be in Default view, this will be set back by collapse()
-                    dlg.collapse();
-                }
-            } else {
-                dlg.hideDialog();
-            }
-        }
+        
         this.add(mSpltPane);
         reconstruct(Action.ELEMENT_SHRINKS, null);
+    }
+
+    public void add(ToggleDialog dlg) {
+        add(dlg, true);
+    }
+    
+    public void add(ToggleDialog dlg, boolean doReconstruct) {
+        allDialogs.add(dlg);
+        int i = allDialogs.size() - 1;
+        dlg.setDialogsPanel(this);
+        dlg.setVisible(false);
+        final JPanel p = new JPanel() {
+            /**
+             * Honoured by the MultiSplitPaneLayout when the
+             * entire Window is resized.
+             */
+            @Override
+            public Dimension getMinimumSize() {
+                return new Dimension(0, 40);
+            }
+        };
+        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+        p.setVisible(false);
+
+        mSpltPane.add(p, "L"+i);
+        panels.add(p);
+
+        if (dlg.isDialogShowing()) {
+            dlg.showDialog();
+            if (dlg.isDialogInCollapsedView()) {
+                dlg.isCollapsed = false;    // pretend to be in Default view, this will be set back by collapse()
+                dlg.collapse();
+            }
+            if (doReconstruct) {
+                reconstruct(Action.INVISIBLE_TO_DEFAULT, dlg);
+            }
+        } else {
+            dlg.hideDialog();
+        }
     }
 
     /**

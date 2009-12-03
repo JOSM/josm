@@ -63,6 +63,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
@@ -297,7 +298,7 @@ public class GpxLayer extends Layer {
             }
         });
 
-        JMenuItem tagimage = new JMenuItem(tr("Import images"), ImageProvider.get("tagimages"));
+        JMenuItem tagimage = new JMenuItem(tr("Import images"), ImageProvider.get("dialogs/geoimage"));
         tagimage.putClientProperty("help", ht("/Action/ImportImages"));
         tagimage.addActionListener(new ActionListener() {
 

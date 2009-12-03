@@ -79,7 +79,7 @@ public class MapFrame extends JPanel implements Destroyable {
      * instead of adding directly to this list.
      */
     private List<ToggleDialog> allDialogs = new ArrayList<ToggleDialog>();
-    private DialogsPanel dialogsPanel;
+    private final DialogsPanel dialogsPanel;
 
     public final ButtonGroup toolGroup = new ButtonGroup();
 
@@ -218,6 +218,9 @@ public class MapFrame extends JPanel implements Destroyable {
         IconToggleButton button = new IconToggleButton(dlg.getToggleAction());
         toolBarToggle.add(button);
         allDialogs.add(dlg);
+        if (dialogsPanel.initialized) {
+            dialogsPanel.add(dlg);
+        }
         return button;
     }
 
