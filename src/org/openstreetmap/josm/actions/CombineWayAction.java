@@ -2,9 +2,9 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.combineTigerTags;
-import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.completeTagCollectionForEditing;
 import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.normalizeTagCollectionBeforeEditing;
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
@@ -28,11 +27,9 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -89,6 +86,19 @@ public class CombineWayAction extends JosmAction {
         return targetWay;
     }
 
+    /**
+     * Replies the set of referring relations
+     *
+     * @return the set of referring relations
+     */
+    protected Set<Relation> getParentRelations(Collection<Way> ways) {
+        HashSet<Relation> ret = new HashSet<Relation>();
+        for (Way w: ways) {
+            ret.addAll(OsmPrimitive.getFilteredList(w.getReferrers(), Relation.class));
+        }
+        return ret;
+    }
+
     public void combineWays(Collection<Way> ways) {
 
         // prepare and clean the list of ways to combine
@@ -97,11 +107,6 @@ public class CombineWayAction extends JosmAction {
             return;
         ways.remove(null); // just in case -  remove all null ways from the collection
         ways = new HashSet<Way>(ways); // remove duplicates
-
-        // build the list of relations referring to the ways to combine
-        //
-        WayReferringRelations referringRelations = new WayReferringRelations(ways);
-        referringRelations.build(getCurrentDataSet());
 
         // build the collection of tags used by the ways to combine
         //
@@ -139,15 +144,16 @@ public class CombineWayAction extends JosmAction {
         CombinePrimitiveResolverDialog dialog = CombinePrimitiveResolverDialog.getInstance();
         dialog.getTagConflictResolverModel().populate(tagsToEdit, completeWayTags.getKeysWithMultipleValues());
         dialog.setTargetPrimitive(targetWay);
+        Set<Relation> parentRelations = getParentRelations(ways);
         dialog.getRelationMemberConflictResolverModel().populate(
-                referringRelations.getRelations(),
-                referringRelations.getWays()
+                parentRelations,
+                ways
         );
         dialog.prepareDefaultDecisions();
 
         // resolve tag conflicts if necessary
         //
-        if (!completeWayTags.isApplicableToPrimitive() || !referringRelations.getRelations().isEmpty()) {
+        if (!completeWayTags.isApplicableToPrimitive() || !parentRelations.isEmpty()) {
             dialog.setVisible(true);
             if (dialog.isCancelled())
                 return;
@@ -212,110 +218,6 @@ public class CombineWayAction extends JosmAction {
                 numWays++;
             }
         setEnabled(numWays >= 2);
-    }
-
-    /**
-     * This is a collection of relations referring to at least one out of a set of
-     * ways.
-     *
-     *
-     */
-    static private class WayReferringRelations {
-        /**
-         * the map references between relations and ways. The key is a ways, the value is a
-         * set of relations referring to that way.
-         */
-        private Map<Way, Set<Relation>> wayRelationMap;
-
-        /**
-         *
-         * @param ways  a collection of ways
-         */
-        public WayReferringRelations(Collection<Way> ways) {
-            wayRelationMap = new HashMap<Way, Set<Relation>>();
-            if (ways == null) return;
-            ways.remove(null); // just in case - remove null values
-            for (Way way: ways) {
-                if (!wayRelationMap.containsKey(way)) {
-                    wayRelationMap.put(way, new HashSet<Relation>());
-                }
-            }
-        }
-
-        /**
-         * build the sets of referring relations from the relations in the dataset <code>ds</code>
-         *
-         * @param ds the data set
-         */
-        public void build(DataSet ds) {
-            for (Relation r : ds.getRelations()) {
-                if (!r.isUsable()) {
-                    continue;
-                }
-                Set<Way> referringWays = OsmPrimitive.getFilteredSet(r.getMemberPrimitives(), Way.class);
-                for (Way w : wayRelationMap.keySet()) {
-                    if (referringWays.contains(w)) {
-                        wayRelationMap.get(w).add(r);
-                    }
-                }
-            }
-        }
-
-        /**
-         * Replies the ways
-         * @return the ways
-         */
-        public Set<Way> getWays() {
-            return wayRelationMap.keySet();
-        }
-
-        /**
-         * Replies the set of referring relations
-         *
-         * @return the set of referring relations
-         */
-        public Set<Relation> getRelations() {
-            HashSet<Relation> ret = new HashSet<Relation>();
-            for (Way w: wayRelationMap.keySet()) {
-                ret.addAll(wayRelationMap.get(w));
-            }
-            return ret;
-        }
-
-        /**
-         * Replies the set of referring relations for a specific way
-         *
-         * @return the set of referring relations
-         */
-        public Set<Relation> getRelations(Way way) {
-            return wayRelationMap.get(way);
-        }
-
-        protected Command buildRelationUpdateCommand(Relation relation, Collection<Way> ways, Way targetWay) {
-            List<RelationMember> newMembers = new ArrayList<RelationMember>();
-            for (RelationMember rm : relation.getMembers()) {
-                if (ways.contains(rm.getMember())) {
-                    RelationMember newMember = new RelationMember(rm.getRole(),targetWay);
-                    newMembers.add(newMember);
-                } else {
-                    newMembers.add(rm);
-                }
-            }
-            Relation newRelation = new Relation(relation);
-            newRelation.setMembers(newMembers);
-            return new ChangeCommand(relation, newRelation);
-        }
-
-        public List<Command> buildRelationUpdateCommands(Way targetWay) {
-            Collection<Way> toRemove = getWays();
-            toRemove.remove(targetWay);
-            ArrayList<Command> cmds = new ArrayList<Command>();
-            for (Relation r : getRelations()) {
-                Command cmd = buildRelationUpdateCommand(r, toRemove, targetWay);
-                cmds.add(cmd);
-            }
-            return cmds;
-        }
     }
 
     static public class NodePair {
