@@ -887,20 +887,16 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         // Method copied from OsmPrimitive in josm-ng
         // Returns only referrers that are members of the same dataset (primitive can have some fake references, for example
         // when way is cloned
-        if (referrers == null)
-            return Collections.emptyList();
-
-        if (referrers instanceof OsmPrimitive) {
-            if (((OsmPrimitive)referrers).dataSet == dataSet)
-                return Collections.singletonList((OsmPrimitive)referrers);
-            else
-                return Collections.emptyList();
-        }
-
         List<OsmPrimitive> result = new ArrayList<OsmPrimitive>();
-        for (OsmPrimitive o:(OsmPrimitive[])referrers) {
-            if (dataSet == o.dataSet) {
-                result.add(o);
+        if (referrers != null) {
+            if ((referrers instanceof OsmPrimitive) && (((OsmPrimitive)referrers).dataSet == dataSet)) {
+                result.add((OsmPrimitive)referrers);
+            } else {
+                for (OsmPrimitive o:(OsmPrimitive[])referrers) {
+                    if (dataSet == o.dataSet) {
+                        result.add(o);
+                    }
+                }
             }
         }
 
