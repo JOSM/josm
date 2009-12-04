@@ -144,14 +144,6 @@ public class OsmApi extends OsmConnection {
     }
 
     /**
-     * Returns true if the negotiated version supports diff uploads.
-     * @return true if the negotiated version supports diff uploads
-     */
-    public boolean hasSupportForDiffUploads() {
-        return ((version != null) && (version.compareTo("0.6")>=0));
-    }
-
-    /**
      * Initializes this component by negotiating a protocol version with the server.
      *
      * @exception OsmApiInitializationException thrown, if an exception occurs
@@ -167,11 +159,9 @@ public class OsmApi extends OsmConnection {
             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, new CapabilitiesParser());
             if (capabilities.supportsVersion("0.6")) {
                 version = "0.6";
-            } else if (capabilities.supportsVersion("0.5")) {
-                version = "0.5";
             } else {
                 System.err.println(tr("This version of JOSM is incompatible with the configured server."));
-                System.err.println(tr("It supports protocol versions 0.5 and 0.6, while the server says it supports {0} to {1}.",
+                System.err.println(tr("It supports protocol version 0.6, while the server says it supports {0} to {1}.",
                         capabilities.get("version", "minimum"), capabilities.get("version", "maximum")));
                 initialized = false;
             }
@@ -255,11 +245,10 @@ public class OsmApi extends OsmConnection {
     }
 
     /**
-     * Modifies an OSM primitive on the server. For protocols greater than 0.5,
-     * the OsmPrimitive object passed in is modified by giving it the server-assigned
-     * version.
+     * Modifies an OSM primitive on the server.
      *
-     * @param osm the primitive. Must not be null
+     * @param osm the primitive. Must not be null.
+     * @param monitor the progress monitor
      * @throws OsmTransferException if something goes wrong
      */
     public void modifyPrimitive(OsmPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
@@ -267,14 +256,9 @@ public class OsmApi extends OsmConnection {
         try {
             ensureValidChangeset();
             initialize(monitor);
-            if (version.equals("0.5")) {
-                // legacy mode does not return the new object version.
-                sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.getId(), toXml(osm, true),monitor);
-            } else {
-                // normal mode (0.6 and up) returns new object version.
-                ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.getId(), toXml(osm, true), monitor);
-                osm.setOsmId(osm.getId(), Integer.parseInt(ret.trim()));
-            }
+            // normal mode (0.6 and up) returns new object version.
+            ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.getId(), toXml(osm, true), monitor);
+            osm.setOsmId(osm.getId(), Integer.parseInt(ret.trim()));
         } catch(NumberFormatException e) {
             throw new OsmTransferException(tr("Unexpected format of new version of modified primitive ''{0}''. Got ''{1}''.", osm.getId(), ret));
         }
@@ -358,8 +342,8 @@ public class OsmApi extends OsmConnection {
                     monitor
             );
         } catch(OsmApiException e) {
-            if (e.getResponseCode() == HttpURLConnection.HTTP_CONFLICT)
-                throw new ChangesetClosedException(e.getErrorHeader());
+            if (e.getResponseCode() == HttpURLConnection.HTTP_CONFLICT && ChangesetClosedException.errorHeaderMatchesPattern(e.getErrorHeader()))
+                throw new ChangesetClosedException(e.getErrorHeader(), ChangesetClosedException.Source.UPDATE_CHANGESET);
             throw e;
         } finally {
             monitor.finishTask();
@@ -568,6 +552,11 @@ public class OsmApi extends OsmConnection {
                     return responseBody.toString();
                 case HttpURLConnection.HTTP_GONE:
                     throw new OsmApiPrimitiveGoneException(errorHeader, errorBody);
+                case HttpURLConnection.HTTP_CONFLICT:
+                    if (ChangesetClosedException.errorHeaderMatchesPattern(errorHeader))
+                        throw new ChangesetClosedException(errorBody, ChangesetClosedException.Source.UPLOAD_DATA);
+                    else
+                        throw new OsmApiException(retCode, errorHeader, errorBody);
                 default:
                     throw new OsmApiException(retCode, errorHeader, errorBody);
                 }
@@ -641,5 +630,4 @@ public class OsmApi extends OsmConnection {
             throw new IllegalArgumentException(tr("Open changeset expected. Got closed changeset with id {0}.", changeset.getId()));
         this.changeset = changeset;
     }
-
 }

@@ -67,8 +67,8 @@ public class RelationMemberConflictResolverCommand extends Command {
         //
         super.executeCommand();
 
-        // replace the list of nodes of 'my' way by the list of merged
-        // nodes
+        // replace the list of members of 'my' relation by the list of merged
+        // members
         //
         my.setMembers(mergedMembers);
 
@@ -86,7 +86,7 @@ public class RelationMemberConflictResolverCommand extends Command {
     @Override
     public void undoCommand() {
         if (! Main.map.mapView.hasLayer(layer)) {
-            logger.warning(tr("Can't undo command ''{0}'' because layer ''{1}'' is not present any more",
+            logger.warning(tr("Can''t undo command ''{0}'' because layer ''{1}'' is not present any more",
                     this.toString(),
                     layer.toString()
             ));

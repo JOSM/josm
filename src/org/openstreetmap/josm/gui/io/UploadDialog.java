@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -49,6 +50,7 @@ import javax.swing.event.ListDataListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
@@ -57,7 +59,6 @@ import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.TagModel;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
-import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -191,8 +192,8 @@ public class UploadDialog extends JDialog {
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0),
                 JComponent.WHEN_IN_FOCUSED_WINDOW
         );
-        pnl.add(new SideButton(new ContextSensitiveHelpAction("/Dialogs/UploadDialog")));
-        HelpUtil.setHelpContext(getRootPane(),"/Dialogs/UploadDialog");
+        pnl.add(new SideButton(new ContextSensitiveHelpAction(ht("/Dialogs/UploadDialog"))));
+        HelpUtil.setHelpContext(getRootPane(),ht("/Dialogs/UploadDialog"));
         return pnl;
     }
 
@@ -292,6 +293,7 @@ public class UploadDialog extends JDialog {
             gcList.gridy = y;
             pnlLists.add(spDelete, gcList);
         }
+        pnlChangesetSelection.setNumUploadedObjects(add.size() + update.size() + delete.size());
     }
 
     /**
@@ -319,6 +321,15 @@ public class UploadDialog extends JDialog {
         tagEditorPanel.getModel().applyToPrimitive(cs);
         cs.put("comment", getUploadComment());
         return cs;
+    }
+
+    /**
+     * Replies the {@see UploadStrategySpecification} the user entered in the dialog.
+     * 
+     * @return the {@see UploadStrategySpecification} the user entered in the dialog.
+     */
+    public UploadStrategySpecification getUploadStrategySpecification() {
+        return pnlChangesetSelection.getUploadStrategySpecification();
     }
 
     /**
@@ -486,14 +497,27 @@ public class UploadDialog extends JDialog {
         }
 
         protected void warnIllegalUploadComment() {
-            JOptionPane.showMessageDialog(
+            HelpAwareOptionPane.showOptionDialog(
                     UploadDialog.this,
                     tr("Please enter a comment for this upload changeset (min. 3 characters)"),
                     tr("Illegal upload comment"),
-                    JOptionPane.ERROR_MESSAGE
+                    JOptionPane.ERROR_MESSAGE,
+                    ht("/Dialog/UploadDialog#IllegalUploadComment")
 
             );
         }
+
+        protected void warnIllegalChunkSize() {
+            HelpAwareOptionPane.showOptionDialog(
+                    UploadDialog.this,
+                    tr("Please enter a valid chunk size first"),
+                    tr("Illegal chunk size"),
+                    JOptionPane.ERROR_MESSAGE,
+                    ht("/Dialog/UploadDialog#IllegalChunkSize")
+            );
+        }
+
+
         public void actionPerformed(ActionEvent e) {
             if (getUploadComment().trim().length() < 3) {
                 warnIllegalUploadComment();
@@ -501,9 +525,17 @@ public class UploadDialog extends JDialog {
                 pnlChangesetSelection.initEditingOfUploadComment(getUploadComment());
                 return;
             }
+            UploadStrategySpecification strategy = getUploadStrategySpecification();
+            if (strategy.getStrategy().equals(UploadStrategy.CHUNKED_DATASET_STRATEGY)) {
+                if (strategy.getChunkSize() == UploadStrategySpecification.UNSPECIFIED_CHUNK_SIZE) {
+                    warnIllegalChunkSize();
+                    southTabbedPane.setSelectedIndex(0);
+                    pnlChangesetSelection.initEditingOfChunkSize();
+                    return;
+                }
+            }
             setCanceled(false);
             setVisible(false);
-
         }
     }
 
@@ -606,7 +638,7 @@ public class UploadDialog extends JDialog {
         private JCheckBox cbCloseAfterUpload;
         private OpenChangesetModel model;
         private HistoryComboBox cmt;
-        private JCheckBox cbUseAtomicUpload;
+        private UploadStrategySelectionPanel pnlUploadStrategy;
 
         /**
          * build the panel with the widgets for controlling whether an atomic upload
@@ -614,19 +646,10 @@ public class UploadDialog extends JDialog {
          *
          * @return the panel
          */
-        protected JPanel buildAtomicUploadControlPanel() {
-            JPanel pnl = new JPanel();
-            pnl.setLayout(new GridBagLayout());
-            GridBagConstraints gc = new GridBagConstraints();
-            gc.fill = GridBagConstraints.HORIZONTAL;
-            gc.weightx = 1.0;
-            gc.anchor = GridBagConstraints.FIRST_LINE_START;
-            pnl.add(cbUseAtomicUpload = new JCheckBox(tr("Upload all changes in one request")), gc);
-            cbUseAtomicUpload.setToolTipText(tr("Enable to upload all changes in one request, disable to use one request per changed primitive"));
-            boolean useAtomicUpload = Main.pref.getBoolean("osm-server.atomic-upload", true);
-            cbUseAtomicUpload.setSelected(useAtomicUpload);
-            cbUseAtomicUpload.setEnabled(OsmApi.getOsmApi().hasSupportForDiffUploads());
-            return pnl;
+        protected JPanel buildUploadStrategySelectionPanel() {
+            pnlUploadStrategy = new UploadStrategySelectionPanel();
+            pnlUploadStrategy.initFromPreferences();
+            return pnlUploadStrategy;
         }
 
         protected JPanel buildUploadCommentPanel() {
@@ -677,7 +700,7 @@ public class UploadDialog extends JDialog {
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             gc.anchor = GridBagConstraints.FIRST_LINE_START;
-            add(buildAtomicUploadControlPanel(), gc);
+            add(buildUploadStrategySelectionPanel(), gc);
 
             // -- changeset command
             gc.gridwidth = 4;
@@ -763,7 +786,7 @@ public class UploadDialog extends JDialog {
             // store the history of comments
             cmt.addCurrentItemToHistory();
             Main.pref.putCollection(HISTORY_KEY, cmt.getHistory());
-            Main.pref.put("osm-server.atomic-upload", cbUseAtomicUpload.isSelected());
+            pnlUploadStrategy.saveToPreferences();
         }
 
         /**
@@ -818,6 +841,10 @@ public class UploadDialog extends JDialog {
             cmt.requestFocusInWindow();
         }
 
+        public void initEditingOfChunkSize() {
+            pnlUploadStrategy.initEditingOfChunkSize();
+        }
+
         protected void refreshGUI() {
             rbExisting.setEnabled(model.getSize() > 0);
             if (model.getSize() == 0) {
@@ -847,6 +874,15 @@ public class UploadDialog extends JDialog {
             if (cs == null)
                 return new Changeset();
             return cs;
+        }
+
+        /**
+         * Replies the {@see UploadStrategySpecification} the user entered in the dialog.
+         * 
+         * @return the {@see UploadStrategySpecification} the user entered in the dialog.
+         */
+        public UploadStrategySpecification getUploadStrategySpecification() {
+            return pnlUploadStrategy.getUploadStrategySpecification();
         }
 
         public void setOrUpdateChangeset(Changeset cs) {
@@ -931,6 +967,10 @@ public class UploadDialog extends JDialog {
          */
         public boolean isCloseAfterUpload() {
             return cbCloseAfterUpload.isSelected();
+        }
+
+        public void setNumUploadedObjects(int numUploadedObjects) {
+            pnlUploadStrategy.setNumUploadedObjects(numUploadedObjects);
         }
 
         class RadioButtonHandler implements ItemListener {

@@ -35,6 +35,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.io.UploadDialog;
+import org.openstreetmap.josm.gui.io.UploadStrategySpecification;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.ChangesetClosedException;
@@ -167,7 +168,8 @@ public class UploadAction extends JosmAction{
         if (!checkPreUploadConditions(layer, apiData))
             return;
         Main.worker.execute(
-                createUploadTask(
+                new UploadPrimitivesTask(
+                        UploadDialog.getUploadDialog().getUploadStrategySpecification(),
                         layer,
                         apiData.getPrimitives(),
                         UploadDialog.getUploadDialog().getChangeset(),
@@ -551,10 +553,6 @@ public class UploadAction extends JosmAction{
         }
     }
 
-    public UploadPrimitivesTask createUploadTask(OsmDataLayer layer, Collection<OsmPrimitive> toUpload, Changeset changeset, boolean closeChangesetAfterUpload) {
-        return new UploadPrimitivesTask(layer, toUpload, changeset, closeChangesetAfterUpload);
-    }
-
     /**
      * The task for uploading a collection of primitives
      *
@@ -568,19 +566,22 @@ public class UploadAction extends JosmAction{
         private Changeset changeset;
         private boolean closeChangesetAfterUpload;
         private HashSet<OsmPrimitive> processedPrimitives;
+        private UploadStrategySpecification strategy;
 
         /**
-         *
+         * Creates the task
+         * @param strategy the upload strategy
          * @param layer  the OSM data layer for which data is uploaded
          * @param toUpload the collection of primitives to upload
          * @param changeset the changeset to use for uploading
          * @param closeChangesetAfterUpload true, if the changeset is to be closed after uploading
          */
-        private UploadPrimitivesTask(OsmDataLayer layer, Collection <OsmPrimitive> toUpload, Changeset changeset, boolean closeChangesetAfterUpload) {
+        private UploadPrimitivesTask(UploadStrategySpecification strategy, OsmDataLayer layer, Collection <OsmPrimitive> toUpload, Changeset changeset, boolean closeChangesetAfterUpload) {
             super(tr("Uploading data for layer ''{0}''", layer.getName()),false /* don't ignore exceptions */);
             this.toUpload = toUpload;
             this.layer = layer;
             this.changeset = changeset;
+            this.strategy = strategy;
             this.closeChangesetAfterUpload = closeChangesetAfterUpload;
             this.processedPrimitives = new HashSet<OsmPrimitive>();
         }
@@ -627,7 +628,7 @@ public class UploadAction extends JosmAction{
                 while(true) {
                     try {
                         getProgressMonitor().subTask(tr("Uploading {0} objects ...", toUpload.size()));
-                        writer.uploadOsm(layer.data.getVersion(), toUpload, changeset, getProgressMonitor().createSubTaskMonitor(1, false));
+                        writer.uploadOsm(strategy, toUpload, changeset, getProgressMonitor().createSubTaskMonitor(1, false));
                         processedPrimitives.addAll(writer.getProcessedPrimitives());
                         // if we get here we've successfully uploaded the data. Exit the loop.
                         //

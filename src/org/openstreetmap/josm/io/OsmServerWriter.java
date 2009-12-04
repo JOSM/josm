@@ -4,14 +4,17 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.gui.io.UploadStrategySpecification;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
@@ -35,12 +38,14 @@ public class OsmServerWriter {
     private Collection<OsmPrimitive> processed;
 
     private OsmApi api = OsmApi.getOsmApi();
+    private boolean canceled = false;
 
     private static final int MSECS_PER_SECOND = 1000;
     private static final int SECONDS_PER_MINUTE = 60;
     private static final int MSECS_PER_MINUTE = MSECS_PER_SECOND * SECONDS_PER_MINUTE;
 
     long uploadStartTime;
+
 
     public String timeLeft(int progress, int list_size) {
         long now = System.currentTimeMillis();
@@ -124,16 +129,57 @@ public class OsmServerWriter {
     }
 
     /**
+     * Upload all changes in one diff upload
+     *
+     * @param primitives the collection of primitives to upload
+     * @param progressMonitor  the progress monitor
+     * @param chunkSize the size of the individual upload chunks. > 0 required.
+     * @throws IllegalArgumentException thrown if chunkSize <= 0
+     * @throws OsmTransferException thrown if an exception occurs
+     */
+    protected void uploadChangesInChunks(Collection<OsmPrimitive> primitives, ProgressMonitor progressMonitor, int chunkSize) throws OsmTransferException, IllegalArgumentException {
+        if (chunkSize <=0)
+            throw new IllegalArgumentException(tr("Value >0 expected for parameter ''{0}'', got {1}", "chunkSize", chunkSize));
+        try {
+            progressMonitor.beginTask(tr("Starting to upload in chunks..."));
+            List<OsmPrimitive> chunk = new ArrayList<OsmPrimitive>(chunkSize);
+            Iterator<OsmPrimitive> it = primitives.iterator();
+            int numChunks = (int)Math.ceil((double)primitives.size() / (double)chunkSize);
+            int i= 0;
+            while(it.hasNext()) {
+                i++;
+                progressMonitor.setCustomText(tr("({0}/{1}) Uploading {2} objects...", i,numChunks,chunkSize));
+                if (canceled) return;
+                int j = 0;
+                chunk.clear();
+                while(it.hasNext() && j < chunkSize) {
+                    if (canceled) return;
+                    j++;
+                    chunk.add(it.next());
+                }
+                processed.addAll(api.uploadDiff(chunk, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)));
+            }
+        } catch(OsmTransferException e) {
+            throw e;
+        } catch(Exception e) {
+            throw new OsmTransferException(e);
+        } finally {
+            progressMonitor.finishTask();
+        }
+    }
+
+    /**
      * Send the dataset to the server.
      *
-     * @param apiVersion version of the data set
+     * @param strategy the upload strategy. Must not be null.
      * @param primitives list of objects to send
      * @param changeset the changeset the data is uploaded to. Must not be null.
      * @param monitor the progress monitor. If null, assumes {@see NullProgressMonitor#INSTANCE}
      * @throws IllegalArgumentException thrown if changeset is null
+     * @throws IllegalArgumentException thrown if strategy is null
      * @throws OsmTransferException thrown if something goes wrong
      */
-    public void uploadOsm(String apiVersion, Collection<OsmPrimitive> primitives, Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
+    public void uploadOsm(UploadStrategySpecification strategy, Collection<OsmPrimitive> primitives, Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
         if (changeset == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "changeset"));
         processed = new LinkedList<OsmPrimitive>();
@@ -142,27 +188,22 @@ public class OsmServerWriter {
         try {
             api.initialize(monitor);
             // check whether we can use diff upload
-            //
-            boolean canUseDiffUpload = api.hasSupportForDiffUploads();
-            if (apiVersion == null) {
-                System.out.println(tr("WARNING: no API version defined for data to upload. Falling back to version 0.6"));
-                apiVersion = "0.6";
-            }
-            boolean useDiffUpload = Main.pref.getBoolean("osm-server.atomic-upload", apiVersion.compareTo("0.6")>=0);
-            if (useDiffUpload && ! canUseDiffUpload) {
-                System.out.println(tr("WARNING: preference ''{0}'' or API version ''{1}'' of dataset requires to use diff uploads, but API is not able to handle them. Ignoring diff upload.", "osm-server.atomic-upload", apiVersion));
-                useDiffUpload = false;
-            }
             if (changeset.getId() == 0) {
                 api.openChangeset(changeset,monitor.createSubTaskMonitor(0, false));
             } else {
                 api.updateChangeset(changeset,monitor.createSubTaskMonitor(0, false));
             }
             api.setChangeset(changeset);
-            if (useDiffUpload) {
+            switch(strategy.getStrategy()) {
+            case SINGLE_REQUEST_STRATEGY:
                 uploadChangesAsDiffUpload(primitives,monitor.createSubTaskMonitor(0,false));
-            } else {
+                break;
+            case INDIVIDUAL_OBJECTS_STRATEGY:
                 uploadChangesIndividually(primitives,monitor.createSubTaskMonitor(0,false));
+                break;
+            case CHUNKED_DATASET_STRATEGY:
+                uploadChangesInChunks(primitives,monitor.createSubTaskMonitor(0,false), strategy.getChunkSize());
+                break;
             }
         } catch(OsmTransferException e) {
             throw e;
@@ -185,6 +226,7 @@ public class OsmServerWriter {
     }
 
     public void cancel() {
+        this.canceled = true;
         if (api != null) {
             api.cancel();
         }

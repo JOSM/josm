@@ -14,7 +14,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
@@ -119,9 +118,11 @@ public abstract class ListMergeModel<T> extends Observable {
     protected ArrayList<T> getMergedEntries() {
         return entries.get(MERGED_ENTRIES);
     }
+
     protected ArrayList<T> getMyEntries() {
         return entries.get(MY_ENTRIES);
     }
+
     protected ArrayList<T> getTheirEntries() {
         return entries.get(THEIR_ENTRIES);
     }

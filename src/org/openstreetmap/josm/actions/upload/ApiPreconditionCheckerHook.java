@@ -72,7 +72,7 @@ public class ApiPreconditionCheckerHook implements UploadHook {
                         // if OsmPrimitive is going to be deleted we automatically shorten the
                         // value
                         System.out.println(
-                                tr("Warning: automatically truncating value of tag ''{0}'' on deleted primitive {1}",
+                                tr("Warning: automatically truncating value of tag ''{0}'' on deleted object {1}",
                                         e.getKey(),
                                         Long.toString(osmPrimitive.getId())
                                 )
@@ -81,7 +81,7 @@ public class ApiPreconditionCheckerHook implements UploadHook {
                         continue;
                     }
                     JOptionPane.showMessageDialog(Main.parent,
-                            tr("Length of value for tag ''{0}'' on primitive {1} exceeds the max. allowed length {2}. Values length is {3}.",
+                            tr("Length of value for tag ''{0}'' on object {1} exceeds the max. allowed length {2}. Values length is {3}.",
                                     e.getKey(), Long.toString(osmPrimitive.getId()), 255, e.getValue().length()
                             ),
                             tr("Precondition Violation"),

@@ -43,24 +43,31 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
     private boolean closeChangesetAfterUpload;
     private Collection<OsmPrimitive> toUpload;
     private HashSet<OsmPrimitive> processedPrimitives;
+    private UploadStrategySpecification strategy;
 
     /**
-     *
+     * Creates the upload task
+     * 
+     * @param strategy the upload strategy specification
      * @param layer the layer. Must not be null.
      * @param monitor  a progress monitor. If monitor is null, uses {@see NullProgressMonitor#INSTANCE}
      * @param changeset the changeset to be used
      * @param closeChangesetAfterUpload true, if the changeset should be closed after the upload
      * @throws IllegalArgumentException thrown, if layer is null
+     * @throws IllegalArgumentException thrown if strategy is null
      */
-    public UploadLayerTask(OsmDataLayer layer, ProgressMonitor monitor, Changeset changeset, boolean closeChangesetAfterUpload) {
+    public UploadLayerTask(UploadStrategySpecification strategy, OsmDataLayer layer, ProgressMonitor monitor, Changeset changeset, boolean closeChangesetAfterUpload) {
         if (layer == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", layer));
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
+        if (strategy == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "strategy"));
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
         this.layer = layer;
         this.monitor = monitor;
         this.changeset = changeset;
+        this.strategy = strategy;
         this.closeChangesetAfterUpload = closeChangesetAfterUpload;
         processedPrimitives = new HashSet<OsmPrimitive>();
     }
@@ -102,7 +109,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
 
     @Override
     public void run() {
-        monitor.subTask(tr("Preparing primitives to upload ..."));
+        monitor.indeterminateSubTask(tr("Preparing primitives to upload ..."));
         APIDataSet ds = new APIDataSet(layer.data);
         try {
             ds.adjustRelationUploadOrder();
@@ -119,7 +126,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
                 try {
                     ProgressMonitor m = monitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
                     if (isCancelled()) return;
-                    writer.uploadOsm(layer.data.getVersion(), toUpload, changeset, m);
+                    writer.uploadOsm(strategy, toUpload, changeset, m);
                     processedPrimitives.addAll(writer.getProcessedPrimitives());
                     break;
                 } catch(OsmApiPrimitiveGoneException e) {

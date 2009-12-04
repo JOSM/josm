@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.conflict.pair.relation;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import javax.swing.table.DefaultTableModel;
@@ -15,7 +16,6 @@ import org.openstreetmap.josm.gui.conflict.pair.ListRole;
 /**
  * The model for merging two lists of relation members
  *
- *
  */
 public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>{
 
@@ -23,13 +23,7 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
 
     @Override
     public boolean isEqualEntry(RelationMember e1, RelationMember e2) {
-        boolean ret = e1.getRole().equals(e2.getRole());
-        if (!e1.getMember().isNew() ) {
-            ret = ret && (e1.getMember().getId() == e2.getMember().getId());
-        } else {
-            ret = ret && (e1 == e2);
-        }
-        return ret;
+        return e1.equals(e2);
     }
 
     @Override
@@ -118,6 +112,7 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "their"));
         if (! isFrozen())
             throw new IllegalArgumentException(tr("Merged nodes not frozen yet. Can't build resolution command"));
-        return new RelationMemberConflictResolverCommand(my, their, getMergedEntries());
+        ArrayList<RelationMember> entries = getMergedEntries();
+        return new RelationMemberConflictResolverCommand(my, their, entries);
     }
 }
