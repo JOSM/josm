@@ -426,5 +426,10 @@ public class PluginSelection {
                 localPlugins.put(proxy.info.name, proxy.info);
             }
         }
+        for (String p : PluginHandler.oldplugins)
+        {
+            if(availablePlugins.containsKey(p))
+                availablePlugins.remove(p);
+        }
     }
 }
