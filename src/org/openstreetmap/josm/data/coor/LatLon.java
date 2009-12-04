@@ -6,6 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
+import static java.lang.Math.*;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -120,15 +122,25 @@ public class LatLon extends Coordinate {
 
     /**
      * Computes the distance between this lat/lon and another point on the earth.
-     * Uses spherical law of cosines formula, not Haversine.
+     * Uses Haversine formular.
      * @param other the other point.
      * @return distance in metres.
      */
     public double greatCircleDistance(LatLon other) {
-        return (Math.acos(
-                Math.sin(Math.toRadians(lat())) * Math.sin(Math.toRadians(other.lat())) +
-                Math.cos(Math.toRadians(lat()))*Math.cos(Math.toRadians(other.lat())) *
-                Math.cos(Math.toRadians(other.lon()-lon()))) * 6378135);
+        double R = 6378135;
+        double sinHalfLat = sin(toRadians(other.lat() - this.lat()) / 2);
+        double sinHalfLon = sin(toRadians(other.lon() - this.lon()) / 2);
+        double d = 2 * R * asin(
+                            sqrt(sinHalfLat*sinHalfLat + 
+                            cos(toRadians(this.lat()))*cos(toRadians(other.lat()))*sinHalfLon*sinHalfLon));
+        // For points opposite to each other on the sphere, 
+        // rounding errors could make the argument of asin greater than 1
+        // (This should almost never happen.)
+        if (java.lang.Double.isNaN(d)) {
+            System.err.println("Error: NaN in greatCircleDistance");
+            d = PI * R;
+        }
+        return d;
     }
 
     /**
