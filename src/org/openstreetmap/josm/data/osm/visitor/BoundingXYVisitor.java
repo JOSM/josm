@@ -94,7 +94,7 @@ public class BoundingXYVisitor extends AbstractVisitor {
      * equal <code>null</code>) this method does not do anything.
      */
     public void enlargeBoundingBox() {
-        enlargeBoundingBox(0.002);
+        enlargeBoundingBox(Main.pref.getDouble("edit.zoom-enlarge-bbox", 0.002));
     }
 
     /**
