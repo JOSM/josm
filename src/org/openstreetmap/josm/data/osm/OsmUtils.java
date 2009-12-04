@@ -11,9 +11,12 @@ public class OsmUtils {
             .asList(new String[] { "true", "yes", "1", "on" }));
     static ArrayList<String> FALSE_VALUES = new ArrayList<String>(Arrays
             .asList(new String[] { "false", "no", "0", "off" }));
+    static ArrayList<String> REVERSE_VALUES = new ArrayList<String>(Arrays
+            .asList(new String[] { "reverse", "-1" }));
 
     public static final String trueval = "yes";
     public static final String falseval = "no";
+    public static final String reverseval = "-1";
 
     public static Boolean getOsmBoolean(String value) {
         if(value == null) return null;
@@ -22,8 +25,13 @@ public class OsmUtils {
         if (FALSE_VALUES.contains(lowerValue)) return Boolean.FALSE;
         return null;
     }
+
     public static String getNamedOsmBoolean(String value) {
         Boolean res = getOsmBoolean(value);
         return res == null ? value : (res ? trueval : falseval);
+    }
+
+    public static boolean isReversed(String value) {
+        return REVERSE_VALUES.contains(value);
     }
 }

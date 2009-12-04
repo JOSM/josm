@@ -27,6 +27,8 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.corrector.ReverseWayTagCorrector;
+import org.openstreetmap.josm.corrector.UserCancelException;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -36,6 +38,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
+
 /**
  * Combines multiple ways into one.
  *
@@ -108,26 +111,74 @@ public class CombineWayAction extends JosmAction {
         ways.remove(null); // just in case -  remove all null ways from the collection
         ways = new HashSet<Way>(ways); // remove duplicates
 
-        // build the collection of tags used by the ways to combine
-        //
-        TagCollection wayTags = TagCollection.unionOfAllPrimitives(ways);
-
         // try to build a new way which includes all the combined
         // ways
         //
-        NodeGraph graph = NodeGraph.createDirectedGraphFromWays(ways);
+        NodeGraph graph = NodeGraph.createUndirectedGraphFromNodeWays(ways);
         List<Node> path = graph.buildSpanningPath();
         if (path == null) {
-            graph = NodeGraph.createUndirectedGraphFromNodeWays(ways);
-            path = graph.buildSpanningPath();
-            if (path != null) {
-                if (!confirmChangeDirectionOfWays())
-                    return;
+            warnCombiningImpossible();
+            return;
+        }
+        // check whether any ways have been reversed in the process
+        // and build the collection of tags used by the ways to combine
+        //
+        TagCollection wayTags = TagCollection.unionOfAllPrimitives(ways);
+
+        List<Way> reversedWays = new LinkedList<Way>();
+        List<Way> unreversedWays = new LinkedList<Way>();
+        for (Way w: ways) {
+            if ((path.indexOf(w.getNode(0)) + 1) == path.lastIndexOf(w.getNode(1))) {
+                unreversedWays.add(w);
             } else {
-                warnCombiningImpossible();
-                return;
+                reversedWays.add(w);
             }
         }
+        // reverse path if all ways have been reversed
+        if (unreversedWays.isEmpty()) {
+            Collections.reverse(path);
+            unreversedWays = reversedWays;
+            reversedWays = null;
+        }
+        if ((reversedWays != null) && !reversedWays.isEmpty()) {
+            if (!confirmChangeDirectionOfWays()) return;
+            // filter out ways that have no direction-dependent tags
+            unreversedWays = ReverseWayTagCorrector.irreversibleWays(unreversedWays);
+            reversedWays = ReverseWayTagCorrector.irreversibleWays(reversedWays);
+            // reverse path if there are more reversed than unreversed ways with direction-dependent tags
+            if (reversedWays.size() > unreversedWays.size()) {
+                Collections.reverse(path);
+                List<Way> tempWays = unreversedWays;
+                unreversedWays = reversedWays;
+                reversedWays = tempWays;
+            }
+            // if there are still reversed ways with direction-dependent tags, reverse their tags
+            if (!reversedWays.isEmpty() && Main.pref.getBoolean("tag-correction.reverse-way", true)) {
+                List<Way> unreversedTagWays = new ArrayList<Way>(ways);
+                unreversedTagWays.removeAll(reversedWays);
+                ReverseWayTagCorrector reverseWayTagCorrector = new ReverseWayTagCorrector();
+                List<Way> reversedTagWays = new ArrayList<Way>();
+                Collection<Command> changePropertyCommands =  null;
+                for (Way w : reversedWays) {
+                    Way wnew = new Way(w);
+                    reversedTagWays.add(wnew);
+                    try {
+                        changePropertyCommands = reverseWayTagCorrector.execute(w, wnew);
+                    }
+                    catch(UserCancelException ex) {
+                        return;
+                    }
+                }
+                if ((changePropertyCommands != null) && !changePropertyCommands.isEmpty()) {
+                    for (Command c : changePropertyCommands) {
+                        c.executeCommand();
+                    }
+                }
+                wayTags = TagCollection.unionOfAllPrimitives(reversedTagWays);
+                wayTags.add(TagCollection.unionOfAllPrimitives(unreversedTagWays));
+            }
+        }
+
 
         // create the new way and apply the new node list
         //

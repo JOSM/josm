@@ -68,10 +68,37 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         new PrefixSuffixSwitcher("forwards", "backwards")
     };
 
+    public static boolean isReversible(Way way) {
+        ArrayList<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
+        primitives.add(way);
+        primitives.addAll(way.getNodes());
+
+        for  (OsmPrimitive primitive : primitives) {
+            for (String key : primitive.keySet()) {
+                if (key.equals("oneway")) return false;
+                for (PrefixSuffixSwitcher prefixSuffixSwitcher : prefixSuffixSwitchers) {
+                    if (!key.equals(prefixSuffixSwitcher.apply(key))) return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public static List<Way> irreversibleWays(List<Way> ways) {
+        List<Way> newWays = new ArrayList<Way>(ways);
+        for (Way way : ways) {
+            if (isReversible(way)) {
+                newWays.remove(way);
+            }
+        }
+        return newWays;
+    }
+
     @Override
     public Collection<Command> execute(Way oldway, Way way) throws UserCancelException {
         Map<OsmPrimitive, List<TagCorrection>> tagCorrectionsMap =
-                new HashMap<OsmPrimitive, List<TagCorrection>>();
+            new HashMap<OsmPrimitive, List<TagCorrection>>();
 
         ArrayList<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
         primitives.add(way);
@@ -86,12 +113,12 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 String newValue = value;
 
                 if (key.equals("oneway")) {
-                    if (value.equals("-1")) {
+                    if (OsmUtils.isReversed(value)) {
                         newValue = OsmUtils.trueval;
                     } else {
                         Boolean boolValue = OsmUtils.getOsmBoolean(value);
                         if (boolValue != null && boolValue.booleanValue()) {
-                            newValue = "-1";
+                            newValue = OsmUtils.reverseval;
                         }
                     }
                 } else {
@@ -111,7 +138,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         }
 
         Map<OsmPrimitive, List<RoleCorrection>> roleCorrectionMap =
-                new HashMap<OsmPrimitive, List<RoleCorrection>>();
+            new HashMap<OsmPrimitive, List<RoleCorrection>>();
         roleCorrectionMap.put(way, new ArrayList<RoleCorrection>());
 
         for (Relation relation : Main.main.getCurrentDataSet().getRelations()) {
