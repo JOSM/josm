@@ -20,6 +20,7 @@ import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
+import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer.ImageEntry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -44,19 +45,24 @@ public class ImageViewerDialog extends ToggleDialog implements ActionListener {
         }
         return INSTANCE;
     }
-    
+
     private JButton btnNext;
     private JButton btnPrevious;
 
     private ImageViewerDialog() {
         super(tr("Geotagged Images"), "geoimage", tr("Display geotagged images"), Shortcut.registerShortcut("tools:geotagged", tr("Tool: {0}", tr("Display geotagged images")), KeyEvent.VK_Y, Shortcut.GROUP_EDIT), 200);
 
+        /* Don't show a detached dialog right from the start. */
+        if (isShowing && !isDocked) {
+            setIsShowing(false);
+        }
+
         if (INSTANCE != null) {
             throw new IllegalStateException("Image viewer dialog should not be instanciated twice !");
         }
 
         INSTANCE = this;
-        
+
         JPanel content = new JPanel();
         content.setLayout(new BorderLayout());
 
@@ -187,8 +193,38 @@ public class ImageViewerDialog extends ToggleDialog implements ActionListener {
             imgDisplay.setImage(null);
             imgDisplay.setOsdText("");
         }
+        if (! isDialogShowing()) {
+            setIsDocked(false);     // always open a detached window when an image is clicked and dialog is closed
+            showDialog();
+        } else {
+            if (isDocked && isCollapsed) {
+                expand();
+                dialogsPanel.reconstruct(Action.COLLAPSED_TO_DEFAULT, this);
+            }
+        }
+
     }
-    
+
+    /**
+     * When pressing the Toggle button always show the docked dialog.
+     */
+    @Override
+    protected void toggleButtonHook() {
+        if (! isShowing) {
+            setIsDocked(true);
+            setIsCollapsed(false);
+        }
+    }
+
+    /**
+     * When an image is closed, really close it and do not pop
+     * up the side dialog.
+     */
+    @Override
+    protected boolean dockWhenClosingDetachedDlg() {
+        return false;
+    }
+
     /**
      * Returns whether an image is currently displayed
      * @return If image is currently displayed

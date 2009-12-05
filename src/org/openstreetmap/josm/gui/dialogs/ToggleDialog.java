@@ -45,28 +45,28 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class ToggleDialog extends JPanel implements Helpful {
     /** The action to toggle this dialog */
-    private ToggleDialogAction toggleAction;
-    private String preferencePrefix;
+    protected ToggleDialogAction toggleAction;
+    protected String preferencePrefix;
 
     /** DialogsPanel that manages all ToggleDialogs */
-    private DialogsPanel dialogsPanel;
+    protected DialogsPanel dialogsPanel;
 
-    private TitleBar titleBar;
+    protected TitleBar titleBar;
 
     /**
      * Indicates whether the dialog is showing or not.
      */
-    private boolean isShowing;
+    protected boolean isShowing;
     /**
      * If isShowing is true, indicates whether the dialog is docked or not, e. g.
      * shown as part of the main window or as a seperate dialog window.
      */
-    private boolean isDocked;
+    protected boolean isDocked;
     /**
      * If isShowing and isDocked are true, indicates whether the dialog is
      * currently minimized or not.
      */
-    boolean isCollapsed;
+    protected boolean isCollapsed;
 
     /** the preferred height if the toggle dialog is expanded */
     private int preferredHeight;
@@ -138,6 +138,7 @@ public class ToggleDialog extends JPanel implements Helpful {
         }
 
         public void actionPerformed(ActionEvent e) {
+            toggleButtonHook();
             if (isShowing) {
                 hideDialog();
                 dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
@@ -203,6 +204,7 @@ public class ToggleDialog extends JPanel implements Helpful {
         titleBar.setVisible(false);
         detachedDialog = new DetachedDialog();
         detachedDialog.setVisible(true);
+        setIsShowing(true);
         setIsDocked(false);
     }
 
@@ -212,6 +214,7 @@ public class ToggleDialog extends JPanel implements Helpful {
      */
     public void collapse() {
 //        if (isShowing && isDocked && !isCollapsed) {
+        if (isDialogInDefaultView()) {
             setContentVisible(false);
             setIsCollapsed(true);
             setPreferredSize(new Dimension(0,20));
@@ -219,8 +222,8 @@ public class ToggleDialog extends JPanel implements Helpful {
             setMinimumSize(new Dimension(Integer.MAX_VALUE,20));
             lblMinimized.setIcon(ImageProvider.get("misc", "minimized"));
             hideNotify();
-//        }
-//        else throw ...
+        }
+        else throw new IllegalStateException();
     }
 
     /**
@@ -228,14 +231,15 @@ public class ToggleDialog extends JPanel implements Helpful {
      */
     protected void expand() {
 //        if (isShowing && isDocked && isCollapsed) {
+        if (isDialogInCollapsedView()) {
             setContentVisible(true);
             setIsCollapsed(false);
             setPreferredSize(new Dimension(0,preferredHeight));
             setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
             lblMinimized.setIcon(ImageProvider.get("misc", "normal"));
             showNotify();
-//        }
-//        else throw ...
+        }
+        else throw new IllegalStateException();
     }
 
     /**
@@ -391,9 +395,15 @@ public class ToggleDialog extends JPanel implements Helpful {
                     rememberGeometry();
                     getContentPane().removeAll();
                     dispose();
-                    dock();
-                    expand();
-                    dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, ToggleDialog.this);
+                    if (dockWhenClosingDetachedDlg()) {
+                        dock();
+                        if (isDialogInCollapsedView()) {
+                            expand();
+                        }
+                        dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, ToggleDialog.this);
+                    } else {
+                        hideDialog();
+                    }
                 }
             });
             addComponentListener(new ComponentAdapter() {
@@ -422,22 +432,6 @@ public class ToggleDialog extends JPanel implements Helpful {
         protected void rememberGeometry() {
             Main.pref.put(preferencePrefix+".bounds", detachedDialog.getX()+","+detachedDialog.getY()+","+detachedDialog.getWidth()+","+detachedDialog.getHeight());
         }
-    }
-
-    /**
-     * Change the Geometry of the detached dialog to better fit the content.
-     * Overrride this to make it useful.
-     */
-    protected Rectangle getDetachedGeometry(Rectangle last) {
-        return last;
-    }
-
-    /**
-     * Default size of the detached dialog.
-     * Override this method to customize the initial dialog size.
-     */
-    protected Dimension getDefaultDetachedSize() {
-        return new Dimension(Main.map.DEF_TOGGLE_DLG_WIDTH, preferredHeight);
     }
 
     /**
@@ -480,17 +474,17 @@ public class ToggleDialog extends JPanel implements Helpful {
         titleBar.setTitle(title);
     }
 
-    private void setIsShowing(boolean val) {
+    protected void setIsShowing(boolean val) {
         isShowing = val;
         Main.pref.put(preferencePrefix+".visible", val);
     }
 
-    private void setIsDocked(boolean val) {
+    protected void setIsDocked(boolean val) {
         isDocked = val;
         Main.pref.put(preferencePrefix+".docked", val);
     }
 
-    private void setIsCollapsed(boolean val) {
+    protected void setIsCollapsed(boolean val) {
         isCollapsed = val;
         Main.pref.put(preferencePrefix+".minimized", val);
     }
@@ -499,6 +493,11 @@ public class ToggleDialog extends JPanel implements Helpful {
         return preferredHeight;
     }
 
+    public String helpTopic() {
+        String help = getClass().getName();
+        help = help.substring(help.lastIndexOf('.')+1, help.length()-6);
+        return "Dialog/"+help;
+    }
     /**
      * Replies true if this dialog is showing either as docked or as detached dialog
      */
@@ -520,9 +519,37 @@ public class ToggleDialog extends JPanel implements Helpful {
         return isShowing && isDocked && isCollapsed;
     }
 
-    public String helpTopic() {
-        String help = getClass().getName();
-        help = help.substring(help.lastIndexOf('.')+1, help.length()-6);
-        return "Dialog/"+help;
+    /***
+     * The following methods are intended to be overridden, in order to customize
+     * the toggle dialog behavior.
+     **/
+
+    /**
+    * Change the Geometry of the detached dialog to better fit the content.
+    */
+    protected Rectangle getDetachedGeometry(Rectangle last) {
+        return last;
     }
+
+    /**
+     * Default size of the detached dialog.
+     * Override this method to customize the initial dialog size.
+     */
+    protected Dimension getDefaultDetachedSize() {
+        return new Dimension(dialogsPanel.getWidth(), preferredHeight);
+    }
+
+    /**
+     * Do something when the toggleButton is pressed.
+     */
+    protected void toggleButtonHook() {
+    }
+
+    protected boolean dockWhenClosingDetachedDlg() {
+        return true;
+    }
+
+    /***
+     * End of override hooks
+     **/
 }
