@@ -39,6 +39,7 @@ import javax.swing.Popup;
 import javax.swing.PopupFactory;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.JumpToAction;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -499,6 +500,10 @@ public class MapStatus extends JPanel implements Helpful {
      */
     public MapStatus(final MapFrame mapFrame) {
         this.mv = mapFrame.mapView;
+
+        JumpToAction JumpToAct = new JumpToAction();
+        lonText.addMouseListener(JumpToAct);
+        latText.addMouseListener(JumpToAct);
 
         // Listen for mouse movements and set the position text field
         mv.addMouseMotionListener(new MouseMotionListener(){

@@ -37,6 +37,7 @@ import org.openstreetmap.josm.actions.HelpAction;
 import org.openstreetmap.josm.actions.HistoryInfoAction;
 import org.openstreetmap.josm.actions.InfoAction;
 import org.openstreetmap.josm.actions.JoinNodeWayAction;
+import org.openstreetmap.josm.actions.JoinAreasAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.actions.MergeNodesAction;
@@ -55,6 +56,7 @@ import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.actions.SelectAllAction;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
+import org.openstreetmap.josm.actions.SimplifyWayAction;
 import org.openstreetmap.josm.actions.SplitWayAction;
 import org.openstreetmap.josm.actions.ToggleGPXLinesAction;
 import org.openstreetmap.josm.actions.UnGlueAction;
@@ -139,6 +141,8 @@ public class MainMenu extends JMenuBar {
     public final JosmAction mergeNodes = new MergeNodesAction();
     public final JosmAction joinNodeWay = new JoinNodeWayAction();
     public final JosmAction unglueNodes = new UnGlueAction();
+    public final JosmAction simplifyWay = new SimplifyWayAction();
+    public final JosmAction joinAreas = new JoinAreasAction();
     public final InfoAction info = new InfoAction();
     public final HistoryInfoAction historyinfo = new HistoryInfoAction();
 
@@ -264,6 +268,7 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, combineWay);
         toolsMenu.addSeparator();
         add(toolsMenu, reverseWay);
+        add(toolsMenu, simplifyWay);
         toolsMenu.addSeparator();
         add(toolsMenu, alignInCircle);
         add(toolsMenu, alignInLine);
@@ -277,6 +282,7 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, mergeNodes);
         add(toolsMenu, joinNodeWay);
         add(toolsMenu, unglueNodes);
+        add(toolsMenu, joinAreas);
         toolsMenu.addSeparator();
         add(toolsMenu, info);
         add(toolsMenu, historyinfo);
