@@ -295,7 +295,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
                 }
                 if (alt) {
                     for (Node n : w.getNodes()) {
-                        if (!n.incomplete && r.contains(nc.getPoint(n))) {
+                        if (!n.isIncomplete() && r.contains(nc.getPoint(n))) {
                             selection.add(w);
                             break;
                         }
@@ -303,7 +303,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
                 } else {
                     boolean allIn = true;
                     for (Node n : w.getNodes()) {
-                        if (!n.incomplete && !r.contains(nc.getPoint(n))) {
+                        if (!n.isIncomplete() && !r.contains(nc.getPoint(n))) {
                             allIn = false;
                             break;
                         }

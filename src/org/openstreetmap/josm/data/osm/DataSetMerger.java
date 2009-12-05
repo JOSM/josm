@@ -144,12 +144,12 @@ public class DataSetMerger {
         Way myWay = (Way)getMergeTarget(other);
         if (myWay == null)
             throw new RuntimeException(tr("Missing merge target for way with id {0}", other.getUniqueId()));
-        if (!myWay.incomplete)return;
-        if (myWay.incomplete && other.getNodesCount() == 0) return;
+        if (!myWay.isIncomplete())return;
+        if (myWay.isIncomplete() && other.getNodesCount() == 0) return;
         for (Node n: myWay.getNodes()) {
-            if (n.incomplete) return;
+            if (n.isIncomplete()) return;
         }
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
     }
 
     /**
@@ -166,18 +166,18 @@ public class DataSetMerger {
         Node myNode = (Node)getMergeTarget(other);
         if (myNode == null)
             throw new RuntimeException(tr("Missing merge target for node with id {0}", other.getUniqueId()));
-        if (myNode.incomplete || myNode.isDeleted() || !myNode.isVisible()) return;
+        if (myNode.isIncomplete() || myNode.isDeleted() || !myNode.isVisible()) return;
         wayloop: for (Way w: OsmPrimitive.getFilteredList(myNode.getReferrers(), Way.class)) {
-            if (w.isDeleted() || ! w.isVisible() || ! w.incomplete) {
+            if (w.isDeleted() || ! w.isVisible() || ! w.isIncomplete()) {
                 continue;
             }
             for (Node n: w.getNodes()) {
-                if (n.incomplete) {
+                if (n.isIncomplete()) {
                     continue wayloop;
                 }
             }
             // all nodes are complete - set the way complete too
-            w.incomplete = false;
+            w.setIncomplete(false);
         }
     }
 
@@ -305,17 +305,17 @@ public class DataSetMerger {
             // because it was deleted on the server.
             //
             conflicts.add(target,source);
-        } else if (target.incomplete && !source.incomplete) {
+        } else if (target.isIncomplete() && !source.isIncomplete()) {
             // target is incomplete, source completes it
             // => merge source into target
             //
             target.mergeFrom(source);
             objectsWithChildrenToMerge.add(source.getPrimitiveId());
-        } else if (!target.incomplete && source.incomplete) {
+        } else if (!target.isIncomplete() && source.isIncomplete()) {
             // target is complete and source is incomplete
             // => keep target, it has more information already
             //
-        } else if (target.incomplete && source.incomplete) {
+        } else if (target.isIncomplete() && source.isIncomplete()) {
             // target and source are incomplete. Doesn't matter which one to
             // take. We take target.
             //

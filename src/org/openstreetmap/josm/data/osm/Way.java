@@ -115,7 +115,7 @@ public final class Way extends OsmPrimitive {
 
     public ArrayList<Pair<Node,Node>> getNodePairs(boolean sort) {
         ArrayList<Pair<Node,Node>> chunkSet = new ArrayList<Pair<Node,Node>>();
-        if (incomplete) return chunkSet;
+        if (isIncomplete()) return chunkSet;
         Node lastN = null;
         for (Node n : this.nodes) {
             if (lastN == null) {
@@ -218,7 +218,7 @@ public final class Way extends OsmPrimitive {
     }
 
     @Override public String toString() {
-        String nodesDesc = incomplete?"(incomplete)":"nodes=" + Arrays.toString(nodes);
+        String nodesDesc = isIncomplete()?"(incomplete)":"nodes=" + Arrays.toString(nodes);
         return "{Way id=" + getUniqueId() + " version=" + getVersion()+ " " + getFlagsAsString()  + " " + nodesDesc + "}";
     }
 
@@ -244,7 +244,7 @@ public final class Way extends OsmPrimitive {
     }
 
     public void removeNode(Node n) {
-        if (incomplete) return;
+        if (isIncomplete()) return;
         boolean closed = (lastNode() == n && firstNode() == n);
         int i;
         List<Node> copy = getNodes();
@@ -261,7 +261,7 @@ public final class Way extends OsmPrimitive {
     }
 
     public void removeNodes(Collection<? extends OsmPrimitive> selection) {
-        if (incomplete) return;
+        if (isIncomplete()) return;
         for(OsmPrimitive p : selection) {
             if (p instanceof Node) {
                 removeNode((Node)p);
@@ -278,7 +278,7 @@ public final class Way extends OsmPrimitive {
      */
     public void addNode(Node n) throws IllegalStateException {
         if (n==null) return;
-        if (incomplete)
+        if (isIncomplete())
             throw new IllegalStateException(tr("Cannot add node {0} to incomplete way {1}.", n.getId(), getId()));
         clearCached();
         n.addReferrer(this);
@@ -300,7 +300,7 @@ public final class Way extends OsmPrimitive {
      */
     public void addNode(int offs, Node n) throws IllegalStateException, IndexOutOfBoundsException {
         if (n==null) return;
-        if (incomplete)
+        if (isIncomplete())
             throw new IllegalStateException(tr("Cannot add node {0} to incomplete way {1}.", n.getId(), getId()));
         clearCached();
         n.addReferrer(this);
@@ -326,22 +326,22 @@ public final class Way extends OsmPrimitive {
     }
 
     public boolean isClosed() {
-        if (incomplete) return false;
+        if (isIncomplete()) return false;
         return nodes.length >= 3 && lastNode() == firstNode();
     }
 
     public Node lastNode() {
-        if (incomplete || nodes.length == 0) return null;
+        if (isIncomplete() || nodes.length == 0) return null;
         return nodes[nodes.length-1];
     }
 
     public Node firstNode() {
-        if (incomplete || nodes.length == 0) return null;
+        if (isIncomplete() || nodes.length == 0) return null;
         return nodes[0];
     }
 
     public boolean isFirstLastNode(Node n) {
-        if (incomplete || nodes.length == 0) return false;
+        if (isIncomplete() || nodes.length == 0) return false;
         return n == firstNode() || n == lastNode();
     }
 

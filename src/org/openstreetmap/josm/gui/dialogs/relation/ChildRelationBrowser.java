@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -53,7 +52,7 @@ import org.xml.sax.SAXException;
  *
  */
 public class ChildRelationBrowser extends JPanel {
-    static private final Logger logger = Logger.getLogger(ChildRelationBrowser.class.getName());
+    //static private final Logger logger = Logger.getLogger(ChildRelationBrowser.class.getName());
 
     /** the tree with relation children */
     private RelationTree childTree;
@@ -193,7 +192,7 @@ public class ChildRelationBrowser extends JPanel {
             //
             for (int i=0; i < Math.min(selection.length,10);i++) {
                 Relation r = (Relation)selection[i].getLastPathComponent();
-                if (r.incomplete) {
+                if (r.isIncomplete()) {
                     continue;
                 }
                 RelationEditor editor = RelationEditor.getEditor(getLayer(), r, null);

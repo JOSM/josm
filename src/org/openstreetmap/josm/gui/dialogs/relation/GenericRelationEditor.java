@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -75,8 +74,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  */
 public class GenericRelationEditor extends RelationEditor  {
-
-    static private final Logger logger = Logger.getLogger(GenericRelationEditor.class.getName());
+    //static private final Logger logger = Logger.getLogger(GenericRelationEditor.class.getName());
 
     /** the tag table and its model */
     private TagEditorPanel tagEditorPanel;
@@ -1381,7 +1379,7 @@ public class GenericRelationEditor extends RelationEditor  {
             if (!(primitive instanceof Relation))
                 return;
             Relation r = (Relation) primitive;
-            if (r.incomplete)
+            if (r.isIncomplete())
                 return;
 
             RelationEditor editor = RelationEditor.getEditor(getLayer(), r, getMembersForCurrentSelection(r));

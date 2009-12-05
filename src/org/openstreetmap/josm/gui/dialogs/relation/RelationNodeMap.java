@@ -56,7 +56,7 @@ public class RelationNodeMap {
 
         for (int i = 0; i < members.size(); ++i) {
             RelationMember m = members.get(i);
-            if (m.getMember().incomplete || !m.isWay())
+            if (m.getMember().isIncomplete() || !m.isWay())
             {
                 notSortable.add(i);
             }

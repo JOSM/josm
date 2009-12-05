@@ -223,7 +223,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
             Collection<Way> waysToCheck = new ArrayList<Way>(ds.getWays());
             if (isReadFull() ||primitiveType.equals(OsmPrimitiveType.NODE)) {
                 for (Way way: waysToCheck) {
-                    if (!way.isNew() && way.incomplete) {
+                    if (!way.isNew() && way.isIncomplete()) {
                         OsmServerObjectReader reader = new OsmServerObjectReader(way.getId(), OsmPrimitiveType.from(way), true /* read full */);
                         DataSet wayDs = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
                         DataSetMerger visitor = new DataSetMerger(ds, wayDs);
@@ -234,7 +234,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
             if (isReadFull()) {
                 Collection<Relation> relationsToCheck  = new ArrayList<Relation>(ds.getRelations());
                 for (Relation relation: relationsToCheck) {
-                    if (!relation.isNew() && relation.incomplete) {
+                    if (!relation.isNew() && relation.isIncomplete()) {
                         OsmServerObjectReader reader = new OsmServerObjectReader(relation.getId(), OsmPrimitiveType.from(relation), true /* read full */);
                         DataSet wayDs = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
                         DataSetMerger visitor = new DataSetMerger(ds, wayDs);

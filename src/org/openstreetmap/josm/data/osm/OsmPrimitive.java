@@ -228,7 +228,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * If set to true, this object is incomplete, which means only the id
      * and type is known (type is the objects instance class)
      */
-    public boolean incomplete = false;
+    private boolean incomplete = false;
 
     /**
      * Contains the version number as returned by the API. Needed to
@@ -258,7 +258,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
         }
         this.version = 0;
-        this.incomplete = id > 0;
+        this.setIncomplete(id > 0);
     }
 
     protected OsmPrimitive(PrimitiveData data) {
@@ -356,7 +356,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @see #delete(boolean)
      */
     public boolean isUsable() {
-        return !isDeleted() && !incomplete && !isDisabled();
+        return !isDeleted() && !isIncomplete() && !isDisabled();
     }
 
     /**
@@ -450,7 +450,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         }
         this.id = id;
         this.version = version;
-        this.incomplete = false;
+        this.setIncomplete(false);
     }
 
     /**
@@ -467,7 +467,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             throw new DataIntegrityProblemException("Method cannot be called after primitive was added to the dataset");
         this.id = generateUniqueId();
         this.version = 0;
-        this.incomplete = false;
+        this.setIncomplete(false);
     }
 
     public void setTimestamp(Date timestamp) {
@@ -912,7 +912,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         id = osm.id;
         timestamp = osm.timestamp;
         version = osm.version;
-        incomplete = osm.incomplete;
+        setIncomplete(osm.isIncomplete());
         flags = osm.flags;
         user= osm.user;
         clearCached();
@@ -939,7 +939,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         setKeys(other.getKeys());
         timestamp = other.timestamp;
         version = other.version;
-        incomplete = other.incomplete;
+        setIncomplete(other.isIncomplete());
         flags = other.flags;
         user= other.user;
     }
@@ -959,7 +959,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     public boolean hasEqualSemanticAttributes(OsmPrimitive other) {
         if (!isNew() &&  id != other.id)
             return false;
-        if (incomplete && ! other.incomplete || !incomplete  && other.incomplete)
+        if (isIncomplete() && ! other.isIncomplete() || !isIncomplete()  && other.isIncomplete())
             return false;
         // can't do an equals check on the internal keys array because it is not ordered
         //
@@ -1149,5 +1149,13 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      */
     public PrimitiveId getPrimitiveId() {
         return new SimplePrimitiveId(getUniqueId(), getType());
+    }
+
+    public void setIncomplete(boolean incomplete) {
+        this.incomplete = incomplete;
+    }
+
+    public boolean isIncomplete() {
+        return incomplete;
     }
 }

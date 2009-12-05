@@ -318,7 +318,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     public Set<OsmPrimitive> getIncompleteMemberPrimitives() {
         Set<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
         for (RelationMember member : members) {
-            if (member.getMember().incomplete) {
+            if (member.getMember().isIncomplete()) {
                 ret.add(member.getMember());
             }
         }
@@ -333,7 +333,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     public Set<OsmPrimitive> getSelectedIncompleteMemberPrimitives() {
         Set<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
         for (RelationMember member : getSelectedMembers()) {
-            if (member.getMember().incomplete) {
+            if (member.getMember().isIncomplete()) {
                 ret.add(member.getMember());
             }
         }
@@ -347,7 +347,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      */
     public boolean hasIncompleteMembers() {
         for (RelationMember member : members) {
-            if (member.getMember().incomplete)
+            if (member.getMember().isIncomplete())
                 return true;
         }
         return false;
@@ -360,7 +360,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      */
     public boolean hasIncompleteSelectedMembers() {
         for (RelationMember member : getSelectedMembers()) {
-            if (member.getMember().incomplete)
+            if (member.getMember().isIncomplete())
                 return true;
         }
         return false;
@@ -576,7 +576,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         if (!member.isRelation())
             return false;
         Relation r = member.getRelation();
-        return !r.incomplete;
+        return !r.isIncomplete();
     }
 
     /**
@@ -880,7 +880,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
             }
 
             Way w = m.getWay();
-            if (w == null || w.incomplete) {
+            if (w == null || w.isIncomplete()) {
                 con.set(i, new WayConnectionType());
                 resetFirstGoupIdx = true;
                 continue;

@@ -47,9 +47,9 @@ public class DatasetConsistencyTest {
 
     private void checkCompleteWaysWithIncompleteNodes() {
         for (Way way:dataSet.getWays()) {
-            if (!way.incomplete) {
+            if (!way.isIncomplete()) {
                 for (Node node:way.getNodes()) {
-                    if (node.incomplete) {
+                    if (node.isIncomplete()) {
                         writer.println(String.format("%s is complete but contains incomplete node '%s'", way, node));
                     }
                 }
@@ -59,7 +59,7 @@ public class DatasetConsistencyTest {
 
     private void checkCompleteNodesWithoutCoordinates() {
         for (Node node:dataSet.getNodes()) {
-            if (!node.incomplete && (node.getCoor() == null || node.getEastNorth() == null)) {
+            if (!node.isIncomplete() && (node.getCoor() == null || node.getEastNorth() == null)) {
                 writer.println(String.format("%s is not incomplete but has null coordinates", node));
             }
         }
@@ -67,7 +67,7 @@ public class DatasetConsistencyTest {
 
     private void searchNodes() {
         for (Node n:dataSet.getNodes()) {
-            if (!n.incomplete) {
+            if (!n.isIncomplete()) {
                 LatLon c = n.getCoor();
                 BBox box = new BBox(new LatLon(c.lat() - 0.0001, c.lon() - 0.0001), new LatLon(c.lat() + 0.0001, c.lon() + 0.0001));
                 if (!dataSet.searchNodes(box).contains(n)) {
@@ -79,7 +79,7 @@ public class DatasetConsistencyTest {
 
     private void searchWays() {
         for (Way w:dataSet.getWays()) {
-            if (!w.incomplete && !dataSet.searchWays(w.getBBox()).contains(w)) {
+            if (!w.isIncomplete() && !dataSet.searchWays(w.getBBox()).contains(w)) {
                 writer.println(String.format("%s not found using Dataset.searchWays()", w));
             }
         }

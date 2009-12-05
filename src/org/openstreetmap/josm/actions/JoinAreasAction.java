@@ -28,10 +28,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.CombineWayAction;
-import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.actions.ReverseWayAction;
-import org.openstreetmap.josm.actions.SplitWayAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -74,18 +70,23 @@ public class JoinAreasAction extends JosmAction {
         public int compareTo(NodeToSegs o) {
             if(this.pos == o.pos)
                 return (this.dis - o.dis) > 0 ? 1 : -1;
-            return this.pos - o.pos;
+                return this.pos - o.pos;
         }
-    };
+    }
 
     // HelperClass
     // Saves a relation and a role an OsmPrimitve was part of until it was stripped from all relations
     private class RelationRole {
-        public Relation rel;
-        public String role;
+        public final Relation rel;
+        public final String role;
         public RelationRole(Relation rel, String role) {
             this.rel = rel;
             this.role = role;
+        }
+
+        @Override
+        public int hashCode() {
+            return rel.hashCode();
         }
 
         @Override
@@ -99,7 +100,7 @@ public class JoinAreasAction extends JosmAction {
     // Adds the menu entry, Shortcuts, etc.
     public JoinAreasAction() {
         super(tr("Join overlapping Areas"), "joinareas", tr("Joins areas that overlap each other"), Shortcut.registerShortcut("tools:joinareas", tr("Tool: {0}", tr("Join overlapping Areas")),
-        KeyEvent.VK_J, Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), true);
+                KeyEvent.VK_J, Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), true);
     }
 
     /**
@@ -115,8 +116,9 @@ public class JoinAreasAction extends JosmAction {
         LinkedList<Bounds> bounds = new LinkedList<Bounds>();
         OsmDataLayer dataLayer = Main.map.mapView.getEditLayer();
         for (DataSource ds : dataLayer.data.dataSources) {
-            if (ds.bounds != null)
+            if (ds.bounds != null) {
                 bounds.add(ds.bounds);
+            }
         }
 
         boolean askedAlready = false;
@@ -136,7 +138,9 @@ public class JoinAreasAction extends JosmAction {
 
             // This is copied from SimplifyAction and should be probably ported to tools
             for (Node node : way.getNodes()) {
-                if(askedAlready) break;
+                if(askedAlready) {
+                    break;
+                }
                 boolean isInsideOneBoundingBox = false;
                 for (Bounds b : bounds) {
                     if (b.contains(node.getCoor())) {
@@ -150,8 +154,8 @@ public class JoinAreasAction extends JosmAction {
                             tr("The selected way(s) have nodes outside of the downloaded data region.\n"
                                     + "This can lead to nodes being deleted accidentally.\n"
                                     + "Are you really sure to continue?"),
-                            tr("Please abort if you are not sure"), JOptionPane.YES_NO_OPTION,
-                            JOptionPane.WARNING_MESSAGE);
+                                    tr("Please abort if you are not sure"), JOptionPane.YES_NO_OPTION,
+                                    JOptionPane.WARNING_MESSAGE);
 
                     if (option != JOptionPane.YES_OPTION) return;
                     askedAlready = true;
@@ -172,8 +176,9 @@ public class JoinAreasAction extends JosmAction {
             Main.map.mapView.repaint();
             DataSet ds = Main.main.getCurrentDataSet();
             ds.fireSelectionChanged();
-        } else
+        } else {
             JOptionPane.showMessageDialog(Main.parent, tr("No intersection found. Nothing was changed."));
+        }
     }
 
     /**
@@ -198,7 +203,9 @@ public class JoinAreasAction extends JosmAction {
 
         // Remove ways from all relations so ways can be combined/split quietly
         ArrayList<RelationRole> relations = removeFromRelations(a);
-        if(!same) relations.addAll(removeFromRelations(b));
+        if(!same) {
+            relations.addAll(removeFromRelations(b));
+        }
 
         // Don't warn now, because it will really look corrupted
         boolean warnAboutRelations = relations.size() > 0;
@@ -216,8 +223,9 @@ public class JoinAreasAction extends JosmAction {
         Collection<Way> newInnerWays = fixMultigons(innerWays, outerWay);
 
         // Delete the remaining inner ways
-        if(innerWays != null && innerWays.size() > 0)
+        if(innerWays != null && innerWays.size() > 0) {
             cmds.add(DeleteCommand.delete(Main.map.mapView.getEditLayer(), innerWays, true));
+        }
         commitCommands(marktr("Delete Ways that are not part of an inner multipolygon"));
 
         // We can attach our new multipolygon relation and pretend it has always been there
@@ -227,13 +235,14 @@ public class JoinAreasAction extends JosmAction {
 
         stripTags(newInnerWays);
         makeCommitsOneAction(
-            same
+                same
                 ? marktr("Joined self-overlapping area")
-                : marktr("Joined overlapping areas")
+                        : marktr("Joined overlapping areas")
         );
 
-        if(warnAboutRelations)
+        if(warnAboutRelations) {
             JOptionPane.showMessageDialog(Main.parent, tr("Some of the ways were part of relations that have been modified. Please verify no errors have been introduced."));
+        }
 
         return true;
     }
@@ -253,8 +262,9 @@ public class JoinAreasAction extends JosmAction {
         Map<String, Set<String>> props = new TreeMap<String, Set<String>>();
         for (Way w : ways) {
             for (Entry<String,String> e : w.entrySet()) {
-                if (!props.containsKey(e.getKey()))
+                if (!props.containsKey(e.getKey())) {
                     props.put(e.getKey(), new TreeSet<String>());
+                }
                 props.get(e.getKey()).add(e.getValue());
             }
         }
@@ -337,16 +347,18 @@ public class JoinAreasAction extends JosmAction {
                     nodes.add(b.getNode(j));
                     continue;
                 } else
-                if(a.getNode(i).equals(b.getNode(j+1)) || a.getNode(i+1).equals(b.getNode(j+1))) {
-                    nodes.add(b.getNode(j+1));
-                    continue;
-                }
+                    if(a.getNode(i).equals(b.getNode(j+1)) || a.getNode(i+1).equals(b.getNode(j+1))) {
+                        nodes.add(b.getNode(j+1));
+                        continue;
+                    }
                 LatLon intersection = getLineLineIntersection(
                         a.getNode(i)  .getEastNorth().east(), a.getNode(i)  .getEastNorth().north(),
                         a.getNode(i+1).getEastNorth().east(), a.getNode(i+1).getEastNorth().north(),
                         b.getNode(j)  .getEastNorth().east(), b.getNode(j)  .getEastNorth().north(),
                         b.getNode(j+1).getEastNorth().east(), b.getNode(j+1).getEastNorth().north());
-                if(intersection == null) continue;
+                if(intersection == null) {
+                    continue;
+                }
 
                 // Create the node. Adding them to the ways must be delayed because we still loop over them
                 Node n = new Node(intersection);
@@ -354,15 +366,18 @@ public class JoinAreasAction extends JosmAction {
                 nodes.add(n);
                 // The distance is needed to sort and add the nodes in direction of the way
                 nodesA.add(new NodeToSegs(i,  n, a.getNode(i).getCoor()));
-                if(same)
+                if(same) {
                     nodesA.add(new NodeToSegs(j,  n, a.getNode(j).getCoor()));
-                else
+                } else {
                     nodesB.add(new NodeToSegs(j,  n, b.getNode(j).getCoor()));
+                }
             }
         }
 
         addNodesToWay(a, nodesA);
-        if(!same) addNodesToWay(b, nodesB);
+        if(!same) {
+            addNodesToWay(b, nodesB);
+        }
 
         return nodes;
     }
@@ -372,8 +387,8 @@ public class JoinAreasAction extends JosmAction {
      * @return LatLon null if no intersection was found, the LatLon coordinates of the intersection otherwise
      */
     static private LatLon getLineLineIntersection(
-                double x1, double y1, double x2, double y2,
-                double x3, double y3, double x4, double y4) {
+            double x1, double y1, double x2, double y2,
+            double x3, double y3, double x4, double y4) {
 
         if (!Line2D.linesIntersect(x1, y1, x2, y2, x3, y3, x4, y4)) return null;
 
@@ -391,8 +406,8 @@ public class JoinAreasAction extends JosmAction {
         if(det == 0) return null; // Lines are parallel
 
         return Main.proj.eastNorth2latlon(new EastNorth(
-            (b1*c2 - b2*c1)/det,
-            (a2*c1 -a1*c2)/det
+                (b1*c2 - b2*c1)/det,
+                (a2*c1 -a1*c2)/det
         ));
     }
 
@@ -420,15 +435,15 @@ public class JoinAreasAction extends JosmAction {
      */
     private void commitCommands(String description) {
         switch(cmds.size()) {
-            case 0:
-                return;
-            case 1:
-                Main.main.undoRedo.add(cmds.getFirst());
-                break;
-            default:
-                Command c = new SequenceCommand(tr(description), cmds);
-                Main.main.undoRedo.add(c);
-                break;
+        case 0:
+            return;
+        case 1:
+            Main.main.undoRedo.add(cmds.getFirst());
+            break;
+        default:
+            Command c = new SequenceCommand(tr(description), cmds);
+            Main.main.undoRedo.add(c);
+            break;
         }
 
         cmds.clear();
@@ -443,9 +458,13 @@ public class JoinAreasAction extends JosmAction {
     private ArrayList<RelationRole> removeFromRelations(OsmPrimitive osm) {
         ArrayList<RelationRole> result = new ArrayList<RelationRole>();
         for (Relation r : Main.main.getCurrentDataSet().getRelations()) {
-            if (r.isDeleted() || r.incomplete) continue;
+            if (r.isDeleted() || r.isIncomplete()) {
+                continue;
+            }
             for (RelationMember rm : r.getMembers()) {
-                if (rm.getMember() != osm) continue;
+                if (rm.getMember() != osm) {
+                    continue;
+                }
 
                 Relation newRel = new Relation(r);
                 List<RelationMember> members = newRel.getMembers();
@@ -454,7 +473,9 @@ public class JoinAreasAction extends JosmAction {
 
                 cmds.add(new ChangeCommand(r, newRel));
                 RelationRole saverel =  new RelationRole(r, rm.getRole());
-                if(!result.contains(saverel)) result.add(saverel);
+                if(!result.contains(saverel)) {
+                    result.add(saverel);
+                }
                 break;
             }
         }
@@ -470,7 +491,9 @@ public class JoinAreasAction extends JosmAction {
     private Collection<Way> splitWaysOnNodes(Way a, Way b, Collection<OsmPrimitive> nodes) {
         ArrayList<Way> ways = new ArrayList<Way>();
         ways.add(a);
-        if(!a.equals(b)) ways.add(b);
+        if(!a.equals(b)) {
+            ways.add(b);
+        }
 
         List<OsmPrimitive> affected = new ArrayList<OsmPrimitive>();
         for (Way way : ways) {
@@ -492,7 +515,9 @@ public class JoinAreasAction extends JosmAction {
     static private Collection<Way> osmprim2way(Collection<OsmPrimitive> ways) {
         Collection<Way> result = new ArrayList<Way>();
         for(OsmPrimitive w: ways) {
-            if(w instanceof Way) result.add((Way) w);
+            if(w instanceof Way) {
+                result.add((Way) w);
+            }
         }
         return result;
     }
@@ -504,7 +529,9 @@ public class JoinAreasAction extends JosmAction {
      */
     private Collection<Node> getNodesFromWays(Collection<Way> ways) {
         Collection<Node> allNodes = new ArrayList<Node>();
-        for(Way w: ways) allNodes.addAll(w.getNodes());
+        for(Way w: ways) {
+            allNodes.addAll(w.getNodes());
+        }
         return allNodes;
     }
 
@@ -520,7 +547,9 @@ public class JoinAreasAction extends JosmAction {
         Collection<Way> innerWays = new ArrayList<Way>();
         for(Way w: multigonWays) {
             Polygon poly = new Polygon();
-            for(Node n: (w).getNodes()) poly.addPoint(latlonToXY(n.getCoor().lat()), latlonToXY(n.getCoor().lon()));
+            for(Node n: (w).getNodes()) {
+                poly.addPoint(latlonToXY(n.getCoor().lat()), latlonToXY(n.getCoor().lon()));
+            }
 
             for(Node n: multigonNodes) {
                 if(!(w).containsNode(n) && poly.contains(latlonToXY(n.getCoor().lat()), latlonToXY(n.getCoor().lon()))) {
@@ -545,8 +574,12 @@ public class JoinAreasAction extends JosmAction {
      */
     private void getWaysByNode(Collection<Way> innerWays, Collection<Way> w, Node n) {
         for(Way way : w) {
-            if(!(way).containsNode(n)) continue;
-            if(!innerWays.contains(way)) innerWays.add(way); // Will need this later for multigons
+            if(!(way).containsNode(n)) {
+                continue;
+            }
+            if(!innerWays.contains(way)) {
+                innerWays.add(way); // Will need this later for multigons
+            }
         }
     }
 
@@ -560,12 +593,15 @@ public class JoinAreasAction extends JosmAction {
         ArrayList<Way> join = new ArrayList<Way>();
         for(Way w: multigonWays) {
             // Skip inner ways
-            if(innerWays.contains(w)) continue;
+            if(innerWays.contains(w)) {
+                continue;
+            }
 
-            if(w.getNodesCount() <= 2)
+            if(w.getNodesCount() <= 2) {
                 cmds.add(new DeleteCommand(w));
-            else
+            } else {
                 join.add(w);
+            }
         }
 
         commitCommands(marktr("Join Areas: Remove Short Ways"));
@@ -605,7 +641,7 @@ public class JoinAreasAction extends JosmAction {
                 continue;
             }
             if(a.getNode(0).equals(b.getNode(0)) ||
-               a.getNode(a.getNodesCount()-1).equals(b.getNode(b.getNodesCount()-1))) {
+                    a.getNode(a.getNodesCount()-1).equals(b.getNode(b.getNodesCount()-1))) {
                 Main.main.getCurrentDataSet().setSelected(b);
                 new ReverseWayAction().actionPerformed(null);
                 cmdsCount++;
@@ -643,10 +679,16 @@ public class JoinAreasAction extends JosmAction {
         wayIterator: for(Way w : uninterestingWays) {
             boolean hasInnerNodes = false;
             for(Node n : w.getNodes()) {
-                if(outerNodes.contains(n)) continue wayIterator;
-                if(!hasInnerNodes && innerNodes.contains(n)) hasInnerNodes = true;
+                if(outerNodes.contains(n)) {
+                    continue wayIterator;
+                }
+                if(!hasInnerNodes && innerNodes.contains(n)) {
+                    hasInnerNodes = true;
+                }
             }
-            if(!hasInnerNodes || w.getNodesCount() < 2) continue;
+            if(!hasInnerNodes || w.getNodesCount() < 2) {
+                continue;
+            }
             possibleWays.add(w);
         }
 
@@ -670,7 +712,9 @@ public class JoinAreasAction extends JosmAction {
                 }
                 for(Way w2 : possibleWays) {
                     // w2 cannot be closed, otherwise it would have been removed above
-                    if(!waysCanBeCombined(w1, w2)) continue;
+                    if(!waysCanBeCombined(w1, w2)) {
+                        continue;
+                    }
 
                     ArrayList<Way> joinThem = new ArrayList<Way>();
                     joinThem.add(w1);
@@ -718,19 +762,25 @@ public class JoinAreasAction extends JosmAction {
     private void removePartlyUnconnectedWays(ArrayList<Way> ways) {
         List<Way> removables = new ArrayList<Way>();
         for(Way a : ways) {
-            if(a.isClosed()) continue;
+            if(a.isClosed()) {
+                continue;
+            }
             boolean connectedStart = false;
             boolean connectedEnd = false;
             for(Way b : ways) {
-                if(a.equals(b))
+                if(a.equals(b)) {
                     continue;
-                if(b.isFirstLastNode(a.firstNode()))
+                }
+                if(b.isFirstLastNode(a.firstNode())) {
                     connectedStart = true;
-                if(b.isFirstLastNode(a.lastNode()))
+                }
+                if(b.isFirstLastNode(a.lastNode())) {
                     connectedEnd = true;
+                }
             }
-            if(!connectedStart || !connectedEnd)
+            if(!connectedStart || !connectedEnd) {
                 removables.add(a);
+            }
         }
         ways.removeAll(removables);
     }
@@ -748,7 +798,9 @@ public class JoinAreasAction extends JosmAction {
         int count = 0;
         for(Node n : w.getNodes()) {
             x.removeNode(n);
-            if(x.containsNode(n)) count++;
+            if(x.containsNode(n)) {
+                count++;
+            }
             if(count == 2) return true;
         }
         return false;
@@ -783,8 +835,9 @@ public class JoinAreasAction extends JosmAction {
         // Create new multipolygon relation and add all inner ways to it
         Relation newRel = new Relation();
         newRel.put("type", "multipolygon");
-        for(Way w : inner)
+        for(Way w : inner) {
             newRel.addMember(new RelationMember("inner", w));
+        }
         cmds.add(new AddCommand(newRel));
 
         // We don't add outer to the relation because it will be handed to fixRelations()
@@ -805,9 +858,9 @@ public class JoinAreasAction extends JosmAction {
         ArrayList<RelationRole> multiouters = new ArrayList<RelationRole>();
         for(RelationRole r : rels) {
             if( r.rel.get("type") != null &&
-                r.rel.get("type").equalsIgnoreCase("multipolygon") &&
-                r.role.equalsIgnoreCase("outer")
-              ) {
+                    r.rel.get("type").equalsIgnoreCase("multipolygon") &&
+                    r.role.equalsIgnoreCase("outer")
+            ) {
                 multiouters.add(r);
                 continue;
             }
@@ -819,30 +872,32 @@ public class JoinAreasAction extends JosmAction {
 
         Relation newRel = null;
         switch(multiouters.size()) {
-            case 0:
-                return;
-            case 1:
-                // Found only one to be part of a multipolygon relation, so just add it back as well
-                newRel = new Relation(multiouters.get(0).rel);
-                newRel.addMember(new RelationMember(multiouters.get(0).role, outer));
-                cmds.add(new ChangeCommand(multiouters.get(0).rel, newRel));
-                return;
-            default:
-                // Create a new relation with all previous members and (Way)outer as outer.
-                newRel = new Relation();
-                for(RelationRole r : multiouters) {
-                    // Add members
-                    for(RelationMember rm : r.rel.getMembers())
-                        if(!newRel.getMembers().contains(rm)) newRel.addMember(rm);
-                    // Add tags
-                    for (String key : r.rel.keySet()) {
-                        newRel.put(key, r.rel.get(key));
+        case 0:
+            return;
+        case 1:
+            // Found only one to be part of a multipolygon relation, so just add it back as well
+            newRel = new Relation(multiouters.get(0).rel);
+            newRel.addMember(new RelationMember(multiouters.get(0).role, outer));
+            cmds.add(new ChangeCommand(multiouters.get(0).rel, newRel));
+            return;
+        default:
+            // Create a new relation with all previous members and (Way)outer as outer.
+            newRel = new Relation();
+            for(RelationRole r : multiouters) {
+                // Add members
+                for(RelationMember rm : r.rel.getMembers())
+                    if(!newRel.getMembers().contains(rm)) {
+                        newRel.addMember(rm);
                     }
-                    // Delete old relation
-                    cmds.add(new DeleteCommand(r.rel));
+                // Add tags
+                for (String key : r.rel.keySet()) {
+                    newRel.put(key, r.rel.get(key));
                 }
-                newRel.addMember(new RelationMember("outer", outer));
-                cmds.add(new AddCommand(newRel));
+                // Delete old relation
+                cmds.add(new DeleteCommand(r.rel));
+            }
+            newRel.addMember(new RelationMember("outer", outer));
+            cmds.add(new AddCommand(newRel));
         }
     }
 
@@ -850,7 +905,9 @@ public class JoinAreasAction extends JosmAction {
      * @param Collection<Way> The List of Ways to remove all tags from
      */
     private void stripTags(Collection<Way> ways) {
-        for(Way w: ways) stripTags(w);
+        for(Way w: ways) {
+            stripTags(w);
+        }
         commitCommands(marktr("Remove tags from inner ways"));
     }
 
@@ -860,8 +917,9 @@ public class JoinAreasAction extends JosmAction {
     private void stripTags(Way x) {
         if(x.getKeys() == null) return;
         Way y = new Way(x);
-        for (String key : x.keySet())
+        for (String key : x.keySet()) {
             y.remove(key);
+        }
         cmds.add(new ChangeCommand(x, y));
     }
 
@@ -874,11 +932,13 @@ public class JoinAreasAction extends JosmAction {
         UndoRedoHandler ur = Main.main.undoRedo;
         cmds.clear();
         int i = Math.max(ur.commands.size() - cmdsCount, 0);
-        for(; i < ur.commands.size(); i++)
+        for(; i < ur.commands.size(); i++) {
             cmds.add(ur.commands.get(i));
+        }
 
-        for(i = 0; i < cmds.size(); i++)
+        for(i = 0; i < cmds.size(); i++) {
             ur.undo();
+        }
 
         commitCommands(message == null ? marktr("Join Areas Function") : message);
         cmdsCount = 0;

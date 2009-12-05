@@ -533,7 +533,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
 
             }
             for (Relation r: relations) {
-                if (! r.isDeleted() && r.isVisible() && !r.incomplete) {
+                if (! r.isDeleted() && r.isVisible() && !r.isIncomplete()) {
                     this.relations.add(r);
                 }
             }

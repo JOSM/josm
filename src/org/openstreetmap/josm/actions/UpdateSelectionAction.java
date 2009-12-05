@@ -9,7 +9,6 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -138,7 +137,7 @@ public class UpdateSelectionAction extends JosmAction {
      *
      */
     static class UpdatePrimitivesTask extends PleaseWaitRunnable {
-        static private final Logger logger = Logger.getLogger(UpdatePrimitivesTask.class.getName());
+        //static private final Logger logger = Logger.getLogger(UpdatePrimitivesTask.class.getName());
 
         private DataSet ds;
         private boolean canceled;
@@ -227,7 +226,7 @@ public class UpdateSelectionAction extends JosmAction {
                 // incomplete ways.
                 //
                 for (Way w : ds.getWays()) {
-                    if (w.incomplete) {
+                    if (w.isIncomplete()) {
                         OsmServerObjectReader reader = new OsmServerObjectReader(w.getId(), OsmPrimitiveType.WAY, true /* full */);
                         theirDataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
                         merger = new DataSetMerger(ds, theirDataSet);

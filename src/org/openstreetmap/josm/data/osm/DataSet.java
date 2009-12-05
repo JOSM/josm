@@ -158,7 +158,7 @@ public class DataSet implements Cloneable {
     public Collection<OsmPrimitive> allNonDeletedCompletePrimitives() {
         Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
         for (OsmPrimitive osm : allPrimitives())
-            if (osm.isVisible() && !osm.isDeleted() && !osm.incomplete) {
+            if (osm.isVisible() && !osm.isDeleted() && !osm.isIncomplete()) {
                 o.add(osm);
             }
         return o;
@@ -167,7 +167,7 @@ public class DataSet implements Cloneable {
     public Collection<OsmPrimitive> allNonDeletedPhysicalPrimitives() {
         Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
         for (OsmPrimitive osm : allPrimitives())
-            if (osm.isVisible() && !osm.isDeleted() && !osm.incomplete && !(osm instanceof Relation)) {
+            if (osm.isVisible() && !osm.isDeleted() && !osm.isIncomplete() && !(osm instanceof Relation)) {
                 o.add(osm);
             }
         return o;

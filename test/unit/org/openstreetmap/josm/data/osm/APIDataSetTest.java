@@ -75,7 +75,7 @@ public class APIDataSetTest {
 
         Relation r4 = new Relation(1);
         r4.put("name", "r4");
-        r4.incomplete = false;
+        r4.setIncomplete(false);
         r4.setModified(true);
 
         r1.addMember(new RelationMember("", r2));

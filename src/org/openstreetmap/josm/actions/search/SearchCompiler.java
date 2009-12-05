@@ -486,7 +486,7 @@ public class SearchCompiler {
 
     private static class Incomplete extends Match {
         @Override public boolean match(OsmPrimitive osm) {
-            return osm.incomplete;
+            return osm.isIncomplete();
         }
         @Override public String toString() {return "incomplete";}
     }

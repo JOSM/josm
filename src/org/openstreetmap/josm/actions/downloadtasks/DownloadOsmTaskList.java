@@ -106,17 +106,17 @@ public class DownloadOsmTaskList {
     protected Set<OsmPrimitive> getCompletePrimitives(DataSet ds) {
         HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
         for (OsmPrimitive primitive : ds.getNodes()) {
-            if (!primitive.incomplete && !primitive.isNew()) {
+            if (!primitive.isIncomplete() && !primitive.isNew()) {
                 ret.add(primitive);
             }
         }
         for (OsmPrimitive primitive : ds.getWays()) {
-            if (!primitive.incomplete && !primitive.isNew()) {
+            if (!primitive.isIncomplete() && !primitive.isNew()) {
                 ret.add(primitive);
             }
         }
         for (OsmPrimitive primitive : ds.getRelations()) {
-            if (!primitive.incomplete && !primitive.isNew()) {
+            if (!primitive.isIncomplete() && !primitive.isNew()) {
                 ret.add(primitive);
             }
         }

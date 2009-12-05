@@ -122,7 +122,7 @@ public final class Node extends OsmPrimitive {
     @Override
     public void mergeFrom(OsmPrimitive other) {
         super.mergeFrom(other);
-        if (!other.incomplete) {
+        if (!other.isIncomplete()) {
             setCoor(new LatLon(((Node)other).coor));
         }
     }

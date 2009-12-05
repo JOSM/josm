@@ -377,9 +377,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
 
     protected void rememberNodesOfIncompleteWaysToLoad(DataSet from) {
         for (Way w: from.getWays()) {
-            if (w.incomplete) {
+            if (w.isIncomplete()) {
                 for (Node n: w.getNodes()) {
-                    if (n.incomplete) {
+                    if (n.isIncomplete()) {
                         nodes.add(n.getId());
                     }
                 }

@@ -64,7 +64,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
@@ -89,7 +89,7 @@ public class NodeListMergeModelTest {
 
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
@@ -121,7 +121,7 @@ public class NodeListMergeModelTest {
 
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
@@ -149,7 +149,7 @@ public class NodeListMergeModelTest {
 
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         myWay.addNode(new Node(4));
@@ -178,7 +178,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
@@ -200,7 +200,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
@@ -227,7 +227,7 @@ public class NodeListMergeModelTest {
 
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
@@ -255,7 +255,7 @@ public class NodeListMergeModelTest {
 
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         myWay.addNode(new Node(4));
@@ -288,7 +288,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -317,7 +317,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -346,7 +346,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -380,7 +380,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -409,7 +409,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
@@ -440,7 +440,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
@@ -470,7 +470,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -504,7 +504,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -531,7 +531,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -562,7 +562,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -596,7 +596,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -623,7 +623,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -654,7 +654,7 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
         Way myWay = new Way(1);
-        myWay.incomplete = false;
+        myWay.setIncomplete(false);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);

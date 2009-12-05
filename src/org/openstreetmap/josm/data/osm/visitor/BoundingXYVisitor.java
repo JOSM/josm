@@ -27,7 +27,7 @@ public class BoundingXYVisitor extends AbstractVisitor {
     }
 
     public void visit(Way w) {
-        if (w.incomplete) return;
+        if (w.isIncomplete()) return;
         for (Node n : w.getNodes())
             visit(n);
     }

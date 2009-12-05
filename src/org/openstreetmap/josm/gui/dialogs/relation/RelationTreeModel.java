@@ -209,7 +209,7 @@ public class RelationTreeModel implements TreeModel {
 
     public boolean isLeaf(Object node) {
         Relation r = (Relation)node;
-        if (r.incomplete) return false;
+        if (r.isIncomplete()) return false;
         return getNumRelationChildren(r) == 0;
     }
 

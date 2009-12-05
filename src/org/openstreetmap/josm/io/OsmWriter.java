@@ -104,7 +104,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
     }
 
     public void visit(Node n) {
-        if (n.incomplete) return;
+        if (n.isIncomplete()) return;
         addCommon(n, "node");
         out.print(" lat='"+n.getCoor().lat()+"' lon='"+n.getCoor().lon()+"'");
         if (!withBody) {
@@ -115,7 +115,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
     }
 
     public void visit(Way w) {
-        if (w.incomplete) return;
+        if (w.isIncomplete()) return;
         addCommon(w, "way");
         if (!withBody) {
             out.println("/>");
@@ -129,7 +129,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
     }
 
     public void visit(Relation e) {
-        if (e.incomplete) return;
+        if (e.isIncomplete()) return;
         addCommon(e, "relation");
         if (!withBody) {
             out.println("/>");

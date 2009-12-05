@@ -603,7 +603,7 @@ public class OsmDataLayer extends Layer {
         // what is this loop meant to do? it creates waypoints but never
         // records them?
         for (Node n : data.getNodes()) {
-            if (n.incomplete || n.isDeleted() || doneNodes.contains(n)) {
+            if (n.isIncomplete() || n.isDeleted() || doneNodes.contains(n)) {
                 continue;
             }
             WayPoint wpt = new WayPoint(n.getCoor());

@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Stack;
-import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -38,7 +37,7 @@ import org.xml.sax.SAXException;
  *
  */
 public class UploadSelectionAction extends JosmAction{
-    static private Logger logger = Logger.getLogger(UploadSelectionAction.class.getName());
+    //static private Logger logger = Logger.getLogger(UploadSelectionAction.class.getName());
 
     public UploadSelectionAction() {
         super(
@@ -89,7 +88,7 @@ public class UploadSelectionAction extends JosmAction{
         for (OsmPrimitive p: primitives) {
             if (p.isNew()) {
                 ret.add(p);
-            } else if (p.isVisible() && p.isModified() && !p.incomplete) {
+            } else if (p.isVisible() && p.isModified() && !p.isIncomplete()) {
                 ret.add(p);
             }
         }

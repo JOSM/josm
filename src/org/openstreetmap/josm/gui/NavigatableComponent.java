@@ -370,7 +370,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
             int i = -2;
             for (Node n : w.getNodes()) {
                 i++;
-                if (n.isDeleted() || n.incomplete) {
+                if (n.isDeleted() || n.isIncomplete()) {
                     continue;
                 }
                 if (lastN == null) {

@@ -87,7 +87,7 @@ public class DefaultNameFormatter implements NameFormatter {
      */
     public String format(Node node) {
         String name = "";
-        if (node.incomplete) {
+        if (node.isIncomplete()) {
             name = tr("incomplete");
         } else {
             if (Main.pref.getBoolean("osm-primitives.localize-name", true)) {
@@ -112,7 +112,7 @@ public class DefaultNameFormatter implements NameFormatter {
      */
     public String format(Way way) {
         String name = "";
-        if (way.incomplete) {
+        if (way.isIncomplete()) {
             name = tr("incomplete");
         } else {
             if (Main.pref.getBoolean("osm-primitives.localize-name", true)) {
@@ -150,7 +150,7 @@ public class DefaultNameFormatter implements NameFormatter {
      */
     public String format(Relation relation) {
         String name;
-        if (relation.incomplete) {
+        if (relation.isIncomplete()) {
             name = tr("incomplete");
         } else {
             name = relation.get("type");

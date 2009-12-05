@@ -562,7 +562,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             if (m.getMember().isDeleted()) {
                 putError(r, tr("Deleted member ''{0}'' in relation.",
                         m.getMember().getDisplayName(DefaultNameFormatter.getInstance())), true);
-            } else if(m.getMember().incomplete)
+            } else if(m.getMember().isIncomplete())
                 return;
             else
             {
@@ -921,7 +921,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             if (m.getMember().isDeleted()) {
                 putError(r, tr("Deleted member ''{0}'' in relation.",
                         m.getMember().getDisplayName(DefaultNameFormatter.getInstance())), true);
-            } else if(m.getMember().incomplete) {
+            } else if(m.getMember().isIncomplete()) {
                 incomplete = true;
             } else {
                 if(m.isWay()) {
@@ -1382,7 +1382,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
     boolean drawable(OsmPrimitive osm)
     {
-        return !osm.isDeleted() && !osm.isFiltered() && !osm.incomplete;
+        return !osm.isDeleted() && !osm.isFiltered() && !osm.isIncomplete();
     }
 
     @Override
@@ -1544,7 +1544,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         /*** SELECTED  ***/
         //profilerN = 0;
         for (final OsmPrimitive osm : data.getSelected()) {
-            if (!osm.incomplete && !osm.isDeleted() && !(osm instanceof Node)
+            if (!osm.isIncomplete() && !osm.isDeleted() && !(osm instanceof Node)
                     && osm.mappaintDrawnCode != paintid
             ) {
                 osm.visit(new AbstractVisitor() {
@@ -1583,7 +1583,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         /*** NODES ***/
         //profilerN = 0;
         for (final Node osm: data.searchNodes(bbox)) {
-            if (!osm.incomplete && !osm.isDeleted() && (data.isSelected(osm) || !osm.isFiltered())
+            if (!osm.isIncomplete() && !osm.isDeleted() && (data.isSelected(osm) || !osm.isFiltered())
                     && osm.mappaintDrawnCode != paintid)
             {
                 drawNode(osm);

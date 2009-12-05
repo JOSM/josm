@@ -248,7 +248,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
      * @param n The node to draw.
      */
     public void visit(Node n) {
-        if (n.incomplete) return;
+        if (n.isIncomplete()) return;
 
         if (inactive || n.isDisabled()) {
             drawNode(n, inactiveColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
@@ -300,7 +300,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
      * @param w The way to draw.
      */
     public void visit(Way w) {
-        if (w.incomplete || w.getNodesCount() < 2)
+        if (w.isIncomplete() || w.getNodesCount() < 2)
             return;
 
         /* show direction arrows, if draw.segment.relevant_directions_only is not set, the way is tagged with a direction key
@@ -343,7 +343,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
     private Stroke relatedWayStroke = new BasicStroke(
             4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL);
     public void visit(Relation r) {
-        if (r.incomplete) return;
+        if (r.isIncomplete()) return;
 
         Color col;
         if (inactive || r.isDisabled()) {
@@ -356,7 +356,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
         g.setColor(col);
 
         for (RelationMember m : r.getMembers()) {
-            if (m.getMember().incomplete || m.getMember().isDeleted()) {
+            if (m.getMember().isIncomplete() || m.getMember().isDeleted()) {
                 continue;
             }
 
@@ -373,7 +373,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
 
                 boolean first = true;
                 for (Node n : m.getWay().getNodes()) {
-                    if (n.incomplete || n.isDeleted()) {
+                    if (n.isIncomplete() || n.isDeleted()) {
                         continue;
                     }
                     Point p = nc.getPoint(n);

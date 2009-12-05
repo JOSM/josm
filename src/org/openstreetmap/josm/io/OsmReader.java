@@ -447,10 +447,10 @@ public class OsmReader {
                     logger.fine(tr("Marked way {0} with {1} nodes incomplete because at least one node was missing in the " +
                             "loaded data and is therefore incomplete too.", externalWayId, w.getNodesCount()));
                 }
-                w.incomplete = true;
+                w.setIncomplete(true);
                 ds.addPrimitive(w);
             } else {
-                w.incomplete = false;
+                w.setIncomplete(false);
                 ds.addPrimitive(w);
             }
         }

@@ -148,7 +148,7 @@ public class AutoCompletionCache {
             cachePrimitive(primitive);
         }
         for (Relation relation : layer.data.getRelations()) {
-            if (relation.incomplete || relation.isDeleted()) {
+            if (relation.isIncomplete() || relation.isDeleted()) {
                 continue;
             }
             cacheRelationMemberRoles(relation);

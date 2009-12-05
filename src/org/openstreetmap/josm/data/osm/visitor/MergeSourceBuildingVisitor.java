@@ -129,7 +129,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         if (isAlreadyRemembered(n))
             return;
         Node clone = new Node(n);
-        clone.incomplete = true;
+        clone.setIncomplete(true);
         mappedPrimitives.put(n, clone);
     }
 
@@ -138,7 +138,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
             return;
         Way clone = new Way(w);
         clone.setNodes(null);
-        clone.incomplete = true;
+        clone.setIncomplete(true);
         mappedPrimitives.put(w, clone);
     }
 
@@ -151,7 +151,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
             clone = new Relation(r);
         }
         clone.setMembers(null);
-        clone.incomplete = true;
+        clone.setIncomplete(true);
         if (! isAlreadyRemembered(r)) {
             mappedPrimitives.put(r, clone);
         }

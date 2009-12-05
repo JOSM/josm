@@ -201,7 +201,7 @@ public class DataSetMergerTest {
         my.setVersion("0.6");
         Node n = new Node(1);
         n.setCoor(new LatLon(0,0));
-        n.incomplete = false;
+        n.setIncomplete(false);
         n.setDeleted(true);
         n.put("key1", "value1");
         my.addPrimitive(n);
@@ -448,7 +448,7 @@ public class DataSetMergerTest {
         Node n = new Node();
         n.setCoor(new LatLon(0,0));
         n.setOsmId(1,1);
-        n.incomplete = true;
+        n.setIncomplete(true);
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
@@ -469,7 +469,7 @@ public class DataSetMergerTest {
         assertEquals(0,visitor.getConflicts().size());
         assertEquals("value1",n2.get("key1"));
         assertEquals(true, n1.getTimestamp().equals(n2.getTimestamp()));
-        assertEquals(false, n2.incomplete);
+        assertEquals(false, n2.isIncomplete());
         assertTrue(n2 == n);
     }
 
@@ -1003,7 +1003,7 @@ public class DataSetMergerTest {
         Way w3 = new Way(3);
         w3.setNodes(Arrays.asList(n1,n2));
         source.addPrimitive(w3);
-        assertTrue(w3.incomplete);
+        assertTrue(w3.isIncomplete());
 
         DataSet target = new DataSet();
         target.setVersion("0.6");
@@ -1015,20 +1015,20 @@ public class DataSetMergerTest {
 
         OsmPrimitive p= target.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertNotNull(p);
-        assertTrue(p.incomplete);
+        assertTrue(p.isIncomplete());
         p= target.getPrimitiveById(2, OsmPrimitiveType.NODE);
         assertNotNull(p);
-        assertTrue(p.incomplete);
+        assertTrue(p.isIncomplete());
         p= target.getPrimitiveById(3, OsmPrimitiveType.WAY);
         assertNotNull(p);
-        assertTrue(p.incomplete);
+        assertTrue(p.isIncomplete());
 
         Way w = (Way)target.getPrimitiveById(3, OsmPrimitiveType.WAY);
         assertNotNull(w);
-        assertTrue(p.incomplete);
+        assertTrue(p.isIncomplete());
         assertEquals(2, w.getNodesCount());
-        assertTrue(w.getNode(0).incomplete);
-        assertTrue(w.getNode(1).incomplete);
+        assertTrue(w.getNode(0).isIncomplete());
+        assertTrue(w.getNode(1).isIncomplete());
     }
 
     /**
@@ -1066,7 +1066,7 @@ public class DataSetMergerTest {
         my.addPrimitive(n5);
 
         Way w6 = new Way(3);
-        w6.incomplete = false;
+        w6.setIncomplete(false);
         w6.setNodes(Arrays.asList(n4,n5));
         my.addPrimitive(w6);
 
@@ -1077,20 +1077,20 @@ public class DataSetMergerTest {
 
         OsmPrimitive p= my.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertNotNull(p);
-        assertTrue(!p.incomplete);
+        assertTrue(!p.isIncomplete());
         p= my.getPrimitiveById(2, OsmPrimitiveType.NODE);
         assertNotNull(p);
-        assertTrue(!p.incomplete);
+        assertTrue(!p.isIncomplete());
         p= my.getPrimitiveById(3,OsmPrimitiveType.WAY);
         assertNotNull(p);
-        assertTrue(!p.incomplete);
+        assertTrue(!p.isIncomplete());
 
         Way w = (Way)my.getPrimitiveById(3,OsmPrimitiveType.WAY);
         assertNotNull(w);
-        assertTrue(!p.incomplete);
+        assertTrue(!p.isIncomplete());
         assertEquals(2, w.getNodesCount());
-        assertTrue(!w.getNode(0).incomplete);
-        assertTrue(!w.getNode(1).incomplete);
+        assertTrue(!w.getNode(0).isIncomplete());
+        assertTrue(!w.getNode(1).isIncomplete());
     }
 
     /**
@@ -1107,13 +1107,13 @@ public class DataSetMergerTest {
         // an complete node
         Node n1 = new Node(1);
         n1.setCoor(new LatLon(1,1));
-        n1.incomplete = false;
+        n1.setIncomplete(false);
         source.addPrimitive(n1);
 
         // another complete node
         Node n2 = new Node(2);
         n2.setCoor(new LatLon(2,2));
-        n2.incomplete = false;
+        n2.setIncomplete(false);
         source.addPrimitive(n2);
 
         // --- target daset
@@ -1127,10 +1127,10 @@ public class DataSetMergerTest {
         target.addPrimitive(n5);
 
         Way w6 = new Way(3);
-        w6.incomplete = false;
+        w6.setIncomplete(false);
         w6.addNode(n4);
         w6.addNode(n5);
-        w6.incomplete = true;
+        w6.setIncomplete(true);
         target.addPrimitive(w6);
 
         //-- merge it
@@ -1142,15 +1142,15 @@ public class DataSetMergerTest {
 
         Node n = (Node)target.getPrimitiveById(1, OsmPrimitiveType.NODE);
         assertNotNull(n);
-        assertFalse(n.incomplete);
+        assertFalse(n.isIncomplete());
 
         n = (Node)target.getPrimitiveById(2, OsmPrimitiveType.NODE);
         assertNotNull(n);
-        assertFalse(n.incomplete);
+        assertFalse(n.isIncomplete());
 
         Way w = (Way)target.getPrimitiveById(3, OsmPrimitiveType.WAY);
         assertNotNull(w);
-        assertFalse(w.incomplete);
+        assertFalse(w.isIncomplete());
         assertEquals(2, w.getNodesCount());
         assertEquals(1, w.getNode(0).getId());
         assertEquals(2, w.getNode(1).getId());

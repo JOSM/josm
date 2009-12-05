@@ -71,7 +71,7 @@ public class MergeSourceBuildingVisitorTest {
         Node n1 = new Node(1);
         Node n2 = new Node(2);
         Way w1 = new Way(3);
-        w1.incomplete = false;
+        w1.setIncomplete(false);
         w1.addNode(n1);
         w1.addNode(n2);
         source.addPrimitive(n1);
@@ -104,7 +104,7 @@ public class MergeSourceBuildingVisitorTest {
         Node n1 = new Node(1);
         Node n2 = new Node(2);
         Way w1 = new Way(3);
-        w1.incomplete = false;
+        w1.setIncomplete(false);
         w1.addNode(n1);
         w1.addNode(n2);
         source.addPrimitive(n1);
@@ -146,7 +146,7 @@ public class MergeSourceBuildingVisitorTest {
         OsmPrimitive p = hull.getPrimitiveById(3, OsmPrimitiveType.WAY);
         assertNotNull(p);
         assertEquals(p.getClass(), Way.class);
-        assertTrue(p.incomplete);
+        assertTrue(p.isIncomplete());
     }
 
     @Test
@@ -155,9 +155,9 @@ public class MergeSourceBuildingVisitorTest {
         Relation r1 = new Relation(1);
         Node n20 = new Node(20);
         r1.addMember(new RelationMember("node-20",n20));
-        r1.incomplete = false;
+        r1.setIncomplete(false);
         Way w30 = new Way(30);
-        w30.incomplete = false;
+        w30.setIncomplete(false);
         Node n21;
         w30.addNode(n21 = new Node(21));
         Node n22;
@@ -216,7 +216,7 @@ public class MergeSourceBuildingVisitorTest {
         Node n20 = new Node(20);
         r1.addMember(new RelationMember("node-20",n20));
         Way w30 = new Way(30);
-        w30.incomplete = false;
+        w30.setIncomplete(false);
         Node n21;
         w30.addNode(n21 = new Node(21));
         Node n22;
@@ -245,7 +245,7 @@ public class MergeSourceBuildingVisitorTest {
 
         Way w = (Way)hull.getPrimitiveById(30, OsmPrimitiveType.WAY);
         assertNotNull(w);
-        assertTrue(w.incomplete);
+        assertTrue(w.isIncomplete());
 
 
         Node n = (Node)hull.getPrimitiveById(21,OsmPrimitiveType.NODE);
@@ -256,7 +256,7 @@ public class MergeSourceBuildingVisitorTest {
 
         Relation r = (Relation)hull.getPrimitiveById(40, OsmPrimitiveType.RELATION);
         assertNotNull(r);
-        assertTrue(r.incomplete);
+        assertTrue(r.isIncomplete());
 
         r = (Relation)hull.getPrimitiveById(1, OsmPrimitiveType.RELATION);
         assertNotNull(r);
