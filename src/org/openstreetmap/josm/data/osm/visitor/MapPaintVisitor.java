@@ -740,9 +740,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         }
 
         /* rotate icon with direction last node in from to */
-        ImageIcon rotatedIcon = ImageProvider.createRotatedImage(null /*icon2*/, inactive || r.isDisabled() ? 
-                                                                                    nodeStyle.getDisabledIcon() :
-                                                                                    nodeStyle.icon, iconAngle);
+        ImageIcon rotatedIcon = ImageProvider.createRotatedImage(null /*icon2*/, inactive || r.isDisabled() ?
+                nodeStyle.getDisabledIcon() :
+                    nodeStyle.icon, iconAngle);
 
         /* scale down icon to 16*16 pixels */
         ImageIcon smallIcon = new ImageIcon(rotatedIcon.getImage().getScaledInstance(16 , 16, Image.SCALE_SMOOTH));
@@ -1310,7 +1310,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
     boolean drawable(OsmPrimitive osm)
     {
-        return !osm.isDeleted() && !osm.isFiltered() && !osm.isIncomplete();
+        return osm.isUsable() && !osm.isFiltered();
     }
 
     @Override
@@ -1388,10 +1388,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             /*** AREAS ***/
             for (final Way osm : selectedLast(data, data.searchWays(bbox))) {
                 if (drawable(osm) && osm.mappaintDrawnCode != paintid) {
-                    if (isPrimitiveArea(osm) && osm.mappaintDrawnAreaCode != paintid)
+                    if (isPrimitiveArea(osm) && osm.mappaintDrawnAreaCode != paintid) {
                         drawWay(osm, fillAreas);
-                    else
+                    } else {
                         noAreaWays.add(osm);
+                    }
                 }
             }
 
