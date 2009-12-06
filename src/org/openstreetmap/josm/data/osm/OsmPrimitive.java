@@ -1118,6 +1118,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
         StringBuilder builder = new StringBuilder();
 
+        if (isIncomplete()) {
+            builder.append("I");
+        }
         if (isModified()) {
             builder.append("M");
         }

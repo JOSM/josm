@@ -377,8 +377,14 @@ public final class Way extends OsmPrimitive {
     }
 
     //TODO This method should not be necessary. hasIncomplete state should be updated automatically when incomplete state of nodes change
-    public void setHasIncompleteNodes(boolean hasIncompleteNodes) {
-        this.hasIncompleteNodes = hasIncompleteNodes;
+    public void setHasIncompleteNodes() {
+        hasIncompleteNodes = false;
+        for (Node node:getNodes()) {
+            if (node.isIncomplete()) {
+                hasIncompleteNodes = true;
+                break;
+            }
+        }
     }
 
     public boolean hasIncompleteNodes() {

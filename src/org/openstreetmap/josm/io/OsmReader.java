@@ -417,7 +417,6 @@ public class OsmReader {
     protected void processWaysAfterParsing() throws IllegalDataException{
         for (Long externalWayId: ways.keySet()) {
             Way w = (Way)externalIdMap.get("w" + externalWayId);
-            boolean hasIncompleteNodes = false;
             List<Node> wayNodes = new ArrayList<Node>();
             for (long id : ways.get(externalWayId)) {
                 Node n = (Node)externalIdMap.get("n" +id);
@@ -437,20 +436,18 @@ public class OsmReader {
                         n = new Node(id);
                         ds.addPrimitive(n);
                     }
-                    hasIncompleteNodes = true;
                 }
                 wayNodes.add(n);
             }
             w.setNodes(wayNodes);
-            if (hasIncompleteNodes) {
+            w.setHasIncompleteNodes();
+            if (w.hasIncompleteNodes()) {
                 if (logger.isLoggable(Level.FINE)) {
                     logger.fine(tr("Marked way {0} with {1} nodes incomplete because at least one node was missing in the " +
                             "loaded data and is therefore incomplete too.", externalWayId, w.getNodesCount()));
                 }
-                w.setHasIncompleteNodes(true);
                 ds.addPrimitive(w);
             } else {
-                w.setHasIncompleteNodes(false);
                 ds.addPrimitive(w);
             }
         }
