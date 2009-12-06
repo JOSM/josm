@@ -449,6 +449,7 @@ public class GenericRelationEditor extends RelationEditor  {
         tb.addSeparator();
         // -- sort action
         SortAction sortAction = new SortAction();
+        memberTableModel.addTableModelListener(sortAction);
         tb.add(sortAction);
 
         tb.addSeparator();
@@ -865,7 +866,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
     }
 
-    class SortAction extends AbstractAction implements ListSelectionListener {
+    class SortAction extends AbstractAction implements TableModelListener {
         public SortAction() {
             putValue(SHORT_DESCRIPTION, tr("Sort the relation members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "sort"));
@@ -880,10 +881,10 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         protected void updateEnabledState() {
-            setEnabled(memberTable.getSelectedRowCount() > 0);
+            setEnabled(memberTableModel.getRowCount() > 0);
         }
 
-        public void valueChanged(ListSelectionEvent e) {
+        public void tableChanged(TableModelEvent e) {
             updateEnabledState();
         }
     }
