@@ -7,6 +7,7 @@ import java.awt.Insets;
 import java.awt.event.ActionListener;
 
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
@@ -18,13 +19,24 @@ public class SideButton extends JButton {
     public SideButton(Action action)
     {
         super(action);
+        fixIcon();
         doStyle();
     }
 
     public SideButton(Action action, String imagename)
     {
-        this(action);
+        super(action);
         setIcon(makeIcon(imagename));
+        doStyle();
+    }
+
+    void fixIcon() {
+        Icon i = getIcon();
+        if(i != null && i instanceof ImageIcon)
+        {
+            Image im = ((ImageIcon) i).getImage();
+            setIcon(new ImageIcon(im.getScaledInstance(20 , 20, Image.SCALE_SMOOTH)));
+        }
     }
 
     public static ImageIcon makeIcon(String imagename) {
