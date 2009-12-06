@@ -5,27 +5,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.io.File;
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.projection.Mercator;
 
 public class DataSetMergerTest {
-    private static Logger logger = Logger.getLogger(DataSetMergerTest.class.getName());
+    /*private static Logger logger = Logger.getLogger(DataSetMergerTest.class.getName());
 
     static Properties testProperties;
 
@@ -61,7 +52,7 @@ public class DataSetMergerTest {
 
         // init projection
         Main.proj = new Mercator();
-    }
+    }*/
 
     @Before
     public void setUp() {
