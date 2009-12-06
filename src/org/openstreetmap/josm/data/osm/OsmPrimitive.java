@@ -1154,6 +1154,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return new SimplePrimitiveId(getUniqueId(), getType());
     }
 
+    //TODO This method should not be necessary, incomplete state should be handled internally by OsmPrimitive
     public void setIncomplete(boolean incomplete) {
         this.incomplete = incomplete;
     }

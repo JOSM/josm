@@ -1141,7 +1141,8 @@ public class DataSetMergerTest {
 
         Way w = (Way)target.getPrimitiveById(3, OsmPrimitiveType.WAY);
         assertNotNull(w);
-        assertFalse(w.isIncomplete());
+        assertFalse(w.hasIncompleteNodes());
+        assertFalse(w.isUsable());
         assertEquals(2, w.getNodesCount());
         assertEquals(1, w.getNode(0).getId());
         assertEquals(2, w.getNode(1).getId());
