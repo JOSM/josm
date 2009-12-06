@@ -72,7 +72,7 @@ public class PluginHandler {
                 Main.pref.removeFromCollection("plugins", p);
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        tr("Loading of {0} plugin was requested. This plugin is no longer required.", p),
+                        tr("Plugin {0} is no longer necessary and has been deactivated.", p),
                         tr("Warning"),
                         JOptionPane.WARNING_MESSAGE
                 );
