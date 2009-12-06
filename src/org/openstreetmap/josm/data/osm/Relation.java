@@ -233,14 +233,6 @@ public final class Relation extends OsmPrimitive {
         return o instanceof Relation ? Long.valueOf(getUniqueId()).compareTo(o.getUniqueId()) : -1;
     }
 
-    // seems to be different from member "incomplete" - FIXME
-    public boolean isIncomplete() {
-        for (RelationMember m : members)
-            if (m.getMember() == null)
-                return true;
-        return false;
-    }
-
     public RelationMember firstMember() {
         if (isIncomplete()) return null;
         return (members.size() == 0) ? null : members.get(0);
