@@ -889,8 +889,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         // when way is cloned
         List<OsmPrimitive> result = new ArrayList<OsmPrimitive>();
         if (referrers != null) {
-            if ((referrers instanceof OsmPrimitive) && (((OsmPrimitive)referrers).dataSet == dataSet)) {
-                result.add((OsmPrimitive)referrers);
+            if (referrers instanceof OsmPrimitive) {
+                OsmPrimitive ref = (OsmPrimitive)referrers;
+                if (ref.dataSet == dataSet) {
+                    result.add(ref);
+                }
             } else {
                 for (OsmPrimitive o:(OsmPrimitive[])referrers) {
                     if (dataSet == o.dataSet) {
