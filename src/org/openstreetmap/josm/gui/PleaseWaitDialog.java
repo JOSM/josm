@@ -55,7 +55,6 @@ public class PleaseWaitDialog extends JDialog {
         pane.add(spLog = new JScrollPane(taLog), gc);
         spLog.setVisible(false);
         setContentPane(pane);
-        //setSize(Main.pref.getInteger("progressdialog.size",600),100);
         setCustomText("");
         setLocationRelativeTo(getParent());
         addComponentListener(new ComponentListener() {
@@ -97,11 +96,11 @@ public class PleaseWaitDialog extends JDialog {
             adjustLayout();
             return;
         }
+        customText.setText(text);
         if (!customText.isVisible()) {
             customText.setVisible(true);
             adjustLayout();
         }
-        customText.setText(text);
     }
 
     /**
