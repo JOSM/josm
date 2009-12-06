@@ -144,8 +144,7 @@ public class DataSetMerger {
         Way myWay = (Way)getMergeTarget(other);
         if (myWay == null)
             throw new RuntimeException(tr("Missing merge target for way with id {0}", other.getUniqueId()));
-        if (!myWay.isIncomplete())return;
-        if (myWay.isIncomplete() && other.getNodesCount() == 0) return;
+        if (!myWay.isIncomplete() || other.getNodesCount() == 0) return;
         for (Node n: myWay.getNodes()) {
             if (n.isIncomplete()) return;
         }
@@ -153,13 +152,13 @@ public class DataSetMerger {
     }
 
     /**
-     * A way in the target dataset might be incomplete because at least of of its nodes is incomplete.
-     * The nodes might have become complete because a complete node was merged onto into in the
+     * A way in the target dataset might be incomplete because at least one of its nodes is incomplete.
+     * The nodes might have become complete because a complete node was merged into in the
      * merge operation.
-     * 
+     *
      * This method loops over all parent ways of such nodes and turns them into complete ways
      * if necessary.
-     * 
+     *
      * @param other
      */
     protected void fixIncompleteParentWays(Node other) {
