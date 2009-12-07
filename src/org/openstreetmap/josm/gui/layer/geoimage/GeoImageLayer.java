@@ -70,6 +70,8 @@ public class GeoImageLayer extends Layer {
     public boolean hasTimeoffset = false;
     public long timeoffset = 0;
 
+    boolean loadThumbs;
+
     /*
      * Stores info about each image
      */
@@ -116,7 +118,7 @@ public class GeoImageLayer extends Layer {
         private LinkedHashSet<String> errorMessages;
 
         protected void rememberError(String message) {
-        	this.errorMessages.add(message);
+            this.errorMessages.add(message);
         }
 
         public Loader(Collection<File> selection, GpxLayer gpxLayer) {
@@ -137,7 +139,7 @@ public class GeoImageLayer extends Layer {
 
             if (cancelled) {
                 return;
-            }            
+            }
             progressMonitor.subTask(tr("Read photos..."));
             progressMonitor.setTicksCount(files.size());
 
@@ -172,9 +174,6 @@ public class GeoImageLayer extends Layer {
             }
             layer = new GeoImageLayer(data);
             files.clear();
-            Thread thumbsloader = new Thread(new Thumbsloader());
-            thumbsloader.setPriority(Thread.MIN_PRIORITY);
-            thumbsloader.start();            
         }
 
         private void addRecursiveFiles(Collection<File> files, Collection<File> sel) {
@@ -215,7 +214,7 @@ public class GeoImageLayer extends Layer {
                             rememberError(tr("Found null file in directory {0}\n", f.getPath()));
                         }
                     } else {
-                    	rememberError(tr("Error while getting files from directory {0}\n", f.getPath()));
+                        rememberError(tr("Error while getting files from directory {0}\n", f.getPath()));
                     }
 
                 } else {
@@ -229,30 +228,30 @@ public class GeoImageLayer extends Layer {
         }
 
         protected String formatErrorMessages() {
-        	StringBuffer sb = new StringBuffer();
-        	sb.append("<html>");
-    		if (errorMessages.size() == 1) {
-    			sb.append(errorMessages.iterator().next());
-    		} else {
-    			sb.append("<ul>");
-    			for (String msg: errorMessages) {
-    				sb.append("<li>").append(msg).append("</li>");
-    			}
-    			sb.append("/ul>");
-    		}
-    		sb.append("</html>");
-    		return sb.toString();
+            StringBuffer sb = new StringBuffer();
+            sb.append("<html>");
+            if (errorMessages.size() == 1) {
+                sb.append(errorMessages.iterator().next());
+            } else {
+                sb.append("<ul>");
+                for (String msg: errorMessages) {
+                    sb.append("<li>").append(msg).append("</li>");
+                }
+                sb.append("/ul>");
+            }
+            sb.append("</html>");
+            return sb.toString();
         }
 
         @Override protected void finish() {
-        	if (!errorMessages.isEmpty()) {
-        		JOptionPane.showMessageDialog(
-        				Main.parent,
-        				formatErrorMessages(),
-        				tr("Error"),
-        				JOptionPane.ERROR_MESSAGE
-        		);
-        	}
+            if (!errorMessages.isEmpty()) {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        formatErrorMessages(),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
             if (layer != null) {
                 Main.main.addLayer(layer);
                 layer.hook_up_mouse_events(); // Main.map.mapView should exist
@@ -275,47 +274,8 @@ public class GeoImageLayer extends Layer {
         @Override protected void cancel() {
             cancelled = true;
         }
-        
-        class Thumbsloader implements Runnable {
-            public void run() {
-                System.err.println("Load Thumbnails");
-                MediaTracker tracker = new MediaTracker(Main.map.mapView); 
-                for (int i = 0; i < layer.data.size(); i++) {
-                    System.err.println("getImg "+i);
-                    Image img = Toolkit.getDefaultToolkit().createImage(layer.data.get(i).file.getPath());
-                    tracker.addImage(img, 0);
-                    try {
-                		tracker.waitForID(0);
-            	    } catch (InterruptedException e) {
-            	        System.err.println("InterruptedException");
-                		return; //  FIXME
-            	    }
-    	            BufferedImage scaledBI = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);
-                    Graphics2D g = scaledBI.createGraphics();
-                    while (!g.drawImage(img, 0, 0, 16, 16, null))
-                    {
-                        try {
-                            Thread.sleep(10);
-                        } catch(InterruptedException ie) {}
-                    }
-                    g.dispose();
-                    tracker.removeImage(img);
-                    layer.data.get(i).thumbnail = scaledBI;
-                    if (Main.map != null && Main.map.mapView != null) {
-                        Main.map.mapView.repaint();
-                    }
-                }
-                
-//                boolean error = tracker.isErrorID(1);
-//                if (img != null && (img.getWidth(null) == 0 || img.getHeight(null) == 0)) {
-//                    error = true;
-//                }
-
-
-            }
-        }        
     }
-    
+
     private static boolean addedToggleDialog = false;
 
     public static void create(Collection<File> files, GpxLayer gpxLayer) {
@@ -423,13 +383,13 @@ public class GeoImageLayer extends Layer {
             if (e.pos != null) {
                 Point p = mv.getPoint(e.pos);
                 if (e.thumbnail != null && e.thumbnail.getWidth(null) > 0 && e.thumbnail.getHeight(null) > 0) {
-                    g.drawImage(e.thumbnail, 
-                                p.x - e.thumbnail.getWidth(null) / 2, 
+                    g.drawImage(e.thumbnail,
+                                p.x - e.thumbnail.getWidth(null) / 2,
                                 p.y - e.thumbnail.getHeight(null) / 2, null);
                 }
                 else {
-                icon.paintIcon(mv, g, 
-                               p.x - icon.getIconWidth() / 2, 
+                icon.paintIcon(mv, g,
+                               p.x - icon.getIconWidth() / 2,
                                p.y - icon.getIconHeight() / 2);
                 }
             }
@@ -536,7 +496,7 @@ public class GeoImageLayer extends Layer {
         }
         Main.main.map.repaint();
     }
-    
+
     public void checkPreviousNextButtons() {
         System.err.println("check: " + currentPhoto);
         ImageViewerDialog.setNextEnabled(currentPhoto < data.size() - 1);
@@ -597,8 +557,6 @@ public class GeoImageLayer extends Layer {
                         currentPhoto = i;
                         ImageViewerDialog.showImage(GeoImageLayer.this, e);
                         Main.main.map.repaint();
-                        
-                        
                         break;
                     }
                 }
@@ -627,5 +585,4 @@ public class GeoImageLayer extends Layer {
             }
         });
     }
-
 }

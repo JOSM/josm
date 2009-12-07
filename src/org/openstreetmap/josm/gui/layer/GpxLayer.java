@@ -321,7 +321,7 @@ public class GpxLayer extends Layer {
                     warnCantImportIntoServerLayer(GpxLayer.this);
                     return;
                 }
-                JFileChooser fc = new JFileChooser(Main.pref.get("tagimages.lastdirectory", Main.pref.get("lastDirectory")));
+                JFileChooser fc = new JFileChooser(Main.pref.get("geoimage.lastdirectory", Main.pref.get("lastDirectory")));
                 fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
                 fc.setMultiSelectionEnabled(true);
                 fc.setAcceptAllFileFilterUsed(false);
@@ -342,7 +342,7 @@ public class GpxLayer extends Layer {
                     return;
                 LinkedList<File> files = new LinkedList<File>();
                 addRecursiveFiles(files, sel);
-                Main.pref.put("tagimages.lastdirectory", fc.getCurrentDirectory().getPath());
+                Main.pref.put("geoimage.lastdirectory", fc.getCurrentDirectory().getPath());
                 GeoImageLayer.create(files, GpxLayer.this);
             }
 

@@ -134,7 +134,7 @@ public class ImageDisplay extends JComponent {
             // again if there was less than 1.5seconds since the last event.
             System.out.println(e);
             if (e.getWhen() - lastTimeForMousePoint > 1500 || mousePointInImg == null) {
-            	lastTimeForMousePoint = e.getWhen();
+                lastTimeForMousePoint = e.getWhen();
                 mousePointInImg = comp2imgCoord(visibleRect, e.getX(), e.getY());
             }
 
