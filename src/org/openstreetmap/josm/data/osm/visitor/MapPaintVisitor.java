@@ -171,6 +171,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(w.getNodesCount() < 2)
             return;
 
+        if (w.hasIncompleteNodes())
+            return;
+
         /* check, if the way is visible at all */
         double minx = 10000;
         double maxx = -10000;
@@ -1310,7 +1313,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
     boolean drawable(OsmPrimitive osm)
     {
-        return osm.isUsable() && !osm.isFiltered();
+        return !osm.isDeleted() && !osm.isIncomplete() && !osm.isFiltered();
     }
 
     @Override
@@ -1411,8 +1414,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         /*** SELECTED  ***/
         for (final OsmPrimitive osm : data.getSelected()) {
-            if (!osm.isIncomplete() && !osm.isDeleted() && !(osm instanceof Node)
-                    && osm.mappaintDrawnCode != paintid
+            if (osm.isUsable() && !(osm instanceof Node) && osm.mappaintDrawnCode != paintid
             ) {
                 osm.visit(new AbstractVisitor() {
                     public void visit(Way w) {

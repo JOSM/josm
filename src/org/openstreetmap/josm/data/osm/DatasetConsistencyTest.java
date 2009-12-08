@@ -47,10 +47,10 @@ public class DatasetConsistencyTest {
 
     private void checkCompleteWaysWithIncompleteNodes() {
         for (Way way:dataSet.getWays()) {
-            if (!way.isIncomplete()) {
+            if (way.isUsable()) {
                 for (Node node:way.getNodes()) {
                     if (node.isIncomplete()) {
-                        writer.println(String.format("%s is complete but contains incomplete node '%s'", way, node));
+                        writer.println(String.format("%s is usable but contains incomplete node '%s'", way, node));
                     }
                 }
             }
