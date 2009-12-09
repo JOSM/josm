@@ -2,28 +2,61 @@
 package org.openstreetmap.josm.io;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
+import org.openstreetmap.josm.fixtures.JOSMFixture;
 import org.openstreetmap.josm.gui.io.UploadStrategySelectionPanel;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 
 public class UploadStrategySelectionPanelTest extends JFrame {
 
-    private UploadStrategySelectionPanel pnl;
+    private UploadStrategySelectionPanel uploadStrategySelectionPanel;
 
     protected void build()  {
         getContentPane().setLayout(new BorderLayout());
-        pnl = new UploadStrategySelectionPanel();
-        getContentPane().add(pnl, BorderLayout.CENTER);
+        uploadStrategySelectionPanel = new UploadStrategySelectionPanel();
+        getContentPane().add(uploadStrategySelectionPanel, BorderLayout.CENTER);
+        getContentPane().add(buildControlPanel(), BorderLayout.SOUTH);
         setSize(400,400);
     }
 
+
+    protected JPanel buildControlPanel() {
+        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        pnl.add(new JLabel("Num objects:"));
+        final JTextField tf;
+        pnl.add(tf = new JTextField(8));
+        tf.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent arg0) {
+                        int n = 0;
+                        try {
+                            n = Integer.parseInt(tf.getText());
+                        } catch(NumberFormatException e) {
+                            e.printStackTrace();
+                            return;
+                        }
+                        uploadStrategySelectionPanel.setNumUploadedObjects(n);
+                    }
+                }
+        );
+        return pnl;
+    }
     public UploadStrategySelectionPanelTest() {
         build();
-        pnl.setNumUploadedObjects(1500);
+        uploadStrategySelectionPanel.setNumUploadedObjects(51000);
     }
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws OsmApiInitializationException {
+        JOSMFixture josmFixture = JOSMFixture.createFunctionalTestFixture();
+        OsmApi.getOsmApi().initialize(NullProgressMonitor.INSTANCE);
         new UploadStrategySelectionPanelTest().setVisible(true);
     }
 }

@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.Mercator;
+import org.openstreetmap.josm.gui.io.UploadStrategy;
 import org.openstreetmap.josm.gui.io.UploadStrategySpecification;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 
@@ -128,7 +129,7 @@ public class OsmServerBackreferenceReaderTest {
         primitives.addAll(ds.getRelations());
         OsmServerWriter writer = new OsmServerWriter();
         Changeset cs  = new Changeset();
-        writer.uploadOsm(UploadStrategySpecification.createSingleRequestUploadStrategy(), primitives, cs, NullProgressMonitor.INSTANCE);
+        writer.uploadOsm(new UploadStrategySpecification().setStrategy(UploadStrategy.SINGLE_REQUEST_STRATEGY), primitives, cs, NullProgressMonitor.INSTANCE);
         OsmApi.getOsmApi().closeChangeset(cs, NullProgressMonitor.INSTANCE);
     }
 
