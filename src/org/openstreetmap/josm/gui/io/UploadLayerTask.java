@@ -40,7 +40,6 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
     private OsmDataLayer layer;
     private ProgressMonitor monitor;
     private Changeset changeset;
-    private boolean closeChangesetAfterUpload;
     private Collection<OsmPrimitive> toUpload;
     private HashSet<OsmPrimitive> processedPrimitives;
     private UploadStrategySpecification strategy;
@@ -52,11 +51,10 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
      * @param layer the layer. Must not be null.
      * @param monitor  a progress monitor. If monitor is null, uses {@see NullProgressMonitor#INSTANCE}
      * @param changeset the changeset to be used
-     * @param closeChangesetAfterUpload true, if the changeset should be closed after the upload
      * @throws IllegalArgumentException thrown, if layer is null
      * @throws IllegalArgumentException thrown if strategy is null
      */
-    public UploadLayerTask(UploadStrategySpecification strategy, OsmDataLayer layer, ProgressMonitor monitor, Changeset changeset, boolean closeChangesetAfterUpload) {
+    public UploadLayerTask(UploadStrategySpecification strategy, OsmDataLayer layer, ProgressMonitor monitor, Changeset changeset) {
         if (layer == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
         if (strategy == null)
@@ -68,7 +66,6 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
         this.monitor = monitor;
         this.changeset = changeset;
         this.strategy = strategy;
-        this.closeChangesetAfterUpload = closeChangesetAfterUpload;
         processedPrimitives = new HashSet<OsmPrimitive>();
     }
 
@@ -133,7 +130,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
                     recoverFromGoneOnServer(e, monitor);
                 }
             }
-            if (closeChangesetAfterUpload) {
+            if (strategy.isCloseChangesetAfterUpload()) {
                 if (changeset != null && changeset.getId() > 0) {
                     OsmApi.getOsmApi().closeChangeset(changeset, monitor.createSubTaskMonitor(0, false));
                 }

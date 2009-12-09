@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -68,7 +69,9 @@ public class TagEditorPanel extends JPanel {
         // add action
         //
         AddAction addAction = new AddAction();
-        pnl.add(new JButton(addAction));
+        JButton btn;
+        pnl.add(btn = new JButton(addAction));
+        btn.setMargin(new Insets(0,0,0,0));
         tagTable.addPropertyChangeListener(addAction);
 
         // delete action
@@ -76,7 +79,8 @@ public class TagEditorPanel extends JPanel {
         DeleteAction deleteAction = new DeleteAction();
         tagTable.getSelectionModel().addListSelectionListener(deleteAction);
         tagTable.addPropertyChangeListener(deleteAction);
-        pnl.add(new JButton(deleteAction));
+        pnl.add(btn = new JButton(deleteAction));
+        btn.setMargin(new Insets(0,0,0,0));
         return pnl;
     }
 

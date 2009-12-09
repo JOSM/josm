@@ -154,7 +154,6 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
                 tagEditorModel.updateTagValue(currentTag, editor.getText());
             }
         }
-
         return super.stopCellEditing();
     }
 

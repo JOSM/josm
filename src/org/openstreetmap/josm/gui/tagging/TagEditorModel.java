@@ -218,14 +218,18 @@ public class TagEditorModel extends AbstractTableModel {
     public void delete(String name) {
         if (name == null) return;
         Iterator<TagModel> it = tags.iterator();
+        boolean changed = false;
         while(it.hasNext()) {
             TagModel tm = it.next();
             if (tm.getName().equals(name)) {
+                changed = true;
                 it.remove();
             }
         }
-        fireTableDataChanged();
-        setDirty(true);
+        if (changed) {
+            fireTableDataChanged();
+            setDirty(true);
+        }
     }
     /**
      * deletes the tags given by tagIndices
@@ -448,6 +452,7 @@ public class TagEditorModel extends AbstractTableModel {
         if (! newName.equals(oldName)) {
             setDirty(true);
         }
+        fireTableDataChanged();
     }
 
     /**
@@ -463,6 +468,7 @@ public class TagEditorModel extends AbstractTableModel {
         if (! newValue.equals(oldValue)) {
             setDirty(true);
         }
+        fireTableDataChanged();
     }
 
     /**

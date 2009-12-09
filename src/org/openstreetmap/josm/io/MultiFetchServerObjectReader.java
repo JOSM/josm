@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -75,22 +76,19 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * remembers an {@see OsmPrimitive}'s id and its type. The id will
+     * Remembers an {@see OsmPrimitive}'s id. The id will
      * later be fetched as part of a Multi Get request.
      *
-     * Ignore the id if it id <= 0.
+     * Ignore the id if it represents a new primitives.
      *
      * @param id  the id
-     * @param type  the type
      */
-    protected void remember(long id, OsmPrimitiveType type) {
-        if (id <= 0) return;
-        if (type.equals(OsmPrimitiveType.NODE)) {
-            nodes.add(id);
-        } else if (type.equals(OsmPrimitiveType.WAY)) {
-            ways.add(id);
-        } if (type.equals(OsmPrimitiveType.RELATION)) {
-            relations.add(id);
+    protected void remember(PrimitiveId id) {
+        if (id.isNew()) return;
+        switch(id.getType()) {
+        case NODE: nodes.add(id.getUniqueId()); break;
+        case WAY: ways.add(id.getUniqueId()); break;
+        case RELATION: relations.add(id.getUniqueId()); break;
         }
     }
 
@@ -114,7 +112,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         OsmPrimitive primitive = ds.getPrimitiveById(id, type);
         if (primitive == null)
             throw new NoSuchElementException(tr("No primitive with id {0} in local dataset. Can't infer primitive type.", id));
-        remember(id, OsmPrimitiveType.from(primitive));
+        remember(primitive.getPrimitiveId());
         return;
     }
 
@@ -152,8 +150,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      */
     public MultiFetchServerObjectReader append(Node node) {
         if (node == null) return this;
-        if (node.isNew()) return this;
-        remember(node.getId(), OsmPrimitiveType.NODE);
+        remember(node.getPrimitiveId());
         return this;
     }
 
@@ -169,10 +166,10 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         if (way.isNew()) return this;
         for (Node node: way.getNodes()) {
             if (!node.isNew()) {
-                remember(node.getId(), OsmPrimitiveType.NODE);
+                remember(node.getPrimitiveId());
             }
         }
-        remember(way.getId(), OsmPrimitiveType.WAY);
+        remember(way.getPrimitiveId());
         return this;
     }
 
@@ -186,7 +183,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     public MultiFetchServerObjectReader append(Relation relation) {
         if (relation == null) return this;
         if (relation.isNew()) return this;
-        remember(relation.getId(), OsmPrimitiveType.RELATION);
+        remember(relation.getPrimitiveId());
         for (RelationMember member : relation.getMembers()) {
             if (OsmPrimitiveType.from(member.getMember()).equals(OsmPrimitiveType.RELATION)) {
                 // avoid infinite recursion in case of cyclic dependencies in relations

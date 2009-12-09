@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.HashMap;
 
 /**
@@ -70,4 +72,26 @@ public class Capabilities {
         && get("version", "maximum").compareTo(version) >= 0;
     }
 
+    /**
+     * Replies the max number of objects in a changeset. -1 if either the capabilities
+     * don't include this parameter or if the parameter value is illegal (not a number,
+     * a negative number)
+     * 
+     * @return the max number of objects in a changeset
+     */
+    public int getMaxChangsetSize() {
+        String v = get("changesets", "maximum_elements");
+        if (v == null) return -1;
+        try {
+            int n = Integer.parseInt(v);
+            if (n <= 0) {
+                System.err.println(tr("Warning: illegal value of attribute '{0}'' of element ''{1}'' in server capabilities. Got ''{2}", "changesets", "maximum_elements", n ));
+                return -1;
+            }
+            return n;
+        } catch(NumberFormatException e) {
+            System.err.println(tr("Warning: illegal value of attribute '{0}'' of element ''{1}'' in server capabilities. Got ''{2}", "changesets", "maximum_elements", v ));
+            return -1;
+        }
+    }
 }

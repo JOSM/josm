@@ -79,7 +79,7 @@ public class OsmApi extends OsmConnection {
     static public OsmApi getOsmApi() {
         String serverUrl = Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api");
         if (serverUrl == null)
-            throw new IllegalStateException(tr("Preference ''{0}'' missing. Can't initialize OsmApi.", "osm-server.url"));
+            throw new IllegalStateException(tr("Preference ''{0}'' missing. Can''t initialize OsmApi.", "osm-server.url"));
         return getOsmApi(serverUrl);
     }
 
@@ -341,6 +341,9 @@ public class OsmApi extends OsmConnection {
                     toXml(changeset),
                     monitor
             );
+        } catch(ChangesetClosedException e) {
+            e.setSource(ChangesetClosedException.Source.UPDATE_CHANGESET);
+            throw e;
         } catch(OsmApiException e) {
             if (e.getResponseCode() == HttpURLConnection.HTTP_CONFLICT && ChangesetClosedException.errorHeaderMatchesPattern(e.getErrorHeader()))
                 throw new ChangesetClosedException(e.getErrorHeader(), ChangesetClosedException.Source.UPDATE_CHANGESET);

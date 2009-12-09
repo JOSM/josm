@@ -32,6 +32,7 @@ import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction;
+import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.io.SaveLayersModel.Mode;
@@ -405,13 +406,20 @@ public class SaveLayersDialog extends JDialog {
                     model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.FAILED);
                     continue;
                 }
+                final UploadDialog dialog = UploadDialog.getUploadDialog();
+                dialog.setUploadedPrimitives(new APIDataSet(layerInfo.getLayer().data));
+                dialog.setVisible(true);
+                if (dialog.isCanceled()) {
+                    model.setUploadState(layerInfo.getLayer(), UploadOrSaveState.CANCELLED);
+                    continue;
+                }
+                dialog.rememberUserInput();
 
                 currentTask = new UploadLayerTask(
                         UploadDialog.getUploadDialog().getUploadStrategySpecification(),
                         layerInfo.getLayer(),
                         monitor,
-                        UploadDialog.getUploadDialog().getChangeset(),
-                        UploadDialog.getUploadDialog().isDoCloseAfterUpload()
+                        UploadDialog.getUploadDialog().getChangeset()
                 );
                 currentFuture = worker.submit(currentTask);
                 try {

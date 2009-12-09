@@ -59,7 +59,7 @@ public class CloseChangesetTask extends PleaseWaitRunnable {
                 new Runnable() {
                     public void run() {
                         for (Changeset cs: closedChangesets) {
-                            UploadDialog.getUploadDialog().setOrUpdateChangeset(cs);
+                            UploadDialog.getUploadDialog().updateListOfChangesetsAfterUploadOperation(cs);
                         }
                     }
                 }

@@ -148,7 +148,6 @@ public class OsmServerWriter {
             int i= 0;
             while(it.hasNext()) {
                 i++;
-                progressMonitor.setCustomText(tr("({0}/{1}) Uploading {2} objects...", i,numChunks,chunkSize));
                 if (canceled) return;
                 int j = 0;
                 chunk.clear();
@@ -157,6 +156,7 @@ public class OsmServerWriter {
                     j++;
                     chunk.add(it.next());
                 }
+                progressMonitor.setCustomText(tr("({0}/{1}) Uploading {2} objects...", i,numChunks,chunk.size()));
                 processed.addAll(api.uploadDiff(chunk, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)));
             }
         } catch(OsmTransferException e) {
