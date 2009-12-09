@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -150,15 +151,46 @@ public final class OrthogonalizeAction extends JosmAction {
                 throw new InvalidUserInputException("usage");
             }
             else  {
-                if (nodeList.size() == 2) {
-                    orthogonalize(wayDataList, nodeList);
-                }
-                else if (nodeList.isEmpty()) {
-                    orthogonalize(wayDataList, nodeList);
-                }
-                else {
+                if (nodeList.size() == 2 || nodeList.isEmpty()) {
+                    OrthogonalizeAction.rememberMovements.clear();
+                    final Collection<Command> commands = new LinkedList<Command>();
+
+                    if (nodeList.size() == 2) {  // fixed direction
+                        commands.addAll(orthogonalize(wayDataList, nodeList));
+                    }
+                    else if (nodeList.isEmpty()) {
+                        // collect groups of ways with common nodes and orthogonalize each group separately.
+                        ArrayList<ArrayList<WayData>> groups = new ArrayList<ArrayList<WayData>>();
+                        for (WayData w: wayDataList) {
+                            boolean add = false;
+                            for (ArrayList<WayData> g: groups) {
+                                for (WayData groupedWay: g) {
+                                    if (!Collections.disjoint(w.way.getNodes(), groupedWay.way.getNodes())) {
+                                        add = true;
+                                        break;
+                                    }
+                                }
+                                if (add) {
+                                    g.add(w);
+                                }
+                            }
+                            if (!add) {
+                                ArrayList<WayData> newGroup = new ArrayList<WayData>();
+                                newGroup.add(w);
+                                groups.add(newGroup);
+                            }
+                        }
+                        for (ArrayList<WayData> g: groups) {
+                            commands.addAll(orthogonalize(g, nodeList));
+                        }
+                    } else
+                        throw new IllegalStateException();
+                    
+                    Main.main.undoRedo.add(new SequenceCommand(tr("Orthogonalize"), commands));
+                    Main.map.repaint();
+                    
+                } else
                     throw new InvalidUserInputException("usage");
-                }
             }
         } catch (InvalidUserInputException ex) {
             if (ex.getMessage().equals("usage")) {
@@ -198,7 +230,7 @@ public final class OrthogonalizeAction extends JosmAction {
      *  5. Rotate back.
      *
      **/
-    private static void orthogonalize(ArrayList<WayData> wayDataList, ArrayList<Node> headingNodes)
+    private static Collection<Command> orthogonalize(ArrayList<WayData> wayDataList, ArrayList<Node> headingNodes)
         throws InvalidUserInputException
     {
         // find average heading
@@ -246,7 +278,7 @@ public final class OrthogonalizeAction extends JosmAction {
         final HashMap<Node, Double> nX = new HashMap<Node, Double>();
         final HashMap<Node, Double> nY = new HashMap<Node, Double>();
 
-        // caluclate the centroid of all nodes
+        // calculate the centroid of all nodes
         // it is used as rotation center
         EastNorth pivot = new EastNorth(0., 0.);
         for (Node n : allNodes) {
@@ -324,7 +356,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
         // rotate back and log the change
         final Collection<Command> commands = new LinkedList<Command>();
-        OrthogonalizeAction.rememberMovements.clear();
+//        OrthogonalizeAction.rememberMovements.clear();
         for (Node n: allNodes) {
             EastNorth tmp = new EastNorth(nX.get(n), nY.get(n));
             tmp = EN.rotate_cc(pivot, tmp, headingAll);
@@ -342,8 +374,7 @@ public final class OrthogonalizeAction extends JosmAction {
                 commands.add(new MoveCommand(n, dx, dy));
             }
         }
-        Main.main.undoRedo.add(new SequenceCommand(tr("Orthogonalize"), commands));
-        Main.map.repaint();
+        return commands;
     }
 
     /**
