@@ -2,11 +2,11 @@
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.CheckParameterUtil.ensureParameterNotNull;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -14,21 +14,14 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.DataSetMerger;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
-import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.io.UpdatePrimitivesTask;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
-import org.openstreetmap.josm.io.OsmServerObjectReader;
-import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.xml.sax.SAXException;
 
 /**
  * This action synchronizes a set of primitives with their state on the server.
@@ -41,7 +34,7 @@ public class UpdateSelectionAction extends JosmAction {
      *
      * @param id the primitive id
      */
-    protected void handlePrimitiveGoneException(long id, OsmPrimitiveType type) {
+    public void handlePrimitiveGoneException(long id, OsmPrimitiveType type) {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         reader.append(getCurrentDataSet(),id, type);
         DataSet ds = null;
@@ -61,7 +54,7 @@ public class UpdateSelectionAction extends JosmAction {
      *
      */
     public void updatePrimitives(final Collection<OsmPrimitive> selection) {
-        UpdatePrimitivesTask task = new UpdatePrimitivesTask(selection);
+        UpdatePrimitivesTask task = new UpdatePrimitivesTask(Main.main.getEditLayer(),selection);
         Main.worker.submit(task);
     }
 
@@ -69,16 +62,18 @@ public class UpdateSelectionAction extends JosmAction {
      * Updates the data for  the {@see OsmPrimitive}s with id <code>id</code>
      * with the data currently kept on the server.
      *
-     * @param id  the id of a primitive in the {@see DataSet} of the current edit layer
+     * @param id  the id of a primitive in the {@see DataSet} of the current edit layer. Must not be null.
+     * @throws IllegalArgumentException thrown if id is null
      * @exception IllegalStateException thrown if there is no primitive with <code>id</code> in
      *   the current dataset
      * @exception IllegalStateException thrown if there is no current dataset
      *
      */
-    public void updatePrimitive(OsmPrimitiveType type, long id) throws IllegalStateException{
+    public void updatePrimitive(PrimitiveId id) throws IllegalStateException, IllegalArgumentException{
+        ensureParameterNotNull(id, "id");
         if (getEditLayer() == null)
             throw new IllegalStateException(tr("No current dataset found"));
-        OsmPrimitive primitive = getEditLayer().data.getPrimitiveById(id, type);
+        OsmPrimitive primitive = getEditLayer().data.getPrimitiveById(id);
         if (primitive == null)
             throw new IllegalStateException(tr("Didn''t find an object with id {0} in the current dataset", id));
         updatePrimitives(Collections.singleton(primitive));
@@ -130,114 +125,5 @@ public class UpdateSelectionAction extends JosmAction {
             return;
         }
         updatePrimitives(selection);
-    }
-
-    /**
-     * The asynchronous task for updating the data using multi fetch.
-     *
-     */
-    static class UpdatePrimitivesTask extends PleaseWaitRunnable {
-        //static private final Logger logger = Logger.getLogger(UpdatePrimitivesTask.class.getName());
-
-        private DataSet ds;
-        private boolean canceled;
-        private Exception lastException;
-        private Collection<? extends OsmPrimitive> toUpdate;
-        private MultiFetchServerObjectReader reader;
-
-        /**
-         *
-         * @param toUpdate a collection of primitives to update from the server
-         */
-        public UpdatePrimitivesTask(Collection<? extends OsmPrimitive> toUpdate) {
-            super(tr("Update objects"), false /* don't ignore exception*/);
-            canceled = false;
-            this.toUpdate = toUpdate;
-        }
-
-        @Override
-        protected void cancel() {
-            canceled = true;
-            if (reader != null) {
-                reader.cancel();
-            }
-        }
-
-        @Override
-        protected void finish() {
-            if (canceled)
-                return;
-            if (lastException != null) {
-                ExceptionDialogUtil.explainException(lastException);
-                return;
-            }
-            if (ds != null && Main.main.getEditLayer() != null) {
-                Main.main.getEditLayer().mergeFrom(ds);
-                Main.main.getEditLayer().onPostDownloadFromServer();
-            }
-        }
-
-        protected void initMultiFetchReaderWithNodes(MultiFetchServerObjectReader reader) {
-            for (OsmPrimitive primitive : toUpdate) {
-                if (primitive instanceof Node && !primitive.isNew()) {
-                    reader.append((Node)primitive);
-                } else if (primitive instanceof Way) {
-                    Way way = (Way)primitive;
-                    for (Node node: way.getNodes()) {
-                        if (!node.isNew()) {
-                            reader.append(node);
-                        }
-                    }
-                }
-            }
-        }
-
-        protected void initMultiFetchReaderWithWays(MultiFetchServerObjectReader reader) {
-            for (OsmPrimitive primitive : toUpdate) {
-                if (primitive instanceof Way && !primitive.isNew()) {
-                    reader.append((Way)primitive);
-                }
-            }
-        }
-
-        protected void initMultiFetchReaderWithRelations(MultiFetchServerObjectReader reader) {
-            for (OsmPrimitive primitive : toUpdate) {
-                if (primitive instanceof Relation && !primitive.isNew()) {
-                    reader.append((Relation)primitive);
-                }
-            }
-        }
-
-        @Override
-        protected void realRun() throws SAXException, IOException, OsmTransferException {
-            progressMonitor.indeterminateSubTask("");
-            this.ds = new DataSet();
-            DataSet theirDataSet;
-            try {
-                reader = new MultiFetchServerObjectReader();
-                initMultiFetchReaderWithNodes(reader);
-                initMultiFetchReaderWithWays(reader);
-                initMultiFetchReaderWithRelations(reader);
-                theirDataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-                DataSetMerger merger = new DataSetMerger(ds, theirDataSet);
-                merger.merge();
-                // a way loaded with MultiFetch may be incomplete because at least one of its
-                // nodes isn't present in the local data set. We therefore fully load all
-                // incomplete ways.
-                //
-                for (Way w : ds.getWays()) {
-                    if (w.isIncomplete()) {
-                        OsmServerObjectReader reader = new OsmServerObjectReader(w.getId(), OsmPrimitiveType.WAY, true /* full */);
-                        theirDataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-                        merger = new DataSetMerger(ds, theirDataSet);
-                        merger.merge();
-                    }
-                }
-            } catch(Exception e) {
-                if (canceled)
-                    return;
-                lastException = e;
-            }
-        }
     }
 }

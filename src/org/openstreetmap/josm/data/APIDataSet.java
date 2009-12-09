@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.logging.Logger;
 
+import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -20,12 +21,11 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 
-import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
-
 /**
  * Represents a collection of {@see OsmPrimitive}s which should be uploaded to the
  * API.
- * The collection is derived from the modified primitives of an {@see DataSet}.
+ * The collection is derived from the modified primitives of an {@see DataSet} and it provides methods
+ * for sorting the objects in upload order.
  *
  */
 public class APIDataSet {
@@ -208,6 +208,22 @@ public class APIDataSet {
         ret.addAll(toUpdate);
         ret.addAll(toDelete);
         return ret;
+    }
+
+    /**
+     * Replies the number of objects to upload
+     * 
+     * @return the number of objects to upload
+     */
+    public int getSize() {
+        return toAdd.size() + toUpdate.size() + toDelete.size();
+    }
+
+    public void removeProcessed(Collection<OsmPrimitive> processed) {
+        if (processed == null) return;
+        toAdd.removeAll(processed);
+        toUpdate.removeAll(processed);
+        toDelete.removeAll(processed);
     }
 
     /**

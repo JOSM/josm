@@ -172,4 +172,7 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
         return id;
     }
 
+    public boolean isNew() {
+        return id <= 0;
+    }
 }

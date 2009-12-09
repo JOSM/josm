@@ -170,4 +170,8 @@ public class RelationMember implements PrimitiveId {
     public long getUniqueId() {
         return member.getUniqueId();
     }
+
+    public boolean isNew() {
+        return member.isNew();
+    }
 }

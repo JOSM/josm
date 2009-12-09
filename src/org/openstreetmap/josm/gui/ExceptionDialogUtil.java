@@ -58,7 +58,7 @@ public class ExceptionDialogUtil {
                 ExceptionUtil.explainChangesetClosedException(e),
                 tr("Error"),
                 JOptionPane.ERROR_MESSAGE,
-                ht("/ErrorMessages#ChangesetClosedException")
+                ht("/Action/Upload#ChangesetClosed")
         );
     }
 

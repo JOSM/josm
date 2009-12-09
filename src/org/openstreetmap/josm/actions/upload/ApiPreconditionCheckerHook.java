@@ -22,16 +22,13 @@ public class ApiPreconditionCheckerHook implements UploadHook {
     public boolean checkUpload(APIDataSet apiData) {
         OsmApi api = OsmApi.getOsmApi();
         try {
+            // FIXME: this should run asynchronously and a progress monitor
+            // should be displayed.
             api.initialize(NullProgressMonitor.INSTANCE);
             long maxNodes = 0;
             if (api.getCapabilities().isDefined("waynodes", "maximum")) {
                 maxNodes = api.getCapabilities().getLong("waynodes","maximum");
             }
-            long maxElements = 0;
-            if (api.getCapabilities().isDefined("changesets", "maximum_elements")) {
-                maxElements = api.getCapabilities().getLong("changesets", "maximum_elements");
-            }
-
             if (maxNodes > 0) {
                 if( !checkMaxNodes(apiData.getPrimitivesToAdd(), maxNodes))
                     return false;
@@ -39,23 +36,6 @@ public class ApiPreconditionCheckerHook implements UploadHook {
                     return false;
                 if( !checkMaxNodes(apiData.getPrimitivesToDelete(), maxNodes))
                     return false;
-            }
-
-            if (maxElements  > 0) {
-                int total = 0;
-                total = apiData.getPrimitivesToAdd().size() + apiData.getPrimitivesToUpdate().size() + apiData.getPrimitivesToDelete().size();
-                if(total > maxElements) {
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            tr("Current number of changes exceeds the max. number of changes, current is {0}, max is {1}",
-                                    total,
-                                    maxElements
-                            ),
-                            tr("API Capabilities Violation"),
-                            JOptionPane.ERROR_MESSAGE
-                    );
-                    return false;
-                }
             }
         } catch (OsmApiInitializationException e) {
             ExceptionDialogUtil.explainOsmTransferException(e);

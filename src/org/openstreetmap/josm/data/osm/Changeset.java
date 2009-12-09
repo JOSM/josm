@@ -1,8 +1,6 @@
 // License: GPL. Copyright 2007 by Martijn van Oosterhout and others
 package org.openstreetmap.josm.data.osm;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -97,10 +95,6 @@ public final class Changeset implements Tagged {
     public String getName() {
         // no translation
         return "changeset " + getId();
-    }
-
-    public String getLocalName(){
-        return tr("Changeset {0}",getId());
     }
 
     public String getDisplayName(NameFormatter formatter) {
@@ -306,5 +300,9 @@ public final class Changeset implements Tagged {
 
     public Collection<String> keySet() {
         return tags.keySet();
+    }
+
+    public boolean isNew() {
+        return id <= 0;
     }
 }

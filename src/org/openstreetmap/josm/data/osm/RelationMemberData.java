@@ -50,4 +50,7 @@ public class RelationMemberData implements PrimitiveId {
         return memberId;
     }
 
+    public boolean isNew() {
+        return memberId <= 0;
+    }
 }

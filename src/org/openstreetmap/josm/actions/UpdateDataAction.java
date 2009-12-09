@@ -14,6 +14,7 @@ import java.util.concurrent.Future;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTaskList;
 import org.openstreetmap.josm.data.osm.DataSource;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -37,6 +38,10 @@ public class UpdateDataAction extends JosmAction{
     @Override
     protected void updateEnabledState() {
         setEnabled(getEditLayer() != null);
+    }
+
+    public void updateLayer(OsmDataLayer layer) {
+        
     }
 
     public void actionPerformed(ActionEvent e) {
