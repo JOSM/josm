@@ -14,18 +14,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer.ImageEntry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public class ImageViewerDialog extends ToggleDialog implements ActionListener {
+public class ImageViewerDialog extends ToggleDialog {
 
     private static final String COMMAND_ZOOM = "zoom";
     private static final String COMMAND_CENTERVIEW = "centre";
@@ -52,13 +56,13 @@ public class ImageViewerDialog extends ToggleDialog implements ActionListener {
     private ImageViewerDialog() {
         super(tr("Geotagged Images"), "geoimage", tr("Display geotagged images"), Shortcut.registerShortcut("tools:geotagged", tr("Tool: {0}", tr("Display geotagged images")), KeyEvent.VK_Y, Shortcut.GROUP_EDIT), 200);
 
+        if (INSTANCE != null) {
+            throw new IllegalStateException("Image viewer dialog should not be instanciated twice !");
+        }
+
         /* Don't show a detached dialog right from the start. */
         if (isShowing && !isDocked) {
             setIsShowing(false);
-        }
-
-        if (INSTANCE != null) {
-            throw new IllegalStateException("Image viewer dialog should not be instanciated twice !");
         }
 
         INSTANCE = this;
@@ -71,82 +75,82 @@ public class ImageViewerDialog extends ToggleDialog implements ActionListener {
         JPanel buttons = new JPanel();
         buttons.setLayout(new FlowLayout());
 
-        JButton button;
-
         Dimension buttonDim = new Dimension(26,26);
-        button = new JButton();
-        button.setIcon(ImageProvider.get("dialogs", "previous"));
-        button.setActionCommand(COMMAND_PREVIOUS);
-        button.setToolTipText(tr("Previous"));
-        button.addActionListener(this);
-        button.setPreferredSize(buttonDim);
-        buttons.add(button);
-        btnPrevious = button; //FIX
+        
+        ImageAction prevAction = new ImageAction(COMMAND_PREVIOUS, ImageProvider.get("dialogs", "previous"), tr("Previous"));
+        btnPrevious = new JButton(prevAction);
+        btnPrevious.setPreferredSize(buttonDim);
+        buttons.add(btnPrevious);
+        Shortcut scPrev = Shortcut.registerShortcut(
+            "geoimage:previous", tr("Geoimage: {0}", tr("Show previous Image")), KeyEvent.VK_PAGE_UP, Shortcut.GROUP_DIRECT);
+        final String APREVIOUS = "Previous Image";
+        Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scPrev.getKeyStroke(), APREVIOUS);
+        Main.contentPane.getActionMap().put(APREVIOUS, prevAction);
+        btnPrevious.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scPrev.getKeyStroke(), APREVIOUS);
+        btnPrevious.getActionMap().put(APREVIOUS, prevAction);
 
-        button = new JButton();
-        button.setIcon(ImageProvider.get("dialogs", "delete"));
-        button.setActionCommand(COMMAND_REMOVE);
-        button.setToolTipText(tr("Remove photo from layer"));
-        button.addActionListener(this);
-        button.setPreferredSize(buttonDim);
-        buttons.add(button);
+        JButton btnDelete = new JButton(new ImageAction(COMMAND_REMOVE, ImageProvider.get("dialogs", "delete"), tr("Remove photo from layer")));
+        btnDelete.setPreferredSize(buttonDim);
+        buttons.add(btnDelete);
+      
+        ImageAction nextAction = new ImageAction(COMMAND_NEXT, ImageProvider.get("dialogs", "next"), tr("Next"));
+        btnNext = new JButton(nextAction);
+        btnNext.setPreferredSize(buttonDim);
+        buttons.add(btnNext);
+        Shortcut scNext = Shortcut.registerShortcut(
+            "geoimage:next", tr("Geoimage: {0}", tr("Show next Image")), KeyEvent.VK_PAGE_DOWN, Shortcut.GROUP_DIRECT);
+        final String ANEXT = "Next Image";
+        Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scNext.getKeyStroke(), ANEXT);
+        Main.contentPane.getActionMap().put(ANEXT, nextAction);
+        btnNext.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scNext.getKeyStroke(), ANEXT);
+        btnNext.getActionMap().put(ANEXT, nextAction);
 
-        button = new JButton();
-        button.setIcon(ImageProvider.get("dialogs", "next"));
-        button.setActionCommand(COMMAND_NEXT);
-        button.setToolTipText(tr("Next"));
-        button.addActionListener(this);
-        button.setPreferredSize(buttonDim);
-        buttons.add(button);
-        btnNext = button;
-
-        JToggleButton tb = new JToggleButton();
-        tb.setIcon(ImageProvider.get("dialogs", "centreview"));
-        tb.setActionCommand(COMMAND_CENTERVIEW);
-        tb.setToolTipText(tr("Center view"));
-        tb.addActionListener(this);
-        tb.setPreferredSize(buttonDim);
-        buttons.add(tb);
-
-        button = new JButton();
-        button.setIcon(ImageProvider.get("dialogs", "zoom-best-fit"));
-        button.setActionCommand(COMMAND_ZOOM);
-        button.setToolTipText(tr("Zoom best fit and 1:1"));
-        button.addActionListener(this);
-        button.setPreferredSize(buttonDim);
-        buttons.add(button);
+        JToggleButton tbCentre = new JToggleButton(new ImageAction(COMMAND_CENTERVIEW, ImageProvider.get("dialogs", "centreview"), tr("Center view")));
+        tbCentre.setPreferredSize(buttonDim);
+        buttons.add(tbCentre);
+       
+        JButton btnZoomBestFit = new JButton(new ImageAction(COMMAND_ZOOM, ImageProvider.get("dialogs", "zoom-best-fit"), tr("Zoom best fit and 1:1")));
+        btnZoomBestFit.setPreferredSize(buttonDim);
+        buttons.add(btnZoomBestFit);
 
         content.add(buttons, BorderLayout.SOUTH);
 
         add(content, BorderLayout.CENTER);
-
     }
 
-    public void actionPerformed(ActionEvent e) {
-        if (COMMAND_NEXT.equals(e.getActionCommand())) {
-            if (currentLayer != null) {
-                currentLayer.showNextPhoto();
-            }
-        } else if (COMMAND_PREVIOUS.equals(e.getActionCommand())) {
-            if (currentLayer != null) {
-                currentLayer.showPreviousPhoto();
-            }
-
-        } else if (COMMAND_CENTERVIEW.equals(e.getActionCommand())) {
-            centerView = ((JToggleButton) e.getSource()).isSelected();
-            if (centerView && currentEntry != null && currentEntry.pos != null) {
-                Main.map.mapView.zoomTo(currentEntry.pos);
-            }
-
-        } else if (COMMAND_ZOOM.equals(e.getActionCommand())) {
-            imgDisplay.zoomBestFitOrOne();
-
-        } else if (COMMAND_REMOVE.equals(e.getActionCommand())) {
-            if (currentLayer != null) {
-               currentLayer.removeCurrentPhoto();
-            }
+    class ImageAction extends AbstractAction {
+        private final String action;
+        public ImageAction(String action, ImageIcon icon, String toolTipText) {
+            this.action = action;
+            putValue(SHORT_DESCRIPTION, toolTipText);
+            putValue(SMALL_ICON, icon);
         }
 
+        public void actionPerformed(ActionEvent e) {
+            if (COMMAND_NEXT.equals(action)) {
+                if (currentLayer != null) {
+                    currentLayer.showNextPhoto();
+                }
+            } else if (COMMAND_PREVIOUS.equals(action)) {
+                if (currentLayer != null) {
+                    currentLayer.showPreviousPhoto();
+                }
+
+            } else if (COMMAND_CENTERVIEW.equals(action)) {
+                centerView = ((JToggleButton) e.getSource()).isSelected();
+                if (centerView && currentEntry != null && currentEntry.pos != null) {
+                    Main.map.mapView.zoomTo(currentEntry.pos);
+                }
+
+            } else if (COMMAND_ZOOM.equals(action)) {
+                imgDisplay.zoomBestFitOrOne();
+
+            } else if (COMMAND_REMOVE.equals(action)) {
+                if (currentLayer != null) {
+                   currentLayer.removeCurrentPhoto();
+                }
+            }
+        }
     }
 
     public static void showImage(GeoImageLayer layer, ImageEntry entry) {
