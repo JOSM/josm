@@ -1543,7 +1543,10 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="highway" value="bus_stop" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
-                <check key="shelter" text="Shelter" default="off" delete_if_empty="true" />
+                <combo key="shelter" text="Shelter" values="yes,no" default="" delete_if_empty="true" />
+                <combo key="bench" text="Bench" values="yes,no" default="" delete_if_empty="true" />
+                <combo key="tactile_paving" text="Tactile Paving" values="yes,no" default="" delete_if_empty="true" />
+
             </optional>
         </item>
         <item name="Bus Platform" icon="presets/platform_bus.png" type="node,closedway">
