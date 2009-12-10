@@ -71,6 +71,7 @@ public class GeoImageLayer extends Layer {
     public long timeoffset = 0;
 
     boolean loadThumbs;
+    ThumbsLoader thumbsloader;
 
     /*
      * Stores info about each image
@@ -541,8 +542,6 @@ public class GeoImageLayer extends Layer {
                 }
 
                 ImageViewerDialog d = ImageViewerDialog.getInstance();
-//                System.err.println(d.isDialogShowing());
-
 
                 for (int i = data.size() - 1; i >= 0; --i) {
                     ImageEntry e = data.get(i);
@@ -584,5 +583,12 @@ public class GeoImageLayer extends Layer {
                 }
             }
         });
+    }
+    
+    @Override
+    public void destroy() {
+        if (thumbsloader != null) {
+            thumbsloader.stop = true;
+        }
     }
 }

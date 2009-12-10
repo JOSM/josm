@@ -643,9 +643,10 @@ public class CorrelateGpxWithImages implements ActionListener {
             isOk = true;
 
             if (yLayer.loadThumbs) {
-                Thread tl = new Thread(new ThumbsLoader(yLayer.data));
-                tl.setPriority(Thread.MIN_PRIORITY);
-                tl.start();
+                yLayer.thumbsloader = new ThumbsLoader(yLayer.data);
+                Thread t = new Thread(yLayer.thumbsloader);
+                t.setPriority(Thread.MIN_PRIORITY);
+                t.start();
             }
 
         }

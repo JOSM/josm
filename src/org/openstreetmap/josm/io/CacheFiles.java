@@ -54,7 +54,12 @@ public class CacheFiles {
      * @param ident
      */
     public CacheFiles(String ident) {
-        String pref = Main.pref.getPluginsDirFile().getPath();
+        this(ident, true);
+    }
+    
+    public CacheFiles(String ident, boolean isPlugin) {
+        String pref = isPlugin ? Main.pref.getPluginsDirFile().getPath() : Main.pref.getPreferencesDir();
+        
         boolean dir_writeable;
         this.ident = ident;
         String cacheDir = Main.pref.get("cache." + ident + "." + "path", pref + "/" + ident + "/cache/");
