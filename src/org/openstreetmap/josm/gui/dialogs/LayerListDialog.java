@@ -541,6 +541,9 @@ public class LayerListDialog extends ToggleDialog {
             if (index < 0) return;
             if (!layerList.getCellBounds(index, index).contains(e.getPoint()))
                 return;
+            if (!layerList.isSelectedIndex(index)) {
+                layerList.setSelectedIndex(index);
+            }
             Layer layer = model.getLayer(index);
             LayerListPopup menu = new LayerListPopup(layerList, layer);
             menu.show(LayerListDialog.this, p.x, p.y-3);

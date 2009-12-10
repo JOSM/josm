@@ -101,8 +101,9 @@ public class ExtendedDialog extends JDialog {
      * to images relative to JOSM/images.
      * @param buttonIcons
      */
-    public void setButtonIcons(String[] buttonIcons) {
+    public ExtendedDialog setButtonIcons(String[] buttonIcons) {
         this.bIcons = buttonIcons;
+        return this;
     }
 
     /**
@@ -111,8 +112,9 @@ public class ExtendedDialog extends JDialog {
      *
      * @param toolTipTexts the tool tip texts. Ignored, if null.
      */
-    public void setToolTipTexts(String[] toolTipTexts) {
+    public ExtendedDialog setToolTipTexts(String[] toolTipTexts) {
         this.bToolTipTexts = toolTipTexts;
+        return this;
     }
 
     /**
@@ -123,8 +125,8 @@ public class ExtendedDialog extends JDialog {
      *
      * @param content Any element that can be displayed in the message dialog
      */
-    public void setContent(Component content) {
-        setContent(content, true);
+    public ExtendedDialog setContent(Component content) {
+        return setContent(content, true);
     }
 
     /**
@@ -137,9 +139,10 @@ public class ExtendedDialog extends JDialog {
      * @param placeContentInScrollPane if  true, places  the content in a JScrollPane
      *
      */
-    public void setContent(Component content, boolean placeContentInScrollPane) {
+    public ExtendedDialog setContent(Component content, boolean placeContentInScrollPane) {
         this.content = content;
         this.placeContentInScrollPane = placeContentInScrollPane;
+        return this;
     }
 
     /**
@@ -151,24 +154,25 @@ public class ExtendedDialog extends JDialog {
      *
      * @param message The text that should be shown to the user
      */
-    public void setContent(String message) {
-        setContent(string2label(message), false);
+    public ExtendedDialog setContent(String message) {
+        return setContent(string2label(message), false);
     }
 
     /**
      * Show the dialog to the user. Call this after you have set all options
      * for the dialog. You can retrieve the result using <code>getValue</code>
      */
-    public void showDialog() {
+    public ExtendedDialog showDialog() {
         // Check if the user has set the dialog to not be shown again
         if(toggleCheckState(togglePref)) {
             result = ExtendedDialog.DialogNotShown;
-            return;
+            return this;
         }
 
         setupDialog();
         setVisible(true);
         toggleSaveState();
+        return this;
     }
 
     /**
@@ -341,9 +345,10 @@ public class ExtendedDialog extends JDialog {
      *              <code>pref</code> is not null or empty
      *
      */
-    public void setRememberWindowGeometry(String pref, WindowGeometry wg) {
+    public ExtendedDialog setRememberWindowGeometry(String pref, WindowGeometry wg) {
         rememberSizePref = pref == null ? "" : pref;
         defaultWindowGeometry = wg;
+        return this;
     }
 
     /**
@@ -353,17 +358,19 @@ public class ExtendedDialog extends JDialog {
      * user, the result <code>ExtendedDialog.DialogNotShown</code> is returned
      * @param togglePref  The preference to save the checkbox state to
      */
-    public void toggleEnable(String togglePref) {
+    public ExtendedDialog toggleEnable(String togglePref) {
         this.toggleable = true;
         this.togglePref = togglePref;
+        return this;
     }
 
     /**
      * Call this if you "accidentally" called toggleEnable. This doesn't need
      * to be called for every dialog, as it's the default anyway.
      */
-    public void toggleDisable() {
+    public ExtendedDialog toggleDisable() {
         this.toggleable = false;
+        return this;
     }
 
     /**
@@ -372,8 +379,9 @@ public class ExtendedDialog extends JDialog {
      * <code>toggleEnable</code> is set.
      * @param text
      */
-    public void setToggleCheckboxText(String text) {
+    public ExtendedDialog setToggleCheckboxText(String text) {
         this.toggleCheckboxText = text;
+        return this;
     }
 
     /**
@@ -428,9 +436,10 @@ public class ExtendedDialog extends JDialog {
      * @param helpTopic the help topic
      * @param showHelpButton true, if the dialog displays a help button
      */
-    public void configureContextsensitiveHelp(String helpTopic, boolean showHelpButton) {
+    public ExtendedDialog configureContextsensitiveHelp(String helpTopic, boolean showHelpButton) {
         this.helpTopic = helpTopic;
         this.showHelpButton = showHelpButton;
+        return this;
     }
 
     class HelpAction extends AbstractAction {

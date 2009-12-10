@@ -67,7 +67,7 @@ public class ToggleDialog extends JPanel implements Helpful {
      * currently minimized or not.
      */
     protected boolean isCollapsed;
-
+    
     /** the preferred height if the toggle dialog is expanded */
     private int preferredHeight;
 
@@ -75,7 +75,7 @@ public class ToggleDialog extends JPanel implements Helpful {
     private JLabel lblMinimized;
 
     /** the JDialog displaying the toggle dialog as undocked dialog */
-    private JDialog detachedDialog;
+    protected JDialog detachedDialog;
 
     /**
      * Constructor
@@ -294,7 +294,7 @@ public class ToggleDialog extends JPanel implements Helpful {
      * The title bar displayed in docked mode
      *
      */
-    private class TitleBar extends JPanel {
+    protected class TitleBar extends JPanel {
         final private JLabel lblTitle;
         final private JComponent lblTitle_weak;
 
@@ -477,16 +477,19 @@ public class ToggleDialog extends JPanel implements Helpful {
     protected void setIsShowing(boolean val) {
         isShowing = val;
         Main.pref.put(preferencePrefix+".visible", val);
+        stateChanged();
     }
 
     protected void setIsDocked(boolean val) {
         isDocked = val;
         Main.pref.put(preferencePrefix+".docked", val);
+        stateChanged();
     }
 
     protected void setIsCollapsed(boolean val) {
         isCollapsed = val;
         Main.pref.put(preferencePrefix+".minimized", val);
+        stateChanged();
     }
 
     public int getPreferredHeight() {
@@ -547,6 +550,12 @@ public class ToggleDialog extends JPanel implements Helpful {
 
     protected boolean dockWhenClosingDetachedDlg() {
         return true;
+    }
+    
+    /**
+     * primitive stateChangedListener for subclasses
+     */
+    protected void stateChanged() {
     }
 
     /***

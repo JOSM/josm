@@ -132,7 +132,6 @@ public class ImageDisplay extends JComponent {
             // on that mouse position. 
             // To avoid issues when the user tries to zoom in on the image borders, this point is not calculated 
             // again if there was less than 1.5seconds since the last event.
-            System.out.println(e);
             if (e.getWhen() - lastTimeForMousePoint > 1500 || mousePointInImg == null) {
                 lastTimeForMousePoint = e.getWhen();
                 mousePointInImg = comp2imgCoord(visibleRect, e.getX(), e.getY());
@@ -534,25 +533,35 @@ public class ImageDisplay extends JComponent {
     }
 
     private Rectangle calculateDrawImageRectangle(Rectangle visibleRect) {
-        Dimension size = getSize();
+        return calculateDrawImageRectangle(visibleRect, new Rectangle(0, 0, getSize().width, getSize().height));
+    }
+    
+    /**
+     * calculateDrawImageRectangle
+     *
+     * @param imgRect the part of the image that should be drawn (in image coordinates)
+     * @param compRect the part of the component where the image should be drawn (in component coordinates)
+     * @return the part of compRect with the same width/height ratio as the image
+     */
+    static Rectangle calculateDrawImageRectangle(Rectangle imgRect, Rectangle compRect) {
         int x, y, w, h;
         x = 0;
         y = 0;
-        w = size.width;
-        h = size.height;
+        w = compRect.width;
+        h = compRect.height;
 
-        int wFact = w * visibleRect.height;
-        int hFact = h * visibleRect.width;
+        int wFact = w * imgRect.height;
+        int hFact = h * imgRect.width;
         if (wFact != hFact) {
             if (wFact > hFact) {
-                w = hFact / visibleRect.height;
-                x = (size.width - w) / 2;
+                w = hFact / imgRect.height;
+                x = (compRect.width - w) / 2;
             } else {
-                h = wFact / visibleRect.width;
-                y = (size.height - h) / 2;
+                h = wFact / imgRect.width;
+                y = (compRect.height - h) / 2;
             }
         }
-        return new Rectangle(x, y, w, h);
+        return new Rectangle(x + compRect.x, y + compRect.y, w, h);
     }
 
     public void zoomBestFitOrOne() {

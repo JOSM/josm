@@ -8,12 +8,16 @@ package org.openstreetmap.josm.gui.layer.geoimage;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 
+import javax.swing.Box;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -22,7 +26,6 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer.ImageEntry;
@@ -36,12 +39,15 @@ public class ImageViewerDialog extends ToggleDialog {
     private static final String COMMAND_NEXT = "next";
     private static final String COMMAND_REMOVE = "remove";
     private static final String COMMAND_PREVIOUS = "previous";
+    private static final String COMMAND_COLLAPSE = "collapse";
 
     private ImageDisplay imgDisplay = new ImageDisplay();
     private boolean centerView = false;
 
     // Only one instance of that class
     static private ImageViewerDialog INSTANCE = null;
+
+    private boolean collapseButtonClicked = false;
 
     public static ImageViewerDialog getInstance() {
         if (INSTANCE == null) {
@@ -52,6 +58,7 @@ public class ImageViewerDialog extends ToggleDialog {
 
     private JButton btnNext;
     private JButton btnPrevious;
+    private JButton btnCollapse;
 
     private ImageViewerDialog() {
         super(tr("Geotagged Images"), "geoimage", tr("Display geotagged images"), Shortcut.registerShortcut("tools:geotagged", tr("Tool: {0}", tr("Display geotagged images")), KeyEvent.VK_Y, Shortcut.GROUP_EDIT), 200);
@@ -72,15 +79,11 @@ public class ImageViewerDialog extends ToggleDialog {
 
         content.add(imgDisplay, BorderLayout.CENTER);
 
-        JPanel buttons = new JPanel();
-        buttons.setLayout(new FlowLayout());
-
         Dimension buttonDim = new Dimension(26,26);
-        
+
         ImageAction prevAction = new ImageAction(COMMAND_PREVIOUS, ImageProvider.get("dialogs", "previous"), tr("Previous"));
         btnPrevious = new JButton(prevAction);
         btnPrevious.setPreferredSize(buttonDim);
-        buttons.add(btnPrevious);
         Shortcut scPrev = Shortcut.registerShortcut(
             "geoimage:previous", tr("Geoimage: {0}", tr("Show previous Image")), KeyEvent.VK_PAGE_UP, Shortcut.GROUP_DIRECT);
         final String APREVIOUS = "Previous Image";
@@ -91,12 +94,10 @@ public class ImageViewerDialog extends ToggleDialog {
 
         JButton btnDelete = new JButton(new ImageAction(COMMAND_REMOVE, ImageProvider.get("dialogs", "delete"), tr("Remove photo from layer")));
         btnDelete.setPreferredSize(buttonDim);
-        buttons.add(btnDelete);
-      
+
         ImageAction nextAction = new ImageAction(COMMAND_NEXT, ImageProvider.get("dialogs", "next"), tr("Next"));
         btnNext = new JButton(nextAction);
         btnNext.setPreferredSize(buttonDim);
-        buttons.add(btnNext);
         Shortcut scNext = Shortcut.registerShortcut(
             "geoimage:next", tr("Geoimage: {0}", tr("Show next Image")), KeyEvent.VK_PAGE_DOWN, Shortcut.GROUP_DIRECT);
         final String ANEXT = "Next Image";
@@ -107,13 +108,39 @@ public class ImageViewerDialog extends ToggleDialog {
 
         JToggleButton tbCentre = new JToggleButton(new ImageAction(COMMAND_CENTERVIEW, ImageProvider.get("dialogs", "centreview"), tr("Center view")));
         tbCentre.setPreferredSize(buttonDim);
-        buttons.add(tbCentre);
-       
+
         JButton btnZoomBestFit = new JButton(new ImageAction(COMMAND_ZOOM, ImageProvider.get("dialogs", "zoom-best-fit"), tr("Zoom best fit and 1:1")));
         btnZoomBestFit.setPreferredSize(buttonDim);
-        buttons.add(btnZoomBestFit);
 
-        content.add(buttons, BorderLayout.SOUTH);
+        btnCollapse = new JButton(new ImageAction(COMMAND_COLLAPSE, ImageProvider.get("dialogs", "collapse"), tr("Move dialog to the side pane")));
+        btnCollapse.setPreferredSize(new Dimension(20,20));
+        btnCollapse.setAlignmentY(Component.TOP_ALIGNMENT);
+
+        JPanel buttons = new JPanel();
+        buttons.add(btnPrevious);
+        buttons.add(btnNext);
+        buttons.add(Box.createRigidArea(new Dimension(14, 0)));
+        buttons.add(tbCentre);
+        buttons.add(btnZoomBestFit);
+        buttons.add(Box.createRigidArea(new Dimension(14, 0)));
+        buttons.add(btnDelete);
+
+        JPanel bottomPane = new JPanel();
+        bottomPane.setLayout(new GridBagLayout());
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.gridx = 0;
+        gc.gridy = 0;
+        gc.anchor = GridBagConstraints.CENTER;
+        gc.weightx = 1;
+        bottomPane.add(buttons, gc);
+
+        gc.gridx = 1;
+        gc.gridy = 0;
+        gc.anchor = GridBagConstraints.PAGE_END;
+        gc.weightx = 0;
+        bottomPane.add(btnCollapse, gc);
+
+        content.add(bottomPane, BorderLayout.SOUTH);
 
         add(content, BorderLayout.CENTER);
     }
@@ -149,6 +176,9 @@ public class ImageViewerDialog extends ToggleDialog {
                 if (currentLayer != null) {
                    currentLayer.removeCurrentPhoto();
                 }
+            } else if (COMMAND_COLLAPSE.equals(action)) {
+                collapseButtonClicked = true;
+                detachedDialog.getToolkit().getSystemEventQueue().postEvent(new WindowEvent(detachedDialog, WindowEvent.WINDOW_CLOSING));
             }
         }
     }
@@ -185,6 +215,7 @@ public class ImageViewerDialog extends ToggleDialog {
 
         if (entry != null) {
             imgDisplay.setImage(entry.file);
+            titleBar.setTitle("Geotagged Images" + (entry.file != null ? " - " + entry.file.getName() : ""));
             StringBuffer osd = new StringBuffer(entry.file != null ? entry.file.getName() : "");
             if (entry.elevation != null) {
                 osd.append(tr("\nAltitude: {0} m", entry.elevation.longValue()));
@@ -226,7 +257,19 @@ public class ImageViewerDialog extends ToggleDialog {
      */
     @Override
     protected boolean dockWhenClosingDetachedDlg() {
+        if (collapseButtonClicked) {
+            collapseButtonClicked = false;
+            return true;
+        }
         return false;
+    }
+
+    @Override
+    protected void stateChanged() {
+        super.stateChanged();
+        if (btnCollapse != null) {
+            btnCollapse.setVisible(!isDocked);
+        }
     }
 
     /**
