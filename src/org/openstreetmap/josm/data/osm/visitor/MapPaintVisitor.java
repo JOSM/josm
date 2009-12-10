@@ -517,7 +517,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         {
             for (RelationMember m : r.getMembers())
             {
-                if (m.isWay() && drawable(m.getMember()))
+                if (m.isWay() && m.getMember().isDrawable())
                 {
                     drawSelectedMember(m.getMember(), styles != null ? getPrimitiveStyle(m.getMember())
                             : null, true, true);
@@ -1311,11 +1311,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         }
     }
 
-    boolean drawable(OsmPrimitive osm)
-    {
-        return !osm.isDeleted() && !osm.isIncomplete() && !osm.isFiltered();
-    }
-
     @Override
     public void getColors()
     {
@@ -1383,14 +1378,14 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
             /*** RELATIONS ***/
             for (final Relation osm: data.getRelations()) {
-                if (drawable(osm)) {
+                if (osm.isDrawable()) {
                     paintUnselectedRelation(osm);
                 }
             }
 
             /*** AREAS ***/
             for (final Way osm : selectedLast(data, data.searchWays(bbox))) {
-                if (drawable(osm) && osm.mappaintDrawnCode != paintid) {
+                if (osm.isDrawable() && osm.mappaintDrawnCode != paintid) {
                     if (isPrimitiveArea(osm) && osm.mappaintDrawnAreaCode != paintid) {
                         drawWay(osm, fillAreas);
                     } else {
@@ -1404,9 +1399,18 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 drawWay(osm, 0);
             }
         } else {
+            drawMultipolygon = false;
+
+            /*** RELATIONS ***/
+            for (final Relation osm: data.getRelations()) {
+                if (osm.isDrawable()) {
+                    paintUnselectedRelation(osm);
+                }
+            }
+
             /*** WAYS (filling disabled)  ***/
             for (final Way way: data.getWays()) {
-                if (drawable(way) && !data.isSelected(way)) {
+                if (way.isDrawable() && !data.isSelected(way)) {
                     drawWay(way, 0);
                 }
             }
@@ -1428,7 +1432,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     public void visit(Relation r) {
                         /* TODO: is it possible to do this like the nodes/ways code? */
                         for (RelationMember m : r.getMembers()) {
-                            if (m.isNode() && drawable(m.getMember())) {
+                            if (m.isNode() && m.getMember().isDrawable()) {
                                 drawSelectedMember(m.getMember(), styles != null ? getPrimitiveStyle(m.getMember()) : null, true, true);
                             }
                         }

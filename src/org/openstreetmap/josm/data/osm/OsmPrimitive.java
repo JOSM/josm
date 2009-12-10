@@ -359,6 +359,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return !isDeleted() && !isIncomplete() && !isDisabled();
     }
 
+    public boolean isDrawable()
+    {
+        return !isDeleted() && !isIncomplete() && !isFiltered();
+    }
+
     /**
      * Replies true if this primitive is either unknown to the server (i.e. its id
      * is 0) or it is known to the server and it hasn't be deleted on the server.
