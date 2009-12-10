@@ -1,8 +1,9 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.io;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
@@ -27,17 +28,6 @@ import org.openstreetmap.josm.tools.DateUtils;
 public class OsmWriter extends XmlWriter implements Visitor {
 
     public final String DEFAULT_API_VERSION = "0.6";
-
-    /**
-     * The counter for newly created objects. Starts at -1 and goes down.
-     */
-    private long newIdCounter = -1;
-
-    /**
-     * All newly created ids and their primitive that uses it. This is a back reference
-     * map to allow references to use the correnct primitives.
-     */
-    public HashMap<OsmPrimitive, Long> usedNewIds = new HashMap<OsmPrimitive, Long>();
 
     private boolean osmConform;
     private boolean withBody = true;
@@ -122,7 +112,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
         } else {
             out.println(">");
             for (Node n : w.getNodes()) {
-                out.println("    <nd ref='"+getUsedId(n)+"' />");
+                out.println("    <nd ref='"+n.getUniqueId()+"' />");
             }
             addTags(w, "way", false);
         }
@@ -138,7 +128,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
             for (RelationMember em : e.getMembers()) {
                 out.print("    <member type='");
                 out.print(OsmPrimitiveType.from(em.getMember()).getAPIName());
-                out.println("' ref='"+getUsedId(em.getMember())+"' role='" +
+                out.println("' ref='"+em.getMember().getUniqueId()+"' role='" +
                         XmlWriter.encode(em.getRole()) + "' />");
             }
             addTags(e, "relation", false);
@@ -171,18 +161,6 @@ public class OsmWriter extends XmlWriter implements Visitor {
         addTags(cs, "changeset", false); // also writes closing </changeset>
     }
 
-    /**
-     * Return the id for the given osm primitive (may access the usedId map)
-     */
-    private long getUsedId(OsmPrimitive osm) {
-        if (!osm.isNew())
-            return osm.getId();
-        if (usedNewIds.containsKey(osm))
-            return usedNewIds.get(osm);
-        usedNewIds.put(osm, newIdCounter);
-        return osmConform ? 0 : newIdCounter--;
-    }
-
     private void addTags(Tagged osm, String tagname, boolean tagOpen) {
         if (osm.hasKeys()) {
             if (tagOpen) {
@@ -207,11 +185,11 @@ public class OsmWriter extends XmlWriter implements Visitor {
      * id, action, user, and visible.
      */
     private void addCommon(OsmPrimitive osm, String tagname) {
-        long id = getUsedId(osm);
         out.print("  <"+tagname);
-        if (id != 0) {
-            out.print(" id='"+getUsedId(osm)+"'");
-        }
+        if (osm.getUniqueId() != 0) {
+            out.print(" id='"+ osm.getUniqueId()+"'");
+        } else
+            throw new IllegalStateException(tr("Unexpected id 0 for osm primitive found"));
         if (!osmConform) {
             String action = null;
             if (osm.isDeleted()) {
@@ -242,6 +220,8 @@ public class OsmWriter extends XmlWriter implements Visitor {
         }
         if (this.changeset != null && this.changeset.getId() != 0) {
             out.print(" changeset='"+this.changeset.getId()+"'" );
+        } else if (osm.getChangesetId() > 0 && !osm.isNew()) {
+            out.print(" changeset='"+osm.getChangesetId()+"'" );
         }
     }
 

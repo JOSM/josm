@@ -18,7 +18,6 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,7 +28,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.data.osm.visitor.CreateOsmChangeVisitor;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.xml.sax.Attributes;
@@ -239,6 +237,7 @@ public class OsmApi extends OsmConnection {
             initialize(monitor);
             ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/create", toXml(osm, true),monitor);
             osm.setOsmId(Long.parseLong(ret.trim()), 1);
+            osm.setChangesetId(getChangeset().getId());
         } catch(NumberFormatException e){
             throw new OsmTransferException(tr("Unexpected format of ID replied by the server. Got ''{0}''.", ret));
         }
@@ -259,6 +258,7 @@ public class OsmApi extends OsmConnection {
             // normal mode (0.6 and up) returns new object version.
             ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.getId(), toXml(osm, true), monitor);
             osm.setOsmId(osm.getId(), Integer.parseInt(ret.trim()));
+            osm.setChangesetId(getChangeset().getId());
         } catch(NumberFormatException e) {
             throw new OsmTransferException(tr("Unexpected format of new version of modified primitive ''{0}''. Got ''{1}''.", osm.getId(), ret));
         }
@@ -300,7 +300,7 @@ public class OsmApi extends OsmConnection {
             String ret = "";
             try {
                 ret = sendRequest("PUT", "changeset/create", toXml(changeset),progressMonitor);
-                changeset.setId(Long.parseLong(ret.trim()));
+                changeset.setId(Integer.parseInt(ret.trim()));
                 changeset.setOpen(true);
             } catch(NumberFormatException e){
                 throw new OsmTransferException(tr("Unexpected format of ID replied by the server. Got ''{0}''.", ret));
@@ -397,25 +397,32 @@ public class OsmApi extends OsmConnection {
                 throw new OsmTransferException(tr("No changeset present for diff upload."));
 
             initialize(monitor);
-            final ArrayList<OsmPrimitive> processed = new ArrayList<OsmPrimitive>();
 
-            CreateOsmChangeVisitor duv = new CreateOsmChangeVisitor(changeset, OsmApi.this);
+            // prepare upload request
+            //
+            OsmChangeBuilder changeBuilder = new OsmChangeBuilder(changeset);
+            monitor.subTask(tr("Preparing upload request..."));
+            changeBuilder.start();
+            changeBuilder.append(list);
+            changeBuilder.finish();
+            String diffUploadRequest = changeBuilder.getDocument();
 
-            monitor.subTask(tr("Preparing..."));
-            for (OsmPrimitive osm : list) {
-                osm.visit(duv);
-                monitor.worked(1);
-            }
-            monitor.indeterminateSubTask(tr("Uploading..."));
+            // Upload to the server
+            //
+            monitor.indeterminateSubTask(tr("Uploading {0} objects...", list.size()));
+            String diffUploadResponse = sendRequest("POST", "changeset/" + changeset.getId() + "/upload", diffUploadRequest,monitor);
 
-            String diff = duv.getDocument();
-            String diffresult = sendRequest("POST", "changeset/" + changeset.getId() + "/upload", diff,monitor);
-            DiffResultReader.parseDiffResult(diffresult, list, processed, duv.getNewIdMap(),
-                    monitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
-            return processed;
+            // Process the response from the server
+            //
+            DiffResultProcessor reader = new DiffResultProcessor(list);
+            reader.parse(diffUploadResponse, monitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+            return reader.postProcess(
+                    getChangeset(),
+                    monitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)
+            );
         } catch(OsmTransferException e) {
             throw e;
-        } catch(Exception e) {
+        } catch(OsmDataParsingException e) {
             throw new OsmTransferException(e);
         } finally {
             monitor.finishTask();

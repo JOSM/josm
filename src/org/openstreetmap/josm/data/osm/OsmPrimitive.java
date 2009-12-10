@@ -237,6 +237,13 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     private int version = 0;
 
     /**
+     * The id of the changeset this primitive was last uploaded to.
+     * 0 if it wasn't uploaded to a changeset yet of if the changeset
+     * id isn't known.
+     */
+    private int changesetId;
+
+    /**
      * Creates a new primitive for the given id. If the id > 0, the primitive is marked
      * as incomplete.
      *
@@ -578,6 +585,35 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         this.user = user;
     }
 
+
+    /**
+     * Replies the id of the changeset this primitive was last uploaded to.
+     * 0 if this primitive wasn't uploaded to a changeset yet or if the
+     * changeset isn't known.
+     * 
+     * @return the id of the changeset this primitive was last uploaded to.
+     */
+    public int getChangesetId() {
+        return changesetId;
+    }
+
+
+    /**
+     * Sets the changeset id of this primitive. Can't be set on a new
+     * primitive.
+     * 
+     * @param changesetId the id. >= 0 required.
+     * @throws IllegalStateException thrown if this primitive is new.
+     * @throws IllegalArgumentException thrown if id < 0
+     */
+    public void setChangesetId(int changesetId) throws IllegalStateException, IllegalArgumentException {
+        if (changesetId < 0)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' >= 0 expected, got {1}", "changesetId", changesetId));
+        if (isNew() && changesetId > 0)
+            throw new IllegalStateException(tr("Can''t assign a changesetId > 0 to a new primitive. Value of changesetId is {0}", changesetId));
+        this.changesetId = changesetId;
+    }
+
     /**
      * Equal, if the id (and class) is equal.
      *
@@ -915,14 +951,15 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * Get and write all attributes from the parameter. Does not fire any listener, so
      * use this only in the data initializing phase
      */
-    public void cloneFrom(OsmPrimitive osm) {
-        setKeys(osm.getKeys());
-        id = osm.id;
-        timestamp = osm.timestamp;
-        version = osm.version;
-        setIncomplete(osm.isIncomplete());
-        flags = osm.flags;
-        user= osm.user;
+    public void cloneFrom(OsmPrimitive other) {
+        setKeys(other.getKeys());
+        id = other.id;
+        timestamp = other.timestamp;
+        version = other.version;
+        setIncomplete(other.isIncomplete());
+        flags = other.flags;
+        user= other.user;
+        changesetId = other.changesetId;
         clearCached();
     }
 
@@ -950,6 +987,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         setIncomplete(other.isIncomplete());
         flags = other.flags;
         user= other.user;
+        changesetId = other.changesetId;
     }
 
     /**
@@ -999,7 +1037,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         && timestamp == other.timestamp
         && version == other.version
         && isVisible() == other.isVisible()
-        && (user == null ? other.user==null : user==other.user);
+        && (user == null ? other.user==null : user==other.user)
+        && changesetId == other.changesetId;
     }
 
     private void updateTagged() {
@@ -1097,6 +1136,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         setKeys(data.getKeys());
         timestamp = data.getTimestamp();
         user = data.getUser();
+        changesetId = data.getChangesetId();
         setDeleted(data.isDeleted());
         setModified(data.isModified());
         setVisible(data.isVisible());
@@ -1117,6 +1157,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         data.setDeleted(isDeleted());
         data.setModified(isModified());
         data.setVisible(isVisible());
+        data.setChangesetId(changesetId);
     }
 
     protected String getFlagsAsString() {

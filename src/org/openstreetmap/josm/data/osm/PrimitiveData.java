@@ -45,6 +45,7 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
     private User user;
     private int version;
     private int timestamp;
+    private int changesetId;
 
     public boolean isModified() {
         return modified;
@@ -88,6 +89,15 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
     public void setTimestamp(int timestamp) {
         this.timestamp = timestamp;
     }
+
+    public int getChangesetId() {
+        return changesetId;
+    }
+
+    public void setChangesetId(int changesetId) {
+        this.changesetId = changesetId;
+    }
+
     public Map<String, String> getKeys() {
         return keys;
     }

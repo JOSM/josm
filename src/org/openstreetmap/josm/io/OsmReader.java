@@ -24,10 +24,13 @@ import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.xml.sax.Attributes;
@@ -68,7 +71,7 @@ public class OsmReader {
      *   <li>"r" + id  for nodes</li>
      * </ul>
      */
-    private Map<String, OsmPrimitive> externalIdMap = new HashMap<String, OsmPrimitive>();
+    private Map<PrimitiveId, OsmPrimitive> externalIdMap = new HashMap<PrimitiveId, OsmPrimitive>();
 
     /**
      * constructor (for private use only)
@@ -77,7 +80,7 @@ public class OsmReader {
      * @see #parseDataSetOsm(InputStream, DataSet, ProgressMonitor)
      */
     private OsmReader() {
-        externalIdMap = new HashMap<String, OsmPrimitive>();
+        externalIdMap = new HashMap<PrimitiveId, OsmPrimitive>();
     }
 
     private static class OsmPrimitiveData {
@@ -90,6 +93,7 @@ public class OsmReader {
         public int version = 0;
         public LatLon latlon = new LatLon(0,0);
         private OsmPrimitive primitive;
+        private int changesetId;
 
         public void copyTo(OsmPrimitive osm) {
             // It's not necessary to call clearOsmId for id < 0. The same thing is done by parameterless constructor
@@ -100,7 +104,16 @@ public class OsmReader {
             osm.setModified(modified | deleted);
             osm.setTimestamp(timestamp);
             osm.setUser(user);
-            if (id > 0) {
+            if (!osm.isNew() && changesetId > 0) {
+                osm.setChangesetId(changesetId);
+            } else if (osm.isNew() && changesetId > 0) {
+                System.out.println(tr("Warning: ignoring changeset id {0} for new object with external id {1} and internal id {2}",
+                        changesetId,
+                        id,
+                        osm.getUniqueId()
+                ));
+            }
+            if (! osm.isNew()) {
                 // ignore visible attribute for objects not yet known to the server
                 //
                 osm.setVisible(visible);
@@ -217,12 +230,12 @@ public class OsmReader {
                 current.latlon = new LatLon(getDouble(atts, "lat"), getDouble(atts, "lon"));
                 readCommon(atts, current);
                 Node n = current.createNode();
-                externalIdMap.put("n"+current.id, n);
+                externalIdMap.put(new SimplePrimitiveId(current.id, OsmPrimitiveType.NODE), n);
             } else if (qName.equals("way")) {
                 current = new OsmPrimitiveData();
                 readCommon(atts, current);
                 Way w = current.createWay();
-                externalIdMap.put("w"+current.id, w);
+                externalIdMap.put(new SimplePrimitiveId(current.id, OsmPrimitiveType.WAY), w);
                 ways.put(current.id, new ArrayList<Long>());
             } else if (qName.equals("nd")) {
                 Collection<Long> list = ways.get(current.id);
@@ -250,7 +263,7 @@ public class OsmReader {
                 current = new OsmPrimitiveData();
                 readCommon(atts, current);
                 Relation r = current.createRelation();
-                externalIdMap.put("r"+current.id, r );
+                externalIdMap.put(new SimplePrimitiveId(current.id, OsmPrimitiveType.RELATION), r);
                 relations.put(current.id, new LinkedList<RelationMemberData>());
             } else if (qName.equals("member")) {
                 Collection<RelationMemberData> list = relations.get(current.id);
@@ -385,12 +398,40 @@ public class OsmReader {
             }
 
             String action = atts.getValue("action");
-            if (action == null)
-                return;
-            if (action.equals("delete")) {
+            if (action == null) {
+                // do nothing
+            } else if (action.equals("delete")) {
                 current.deleted = true;
-            } else if (action.startsWith("modify")) {
+            } else if (action.startsWith("modify")) { //FIXME: why startsWith()? why not equals()?
                 current.modified = true;
+            }
+
+            String v = atts.getValue("changeset");
+            if (v == null) {
+                current.changesetId = 0;
+            } else {
+                try {
+                    current.changesetId = Integer.parseInt(v);
+                } catch(NumberFormatException e) {
+                    if (current.id <= 0) {
+                        // for a new primitive we just log a warning
+                        System.out.println(tr("Illegal value for attribute ''changeset'' on new object {1}. Got {0}. Resetting to 0.", v, current.id));
+                        current.changesetId = 0;
+                    } else {
+                        // for an existing primitive this is a problem
+                        throwException(tr("Illegal value for attribute ''changeset''. Got {0}.", v));
+                    }
+                }
+                if (current.changesetId <=0) {
+                    if (current.id <= 0) {
+                        // for a new primitive we just log a warning
+                        System.out.println(tr("Illegal value for attribute ''changeset'' on new object {1}. Got {0}. Resetting to 0.", v, current.id));
+                        current.changesetId = 0;
+                    } else {
+                        // for an existing primitive this is a problem
+                        throwException(tr("Illegal value for attribute ''changeset''. Got {0}.", v));
+                    }
+                }
             }
         }
 
@@ -416,10 +457,10 @@ public class OsmReader {
      */
     protected void processWaysAfterParsing() throws IllegalDataException{
         for (Long externalWayId: ways.keySet()) {
-            Way w = (Way)externalIdMap.get("w" + externalWayId);
+            Way w = (Way)externalIdMap.get(new SimplePrimitiveId(externalWayId, OsmPrimitiveType.WAY));
             List<Node> wayNodes = new ArrayList<Node>();
             for (long id : ways.get(externalWayId)) {
-                Node n = (Node)externalIdMap.get("n" +id);
+                Node n = (Node)externalIdMap.get(new SimplePrimitiveId(id, OsmPrimitiveType.NODE));
                 if (n == null) {
                     if (id <= 0)
                         throw new IllegalDataException (
@@ -475,23 +516,23 @@ public class OsmReader {
      */
     private void processRelationsAfterParsing() throws IllegalDataException {
         for (Long externalRelationId : relations.keySet()) {
-            Relation relation = (Relation) externalIdMap.get("r" +externalRelationId);
+            Relation relation = (Relation) externalIdMap.get(
+                    new SimplePrimitiveId(externalRelationId, OsmPrimitiveType.RELATION)
+            );
             List<RelationMember> relationMembers = new ArrayList<RelationMember>();
             for (RelationMemberData rm : relations.get(externalRelationId)) {
                 OsmPrimitive primitive = null;
 
                 // lookup the member from the map of already created primitives
                 //
-                if (rm.type.equals("node")) {
-                    primitive = externalIdMap.get("n" + rm.id);
-                } else if (rm.type.equals("way")) {
-                    primitive = externalIdMap.get("w" + rm.id);
-                } else if (rm.type.equals("relation")) {
-                    primitive = externalIdMap.get("r" + rm.id);
-                } else
+                try {
+                    OsmPrimitiveType type = OsmPrimitiveType.fromApiTypeName(rm.type);
+                    primitive = externalIdMap.get(new SimplePrimitiveId(rm.id, type));
+                } catch(IllegalArgumentException e) {
                     throw new IllegalDataException(
                             tr("Unknown relation member type ''{0}'' in relation with external id ''{1}''.", rm.type,externalRelationId)
                     );
+                }
 
                 if (primitive == null) {
                     if (rm.id <= 0)
@@ -522,15 +563,7 @@ public class OsmReader {
                         //
                     }
                     ds.addPrimitive(primitive);
-
-                    if (rm.type.equals("node")) {
-                        externalIdMap.put("n" + rm.id, primitive);
-                    } else if (rm.type.equals("way")) {
-                        externalIdMap.put("w" + rm.id, primitive);
-                    } else if (rm.type.equals("relation")) {
-                        externalIdMap.put("r" + rm.id, primitive);
-                    }
-
+                    externalIdMap.put(new SimplePrimitiveId(rm.id, OsmPrimitiveType.fromApiTypeName(rm.type)), primitive);
                 }
                 relationMembers.add(new RelationMember(rm.role, primitive));
             }
@@ -542,13 +575,19 @@ public class OsmReader {
     /**
      * Parse the given input source and return the dataset.
      *
-     * @param source the source input stream
-     * @param progressMonitor  the progress monitor
+     * @param source the source input stream. Must not be null.
+     * @param progressMonitor  the progress monitor. If null, {@see NullProgressMonitor#INSTANCE} is assumed
      *
      * @return the dataset with the parsed data
      * @throws IllegalDataException thrown if the an error was found while parsing the data from the source
+     * @throws IllegalArgumentException thrown if source is null
      */
     public static DataSet parseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
+        if (progressMonitor == null) {
+            progressMonitor = NullProgressMonitor.INSTANCE;
+        }
+        if (source == null)
+            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "source"));
         OsmReader reader = new OsmReader();
         try {
             progressMonitor.beginTask(tr("Prepare OSM data...", 2));

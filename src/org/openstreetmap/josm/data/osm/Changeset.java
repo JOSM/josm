@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
  */
 public final class Changeset implements Tagged {
     /** the changeset id */
-    private long id;
+    private int id;
     /** the user who owns the changeset */
     private User user;
     /** date this changeset was created at */
@@ -49,7 +49,7 @@ public final class Changeset implements Tagged {
      *
      * @param id the id
      */
-    public Changeset(long id) {
+    public Changeset(int id) {
         this.id = id;
         this.incomplete = id > 0;
         this.tags = new HashMap<String, String>();
@@ -89,7 +89,7 @@ public final class Changeset implements Tagged {
     }
 
     public int compareTo(Changeset other) {
-        return Long.valueOf(getId()).compareTo(other.getId());
+        return Integer.valueOf(getId()).compareTo(other.getId());
     }
 
     public String getName() {
@@ -101,11 +101,11 @@ public final class Changeset implements Tagged {
         return formatter.format(this);
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -233,7 +233,7 @@ public final class Changeset implements Tagged {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (int) (id ^ (id >>> 32));
+        result = prime * result + (id ^ (id >>> 32));
         if (id > 0)
             return prime * result + getClass().hashCode();
         result = prime * result + ((closedAt == null) ? 0 : closedAt.hashCode());
@@ -304,5 +304,20 @@ public final class Changeset implements Tagged {
 
     public boolean isNew() {
         return id <= 0;
+    }
+
+    public void mergeFrom(Changeset other) {
+        if (other == null)
+            return;
+        if (id != other.id)
+            return;
+        this.user = other.user;
+        this.createdAt = other.createdAt;
+        this.closedAt = other.closedAt;
+        this.open  = other.open;
+        this.min = other.min;
+        this.max = other.max;
+        this.tags.clear();
+        this.tags.putAll(other.tags);
     }
 }

@@ -86,6 +86,15 @@ public class SearchCompiler {
         @Override public String toString() {return "id="+id;}
     }
 
+    private static class ChangesetId extends Match {
+        private long changesetid;
+        public ChangesetId(long changesetid) {this.changesetid = changesetid;}
+        @Override public boolean match(OsmPrimitive osm) {
+            return osm.getChangesetId() == changesetid;
+        }
+        @Override public String toString() {return "changeset="+changesetid;}
+    }
+
     private static class KeyValue extends Match {
         private final String key;
         private final Pattern keyPattern;
@@ -691,6 +700,12 @@ public class SearchCompiler {
                 return new Id(Long.parseLong(value));
             } catch (NumberFormatException x) {
                 throw new ParseError(tr("Incorrect value of id operator: {0}. Number is expected.", value));
+            }
+        } else if (key.equals("changeset")) {
+            try {
+                return new ChangesetId(Integer.parseInt(value));
+            } catch (NumberFormatException x) {
+                throw new ParseError(tr("Incorrect value of changeset operator: {0}. Number is expected.", value));
             }
         } else
             return new KeyValue(key, value, regexSearch, caseSensitive);

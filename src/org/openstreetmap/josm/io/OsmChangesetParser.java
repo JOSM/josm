@@ -71,9 +71,9 @@ public class OsmChangesetParser {
             if (value == null) {
                 throwException(tr("Missing mandatory attribute ''{0}''.", "id"));
             }
-            long id = 0;
+            int id = 0;
             try {
-                id = Long.parseLong(value);
+                id = Integer.parseInt(value);
             } catch(NumberFormatException e) {
                 throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "id", value));
             }

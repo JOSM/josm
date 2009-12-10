@@ -125,6 +125,7 @@ public class SearchAction extends JosmAction{
                     + "<li>"+tr("<b>user:</b>... - all objects changed by user")+"</li>"
                     + "<li>"+tr("<b>user:anonymous</b> - all objects changed by anonymous users")+"</li>"
                     + "<li>"+tr("<b>id:</b>... - object with given ID (0 for new objects)")+"</li>"
+                    + "<li>"+tr("<b>changeset:</b>... - object with given changeset id (0 objects without assigned changeset)")+"</li>"
                     + "<li>"+tr("<b>nodes:</b>... - object with given number of nodes")+"</li>"
                     + "<li>"+tr("<b>tags:</b>... - object with given number of tags (tags:count or tags:min-max)")+"</li>"
                     + "<li>"+tr("<b>modified</b> - all changed objects")+"</li>"
