@@ -1419,13 +1419,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
         </item>
-        <item name="Shop" icon="presets/car_repair.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=car" />
-            <label text="Edit Car Shop" />
-            <key key="shop" value="car" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <text key="operator" text="Operator" default="" delete_if_empty="true" />
-        </item>
         <item name="Repair" icon="presets/car_repair.png" type="node,closedway">
             <label text="Edit Car Repair" />
             <key key="shop" value="car_repair" />
@@ -1461,13 +1454,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:bicycle_rental" />
             <label text="Edit Bicycle Rental" />
             <key key="amenity" value="bicycle_rental" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Shop" icon="presets/bike.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=bicycle"
-                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:shop=bicycle" />
-            <label text="Edit Bicycle Shop" />
-            <key key="shop" value="bicycle" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Bicycle -->
@@ -2510,6 +2496,20 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
     </group> <!-- Amenities -->
     <group name="Shops" icon="presets/shopping.png">
+        <item name="Car Dealer" icon="presets/car_repair.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=car" />
+            <label text="Edit Car Shop" />
+            <key key="shop" value="car" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+        </item>
+        <item name="Bike Dealer" icon="presets/bike.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=bicycle"
+                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:shop=bicycle" />
+            <label text="Edit Bicycle Shop" />
+            <key key="shop" value="bicycle" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
         <item name="Supermarket" icon="presets/shopping.png" type="node,closedway">
             <label text="Edit Supermarket" />
             <key key="shop" value="supermarket" />
