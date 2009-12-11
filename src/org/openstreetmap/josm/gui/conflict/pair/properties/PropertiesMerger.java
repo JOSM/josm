@@ -30,7 +30,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class PropertiesMerger extends JPanel implements Observer {
-    private static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000");
+    private static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000000");
 
     public final static Color BGCOLOR_NO_CONFLICT = new Color(234,234,234);
     public final static Color BGCOLOR_UNDECIDED = new Color(255,197,197);

@@ -1,12 +1,16 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.coor;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.asin;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.toRadians;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-
-import static java.lang.Math.*;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -99,7 +103,7 @@ public class LatLon extends Coordinate {
      * 1 / {@link org.openstreetmap.josm.data.projection.Projection#MAX_SERVER_PRECISION MAX_SERVER_PRECISION}.
      */
     public boolean equalsEpsilon(LatLon other) {
-        final double p = 1/Projection.MAX_SERVER_PRECISION;
+        final double p = Projection.MAX_SERVER_PRECISION;
         return Math.abs(lat()-other.lat()) <= p && Math.abs(lon()-other.lon()) <= p;
     }
 
@@ -131,9 +135,9 @@ public class LatLon extends Coordinate {
         double sinHalfLat = sin(toRadians(other.lat() - this.lat()) / 2);
         double sinHalfLon = sin(toRadians(other.lon() - this.lon()) / 2);
         double d = 2 * R * asin(
-                            sqrt(sinHalfLat*sinHalfLat + 
-                            cos(toRadians(this.lat()))*cos(toRadians(other.lat()))*sinHalfLon*sinHalfLon));
-        // For points opposite to each other on the sphere, 
+                sqrt(sinHalfLat*sinHalfLat +
+                        cos(toRadians(this.lat()))*cos(toRadians(other.lat()))*sinHalfLon*sinHalfLon));
+        // For points opposite to each other on the sphere,
         // rounding errors could make the argument of asin greater than 1
         // (This should almost never happen.)
         if (java.lang.Double.isNaN(d)) {

@@ -135,7 +135,9 @@ public final class Node extends OsmPrimitive {
     @Override public NodeData save() {
         NodeData data = new NodeData();
         saveCommonAttributes(data);
-        data.setCoor(getCoor());
+        if (!isIncomplete()) {
+            data.setCoor(getCoor());
+        }
         return data;
     }
 
@@ -154,7 +156,7 @@ public final class Node extends OsmPrimitive {
         if (coor == null && n.coor == null)
             return true;
         else if (coor != null && n.coor != null)
-            return coor.equals(n.coor);
+            return coor.equalsEpsilon(n.coor);
         else
             return false;
     }
