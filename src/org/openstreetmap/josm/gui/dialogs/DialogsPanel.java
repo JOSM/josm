@@ -32,7 +32,7 @@ public class DialogsPanel extends JPanel {
     }
 
     public boolean initialized = false; // read only from outside
-    
+
     public void initialize(List<ToggleDialog> pAllDialogs) {
         if (initialized)
             throw new IllegalStateException();
@@ -42,15 +42,26 @@ public class DialogsPanel extends JPanel {
         for (Integer i=0; i < pAllDialogs.size(); ++i) {
             add(pAllDialogs.get(i), false);
         }
-        
+
         this.add(mSpltPane);
         reconstruct(Action.ELEMENT_SHRINKS, null);
+    }
+
+    /**
+     * Invoke before the panel is discarded. This will in turn call {@see ToggleDialog#tearDown()}
+     * on every dialog.
+     * 
+     */
+    public void tearDown() {
+        for(ToggleDialog dialog: allDialogs) {
+            dialog.tearDown();
+        }
     }
 
     public void add(ToggleDialog dlg) {
         add(dlg, true);
     }
-    
+
     public void add(ToggleDialog dlg, boolean doReconstruct) {
         allDialogs.add(dlg);
         int i = allDialogs.size() - 1;

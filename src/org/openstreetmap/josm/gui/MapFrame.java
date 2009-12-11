@@ -3,11 +3,10 @@
 package org.openstreetmap.josm.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,12 +14,12 @@ import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.JSplitPane;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.border.Border;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.DeleteAction;
@@ -29,6 +28,7 @@ import org.openstreetmap.josm.actions.mapmode.ExtrudeAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.actions.mapmode.ZoomAction;
+import org.openstreetmap.josm.gui.dialogs.ChangesetDialog;
 import org.openstreetmap.josm.gui.dialogs.CommandStackDialog;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel;
@@ -125,8 +125,10 @@ public class MapFrame extends JPanel implements Destroyable {
         splitPane.setDividerSize(5);
         splitPane.setBorder(null);
         splitPane.setUI(new BasicSplitPaneUI() {
+            @Override
             public BasicSplitPaneDivider createDefaultDivider() {
                 return new BasicSplitPaneDivider(this) {
+                    @Override
                     public void setBorder(Border b) {
                     }
                 };
@@ -147,12 +149,14 @@ public class MapFrame extends JPanel implements Destroyable {
         addToggleDialog(new PropertiesDialog(this));
         addToggleDialog(new HistoryDialog());
         addToggleDialog(new SelectionListDialog());
-        if(Main.pref.getBoolean("displayfilter", false))
+        if(Main.pref.getBoolean("displayfilter", false)) {
             addToggleDialog(new FilterDialog());
+        }
         addToggleDialog(new UserListDialog());
         addToggleDialog(conflictDialog = new ConflictDialog());
         addToggleDialog(new CommandStackDialog(this));
         addToggleDialog(relationListDialog = new RelationListDialog());
+        addToggleDialog(new ChangesetDialog(this));
 
         // status line below the map
         statusLine = new MapStatus(this);
@@ -208,6 +212,13 @@ public class MapFrame extends JPanel implements Destroyable {
      */
     public void initializeDialogsPane() {
         dialogsPanel.initialize(allDialogs);
+    }
+
+    /**
+     * 
+     */
+    public void tearDownDialogsPane() {
+        dialogsPanel.tearDown();
     }
 
     /**

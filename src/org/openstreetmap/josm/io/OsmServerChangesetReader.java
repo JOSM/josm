@@ -1,14 +1,20 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
+
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * Reads the history of an {@see OsmPrimitive} from the OSM API server.
@@ -67,7 +73,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
     }
 
     /**
-     * Reads teh changeset with id <code>id</code> from the server
+     * Reads the changeset with id <code>id</code> from the server
      *
      * @param id  the changeset id. id > 0 required.
      * @param monitor the progress monitor. Set to {@see NullProgressMonitor#INSTANCE} if null
@@ -93,6 +99,55 @@ public class OsmServerChangesetReader extends OsmServerReader {
             if (changesets == null || changesets.isEmpty())
                 return null;
             return changesets.get(0);
+        } catch(OsmTransferException e) {
+            throw e;
+        } catch(IllegalDataException e) {
+            throw new OsmTransferException(e);
+        } finally {
+            monitor.finishTask();
+        }
+    }
+
+    /**
+     * Reads the changeset with id <code>id</code> from the server
+     *
+     * @param ids  the list of ids. Ignored if null. Only load changesets for ids > 0.
+     * @param monitor the progress monitor. Set to {@see NullProgressMonitor#INSTANCE} if null
+     * @return the changeset read
+     * @throws OsmTransferException thrown if something goes wrong
+     * @throws IllegalArgumentException if id <= 0
+     */
+    public List<Changeset> readChangesets(Collection<Integer> ids, ProgressMonitor monitor) throws OsmTransferException {
+        if (ids == null)
+            return Collections.emptyList();
+        if (monitor == null) {
+            monitor = NullProgressMonitor.INSTANCE;
+        }
+        try {
+            monitor.beginTask(trn("Downloading {0} changeset ...", "Downloading {0} changesets ...",ids.size(),ids.size()));
+            monitor.setTicksCount(ids.size());
+            List<Changeset> ret = new ArrayList<Changeset>();
+            int i=0;
+            for (Iterator<Integer> it = ids.iterator(); it.hasNext(); ) {
+                int id = it.next();
+                if (id <= 0) {
+                    continue;
+                }
+                i++;
+                StringBuffer sb = new StringBuffer();
+                sb.append("changeset/").append(id);
+                InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true));
+                if (in == null)
+                    return null;
+                monitor.indeterminateSubTask(tr("({0}/{1}) Downloading changeset {0} ...", i,ids.size(), id));
+                List<Changeset> changesets = OsmChangesetParser.parse(in, monitor.createSubTaskMonitor(1, true));
+                if (changesets == null || changesets.isEmpty()) {
+                    continue;
+                }
+                ret.addAll(changesets);
+                monitor.worked(1);
+            }
+            return ret;
         } catch(OsmTransferException e) {
             throw e;
         } catch(IllegalDataException e) {

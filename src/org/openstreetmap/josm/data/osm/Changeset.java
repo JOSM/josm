@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 
@@ -67,21 +68,12 @@ public final class Changeset implements Tagged {
         } else if (other.isIncomplete()) {
             setId(other.getId());
             this.incomplete = true;
+            this.tags = new HashMap<String, String>();
         } else {
-            cloneFrom(other);
+            this.id = other.id;
+            mergeFrom(other);
             this.incomplete = false;
         }
-    }
-
-    public void cloneFrom(Changeset other) {
-        setId(other.getId());
-        setUser(other.getUser());
-        setCreatedAt(other.getCreatedAt());
-        setClosedAt(other.getClosedAt());
-        setMin(other.getMin());
-        setMax(other.getMax());
-        setKeys(other.getKeys());
-        setOpen(other.isOpen());
     }
 
     public void visit(Visitor v) {
@@ -151,6 +143,12 @@ public final class Changeset implements Tagged {
 
     public LatLon getMax() {
         return max;
+    }
+
+    public Bounds getBounds() {
+        if (min != null && max != null)
+            return new Bounds(min,max);
+        return null;
     }
 
     public void setMax(LatLon max) {
@@ -236,14 +234,8 @@ public final class Changeset implements Tagged {
         result = prime * result + (id ^ (id >>> 32));
         if (id > 0)
             return prime * result + getClass().hashCode();
-        result = prime * result + ((closedAt == null) ? 0 : closedAt.hashCode());
-        result = prime * result + ((createdAt == null) ? 0 : createdAt.hashCode());
-        result = prime * result + ((max == null) ? 0 : max.hashCode());
-        result = prime * result + ((min == null) ? 0 : min.hashCode());
-        result = prime * result + (open ? 1231 : 1237);
-        result = prime * result + ((tags == null) ? 0 : tags.hashCode());
-        result = prime * result + ((user == null) ? 0 : user.hashCode());
-        return result;
+        else
+            return super.hashCode();
     }
 
     @Override
@@ -257,41 +249,7 @@ public final class Changeset implements Tagged {
         Changeset other = (Changeset) obj;
         if (this.id > 0 && other.id == this.id)
             return true;
-        if (closedAt == null) {
-            if (other.closedAt != null)
-                return false;
-        } else if (!closedAt.equals(other.closedAt))
-            return false;
-        if (createdAt == null) {
-            if (other.createdAt != null)
-                return false;
-        } else if (!createdAt.equals(other.createdAt))
-            return false;
-        if (id != other.id)
-            return false;
-        if (max == null) {
-            if (other.max != null)
-                return false;
-        } else if (!max.equals(other.max))
-            return false;
-        if (min == null) {
-            if (other.min != null)
-                return false;
-        } else if (!min.equals(other.min))
-            return false;
-        if (open != other.open)
-            return false;
-        if (tags == null) {
-            if (other.tags != null)
-                return false;
-        } else if (!tags.equals(other.tags))
-            return false;
-        if (user == null) {
-            if (other.user != null)
-                return false;
-        } else if (!user.equals(other.user))
-            return false;
-        return true;
+        return this == obj;
     }
 
     public boolean hasKeys() {
@@ -317,7 +275,7 @@ public final class Changeset implements Tagged {
         this.open  = other.open;
         this.min = other.min;
         this.max = other.max;
-        this.tags.clear();
-        this.tags.putAll(other.tags);
+        this.tags = new HashMap<String, String>(other.tags);
+        this.incomplete = other.incomplete;
     }
 }

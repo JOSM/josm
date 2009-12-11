@@ -11,6 +11,7 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -69,7 +70,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
         SwingUtilities.invokeLater(
                 new Runnable() {
                     public void run() {
-                        model.setChangesets(changesets);
+                        ChangesetCache.getInstance().update(changesets);
                     }
                 }
         );

@@ -288,6 +288,10 @@ public class UploadDialog extends JDialog implements PropertyChangeListener{
         return cs;
     }
 
+    public void setSelectedChangesetForNextUpload(Changeset cs) {
+        pnlChangesetManagement.setSelectedChangesetForNextUpload(cs);
+    }
+
     /**
      * Replies the {@see UploadStrategySpecification} the user entered in the dialog.
      * 
@@ -297,31 +301,6 @@ public class UploadDialog extends JDialog implements PropertyChangeListener{
         UploadStrategySpecification spec = pnlUploadStrategySelectionPanel.getUploadStrategySpecification();
         spec.setCloseChangesetAfterUpload(pnlChangesetManagement.isCloseChangesetAfterUpload());
         return spec;
-    }
-
-    /**
-     * Sets or updates the changeset cs.
-     * If cs is null, does nothing.
-     * If cs.getId() == 0 does nothing.
-     * If cs.getId() > 0 and cs is open, adds it to the list of open
-     * changesets. If it is closed, removes it from the list of open
-     * changesets.
-     *
-     * @param cs the changeset
-     */
-    public void updateListOfChangesetsAfterUploadOperation(Changeset cs) {
-        pnlChangesetManagement.updateListOfChangesetsAfterUploadOperation(cs);
-    }
-
-    /**
-     * Removes <code>cs</code> from the list of open changesets in the upload
-     * dialog
-     *
-     * @param cs the changeset. Ignored if null.
-     */
-    public void removeChangeset(Changeset cs) {
-        if (cs == null) return;
-        pnlChangesetManagement.removeChangeset(cs);
     }
 
     /**

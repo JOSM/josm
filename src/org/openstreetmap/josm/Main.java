@@ -187,6 +187,7 @@ abstract public class Main {
         if (map != null) {
             map.mapView.removeLayer(layer);
             if (map.mapView.getAllLayers().isEmpty()) {
+                map.tearDownDialogsPane();
                 setMapFrame(null);
             }
         }

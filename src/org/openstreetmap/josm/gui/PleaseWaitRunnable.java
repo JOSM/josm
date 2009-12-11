@@ -1,11 +1,9 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.EventQueue;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
@@ -22,6 +20,7 @@ import org.xml.sax.SAXException;
  * @author Imi
  */
 public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
+    private final static Logger logger = Logger.getLogger(PleaseWaitRunnable.class.getName());
 
     private boolean cancelled = false;
     private boolean ignoreException;

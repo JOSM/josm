@@ -17,6 +17,7 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
@@ -138,7 +139,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
     protected void openNewChangset() {
         // make sure the current changeset is removed from the upload dialog.
         //
-        UploadDialog.getUploadDialog().removeChangeset(changeset);
+        ChangesetCache.getInstance().update(changeset);
         Changeset newChangeSet = new Changeset();
         newChangeSet.setKeys(this.changeset.getKeys());
         this.changeset = new Changeset();
@@ -210,14 +211,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                 layer.cleanupAfterUpload(processedPrimitives);
                 layer.fireDataChange();
                 layer.onPostUploadToServer();
-
-                // make sure the upload dialog lists all known open changesets
-                //
-                if (lastException != null && lastException instanceof ChangesetClosedException) {
-                    UploadDialog.getUploadDialog().removeChangeset(changeset);
-                } else {
-                    UploadDialog.getUploadDialog().updateListOfChangesetsAfterUploadOperation(changeset);
-                }
+                ChangesetCache.getInstance().update(changeset);
             }
         };
 
@@ -297,8 +291,6 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
     @Override protected void finish() {
         if (uploadCancelled)
             return;
-        if (lastException == null)
-            return;
 
         // depending on the success of the upload operation and on the policy for
         // multi changeset uploads this will sent the user back to the appropriate
@@ -308,6 +300,15 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
         // - to map editing
         Runnable r = new Runnable() {
             public void run() {
+                // if the changeset is still open after this upload we want it to
+                // be selected on the next upload
+                //
+                ChangesetCache.getInstance().update(changeset);
+                if (changeset != null && changeset.isOpen()) {
+                    UploadDialog.getUploadDialog().setSelectedChangesetForNextUpload(changeset);
+                }
+                if (lastException == null)
+                    return;
                 if (lastException instanceof ChangesetClosedException) {
                     ChangesetClosedException e = (ChangesetClosedException)lastException;
                     if (strategy.getPolicy() == null)
@@ -336,7 +337,11 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
 
             }
         };
-        SwingUtilities.invokeLater(r);
+        if (SwingUtilities.isEventDispatchThread()) {
+            r.run();
+        } else {
+            SwingUtilities.invokeLater(r);
+        }
     }
 
     @Override protected void cancel() {

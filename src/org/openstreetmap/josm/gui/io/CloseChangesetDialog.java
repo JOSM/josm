@@ -1,22 +1,29 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -25,8 +32,6 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
-
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * This dialog lets the user select changesets from a list of changesets.
@@ -40,6 +45,8 @@ public class CloseChangesetDialog extends JDialog {
     private boolean canceled;
     /** the list model */
     private DefaultListModel model;
+
+    private SideButton btnCloseChangesets;
 
     protected JPanel buildTopPanel() {
         JPanel pnl = new JPanel();
@@ -65,8 +72,15 @@ public class CloseChangesetDialog extends JDialog {
         // -- close action
         CloseAction closeAction = new CloseAction();
         lstOpenChangesets.addListSelectionListener(closeAction);
-        pnl.add(new SideButton(closeAction));
-        pnl.add(new SideButton(new CancelAction()));
+        pnl.add(btnCloseChangesets = new SideButton(closeAction));
+        btnCloseChangesets.setFocusable(true);
+        btnCloseChangesets.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "enter");
+        btnCloseChangesets.getActionMap().put("enter",closeAction);
+
+        // -- cancel action
+        SideButton btn;
+        pnl.add(btn = new SideButton(new CancelAction()));
+        btn.setFocusable(true);
         return pnl;
     }
 
@@ -76,6 +90,10 @@ public class CloseChangesetDialog extends JDialog {
         getContentPane().add(buildTopPanel(), BorderLayout.NORTH);
         getContentPane().add(buildCenterPanel(), BorderLayout.CENTER);
         getContentPane().add(buildSouthPanel(), BorderLayout.SOUTH);
+
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "escape");
+        getRootPane().getActionMap().put("escape", new CancelAction());
+        addWindowListener(new WindowEventHandler());
     }
 
     @Override
@@ -126,10 +144,28 @@ public class CloseChangesetDialog extends JDialog {
             putValue(SHORT_DESCRIPTION, tr("Cancel closing of changesets"));
         }
 
-        public void actionPerformed(ActionEvent e) {
+        public void cancel() {
             setCanceled(true);
             setVisible(false);
         }
+
+        public void actionPerformed(ActionEvent e) {
+            cancel();
+        }
+    }
+
+    class WindowEventHandler extends WindowAdapter {
+
+        @Override
+        public void windowActivated(WindowEvent arg0) {
+            btnCloseChangesets.requestFocusInWindow();
+        }
+
+        @Override
+        public void windowClosing(WindowEvent arg0) {
+            new CancelAction().cancel();
+        }
+
     }
 
     /**
@@ -161,6 +197,9 @@ public class CloseChangesetDialog extends JDialog {
         model.removeAllElements();
         for (Changeset cs: changesets) {
             model.addElement(cs);
+        }
+        if (!changesets.isEmpty()) {
+            lstOpenChangesets.getSelectionModel().setSelectionInterval(0, changesets.size()-1);
         }
     }
 

@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
 
+
 /**
  * DataSet is the data behind the application. It can consists of only a few points up to the whole
  * osm database. DataSet's can be merged together, saved, (up/down/disk)loaded etc.

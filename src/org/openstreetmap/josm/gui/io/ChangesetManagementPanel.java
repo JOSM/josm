@@ -25,6 +25,7 @@ import javax.swing.event.ListDataListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -103,6 +104,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         gc.gridwidth = 1;
         gc.weightx = 1.0;
         model = new OpenChangesetComboBoxModel();
+        ChangesetCache.getInstance().addChangesetCacheListener(model);
         cbOpenChangesets = new JComboBox(model);
         cbOpenChangesets.setToolTipText("Select an open changeset");
         cbOpenChangesets.setRenderer(new ChangesetCellRenderer());
@@ -170,6 +172,14 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         cbOpenChangesets.setEnabled(model.getSize() > 0 && rbExisting.isSelected());
     }
 
+    public void setSelectedChangesetForNextUpload(Changeset cs) {
+        int idx  = model.getIndexOf(cs);
+        if (idx >=0) {
+            rbExisting.setSelected(true);
+            model.setSelectedItem(cs);
+        }
+    }
+
     /**
      * Replies the currently selected changeset. null, if no changeset is
      * selected or if the user has chosen to use a new changeset.
@@ -202,34 +212,6 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         return(ua == null) ? "JOSM" : ua.toString();
     }
 
-    public void updateListOfChangesetsAfterUploadOperation(Changeset cs) {
-        if (cs == null || cs.isNew()) {
-            model.setSelectedItem(null);
-        } else if (cs.isOpen()){
-            if (cs.get("created_by") == null) {
-                cs.put("created_by", getDefaultCreatedBy());
-            }
-            model.addOrUpdate(cs);
-            cs = model.getChangesetById(cs.getId());
-            model.setSelectedItem(cs);
-            rbExisting.setSelected(true);
-        } else if (!cs.isOpen()){
-            removeChangeset(cs);
-            rbUseNew.setSelected(true);
-        }
-    }
-
-    /**
-     * Remove a changeset from the list of open changeset
-     *
-     * @param cs the changeset to be removed. Ignored if null.
-     */
-    public void removeChangeset(Changeset cs) {
-        if (cs ==  null) return;
-        model.removeChangeset(cs);
-        refreshGUI();
-    }
-
     /* ---------------------------------------------------------------------------- */
     /* Interface ListDataListener                                                   */
     /* ---------------------------------------------------------------------------- */
@@ -255,6 +237,9 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
             Changeset cs = (Changeset)cbOpenChangesets.getSelectedItem();
             if (rbExisting.isSelected()) {
                 firePropertyChange(SELECTED_CHANGESET_PROP, null, cs);
+                if (cs == null) {
+                    rbUseNew.setSelected(true);
+                }
             }
         }
     }

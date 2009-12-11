@@ -67,7 +67,7 @@ public class ToggleDialog extends JPanel implements Helpful {
      * currently minimized or not.
      */
     protected boolean isCollapsed;
-    
+
     /** the preferred height if the toggle dialog is expanded */
     private int preferredHeight;
 
@@ -119,7 +119,6 @@ public class ToggleDialog extends JPanel implements Helpful {
         isShowing = Main.pref.getBoolean(preferencePrefix+".visible", defShow);
         isDocked = Main.pref.getBoolean(preferencePrefix+".docked", true);
         isCollapsed = Main.pref.getBoolean(preferencePrefix+".minimized", false);
-        //System.err.println(name+": showing="+isShowing+" docked="+isDocked+" collapsed="+isCollapsed);
     }
 
     /**
@@ -213,7 +212,7 @@ public class ToggleDialog extends JPanel implements Helpful {
      *
      */
     public void collapse() {
-//        if (isShowing && isDocked && !isCollapsed) {
+        //        if (isShowing && isDocked && !isCollapsed) {
         if (isDialogInDefaultView()) {
             setContentVisible(false);
             setIsCollapsed(true);
@@ -230,7 +229,7 @@ public class ToggleDialog extends JPanel implements Helpful {
      * Expands the toggle dialog
      */
     protected void expand() {
-//        if (isShowing && isDocked && isCollapsed) {
+        //        if (isShowing && isDocked && isCollapsed) {
         if (isDialogInCollapsedView()) {
             setContentVisible(true);
             setIsCollapsed(false);
@@ -528,8 +527,8 @@ public class ToggleDialog extends JPanel implements Helpful {
      **/
 
     /**
-    * Change the Geometry of the detached dialog to better fit the content.
-    */
+     * Change the Geometry of the detached dialog to better fit the content.
+     */
     protected Rectangle getDetachedGeometry(Rectangle last) {
         return last;
     }
@@ -551,14 +550,22 @@ public class ToggleDialog extends JPanel implements Helpful {
     protected boolean dockWhenClosingDetachedDlg() {
         return true;
     }
-    
+
     /**
      * primitive stateChangedListener for subclasses
      */
     protected void stateChanged() {
     }
 
-    /***
-     * End of override hooks
-     **/
+    /**
+     * This method is called by hosting panel before the panel with the toggle dialogs
+     * and the toggle dialogs themself are discared, for instance because no layer is
+     * left in JOSM and  the main screen turns from the map editor to the MOTD panel.
+     * 
+     * Override in subclasses to unregister as listener. After tearDown() is invoked
+     * the dialog should be registered as listener.
+     * 
+     * The default implementation is empty.
+     */
+    public void tearDown() {}
 }

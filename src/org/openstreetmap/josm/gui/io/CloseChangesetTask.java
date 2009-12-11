@@ -10,6 +10,7 @@ import java.util.Collection;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.io.OsmApi;
@@ -58,9 +59,7 @@ public class CloseChangesetTask extends PleaseWaitRunnable {
         SwingUtilities.invokeLater(
                 new Runnable() {
                     public void run() {
-                        for (Changeset cs: closedChangesets) {
-                            UploadDialog.getUploadDialog().updateListOfChangesetsAfterUploadOperation(cs);
-                        }
+                        ChangesetCache.getInstance().update(closedChangesets);
                     }
                 }
         );
