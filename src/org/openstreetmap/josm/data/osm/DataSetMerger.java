@@ -144,7 +144,6 @@ public class DataSetMerger {
         Way myWay = (Way)getMergeTarget(other);
         if (myWay == null)
             throw new RuntimeException(tr("Missing merge target for way with id {0}", other.getUniqueId()));
-        myWay.setHasIncompleteNodes();
     }
 
     /**
@@ -162,10 +161,6 @@ public class DataSetMerger {
         if (myNode == null)
             throw new RuntimeException(tr("Missing merge target for node with id {0}", other.getUniqueId()));
         if (myNode.isIncomplete() || myNode.isDeleted() || !myNode.isVisible()) return;
-
-        for (Way w: OsmPrimitive.getFilteredList(myNode.getReferrers(), Way.class)) {
-            w.setHasIncompleteNodes();
-        }
     }
 
     /**

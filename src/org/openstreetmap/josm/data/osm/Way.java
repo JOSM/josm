@@ -25,7 +25,6 @@ public final class Way extends OsmPrimitive {
      */
     private Node[] nodes = new Node[0];
     private BBox bbox;
-    private boolean hasIncompleteNodes;
 
     /**
      *
@@ -376,19 +375,12 @@ public final class Way extends OsmPrimitive {
         bbox = new BBox(this);
     }
 
-    //TODO This method should not be necessary. hasIncomplete state should be updated automatically when incomplete state of nodes change
-    public void setHasIncompleteNodes() {
-        hasIncompleteNodes = false;
-        for (Node node:getNodes()) {
-            if (node.isIncomplete()) {
-                hasIncompleteNodes = true;
-                break;
-            }
-        }
-    }
-
     public boolean hasIncompleteNodes() {
-        return hasIncompleteNodes;
+        for (Node node:getNodes()) {
+            if (node.isIncomplete())
+                return true;
+        }
+        return false;
     }
 
     @Override

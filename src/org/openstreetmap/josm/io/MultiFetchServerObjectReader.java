@@ -192,7 +192,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
                     continue;
                 }
             }
-            appendGeneric(member.getMember());
+            if (!member.getMember().isIncomplete()) {
+                appendGeneric(member.getMember());
+            }
         }
         return this;
     }
@@ -374,7 +376,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
 
     protected void rememberNodesOfIncompleteWaysToLoad(DataSet from) {
         for (Way w: from.getWays()) {
-            if (w.isIncomplete()) {
+            if (w.hasIncompleteNodes()) {
                 for (Node n: w.getNodes()) {
                     if (n.isIncomplete()) {
                         nodes.add(n.getId());

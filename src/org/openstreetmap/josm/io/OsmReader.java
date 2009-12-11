@@ -481,7 +481,6 @@ public class OsmReader {
                 wayNodes.add(n);
             }
             w.setNodes(wayNodes);
-            w.setHasIncompleteNodes();
             if (w.hasIncompleteNodes()) {
                 if (logger.isLoggable(Level.FINE)) {
                     logger.fine(tr("Marked way {0} with {1} nodes incomplete because at least one node was missing in the " +
