@@ -13,6 +13,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -48,7 +49,7 @@ public class ChangeRelationMemberRoleCommand extends Command {
         }
 
         oldRole = relation.getMember(position).getRole();
-        relation.getMember(position).getRole().equals(newRole);
+        relation.setMember(position, new RelationMember(newRole, relation.getMember(position).getMember()));
 
         oldModified = relation.isModified();
         relation.setModified(true);

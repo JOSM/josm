@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -141,7 +140,12 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
             new HashMap<OsmPrimitive, List<RoleCorrection>>();
         roleCorrectionMap.put(way, new ArrayList<RoleCorrection>());
 
-        for (Relation relation : Main.main.getCurrentDataSet().getRelations()) {
+        Collection<OsmPrimitive> referrers = oldway.getReferrers();
+        for (OsmPrimitive referrer: referrers) {
+            if (! (referrer instanceof Relation)) {
+                continue;
+            }
+            Relation relation = (Relation)referrer;
             int position = 0;
             for (RelationMember member : relation.getMembers()) {
                 if (!member.getMember().hasEqualSemanticAttributes(oldway)
