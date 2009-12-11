@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,12 +34,10 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -46,7 +45,6 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.TigerUtils;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -108,48 +106,34 @@ public class JoinAreasAction extends JosmAction {
      * Checks whether the selected objects are suitable to join and joins them if so
      */
     public void actionPerformed(ActionEvent e) {
-        Collection<OsmPrimitive> selection = Main.main.getCurrentDataSet().getSelectedWays();
+        LinkedList<Way> ways = new LinkedList<Way>(Main.main.getCurrentDataSet().getSelectedWays());
 
-        int ways = 0;
-        Way[] selWays = new Way[2];
-
-        LinkedList<Bounds> bounds = new LinkedList<Bounds>();
-        OsmDataLayer dataLayer = Main.map.mapView.getEditLayer();
-        for (DataSource ds : dataLayer.data.dataSources) {
-            if (ds.bounds != null) {
-                bounds.add(ds.bounds);
-            }
+        if (ways.isEmpty()) {
+            JOptionPane.showMessageDialog(Main.parent, tr("Please select at least one closed way that should be joined."));
+            return;
         }
 
-        boolean askedAlready = false;
-        for (OsmPrimitive prim : selection) {
-            Way way = (Way) prim;
+        // Too many ways
+        if(ways.size() > 2) {
+            JOptionPane.showMessageDialog(Main.parent, tr("Only up to two areas can be joined at the moment."));
+            return;
+        }
 
-            // Too many ways
-            if(ways == 2) {
-                JOptionPane.showMessageDialog(Main.parent, tr("Only up to two areas can be joined at the moment."));
-                return;
-            }
-
+        List<Node> allNodes = new ArrayList<Node>();
+        for (Way way: ways) {
             if(!way.isClosed()) {
                 JOptionPane.showMessageDialog(Main.parent, tr("\"{0}\" is not closed and therefore can't be joined.", way.getName()));
                 return;
             }
 
-            // This is copied from SimplifyAction and should be probably ported to tools
-            for (Node node : way.getNodes()) {
-                if(askedAlready) {
-                    break;
-                }
-                boolean isInsideOneBoundingBox = false;
-                for (Bounds b : bounds) {
-                    if (b.contains(node.getCoor())) {
-                        isInsideOneBoundingBox = true;
-                        break;
-                    }
-                }
+            allNodes.addAll(way.getNodes());
+        }
 
-                if (!isInsideOneBoundingBox) {
+        // TODO: Only display this warning when nodes outside dataSourceArea are deleted
+        Area dataSourceArea = Main.main.getCurrentDataSet().getDataSourceArea();
+        if (dataSourceArea != null) {
+            for (Node node: allNodes) {
+                if (!dataSourceArea.contains(node.getCoor())) {
                     int option = JOptionPane.showConfirmDialog(Main.parent,
                             tr("The selected way(s) have nodes outside of the downloaded data region.\n"
                                     + "This can lead to nodes being deleted accidentally.\n"
@@ -158,21 +142,12 @@ public class JoinAreasAction extends JosmAction {
                                     JOptionPane.WARNING_MESSAGE);
 
                     if (option != JOptionPane.YES_OPTION) return;
-                    askedAlready = true;
                     break;
                 }
             }
-
-            selWays[ways] = way;
-            ways++;
         }
 
-        if (ways < 1) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Please select at least one closed way the should be joined."));
-            return;
-        }
-
-        if(joinAreas(selWays[0], selWays[ways == 2 ? 1 : 0])) {
+        if(joinAreas(ways.getFirst(), ways.getLast())) {
             Main.map.mapView.repaint();
             DataSet ds = Main.main.getCurrentDataSet();
             ds.fireSelectionChanged();
@@ -458,8 +433,9 @@ public class JoinAreasAction extends JosmAction {
     private ArrayList<RelationRole> removeFromRelations(OsmPrimitive osm) {
         ArrayList<RelationRole> result = new ArrayList<RelationRole>();
         for (Relation r : Main.main.getCurrentDataSet().getRelations()) {
-            if (r.isDeleted())
+            if (r.isDeleted()) {
                 continue;
+            }
             for (RelationMember rm : r.getMembers()) {
                 if (rm.getMember() != osm) {
                     continue;

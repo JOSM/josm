@@ -292,21 +292,21 @@ public class DataSet implements Cloneable {
     /**
      * Return selected nodes.
      */
-    public Collection<OsmPrimitive> getSelectedNodes() {
+    public Collection<Node> getSelectedNodes() {
         return getSelected(nodes);
     }
 
     /**
      * Return selected ways.
      */
-    public Collection<OsmPrimitive> getSelectedWays() {
+    public Collection<Way> getSelectedWays() {
         return getSelected(ways);
     }
 
     /**
      * Return selected relations.
      */
-    public Collection<OsmPrimitive> getSelectedRelations() {
+    public Collection<Relation> getSelectedRelations() {
         return getSelected(relations);
     }
 
@@ -314,14 +314,14 @@ public class DataSet implements Cloneable {
      * Return all selected items in the collection.
      * @param list The collection from which the selected items are returned.
      */
-    private Collection<OsmPrimitive> getSelected(Collection<? extends OsmPrimitive> list) {
+    private <T extends OsmPrimitive> Collection<T> getSelected(Collection<T> list) {
         if (list == null)
-            return new LinkedList<OsmPrimitive>();
+            return new LinkedList<T>();
         // getSelected() is called with large lists, so
         // creating the return list from the selection
         // should be faster most of the time.
-        Collection<OsmPrimitive> sel = new LinkedHashSet<OsmPrimitive>(selectedPrimitives);
-        sel.retainAll(list);
+        Collection<T> sel = new LinkedHashSet<T>(list);
+        sel.retainAll(selectedPrimitives);
         return sel;
     }
 
