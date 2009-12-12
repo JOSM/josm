@@ -200,10 +200,10 @@ public class ImageViewerDialog extends ToggleDialog {
 
     public void displayImage(GeoImageLayer layer, ImageEntry entry) {
         synchronized(this) {
-            if (currentLayer == layer && currentEntry == entry) {
-                repaint();
-                return;
-            }
+//            if (currentLayer == layer && currentEntry == entry) {
+//                repaint();
+//                return;
+//            }                     TODO: pop up image dialog but don't load image again
 
             if (centerView && Main.map != null && entry != null && entry.pos != null) {
                 Main.map.mapView.zoomTo(entry.pos);

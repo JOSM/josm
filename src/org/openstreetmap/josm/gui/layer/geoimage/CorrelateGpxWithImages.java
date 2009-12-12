@@ -563,8 +563,8 @@ public class CorrelateGpxWithImages implements ActionListener {
         gc.gridheight = 1;
         gc.fill = GridBagConstraints.NONE;
         gc.weightx = gc.weighty = 0.0;
-        yLayer.loadThumbs = Main.pref.getBoolean("geoimage.showThumbs", false);
-        JCheckBox cbShowThumbs = new JCheckBox(tr("Show Thumbnail images on the map"), yLayer.loadThumbs);
+        yLayer.useThumbs = Main.pref.getBoolean("geoimage.showThumbs", false);
+        JCheckBox cbShowThumbs = new JCheckBox(tr("Show Thumbnail images on the map"), yLayer.useThumbs);
         panelTf.add(cbShowThumbs, gc);
 
         ButtonGroup group = new ButtonGroup();
@@ -634,16 +634,16 @@ public class CorrelateGpxWithImages implements ActionListener {
                 delta = 0;
             }
 
-            yLayer.loadThumbs = cbShowThumbs.isSelected();
+            yLayer.useThumbs = cbShowThumbs.isSelected();
 
             Main.pref.put("geoimage.doublegpstimezone", Double.toString(gpstimezone));
             Main.pref.put("geoimage.gpstimezone", Long.toString(- ((long) gpstimezone)));
             Main.pref.put("geoimage.delta", Long.toString(delta * 1000));
-            Main.pref.put("geoimage.showThumbs", yLayer.loadThumbs);
+            Main.pref.put("geoimage.showThumbs", yLayer.useThumbs);
             isOk = true;
 
-            if (yLayer.loadThumbs) {
-                yLayer.thumbsloader = new ThumbsLoader(yLayer.data);
+            if (yLayer.useThumbs) {
+                yLayer.thumbsloader = new ThumbsLoader(yLayer);
                 Thread t = new Thread(yLayer.thumbsloader);
                 t.setPriority(Thread.MIN_PRIORITY);
                 t.start();

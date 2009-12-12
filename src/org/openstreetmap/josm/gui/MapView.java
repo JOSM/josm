@@ -380,6 +380,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         }
 
         Graphics2D tempG = offscreenBuffer.createGraphics();
+        tempG.setClip(g.getClip());
         tempG.setColor(Main.pref.getColor("background", Color.BLACK));
         tempG.fillRect(0, 0, getWidth(), getHeight());
 

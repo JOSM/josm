@@ -8,7 +8,11 @@ package org.openstreetmap.josm.gui.layer.geoimage;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Composite;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MediaTracker;
@@ -18,6 +22,8 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -55,7 +61,7 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.GpsDirectory;
 
-public class GeoImageLayer extends Layer {
+public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
     List<ImageEntry> data;
 
@@ -70,8 +76,10 @@ public class GeoImageLayer extends Layer {
     public boolean hasTimeoffset = false;
     public long timeoffset = 0;
 
-    boolean loadThumbs;
+    boolean useThumbs = false;
     ThumbsLoader thumbsloader;
+    private BufferedImage offscreenBuffer;
+    boolean updateOffscreenBuffer = true;
 
     /*
      * Stores info about each image
@@ -294,6 +302,7 @@ public class GeoImageLayer extends Layer {
 
         Collections.sort(data);
         this.data = data;
+        Main.map.mapView.addPropertyChangeListener(this);
     }
 
     @Override
@@ -374,40 +383,100 @@ public class GeoImageLayer extends Layer {
         }
 
         setName(l.getName());
+    }
 
+    private Dimension scaledDimension(Image thumb) {
+        final double d = Main.map.mapView.getDist100Pixel();
+        final double size = 40 /*meter*/;     /* size of the photo on the map */
+        double s = size * 100 /*px*/ / d;
+
+        final double sMin = ThumbsLoader.minSize;
+        final double sMax = ThumbsLoader.maxSize;
+
+        if (s < sMin) {
+            s = sMin;
+        }
+        if (s > sMax) {
+            s = sMax;
+        }
+        final double f = s / sMax;  /* scale factor */
+
+        if (thumb == null)
+            return null;
+
+        return new Dimension(
+            (int) Math.round(f * thumb.getWidth(null)),
+            (int) Math.round(f * thumb.getHeight(null)));
     }
 
     @Override
     public void paint(Graphics2D g, MapView mv, Bounds bounds) {
+        int width = Main.map.mapView.getWidth();
+        int height = Main.map.mapView.getHeight();
+        Rectangle clip = g.getClipBounds();
+        if (useThumbs) {
+            if (null == offscreenBuffer || offscreenBuffer.getWidth() != width  // reuse the old buffer if possible
+                    || offscreenBuffer.getHeight() != height) {
+                offscreenBuffer = new BufferedImage(width, height,
+                        BufferedImage.TYPE_INT_ARGB);
+                updateOffscreenBuffer = true;
+            }
 
-        for (ImageEntry e : data) {
-            if (e.pos != null) {
+            if (updateOffscreenBuffer) {
+                Graphics2D tempG = offscreenBuffer.createGraphics();
+                tempG.setColor(new Color(0,0,0,0));
+                Composite saveComp = tempG.getComposite();
+                tempG.setComposite(AlphaComposite.Clear);   // remove the old images
+                tempG.fillRect(0, 0, width, height);
+                tempG.setComposite(saveComp);
+
+                for (ImageEntry e : data) {
+                    if (e.pos == null)
+                        continue;
+                    Point p = mv.getPoint(e.pos);
+                    if (e.thumbnail != null) {
+                        Dimension d = scaledDimension(e.thumbnail);
+                        Rectangle target = new Rectangle(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
+                        if (clip.intersects(target)) {
+                            tempG.drawImage(e.thumbnail, target.x, target.y, target.width, target.height, null);
+                        }
+                    }
+                    else { // thumbnail not loaded yet
+                        icon.paintIcon(mv, tempG,
+                                   p.x - icon.getIconWidth() / 2,
+                                   p.y - icon.getIconHeight() / 2);
+                    }
+                }
+                updateOffscreenBuffer = false;
+            }
+            g.drawImage(offscreenBuffer, 0, 0, null);
+        }
+        else {
+            for (ImageEntry e : data) {
+                if (e.pos == null)
+                    continue;
                 Point p = mv.getPoint(e.pos);
-                if (e.thumbnail != null && e.thumbnail.getWidth(null) > 0 && e.thumbnail.getHeight(null) > 0) {
-                    g.drawImage(e.thumbnail,
-                                p.x - e.thumbnail.getWidth(null) / 2,
-                                p.y - e.thumbnail.getHeight(null) / 2, null);
-                }
-                else {
                 icon.paintIcon(mv, g,
-                               p.x - icon.getIconWidth() / 2,
-                               p.y - icon.getIconHeight() / 2);
-                }
+                           p.x - icon.getIconWidth() / 2,
+                           p.y - icon.getIconHeight() / 2);
             }
         }
 
-        // Draw the selection on top of the other pictures.
         if (currentPhoto >= 0 && currentPhoto < data.size()) {
             ImageEntry e = data.get(currentPhoto);
 
             if (e.pos != null) {
                 Point p = mv.getPoint(e.pos);
 
-                Rectangle r = new Rectangle(p.x - selectedIcon.getIconWidth() / 2,
-                                            p.y - selectedIcon.getIconHeight() / 2,
-                                            selectedIcon.getIconWidth(),
-                                            selectedIcon.getIconHeight());
-                selectedIcon.paintIcon(mv, g, r.x, r.y);
+                if (e.thumbnail != null) {
+                    Dimension d = scaledDimension(e.thumbnail);
+                    g.setColor(new Color(128, 0, 0, 122));
+                    g.fillRect(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
+                } else {
+                    selectedIcon.paintIcon(mv, g,
+                                p.x - selectedIcon.getIconWidth() / 2,
+                                p.y - selectedIcon.getIconHeight() / 2);
+                }
             }
         }
     }
@@ -499,7 +568,7 @@ public class GeoImageLayer extends Layer {
     }
 
     public void checkPreviousNextButtons() {
-        System.err.println("check: " + currentPhoto);
+//        System.err.println("showing image " + currentPhoto);
         ImageViewerDialog.setNextEnabled(currentPhoto < data.size() - 1);
         ImageViewerDialog.setPreviousEnabled(currentPhoto > 0);
     }
@@ -516,6 +585,7 @@ public class GeoImageLayer extends Layer {
                 ImageViewerDialog.showImage(this, null);
             }
         }
+        updateOffscreenBuffer = true;
         Main.main.map.repaint();
     }
 
@@ -533,7 +603,6 @@ public class GeoImageLayer extends Layer {
             }
 
             @Override public void mouseReleased(MouseEvent ev) {
-
                 if (ev.getButton() != MouseEvent.BUTTON1) {
                     return;
                 }
@@ -541,17 +610,21 @@ public class GeoImageLayer extends Layer {
                     return;
                 }
 
-                ImageViewerDialog d = ImageViewerDialog.getInstance();
-
                 for (int i = data.size() - 1; i >= 0; --i) {
                     ImageEntry e = data.get(i);
                     if (e.pos == null)
                         continue;
                     Point p = Main.map.mapView.getPoint(e.pos);
-                    Rectangle r = new Rectangle(p.x - icon.getIconWidth() / 2,
-                                                p.y - icon.getIconHeight() / 2,
-                                                icon.getIconWidth(),
-                                                icon.getIconHeight());
+                    Rectangle r;
+                    if (e.thumbnail != null) {
+                        Dimension d = scaledDimension(e.thumbnail);
+                        r = new Rectangle(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
+                    } else {
+                        r = new Rectangle(p.x - icon.getIconWidth() / 2,
+                                            p.y - icon.getIconHeight() / 2,
+                                            icon.getIconWidth(),
+                                            icon.getIconHeight());
+                    }
                     if (r.contains(ev.getPoint())) {
                         currentPhoto = i;
                         ImageViewerDialog.showImage(GeoImageLayer.this, e);
@@ -559,7 +632,6 @@ public class GeoImageLayer extends Layer {
                         break;
                     }
                 }
-                Main.map.mapView.repaint();
             }
         };
         Main.map.mapView.addMouseListener(mouseAdapter);
@@ -576,6 +648,9 @@ public class GeoImageLayer extends Layer {
 
             public void layerRemoved(Layer oldLayer) {
                 if (oldLayer == GeoImageLayer.this) {
+                    if (thumbsloader != null) {
+                        thumbsloader.stop = true;
+                    }
                     Main.map.mapView.removeMouseListener(mouseAdapter);
                     currentPhoto = -1;
                     data.clear();
@@ -584,11 +659,10 @@ public class GeoImageLayer extends Layer {
             }
         });
     }
-    
-    @Override
-    public void destroy() {
-        if (thumbsloader != null) {
-            thumbsloader.stop = true;
+
+    public void propertyChange(PropertyChangeEvent evt) {
+        if ("center".equals(evt.getPropertyName()) || "scale".equals(evt.getPropertyName())) {
+            updateOffscreenBuffer = true;
         }
     }
 }

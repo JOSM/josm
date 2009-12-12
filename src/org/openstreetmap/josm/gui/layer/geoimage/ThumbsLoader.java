@@ -4,9 +4,10 @@ package org.openstreetmap.josm.gui.layer.geoimage;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.MediaTracker;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -18,14 +19,18 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer.ImageEntry;
 
 public class ThumbsLoader implements Runnable {
+        public static final int maxSize = 120;
+        public static final int minSize = 22;
         volatile boolean stop = false;
         List<ImageEntry> data;
+        GeoImageLayer layer;
         MediaTracker tracker;
         CacheFiles cache;
         boolean cacheOff = Main.pref.getBoolean("geoimage.noThumbnailCache", false);
-        
-        public ThumbsLoader(List<ImageEntry> data) {
-            this.data = new ArrayList<ImageEntry>(data);
+
+        public ThumbsLoader(GeoImageLayer layer) {
+            this.layer = layer;
+            this.data = new ArrayList<ImageEntry>(layer.data);
             if (!cacheOff) {
                 cache = new CacheFiles("geoimage-thumbnails", false);
                 cache.setExpire(CacheFiles.EXPIRE_NEVER, false);
@@ -38,13 +43,23 @@ public class ThumbsLoader implements Runnable {
             tracker = new MediaTracker(Main.map.mapView);
             for (int i = 0; i < data.size(); i++) {
                 if (stop) return;
+
                 System.err.print("fetching image "+i);
+
                 data.get(i).thumbnail = loadThumb(data.get(i));
+
                 if (Main.map != null && Main.map.mapView != null) {
+                    try {
+                        layer.updateOffscreenBuffer = true;
+                    } catch (Exception e) {}
                     Main.map.mapView.repaint();
                 }
             }
-            (new Thread() {
+            try {
+                layer.updateOffscreenBuffer = true;
+            } catch (Exception e) {}
+            Main.map.mapView.repaint();
+            (new Thread() {             // clean up the garbage - shouldn't hurt
                 public void run() {
                     try {
                         Thread.sleep(200);
@@ -55,19 +70,18 @@ public class ThumbsLoader implements Runnable {
             }).start();
 
         }
-        
+
         private BufferedImage loadThumb(ImageEntry entry) {
-            final int size = 16;
-            final String cacheIdent = entry.file.toString()+":"+size;
-            
+            final String cacheIdent = entry.file.toString()+":"+maxSize;
+
             if (!cacheOff) {
                 BufferedImage cached = cache.getImg(cacheIdent);
                 if(cached != null) {
-                    System.err.println(" from cache"); 
+                    System.err.println(" from cache");
                     return cached;
                 }
             }
-            
+
             Image img = Toolkit.getDefaultToolkit().createImage(entry.file.getPath());
             tracker.addImage(img, 0);
             try {
@@ -76,21 +90,33 @@ public class ThumbsLoader implements Runnable {
                 System.err.println(" InterruptedException");
                 return null;
             }
-            BufferedImage scaledBI = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);
+            if (tracker.isErrorID(1) || img.getWidth(null) <= 0 || img.getHeight(null) <= 0) {
+                System.err.println(" Invalid image");
+                return null;
+            }
+            Rectangle targetSize = ImageDisplay.calculateDrawImageRectangle(
+                new Rectangle(0, 0, img.getWidth(null), img.getHeight(null)),
+                new Rectangle(0, 0, maxSize, maxSize));
+            BufferedImage scaledBI = new BufferedImage(targetSize.width, targetSize.height, BufferedImage.TYPE_INT_RGB);
             Graphics2D g = scaledBI.createGraphics();
-            while (!g.drawImage(img, 0, 0, 16, 16, null))
+            while (!g.drawImage(img, 0, 0, targetSize.width, targetSize.height, null))
             {
                 try {
                     Thread.sleep(10);
-                } catch(InterruptedException ie) {} //FIXME: timeout?
+                } catch(InterruptedException ie) {}
             }
             g.dispose();
             tracker.removeImage(img);
-            
-            if (!cacheOff && scaledBI != null && scaledBI.getWidth() > 0) {
+
+            if (scaledBI == null || scaledBI.getWidth() <= 0 || scaledBI.getHeight() <= 0) {
+                System.err.println(" Invalid image");
+                return null;
+            }
+
+            if (!cacheOff) {
                 cache.saveImg(cacheIdent, scaledBI);
             }
-            
+
             System.err.println("");
             return scaledBI;
         }
