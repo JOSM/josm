@@ -19,6 +19,15 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSetListener;
+import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
+import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
+import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
+import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 
 
 /**
@@ -815,62 +824,42 @@ public class DataSet implements Cloneable {
             throw new AssertionError("endUpdate called without beginUpdate");
     }
 
-    private void fireDataChanged() {
+    private void fireEvent(AbstractDatasetChangedEvent event) {
         if (updateCount == 0) {
             for (DataSetListener dsl : listeners) {
-                dsl.dataChanged();
+                event.fire(dsl);
             }
         }
+    }
+
+    private void fireDataChanged() {
+        fireEvent(new DataChangedEvent(this));
     }
 
     void firePrimitivesAdded(Collection<? extends OsmPrimitive> added) {
-        if (updateCount == 0) {
-            for (DataSetListener dsl : listeners) {
-                dsl.primtivesAdded(added);
-            }
-        }
+        fireEvent(new PrimitivesAddedEvent(this, added));
     }
 
     void firePrimitivesRemoved(Collection<? extends OsmPrimitive> removed) {
-        if (updateCount == 0) {
-            for (DataSetListener dsl : listeners) {
-                dsl.primtivesRemoved(removed);
-            }
-        }
+        fireEvent(new PrimitivesRemovedEvent(this, removed));
     }
 
     void fireTagsChanged(OsmPrimitive prim) {
-        if (updateCount == 0) {
-            for (DataSetListener dsl : listeners) {
-                dsl.tagsChanged(prim);
-            }
-        }
+        fireEvent(new TagsChangedEvent(this, prim));
     }
 
     void fireRelationMembersChanged(Relation r) {
-        if (updateCount == 0) {
-            for (DataSetListener dsl : listeners) {
-                dsl.relationMembersChanged(r);
-            }
-        }
+        fireEvent(new RelationMembersChangedEvent(this, r));
     }
 
     void fireNodeMoved(Node node) {
         reindexNode(node);
-        if (updateCount == 0) {
-            for (DataSetListener dsl : listeners) {
-                dsl.nodeMoved(node);
-            }
-        }
+        fireEvent(new NodeMovedEvent(this, node));
     }
 
     void fireWayNodesChanged(Way way) {
         reindexWay(way);
-        if (updateCount == 0) {
-            for (DataSetListener dsl : listeners) {
-                dsl.wayNodesChanged(way);
-            }
-        }
+        fireEvent(new WayNodesChangedEvent(this, way));
     }
 
     public void clenupDeletedPrimitives() {

@@ -27,12 +27,19 @@ import javax.swing.table.AbstractTableModel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.osm.DataSetListener;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSetListener;
+import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
+import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
+import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
+import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction;
 import org.openstreetmap.josm.gui.layer.DataChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -87,7 +94,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     /* --------------------------------------------------------------------------- */
     /* Interface DataSetListener                                                   */
     /* --------------------------------------------------------------------------- */
-    public void dataChanged() {
+    public void dataChanged(DataChangedEvent event) {
         // just trigger a repaint - the display name of the relation members may
         // have changed
         Collection<RelationMember> sel = getSelectedMembers();
@@ -95,34 +102,34 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         setSelectedMembers(sel);
     }
 
-    public void nodeMoved(Node node) {/* ignore */}
-    public void primtivesAdded(Collection<? extends OsmPrimitive> added) {/* ignore */}
+    public void nodeMoved(NodeMovedEvent event) {/* ignore */}
+    public void primtivesAdded(PrimitivesAddedEvent event) {/* ignore */}
 
-    public void primtivesRemoved(Collection<? extends OsmPrimitive> removed) {
+    public void primtivesRemoved(PrimitivesRemovedEvent event) {
         // ignore - the relation in the editor might become out of sync with the relation
         // in the dataset. We will deal with it when the relation editor is closed or
         // when the changes in the editor are applied.
     }
 
-    public void relationMembersChanged(Relation r) {
+    public void relationMembersChanged(RelationMembersChangedEvent event) {
         // ignore - the relation in the editor might become out of sync with the relation
         // in the dataset. We will deal with it when the relation editor is closed or
         // when the changes in the editor are applied.
     }
 
-    public void tagsChanged(OsmPrimitive prim) {
+    public void tagsChanged(TagsChangedEvent event) {
         // just refresh the respective table cells
         //
         Collection<RelationMember> sel = getSelectedMembers();
         for (int i=0; i < members.size();i++) {
-            if (members.get(i).getMember() == prim) {
+            if (members.get(i).getMember() == event.getPrimitive()) {
                 fireTableCellUpdated(i, 1 /* the column with the primitive name */);
             }
         }
         setSelectedMembers(sel);
     }
 
-    public void wayNodesChanged(Way way) {/* ignore */}
+    public void wayNodesChanged(WayNodesChangedEvent event) {/* ignore */}
     /* --------------------------------------------------------------------------- */
 
     public void addMemberModelListener(IMemberModelListener listener) {

@@ -32,18 +32,23 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.DataSetListener;
 import org.openstreetmap.josm.data.osm.NameFormatter;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSetListener;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
+import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
+import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
+import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
+import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.DataChangeListener;
@@ -139,22 +144,14 @@ public class RelationListDialog extends ToggleDialog implements MapView.LayerCha
     @Override public void showNotify() {
         MapView.addLayerChangeListener(this);
         MapView.addLayerChangeListener(newAction);
-        // Register as a data set listener for the current edit layer only.
-        // See also activeLayerChanged
-        if (Main.main.getEditLayer() != null) {
-            Main.main.getEditLayer().data.addDataSetListener(this);
-        }
-        dataChanged();
+        DatasetEventManager.getInstance().addDatasetListener(this, true);
+        dataChanged(Main.main.getEditLayer());
     }
 
     @Override public void hideNotify() {
         MapView.removeLayerChangeListener(this);
         MapView.removeLayerChangeListener(newAction);
-        // unregistering from *all* data layer is somewhat overkill but it
-        // doesn't harm either.
-        for (OsmDataLayer layer:Main.map.mapView.getLayersOfType(OsmDataLayer.class)) {
-            layer.data.removeDataSetListener(this);
-        }
+        DatasetEventManager.getInstance().removeDatasetListener(this);
     }
 
     /**
@@ -700,13 +697,10 @@ public class RelationListDialog extends ToggleDialog implements MapView.LayerCha
     /* LayerChangeListener                                                                */
     /* ---------------------------------------------------------------------------------- */
     public void activeLayerChange(Layer a, Layer b) {
-        initFromLayer(b);
         if (a != null && a instanceof OsmDataLayer) {
-            ((OsmDataLayer)a).data.removeDataSetListener(this);
             ((OsmDataLayer)a).listenerDataChanged.remove(this);
         }
         if (b != null && b instanceof OsmDataLayer) {
-            ((OsmDataLayer)b).data.addDataSetListener(this);
             ((OsmDataLayer)b).listenerDataChanged.add(this);
         }
 
@@ -718,74 +712,39 @@ public class RelationListDialog extends ToggleDialog implements MapView.LayerCha
     /* DataSetListener                                                                    */
     /* ---------------------------------------------------------------------------------- */
 
-    public void nodeMoved(Node node) {/* irrelevant in this context */}
+    public void nodeMoved(NodeMovedEvent event) {/* irrelevant in this context */}
 
-    public void wayNodesChanged(Way way) {/* irrelevant in this context */}
+    public void wayNodesChanged(WayNodesChangedEvent event) {/* irrelevant in this context */}
 
-    public void primtivesAdded(final Collection<? extends OsmPrimitive> added) {
-        Runnable task = new Runnable() {
-            public void run() {
-                model.addRelations(added);
-            }
-        };
-        if (SwingUtilities.isEventDispatchThread()) {
-            task.run();
-        } else {
-            SwingUtilities.invokeLater(task);
-        }
+    public void primtivesAdded(final PrimitivesAddedEvent event) {
+        model.addRelations(event.getPrimitives());
     }
 
-    public void primtivesRemoved(final Collection<? extends OsmPrimitive> removed) {
-        Runnable task = new Runnable() {
-            public void run() {
-                model.removeRelations(removed);
-            }
-        };
-        if (SwingUtilities.isEventDispatchThread()) {
-            task.run();
-        } else {
-            SwingUtilities.invokeLater(task);
-        }
+    public void primtivesRemoved(final PrimitivesRemovedEvent event) {
+        model.removeRelations(event.getPrimitives());
     }
 
-    public void relationMembersChanged(final Relation r) {
-        Runnable task = new Runnable() {
-            public void run() {
-                List<Relation> sel = model.getSelectedRelations();
-                model.sort();
-                model.setSelectedRelations(sel);
-                displaylist.repaint();
-            }
-        };
-        if (SwingUtilities.isEventDispatchThread()) {
-            task.run();
-        } else {
-            SwingUtilities.invokeLater(task);
-        }
+    public void relationMembersChanged(final RelationMembersChangedEvent event) {
+        List<Relation> sel = model.getSelectedRelations();
+        model.sort();
+        model.setSelectedRelations(sel);
+        displaylist.repaint();
     }
 
-    public void tagsChanged(OsmPrimitive prim) {
+    public void tagsChanged(TagsChangedEvent event) {
+        OsmPrimitive prim = event.getPrimitive();
         if (prim == null || ! (prim instanceof Relation))
             return;
-        Runnable task = new Runnable() {
-            public void run() {
-                // trigger a sort of the relation list because the display name may
-                // have changed
-                //
-                List<Relation> sel = model.getSelectedRelations();
-                model.sort();
-                model.setSelectedRelations(sel);
-                displaylist.repaint();
-            }
-        };
-        if (SwingUtilities.isEventDispatchThread()) {
-            task.run();
-        } else {
-            SwingUtilities.invokeLater(task);
-        }
+        // trigger a sort of the relation list because the display name may
+        // have changed
+        //
+        List<Relation> sel = model.getSelectedRelations();
+        model.sort();
+        model.setSelectedRelations(sel);
+        displaylist.repaint();
     }
 
-    public void dataChanged() {
+    public void dataChanged(DataChangedEvent event) {
         Layer l = Main.main.getEditLayer();
         if (l != null) {
             initFromLayer(l);

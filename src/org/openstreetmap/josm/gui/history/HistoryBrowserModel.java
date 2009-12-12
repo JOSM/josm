@@ -4,16 +4,13 @@ package org.openstreetmap.josm.gui.history;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Observable;
-import java.util.logging.Logger;
 
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.DataSetListener;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -22,6 +19,14 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSetListener;
+import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
+import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
+import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
+import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
@@ -29,6 +34,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.DataChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -58,9 +64,8 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  *
  * @see HistoryBrowser
  */
-public class HistoryBrowserModel extends Observable implements MapView.LayerChangeListener, DataSetListener, DataChangeListener {
-
-    private static Logger logger = Logger.getLogger(HistoryBrowserModel.class.getName());
+public class HistoryBrowserModel extends Observable implements LayerChangeListener, DataSetListener, DataChangeListener {
+    //private static Logger logger = Logger.getLogger(HistoryBrowserModel.class.getName());
 
     /** the history of an OsmPrimitive */
     private History history;
@@ -776,54 +781,56 @@ public class HistoryBrowserModel extends Observable implements MapView.LayerChan
     /* ---------------------------------------------------------------------- */
     /* DataSetListener                                                        */
     /* ---------------------------------------------------------------------- */
-    public void nodeMoved(Node node) {
+    public void nodeMoved(NodeMovedEvent event) {
+        Node node = event.getNode();
         if (!node.isNew() && node.getId() == history.getId()) {
             setLatest(new HistoryPrimitiveBuilder().build(node));
         }
     }
 
-    public void primtivesAdded(Collection<? extends OsmPrimitive> added) {
-        if (added == null || added.isEmpty()) return;
-        for (OsmPrimitive p: added) {
+    public void primtivesAdded(PrimitivesAddedEvent event) {
+        for (OsmPrimitive p: event.getPrimitives()) {
             if (canShowAsLatest(p)) {
                 setLatest(new HistoryPrimitiveBuilder().build(p));
             }
         }
     }
 
-    public void primtivesRemoved(Collection<? extends OsmPrimitive> removed) {
-        if (removed == null || removed.isEmpty()) return;
-        for (OsmPrimitive p: removed) {
+    public void primtivesRemoved(PrimitivesRemovedEvent event) {
+        for (OsmPrimitive p: event.getPrimitives()) {
             if (!p.isNew() && p.getId() == history.getId()) {
                 setLatest(null);
             }
         }
     }
 
-    public void relationMembersChanged(Relation r) {
+    public void relationMembersChanged(RelationMembersChangedEvent event) {
+        Relation r = event.getRelation();
         if (!r.isNew() && r.getId() == history.getId()) {
             setLatest(new HistoryPrimitiveBuilder().build(r));
         }
     }
 
-    public void tagsChanged(OsmPrimitive prim) {
+    public void tagsChanged(TagsChangedEvent event) {
+        OsmPrimitive prim = event.getPrimitive();
         if (!prim.isNew() && prim.getId() == history.getId()) {
             setLatest(new HistoryPrimitiveBuilder().build(prim));
         }
     }
 
-    public void wayNodesChanged(Way way) {
+    public void wayNodesChanged(WayNodesChangedEvent event) {
+        Way way = event.getChangedWay();
         if (!way.isNew() && way.getId() == history.getId()) {
             setLatest(new HistoryPrimitiveBuilder().build(way));
         }
     }
 
-    public void dataChanged() {
+    public void dataChanged(DataChangedEvent event) {
         dataChanged(getEditLayer());
     }
 
     /* ---------------------------------------------------------------------- */
-    /* DataChangeListener                                                    */
+    /* DataChangeListener                                                     */
     /* ---------------------------------------------------------------------- */
     public void dataChanged(OsmDataLayer l) {
         if (l != getEditLayer()) return;

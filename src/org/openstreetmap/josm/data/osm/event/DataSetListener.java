@@ -19,9 +19,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
-package org.openstreetmap.josm.data.osm;
+package org.openstreetmap.josm.data.osm.event;
 
-import java.util.Collection;
 
 /**
  * A listener listening for all DataSet changes.
@@ -36,7 +35,7 @@ public interface DataSetListener {
      *
      * @param added A collection of newly-visible primitives
      */
-    void primtivesAdded(Collection<? extends OsmPrimitive> added);
+    void primtivesAdded(PrimitivesAddedEvent event);
 
     /**
      * A bunch of primitives were removed from the DataSet, or preexisting
@@ -44,7 +43,7 @@ public interface DataSetListener {
      *
      * @param removed A collection of newly-invisible primitives
      */
-    void primtivesRemoved(Collection<? extends OsmPrimitive> removed);
+    void primtivesRemoved(PrimitivesRemovedEvent event);
 
     /**
      * There was some change in the tag set of a primitive. It can have been
@@ -52,30 +51,30 @@ public interface DataSetListener {
      *
      * @param prim the primitive, whose tags were affected.
      */
-    void tagsChanged(OsmPrimitive prim);
+    void tagsChanged(TagsChangedEvent event);
 
     /**
      * A node's coordinates were modified.
      * @param node The node that was moved.
      */
-    void nodeMoved(Node node);
+    void nodeMoved(NodeMovedEvent event);
 
     /**
      * A way's node list was changed.
      * @param way The way that was modified.
      */
-    void wayNodesChanged(Way way);
+    void wayNodesChanged(WayNodesChangedEvent event);
 
     /**
      * A relation's members have changed.
      * @param relation The relation that was modified.
      */
-    void relationMembersChanged(Relation r);
+    void relationMembersChanged(RelationMembersChangedEvent event);
 
     /**
      * Called after big changes in dataset. Usually other events are stopped using Dataset.beginUpdate() and
      * after operation is completed (Dataset.endUpdate()), {@link #dataChanged()} is called.
      */
-    void dataChanged();
+    void dataChanged(DataChangedEvent event);
 
 }

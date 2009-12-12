@@ -245,9 +245,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         fireLayerAdded(layer);
         if (layer instanceof OsmDataLayer || activeLayer == null) {
             // autoselect the new layer
-            Layer old = activeLayer;
             setActiveLayer(layer);
-            fireActiveLayerChanged(old, layer);
         }
         layer.addPropertyChangeListener(this);
         AudioPlayer.reset();
