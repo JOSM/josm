@@ -1140,6 +1140,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         setDeleted(data.isDeleted());
         setModified(data.isModified());
         setVisible(data.isVisible());
+        setIncomplete(data.isIncomplete());
     }
 
     /**
@@ -1157,6 +1158,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         data.setDeleted(isDeleted());
         data.setModified(isModified());
         data.setVisible(isVisible());
+        data.setIncomplete(isIncomplete());
         data.setChangesetId(changesetId);
     }
 

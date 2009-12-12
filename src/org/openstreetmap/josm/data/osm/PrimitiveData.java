@@ -35,12 +35,14 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
         this.user = data.user;
         this.version = data.version;
         this.timestamp = data.timestamp;
+        this.incomplete = data.incomplete;
     }
 
     private final Map<String, String> keys = new HashMap<String, String>();
     private boolean modified;
     private boolean visible = true;
     private boolean deleted;
+    private boolean incomplete;
     private long id;
     private User user;
     private int version;
@@ -101,6 +103,12 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
     public Map<String, String> getKeys() {
         return keys;
     }
+    public boolean isIncomplete() {
+        return incomplete;
+    }
+    public void setIncomplete(boolean incomplete) {
+        this.incomplete = incomplete;
+    }
 
     public void clearOsmId() {
         id = OsmPrimitive.generateUniqueId();
@@ -121,6 +129,9 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
         }
         if (deleted) {
             builder.append("D");
+        }
+        if (incomplete) {
+            builder.append("I");
         }
 
         return builder.toString();
