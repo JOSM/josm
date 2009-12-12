@@ -60,8 +60,34 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
     /**
      * The listener of the active layer changes. You may register/deregister yourself
      * while an LayerChangeListener - action is executed.
+     * 
+     * @deprecated use {@see #addLayerChangeListener(LayerChangeListener)}
+     * and {@see #removeLayerChangeListener(LayerChangeListener)}
      */
+    @Deprecated
     public static final Collection<LayerChangeListener> listeners = new CopyOnWriteArrayList<LayerChangeListener>();
+
+    /**
+     * Adds a layer change listener
+     * 
+     * @param listener the listener. Ignored if null or already registered.
+     */
+    public static void addLayerChangeListener(LayerChangeListener listener) {
+        if (listener != null && ! listeners.contains(listener)) {
+            listeners.add(listener);
+        }
+    }
+
+    /**
+     * Removes a layer change listener
+     * 
+     * @param listener the listener. Ignored if null or already registered.
+     */
+    public static void removeLayerChangeListener(LayerChangeListener listener) {
+        if (listener != null && listeners.contains(listener)) {
+            listeners.remove(listener);
+        }
+    }
 
     /**
      * The visibility state of the layer.
