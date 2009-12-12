@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,8 +50,45 @@ public class Preferences {
      */
     private File preferencesDirFile = null;
 
+    public static interface PreferenceChangeEvent{
+        public String getKey();
+        public String getOldValue();
+        public String getNewValue();
+    }
+
     public static interface PreferenceChangedListener {
-        void preferenceChanged(String key, String newValue);
+        void preferenceChanged(PreferenceChangeEvent e);
+    }
+
+    private static class DefaultPreferenceChangeEvent implements PreferenceChangeEvent {
+        private String key;
+        private String oldValue;
+        private String newValue;
+
+        public DefaultPreferenceChangeEvent(String key, String oldValue, String newValue) {
+            this.key = key;
+            this.oldValue = oldValue;
+            this.newValue = newValue;
+        }
+
+        public String getKey() {
+            return key;
+        }
+        public void setKey(String key) {
+            this.key = key;
+        }
+        public String getOldValue() {
+            return oldValue;
+        }
+        public void setOldValue(String oldValue) {
+            this.oldValue = oldValue;
+        }
+        public String getNewValue() {
+            return newValue;
+        }
+        public void setNewValue(String newValue) {
+            this.newValue = newValue;
+        }
     }
 
     /**
@@ -95,7 +133,27 @@ public class Preferences {
         }
     }
 
-    public final ArrayList<PreferenceChangedListener> listener = new ArrayList<PreferenceChangedListener>();
+    private final CopyOnWriteArrayList<PreferenceChangedListener> listeners = new CopyOnWriteArrayList<PreferenceChangedListener>();
+
+
+    public void addPreferenceChangeListener(PreferenceChangedListener listener) {
+        if (listener != null && ! listeners.contains(listener)) {
+            listeners.add(listener);
+        }
+    }
+
+    public void removePreferenceChangeListener(PreferenceChangedListener listener) {
+        if (listener != null && listeners.contains(listener)) {
+            listeners.remove(listener);
+        }
+    }
+
+    protected void firePrefrenceChanged(String key, String oldValue, String newValue) {
+        PreferenceChangeEvent evt = new DefaultPreferenceChangeEvent(key, oldValue, newValue);
+        for (PreferenceChangedListener l : listeners) {
+            l.preferenceChanged(evt);
+        }
+    }
 
     /**
      * Map the property name to the property object.
@@ -288,7 +346,7 @@ public class Preferences {
             } catch(IOException e){
                 System.out.println(tr("Warning: failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
             }
-            firePreferenceChanged(key, value);
+            firePrefrenceChanged(key, oldvalue, value);
             return true;
         }
         return false;
@@ -310,11 +368,6 @@ public class Preferences {
         return put(key, Long.toString(value));
     }
 
-    private final void firePreferenceChanged(final String key, final String value) {
-        for (final PreferenceChangedListener l : listener) {
-            l.preferenceChanged(key, value);
-        }
-    }
 
     /**
      * Called after every put. In case of a problem, do nothing but output the error
@@ -617,8 +670,9 @@ public class Preferences {
 
     synchronized public String getCollectionAsString(final String key) {
         String s = get(key);
-        if(s != null && s.length() != 0)
+        if(s != null && s.length() != 0) {
             s = s.replaceAll("\u001e",",");
+        }
         return s;
     }
 

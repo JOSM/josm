@@ -29,6 +29,8 @@ import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.APIDataSet;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
@@ -44,7 +46,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * the upload changeset and the strategy for opening/closing a changeset.
  *
  */
-public class UploadDialog extends JDialog implements PropertyChangeListener{
+public class UploadDialog extends JDialog implements PropertyChangeListener, PreferenceChangedListener{
     protected static final Logger logger = Logger.getLogger(UploadDialog.class.getName());
 
     /**  the unique instance of the upload dialog */
@@ -220,6 +222,8 @@ public class UploadDialog extends JDialog implements PropertyChangeListener{
                     }
                 }
         );
+
+        Main.pref.addPreferenceChangeListener(this);
     }
 
     /**
@@ -450,6 +454,19 @@ public class UploadDialog extends JDialog implements PropertyChangeListener{
             } else {
                 tpConfigPanels.setTitleAt(1, tr("Tags of changeset {0}", cs.getId()));
             }
+        }
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /* Interface PreferenceChangedListener                                        */
+    /* -------------------------------------------------------------------------- */
+    public void preferenceChanged(PreferenceChangeEvent e) {
+        if (e.getKey() == null || ! e.getKey().equals("osm-server.url"))
+            return;
+        if (e.getNewValue() == null) {
+            setTitle(tr("Upload"));
+        } else {
+            setTitle(tr("Upload to ''{0}''", e.getNewValue()));
         }
     }
 }

@@ -33,6 +33,7 @@ import javax.swing.JSeparator;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -112,7 +113,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
         this.fromServer = fromServer;
         setAssociatedFile(associatedFile);
         this.data = data;
-        Main.pref.listener.add(this);
+        Main.pref.addPreferenceChangeListener(this);
     }
 
     /**
@@ -283,13 +284,13 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
                 new JMenuItem(new LayerListPopup.InfoAction(this))};
     }
 
-    public void preferenceChanged(String key, String newValue) {
-        if (Main.map != null && (key.equals("draw.rawgps.lines") || key.equals("draw.rawgps.lines.force"))) {
+    public void preferenceChanged(PreferenceChangeEvent e) {
+        if (Main.map != null && (e.getKey().equals("draw.rawgps.lines") || e.getKey().equals("draw.rawgps.lines.force"))) {
             Main.map.repaint();
         }
     }
 
     @Override public void destroy() {
-        Main.pref.listener.remove(RawGpsLayer.this);
+        Main.pref.removePreferenceChangeListener(this);
     }
 }

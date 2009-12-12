@@ -9,7 +9,11 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
-public class ChangesetCache {
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+
+public class ChangesetCache implements PreferenceChangedListener{
     static private final Logger logger = Logger.getLogger(ChangesetCache.class.getName());
     static private final ChangesetCache instance = new ChangesetCache();
 
@@ -23,6 +27,7 @@ public class ChangesetCache {
         new CopyOnWriteArrayList<ChangesetCacheListener>();
 
     private ChangesetCache() {
+        Main.pref.addPreferenceChangeListener(this);
     }
 
     public void addChangesetCacheListener(ChangesetCacheListener listener) {
@@ -133,5 +138,18 @@ public class ChangesetCache {
             }
         }
         return ret;
+    }
+
+    /* ------------------------------------------------------------------------- */
+    /* interface PreferenceChangedListener                                       */
+    /* ------------------------------------------------------------------------- */
+    public void preferenceChanged(PreferenceChangeEvent e) {
+        if (e.getKey() == null || ! e.getKey().equals("osm-server.url"))
+            return;
+
+        // clear the cache when the API url changes
+        if (e.getOldValue() == null || e.getNewValue() == null || !e.getOldValue().equals(e.getNewValue())) {
+            clear();
+        }
     }
 }

@@ -13,12 +13,12 @@
 	<property name="test.dir" value="test" />
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build"/>
-    <!-- build parameter: compression level (ant -Dclevel=N)
+	<!-- build parameter: compression level (ant -Dclevel=N)
              N ranges from 0 (no compression) to 9 (maximum compression)
              default: 9 -->
-    <condition property="clevel" value="${clevel}" else="9">
-        <isset property="clevel" />
-    </condition>
+	<condition property="clevel" value="${clevel}" else="9">
+		<isset property="clevel" />
+	</condition>
 
 	<!-- Java classpath addition (all jar files to compile tests with this) -->
 	<path id="classpath">
@@ -27,11 +27,11 @@
 		</fileset>
 	</path>
 
-	
+
 	<!--
 	  ** Used by Eclipse ant builder for updating 
 	  ** the REVISION file used by JOSM
-	--> 	  
+	-->
 	<target name="create-revision-eclipse">
 		<property name="revision.dir" value="bin"/>
 		<antcall target="create-revision" />
@@ -39,19 +39,19 @@
 
 	<!--
 	  ** Creates the REVISION file to be included in the distribution
-	  --> 	  
+	  -->
 	<target name="create-revision">
 		<property name="revision.dir" value="${build.dir}"/>
 		<exec append="false" output="REVISION.XML" executable="svn" failifexecutionfails="false">
-				<env key="LANG" value="C"/>
-				<arg value="info"/>
-				<arg value="--xml"/>
-				<arg value="."/>
+			<env key="LANG" value="C"/>
+			<arg value="info"/>
+			<arg value="--xml"/>
+			<arg value="."/>
 		</exec>
 		<xmlproperty file="REVISION.XML" prefix="version" keepRoot="false" collapseAttributes="true"/>
 		<delete file="REVISION.XML" />
 		<tstamp>
-		      <format property="build.tstamp" pattern="yyyy-MM-dd HH:mm:ss"/>
+			<format property="build.tstamp" pattern="yyyy-MM-dd HH:mm:ss"/>
 		</tstamp>
 
 		<property name="version.entry.commit.revision" value="UNKNOWN"/>
@@ -61,9 +61,9 @@
 Revision: ${version.entry.commit.revision}
 Is-Local-Build: true
 Build-Date: ${build.tstamp}		
-</echo>						
+</echo>
 	</target>
-		
+
 
 	<target name="dist" depends="compile,create-revision">
 
@@ -77,21 +77,21 @@ Build-Date: ${build.tstamp}
 		<delete file="REVISION"/>
 		<property name="version.entry.commit.revision" value="UNKNOWN"/>
 		<property name="version.entry.commit.date" value="UNKNOWN"/>
-	    <echo>Revision ${version.entry.commit.revision}</echo>
+		<echo>Revision ${version.entry.commit.revision}</echo>
 		<copy file="CONTRIBUTION" todir="build"/>
 		<copy file="README" todir="build"/>
 		<copy file="LICENSE" todir="build"/>
 
-        <!-- styles -->
+		<!-- styles -->
 		<copy file="styles/standard/elemstyles.xml" todir="build/styles/standard"/>
 
-        <!-- css-->
+		<!-- css-->
 		<copy file="src/org/openstreetmap/josm/gui/help/help-browser.css" todir="build/org/openstreetmap/josm/gui/help"/>
 
 		<!-- create josm-custom.jar -->
 		<delete file="dist/josm-custom.jar"/>
 		<jar destfile="dist/josm-custom.jar" basedir="build" level="${clevel}">
-        <!-- add attribute excludes="**/*BZip2*,**/*Bzip2*" to create a non-bzip2 supporting jar -->
+			<!-- add attribute excludes="**/*BZip2*,**/*Bzip2*" to create a non-bzip2 supporting jar -->
 			<manifest>
 				<attribute name="Main-class" value="JOSM" />
 				<attribute name="Main-Version" value="${version.entry.commit.revision} SVN"/>
@@ -165,21 +165,26 @@ Build-Date: ${build.tstamp}
 			<compilerarg value="-Xlint:deprecation"/>
 			<compilerarg value="-Xlint:unchecked"/>
 		</javac>
+		<javac srcdir="${src.dir}:${test.dir}/functional" classpathref="test.classpath" destdir="${test.dir}/${build.dir}"
+						target="1.5" source="1.5" debug="on" encoding="UTF-8">
+			<compilerarg value="-Xlint:deprecation"/>
+			<compilerarg value="-Xlint:unchecked"/>
+		</javac>
 	</target>
 
-    <target name="test" depends="test-compile">
-        <junit printsummary="yes">
-        	<sysproperty key="josm.home" value="${test.dir}/config/unit-josm.home"/>
-            <classpath>
-                <path refid="test.classpath"/>
-                <pathelement path="${test.dir}/${build.dir}"/>
-            	<pathelement path="${test.dir}/config"/>
-            </classpath>
-            <formatter type="plain"/>
-            <batchtest fork="no" todir="${test.dir}/report">
-                <fileset dir="${test.dir}/unit" includes="**/*.java"/>
-            </batchtest>
-        </junit>
-    </target>
+	<target name="test" depends="test-compile">
+		<junit printsummary="yes">
+			<sysproperty key="josm.home" value="${test.dir}/config/unit-josm.home"/>
+			<classpath>
+				<path refid="test.classpath"/>
+				<pathelement path="${test.dir}/${build.dir}"/>
+				<pathelement path="${test.dir}/config"/>
+			</classpath>
+			<formatter type="plain"/>
+			<batchtest fork="no" todir="${test.dir}/report">
+				<fileset dir="${test.dir}/unit" includes="**/*.java"/>
+			</batchtest>
+		</junit>
+	</target>
 
 </project>
