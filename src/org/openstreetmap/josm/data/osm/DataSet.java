@@ -202,7 +202,7 @@ public class DataSet implements Cloneable {
         }
         allPrimitives.add(primitive);
         primitive.setDataset(this);
-        firePrimitivesAdded(Collections.singletonList(primitive));
+        firePrimitivesAdded(Collections.singletonList(primitive), false);
     }
 
     public OsmPrimitive addPrimitive(PrimitiveData data) {
@@ -245,7 +245,7 @@ public class DataSet implements Cloneable {
         allPrimitives.remove(primitive);
         primitive.setDataset(null);
         errors.remove(primitive);
-        firePrimitivesRemoved(Collections.singletonList(primitive));
+        firePrimitivesRemoved(Collections.singletonList(primitive), false);
     }
 
     /*---------------------------------------------------
@@ -836,12 +836,12 @@ public class DataSet implements Cloneable {
         fireEvent(new DataChangedEvent(this));
     }
 
-    void firePrimitivesAdded(Collection<? extends OsmPrimitive> added) {
-        fireEvent(new PrimitivesAddedEvent(this, added));
+    void firePrimitivesAdded(Collection<? extends OsmPrimitive> added, boolean wasIncomplete) {
+        fireEvent(new PrimitivesAddedEvent(this, added, wasIncomplete));
     }
 
-    void firePrimitivesRemoved(Collection<? extends OsmPrimitive> removed) {
-        fireEvent(new PrimitivesRemovedEvent(this, removed));
+    void firePrimitivesRemoved(Collection<? extends OsmPrimitive> removed, boolean wasComplete) {
+        fireEvent(new PrimitivesRemovedEvent(this, removed, wasComplete));
     }
 
     void fireTagsChanged(OsmPrimitive prim) {

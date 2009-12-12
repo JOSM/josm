@@ -51,7 +51,6 @@ import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
-import org.openstreetmap.josm.gui.layer.DataChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.GBC;
@@ -65,7 +64,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * We don't have such dialogs for nodes, segments, and ways, because those
  * objects are visible on the map and can be selected there. Relations are not.
  */
-public class RelationListDialog extends ToggleDialog implements MapView.LayerChangeListener, DataSetListener, DataChangeListener {
+public class RelationListDialog extends ToggleDialog implements DataSetListener {
     //private static final Logger logger = Logger.getLogger(RelationListDialog.class.getName());
 
     /** The display list. */
@@ -142,14 +141,12 @@ public class RelationListDialog extends ToggleDialog implements MapView.LayerCha
     }
 
     @Override public void showNotify() {
-        MapView.addLayerChangeListener(this);
         MapView.addLayerChangeListener(newAction);
         DatasetEventManager.getInstance().addDatasetListener(this, true);
-        dataChanged(Main.main.getEditLayer());
+        dataChanged(null);
     }
 
     @Override public void hideNotify() {
-        MapView.removeLayerChangeListener(this);
         MapView.removeLayerChangeListener(newAction);
         DatasetEventManager.getInstance().removeDatasetListener(this);
     }
@@ -520,25 +517,6 @@ public class RelationListDialog extends ToggleDialog implements MapView.LayerCha
             return relations.get(idx);
         }
 
-        public synchronized void setRelations(Collection<Relation> relations) {
-            List<Relation> sel =  getSelectedRelations();
-            this.relations.clear();
-            if (relations == null) {
-                selectionModel.clearSelection();
-                fireContentsChanged(this,0,getSize());
-                return;
-
-            }
-            for (Relation r: relations) {
-                if (! r.isDeleted() && r.isVisible() && !r.isIncomplete()) {
-                    this.relations.add(r);
-                }
-            }
-            sort();
-            fireIntervalAdded(this, 0, getSize());
-            setSelectedRelations(sel);
-        }
-
         public synchronized void sort() {
             Collections.sort(
                     relations,
@@ -552,6 +530,29 @@ public class RelationListDialog extends ToggleDialog implements MapView.LayerCha
             );
         }
 
+        private boolean isValid(Relation r) {
+            return !r.isDeleted() && r.isVisible() && !r.isIncomplete();
+        }
+
+        public synchronized void setRelations(Collection<Relation> relations) {
+            List<Relation> sel =  getSelectedRelations();
+            this.relations.clear();
+            if (relations == null) {
+                selectionModel.clearSelection();
+                fireContentsChanged(this,0,getSize());
+                return;
+
+            }
+            for (Relation r: relations) {
+                if (isValid(r)) {
+                    this.relations.add(r);
+                }
+            }
+            sort();
+            fireIntervalAdded(this, 0, getSize());
+            setSelectedRelations(sel);
+        }
+
         /**
          * Add all relations in <code>addedPrimitives</code> to the model for the
          * relation list dialog
@@ -560,17 +561,20 @@ public class RelationListDialog extends ToggleDialog implements MapView.LayerCha
          * ways, and relations.
          */
         public synchronized void addRelations(Collection<? extends OsmPrimitive> addedPrimitives) {
-            if (addedPrimitives == null || addedPrimitives.isEmpty()) return;
             boolean added = false;
             for (OsmPrimitive p: addedPrimitives) {
                 if (! (p instanceof Relation)) {
                     continue;
                 }
-                if (relations.contains(p)) {
+
+                Relation r = (Relation)p;
+                if (relations.contains(r)) {
                     continue;
                 }
-                relations.add((Relation)p);
-                added = true;
+                if (isValid(r)) {
+                    relations.add(r);
+                    added = true;
+                }
             }
             if (added) {
                 List<Relation> sel = getSelectedRelations();
@@ -694,21 +698,6 @@ public class RelationListDialog extends ToggleDialog implements MapView.LayerCha
     }
 
     /* ---------------------------------------------------------------------------------- */
-    /* LayerChangeListener                                                                */
-    /* ---------------------------------------------------------------------------------- */
-    public void activeLayerChange(Layer a, Layer b) {
-        if (a != null && a instanceof OsmDataLayer) {
-            ((OsmDataLayer)a).listenerDataChanged.remove(this);
-        }
-        if (b != null && b instanceof OsmDataLayer) {
-            ((OsmDataLayer)b).listenerDataChanged.add(this);
-        }
-
-    }
-    public void layerRemoved(Layer a) {/* irrelevant in this context */}
-    public void layerAdded(Layer a) {/* irrelevant in this context */}
-
-    /* ---------------------------------------------------------------------------------- */
     /* DataSetListener                                                                    */
     /* ---------------------------------------------------------------------------------- */
 
@@ -747,15 +736,6 @@ public class RelationListDialog extends ToggleDialog implements MapView.LayerCha
     public void dataChanged(DataChangedEvent event) {
         Layer l = Main.main.getEditLayer();
         if (l != null) {
-            initFromLayer(l);
-        }
-    }
-
-    /* ---------------------------------------------------------------------------------- */
-    /* DataSetListener                                                                    */
-    /* ---------------------------------------------------------------------------------- */
-    public void dataChanged(OsmDataLayer l) {
-        if (l != null && l == Main.main.getEditLayer()) {
             initFromLayer(l);
         }
     }

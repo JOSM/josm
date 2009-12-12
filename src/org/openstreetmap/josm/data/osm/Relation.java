@@ -216,6 +216,8 @@ public final class Relation extends OsmPrimitive {
         result.append(getUniqueId());
         result.append(" version=");
         result.append(getVersion());
+        result.append(" ");
+        result.append(getFlagsAsString());
         result.append(" [");
         for (RelationMember rm:getMembers()) {
             result.append(OsmPrimitiveType.from(rm.getMember()));

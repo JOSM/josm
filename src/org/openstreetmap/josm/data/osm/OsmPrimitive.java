@@ -563,9 +563,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         setModified(deleted);
         if (dataSet != null) {
             if (deleted) {
-                dataSet.firePrimitivesRemoved(Collections.singleton(this));
+                dataSet.firePrimitivesRemoved(Collections.singleton(this), false);
             } else {
-                dataSet.firePrimitivesAdded(Collections.singleton(this));
+                dataSet.firePrimitivesAdded(Collections.singleton(this), false);
             }
         }
     }
@@ -955,6 +955,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * use this only in the data initializing phase
      */
     public void cloneFrom(OsmPrimitive other) {
+        if (id != other.id && dataSet != null)
+            throw new DataIntegrityProblemException("Osm id cannot be changed after primitive was added to the dataset");
         setKeys(other.getKeys());
         id = other.id;
         timestamp = other.timestamp;
@@ -1209,6 +1211,13 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     private void setIncomplete(boolean incomplete) {
+        if (dataSet != null && incomplete != this.incomplete) {
+            if (incomplete) {
+                dataSet.firePrimitivesRemoved(Collections.singletonList(this), true);
+            } else {
+                dataSet.firePrimitivesAdded(Collections.singletonList(this), true);
+            }
+        }
         this.incomplete = incomplete;
     }
 
