@@ -20,7 +20,6 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
@@ -124,7 +123,7 @@ public class PluginInformation {
         if(oldcheck && mainversion > Version.getInstance().getVersion())
         {
             int myv = Version.getInstance().getVersion();
-            for(Map.Entry entry : attr.entrySet())
+            for(Map.Entry<Object, Object> entry : attr.entrySet())
             {
                 try {
                     String key = ((Attributes.Name)entry.getKey()).toString();

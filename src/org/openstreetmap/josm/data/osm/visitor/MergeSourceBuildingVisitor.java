@@ -47,6 +47,14 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         this.mappedPrimitives = new HashMap<OsmPrimitive, OsmPrimitive>();
     }
 
+    protected boolean isInSelectionBase(OsmPrimitive primitive) {
+        return selectionBase.getSelected().contains(primitive);
+    }
+
+    protected boolean isAlreadyRemembered(OsmPrimitive primitive) {
+        return mappedPrimitives.keySet().contains(primitive);
+    }
+
     /**
      * Remebers a node in the "hull"
      *
@@ -68,7 +76,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         if (isAlreadyRemembered(w))
             return;
         Way clone = new Way(w);
-        List<Node> newNodes = new ArrayList<Node>();
+        List<Node> newNodes = new ArrayList<Node>(w.getNodesCount());
         for (Node n: w.getNodes()) {
             newNodes.add((Node)mappedPrimitives.get(n));
         }
@@ -83,7 +91,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
      */
     protected void rememberRelation(Relation r) {
         Relation clone;
-        if (mappedPrimitives.keySet().contains(r)) {
+        if (isAlreadyRemembered(r)) {
             clone = (Relation)mappedPrimitives.get(r);
             clone.cloneFrom(r);
         } else {
@@ -98,7 +106,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         }
         clone.setMembers(newMembers);
 
-        if (! mappedPrimitives.keySet().contains(r)) {
+        if (!isAlreadyRemembered(r)) {
             mappedPrimitives.put(r, clone);
         }
     }
@@ -126,34 +134,20 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
     }
 
     protected void rememberNodeIncomplete(Node n) {
-        if (isAlreadyRemembered(n))
-            return;
-        Node clone = new Node(n);
-        clone.setIncomplete(true);
-        mappedPrimitives.put(n, clone);
+        if (!isAlreadyRemembered(n)) {
+            mappedPrimitives.put(n, new Node(n.getId()));
+        }
     }
 
     protected void rememberWayIncomplete(Way w) {
-        if (isAlreadyRemembered(w))
-            return;
-        Way clone = new Way(w);
-        clone.setNodes(null);
-        clone.setIncomplete(true);
-        mappedPrimitives.put(w, clone);
+        if (!isAlreadyRemembered(w)) {
+            mappedPrimitives.put(w, new Way(w.getId()));
+        }
     }
 
     protected void rememberRelationIncomplete(Relation r) {
-        Relation clone;
-        if (isAlreadyRemembered(r)) {
-            clone = (Relation)mappedPrimitives.get(r);
-            clone.cloneFrom(r);
-        } else {
-            clone = new Relation(r);
-        }
-        clone.setMembers(null);
-        clone.setIncomplete(true);
-        if (! isAlreadyRemembered(r)) {
-            mappedPrimitives.put(r, clone);
+        if (!isAlreadyRemembered(r)) {
+            mappedPrimitives.put(r, new Relation(r.getId()));
         }
     }
 
@@ -165,20 +159,10 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         // remember all nodes this way refers to ...
         //
         for (Node n: w.getNodes()) {
-            if (! isAlreadyRemembered(n)) {
-                n.visit(this);
-            }
+            n.visit(this);
         }
         // ... and the way itself
         rememberWay(w);
-    }
-
-    protected boolean isInSelectionBase(OsmPrimitive primitive) {
-        return selectionBase.getSelected().contains(primitive);
-    }
-
-    protected boolean isAlreadyRemembered(OsmPrimitive primitive) {
-        return mappedPrimitives.keySet().contains(primitive);
     }
 
     public void visit(Relation r) {

@@ -49,7 +49,7 @@ public class GpxWriter extends XmlWriter {
         out.println("<?xml version='1.0' encoding='UTF-8'?>");
         out.println("<gpx version=\"1.1\" creator=\"JOSM GPX export\" xmlns=\"http://www.topografix.com/GPX/1/1\"\n" +
                 "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n" +
-                "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">");
+        "    xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">");
         indent = "  ";
         writeMetaData();
         writeWayPoints();
@@ -59,6 +59,7 @@ public class GpxWriter extends XmlWriter {
         out.flush();
     }
 
+    @SuppressWarnings("unchecked")
     private void writeAttr(Map<String, Object> attr) {
         // FIXME this loop is evil, because it does not assure the
         // correct element order specified by the xml schema.
@@ -66,8 +67,8 @@ public class GpxWriter extends XmlWriter {
         for (Map.Entry<String, Object> ent : attr.entrySet()) {
             String k = ent.getKey();
             if (k.equals(GpxData.META_LINKS)) {
-                for (Object link : (Collection) ent.getValue()) {
-                    gpxLink((GpxLink) link);
+                for (GpxLink link : (Collection<GpxLink>) ent.getValue()) {
+                    gpxLink(link);
                 }
             } else {
                 simpleTag(k, ent.getValue().toString());
@@ -75,12 +76,15 @@ public class GpxWriter extends XmlWriter {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void writeMetaData() {
         Map<String, Object> attr = data.attr;
         openln("metadata");
 
         // write the description
-        if (attr.containsKey(GpxData.META_DESC)) simpleTag("desc", (String)attr.get(GpxData.META_DESC));
+        if (attr.containsKey(GpxData.META_DESC)) {
+            simpleTag("desc", (String)attr.get(GpxData.META_DESC));
+        }
 
         // write the author details
         if (attr.containsKey(GpxData.META_AUTHOR_NAME)
@@ -115,19 +119,21 @@ public class GpxWriter extends XmlWriter {
 
         // write links
         if(attr.containsKey(GpxData.META_LINKS)) {
-            for (Object link : (Collection) attr.get(GpxData.META_LINKS)) {
-                gpxLink((GpxLink) link);
+            for (GpxLink link : (Collection<GpxLink>) attr.get(GpxData.META_LINKS)) {
+                gpxLink(link);
             }
         }
 
         // write keywords
-        if (attr.containsKey(GpxData.META_KEYWORDS)) simpleTag("keywords", (String)attr.get(GpxData.META_KEYWORDS));
+        if (attr.containsKey(GpxData.META_KEYWORDS)) {
+            simpleTag("keywords", (String)attr.get(GpxData.META_KEYWORDS));
+        }
 
         Bounds bounds = data.recalculateBounds();
         if(bounds != null)
         {
             String b = "minlat=\"" + bounds.getMin().lat() + "\" minlon=\"" + bounds.getMin().lon() +
-                "\" maxlat=\"" + bounds.getMax().lat() + "\" maxlon=\"" + bounds.getMax().lon() + "\"" ;
+            "\" maxlat=\"" + bounds.getMax().lat() + "\" maxlon=\"" + bounds.getMax().lon() + "\"" ;
             inline("bounds", b);
         }
 

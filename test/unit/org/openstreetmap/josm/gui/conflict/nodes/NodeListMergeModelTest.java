@@ -28,7 +28,7 @@ public class NodeListMergeModelTest {
         .invoke();
     }
 
-    protected DefaultListSelectionModel inspectListSelectionModel(NodeListMergeModel model, String name) throws NoSuchFieldException, IllegalAccessException {
+    protected DefaultListSelectionModel inspectListSelectionModel(NodeListMergeModel model, String name) {
         return field(name).ofType(DefaultListSelectionModel.class)
         .in(model)
         .get();
@@ -60,11 +60,10 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesToTop_1() throws IllegalAccessException, NoSuchFieldException {
+    public void test_copyMyNodesToTop_1() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
@@ -84,12 +83,11 @@ public class NodeListMergeModelTest {
 
 
     @Test
-    public void test_copyMyNodesToTop_2() throws IllegalAccessException, NoSuchFieldException {
+    public void test_copyMyNodesToTop_2() {
         NodeListMergeModel model = new NodeListMergeModel();
 
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
@@ -116,12 +114,11 @@ public class NodeListMergeModelTest {
 
 
     @Test
-    public void test_copyMyNodesToTop_3() throws IllegalAccessException, NoSuchFieldException {
+    public void test_copyMyNodesToTop_3() {
         NodeListMergeModel model = new NodeListMergeModel();
 
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
@@ -144,12 +141,11 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesToTop_4() throws IllegalAccessException, NoSuchFieldException {
+    public void test_copyMyNodesToTop_4() {
         NodeListMergeModel model = new NodeListMergeModel();
 
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         myWay.addNode(new Node(4));
@@ -174,11 +170,10 @@ public class NodeListMergeModelTest {
 
 
     @Test
-    public void test_copyMyNodesToEnd_1() throws IllegalAccessException, NoSuchFieldException {
+    public void test_copyMyNodesToEnd_1() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
@@ -196,11 +191,10 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesToEnd_2() throws IllegalAccessException, NoSuchFieldException {
+    public void test_copyMyNodesToEnd_2() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
@@ -222,12 +216,11 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesToEnd_3() throws IllegalAccessException, NoSuchFieldException {
+    public void test_copyMyNodesToEnd_3() {
         NodeListMergeModel model = new NodeListMergeModel();
 
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         Way theirWay = new Way(1);
@@ -250,12 +243,11 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesToEnd_4() throws IllegalAccessException, NoSuchFieldException {
+    public void test_copyMyNodesToEnd_4() {
         NodeListMergeModel model = new NodeListMergeModel();
 
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
         myWay.addNode(new Node(4));
@@ -284,11 +276,10 @@ public class NodeListMergeModelTest {
     /* ----------------------------------------------------------------------------- */
 
     @Test
-    public void test_copyMyNodesBeforeCurrent_1() throws IllegalAccessException, NoSuchFieldException {
+    public void test_copyMyNodesBeforeCurrent_1() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -313,11 +304,10 @@ public class NodeListMergeModelTest {
 
 
     @Test
-    public void test_copyMyNodesBeforeCurrent_2() throws IllegalAccessException, NoSuchFieldException {
+    public void test_copyMyNodesBeforeCurrent_2() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -342,11 +332,10 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesBeforeCurrent_3() throws IllegalAccessException, NoSuchFieldException {
+    public void test_copyMyNodesBeforeCurrent_3() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -376,11 +365,10 @@ public class NodeListMergeModelTest {
     /* copyMyNodesAfterCurrent                                                       */
     /* ----------------------------------------------------------------------------- */
     @Test
-    public void test_copyMyNodesAfterCurrent_1() throws IllegalAccessException, NoSuchFieldException {
+    public void test_copyMyNodesAfterCurrent_1() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -405,11 +393,10 @@ public class NodeListMergeModelTest {
 
 
     @Test
-    public void test_copyMyNodesAfterCurrent_2() throws IllegalAccessException, NoSuchFieldException {
+    public void test_copyMyNodesAfterCurrent_2() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
@@ -436,11 +423,10 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesAfterCurrent_3() throws IllegalAccessException, NoSuchFieldException {
+    public void test_copyMyNodesAfterCurrent_3() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         myWay.addNode(new Node(3));
@@ -466,11 +452,10 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_copyMyNodesAfterCurrent_4() throws IllegalAccessException, NoSuchFieldException {
+    public void test_copyMyNodesAfterCurrent_4() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -500,11 +485,10 @@ public class NodeListMergeModelTest {
     /* moveUpMergedNodes                                                       */
     /* ----------------------------------------------------------------------------- */
     @Test
-    public void test_moveUpMergedNodes_1() throws IllegalAccessException, NoSuchFieldException {
+    public void test_moveUpMergedNodes_1() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -527,11 +511,10 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_moveUpMergedNodes_2() throws IllegalAccessException, NoSuchFieldException {
+    public void test_moveUpMergedNodes_2() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -558,11 +541,10 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_moveUpMergedNodes_3() throws IllegalAccessException, NoSuchFieldException {
+    public void test_moveUpMergedNodes_3() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -592,11 +574,10 @@ public class NodeListMergeModelTest {
     /* moveDownMergedNodes                                                       */
     /* ----------------------------------------------------------------------------- */
     @Test
-    public void test_moveDownMergedNodes_1() throws IllegalAccessException, NoSuchFieldException {
+    public void test_moveDownMergedNodes_1() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -619,11 +600,10 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_moveDownMergedNodes_2() throws IllegalAccessException, NoSuchFieldException {
+    public void test_moveDownMergedNodes_2() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);
@@ -650,11 +630,10 @@ public class NodeListMergeModelTest {
     }
 
     @Test
-    public void test_moveDownMergedNodes_3() throws IllegalAccessException, NoSuchFieldException {
+    public void test_moveDownMergedNodes_3() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1);
-        myWay.setIncomplete(false);
+        Way myWay = new Way(1, 1);
         myWay.addNode(new Node(1));
         myWay.addNode(new Node(2));
         Way theirWay = new Way(1);

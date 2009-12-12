@@ -244,11 +244,14 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     private int changesetId;
 
     /**
-     * Creates a new primitive for the given id. If the id > 0, the primitive is marked
-     * as incomplete.
+     * Creates a new primitive for the given id.
+     * 
+     * If allowNegativeId is set, provided id can be < 0 and will be set to primitive without any processing.
+     * If allowNegativeId is not set, then id will have to be 0 (in that case new unique id will be generated) or
+     * positive number.
      *
-     * @param id the id. > 0 required
-     * @param allowNegativeId Allows to set negative id. For internal use
+     * @param id the id
+     * @param allowNegativeId
      * @throws IllegalArgumentException thrown if id < 0 and allowNegativeId is false
      */
     protected OsmPrimitive(long id, boolean allowNegativeId) throws IllegalArgumentException {
@@ -1205,8 +1208,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return new SimplePrimitiveId(getUniqueId(), getType());
     }
 
-    //TODO This method should not be necessary, incomplete state should be handled internally by OsmPrimitive
-    public void setIncomplete(boolean incomplete) {
+    private void setIncomplete(boolean incomplete) {
         this.incomplete = incomplete;
     }
 

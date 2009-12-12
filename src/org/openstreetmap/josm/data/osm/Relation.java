@@ -170,6 +170,16 @@ public final class Relation extends OsmPrimitive {
         super(id, false);
     }
 
+    /**
+     * Creates new complete relation
+     * @param id
+     * @param version
+     */
+    public Relation(long id, int version) {
+        super(id, false);
+        setOsmId(id, version);
+    }
+
     @Override public void cloneFrom(OsmPrimitive osm) {
         super.cloneFrom(osm);
         // It's not necessary to clone members as RelationMember class is immutable

@@ -70,8 +70,7 @@ public class MergeSourceBuildingVisitorTest {
         DataSet source = new DataSet();
         Node n1 = new Node(1);
         Node n2 = new Node(2);
-        Way w1 = new Way(3);
-        w1.setIncomplete(false);
+        Way w1 = new Way(3, 1);
         w1.addNode(n1);
         w1.addNode(n2);
         source.addPrimitive(n1);
@@ -103,8 +102,7 @@ public class MergeSourceBuildingVisitorTest {
         DataSet source = new DataSet();
         Node n1 = new Node(1);
         Node n2 = new Node(2);
-        Way w1 = new Way(3);
-        w1.setIncomplete(false);
+        Way w1 = new Way(3, 1);
         w1.addNode(n1);
         w1.addNode(n2);
         source.addPrimitive(n1);
@@ -153,11 +151,9 @@ public class MergeSourceBuildingVisitorTest {
     public void test_OneRelation_ExistingMembersSelected() {
         DataSet source = new DataSet();
         Relation r1 = new Relation(1);
-        Node n20 = new Node(20);
+        Node n20 = new Node(20, 1);
         r1.addMember(new RelationMember("node-20",n20));
-        r1.setIncomplete(false);
-        Way w30 = new Way(30);
-        w30.setIncomplete(false);
+        Way w30 = new Way(30, 1);
         Node n21;
         w30.addNode(n21 = new Node(21));
         Node n22;
@@ -215,8 +211,7 @@ public class MergeSourceBuildingVisitorTest {
         Relation r1 = new Relation(1);
         Node n20 = new Node(20);
         r1.addMember(new RelationMember("node-20",n20));
-        Way w30 = new Way(30);
-        w30.setIncomplete(false);
+        Way w30 = new Way(30, 1);
         Node n21;
         w30.addNode(n21 = new Node(21));
         Node n22;

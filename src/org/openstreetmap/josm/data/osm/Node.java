@@ -70,6 +70,16 @@ public final class Node extends OsmPrimitive {
     }
 
     /**
+     * Create new complete node
+     * @param id
+     * @param version
+     */
+    public Node(long id, int version) {
+        super(id, false);
+        setOsmId(id, version);
+    }
+
+    /**
      *
      * @param clone
      * @param clearId If true, set version to 0 and id to new unique value

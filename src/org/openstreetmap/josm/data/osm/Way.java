@@ -172,13 +172,23 @@ public final class Way extends OsmPrimitive {
 
     /**
      * Creates a new way for the given id. If the id > 0, the way is marked
-     * as incomplete.
+     * as incomplete. If id == 0 then way is marked as new
      *
-     * @param id the id. > 0 required
+     * @param id the id. >= 0 required
      * @throws IllegalArgumentException thrown if id < 0
      */
     public Way(long id) throws IllegalArgumentException {
         super(id, false);
+    }
+
+    /**
+     * Creates new way with given id and version. Way is marked as complete
+     * @param id
+     * @param version
+     */
+    public Way(long id, int version) {
+        super(id, false);
+        setOsmId(id, version);
     }
 
     /**

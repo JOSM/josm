@@ -19,9 +19,8 @@
  */
 package org.openstreetmap.josm.data.projection;
 
-import java.io.InputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,7 +60,6 @@ import java.util.HashMap;
  */
 public class NTV2GridShiftFile implements Serializable {
 
-    private static final int REC_SIZE = 16;
     private String overviewHeaderCountId;
     private int overviewHeaderCount;
     private int subGridHeaderCount;
@@ -269,7 +267,7 @@ public class NTV2GridShiftFile implements Serializable {
         return (topLevelSubGrid != null);
     }
 
-    public void unload() throws IOException {
+    public void unload() {
         topLevelSubGrid = null;
     }
 

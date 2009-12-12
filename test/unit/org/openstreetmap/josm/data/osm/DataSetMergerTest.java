@@ -190,9 +190,8 @@ public class DataSetMergerTest {
     public void nodeSimple_DeleteConflict() {
         DataSet my = new DataSet();
         my.setVersion("0.6");
-        Node n = new Node(1);
+        Node n = new Node(1, 1);
         n.setCoor(new LatLon(0,0));
-        n.setIncomplete(false);
         n.setDeleted(true);
         n.put("key1", "value1");
         my.addPrimitive(n);
@@ -200,7 +199,7 @@ public class DataSetMergerTest {
         DataSet their = new DataSet();
         their.setVersion("0.6");
         Node n1 = new Node(new LatLon(0,0));
-        n1.setOsmId(1,1);
+        n1.setOsmId(1,2);
         n1.setModified(false);
         n1.put("key1", "value1-new");
         n1.put("key2", "value2");
@@ -436,10 +435,7 @@ public class DataSetMergerTest {
 
         DataSet my = new DataSet();
         my.setVersion("0.6");
-        Node n = new Node();
-        n.setCoor(new LatLon(0,0));
-        n.setOsmId(1,1);
-        n.setIncomplete(true);
+        Node n = new Node(1);
         my.addPrimitive(n);
 
         DataSet their = new DataSet();
@@ -1056,8 +1052,7 @@ public class DataSetMergerTest {
         n5.setOsmId(2,1);
         my.addPrimitive(n5);
 
-        Way w6 = new Way(3);
-        w6.setIncomplete(false);
+        Way w6 = new Way(3, 1);
         w6.setNodes(Arrays.asList(n4,n5));
         my.addPrimitive(w6);
 
@@ -1096,18 +1091,16 @@ public class DataSetMergerTest {
         source.setVersion("0.6");
 
         // an complete node
-        Node n1 = new Node(1);
+        Node n1 = new Node(1, 1);
         n1.setCoor(new LatLon(1,1));
-        n1.setIncomplete(false);
         source.addPrimitive(n1);
 
         // another complete node
-        Node n2 = new Node(2);
+        Node n2 = new Node(2, 1);
         n2.setCoor(new LatLon(2,2));
-        n2.setIncomplete(false);
         source.addPrimitive(n2);
 
-        // --- target daset
+        // --- target dataset
         DataSet target = new DataSet();
         target.setVersion("0.6");
 
@@ -1117,11 +1110,9 @@ public class DataSetMergerTest {
         Node n5 = new Node(2);
         target.addPrimitive(n5);
 
-        Way w6 = new Way(3);
-        w6.setIncomplete(false);
+        Way w6 = new Way(3, 1);
         w6.addNode(n4);
         w6.addNode(n5);
-        w6.setIncomplete(true);
         target.addPrimitive(w6);
 
         //-- merge it
@@ -1142,7 +1133,7 @@ public class DataSetMergerTest {
         Way w = (Way)target.getPrimitiveById(3, OsmPrimitiveType.WAY);
         assertNotNull(w);
         assertFalse(w.hasIncompleteNodes());
-        assertFalse(w.isUsable());
+        assertTrue(w.isUsable());
         assertEquals(2, w.getNodesCount());
         assertEquals(1, w.getNode(0).getId());
         assertEquals(2, w.getNode(1).getId());

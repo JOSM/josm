@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SortedMap;
@@ -61,9 +62,9 @@ public class Preferences {
     }
 
     private static class DefaultPreferenceChangeEvent implements PreferenceChangeEvent {
-        private String key;
-        private String oldValue;
-        private String newValue;
+        private final String key;
+        private final String oldValue;
+        private final String newValue;
 
         public DefaultPreferenceChangeEvent(String key, String oldValue, String newValue) {
             this.key = key;
@@ -74,20 +75,11 @@ public class Preferences {
         public String getKey() {
             return key;
         }
-        public void setKey(String key) {
-            this.key = key;
-        }
         public String getOldValue() {
             return oldValue;
         }
-        public void setOldValue(String oldValue) {
-            this.oldValue = oldValue;
-        }
         public String getNewValue() {
             return newValue;
-        }
-        public void setNewValue(String newValue) {
-            this.newValue = newValue;
         }
     }
 
@@ -712,12 +704,9 @@ public class Preferences {
         return def;
     }
     synchronized public void removeFromCollection(String key, String value) {
-        ArrayList<String> a = new ArrayList<String>(getCollection(key, null));
-        if(a != null)
-        {
-            a.remove(value);
-            putCollection(key, a);
-        }
+        List<String> a = new ArrayList<String>(getCollection(key, null));
+        a.remove(value);
+        putCollection(key, a);
     }
     synchronized public boolean putCollection(String key, Collection<String> val) {
         String s = null;
