@@ -7,11 +7,12 @@ import javax.swing.DefaultListSelectionModel;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 
-public class ChangesetInSelectionListModel extends ChangesetListModel implements SelectionChangedListener, LayerChangeListener{
+public class ChangesetInSelectionListModel extends ChangesetListModel implements SelectionChangedListener, MapView.LayerChangeListener{
 
     public ChangesetInSelectionListModel(DefaultListSelectionModel selectionModel) {
         super(selectionModel);

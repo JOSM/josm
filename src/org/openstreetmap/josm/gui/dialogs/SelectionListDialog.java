@@ -42,11 +42,12 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -56,7 +57,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class SelectionListDialog extends ToggleDialog implements SelectionChangedListener, LayerChangeListener {
+public class SelectionListDialog extends ToggleDialog implements SelectionChangedListener, MapView.LayerChangeListener {
 
     private static final int SELECTION_HISTORY_SIZE = 10;
 
@@ -162,7 +163,13 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
         }
 
         DataSet.selListeners.add(this);
-        Layer.listeners.add(this);
+        MapView.addLayerChangeListener(this);
+    }
+
+    @Override
+    public void tearDown() {
+        MapView.removeLayerChangeListener(this);
+        DataSet.selListeners.remove(this);
     }
 
     private BasicArrowButton createArrowButton(SideButton parentButton) {

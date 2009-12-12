@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
@@ -63,6 +64,61 @@ import org.openstreetmap.josm.tools.AudioPlayer;
  * @author imi
  */
 public class MapView extends NavigatableComponent implements PropertyChangeListener {
+
+    /**
+     * Interface to notify listeners of the change of the active layer.
+     * @author imi
+     */
+    public interface LayerChangeListener {
+        void activeLayerChange(Layer oldLayer, Layer newLayer);
+        void layerAdded(Layer newLayer);
+        void layerRemoved(Layer oldLayer);
+    }
+
+    /**
+     * the layer listeners
+     */
+    private static final Collection<MapView.LayerChangeListener> layerChangeListeners = new CopyOnWriteArrayList<MapView.LayerChangeListener>();
+
+    /**
+     * Removes a layer change listener
+     * 
+     * @param listener the listener. Ignored if null or already registered.
+     */
+    public static void removeLayerChangeListener(MapView.LayerChangeListener listener) {
+        if (listener != null && layerChangeListeners.contains(listener)) {
+            layerChangeListeners.remove(listener);
+        }
+    }
+
+    /**
+     * Adds a layer change listener
+     * 
+     * @param listener the listener. Ignored if null or already registered.
+     */
+    public static void addLayerChangeListener(MapView.LayerChangeListener listener) {
+        if (listener != null && ! layerChangeListeners.contains(listener)) {
+            layerChangeListeners.add(listener);
+        }
+    }
+
+    protected static void fireActiveLayerChanged(Layer oldLayer, Layer newLayer) {
+        for (LayerChangeListener l : layerChangeListeners) {
+            l.activeLayerChange(oldLayer, newLayer);
+        }
+    }
+
+    protected static void fireLayerAdded(Layer newLayer) {
+        for (MapView.LayerChangeListener l : MapView.layerChangeListeners) {
+            l.layerAdded(newLayer);
+        }
+    }
+
+    protected static void fireLayerRemoved(Layer layer) {
+        for (MapView.LayerChangeListener l : MapView.layerChangeListeners) {
+            l.layerRemoved(layer);
+        }
+    }
 
     /**
      * A list of all layers currently loaded.
@@ -186,17 +242,12 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         } else {
             layers.add(0, layer);
         }
-
-        for (Layer.LayerChangeListener l : Layer.listeners) {
-            l.layerAdded(layer);
-        }
+        fireLayerAdded(layer);
         if (layer instanceof OsmDataLayer || activeLayer == null) {
             // autoselect the new layer
             Layer old = activeLayer;
             setActiveLayer(layer);
-            for (Layer.LayerChangeListener l : Layer.listeners) {
-                l.activeLayerChange(old, layer);
-            }
+            fireActiveLayerChanged(old, layer);
         }
         layer.addPropertyChangeListener(this);
         AudioPlayer.reset();
@@ -228,11 +279,6 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         return isActiveLayerDrawable() && activeLayer.isVisible();
     }
 
-    protected void fireActiveLayerChanged(Layer oldLayer, Layer newLayer) {
-        for (Layer.LayerChangeListener l : Layer.listeners) {
-            l.activeLayerChange(oldLayer, newLayer);
-        }
-    }
 
     /**
      * Determines the next active data layer according to the following
@@ -271,9 +317,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             fireActiveLayerChanged(layer, null);
         }
         if (layers.remove(layer)) {
-            for (Layer.LayerChangeListener l : Layer.listeners) {
-                l.layerRemoved(layer);
-            }
+            fireLayerRemoved(layer);
         }
         layer.removePropertyChangeListener(this);
         layer.destroy();
@@ -289,6 +333,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     }
 
     private boolean virtualNodesEnabled = false;
+
     public void setVirtualNodesEnabled(boolean enabled) {
         if(virtualNodesEnabled != enabled) {
             virtualNodesEnabled = enabled;
@@ -535,9 +580,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         Layer old = activeLayer;
         activeLayer = layer;
         if (old != layer) {
-            for (Layer.LayerChangeListener l : Layer.listeners) {
-                l.activeLayerChange(old, layer);
-            }
+            fireActiveLayerChanged(old, layer);
         }
         if (layer instanceof OsmDataLayer) {
             refreshTitle((OsmDataLayer)layer);
@@ -649,4 +692,5 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             JOptionPane.getFrameForComponent(Main.parent).setTitle(tr("Java OpenStreetMap Editor"));
         }
     }
+
 }

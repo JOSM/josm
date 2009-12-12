@@ -28,10 +28,10 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.DataChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 
 /**
  * This is the model used by the history browser.
@@ -58,7 +58,7 @@ import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
  *
  * @see HistoryBrowser
  */
-public class HistoryBrowserModel extends Observable implements LayerChangeListener, DataSetListener, DataChangeListener {
+public class HistoryBrowserModel extends Observable implements MapView.LayerChangeListener, DataSetListener, DataChangeListener {
 
     private static Logger logger = Logger.getLogger(HistoryBrowserModel.class.getName());
 
@@ -96,8 +96,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
             getEditLayer().data.addDataSetListener(this);
             getEditLayer().listenerDataChanged.add(this);
         }
-        Layer.listeners.add(this);
-
+        MapView.addLayerChangeListener(this);
     }
 
     /**
@@ -771,8 +770,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         if (getEditLayer() != null) {
             getEditLayer().data.removeDataSetListener(this);
         }
-        Layer.listeners.remove(this);
-
+        MapView.removeLayerChangeListener(this);
     }
 
     /* ---------------------------------------------------------------------- */

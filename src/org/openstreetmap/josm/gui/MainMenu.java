@@ -6,8 +6,6 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -32,12 +30,13 @@ import org.openstreetmap.josm.actions.DownloadAction;
 import org.openstreetmap.josm.actions.DownloadReferrersAction;
 import org.openstreetmap.josm.actions.DuplicateAction;
 import org.openstreetmap.josm.actions.ExitAction;
+import org.openstreetmap.josm.actions.FullscreenToggleAction;
 import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.HelpAction;
 import org.openstreetmap.josm.actions.HistoryInfoAction;
 import org.openstreetmap.josm.actions.InfoAction;
-import org.openstreetmap.josm.actions.JoinNodeWayAction;
 import org.openstreetmap.josm.actions.JoinAreasAction;
+import org.openstreetmap.josm.actions.JoinNodeWayAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.actions.MergeNodesAction;
@@ -67,7 +66,6 @@ import org.openstreetmap.josm.actions.UpdateSelectionAction;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.actions.UploadSelectionAction;
 import org.openstreetmap.josm.actions.WireframeToggleAction;
-import org.openstreetmap.josm.actions.FullscreenToggleAction;
 import org.openstreetmap.josm.actions.ZoomInAction;
 import org.openstreetmap.josm.actions.ZoomOutAction;
 import org.openstreetmap.josm.actions.audio.AudioBackAction;
@@ -79,7 +77,6 @@ import org.openstreetmap.josm.actions.audio.AudioPrevAction;
 import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.Shortcut;
 /**
  * This is the JOSM main menu bar. It is overwritten to initialize itself and provide all menu
@@ -308,10 +305,10 @@ public class MainMenu extends JMenuBar {
         new PresetsMenuEnabler(presetsMenu).refreshEnabled();
     }
 
-    class PresetsMenuEnabler implements LayerChangeListener {
+    class PresetsMenuEnabler implements MapView.LayerChangeListener {
         private JMenu presetsMenu;
         public PresetsMenuEnabler(JMenu presetsMenu) {
-            Layer.listeners.add(this);
+            MapView.addLayerChangeListener(this);
             this.presetsMenu = presetsMenu;
         }
         /**

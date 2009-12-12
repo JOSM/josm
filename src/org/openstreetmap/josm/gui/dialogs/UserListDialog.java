@@ -40,10 +40,11 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -52,7 +53,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * selection area, along with the number of objects.
  *
  */
-public class UserListDialog extends ToggleDialog implements SelectionChangedListener, LayerChangeListener {
+public class UserListDialog extends ToggleDialog implements SelectionChangedListener, MapView.LayerChangeListener {
 
     /**
      * The display list.
@@ -68,7 +69,13 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
         build();
         DataSet.selListeners.add(this);
-        Layer.listeners.add(this);
+        MapView.addLayerChangeListener(this);
+    }
+
+    @Override
+    public void tearDown() {
+        MapView.removeLayerChangeListener(this);
+        DataSet.selListeners.remove(this);
     }
 
     protected JPanel buildButtonRow() {
@@ -311,9 +318,9 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         public Object getValueAt(int row, int column) {
             UserInfo info = data.get(row);
             switch(column) {
-                case 0: /* author */ return info.getName() == null ? "" : info.getName();
-                case 1: /* count */ return info.count;
-                case 2: /* percent */ return NumberFormat.getPercentInstance().format(info.percent);
+            case 0: /* author */ return info.getName() == null ? "" : info.getName();
+            case 1: /* count */ return info.count;
+            case 2: /* percent */ return NumberFormat.getPercentInstance().format(info.percent);
             }
             return null;
         }

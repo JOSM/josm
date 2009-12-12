@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetInSelectionListModel;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetListCellRenderer;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetListModel;
@@ -42,7 +43,6 @@ import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetsInActiveDataLayerL
 import org.openstreetmap.josm.gui.dialogs.changeset.DownloadChangesetsTask;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.CloseChangesetTask;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
@@ -93,11 +93,11 @@ public class ChangesetDialog extends ToggleDialog{
         lstInActiveDataLayer.setCellRenderer(new ChangesetListCellRenderer());
 
         ChangesetCache.getInstance().addChangesetCacheListener(inSelectionModel);
-        Layer.listeners.add(inSelectionModel);
+        MapView.addLayerChangeListener(inSelectionModel);
         DataSet.selListeners.add(inSelectionModel);
 
         ChangesetCache.getInstance().addChangesetCacheListener(inActiveDataLayerModel);
-        Layer.listeners.add(inActiveDataLayerModel);
+        MapView.addLayerChangeListener(inActiveDataLayerModel);
 
         DblClickHandler dblClickHandler = new DblClickHandler();
         lstInSelection.addMouseListener(dblClickHandler);
@@ -111,9 +111,9 @@ public class ChangesetDialog extends ToggleDialog{
     @Override
     public void tearDown() {
         ChangesetCache.getInstance().removeChangesetCacheListener(inActiveDataLayerModel);
-        Layer.listeners.remove(inSelectionModel);
+        MapView.removeLayerChangeListener(inSelectionModel);
         DataSet.selListeners.remove(inSelectionModel);
-        Layer.listeners.remove(inActiveDataLayerModel);
+        MapView.removeLayerChangeListener(inActiveDataLayerModel);
     }
 
     protected JPanel buildFilterPanel() {

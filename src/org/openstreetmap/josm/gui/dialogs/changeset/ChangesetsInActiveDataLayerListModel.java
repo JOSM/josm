@@ -4,12 +4,13 @@ package org.openstreetmap.josm.gui.dialogs.changeset;
 import javax.swing.DefaultListSelectionModel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.DataChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 
-public class ChangesetsInActiveDataLayerListModel extends ChangesetListModel implements LayerChangeListener, DataChangeListener{
+public class ChangesetsInActiveDataLayerListModel extends ChangesetListModel implements MapView.LayerChangeListener, DataChangeListener{
 
     public ChangesetsInActiveDataLayerListModel(DefaultListSelectionModel selectionModel) {
         super(selectionModel);

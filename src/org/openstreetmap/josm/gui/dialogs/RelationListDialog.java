@@ -40,14 +40,15 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.DataChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -59,7 +60,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * We don't have such dialogs for nodes, segments, and ways, because those
  * objects are visible on the map and can be selected there. Relations are not.
  */
-public class RelationListDialog extends ToggleDialog implements LayerChangeListener, DataSetListener, DataChangeListener {
+public class RelationListDialog extends ToggleDialog implements MapView.LayerChangeListener, DataSetListener, DataChangeListener {
     //private static final Logger logger = Logger.getLogger(RelationListDialog.class.getName());
 
     /** The display list. */
@@ -136,8 +137,8 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     }
 
     @Override public void showNotify() {
-        Layer.listeners.add(this);
-        Layer.listeners.add(newAction);
+        MapView.addLayerChangeListener(this);
+        MapView.addLayerChangeListener(newAction);
         // Register as a data set listener for the current edit layer only.
         // See also activeLayerChanged
         if (Main.main.getEditLayer() != null) {
@@ -147,9 +148,8 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
     }
 
     @Override public void hideNotify() {
-        Layer.listeners.remove(this);
-        Layer.listeners.remove(newAction);
-        Layer.listeners.add(newAction);
+        MapView.removeLayerChangeListener(this);
+        MapView.removeLayerChangeListener(newAction);
         // unregistering from *all* data layer is somewhat overkill but it
         // doesn't harm either.
         for (OsmDataLayer layer:Main.map.mapView.getLayersOfType(OsmDataLayer.class)) {
@@ -344,7 +344,7 @@ public class RelationListDialog extends ToggleDialog implements LayerChangeListe
      * The action for creating a new relation
      *
      */
-    class NewAction extends AbstractAction implements LayerChangeListener{
+    class NewAction extends AbstractAction implements MapView.LayerChangeListener{
         public NewAction() {
             putValue(SHORT_DESCRIPTION,tr("Create a new relation"));
             //putValue(NAME, tr("New"));

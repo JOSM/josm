@@ -15,25 +15,23 @@ import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.MediaTracker;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedHashSet;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.swing.Icon;
@@ -49,6 +47,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -101,15 +100,14 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             pos = new CachedLatLon(latlon);
         }
         public int compareTo(ImageEntry image) {
-            if (time != null && image.time != null) {
+            if (time != null && image.time != null)
                 return time.compareTo(image.time);
-            } else if (time == null && image.time == null) {
+            else if (time == null && image.time == null)
                 return 0;
-            } else if (time == null) {
+            else if (time == null)
                 return -1;
-            } else {
+            else
                 return 1;
-            }
         }
     }
 
@@ -146,9 +144,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 rememberError(tr("One of the selected files was null"));
             }
 
-            if (cancelled) {
+            if (cancelled)
                 return;
-            }
             progressMonitor.subTask(tr("Read photos..."));
             progressMonitor.setTicksCount(files.size());
 
@@ -204,7 +201,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                     } catch (IOException e) {
                         e.printStackTrace();
                         rememberError(tr("Unable to get canonical path for directory {0}\n",
-                                           f.getAbsolutePath()));
+                                f.getAbsolutePath()));
                     }
 
                     if (canonical == null || loadedDirectories.contains(canonical)) {
@@ -227,13 +224,12 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                     }
 
                 } else {
-                      files.add(f);
+                    files.add(f);
                 }
             }
 
-            if (nullFile) {
+            if (nullFile)
                 throw new NullPointerException();
-            }
         }
 
         protected String formatErrorMessages() {
@@ -264,7 +260,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             if (layer != null) {
                 Main.main.addLayer(layer);
                 layer.hook_up_mouse_events(); // Main.map.mapView should exist
-                                              // now. Can add mouse listener
+                // now. Can add mouse listener
 
                 if (! cancelled && layer.data.size() > 0) {
                     boolean noGeotagFound = true;
@@ -328,17 +324,18 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 new JMenuItem(new RenameLayerAction(null, this)),
                 new JSeparator(),
                 correlateItem
-                };
+        };
     }
 
     @Override
     public String getToolTipText() {
         int i = 0;
         for (ImageEntry e : data)
-            if (e.pos != null)
+            if (e.pos != null) {
                 i++;
+            }
         return data.size() + " " + trn("image", "images", data.size())
-                + " loaded. " + tr("{0} were found to be gps tagged.", i);
+        + " loaded. " + tr("{0} were found to be gps tagged.", i);
     }
 
     @Override
@@ -405,8 +402,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             return null;
 
         return new Dimension(
-            (int) Math.round(f * thumb.getWidth(null)),
-            (int) Math.round(f * thumb.getHeight(null)));
+                (int) Math.round(f * thumb.getWidth(null)),
+                (int) Math.round(f * thumb.getHeight(null)));
     }
 
     @Override
@@ -431,8 +428,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 tempG.setComposite(saveComp);
 
                 for (ImageEntry e : data) {
-                    if (e.pos == null)
+                    if (e.pos == null) {
                         continue;
+                    }
                     Point p = mv.getPoint(e.pos);
                     if (e.thumbnail != null) {
                         Dimension d = scaledDimension(e.thumbnail);
@@ -443,8 +441,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                     }
                     else { // thumbnail not loaded yet
                         icon.paintIcon(mv, tempG,
-                                   p.x - icon.getIconWidth() / 2,
-                                   p.y - icon.getIconHeight() / 2);
+                                p.x - icon.getIconWidth() / 2,
+                                p.y - icon.getIconHeight() / 2);
                     }
                 }
                 updateOffscreenBuffer = false;
@@ -453,12 +451,13 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         }
         else {
             for (ImageEntry e : data) {
-                if (e.pos == null)
+                if (e.pos == null) {
                     continue;
+                }
                 Point p = mv.getPoint(e.pos);
                 icon.paintIcon(mv, g,
-                           p.x - icon.getIconWidth() / 2,
-                           p.y - icon.getIconHeight() / 2);
+                        p.x - icon.getIconWidth() / 2,
+                        p.y - icon.getIconHeight() / 2);
             }
         }
 
@@ -474,8 +473,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                     g.fillRect(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
                 } else {
                     selectedIcon.paintIcon(mv, g,
-                                p.x - selectedIcon.getIconWidth() / 2,
-                                p.y - selectedIcon.getIconHeight() / 2);
+                            p.x - selectedIcon.getIconWidth() / 2,
+                            p.y - selectedIcon.getIconHeight() / 2);
                 }
             }
         }
@@ -483,8 +482,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
     @Override
     public void visitBoundingBox(BoundingXYVisitor v) {
-        for (ImageEntry e : data)
+        for (ImageEntry e : data) {
             v.visit(e.pos);
+        }
     }
 
     /*
@@ -507,7 +507,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             // longitude
 
             Rational[] components = dir
-                    .getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
+            .getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
 
             deg = components[0].intValue();
             min = components[1].floatValue();
@@ -515,8 +515,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
             lon = (deg + (min / 60) + (sec / 3600));
 
-            if (dir.getString(GpsDirectory.TAG_GPS_LONGITUDE_REF).charAt(0) == 'W')
+            if (dir.getString(GpsDirectory.TAG_GPS_LONGITUDE_REF).charAt(0) == 'W') {
                 lon = -lon;
+            }
 
             // latitude
 
@@ -528,8 +529,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
             lat = (deg + (min / 60) + (sec / 3600));
 
-            if (dir.getString(GpsDirectory.TAG_GPS_LATITUDE_REF).charAt(0) == 'S')
+            if (dir.getString(GpsDirectory.TAG_GPS_LATITUDE_REF).charAt(0) == 'S') {
                 lat = -lat;
+            }
 
             // Store values
 
@@ -568,7 +570,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
     }
 
     public void checkPreviousNextButtons() {
-//        System.err.println("showing image " + currentPhoto);
+        //        System.err.println("showing image " + currentPhoto);
         ImageViewerDialog.setNextEnabled(currentPhoto < data.size() - 1);
         ImageViewerDialog.setPreviousEnabled(currentPhoto > 0);
     }
@@ -595,25 +597,24 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         mouseAdapter = new MouseAdapter() {
             @Override public void mousePressed(MouseEvent e) {
 
-                if (e.getButton() != MouseEvent.BUTTON1) {
+                if (e.getButton() != MouseEvent.BUTTON1)
                     return;
-                }
-                if (isVisible())
+                if (isVisible()) {
                     Main.map.mapView.repaint();
+                }
             }
 
             @Override public void mouseReleased(MouseEvent ev) {
-                if (ev.getButton() != MouseEvent.BUTTON1) {
+                if (ev.getButton() != MouseEvent.BUTTON1)
                     return;
-                }
-                if (!isVisible()) {
+                if (!isVisible())
                     return;
-                }
 
                 for (int i = data.size() - 1; i >= 0; --i) {
                     ImageEntry e = data.get(i);
-                    if (e.pos == null)
+                    if (e.pos == null) {
                         continue;
+                    }
                     Point p = Main.map.mapView.getPoint(e.pos);
                     Rectangle r;
                     if (e.thumbnail != null) {
@@ -621,9 +622,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                         r = new Rectangle(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
                     } else {
                         r = new Rectangle(p.x - icon.getIconWidth() / 2,
-                                            p.y - icon.getIconHeight() / 2,
-                                            icon.getIconWidth(),
-                                            icon.getIconHeight());
+                                p.y - icon.getIconHeight() / 2,
+                                icon.getIconWidth(),
+                                icon.getIconHeight());
                     }
                     if (r.contains(ev.getPoint())) {
                         currentPhoto = i;
@@ -635,7 +636,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             }
         };
         Main.map.mapView.addMouseListener(mouseAdapter);
-        Layer.listeners.add(new LayerChangeListener() {
+        MapView.addLayerChangeListener(new LayerChangeListener() {
             public void activeLayerChange(Layer oldLayer, Layer newLayer) {
                 if (newLayer == GeoImageLayer.this && currentPhoto >= 0) {
                     Main.main.map.repaint();
@@ -655,6 +656,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                     currentPhoto = -1;
                     data.clear();
                     data = null;
+                    // stop listening to layer change events
+                    MapView.removeLayerChangeListener(this);
                 }
             }
         });

@@ -42,13 +42,13 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -57,7 +57,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * dialog on the right of the main frame.
  *
  */
-public final class ConflictDialog extends ToggleDialog implements LayerChangeListener, IConflictListener, SelectionChangedListener{
+public final class ConflictDialog extends ToggleDialog implements MapView.LayerChangeListener, IConflictListener, SelectionChangedListener{
 
     static public Color getColor() {
         return Main.pref.getColor(marktr("conflict"), Color.gray);
@@ -121,8 +121,16 @@ public final class ConflictDialog extends ToggleDialog implements LayerChangeLis
 
         build();
         DataSet.selListeners.add(this);
-        Layer.listeners.add(this);
+        MapView.addLayerChangeListener(this);
         refreshView();
+    }
+
+
+
+    @Override
+    public void tearDown() {
+        MapView.removeLayerChangeListener(this);
+        DataSet.selListeners.remove(this);
     }
 
     /**

@@ -24,9 +24,10 @@ import javax.swing.event.ListSelectionListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 
 public class MemberTable extends JTable implements IMemberModelListener {
 
@@ -37,6 +38,7 @@ public class MemberTable extends JTable implements IMemberModelListener {
 
     /** the popup menu */
     protected JPopupMenu popupMenu;
+    private ZoomToAction zoomToAction;
 
     /**
      * constructor
@@ -147,26 +149,23 @@ public class MemberTable extends JTable implements IMemberModelListener {
     }
 
     /**
-     * creates the popup men
-     */
-    protected void createPopupMenu() {
-        popupMenu = new JPopupMenu();
-        ZoomToAction zoomToAction = new ZoomToAction();
-        Layer.listeners.add(zoomToAction);
-        getSelectionModel().addListSelectionListener(zoomToAction);
-        popupMenu.add(zoomToAction);
-    }
-
-    /**
      * Replies the popup menu for this table
      *
      * @return the popup menu
      */
     protected JPopupMenu getPopUpMenu() {
         if (popupMenu == null) {
-            createPopupMenu();
+            popupMenu = new JPopupMenu();
+            zoomToAction = new ZoomToAction();
+            MapView.addLayerChangeListener(zoomToAction);
+            getSelectionModel().addListSelectionListener(zoomToAction);
+            popupMenu.add(zoomToAction);
         }
         return popupMenu;
+    }
+
+    public void unlinkAsListener() {
+        MapView.removeLayerChangeListener(zoomToAction);
     }
 
     class PopupListener extends MouseAdapter {

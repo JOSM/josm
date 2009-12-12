@@ -65,11 +65,12 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.widgets.AutoCompleteComboBox;
@@ -94,7 +95,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener, LayerChangeListener {
+public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener, MapView.LayerChangeListener {
     /**
      * Watches for double clicks and from editing or new property, depending on the
      * location, the click was.
@@ -593,7 +594,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         add(buttonPanel, BorderLayout.SOUTH);
 
         DataSet.selListeners.add(this);
-        Layer.listeners.add(this);
+        MapView.addLayerChangeListener(this);
+    }
+
+    @Override
+    public void tearDown() {
+        MapView.removeLayerChangeListener(this);
     }
 
     @Override public void setVisible(boolean b) {

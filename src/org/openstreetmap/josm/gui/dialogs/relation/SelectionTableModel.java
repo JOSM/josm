@@ -12,11 +12,11 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 
-public class SelectionTableModel extends AbstractTableModel implements SelectionChangedListener, LayerChangeListener{
+public class SelectionTableModel extends AbstractTableModel implements SelectionChangedListener, MapView.LayerChangeListener{
 
     /** this selection table model only displays selected primitives in this layer */
     private OsmDataLayer layer;
@@ -33,13 +33,13 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
         this.layer = layer;
         cache = new ArrayList<OsmPrimitive>();
-        Layer.listeners.add(this);
+        MapView.addLayerChangeListener(this);
         populateSelectedPrimitives(layer);
     }
 
     public void unregister() {
         DataSet.selListeners.remove(this);
-        Layer.listeners.remove(this);
+        MapView.removeLayerChangeListener(this);
     }
 
     public int getColumnCount() {

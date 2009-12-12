@@ -11,15 +11,15 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 
 /**
  * RelationDialogManager keeps track of the open relation editors.
  *
  */
-public class RelationDialogManager extends WindowAdapter implements LayerChangeListener{
+public class RelationDialogManager extends WindowAdapter implements MapView.LayerChangeListener{
 
     /** keeps track of open relation editors */
     static RelationDialogManager relationDialogManager;
@@ -32,7 +32,7 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
     static public RelationDialogManager getRelationDialogManager() {
         if (RelationDialogManager.relationDialogManager == null) {
             RelationDialogManager.relationDialogManager = new RelationDialogManager();
-            Layer.listeners.add(RelationDialogManager.relationDialogManager);
+            MapView.addLayerChangeListener(RelationDialogManager.relationDialogManager);
         }
         return RelationDialogManager.relationDialogManager;
     }

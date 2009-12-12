@@ -9,11 +9,11 @@ import java.util.Map;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.history.History;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
-public class HistoryBrowserDialogManager implements LayerChangeListener {
+public class HistoryBrowserDialogManager implements MapView.LayerChangeListener {
     static private HistoryBrowserDialogManager instance;
     static public HistoryBrowserDialogManager getInstance() {
         if (instance == null) {
@@ -26,7 +26,7 @@ public class HistoryBrowserDialogManager implements LayerChangeListener {
 
     protected HistoryBrowserDialogManager() {
         dialogs = new HashMap<Long, HistoryBrowserDialog>();
-        Layer.listeners.add(this);
+        MapView.addLayerChangeListener(this);
     }
 
     public boolean existsDialog(long id) {

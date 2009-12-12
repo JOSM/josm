@@ -11,9 +11,9 @@ import java.util.logging.Logger;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 
 /**
  * AutoCompletionCache temporarily holds a cache of keys with a list of
@@ -39,7 +39,7 @@ public class AutoCompletionCache {
 
     static {
         caches = new HashMap<OsmDataLayer, AutoCompletionCache>();
-        Layer.listeners.add(new LayerChangeListener() {
+        MapView.addLayerChangeListener(new MapView.LayerChangeListener() {
             public void activeLayerChange(Layer oldLayer, Layer newLayer) {
                 // do nothing
             }

@@ -43,10 +43,10 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.QuadStateCheckBox;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPritority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
@@ -64,7 +64,7 @@ import org.xml.sax.SAXException;
  *
  * It is also able to construct dialogs out of preset definitions.
  */
-public class TaggingPreset extends AbstractAction implements LayerChangeListener {
+public class TaggingPreset extends AbstractAction implements MapView.LayerChangeListener {
 
     public TaggingPresetMenu group = null;
     public String name;
@@ -180,10 +180,11 @@ public class TaggingPreset extends AbstractAction implements LayerChangeListener
                 originalValue = DIFFERENT;
             }
             if(locale_text == null) {
-                if(text_context != null)
+                if(text_context != null) {
                     locale_text = trc(text_context, text);
-                else
+                } else {
                     locale_text = tr(text);
+                }
             }
             p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
             p.add(value, GBC.eol().fill(GBC.HORIZONTAL));
@@ -230,10 +231,11 @@ public class TaggingPreset extends AbstractAction implements LayerChangeListener
             def = default_;
 
             if(locale_text == null) {
-                if(text_context != null)
+                if(text_context != null) {
                     locale_text = trc(text_context, text);
-                else
+                } else {
                     locale_text = tr(text);
+                }
             }
 
             String oneValue = null;
@@ -333,8 +335,8 @@ public class TaggingPreset extends AbstractAction implements LayerChangeListener
             }
             for (int i=0; i<value_array.length; i++) {
                 lhm.put(value_array[i], (locale_display_values == null)
-                ? (values_context == null ? tr(display_array[i])
-                : tr(values_context, display_array[i])) : display_array[i]);
+                        ? (values_context == null ? tr(display_array[i])
+                                : tr(values_context, display_array[i])) : display_array[i]);
             }
             if(!usage.unused()){
                 for (String s : usage.values) {
@@ -376,10 +378,11 @@ public class TaggingPreset extends AbstractAction implements LayerChangeListener
             }
 
             if(locale_text == null) {
-                if(text_context != null)
+                if(text_context != null) {
                     locale_text = trc(text_context, text);
-                else
+                } else {
                     locale_text = tr(text);
+                }
             }
             p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
             p.add(combo, GBC.eol().fill(GBC.HORIZONTAL));
@@ -426,10 +429,11 @@ public class TaggingPreset extends AbstractAction implements LayerChangeListener
 
         @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             if(locale_text == null) {
-                if(text_context != null)
+                if(text_context != null) {
                     locale_text = trc(text_context, text);
-                else
+                } else {
                     locale_text = tr(text);
+                }
             }
             p.add(new JLabel(locale_text), GBC.eol());
             return false;
@@ -446,12 +450,13 @@ public class TaggingPreset extends AbstractAction implements LayerChangeListener
 
         @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             if(locale_text == null) {
-                if(text == null)
+                if(text == null) {
                     locale_text = tr("More information about this feature");
-                else if(text_context != null)
+                } else if(text_context != null) {
                     locale_text = trc(text_context, text);
-                else
+                } else {
                     locale_text = tr(text);
+                }
             }
             String url = locale_href;
             if (url == null) {
@@ -507,7 +512,7 @@ public class TaggingPreset extends AbstractAction implements LayerChangeListener
      * Use this as default item for "do not select anything".
      */
     public TaggingPreset() {
-        Layer.listeners.add(this);
+        MapView.addLayerChangeListener(this);
         updateEnabledState();
     }
 
@@ -521,10 +526,11 @@ public class TaggingPreset extends AbstractAction implements LayerChangeListener
 
     public String getLocaleName() {
         if(locale_name == null) {
-            if(name_context != null)
+            if(name_context != null) {
                 locale_name = trc(name_context, name);
-            else
+            } else {
                 locale_name = tr(name);
+            }
         }
         return locale_name;
     }

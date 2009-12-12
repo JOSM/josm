@@ -3,20 +3,18 @@ package org.openstreetmap.josm.data;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.LinkedList;
 import java.util.Stack;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 
-public class UndoRedoHandler implements LayerChangeListener {
+public class UndoRedoHandler implements MapView.LayerChangeListener {
 
     /**
      * All commands that were made on the dataset. Don't write from outside!
@@ -30,7 +28,7 @@ public class UndoRedoHandler implements LayerChangeListener {
     public final LinkedList<CommandQueueListener> listenerCommands = new LinkedList<CommandQueueListener>();
 
     public UndoRedoHandler() {
-        Layer.listeners.add(this);
+        MapView.addLayerChangeListener(this);
     }
 
     /**

@@ -13,9 +13,9 @@ import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -92,9 +92,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
             Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(sc.getKeyStroke());
             Main.contentPane.getActionMap().remove(sc.getKeyStroke());
         }
-        if (Layer.listeners != null) {
-            Layer.listeners.remove(layerChangeAdapter);
-        }
+        MapView.removeLayerChangeListener(layerChangeAdapter);
         if (DataSet.selListeners != null) {
             DataSet.selListeners.remove(selectionChangeAdapter);
         }
@@ -145,7 +143,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         //
         layerChangeAdapter = new LayerChangeAdapter();
         selectionChangeAdapter = new SelectionChangeAdapter();
-        Layer.listeners.add(layerChangeAdapter);
+        MapView.addLayerChangeListener(layerChangeAdapter);
         DataSet.selListeners.add(selectionChangeAdapter);
         initEnabledState();
     }
@@ -194,7 +192,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
      * Adapter for layer change events
      *
      */
-    private class LayerChangeAdapter implements LayerChangeListener {
+    private class LayerChangeAdapter implements MapView.LayerChangeListener {
         public void activeLayerChange(Layer oldLayer, Layer newLayer) {
             updateEnabledState();
         }

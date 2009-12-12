@@ -1,4 +1,3 @@
-// License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -43,10 +42,10 @@ import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.Layer.LayerChangeListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.ImageProvider.OverlayPosition;
@@ -94,6 +93,8 @@ public class LayerListDialog extends ToggleDialog {
     /** the list of layers */
     private LayerList layerList;
 
+    ActivateLayerAction activateLayerAction;
+
     protected JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel(new GridLayout(1, 5));
 
@@ -110,9 +111,9 @@ public class LayerListDialog extends ToggleDialog {
         buttonPanel.add(new SideButton(moveDownAction));
 
         // -- activate action
-        ActivateLayerAction activateLayerAction = new ActivateLayerAction();
+        activateLayerAction = new ActivateLayerAction();
         adaptTo(activateLayerAction, selectionModel);
-        adaptToLayerChanges(activateLayerAction);
+        MapView.addLayerChangeListener(activateLayerAction);
         buttonPanel.add(new SideButton(activateLayerAction, "activate"));
 
         // -- show hide action
@@ -150,7 +151,7 @@ public class LayerListDialog extends ToggleDialog {
         selectionModel = new DefaultListSelectionModel();
         selectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         model = new LayerListModel(selectionModel);
-        Layer.listeners.add(model);
+        MapView.addLayerChangeListener(model);
 
         // create the list control
         //
@@ -179,6 +180,12 @@ public class LayerListDialog extends ToggleDialog {
         );
 
         add(createButtonPanel(), BorderLayout.SOUTH);
+    }
+
+    @Override
+    public void tearDown() {
+        MapView.removeLayerChangeListener(model);
+        MapView.removeLayerChangeListener(activateLayerAction);
     }
 
     public LayerListModel getModel() {
@@ -231,35 +238,6 @@ public class LayerListDialog extends ToggleDialog {
                     }
                 }
         );
-    }
-    /**
-     * Wires <code>listener</code> to {@see MapView} in such a way, that
-     * <code>listener</code> receives a {@see IEnabledStateUpdating#updateEnabledState()}
-     * on every {@see LayerChangeListener}-event emitted by {@see MapView}.
-     *
-     * @param listener  the listener
-     */
-    protected void adaptToLayerChanges(final IEnabledStateUpdating listener) {
-        Layer.listeners.add(
-                new LayerChangeListener() {
-                    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-                        listener.updateEnabledState();
-                    }
-                    public void layerAdded(Layer newLayer) {
-                        listener.updateEnabledState();
-                    }
-                    public void layerRemoved(Layer oldLayer) {
-                        listener.updateEnabledState();
-                    }
-                }
-        );
-    }
-
-    private enum DeleteDecision {
-        deleteCurrent,
-        dontDeleteCurrent,
-        deleteAll,
-        cancel
     }
 
     /**
@@ -399,7 +377,7 @@ public class LayerListDialog extends ToggleDialog {
      * The action to activate the currently selected layer
      */
 
-    public final class ActivateLayerAction extends AbstractAction implements IEnabledStateUpdating{
+    public final class ActivateLayerAction extends AbstractAction implements IEnabledStateUpdating, MapView.LayerChangeListener{
         private  Layer layer;
 
         public ActivateLayerAction(Layer layer) throws IllegalArgumentException {
@@ -448,6 +426,16 @@ public class LayerListDialog extends ToggleDialog {
             } else {
                 setEnabled(!isActiveLayer(layer));
             }
+        }
+
+        public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+            updateEnabledState();
+        }
+        public void layerAdded(Layer newLayer) {
+            updateEnabledState();
+        }
+        public void layerRemoved(Layer oldLayer) {
+            updateEnabledState();
         }
     }
 
@@ -632,7 +620,7 @@ public class LayerListDialog extends ToggleDialog {
      * It also listens to {@see PropertyChangeEvent}s of every {@see Layer} it manages, in particular to
      * the properties {@see Layer#VISIBLE_PROP} and {@see Layer#NAME_PROP}.
      */
-    public class LayerListModel extends DefaultListModel implements LayerChangeListener, PropertyChangeListener{
+    public class LayerListModel extends DefaultListModel implements MapView.LayerChangeListener, PropertyChangeListener{
 
         /** manages list selection state*/
         private DefaultListSelectionModel selectionModel;
