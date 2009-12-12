@@ -81,13 +81,14 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
             bgStrategies.add(rbStrategy.get(strategy));
         }
 
-        // -- single request strategy
+        // -- headline
         GridBagConstraints gc = new GridBagConstraints();
         gc.gridx = 0;
         gc.gridy = 0;
         gc.weightx = 1.0;
         gc.weighty = 0.0;
         gc.gridwidth = 4;
+        gc.fill = GridBagConstraints.HORIZONTAL;
         gc.insets = new Insets(0,0,3,0);
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         pnl.add(new JMultilineLabel(tr("Please select the upload strategy:")), gc);
