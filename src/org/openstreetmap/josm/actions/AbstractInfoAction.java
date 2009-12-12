@@ -14,6 +14,10 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -77,27 +81,37 @@ public abstract class AbstractInfoAction extends JosmAction {
         );
     }
 
-    protected boolean confirmLaunchMultiple(int numPrimitives) {
+    public static boolean confirmLaunchMultiple(int numBrowsers) {
         String msg  = tr(
                 "You''re about to launch {0} browser windows.<br>"
                 + "This may both clutter your screen with browser windows<br>"
-                + "and take some time to finish.", numPrimitives);
+                + "and take some time to finish.", numBrowsers);
         msg = "<html>" + msg + "</html>";
-        String [] options = new String [] {
-                tr("Continue"),
-                tr("Cancel")
+        ButtonSpec[] spec = new ButtonSpec[] {
+                new ButtonSpec(
+                        tr("Continue"),
+                        ImageProvider.get("ok"),
+                        tr("Click to continue and to open {0} browsers", numBrowsers),
+                        null // no specific help topic
+                ),
+                new ButtonSpec(
+                        tr("Cancel"),
+                        ImageProvider.get("cancel"),
+                        tr("Click to abort launching external browsers"),
+                        null // no specific help topic
+                )
         };
-        int ret = JOptionPane.showOptionDialog(
+        int ret = HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
                 msg,
                 tr("Warning"),
-                JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE,
                 null,
-                options,
-                options[0]
+                spec,
+                spec[0],
+                HelpUtil.ht("/WarningMessages#ToManyBrowsersToOpen")
         );
-        return ret == JOptionPane.YES_OPTION;
+        return ret == 0;
     }
 
     protected void launchInfoBrowsersForSelectedPrimitives() {

@@ -11,6 +11,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -19,6 +20,7 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
@@ -27,6 +29,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.AbstractInfoAction;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -37,9 +41,24 @@ import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetListModel;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetsInActiveDataLayerListModel;
 import org.openstreetmap.josm.gui.dialogs.changeset.DownloadChangesetsTask;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.io.CloseChangesetTask;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.OpenBrowser;
 
+/**
+ * ChangesetDialog is a toggle dialog which displays the current list of changesets.
+ * It either displays
+ * <ul>
+ *   <li>the list of changesets the currently selected objects are assigned to</li>
+ *   <li>the list of changesets objects in the current data layer are assigend to</li>
+ * </ul>
+ * 
+ * The dialog offers actions to download and to close changesets. It can also launch an external
+ * browser with information about a changeset. Furthermore, it can select all objects in
+ * the current data layer being assigned to a specific changeset.
+ * 
+ */
 public class ChangesetDialog extends ToggleDialog{
     static private final Logger logger = Logger.getLogger(ChangesetDialog.class.getName());
 
@@ -49,6 +68,13 @@ public class ChangesetDialog extends ToggleDialog{
     private JList lstInActiveDataLayer;
     private JCheckBox cbInSelectionOnly;
     private JPanel pnlList;
+
+    // the actions
+    private SelectObjectsAction selectObjectsAction;
+    private  ReadChangesetsAction readChangesetAction;
+    private ShowChangesetInfoAction showChangsetInfoAction;
+    private CloseOpenChangesetsAction closeChangesetAction;
+
 
     protected void buildChangesetsLists() {
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
@@ -76,6 +102,10 @@ public class ChangesetDialog extends ToggleDialog{
         DblClickHandler dblClickHandler = new DblClickHandler();
         lstInSelection.addMouseListener(dblClickHandler);
         lstInActiveDataLayer.addMouseListener(dblClickHandler);
+
+        PopupMenuLauncher popupMenuLauncher = new PopupMenuLauncher();
+        lstInSelection.addMouseListener(popupMenuLauncher);
+        lstInActiveDataLayer.addMouseListener(popupMenuLauncher);
     }
 
     @Override
@@ -113,17 +143,33 @@ public class ChangesetDialog extends ToggleDialog{
         JToolBar tp = new JToolBar(JToolBar.HORIZONTAL);
         tp.setFloatable(false);
 
-        SelectObjectsAction selectObjectsAction = new SelectObjectsAction();
+        // -- select objects action
+        selectObjectsAction = new SelectObjectsAction();
         tp.add(selectObjectsAction);
         cbInSelectionOnly.addItemListener(selectObjectsAction);
         lstInActiveDataLayer.getSelectionModel().addListSelectionListener(selectObjectsAction);
         lstInSelection.getSelectionModel().addListSelectionListener(selectObjectsAction);
 
-        ReadChangesetsAction readChangesetAction = new ReadChangesetsAction();
+        // -- read changesets action
+        readChangesetAction = new ReadChangesetsAction();
         tp.add(readChangesetAction);
         cbInSelectionOnly.addItemListener(readChangesetAction);
         lstInActiveDataLayer.getSelectionModel().addListSelectionListener(readChangesetAction);
         lstInSelection.getSelectionModel().addListSelectionListener(readChangesetAction);
+
+        // -- close changesets action
+        closeChangesetAction = new CloseOpenChangesetsAction();
+        tp.add(closeChangesetAction);
+        cbInSelectionOnly.addItemListener(closeChangesetAction);
+        lstInActiveDataLayer.getSelectionModel().addListSelectionListener(closeChangesetAction);
+        lstInSelection.getSelectionModel().addListSelectionListener(closeChangesetAction);
+
+        // -- show info action
+        showChangsetInfoAction = new ShowChangesetInfoAction();
+        tp.add(showChangsetInfoAction);
+        cbInSelectionOnly.addItemListener(showChangsetInfoAction);
+        lstInActiveDataLayer.getSelectionModel().addListSelectionListener(showChangsetInfoAction);
+        lstInSelection.getSelectionModel().addListSelectionListener(showChangsetInfoAction);
 
         pnl.add(tp);
         return pnl;
@@ -202,6 +248,9 @@ public class ChangesetDialog extends ToggleDialog{
         }
     }
 
+    /**
+     * Selects objects for the currently selected changesets.
+     */
     class SelectObjectsAction extends AbstractAction implements ListSelectionListener, ItemListener{
 
         public SelectObjectsAction() {
@@ -259,6 +308,10 @@ public class ChangesetDialog extends ToggleDialog{
         }
     }
 
+    /**
+     * Downloads selected changesets
+     * 
+     */
     class ReadChangesetsAction extends AbstractAction implements ListSelectionListener, ItemListener{
         public ReadChangesetsAction() {
             putValue(NAME, tr("Download"));
@@ -290,4 +343,115 @@ public class ChangesetDialog extends ToggleDialog{
         }
     }
 
+    /**
+     * Closes the currently selected changesets
+     * 
+     */
+    class CloseOpenChangesetsAction extends AbstractAction implements ListSelectionListener, ItemListener {
+        public CloseOpenChangesetsAction() {
+            putValue(NAME, tr("Close open changesets"));
+            putValue(SHORT_DESCRIPTION, tr("Closes the selected open changesets"));
+            putValue(SMALL_ICON, ImageProvider.get("closechangeset"));
+            updateEnabledState();
+        }
+
+        public void actionPerformed(ActionEvent arg0) {
+            List<Changeset> sel = getCurrentChangesetListModel().getSelectedOpenChangesets();
+            if (sel.isEmpty())
+                return;
+            Main.worker.submit(new CloseChangesetTask(sel));
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(getCurrentChangesetListModel().hasSelectedOpenChangesets());
+        }
+
+        public void itemStateChanged(ItemEvent arg0) {
+            updateEnabledState();
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+    }
+
+    /**
+     * Show information about the currently selected changesets
+     * 
+     */
+    class ShowChangesetInfoAction extends AbstractAction implements ListSelectionListener, ItemListener {
+        public ShowChangesetInfoAction() {
+            putValue(NAME, tr("Show info"));
+            putValue(SHORT_DESCRIPTION, tr("Open a web page for each selected changeset"));
+            putValue(SMALL_ICON, ImageProvider.get("about"));
+            updateEnabledState();
+        }
+
+        public void actionPerformed(ActionEvent arg0) {
+            Set<Changeset> sel = getCurrentChangesetListModel().getSelectedChangesets();
+            if (sel.isEmpty())
+                return;
+            if (sel.size() > 10 && ! AbstractInfoAction.confirmLaunchMultiple(sel.size()))
+                return;
+            String baseUrl = AbstractInfoAction.getBaseBrowseUrl();
+            for (Changeset cs: sel) {
+                String url = baseUrl + "/changeset/" + cs.getId();
+                OpenBrowser.displayUrl(
+                        url
+                );
+            }
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(getCurrentChangesetList().getSelectedIndices().length > 0);
+        }
+
+        public void itemStateChanged(ItemEvent arg0) {
+            updateEnabledState();
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+    }
+
+    class PopupMenuLauncher extends MouseAdapter {
+        protected void showPopup(MouseEvent evt) {
+            if (!evt.isPopupTrigger())
+                return;
+            JList lst = getCurrentChangesetList();
+            if (lst.getSelectedIndices().length == 0) {
+                int idx = lst.locationToIndex(evt.getPoint());
+                if (idx >=0) {
+                    lst.getSelectionModel().addSelectionInterval(idx, idx);
+                }
+            }
+            ChangesetDialogPopup popup = new ChangesetDialogPopup();
+            popup.show(lst, evt.getX(), evt.getY());
+
+        }
+        @Override
+        public void mouseClicked(MouseEvent evt) {
+            showPopup(evt);
+        }
+        @Override
+        public void mousePressed(MouseEvent evt) {
+            showPopup(evt);
+        }
+        @Override
+        public void mouseReleased(MouseEvent evt) {
+            showPopup(evt);
+        }
+    }
+
+    class ChangesetDialogPopup extends JPopupMenu {
+        public ChangesetDialogPopup() {
+            add(selectObjectsAction);
+            addSeparator();
+            add(readChangesetAction);
+            add(closeChangesetAction);
+            addSeparator();
+            add(showChangsetInfoAction);
+        }
+    }
 }

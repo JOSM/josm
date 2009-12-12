@@ -161,6 +161,33 @@ public class ChangesetListModel extends DefaultListModel  implements ChangesetCa
         );
     }
 
+    /**
+     * Replies true if  there is at least one selected open changeset
+     * 
+     * @return true if  there is at least one selected open changeset
+     */
+    public boolean hasSelectedOpenChangesets() {
+        return !getSelectedOpenChangesets().isEmpty();
+    }
+
+    /**
+     * Replies the selected open changesets
+     * 
+     * @return the selected open changesets
+     */
+    public List<Changeset> getSelectedOpenChangesets() {
+        List<Changeset> ret = new ArrayList<Changeset>();
+        for (int i=0; i< getSize(); i++) {
+            if (selectionModel.isSelectedIndex(i)) {
+                Changeset cs = data.get(i);
+                if (cs.isOpen()) {
+                    ret.add(cs);
+                }
+            }
+        }
+        return ret;
+    }
+
     /* ---------------------------------------------------------------------------- */
     /* Interface ChangesetCacheListener                                             */
     /* ---------------------------------------------------------------------------- */
