@@ -806,14 +806,6 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="highway" v="viaduct"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
 		<condition k="highway" v="motorway_junction"/>
 		<icon annotate="true" src="vehicle/exit.png"/>
 		<scale_min>1</scale_min>
@@ -1035,14 +1027,6 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="waterway" v="aqueduct"/>
-		<line width="2" realwidth="5" dashed="true" colour="aqueduct#ff0000"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
 		<condition k="waterway" v="boatyard"/>
 		<icon annotate="true" src="nautical/boatyard.png"/>
 		<area colour="manmade#d8d8d8"/>
@@ -1133,14 +1117,6 @@ For external files the <rules> should have following elements:
 		<condition k="railway" v="subway_entrance"/>
 		<area colour="railwaypoint#f7efb7"/>
 		<icon annotate="true" src="transport/underground.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="railway" v="viaduct"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2489,15 +2465,6 @@ For external files the <rules> should have following elements:
 		<scale_max>50000</scale_max>
 	</rule>
 
-	<rule>
-    <!-- deprecated; use information=guidepost instead -->
-		<condition k="amenity" v="signpost"/>
-    <icon annotate="true" src="misc/deprecated.png"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
-	</rule>
-
 <!--shop tags -->
 
 	<rule>
@@ -3410,15 +3377,6 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="natural" v="marsh"/>
-		<icon src="misc/deprecated.png"/>
-		<line dashed="true" colour="deprecated#ff0000"/>
-		<area colour="deprecated#ff0000"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
 		<condition k="natural" v="wetland"/>
 		<icon src="misc/no_icon.png"/>
 		<area colour="marsh#4f4ff3"/>
@@ -4293,12 +4251,18 @@ For external files the <rules> should have following elements:
 	<!-- man_made=power_hydro -> power=generator and power_source=hydro -->
 	<!-- man_made=power_fossil -> power=generator and power_source=fossil -->
 	<!-- man_made=power_nuclear -> power=generator and power_source=nuclear -->
-	<!-- highway minor - classification now more detailed -->
 	<!-- amenity=park_bench -> amenity=bench -->
+	<!-- amenity=signpost -> information=guidepost -->
+	<!-- highway minor - classification now more detailed -->
 	<!-- highway=stile -> barrier=stile -->
 	<!-- highway=cattle_grid -> barrier=cattle_grid -->
 	<!-- highway=toll_booth -> barrier=toll_booth -->
+	<!-- highway=viaduct -> bridge=viaduct -->
+	<!-- railway=viaduct -> bridge=viaduct -->
+	<!-- waterway=aqueduct -> bridge=aqueduct -->
+	<!-- natural=marsh -> natural=wetland -->
 
+	
 	<!-- there's a bit confusion about this tag, the proposal says leisure, map features say tourism ?!? -->
 	<rule>
 		<condition k="leisure" v="zoo"/>
