@@ -45,11 +45,14 @@ import javax.swing.SwingConstants;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
+import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.MapFrame.MapModeChangeListener;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
@@ -645,6 +648,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
     }
 
     private MouseAdapter mouseAdapter = null;
+    private MapModeChangeListener mapModeListener = null;
 
     private void hook_up_mouse_events() {
         mouseAdapter = new MouseAdapter() {
@@ -688,12 +692,25 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 }
             }
         };
-        Main.map.mapView.addMouseListener(mouseAdapter);
+
+        mapModeListener = new MapModeChangeListener() {
+            public void mapModeChange(MapMode oldMapMode, MapMode newMapMode) {
+                if (newMapMode instanceof org.openstreetmap.josm.actions.mapmode.SelectAction) {
+                    Main.map.mapView.addMouseListener(mouseAdapter);
+                } else {
+                    Main.map.mapView.removeMouseListener(mouseAdapter);
+                }
+            }
+        };
+
+        Main.map.addMapModeChangeListener(mapModeListener);
+        mapModeListener.mapModeChange(null, Main.map.mapMode);
+
         MapView.addLayerChangeListener(new LayerChangeListener() {
             public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-                if (newLayer == GeoImageLayer.this && currentPhoto >= 0) {
-                    Main.main.map.repaint();
-                    ImageViewerDialog.showImage(GeoImageLayer.this, data.get(currentPhoto));
+                if (newLayer == GeoImageLayer.this) {
+                    // only in select mode it is possible to click the images
+                    Main.map.selectSelectTool(false);
                 }
             }
 
@@ -706,6 +723,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                         thumbsloader.stop = true;
                     }
                     Main.map.mapView.removeMouseListener(mouseAdapter);
+                    Main.map.removeMapModeChangeListener(mapModeListener);
                     currentPhoto = -1;
                     data.clear();
                     data = null;

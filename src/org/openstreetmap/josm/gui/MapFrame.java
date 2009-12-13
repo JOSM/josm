@@ -8,7 +8,9 @@ import java.awt.Dimension;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -215,7 +217,7 @@ public class MapFrame extends JPanel implements Destroyable {
     }
 
     /**
-     * 
+     *
      */
     public void tearDownDialogsPane() {
         dialogsPanel.tearDown();
@@ -256,14 +258,16 @@ public class MapFrame extends JPanel implements Destroyable {
      * old MapMode and register on the new one.
      * @param mapMode   The new mode to set.
      */
-    public void selectMapMode(MapMode mapMode) {
-        if (mapMode == this.mapMode)
+    public void selectMapMode(MapMode newMapMode) {
+        MapMode oldMapMode = this.mapMode;
+        if (newMapMode == oldMapMode)
             return;
-        if (this.mapMode != null) {
-            this.mapMode.exitMode();
+        if (oldMapMode != null) {
+            oldMapMode.exitMode();
         }
-        this.mapMode = mapMode;
-        mapMode.enterMode();
+        this.mapMode = newMapMode;
+        newMapMode.enterMode();
+        fireMapModeChanged(oldMapMode, newMapMode);
     }
 
     /**
@@ -317,5 +321,43 @@ public class MapFrame extends JPanel implements Destroyable {
      */
     public int getToggleDlgWidth() {
         return dialogsPanel.getWidth();
+    }
+
+    /**
+     * Interface to notify listeners of the change of the mapMode.
+     */
+    public interface MapModeChangeListener {
+        void mapModeChange(MapMode oldMapMode, MapMode newMapMode);
+    }
+
+    /**
+     * the mapMode listeners
+     */
+    private static final Collection<MapModeChangeListener> mapModeChangeListeners = new CopyOnWriteArrayList<MapModeChangeListener>();
+     /**
+     * Adds a mapMode change listener
+     *
+     * @param listener the listener. Ignored if null or already registered.
+     */
+    public static void addMapModeChangeListener(MapModeChangeListener listener) {
+        if (listener != null && ! mapModeChangeListeners.contains(listener)) {
+            mapModeChangeListeners.add(listener);
+        }
+    }
+    /**
+     * Removes a mapMode change listener
+     *
+     * @param listener the listener. Ignored if null or already registered.
+     */
+    public static void removeMapModeChangeListener(MapModeChangeListener listener) {
+        if (listener != null && mapModeChangeListeners.contains(listener)) {
+            mapModeChangeListeners.remove(listener);
+        }
+    }
+
+    protected static void fireMapModeChanged(MapMode oldMapMode, MapMode newMapMode) {
+        for (MapModeChangeListener l : mapModeChangeListeners) {
+            l.mapModeChange(oldMapMode, newMapMode);
+        }
     }
 }
