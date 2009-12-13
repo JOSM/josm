@@ -61,6 +61,9 @@ public class DatasetEventManager implements LayerChangeListener, Listener {
         normalListeners.remove(listener);
     }
 
+    /* --------------------------------------------------------------------------- */
+    /* interface LayerChangeListener                                               */
+    /* --------------------------------------------------------------------------- */
     public void activeLayerChange(Layer a, Layer b) {
         if (a != null && a instanceof OsmDataLayer) {
             ((OsmDataLayer)a).data.removeDataSetListener(myListener);
@@ -68,7 +71,9 @@ public class DatasetEventManager implements LayerChangeListener, Listener {
         if (b != null && b instanceof OsmDataLayer) {
             ((OsmDataLayer)b).data.addDataSetListener(myListener);
         }
-        processDatasetEvent(new DataChangedEvent(Main.main.getEditLayer().data));
+        if (Main.main.getEditLayer() != null) {
+            processDatasetEvent(new DataChangedEvent(Main.main.getEditLayer().data));
+        }
     }
     public void layerRemoved(Layer a) {/* irrelevant in this context */}
     public void layerAdded(Layer a) {/* irrelevant in this context */}
