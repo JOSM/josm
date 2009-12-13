@@ -331,15 +331,69 @@ public class SplitWayAction extends JosmAction {
             int i = 0;
 
             for (RelationMember rm : r.getMembers()) {
-                if (rm.isWay()) {
-                    if (rm.getMember() == way) {
-                        if (!("route".equals(type)) && !("multipolygon".equals(type))) {
+                if (rm.isWay() && rm.getMember() == way) {
+                    boolean insert = true;
+                    if ("restriction".equals(type))
+                    {
+                        /* this code assumes the restriction is correct. No real error checking done */
+                        String role = rm.getRole();
+                        if("from".equals(role) || "to".equals(role))
+                        {
+                            OsmPrimitive via = null;
+                            for (RelationMember rmv : r.getMembers()) {
+                                if("via".equals(rmv.getRole())){
+                                    via = rmv.getMember();
+                                }
+                            }
+                            List<Node> nodes = new ArrayList<Node>();
+                            if(via != null) {
+                                if(via instanceof Node) {
+                                    nodes.add((Node)via);
+                                } else if(via instanceof Way) {
+                                    nodes.add(((Way)via).lastNode());
+                                    nodes.add(((Way)via).firstNode());
+                                }
+                            }
+                            Way res = null;
+                            for(Node n : nodes) {
+                                if(changedWay.isFirstLastNode(n)) {
+                                    res = way;
+                                }
+                            }
+                            if(res == null)
+                            {
+                                for (Way wayToAdd : newWays) {
+                                    for(Node n : nodes) {
+                                        if(wayToAdd.isFirstLastNode(n)) {
+                                            res = wayToAdd;
+                                        }
+                                    }
+                                }
+                                if(res != null)
+                                {
+                                    if (c == null) {
+                                        c = new Relation(r);
+                                    }
+                                    c.addMember(new RelationMember(role, res));
+                                    c.removeMembersFor(way);
+                                    insert = false;
+                                }
+                            }
+                            else
+                                insert = false;
+                        }
+                        else if(!"via".equals(role))
                             warnme = true;
-                        }
-                        if (c == null) {
-                            c = new Relation(r);
-                        }
+                    }
+                    else if (!("route".equals(type)) && !("multipolygon".equals(type))) {
+                        warnme = true;
+                    }
+                    if (c == null) {
+                        c = new Relation(r);
+                    }
 
+                    if(insert)
+                    {
                         int j = i;
                         boolean backwards = "backward".equals(rm.getRole());
                         for (Way wayToAdd : newWays) {
