@@ -42,7 +42,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -272,7 +271,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
      * The table model for the users
      *
      */
-    class UserTableModel extends DefaultTableModel {
+    static class UserTableModel extends DefaultTableModel {
         private ArrayList<UserInfo> data;
 
         public UserTableModel() {

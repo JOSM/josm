@@ -178,7 +178,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
     /**
      * Action for canceling conflict resolution
      */
-    class HelpAction extends AbstractAction {
+    static class HelpAction extends AbstractAction {
         public HelpAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Show help information"));
             putValue(Action.NAME, tr("Help"));

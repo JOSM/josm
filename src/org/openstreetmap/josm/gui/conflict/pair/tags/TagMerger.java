@@ -306,7 +306,7 @@ public class TagMerger extends JPanel {
      * the other registered Adjustables is adjusted too.
      *
      */
-    class AdjustmentSynchronizer implements AdjustmentListener {
+    static class AdjustmentSynchronizer implements AdjustmentListener {
         private final ArrayList<Adjustable> synchronizedAdjustables;
 
         public AdjustmentSynchronizer() {

@@ -159,11 +159,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
     public void populate(Collection<RelationToChildReference> references) {
         references = references == null ? new LinkedList<RelationToChildReference>() : references;
         decisions.clear();
-        if (references.isEmpty()) {
-            this.relations = new HashSet<Relation>(references.size());
-        } else {
-            this.relations = new HashSet<Relation>(references.size());
-        }
+        this.relations = new HashSet<Relation>(references.size());
         for (RelationToChildReference reference: references) {
             decisions.add(new RelationMemberConflictDecision(reference.getParent(), reference.getPosition()));
             relations.add(reference.getParent());

@@ -73,7 +73,7 @@ public class MapStatus extends JPanel implements Helpful {
      * A small user interface component that consists of an image label and
      * a fixed text content to the right of the image.
      */
-    class ImageLabel extends JPanel {
+    static class ImageLabel extends JPanel {
         private JLabel tf;
         private int chars;
         public ImageLabel(String img, String tooltip, int chars) {
@@ -485,7 +485,7 @@ public class MapStatus extends JPanel implements Helpful {
      * Everything, the collector is interested of. Access must be synchronized.
      * @author imi
      */
-    class MouseState {
+    static class MouseState {
         Point mousePos;
         int modifiers;
     }

@@ -16,8 +16,6 @@ import javax.swing.BorderFactory;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.OpenFileAction;
 
-import org.openstreetmap.josm.gui.FileDrop.TransferableObject;
-
 /**
  * This class makes it easy to drag and drop files from the operating
  * system to a Java program. Any <tt>java.awt.Component</tt> can be
@@ -437,7 +435,7 @@ public class FileDrop
             catch( Exception e )
             {   support = false;
             }   // end catch
-            supportsDnD = new Boolean( support );
+            supportsDnD = support;
         }   // end if: first time through
         return supportsDnD.booleanValue();
     }   // end supportsDnD

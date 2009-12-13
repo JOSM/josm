@@ -45,7 +45,6 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -355,7 +354,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
      *
      * @author Jan Peter Stotz
      */
-    protected class SearchMenuItem extends JMenuItem implements ActionListener {
+    protected static class SearchMenuItem extends JMenuItem implements ActionListener {
         protected SearchSetting s;
 
         public SearchMenuItem(SearchSetting s) {

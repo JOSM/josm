@@ -272,7 +272,7 @@ public class Shortcut {
         }
         // pull in the groups
         for (int i = GROUP_NONE; i < GROUP__MAX+GROUPS_ALT2*2; i++) { // fill more groups, so registering with e.g. ALT2+MNEMONIC won't NPE
-            groups.put(new Integer(i), new Integer(Main.pref.getInteger("shortcut.groups."+i, -1)));
+            groups.put(i, Main.pref.getInteger("shortcut.groups."+i, -1));
         }
         // (1) System reserved shortcuts
         Main.platform.initSystemShortcuts();

@@ -112,7 +112,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
     public int compareTo(HistoryOsmPrimitive o) {
         if (this.id != o.id)
             throw new ClassCastException(tr("Can''t compare primitive with ID ''{0}'' to primitive with ID ''{1}''.", o.id, this.id));
-        return new Long(this.version).compareTo(o.version);
+        return Long.valueOf(this.version).compareTo(o.version);
     }
 
     public void put(String key, String value) {
@@ -158,7 +158,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
+        if (!(obj instanceof HistoryOsmPrimitive))
             return false;
         // equal semantics is valid for subclasses like {@see HistoryOsmNode} etc. too.
         // So, don't enforce equality of class.

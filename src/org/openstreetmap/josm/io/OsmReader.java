@@ -556,11 +556,11 @@ public class OsmReader {
                         primitive = new Way(rm.id);
                     } else if (rm.type.equals("relation")) {
                         primitive = new Relation(rm.id);
-                    } else {
+                    } else
                         // can't happen, we've been testing for valid member types
                         // at the beginning of this method
                         //
-                    }
+                        throw new AssertionError();
                     ds.addPrimitive(primitive);
                     externalIdMap.put(new SimplePrimitiveId(rm.id, OsmPrimitiveType.fromApiTypeName(rm.type)), primitive);
                 }

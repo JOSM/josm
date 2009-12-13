@@ -581,7 +581,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
     }
 
-    class AddAbortException extends Exception  {
+    static class AddAbortException extends Exception  {
     }
 
     abstract class  AddFromSelectionAction extends AbstractAction {

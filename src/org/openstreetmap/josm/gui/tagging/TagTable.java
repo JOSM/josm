@@ -29,7 +29,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.gui.dialogs.relation.RunnableAction;
@@ -393,8 +392,9 @@ public class TagTable extends JTable  {
         addKeyListener(l);
         if (editor == null) {
             logger.warning("editor is null. cannot register OK accelator listener.");
+        } else {
+            editor.getEditor().addKeyListener(l);
         }
-        editor.getEditor().addKeyListener(l);
     }
 
     public void requestFocusInCell(final int row, final int col) {

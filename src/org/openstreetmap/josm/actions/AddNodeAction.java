@@ -18,7 +18,6 @@ import java.awt.event.WindowEvent;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -51,7 +50,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * and when ok is pressed, a new node is created at the specified position.
  */
 public final class AddNodeAction extends JosmAction {
-    static private final Logger logger = Logger.getLogger(AddNodeAction.class.getName());
+    //static private final Logger logger = Logger.getLogger(AddNodeAction.class.getName());
 
     public AddNodeAction() {
         super(tr("Add Node..."), "addnode", tr("Add a node by entering latitude and longitude."),
@@ -310,7 +309,7 @@ public final class AddNodeAction extends JosmAction {
             }
         }
 
-        class TextFieldFocusHandler implements FocusListener {
+        static class TextFieldFocusHandler implements FocusListener {
             public void focusGained(FocusEvent e) {
                 Component c = e.getComponent();
                 if (c instanceof JTextField) {

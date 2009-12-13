@@ -397,9 +397,9 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                         if (l1 instanceof OsmDataLayer && l2 instanceof OsmDataLayer) {
                             if (l1 == getActiveLayer()) return -1;
                             if (l2 == getActiveLayer()) return 1;
-                            return new Integer(layers.indexOf(l1)).compareTo(layers.indexOf(l2));
+                            return Integer.valueOf(layers.indexOf(l1)).compareTo(layers.indexOf(l2));
                         } else
-                            return new Integer(layers.indexOf(l1)).compareTo(layers.indexOf(l2));
+                            return Integer.valueOf(layers.indexOf(l1)).compareTo(layers.indexOf(l2));
                     }
                 }
         );

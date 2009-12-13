@@ -84,7 +84,7 @@ public class GpxLayer extends Layer {
     private int computeCacheColorTracksTune;
     private boolean isLocalFile;
 
-    private class Markers {
+    private static class Markers {
         public boolean timedMarkersOmitted = false;
         public boolean untimedMarkersOmitted = false;
     }

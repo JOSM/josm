@@ -30,8 +30,8 @@ public class OsmUrlToBounds {
             if (map.containsKey("bbox")) {
                 String bbox[] = map.get("bbox").split(",");
                 b = new Bounds(
-                    new LatLon(Double.parseDouble(bbox[1]), Double.parseDouble(bbox[0])),
-                    new LatLon(Double.parseDouble(bbox[3]), Double.parseDouble(bbox[2])));
+                        new LatLon(Double.parseDouble(bbox[1]), Double.parseDouble(bbox[0])),
+                        new LatLon(Double.parseDouble(bbox[3]), Double.parseDouble(bbox[2])));
             } else if (map.containsKey("minlat")) {
                 String s = map.get("minlat");
                 Double minlat = Double.parseDouble(s);
@@ -44,8 +44,8 @@ public class OsmUrlToBounds {
                 b = new Bounds(new LatLon(minlat, minlon), new LatLon(maxlat, maxlon));
             } else {
                 b = positionToBounds(parseDouble(map, "lat"),
-                                     parseDouble(map, "lon"),
-                                     Integer.parseInt(map.get("zoom")));
+                        parseDouble(map, "lon"),
+                        Integer.parseInt(map.get("zoom")));
             }
         } catch (NumberFormatException x) {
         } catch (NullPointerException x) {
@@ -80,9 +80,8 @@ public class OsmUrlToBounds {
      * @see http://trac.openstreetmap.org/browser/sites/rails_port/lib/short_link.rb
      */
     private static Bounds parseShortLink(final String url) {
-        if (!url.startsWith(SHORTLINK_PREFIX)) {
+        if (!url.startsWith(SHORTLINK_PREFIX))
             return null;
-        }
         final String shortLink = url.substring(SHORTLINK_PREFIX.length());
 
         final Map<Character, Integer> array = new HashMap<Character, Integer>();
@@ -124,16 +123,16 @@ public class OsmUrlToBounds {
 
         // 2**32 == 4294967296
         return positionToBounds(y * 180.0 / 4294967296.0 - 90.0,
-                                x * 360.0 / 4294967296.0 - 180.0,
-                                // TODO: -2 was not in ruby code
-                                zoom - 8 - (zoomOffset % 3) - 2);
+                x * 360.0 / 4294967296.0 - 180.0,
+                // TODO: -2 was not in ruby code
+                zoom - 8 - (zoomOffset % 3) - 2);
     }
 
     private static Bounds positionToBounds(final double lat, final double lon, final int zoom) {
         final double size = 180.0 / Math.pow(2, zoom);
         return new Bounds(
-                          new LatLon(lat - size/2, lon - size),
-                          new LatLon(lat + size/2, lon + size));
+                new LatLon(lat - size/2, lon - size),
+                new LatLon(lat + size/2, lon + size));
     }
 
     static public int getZoom(Bounds b) {
@@ -143,8 +142,9 @@ public class OsmUrlToBounds {
         double size = Math.max(Math.abs(latMax-latMin), Math.abs(b.getMax().lon()-b.getMin().lon()));
         int zoom = 0;
         while (zoom <= 20) {
-            if (size >= 180)
+            if (size >= 180) {
                 break;
+            }
             size *= 2;
             zoom++;
         }
@@ -162,6 +162,6 @@ public class OsmUrlToBounds {
         lat /= decimals;
         double lon = (Math.round(pos.lon() * decimals));
         lon /= decimals;
-        return new String("http://www.openstreetmap.org/?lat="+lat+"&lon="+lon+"&zoom="+zoom);
+        return "http://www.openstreetmap.org/?lat="+lat+"&lon="+lon+"&zoom="+zoom;
     }
 }

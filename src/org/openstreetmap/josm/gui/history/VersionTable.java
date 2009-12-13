@@ -8,7 +8,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Logger;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JPopupMenu;
@@ -27,8 +26,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class VersionTable extends JTable implements Observer{
+    //private static Logger logger = Logger.getLogger(VersionTable.class.getName());
 
-    private static Logger logger = Logger.getLogger(VersionTable.class.getName());
     private VersionTablePopupMenu popupMenu;
 
     protected void build() {
@@ -113,7 +112,7 @@ public class VersionTable extends JTable implements Observer{
         }
     }
 
-    class ChangesetInfoAction extends AbstractInfoAction {
+    static class ChangesetInfoAction extends AbstractInfoAction {
         private HistoryOsmPrimitive primitive;
 
         public ChangesetInfoAction() {
@@ -142,7 +141,7 @@ public class VersionTable extends JTable implements Observer{
         }
     }
 
-    class VersionTablePopupMenu extends JPopupMenu {
+    static class VersionTablePopupMenu extends JPopupMenu {
 
         private ChangesetInfoAction changesetInfoAction;
 

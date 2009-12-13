@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.osm.Way;
 
 public class ElemStyles
 {
-    public class StyleSet {
+    public static class StyleSet {
         private HashMap<String, IconElemStyle> icons;
         private HashMap<String, LineElemStyle> lines;
         private HashMap<String, AreaElemStyle> areas;
@@ -45,24 +45,28 @@ public class ElemStyles
                 IconElemStyle style;
                 if((style = icons.get("n" + key + "=" + val)) != null)
                 {
-                    if(ret == null || style.priority > ret.priority)
+                    if(ret == null || style.priority > ret.priority) {
                         ret = style;
+                    }
                 }
                 if((style = icons.get("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val))) != null)
                 {
-                    if(ret == null || style.priority > ret.priority)
+                    if(ret == null || style.priority > ret.priority) {
                         ret = style;
+                    }
                 }
                 if((style = icons.get("x" + key)) != null)
                 {
-                    if(ret == null || style.priority > ret.priority)
+                    if(ret == null || style.priority > ret.priority) {
                         ret = style;
+                    }
                 }
             }
             for(IconElemStyle s : iconsList)
             {
-                if((ret == null || s.priority > ret.priority) && s.check(primitive))
+                if((ret == null || s.priority > ret.priority) && s.check(primitive)) {
                     ret = s;
+                }
             }
             return ret;
         }
@@ -79,60 +83,69 @@ public class ElemStyles
                 LineElemStyle styleLine;
                 String idx = "n" + key + "=" + val;
                 if((styleArea = areas.get(idx)) != null && (retArea == null
-                || styleArea.priority > retArea.priority) && (!noclosed
-                || !styleArea.closed))
+                        || styleArea.priority > retArea.priority) && (!noclosed
+                                || !styleArea.closed)) {
                     retArea = styleArea;
+                }
                 if((styleLine = lines.get(idx)) != null && (retLine == null
-                || styleLine.priority > retLine.priority))
+                        || styleLine.priority > retLine.priority))
                 {
                     retLine = styleLine;
                     linestring = idx;
                 }
-                if((styleLine = modifiers.get(idx)) != null)
+                if((styleLine = modifiers.get(idx)) != null) {
                     over.put(idx, styleLine);
+                }
                 idx = "b" + key + "=" + OsmUtils.getNamedOsmBoolean(val);
                 if((styleArea = areas.get(idx)) != null && (retArea == null
-                || styleArea.priority > retArea.priority) && (!noclosed
-                || !styleArea.closed))
+                        || styleArea.priority > retArea.priority) && (!noclosed
+                                || !styleArea.closed)) {
                     retArea = styleArea;
+                }
                 if((styleLine = lines.get(idx)) != null && (retLine == null
-                || styleLine.priority > retLine.priority))
+                        || styleLine.priority > retLine.priority))
                 {
                     retLine = styleLine;
                     linestring = idx;
                 }
-                if((styleLine = modifiers.get(idx)) != null)
+                if((styleLine = modifiers.get(idx)) != null) {
                     over.put(idx, styleLine);
+                }
                 idx = "x" + key;
                 if((styleArea = areas.get(idx)) != null && (retArea == null
-                || styleArea.priority > retArea.priority) && (!noclosed
-                || !styleArea.closed))
+                        || styleArea.priority > retArea.priority) && (!noclosed
+                                || !styleArea.closed)) {
                     retArea = styleArea;
+                }
                 if((styleLine = lines.get(idx)) != null && (retLine == null
-                || styleLine.priority > retLine.priority))
+                        || styleLine.priority > retLine.priority))
                 {
                     retLine = styleLine;
                     linestring = idx;
                 }
-                if((styleLine = modifiers.get(idx)) != null)
+                if((styleLine = modifiers.get(idx)) != null) {
                     over.put(idx, styleLine);
+                }
             }
             for(AreaElemStyle s : areasList)
             {
                 if((retArea == null || s.priority > retArea.priority)
-                && (!noclosed || !s.closed) && s.check(primitive))
+                        && (!noclosed || !s.closed) && s.check(primitive)) {
                     retArea = s;
+                }
             }
             for(LineElemStyle s : linesList)
             {
                 if((retLine == null || s.priority > retLine.priority)
-                && s.check(primitive))
+                        && s.check(primitive)) {
                     retLine = s;
+                }
             }
             for(LineElemStyle s : modifiersList)
             {
-                if(s.check(primitive))
+                if(s.check(primitive)) {
                     over.put(s.getCode(), s);
+                }
             }
             over.remove(linestring);
             if(over.size() != 0 && retLine != null)
@@ -154,8 +167,8 @@ public class ElemStyles
         public ElemStyle get(OsmPrimitive osm)
         {
             return (!osm.hasKeys()) ? null :
-            ((osm instanceof Node) ? getNode(osm) : get(osm,
-            osm instanceof Way && !((Way)osm).isClosed()));
+                ((osm instanceof Node) ? getNode(osm) : get(osm,
+                        osm instanceof Way && !((Way)osm).isClosed()));
         }
 
         public ElemStyle getArea(Way osm)
@@ -186,10 +199,12 @@ public class ElemStyles
                     String key = iterator.next();
                     String val = o.get(key);
                     AreaElemStyle s = areas.get("n" + key + "=" + val);
-                    if(s == null || (s.closed && noclosed))
+                    if(s == null || (s.closed && noclosed)) {
                         s = areas.get("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val));
-                    if(s == null || (s.closed && noclosed))
+                    }
+                    if(s == null || (s.closed && noclosed)) {
                         s = areas.get("x" + key);
+                    }
                     if(s != null && !(s.closed && noclosed))
                         return true;
                 }
@@ -276,8 +291,9 @@ public class ElemStyles
 
     private StyleSet getStyleSet(String name, boolean create)
     {
-        if(name == null)
+        if(name == null) {
             name = Main.pref.get("mappaint.style", "standard");
+        }
 
         StyleSet s = styleSet.get(name);
         if(create && s == null)

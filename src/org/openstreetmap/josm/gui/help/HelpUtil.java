@@ -156,7 +156,7 @@ public class HelpUtil {
         } else {
             ret += "/" + topic;
         }
-        ret.replaceAll("\\/+", "\\/"); // just in case, collapse sequences of //
+        ret = ret.replaceAll("\\/+", "\\/"); // just in case, collapse sequences of //
         return ret;
     }
 

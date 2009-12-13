@@ -168,7 +168,7 @@ public class NodeListViewer extends JPanel {
         }
     }
 
-    class NodeListPopupMenu extends JPopupMenu {
+    static class NodeListPopupMenu extends JPopupMenu {
         private ZoomToNodeAction zoomToNodeAction;
         private ShowHistoryAction showHistoryAction;
 
@@ -188,7 +188,7 @@ public class NodeListViewer extends JPanel {
         }
     }
 
-    class ZoomToNodeAction extends AbstractAction {
+    static class ZoomToNodeAction extends AbstractAction {
         private PrimitiveId primitiveId;
 
         public ZoomToNodeAction() {
@@ -234,7 +234,7 @@ public class NodeListViewer extends JPanel {
         }
     }
 
-    class ShowHistoryAction extends AbstractAction {
+    static class ShowHistoryAction extends AbstractAction {
         private PrimitiveId primitiveId;
 
         public ShowHistoryAction() {
@@ -301,7 +301,7 @@ public class NodeListViewer extends JPanel {
         }
     }
 
-    class DoubleClickAdapter extends MouseAdapter {
+    static class DoubleClickAdapter extends MouseAdapter {
         private JTable table;
         private ShowHistoryAction showHistoryAction;
 

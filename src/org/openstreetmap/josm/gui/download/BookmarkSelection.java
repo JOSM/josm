@@ -151,7 +151,7 @@ public class BookmarkSelection implements DownloadSelection {
                     currentArea.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES),
                     currentArea.getMax().latToString(CoordinateFormat.DECIMAL_DEGREES),
                     currentArea.getMax().lonToString(CoordinateFormat.DECIMAL_DEGREES)
-                    )
+            )
             );
         }
     }
@@ -166,7 +166,7 @@ public class BookmarkSelection implements DownloadSelection {
         this.currentArea = area;
         bookmarks.clearSelection();
         updateDownloadAreaLabel();
-        actAdd.setEnabled(area != null);
+        actAdd.setEnabled(true);
     }
 
     /**
@@ -193,9 +193,9 @@ public class BookmarkSelection implements DownloadSelection {
             Bookmark b = new Bookmark();
             b.setName(
                     JOptionPane.showInputDialog(
-                    Main.parent,tr("Please enter a name for the bookmarked download area."),
-                    tr("Name of location"),
-                    JOptionPane.QUESTION_MESSAGE)
+                            Main.parent,tr("Please enter a name for the bookmarked download area."),
+                            tr("Name of location"),
+                            JOptionPane.QUESTION_MESSAGE)
             );
             b.setArea(currentArea);
             if (b.getName() != null && !b.getName().equals("")) {
@@ -207,7 +207,7 @@ public class BookmarkSelection implements DownloadSelection {
 
     class RemoveAction extends AbstractAction implements ListSelectionListener{
         public RemoveAction() {
-           //putValue(NAME, tr("Remove"));
+            //putValue(NAME, tr("Remove"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
             putValue(SHORT_DESCRIPTION, tr("Remove the currently selected bookmarks"));
             updateEnabledState();
@@ -215,9 +215,8 @@ public class BookmarkSelection implements DownloadSelection {
 
         public void actionPerformed(ActionEvent e) {
             Object[] sels = bookmarks.getSelectedValues();
-            if (sels == null || sels.length == 0) {
+            if (sels == null || sels.length == 0)
                 return;
-            }
             for (Object sel: sels) {
                 ((DefaultListModel)bookmarks.getModel()).removeElement(sel);
             }
@@ -233,7 +232,7 @@ public class BookmarkSelection implements DownloadSelection {
 
     class RenameAction extends AbstractAction implements ListSelectionListener{
         public RenameAction() {
-           //putValue(NAME, tr("Remove"));
+            //putValue(NAME, tr("Remove"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
             putValue(SHORT_DESCRIPTION, tr("Rename the currently selected bookmark"));
             updateEnabledState();
@@ -241,19 +240,18 @@ public class BookmarkSelection implements DownloadSelection {
 
         public void actionPerformed(ActionEvent e) {
             Object[] sels = bookmarks.getSelectedValues();
-            if (sels == null || sels.length != 1) {
+            if (sels == null || sels.length != 1)
                 return;
-            }
             Bookmark b = (Bookmark)sels[0];
             Object value =
-                    JOptionPane.showInputDialog(
-                    Main.parent,tr("Please enter a name for the bookmarked download area."),
-                    tr("Name of location"),
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    null,
-                    b.getName()
-                    );
+                JOptionPane.showInputDialog(
+                        Main.parent,tr("Please enter a name for the bookmarked download area."),
+                        tr("Name of location"),
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        null,
+                        b.getName()
+                );
             if (value != null) {
                 b.setName(value.toString());
                 bookmarks.save();

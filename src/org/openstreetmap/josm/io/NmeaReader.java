@@ -131,8 +131,8 @@ public class NmeaReader {
 
     public GpxData data;
 
-//  private final static SimpleDateFormat GGATIMEFMT =
-//      new SimpleDateFormat("HHmmss.SSS");
+    //  private final static SimpleDateFormat GGATIMEFMT =
+    //      new SimpleDateFormat("HHmmss.SSS");
     private final static SimpleDateFormat RMCTIMEFMT =
         new SimpleDateFormat("ddMMyyHHmmss.SSS");
     private final static SimpleDateFormat RMCTIMEFMTSTD =
@@ -141,9 +141,11 @@ public class NmeaReader {
     private Date readTime(String p)
     {
         Date d = RMCTIMEFMT.parse(p, new ParsePosition(0));
-        if (d == null)
+        if (d == null) {
             d = RMCTIMEFMTSTD.parse(p, new ParsePosition(0));
-        if (d == null) throw(null); // malformed
+        }
+        if (d == null)
+            throw new RuntimeException("Date is malformed"); // malformed
         return d;
     }
 
@@ -180,15 +182,16 @@ public class NmeaReader {
             StringBuffer sb = new StringBuffer(1024);
             int loopstart_char = rd.read();
             ps = new NMEAParserState();
-            if(loopstart_char == -1) {// zero size file
+            if(loopstart_char == -1)
                 //TODO tell user about the problem?
                 return;
-            }
             sb.append((char)loopstart_char);
             ps.p_Date="010100"; // TODO date problem
             while(true) {
                 // don't load unparsable files completely to memory
-                if(sb.length()>=1020) sb.delete(0, sb.length()-1);
+                if(sb.length()>=1020) {
+                    sb.delete(0, sb.length()-1);
+                }
                 int c = rd.read();
                 if(c=='$') {
                     ParseNMEASentence(sb.toString(), ps);
@@ -198,7 +201,9 @@ public class NmeaReader {
                     // EOF: add last WayPoint if it works out
                     ParseNMEASentence(sb.toString(),ps);
                     break;
-                } else sb.append((char)c);
+                } else {
+                    sb.append((char)c);
+                }
             }
             rd.close();
             currentTrack.trackSegs.add(ps.waypoints);
@@ -208,7 +213,7 @@ public class NmeaReader {
             // TODO tell user about the problem?
         }
     }
-    private class NMEAParserState {
+    private static class NMEAParserState {
         protected Collection<WayPoint> waypoints = new ArrayList<WayPoint>();
         protected String p_Time;
         protected String p_Date;
@@ -238,16 +243,18 @@ public class NmeaReader {
             {
                 byte[] chb = chkstrings[0].getBytes();
                 int chk=0;
-                for(int i = 1; i < chb.length; i++) chk ^= chb[i];
+                for(int i = 1; i < chb.length; i++) {
+                    chk ^= chb[i];
+                }
                 if(Integer.parseInt(chkstrings[1].substring(0,2),16) != chk) {
                     //System.out.println("Checksum error");
                     ps.checksum_errors++;
                     ps.p_Wp=null;
                     return false;
                 }
-            }
-            else
+            } else {
                 ps.no_checksum++;
+            }
             // now for the content
             String[] e = chkstrings[0].split(",");
             String accu;
@@ -263,7 +270,7 @@ public class NmeaReader {
                         e[GPGGA.LONGITUDE_NAME.position],
                         e[GPGGA.LATITUDE.position],
                         e[GPGGA.LONGITUDE.position]
-                    );
+                );
                 if(latLon==null) throw(null); // malformed
 
                 if((latLon.lat()==0.0) && (latLon.lon()==0.0)) {
@@ -290,13 +297,15 @@ public class NmeaReader {
                 // elevation
                 accu=e[GPGGA.HEIGHT_UNTIS.position];
                 if(accu.equals("M")) {
-                        // Ignore heights that are not in meters for now
-                        accu=e[GPGGA.HEIGHT.position];
-                        if(!accu.equals("")) {
+                    // Ignore heights that are not in meters for now
+                    accu=e[GPGGA.HEIGHT.position];
+                    if(!accu.equals("")) {
                         Double.parseDouble(accu);
                         // if it throws it's malformed; this should only happen if the
                         // device sends nonstandard data.
-                        if(!accu.equals("")) currentwp.attr.put("ele", accu);
+                        if(!accu.equals("")) {
+                            currentwp.attr.put("ele", accu);
+                        }
                     }
                 }
                 // number of sattelites
@@ -308,8 +317,9 @@ public class NmeaReader {
                 }
                 // h-dilution
                 accu=e[GPGGA.HDOP.position];
-                if(!accu.equals(""))
+                if(!accu.equals("")) {
                     currentwp.attr.put("hdop", Float.parseFloat(accu));
+                }
                 // fix
                 accu=e[GPGGA.QUALITY.position];
                 if(!accu.equals("")) {
@@ -319,8 +329,11 @@ public class NmeaReader {
                         currentwp.attr.put("fix", "none");
                         break;
                     case 1:
-                        if(sat < 4) currentwp.attr.put("fix", "2d");
-                        else currentwp.attr.put("fix", "3d");
+                        if(sat < 4) {
+                            currentwp.attr.put("fix", "2d");
+                        } else {
+                            currentwp.attr.put("fix", "3d");
+                        }
                         break;
                     case 2:
                         currentwp.attr.put("fix", "dgps");
@@ -353,16 +366,19 @@ public class NmeaReader {
             } else if(e[0].equals("$GPGSA")) {
                 // vdop
                 accu=e[GPGSA.VDOP.position];
-                if(!accu.equals(""))
+                if(!accu.equals("")) {
                     currentwp.attr.put("vdop", Float.parseFloat(accu));
+                }
                 // hdop
                 accu=e[GPGSA.HDOP.position];
-                if(!accu.equals(""))
+                if(!accu.equals("")) {
                     currentwp.attr.put("hdop", Float.parseFloat(accu));
+                }
                 // pdop
                 accu=e[GPGSA.PDOP.position];
-                if(!accu.equals(""))
+                if(!accu.equals("")) {
                     currentwp.attr.put("pdop", Float.parseFloat(accu));
+                }
             }
             else if(e[0].equals("$GPRMC")) {
                 // coordinates
@@ -371,8 +387,7 @@ public class NmeaReader {
                         e[GPRMC.LENGTH_EAST_NAME.position],
                         e[GPRMC.WIDTH_NORTH.position],
                         e[GPRMC.LENGTH_EAST.position]
-                    );
-                if(latLon==null) throw(null);
+                );
                 if((latLon.lat()==0.0) && (latLon.lon()==0.0)) {
                     ps.zero_coord++;
                     return false;
@@ -438,7 +453,7 @@ public class NmeaReader {
     }
 
     private LatLon parseLatLon(String ns, String ew, String dlat, String dlon)
-        throws NumberFormatException {
+    throws NumberFormatException {
         String widthNorth = dlat.trim();
         String lengthEast = dlon.trim();
 
@@ -455,8 +470,9 @@ public class NmeaReader {
 
         int latdeg = Integer.parseInt(widthNorth.substring(0, latdegsep));
         double latmin = Double.parseDouble(widthNorth.substring(latdegsep));
-        if(latdeg < 0) // strange data with '-' sign
+        if(latdeg < 0) {
             latmin *= -1.0;
+        }
         double lat = latdeg + latmin / 60;
         if ("S".equals(ns)) {
             lat = -lat;
@@ -467,8 +483,9 @@ public class NmeaReader {
 
         int londeg = Integer.parseInt(lengthEast.substring(0, londegsep));
         double lonmin = Double.parseDouble(lengthEast.substring(londegsep));
-        if(londeg < 0) // strange data with '-' sign
+        if(londeg < 0) {
             lonmin *= -1.0;
+        }
         double lon = londeg + lonmin / 60;
         if ("W".equals(ew)) {
             lon = -lon;

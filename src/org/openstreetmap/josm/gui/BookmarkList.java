@@ -82,7 +82,7 @@ public class BookmarkList extends JList {
         }
     }
 
-    class BookmarkCellRenderer extends JLabel implements ListCellRenderer {
+    static class BookmarkCellRenderer extends JLabel implements ListCellRenderer {
 
         private ImageIcon icon;
 

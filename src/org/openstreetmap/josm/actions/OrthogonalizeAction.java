@@ -36,10 +36,10 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public final class OrthogonalizeAction extends JosmAction {
     String USAGE = "<h3>"+
-            "When one or more ways are selected, the shape is adjusted, such that all angles are 90 or 180 degrees.<h3>"+
-            "You can add two nodes to the selection. Then the direction is fixed by these two reference nodes.<h3>"+
-            "(Afterwards, you can undo the movement for certain nodes:<br>"+
-            "Select them and press the shortcut for Orthogonalize / Undo. The default is Shift-Q.)";
+    "When one or more ways are selected, the shape is adjusted, such that all angles are 90 or 180 degrees.<h3>"+
+    "You can add two nodes to the selection. Then the direction is fixed by these two reference nodes.<h3>"+
+    "(Afterwards, you can undo the movement for certain nodes:<br>"+
+    "Select them and press the shortcut for Orthogonalize / Undo. The default is Shift-Q.)";
 
     public OrthogonalizeAction() {
         super(tr("Orthogonalize Shape"),
@@ -71,14 +71,14 @@ public final class OrthogonalizeAction extends JosmAction {
      *
      * This action can be triggered by shortcut only.
      */
-    public class Undo extends JosmAction {
+    public static class Undo extends JosmAction {
         public Undo() {
             super(tr("Orthogonalize Shape / Undo"),
-                "ortho",
-                tr("Undo orthogonalization for certain nodes"),
-                Shortcut.registerShortcut("tools:orthogonalizeUndo", tr("Tool: {0}", tr("Orthogonalize Shape / Undo")),
-                        KeyEvent.VK_Q,
-                        Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), true);
+                    "ortho",
+                    tr("Undo orthogonalization for certain nodes"),
+                    Shortcut.registerShortcut("tools:orthogonalizeUndo", tr("Tool: {0}", tr("Orthogonalize Shape / Undo")),
+                            KeyEvent.VK_Q,
+                            Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), true);
         }
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())
@@ -102,11 +102,11 @@ public final class OrthogonalizeAction extends JosmAction {
             }
             catch (InvalidUserInputException ex) {
                 JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("Orthogonalize Shape / Undo\n"+
+                        Main.parent,
+                        tr("Orthogonalize Shape / Undo\n"+
                         "Please select nodes that were moved by the previous Orthogonalize Shape action!"),
-                    tr("Undo Orthogonalize Shape"),
-                    JOptionPane.INFORMATION_MESSAGE);
+                        tr("Undo Orthogonalize Shape"),
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }
@@ -142,14 +142,11 @@ public final class OrthogonalizeAction extends JosmAction {
                 }
                 else if (p instanceof Way) {
                     wayDataList.add(new WayData((Way) p));
-                }
-                else {      // maybe a relation got selected...
+                } else
                     throw new InvalidUserInputException("Selection must consist only of ways and nodes.");
-                }
             }
-            if (wayDataList.isEmpty()) {
+            if (wayDataList.isEmpty())
                 throw new InvalidUserInputException("usage");
-            }
             else  {
                 if (nodeList.size() == 2 || nodeList.isEmpty()) {
                     OrthogonalizeAction.rememberMovements.clear();
@@ -185,27 +182,27 @@ public final class OrthogonalizeAction extends JosmAction {
                         }
                     } else
                         throw new IllegalStateException();
-                    
+
                     Main.main.undoRedo.add(new SequenceCommand(tr("Orthogonalize"), commands));
                     Main.map.repaint();
-                    
+
                 } else
                     throw new InvalidUserInputException("usage");
             }
         } catch (InvalidUserInputException ex) {
             if (ex.getMessage().equals("usage")) {
                 JOptionPane.showMessageDialog(
-                    Main.parent,
-                    "<html><h2>"+tr("Usage")+tr(USAGE),
-                    tr("Orthogonalize Shape"),
-                    JOptionPane.INFORMATION_MESSAGE);
+                        Main.parent,
+                        "<html><h2>"+tr("Usage")+tr(USAGE),
+                        tr("Orthogonalize Shape"),
+                        JOptionPane.INFORMATION_MESSAGE);
             }
             else {
                 JOptionPane.showMessageDialog(
-                    Main.parent,
-                    "<html><h3>"+tr(ex.getMessage())+"<br><hr><h3>"+tr("Usage")+tr(USAGE),
-                    tr("Selected Elements cannot be orthogonalized"),
-                    JOptionPane.INFORMATION_MESSAGE);
+                        Main.parent,
+                        "<html><h3>"+tr(ex.getMessage())+"<br><hr><h3>"+tr("Usage")+tr(USAGE),
+                        tr("Selected Elements cannot be orthogonalized"),
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }
@@ -231,7 +228,7 @@ public final class OrthogonalizeAction extends JosmAction {
      *
      **/
     private static Collection<Command> orthogonalize(ArrayList<WayData> wayDataList, ArrayList<Node> headingNodes)
-        throws InvalidUserInputException
+    throws InvalidUserInputException
     {
         // find average heading
         double headingAll;
@@ -262,8 +259,8 @@ public final class OrthogonalizeAction extends JosmAction {
             }
         } catch (RejectedAngleException ex) {
             throw new InvalidUserInputException(
-                "<html>Please make sure all selected ways head in a similar direction<br>"+
-                "or orthogonalize them one by one.");
+                    "<html>Please make sure all selected ways head in a similar direction<br>"+
+            "or orthogonalize them one by one.");
         }
 
         // put the nodes of all ways in a set
@@ -301,7 +298,9 @@ public final class OrthogonalizeAction extends JosmAction {
             final HashSet<Node> s = new HashSet<Node>(allNodes);
             int s_size = s.size();
             for (int dummy = 0; dummy < s_size; ++ dummy) {
-                if (s.isEmpty()) break;
+                if (s.isEmpty()) {
+                    break;
+                }
                 final Node dummy_n = s.iterator().next();     // pick arbitrary element of s
 
                 final HashSet<Node> cs = new HashSet<Node>(); // will contain each node that can be reached from dummy_n
@@ -356,7 +355,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
         // rotate back and log the change
         final Collection<Command> commands = new LinkedList<Command>();
-//        OrthogonalizeAction.rememberMovements.clear();
+        //        OrthogonalizeAction.rememberMovements.clear();
         for (Node n: allNodes) {
             EastNorth tmp = new EastNorth(nX.get(n), nY.get(n));
             tmp = EN.rotate_cc(pivot, tmp, headingAll);
@@ -365,9 +364,8 @@ public final class OrthogonalizeAction extends JosmAction {
             if (headingNodes.contains(n)) { // The heading nodes should not have changed
                 final double EPSILON = 1E-6;
                 if (Math.abs(dx) > Math.abs(EPSILON * tmp.east()) ||
-                    Math.abs(dy) > Math.abs(EPSILON * tmp.east())) {
+                        Math.abs(dy) > Math.abs(EPSILON * tmp.east()))
                     throw new AssertionError();
-                }
             }
             else {
                 OrthogonalizeAction.rememberMovements.put(n, new EastNorth(dx, dy));
@@ -385,9 +383,9 @@ public final class OrthogonalizeAction extends JosmAction {
         final public int nSeg;            // Number of Segments of the Way
         final public int nNode;           // Number of Nodes of the Way
         public Direction[] segDirections; // Direction of the segments
-                                          // segment i goes from node i to node (i+1)
+        // segment i goes from node i to node (i+1)
         public EastNorth segSum;          // (Vector-)sum of all horizontal segments plus the sum of all vertical
-                                          //     segments turned by 90 degrees
+        //     segments turned by 90 degrees
         public double heading;            // heading of segSum == approximate heading of the way
         public WayData(Way pWay) {
             way = pWay;
@@ -421,32 +419,36 @@ public final class OrthogonalizeAction extends JosmAction {
 
             // sum up segments
             EastNorth h = new EastNorth(0.,0.);
-            double lh = EN.abs(h);
+            //double lh = EN.abs(h);
             EastNorth v = new EastNorth(0.,0.);
-            double lv = EN.abs(v);
+            //double lv = EN.abs(v);
             for (int i = 0; i < nSeg; ++i) {
                 EastNorth segment = EN.diff(en[i+1], en[i]);
-                if      (segDirections[i] == Direction.RIGHT) h = EN.sum(h,segment);
-                else if (segDirections[i] == Direction.UP)    v = EN.sum(v,segment);
-                else if (segDirections[i] == Direction.LEFT)  h = EN.diff(h,segment);
-                else if (segDirections[i] == Direction.DOWN)  v = EN.diff(v,segment);
-                else throw new IllegalStateException();
+                if      (segDirections[i] == Direction.RIGHT) {
+                    h = EN.sum(h,segment);
+                } else if (segDirections[i] == Direction.UP) {
+                    v = EN.sum(v,segment);
+                } else if (segDirections[i] == Direction.LEFT) {
+                    h = EN.diff(h,segment);
+                } else if (segDirections[i] == Direction.DOWN) {
+                    v = EN.diff(v,segment);
+                } else throw new IllegalStateException();
                 /**
                  * When summing up the length of the sum vector should increase.
                  * However, it is possible to construct ways, such that this assertion fails.
                  * So only uncomment this for testing
                  **/
-//                if (segDirections[i].ordinal() % 2 == 0) {
-//                    if (EN.abs(h) < lh) throw new AssertionError();
-//                    lh = EN.abs(h);
-//                } else {
-//                    if (EN.abs(v) < lv) throw new AssertionError();
-//                    lv = EN.abs(v);
-//                }
+                //                if (segDirections[i].ordinal() % 2 == 0) {
+                //                    if (EN.abs(h) < lh) throw new AssertionError();
+                //                    lh = EN.abs(h);
+                //                } else {
+                //                    if (EN.abs(v) < lv) throw new AssertionError();
+                //                    lv = EN.abs(v);
+                //                }
             }
             // rotate the vertical vector by 90 degrees (clockwise) and add it to the horizontal vector
             segSum = EN.sum(h, new EastNorth(v.north(), - v.east()));
-//            if (EN.abs(segSum) < lh) throw new AssertionError();
+            //            if (EN.abs(segSum) < lh) throw new AssertionError();
             this.heading = EN.polar(new EastNorth(0.,0.), segSum);
         }
     }
@@ -455,7 +457,9 @@ public final class OrthogonalizeAction extends JosmAction {
         RIGHT, UP, LEFT, DOWN;
         public Direction changeBy(int directionChange) {
             int tmp = (this.ordinal() + directionChange) % 4;
-            if (tmp < 0) tmp += 4;          // the % operator can return negative value
+            if (tmp < 0) {
+                tmp += 4;          // the % operator can return negative value
+            }
             return Direction.values()[tmp];
         }
     }
@@ -464,8 +468,12 @@ public final class OrthogonalizeAction extends JosmAction {
      * Make sure angle (up to 2*Pi) is in interval [ 0, 2*Pi ).
      */
     private static double standard_angle_0_to_2PI(double a) {
-        while (a >= 2 * Math.PI) a -= 2 * Math.PI;
-        while (a < 0)            a += 2 * Math.PI;
+        while (a >= 2 * Math.PI) {
+            a -= 2 * Math.PI;
+        }
+        while (a < 0) {
+            a += 2 * Math.PI;
+        }
         return a;
     }
 
@@ -473,8 +481,12 @@ public final class OrthogonalizeAction extends JosmAction {
      * Make sure angle (up to 2*Pi) is in interval ( -Pi, Pi ].
      */
     private static double standard_angle_mPI_to_PI(double a) {
-        while (a > Math.PI)    a -= 2 * Math.PI;
-        while (a <= - Math.PI) a += 2 * Math.PI;
+        while (a > Math.PI) {
+            a -= 2 * Math.PI;
+        }
+        while (a <= - Math.PI) {
+            a += 2 * Math.PI;
+        }
         return a;
     }
 
@@ -498,15 +510,6 @@ public final class OrthogonalizeAction extends JosmAction {
         public static EastNorth diff(EastNorth en1, EastNorth en2) {
             return new EastNorth(en1.east() - en2.east(), en1.north() - en2.north());
         }
-        public static double abs(EastNorth en) {
-            return Math.sqrt(en.east() * en.east() + en.north() * en.north());
-        }
-        public static String toString(EastNorth en) {
-            return "["+u(en.east())+","+u(en.north())+"]";
-        }
-        public static long u(double d) {
-            return Math.round(d * 1000000.);
-        }
         public static double polar(EastNorth en1, EastNorth en2) {
             return Math.atan2(en2.north() - en1.north(), en2.east() -  en1.east());
         }
@@ -522,16 +525,19 @@ public final class OrthogonalizeAction extends JosmAction {
         double d90   = Math.abs(a - Math.PI / 2);
         double d_m90 = Math.abs(a + Math.PI / 2);
         int dirChange;
-        if (d0 < deltaMax)         dirChange =  0;
-        else if (d90 < deltaMax)   dirChange =  1;
-        else if (d_m90 < deltaMax) dirChange = -1;
-        else {
+        if (d0 < deltaMax) {
+            dirChange =  0;
+        } else if (d90 < deltaMax) {
+            dirChange =  1;
+        } else if (d_m90 < deltaMax) {
+            dirChange = -1;
+        } else {
             a = standard_angle_0_to_2PI(a);
             double d180 = Math.abs(a - Math.PI);
-            if (d180 < deltaMax)   dirChange = 2;
-            else {
+            if (d180 < deltaMax) {
+                dirChange = 2;
+            } else
                 throw new RejectedAngleException();
-            }
         }
         return dirChange;
     }

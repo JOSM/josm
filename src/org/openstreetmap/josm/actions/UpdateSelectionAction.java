@@ -37,13 +37,12 @@ public class UpdateSelectionAction extends JosmAction {
     public void handlePrimitiveGoneException(long id, OsmPrimitiveType type) {
         MultiFetchServerObjectReader reader = new MultiFetchServerObjectReader();
         reader.append(getCurrentDataSet(),id, type);
-        DataSet ds = null;
         try {
-            ds = reader.parseOsm(NullProgressMonitor.INSTANCE);
+            DataSet ds = reader.parseOsm(NullProgressMonitor.INSTANCE);
+            Main.map.mapView.getEditLayer().mergeFrom(ds);
         } catch(Exception e) {
             ExceptionDialogUtil.explainException(e);
         }
-        Main.map.mapView.getEditLayer().mergeFrom(ds);
     }
 
     /**

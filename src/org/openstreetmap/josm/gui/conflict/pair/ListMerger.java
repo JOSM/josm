@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -773,9 +772,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         theirEntriesTable.setEnabled(!newValue);
         mergedEntriesTable.getSelectionModel().clearSelection();
         mergedEntriesTable.setEnabled(!newValue);
-        if (freezeAction != null) {
-            freezeAction.putValue(FreezeActionProperties.PROP_SELECTED, newValue);
-        }
+        freezeAction.putValue(FreezeActionProperties.PROP_SELECTED, newValue);
         if (newValue) {
             lblFrozenState.setText(
                     tr("<html>Click <strong>{0}</strong> to start merging my and their entries.</html>",

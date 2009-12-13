@@ -216,7 +216,7 @@ public class StyleSourceEditor extends JPanel {
         stylesInitiallyLoaded = true;
     }
 
-    class AvailableStylesListModel extends DefaultListModel {
+    static class AvailableStylesListModel extends DefaultListModel {
         private ArrayList<StyleSourceInfo> data;
         private DefaultListSelectionModel selectionModel;
 
@@ -268,7 +268,7 @@ public class StyleSourceEditor extends JPanel {
         }
     }
 
-    class ActiveStylesModel extends AbstractTableModel {
+    static class ActiveStylesModel extends AbstractTableModel {
         private ArrayList<String> data;
         private DefaultListSelectionModel selectionModel;
 
@@ -384,7 +384,7 @@ public class StyleSourceEditor extends JPanel {
         }
     }
 
-    public class StyleSourceInfo {
+    public static class StyleSourceInfo {
         String version;
         String name;
         String url;
@@ -521,7 +521,7 @@ public class StyleSourceEditor extends JPanel {
         }
     }
 
-    class IconPathTableModel extends AbstractTableModel {
+    static class IconPathTableModel extends AbstractTableModel {
         private ArrayList<String> data;
         private DefaultListSelectionModel selectionModel;
 
@@ -674,7 +674,7 @@ public class StyleSourceEditor extends JPanel {
         }
     }
 
-    class StyleSourceCellRenderer extends JLabel implements ListCellRenderer {
+    static class StyleSourceCellRenderer extends JLabel implements ListCellRenderer {
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {
             String s = value.toString();

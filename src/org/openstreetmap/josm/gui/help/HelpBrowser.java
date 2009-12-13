@@ -398,7 +398,7 @@ public class HelpBrowser extends JFrame {
         }
     }
 
-    class BackAction extends AbstractAction implements Observer {
+    static class BackAction extends AbstractAction implements Observer {
         private HelpBrowserHistory history;
         public BackAction(HelpBrowserHistory history) {
             this.history = history;
@@ -418,7 +418,7 @@ public class HelpBrowser extends JFrame {
         }
     }
 
-    class ForwardAction extends AbstractAction implements Observer {
+    static class ForwardAction extends AbstractAction implements Observer {
         private HelpBrowserHistory history;
         public ForwardAction(HelpBrowserHistory history) {
             this.history = history;

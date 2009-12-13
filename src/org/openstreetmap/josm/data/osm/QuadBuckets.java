@@ -635,7 +635,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                     continue;
                 }
                 if (!canRemove()) {
-                    abort("attempt to remove non-empty child: " + this.content + " " + this.children);
+                    abort("attempt to remove non-empty child: " + this.content + " " + Arrays.toString(this.children));
                 }
                 parent.children[i] = null;
                 nr_siblings--;

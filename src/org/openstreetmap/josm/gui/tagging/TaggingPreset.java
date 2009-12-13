@@ -666,7 +666,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return allPresets;
     }
 
-    private class PresetPanel extends JPanel {
+    private static class PresetPanel extends JPanel {
         boolean hasElements = false;
         PresetPanel()
         {

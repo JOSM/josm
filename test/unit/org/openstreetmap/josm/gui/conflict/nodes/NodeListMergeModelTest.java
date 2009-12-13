@@ -10,6 +10,7 @@ import static org.junit.Assert.fail;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.DefaultListSelectionModel;
@@ -45,7 +46,7 @@ public class NodeListMergeModelTest {
             try {
                 int rows[] = (int[])idx[i];
                 if (rows == null || rows.length != 2) {
-                    fail("illegal selection range. Either null or not length 2: " + rows);
+                    fail("illegal selection range. Either null or not length 2: " + Arrays.toString(rows));
                 }
                 if (rows[0] > rows[1]) {
                     fail("illegal selection range. lower bound > upper bound ");

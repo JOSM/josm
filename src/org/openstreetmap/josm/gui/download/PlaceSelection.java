@@ -143,7 +143,7 @@ public class PlaceSelection implements DownloadSelection {
     }
 
     public void setDownloadArea(Bounds area) {
-       tblSearchResults.clearSelection();
+        tblSearchResults.clearSelection();
     }
 
     /**
@@ -165,7 +165,7 @@ public class PlaceSelection implements DownloadSelection {
             Bounds b = new Bounds(
                     new LatLon(lat - size / 2, lon - size),
                     new LatLon(lat + size / 2, lon+ size)
-                    );
+            );
             return b;
         }
     }
@@ -175,7 +175,7 @@ public class PlaceSelection implements DownloadSelection {
      * Structure of xml described here:  http://wiki.openstreetmap.org/index.php/Name_finder
      *
      */
-    private class NameFinderResultParser extends DefaultHandler {
+    private static class NameFinderResultParser extends DefaultHandler {
         private SearchResult currentResult = null;
         private StringBuffer description = null;
         private int depth = 0;
@@ -187,7 +187,7 @@ public class PlaceSelection implements DownloadSelection {
          */
         @Override
         public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
-                throws SAXException {
+        throws SAXException {
             depth++;
             try {
                 if (qName.equals("searchresults")) {
@@ -322,28 +322,27 @@ public class PlaceSelection implements DownloadSelection {
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
                 getProgressMonitor().indeterminateSubTask(tr("Querying name server ..."));
-                    URL url = new URL("http://gazetteer.openstreetmap.org/namefinder/search.xml?find="
-                            +java.net.URLEncoder.encode(searchExpression, "UTF-8"));
-                    synchronized(this) {
-                        connection = (HttpURLConnection)url.openConnection();
-                    }
-                    connection.setConnectTimeout(15000);
-                    InputStream inputStream = connection.getInputStream();
-                    InputSource inputSource = new InputSource(new InputStreamReader(inputStream, "UTF-8"));
-                    NameFinderResultParser parser = new NameFinderResultParser();
-                    SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser);
-                    this.data = parser.getResult();
+                URL url = new URL("http://gazetteer.openstreetmap.org/namefinder/search.xml?find="
+                        +java.net.URLEncoder.encode(searchExpression, "UTF-8"));
+                synchronized(this) {
+                    connection = (HttpURLConnection)url.openConnection();
+                }
+                connection.setConnectTimeout(15000);
+                InputStream inputStream = connection.getInputStream();
+                InputSource inputSource = new InputSource(new InputStreamReader(inputStream, "UTF-8"));
+                NameFinderResultParser parser = new NameFinderResultParser();
+                SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser);
+                this.data = parser.getResult();
             } catch(Exception e) {
-                if (canceled) {
+                if (canceled)
                     // ignore exception
                     return;
-                }
                 lastException = e;
             }
         }
     }
 
-    class NamedResultTableModel extends DefaultTableModel {
+    static class NamedResultTableModel extends DefaultTableModel {
         private ArrayList<SearchResult> data;
         private ListSelectionModel selectionModel;
 
@@ -377,9 +376,8 @@ public class PlaceSelection implements DownloadSelection {
         }
 
         public SearchResult getSelectedSearchResult() {
-            if (selectionModel.getMinSelectionIndex() < 0) {
+            if (selectionModel.getMinSelectionIndex() < 0)
                 return null;
-            }
             return data.get(selectionModel.getMinSelectionIndex());
         }
     }
@@ -441,7 +439,7 @@ public class PlaceSelection implements DownloadSelection {
         }
     }
 
-    class NamedResultCellRenderer extends JLabel implements TableCellRenderer {
+    static class NamedResultCellRenderer extends JLabel implements TableCellRenderer {
 
         public NamedResultCellRenderer() {
             setOpaque(true);

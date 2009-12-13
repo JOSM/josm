@@ -8,7 +8,6 @@ import javax.swing.DefaultListSelectionModel;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
@@ -30,7 +29,7 @@ public class ChangesetInSelectionListModel extends ChangesetListModel implements
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
         if (newLayer == null || ! (newLayer instanceof OsmDataLayer)) {
             setChangesets(null);
-        } else if (newLayer instanceof OsmDataLayer){
+        } else {
             initFromPrimitives(((OsmDataLayer) newLayer).data.getSelected());
         }
     }

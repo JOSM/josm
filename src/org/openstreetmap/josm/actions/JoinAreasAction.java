@@ -55,7 +55,7 @@ public class JoinAreasAction extends JosmAction {
 
     // HelperClass
     // Saves a node and two positions where to insert the node into the ways
-    private class NodeToSegs implements Comparable<NodeToSegs> {
+    private static class NodeToSegs implements Comparable<NodeToSegs> {
         public int pos;
         public Node n;
         public double dis;
@@ -70,11 +70,24 @@ public class JoinAreasAction extends JosmAction {
                 return (this.dis - o.dis) > 0 ? 1 : -1;
                 return this.pos - o.pos;
         }
+
+        @Override
+        public int hashCode() {
+            return pos;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof NodeToSegs)
+                return compareTo((NodeToSegs) o) == 0;
+            else
+                return false;
+        }
     }
 
     // HelperClass
     // Saves a relation and a role an OsmPrimitve was part of until it was stripped from all relations
-    private class RelationRole {
+    private static class RelationRole {
         public final Relation rel;
         public final String role;
         public RelationRole(Relation rel, String role) {

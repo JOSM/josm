@@ -17,9 +17,12 @@ public final class Pair<A,B> {
         return a.hashCode() ^ b.hashCode();
     }
 
-    @Override public boolean equals(Object o) {
-        return o == null ? o == null : o instanceof Pair
-            && a.equals(((Pair<?,?>) o).a) && b.equals(((Pair<?,?>) o).b);
+    @Override public boolean equals(Object other) {
+        if (other instanceof Pair<?, ?>) {
+            Pair<?, ?> o = (Pair<?, ?>)other;
+            return a.equals(o.a) && b.equals(o.b);
+        } else
+            return false;
     }
 
     public static <T> ArrayList<T> toArrayList(Pair<T, T> p) {

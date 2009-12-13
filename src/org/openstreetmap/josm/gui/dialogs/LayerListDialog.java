@@ -42,7 +42,6 @@ import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -496,7 +495,7 @@ public class LayerListDialog extends ToggleDialog {
      * the list cell renderer used to render layer list entries
      *
      */
-    class LayerListCellRenderer extends DefaultListCellRenderer {
+    static class LayerListCellRenderer extends DefaultListCellRenderer {
 
         protected boolean isActiveLayer(Layer layer) {
             if (Main.map == null) return false;
@@ -620,7 +619,7 @@ public class LayerListDialog extends ToggleDialog {
      * It also listens to {@see PropertyChangeEvent}s of every {@see Layer} it manages, in particular to
      * the properties {@see Layer#VISIBLE_PROP} and {@see Layer#NAME_PROP}.
      */
-    public class LayerListModel extends DefaultListModel implements MapView.LayerChangeListener, PropertyChangeListener{
+    public static class LayerListModel extends DefaultListModel implements MapView.LayerChangeListener, PropertyChangeListener{
 
         /** manages list selection state*/
         private DefaultListSelectionModel selectionModel;
@@ -1009,7 +1008,7 @@ public class LayerListDialog extends ToggleDialog {
         }
     }
 
-    class LayerList extends JList {
+    static class LayerList extends JList {
         public LayerList(ListModel dataModel) {
             super(dataModel);
         }

@@ -29,7 +29,6 @@ import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.Filters;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.DataChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -203,7 +202,7 @@ public class FilterDialog extends ToggleDialog implements DataChangeListener, Ma
         filters.filter();
     }
 
-    class StringRenderer extends DefaultTableCellRenderer {
+    static class StringRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
             Filters model = (Filters)table.getModel();
@@ -213,7 +212,7 @@ public class FilterDialog extends ToggleDialog implements DataChangeListener, Ma
         }
     }
 
-    class BooleanRenderer extends JCheckBox implements TableCellRenderer {
+    static class BooleanRenderer extends JCheckBox implements TableCellRenderer {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
             Filters model = (Filters)table.getModel();
             setSelected((Boolean)value);

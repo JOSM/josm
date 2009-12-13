@@ -281,8 +281,7 @@ public class ExtendedDialog extends JDialog {
      */
     protected Dimension findMaxDialogSize() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension x = new Dimension(Math.round(screenSize.width*2/3),
-                Math.round(screenSize.height*2/3));
+        Dimension x = new Dimension(screenSize.width*2/3, screenSize.height*2/3);
         try {
             if(parent != null) {
                 x = JOptionPane.getFrameForComponent(parent).getSize();
@@ -419,7 +418,7 @@ public class ExtendedDialog extends JDialog {
         JMultilineLabel lbl = new JMultilineLabel(msg);
         // Make it not wider than 1/2 of the screen
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        lbl.setMaxWidth(Math.round(screenSize.width*1/2));
+        lbl.setMaxWidth(screenSize.width/2);
         return lbl;
     }
 

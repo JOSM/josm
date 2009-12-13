@@ -153,7 +153,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
      * A list model for a list of OSM primitives.
      *
      */
-    class PrimitiveListModel extends AbstractListModel{
+    static class PrimitiveListModel extends AbstractListModel{
         private List<OsmPrimitive> primitives;
 
         public PrimitiveListModel() {

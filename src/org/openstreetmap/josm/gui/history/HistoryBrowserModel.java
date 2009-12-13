@@ -880,7 +880,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
      * Creates a {@see HistoryOsmPrimitive} from a {@see OsmPrimitive}
      *
      */
-    class HistoryPrimitiveBuilder extends AbstractVisitor {
+    static class HistoryPrimitiveBuilder extends AbstractVisitor {
         private HistoryOsmPrimitive clone;
 
         public void visit(Node n) {

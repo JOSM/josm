@@ -268,7 +268,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         }
     }
 
-    class SelectAllOnFocusHandler extends FocusAdapter {
+    static class SelectAllOnFocusHandler extends FocusAdapter {
         private JTextComponent tfTarget;
         public SelectAllOnFocusHandler(JTextComponent tfTarget) {
             this.tfTarget = tfTarget;

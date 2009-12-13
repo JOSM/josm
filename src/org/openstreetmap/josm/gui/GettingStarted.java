@@ -26,7 +26,7 @@ public class GettingStarted extends JPanel {
     static private String styles = "<style type=\"text/css\">\n"
         + "body { font-family: sans-serif; font-weight: bold; }\n" + "h1 {text-align: center;}\n" + "</style>\n";
 
-    public class LinkGeneral extends JEditorPane implements HyperlinkListener {
+    public static class LinkGeneral extends JEditorPane implements HyperlinkListener {
         public LinkGeneral(String text) {
             setContentType("text/html");
             setText(text);
@@ -45,7 +45,7 @@ public class GettingStarted extends JPanel {
     /**
      * Grabs current MOTD from cache or webpage and parses it.
      */
-    private class MotdContent extends CacheCustomContent {
+    private static class MotdContent extends CacheCustomContent {
         public MotdContent() {
             super("motd.html", CacheCustomContent.INTERVAL_DAILY);
         }

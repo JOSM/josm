@@ -243,7 +243,7 @@ public class DataSetMerger {
         for (RelationMember sourceMember : source.getMembers()) {
             OsmPrimitive targetMember = getMergeTarget(sourceMember.getMember());
             if (targetMember == null)
-                throw new IllegalStateException(tr("Missing merge target of type {0} with id {1}", targetMember.getType(), targetMember.getUniqueId()));
+                throw new IllegalStateException(tr("Missing merge target of type {0} with id {1}", sourceMember.getType(), sourceMember.getUniqueId()));
             if (! targetMember.isDeleted() && targetMember.isVisible()) {
                 RelationMember newMember = new RelationMember(sourceMember.getRole(), targetMember);
                 newMembers.add(newMember);

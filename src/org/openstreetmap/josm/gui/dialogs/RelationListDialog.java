@@ -338,7 +338,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
      * The action for creating a new relation
      *
      */
-    class NewAction extends AbstractAction implements MapView.LayerChangeListener{
+    static class NewAction extends AbstractAction implements MapView.LayerChangeListener{
         public NewAction() {
             putValue(SHORT_DESCRIPTION,tr("Create a new relation"));
             //putValue(NAME, tr("New"));

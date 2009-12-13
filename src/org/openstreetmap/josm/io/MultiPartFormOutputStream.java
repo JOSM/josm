@@ -7,10 +7,10 @@ Copyright 1994-2007 Sun Microsystems, Inc. All Rights Reserved.
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    * Redistribution of source code must retain the above copyright notice, this list
+ * Redistribution of source code must retain the above copyright notice, this list
       of conditions and the following disclaimer.
 
-    * Redistribution in binary form must reproduce the above copyright notice, this
+ * Redistribution in binary form must reproduce the above copyright notice, this
       list of conditions and the following disclaimer in the documentation and/or other
       materials provided with the distribution.
 
@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF SUN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 
 You acknowledge that this software is not designed, licensed or intended for use in the
 design, construction, operation or maintenance of any nuclear facility.
-*/
+ */
 
 package org.openstreetmap.josm.io;
 
@@ -85,12 +85,10 @@ public class MultiPartFormOutputStream extends OsmConnection {
      * @see  #getContentType(String)
      */
     public MultiPartFormOutputStream(OutputStream os, String boundary) {
-        if(os == null) {
+        if(os == null)
             throw new IllegalArgumentException("Output stream is required.");
-        }
-        if(boundary == null || boundary.length() == 0) {
+        if(boundary == null || boundary.length() == 0)
             throw new IllegalArgumentException("Boundary stream is required.");
-        }
         this.out = new DataOutputStream(os);
         this.boundary = boundary;
         initAuthentication();
@@ -105,7 +103,7 @@ public class MultiPartFormOutputStream extends OsmConnection {
      */
     public void writeField(String name, boolean value)
     throws java.io.IOException {
-        writeField(name, new Boolean(value).toString());
+        writeField(name, Boolean.valueOf(value).toString());
     }
 
     /**
@@ -177,7 +175,7 @@ public class MultiPartFormOutputStream extends OsmConnection {
      */
     public void writeField(String name, char value)
     throws java.io.IOException {
-        writeField(name, new Character(value).toString());
+        writeField(name, Character.valueOf(value).toString());
     }
 
     /**
@@ -190,9 +188,8 @@ public class MultiPartFormOutputStream extends OsmConnection {
      */
     public void writeField(String name, String value)
     throws java.io.IOException {
-        if(name == null) {
+        if(name == null)
             throw new IllegalArgumentException("Name cannot be null or empty.");
-        }
         if(value == null) {
             value = "";
         }
@@ -228,15 +225,12 @@ public class MultiPartFormOutputStream extends OsmConnection {
      */
     public void writeFile(String name, String mimeType, java.io.File file)
     throws java.io.IOException {
-        if(file == null) {
+        if(file == null)
             throw new IllegalArgumentException("File cannot be null.");
-        }
-        if(!file.exists()) {
+        if(!file.exists())
             throw new IllegalArgumentException("File does not exist.");
-        }
-        if(file.isDirectory()) {
+        if(file.isDirectory())
             throw new IllegalArgumentException("File cannot be a directory.");
-        }
         writeFile(name, mimeType, file.getCanonicalPath(), new FileInputStream(file));
     }
 
@@ -253,12 +247,10 @@ public class MultiPartFormOutputStream extends OsmConnection {
     public void writeFile(String name, String mimeType,
             String fileName, InputStream is)
     throws java.io.IOException {
-        if(is == null) {
+        if(is == null)
             throw new IllegalArgumentException("Input stream cannot be null.");
-        }
-        if(fileName == null || fileName.length() == 0) {
+        if(fileName == null || fileName.length() == 0)
             throw new IllegalArgumentException("File name cannot be null or empty.");
-        }
         /*
             --boundary\r\n
             Content-Disposition: form-data; name="<fieldName>"; filename="<filename>"\r\n
@@ -307,12 +299,10 @@ public class MultiPartFormOutputStream extends OsmConnection {
     public void writeFile(String name, String mimeType,
             String fileName, byte[] data)
     throws java.io.IOException {
-        if(data == null) {
+        if(data == null)
             throw new IllegalArgumentException("Data cannot be null.");
-        }
-        if(fileName == null || fileName.length() == 0) {
+        if(fileName == null || fileName.length() == 0)
             throw new IllegalArgumentException("File name cannot be null or empty.");
-        }
         /*
             --boundary\r\n
             Content-Disposition: form-data; name="<fieldName>"; filename="<filename>"\r\n

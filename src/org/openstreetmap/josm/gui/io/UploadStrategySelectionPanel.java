@@ -234,7 +234,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
     public void setUploadStrategySpecification(UploadStrategySpecification strategy) {
         if (strategy == null) return;
         rbStrategy.get(strategy.getStrategy()).setSelected(true);
-        tfChunkSize.setEnabled(strategy.equals(UploadStrategy.CHUNKED_DATASET_STRATEGY));
+        tfChunkSize.setEnabled(strategy.getStrategy() == UploadStrategy.CHUNKED_DATASET_STRATEGY);
         if (strategy.getStrategy().equals(UploadStrategy.CHUNKED_DATASET_STRATEGY)) {
             if (strategy.getChunkSize() != UploadStrategySpecification.UNSPECIFIED_CHUNK_SIZE) {
                 tfChunkSize.setText(Integer.toString(strategy.getChunkSize()));
@@ -379,7 +379,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         }
     }
 
-    class TextFieldFocusHandler implements FocusListener {
+    static class TextFieldFocusHandler implements FocusListener {
         public void focusGained(FocusEvent e) {
             Component c = e.getComponent();
             if (c instanceof JTextField) {

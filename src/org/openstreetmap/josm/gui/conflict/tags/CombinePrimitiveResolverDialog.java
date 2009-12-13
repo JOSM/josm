@@ -1,7 +1,7 @@
 package org.openstreetmap.josm.gui.conflict.tags;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -398,7 +398,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         }
     }
 
-    class AutoAdjustingSplitPane extends JSplitPane implements PropertyChangeListener, HierarchyBoundsListener {
+    static class AutoAdjustingSplitPane extends JSplitPane implements PropertyChangeListener, HierarchyBoundsListener {
         private double dividerLocation;
 
         public AutoAdjustingSplitPane(int newOrientation) {
