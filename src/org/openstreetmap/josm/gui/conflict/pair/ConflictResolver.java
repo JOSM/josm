@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.command.ModifiedConflictResolveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.command.VersionConflictResolveCommand;
 import org.openstreetmap.josm.data.osm.Node;
@@ -270,9 +271,8 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
                 commands.add(model.buildResolveCommand((Relation)my, (Relation)their));
             }
             if (isResolvedCompletely()) {
-                commands.add(
-                        new VersionConflictResolveCommand(my, their)
-                );
+                commands.add(new VersionConflictResolveCommand(my, their));
+                commands.add(new ModifiedConflictResolveCommand(my, their));
             }
         }
         return new SequenceCommand(tr("Conflict Resolution"), commands);
