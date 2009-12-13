@@ -792,20 +792,6 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="highway" v="cattle_grid"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="highway" v="toll_booth"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
 		<condition k="highway" v="incline"/>
 		<icon annotate="true" src="vehicle/restriction/incline.png"/>
 		<scale_min>1</scale_min>
@@ -1281,6 +1267,14 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="railway" v="funicular"/>
+		<line width="1" colour="rail#404040" dashed="true"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="service" v="yard"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
@@ -1348,6 +1342,13 @@ For external files the <rules> should have following elements:
 		<condition k="aeroway" v="apron"/>
 		<area colour="aeroway_light#990000"/>
 		<icon annotate="true" src="transport/airport.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="aeroway" v="gate"/>
+		<icon annotate="true" src="misc/no_icon.png"/>		
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1622,6 +1623,13 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="man_made" v="petroleum_well"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="man_made" v="reservoir_covered"/>
 		<icon annotate="true" src="misc/landmark/reservoir_covered.png"/>
 		<area colour="manmade#d8d8d8"/>
@@ -1818,6 +1826,22 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="leisure" v="miniature_golf"/>
 		<icon annotate="true" src="sport/golf.png"/>
+		<area colour="leisure#c7f1a3"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="leisure" v="dog_park"/>
+		<icon annotate="true" src="leisure/dog.png"/>
+		<area colour="leisure#c7f1a3"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="leisure" v="ice_rink"/>
+		<icon annotate="true" src="sport/hockey.png"/>
 		<area colour="leisure#c7f1a3"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -4265,77 +4289,15 @@ For external files the <rules> should have following elements:
 <!--"deprecated" tags -->
 
 	<!-- historic=museum -> tourism=museum -->
-	<rule>
-		<condition k="historic" v="museum"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
 	<!-- man_made=power_wind -> power=generator and power_source=wind -->
-	<rule>
-		<condition k="man_made" v="power_wind"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
 	<!-- man_made=power_hydro -> power=generator and power_source=hydro -->
-	<rule>
-		<condition k="man_made" v="power_hydro"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
 	<!-- man_made=power_fossil -> power=generator and power_source=fossil -->
-	<rule>
-		<condition k="man_made" v="power_fossil"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
 	<!-- man_made=power_nuclear -> power=generator and power_source=nuclear -->
-	<rule>
-		<condition k="man_made" v="power_nuclear"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<!-- highway classification now more detailed -->
-	<rule>
-		<condition k="highway" v="minor"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
-	</rule>
-
+	<!-- highway minor - classification now more detailed -->
 	<!-- amenity=park_bench -> amenity=bench -->
-	<rule>
-		<condition k="amenity" v="park_bench"/>
-		<area colour="deprecated#ff0000"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
 	<!-- highway=stile -> barrier=stile -->
-	<rule>
-		<condition k="highway" v="stile"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
+	<!-- highway=cattle_grid -> barrier=cattle_grid -->
+	<!-- highway=toll_booth -> barrier=toll_booth -->
 
 	<!-- there's a bit confusion about this tag, the proposal says leisure, map features say tourism ?!? -->
 	<rule>
