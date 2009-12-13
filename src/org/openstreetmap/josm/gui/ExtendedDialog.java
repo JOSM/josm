@@ -43,6 +43,9 @@ public class ExtendedDialog extends JDialog {
     private final String[] bTexts;
     private String[] bToolTipTexts;
     private String[] bIcons;
+    private int cancelButtonIdx = -1;
+    private int defaultButtonIdx = -1;
+    private JButton defaultButton = null;
 
     /** true, if the dialog should include a help button */
     private boolean showHelpButton;
@@ -170,6 +173,9 @@ public class ExtendedDialog extends JDialog {
         }
 
         setupDialog();
+        if (defaultButton != null) {
+            getRootPane().setDefaultButton(defaultButton);
+        }
         setVisible(true);
         toggleSaveState();
         return this;
@@ -199,6 +205,9 @@ public class ExtendedDialog extends JDialog {
             };
 
             button = new JButton(action);
+            if (i == defaultButtonIdx-1) {
+                defaultButton = button;
+            }
             if(bIcons != null && bIcons[i] != null) {
                 button.setIcon(ImageProvider.get(bIcons[i]));
             }
@@ -384,6 +393,24 @@ public class ExtendedDialog extends JDialog {
     }
 
     /**
+     * Sets the button that will react to ENTER.
+     */
+    public ExtendedDialog setDefaultButton(int defaultButtonIdx) {
+        this.defaultButtonIdx = defaultButtonIdx;
+        return this;
+    }
+
+    /**
+     * Used in combination with toggle:
+     * If the user presses 'cancel' the toggle settings are ignored and not saved to the pref
+     * @param cancelButton index of the button that stands for cancel
+     */
+    public ExtendedDialog setCancelButton(int cancelButtonIdx) {
+        this.cancelButtonIdx = cancelButtonIdx;
+        return this;
+    }
+
+    /**
      * This function returns true if the dialog has been set to "do not show again"
      * @return true if dialog should not be shown again
      */
@@ -393,7 +420,6 @@ public class ExtendedDialog extends JDialog {
         // No identifier given, so return false (= show the dialog)
         if(!toggleable)
             return false;
-
         this.togglePref = togglePref;
         // The pref is true, if the dialog should be shown.
         return !(Main.pref.getBoolean("message."+ togglePref, true));
@@ -404,7 +430,7 @@ public class ExtendedDialog extends JDialog {
      * writes the corresponding pref
      */
     private void toggleSaveState() {
-        if(!toggleable || toggleCheckbox == null)
+        if(!toggleable || toggleCheckbox == null || result == cancelButtonIdx || result == ExtendedDialog.DialogClosedOtherwise)
             return;
         Main.pref.put("message."+ togglePref, !toggleCheckbox.isSelected());
     }

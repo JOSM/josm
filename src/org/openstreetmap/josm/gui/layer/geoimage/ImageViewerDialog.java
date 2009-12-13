@@ -38,6 +38,7 @@ public class ImageViewerDialog extends ToggleDialog {
     private static final String COMMAND_CENTERVIEW = "centre";
     private static final String COMMAND_NEXT = "next";
     private static final String COMMAND_REMOVE = "remove";
+    private static final String COMMAND_REMOVE_FROM_DISK = "removefromdisk";
     private static final String COMMAND_PREVIOUS = "previous";
     private static final String COMMAND_COLLAPSE = "collapse";
 
@@ -92,8 +93,27 @@ public class ImageViewerDialog extends ToggleDialog {
         btnPrevious.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scPrev.getKeyStroke(), APREVIOUS);
         btnPrevious.getActionMap().put(APREVIOUS, prevAction);
 
-        JButton btnDelete = new JButton(new ImageAction(COMMAND_REMOVE, ImageProvider.get("dialogs", "delete"), tr("Remove photo from layer")));
+        final String DELETE_TEXT = tr("Remove photo from layer");
+        ImageAction delAction = new ImageAction(COMMAND_REMOVE, ImageProvider.get("dialogs", "delete"), DELETE_TEXT);
+        JButton btnDelete = new JButton(delAction);
         btnDelete.setPreferredSize(buttonDim);
+        Shortcut scDelete = Shortcut.registerShortcut(
+            "geoimage:deleteimagefromlayer", tr("Geoimage: {0}", DELETE_TEXT), KeyEvent.VK_DELETE, Shortcut.GROUP_DIRECT, Shortcut.SHIFT_DEFAULT);
+        Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scDelete.getKeyStroke(), DELETE_TEXT);
+        Main.contentPane.getActionMap().put(DELETE_TEXT, delAction);
+        btnDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scDelete.getKeyStroke(), DELETE_TEXT);
+        btnDelete.getActionMap().put(DELETE_TEXT, delAction);
+
+        ImageAction delFromDiskAction = new ImageAction(COMMAND_REMOVE_FROM_DISK, ImageProvider.get("dialogs", "geoimage/deletefromdisk"), tr("Delete image file from disk"));
+        JButton btnDeleteFromDisk = new JButton(delFromDiskAction);
+        btnDeleteFromDisk.setPreferredSize(buttonDim);
+        Shortcut scDeleteFromDisk = Shortcut.registerShortcut(
+            "geoimage:deletefilefromdisk", tr("Geoimage: {0}", tr("Delete File from disk")), KeyEvent.VK_DELETE, Shortcut.GROUP_DIRECT, Shortcut.GROUP_MENU + Shortcut.SHIFT_DEFAULT);
+        final String ADELFROMDISK = "Delete image file from disk";
+        Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scDeleteFromDisk.getKeyStroke(), ADELFROMDISK);
+        Main.contentPane.getActionMap().put(ADELFROMDISK, delFromDiskAction);
+        btnDeleteFromDisk.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scDeleteFromDisk.getKeyStroke(), ADELFROMDISK);
+        btnDeleteFromDisk.getActionMap().put(ADELFROMDISK, delFromDiskAction);
 
         ImageAction nextAction = new ImageAction(COMMAND_NEXT, ImageProvider.get("dialogs", "next"), tr("Next"));
         btnNext = new JButton(nextAction);
@@ -124,6 +144,7 @@ public class ImageViewerDialog extends ToggleDialog {
         buttons.add(btnZoomBestFit);
         buttons.add(Box.createRigidArea(new Dimension(14, 0)));
         buttons.add(btnDelete);
+        buttons.add(btnDeleteFromDisk);
 
         JPanel bottomPane = new JPanel();
         bottomPane.setLayout(new GridBagLayout());
@@ -175,6 +196,10 @@ public class ImageViewerDialog extends ToggleDialog {
             } else if (COMMAND_REMOVE.equals(action)) {
                 if (currentLayer != null) {
                    currentLayer.removeCurrentPhoto();
+                }
+            } else if (COMMAND_REMOVE_FROM_DISK.equals(action)) {
+                if (currentLayer != null) {
+                    currentLayer.removeCurrentPhotoFromDisk();
                 }
             } else if (COMMAND_COLLAPSE.equals(action)) {
                 collapseButtonClicked = true;

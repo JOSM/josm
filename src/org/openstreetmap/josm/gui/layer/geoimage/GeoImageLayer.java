@@ -9,6 +9,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.AlphaComposite;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
@@ -35,9 +36,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.swing.Icon;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
@@ -45,6 +49,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
@@ -586,9 +591,57 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             } else {
                 ImageViewerDialog.showImage(this, null);
             }
+            updateOffscreenBuffer = true;
+            Main.main.map.repaint();
         }
-        updateOffscreenBuffer = true;
-        Main.main.map.repaint();
+    }
+
+    public void removeCurrentPhotoFromDisk() {
+        ImageEntry toDelete = null;
+        if (data != null && data.size() > 0 && currentPhoto >= 0 && currentPhoto < data.size()) {
+            toDelete = data.get(currentPhoto);
+
+            int result = new ExtendedDialog(
+                    Main.parent,
+                    tr("Delete image file from disk"),
+                    new String[] {tr("Cancel"), tr("Delete")})
+                .setButtonIcons(new String[] {"cancel.png", "dialogs/delete.png"})
+                .setContent(new JLabel(tr("<html><h3>Delete the file {0}  from the disk?<p>The image file will be permanently lost!"
+                    ,toDelete.file.getName()), ImageProvider.get("dialogs/geoimage/deletefromdisk"),SwingConstants.LEFT))
+                .toggleEnable("geoimage.deleteimagefromdisk")
+                .setToggleCheckboxText(tr("Always delete and don't show this dialog again"))
+                .setCancelButton(1)
+                .setDefaultButton(2)
+                .showDialog()
+                .getValue();
+
+            if(result == 2 || result == ExtendedDialog.DialogNotShown)
+            {
+                data.remove(currentPhoto);
+                if (currentPhoto >= data.size()) {
+                    currentPhoto = data.size() - 1;
+                }
+                if (currentPhoto >= 0) {
+                    ImageViewerDialog.showImage(this, data.get(currentPhoto));
+                } else {
+                    ImageViewerDialog.showImage(this, null);
+                }
+
+                if (toDelete.file.delete()) {
+                    System.out.println("File "+toDelete.file.toString()+" deleted. ");
+                } else {
+                    JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("Image file could not be deleted."),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                }
+
+                updateOffscreenBuffer = true;
+                Main.main.map.repaint();
+            }
+        }
     }
 
     private MouseAdapter mouseAdapter = null;
