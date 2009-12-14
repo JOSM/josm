@@ -1,8 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -19,7 +19,6 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.corrector.ReverseWayTagCorrector;
 import org.openstreetmap.josm.corrector.UserCancelException;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -39,12 +38,7 @@ public final class ReverseWayAction extends JosmAction {
         if (getCurrentDataSet() == null)
             return;
 
-        final Collection<Way> sel = new LinkedList<Way>();
-        for (OsmPrimitive primitive : getCurrentDataSet().getSelected()) {
-            if (primitive instanceof Way) {
-                sel.add((Way)primitive);
-            }
-        }
+        final Collection<Way> sel = getCurrentDataSet().getSelectedWays();
         if (sel.isEmpty()) {
             JOptionPane.showMessageDialog(
                     Main.parent,
