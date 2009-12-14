@@ -4,7 +4,6 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -22,9 +21,9 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -48,12 +47,11 @@ import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
-import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -100,38 +98,38 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
         // create the panel with buttons
         //
-        JPanel buttonPanel = new JPanel(new GridLayout(1,3));
-
+        JToolBar tp = new JToolBar(JToolBar.HORIZONTAL);
+        tp.setFloatable(false);
         // the new action
         //
         newAction = new NewAction();
-        buttonPanel.add(new SideButton(newAction), GBC.std());
+        tp.add(newAction);
 
         // the edit action
         //
         editAction = new EditAction();
         displaylist.addListSelectionListener(editAction);
-        buttonPanel.add(new SideButton(editAction), GBC.std());
+        tp.add(editAction);
 
         // the duplicate action
         //
         DuplicateAction duplicateAction = new DuplicateAction();
         displaylist.addListSelectionListener(duplicateAction);
-        buttonPanel.add(new SideButton(duplicateAction), GBC.std());
+        tp.add(duplicateAction);
 
         // the delete action
         //
         deleteAction = new DeleteAction();
         displaylist.addListSelectionListener(deleteAction);
-        buttonPanel.add(new SideButton(deleteAction), GBC.eol());
+        tp.add(deleteAction);
 
         // the select action
         //
         SelectAction selectAction = new SelectAction();
         displaylist.addListSelectionListener(selectAction);
-        buttonPanel.add(new SideButton(selectAction), GBC.eol());
+        tp.add(selectAction);
 
-        add(buttonPanel, BorderLayout.SOUTH);
+        add(tp, BorderLayout.SOUTH);
 
         // activate DEL in the list of relations
         displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "deleteRelation");
@@ -338,12 +336,12 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
      * The action for creating a new relation
      *
      */
-    static class NewAction extends AbstractAction implements MapView.LayerChangeListener{
+    static class NewAction extends AbstractAction implements LayerChangeListener{
         public NewAction() {
             putValue(SHORT_DESCRIPTION,tr("Create a new relation"));
             //putValue(NAME, tr("New"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "addrelation"));
-            setEnabled(false);
+            updateEnabledState();
         }
 
         public void run() {
