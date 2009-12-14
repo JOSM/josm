@@ -158,23 +158,24 @@ public class SearchCompiler {
                     }
                 }
             } else {
-                String value = null;
+                String mv = null;
 
                 if (key.equals("timestamp")) {
-                    value = DateUtils.fromDate(osm.getTimestamp());
+                    mv = DateUtils.fromDate(osm.getTimestamp());
                 } else {
-                    value = osm.get(key);
+                    mv = osm.get(key);
                 }
 
-                if (value == null)
+                if (mv == null)
                     return false;
 
-                String v1 = caseSensitive ? value : value.toLowerCase();
+                String v1 = caseSensitive ? mv : mv.toLowerCase();
+                String v2 = caseSensitive ? value : value.toLowerCase();
 
                 // is not Java 1.5
                 //v1 = java.text.Normalizer.normalize(v1, java.text.Normalizer.Form.NFC);
                 //v2 = java.text.Normalizer.normalize(v2, java.text.Normalizer.Form.NFC);
-                return v1.indexOf(value) != -1;
+                return v1.indexOf(v2) != -1;
             }
 
             return false;
