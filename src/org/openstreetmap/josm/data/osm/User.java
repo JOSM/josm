@@ -1,10 +1,9 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -55,8 +54,7 @@ public class User {
             user = new User(uid, name);
             userMap.put(user.getId(), user);
         }
-        if (!user.getName().equals(name))
-            throw new DataIntegrityProblemException(tr("User with the same uid but different name found"));
+        user.addName(name);
         return user;
     }
 
@@ -92,7 +90,7 @@ public class User {
         }
         List<User> ret = new ArrayList<User>();
         for (User user: userMap.values()) {
-            if (user.getName().equals(name)) {
+            if (user.hasName(name)) {
                 ret.add(user);
             }
         }
@@ -100,7 +98,7 @@ public class User {
     }
 
     /** the user name */
-    private final String name;
+    private final HashSet<String> names = new HashSet<String>();
     /** the user id */
     private final long uid;
 
@@ -110,7 +108,40 @@ public class User {
      * @return the user name. Never null, but may be the empty string
      */
     public String getName() {
-        return name;
+        StringBuilder sb = new StringBuilder();
+        for (String name: names) {
+            sb.append(name);
+            sb.append('/');
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
+    }
+
+    /*
+     * Returns the list of user names
+     * 
+     * @returns list of names
+     */
+    public ArrayList<String> getNames() {
+        return new ArrayList<String>(names);
+    }
+
+    /*
+     * Adds a user name to the list if it is not there, yet.
+     * 
+     * @param name
+     */
+    public void addName(String name) {
+        names.add(name);
+    }
+
+    /*
+     * Returns true if the name is in the names list
+     * 
+     * @param name
+     */
+    public boolean hasName(String name) {
+        return names.contains(name);
     }
 
     /**
@@ -129,10 +160,8 @@ public class User {
     /** private constructor, only called from get method. */
     private User(long uid, String name) {
         this.uid = uid;
-        if (name == null) {
-            this.name = "";
-        } else {
-            this.name = name;
+        if (name != null) {
+            addName(name);
         }
     }
 
@@ -148,21 +177,18 @@ public class User {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + name.hashCode();
+        result = prime * result + getName().hashCode();
         result = prime * result + (int) (uid ^ (uid >>> 32));
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof User) {
-            User other = (User) obj;
-            if (!name.equals(other.name))
-                return false;
-            if (uid != other.uid)
-                return false;
-            return true;
-        } else
+        if (! (obj instanceof User))
             return false;
+        User other = (User) obj;
+        if (uid != other.uid)
+            return false;
+        return true;
     }
 }
