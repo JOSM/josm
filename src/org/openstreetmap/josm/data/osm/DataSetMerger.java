@@ -329,7 +329,10 @@ public class DataSetMerger {
             objectsWithChildrenToMerge.add(source.getPrimitiveId());
         } else if (target.isModified() && ! source.isModified() && target.getVersion() == source.getVersion()) {
             // target is same as source but target is modified
-            // => keep target
+            // => keep target and reset modified flag if target and source are semantically equal
+            if (target.hasEqualSemanticAttributes(source)) {
+                target.setModified(false);
+            }
         } else if (! target.hasEqualSemanticAttributes(source)) {
             // target is modified and is not semantically equal with source. Can't automatically
             // resolve the differences
