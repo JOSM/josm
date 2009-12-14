@@ -534,9 +534,8 @@ public class GpxLayer extends Layer {
         /****************************************************************
          ********** STEP 2a - CHECK CACHE VALIDITY **********************
          ****************************************************************/
-        if (computeCacheInSync
-                && ((computeCacheMaxLineLengthUsed != maxLineLength) || (!neutralColor.equals(computeCacheColorUsed))
-                        || (computeCacheColored != colored) || (computeCacheColorTracksTune != colorTracksTune))) {
+        if ((computeCacheMaxLineLengthUsed != maxLineLength) || (!neutralColor.equals(computeCacheColorUsed))
+                        || (computeCacheColored != colored) || (computeCacheColorTracksTune != colorTracksTune)) {
             // System.out.println("(re-)computing gpx line styles, reason: CCIS=" +
             // computeCacheInSync + " CCMLLU=" + (computeCacheMaxLineLengthUsed != maxLineLength) +
             // " CCCU=" + (!neutralColor.equals(computeCacheColorUsed)) + " CCC=" +
@@ -554,10 +553,10 @@ public class GpxLayer extends Layer {
         if (!computeCacheInSync) { // don't compute if the cache is good
             WayPoint oldWp = null;
             for (GpxTrack trk : data.tracks) {
-                if (!forceLines) { // don't draw lines between segments, unless forced to
-                    oldWp = null;
-                }
                 for (Collection<WayPoint> segment : trk.trackSegs) {
+                    if (!forceLines) { // don't draw lines between segments, unless forced to
+                        oldWp = null;
+                    }
                     for (WayPoint trkPnt : segment) {
                         LatLon c = trkPnt.getCoor();
                         if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
