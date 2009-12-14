@@ -785,13 +785,6 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="highway" v="gate"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
 		<condition k="highway" v="incline"/>
 		<icon annotate="true" src="vehicle/restriction/incline.png"/>
 		<scale_min>1</scale_min>
@@ -1850,6 +1843,22 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="amenity" v="stripclub"/>
+		<icon annotate="true" src="leisure/stripclub.png"/>
+		<area colour="amenity#ecba52"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="amenity" v="brothel"/>
+		<icon annotate="true" src="leisure/stripclub.png"/>
+		<area colour="amenity#ecba52"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="amenity" v="cafe"/>
 		<icon annotate="true" src="food/cafe.png"/>
 		<area colour="amenity#ecba52"/>
@@ -1859,6 +1868,14 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="amenity" v="restaurant"/>
+		<icon annotate="true" src="food/restaurant.png"/>
+		<area colour="amenity#ecba52"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="amenity" v="food_court"/>
 		<icon annotate="true" src="food/restaurant.png"/>
 		<area colour="amenity#ecba52"/>
 		<scale_min>1</scale_min>
@@ -4255,22 +4272,13 @@ For external files the <rules> should have following elements:
 	<!-- amenity=signpost -> information=guidepost -->
 	<!-- highway minor - classification now more detailed -->
 	<!-- highway=stile -> barrier=stile -->
+	<!-- highway=gate -> barrier=gate -->
 	<!-- highway=cattle_grid -> barrier=cattle_grid -->
 	<!-- highway=toll_booth -> barrier=toll_booth -->
 	<!-- highway=viaduct -> bridge=viaduct -->
 	<!-- railway=viaduct -> bridge=viaduct -->
 	<!-- waterway=aqueduct -> bridge=aqueduct -->
 	<!-- natural=marsh -> natural=wetland -->
-
-	
-	<!-- there's a bit confusion about this tag, the proposal says leisure, map features say tourism ?!? -->
-	<rule>
-		<condition k="leisure" v="zoo"/>
-		<line width="2" realwidth="5" dashed="true" colour="deprecated#ff0000"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
+	<!-- leisure=zoo -> tourism=zoo -->
 
 </rules>
