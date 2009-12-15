@@ -1317,7 +1317,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="aeroway" v="gate"/>
-		<icon annotate="true" src="misc/no_icon.png"/>		
+		<icon annotate="true" src="transport/airport/terminal.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2261,7 +2261,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="amenity" v="driving_school"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="education/driving_school.png"/>
 		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2454,7 +2454,15 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="amenity" v="hunting_stand"/>
 		<area colour="amenity_light#f7efb7"/>
-    <icon annotate="true" src="hunting_stand.png"/>
+		<icon annotate="true" src="hunting_stand.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="amenity" v="marketplace"/>
+		<area colour="amenity_light#f7efb7"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -4161,36 +4169,8 @@ For external files the <rules> should have following elements:
 <!--"work in progress" tags -->
 
 	<rule>
-		<condition k="building" b="yes"/>
+		<condition k="building"/>
 		<icon annotate="true" src="misc/landmark/building.png" priority="-10000"/>
-		<area colour="building#cb9999" priority="-10000"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-	<rule>
-		<condition k="building" v="church"/>
-		<icon annotate="true" src="misc/no_icon.png" priority="-10000"/>
-		<area colour="building#cb9999" priority="-10000"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-	<rule>
-		<condition k="building" v="museum"/>
-		<icon annotate="true" src="misc/no_icon.png" priority="-10000"/>
-		<area colour="building#cb9999" priority="-10000"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-	<rule>
-		<condition k="building" v="tower"/>
-		<icon annotate="true" src="misc/no_icon.png" priority="-10000"/>
-		<area colour="building#cb9999" priority="-10000"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-	<rule>
-		<condition k="building" v="station"/>
-		<icon annotate="true" src="misc/no_icon.png" priority="-10000"/>
 		<area colour="building#cb9999" priority="-10000"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>

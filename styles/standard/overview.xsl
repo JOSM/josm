@@ -524,17 +524,17 @@
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'aerialway'"/>
 		<xsl:with-param name="column" select="6"/>
-		<xsl:with-param name="row" select="10"/>
+		<xsl:with-param name="row" select="11"/>
     </xsl:call-template>
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'piste:difficulty'"/>
 		<xsl:with-param name="column" select="6"/>
-		<xsl:with-param name="row" select="17"/>
+		<xsl:with-param name="row" select="18"/>
     </xsl:call-template>
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'waterway'"/>
 		<xsl:with-param name="column" select="6"/>
-		<xsl:with-param name="row" select="25"/>
+		<xsl:with-param name="row" select="26"/>
     </xsl:call-template>
 
     <xsl:call-template name="topic">
@@ -625,30 +625,25 @@
 		<xsl:with-param name="row" select="1"/>
     </xsl:call-template>
     <xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'abutters'"/>
-		<xsl:with-param name="column" select="16"/>
-		<xsl:with-param name="row" select="27"/>
-    </xsl:call-template>
-    <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'building'"/>
 		<xsl:with-param name="column" select="16"/>
-		<xsl:with-param name="row" select="35"/>
+		<xsl:with-param name="row" select="28"/>
     </xsl:call-template>	
+	<xsl:call-template name="topic">
+		<xsl:with-param name="key" select="'boundary'"/>
+		<xsl:with-param name="column" select="16"/>
+		<xsl:with-param name="row" select="34"/>
+    </xsl:call-template>
 	
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'place'"/>
 		<xsl:with-param name="column" select="17"/>
-		<xsl:with-param name="row" select="23"/>
+		<xsl:with-param name="row" select="22"/>
     </xsl:call-template>
 	<xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'natural'"/>
 		<xsl:with-param name="column" select="17"/>
 		<xsl:with-param name="row" select="1"/>
-    </xsl:call-template>
-	<xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'boundary'"/>
-		<xsl:with-param name="column" select="17"/>
-		<xsl:with-param name="row" select="36"/>
     </xsl:call-template>
 	
 	</xsl:element>
