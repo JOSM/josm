@@ -71,7 +71,8 @@ import com.drew.metadata.exif.GpsDirectory;
 public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
     List<ImageEntry> data;
-
+    GpxLayer gpxLayer;
+    
     private Icon icon = ImageProvider.get("dialogs/geoimage/photo-marker");
     private Icon selectedIcon = ImageProvider.get("dialogs/geoimage/photo-marker-selected");
 
@@ -131,6 +132,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         private Collection<File> selection;
         private HashSet<String> loadedDirectories = new HashSet<String>();
         private LinkedHashSet<String> errorMessages;
+        private GpxLayer gpxLayer;
 
         protected void rememberError(String message) {
             this.errorMessages.add(message);
@@ -139,6 +141,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         public Loader(Collection<File> selection, GpxLayer gpxLayer) {
             super(tr("Extracting GPS locations from EXIF"));
             this.selection = selection;
+            this.gpxLayer = gpxLayer;
             errorMessages = new LinkedHashSet<String>();
         }
 
@@ -186,7 +189,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 extractExif(e);
                 data.add(e);
             }
-            layer = new GeoImageLayer(data);
+            layer = new GeoImageLayer(data, gpxLayer);
             files.clear();
         }
 
@@ -300,12 +303,13 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         }
     }
 
-    private GeoImageLayer(final List<ImageEntry> data) {
+    private GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer) {
 
         super(tr("Geotagged Images"));
 
         Collections.sort(data);
         this.data = data;
+        this.gpxLayer = gpxLayer;
         Main.map.mapView.addPropertyChangeListener(this);
     }
 

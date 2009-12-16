@@ -430,13 +430,19 @@ public class CorrelateGpxWithImages implements ActionListener {
     public void actionPerformed(ActionEvent arg0) {
         // Construct the list of loaded GPX tracks
         Collection<Layer> layerLst = Main.main.map.mapView.getAllLayers();
+        GpxDataWrapper defaultItem = null;
         Iterator<Layer> iterLayer = layerLst.iterator();
         while (iterLayer.hasNext()) {
             Layer cur = iterLayer.next();
             if (cur instanceof GpxLayer) {
-                gpxLst.add(new GpxDataWrapper(((GpxLayer) cur).getName(),
+                GpxDataWrapper gdw = new GpxDataWrapper(((GpxLayer) cur).getName(),
                         ((GpxLayer) cur).data,
-                        ((GpxLayer) cur).data.storageFile));
+                        ((GpxLayer) cur).data.storageFile);
+                gpxLst.add(gdw);
+                if (cur == yLayer.gpxLayer) {
+                    System.err.println("Hier!");
+                    defaultItem = gdw;
+                }
             }
         }
         for (GpxData data : loadedGpxData) {
@@ -455,6 +461,9 @@ public class CorrelateGpxWithImages implements ActionListener {
         panelCb.add(new JLabel(tr("GPX track: ")));
 
         cbGpx = new JComboBox(gpxLst);
+        if (defaultItem != null) {
+            cbGpx.setSelectedItem(defaultItem);
+        }
         panelCb.add(cbGpx);
 
         JButton buttonOpen = new JButton(tr("Open another GPX trace"));
