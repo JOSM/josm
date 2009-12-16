@@ -91,14 +91,14 @@ public class ProxyPreferences implements PreferenceSetting {
 
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(5,5,0,0);
-        pnl.add(new JLabel("Host:"), gc);
+        pnl.add(new JLabel(tr("Host:")), gc);
 
         gc.gridx = 1;
         pnl.add(tfProxyHttpHost = new JTextField(20),gc);
 
         gc.gridy = 1;
         gc.gridx = 0;
-        pnl.add(new JLabel("Port:"), gc);
+        pnl.add(new JLabel(tr("Port:")), gc);
 
         gc.gridx = 1;
         gc.weightx = 0.0;
@@ -117,7 +117,7 @@ public class ProxyPreferences implements PreferenceSetting {
         gc.gridwidth = 1;
         gc.weightx = 0.0;
         gc.fill = GridBagConstraints.NONE;
-        pnl.add(new JLabel("User:"), gc);
+        pnl.add(new JLabel(tr("User:")), gc);
 
         gc.gridy = 3;
         gc.gridx = 1;
@@ -125,7 +125,7 @@ public class ProxyPreferences implements PreferenceSetting {
 
         gc.gridy = 4;
         gc.gridx = 0;
-        pnl.add(new JLabel("Password:"), gc);
+        pnl.add(new JLabel(tr("Password:")), gc);
 
         gc.gridx = 1;
         pnl.add(tfProxyHttpPassword = new JPasswordField(20),gc);
@@ -142,14 +142,14 @@ public class ProxyPreferences implements PreferenceSetting {
         GridBagConstraints gc = new GridBagConstraints();
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(5,5,0,0);
-        pnl.add(new JLabel("Host:"), gc);
+        pnl.add(new JLabel(tr("Host:")), gc);
 
         gc.gridx = 1;
         pnl.add(tfProxySocksHost = new JTextField(20),gc);
 
         gc.gridy = 1;
         gc.gridx = 0;
-        pnl.add(new JLabel("Port:"), gc);
+        pnl.add(new JLabel(tr("Port:")), gc);
 
         gc.gridx = 1;
         pnl.add(tfProxySocksPort = new JTextField(5),gc);
