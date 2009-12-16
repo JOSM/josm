@@ -8,11 +8,11 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,18 +22,20 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
+import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.NameFormatter;
@@ -70,18 +72,41 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
 
     /** the data model */
     private RelationMemberTableModel model;
-    private JLabel lblMessage;
+    private JEditorPane jepMessage;
     private boolean canceled;
     private SideButton btnOK;
 
     protected JPanel buildMessagePanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new GridBagLayout());
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.fill = GridBagConstraints.BOTH;
-        pnl.add(lblMessage = new JLabel(), gc);
-        lblMessage.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+        JPanel pnl = new JPanel(new BorderLayout());
+        jepMessage = new JEditorPane("text/html", "");
+        jepMessage.setOpaque(false);
+        jepMessage.setEditable(false);
+        Font f = UIManager.getFont("Label.font");
+        StyleSheet ss = new StyleSheet();
+        String rule = MessageFormat.format(
+                "font-family: ''{0}'';font-size: {1,number}pt; font-weight: {2}; font-style: {3}",
+                f.getName(),
+                f.getSize(),
+                f.isBold() ? "bold" : "normal",
+                        f.isItalic() ? "italic" : "normal"
+        );
+        rule = "body {" + rule + "}";
+        rule = MessageFormat.format(
+                "font-family: ''{0}'';font-size: {1,number}pt; font-weight: {2}; font-style: {3}",
+                f.getName(),
+                f.getSize(),
+                "bold",
+                f.isItalic() ? "italic" : "normal"
+        );
+        rule = "strong {" + rule + "}";
+        ss.addRule(rule);
+        ss.addRule("a {text-decoration: underline; color: blue}");
+        HTMLEditorKit kit = new HTMLEditorKit();
+        kit.setStyleSheet(ss);
+        jepMessage.setEditorKit(kit);
+
+        pnl.setLayout(new BorderLayout());
+        pnl.add(jepMessage, BorderLayout.CENTER);
         pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         return pnl;
     }
@@ -130,7 +155,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
         } else {
             msg = tr("<html>Please confirm to remove <strong>{0} objects</strong> from <strong>{1} relations</strong>.</html>", numObjectsToDelete,numParentRelations);
         }
-        lblMessage.setText(msg);
+        jepMessage.setText(msg);
         invalidate();
     }
 
