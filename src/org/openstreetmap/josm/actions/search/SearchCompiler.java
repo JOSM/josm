@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.search.PushbackTokenizer.Token;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -22,8 +23,24 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.DateUtils;
 
 /**
- * Implements a google-like search.
- * @author Imi
+ Implements a google-like search.
+ <br>
+ Grammar:
+<pre>
+expression =
+  fact | expression
+  fact expression
+  fact
+
+fact =
+ ( expression )
+ -fact
+ term=term
+ term:term
+ term
+ </pre>
+
+ @author Imi
  */
 public class SearchCompiler {
 
@@ -183,7 +200,7 @@ public class SearchCompiler {
         @Override public String toString() {return key+"="+value;}
     }
 
-    private static class ExactKeyValue extends Match {
+    public static class ExactKeyValue extends Match {
 
         private enum Mode {
             ANY, ANY_KEY, ANY_VALUE, EXACT, NONE, MISSING_KEY,
@@ -200,7 +217,7 @@ public class SearchCompiler {
             if (key == "")
                 throw new ParseError(tr("Key cannot be empty when tag operator is used. Sample use: key=value"));
             this.key = key;
-            this.value = value;
+            this.value = value == null?"":value;
             if ("".equals(value) && "*".equals(key)) {
                 mode = Mode.NONE;
             } else if ("".equals(value)) {
@@ -526,10 +543,7 @@ public class SearchCompiler {
                 }
             } else if (osm instanceof Relation) {
                 for (RelationMember member : ((Relation)osm).getMembers()) {
-                    if (member.getMember() != null) {
-                        // TODO Nullable member will not be allowed
-                        isParent |= child.match(member.getMember());
-                    }
+                    isParent |= child.match(member.getMember());
                 }
             }
             return isParent;
@@ -575,98 +589,81 @@ public class SearchCompiler {
     }
 
     public Match parse() throws ParseError {
-        Match m = parseJuxta();
-        if (!tokenizer.readIfEqual(null))
+        Match m = parseExpression();
+        if (!tokenizer.readIfEqual(Token.EOF))
             throw new ParseError(tr("Unexpected token: {0}", tokenizer.nextToken()));
         return m;
     }
 
-    private Match parseJuxta() throws ParseError {
-        Match juxta = new Always();
-
-        Match m;
-        while ((m = parseOr()) != null) {
-            juxta = new And(m, juxta);
-        }
-
-        return juxta;
-    }
-
-    private Match parseOr() throws ParseError {
-        Match a = parseNot();
-        if (tokenizer.readIfEqual("|")) {
-            Match b = parseNot();
-            if (a == null || b == null)
-                throw new ParseError(tr("Missing arguments for or."));
-            return new Or(a, b);
-        }
-        return a;
-    }
-
-    private Match parseNot() throws ParseError {
-        if (tokenizer.readIfEqual("-")) {
-            Match m = parseParens();
-            if (m == null)
-                throw new ParseError(tr("Missing argument for not."));
-            return new Not(m);
-        }
-        return parseParens();
-    }
-
-    private Match parseParens() throws ParseError {
-        if (tokenizer.readIfEqual("(")) {
-            Match m = parseJuxta();
-            if (!tokenizer.readIfEqual(")"))
-                throw new ParseError(tr("Expected closing parenthesis."));
-            return m;
-        }
-        return parsePat();
-    }
-
-    private Match parsePat() throws ParseError {
-        String tok = tokenizer.readText();
-
-        if (tokenizer.readIfEqual(":")) {
-            String tok2 = tokenizer.readText();
-            if (tok == null) {
-                tok = "";
-            }
-            if (tok2 == null) {
-                tok2 = "";
-            }
-            return parseKV(tok, tok2);
-        }
-
-        if (tokenizer.readIfEqual("=")) {
-            String tok2 = tokenizer.readText();
-            if (tok == null) {
-                tok = "";
-            }
-            if (tok2 == null) {
-                tok2 = "";
-            }
-            return new ExactKeyValue(regexSearch, tok, tok2);
-        }
-
-        if (tok == null)
+    private Match parseExpression() throws ParseError {
+        Match factor = parseFactor();
+        if (factor == null)
             return null;
-        else if (tok.equals("modified"))
-            return new Modified();
-        else if (tok.equals("incomplete"))
-            return new Incomplete();
-        else if (tok.equals("untagged"))
-            return new Untagged();
-        else if (tok.equals("selected"))
-            return new Selected();
-        else if (tok.equals("child"))
-            return new Child(parseParens());
-        else if (tok.equals("parent"))
-            return new Parent(parseParens());
-        else
-            return new Any(tok, regexSearch, caseSensitive);
+        if (tokenizer.readIfEqual(Token.OR))
+            return new Or(factor, parseExpression(tr("Missing parameter for OR")));
+        else {
+            Match expression = parseExpression();
+            if (expression == null)
+                return factor;
+            else
+                return new And(factor, expression);
+        }
     }
+
+    private Match parseExpression(String errorMessage) throws ParseError {
+        Match expression = parseExpression();
+        if (expression == null)
+            throw new ParseError(errorMessage);
+        else
+            return expression;
+    }
+
+    private Match parseFactor() throws ParseError {
+        if (tokenizer.readIfEqual(Token.LEFT_PARENT)) {
+            Match expression = parseExpression();
+            if (!tokenizer.readIfEqual(Token.RIGHT_PARENT))
+                throw new ParseError(tr("Missing right parent"));
+            return expression;
+        } else if (tokenizer.readIfEqual(Token.NOT))
+            return new Not(parseFactor(tr("Missing operator for NOT")));
+        else if (tokenizer.readIfEqual(Token.KEY)) {
+            String key = tokenizer.getText();
+            if (tokenizer.readIfEqual(Token.EQUALS))
+                return new ExactKeyValue(regexSearch, key, tokenizer.readText());
+            else if (tokenizer.readIfEqual(Token.COLON))
+                return parseKV(key, tokenizer.readText());
+            else if ("modified".equals(key))
+                return new Modified();
+            else if ("incomplete".equals(key))
+                return new Incomplete();
+            else if ("untagged".equals(key))
+                return new Untagged();
+            else if ("selected".equals(key))
+                return new Selected();
+            else if ("child".equals(key))
+                return new Child(parseFactor());
+            else if ("parent".equals(key))
+                return new Parent(parseFactor());
+            else
+                return new Any(key, regexSearch, caseSensitive);
+        } else
+            return null;
+    }
+
+    private Match parseFactor(String errorMessage) throws ParseError {
+        Match fact = parseFactor();
+        if (fact == null)
+            throw new ParseError(errorMessage);
+        else
+            return fact;
+    }
+
+
 
     private Match parseKV(String key, String value) throws ParseError {
+        if (value == null) {
+            value = "";
+        }
         if (key.equals("type"))
             return new ExactType(value);
         else if (key.equals("user"))

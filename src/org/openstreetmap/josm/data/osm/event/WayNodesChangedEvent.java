@@ -31,4 +31,9 @@ public class WayNodesChangedEvent extends AbstractDatasetChangedEvent {
         return Collections.singletonList(way);
     }
 
+    @Override
+    public DatasetEventType getType() {
+        return DatasetEventType.WAY_NODES_CHANGED;
+    }
+
 }

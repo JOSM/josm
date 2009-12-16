@@ -31,4 +31,9 @@ public class RelationMembersChangedEvent extends AbstractDatasetChangedEvent {
         return Collections.singletonList(relation);
     }
 
+    @Override
+    public DatasetEventType getType() {
+        return DatasetEventType.RELATION_MEMBERS_CHANGED;
+    }
+
 }

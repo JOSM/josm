@@ -30,4 +30,9 @@ public class TagsChangedEvent extends AbstractDatasetChangedEvent {
         return Collections.singletonList(primitive);
     }
 
+    @Override
+    public DatasetEventType getType() {
+        return DatasetEventType.TAGS_CHANGED;
+    }
+
 }

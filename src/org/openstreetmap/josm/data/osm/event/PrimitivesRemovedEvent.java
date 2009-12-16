@@ -38,4 +38,9 @@ public class PrimitivesRemovedEvent extends AbstractDatasetChangedEvent {
         return wasComplete;
     }
 
+    @Override
+    public DatasetEventType getType() {
+        return DatasetEventType.PRIMITIVES_REMOVED;
+    }
+
 }

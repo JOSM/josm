@@ -31,4 +31,9 @@ public class NodeMovedEvent extends AbstractDatasetChangedEvent {
         return Collections.singletonList(node);
     }
 
+    @Override
+    public DatasetEventType getType() {
+        return DatasetEventType.NODE_MOVED;
+    }
+
 }

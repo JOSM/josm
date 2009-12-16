@@ -20,6 +20,9 @@ import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.search.SearchCompiler;
+import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
+import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 
@@ -511,7 +514,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     private int timestamp;
 
-    private static Collection<String> uninteresting = null;
+    private static volatile Collection<String> uninteresting = null;
     /**
      * Contains a list of "uninteresting" keys that do not make an object
      * "tagged".
@@ -525,19 +528,42 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return uninteresting;
     }
 
-    private static Collection<String> directionKeys = null;
+    private static volatile Match directionKeys = null;
 
     /**
      * Contains a list of direction-dependent keys that make an object
      * direction dependent.
      * Initialized by checkDirectionTagged()
      */
-    public static Collection<String> getDirectionKeys() {
+    public static void initDirectionKeys() {
         if(directionKeys == null) {
-            directionKeys = Main.pref.getCollection("tags.direction",
-                    Arrays.asList("oneway","incline","incline_steep","aerialway"));
+
+            // Legacy support - convert list of keys to search pattern
+            if (Main.pref.isCollection("tags.direction", false)) {
+                System.out.println("Collection of keys in tags.direction is no longer supported, value will converted to search pattern");
+                Collection<String> keys = Main.pref.getCollection("tags.direction", null);
+                StringBuilder builder = new StringBuilder();
+                for (String key:keys) {
+                    builder.append(key);
+                    builder.append("=* | ");
+                }
+                builder.delete(builder.length() - 3, builder.length());
+                Main.pref.put("tags.direction", builder.toString());
+            }
+
+            String defaultValue = "oneway=* | incline=* | incline_steep=* | aerialway=*";
+            try {
+                directionKeys = SearchCompiler.compile(Main.pref.get("tags.direction", defaultValue), false, false);
+            } catch (ParseError e) {
+                System.err.println("Unable to compile pattern for tags.direction, trying default pattern: " + e.getMessage());
+
+                try {
+                    directionKeys = SearchCompiler.compile(defaultValue, false, false);
+                } catch (ParseError e2) {
+                    throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage());
+                }
+            }
         }
-        return directionKeys;
     }
 
     /**
@@ -1070,16 +1096,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     private void updateHasDirectionKeys() {
-        getDirectionKeys();
-        if (keys != null) {
-            for (Entry<String,String> e : getKeys().entrySet()) {
-                if (directionKeys.contains(e.getKey())) {
-                    flags |= FLAG_HAS_DIRECTIONS;
-                    return;
-                }
-            }
+        initDirectionKeys();
+        if (directionKeys.match(this)) {
+            flags |= FLAG_HAS_DIRECTIONS;
+        } else {
+            flags &= ~FLAG_HAS_DIRECTIONS;
         }
-        flags &= ~FLAG_HAS_DIRECTIONS;
     }
     /**
      * true if this object has direction dependent tags (e.g. oneway)

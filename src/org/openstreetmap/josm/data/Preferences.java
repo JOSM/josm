@@ -669,6 +669,14 @@ public class Preferences {
         return s;
     }
 
+    public boolean isCollection(String key, boolean def) {
+        String s = get(key);
+        if (s != null && s.length() != 0)
+            return s.indexOf("\u001e") >= 0 || s.indexOf("§§§") >= 0;
+            else
+                return def;
+    }
+
     synchronized public Collection<String> getCollection(String key, Collection<String> def) {
         String s = get(key);
         if(def != null)

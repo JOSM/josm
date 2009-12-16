@@ -23,4 +23,9 @@ public class DataChangedEvent extends AbstractDatasetChangedEvent {
         return dataSet.allPrimitives();
     }
 
+    @Override
+    public DatasetEventType getType() {
+        return DatasetEventType.DATA_CHANGED;
+    }
+
 }

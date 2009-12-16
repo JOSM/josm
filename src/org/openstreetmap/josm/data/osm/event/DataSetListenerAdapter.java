@@ -1,6 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.event;
 
+/**
+ * Classes that do not wish to implement all methods of DataSetListener
+ * may use this class. Implement DatasetListenerAdapter.Listener and
+ * pass this adapter instead of class itself.
+ *
+ */
 public class DataSetListenerAdapter implements DataSetListener {
 
     public interface Listener {

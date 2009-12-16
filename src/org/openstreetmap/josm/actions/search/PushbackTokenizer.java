@@ -2,16 +2,30 @@
 package org.openstreetmap.josm.actions.search;
 
 import java.io.IOException;
-import java.io.PushbackReader;
-import java.util.LinkedList;
+import java.io.Reader;
+
+import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 
 public class PushbackTokenizer {
-    private PushbackReader search;
+    private final Reader search;
 
-    private LinkedList<String> pushBackBuf = new LinkedList<String>();
+    private Token currentToken;
+    private String currentText;
+    private int c;
 
-    public PushbackTokenizer(PushbackReader search) {
+    public PushbackTokenizer(Reader search) {
         this.search = search;
+        getChar();
+    }
+
+    public enum Token {NOT, OR, LEFT_PARENT, RIGHT_PARENT, COLON, EQUALS, KEY, EOF}
+
+    private void getChar() {
+        try {
+            c = search.read();
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     /**
@@ -22,85 +36,90 @@ public class PushbackTokenizer {
      * ' ' for anything else.
      * @return The next token in the stream.
      */
-    public String nextToken() {
-        if (!pushBackBuf.isEmpty()) {
-            return pushBackBuf.removeLast();
+    public Token nextToken() {
+        if (currentToken != null) {
+            Token result = currentToken;
+            currentToken = null;
+            return result;
         }
 
-        try {
-            int next;
-            char c = ' ';
-            while (c == ' ' || c == '\t' || c == '\n') {
-                next = search.read();
-                if (next == -1)
-                    return null;
-                c = (char)next;
+        while (Character.isWhitespace(c)) {
+            getChar();
+        }
+        switch (c) {
+        case -1:
+            getChar();
+            return Token.EOF;
+        case ':':
+            getChar();
+            return Token.COLON;
+        case '=':
+            getChar();
+            return Token.EQUALS;
+        case '-':
+            getChar();
+            return Token.NOT;
+        case '(':
+            getChar();
+            return Token.LEFT_PARENT;
+        case ')':
+            getChar();
+            return Token.RIGHT_PARENT;
+        case '|':
+            getChar();
+            return Token.OR;
+        case '"':
+        {
+            StringBuilder s = new StringBuilder();
+            while (c != -1 && c != '"') {
+                s.append((char)c);
+                getChar();
             }
-            StringBuilder s;
-            switch (c) {
-            case ':':
-            case '=':
-                next = search.read();
-                if (next == -1 || next == ' ' || next == '\t') {
-                    pushBack(" ");
-                } else {
-                    search.unread(next);
-                }
-                return String.valueOf(c);
-            case '-':
-                return "-";
-            case '(':
-                return "(";
-            case ')':
-                return ")";
-            case '|':
-                return "|";
-            case '"':
-                s = new StringBuilder(" ");
-                for (int nc = search.read(); nc != -1 && nc != '"'; nc = search.read())
-                    s.append((char)nc);
-                return s.toString();
-            default:
-                s = new StringBuilder();
-            for (;;) {
-                s.append(c);
-                next = search.read();
-                if (next == -1) {
-                    if (s.toString().equals("OR"))
-                        return "|";
-                    return " "+s.toString();
-                }
-                c = (char)next;
-                if (c == ' ' || c == '\t' || c == '"' || c == ':' || c == '(' || c == ')' || c == '|' || c == '=') {
-                    search.unread(next);
-                    if (s.toString().equals("OR"))
-                        return "|";
-                    return " "+s.toString();
-                }
+            getChar();
+            currentText = s.toString();
+            return Token.KEY;
+        }
+        default:
+        {
+            StringBuilder s = new StringBuilder();
+            while (!(c == -1 || Character.isWhitespace(c) || c == '"'|| c == ':' || c == '(' || c == ')' || c == '|' || c == '=')) {
+                s.append((char)c);
+                getChar();
             }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            currentText = s.toString();
+            if ("or".equals(currentText))
+                return Token.OR;
+            else
+                return Token.KEY;
+        }
         }
     }
 
-    public boolean readIfEqual(String tok) {
-        String nextTok = nextToken();
-        if (nextTok == null ? tok == null : nextTok.equals(tok))
+    public boolean readIfEqual(Token token) {
+        Token nextTok = nextToken();
+        if (nextTok == null ? token == null : nextTok == token)
             return true;
-        pushBack(nextTok);
+        currentToken = nextTok;
         return false;
     }
 
     public String readText() {
-        String nextTok = nextToken();
-        if (nextTok != null && nextTok.startsWith(" "))
-            return nextTok.substring(1);
-        pushBack(nextTok);
+        Token nextTok = nextToken();
+        if (nextTok == Token.KEY)
+            return currentText;
+        currentToken = nextTok;
         return null;
     }
 
-    public void pushBack(String tok) {
-        pushBackBuf.addLast(tok);
+    public String readText(String errorMessage) throws ParseError {
+        String text = readText();
+        if (text == null)
+            throw new ParseError(errorMessage);
+        else
+            return text;
+    }
+
+    public String getText() {
+        return currentText;
     }
 }

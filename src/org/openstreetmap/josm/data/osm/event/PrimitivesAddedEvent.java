@@ -38,4 +38,9 @@ public class PrimitivesAddedEvent extends AbstractDatasetChangedEvent {
         return wasIncomplete;
     }
 
+    @Override
+    public DatasetEventType getType() {
+        return DatasetEventType.PRIMITIVES_ADDED;
+    }
+
 }
