@@ -1,0 +1,321 @@
+// License: GPL. For details, see LICENSE file.
+package org.openstreetmap.josm.gui.io;
+
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.JMultilineLabel;
+import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
+import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.WindowGeometry;
+
+public class CredentialDialog extends JDialog {
+
+    static public CredentialDialog getOsmApiCredentialDialog(String username, String password) {
+        CredentialDialog dialog = new CredentialDialog();
+        dialog.prepareForOsmApiCredentials(username, password);
+        dialog.pack();
+        return dialog;
+    }
+
+    static public CredentialDialog getHttpProxyCredentialDialog(String username, String password) {
+        CredentialDialog dialog = new CredentialDialog();
+        dialog.prepareForProxyCredentials(username, password);
+        dialog.pack();
+        return dialog;
+    }
+
+    private boolean canceled;
+    private CredentialPanel pnlCredentials;
+
+    public boolean isCanceled() {
+        return canceled;
+    }
+
+    protected void setCanceled(boolean canceled) {
+        this.canceled = canceled;
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        if (visible) {
+            WindowGeometry.centerInWindow(Main.parent, new Dimension(350,300)).apply(this);
+        }
+        super.setVisible(visible);
+    }
+
+    protected JPanel createButtonPanel() {
+        JPanel pnl = new JPanel(new FlowLayout());
+        pnl.add(new SideButton(new OKAction()));
+        pnl.add(new SideButton(new CancelAction()));
+        pnl.add(new SideButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Dialog/PasswordDialog"))));
+        return pnl;
+    }
+
+    protected void build() {
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(createButtonPanel(), BorderLayout.SOUTH);
+
+        addWindowListener(new WindowEventHander());
+        getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "escape");
+        getRootPane().getActionMap().put("escape", new CancelAction());
+
+        getRootPane().setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+    }
+
+    public CredentialDialog() {
+        setModal(true);
+        try {
+            setAlwaysOnTop(true);
+        } catch(SecurityException e) {
+            System.out.println(tr("Warning: failed to put Credential Dialog always on top. Caught security exception."));
+        }
+        build();
+    }
+
+    public void prepareForOsmApiCredentials(String username, String password) {
+        setTitle(tr("Enter credentials for OSM API"));
+        getContentPane().add(pnlCredentials = new OsmApiCredentialsPanel(), BorderLayout.CENTER);
+        pnlCredentials.init(username, password);
+        validate();
+    }
+
+    public void prepareForProxyCredentials(String username, String password) {
+        setTitle(tr("Enter credentials for HTTP proxy"));
+        getContentPane().add(pnlCredentials = new HttpProxyCredentialsPanel(), BorderLayout.CENTER);
+        pnlCredentials.init(username, password);
+        validate();
+    }
+
+    public String getUsername() {
+        if (pnlCredentials== null) return null;
+        return pnlCredentials.getUserName();
+    }
+
+    public char[] getPassword() {
+        if (pnlCredentials== null) return null;
+        return pnlCredentials.getPassword();
+    }
+
+    public boolean isSaveCredentials() {
+        if (pnlCredentials== null) return false;
+        return pnlCredentials.isSaveCredentials();
+    }
+
+    private static class CredentialPanel extends JPanel {
+        protected JTextField tfUserName;
+        protected JPasswordField tfPassword;
+        protected JCheckBox cbSaveCredentials;
+        protected JMultilineLabel lblHeading;
+        protected JMultilineLabel lblWarning;
+
+        protected void build() {
+            tfUserName = new JTextField(20);
+            tfPassword = new JPasswordField(20);
+            tfUserName.addFocusListener(new SelectAllOnFocusHandler());
+            tfPassword.addFocusListener(new SelectAllOnFocusHandler());
+            cbSaveCredentials =  new JCheckBox(tr("Save user and password (unencrypted)"));
+
+            setLayout(new GridBagLayout());
+            GridBagConstraints gc = new GridBagConstraints();
+            gc.gridwidth = 2;
+            gc.gridheight = 1;
+            gc.fill = GridBagConstraints.HORIZONTAL;
+            gc.weightx = 1.0;
+            gc.weighty = 0.0;
+            gc.insets = new Insets(0,0,10,0);
+            add(lblHeading = new JMultilineLabel(""), gc);
+
+            gc.gridx = 0;
+            gc.gridy = 1;
+            gc.gridwidth = 1;
+            gc.gridheight = 1;
+            gc.fill = GridBagConstraints.HORIZONTAL;
+            gc.weightx = 0.0;
+            gc.weighty = 0.0;
+            gc.insets = new Insets(0,0,10,10);
+            add(new JLabel(tr("Username")), gc);
+            gc.gridx = 1;
+            gc.gridy = 1;
+            gc.weightx = 1.0;
+            add(tfUserName, gc);
+            gc.gridx = 0;
+            gc.gridy = 2;
+            gc.weightx = 0.0;
+            add(new JLabel(tr("Password")), gc);
+
+            gc.gridx = 1;
+            gc.gridy = 2;
+            gc.weightx = 0.0;
+            add(tfPassword, gc);
+
+            gc.gridx = 0;
+            gc.gridy = 3;
+            gc.gridwidth = 2;
+            gc.gridheight = 1;
+            gc.fill = GridBagConstraints.BOTH;
+            gc.weightx = 1.0;
+            gc.weighty = 0.0;
+            lblWarning = new JMultilineLabel(tr(""));
+            lblWarning.setFont(lblWarning.getFont().deriveFont(Font.ITALIC));
+            add(lblWarning, gc);
+
+            gc.gridx = 0;
+            gc.gridy = 4;
+            gc.weighty = 0.0;
+            add(cbSaveCredentials, gc);
+
+            // consume the remaining space
+            gc.gridx = 0;
+            gc.gridy = 5;
+            gc.weighty = 1.0;
+            add(new JPanel(),gc);
+
+        }
+
+        public CredentialPanel() {
+        }
+
+        public void init(String username, String password) {
+            username = username == null ? "" : username;
+            password = password == null ? "" : password;
+            tfUserName.setText(username);
+            tfPassword.setText(password);
+            cbSaveCredentials.setSelected(!username.equals("") && ! password.equals(""));
+        }
+
+        public void startUserInput() {
+            tfUserName.requestFocusInWindow();
+        }
+
+        public String getUserName() {
+            return tfUserName.getText();
+        }
+
+        public char[] getPassword() {
+            return tfPassword.getPassword();
+        }
+
+        public boolean isSaveCredentials() {
+            return cbSaveCredentials.isSelected();
+        }
+    }
+
+    private static class OsmApiCredentialsPanel extends CredentialPanel {
+
+        @Override
+        protected void build() {
+            super.build();
+            tfUserName.setToolTipText(tr("Please enter the user name of your OSM account"));
+            tfPassword.setToolTipText(tr("Please enter the password name of your OSM account"));
+            lblHeading.setText(
+                    tr("<html>Authenticating at the OSM API ''{0}'' failed. Please enter a valid username and a valid password.</html>",
+                            OsmApi.getOsmApi().getBaseUrl()));
+            lblWarning.setText(tr("Warning: The password is transferred unencrypted."));
+        }
+
+        public OsmApiCredentialsPanel() {
+            build();
+        }
+    }
+
+    private static class HttpProxyCredentialsPanel extends CredentialPanel {
+        @Override
+        protected void build() {
+            super.build();
+            tfUserName.setToolTipText(tr("Please enter the user name for authenticating at your proxy server"));
+            tfPassword.setToolTipText(tr("Please enter the password for authenticating at your proxy server"));
+            lblHeading.setText(
+                    tr("<html>Authenticating at the HTTP proxy ''{0}'' failed. Please enter a valid username and a valid password.</html>",
+                            System.getProperty("http.proxyHost") + ":" + System.getProperty("http.proxyPort")));
+            lblWarning.setText(tr("<html>Warning: depending on the authentication method the proxy server uses the password may be transferred unencrypted.</html>"));
+        }
+
+        public HttpProxyCredentialsPanel() {
+            build();
+        }
+    }
+
+    static private class SelectAllOnFocusHandler extends FocusAdapter {
+        @Override
+        public void focusGained(FocusEvent e) {
+            if (e.getSource() instanceof JTextField) {
+                JTextField tf = (JTextField)e.getSource();
+                tf.selectAll();
+            }
+        }
+    }
+
+    class OKAction extends AbstractAction {
+        public OKAction() {
+            putValue(NAME, tr("Authenticate"));
+            putValue(SHORT_DESCRIPTION, tr("Authenticate with the supplied username and password"));
+            putValue(SMALL_ICON, ImageProvider.get("ok"));
+        }
+
+        public void actionPerformed(ActionEvent arg0) {
+            setCanceled(false);
+            setVisible(false);
+        }
+    }
+
+    class CancelAction extends AbstractAction {
+        public CancelAction() {
+            putValue(NAME, tr("Cancel"));
+            putValue(SHORT_DESCRIPTION, tr("Cancel authentication"));
+            putValue(SMALL_ICON, ImageProvider.get("cancel"));
+        }
+
+        public void cancel() {
+            setCanceled(true);
+            setVisible(false);
+        }
+
+        public void actionPerformed(ActionEvent arg0) {
+            cancel();
+        }
+    }
+
+    class WindowEventHander extends WindowAdapter {
+
+        @Override
+        public void windowActivated(WindowEvent e) {
+            if (pnlCredentials != null) {
+                pnlCredentials.startUserInput();
+            }
+        }
+
+        @Override
+        public void windowClosing(WindowEvent e) {
+            new CancelAction().cancel();
+        }
+    }
+}

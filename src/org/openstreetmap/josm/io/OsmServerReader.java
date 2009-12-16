@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.CharacterCodingException;
+import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
@@ -28,7 +28,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  * @author imi
  */
 public abstract class OsmServerReader extends OsmConnection {
-
+    static private final Logger logger = Logger.getLogger(OsmServerReader.class.getName());
     private OsmApi api = OsmApi.getOsmApi();
     private boolean doAuthenticate = false;
 
@@ -67,14 +67,11 @@ public abstract class OsmServerReader extends OsmConnection {
                 return null;
             }
 
-            try {
-                if (doAuthenticate) {
-                    addAuth(activeConnection);
-                }
-            } catch(CharacterCodingException e) {
-                System.err.println(tr("Error: failed to add authentication credentials to the connection."));
-                throw new OsmTransferException(e);
+            if (doAuthenticate) {
+                addAuth(activeConnection);
             }
+            if (cancel)
+                throw new OsmTransferCancelledException();
             if (Main.pref.getBoolean("osm-server.use-compression", true)) {
                 activeConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
             }
@@ -85,11 +82,15 @@ public abstract class OsmServerReader extends OsmConnection {
                 System.out.println("GET " + url);
                 activeConnection.connect();
             } catch (Exception e) {
+                e.printStackTrace();
                 throw new OsmTransferException(tr("Couldn't connect to the OSM server. Please check your internet connection."), e);
             }
             try {
-                if (isAuthCancelled() && activeConnection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
+                if (activeConnection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
                     throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED,null,null);
+
+                if (activeConnection.getResponseCode() == HttpURLConnection.HTTP_PROXY_AUTH)
+                    throw new OsmTransferCancelledException();
 
                 if (activeConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                     String errorHeader = activeConnection.getHeaderField("Error");

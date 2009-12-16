@@ -8,6 +8,8 @@ import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.Authenticator;
+import java.net.ProxySelector;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,6 +20,9 @@ import java.util.Map;
 import javax.swing.JFrame;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.io.DefaultProxySelector;
+import org.openstreetmap.josm.io.auth.CredentialsManagerFactory;
+import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.I18n;
@@ -96,6 +101,13 @@ public class MainApplication extends Main {
             I18n.set(Main.pref.get("language", null));
         }
         Main.pref.updateSystemProperties();
+
+        Authenticator.setDefault(
+                new DefaultAuthenticator(
+                        CredentialsManagerFactory.getCredentialManager()
+                )
+        );
+        ProxySelector.setDefault(new DefaultProxySelector(ProxySelector.getDefault()));
 
         if (argList.contains("--help") || argList.contains("-?") || argList.contains("-h")) {
             // TODO: put in a platformHook for system that have no console by default

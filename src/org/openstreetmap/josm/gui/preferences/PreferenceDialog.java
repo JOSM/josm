@@ -43,7 +43,7 @@ public class PreferenceDialog extends JTabbedPane implements MouseWheelListener 
 
     // some common tabs
     public final JPanel display = createPreferenceTab("display", tr("Display Settings"), tr("Various settings that influence the visual representation of the whole program."));
-    public final JPanel connection = createPreferenceTab("connection", I18n.tr("Connection Settings"), I18n.tr("Connection Settings for the OSM server."),true);
+    public final JPanel connection = createPreferenceTab("connection", I18n.tr("Connection Settings"), I18n.tr("Connection Settings for the OSM server."),false);
     public final JPanel map = createPreferenceTab("map", I18n.tr("Map Settings"), I18n.tr("Settings for the map projection and data interpretation."));
     public final JPanel audio = createPreferenceTab("audio", I18n.tr("Audio Settings"), I18n.tr("Settings for the audio player and audio markers."));
 

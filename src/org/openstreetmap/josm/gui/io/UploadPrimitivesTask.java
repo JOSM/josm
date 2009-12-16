@@ -28,6 +28,7 @@ import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiPrimitiveGoneException;
 import org.openstreetmap.josm.io.OsmServerWriter;
+import org.openstreetmap.josm.io.OsmTransferCancelledException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.SAXException;
@@ -238,6 +239,9 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                     // if we get here we've successfully uploaded the data. Exit the loop.
                     //
                     break;
+                } catch(OsmTransferCancelledException e) {
+                    uploadCancelled = true;
+                    return;
                 } catch(OsmApiPrimitiveGoneException e) {
                     // try to recover from  410 Gone
                     //

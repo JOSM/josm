@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
@@ -146,11 +147,10 @@ public class OsmApi extends OsmConnection {
      *
      * @exception OsmApiInitializationException thrown, if an exception occurs
      */
-    public void initialize(ProgressMonitor monitor) throws OsmApiInitializationException {
+    public void initialize(ProgressMonitor monitor) throws OsmApiInitializationException, OsmTransferCancelledException {
         if (initialized)
             return;
         cancel = false;
-        initAuthentication();
         try {
             String s = sendRequest("GET", "capabilities", null,monitor, false);
             InputSource inputSource = new InputSource(new StringReader(s));
@@ -168,9 +168,20 @@ public class OsmApi extends OsmConnection {
                     version));
             osmWriter.setVersion(version);
             initialized = true;
-        } catch (Exception ex) {
+        } catch(IOException e) {
             initialized = false;
-            throw new OsmApiInitializationException(ex);
+            throw new OsmApiInitializationException(e);
+        } catch(SAXException e) {
+            initialized = false;
+            throw new OsmApiInitializationException(e);
+        } catch(ParserConfigurationException e) {
+            initialized = false;
+            throw new OsmApiInitializationException(e);
+        } catch(OsmTransferCancelledException e){
+            throw e;
+        } catch(OsmTransferException e) {
+            initialized = false;
+            throw new OsmApiInitializationException(e);
         }
     }
 
@@ -435,7 +446,7 @@ public class OsmApi extends OsmConnection {
             if (monitor != null) {
                 monitor.setCustomText(tr("Starting retry {0} of {1} in {2} seconds ...", getMaxRetries() - retry,getMaxRetries(), 10-i));
             }
-            if (cancel || isAuthCancelled())
+            if (cancel)
                 throw new OsmTransferCancelledException();
             try {
                 Thread.sleep(1000);
@@ -562,6 +573,12 @@ public class OsmApi extends OsmConnection {
                     return responseBody.toString();
                 case HttpURLConnection.HTTP_GONE:
                     throw new OsmApiPrimitiveGoneException(errorHeader, errorBody);
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                case HttpURLConnection.HTTP_PROXY_AUTH:
+                    // if we get here with HTTP_UNAUTHORIZED or HTTP_PROXY_AUTH the user canceled the
+                    // username/password dialog. Throw an OsmTransferCancelledException.
+                    //
+                    throw new OsmTransferCancelledException();
                 case HttpURLConnection.HTTP_CONFLICT:
                     if (ChangesetClosedException.errorHeaderMatchesPattern(errorHeader))
                         throw new ChangesetClosedException(errorBody, ChangesetClosedException.Source.UPLOAD_DATA);
@@ -582,10 +599,12 @@ public class OsmApi extends OsmConnection {
                     continue;
                 }
                 throw new OsmTransferException(e);
+            } catch(IOException e){
+                throw new OsmTransferException(e);
+            } catch(OsmTransferCancelledException e){
+                throw e;
             } catch(OsmTransferException e) {
                 throw e;
-            } catch (Exception e) {
-                throw new OsmTransferException(e);
             }
         }
     }

@@ -24,8 +24,8 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences.Bookmark;
 import org.openstreetmap.josm.io.OsmConnection;
+import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.Base64;
 import org.openstreetmap.josm.tools.XmlObjectParser;
@@ -65,6 +65,8 @@ public class ServerSidePreferences extends Preferences {
                 }
                 return b.toString();
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch(OsmTransferException e) {
                 e.printStackTrace();
             }
             return null;

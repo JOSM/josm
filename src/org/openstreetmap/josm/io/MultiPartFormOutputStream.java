@@ -91,7 +91,6 @@ public class MultiPartFormOutputStream extends OsmConnection {
             throw new IllegalArgumentException("Boundary stream is required.");
         this.out = new DataOutputStream(os);
         this.boundary = boundary;
-        initAuthentication();
     }
 
     /**

@@ -16,6 +16,7 @@ import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
+import org.openstreetmap.josm.io.OsmTransferCancelledException;
 
 public class ApiPreconditionCheckerHook implements UploadHook {
 
@@ -37,6 +38,8 @@ public class ApiPreconditionCheckerHook implements UploadHook {
                 if( !checkMaxNodes(apiData.getPrimitivesToDelete(), maxNodes))
                     return false;
             }
+        } catch(OsmTransferCancelledException e){
+            return false;
         } catch (OsmApiInitializationException e) {
             ExceptionDialogUtil.explainOsmTransferException(e);
             return false;

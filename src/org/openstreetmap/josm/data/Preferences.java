@@ -25,13 +25,13 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.preferences.ProxyPreferences;
 import org.openstreetmap.josm.tools.ColorHelper;
 
 /**
@@ -43,6 +43,7 @@ import org.openstreetmap.josm.tools.ColorHelper;
  * @author imi
  */
 public class Preferences {
+    static private final Logger logger = Logger.getLogger(Preferences.class.getName());
 
     /**
      * Internal storage for the preference directory.
@@ -730,16 +731,6 @@ public class Preferences {
      */
     public void updateSystemProperties() {
         Properties sysProp = System.getProperties();
-        if (getBoolean(ProxyPreferences.PROXY_ENABLE)) {
-            sysProp.put("proxySet", "true");
-            sysProp.put("http.proxyHost", get(ProxyPreferences.PROXY_HOST));
-            sysProp.put("proxyPort", get(ProxyPreferences.PROXY_PORT));
-            if (!getBoolean(ProxyPreferences.PROXY_ANONYMOUS)) {
-                sysProp.put("proxyUser", get(ProxyPreferences.PROXY_USER));
-                sysProp.put("proxyPassword", get(ProxyPreferences.PROXY_PASS));
-            }
-
-        }
         sysProp.put("http.agent", Version.getInstance().getAgentString());
         System.setProperties(sysProp);
     }
