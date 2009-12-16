@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.Reader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -17,7 +19,9 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -26,6 +30,53 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Imi
  */
 public class XmlObjectParser implements Iterable<Object> {
+    public class PresetParsingException extends SAXException {
+        private int columnNumber;
+        private int lineNumber;
+
+        public PresetParsingException() {
+            super();
+        }
+
+        public PresetParsingException(Exception e) {
+            super(e);
+        }
+
+        public PresetParsingException(String message, Exception e) {
+            super(message, e);
+        }
+
+        public PresetParsingException(String message) {
+            super(message);
+        }
+
+        public PresetParsingException rememberLocation(Locator locator) {
+            if (locator == null) return this;
+            this.columnNumber = locator.getColumnNumber();
+            this.lineNumber = locator.getLineNumber();
+            return this;
+        }
+
+        @Override
+        public String getMessage() {
+            String msg = super.getMessage();
+            if (lineNumber == 0 && columnNumber == 0)
+                return msg;
+            if (msg == null) {
+                msg = getClass().getName();
+            }
+            msg = msg + " " + tr("(at line {0}, column {1})", lineNumber, columnNumber);
+            return msg;
+        }
+
+        public int getColumnNumber() {
+            return columnNumber;
+        }
+
+        public int getLineNumber() {
+            return lineNumber;
+        }
+    }
 
     public static final String lang = LanguageInfo.getLanguageCodeXML();
     public static class Uniform<T> implements Iterable<T>{
@@ -52,18 +103,36 @@ public class XmlObjectParser implements Iterable<Object> {
     private class Parser extends DefaultHandler {
         Stack<Object> current = new Stack<Object>();
         String characters = "";
+
+        private Locator locator;
+
+        @Override
+        public void setDocumentLocator(Locator locator) {
+            this.locator = locator;
+        }
+
+        protected void throwException(String msg) throws PresetParsingException{
+            throw new PresetParsingException(msg).rememberLocation(locator);
+        }
+
+        protected void throwException(Exception e) throws PresetParsingException{
+            throw new PresetParsingException(e).rememberLocation(locator);
+        }
+
         @Override public void startElement(String ns, String lname, String qname, Attributes a) throws SAXException {
             if (mapping.containsKey(qname)) {
                 Class<?> klass = mapping.get(qname).klass;
                 try {
                     current.push(klass.newInstance());
                 } catch (Exception e) {
-                    throw new SAXException(e);
+                    throwException(e);
                 }
-                for (int i = 0; i < a.getLength(); ++i)
+                for (int i = 0; i < a.getLength(); ++i) {
                     setValue(a.getQName(i), a.getValue(i));
-                if (mapping.get(qname).onStart)
+                }
+                if (mapping.get(qname).onStart) {
                     report();
+                }
                 if (mapping.get(qname).both)
                 {
                     try {
@@ -74,9 +143,9 @@ public class XmlObjectParser implements Iterable<Object> {
             }
         }
         @Override public void endElement(String ns, String lname, String qname) throws SAXException {
-            if (mapping.containsKey(qname) && !mapping.get(qname).onStart)
+            if (mapping.containsKey(qname) && !mapping.get(qname).onStart) {
                 report();
-            else if (characters != null && !current.isEmpty()) {
+            } else if (characters != null && !current.isEmpty()) {
                 setValue(qname, characters.trim());
                 characters = "";
             }
@@ -105,8 +174,9 @@ public class XmlObjectParser implements Iterable<Object> {
         }
 
         private void setValue(String fieldName, String value) throws SAXException {
-            if (fieldName.equals("class") || fieldName.equals("default") || fieldName.equals("throw") || fieldName.equals("new") || fieldName.equals("null"))
+            if (fieldName.equals("class") || fieldName.equals("default") || fieldName.equals("throw") || fieldName.equals("new") || fieldName.equals("null")) {
                 fieldName += "_";
+            }
             try {
                 Object c = current.peek();
                 Field f = null;
@@ -123,9 +193,9 @@ public class XmlObjectParser implements Iterable<Object> {
                         }
                     }
                 }
-                if (f != null && Modifier.isPublic(f.getModifiers()))
+                if (f != null && Modifier.isPublic(f.getModifiers())) {
                     f.set(c, getValueForClass(f.getType(), value));
-                else {
+                } else {
                     if(fieldName.startsWith(lang))
                     {
                         int l = lang.length();
@@ -145,15 +215,26 @@ public class XmlObjectParser implements Iterable<Object> {
                 }
             } catch (Exception e) {
                 e.printStackTrace(); // SAXException does not dump inner exceptions.
-                throw new SAXException(e);
+                throwException(e);
             }
         }
+
         private boolean parseBoolean(String s) {
             return s != null &&
-                !s.equals("0") &&
-                !s.startsWith("off") &&
-                !s.startsWith("false") &&
-                !s.startsWith("no");
+            !s.equals("0") &&
+            !s.startsWith("off") &&
+            !s.startsWith("false") &&
+            !s.startsWith("no");
+        }
+
+        @Override
+        public void error(SAXParseException e) throws SAXException {
+            throwException(e);
+        }
+
+        @Override
+        public void fatalError(SAXParseException e) throws SAXException {
+            throwException(e);
         }
     }
 
