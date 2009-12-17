@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
