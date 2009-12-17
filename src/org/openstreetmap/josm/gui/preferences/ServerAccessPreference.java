@@ -45,8 +45,8 @@ public class ServerAccessPreference implements PreferenceSetting {
         String oldPassword;
         try {
             PasswordAuthentication credentials =  cm.lookup(RequestorType.SERVER);
-            oldUsername = (credentials == null | credentials.getUserName() == null) ? "" : credentials.getUserName();
-            oldPassword = (credentials == null | credentials.getPassword() == null) ? "" : String.valueOf(credentials.getPassword());
+            oldUsername = (credentials == null || credentials.getUserName() == null) ? "" : credentials.getUserName();
+            oldPassword = (credentials == null || credentials.getPassword() == null) ? "" : String.valueOf(credentials.getPassword());
         } catch(CredentialsManagerException e) {
             e.printStackTrace();
             oldUsername = "";
