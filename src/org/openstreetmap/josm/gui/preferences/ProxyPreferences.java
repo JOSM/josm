@@ -98,7 +98,7 @@ public class ProxyPreferences implements PreferenceSetting {
 
         gc.gridy = 1;
         gc.gridx = 0;
-        pnl.add(new JLabel(tr("Port:")), gc);
+        pnl.add(new JLabel(trc("server", "Port:")), gc);
 
         gc.gridx = 1;
         gc.weightx = 0.0;
@@ -149,7 +149,7 @@ public class ProxyPreferences implements PreferenceSetting {
 
         gc.gridy = 1;
         gc.gridx = 0;
-        pnl.add(new JLabel(tr("Port:")), gc);
+        pnl.add(new JLabel(trc("server", "Port:")), gc);
 
         gc.gridx = 1;
         pnl.add(tfProxySocksPort = new JTextField(5),gc);
