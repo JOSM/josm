@@ -103,7 +103,7 @@ public class CorrelateGpxWithImages implements ActionListener {
         }
     }
 
-    Vector gpxLst = new Vector();
+    Vector<GpxDataWrapper> gpxLst = new Vector<GpxDataWrapper>();
     JPanel panel = null;
     JComboBox cbGpx = null;
     JTextField tfTimezone = null;
@@ -144,20 +144,18 @@ public class CorrelateGpxWithImages implements ActionListener {
                 Main.pref.put("lastDirectory", sel.getPath());
 
                 for (int i = gpxLst.size() - 1 ; i >= 0 ; i--) {
-                    if (gpxLst.get(i) instanceof GpxDataWrapper) {
-                        GpxDataWrapper wrapper = (GpxDataWrapper) gpxLst.get(i);
-                        if (sel.equals(wrapper.file)) {
-                            cbGpx.setSelectedIndex(i);
-                            if (!sel.getName().equals(wrapper.name)) {
-                                JOptionPane.showMessageDialog(
-                                        Main.parent,
-                                        tr("File {0} is loaded yet under the name \"{1}\"", sel.getName(), wrapper.name),
-                                        tr("Error"),
-                                        JOptionPane.ERROR_MESSAGE
-                                );
-                            }
-                            return;
+                    GpxDataWrapper wrapper = gpxLst.get(i);
+                    if (wrapper.file != null && sel.equals(wrapper.file)) {
+                        cbGpx.setSelectedIndex(i);
+                        if (!sel.getName().equals(wrapper.name)) {
+                            JOptionPane.showMessageDialog(
+                                    Main.parent,
+                                    tr("File {0} is loaded yet under the name \"{1}\"", sel.getName(), wrapper.name),
+                                    tr("Error"),
+                                    JOptionPane.ERROR_MESSAGE
+                            );
                         }
+                        return;
                     }
                 }
                 GpxData data = null;
@@ -192,7 +190,7 @@ public class CorrelateGpxWithImages implements ActionListener {
                 }
 
                 loadedGpxData.add(data);
-                if (gpxLst.get(0) instanceof String) {
+                if (gpxLst.get(0).file == null) {
                     gpxLst.remove(0);
                 }
                 gpxLst.add(new GpxDataWrapper(sel.getName(), data, sel));
@@ -278,7 +276,7 @@ public class CorrelateGpxWithImages implements ActionListener {
             gc.anchor = GridBagConstraints.WEST;
             panelTf.add(new JLabel(tr("I'm in the timezone of: ")), gc);
 
-            Vector vtTimezones = new Vector<String>();
+            Vector<String> vtTimezones = new Vector<String>();
             String[] tmp = TimeZone.getAvailableIDs();
 
             for (String tzStr : tmp) {
@@ -440,7 +438,6 @@ public class CorrelateGpxWithImages implements ActionListener {
                         ((GpxLayer) cur).data.storageFile);
                 gpxLst.add(gdw);
                 if (cur == yLayer.gpxLayer) {
-                    System.err.println("Hier!");
                     defaultItem = gdw;
                 }
             }
@@ -452,7 +449,7 @@ public class CorrelateGpxWithImages implements ActionListener {
         }
 
         if (gpxLst.size() == 0) {
-            gpxLst.add(tr("<No GPX track loaded yet>"));
+            gpxLst.add(new GpxDataWrapper(tr("<No GPX track loaded yet>"), null, null));
         }
 
         JPanel panelCb = new JPanel();
