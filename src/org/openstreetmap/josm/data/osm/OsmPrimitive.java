@@ -567,6 +567,18 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     /**
+     * Replies a list of direction-dependent keys that make an object
+     * direction dependent.
+     * 
+     * @return  a list of direction-dependent keys that make an object
+     * direction dependent.
+     */
+    public static Collection<String> getDirectionKeys() {
+        return Main.pref.getCollection("tags.direction",
+                Arrays.asList("oneway","incline","incline_steep","aerialway"));
+    }
+
+    /**
      * Implementation of the visitor scheme. Subclasses have to call the correct
      * visitor function.
      * @param visitor The visitor from which the visit() function must be called.
@@ -1103,6 +1115,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             flags &= ~FLAG_HAS_DIRECTIONS;
         }
     }
+
+
     /**
      * true if this object has direction dependent tags (e.g. oneway)
      */
