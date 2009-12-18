@@ -622,7 +622,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * @exception IllegalArgumentException thrown if layer is not in the lis of layers
      */
     public void setActiveLayer(Layer layer) {
-        if (!layers.contains(layer))
+        if (layer != null && !layers.contains(layer))
             throw new IllegalArgumentException(tr("Layer ''{0}'' must be in list of layers", layer.toString()));
 
         if (layer == activeLayer)
