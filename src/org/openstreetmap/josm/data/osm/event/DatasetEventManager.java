@@ -8,11 +8,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter.Listener;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 
@@ -25,7 +22,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  * Events in EDT are supported, see {@link #addDatasetListener(DataSetListener, boolean)}
  *
  */
-public class DatasetEventManager implements LayerChangeListener, Listener {
+public class DatasetEventManager implements MapView.EditLayerChangeListener, Listener {
 
     private static final DatasetEventManager instance = new DatasetEventManager();
 
@@ -39,7 +36,7 @@ public class DatasetEventManager implements LayerChangeListener, Listener {
     private final DataSetListener myListener = new DataSetListenerAdapter(this);
 
     public DatasetEventManager() {
-        MapView.addLayerChangeListener(this);
+        MapView.addEditLayerChangeListener(this);
     }
 
     /**
@@ -61,22 +58,18 @@ public class DatasetEventManager implements LayerChangeListener, Listener {
         normalListeners.remove(listener);
     }
 
-    /* --------------------------------------------------------------------------- */
-    /* interface LayerChangeListener                                               */
-    /* --------------------------------------------------------------------------- */
-    public void activeLayerChange(Layer a, Layer b) {
-        if (a != null && a instanceof OsmDataLayer) {
-            ((OsmDataLayer)a).data.removeDataSetListener(myListener);
+    public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
+        if (oldLayer != null) {
+            oldLayer.data.removeDataSetListener(myListener);
         }
-        if (b != null && b instanceof OsmDataLayer) {
-            ((OsmDataLayer)b).data.addDataSetListener(myListener);
-        }
-        if (Main.main.getEditLayer() != null) {
-            processDatasetEvent(new DataChangedEvent(Main.main.getEditLayer().data));
+
+        if (newLayer != null) {
+            newLayer.data.addDataSetListener(myListener);
+            processDatasetEvent(new DataChangedEvent(newLayer.data));
+        } else {
+            processDatasetEvent(new DataChangedEvent(null));
         }
     }
-    public void layerRemoved(Layer a) {/* irrelevant in this context */}
-    public void layerAdded(Layer a) {/* irrelevant in this context */}
 
     public void processDatasetEvent(AbstractDatasetChangedEvent event) {
         for (DataSetListener listener: normalListeners) {

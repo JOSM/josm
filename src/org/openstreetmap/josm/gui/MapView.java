@@ -75,10 +75,15 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         void layerRemoved(Layer oldLayer);
     }
 
+    public interface EditLayerChangeListener {
+        void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer);
+    }
+
     /**
      * the layer listeners
      */
     private static final Collection<MapView.LayerChangeListener> layerChangeListeners = new CopyOnWriteArrayList<MapView.LayerChangeListener>();
+    private static final Collection<EditLayerChangeListener> editLayerChangeListeners = new CopyOnWriteArrayList<EditLayerChangeListener>();
 
     /**
      * Removes a layer change listener
@@ -91,6 +96,14 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         }
     }
 
+    public static void removeEditLayerChangeListener(EditLayerChangeListener listener) {
+        if (listener != null && editLayerChangeListeners.contains(listener)) {
+            editLayerChangeListeners.remove(listener);
+        }
+    }
+
+
+
     /**
      * Adds a layer change listener
      * 
@@ -99,6 +112,12 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     public static void addLayerChangeListener(MapView.LayerChangeListener listener) {
         if (listener != null && ! layerChangeListeners.contains(listener)) {
             layerChangeListeners.add(listener);
+        }
+    }
+
+    public static void addEditLayerChangeListener(EditLayerChangeListener listener) {
+        if (listener != null && ! layerChangeListeners.contains(listener)) {
+            editLayerChangeListeners.add(listener);
         }
     }
 
@@ -120,6 +139,12 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         }
     }
 
+    protected static void fireEditLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
+        for (EditLayerChangeListener l : editLayerChangeListeners) {
+            l.editLayerChanged(oldLayer, newLayer);
+        }
+    }
+
     /**
      * A list of all layers currently loaded.
      */
@@ -133,6 +158,8 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * The layer from the layers list that is currently active.
      */
     private Layer activeLayer;
+
+    private OsmDataLayer editLayer;
 
     /**
      * The last event performed by mouse.
@@ -254,9 +281,10 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
     @Override
     protected DataSet getCurrentDataSet() {
-        if(activeLayer != null && activeLayer instanceof OsmDataLayer)
-            return ((OsmDataLayer)activeLayer).data;
-        return null;
+        if (editLayer != null)
+            return editLayer.data;
+        else
+            return null;
     }
 
     /**
@@ -265,7 +293,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * @return true if the active layer is drawable, false otherwise
      */
     public boolean isActiveLayerDrawable() {
-        return activeLayer != null && activeLayer instanceof OsmDataLayer;
+        return editLayer != null;
     }
 
     /**
@@ -274,7 +302,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * @return true if the active layer is visible, false otherwise
      */
     public boolean isActiveLayerVisible() {
-        return isActiveLayerDrawable() && activeLayer.isVisible();
+        return isActiveLayerDrawable() && editLayer.isVisible();
     }
 
 
@@ -289,17 +317,22 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      *
      * @return the next active data layer
      */
-    protected Layer determineNextActiveLayer() {
-        if (layers.isEmpty()) return null;
-        // if possible, activate the first data layer
-        //
-        List<OsmDataLayer> dataLayers = getLayersOfType(OsmDataLayer.class);
-        if (!dataLayers.isEmpty())
-            return dataLayers.get(0);
+    protected Layer determineNextActiveLayer(Layer ignoredLayer) {
+        // First look for data layer
+        for (Layer layer:layers) {
+            if (layer instanceof OsmDataLayer && layer != ignoredLayer)
+                return layer;
+        }
 
-        // else the first layer of any type
-        //
-        return layers.get(0);
+        // Then any layer
+        for (Layer layer:layers) {
+            if (layer != ignoredLayer)
+                return layer;
+        }
+
+        // and then give up
+        return null;
+
     }
 
     /**
@@ -307,12 +340,8 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * an LayerChange event is fired.
      */
     public void removeLayer(Layer layer) {
-        boolean deletedLayerWasActiveLayer = false;
-
         if (layer == activeLayer) {
-            activeLayer = null;
-            deletedLayerWasActiveLayer = true;
-            fireActiveLayerChanged(layer, null);
+            setActiveLayer(determineNextActiveLayer(activeLayer));
         }
         if (layers.remove(layer)) {
             fireLayerRemoved(layer);
@@ -320,13 +349,6 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         layer.removePropertyChangeListener(this);
         layer.destroy();
         AudioPlayer.reset();
-        if (deletedLayerWasActiveLayer) {
-            Layer l = determineNextActiveLayer();
-            if (l != null) {
-                activeLayer = l;
-                fireActiveLayerChanged(null, l);
-            }
-        }
         repaint();
     }
 
@@ -361,6 +383,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         } else {
             layers.add(pos, layer);
         }
+        setEditLayer();
         AudioPlayer.reset();
         repaint();
     }
@@ -560,6 +583,37 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         return getNumLayers() > 0;
     }
 
+    private void setEditLayer() {
+        OsmDataLayer newEditLayer = null;
+        OsmDataLayer oldEditLayer = editLayer;
+
+        // Find new edit layer
+        if (activeLayer != editLayer) {
+            if (activeLayer instanceof OsmDataLayer) {
+                newEditLayer = (OsmDataLayer) activeLayer;
+            } else {
+                for (Layer layer:layers) {
+                    if (layer instanceof OsmDataLayer) {
+                        newEditLayer = (OsmDataLayer) layer;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Set new edit layer
+        if (newEditLayer != editLayer) {
+            if (newEditLayer == null) {
+                getCurrentDataSet().setSelected();
+            }
+
+            editLayer = newEditLayer;
+            fireEditLayerChanged(oldEditLayer, newEditLayer);
+            refreshTitle();
+        }
+
+    }
+
     /**
      * Sets the active layer to <code>layer</code>. If <code>layer</code> is an instance
      * of {@see OsmDataLayer} also sets {@see #editLayer} to <code>layer</code>.
@@ -570,19 +624,15 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     public void setActiveLayer(Layer layer) {
         if (!layers.contains(layer))
             throw new IllegalArgumentException(tr("Layer ''{0}'' must be in list of layers", layer.toString()));
-        if (! (layer instanceof OsmDataLayer)) {
-            if (getCurrentDataSet() != null) {
-                getCurrentDataSet().setSelected();
-            }
-        }
+
+        if (layer == activeLayer)
+            return;
+
         Layer old = activeLayer;
         activeLayer = layer;
-        if (old != layer) {
-            fireActiveLayerChanged(old, layer);
-        }
-        if (layer instanceof OsmDataLayer) {
-            refreshTitle((OsmDataLayer)layer);
-        }
+        fireActiveLayerChanged(old, layer);
+
+        setEditLayer();
 
         /* This only makes the buttons look disabled. Disabling the actions as well requires
          * the user to re-select the tool after i.e. moving a layer. While testing I found
@@ -611,16 +661,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * @return the current edit layer. May be null.
      */
     public OsmDataLayer getEditLayer() {
-        if (activeLayer instanceof OsmDataLayer)
-            return (OsmDataLayer)activeLayer;
-
-        // the first OsmDataLayer is the edit layer
-        //
-        for (Layer layer : layers) {
-            if (layer instanceof OsmDataLayer)
-                return (OsmDataLayer)layer;
-        }
-        return null;
+        return editLayer;
     }
 
     /**
@@ -677,13 +718,13 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                 || evt.getPropertyName().equals(OsmDataLayer.REQUIRES_UPLOAD_TO_SERVER_PROP)) {
             OsmDataLayer layer = (OsmDataLayer)evt.getSource();
             if (layer == getEditLayer()) {
-                refreshTitle(layer);
+                refreshTitle();
             }
         }
     }
 
-    protected void refreshTitle(OsmDataLayer layer) {
-        boolean dirty = layer.requiresSaveToFile() || layer.requiresUploadToServer();
+    protected void refreshTitle() {
+        boolean dirty = editLayer != null && (editLayer.requiresSaveToFile() || editLayer.requiresUploadToServer());
         if (dirty) {
             JOptionPane.getFrameForComponent(Main.parent).setTitle("* " + tr("Java OpenStreetMap Editor"));
         } else {
