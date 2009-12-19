@@ -716,8 +716,10 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @since 1924
      */
     public void setKeys(Map<String, String> keys) {
+        Map<String, String> originalKeys = getKeys();
         if (keys == null) {
             this.keys = null;
+            keysChangedImpl(originalKeys);
             return;
         }
         String[] newKeys = new String[keys.size() * 2];
@@ -727,7 +729,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             newKeys[index++] = entry.getValue();
         }
         this.keys = newKeys;
-        keysChangedImpl();
+        keysChangedImpl(originalKeys);
     }
 
     /**
@@ -740,18 +742,19 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @see #remove(String)
      */
     public final void put(String key, String value) {
+        Map<String, String> originalKeys = getKeys();
         if (key == null)
             return;
         else if (value == null) {
             remove(key);
         } else if (keys == null || keys.length == 0){
             keys = new String[] {key, value};
-            keysChangedImpl();
+            keysChangedImpl(originalKeys);
         } else {
             for (int i=0; i<keys.length;i+=2) {
                 if (keys[i].equals(key)) {
                     keys[i+1] = value;
-                    keysChangedImpl();
+                    keysChangedImpl(originalKeys);
                     return;
                 }
             }
@@ -763,7 +766,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             newKeys[keys.length] = key;
             newKeys[keys.length + 1] = value;
             keys = newKeys;
-            keysChangedImpl();
+            keysChangedImpl(originalKeys);
         }
     }
     /**
@@ -775,9 +778,10 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         if (key == null || keys == null || keys.length == 0 ) return;
         if (!hasKey(key))
             return;
+        Map<String, String> originalKeys = getKeys();
         if (keys.length == 2) {
             keys = null;
-            keysChangedImpl();
+            keysChangedImpl(originalKeys);
             return;
         }
         String[] newKeys = new String[keys.length - 2];
@@ -789,7 +793,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             }
         }
         keys = newKeys;
-        keysChangedImpl();
+        keysChangedImpl(originalKeys);
     }
 
     /**
@@ -798,8 +802,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @since 1843
      */
     public final void removeAll() {
-        keys = null;
-        keysChangedImpl();
+        if (keys != null) {
+            Map<String, String> originalKeys = getKeys();
+            keys = null;
+            keysChangedImpl(originalKeys);
+        }
     }
 
     /**
@@ -853,12 +860,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return keys != null && keys.length != 0;
     }
 
-    private void keysChangedImpl() {
+    private void keysChangedImpl(Map<String, String> originalKeys) {
         clearCached();
         updateHasDirectionKeys();
         updateTagged();
         if (dataSet != null) {
-            dataSet.fireTagsChanged(this);
+            dataSet.fireTagsChanged(this, originalKeys);
         }
     }
 

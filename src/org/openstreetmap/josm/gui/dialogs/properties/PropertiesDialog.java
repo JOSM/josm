@@ -1,5 +1,5 @@
 
-package org.openstreetmap.josm.gui.dialogs;
+package org.openstreetmap.josm.gui.dialogs.properties;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
@@ -19,6 +19,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,7 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.Vector;
 import java.util.Map.Entry;
 
@@ -62,12 +62,13 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
+import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -138,6 +139,18 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     }
 
     private final Map<String, Map<String, Integer>> valueCount = new TreeMap<String, Map<String, Integer>>();
+    private final ListOfUsedTags listOfUsedTags = new ListOfUsedTags();
+
+    @Override
+    public void showNotify() {
+        DatasetEventManager.getInstance().addDatasetListener(listOfUsedTags, false);
+    }
+
+    @Override
+    public void hideNotify() {
+        DatasetEventManager.getInstance().removeDatasetListener(listOfUsedTags);
+    }
+
     /**
      * Edit the value in the properties table row
      * @param row The row of the table from which the value is edited.
@@ -157,13 +170,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(new JLabel(msg), BorderLayout.NORTH);
 
-        final TreeMap<String, TreeSet<String>> allData = createAutoCompletionInfo(true);
-
         JPanel p = new JPanel(new GridBagLayout());
         panel.add(p, BorderLayout.CENTER);
 
         final AutoCompleteComboBox keys = new AutoCompleteComboBox();
-        keys.setPossibleItems(allData.keySet());
+        keys.setPossibleItems(listOfUsedTags.getUsedKeys());
         keys.setEditable(true);
         keys.setSelectedItem(key);
 
@@ -193,7 +204,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         });
         values.setEditable(true);
-        updateListData(key, allData, values);
+        values.setPossibleItems(listOfUsedTags.getUsedValues(key));
         Map<String, Integer> m=(Map<String, Integer>)propertyData.getValueAt(row, 1);
         final String selection= m.size()!=1?tr("<different>"):m.entrySet().iterator().next().getKey();
         values.setSelectedItem(selection);
@@ -201,7 +212,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         p.add(new JLabel(tr("Value")), GBC.std());
         p.add(Box.createHorizontalStrut(10), GBC.std());
         p.add(values, GBC.eol().fill(GBC.HORIZONTAL));
-        addFocusAdapter(row, allData, keys, values);
+        addFocusAdapter(row, keys, values);
 
         final JOptionPane optionPane = new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
             @Override public void selectInitialValue() {
@@ -287,22 +298,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     }
 
     /**
-     * @param key
-     * @param allData
-     * @param values
-     */
-    private void updateListData(String key, final TreeMap<String, TreeSet<String>> allData,
-            final AutoCompleteComboBox values) {
-        Collection<String> newItems;
-        if (allData.containsKey(key)) {
-            newItems = allData.get(key);
-        } else {
-            newItems = Collections.emptyList();
-        }
-        values.setPossibleItems(newItems);
-    }
-
-    /**
      * This simply fires up an relation editor for the relation shown; everything else
      * is the editor's business.
      *
@@ -329,9 +324,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         p.add(new JLabel("<html>"+trn("This will change up to {0} object.",
                 "This will change up to {0} objects.", sel.size(),sel.size())
                 +"<br><br>"+tr("Please select a key")), BorderLayout.NORTH);
-        final TreeMap<String, TreeSet<String>> allData = createAutoCompletionInfo(false);
         final AutoCompleteComboBox keys = new AutoCompleteComboBox();
-        keys.setPossibleItems(allData.keySet());
+        List<String> usedKeys = new ArrayList<String>(listOfUsedTags.getUsedKeys());
+        for (int i = 0; i < propertyData.getRowCount(); ++i) {
+            usedKeys.remove(propertyData.getValueAt(i, 0));
+        }
+        keys.setPossibleItems(usedKeys);
         keys.setEditable(true);
 
         p.add(keys, BorderLayout.CENTER);
@@ -343,7 +341,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         values.setEditable(true);
         p2.add(values, BorderLayout.CENTER);
 
-        addFocusAdapter(-1, allData, keys, values);
+        addFocusAdapter(-1, keys, values);
         JOptionPane pane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION){
             @Override public void selectInitialValue() {
                 keys.requestFocusInWindow();
@@ -372,8 +370,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * @param keys
      * @param values
      */
-    private void addFocusAdapter(final int row, final TreeMap<String, TreeSet<String>> allData,
-            final AutoCompleteComboBox keys, final AutoCompleteComboBox values) {
+    private void addFocusAdapter(final int row, final AutoCompleteComboBox keys, final AutoCompleteComboBox values) {
         // get the combo box' editor component
         JTextComponent editor = (JTextComponent)values.getEditor()
         .getEditorComponent();
@@ -381,35 +378,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         editor.addFocusListener(new FocusAdapter() {
             @Override public void focusGained(FocusEvent e) {
                 String key = keys.getEditor().getItem().toString();
-                updateListData(key, allData, values);
+                values.setPossibleItems(listOfUsedTags.getUsedValues(key));
                 objKey=key;
             }
         });
     }
     private String objKey;
-
-    private TreeMap<String, TreeSet<String>> createAutoCompletionInfo(
-            boolean edit) {
-        final TreeMap<String, TreeSet<String>> allData = new TreeMap<String, TreeSet<String>>();
-        for (OsmPrimitive osm : Main.main.getCurrentDataSet().allNonDeletedPrimitives()) {
-            for (String key : osm.keySet()) {
-                TreeSet<String> values = null;
-                if (allData.containsKey(key)) {
-                    values = allData.get(key);
-                } else {
-                    values = new TreeSet<String>();
-                    allData.put(key, values);
-                }
-                values.add(osm.get(key));
-            }
-        }
-        if (!edit) {
-            for (int i = 0; i < propertyData.getRowCount(); ++i) {
-                allData.remove(propertyData.getValueAt(i, 0));
-            }
-        }
-        return allData;
-    }
 
     /**
      * The property data.

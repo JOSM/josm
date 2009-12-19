@@ -848,8 +848,8 @@ public class DataSet implements Cloneable {
         fireEvent(new PrimitivesRemovedEvent(this, removed, wasComplete));
     }
 
-    void fireTagsChanged(OsmPrimitive prim) {
-        fireEvent(new TagsChangedEvent(this, prim));
+    void fireTagsChanged(OsmPrimitive prim, Map<String, String> originalKeys) {
+        fireEvent(new TagsChangedEvent(this, prim, originalKeys));
     }
 
     void fireRelationMembersChanged(Relation r) {
