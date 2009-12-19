@@ -630,9 +630,8 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
         Layer old = activeLayer;
         activeLayer = layer;
-        fireActiveLayerChanged(old, layer);
-
         setEditLayer();
+        fireActiveLayerChanged(old, layer);
 
         /* This only makes the buttons look disabled. Disabling the actions as well requires
          * the user to re-select the tool after i.e. moving a layer. While testing I found
