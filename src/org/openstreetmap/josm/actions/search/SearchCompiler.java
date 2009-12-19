@@ -592,6 +592,8 @@ public class SearchCompiler {
         Match m = parseExpression();
         if (!tokenizer.readIfEqual(Token.EOF))
             throw new ParseError(tr("Unexpected token: {0}", tokenizer.nextToken()));
+        if (m == null)
+            return new Always();
         return m;
     }
 
