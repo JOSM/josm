@@ -28,7 +28,6 @@ import javax.swing.JToggleButton;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
-import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer.ImageEntry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -186,8 +185,8 @@ public class ImageViewerDialog extends ToggleDialog {
 
             } else if (COMMAND_CENTERVIEW.equals(action)) {
                 centerView = ((JToggleButton) e.getSource()).isSelected();
-                if (centerView && currentEntry != null && currentEntry.pos != null) {
-                    Main.map.mapView.zoomTo(currentEntry.pos);
+                if (centerView && currentEntry != null && currentEntry.getPos() != null) {
+                    Main.map.mapView.zoomTo(currentEntry.getPos());
                 }
 
             } else if (COMMAND_ZOOM.equals(action)) {
@@ -230,8 +229,8 @@ public class ImageViewerDialog extends ToggleDialog {
 //                return;
 //            }                     TODO: pop up image dialog but don't load image again
 
-            if (centerView && Main.map != null && entry != null && entry.pos != null) {
-                Main.map.mapView.zoomTo(entry.pos);
+            if (centerView && Main.map != null && entry != null && entry.getPos() != null) {
+                Main.map.mapView.zoomTo(entry.getPos());
             }
 
             currentLayer = layer;
@@ -242,11 +241,11 @@ public class ImageViewerDialog extends ToggleDialog {
             imgDisplay.setImage(entry.file);
             titleBar.setTitle("Geotagged Images" + (entry.file != null ? " - " + entry.file.getName() : ""));
             StringBuffer osd = new StringBuffer(entry.file != null ? entry.file.getName() : "");
-            if (entry.elevation != null) {
-                osd.append(tr("\nAltitude: {0} m", entry.elevation.longValue()));
+            if (entry.getElevation() != null) {
+                osd.append(tr("\nAltitude: {0} m", entry.getElevation().longValue()));
             }
-            if (entry.speed != null) {
-                osd.append(tr("\n{0} km/h", Math.round(entry.speed)));
+            if (entry.getSpeed() != null) {
+                osd.append(tr("\n{0} km/h", Math.round(entry.getSpeed())));
             }
             imgDisplay.setOsdText(osd.toString());
         } else {

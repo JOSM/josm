@@ -78,47 +78,11 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
     private int currentPhoto = -1;
 
-    // These are used by the auto-guess function to store the result,
-    // so when the dialig is re-opened the users modifications don't
-    // get overwritten
-    public boolean hasTimeoffset = false;
-    public long timeoffset = 0;
-
     boolean useThumbs = false;
     ThumbsLoader thumbsloader;
+    boolean thumbsLoaded = false;
     private BufferedImage offscreenBuffer;
     boolean updateOffscreenBuffer = true;
-
-    /*
-     * Stores info about each image
-     */
-
-    static final class ImageEntry implements Comparable<ImageEntry> {
-        File file;
-        Date time;
-        LatLon exifCoor;
-        CachedLatLon pos;
-        Image thumbnail;
-        /** Speed in kilometer per second */
-        Double speed;
-        /** Elevation (altitude) in meters */
-        Double elevation;
-
-        public void setCoor(LatLon latlon)
-        {
-            pos = new CachedLatLon(latlon);
-        }
-        public int compareTo(ImageEntry image) {
-            if (time != null && image.time != null)
-                return time.compareTo(image.time);
-            else if (time == null && image.time == null)
-                return 0;
-            else if (time == null)
-                return -1;
-            else
-                return 1;
-        }
-    }
 
     /** Loads a set of images, while displaying a dialog that indicates what the plugin is currently doing.
      * In facts, this object is instantiated with a list of files. These files may be JPEG files or
@@ -276,7 +240,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 if (! cancelled && layer.data.size() > 0) {
                     boolean noGeotagFound = true;
                     for (ImageEntry e : layer.data) {
-                        if (e.pos != null) {
+                        if (e.getPos() != null) {
                             noGeotagFound = false;
                         }
                     }
@@ -343,7 +307,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
     public String getToolTipText() {
         int i = 0;
         for (ImageEntry e : data)
-            if (e.pos != null) {
+            if (e.getPos() != null) {
                 i++;
             }
         return data.size() + " " + trn("image", "images", data.size())
@@ -396,7 +360,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
     private Dimension scaledDimension(Image thumb) {
         final double d = Main.map.mapView.getDist100Pixel();
-        final double size = 40 /*meter*/;     /* size of the photo on the map */
+        final double size = 10 /*meter*/;     /* size of the photo on the map */
         double s = size * 100 /*px*/ / d;
 
         final double sMin = ThumbsLoader.minSize;
@@ -440,10 +404,10 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 tempG.setComposite(saveComp);
 
                 for (ImageEntry e : data) {
-                    if (e.pos == null) {
+                    if (e.getPos() == null) {
                         continue;
                     }
-                    Point p = mv.getPoint(e.pos);
+                    Point p = mv.getPoint(e.getPos());
                     if (e.thumbnail != null) {
                         Dimension d = scaledDimension(e.thumbnail);
                         Rectangle target = new Rectangle(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
@@ -463,10 +427,10 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         }
         else {
             for (ImageEntry e : data) {
-                if (e.pos == null) {
+                if (e.getPos() == null) {
                     continue;
                 }
-                Point p = mv.getPoint(e.pos);
+                Point p = mv.getPoint(e.getPos());
                 icon.paintIcon(mv, g,
                         p.x - icon.getIconWidth() / 2,
                         p.y - icon.getIconHeight() / 2);
@@ -476,8 +440,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         if (currentPhoto >= 0 && currentPhoto < data.size()) {
             ImageEntry e = data.get(currentPhoto);
 
-            if (e.pos != null) {
-                Point p = mv.getPoint(e.pos);
+            if (e.getPos() != null) {
+                Point p = mv.getPoint(e.getPos());
 
                 if (e.thumbnail != null) {
                     Dimension d = scaledDimension(e.thumbnail);
@@ -495,7 +459,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
     @Override
     public void visitBoundingBox(BoundingXYVisitor v) {
         for (ImageEntry e : data) {
-            v.visit(e.pos);
+            v.visit(e.getPos());
         }
     }
 
@@ -548,10 +512,11 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             // Store values
 
             e.setCoor(new LatLon(lat, lon));
-            e.exifCoor = e.pos;
+            e.exifCoor = e.getPos();
 
         } catch (Exception p) {
-            e.pos = null;
+            e.exifCoor = null;
+            e.setPos(null);
         }
     }
 
@@ -613,7 +578,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                     tr("Delete image file from disk"),
                     new String[] {tr("Cancel"), tr("Delete")})
                 .setButtonIcons(new String[] {"cancel.png", "dialogs/delete.png"})
-                .setContent(new JLabel(tr("<html><h3>Delete the file {0}  from the disk?<p>The image file will be permanently lost!"
+                .setContent(new JLabel(tr("<html><h3>Delete the file {0}  from disk?<p>The image file will be permanently lost!"
                     ,toDelete.file.getName()), ImageProvider.get("dialogs/geoimage/deletefromdisk"),SwingConstants.LEFT))
                 .toggleEnable("geoimage.deleteimagefromdisk")
                 .setToggleCheckboxText(tr("Always delete and don't show this dialog again"))
@@ -673,10 +638,10 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
                 for (int i = data.size() - 1; i >= 0; --i) {
                     ImageEntry e = data.get(i);
-                    if (e.pos == null) {
+                    if (e.getPos() == null) {
                         continue;
                     }
-                    Point p = Main.map.mapView.getPoint(e.pos);
+                    Point p = Main.map.mapView.getPoint(e.getPos());
                     Rectangle r;
                     if (e.thumbnail != null) {
                         Dimension d = scaledDimension(e.thumbnail);
@@ -742,5 +707,20 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         if ("center".equals(evt.getPropertyName()) || "scale".equals(evt.getPropertyName())) {
             updateOffscreenBuffer = true;
         }
+    }
+    
+    public void loadThumbs() {    
+        if (useThumbs && !thumbsLoaded) {
+            thumbsLoaded = true;
+            thumbsloader = new ThumbsLoader(this);
+            Thread t = new Thread(thumbsloader);
+            t.setPriority(Thread.MIN_PRIORITY);
+            t.start();
+        }
+    }
+    
+    public void updateBufferAndRepaint() {
+        updateOffscreenBuffer = true;
+        Main.map.mapView.repaint();
     }
 }

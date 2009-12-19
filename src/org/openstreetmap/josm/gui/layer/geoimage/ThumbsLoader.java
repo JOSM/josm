@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.openstreetmap.josm.io.CacheFiles;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer.ImageEntry;
 
 public class ThumbsLoader implements Runnable {
         public static final int maxSize = 120;
