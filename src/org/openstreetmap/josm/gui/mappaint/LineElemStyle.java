@@ -3,12 +3,14 @@ package org.openstreetmap.josm.gui.mappaint;
 import java.awt.Color;
 import java.util.Collection;
 
+import org.openstreetmap.josm.tools.I18n;
+
 public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle>
 {
     public int width;
     public int realWidth; //the real width of this line in meter
     public Color color;
-    public float[] dashed;
+    private float[] dashed;
     public Color dashedColor;
 
     public boolean over;
@@ -48,8 +50,9 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
 
         this.overlays = overlays;
         this.code = s.code;
-        for (LineElemStyle o : overlays)
+        for (LineElemStyle o : overlays) {
             this.code += o.code;
+        }
     }
 
     public LineElemStyle() { init(); }
@@ -71,27 +74,53 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
     public int getWidth(int ref)
     {
         int res;
-        if(widthMode == WidthMode.ABSOLUTE)
+        if(widthMode == WidthMode.ABSOLUTE) {
             res = width;
-        else if(widthMode == WidthMode.OFFSET)
+        } else if(widthMode == WidthMode.OFFSET) {
             res = ref + width;
-        else
+        } else
         {
-            if(width < 0)
+            if(width < 0) {
                 res = 0;
-            else
+            } else {
                 res = ref*width/100;
+            }
         }
         return res <= 0 ? 1 : res;
     }
 
-    public int compareTo(LineElemStyle s)
-    {
+    public int compareTo(LineElemStyle s) {
         if(s.priority != priority)
             return s.priority > priority ? 1 : -1;
-        if(!over && s.over)
-            return -1;
-        // we have no idea how to order other objects :-)
-        return 0;
+            if(!over && s.over)
+                return -1;
+            // we have no idea how to order other objects :-)
+            return 0;
+    }
+
+    public float[] getDashed() {
+        return dashed;
+    }
+
+    public void setDashed(float[] dashed) {
+        if (dashed.length == 0) {
+            this.dashed = dashed;
+            return;
+        }
+
+        boolean found = false;
+        for (int i=0; i<dashed.length; i++) {
+            if (dashed[i] > 0) {
+                found = true;
+            }
+            if (dashed[i] < 0) {
+                System.out.println(I18n.tr("Illegal dash pattern, values must be positive"));
+            }
+        }
+        if (found) {
+            this.dashed = dashed;
+        } else {
+            System.out.println(I18n.tr("Illegal dash pattern, at least one value must be > 0"));
+        }
     }
 }

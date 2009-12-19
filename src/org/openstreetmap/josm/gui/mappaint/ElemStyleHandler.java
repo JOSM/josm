@@ -13,7 +13,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ElemStyleHandler extends DefaultHandler
 {
-    boolean inDoc, inRule, inCondition, inElemStyle, inLine, inLineMod, inIcon, inArea, inScaleMax, inScaleMin;
+    boolean inDoc, inRule, inCondition, inLine, inLineMod, inIcon, inArea, inScaleMax, inScaleMin;
     boolean hadLine, hadLineMod, hadIcon, hadArea;
     ElemStyles styles;
     String styleName;
@@ -43,7 +43,7 @@ public class ElemStyleHandler extends DefaultHandler
 
     public ElemStyleHandler(String name) {
         styleName = name;
-        inDoc=inRule=inCondition=inElemStyle=inLine=inIcon=inArea=false;
+        inDoc=inRule=inCondition=inLine=inIcon=inArea=false;
         rule.init();
         styles = MapPaintStyles.getStyles();
     }
@@ -104,19 +104,22 @@ public class ElemStyleHandler extends DefaultHandler
             } else if (atts.getQName(count).equals("realwidth")) {
                 line.realWidth=Integer.parseInt(atts.getValue(count));
             } else if (atts.getQName(count).equals("dashed")) {
-                try
-                {
+                float[] dashed;
+                try {
                     String[] parts = atts.getValue(count).split(",");
-                    line.dashed = new float[parts.length];
+                    dashed = new float[parts.length];
                     for (int i = 0; i < parts.length; i++) {
-                        line.dashed[i] = (Integer.parseInt(parts[i]));
+                        dashed[i] = (Integer.parseInt(parts[i]));
                     }
                 } catch (NumberFormatException nfe) {
-                    boolean dashed=Boolean.parseBoolean(atts.getValue(count));
-                    if(dashed) {
-                        line.dashed = new float[]{9};
+                    boolean isDashed = Boolean.parseBoolean(atts.getValue(count));
+                    if(isDashed) {
+                        dashed = new float[]{9};
+                    } else {
+                        dashed = new float[0];
                     }
                 }
+                line.setDashed(dashed);
             } else if (atts.getQName(count).equals("dashedcolour")) {
                 line.dashedColor=convertColor(atts.getValue(count));
             } else if(atts.getQName(count).equals("priority")) {

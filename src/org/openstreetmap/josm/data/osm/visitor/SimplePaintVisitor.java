@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
@@ -44,7 +43,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
     /**
      * The environment to paint to.
      */
-    protected Graphics g;
+    protected Graphics2D g;
     /**
      * MapView to get screen coordinates.
      */
@@ -89,8 +88,6 @@ public class SimplePaintVisitor extends AbstractVisitor {
     protected Color currentColor = null;
     protected GeneralPath currentPath = new GeneralPath();
 
-    Rectangle bbox = new Rectangle();
-
     public void getColors()
     {
         inactiveColor = Main.pref.getColor(marktr("inactive"), Color.darkGray);
@@ -123,7 +120,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
         segmentNumberSpace = Main.pref.getInteger("mappaint.segmentnumber.space", 40);
         getColors();
 
-        ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 Main.pref.getBoolean("mappaint.use-antialiasing", false) ?
                         RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
     }
@@ -385,7 +382,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
                     }
                 }
 
-                ((Graphics2D) g).draw(relatedWayStroke.createStrokedShape(path));
+                g.draw(relatedWayStroke.createStrokedShape(path));
             }
         }
     }
@@ -476,7 +473,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
         return true;
     }
 
-    public void setGraphics(Graphics g) {
+    public void setGraphics(Graphics2D g) {
         this.g = g;
     }
 
@@ -490,7 +487,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
     protected void displaySegments(Color newColor) {
         if (currentPath != null) {
             g.setColor(currentColor);
-            ((Graphics2D) g).draw(currentPath);
+            g.draw(currentPath);
             currentPath = new GeneralPath();
             currentColor = newColor;
         }

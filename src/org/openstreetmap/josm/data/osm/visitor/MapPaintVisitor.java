@@ -10,7 +10,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
@@ -91,15 +90,15 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
     public ElemStyle getPrimitiveStyle(OsmPrimitive osm) {
         if(!useStyleCache)
-            return (styles != null) ? styles.get(osm) : null;
+            return ((styles != null) ? styles.get(osm) : null);
 
-            if(osm.mappaintStyle == null && styles != null) {
-                osm.mappaintStyle = styles.get(osm);
-                if(osm instanceof Way) {
-                    ((Way)osm).isMappaintArea = styles.isArea(osm);
-                }
+        if(osm.mappaintStyle == null && styles != null) {
+            osm.mappaintStyle = styles.get(osm);
+            if(osm instanceof Way) {
+                ((Way)osm).isMappaintArea = styles.isArea(osm);
             }
-            return osm.mappaintStyle;
+        }
+        return osm.mappaintStyle;
     }
 
     public IconElemStyle getPrimitiveNodeStyle(OsmPrimitive osm) {
@@ -254,7 +253,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             }
             width = l.width;
             realWidth = l.realWidth;
-            dashed = l.dashed;
+            dashed = l.getDashed();
             dashedColor = l.dashedColor;
         }
         if(selected) {
@@ -291,19 +290,14 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         }
 
         /* draw overlays under the way */
-        if(l != null && l.overlays != null)
-        {
-            for(LineElemStyle s : l.overlays)
-            {
-                if(!s.over)
-                {
+        if(l != null && l.overlays != null) {
+            for(LineElemStyle s : l.overlays) {
+                if(!s.over) {
                     lastN = null;
-                    for(Node n : w.getNodes())
-                    {
-                        if(lastN != null)
-                        {
+                    for(Node n : w.getNodes()) {
+                        if(lastN != null) {
                             drawSeg(lastN, n, s.color != null  && !data.isSelected(w) ? s.color : color,
-                                    false, s.getWidth(width), s.dashed, s.dashedColor);
+                                    false, s.getWidth(width), s.getDashed(), s.dashedColor);
                         }
                         lastN = n;
                     }
@@ -337,7 +331,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                         if(lastN != null)
                         {
                             drawSeg(lastN, n, s.color != null && !data.isSelected(w) ? s.color : color,
-                                    false, s.getWidth(width), s.dashed, s.dashedColor);
+                                    false, s.getWidth(width), s.getDashed(), s.dashedColor);
                         }
                         lastN = n;
                     }
@@ -1155,11 +1149,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         int w = icon.getIconWidth(), h=icon.getIconHeight();
         icon.paintIcon ( Main.map.mapView, g, p.x-w/2, p.y-h/2 );
-        if(showNames > dist)
-        {
+        if(showNames > dist && annotate) {
             String name = getNodeName(n);
-            if (name!=null && annotate)
-            {
+            if (name!=null) {
                 if (inactive || n.isDisabled()) {
                     g.setColor(inactiveColor);
                 } else {
@@ -1218,43 +1210,34 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
     protected void displaySegments(Color newColor, int newWidth, float newDash[], Color newDashedColor) {
         if (currentPath != null) {
-            Graphics2D g2d = (Graphics2D)g;
-            g2d.setColor(inactive ? inactiveColor : currentColor);
+            g.setColor(inactive ? inactiveColor : currentColor);
             if (currentStroke == null && useStrokes > dist) {
                 if (currentDashed.length > 0) {
-                    try {
-                        g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,currentDashed,0));
-                    } catch (IllegalArgumentException e) {
-                        g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
-                    }
+                    g.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,currentDashed,0));
                 } else {
-                    g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+                    g.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
                 }
             }
-            g2d.draw(currentPath);
+            g.draw(currentPath);
 
             if(currentDashedColor != null) {
-                g2d.setColor(currentDashedColor);
+                g.setColor(currentDashedColor);
                 if (currentStroke == null && useStrokes > dist) {
                     if (currentDashed.length > 0) {
                         float[] currentDashedOffset = new float[currentDashed.length];
                         System.arraycopy(currentDashed, 1, currentDashedOffset, 0, currentDashed.length - 1);
                         currentDashedOffset[currentDashed.length-1] = currentDashed[0];
                         float offset = currentDashedOffset[0];
-                        try {
-                            g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,currentDashedOffset,offset));
-                        } catch (IllegalArgumentException e) {
-                            g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
-                        }
+                        g.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,currentDashedOffset,offset));
                     } else {
-                        g2d.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+                        g.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
                     }
                 }
-                g2d.draw(currentPath);
+                g.draw(currentPath);
             }
 
             if(useStrokes > dist) {
-                g2d.setStroke(new BasicStroke(1));
+                g.setStroke(new BasicStroke(1));
             }
 
             currentPath = new GeneralPath();
