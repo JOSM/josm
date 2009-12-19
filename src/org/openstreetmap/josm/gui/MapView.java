@@ -82,8 +82,8 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     /**
      * the layer listeners
      */
-    private static final Collection<MapView.LayerChangeListener> layerChangeListeners = new CopyOnWriteArrayList<MapView.LayerChangeListener>();
-    private static final Collection<EditLayerChangeListener> editLayerChangeListeners = new CopyOnWriteArrayList<EditLayerChangeListener>();
+    private static final CopyOnWriteArrayList<MapView.LayerChangeListener> layerChangeListeners = new CopyOnWriteArrayList<MapView.LayerChangeListener>();
+    private static final CopyOnWriteArrayList<EditLayerChangeListener> editLayerChangeListeners = new CopyOnWriteArrayList<EditLayerChangeListener>();
 
     /**
      * Removes a layer change listener
@@ -91,15 +91,11 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * @param listener the listener. Ignored if null or already registered.
      */
     public static void removeLayerChangeListener(MapView.LayerChangeListener listener) {
-        if (listener != null && layerChangeListeners.contains(listener)) {
-            layerChangeListeners.remove(listener);
-        }
+        layerChangeListeners.remove(listener);
     }
 
     public static void removeEditLayerChangeListener(EditLayerChangeListener listener) {
-        if (listener != null && editLayerChangeListeners.contains(listener)) {
-            editLayerChangeListeners.remove(listener);
-        }
+        editLayerChangeListeners.remove(listener);
     }
 
 
@@ -110,14 +106,14 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * @param listener the listener. Ignored if null or already registered.
      */
     public static void addLayerChangeListener(MapView.LayerChangeListener listener) {
-        if (listener != null && ! layerChangeListeners.contains(listener)) {
-            layerChangeListeners.add(listener);
+        if (listener != null) {
+            layerChangeListeners.addIfAbsent(listener);
         }
     }
 
     public static void addEditLayerChangeListener(EditLayerChangeListener listener) {
-        if (listener != null && ! layerChangeListeners.contains(listener)) {
-            editLayerChangeListeners.add(listener);
+        if (listener != null) {
+            editLayerChangeListeners.addIfAbsent(listener);
         }
     }
 

@@ -71,8 +71,8 @@ class FilenameCellEditor extends JPanel implements TableCellEditor {
     }
 
     public void addCellEditorListener(CellEditorListener l) {
-        if (!listeners.contains(l)) {
-            listeners.add(l);
+        if (l != null) {
+            listeners.addIfAbsent(l);
         }
     }
 
@@ -101,9 +101,7 @@ class FilenameCellEditor extends JPanel implements TableCellEditor {
     }
 
     public void removeCellEditorListener(CellEditorListener l) {
-        if (listeners.contains(l)) {
-            listeners.remove(l);
-        }
+        listeners.remove(l);
     }
 
     public boolean shouldSelectCell(EventObject anEvent) {

@@ -44,15 +44,13 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
     private CopyOnWriteArrayList<NavigationListener> listeners;
 
     public void addNavigationListeners(NavigationListener listener) {
-        if (listener != null && ! (listeners.contains(listener))) {
-            listeners.add(listener);
+        if (listener != null) {
+            listeners.addIfAbsent(listener);
         }
     }
 
     public void removeavigationListeners(NavigationListener listener) {
-        if (listener != null && listeners.contains(listener)) {
-            listeners.remove(listener);
-        }
+        listeners.remove(listener);
     }
 
     protected void fireGotoNextDecision() {
@@ -115,17 +113,17 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
             editorModel.addElement(MultiValueDecisionType.KEEP_ALL);
         }
         switch(decision.getDecisionType()) {
-            case UNDECIDED:
-                editor.setSelectedIndex(0);
-                break;
-            case KEEP_ONE:
-                editor.setSelectedItem(decision.getChosenValue());
-                break;
-            case KEEP_NONE:
-                editor.setSelectedItem(MultiValueDecisionType.KEEP_NONE);
-                break;
-            case KEEP_ALL:
-                editor.setSelectedItem(MultiValueDecisionType.KEEP_ALL);
+        case UNDECIDED:
+            editor.setSelectedIndex(0);
+            break;
+        case KEEP_ONE:
+            editor.setSelectedItem(decision.getChosenValue());
+            break;
+        case KEEP_NONE:
+            editor.setSelectedItem(MultiValueDecisionType.KEEP_NONE);
+            break;
+        case KEEP_ALL:
+            editor.setSelectedItem(MultiValueDecisionType.KEEP_ALL);
         }
     }
 
@@ -166,16 +164,16 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
                 setText(String.class.cast(value));
             } else if (MultiValueDecisionType.class.isInstance(value)) {
                 switch(MultiValueDecisionType.class.cast(value)) {
-                    case KEEP_NONE:
-                        setText(tr("none"));
-                        setFont(UIManager.getFont("ComboBox.font").deriveFont(Font.ITALIC + Font.BOLD));
-                        break;
-                    case KEEP_ALL:
-                        setText(tr("all"));
-                        setFont(UIManager.getFont("ComboBox.font").deriveFont(Font.ITALIC + Font.BOLD));
-                        break;
-                    default:
-                        // don't display other values
+                case KEEP_NONE:
+                    setText(tr("none"));
+                    setFont(UIManager.getFont("ComboBox.font").deriveFont(Font.ITALIC + Font.BOLD));
+                    break;
+                case KEEP_ALL:
+                    setText(tr("all"));
+                    setFont(UIManager.getFont("ComboBox.font").deriveFont(Font.ITALIC + Font.BOLD));
+                    break;
+                default:
+                    // don't display other values
                 }
             }
         }

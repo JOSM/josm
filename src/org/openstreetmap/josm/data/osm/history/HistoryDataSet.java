@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Logger;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
@@ -18,7 +17,7 @@ import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
  *
  */
 public class HistoryDataSet {
-    private final static Logger logger = Logger.getLogger(HistoryDataSet.class.getName());
+    //private final static Logger logger = Logger.getLogger(HistoryDataSet.class.getName());
 
     /** the unique instance */
     private static HistoryDataSet historyDataSet;
@@ -45,19 +44,13 @@ public class HistoryDataSet {
     }
 
     public void addHistoryDataSetListener(HistoryDataSetListener listener) {
-        synchronized(listeners) {
-            if (!listeners.contains(listener)) {
-                listeners.add(listener);
-            }
+        if (listener != null) {
+            listeners.addIfAbsent(listener);
         }
     }
 
     public void removeHistoryDataSetListener(HistoryDataSetListener listener) {
-        synchronized(listeners) {
-            if (listeners.contains(listener)) {
-                listeners.remove(listener);
-            }
-        }
+        listeners.remove(listener);
     }
 
     protected void fireHistoryUpdated(SimplePrimitiveId id) {

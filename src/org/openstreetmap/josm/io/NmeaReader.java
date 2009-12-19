@@ -271,7 +271,8 @@ public class NmeaReader {
                         e[GPGGA.LATITUDE.position],
                         e[GPGGA.LONGITUDE.position]
                 );
-                if(latLon==null) throw(null); // malformed
+                if(latLon==null)
+                    throw new NullPointerException(); // malformed
 
                 if((latLon.lat()==0.0) && (latLon.lon()==0.0)) {
                     ps.zero_coord++;

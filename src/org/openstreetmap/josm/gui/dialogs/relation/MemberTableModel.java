@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
 import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
@@ -130,29 +131,23 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     }
 
     public void wayNodesChanged(WayNodesChangedEvent event) {/* ignore */}
+
+    public void otherDatasetChange(AbstractDatasetChangedEvent event) {/* ignore */}
     /* --------------------------------------------------------------------------- */
 
     public void addMemberModelListener(IMemberModelListener listener) {
-        synchronized (listeners) {
-            if (listener != null && !listeners.contains(listener)) {
-                listeners.add(listener);
-            }
+        if (listener != null) {
+            listeners.addIfAbsent(listener);
         }
     }
 
     public void removeMemberModelListener(IMemberModelListener listener) {
-        synchronized (listeners) {
-            if (listener != null && listeners.contains(listener)) {
-                listeners.remove(listener);
-            }
-        }
+        listeners.remove(listener);
     }
 
     protected void fireMakeMemberVisible(int index) {
-        synchronized (listeners) {
-            for (IMemberModelListener listener : listeners) {
-                listener.makeMemberVisible(index);
-            }
+        for (IMemberModelListener listener : listeners) {
+            listener.makeMemberVisible(index);
         }
     }
 

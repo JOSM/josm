@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Logger;
 
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -23,7 +22,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
  *
  */
 public class RelationTreeModel implements TreeModel {
-    private static final Logger logger = Logger.getLogger(RelationTreeModel.class.getName());
+    //private static final Logger logger = Logger.getLogger(RelationTreeModel.class.getName());
 
     /** the root relation */
     private Relation root;
@@ -214,19 +213,13 @@ public class RelationTreeModel implements TreeModel {
     }
 
     public void addTreeModelListener(TreeModelListener l) {
-        synchronized (listeners) {
-            if (l != null && !listeners.contains(l)) {
-                listeners.add(l);
-            }
+        if (l != null) {
+            listeners.addIfAbsent(l);
         }
     }
 
     public void removeTreeModelListener(TreeModelListener l) {
-        synchronized (listeners) {
-            if (l != null && listeners.contains(l)) {
-                listeners.remove(l);
-            }
-        }
+        listeners.remove(l);
     }
 
     public void valueForPathChanged(TreePath path, Object newValue) {

@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
@@ -737,4 +738,6 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             initFromLayer(l);
         }
     }
+
+    public void otherDatasetChange(AbstractDatasetChangedEvent event) {/* ignore */}
 }

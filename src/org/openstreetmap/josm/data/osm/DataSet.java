@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
+import org.openstreetmap.josm.data.osm.event.ChangesetIdChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
 import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
@@ -860,6 +861,10 @@ public class DataSet implements Cloneable {
     void fireWayNodesChanged(Way way) {
         reindexWay(way);
         fireEvent(new WayNodesChangedEvent(this, way));
+    }
+
+    void fireChangesetIdChanged(OsmPrimitive primitive, int oldChangesetId, int newChangesetId) {
+        fireEvent(new ChangesetIdChangedEvent(this, Collections.singletonList(primitive), oldChangesetId, newChangesetId));
     }
 
     public void clenupDeletedPrimitives() {

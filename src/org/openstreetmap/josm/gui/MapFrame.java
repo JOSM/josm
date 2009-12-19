@@ -8,7 +8,6 @@ import java.awt.Dimension;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -333,15 +332,15 @@ public class MapFrame extends JPanel implements Destroyable {
     /**
      * the mapMode listeners
      */
-    private static final Collection<MapModeChangeListener> mapModeChangeListeners = new CopyOnWriteArrayList<MapModeChangeListener>();
-     /**
+    private static final CopyOnWriteArrayList<MapModeChangeListener> mapModeChangeListeners = new CopyOnWriteArrayList<MapModeChangeListener>();
+    /**
      * Adds a mapMode change listener
      *
      * @param listener the listener. Ignored if null or already registered.
      */
     public static void addMapModeChangeListener(MapModeChangeListener listener) {
-        if (listener != null && ! mapModeChangeListeners.contains(listener)) {
-            mapModeChangeListeners.add(listener);
+        if (listener != null) {
+            mapModeChangeListeners.addIfAbsent(listener);
         }
     }
     /**
@@ -350,9 +349,7 @@ public class MapFrame extends JPanel implements Destroyable {
      * @param listener the listener. Ignored if null or already registered.
      */
     public static void removeMapModeChangeListener(MapModeChangeListener listener) {
-        if (listener != null && mapModeChangeListeners.contains(listener)) {
-            mapModeChangeListeners.remove(listener);
-        }
+        mapModeChangeListeners.remove(listener);
     }
 
     protected static void fireMapModeChanged(MapMode oldMapMode, MapMode newMapMode) {

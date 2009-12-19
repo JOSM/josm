@@ -46,7 +46,6 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -284,8 +283,8 @@ public final class ConflictDialog extends ToggleDialog implements MapView.LayerC
         }
 
         public void addListDataListener(ListDataListener l) {
-            if (l != null && ! listeners.contains(l)) {
-                listeners.add(l);
+            if (l != null) {
+                listeners.addIfAbsent(l);
             }
         }
 

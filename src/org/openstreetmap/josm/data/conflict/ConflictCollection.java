@@ -41,15 +41,13 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
     }
 
     public void addConflictListener(IConflictListener listener) {
-        if (listener != null && ! listeners.contains(listener)) {
-            listeners.add(listener);
+        if (listener != null) {
+            listeners.addIfAbsent(listener);
         }
     }
 
     public void removeConflictListener(IConflictListener listener) {
-        if (listener != null) {
-            listeners.remove(listener);
-        }
+        listeners.remove(listener);
     }
 
     protected void fireConflictAdded() {

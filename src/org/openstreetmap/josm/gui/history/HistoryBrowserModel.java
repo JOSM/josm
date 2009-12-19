@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
 import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
@@ -827,6 +828,10 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
 
     public void dataChanged(DataChangedEvent event) {
         dataChanged(getEditLayer());
+    }
+
+    public void otherDatasetChange(AbstractDatasetChangedEvent event) {
+        // Irrelevant
     }
 
     /* ---------------------------------------------------------------------- */

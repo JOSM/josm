@@ -13,7 +13,6 @@ import java.awt.event.MouseEvent;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
@@ -34,6 +33,7 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetInSelectionListModel;
@@ -60,7 +60,7 @@ import org.openstreetmap.josm.tools.OpenBrowser;
  * 
  */
 public class ChangesetDialog extends ToggleDialog{
-    static private final Logger logger = Logger.getLogger(ChangesetDialog.class.getName());
+    //static private final Logger logger = Logger.getLogger(ChangesetDialog.class.getName());
 
     private ChangesetInSelectionListModel inSelectionModel;
     private ChangesetsInActiveDataLayerListModel inActiveDataLayerModel;
@@ -97,7 +97,6 @@ public class ChangesetDialog extends ToggleDialog{
         DataSet.selListeners.add(inSelectionModel);
 
         ChangesetCache.getInstance().addChangesetCacheListener(inActiveDataLayerModel);
-        MapView.addLayerChangeListener(inActiveDataLayerModel);
 
         DblClickHandler dblClickHandler = new DblClickHandler();
         lstInSelection.addMouseListener(dblClickHandler);
@@ -113,7 +112,16 @@ public class ChangesetDialog extends ToggleDialog{
         ChangesetCache.getInstance().removeChangesetCacheListener(inActiveDataLayerModel);
         MapView.removeLayerChangeListener(inSelectionModel);
         DataSet.selListeners.remove(inSelectionModel);
-        MapView.removeLayerChangeListener(inActiveDataLayerModel);
+    }
+
+    @Override
+    public void showNotify() {
+        DatasetEventManager.getInstance().addDatasetListener(inActiveDataLayerModel, true);
+    }
+
+    @Override
+    public void hideNotify() {
+        DatasetEventManager.getInstance().removeDatasetListener(inActiveDataLayerModel);
     }
 
     protected JPanel buildFilterPanel() {

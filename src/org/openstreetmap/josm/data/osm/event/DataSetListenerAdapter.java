@@ -47,4 +47,8 @@ public class DataSetListenerAdapter implements DataSetListener {
         listener.processDatasetEvent(event);
     }
 
+    public void otherDatasetChange(AbstractDatasetChangedEvent event) {
+        listener.processDatasetEvent(event);
+    }
+
 }

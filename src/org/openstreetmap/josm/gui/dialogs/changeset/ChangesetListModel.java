@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
@@ -19,11 +18,13 @@ import org.openstreetmap.josm.data.osm.ChangesetCacheEvent;
 import org.openstreetmap.josm.data.osm.ChangesetCacheListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Storage;
 
 public class ChangesetListModel extends DefaultListModel  implements ChangesetCacheListener{
-    static private final Logger logger = Logger.getLogger(ChangesetListModel.class.getName());
+    //static private final Logger logger = Logger.getLogger(ChangesetListModel.class.getName());
 
     private final List<Changeset> data = new ArrayList<Changeset>();
+    private final Storage<Changeset> shownChangesets = new Storage<Changeset>();
     private DefaultListSelectionModel selectionModel;
 
     public ChangesetListModel(DefaultListSelectionModel selectionModel) {
@@ -62,14 +63,32 @@ public class ChangesetListModel extends DefaultListModel  implements ChangesetCa
         }
     }
 
+    protected void addChangeset(Changeset changeset) {
+        if (shownChangesets.add(changeset)) {
+            setChangesets(shownChangesets);
+            updateModel();
+        }
+    }
+
+    protected void removeChangeset(Changeset changeset) {
+        if (shownChangesets.remove(changeset)) {
+            setChangesets(shownChangesets);
+            updateModel();
+        }
+    }
+
     protected void setChangesets(Collection<Changeset> changesets) {
+        shownChangesets.clear();
+        if (changesets != null) {
+            shownChangesets.addAll(changesets);
+        }
+        updateModel();
+    }
+
+    private void updateModel() {
         Set<Changeset> sel = getSelectedChangesets();
         data.clear();
-        if (changesets == null) {
-            fireContentsChanged(this, 0, getSize());
-            return;
-        }
-        data.addAll(changesets);
+        data.addAll(shownChangesets);
         ChangesetCache cache = ChangesetCache.getInstance();
         for (Changeset cs: data) {
             if (cache.contains(cs) && cache.get(cs.getId()) != cs) {

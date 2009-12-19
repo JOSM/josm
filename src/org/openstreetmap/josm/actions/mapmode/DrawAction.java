@@ -29,7 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -61,7 +60,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  */
 public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, AWTEventListener {
-    static private final Logger logger = Logger.getLogger(DrawAction.class.getName());
+    //static private final Logger logger = Logger.getLogger(DrawAction.class.getName());
 
     final private Cursor cursorCrosshair;
     final private Cursor cursorJoinNode;
@@ -69,7 +68,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     enum Cursors { crosshair, node, way }
     private Cursors currCursor = Cursors.crosshair;
 
-    private static Node lastUsedNode = null;
+    private Node lastUsedNode = null;
     private double PHI=Math.toRadians(90);
 
     private boolean ctrl;
@@ -118,28 +117,26 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private void setCursor(final Cursors c) {
         if(currCursor.equals(c) || (!drawTargetCursor && currCursor.equals(Cursors.crosshair)))
             return;
-        try {
-            // We invoke this to prevent strange things from happening
-            EventQueue.invokeLater(new Runnable() {
-                public void run() {
-                    // Don't change cursor when mode has changed already
-                    if(!(Main.map.mapMode instanceof DrawAction))
-                        return;
-                    switch(c) {
-                    case way:
-                        Main.map.mapView.setCursor(cursorJoinWay);
-                        break;
-                    case node:
-                        Main.map.mapView.setCursor(cursorJoinNode);
-                        break;
-                    default:
-                        Main.map.mapView.setCursor(cursorCrosshair);
-                        break;
-                    }
+        // We invoke this to prevent strange things from happening
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                // Don't change cursor when mode has changed already
+                if(!(Main.map.mapMode instanceof DrawAction))
+                    return;
+                switch(c) {
+                case way:
+                    Main.map.mapView.setCursor(cursorJoinWay);
+                    break;
+                case node:
+                    Main.map.mapView.setCursor(cursorJoinNode);
+                    break;
+                default:
+                    Main.map.mapView.setCursor(cursorCrosshair);
+                    break;
                 }
-            });
-            currCursor = c;
-        } catch(Exception e) {}
+            }
+        });
+        currCursor = c;
     }
 
     /**
@@ -974,7 +971,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
          * Handle special case: Self-Overlapping or closing way
          */
         if (getCurrentDataSet() != null && getCurrentDataSet().getSelectedWays().size() > 0 && !wayIsFinished && !alt) {
-            Way w = (Way) getCurrentDataSet().getSelectedWays().iterator().next();
+            Way w = getCurrentDataSet().getSelectedWays().iterator().next();
             for (Node m : w.getNodes()) {
                 if (m.equals(mouseOnExistingNode) || mouseOnExistingWays.contains(w)) {
                     rv += " " + tr("Finish drawing.");

@@ -648,11 +648,17 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @throws IllegalArgumentException thrown if id < 0
      */
     public void setChangesetId(int changesetId) throws IllegalStateException, IllegalArgumentException {
+        if (this.changesetId == changesetId)
+            return;
         if (changesetId < 0)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' >= 0 expected, got {1}", "changesetId", changesetId));
         if (isNew() && changesetId > 0)
             throw new IllegalStateException(tr("Can''t assign a changesetId > 0 to a new primitive. Value of changesetId is {0}", changesetId));
+        int old = this.changesetId;
         this.changesetId = changesetId;
+        if (dataSet != null) {
+            dataSet.fireChangesetIdChanged(this, old, changesetId);
+        }
     }
 
     /**
@@ -1002,7 +1008,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         setIncomplete(other.isIncomplete());
         flags = other.flags;
         user= other.user;
-        changesetId = other.changesetId;
+        setChangesetId(other.changesetId);
         clearCached();
     }
 
@@ -1030,7 +1036,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         setIncomplete(other.isIncomplete());
         flags = other.flags;
         user= other.user;
-        changesetId = other.changesetId;
+        setChangesetId(other.changesetId);
     }
 
     /**
@@ -1177,7 +1183,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         setKeys(data.getKeys());
         timestamp = data.getTimestamp();
         user = data.getUser();
-        changesetId = data.getChangesetId();
+        setChangesetId(data.getChangesetId());
         setDeleted(data.isDeleted());
         setModified(data.isModified());
         setVisible(data.isVisible());

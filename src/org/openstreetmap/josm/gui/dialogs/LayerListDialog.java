@@ -641,10 +641,8 @@ public class LayerListDialog extends ToggleDialog {
          * @param listener the listener
          */
         public void addLayerListModelListener(LayerListModelListener listener) {
-            synchronized(listeners) {
-                if (listener != null && !listeners.contains(listener)) {
-                    listeners.add(listener);
-                }
+            if (listener != null) {
+                listeners.addIfAbsent(listener);
             }
         }
 
@@ -654,11 +652,7 @@ public class LayerListDialog extends ToggleDialog {
          *
          */
         public void removeLayerListModelListener(LayerListModelListener listener) {
-            synchronized(listeners) {
-                if (listener != null && listeners.contains(listener)) {
-                    listeners.remove(listener);
-                }
-            }
+            listeners.remove(listener);
         }
 
         /**

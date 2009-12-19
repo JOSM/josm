@@ -72,9 +72,15 @@ public interface DataSetListener {
     void relationMembersChanged(RelationMembersChangedEvent event);
 
     /**
+     * Minor dataset change, currently only changeset id changed is supported, but can
+     * be extended in future.
+     * @param event
+     */
+    void otherDatasetChange(AbstractDatasetChangedEvent event);
+
+    /**
      * Called after big changes in dataset. Usually other events are stopped using Dataset.beginUpdate() and
      * after operation is completed (Dataset.endUpdate()), {@link #dataChanged()} is called.
      */
     void dataChanged(DataChangedEvent event);
-
 }

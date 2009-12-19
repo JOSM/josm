@@ -10,7 +10,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 public abstract class AbstractDatasetChangedEvent {
 
     public enum DatasetEventType {DATA_CHANGED, NODE_MOVED, PRIMITIVES_ADDED, PRIMITIVES_REMOVED,
-        RELATION_MEMBERS_CHANGED, TAGS_CHANGED, WAY_NODES_CHANGED}
+        RELATION_MEMBERS_CHANGED, TAGS_CHANGED, WAY_NODES_CHANGED, CHANGESET_ID_CHANGED}
 
     protected final DataSet dataSet;
 

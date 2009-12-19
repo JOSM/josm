@@ -25,7 +25,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,7 +42,7 @@ import org.openstreetmap.josm.tools.ColorHelper;
  * @author imi
  */
 public class Preferences {
-    static private final Logger logger = Logger.getLogger(Preferences.class.getName());
+    //static private final Logger logger = Logger.getLogger(Preferences.class.getName());
 
     /**
      * Internal storage for the preference directory.
@@ -130,15 +129,13 @@ public class Preferences {
 
 
     public void addPreferenceChangeListener(PreferenceChangedListener listener) {
-        if (listener != null && ! listeners.contains(listener)) {
-            listeners.add(listener);
+        if (listener != null) {
+            listeners.addIfAbsent(listener);
         }
     }
 
     public void removePreferenceChangeListener(PreferenceChangedListener listener) {
-        if (listener != null && listeners.contains(listener)) {
-            listeners.remove(listener);
-        }
+        listeners.remove(listener);
     }
 
     protected void firePrefrenceChanged(String key, String oldValue, String newValue) {

@@ -7,14 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 
 public class ChangesetCache implements PreferenceChangedListener{
-    static private final Logger logger = Logger.getLogger(ChangesetCache.class.getName());
+    //static private final Logger logger = Logger.getLogger(ChangesetCache.class.getName());
     static private final ChangesetCache instance = new ChangesetCache();
 
     public static ChangesetCache getInstance() {
@@ -31,19 +30,13 @@ public class ChangesetCache implements PreferenceChangedListener{
     }
 
     public void addChangesetCacheListener(ChangesetCacheListener listener) {
-        synchronized(listeners) {
-            if (listener != null && ! listeners.contains(listener)) {
-                listeners.add(listener);
-            }
+        if (listener != null) {
+            listeners.addIfAbsent(listener);
         }
     }
 
     public void removeChangesetCacheListener(ChangesetCacheListener listener) {
-        synchronized(listeners) {
-            if (listener != null && listeners.contains(listener)) {
-                listeners.remove(listener);
-            }
-        }
+        listeners.remove(listener);
     }
 
     protected void fireChangesetCacheEvent(ChangesetCacheEvent e) {

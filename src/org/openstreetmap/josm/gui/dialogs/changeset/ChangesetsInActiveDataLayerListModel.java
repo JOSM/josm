@@ -3,45 +3,55 @@ package org.openstreetmap.josm.gui.dialogs.changeset;
 
 import javax.swing.DefaultListSelectionModel;
 
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.layer.DataChangeListener;
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
+import org.openstreetmap.josm.data.osm.event.ChangesetIdChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSetListener;
+import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
+import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
+import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
+import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 
-public class ChangesetsInActiveDataLayerListModel extends ChangesetListModel implements MapView.LayerChangeListener, DataChangeListener{
+public class ChangesetsInActiveDataLayerListModel extends ChangesetListModel implements DataSetListener  {
 
     public ChangesetsInActiveDataLayerListModel(DefaultListSelectionModel selectionModel) {
         super(selectionModel);
     }
 
-    /* ---------------------------------------------------------------------------- */
-    /* Interface LayerChangeListener                                                */
-    /* ---------------------------------------------------------------------------- */
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        if (oldLayer != null && oldLayer instanceof OsmDataLayer) {
-            OsmDataLayer l = (OsmDataLayer)oldLayer;
-            l.listenerDataChanged.remove(this);
-        }
-        if (newLayer == null) {
-            setChangesets(null);
-        } else if (newLayer instanceof OsmDataLayer){
-            OsmDataLayer l = (OsmDataLayer)newLayer;
-            l.listenerDataChanged.add(this);
-            initFromDataSet(l.data);
-        } else {
-            setChangesets(null);
-        }
+    public void dataChanged(DataChangedEvent event) {
+        initFromPrimitives(event.getPrimitives());
     }
-    public void layerAdded(Layer newLayer) {}
-    public void layerRemoved(Layer oldLayer) {}
 
-    /* ---------------------------------------------------------------------------- */
-    /* Interface DataChangeListener                                                 */
-    /* ---------------------------------------------------------------------------- */
-    public void dataChanged(OsmDataLayer l) {
-        if (l == null) return;
-        if (l != Main.main.getEditLayer()) return;
-        initFromDataSet(l.data);
+    public void nodeMoved(NodeMovedEvent event) {/* ignored */}
+
+    public void primtivesAdded(PrimitivesAddedEvent event) {
+        for (OsmPrimitive primitive:event.getPrimitives()) {
+            addChangeset(new Changeset(primitive.getChangesetId()));
+        }
     }
+
+    public void primtivesRemoved(PrimitivesRemovedEvent event) {
+        for (OsmPrimitive primitive:event.getPrimitives()) {
+            removeChangeset(new Changeset(primitive.getChangesetId()));
+        }
+    }
+
+    public void relationMembersChanged(RelationMembersChangedEvent event) {/* ignored */}
+
+    public void tagsChanged(TagsChangedEvent event) {/* ignored */}
+
+    public void otherDatasetChange(AbstractDatasetChangedEvent event) {
+        if (event instanceof ChangesetIdChangedEvent) {
+            ChangesetIdChangedEvent e = (ChangesetIdChangedEvent) event;
+            removeChangeset(new Changeset(e.getOldChangesetId()));
+            addChangeset(new Changeset(e.getNewChangesetId()));
+        }
+    }
+
+    public void wayNodesChanged(WayNodesChangedEvent event) {/* ignored */}
+
 }

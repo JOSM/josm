@@ -36,8 +36,8 @@ class SaveFlagCellEditor extends JCheckBox implements TableCellEditor {
     }
 
     public void addCellEditorListener(CellEditorListener l) {
-        if (!listeners.contains(l)) {
-            listeners.add(l);
+        if (l != null) {
+            listeners.addIfAbsent(l);
         }
     }
 
@@ -66,9 +66,7 @@ class SaveFlagCellEditor extends JCheckBox implements TableCellEditor {
     }
 
     public void removeCellEditorListener(CellEditorListener l) {
-        if (listeners.contains(l)) {
-            listeners.remove(l);
-        }
+        listeners.remove(l);
     }
 
     public boolean shouldSelectCell(EventObject anEvent) {
@@ -89,8 +87,8 @@ class SaveFlagCellEditor extends JCheckBox implements TableCellEditor {
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         SaveLayerInfo info = (SaveLayerInfo)value;
         switch(column) {
-            case 4: setInitialValue(info.isDoUploadToServer()); break;
-            case 5: setInitialValue(info.isDoSaveToFile()); break;
+        case 4: setInitialValue(info.isDoUploadToServer()); break;
+        case 5: setInitialValue(info.isDoSaveToFile()); break;
         }
         return this;
     }
