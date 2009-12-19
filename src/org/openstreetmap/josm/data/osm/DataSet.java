@@ -304,36 +304,39 @@ public class DataSet implements Cloneable {
      * Return selected nodes.
      */
     public Collection<Node> getSelectedNodes() {
-        return getSelected(nodes);
+        List<Node> result = new ArrayList<Node>(selectedPrimitives.size());
+        for (OsmPrimitive primitive:selectedPrimitives) {
+            if (primitive instanceof Node) {
+                result.add((Node)primitive);
+            }
+        }
+        return result;
     }
 
     /**
      * Return selected ways.
      */
     public Collection<Way> getSelectedWays() {
-        return getSelected(ways);
+        List<Way> result = new ArrayList<Way>(selectedPrimitives.size());
+        for (OsmPrimitive primitive:selectedPrimitives) {
+            if (primitive instanceof Way) {
+                result.add((Way)primitive);
+            }
+        }
+        return result;
     }
 
     /**
      * Return selected relations.
      */
     public Collection<Relation> getSelectedRelations() {
-        return getSelected(relations);
-    }
-
-    /**
-     * Return all selected items in the collection.
-     * @param list The collection from which the selected items are returned.
-     */
-    private <T extends OsmPrimitive> Collection<T> getSelected(Collection<T> list) {
-        if (list == null)
-            return new LinkedList<T>();
-        // getSelected() is called with large lists, so
-        // creating the return list from the selection
-        // should be faster most of the time.
-        Collection<T> sel = new LinkedHashSet<T>(list);
-        sel.retainAll(selectedPrimitives);
-        return sel;
+        List<Relation> result = new ArrayList<Relation>(selectedPrimitives.size() / 10);
+        for (OsmPrimitive primitive:selectedPrimitives) {
+            if (primitive instanceof Relation) {
+                result.add((Relation)primitive);
+            }
+        }
+        return result;
     }
 
     public boolean isSelected(OsmPrimitive osm) {

@@ -678,15 +678,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * An primitive has the same hashcode as its incomplete counterpart.
      */
     @Override public final int hashCode() {
-        final int[] ret = new int[1];
-        Visitor v = new Visitor(){
-            public void visit(Node n) { ret[0] = 0; }
-            public void visit(Way w) { ret[0] = 1; }
-            public void visit(Relation e) { ret[0] = 2; }
-            public void visit(Changeset cs) { ret[0] = 3; }
-        };
-        visit(v);
-        return (int)(id<<2)+ret[0];
+        return (int)id;
     }
 
     /*------------
