@@ -17,7 +17,6 @@ import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.swing.BorderFactory;
@@ -45,7 +44,6 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -56,7 +54,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class SelectionListDialog extends ToggleDialog implements SelectionChangedListener, MapView.LayerChangeListener {
+public class SelectionListDialog extends ToggleDialog implements SelectionChangedListener, MapView.EditLayerChangeListener {
 
     private static final int SELECTION_HISTORY_SIZE = 10;
 
@@ -161,13 +159,22 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
             selectionChanged(Main.main.getCurrentDataSet().getSelected());
         }
 
-        DataSet.selListeners.add(this);
-        MapView.addLayerChangeListener(this);
+        MapView.addEditLayerChangeListener(this);
     }
 
     @Override
     public void tearDown() {
-        MapView.removeLayerChangeListener(this);
+        MapView.removeEditLayerChangeListener(this);
+    }
+
+    @Override
+    public void showNotify() {
+        DataSet.selListeners.add(this);
+        updateSelection();
+    }
+
+    @Override
+    public void hideNotify() {
         DataSet.selListeners.remove(this);
     }
 
@@ -369,21 +376,15 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
 
     }
 
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        if (newLayer instanceof OsmDataLayer) {
-            OsmDataLayer dataLayer = (OsmDataLayer)newLayer;
-            selectionChanged(dataLayer.data.getSelected());
+    private void updateSelection() {
+        if (Main.main.getCurrentDataSet() == null) {
+            selectionChanged(Collections.<OsmPrimitive>emptyList());
         } else {
-            List<OsmPrimitive> selection = Collections.emptyList();
-            selectionChanged(selection);
+            selectionChanged(Main.main.getCurrentDataSet().getSelected());
         }
     }
 
-    public void layerAdded(Layer newLayer) {
-        // do nothing
-    }
-
-    public void layerRemoved(Layer oldLayer) {
-        // do nothing
+    public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
+        updateSelection();
     }
 }

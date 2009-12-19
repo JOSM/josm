@@ -1,9 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.event;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.SwingUtilities;
@@ -31,8 +30,8 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
     }
 
     private final Queue<AbstractDatasetChangedEvent> eventsInEDT = new LinkedBlockingQueue<AbstractDatasetChangedEvent>();
-    private final List<DataSetListener> inEDTListeners = new ArrayList<DataSetListener>();
-    private final List<DataSetListener> normalListeners = new ArrayList<DataSetListener>();
+    private final CopyOnWriteArrayList<DataSetListener> inEDTListeners = new CopyOnWriteArrayList<DataSetListener>();
+    private final CopyOnWriteArrayList<DataSetListener> normalListeners = new CopyOnWriteArrayList<DataSetListener>();
     private final DataSetListener myListener = new DataSetListenerAdapter(this);
 
     public DatasetEventManager() {
@@ -47,9 +46,9 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
      */
     public void addDatasetListener(DataSetListener listener, boolean fireInEDT) {
         if (fireInEDT) {
-            inEDTListeners.add(listener);
+            inEDTListeners.addIfAbsent(listener);
         } else {
-            normalListeners.add(listener);
+            normalListeners.addIfAbsent(listener);
         }
     }
 

@@ -70,7 +70,6 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
@@ -96,7 +95,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener, MapView.LayerChangeListener {
+public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener, MapView.EditLayerChangeListener {
     /**
      * Watches for double clicks and from editing or new property, depending on the
      * location, the click was.
@@ -144,11 +143,15 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     @Override
     public void showNotify() {
         DatasetEventManager.getInstance().addDatasetListener(listOfUsedTags, false);
+        listOfUsedTags.rebuildNecessary();
+        DataSet.selListeners.add(this);
+        updateSelection();
     }
 
     @Override
     public void hideNotify() {
         DatasetEventManager.getInstance().removeDatasetListener(listOfUsedTags);
+        DataSet.selListeners.remove(this);
     }
 
     /**
@@ -567,13 +570,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         buttonPanel.add(this.btnDel);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        DataSet.selListeners.add(this);
-        MapView.addLayerChangeListener(this);
+        MapView.addEditLayerChangeListener(this);
     }
 
     @Override
     public void tearDown() {
-        MapView.removeLayerChangeListener(this);
+        MapView.removeEditLayerChangeListener(this);
     }
 
     @Override public void setVisible(boolean b) {
@@ -775,25 +777,19 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
     }
 
-    /* ---------------------------------------------------------------------------------- */
-    /* LayerChangeListener                                                                */
-    /* ---------------------------------------------------------------------------------- */
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        if (newLayer instanceof OsmDataLayer) {
-            OsmDataLayer dataLayer = (OsmDataLayer)newLayer;
-            selectionChanged(dataLayer.data.getSelected());
+    private void updateSelection() {
+        if (Main.main.getCurrentDataSet() == null) {
+            selectionChanged(Collections.<OsmPrimitive>emptyList());
         } else {
-            List<OsmPrimitive> selection = Collections.emptyList();
-            selectionChanged(selection);
+            selectionChanged(Main.main.getCurrentDataSet().getSelected());
         }
     }
 
-    public void layerAdded(Layer newLayer) {
-        // do nothing
-    }
-
-    public void layerRemoved(Layer oldLayer) {
-        // do nothing
+    /* ---------------------------------------------------------------------------------- */
+    /* EditLayerChangeListener                                                                */
+    /* ---------------------------------------------------------------------------------- */
+    public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
+        updateSelection();
     }
 
     class DeleteAction extends AbstractAction implements ListSelectionListener {

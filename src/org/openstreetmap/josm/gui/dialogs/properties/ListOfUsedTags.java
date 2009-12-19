@@ -48,6 +48,10 @@ public class ListOfUsedTags implements DataSetListener {
             return values;
     }
 
+    public void rebuildNecessary() {
+        dirty = true;
+    }
+
     private void rebuild() {
         dirty = false;
         allData.clear();
