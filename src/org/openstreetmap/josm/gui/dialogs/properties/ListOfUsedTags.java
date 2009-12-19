@@ -9,6 +9,7 @@ import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
@@ -55,7 +56,10 @@ public class ListOfUsedTags implements DataSetListener {
     private void rebuild() {
         dirty = false;
         allData.clear();
-        addPrimitives(Main.main.getCurrentDataSet().allNonDeletedPrimitives());
+        DataSet currentDataset = Main.main.getCurrentDataSet();
+        if (currentDataset != null) {
+            addPrimitives(currentDataset.allNonDeletedPrimitives());
+        }
     }
 
     private void addPrimitives(Collection<? extends OsmPrimitive> primitives) {
