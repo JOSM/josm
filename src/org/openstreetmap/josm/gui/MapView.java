@@ -581,7 +581,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     }
 
     private void setEditLayer() {
-        OsmDataLayer newEditLayer = null;
+        OsmDataLayer newEditLayer = editLayer;
         OsmDataLayer oldEditLayer = editLayer;
 
         // Find new edit layer

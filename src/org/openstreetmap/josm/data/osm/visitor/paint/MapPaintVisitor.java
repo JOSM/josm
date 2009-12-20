@@ -249,10 +249,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             color = selectedColor;
         }
         if (realWidth > 0 && useRealWidth && !showDirection) {
-            int tmpWidth = (int) (100 /  (float) (circum / realWidth));
-            if (tmpWidth > width) {
-                width = tmpWidth;
-            }
 
             /* if we have a "width" tag, try use it */
             /* (this might be slow and could be improved by caching the value in the Way, on the other hand only used if "real width" is enabled) */
@@ -262,10 +258,15 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             }
             if(widthTag != null) {
                 try {
-                    width = Integer.parseInt(widthTag);
+                    realWidth = Integer.parseInt(widthTag);
                 }
                 catch(NumberFormatException nfe) {
                 }
+            }
+
+            int tmpWidth = (int) (100 /  (float) (circum / realWidth));
+            if (tmpWidth > width) {
+                width = tmpWidth;
             }
         }
 
