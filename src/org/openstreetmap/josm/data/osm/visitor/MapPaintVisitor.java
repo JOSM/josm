@@ -341,34 +341,32 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     }
 
     private void displaySegments(GeneralPath path, Color color, int width, float dashed[], Color dashedColor) {
-        if (path != null) {
-            g.setColor(color);
-            if (useStrokes > dist) {
-                if (dashed.length > 0) {
-                    g.setStroke(new BasicStroke(width,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0, dashed,0));
-                } else {
-                    g.setStroke(new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
-                }
+        g.setColor(inactive ? inactiveColor : color);
+        if (useStrokes > dist) {
+            if (dashed.length > 0) {
+                g.setStroke(new BasicStroke(width,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0, dashed,0));
+            } else {
+                g.setStroke(new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+            }
+        }
+        g.draw(path);
+
+        if(!inactive && useStrokes > dist && dashedColor != null) {
+            g.setColor(dashedColor);
+            if (dashed.length > 0) {
+                float[] dashedOffset = new float[dashed.length];
+                System.arraycopy(dashed, 1, dashedOffset, 0, dashed.length - 1);
+                dashedOffset[dashed.length-1] = dashed[0];
+                float offset = dashedOffset[0];
+                g.setStroke(new BasicStroke(width,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,dashedOffset,offset));
+            } else {
+                g.setStroke(new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
             }
             g.draw(path);
+        }
 
-            if(useStrokes > dist && dashedColor != null) {
-                g.setColor(dashedColor);
-                if (dashed.length > 0) {
-                    float[] dashedOffset = new float[dashed.length];
-                    System.arraycopy(dashed, 1, dashedOffset, 0, dashed.length - 1);
-                    dashedOffset[dashed.length-1] = dashed[0];
-                    float offset = dashedOffset[0];
-                    g.setStroke(new BasicStroke(width,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,dashedOffset,offset));
-                } else {
-                    g.setStroke(new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
-                }
-                g.draw(path);
-            }
-
-            if(useStrokes > dist) {
-                g.setStroke(new BasicStroke());
-            }
+        if(useStrokes > dist) {
+            g.setStroke(new BasicStroke());
         }
     }
 
