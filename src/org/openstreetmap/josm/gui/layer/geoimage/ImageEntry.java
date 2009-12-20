@@ -5,9 +5,9 @@
 
 package org.openstreetmap.josm.gui.layer.geoimage;
 
+import java.awt.Image;
 import java.io.File;
 import java.util.Date;
-import java.awt.Image;
 
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -28,25 +28,22 @@ final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     private Double elevation;
 
     Image thumbnail;
-    
+
     ImageEntry tmp;
 
     public CachedLatLon getPos() {
-        if (tmp != null) {
+        if (tmp != null)
             return tmp.pos;
-        }
         return pos;
     }
     public Double getSpeed() {
-        if (tmp != null) {
+        if (tmp != null)
             return tmp.speed;
-        }
         return speed;
     }
     public Double getElevation() {
-        if (tmp != null) {
+        if (tmp != null)
             return tmp.elevation;
-        }
         return elevation;
     }
     public void setPos(CachedLatLon pos) {
@@ -55,7 +52,7 @@ final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     public void setSpeed(Double speed) {
         this.speed = speed;
     }
-    public void setElevation(Double speed) {
+    public void setElevation(Double elevation) {
         this.elevation = elevation;
     }
 
@@ -69,7 +66,7 @@ final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         }
         return (ImageEntry) c;
     }
-    
+
     public void setCoor(LatLon latlon)
     {
         pos = new CachedLatLon(latlon);
@@ -85,7 +82,7 @@ final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         else
             return 1;
     }
-    
+
     public void applyTmp() {
         if (tmp != null) {
             pos = tmp.pos;
@@ -99,20 +96,21 @@ final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         tmp.setPos(null);
         tmp.tmp = null;
     }
-    
+
     public boolean isTagged() {
         return pos != null;
     }
-    
+
     /**
      * only partial info
      */
+    @Override
     public String toString() {
         String result = file.getName()+": "+
-            "pos = "+pos+" | "+
-            "exifCoor = "+exifCoor+" | "+
-            (tmp == null ? " tmp==null" :
-                " [tmp] pos = "+tmp.pos+"");
+        "pos = "+pos+" | "+
+        "exifCoor = "+exifCoor+" | "+
+        (tmp == null ? " tmp==null" :
+            " [tmp] pos = "+tmp.pos+"");
         return result;
     }
 }

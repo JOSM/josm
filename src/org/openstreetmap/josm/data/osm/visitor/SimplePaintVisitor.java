@@ -14,6 +14,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.openstreetmap.josm.Main;
@@ -214,23 +215,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
         //    profilerLast = java.lang.System.currentTimeMillis();
         //}
 
-        if (virtualNodeSize != 0) {
-            //    profilerN = 0;
-            currentColor = nodeColor;
-            for (final OsmPrimitive osm:data.getWays()){
-                if (!osm.isDeleted() && !osm.isDisabled() && !osm.isFiltered()) {
-                    visitVirtual((Way) osm);
-                    //                profilerN++;
-                }
-            }
-            displaySegments();
-
-            //    if(profiler)
-            //    {
-            //        System.out.format("Virtual  : %4dms, n=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-            //        profilerLast = java.lang.System.currentTimeMillis();
-            //    }
-        }
+        drawVirtualNodes(data.getWays());
 
         //if(profiler)
         //{
@@ -271,7 +256,21 @@ public class SimplePaintVisitor extends AbstractVisitor {
         return (xd+yd > space);
     }
 
-    public void visitVirtual(Way w) {
+    public void drawVirtualNodes(Collection<Way> ways) {
+
+        if (virtualNodeSize != 0) {
+            GeneralPath path = new GeneralPath();
+            for (Way osm: ways){
+                if (osm.isUsable() && !osm.isFiltered()) {
+                    visitVirtual(path, osm);
+                }
+            }
+            g.setColor(nodeColor);
+            g.draw(path);
+        }
+    }
+
+    public void visitVirtual(GeneralPath path, Way w) {
         Iterator<Node> it = w.getNodes().iterator();
         if (it.hasNext()) {
             Point lastP = nc.getPoint(it.next());
@@ -282,10 +281,10 @@ public class SimplePaintVisitor extends AbstractVisitor {
                 {
                     int x = (p.x+lastP.x)/2;
                     int y = (p.y+lastP.y)/2;
-                    currentPath.moveTo(x-virtualNodeSize, y);
-                    currentPath.lineTo(x+virtualNodeSize, y);
-                    currentPath.moveTo(x, y-virtualNodeSize);
-                    currentPath.lineTo(x, y+virtualNodeSize);
+                    path.moveTo(x-virtualNodeSize, y);
+                    path.lineTo(x+virtualNodeSize, y);
+                    path.moveTo(x, y-virtualNodeSize);
+                    path.lineTo(x, y+virtualNodeSize);
                 }
                 lastP = p;
             }
@@ -434,6 +433,20 @@ public class SimplePaintVisitor extends AbstractVisitor {
         }
     }
 
+    protected void drawSegment(GeneralPath path, Point p1, Point p2, boolean showDirection) {
+        if (isSegmentVisible(p1, p2)) {
+            path.moveTo(p1.x, p1.y);
+            path.lineTo(p2.x, p2.y);
+
+            if (showDirection) {
+                double t = Math.atan2(p2.y-p1.y, p2.x-p1.x) + Math.PI;
+                path.lineTo((int)(p2.x + 10*Math.cos(t-PHI)), (int)(p2.y + 10*Math.sin(t-PHI)));
+                path.moveTo((int)(p2.x + 10*Math.cos(t+PHI)), (int)(p2.y + 10*Math.sin(t+PHI)));
+                path.lineTo(p2.x, p2.y);
+            }
+        }
+    }
+
     /**
      * Draw a line with the given color.
      */
@@ -441,18 +454,7 @@ public class SimplePaintVisitor extends AbstractVisitor {
         if (col != currentColor) {
             displaySegments(col);
         }
-
-        if (isSegmentVisible(p1, p2)) {
-            currentPath.moveTo(p1.x, p1.y);
-            currentPath.lineTo(p2.x, p2.y);
-
-            if (showDirection) {
-                double t = Math.atan2(p2.y-p1.y, p2.x-p1.x) + Math.PI;
-                currentPath.lineTo((int)(p2.x + 10*Math.cos(t-PHI)), (int)(p2.y + 10*Math.sin(t-PHI)));
-                currentPath.moveTo((int)(p2.x + 10*Math.cos(t+PHI)), (int)(p2.y + 10*Math.sin(t+PHI)));
-                currentPath.lineTo(p2.x, p2.y);
-            }
-        }
+        drawSegment(currentPath, p1, p2, showDirection);
     }
 
     protected boolean isSegmentVisible(Point p1, Point p2) {

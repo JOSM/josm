@@ -14,7 +14,6 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
-import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -64,10 +63,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected Color untaggedColor;
     protected Color textColor;
     protected Color areaTextColor;
-    protected float[] currentDashed = new float[0];
-    protected Color currentDashedColor;
-    protected int currentWidth = 0;
-    protected Stroke currentStroke = null;
     protected Font orderFont;
     protected ElemStyles.StyleSet styles;
     protected double circum;
@@ -293,48 +288,21 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(l != null && l.overlays != null) {
             for(LineElemStyle s : l.overlays) {
                 if(!s.over) {
-                    lastN = null;
-                    for(Node n : w.getNodes()) {
-                        if(lastN != null) {
-                            drawSeg(lastN, n, s.color != null  && !data.isSelected(w) ? s.color : color,
-                                    false, s.getWidth(width), s.getDashed(), s.dashedColor);
-                        }
-                        lastN = n;
-                    }
+                    drawWay(w, s.color != null && !data.isSelected(w) ? s.color : color, s.getWidth(width),
+                            s.getDashed(), s.dashedColor, false, false);
                 }
             }
         }
 
         /* draw the way */
-        lastN = null;
-        Iterator<Node> it = w.getNodes().iterator();
-        while (it.hasNext())
-        {
-            Node n = it.next();
-            if(lastN != null) {
-                drawSeg(lastN, n, color,
-                        showOnlyHeadArrowOnly ? !it.hasNext() : showDirection, width, dashed, dashedColor);
-            }
-            lastN = n;
-        }
+        drawWay(w, color, width, dashed, dashedColor, showDirection, showOnlyHeadArrowOnly);
 
         /* draw overlays above the way */
-        if(l != null && l.overlays != null)
-        {
-            for(LineElemStyle s : l.overlays)
-            {
-                if(s.over)
-                {
-                    lastN = null;
-                    for(Node n : w.getNodes())
-                    {
-                        if(lastN != null)
-                        {
-                            drawSeg(lastN, n, s.color != null && !data.isSelected(w) ? s.color : color,
-                                    false, s.getWidth(width), s.getDashed(), s.dashedColor);
-                        }
-                        lastN = n;
-                    }
+        if(l != null && l.overlays != null)  {
+            for(LineElemStyle s : l.overlays) {
+                if(s.over) {
+                    drawWay(w, s.color != null && !data.isSelected(w) ? s.color : color, s.getWidth(width),
+                            s.getDashed(), s.dashedColor, false, false);
                 }
             }
         }
@@ -353,7 +321,55 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 lastN = n;
             }
         }
-        displaySegments();
+    }
+
+    public void drawWay(Way way, Color color, int width, float dashed[], Color dashedColor, boolean showDirection,
+            boolean showHeadArrowOnly) {
+
+        GeneralPath path = new GeneralPath();
+
+        Node lastN = null;
+        Iterator<Node> it = way.getNodes().iterator();
+        while (it.hasNext()) {
+            Node n = it.next();
+            if(lastN != null) {
+                drawSegment(path, nc.getPoint(lastN), nc.getPoint(n), (showHeadArrowOnly ? !it.hasNext() : showDirection));
+            }
+            lastN = n;
+        }
+        displaySegments(path, color, width, dashed, dashedColor);
+    }
+
+    private void displaySegments(GeneralPath path, Color color, int width, float dashed[], Color dashedColor) {
+        if (path != null) {
+            g.setColor(color);
+            if (useStrokes > dist) {
+                if (dashed.length > 0) {
+                    g.setStroke(new BasicStroke(width,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0, dashed,0));
+                } else {
+                    g.setStroke(new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+                }
+            }
+            g.draw(path);
+
+            if(useStrokes > dist && dashedColor != null) {
+                g.setColor(dashedColor);
+                if (dashed.length > 0) {
+                    float[] dashedOffset = new float[dashed.length];
+                    System.arraycopy(dashed, 1, dashedOffset, 0, dashed.length - 1);
+                    dashedOffset[dashed.length-1] = dashed[0];
+                    float offset = dashedOffset[0];
+                    g.setStroke(new BasicStroke(width,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,dashedOffset,offset));
+                } else {
+                    g.setStroke(new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+                }
+                g.draw(path);
+            }
+
+            if(useStrokes > dist) {
+                g.setStroke(new BasicStroke());
+            }
+        }
     }
 
     public Collection<PolyData> joinWays(Collection<Way> join, OsmPrimitive errs)
@@ -1183,71 +1199,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         return name;
     }
 
-    private void drawSeg(Node n1, Node n2, Color col, boolean showDirection, int width, float dashed[], Color dashedColor) {
-        if (col != currentColor || width != currentWidth || !Arrays.equals(dashed,currentDashed) || dashedColor != currentDashedColor) {
-            displaySegments(col, width, dashed, dashedColor);
-        }
-        Point p1 = nc.getPoint(n1);
-        Point p2 = nc.getPoint(n2);
-
-        if (!isSegmentVisible(p1, p2))
-            return;
-        currentPath.moveTo(p1.x, p1.y);
-        currentPath.lineTo(p2.x, p2.y);
-
-        if (showDirection) {
-            double t = Math.atan2(p2.y-p1.y, p2.x-p1.x) + Math.PI;
-            currentPath.lineTo((int)(p2.x + 10*Math.cos(t-PHI)), (int)(p2.y + 10*Math.sin(t-PHI)));
-            currentPath.moveTo((int)(p2.x + 10*Math.cos(t+PHI)), (int)(p2.y + 10*Math.sin(t+PHI)));
-            currentPath.lineTo(p2.x, p2.y);
-        }
-    }
-
-    @Override
-    protected void displaySegments() {
-        displaySegments(null, 0, new float[0], null);
-    }
-
-    protected void displaySegments(Color newColor, int newWidth, float newDash[], Color newDashedColor) {
-        if (currentPath != null) {
-            g.setColor(inactive ? inactiveColor : currentColor);
-            if (currentStroke == null && useStrokes > dist) {
-                if (currentDashed.length > 0) {
-                    g.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,currentDashed,0));
-                } else {
-                    g.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
-                }
-            }
-            g.draw(currentPath);
-
-            if(currentDashedColor != null) {
-                g.setColor(currentDashedColor);
-                if (currentStroke == null && useStrokes > dist) {
-                    if (currentDashed.length > 0) {
-                        float[] currentDashedOffset = new float[currentDashed.length];
-                        System.arraycopy(currentDashed, 1, currentDashedOffset, 0, currentDashed.length - 1);
-                        currentDashedOffset[currentDashed.length-1] = currentDashed[0];
-                        float offset = currentDashedOffset[0];
-                        g.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,currentDashedOffset,offset));
-                    } else {
-                        g.setStroke(new BasicStroke(currentWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
-                    }
-                }
-                g.draw(currentPath);
-            }
-
-            if(useStrokes > dist) {
-                g.setStroke(new BasicStroke(1));
-            }
-
-            currentPath = new GeneralPath();
-            currentColor = newColor;
-            currentWidth = newWidth;
-            currentDashed = newDash;
-            currentDashedColor = newDashedColor;
-            currentStroke = null;
-        }
-    }
 
     /**
      * Draw the node as small rectangle with the given color.
@@ -1401,19 +1352,20 @@ public class MapPaintVisitor extends SimplePaintVisitor {
 
         /*** SELECTED  ***/
         for (final OsmPrimitive osm : data.getSelected()) {
-            if (osm.isUsable() && !(osm instanceof Node) && osm.mappaintDrawnCode != paintid
-            ) {
+            if (osm.isUsable() && !(osm instanceof Node) && osm.mappaintDrawnCode != paintid) {
                 osm.visit(new AbstractVisitor() {
                     public void visit(Way w) {
                         drawWay(w, 0);
                     }
 
                     public void visit(Node n) {
-                        drawNode(n);
+                        // Selected nodes are painted in following part
                     }
 
                     public void visit(Relation r) {
                         /* TODO: is it possible to do this like the nodes/ways code? */
+                        // Only nodes are painted, ways was already painted before (this might cause that
+                        // way in selected relation is hidden by another way)
                         for (RelationMember m : r.getMembers()) {
                             if (m.isNode() && m.getMember().isDrawable()) {
                                 drawSelectedMember(m.getMember(), styles != null ? getPrimitiveStyle(m.getMember()) : null, true, true);
@@ -1424,30 +1376,15 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             }
         }
 
-        /*** DISPLAY CACHED SEGMENTS (WAYS) NOW ***/
-        displaySegments();
-
         /*** NODES ***/
         for (final Node osm: data.searchNodes(bbox)) {
             if (!osm.isIncomplete() && !osm.isDeleted() && (data.isSelected(osm) || !osm.isFiltered())
-                    && osm.mappaintDrawnCode != paintid)
-            {
+                    && osm.mappaintDrawnCode != paintid) {
                 drawNode(osm);
             }
         }
 
-        /*** VIRTUAL  ***/
-        if (virtualNodeSize != 0) {
-            currentColor = nodeColor;
-            for (final OsmPrimitive osm: data.searchWays(bbox)) {
-                if (osm.isUsable() && !osm.isFiltered())
-                {
-                    /* TODO: move this into the SimplePaint code? */
-                    visitVirtual((Way)osm);
-                }
-            }
-            displaySegments(null);
-        }
+        drawVirtualNodes(data.searchWays(bbox));
     }
 
     /**
