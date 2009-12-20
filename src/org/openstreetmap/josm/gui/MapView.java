@@ -43,6 +43,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
@@ -443,7 +444,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
         Graphics2D tempG = offscreenBuffer.createGraphics();
         tempG.setClip(g.getClip());
-        tempG.setColor(Main.pref.getColor("background", Color.BLACK));
+        tempG.setColor(PaintColors.BACKGROUND.get());
         tempG.fillRect(0, 0, getWidth(), getHeight());
 
         Bounds box = getLatLonBounds(g.getClipBounds());

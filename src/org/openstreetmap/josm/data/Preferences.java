@@ -51,13 +51,13 @@ public class Preferences {
      */
     private File preferencesDirFile = null;
 
-    public static interface PreferenceChangeEvent{
-        public String getKey();
-        public String getOldValue();
-        public String getNewValue();
+    public interface PreferenceChangeEvent{
+        String getKey();
+        String getOldValue();
+        String getNewValue();
     }
 
-    public static interface PreferenceChangedListener {
+    public interface PreferenceChangedListener {
         void preferenceChanged(PreferenceChangeEvent e);
     }
 
@@ -123,6 +123,12 @@ public class Preferences {
         public void setArea(Bounds area) {
             this.area = area;
         }
+    }
+
+    public interface ColorKey {
+        String getColorName();
+        String getSpecialName();
+        Color getDefault();
     }
 
     private final CopyOnWriteArrayList<PreferenceChangedListener> listeners = new CopyOnWriteArrayList<PreferenceChangedListener>();
@@ -578,6 +584,10 @@ public class Preferences {
      */
     synchronized public Color getColor(String colName, Color def) {
         return getColor(colName, null, def);
+    }
+
+    public Color getColor(ColorKey key) {
+        return getColor(key.getColorName(), key.getSpecialName(), key.getDefault());
     }
 
     /**

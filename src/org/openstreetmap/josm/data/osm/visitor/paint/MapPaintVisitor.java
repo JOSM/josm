@@ -1,9 +1,8 @@
 /* License: GPL. Copyright 2007 by Immanuel Scholz and others */
-package org.openstreetmap.josm.data.osm.visitor;
+package org.openstreetmap.josm.data.osm.visitor.paint;
 
 /* To enable debugging or profiling remove the double / signs */
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BasicStroke;
@@ -40,6 +39,7 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
@@ -1247,9 +1247,9 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     public void getColors()
     {
         super.getColors();
-        untaggedColor = Main.pref.getColor(marktr("untagged"),Color.GRAY);
-        textColor = Main.pref.getColor (marktr("text"), Color.WHITE);
-        areaTextColor = Main.pref.getColor (marktr("areatext"), Color.LIGHT_GRAY);
+        untaggedColor = PaintColors.UNTAGGED.get();
+        textColor = PaintColors.TEXT.get();
+        areaTextColor = PaintColors.AREA_TEXT.get();
     }
 
     DataSet data;

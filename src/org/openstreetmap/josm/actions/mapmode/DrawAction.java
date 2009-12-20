@@ -1,7 +1,6 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.actions.mapmode;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -47,6 +46,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -207,7 +207,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return;
         super.enterMode();
         currCursor = Cursors.crosshair;
-        selectedColor = Main.pref.getColor(marktr("selected"), Color.red);
+        selectedColor =PaintColors.SELECTED.get();
         drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
         drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
         drawTargetCursor = Main.pref.getBoolean("draw.target-cursor", true);
@@ -343,7 +343,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 newSelection.clear();
                 newSelection.add(n);
                 getCurrentDataSet().setSelected(n);
-                selection = getCurrentDataSet().getSelected();
                 // The user explicitly selected a node, so let him continue drawing
                 wayIsFinished = false;
                 return;

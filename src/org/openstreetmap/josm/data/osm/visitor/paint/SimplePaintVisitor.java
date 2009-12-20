@@ -1,9 +1,7 @@
 /* License: GPL. Copyright 2007 by Immanuel Scholz and others */
-package org.openstreetmap.josm.data.osm.visitor;
+package org.openstreetmap.josm.data.osm.visitor.paint;
 
 /* To enable debugging or profiling remove the double / signs */
-
-import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -25,6 +23,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 
 /**
@@ -34,13 +33,6 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
  * @author imi
  */
 public class SimplePaintVisitor extends AbstractVisitor {
-
-    public final static Color darkerblue = new Color(0,0,96);
-    public final static Color darkblue = new Color(0,0,128);
-    public final static Color darkgreen = new Color(0,128,0);
-    public final static Color teal = new Color(0,128,128);
-    public final static Color lightteal= new Color(0, 255, 186);
-
     /**
      * The environment to paint to.
      */
@@ -91,15 +83,15 @@ public class SimplePaintVisitor extends AbstractVisitor {
 
     public void getColors()
     {
-        inactiveColor = Main.pref.getColor(marktr("inactive"), Color.darkGray);
-        selectedColor = Main.pref.getColor(marktr("selected"), Color.red);
-        nodeColor = Main.pref.getColor(marktr("node"), Color.yellow);
-        dfltWayColor = Main.pref.getColor(marktr("way"), darkblue);
-        relationColor = Main.pref.getColor(marktr("relation"), teal);
-        untaggedWayColor = Main.pref.getColor(marktr("untagged way"), darkgreen);
-        incompleteColor = Main.pref.getColor(marktr("incomplete way"), darkerblue);
-        backgroundColor = Main.pref.getColor(marktr("background"), Color.BLACK);
-        highlightColor = Main.pref.getColor(marktr("highlight"), lightteal);
+        inactiveColor = PaintColors.INACTIVE.get();
+        selectedColor = PaintColors.SELECTED.get();
+        nodeColor = PaintColors.NODE.get();
+        dfltWayColor = PaintColors.DEFAULT_WAY.get();
+        relationColor = PaintColors.RELATION.get();
+        untaggedWayColor = PaintColors.UNTAGGED_WAY.get();
+        incompleteColor = PaintColors.INCOMPLETE_WAY.get();
+        backgroundColor = PaintColors.BACKGROUND.get();
+        highlightColor = PaintColors.HIGHLIGHT.get();
     }
 
     protected void getSettings(boolean virtual) {

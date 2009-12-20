@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -38,7 +37,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
-import org.openstreetmap.josm.data.osm.visitor.SimplePaintVisitor;
+import org.openstreetmap.josm.data.osm.visitor.paint.SimplePaintVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
@@ -61,7 +60,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class SelectAction extends MapMode implements SelectionEnded {
-    static private final Logger logger = Logger.getLogger(SelectAction.class.getName());
+    //static private final Logger logger = Logger.getLogger(SelectAction.class.getName());
 
     /**
      * Replies true if we are currently running on OSX

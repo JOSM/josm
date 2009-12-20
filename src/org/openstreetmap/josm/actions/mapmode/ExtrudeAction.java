@@ -1,7 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions.mapmode;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BasicStroke;
@@ -33,6 +32,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -64,7 +64,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      * The time which needs to pass between click and release before something
      * counts as a move, in milliseconds
      */
-    private static int initialMoveDelay = 200;
+    private int initialMoveDelay = 200;
     /**
      * The initial EastNorths of node1 and node2
      */
@@ -104,7 +104,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                 getCursor("normal", "rectangle", Cursor.DEFAULT_CURSOR));
         putValue("help", "Action/Extrude/Extrude");
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
-        selectedColor = Main.pref.getColor(marktr("selected"), Color.red);
+        selectedColor = PaintColors.SELECTED.get();
     }
 
     private static Cursor getCursor(String name, String mod, int def) {
@@ -234,7 +234,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             // Nothing to do
         } else {
             if (newN1en != null) {
-                Graphics2D g2 = (Graphics2D)g;
+                Graphics2D g2 = g;
                 g2.setColor(selectedColor);
                 g2.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
