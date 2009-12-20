@@ -320,6 +320,10 @@ public class GenericRelationEditor extends RelationEditor  {
                 }
         );
         tfRole.setEnabled(memberTable.getSelectedRowCount() > 0);
+        SideButton btnApply = new SideButton(setRoleAction);
+        btnApply.setPreferredSize(new Dimension(20,20));
+        btnApply.setText("");
+        p3.add(btnApply);
 
         gc.gridx = 1;
         gc.gridy = 2;
@@ -1257,8 +1261,7 @@ public class GenericRelationEditor extends RelationEditor  {
     class SetRoleAction extends AbstractAction implements ListSelectionListener, DocumentListener {
         public SetRoleAction() {
             putValue(SHORT_DESCRIPTION, tr("Sets a role for the selected members"));
-            // FIXME: find better icon
-            putValue(SMALL_ICON, ImageProvider.get("ok"));
+            putValue(SMALL_ICON, ImageProvider.get("apply"));
             putValue(NAME, tr("Apply Role"));
             refreshEnabled();
         }
