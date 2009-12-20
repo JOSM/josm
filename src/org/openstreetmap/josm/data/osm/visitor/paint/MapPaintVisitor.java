@@ -5,27 +5,17 @@ package org.openstreetmap.josm.data.osm.visitor.paint;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -47,7 +37,6 @@ import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.IconElemStyle;
 import org.openstreetmap.josm.gui.mappaint.LineElemStyle;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
 public class MapPaintVisitor extends SimplePaintVisitor {
@@ -63,15 +52,15 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected Color untaggedColor;
     protected Color textColor;
     protected Color areaTextColor;
-    protected Font orderFont;
     protected ElemStyles.StyleSet styles;
     protected double circum;
     protected double dist;
-    protected Collection<String> regionalNameOrder;
     protected boolean useStyleCache;
     private static int paintid = 0;
     private EastNorth minEN;
     private EastNorth maxEN;
+    private MapPainter painter;
+    protected Collection<String> regionalNameOrder;
 
     protected boolean isZoomOk(ElemStyle e) {
         if (!zoomLevelDisplay) /* show everything if the user wishes so */
@@ -137,21 +126,27 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         IconElemStyle nodeStyle = (IconElemStyle)getPrimitiveStyle(n);
 
         if (nodeStyle != null && isZoomOk(nodeStyle) && showIcons > dist) {
-            if (inactive || n.isDisabled()) {
-                drawNode(n, nodeStyle.getDisabledIcon(), nodeStyle.annotate, data.isSelected(n));
-            } else {
-                drawNode(n, nodeStyle.icon, nodeStyle.annotate, data.isSelected(n));
-            }
-        } else if (n.highlighted) {
-            drawNode(n, highlightColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
-        } else if (data.isSelected(n)) {
-            drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
-        } else if (n.isTagged()) {
-            drawNode(n, nodeColor, taggedNodeSize, taggedNodeRadius, fillUnselectedNode);
-        } else if (inactive || n.isDisabled()) {
-            drawNode(n, inactiveColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
+            painter.drawNodeIcon(n, (inactive || n.isDisabled())?nodeStyle.getDisabledIcon():nodeStyle.icon,
+                    nodeStyle.annotate, data.isSelected(n), getNodeName(n));
         } else {
-            drawNode(n, nodeColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
+            if (isZoomOk(null)) {
+                if (n.highlighted) {
+                    painter.drawNode(n, highlightColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode,
+                            getNodeName(n));
+                } else if (data.isSelected(n)) {
+                    painter.drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode,
+                            getNodeName(n));
+                } else if (n.isTagged()) {
+                    painter.drawNode(n, nodeColor, taggedNodeSize, taggedNodeRadius, fillUnselectedNode,
+                            getNodeName(n));
+                } else if (inactive || n.isDisabled()) {
+                    painter.drawNode(n, inactiveColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode,
+                            getNodeName(n));
+                } else {
+                    painter.drawNode(n, nodeColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode,
+                            getNodeName(n));
+                }
+            }
         }
     }
 
@@ -217,7 +212,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             /* way with area style */
             if (fillAreas > dist)
             {
-                drawArea(w, data.isSelected(w) ? selectedColor : areaStyle.color);
+                painter.drawArea(getPolygon(w), (data.isSelected(w) ? selectedColor : areaStyle.color), getWayName(w));
                 if(!w.isClosed()) {
                     putError(w, tr("Area style way is not closed."), true);
                 }
@@ -241,8 +236,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         Color dashedColor = null;
         Node lastN;
 
-        if(l != null)
-        {
+        if(l != null) {
             if (l.color != null) {
                 color = l.color;
             }
@@ -254,8 +248,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(selected) {
             color = selectedColor;
         }
-        if (realWidth > 0 && useRealWidth && !showDirection)
-        {
+        if (realWidth > 0 && useRealWidth && !showDirection) {
             int tmpWidth = (int) (100 /  (float) (circum / realWidth));
             if (tmpWidth > width) {
                 width = tmpWidth;
@@ -288,85 +281,35 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         if(l != null && l.overlays != null) {
             for(LineElemStyle s : l.overlays) {
                 if(!s.over) {
-                    drawWay(w, s.color != null && !data.isSelected(w) ? s.color : color, s.getWidth(width),
+                    painter.drawWay(w, s.color != null && !data.isSelected(w) ? s.color : color, s.getWidth(width),
                             s.getDashed(), s.dashedColor, false, false);
                 }
             }
         }
 
         /* draw the way */
-        drawWay(w, color, width, dashed, dashedColor, showDirection, showOnlyHeadArrowOnly);
+        painter.drawWay(w, color, width, dashed, dashedColor, showDirection, showOnlyHeadArrowOnly);
 
         /* draw overlays above the way */
         if(l != null && l.overlays != null)  {
             for(LineElemStyle s : l.overlays) {
                 if(s.over) {
-                    drawWay(w, s.color != null && !data.isSelected(w) ? s.color : color, s.getWidth(width),
+                    painter.drawWay(w, s.color != null && !data.isSelected(w) ? s.color : color, s.getWidth(width),
                             s.getDashed(), s.dashedColor, false, false);
                 }
             }
         }
 
-        if(showOrderNumber)
-        {
+        if(showOrderNumber) {
             int orderNumber = 0;
             lastN = null;
-            for(Node n : w.getNodes())
-            {
-                if(lastN != null)
-                {
+            for(Node n : w.getNodes()) {
+                if(lastN != null) {
                     orderNumber++;
                     drawOrderNumber(lastN, n, orderNumber);
                 }
                 lastN = n;
             }
-        }
-    }
-
-    public void drawWay(Way way, Color color, int width, float dashed[], Color dashedColor, boolean showDirection,
-            boolean showHeadArrowOnly) {
-
-        GeneralPath path = new GeneralPath();
-
-        Node lastN = null;
-        Iterator<Node> it = way.getNodes().iterator();
-        while (it.hasNext()) {
-            Node n = it.next();
-            if(lastN != null) {
-                drawSegment(path, nc.getPoint(lastN), nc.getPoint(n), (showHeadArrowOnly ? !it.hasNext() : showDirection));
-            }
-            lastN = n;
-        }
-        displaySegments(path, color, width, dashed, dashedColor);
-    }
-
-    private void displaySegments(GeneralPath path, Color color, int width, float dashed[], Color dashedColor) {
-        g.setColor(inactive ? inactiveColor : color);
-        if (useStrokes > dist) {
-            if (dashed.length > 0) {
-                g.setStroke(new BasicStroke(width,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0, dashed,0));
-            } else {
-                g.setStroke(new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
-            }
-        }
-        g.draw(path);
-
-        if(!inactive && useStrokes > dist && dashedColor != null) {
-            g.setColor(dashedColor);
-            if (dashed.length > 0) {
-                float[] dashedOffset = new float[dashed.length];
-                System.arraycopy(dashed, 1, dashedOffset, 0, dashed.length - 1);
-                dashedOffset[dashed.length-1] = dashed[0];
-                float offset = dashedOffset[0];
-                g.setStroke(new BasicStroke(width,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,dashedOffset,offset));
-            } else {
-                g.setStroke(new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
-            }
-            g.draw(path);
-        }
-
-        if(useStrokes > dist) {
-            g.setStroke(new BasicStroke());
         }
     }
 
@@ -487,7 +430,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                 AreaElemStyle areaStyle = (AreaElemStyle)style;
                 drawWay(way, areaStyle.line, selectedColor, true);
                 if(area) {
-                    drawArea(way, areaselected ? selectedColor : areaStyle.color);
+                    painter.drawArea(getPolygon(way), (areaselected ? selectedColor : areaStyle.color), getWayName(way));
                 }
             }
             else
@@ -498,10 +441,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         else if(osm instanceof Node)
         {
             if(style != null && isZoomOk(style)) {
-                drawNode((Node)osm, ((IconElemStyle)style).icon,
-                        ((IconElemStyle)style).annotate, true);
-            } else {
-                drawNode((Node)osm, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
+                painter.drawNodeIcon((Node)osm, ((IconElemStyle)style).icon,
+                        ((IconElemStyle)style).annotate, true, getNodeName((Node)osm));
+            } else if (isZoomOk(null)) {
+                painter.drawNode((Node)osm, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode,
+                        getNodeName((Node)osm));
             }
         }
         osm.mappaintDrawnCode = paintid;
@@ -750,21 +694,8 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             return;
         }
 
-        /* rotate icon with direction last node in from to */
-        ImageIcon rotatedIcon = ImageProvider.createRotatedImage(null /*icon2*/, inactive || r.isDisabled() ?
-                nodeStyle.getDisabledIcon() :
-                    nodeStyle.icon, iconAngle);
-
-        /* scale down icon to 16*16 pixels */
-        ImageIcon smallIcon = new ImageIcon(rotatedIcon.getImage().getScaledInstance(16 , 16, Image.SCALE_SMOOTH));
-        int w = smallIcon.getIconWidth(), h=smallIcon.getIconHeight();
-        smallIcon.paintIcon ( Main.map.mapView, g, (int)(pVia.x+vx+vx2)-w/2, (int)(pVia.y+vy+vy2)-h/2 );
-
-        if (data.isSelected(r))
-        {
-            g.setColor (  selectedColor );
-            g.drawRect ((int)(pVia.x+vx+vx2)-w/2-2,(int)(pVia.y+vy+vy2)-h/2-2, w+4, h+4);
-        }
+        painter.drawRestriction(inactive || r.isDisabled() ? nodeStyle.getDisabledIcon() : nodeStyle.icon,
+                pVia, vx, vx2, vy, vy2, iconAngle, data.isSelected(r));
     }
 
     class PolyData {
@@ -971,7 +902,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
                     }
 
                     boolean selected = pd.selected || data.isSelected(pd.way) || data.isSelected(r);
-                    drawAreaPolygon(p, selected ? selectedColor : areaStyle.color);
+                    painter.drawArea(p, selected ? selectedColor : areaStyle.color, null);
                     visible = true;
                 }
             }
@@ -1089,158 +1020,36 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         return Math.abs(sum/2.0);
     }
 
-    protected void drawArea(Way w, Color color)
-    {
-        Polygon polygon = getPolygon(w);
-
-        /* set the opacity (alpha) level of the filled polygon */
-        g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), fillAlpha));
-        g.fillPolygon(polygon);
-
+    protected String getNodeName(Node n) {
         if (showNames > dist) {
-            String name = getWayName(w);
-            if (name!=null /* && annotate */) {
-                Rectangle pb = polygon.getBounds();
-                FontMetrics fontMetrics = g.getFontMetrics(orderFont); // if slow, use cache
-                Rectangle2D nb = fontMetrics.getStringBounds(name, g); // if slow, approximate by strlen()*maxcharbounds(font)
-
-                // Point2D c = getCentroid(polygon);
-                // Using the Centroid is Nicer for buildings like: +--------+
-                // but this needs to be fast.  As most houses are  |   42   |
-                // boxes anyway, the center of the bounding box    +---++---+
-                // will have to do.                                    ++
-                // Centroids are not optimal either, just imagine a U-shaped house.
-                // Point2D c = new Point2D.Double(pb.x + pb.width / 2.0, pb.y + pb.height / 2.0);
-                // Rectangle2D.Double centeredNBounds =
-                //     new Rectangle2D.Double(c.getX() - nb.getWidth()/2,
-                //                            c.getY() - nb.getHeight()/2,
-                //                            nb.getWidth(),
-                //                            nb.getHeight());
-
-                Rectangle centeredNBounds = new Rectangle(pb.x + (int)((pb.width - nb.getWidth())/2.0),
-                        pb.y + (int)((pb.height - nb.getHeight())/2.0),
-                        (int)nb.getWidth(),
-                        (int)nb.getHeight());
-
-                if ((pb.width >= nb.getWidth() && pb.height >= nb.getHeight()) && // quick check
-                        polygon.contains(centeredNBounds) // slow but nice
-                ) {
-                    g.setColor(areaTextColor);
-                    Font defaultFont = g.getFont();
-                    g.setFont (orderFont);
-                    g.drawString (name,
-                            (int)(centeredNBounds.getMinX() - nb.getMinX()),
-                            (int)(centeredNBounds.getMinY() - nb.getMinY()));
-                    g.setFont(defaultFont);
+            String name = null;
+            if (n.hasKeys()) {
+                for (String rn : regionalNameOrder) {
+                    name = n.get(rn);
+                    if (name != null) {
+                        break;
+                    }
                 }
             }
-        }
+            return name;
+        } else
+            return null;
     }
 
     protected String getWayName(Way w) {
-        String name = null;
-        if (w.hasKeys()) {
-            for (String rn : regionalNameOrder) {
-                name = w.get(rn);
-                if (name != null) {
-                    break;
-                }
-            }
-        }
-        return name;
-    }
-
-    protected void drawAreaPolygon(Polygon polygon, Color color)
-    {
-        /* set the opacity (alpha) level of the filled polygon */
-        g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), fillAlpha));
-        g.fillPolygon(polygon);
-    }
-
-    protected void drawNode(Node n, ImageIcon icon, boolean annotate, boolean selected) {
-        Point p = nc.getPoint(n);
-        if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
-
-        int w = icon.getIconWidth(), h=icon.getIconHeight();
-        icon.paintIcon ( Main.map.mapView, g, p.x-w/2, p.y-h/2 );
-        if(showNames > dist && annotate) {
-            String name = getNodeName(n);
-            if (name!=null) {
-                if (inactive || n.isDisabled()) {
-                    g.setColor(inactiveColor);
-                } else {
-                    g.setColor(textColor);
-                }
-                Font defaultFont = g.getFont();
-                g.setFont (orderFont);
-                g.drawString (name, p.x+w/2+2, p.y+h/2+2);
-                g.setFont(defaultFont);
-            }
-        }
-        if (selected)
-        {
-            g.setColor (  selectedColor );
-            g.drawRect (p.x-w/2-2, p.y-h/2-2, w+4, h+4);
-        }
-    }
-
-    protected String getNodeName(Node n) {
-        String name = null;
-        if (n.hasKeys()) {
-            for (String rn : regionalNameOrder) {
-                name = n.get(rn);
-                if (name != null) {
-                    break;
-                }
-            }
-        }
-        return name;
-    }
-
-
-    /**
-     * Draw the node as small rectangle with the given color.
-     *
-     * @param n  The node to draw.
-     * @param color The color of the node.
-     */
-    @Override
-    public void drawNode(Node n, Color color, int size, int radius, boolean fill) {
-        if (isZoomOk(null) && size > 1) {
-            Point p = nc.getPoint(n);
-            if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth())
-                    || (p.y > nc.getHeight()))
-                return;
-
-            if (inactive || n.isDisabled()) {
-                g.setColor(inactiveColor);
-            } else {
-                g.setColor(color);
-            }
-            if (fill) {
-                g.fillRect(p.x - radius, p.y - radius, size, size);
-                g.drawRect(p.x - radius, p.y - radius, size, size);
-            } else {
-                g.drawRect(p.x - radius, p.y - radius, size, size);
-            }
-
-            if(showNames > dist)
-            {
-                String name = getNodeName(n);
-                if (name!=null /* && annotate */)
-                {
-                    if (inactive || n.isDisabled()) {
-                        g.setColor(inactiveColor);
-                    } else {
-                        g.setColor(textColor);
+        if (showNames > dist) {
+            String name = null;
+            if (w.hasKeys()) {
+                for (String rn : regionalNameOrder) {
+                    name = w.get(rn);
+                    if (name != null) {
+                        break;
                     }
-                    Font defaultFont = g.getFont();
-                    g.setFont (orderFont);
-                    g.drawString (name, p.x+radius+2, p.y+radius+2);
-                    g.setFont(defaultFont);
                 }
             }
-        }
+            return name;
+        } else
+            return null;
     }
 
     @Override
@@ -1295,11 +1104,12 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         drawMultipolygon = Main.pref.getBoolean("mappaint.multipolygon", true);
         drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
         leftHandTraffic = Main.pref.getBoolean("mappaint.lefthandtraffic", false);
-        orderFont = new Font(Main.pref.get("mappaint.font", "Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
         String[] names = {"name:" + LanguageInfo.getJOSMLocaleCode(), "name", "int_name", "ref", "operator", "brand", "addr:housenumber"};
-        regionalNameOrder = Main.pref.getCollection("mappaint.nameOrder", Arrays.asList(names));
         minEN = nc.getEastNorth(0, nc.getHeight() - 1);
         maxEN = nc.getEastNorth(nc.getWidth() - 1, 0);
+        regionalNameOrder = Main.pref.getCollection("mappaint.nameOrder", Arrays.asList(names));
+
+        this.painter = new MapPainter(g, inactive, nc, useStrokes > dist);
 
         data.clearErrors();
 
