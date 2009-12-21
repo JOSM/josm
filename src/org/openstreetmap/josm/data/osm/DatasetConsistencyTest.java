@@ -90,14 +90,14 @@ public class DatasetConsistencyTest {
             writer.println(String.format("%s is referenced by %s but not found in dataset", primitive, parent));
         }
         if (dataSet.getPrimitiveById(primitive) != primitive) {
-            writer.println(String.format("%s is different instance that reffered by %s", primitive, parent));
+            writer.println(String.format("%s is different instance that refered by %s", primitive, parent));
         }
         if (primitive.isDeleted()) {
-            writer.println(String.format("%s reffers to deleted primitive %s", parent, primitive));
+            writer.println(String.format("%s refers to deleted primitive %s", parent, primitive));
         }
     }
 
-    private void refferedPrimitiveNotInDataset() {
+    private void referedPrimitiveNotInDataset() {
         for (Way way:dataSet.getWays()) {
             for (Node node:way.getNodes()) {
                 checkReferredPrimitive(node, way);
@@ -128,7 +128,7 @@ public class DatasetConsistencyTest {
             checkCompleteNodesWithoutCoordinates();
             searchNodes();
             searchWays();
-            refferedPrimitiveNotInDataset();
+            referedPrimitiveNotInDataset();
             checkZeroNodesWays();
         } catch (Exception e) {
             writer.println("Exception during dataset integrity test:");
