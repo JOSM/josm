@@ -6,8 +6,10 @@ package org.openstreetmap.josm.data.osm.visitor.paint;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +33,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
@@ -39,7 +42,11 @@ import org.openstreetmap.josm.gui.mappaint.LineElemStyle;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
-public class MapPaintVisitor extends SimplePaintVisitor {
+public class MapPaintVisitor implements PaintVisitor {
+
+    protected Graphics2D g;
+    protected NavigatableComponent nc;
+
     protected boolean useRealWidth;
     protected boolean zoomLevelDisplay;
     protected boolean drawMultipolygon;
@@ -61,6 +68,28 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     private EastNorth maxEN;
     private MapPainter painter;
     protected Collection<String> regionalNameOrder;
+
+    public boolean inactive;
+    protected boolean fillSelectedNode;
+    protected boolean fillUnselectedNode;
+    protected int defaultSegmentWidth;
+    protected boolean showOrderNumber;
+
+    protected boolean showRelevantDirectionsOnly;
+    protected boolean showHeadArrowOnly;
+    protected boolean showDirectionArrow;
+
+    protected int selectedNodeRadius;
+    protected int selectedNodeSize;
+    protected int taggedNodeSize;
+    protected int taggedNodeRadius;
+    protected int unselectedNodeRadius;
+    protected int unselectedNodeSize;
+
+    protected Color selectedColor;
+    protected Color highlightColor;
+    protected Color inactiveColor;
+    protected Color nodeColor;
 
     protected boolean isZoomOk(ElemStyle e) {
         if (!zoomLevelDisplay) /* show everything if the user wishes so */
@@ -107,14 +136,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         return osm.isMappaintArea;
     }
 
-    /**
-     * Draw a small rectangle.
-     * White if selected (as always) or red otherwise.
-     *
-     * @param n The node to draw.
-     */
-    @Override
-    public void visit(Node n) {}
     public void drawNode(Node n) {
         /* check, if the node is visible at all */
         if((n.getEastNorth().east()  > maxEN.east() ) ||
@@ -150,12 +171,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         }
     }
 
-    /**
-     * Draw a line for all segments, according to tags.
-     * @param w The way to draw.
-     */
-    @Override
-    public void visit(Way w) {}
     public void drawWay(Way w, int fillAreas) {
         if(w.getNodesCount() < 2)
             return;
@@ -452,8 +467,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         osm.mappaintDrawnCode = paintid;
     }
 
-    @Override
-    public void visit(Relation r) {}
     public void paintUnselectedRelation(Relation r) {
 
         if (drawMultipolygon && "multipolygon".equals(r.get("type")))
@@ -981,6 +994,16 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         return drawn;
     }
 
+    protected boolean isPolygonVisible(Polygon polygon) {
+        Rectangle bounds = polygon.getBounds();
+        if (bounds.width == 0 && bounds.height == 0) return false;
+        if (bounds.x > nc.getWidth()) return false;
+        if (bounds.y > nc.getHeight()) return false;
+        if (bounds.x + bounds.width < 0) return false;
+        if (bounds.y + bounds.height < 0) return false;
+        return true;
+    }
+
     protected Polygon getPolygon(Way w)
     {
         Polygon polygon = new Polygon();
@@ -1053,10 +1076,11 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             return null;
     }
 
-    @Override
-    public void getColors()
-    {
-        super.getColors();
+    public void getColors() {
+        selectedColor  = PaintColors.SELECTED.get();
+        highlightColor = PaintColors.HIGHLIGHT.get();
+        inactiveColor = PaintColors.INACTIVE.get();
+        nodeColor = PaintColors.NODE.get();
         untaggedColor = PaintColors.UNTAGGED.get();
         textColor = PaintColors.TEXT.get();
         areaTextColor = PaintColors.AREA_TEXT.get();
@@ -1082,7 +1106,6 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     }
 
     /* Shows areas before non-areas */
-    @Override
     public void visitAll(DataSet data, boolean virtual, Bounds bounds) {
         BBox bbox = new BBox(bounds);
         this.data = data;
@@ -1097,7 +1120,22 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         LatLon ll2 = nc.getLatLon(100, 0);
         dist = ll1.greatCircleDistance(ll2);
 
-        getSettings(virtual);
+        getColors();
+
+        showDirectionArrow = Main.pref.getBoolean("draw.segment.direction", true);
+        showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only", true);
+        showHeadArrowOnly = Main.pref.getBoolean("draw.segment.head_only", false);
+        showOrderNumber = Main.pref.getBoolean("draw.segment.order_number", false);
+        selectedNodeRadius = Main.pref.getInteger("mappaint.node.selected-size", 5) / 2;
+        selectedNodeSize = selectedNodeRadius * 2;
+        unselectedNodeRadius = Main.pref.getInteger("mappaint.node.unselected-size", 3) / 2;
+        unselectedNodeSize = unselectedNodeRadius * 2;
+        taggedNodeRadius = Main.pref.getInteger("mappaint.node.tagged-size", 5) / 2;
+        taggedNodeSize = taggedNodeRadius * 2;
+        defaultSegmentWidth = Main.pref.getInteger("mappaint.segment.default-width", 2);
+        fillSelectedNode = Main.pref.getBoolean("mappaint.node.fill-selected", true);
+        fillUnselectedNode = Main.pref.getBoolean("mappaint.node.fill-unselected", false);
+
         useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth", false);
         zoomLevelDisplay = Main.pref.getBoolean("mappaint.zoomLevelDisplay", false);
         circum = Main.map.mapView.getDist100Pixel();
@@ -1110,7 +1148,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
         maxEN = nc.getEastNorth(nc.getWidth() - 1, 0);
         regionalNameOrder = Main.pref.getCollection("mappaint.nameOrder", Arrays.asList(names));
 
-        this.painter = new MapPainter(g, inactive, nc, useStrokes > dist);
+        this.painter = new MapPainter(g, inactive, nc, useStrokes > dist, virtual);
 
         data.clearErrors();
 
@@ -1193,7 +1231,7 @@ public class MapPaintVisitor extends SimplePaintVisitor {
             }
         }
 
-        drawVirtualNodes(data.searchWays(bbox));
+        painter.drawVirtualNodes(data.searchWays(bbox));
     }
 
     /**
@@ -1203,11 +1241,23 @@ public class MapPaintVisitor extends SimplePaintVisitor {
     protected void drawOrderNumber(Node n1, Node n2, int orderNumber) {
         Point p1 = nc.getPoint(n1);
         Point p2 = nc.getPoint(n2);
-        drawOrderNumber(p1, p2, orderNumber);
+        painter.drawOrderNumber(p1, p2, orderNumber);
     }
 
     public void putError(OsmPrimitive p, String text, boolean isError)
     {
         data.addError(p, isError ? tr("Error: {0}", text) : tr("Warning: {0}", text));
+    }
+
+    public void setGraphics(Graphics2D g) {
+        this.g = g;
+    }
+
+    public void setInactive(boolean inactive) {
+        this.inactive = inactive;
+    }
+
+    public void setNavigatableComponent(NavigatableComponent nc) {
+        this.nc = nc;
     }
 }

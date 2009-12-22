@@ -32,7 +32,7 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
  *
  * @author imi
  */
-public class SimplePaintVisitor extends AbstractVisitor {
+public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor {
     /**
      * The environment to paint to.
      */
@@ -485,5 +485,9 @@ public class SimplePaintVisitor extends AbstractVisitor {
             currentPath = new GeneralPath();
             currentColor = newColor;
         }
+    }
+
+    public void setInactive(boolean inactive) {
+        this.inactive = inactive;
     }
 }

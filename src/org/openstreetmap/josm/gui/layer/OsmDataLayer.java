@@ -59,6 +59,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintVisitor;
+import org.openstreetmap.josm.data.osm.visitor.paint.PaintVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.SimplePaintVisitor;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MapView;
@@ -237,7 +238,7 @@ public class OsmDataLayer extends Layer {
             g.fill(a);
         }
 
-        SimplePaintVisitor painter;
+        PaintVisitor painter;
         if (Main.pref.getBoolean("draw.wireframe")) {
             painter = new SimplePaintVisitor();
         } else {
@@ -245,7 +246,7 @@ public class OsmDataLayer extends Layer {
         }
         painter.setGraphics(g);
         painter.setNavigatableComponent(mv);
-        painter.inactive = inactive;
+        painter.setInactive(inactive);
         painter.visitAll(data, virtual, box);
         Main.map.conflictDialog.paintConflicts(g, mv);
     }

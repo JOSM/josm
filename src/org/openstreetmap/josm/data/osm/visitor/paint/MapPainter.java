@@ -12,6 +12,7 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
+import java.util.Collection;
 import java.util.Iterator;
 
 import javax.swing.ImageIcon;
@@ -34,11 +35,17 @@ public class MapPainter {
     private final Color textColor;
     private final Color selectedColor;
     private final Color areaTextColor;
+    private final Color nodeColor;
+    private final Color backgroundColor;
 
-    private Font orderFont;
-    private int fillAlpha;
+    private final Font orderFont;
+    private final int fillAlpha;
+    private final int virtualNodeSize;
+    private final int virtualNodeSpace;
+    private final int segmentNumberSpace;
 
-    public MapPainter(Graphics2D g, boolean inactive, NavigatableComponent nc, boolean useStrokes) {
+
+    public MapPainter(Graphics2D g, boolean inactive, NavigatableComponent nc, boolean useStrokes, boolean virtual) {
         this.g = g;
         this.inactive = inactive;
         this.nc = nc;
@@ -48,9 +55,14 @@ public class MapPainter {
         this.textColor = PaintColors.TEXT.get();
         this.selectedColor = PaintColors.SELECTED.get();
         this.areaTextColor = PaintColors.AREA_TEXT.get();
+        this.nodeColor = PaintColors.NODE.get();
+        this.backgroundColor = PaintColors.BACKGROUND.get();
 
         this.orderFont = new Font(Main.pref.get("mappaint.font", "Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
         this.fillAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
+        this.virtualNodeSize = virtual ? Main.pref.getInteger("mappaint.node.virtual-size", 8) / 2 : 0;
+        this.virtualNodeSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
+        this.segmentNumberSpace = Main.pref.getInteger("mappaint.segmentnumber.space", 40);
     }
 
     public void drawWay(Way way, Color color, int width, float dashed[], Color dashedColor, boolean showDirection,
@@ -243,6 +255,75 @@ public class MapPainter {
         if (selected) {
             g.setColor(selectedColor);
             g.drawRect((int)(pVia.x+vx+vx2)-w/2-2,(int)(pVia.y+vy+vy2)-h/2-2, w+4, h+4);
+        }
+    }
+
+    public void drawVirtualNodes(Collection<Way> ways) {
+
+        if (virtualNodeSize != 0) {
+            GeneralPath path = new GeneralPath();
+            for (Way osm: ways){
+                if (osm.isUsable() && !osm.isFiltered()) {
+                    visitVirtual(path, osm);
+                }
+            }
+            g.setColor(nodeColor);
+            g.draw(path);
+        }
+    }
+
+    public void visitVirtual(GeneralPath path, Way w) {
+        Iterator<Node> it = w.getNodes().iterator();
+        if (it.hasNext()) {
+            Point lastP = nc.getPoint(it.next());
+            while(it.hasNext())
+            {
+                Point p = nc.getPoint(it.next());
+                if(isSegmentVisible(lastP, p) && isLargeSegment(lastP, p, virtualNodeSpace))
+                {
+                    int x = (p.x+lastP.x)/2;
+                    int y = (p.y+lastP.y)/2;
+                    path.moveTo(x-virtualNodeSize, y);
+                    path.lineTo(x+virtualNodeSize, y);
+                    path.moveTo(x, y-virtualNodeSize);
+                    path.lineTo(x, y+virtualNodeSize);
+                }
+                lastP = p;
+            }
+        }
+    }
+
+    private static boolean isLargeSegment(Point p1, Point p2, int space)  {
+        int xd = p1.x-p2.x; if(xd < 0) {
+            xd = -xd;
+        }
+        int yd = p1.y-p2.y; if(yd < 0) {
+            yd = -yd;
+        }
+        return (xd+yd > space);
+    }
+
+    /**
+     * Draw an number of the order of the two consecutive nodes within the
+     * parents way
+     */
+    protected void drawOrderNumber(Point p1, Point p2, int orderNumber) {
+        if (isSegmentVisible(p1, p2) && isLargeSegment(p1, p2, segmentNumberSpace)) {
+            String on = Integer.toString(orderNumber);
+            int strlen = on.length();
+            int x = (p1.x+p2.x)/2 - 4*strlen;
+            int y = (p1.y+p2.y)/2 + 4;
+
+            if(virtualNodeSize != 0 && isLargeSegment(p1, p2, virtualNodeSpace))
+            {
+                y = (p1.y+p2.y)/2 - virtualNodeSize - 3;
+            }
+
+            Color c = g.getColor();
+            g.setColor(backgroundColor);
+            g.fillRect(x-1, y-12, 8*strlen+1, 14);
+            g.setColor(c);
+            g.drawString(on, x, y);
         }
     }
 
