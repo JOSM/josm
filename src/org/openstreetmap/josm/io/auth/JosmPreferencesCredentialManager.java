@@ -29,7 +29,7 @@ public class JosmPreferencesCredentialManager implements CredentialsManager {
             password = Main.pref.get("osm-server.password", null);
             if (user == null)
                 return null;
-            return new PasswordAuthentication(user, password == null ? null : password.toCharArray());
+            return new PasswordAuthentication(user, password == null ? new char[0] : password.toCharArray());
         case PROXY:
             user = Main.pref.get(ProxyPreferences.PROXY_USER, null);
             password = Main.pref.get(ProxyPreferences.PROXY_PASS, null);
