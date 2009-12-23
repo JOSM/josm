@@ -97,7 +97,7 @@ public class DefaultProxySelector extends ProxySelector {
      */
     public void initFromPreferences() {
         String value = Main.pref.get(ProxyPreferences.PROXY_POLICY);
-        if (value == null) {
+        if (value.length() == 0) {
             System.err.println(tr("Warning: no preference ''{0}'' found. Will use no proxy.", ProxyPreferences.PROXY_POLICY));
             proxyPolicy = ProxyPolicy.NO_PROXY;
         } else {
