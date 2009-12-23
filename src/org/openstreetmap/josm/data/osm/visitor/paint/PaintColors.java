@@ -47,4 +47,10 @@ public enum PaintColors implements ColorKey {
     public Color get() {
         return Main.pref.getColor(this);
     }
+
+    public static void getColors() {
+        for (PaintColors c:values()) {
+            c.get();
+        }
+    }
 }

@@ -1265,4 +1265,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     public boolean isIncomplete() {
         return incomplete;
     }
+
+    public boolean isSelected() {
+        return dataSet != null && dataSet.isSelected(this);
+    }
 }

@@ -12,6 +12,7 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -22,6 +23,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.LanguageInfo;
 
 public class MapPainter {
     private static final double PHI = Math.toRadians(20);
@@ -29,7 +31,10 @@ public class MapPainter {
     private final Graphics2D g;
     private final NavigatableComponent nc;
     private final boolean inactive;
+
     private final boolean useStrokes;
+    private final boolean showNames;
+    private final boolean showIcons;
 
     private final Color inactiveColor;
     private final Color textColor;
@@ -44,12 +49,18 @@ public class MapPainter {
     private final int virtualNodeSpace;
     private final int segmentNumberSpace;
 
+    private final double circum;
 
-    public MapPainter(Graphics2D g, boolean inactive, NavigatableComponent nc, boolean useStrokes, boolean virtual) {
+    private final Collection<String> regionalNameOrder;
+
+
+    public MapPainter(MapPaintSettings settings, Graphics2D g, boolean inactive, NavigatableComponent nc, boolean virtual, double dist, double circum) {
         this.g = g;
         this.inactive = inactive;
         this.nc = nc;
-        this.useStrokes = useStrokes;
+        this.useStrokes = settings.getUseStrokesDistance() > dist;
+        this.showNames = settings.getShowNamesDistance() > dist;
+        this.showIcons = settings.getShowIconsDistance() > dist;
 
         this.inactiveColor = PaintColors.INACTIVE.get();
         this.textColor = PaintColors.TEXT.get();
@@ -63,6 +74,10 @@ public class MapPainter {
         this.virtualNodeSize = virtual ? Main.pref.getInteger("mappaint.node.virtual-size", 8) / 2 : 0;
         this.virtualNodeSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
         this.segmentNumberSpace = Main.pref.getInteger("mappaint.segmentnumber.space", 40);
+
+        String[] names = {"name:" + LanguageInfo.getJOSMLocaleCode(), "name", "int_name", "ref", "operator", "brand", "addr:housenumber"};
+        this.regionalNameOrder = Main.pref.getCollection("mappaint.nameOrder", Arrays.asList(names));
+        this.circum = circum;
     }
 
     public void drawWay(Way way, Color color, int width, float dashed[], Color dashedColor, boolean showDirection,
@@ -136,7 +151,7 @@ public class MapPainter {
     }
 
 
-    protected void drawNodeIcon(Node n, ImageIcon icon, boolean annotate, boolean selected, String name) {
+    public void drawNodeIcon(Node n, ImageIcon icon, boolean annotate, boolean selected, String name) {
         Point p = nc.getPoint(n);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
 
@@ -167,8 +182,9 @@ public class MapPainter {
      * @param n  The node to draw.
      * @param color The color of the node.
      */
-    public void drawNode(Node n, Color color, int size, int radius, boolean fill, String name) {
+    public void drawNode(Node n, Color color, int size, boolean fill, String name) {
         if (size > 1) {
+            int radius = size / 2;
             Point p = nc.getPoint(n);
             if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth())
                     || (p.y > nc.getHeight()))
@@ -304,6 +320,16 @@ public class MapPainter {
     }
 
     /**
+     * Draw a number of the order of the two consecutive nodes within the
+     * parents way
+     */
+    public void drawOrderNumber(Node n1, Node n2, int orderNumber) {
+        Point p1 = nc.getPoint(n1);
+        Point p2 = nc.getPoint(n2);
+        drawOrderNumber(p1, p2, orderNumber);
+    }
+
+    /**
      * Draw an number of the order of the two consecutive nodes within the
      * parents way
      */
@@ -325,6 +351,50 @@ public class MapPainter {
             g.setColor(c);
             g.drawString(on, x, y);
         }
+    }
+
+    //TODO Not a good place for this method
+    public String getNodeName(Node n) {
+        String name = null;
+        if (n.hasKeys()) {
+            for (String rn : regionalNameOrder) {
+                name = n.get(rn);
+                if (name != null) {
+                    break;
+                }
+            }
+        }
+        return name;
+    }
+
+    //TODO Not a good place for this method
+    public String getWayName(Way w) {
+        String name = null;
+        if (w.hasKeys()) {
+            for (String rn : regionalNameOrder) {
+                name = w.get(rn);
+                if (name != null) {
+                    break;
+                }
+            }
+        }
+        return name;
+    }
+
+    public boolean isInactive() {
+        return inactive;
+    }
+
+    public boolean isShowNames() {
+        return showNames;
+    }
+
+    public double getCircum() {
+        return circum;
+    }
+
+    public boolean isShowIcons() {
+        return showIcons;
     }
 
 }

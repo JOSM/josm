@@ -5,14 +5,12 @@ package org.openstreetmap.josm.data.osm.visitor.paint;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,56 +38,28 @@ import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.IconElemStyle;
 import org.openstreetmap.josm.gui.mappaint.LineElemStyle;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.gui.mappaint.SimpleNodeElemStyle;
 
 public class MapPaintVisitor implements PaintVisitor {
 
-    protected Graphics2D g;
-    protected NavigatableComponent nc;
+    private Graphics2D g;
+    private NavigatableComponent nc;
 
-    protected boolean useRealWidth;
-    protected boolean zoomLevelDisplay;
-    protected boolean drawMultipolygon;
-    protected boolean drawRestriction;
-    protected boolean leftHandTraffic;
-    protected int showNames;
-    protected int showIcons;
-    protected int useStrokes;
-    protected int fillAlpha;
-    protected Color untaggedColor;
-    protected Color textColor;
-    protected Color areaTextColor;
-    protected ElemStyles.StyleSet styles;
-    protected double circum;
-    protected double dist;
-    protected boolean useStyleCache;
+    private boolean zoomLevelDisplay;
+    private boolean drawMultipolygon;
+    private boolean drawRestriction;
+    private boolean leftHandTraffic;
+    private ElemStyles.StyleSet styles;
+    private double circum;
+    private double dist;
+    private boolean useStyleCache;
     private static int paintid = 0;
     private EastNorth minEN;
     private EastNorth maxEN;
     private MapPainter painter;
-    protected Collection<String> regionalNameOrder;
+    private MapPaintSettings paintSettings;
 
-    public boolean inactive;
-    protected boolean fillSelectedNode;
-    protected boolean fillUnselectedNode;
-    protected int defaultSegmentWidth;
-    protected boolean showOrderNumber;
-
-    protected boolean showRelevantDirectionsOnly;
-    protected boolean showHeadArrowOnly;
-    protected boolean showDirectionArrow;
-
-    protected int selectedNodeRadius;
-    protected int selectedNodeSize;
-    protected int taggedNodeSize;
-    protected int taggedNodeRadius;
-    protected int unselectedNodeRadius;
-    protected int unselectedNodeSize;
-
-    protected Color selectedColor;
-    protected Color highlightColor;
-    protected Color inactiveColor;
-    protected Color nodeColor;
+    private boolean inactive;
 
     protected boolean isZoomOk(ElemStyle e) {
         if (!zoomLevelDisplay) /* show everything if the user wishes so */
@@ -111,6 +81,11 @@ public class MapPaintVisitor implements PaintVisitor {
                 ((Way)osm).isMappaintArea = styles.isArea(osm);
             }
         }
+
+        if (osm.mappaintStyle == null && osm instanceof Node) {
+            osm.mappaintStyle = SimpleNodeElemStyle.INSTANCE;
+        }
+
         return osm.mappaintStyle;
     }
 
@@ -144,30 +119,10 @@ public class MapPaintVisitor implements PaintVisitor {
                 (n.getEastNorth().north() < minEN.north()))
             return;
 
-        IconElemStyle nodeStyle = (IconElemStyle)getPrimitiveStyle(n);
+        ElemStyle nodeStyle = getPrimitiveStyle(n);
 
-        if (nodeStyle != null && isZoomOk(nodeStyle) && showIcons > dist) {
-            painter.drawNodeIcon(n, (inactive || n.isDisabled())?nodeStyle.getDisabledIcon():nodeStyle.icon,
-                    nodeStyle.annotate, data.isSelected(n), getNodeName(n));
-        } else {
-            if (isZoomOk(null)) {
-                if (n.highlighted) {
-                    painter.drawNode(n, highlightColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode,
-                            getNodeName(n));
-                } else if (data.isSelected(n)) {
-                    painter.drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode,
-                            getNodeName(n));
-                } else if (n.isTagged()) {
-                    painter.drawNode(n, nodeColor, taggedNodeSize, taggedNodeRadius, fillUnselectedNode,
-                            getNodeName(n));
-                } else if (inactive || n.isDisabled()) {
-                    painter.drawNode(n, inactiveColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode,
-                            getNodeName(n));
-                } else {
-                    painter.drawNode(n, nodeColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode,
-                            getNodeName(n));
-                }
-            }
+        if (isZoomOk(nodeStyle)) {
+            nodeStyle.paintPrimitive(n, paintSettings, painter, n.isSelected());
         }
     }
 
@@ -211,121 +166,23 @@ public class MapPaintVisitor implements PaintVisitor {
         if(!isZoomOk(wayStyle))
             return;
 
-        if(wayStyle==null)
-        {
-            /* way without style */
-            drawWay(w, null, untaggedColor, data.isSelected(w));
+        if (wayStyle == null) {
+            wayStyle = LineElemStyle.UNTAGGED_WAY;
         }
-        else if(wayStyle instanceof LineElemStyle)
-        {
-            /* way with line style */
-            drawWay(w, (LineElemStyle)wayStyle, untaggedColor, data.isSelected(w));
-        }
-        else if (wayStyle instanceof AreaElemStyle)
-        {
+
+        if(wayStyle instanceof LineElemStyle) {
+            wayStyle.paintPrimitive(w, paintSettings, painter, data.isSelected(w));
+        } else if (wayStyle instanceof AreaElemStyle) {
             AreaElemStyle areaStyle = (AreaElemStyle) wayStyle;
             /* way with area style */
             if (fillAreas > dist)
             {
-                painter.drawArea(getPolygon(w), (data.isSelected(w) ? selectedColor : areaStyle.color), getWayName(w));
+                painter.drawArea(getPolygon(w), (data.isSelected(w) ? paintSettings.getSelectedColor() : areaStyle.color), painter.getWayName(w));
                 if(!w.isClosed()) {
                     putError(w, tr("Area style way is not closed."), true);
                 }
             }
-            drawWay(w, areaStyle.line, areaStyle.color, data.isSelected(w));
-        }
-    }
-
-    public void drawWay(Way w, LineElemStyle l, Color color, boolean selected) {
-        /* show direction arrows, if draw.segment.relevant_directions_only is not set,
-           the way is tagged with a direction key
-           (even if the tag is negated as in oneway=false) or the way is selected */
-        boolean showDirection = data.isSelected(w) || ((!useRealWidth) && (showDirectionArrow
-                && (!showRelevantDirectionsOnly || w.hasDirectionKeys())));
-        /* head only takes over control if the option is true,
-           the direction should be shown at all and not only because it's selected */
-        boolean showOnlyHeadArrowOnly = showDirection && !data.isSelected(w) && showHeadArrowOnly;
-        int width = defaultSegmentWidth;
-        int realWidth = 0; /* the real width of the element in meters */
-        float dashed[] = new float[0];
-        Color dashedColor = null;
-        Node lastN;
-
-        if(l != null) {
-            if (l.color != null) {
-                color = l.color;
-            }
-            width = l.width;
-            realWidth = l.realWidth;
-            dashed = l.getDashed();
-            dashedColor = l.dashedColor;
-        }
-        if(selected) {
-            color = selectedColor;
-        }
-        if (realWidth > 0 && useRealWidth && !showDirection) {
-
-            /* if we have a "width" tag, try use it */
-            /* (this might be slow and could be improved by caching the value in the Way, on the other hand only used if "real width" is enabled) */
-            String widthTag = w.get("width");
-            if(widthTag == null) {
-                widthTag = w.get("est_width");
-            }
-            if(widthTag != null) {
-                try {
-                    realWidth = Integer.parseInt(widthTag);
-                }
-                catch(NumberFormatException nfe) {
-                }
-            }
-
-            int tmpWidth = (int) (100 /  (float) (circum / realWidth));
-            if (tmpWidth > width) {
-                width = tmpWidth;
-            }
-        }
-
-        if(w.highlighted) {
-            color = highlightColor;
-        } else if(data.isSelected(w)) {
-            color = selectedColor;
-        } else if(w.isDisabled()) {
-            color = inactiveColor;
-        }
-
-        /* draw overlays under the way */
-        if(l != null && l.overlays != null) {
-            for(LineElemStyle s : l.overlays) {
-                if(!s.over) {
-                    painter.drawWay(w, s.color != null && !data.isSelected(w) ? s.color : color, s.getWidth(width),
-                            s.getDashed(), s.dashedColor, false, false);
-                }
-            }
-        }
-
-        /* draw the way */
-        painter.drawWay(w, color, width, dashed, dashedColor, showDirection, showOnlyHeadArrowOnly);
-
-        /* draw overlays above the way */
-        if(l != null && l.overlays != null)  {
-            for(LineElemStyle s : l.overlays) {
-                if(s.over) {
-                    painter.drawWay(w, s.color != null && !data.isSelected(w) ? s.color : color, s.getWidth(width),
-                            s.getDashed(), s.dashedColor, false, false);
-                }
-            }
-        }
-
-        if(showOrderNumber) {
-            int orderNumber = 0;
-            lastN = null;
-            for(Node n : w.getNodes()) {
-                if(lastN != null) {
-                    orderNumber++;
-                    drawOrderNumber(lastN, n, orderNumber);
-                }
-                lastN = n;
-            }
+            areaStyle.getLineStyle().paintPrimitive(w, paintSettings, painter, data.isSelected(w));
         }
     }
 
@@ -440,28 +297,21 @@ public class MapPaintVisitor implements PaintVisitor {
     {
         if(osm instanceof Way)
         {
-            if(style instanceof AreaElemStyle)
-            {
+            if(style instanceof AreaElemStyle) {
                 Way way = (Way)osm;
                 AreaElemStyle areaStyle = (AreaElemStyle)style;
-                drawWay(way, areaStyle.line, selectedColor, true);
+                areaStyle.getLineStyle().paintPrimitive(way, paintSettings, painter, true);
                 if(area) {
-                    painter.drawArea(getPolygon(way), (areaselected ? selectedColor : areaStyle.color), getWayName(way));
+                    painter.drawArea(getPolygon(way), (areaselected ? paintSettings.getSelectedColor() : areaStyle.color), painter.getWayName(way));
                 }
-            }
-            else
-            {
-                drawWay((Way)osm, (LineElemStyle)style, selectedColor, true);
+            } else {
+                style.paintPrimitive(osm, paintSettings, painter, true);
             }
         }
         else if(osm instanceof Node)
         {
-            if(style != null && isZoomOk(style)) {
-                painter.drawNodeIcon((Node)osm, ((IconElemStyle)style).icon,
-                        ((IconElemStyle)style).annotate, true, getNodeName((Node)osm));
-            } else if (isZoomOk(null)) {
-                painter.drawNode((Node)osm, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode,
-                        getNodeName((Node)osm));
+            if(isZoomOk(style)) {
+                style.paintPrimitive(osm, paintSettings, painter, true);
             }
         }
         osm.mappaintDrawnCode = paintid;
@@ -916,7 +766,7 @@ public class MapPaintVisitor implements PaintVisitor {
                     }
 
                     boolean selected = pd.selected || data.isSelected(pd.way) || data.isSelected(r);
-                    painter.drawArea(p, selected ? selectedColor : areaStyle.color, null);
+                    painter.drawArea(p, selected ? paintSettings.getSelectedColor() : areaStyle.color, null);
                     visible = true;
                 }
             }
@@ -933,9 +783,8 @@ public class MapPaintVisitor implements PaintVisitor {
                     if(zoomok && (wInner.mappaintDrawnCode != paintid
                             || outer.size() == 0))
                     {
-                        drawWay(wInner, ((AreaElemStyle)wayStyle).line,
-                                ((AreaElemStyle)wayStyle).color, data.isSelected(wInner)
-                                || data.isSelected(r));
+                        ((AreaElemStyle)wayStyle).getLineStyle().paintPrimitive(wInner, paintSettings, painter, (data.isSelected(wInner)
+                                || data.isSelected(r)));
                     }
                     wInner.mappaintDrawnCode = paintid;
                 }
@@ -967,9 +816,7 @@ public class MapPaintVisitor implements PaintVisitor {
                     }
                     if(zoomok)
                     {
-                        drawWay(wOuter, ((AreaElemStyle)wayStyle).line,
-                                ((AreaElemStyle)wayStyle).color, data.isSelected(wOuter)
-                                || data.isSelected(r));
+                        ((AreaElemStyle)wayStyle).getLineStyle().paintPrimitive(wOuter, paintSettings, painter, (data.isSelected(wOuter) || data.isSelected(r)));
                     }
                     wOuter.mappaintDrawnCode = paintid;
                 }
@@ -1044,48 +891,6 @@ public class MapPaintVisitor implements PaintVisitor {
         return Math.abs(sum/2.0);
     }
 
-    protected String getNodeName(Node n) {
-        if (showNames > dist) {
-            String name = null;
-            if (n.hasKeys()) {
-                for (String rn : regionalNameOrder) {
-                    name = n.get(rn);
-                    if (name != null) {
-                        break;
-                    }
-                }
-            }
-            return name;
-        } else
-            return null;
-    }
-
-    protected String getWayName(Way w) {
-        if (showNames > dist) {
-            String name = null;
-            if (w.hasKeys()) {
-                for (String rn : regionalNameOrder) {
-                    name = w.get(rn);
-                    if (name != null) {
-                        break;
-                    }
-                }
-            }
-            return name;
-        } else
-            return null;
-    }
-
-    public void getColors() {
-        selectedColor  = PaintColors.SELECTED.get();
-        highlightColor = PaintColors.HIGHLIGHT.get();
-        inactiveColor = PaintColors.INACTIVE.get();
-        nodeColor = PaintColors.NODE.get();
-        untaggedColor = PaintColors.UNTAGGED.get();
-        textColor = PaintColors.TEXT.get();
-        areaTextColor = PaintColors.AREA_TEXT.get();
-    }
-
     DataSet data;
 
     <T extends OsmPrimitive> Collection<T> selectedLast(final DataSet data, Collection <T> prims) {
@@ -1112,43 +917,21 @@ public class MapPaintVisitor implements PaintVisitor {
 
         useStyleCache = Main.pref.getBoolean("mappaint.cache", true);
         int fillAreas = Main.pref.getInteger("mappaint.fillareas", 10000000);
-        fillAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
-        showNames = Main.pref.getInteger("mappaint.shownames", 10000000);
-        showIcons = Main.pref.getInteger("mappaint.showicons", 10000000);
-        useStrokes = Main.pref.getInteger("mappaint.strokes", 10000000);
         LatLon ll1 = nc.getLatLon(0, 0);
         LatLon ll2 = nc.getLatLon(100, 0);
         dist = ll1.greatCircleDistance(ll2);
 
-        getColors();
-
-        showDirectionArrow = Main.pref.getBoolean("draw.segment.direction", true);
-        showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only", true);
-        showHeadArrowOnly = Main.pref.getBoolean("draw.segment.head_only", false);
-        showOrderNumber = Main.pref.getBoolean("draw.segment.order_number", false);
-        selectedNodeRadius = Main.pref.getInteger("mappaint.node.selected-size", 5) / 2;
-        selectedNodeSize = selectedNodeRadius * 2;
-        unselectedNodeRadius = Main.pref.getInteger("mappaint.node.unselected-size", 3) / 2;
-        unselectedNodeSize = unselectedNodeRadius * 2;
-        taggedNodeRadius = Main.pref.getInteger("mappaint.node.tagged-size", 5) / 2;
-        taggedNodeSize = taggedNodeRadius * 2;
-        defaultSegmentWidth = Main.pref.getInteger("mappaint.segment.default-width", 2);
-        fillSelectedNode = Main.pref.getBoolean("mappaint.node.fill-selected", true);
-        fillUnselectedNode = Main.pref.getBoolean("mappaint.node.fill-unselected", false);
-
-        useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth", false);
         zoomLevelDisplay = Main.pref.getBoolean("mappaint.zoomLevelDisplay", false);
         circum = Main.map.mapView.getDist100Pixel();
         styles = MapPaintStyles.getStyles().getStyleSet();
         drawMultipolygon = Main.pref.getBoolean("mappaint.multipolygon", true);
         drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
         leftHandTraffic = Main.pref.getBoolean("mappaint.lefthandtraffic", false);
-        String[] names = {"name:" + LanguageInfo.getJOSMLocaleCode(), "name", "int_name", "ref", "operator", "brand", "addr:housenumber"};
         minEN = nc.getEastNorth(0, nc.getHeight() - 1);
         maxEN = nc.getEastNorth(nc.getWidth() - 1, 0);
-        regionalNameOrder = Main.pref.getCollection("mappaint.nameOrder", Arrays.asList(names));
 
-        this.painter = new MapPainter(g, inactive, nc, useStrokes > dist, virtual);
+        this.paintSettings = MapPaintSettings.INSTANCE;
+        this.painter = new MapPainter(paintSettings, g, inactive, nc, virtual, dist, circum);
 
         data.clearErrors();
 
@@ -1232,16 +1015,6 @@ public class MapPaintVisitor implements PaintVisitor {
         }
 
         painter.drawVirtualNodes(data.searchWays(bbox));
-    }
-
-    /**
-     * Draw a number of the order of the two consecutive nodes within the
-     * parents way
-     */
-    protected void drawOrderNumber(Node n1, Node n2, int orderNumber) {
-        Point p1 = nc.getPoint(n1);
-        Point p2 = nc.getPoint(n2);
-        painter.drawOrderNumber(p1, p2, orderNumber);
     }
 
     public void putError(OsmPrimitive p, String text, boolean isError)

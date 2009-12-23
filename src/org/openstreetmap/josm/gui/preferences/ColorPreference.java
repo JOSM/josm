@@ -33,7 +33,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintVisitor;
+import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.MapScaler;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
@@ -253,7 +253,7 @@ public class ColorPreference implements PreferenceSetting {
      * Add all missing color entries.
      */
     private void fixColorPrefixes() {
-        (new MapPaintVisitor()).getColors();
+        PaintColors.getColors();
         MarkerLayer.getColor(null);
         MapScaler.getColor();
         ConflictDialog.getColor();

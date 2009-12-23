@@ -83,20 +83,20 @@ public class ElemStyleHandler extends DefaultHandler
                 String val = atts.getValue(count);
                 if(val.startsWith("+"))
                 {
-                    line.width = Integer.parseInt(val.substring(1));
+                    line.setWidth(Integer.parseInt(val.substring(1)));
                     line.widthMode = LineElemStyle.WidthMode.OFFSET;
                 }
                 else if(val.startsWith("-"))
                 {
-                    line.width = Integer.parseInt(val);
+                    line.setWidth(Integer.parseInt(val));
                     line.widthMode = LineElemStyle.WidthMode.OFFSET;
                 }
                 else if(val.endsWith("%"))
                 {
-                    line.width = Integer.parseInt(val.substring(0, val.length()-1));
+                    line.setWidth(Integer.parseInt(val.substring(0, val.length()-1)));
                     line.widthMode = LineElemStyle.WidthMode.PERCENT;
                 } else {
-                    line.width = Integer.parseInt(val);
+                    line.setWidth(Integer.parseInt(val));
                 }
             }
             else if (atts.getQName(count).equals("colour")) {
