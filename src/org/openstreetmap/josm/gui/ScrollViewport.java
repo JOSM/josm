@@ -12,7 +12,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -144,11 +143,9 @@ public class ScrollViewport extends JPanel {
     public synchronized void scroll() {
         int direction = scrollDirection;
 
-        if (component == null || direction == NO_SCROLL) {
+        if (component == null || direction == NO_SCROLL)
             return;
-        }
 
-        Dimension compSize = component.getSize();
         Rectangle viewRect = vp.getViewRect();
 
         int deltaX = 0;
@@ -161,20 +158,19 @@ public class ScrollViewport extends JPanel {
         }
 
         switch (direction) {
-            case UP_DIRECTION :
-                deltaY *= -1;
-                break;
-            case LEFT_DIRECTION :
-                deltaX *= -1;
-                break;
+        case UP_DIRECTION :
+            deltaY *= -1;
+            break;
+        case LEFT_DIRECTION :
+            deltaX *= -1;
+            break;
         }
 
         scroll(deltaX, deltaY);
     }
     public synchronized void scroll(int deltaX, int deltaY) {
-        if (component == null) {
+        if (component == null)
             return;
-        }
         Dimension compSize = component.getSize();
         Rectangle viewRect = vp.getViewRect();
 
@@ -203,7 +199,7 @@ public class ScrollViewport extends JPanel {
      */
     public void showOrHideButtons() {
         boolean needButtons = vp.getViewSize().height > vp.getViewRect().height ||
-                              vp.getViewSize().width > vp.getViewRect().width;
+        vp.getViewSize().width > vp.getViewRect().width;
         for (JButton b : buttons) {
             b.setVisible(needButtons);
         }

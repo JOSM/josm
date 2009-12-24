@@ -229,11 +229,8 @@ public final class Changeset implements Tagged {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (id ^ (id >>> 32));
         if (id > 0)
-            return prime * result + getClass().hashCode();
+            return id;
         else
             return super.hashCode();
     }

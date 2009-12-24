@@ -76,12 +76,10 @@ public class BoundingBoxDownloader extends OsmServerReader {
             throw e;
         } catch (OsmTransferException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             if (cancel)
                 return null;
-            if (e instanceof RuntimeException)
-                throw (RuntimeException)e;
-            throw new RuntimeException(e);
+            throw e;
         } finally {
             progressMonitor.finishTask();
         }

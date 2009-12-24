@@ -232,7 +232,8 @@ public class NmeaReader {
     // Returns true if the input made sence, false otherwise.
     private boolean ParseNMEASentence(String s, NMEAParserState ps) {
         try {
-            if(s.equals("")) throw(null);
+            if (s.equals(""))
+                throw new NullPointerException();
 
             // checksum check:
             // the bytes between the $ and the * are xored;
@@ -443,7 +444,7 @@ public class NmeaReader {
             }
             return true;
 
-        } catch(Exception x) {
+        } catch(RuntimeException x) {
             // out of bounds and such
             // x.printStackTrace();
             // System.out.println("Malformed line: "+s.toString().trim());

@@ -46,7 +46,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
@@ -157,8 +156,6 @@ public class PlaceSelection implements DownloadSelection {
         public double lat;
         public double lon;
         public int zoom;
-        public int osmId;
-        public OsmPrimitiveType type;
 
         public Bounds getDownloadArea() {
             double size = 180.0 / Math.pow(2, zoom);
@@ -199,8 +196,8 @@ public class PlaceSelection implements DownloadSelection {
                     currentResult.lat = Double.parseDouble(atts.getValue("lat"));
                     currentResult.lon = Double.parseDouble(atts.getValue("lon"));
                     currentResult.zoom = Integer.parseInt(atts.getValue("zoom"));
-                    currentResult.osmId = Integer.parseInt(atts.getValue("id"));
-                    currentResult.type = OsmPrimitiveType.from(atts.getValue("type"));
+                    //currentResult.osmId = Integer.parseInt(atts.getValue("id"));
+                    //currentResult.type = OsmPrimitiveType.from(atts.getValue("type"));
                     data.add(currentResult);
                 } else if (qName.equals("description") && (depth == 3)) {
                     description = new StringBuffer();
@@ -382,7 +379,7 @@ public class PlaceSelection implements DownloadSelection {
         }
     }
 
-    class NamedResultTableColumnModel extends DefaultTableColumnModel {
+    static class NamedResultTableColumnModel extends DefaultTableColumnModel {
         protected void createColumns() {
             TableColumn col = null;
             NamedResultCellRenderer renderer = new NamedResultCellRenderer();

@@ -22,12 +22,12 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
 
     private static class PrefixSuffixSwitcher {
 
+        private static final String SEPARATOR = "[:_]?";
+
         private final String a;
         private final String b;
         private final Pattern startPattern;
         private final Pattern endPattern;
-
-        private final String SEPARATOR = "[:_]?";
 
         public PrefixSuffixSwitcher(String a, String b) {
             this.a = a;

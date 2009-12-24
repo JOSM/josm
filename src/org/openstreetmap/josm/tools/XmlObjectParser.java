@@ -30,7 +30,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author Imi
  */
 public class XmlObjectParser implements Iterable<Object> {
-    public class PresetParsingException extends SAXException {
+    public static class PresetParsingException extends SAXException {
         private int columnNumber;
         private int lineNumber;
 
@@ -109,10 +109,6 @@ public class XmlObjectParser implements Iterable<Object> {
         @Override
         public void setDocumentLocator(Locator locator) {
             this.locator = locator;
-        }
-
-        protected void throwException(String msg) throws PresetParsingException{
-            throw new PresetParsingException(msg).rememberLocation(locator);
         }
 
         protected void throwException(Exception e) throws PresetParsingException{

@@ -2,11 +2,10 @@
 //                         2009 by Łukasz Stelmach
 package org.openstreetmap.josm.data.projection;
 
-import java.text.DecimalFormat;
-
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
+import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -39,6 +38,7 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
 
     private static DecimalFormat decFormatter = new DecimalFormat("###0");
 
+    @Override
     public EastNorth latlon2eastNorth(LatLon p) {
         PuwgData z = Zones[zone];
         double easting = z.getPuwgFalseEasting();
@@ -49,6 +49,7 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
         return new EastNorth(a.east() * scale + easting, a.north() * scale + northing);
     }
 
+    @Override
     public LatLon eastNorth2latlon(EastNorth p) {
         PuwgData z = Zones[zone];
         double easting = z.getPuwgFalseEasting();
@@ -62,6 +63,7 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
         return tr("PUWG (Poland)");
     }
 
+    @Override
     public String toCode() {
         return Zones[zone].toCode();
     }
@@ -71,14 +73,17 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
         return getClass().getName().hashCode()+zone; // our only real variable
     }
 
+    @Override
     public String getCacheDirectoryName() {
         return Zones[zone].getCacheDirectoryName();
     }
 
+    @Override
     public Bounds getWorldBoundsLatLon() {
         return Zones[zone].getWorldBoundsLatLon();
     }
 
+    @Override
     public double getDefaultZoomInPPD() {
         // This will set the scale bar to about 100 km
         return 0.009;
@@ -92,6 +97,7 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
         return decFormatter.format(p.north());
     }
 
+    @Override
     public void setupPreferencePanel(JPanel p) {
         JComboBox prefcb = new JComboBox(Puwg.Zones);
 
@@ -104,24 +110,27 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
         p.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
     }
 
+    @Override
     public Collection<String> getPreferences(JPanel p) {
-    Object prefcb = p.getComponent(2);
+        Object prefcb = p.getComponent(2);
         if(!(prefcb instanceof JComboBox))
             return null;
         int zone = ((JComboBox)prefcb).getSelectedIndex();
         return Collections.singleton((Puwg.Zones[zone]).toCode());
     }
 
+    @Override
     public Collection<String> getPreferencesFromCode(String code)
     {
         for (Projection p : Puwg.Zones)
         {
             if(code.equals(p.toCode()))
-            return Collections.singleton(code);
+                return Collections.singleton(code);
         }
         return null;
     }
 
+    @Override
     public void setPreferences(Collection<String> args)
     {
         zone = DEFAULT_ZONE;
@@ -130,12 +139,13 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
             try {
                 for(String s : args)
                 {
-                for (int i=0; i < Puwg.Zones.length; ++i)
-                    if(s.equals(Zones[i].toCode()))
-                    zone = i;
-                break;
+                    for (int i=0; i < Puwg.Zones.length; ++i)
+                        if(s.equals(Zones[i].toCode())) {
+                            zone = i;
+                        }
+                    break;
                 }
-            } catch (NullPointerException e) {};
+            } catch (NullPointerException e) {}
         }
     }
 }
@@ -150,10 +160,10 @@ interface PuwgData extends Projection {
 
 class Epsg2180 implements PuwgData {
 
-    final private double Epsg2180FalseEasting = 500000.0; /* y */
-    final private double Epsg2180FalseNorthing = -5300000.0; /* x */
-    final private double Epsg2180ScaleFactor = 0.9993;
-    final private double Epsg2180CentralMeridian = 19.0;
+    private static final double Epsg2180FalseEasting = 500000.0; /* y */
+    private static final double Epsg2180FalseNorthing = -5300000.0; /* x */
+    private static final double Epsg2180ScaleFactor = 0.9993;
+    private static final double Epsg2180CentralMeridian = 19.0;
     private static DecimalFormat decFormatter = new DecimalFormat("###0");
 
     @Override public String toString() {
@@ -201,10 +211,10 @@ class Epsg2180 implements PuwgData {
 
 abstract class Puwg2000 implements PuwgData {
 
-    final private double PuwgFalseEasting = 500000.0;
-    final private double PuwgFalseNorthing = 0;
-    final private double PuwgScaleFactor = 0.999923;
-    final private double[] Puwg2000CentralMeridian = {15.0, 18.0, 21.0, 24.0};
+    private static final double PuwgFalseEasting = 500000.0;
+    private static final double PuwgFalseNorthing = 0;
+    private static final double PuwgScaleFactor = 0.999923;
+    //final private double[] Puwg2000CentralMeridian = {15.0, 18.0, 21.0, 24.0};
     final private String[] Puwg2000Code = { "EPSG:2176",  "EPSG:2177", "EPSG:2178", "EPSG:2179"};
     final private String[] Puwg2000CDName = { "epsg2176",  "epsg2177", "epsg2178", "epsg2179"};
     private static DecimalFormat decFormatter = new DecimalFormat("###0.00");
@@ -257,25 +267,29 @@ abstract class Puwg2000 implements PuwgData {
 }
 
 class Epsg2176 extends Puwg2000 implements Projection {
-    final private int PuwgZone = 5;
+    private static final int PuwgZone = 5;
 
+    @Override
     public int getZone() { return PuwgZone; }
 }
 
 class Epsg2177 extends Puwg2000 implements Projection {
-    final private int PuwgZone = 6;
+    private static final int PuwgZone = 6;
 
+    @Override
     public int getZone() { return PuwgZone; }
 }
 
 class Epsg2178 extends Puwg2000 implements Projection {
-    final private int PuwgZone = 7;
+    private static final int PuwgZone = 7;
 
+    @Override
     public int getZone() { return PuwgZone; }
 }
 
 class Epsg2179 extends Puwg2000 implements Projection {
-    final private int PuwgZone = 8;
+    private static final int PuwgZone = 8;
 
+    @Override
     public int getZone() { return PuwgZone; }
 }

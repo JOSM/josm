@@ -18,11 +18,6 @@ import org.openstreetmap.josm.gui.conflict.pair.tags.TagMergeModel;
 public class TagMergeModelTest {
 
     @Test
-    public void TagMergeModel() {
-        TagMergeModel model = new TagMergeModel();
-    }
-
-    @Test
     public void addPropertyChangeListener() {
         TagMergeModel model = new TagMergeModel();
         PropertyChangeListener listener = new PropertyChangeListener() {
@@ -32,7 +27,7 @@ public class TagMergeModelTest {
         };
         model.addPropertyChangeListener(listener);
 
-        ArrayList list = field("listeners").ofType(ArrayList.class)
+        ArrayList<?> list = field("listeners").ofType(ArrayList.class)
         .in(model)
         .get();
 
@@ -51,7 +46,7 @@ public class TagMergeModelTest {
         model.addPropertyChangeListener(listener);
         model.removePropertyChangeListener(listener);
 
-        ArrayList list = field("listeners")
+        ArrayList<?> list = field("listeners")
         .ofType(ArrayList.class)
         .in(model)
         .get();

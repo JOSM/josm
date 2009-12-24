@@ -328,6 +328,11 @@ public class SearchAction extends JosmAction{
                     && o.mode.equals(this.mode)
                     && o.text.equals(this.text));
         }
+
+        @Override
+        public int hashCode() {
+            return text.hashCode();
+        }
     }
 
     /**

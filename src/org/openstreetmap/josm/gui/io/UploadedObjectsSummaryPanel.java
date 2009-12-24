@@ -139,7 +139,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
      * A simple list of OSM primitives.
      *
      */
-    class PrimitiveList extends JList {
+    static class PrimitiveList extends JList {
         public PrimitiveList() {
             super(new PrimitiveListModel());
         }

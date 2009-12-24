@@ -319,8 +319,7 @@ public class FileDrop
                     log( out, "FileDrop: file list accepted." );
 
                     // Get a useful list
-                    List fileList = (java.util.List)
-                    tr.getTransferData(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
+                    List<?> fileList = (List<?>)tr.getTransferData(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
 
                     // Convert list to array
                     final File[] files = (File[]) fileList.toArray();
@@ -428,13 +427,12 @@ public class FileDrop
         if( supportsDnD == null )
         {
             boolean support = false;
-            try
-            {   Class arbitraryDndClass = Class.forName( "java.awt.dnd.DnDConstants" );
-            support = true;
-            }   // end try
-            catch( Exception e )
-            {   support = false;
-            }   // end catch
+            try {
+                Class.forName( "java.awt.dnd.DnDConstants" );
+                support = true;
+            } catch( Exception e ) {
+                support = false;
+            }
             supportsDnD = support;
         }   // end if: first time through
         return supportsDnD.booleanValue();

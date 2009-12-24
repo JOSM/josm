@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -150,9 +151,9 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
             );
 
             if (answer == JOptionPane.YES_OPTION) {
-                for (OsmPrimitive primitive : tagCorrectionsMap.keySet()) {
-                    List<TagCorrection> tagCorrections =
-                        tagCorrectionsMap.get(primitive);
+                for (Entry<OsmPrimitive, List<TagCorrection>> entry : tagCorrectionsMap.entrySet()) {
+                    List<TagCorrection> tagCorrections = entry.getValue();
+                    OsmPrimitive primitive = entry.getKey();
 
                     // create the clone
                     OsmPrimitive clone = null;
@@ -185,9 +186,9 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                         commands.add(new ChangeCommand(primitive, clone));
                     }
                 }
-                for (OsmPrimitive primitive : roleCorrectionMap.keySet()) {
-                    List<RoleCorrection> roleCorrections = roleCorrectionMap
-                    .get(primitive);
+                for (Entry<OsmPrimitive, List<RoleCorrection>> entry : roleCorrectionMap.entrySet()) {
+                    OsmPrimitive primitive = entry.getKey();
+                    List<RoleCorrection> roleCorrections = entry.getValue();
 
                     for (int i = 0; i < roleCorrections.size(); i++) {
                         RoleCorrection roleCorrection = roleCorrections.get(i);
