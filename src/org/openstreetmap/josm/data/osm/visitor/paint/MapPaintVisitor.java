@@ -189,7 +189,7 @@ public class MapPaintVisitor implements PaintVisitor {
     public Collection<PolyData> joinWays(Collection<Way> join, OsmPrimitive errs)
     {
         Collection<PolyData> res = new LinkedList<PolyData>();
-        Object[] joinArray = join.toArray();
+        Way[] joinArray = join.toArray(new Way[join.size()]);
         int left = join.size();
         while(left != 0)
         {
@@ -204,7 +204,7 @@ public class MapPaintVisitor implements PaintVisitor {
                 {
                     if(joinArray[i] != null)
                     {
-                        Way c = (Way)joinArray[i];
+                        Way c = joinArray[i];
                         if(w == null)
                         { w = c; selected = data.isSelected(w); joinArray[i] = null; --left; }
                         else
@@ -630,7 +630,7 @@ public class MapPaintVisitor implements PaintVisitor {
         PolyData o = null;
         for (PolyData pdOuter : outerPolygons)
         {
-            Integer c = pdOuter.contains(pdInner.poly);
+            int c = pdOuter.contains(pdInner.poly);
             if(c >= 1)
             {
                 if(c > 1 && pdOuter.way != null && pdOuter.way.isClosed())
@@ -663,14 +663,14 @@ public class MapPaintVisitor implements PaintVisitor {
         boolean incomplete = false;
         boolean drawn = false;
 
-        for (RelationMember m : r.getMembers())
-        {
+        // Fill inner and outer list with valid ways
+        for (RelationMember m : r.getMembers()) {
             if (m.getMember().isDeleted()) {
                 putError(r, tr("Deleted member ''{0}'' in relation.",
                         m.getMember().getDisplayName(DefaultNameFormatter.getInstance())), true);
-            } else if(m.getMember().isIncomplete()) {
+            } else if (m.getMember().isIncomplete()) {
                 incomplete = true;
-            } else {
+            } else if(m.getMember().isDrawable()) {
                 if(m.isWay()) {
                     Way w = m.getWay();
                     if(w.getNodesCount() < 2) {
@@ -687,6 +687,7 @@ public class MapPaintVisitor implements PaintVisitor {
                         if(!m.hasRole()) {
                             outer.add(w);
                         } else if(data.isSelected(r)) {
+                            // TODO Is this necessary?
                             drawSelectedMember(m.getMember(), styles != null
                                     ? getPrimitiveStyle(m.getMember()) : null, true, true);
                         }
@@ -700,20 +701,20 @@ public class MapPaintVisitor implements PaintVisitor {
             }
         }
 
-        ElemStyle wayStyle = styles != null ? getPrimitiveStyle(r) : null;
-        if(styles != null && (wayStyle == null || !(wayStyle instanceof AreaElemStyle)))
-        {
-            for (Way w : outer)
-            {
-                if(wayStyle == null) {
-                    wayStyle = styles.getArea(w);
+        ElemStyle wayStyle = getPrimitiveStyle(r);
+
+        // If area style was not found for relation then use style of ways
+        if(styles != null && !(wayStyle instanceof AreaElemStyle)) {
+            for (Way w : outer) {
+                wayStyle = styles.getArea(w);
+                if(wayStyle != null) {
+                    break;
                 }
             }
             r.mappaintStyle = wayStyle;
         }
 
-        if(wayStyle != null && wayStyle instanceof AreaElemStyle)
-        {
+        if (wayStyle instanceof AreaElemStyle) {
             boolean zoomok = isZoomOk(wayStyle);
             boolean visible = false;
             Collection<Way> outerjoin = new LinkedList<Way>();
@@ -736,6 +737,8 @@ public class MapPaintVisitor implements PaintVisitor {
                     innerjoin.add(w);
                 }
             }
+
+
             if(outerclosed.size() == 0 && outerjoin.size() == 0)
             {
                 putError(r, tr("No outer way for multipolygon ''{0}''.",
@@ -770,6 +773,7 @@ public class MapPaintVisitor implements PaintVisitor {
                     visible = true;
                 }
             }
+
             if(!visible)
                 return drawn;
             for (Way wInner : inner)

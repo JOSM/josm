@@ -397,4 +397,9 @@ public final class Way extends OsmPrimitive {
     public boolean isUsable() {
         return super.isUsable() && !hasIncompleteNodes();
     }
+
+    @Override
+    public boolean isDrawable() {
+        return super.isDrawable() && !hasIncompleteNodes();
+    }
 }
