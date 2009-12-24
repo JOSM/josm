@@ -86,6 +86,10 @@ public class MapPaintVisitor implements PaintVisitor {
             osm.mappaintStyle = SimpleNodeElemStyle.INSTANCE;
         }
 
+        if (osm.mappaintStyle == null && osm instanceof Way) {
+            osm.mappaintStyle = LineElemStyle.UNTAGGED_WAY;
+        }
+
         return osm.mappaintStyle;
     }
 

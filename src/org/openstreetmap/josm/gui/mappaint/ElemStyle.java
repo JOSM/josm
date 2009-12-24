@@ -26,13 +26,13 @@ abstract public class ElemStyle {
         return getClass().hashCode();
     }
 
-    public String getCode()
-    {
-        if(code == null && rules != null)
-        {
+    public String getCode() {
+        if(code == null) {
             code = "";
-            for(Rule r: rules) {
-                code += r.toCode();
+            if (rules != null) {
+                for(Rule r: rules) {
+                    code += r.toCode();
+                }
             }
         }
         return code;
