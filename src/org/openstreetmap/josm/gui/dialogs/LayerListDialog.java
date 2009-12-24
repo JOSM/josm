@@ -760,7 +760,7 @@ public class LayerListDialog extends ToggleDialog {
                 selectionModel.setSelectionInterval(size-1, size-1);
             }
             fireRefresh();
-            ensureSelectedIsVisible();
+            ensureActiveSelected();
         }
 
         /**
