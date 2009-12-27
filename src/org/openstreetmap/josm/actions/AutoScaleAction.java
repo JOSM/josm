@@ -27,7 +27,39 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class AutoScaleAction extends JosmAction {
 
-    public static final String[] modes = { marktr("data"), marktr("layer"), marktr("selection"), marktr("conflict"), marktr("download") };
+    public static final String[] MODES = { marktr("data"), marktr("layer"), marktr("selection"), marktr("conflict"), marktr("download") };
+
+    /**
+     * Zooms the current map view to the currently selected primitives.
+     * Does nothing if there either isn't a current map view or if there isn't a current data
+     * layer.
+     * 
+     */
+    public static void zoomToSelection() {
+        if (Main.main == null || Main.main.getEditLayer() == null) return;
+        if (Main.map == null || Main.map.mapView == null) return;
+        Collection<OsmPrimitive> sel = new HashSet<OsmPrimitive>();
+        sel = Main.main.getEditLayer().data.getSelected();
+        if (sel.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("Nothing selected to zoom to."),
+                    tr("Information"),
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            return;
+        }
+        BoundingXYVisitor bboxCalculator = new BoundingXYVisitor();
+        bboxCalculator.computeBoundingBox(sel);
+        // increase bbox by 0.001 degrees on each side. this is required
+        // especially if the bbox contains one single node, but helpful
+        // in most other cases as well.
+        bboxCalculator.enlargeBoundingBox();
+        if (bboxCalculator.getBounds() != null) {
+            Main.map.mapView.recalculateCenterScale(bboxCalculator);
+        }
+    }
+
     private final String mode;
 
     private static int getModeShortcut(String mode) {

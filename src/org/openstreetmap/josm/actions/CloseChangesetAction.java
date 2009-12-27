@@ -131,7 +131,7 @@ public class CloseChangesetAction extends JosmAction{
                 if (cancelled)
                     return;
                 reader = new OsmServerChangesetReader();
-                ChangesetQuery query = new ChangesetQuery().forUser(userInfo.getId()).beingOpen();
+                ChangesetQuery query = new ChangesetQuery().forUser(userInfo.getId()).beingOpen(true);
                 changesets = reader.queryChangesets(
                         query,
                         getProgressMonitor().createSubTaskMonitor(1, false /* not internal */)
