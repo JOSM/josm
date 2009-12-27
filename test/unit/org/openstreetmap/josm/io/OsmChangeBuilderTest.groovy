@@ -1,15 +1,11 @@
-// License: GPL. For details, see LICENSE file.
-
 package org.openstreetmap.josm.io;
 
 import org.junit.Test 
-import org.openstreetmap.josm.data.osm.Changeset
-import org.openstreetmap.josm.data.osm.Node
-import org.openstreetmap.josm.data.coor.LatLon
-
+import org.openstreetmap.josm.data.coor.LatLon 
+import org.openstreetmap.josm.data.osm.Changeset 
 
 import static org.junit.Assert.*;
-
+ 
 class OsmChangeBuilderTest {
 	
 	/**
@@ -29,7 +25,7 @@ class OsmChangeBuilderTest {
 		
 		builder = new OsmChangeBuilder(cs, null)
 		
-		builder = new OsmChangeBuilder(null, null)		
+		builder = new OsmChangeBuilder(null, null)      
 	}
 	
 	/**
@@ -42,7 +38,7 @@ class OsmChangeBuilderTest {
 		OsmChangeBuilder builder = new OsmChangeBuilder(cs)
 		
 		final shouldFail = new GroovyTestCase().&shouldFail
-				
+		
 		// should be OK 
 		builder.start()
 		Node n = new Node(new LatLon(0,0))
@@ -50,7 +46,7 @@ class OsmChangeBuilderTest {
 		builder.finish()
 		
 		shouldFail(IllegalStateException) {
-		    builder = new OsmChangeBuilder(cs)
+			builder = new OsmChangeBuilder(cs)
 			builder.append n
 		}
 		
@@ -60,7 +56,7 @@ class OsmChangeBuilderTest {
 		}
 		
 		shouldFail(IllegalStateException) {
-		    builder = new OsmChangeBuilder(cs)
+			builder = new OsmChangeBuilder(cs)
 			builder.finish()
 		}
 		
@@ -68,7 +64,7 @@ class OsmChangeBuilderTest {
 			builder = new OsmChangeBuilder(cs)
 			builder.start()
 			builder.start()
-		}		
+		}       
 	}
 	
 	@Test
@@ -96,12 +92,12 @@ class OsmChangeBuilderTest {
 		assert node.@id == n.uniqueId.toString()
 		assert node.@lat != null
 		assert node.@lon != null
-		assert node.@changeset == cs.id.toString()		
-	}	
+		assert node.@changeset == cs.id.toString()      
+	}   
 	
-    /**
-     * Test building a coument with a modified node 
-     */
+	/**
+	 * Test building a document with a modified node 
+	 */
 	@Test
 	public void testDocumentWithModifiedNode() {
 		def Changeset cs = new Changeset(1) 
@@ -190,7 +186,7 @@ class OsmChangeBuilderTest {
 		builder.start()
 		builder.append([n1,n2,n3])
 		builder.finish()
-  
+		
 		def doc = new XmlParser().parseText(builder.document)
 		
 		assert doc.children().size() == 3
@@ -205,6 +201,6 @@ class OsmChangeBuilderTest {
 		assert node.@id == n2.uniqueId.toString()
 		
 		node = doc.children()[2].node[0]
-		assert node.@id == n3.uniqueId.toString()		
+		assert node.@id == n3.uniqueId.toString()       
 	}
 }
