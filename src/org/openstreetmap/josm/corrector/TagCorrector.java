@@ -49,32 +49,12 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
             Map<OsmPrimitive, List<RoleCorrection>> roleCorrectionMap,
             String description) throws UserCancelException {
 
-        boolean hasCorrections = false;
-        for (List<TagCorrection> tagCorrectionList : tagCorrectionsMap.values()) {
-            if (!tagCorrectionList.isEmpty()) {
-                hasCorrections = true;
-                break;
-            }
-        }
-
-        if (!hasCorrections) {
-            for (List<RoleCorrection> roleCorrectionList : roleCorrectionMap
-                    .values()) {
-                if (!roleCorrectionList.isEmpty()) {
-                    hasCorrections = true;
-                    break;
-                }
-            }
-        }
-
-        if (hasCorrections) {
+        if (!tagCorrectionsMap.isEmpty() || !roleCorrectionMap.isEmpty()) {
             Collection<Command> commands = new ArrayList<Command>();
             Map<OsmPrimitive, TagCorrectionTable> tagTableMap =
                 new HashMap<OsmPrimitive, TagCorrectionTable>();
             Map<OsmPrimitive, RoleCorrectionTable> roleTableMap =
                 new HashMap<OsmPrimitive, RoleCorrectionTable>();
-
-            //NameVisitor nameVisitor = new NameVisitor();
 
             final JPanel p = new JPanel(new GridBagLayout());
 

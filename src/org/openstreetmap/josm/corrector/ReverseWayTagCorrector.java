@@ -4,6 +4,7 @@ package org.openstreetmap.josm.corrector;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -67,17 +68,14 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         new PrefixSuffixSwitcher("forwards", "backwards")
     };
 
-    public static boolean isReversible(Way way) {
-        ArrayList<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
-        primitives.add(way);
-        primitives.addAll(way.getNodes());
+    private static ArrayList<String> reversibleTags = new ArrayList<String>(
+            Arrays.asList(new String[] {"oneway", "incline"}));
 
-        for  (OsmPrimitive primitive : primitives) {
-            for (String key : primitive.keySet()) {
-                if (key.equals("oneway")) return false;
-                for (PrefixSuffixSwitcher prefixSuffixSwitcher : prefixSuffixSwitchers) {
-                    if (!key.equals(prefixSuffixSwitcher.apply(key))) return false;
-                }
+    public static boolean isReversible(Way way) {
+        for (String key : way.keySet()) {
+            if (reversibleTags.contains(key)) return false;
+            for (PrefixSuffixSwitcher prefixSuffixSwitcher : prefixSuffixSwitchers) {
+                if (!key.equals(prefixSuffixSwitcher.apply(key))) return false;
             }
         }
 
@@ -94,51 +92,59 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         return newWays;
     }
 
+    public String invertNumber(String value) {
+        Pattern pattern = Pattern.compile("^([+-]?)(\\d.*)$", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(value);
+        if (!matcher.matches()) return value;
+        String sign = matcher.group(1);
+        String rest = matcher.group(2);
+        sign = sign.equals("-") ? "" : "-";
+        return sign + rest;
+    }
+
     @Override
     public Collection<Command> execute(Way oldway, Way way) throws UserCancelException {
         Map<OsmPrimitive, List<TagCorrection>> tagCorrectionsMap =
             new HashMap<OsmPrimitive, List<TagCorrection>>();
 
-        ArrayList<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
-        primitives.add(way);
-        primitives.addAll(way.getNodes());
+        ArrayList<TagCorrection> tagCorrections = new ArrayList<TagCorrection>();
+        for (String key : way.keySet()) {
+            String newKey = key;
+            String value = way.get(key);
+            String newValue = value;
 
-        for (OsmPrimitive primitive : primitives) {
-            tagCorrectionsMap.put(primitive, new ArrayList<TagCorrection>());
-
-            for (String key : primitive.keySet()) {
-                String newKey = key;
-                String value = primitive.get(key);
-                String newValue = value;
-
-                if (key.equals("oneway")) {
-                    if (OsmUtils.isReversed(value)) {
-                        newValue = OsmUtils.trueval;
-                    } else {
-                        Boolean boolValue = OsmUtils.getOsmBoolean(value);
-                        if (boolValue != null && boolValue.booleanValue()) {
-                            newValue = OsmUtils.reverseval;
-                        }
-                    }
-                } else {
-                    for (PrefixSuffixSwitcher prefixSuffixSwitcher : prefixSuffixSwitchers) {
-                        newKey = prefixSuffixSwitcher.apply(key);
-                        if (!key.equals(newKey)) {
-                            break;
-                        }
-                    }
+            if (key.equals("oneway")) {
+                if (OsmUtils.isReversed(value)) {
+                    newValue = OsmUtils.trueval;
+                } else if (OsmUtils.isTrue(value)) {
+                    newValue = OsmUtils.reverseval;
                 }
-
-                if (!key.equals(newKey) || !value.equals(newValue)) {
-                    tagCorrectionsMap.get(primitive).add(
-                            new TagCorrection(key, value, newKey, newValue));
+            } else if (key.equals("incline")) {
+                PrefixSuffixSwitcher switcher = new PrefixSuffixSwitcher("up", "down");
+                newValue = switcher.apply(value);
+                if (newValue.equals(value)) {
+                    newValue = invertNumber(value);
+                }
+            } else {
+                for (PrefixSuffixSwitcher prefixSuffixSwitcher : prefixSuffixSwitchers) {
+                    newKey = prefixSuffixSwitcher.apply(key);
+                    if (!key.equals(newKey)) {
+                        break;
+                    }
                 }
             }
+
+            if (!key.equals(newKey) || !value.equals(newValue)) {
+                tagCorrections.add(new TagCorrection(key, value, newKey, newValue));
+            }
+        }
+        if (!tagCorrections.isEmpty()) {
+            tagCorrectionsMap.put(way, tagCorrections);
         }
 
         Map<OsmPrimitive, List<RoleCorrection>> roleCorrectionMap =
             new HashMap<OsmPrimitive, List<RoleCorrection>>();
-        roleCorrectionMap.put(way, new ArrayList<RoleCorrection>());
+        ArrayList<RoleCorrection> roleCorrections = new ArrayList<RoleCorrection>();
 
         Collection<OsmPrimitive> referrers = oldway.getReferrers();
         for (OsmPrimitive referrer: referrers) {
@@ -165,12 +171,14 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 }
 
                 if (found) {
-                    roleCorrectionMap.get(way).add(
-                            new RoleCorrection(relation, position, member, newRole));
+                    roleCorrections.add(new RoleCorrection(relation, position, member, newRole));
                 }
 
                 position++;
             }
+        }
+        if (!roleCorrections.isEmpty()) {
+            roleCorrectionMap.put(way, roleCorrections);
         }
 
         return applyCorrections(tagCorrectionsMap, roleCorrectionMap,

@@ -91,7 +91,10 @@ abstract public class Command {
      */
     public void undoCommand() {
         for (Entry<OsmPrimitive, PrimitiveData> e : cloneMap.entrySet()) {
-            e.getKey().load(e.getValue());
+            OsmPrimitive primitive = e.getKey();
+            if (primitive.getDataSet() != null) {
+                e.getKey().load(e.getValue());
+            }
         }
     }
 

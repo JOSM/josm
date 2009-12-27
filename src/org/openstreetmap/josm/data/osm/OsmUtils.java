@@ -34,4 +34,12 @@ public class OsmUtils {
     public static boolean isReversed(String value) {
         return REVERSE_VALUES.contains(value);
     }
+
+    public static boolean isTrue(String value) {
+        return TRUE_VALUES.contains(value);
+    }
+
+    public static boolean isFalse(String value) {
+        return FALSE_VALUES.contains(value);
+    }
 }
