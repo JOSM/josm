@@ -36,6 +36,8 @@ public final class Changeset implements Tagged {
      * incomplete changeset we only know its id
      */
     private boolean incomplete;
+    /** the changeset content */
+    private ChangesetDataSet content = null;
 
     /**
      * Creates a new changeset with id 0.
@@ -274,5 +276,20 @@ public final class Changeset implements Tagged {
         this.max = other.max;
         this.tags = new HashMap<String, String>(other.tags);
         this.incomplete = other.incomplete;
+
+        // FIXME: merging of content required?
+        this.content = other.content;
+    }
+
+    public boolean hasContent() {
+        return content != null;
+    }
+
+    public ChangesetDataSet getContent() {
+        return content;
+    }
+
+    public void setContent(ChangesetDataSet content) {
+        this.content = content;
     }
 }

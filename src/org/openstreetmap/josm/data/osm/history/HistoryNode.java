@@ -33,4 +33,9 @@ public class HistoryNode extends HistoryOsmPrimitive {
     public void setCoords(LatLon coords) {
         this.coords = coords;
     }
+
+    @Override
+    public String getDisplayName(HistoryNameFormatter formatter) {
+        return formatter.format(this);
+    }
 }

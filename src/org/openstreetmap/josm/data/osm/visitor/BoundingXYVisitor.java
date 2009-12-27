@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm.visitor;
 
+import java.util.Collection;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
@@ -28,8 +30,9 @@ public class BoundingXYVisitor extends AbstractVisitor {
 
     public void visit(Way w) {
         if (w.isIncomplete()) return;
-        for (Node n : w.getNodes())
+        for (Node n : w.getNodes()) {
             visit(n);
+        }
     }
 
     public void visit(Relation e) {
@@ -60,19 +63,21 @@ public class BoundingXYVisitor extends AbstractVisitor {
     public void visit(LatLon latlon) {
         if(latlon != null)
         {
-            if(latlon instanceof CachedLatLon)
+            if(latlon instanceof CachedLatLon) {
                 visit(((CachedLatLon)latlon).getEastNorth());
-            else
+            } else {
                 visit(Main.proj.latlon2eastNorth(latlon));
+            }
         }
     }
 
     public void visit(EastNorth eastNorth) {
         if (eastNorth != null) {
-            if (bounds == null)
+            if (bounds == null) {
                 bounds = new ProjectionBounds(eastNorth);
-            else
+            } else {
                 bounds.extend(eastNorth);
+            }
         }
     }
 
@@ -110,11 +115,21 @@ public class BoundingXYVisitor extends AbstractVisitor {
         LatLon minLatlon = Main.proj.eastNorth2latlon(bounds.min);
         LatLon maxLatlon = Main.proj.eastNorth2latlon(bounds.max);
         bounds = new ProjectionBounds(
-        Main.proj.latlon2eastNorth(new LatLon(minLatlon.lat() - enlargeDegree, minLatlon.lon() - enlargeDegree)),
-        Main.proj.latlon2eastNorth(new LatLon(maxLatlon.lat() + enlargeDegree, maxLatlon.lon() + enlargeDegree)));
+                Main.proj.latlon2eastNorth(new LatLon(minLatlon.lat() - enlargeDegree, minLatlon.lon() - enlargeDegree)),
+                Main.proj.latlon2eastNorth(new LatLon(maxLatlon.lat() + enlargeDegree, maxLatlon.lon() + enlargeDegree)));
     }
 
     @Override public String toString() {
         return "BoundingXYVisitor["+bounds+"]";
+    }
+
+    public void computeBoundingBox(Collection<? extends OsmPrimitive> primitives) {
+        if (primitives == null) return;
+        for (OsmPrimitive p: primitives) {
+            if (p == null) {
+                continue;
+            }
+            p.visit(this);
+        }
     }
 }

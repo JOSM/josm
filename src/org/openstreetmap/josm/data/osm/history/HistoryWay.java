@@ -76,4 +76,18 @@ public class HistoryWay extends HistoryOsmPrimitive {
     public void addNode(long ref) {
         nodeIds.add(ref);
     }
+
+    /**
+     * Replies true if this way is closed.
+     * 
+     * @return true if this way is closed.
+     */
+    public boolean isClosed() {
+        return getNumNodes() >= 3 && nodeIds.get(0) == nodeIds.get(nodeIds.size()-1);
+    }
+
+    @Override
+    public String getDisplayName(HistoryNameFormatter formatter) {
+        return formatter.format(this);
+    }
 }

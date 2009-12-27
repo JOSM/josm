@@ -4,22 +4,51 @@ package org.openstreetmap.josm.data.osm;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Logger;
+
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 
+/**
+ * ChangesetCache is global in-memory cache for changesets downloaded from
+ * an OSM API server. The unique instance is available as singleton, see
+ * {@see #getInstance()}.
+ *
+ * Clients interested in cache updates can register for {@see ChangesetCacheEvent}s
+ * using {@see #addChangesetCacheListener(ChangesetCacheListener)}. They can use
+ * {@see #removeChangesetCacheListener(ChangesetCacheListener)} to unregister as
+ * cache event listener.
+ * 
+ * The cache itself listens to {@see java.util.prefs.PreferenceChangeEvent}s. It
+ * clears itself if the OSM API URL is changed in the preferences.
+ * 
+ * {@see ChangesetCacheEvent}s are delivered on the EDT.
+ * 
+ */
 public class ChangesetCache implements PreferenceChangedListener{
-    //static private final Logger logger = Logger.getLogger(ChangesetCache.class.getName());
+    static private final Logger logger = Logger.getLogger(ChangesetCache.class.getName());
+
+    /** the unique instance */
     static private final ChangesetCache instance = new ChangesetCache();
 
+    /**
+     * Replies the unique instance of the cache
+     * 
+     * @return the unique instance of the cache
+     */
     public static ChangesetCache getInstance() {
         return instance;
     }
 
+    /** the cached changesets */
     private final Map<Integer, Changeset> cache  = new HashMap<Integer, Changeset>();
 
     private final CopyOnWriteArrayList<ChangesetCacheListener> listeners =
@@ -30,18 +59,33 @@ public class ChangesetCache implements PreferenceChangedListener{
     }
 
     public void addChangesetCacheListener(ChangesetCacheListener listener) {
-        if (listener != null) {
-            listeners.addIfAbsent(listener);
+        synchronized(listeners) {
+            if (listener != null && ! listeners.contains(listener)) {
+                listeners.add(listener);
+            }
         }
     }
 
     public void removeChangesetCacheListener(ChangesetCacheListener listener) {
-        listeners.remove(listener);
+        synchronized(listeners) {
+            if (listener != null && listeners.contains(listener)) {
+                listeners.remove(listener);
+            }
+        }
     }
 
-    protected void fireChangesetCacheEvent(ChangesetCacheEvent e) {
-        for(ChangesetCacheListener l: listeners) {
-            l.changesetCacheUpdated(e);
+    protected void fireChangesetCacheEvent(final ChangesetCacheEvent e) {
+        Runnable r = new Runnable() {
+            public void run() {
+                for(ChangesetCacheListener l: listeners) {
+                    l.changesetCacheUpdated(e);
+                }
+            }
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            r.run();
+        } else {
+            SwingUtilities.invokeLater(r);
         }
     }
 
@@ -88,6 +132,10 @@ public class ChangesetCache implements PreferenceChangedListener{
         return cache.get(id);
     }
 
+    public Set<Changeset> getChangesets() {
+        return new HashSet<Changeset>(cache.values());
+    }
+
     protected void remove(int id, DefaultChangesetCacheEvent e) {
         if (id <= 0) return;
         Changeset cs = cache.get(id);
@@ -108,6 +156,26 @@ public class ChangesetCache implements PreferenceChangedListener{
         if (cs == null) return;
         if (cs.isNew()) return;
         remove(cs.getId());
+    }
+
+    /**
+     * Removes the changesets in <code>changesets</code> from the cache. A
+     * {@see ChangesetCacheEvent} is fired.
+     * 
+     * @param changesets the changesets to remove. Ignored if null.
+     */
+    public void remove(Collection<Changeset> changesets) {
+        if (changesets == null) return;
+        DefaultChangesetCacheEvent evt = new DefaultChangesetCacheEvent(this);
+        for (Changeset cs : changesets) {
+            if (cs == null || cs.isNew()) {
+                continue;
+            }
+            remove(cs.getId(), evt);
+        }
+        if (! evt.isEmpty()) {
+            fireChangesetCacheEvent(evt);
+        }
     }
 
     public int size() {

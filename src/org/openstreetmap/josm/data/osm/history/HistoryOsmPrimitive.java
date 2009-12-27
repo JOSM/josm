@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -144,6 +145,53 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
             this.tags = new HashMap<String, String>(tags);
         }
     }
+
+    /**
+     * Replies the name of this primitive. The default implementation replies the value
+     * of the tag <tt>name</tt> or null, if this tag is not present.
+     *
+     * @return the name of this primitive
+     */
+    public String getName() {
+        if (get("name") != null)
+            return get("name");
+        return null;
+    }
+
+    /**
+     * Replies the display name of a primitive formatted by <code>formatter</code>
+     *
+     * @return the display name
+     */
+    public abstract String getDisplayName(HistoryNameFormatter formatter);
+
+    /**
+     * Replies the a localized name for this primitive given by the value of the tags (in this order)
+     * <ul>
+     *   <li>name:lang_COUNTRY_Variant  of the current locale</li>
+     *   <li>name:lang_COUNTRY of the current locale</li>
+     *   <li>name:lang of the current locale</li>
+     *   <li>name of the current locale</li>
+     * </ul>
+     *
+     * null, if no such tag exists
+     *
+     * @return the name of this primitive
+     */
+    public String getLocalName() {
+        String key = "name:" + Locale.getDefault().toString();
+        if (get(key) != null)
+            return get(key);
+        key = "name:" + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry();
+        if (get(key) != null)
+            return get(key);
+        key = "name:" + Locale.getDefault().getLanguage();
+        if (get(key) != null)
+            return get(key);
+        return getName();
+    }
+
+
 
     @Override
     public int hashCode() {

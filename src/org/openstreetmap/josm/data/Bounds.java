@@ -68,6 +68,15 @@ public class Bounds {
                 throw new IllegalArgumentException(tr("Illegal double value ''{0}''", components[i]));
             }
         }
+        if (!LatLon.isValidLat(values[0]))
+            throw new IllegalArgumentException(tr("Illegal latitude value ''{0}''", values[0]));
+        if (!LatLon.isValidLon(values[1]))
+            throw new IllegalArgumentException(tr("Illegal longitude value ''{0}''", values[1]));
+        if (!LatLon.isValidLat(values[2]))
+            throw new IllegalArgumentException(tr("Illegal latitude value ''{0}''", values[2]));
+        if (!LatLon.isValidLon(values[3]))
+            throw new IllegalArgumentException(tr("Illegal latitude value ''{0}''", values[3]));
+
         this.min = new LatLon(values[0], values[1]);
         this.max = new LatLon(values[2], values[3]);
     }

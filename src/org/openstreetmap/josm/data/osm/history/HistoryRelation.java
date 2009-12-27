@@ -110,4 +110,9 @@ public class HistoryRelation extends HistoryOsmPrimitive{
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "member"));
         members.add(member);
     }
+
+    @Override
+    public String getDisplayName(HistoryNameFormatter formatter) {
+        return formatter.format(this);
+    }
 }

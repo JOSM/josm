@@ -8,7 +8,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 
 public class UserInfo {
     /** the user id */
-    private long id;
+    private int id;
     /** the display name */
     private String displayName;
     /** the date this user was created */
@@ -26,10 +26,10 @@ public class UserInfo {
         id = 0;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
     public String getDisplayName() {
