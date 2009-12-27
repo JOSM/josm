@@ -90,10 +90,10 @@ public class UpdateSelectionAction extends JosmAction {
                         KeyEvent.VK_U,
                         Shortcut.GROUP_HOTKEY + Shortcut.GROUPS_ALT2),
                         true);
-        putValue("help", ht("UpdateSelection"));
+        putValue("help", ht("/Action/UpdateSelection"));
     }
     public UpdateSelectionAction(String name, String iconName, String tooltip,
-    Shortcut shortcut, boolean register) {
+            Shortcut shortcut, boolean register) {
         super(name, iconName, tooltip, shortcut, register);
     }
 

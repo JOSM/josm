@@ -28,7 +28,7 @@ public class UpdateModifiedAction extends UpdateSelectionAction {
                         KeyEvent.VK_M,
                         Shortcut.GROUP_HOTKEY + Shortcut.GROUPS_ALT2),
                         true);
-        putValue("help", ht("UpdateModified"));
+        putValue("help", ht("/Action/UpdateModified"));
     }
 
     @Override
