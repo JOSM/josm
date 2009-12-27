@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.ChangesetDataSet;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -139,7 +141,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
                 InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true));
                 if (in == null)
                     return null;
-                monitor.indeterminateSubTask(tr("({0}/{1}) Downloading changeset {0} ...", i,ids.size(), id));
+                monitor.indeterminateSubTask(tr("({0}/{1}) Downloading changeset {2} ...", i,ids.size(), id));
                 List<Changeset> changesets = OsmChangesetParser.parse(in, monitor.createSubTaskMonitor(1, true));
                 if (changesets == null || changesets.isEmpty()) {
                     continue;
@@ -158,14 +160,37 @@ public class OsmServerChangesetReader extends OsmServerReader {
     }
 
     /**
-     * not implemented yet
+     * Downloads the content of a changeset
      *
-     * @param id
-     * @param monitor
-     * @return
-     * @throws OsmTransferException
+     * @param id the changset id. >0 required.
+     * @param monitor the progress monitor. {@see NullProgressMonitor#INSTANCE} assumed if null.
+     * @return the changset content
+     * @throws IllegalArgumentException thrown if id <= 0
+     * @throws OsmTransferException thrown if something went wrong
      */
-    public Changeset downloadChangeset(long id, ProgressMonitor monitor) throws OsmTransferException {
-        return null;
+    public ChangesetDataSet downloadChangeset(int id, ProgressMonitor monitor) throws IllegalArgumentException, OsmTransferException {
+        if (id <= 0)
+            throw new IllegalArgumentException(tr("Expected value of type integer > 0 for parameter ''{0}'', got {1}", "id", id));
+        if (monitor == null) {
+            monitor = NullProgressMonitor.INSTANCE;
+        }
+        try {
+            monitor.beginTask(tr("Downloading changeset content"));
+            StringBuffer sb = new StringBuffer();
+            sb.append("changeset/").append(id).append("/download");
+            InputStream in = getInputStream(sb.toString(), monitor.createSubTaskMonitor(1, true));
+            if (in == null)
+                return null;
+            monitor.setCustomText(tr("Downloading content for changeset {0} ...", id));
+            OsmChangesetContentParser parser = new OsmChangesetContentParser(in);
+            ChangesetDataSet ds = parser.parse(monitor.createSubTaskMonitor(1, true));
+            return ds;
+        } catch(UnsupportedEncodingException e) {
+            throw new OsmTransferException(e);
+        } catch(OsmDataParsingException e) {
+            throw new OsmTransferException(e);
+        } finally {
+            monitor.finishTask();
+        }
     }
 }

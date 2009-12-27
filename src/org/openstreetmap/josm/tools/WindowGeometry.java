@@ -5,14 +5,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 
@@ -39,15 +36,21 @@ public class WindowGeometry {
     }
 
     /**
-     * Replies a window geometry object for a window which a specific size which is centered
-     * relative to a parent window
+     * Replies a window geometry object for a window with a specific size which is centered
+     * relative to the parent window of a reference component.
      *
-     * @param parent the parent window
+     * @param reference the reference component.
      * @param extent the size
      * @return the geometry object
      */
-    static public WindowGeometry centerInWindow(Component parent, Dimension extent) {
-        Frame parentWindow = JOptionPane.getFrameForComponent(parent);
+    static public WindowGeometry centerInWindow(Component reference, Dimension extent) {
+        Window parentWindow = null;
+        while(reference != null && ! (reference instanceof Window) ) {
+            reference = reference.getParent();
+        }
+        if (reference == null || ! (reference instanceof Window))
+            return new WindowGeometry(new Point(0,0), extent);
+        parentWindow = (Window)reference;
         Point topLeft = new Point(
                 Math.max(0, (parentWindow.getSize().width - extent.width) /2),
                 Math.max(0, (parentWindow.getSize().height - extent.height) /2)
@@ -155,7 +158,7 @@ public class WindowGeometry {
         try {
             initFromPreferences(preferenceKey);
         } catch(WindowGeometryException e) {
-//            System.out.println(tr("Warning: Failed to restore window geometry from key ''{0}''. Falling back to default geometry. Details: {1}", preferenceKey, e.getMessage()));
+            //            System.out.println(tr("Warning: Failed to restore window geometry from key ''{0}''. Falling back to default geometry. Details: {1}", preferenceKey, e.getMessage()));
             initFromWindowGeometry(defaultGeometry);
         }
     }

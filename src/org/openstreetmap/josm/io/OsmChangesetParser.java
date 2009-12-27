@@ -212,7 +212,8 @@ public class OsmChangesetParser {
     public static List<Changeset> parse(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
         OsmChangesetParser parser = new OsmChangesetParser();
         try {
-            progressMonitor.beginTask(tr("Parsing list of changesets...", 1));
+            progressMonitor.beginTask(tr(""));
+            progressMonitor.indeterminateSubTask(tr("Parsing list of changesets..."));
             InputSource inputSource = new InputSource(new InputStreamReader(source, "UTF-8"));
             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, parser.new Parser());
             return parser.getChangesets();

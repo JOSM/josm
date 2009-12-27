@@ -52,7 +52,7 @@ public class OsmServerUserInfoReader extends OsmServerReader {
             if (v == null)
                 throw new OsmDataParsingException(tr("Missing attribute ''{0}'' on XML tag ''{1}''.", "id", "user"));
             try {
-                userInfo.setId(Long.parseLong(v));
+                userInfo.setId(Integer.parseInt(v));
             } catch(NumberFormatException e) {
                 throw new OsmDataParsingException(tr("Illegal value for attribute ''{0}'' on XML tag ''{1}''. Got {2}.", "id", "user", v));
             }
