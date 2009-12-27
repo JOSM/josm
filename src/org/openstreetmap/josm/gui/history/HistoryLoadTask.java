@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.history;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Component;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerHistoryReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.xml.sax.SAXException;
 
 /**
@@ -50,6 +52,19 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     public HistoryLoadTask() {
         super(tr("Load history"), true);
+        toLoad = new HashSet<PrimitiveId>();
+    }
+
+    /**
+     * Creates a new task
+     * 
+     * @param parent the component to be used as reference to find the parent for {@see PleaseWaitDialog}.
+     * Must not be null.
+     * @throws IllegalArgumentException thrown if parent is null
+     */
+    public HistoryLoadTask(Component parent) {
+        super(parent, tr("Load history"), true);
+        CheckParameterUtil.ensureParameterNotNull(parent, "parent");
         toLoad = new HashSet<PrimitiveId>();
     }
 

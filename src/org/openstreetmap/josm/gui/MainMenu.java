@@ -20,6 +20,7 @@ import org.openstreetmap.josm.actions.AddNodeAction;
 import org.openstreetmap.josm.actions.AlignInCircleAction;
 import org.openstreetmap.josm.actions.AlignInLineAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.ChangesetManagerToggleAction;
 import org.openstreetmap.josm.actions.CloseChangesetAction;
 import org.openstreetmap.josm.actions.CombineWayAction;
 import org.openstreetmap.josm.actions.CopyAction;
@@ -250,10 +251,18 @@ public class MainMenu extends JMenuBar {
         add(viewMenu, new ZoomInAction());
         add(viewMenu, new ZoomOutAction());
         viewMenu.addSeparator();
-        for (String mode : AutoScaleAction.modes) {
+        for (String mode : AutoScaleAction.MODES) {
             JosmAction autoScaleAction = new AutoScaleAction(mode);
             add(viewMenu, autoScaleAction);
         }
+
+        // -- changeset manager toggle action
+        ChangesetManagerToggleAction changesetManagerToggleAction = new ChangesetManagerToggleAction();
+        final JCheckBoxMenuItem mi = new JCheckBoxMenuItem(changesetManagerToggleAction);
+        viewMenu.addSeparator();
+        viewMenu.add(mi);
+        mi.setAccelerator(changesetManagerToggleAction.getShortcut().getKeyStroke());
+        changesetManagerToggleAction.addButtonModel(mi.getModel());
 
         // -- fullscreen toggle action
         FullscreenToggleAction fullscreenToggleAction = new FullscreenToggleAction();

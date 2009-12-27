@@ -98,7 +98,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
             if (cancelled)
                 return;
             reader = new OsmServerChangesetReader();
-            ChangesetQuery query = new ChangesetQuery().forUser(model.getUserId()).beingOpen();
+            ChangesetQuery query = new ChangesetQuery().forUser((int)model.getUserId()).beingOpen(true);
             changesets = reader.queryChangesets(
                     query,
                     getProgressMonitor().createSubTaskMonitor(1, false /* not internal */)

@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui;
 
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -11,6 +12,7 @@ import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor.CancelListener;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.xml.sax.SAXException;
 
 /**
@@ -45,6 +47,23 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
      */
     public PleaseWaitRunnable(String title, boolean ignoreException) {
         this(title, new PleaseWaitProgressMonitor(title), ignoreException);
+    }
+
+    /**
+     * Create the runnable object with a given message for the user
+     *
+     * @param parent the parent component for the please wait dialog. Must not be null.
+     * @param title message for the user
+     * @param ignoreException If true, exception will be propagated to calling code. If false then
+     * exception will be thrown directly in EDT. When this runnable is executed using executor framework
+     * then use false unless you read result of task (because exception will get lost if you don't)
+     * @throws IllegalArgumentException thrown if parent is null
+     */
+    public PleaseWaitRunnable(Component parent, String title, boolean ignoreException) throws IllegalArgumentException{
+        CheckParameterUtil.ensureParameterNotNull(parent, "parent");
+        this.title = title;
+        this.progressMonitor = new PleaseWaitProgressMonitor(parent, title);
+        this.ignoreException = ignoreException;
     }
 
     public PleaseWaitRunnable(String title, ProgressMonitor progressMonitor, boolean ignoreException) {

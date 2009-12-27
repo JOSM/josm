@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -224,11 +223,11 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
                 new LatLon(
                         Math.min(l2.getLat(), l1.getLat()),
                         Math.min(l1.getLon(), l2.getLon())
-                        ),
+                ),
                 new LatLon(
                         Math.max(l2.getLat(), l1.getLat()),
                         Math.max(l1.getLon(), l2.getLon()))
-                );
+        );
         iGui.boundingBoxChanged(b, this);
         repaint();
     }

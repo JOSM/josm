@@ -7,11 +7,10 @@ import javax.swing.DefaultListSelectionModel;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.MapView.EditLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
-public class ChangesetInSelectionListModel extends ChangesetListModel implements SelectionChangedListener, MapView.LayerChangeListener{
+public class ChangesetInSelectionListModel extends ChangesetListModel implements SelectionChangedListener, EditLayerChangeListener{
 
     public ChangesetInSelectionListModel(DefaultListSelectionModel selectionModel) {
         super(selectionModel);
@@ -23,16 +22,15 @@ public class ChangesetInSelectionListModel extends ChangesetListModel implements
         initFromPrimitives(newSelection);
     }
 
+
     /* ---------------------------------------------------------------------------- */
     /* Interface LayerChangeListener                                                */
     /* ---------------------------------------------------------------------------- */
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        if (newLayer == null || ! (newLayer instanceof OsmDataLayer)) {
+    public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
+        if (newLayer == null) {
             setChangesets(null);
         } else {
-            initFromPrimitives(((OsmDataLayer) newLayer).data.getSelected());
+            initFromPrimitives((newLayer).data.getSelected());
         }
     }
-    public void layerAdded(Layer newLayer) {}
-    public void layerRemoved(Layer oldLayer) {}
 }

@@ -5,14 +5,18 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
@@ -36,13 +40,16 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager;
+import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetHeaderDownloadTask;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetInSelectionListModel;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetListCellRenderer;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetListModel;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetsInActiveDataLayerListModel;
-import org.openstreetmap.josm.gui.dialogs.changeset.DownloadChangesetsTask;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.CloseChangesetTask;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
@@ -74,6 +81,7 @@ public class ChangesetDialog extends ToggleDialog{
     private  ReadChangesetsAction readChangesetAction;
     private ShowChangesetInfoAction showChangsetInfoAction;
     private CloseOpenChangesetsAction closeChangesetAction;
+    private LaunchChangesetManagerAction launchChangesetManagerAction;
 
 
     protected void buildChangesetsLists() {
@@ -92,35 +100,64 @@ public class ChangesetDialog extends ToggleDialog{
         lstInActiveDataLayer.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         lstInActiveDataLayer.setCellRenderer(new ChangesetListCellRenderer());
 
-        ChangesetCache.getInstance().addChangesetCacheListener(inSelectionModel);
-        MapView.addLayerChangeListener(inSelectionModel);
-        DataSet.selListeners.add(inSelectionModel);
-
-        ChangesetCache.getInstance().addChangesetCacheListener(inActiveDataLayerModel);
-
         DblClickHandler dblClickHandler = new DblClickHandler();
         lstInSelection.addMouseListener(dblClickHandler);
         lstInActiveDataLayer.addMouseListener(dblClickHandler);
 
-        PopupMenuLauncher popupMenuLauncher = new PopupMenuLauncher();
+        ChangesetPopupMenuLauncher popupMenuLauncher = new ChangesetPopupMenuLauncher();
         lstInSelection.addMouseListener(popupMenuLauncher);
         lstInActiveDataLayer.addMouseListener(popupMenuLauncher);
     }
 
-    @Override
-    public void tearDown() {
+    protected void registerAsListener() {
+        // let the model for changesets in the current selection listen to various
+        // events
+        ChangesetCache.getInstance().addChangesetCacheListener(inSelectionModel);
+        MapView.addEditLayerChangeListener(inSelectionModel);
+        DataSet.selListeners.add(inSelectionModel);
+
+
+        // let the model for changesets in the current layer listen to various
+        // events and bootstrap it's content
+        ChangesetCache.getInstance().addChangesetCacheListener(inActiveDataLayerModel);
+        MapView.addEditLayerChangeListener(inActiveDataLayerModel);
+        if (Main.main.getEditLayer() != null) {
+            Main.main.getEditLayer().data.addDataSetListener(inActiveDataLayerModel);
+            inActiveDataLayerModel.initFromDataSet(Main.main.getEditLayer().data);
+            inSelectionModel.initFromPrimitives(Main.main.getEditLayer().data.getSelected());
+        }
+    }
+
+    protected void unregisterAsListener() {
+        // remove the list model for the current edit layer as listener
+        //
         ChangesetCache.getInstance().removeChangesetCacheListener(inActiveDataLayerModel);
-        MapView.removeLayerChangeListener(inSelectionModel);
+        MapView.removeEditLayerChangeListener(inActiveDataLayerModel);
+        if (Main.main.getEditLayer() != null) {
+            Main.main.getEditLayer().data.removeDataSetListener(inActiveDataLayerModel);
+        }
+
+        // remove the list model for the changesets in the current selection as
+        // listener
+        //
+        MapView.removeEditLayerChangeListener(inSelectionModel);
         DataSet.selListeners.remove(inSelectionModel);
     }
 
     @Override
+    public void tearDown() {
+        unregisterAsListener();
+    }
+
+    @Override
     public void showNotify() {
+        registerAsListener();
         DatasetEventManager.getInstance().addDatasetListener(inActiveDataLayerModel, true);
     }
 
     @Override
     public void hideNotify() {
+        unregisterAsListener();
         DatasetEventManager.getInstance().removeDatasetListener(inActiveDataLayerModel);
     }
 
@@ -178,6 +215,13 @@ public class ChangesetDialog extends ToggleDialog{
         cbInSelectionOnly.addItemListener(showChangsetInfoAction);
         lstInActiveDataLayer.getSelectionModel().addListSelectionListener(showChangsetInfoAction);
         lstInSelection.getSelectionModel().addListSelectionListener(showChangsetInfoAction);
+
+        // -- launch changeset manager action
+        launchChangesetManagerAction = new LaunchChangesetManagerAction();
+        tp.add(launchChangesetManagerAction);
+        cbInSelectionOnly.addItemListener(launchChangesetManagerAction);
+        lstInActiveDataLayer.getSelectionModel().addListSelectionListener(launchChangesetManagerAction);
+        lstInSelection.getSelectionModel().addListSelectionListener(launchChangesetManagerAction);
 
         pnl.add(tp);
         return pnl;
@@ -333,7 +377,7 @@ public class ChangesetDialog extends ToggleDialog{
             Set<Integer> sel = model.getSelectedChangesetIds();
             if (sel.isEmpty())
                 return;
-            DownloadChangesetsTask task = new DownloadChangesetsTask(sel);
+            ChangesetHeaderDownloadTask task = new ChangesetHeaderDownloadTask(sel);
             Main.worker.submit(task);
         }
 
@@ -423,10 +467,103 @@ public class ChangesetDialog extends ToggleDialog{
         }
     }
 
-    class PopupMenuLauncher extends MouseAdapter {
-        protected void showPopup(MouseEvent evt) {
-            if (!evt.isPopupTrigger())
+    /**
+     * Show information about the currently selected changesets
+     * 
+     */
+    class LaunchChangesetManagerAction extends AbstractAction implements ListSelectionListener, ItemListener {
+        public LaunchChangesetManagerAction() {
+            putValue(NAME, tr("Details"));
+            putValue(SHORT_DESCRIPTION, tr("Opens the Changeset Manager window for the selected changesets"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "changesetmanager"));
+            updateEnabledState();
+        }
+
+        protected void launchChangesetManager(Collection<Integer> toSelect) {
+            ChangesetCacheManager cm = ChangesetCacheManager.getInstance();
+            if (cm.isVisible()) {
+                cm.setExtendedState(Frame.NORMAL);
+                cm.toFront();
+                cm.requestFocus();
+            } else {
+                cm.setVisible(true);
+                cm.toFront();
+                cm.requestFocus();
+            }
+            cm.setSelectedChangesetsById(toSelect);
+        }
+
+        public void actionPerformed(ActionEvent arg0) {
+            ChangesetListModel model = getCurrentChangesetListModel();
+            Set<Integer> sel = model.getSelectedChangesetIds();
+            if (sel.isEmpty())
                 return;
+            final Set<Integer> toDownload = new HashSet<Integer>();
+            ChangesetCache cc = ChangesetCache.getInstance();
+            for (int id: sel) {
+                if (!cc.contains(id)) {
+                    toDownload.add(id);
+                }
+            }
+
+            final ChangesetHeaderDownloadTask task;
+            final Future<?> future;
+            if (toDownload.isEmpty()) {
+                task = null;
+                future = null;
+            } else {
+                task = new ChangesetHeaderDownloadTask(toDownload);
+                future = Main.worker.submit(task);
+            }
+
+            Runnable r = new Runnable() {
+                public void run() {
+                    // first, wait for the download task to finish, if a download
+                    // task was launched
+                    if (future != null) {
+                        try {
+                            future.get();
+                        } catch(InterruptedException e) {
+                            e.printStackTrace();
+                        } catch(ExecutionException e){
+                            e.printStackTrace();
+                            BugReportExceptionHandler.handleException(e.getCause());
+                            return;
+                        }
+                    }
+                    if (task != null) {
+                        if (task.isCanceled())
+                            // don't launch the changeset manager if the download task
+                            // was canceled
+                            return;
+                        if (task.isFailed()) {
+                            toDownload.clear();
+                        }
+                    }
+                    // launch the task
+                    launchChangesetManager(toDownload);
+                }
+            };
+            Main.worker.submit(r);
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(getCurrentChangesetList().getSelectedIndices().length > 0);
+        }
+
+        public void itemStateChanged(ItemEvent arg0) {
+            updateEnabledState();
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+    }
+
+
+    class ChangesetPopupMenuLauncher extends PopupMenuLauncher {
+        @Override
+        public void launch(MouseEvent evt) {
             JList lst = getCurrentChangesetList();
             if (lst.getSelectedIndices().length == 0) {
                 int idx = lst.locationToIndex(evt.getPoint());
@@ -437,18 +574,6 @@ public class ChangesetDialog extends ToggleDialog{
             ChangesetDialogPopup popup = new ChangesetDialogPopup();
             popup.show(lst, evt.getX(), evt.getY());
 
-        }
-        @Override
-        public void mouseClicked(MouseEvent evt) {
-            showPopup(evt);
-        }
-        @Override
-        public void mousePressed(MouseEvent evt) {
-            showPopup(evt);
-        }
-        @Override
-        public void mouseReleased(MouseEvent evt) {
-            showPopup(evt);
         }
     }
 
