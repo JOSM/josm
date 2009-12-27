@@ -185,6 +185,19 @@ public class DataSet implements Cloneable {
     }
 
     /**
+     * @return A collection containing all modified primitives
+     */
+    public Collection<OsmPrimitive> allModifiedPrimitives() {
+        Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
+        for (OsmPrimitive osm : allPrimitives()) {
+            if (osm.isVisible() && osm.isModified()) {
+                o.add(osm);
+            }
+        }
+        return o;
+    }
+
+    /**
      * Adds a primitive to the dataset
      *
      * @param primitive the primitive. Ignored if null.

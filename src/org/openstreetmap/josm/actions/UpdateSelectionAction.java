@@ -86,11 +86,15 @@ public class UpdateSelectionAction extends JosmAction {
                 "updateselection",
                 tr("Updates the currently selected objects from the server (re-downloads data)"),
                 Shortcut.registerShortcut("file:updateselection",
-                        tr("Update Selection"),
+                        tr("Update selection"),
                         KeyEvent.VK_U,
                         Shortcut.GROUP_HOTKEY + Shortcut.GROUPS_ALT2),
                         true);
         putValue("help", ht("UpdateSelection"));
+    }
+    public UpdateSelectionAction(String name, String iconName, String tooltip,
+    Shortcut shortcut, boolean register) {
+        super(name, iconName, tooltip, shortcut, register);
     }
 
     @Override
@@ -98,7 +102,7 @@ public class UpdateSelectionAction extends JosmAction {
         if (getCurrentDataSet() == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getCurrentDataSet().getSelected());
+            updateEnabledState(getData());
         }
     }
 
@@ -113,7 +117,7 @@ public class UpdateSelectionAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         if (! isEnabled())
             return;
-        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
+        Collection<OsmPrimitive> selection = getData();
         if (selection.size() == 0) {
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -124,5 +128,9 @@ public class UpdateSelectionAction extends JosmAction {
             return;
         }
         updatePrimitives(selection);
+    }
+
+    protected Collection<OsmPrimitive> getData() {
+        return getCurrentDataSet().getSelected();
     }
 }
