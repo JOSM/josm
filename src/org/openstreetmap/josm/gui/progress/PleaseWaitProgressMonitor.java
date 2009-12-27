@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.progress;
 
+import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.EventQueue;
 import java.awt.Frame;
@@ -15,7 +16,6 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
-import static org.openstreetmap.josm.tools.I18n.tr;
 
 public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
@@ -31,13 +31,18 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     }
 
     public PleaseWaitProgressMonitor(String windowTitle) {
-        this(JOptionPane.getFrameForComponent(Main.parent));
+        this(Main.parent);
         this.windowTitle = windowTitle;
     }
 
-    public PleaseWaitProgressMonitor(Window dialogParent) {
+    public PleaseWaitProgressMonitor(Component dialogParent) {
         super(new CancelHandler());
-        this.dialogParent = dialogParent;
+        this.dialogParent = JOptionPane.getFrameForComponent(dialogParent);
+    }
+
+    public PleaseWaitProgressMonitor(Component dialogParent, String windowTitle) {
+        this(JOptionPane.getFrameForComponent(dialogParent));
+        this.windowTitle = windowTitle;
     }
 
     private ActionListener cancelListener = new ActionListener(){
