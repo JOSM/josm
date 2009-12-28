@@ -155,6 +155,10 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         Main.map.repaint();
     }
 
+    @Override public void mouseDragged(MouseEvent e) {
+        mouseMoved(e);
+    }
+
     /**
      * Listen to mouse move to be able to update the cursor (and highlights)
      * @param MouseEvent The mouse event that has been captured
@@ -218,7 +222,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      * If user clicked with the left button, delete the nearest object.
      * position.
      */
-    @Override public void mouseClicked(MouseEvent e) {
+    @Override public void mouseReleased(MouseEvent e) {
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
         if(!Main.map.mapView.isActiveLayerVisible())

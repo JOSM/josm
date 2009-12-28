@@ -268,7 +268,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     private void tryAgain(MouseEvent e) {
         getCurrentDataSet().setSelected();
-        mouseClicked(e);
+        mouseReleased(e);
     }
 
     /**
@@ -296,7 +296,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      *
      * If in nodeway mode, insert the node into the way.
      */
-    @Override public void mouseClicked(MouseEvent e) {
+    @Override public void mouseReleased(MouseEvent e) {
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
         if(!Main.map.mapView.isActiveLayerDrawable())
@@ -619,6 +619,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         return null;
     }
 
+    @Override public void mouseDragged(MouseEvent e) {
+        mouseMoved(e);
+    }
+
     @Override public void mouseMoved(MouseEvent e) {
         if(!Main.map.mapView.isActiveLayerDrawable())
             return;
@@ -649,7 +653,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     /**
      * This method prepares data required for painting the "helper line" from
      * the last used position to the mouse cursor. It duplicates some code from
-     * mouseClicked() (FIXME).
+     * mouseReleased() (FIXME).
      */
     private void computeHelperLine() {
         MapView mv = Main.map.mapView;
