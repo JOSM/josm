@@ -141,6 +141,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
     @Override public void showNotify() {
         MapView.addLayerChangeListener(newAction);
+        newAction.updateEnabledState();
         DatasetEventManager.getInstance().addDatasetListener(this, true);
         dataChanged(null);
     }
