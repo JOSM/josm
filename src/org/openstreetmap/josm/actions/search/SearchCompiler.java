@@ -112,6 +112,15 @@ public class SearchCompiler {
         @Override public String toString() {return "changeset="+changesetid;}
     }
 
+    private static class Version extends Match {
+        private long version;
+        public Version(long version) {this.version = version;}
+        @Override public boolean match(OsmPrimitive osm) {
+            return osm.getVersion() == version;
+        }
+        @Override public String toString() {return "version="+version;}
+    }
+
     private static class KeyValue extends Match {
         private final String key;
         private final Pattern keyPattern;
@@ -707,7 +716,15 @@ public class SearchCompiler {
             } catch (NumberFormatException x) {
                 throw new ParseError(tr("Incorrect value of changeset operator: {0}. Number is expected.", value));
             }
-        } else
+
+        }   else if (key.equals("version")) {
+            try {
+                return new Version(Long.parseLong(value));
+            } catch (NumberFormatException x) {
+                throw new ParseError(tr("Incorrect value of version operator: {0}. Number is expected.", value));
+            }
+        }
+        else
             return new KeyValue(key, value, regexSearch, caseSensitive);
     }
 
