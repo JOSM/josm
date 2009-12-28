@@ -485,6 +485,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             throw new DataIntegrityProblemException("Method cannot be called after primitive was added to the dataset");
         this.id = generateUniqueId();
         this.version = 0;
+        this.changesetId = 0; // reset changeset id on a new object
         this.setIncomplete(false);
     }
 
@@ -1002,12 +1003,25 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             throw new DataIntegrityProblemException("Osm id cannot be changed after primitive was added to the dataset");
         setKeys(other.getKeys());
         id = other.id;
+        if (id <=0) {
+            // reset version and changeset id
+            version = 0;
+            changesetId = 0;
+        }
         timestamp = other.timestamp;
-        version = other.version;
+        if (id > 0) {
+            version = other.version;
+        }
         setIncomplete(other.isIncomplete());
         flags = other.flags;
         user= other.user;
-        setChangesetId(other.changesetId);
+        if (id > 0 && other.changesetId > 0) {
+            // #4208: sometimes we cloned from other with id < 0 *and*
+            // an assigned changeset id. Don't know why yet. For primitives
+            // with id < 0 we don't propagate the changeset id any more.
+            //
+            setChangesetId(other.changesetId);
+        }
         clearCached();
     }
 
@@ -1029,13 +1043,14 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             throw new DataIntegrityProblemException(tr("Can''t merge because either of the participating primitives is new and the other is not"));
         if (! other.isNew() && other.getId() != id)
             throw new DataIntegrityProblemException(tr("Can''t merge primitives with different ids. This id is {0}, the other is {1}", id, other.getId()));
+
         setKeys(other.getKeys());
         timestamp = other.timestamp;
         version = other.version;
         setIncomplete(other.isIncomplete());
         flags = other.flags;
         user= other.user;
-        setChangesetId(other.changesetId);
+        changesetId = other.changesetId;
     }
 
     /**
