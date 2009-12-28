@@ -4,7 +4,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.GridLayout;
+import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
@@ -41,10 +42,11 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.ImageProvider.OverlayPosition;
@@ -95,36 +97,40 @@ public class LayerListDialog extends ToggleDialog {
     ActivateLayerAction activateLayerAction;
 
     protected JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 5));
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
+
+        JToolBar tb = new JToolBar(JToolBar.HORIZONTAL);
+        tb.setFloatable(false);
 
         // -- move up action
         MoveUpAction moveUpAction = new MoveUpAction();
         adaptTo(moveUpAction, model);
         adaptTo(moveUpAction,selectionModel);
-        buttonPanel.add(new SideButton(moveUpAction));
+        tb.add(moveUpAction);
 
         // -- move down action
         MoveDownAction moveDownAction = new MoveDownAction();
         adaptTo(moveDownAction, model);
         adaptTo(moveDownAction,selectionModel);
-        buttonPanel.add(new SideButton(moveDownAction));
+        tb.add(moveDownAction);
 
         // -- activate action
         activateLayerAction = new ActivateLayerAction();
         adaptTo(activateLayerAction, selectionModel);
         MapView.addLayerChangeListener(activateLayerAction);
-        buttonPanel.add(new SideButton(activateLayerAction, "activate"));
+        tb.add(activateLayerAction);
 
         // -- show hide action
         ShowHideLayerAction showHideLayerAction = new ShowHideLayerAction();
         adaptTo(showHideLayerAction, selectionModel);
-        buttonPanel.add(new SideButton(showHideLayerAction, "showhide"));
+        tb.add(showHideLayerAction);
 
         // -- merge layer action
         MergeAction mergeLayerAction = new MergeAction();
         adaptTo(mergeLayerAction, model);
         adaptTo(mergeLayerAction,selectionModel);
-        buttonPanel.add(new SideButton(mergeLayerAction));
+        tb.add(mergeLayerAction);
+
 
         //-- delete layer action
         DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
@@ -133,8 +139,9 @@ public class LayerListDialog extends ToggleDialog {
         );
         layerList.getActionMap().put("deleteLayer", deleteLayerAction);
         adaptTo(deleteLayerAction, selectionModel);
-        buttonPanel.add(new SideButton(deleteLayerAction, "delete"));
+        tb.add(deleteLayerAction);
 
+        buttonPanel.add(tb);
         return buttonPanel;
     }
 
@@ -156,7 +163,8 @@ public class LayerListDialog extends ToggleDialog {
         //
         layerList = new LayerList(model);
         layerList.setSelectionModel(selectionModel);
-        layerList.addMouseListener(new LayerListMouseAdapter());
+        layerList.addMouseListener(new DblClickAdapter());
+        layerList.addMouseListener(new PopupMenuHandler());
         layerList.setBackground(UIManager.getColor("Button.background"));
         layerList.setCellRenderer(new LayerListCellRenderer());
         add(new JScrollPane(layerList), BorderLayout.CENTER);
@@ -171,7 +179,6 @@ public class LayerListDialog extends ToggleDialog {
                     public void makeVisible(int index, Layer layer) {
                         layerList.ensureIndexIsVisible(index);
                     }
-
                     public void refresh() {
                         layerList.repaint();
                     }
@@ -243,23 +250,6 @@ public class LayerListDialog extends ToggleDialog {
      * The action to delete the currently selected layer
      */
     public final  class DeleteLayerAction extends AbstractAction implements IEnabledStateUpdating {
-        private  Layer layer;
-
-        /**
-         * Creates a {@see DeleteLayerAction} for a specific layer.
-         *
-         * @param layer the layer. Must not be null.
-         * @exception IllegalArgumentException thrown, if layer is null
-         */
-        public DeleteLayerAction(Layer layer) {
-            this();
-            if (layer == null)
-                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
-            this.layer = layer;
-            putValue(NAME, tr("Delete"));
-            updateEnabledState();
-        }
-
         /**
          * Creates a {@see DeleteLayerAction} which will delete the currently
          * selected layers in the layer dialog.
@@ -267,8 +257,9 @@ public class LayerListDialog extends ToggleDialog {
          */
         public DeleteLayerAction() {
             putValue(SMALL_ICON,ImageProvider.get("dialogs", "delete"));
-            putValue(SHORT_DESCRIPTION, tr("Delete the selected layer."));
-            putValue("help", "Action/LayerDelete");
+            putValue(SHORT_DESCRIPTION, tr("Delete the selected layers."));
+            putValue(NAME, tr("Delete"));
+            putValue("help", HelpUtil.ht("/Dialog/LayerDialog#DeleteLayer"));
             updateEnabledState();
         }
 
@@ -298,12 +289,7 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         public void actionPerformed(ActionEvent e) {
-            List<Layer> selectedLayers;
-            if (this.layer == null) {
-                selectedLayers = getModel().getSelectedLayers();
-            } else {
-                selectedLayers = Collections.singletonList(this.layer);
-            }
+            List<Layer> selectedLayers = getModel().getSelectedLayers();
             if (selectedLayers.isEmpty())
                 return;
             if (! enforceUploadOrSaveModifiedData(selectedLayers))
@@ -314,11 +300,7 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         public void updateEnabledState() {
-            if (layer == null) {
-                setEnabled(! getModel().getSelectedLayers().isEmpty());
-            } else {
-                setEnabled(true);
-            }
+            setEnabled(! getModel().getSelectedLayers().isEmpty());
         }
     }
 
@@ -349,7 +331,7 @@ public class LayerListDialog extends ToggleDialog {
         public ShowHideLayerAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "showhide"));
             putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the selected layer."));
-            putValue("help", "Action/LayerShowHide");
+            putValue("help", HelpUtil.ht("/Dialog/LayerDialog#ShowHideLayer"));
             updateEnabledState();
         }
 
@@ -391,7 +373,7 @@ public class LayerListDialog extends ToggleDialog {
         public ActivateLayerAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "activate"));
             putValue(SHORT_DESCRIPTION, tr("Activate the selected layer"));
-            putValue("help", "Action/ActivateLayer");
+            putValue("help", HelpUtil.ht("/Dialog/LayerDialog#ActivateLayer"));
             updateEnabledState();
         }
 
@@ -456,7 +438,7 @@ public class LayerListDialog extends ToggleDialog {
         public MergeAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "mergedown"));
             putValue(SHORT_DESCRIPTION, tr("Merge this layer into another layer"));
-            putValue("help", "Action/MergeLayer");
+            putValue("help", HelpUtil.ht("/Dialog/LayerDialog#MergeLayer"));
             updateEnabledState();
         }
 
@@ -520,13 +502,13 @@ public class LayerListDialog extends ToggleDialog {
         }
     }
 
-    class LayerListMouseAdapter extends MouseAdapter {
-
-        private void openPopup(MouseEvent e) {
-            Point p = e.getPoint();
+    class PopupMenuHandler extends PopupMenuLauncher {
+        @Override
+        public void launch(MouseEvent evt) {
+            Point p = evt.getPoint();
             int index = layerList.locationToIndex(p);
             if (index < 0) return;
-            if (!layerList.getCellBounds(index, index).contains(e.getPoint()))
+            if (!layerList.getCellBounds(index, index).contains(evt.getPoint()))
                 return;
             if (!layerList.isSelectedIndex(index)) {
                 layerList.setSelectedIndex(index);
@@ -535,16 +517,9 @@ public class LayerListDialog extends ToggleDialog {
             LayerListPopup menu = new LayerListPopup(layerList, layer);
             menu.show(LayerListDialog.this, p.x, p.y-3);
         }
-        @Override public void mousePressed(MouseEvent e) {
-            if (e.isPopupTrigger()) {
-                openPopup(e);
-            }
-        }
-        @Override public void mouseReleased(MouseEvent e) {
-            if (e.isPopupTrigger()) {
-                openPopup(e);
-            }
-        }
+    }
+
+    class DblClickAdapter extends MouseAdapter {
         @Override public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2) {
                 int index = layerList.locationToIndex(e.getPoint());
@@ -1041,7 +1016,8 @@ public class LayerListDialog extends ToggleDialog {
      * @return the action
      */
     public DeleteLayerAction createDeleteLayerAction(Layer layer) {
-        return new DeleteLayerAction(layer);
+        // the delete layer action doesn't depend on the current layer
+        return new DeleteLayerAction();
     }
 
     /**
