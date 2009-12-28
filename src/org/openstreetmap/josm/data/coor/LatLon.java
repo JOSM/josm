@@ -202,8 +202,8 @@ public class LatLon extends Coordinate {
      */
     public LatLon getRoundedToOsmPrecision() {
         return new LatLon(
-                Math.round(lat() * 10e7) / 10e7d,
-                Math.round(lon() * 10e7) / 10e7d
+                Math.round(lat() * 10e6) / 10e6d,
+                Math.round(lon() * 10e6) / 10e6d
         );
     }
 
