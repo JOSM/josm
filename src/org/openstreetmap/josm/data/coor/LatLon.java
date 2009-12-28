@@ -194,6 +194,20 @@ public class LatLon extends Coordinate {
         return "LatLon[lat="+lat()+",lon="+lon()+"]";
     }
 
+    /**
+     * Replies a clone of this lat LatLon, rounded to OSM precisions, i.e. to
+     * 10^-7
+     * 
+     * @return a clone of this lat LatLon
+     */
+    public LatLon getRoundedToOsmPrecision() {
+        return new LatLon(
+                Math.round(lat() * 10e7) / 10e7d,
+                Math.round(lon() * 10e7) / 10e7d
+        );
+    }
+
+
     @Override
     public int hashCode() {
         final int prime = 31;
