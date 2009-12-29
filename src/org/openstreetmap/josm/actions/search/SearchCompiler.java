@@ -633,7 +633,7 @@ public class SearchCompiler {
         if (tokenizer.readIfEqual(Token.LEFT_PARENT)) {
             Match expression = parseExpression();
             if (!tokenizer.readIfEqual(Token.RIGHT_PARENT))
-                throw new ParseError(tr("Missing right parent"));
+                throw new ParseError(tr("Missing right parenthesis"));
             return expression;
         } else if (tokenizer.readIfEqual(Token.NOT))
             return new Not(parseFactor(tr("Missing operator for NOT")));
