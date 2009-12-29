@@ -14,7 +14,6 @@ import java.text.NumberFormat;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.projection.Projection;
 
 /**
  * LatLon are unprojected latitude / longitude coordinates.
@@ -24,6 +23,12 @@ import org.openstreetmap.josm.data.projection.Projection;
  * @author Imi
  */
 public class LatLon extends Coordinate {
+
+    /**
+     * Minimum difference in location to not be represented as the same position.
+     * The API returns 7 decimals.
+     */
+    public static final double MAX_SERVER_PRECISION = 1e-7;
 
     private static DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
     private static DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
@@ -100,10 +105,10 @@ public class LatLon extends Coordinate {
     /**
      * @return <code>true</code> if the other point has almost the same lat/lon
      * values, only differing by no more than
-     * 1 / {@link org.openstreetmap.josm.data.projection.Projection#MAX_SERVER_PRECISION MAX_SERVER_PRECISION}.
+     * 1 / {@link #MAX_SERVER_PRECISION MAX_SERVER_PRECISION}.
      */
     public boolean equalsEpsilon(LatLon other) {
-        final double p = Projection.MAX_SERVER_PRECISION;
+        double p = MAX_SERVER_PRECISION / 2;
         return Math.abs(lat()-other.lat()) <= p && Math.abs(lon()-other.lon()) <= p;
     }
 
@@ -196,14 +201,14 @@ public class LatLon extends Coordinate {
 
     /**
      * Replies a clone of this lat LatLon, rounded to OSM precisions, i.e. to
-     * 10^-7
+     * MAX_SERVER_PRECISION
      * 
      * @return a clone of this lat LatLon
      */
     public LatLon getRoundedToOsmPrecision() {
         return new LatLon(
-                Math.round(lat() * 10e6) / 10e6d,
-                Math.round(lon() * 10e6) / 10e6d
+                Math.round(lat() / MAX_SERVER_PRECISION) * MAX_SERVER_PRECISION,
+                Math.round(lon() / MAX_SERVER_PRECISION) * MAX_SERVER_PRECISION
         );
     }
 

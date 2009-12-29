@@ -13,12 +13,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
  */
 public interface Projection {
     /**
-     * Minimum difference in location to not be represented as the same position.
-     * The API returns 7 decimals.
-     */
-    public static final double MAX_SERVER_PRECISION = 5e-8;
-
-    /**
      * List of all available projections.
      */
     public static Projection[] allProjections = new Projection[]{
