@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -937,6 +938,10 @@ public class MapPaintVisitor implements PaintVisitor {
         leftHandTraffic = Main.pref.getBoolean("mappaint.lefthandtraffic", false);
         minEN = nc.getEastNorth(0, nc.getHeight() - 1);
         maxEN = nc.getEastNorth(nc.getWidth() - 1, 0);
+
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                Main.pref.getBoolean("mappaint.use-antialiasing", false) ?
+                        RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 
         this.paintSettings = MapPaintSettings.INSTANCE;
         this.painter = new MapPainter(paintSettings, g, inactive, nc, virtual, dist, circum);
