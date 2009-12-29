@@ -104,12 +104,15 @@ public class PluginSelection {
             }
         }
         if (toUpdate.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("All installed plugins are up to date."),
-                    tr("Information"),
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            if(pluginPanel != null) /* don't view this message for auto-update */
+            {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("All installed plugins are up to date."),
+                        tr("Information"),
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
             done = true;
         } else {
             ExtendedDialog ed = new ExtendedDialog(Main.parent,
