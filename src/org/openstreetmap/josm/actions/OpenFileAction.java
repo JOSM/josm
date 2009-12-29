@@ -59,6 +59,13 @@ public class OpenFileAction extends DiskAccessAction {
         setEnabled(! Main.applet);
     }
 
+    static public void openFile(File f) throws IOException, IllegalDataException {
+        for (FileImporter importer : ExtensionFileFilter.importers)
+            if (importer.acceptFile(f)) {
+                importer.importData(f);
+            }
+    }
+
     static public class OpenFileTask extends PleaseWaitRunnable {
         private List<File> files;
         private FileFilter fileFilter;
@@ -94,7 +101,7 @@ public class OpenFileAction extends DiskAccessAction {
             }
             /**
              * If the filter wasn't changed in the dialog, chosenImporter is null now.
-             * When the filter was expicitly set to AllFormatsImporter, treat this the same.
+             * When the filter was explicitly set to AllFormatsImporter, treat this the same.
              */
             if (chosenImporter instanceof AllFormatsImporter) {
                 chosenImporter = null;

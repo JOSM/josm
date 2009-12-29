@@ -25,7 +25,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
     }
 
     /**
-     * A batch importer is a file importer that preferes to read multiple files at the same time.
+     * A batch importer is a file importer that prefers to read multiple files at the same time.
      */
     public boolean isBatchImporter() {
         return false;
