@@ -8,17 +8,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.io.AllFormatsImporter;
 import org.openstreetmap.josm.io.FileImporter;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
@@ -45,7 +50,7 @@ public class OpenFileAction extends DiskAccessAction {
         if (fc == null)
             return;
         File[] files = fc.getSelectedFiles();
-        OpenFileTask task = new OpenFileTask(Arrays.asList(files));
+        OpenFileTask task = new OpenFileTask(Arrays.asList(files), fc.getFileFilter());
         Main.worker.submit(task);
     }
 
@@ -54,20 +59,15 @@ public class OpenFileAction extends DiskAccessAction {
         setEnabled(! Main.applet);
     }
 
-    static public void openFile(File f) throws IOException, IllegalDataException {
-        for (FileImporter importer : ExtensionFileFilter.importers)
-            if (importer.acceptFile(f)) {
-                importer.importData(f);
-            }
-    }
-
     static public class OpenFileTask extends PleaseWaitRunnable {
         private List<File> files;
+        private FileFilter fileFilter;
         private boolean cancelled;
 
-        public OpenFileTask(List<File> files) {
+        public OpenFileTask(List<File> files, FileFilter fileFilter) {
             super(tr("Opening files"), false /* don't ignore exception */);
-            this.files = files;
+            this.files = new ArrayList<File>(files);
+            this.fileFilter = fileFilter;
         }
         @Override
         protected void cancel() {
@@ -82,23 +82,87 @@ public class OpenFileAction extends DiskAccessAction {
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             if (files == null || files.isEmpty()) return;
-            getProgressMonitor().setTicks(files.size());
-            for (File f : files) {
-                if (cancelled) return;
-                getProgressMonitor().indeterminateSubTask(tr("Opening file ''{0}'' ...", f.getAbsolutePath()));
-                try {
-                    System.out.println("Open file: " + f.getAbsolutePath() + " (" + f.length() + " bytes)");
-                    openFile(f);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            tr("<html>Could not read file ''{0}\''.<br> Error is: <br>{1}</html>", f.getName(), e.getMessage()),
-                            tr("Error"),
-                            JOptionPane.ERROR_MESSAGE
-                    );
+
+            /**
+             * Find the importer with the chosen file filter
+             */
+            FileImporter chosenImporter = null;
+            for (FileImporter importer : ExtensionFileFilter.importers) {
+                if (fileFilter == importer.filter) {
+                    chosenImporter = importer;
                 }
-                getProgressMonitor().worked(1);
+            }
+            /**
+             * If the filter wasn't changed in the dialog, chosenImporter is null now.
+             * When the filter was expicitly set to AllFormatsImporter, treat this the same.
+             */
+            if (chosenImporter instanceof AllFormatsImporter) {
+                chosenImporter = null;
+            }
+            getProgressMonitor().setTicks(files.size());
+
+            if (chosenImporter != null) { // The importer was expicitely chosen, so use it.
+                //System.err.println("Importer: " +chosenImporter.getClass().getName());
+                for (File f : files) {
+                    if (!chosenImporter.acceptFile(f)) {
+                        if (f.isDirectory()) {
+                            JOptionPane.showMessageDialog(
+                                    Main.parent,
+                                    tr("<html>Cannot open directory.<br>Please select a file!"),
+                                    tr("Open file"),
+                                    JOptionPane.INFORMATION_MESSAGE
+                            );
+                            return;
+                        } else
+                            throw new IllegalStateException();
+                    }
+                }
+                importData(chosenImporter, files);
+            }
+            else {    // find apropriate importer
+                MultiMap<FileImporter, File> map = new MultiMap<FileImporter, File>();
+                while (! files.isEmpty()) {
+                    File f = files.get(0);
+                    for (FileImporter importer : ExtensionFileFilter.importers) {
+                        if (importer.acceptFile(f)) {
+                            map.add(importer, f);
+                            files.remove(f);
+                        }
+                    }
+                    if (files.contains(f))
+                        throw new RuntimeException(); // no importer found
+                }
+                List<FileImporter> ims = new ArrayList<FileImporter>(map.keySet());
+                Collections.sort(ims);
+                Collections.reverse(ims);
+                for (FileImporter importer : ims) {
+                    //System.err.println("Using "+importer.getClass().getName());
+                    List<File> files = map.get(importer);
+                    //System.err.println("for files: "+files);
+                    importData(importer, files);
+                }
+            }
+        }
+
+        public void importData(FileImporter importer, List<File> files) {
+            if (importer.isBatchImporter()) {
+                if (cancelled) return;
+                String msg;
+                if (files.size() == 1) {
+                    msg = tr("Opening 1 file...");
+                } else {
+                    msg = tr("Opening {0} files...", files.size());
+                }
+                getProgressMonitor().indeterminateSubTask(msg);
+                importer.importDataHandleExceptions(files);
+                getProgressMonitor().worked(files.size());
+            } else {
+                for (File f : files) {
+                    if (cancelled) return;
+                    getProgressMonitor().indeterminateSubTask(tr("Opening file ''{0}'' ...", f.getAbsolutePath()));
+                    importer.importDataHandleExceptions(f);
+                    getProgressMonitor().worked(1);
+                }
             }
         }
     }

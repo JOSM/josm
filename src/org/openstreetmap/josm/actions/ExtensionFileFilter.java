@@ -14,17 +14,9 @@ import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
+import org.openstreetmap.josm.io.AllFormatsImporter;
 import org.openstreetmap.josm.io.FileExporter;
 import org.openstreetmap.josm.io.FileImporter;
-import org.openstreetmap.josm.io.GpxExporter;
-import org.openstreetmap.josm.io.GpxImporter;
-import org.openstreetmap.josm.io.NMEAImporter;
-import org.openstreetmap.josm.io.OsmBzip2Exporter;
-import org.openstreetmap.josm.io.OsmBzip2Importer;
-import org.openstreetmap.josm.io.OsmExporter;
-import org.openstreetmap.josm.io.OsmGzipExporter;
-import org.openstreetmap.josm.io.OsmGzipImporter;
-import org.openstreetmap.josm.io.OsmImporter;
 
 /**
  * A file filter that filters after the extension. Also includes a list of file
@@ -54,6 +46,7 @@ public class ExtensionFileFilter extends FileFilter {
             "org.openstreetmap.josm.io.GpxImporter",
             "org.openstreetmap.josm.io.NMEAImporter",
             "org.openstreetmap.josm.io.OsmBzip2Importer",
+            "org.openstreetmap.josm.io.JpgImporter",
             "org.openstreetmap.josm.io.AllFormatsImporter"
         };
 
@@ -109,9 +102,6 @@ public class ExtensionFileFilter extends FileFilter {
     public static List<ExtensionFileFilter> getImportExtensionFileFilters() {
         LinkedList<ExtensionFileFilter> filters = new LinkedList<ExtensionFileFilter>();
         for (FileImporter importer : importers) {
-            if (filters.contains(importer.filter)) {
-                continue;
-            }
             filters.add(importer.filter);
         }
         sort(filters);
@@ -224,20 +214,6 @@ public class ExtensionFileFilter extends FileFilter {
 
     public String getDefaultExtension() {
         return defaultExtension;
-    }
-
-    /**
-     * Dummy importer that adds the "All Formats"-Filter when opening files
-     */
-    public static class AllFormatsImporter extends FileImporter {
-        public AllFormatsImporter() {
-            super(
-                    new ExtensionFileFilter("osm,xml,osm.gz,osm.bz2,osm.bz,gpx,gpx.gz,nmea,nme,nma,txt,wms", "", tr("All Formats")
-                            + " (*.gpx *.osm *.nmea ...)"));
-        }
-        @Override public boolean acceptFile(File pathname) {
-            return false;
-        }
     }
 
     @Override

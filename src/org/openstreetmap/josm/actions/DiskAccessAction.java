@@ -34,9 +34,10 @@ abstract public class DiskAccessAction extends JosmAction {
             fc.setDialogTitle(title);
         }
 
+        fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         fc.setMultiSelectionEnabled(multiple);
         fc.setAcceptAllFileFilterUsed(false);
-        System.out.println("opening fc for extension " + extension);
+        //System.out.println("opening fc for extension " + extension);
         ExtensionFileFilter.applyChoosableImportFileFilters(fc, extension);
 
         int answer = open ? fc.showOpenDialog(Main.parent) : fc.showSaveDialog(Main.parent);

@@ -1073,7 +1073,7 @@ public class CorrelateGpxWithImages implements ActionListener {
     private GpxDataWrapper selectedGPX(boolean complain) {
         Object item = cbGpx.getSelectedItem();
 
-        if (item == null || ! (item instanceof GpxDataWrapper)) {
+        if (item == null || ((GpxDataWrapper) item).file == null) {
             if (complain) {
                 JOptionPane.showMessageDialog(Main.parent, tr("You should select a GPX track"),
                         tr("No selected GPX track"), JOptionPane.ERROR_MESSAGE );
