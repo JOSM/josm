@@ -456,6 +456,11 @@ public class GenericRelationEditor extends RelationEditor  {
         memberTableModel.addTableModelListener(sortAction);
         tb.add(sortAction);
 
+        // -- reverse action
+        ReverseAction reverseAction = new ReverseAction();
+        memberTableModel.addTableModelListener(reverseAction);
+        tb.add(reverseAction);
+
         tb.addSeparator();
 
         // -- download action
@@ -883,6 +888,29 @@ public class GenericRelationEditor extends RelationEditor  {
 
         public void actionPerformed(ActionEvent e) {
             memberTableModel.sort();
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(memberTableModel.getRowCount() > 0);
+        }
+
+        public void tableChanged(TableModelEvent e) {
+            updateEnabledState();
+        }
+    }
+
+    class ReverseAction extends AbstractAction implements TableModelListener {
+        public ReverseAction() {
+            putValue(SHORT_DESCRIPTION, tr("Reverse the order of the relation members"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "reverse"));
+            putValue(NAME, tr("Reverse"));
+            Shortcut.registerShortcut("relationeditor:reverse", tr("Relation Editor: Reverse"), KeyEvent.VK_R,
+                    Shortcut.GROUP_MNEMONIC);
+            updateEnabledState();
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            memberTableModel.reverse();
         }
 
         protected void updateEnabledState() {

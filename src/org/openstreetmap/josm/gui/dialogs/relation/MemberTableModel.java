@@ -743,6 +743,14 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     }
 
     /**
+     * Reverse the relation members.
+     */
+    void reverse() {
+        Collections.reverse(members);
+        fireTableDataChanged();
+    }
+
+    /**
      * Determines the direction of way k with respect to the way ref_i.
      * The way ref_i is assumed to have the direction ref_direction and
      * to be the predecessor of k.
