@@ -308,18 +308,16 @@ abstract public class Main {
 
         try {
             String defaultlaf = platform.getDefaultStyle();
+            String laf = Main.pref.get("laf", defaultlaf);
             try {
-                String laf = Main.pref.get("laf", defaultlaf);
-                if(laf != null && laf.length() > 0) {
-                    UIManager.setLookAndFeel(laf);
-                }
+                UIManager.setLookAndFeel(laf);
             }
             catch (final java.lang.ClassNotFoundException e) {
-                System.out.println("Look and Feel not found: " + Main.pref.get("laf"));
+                System.out.println("Look and Feel not found: " + laf);
                 Main.pref.put("laf", defaultlaf);
             }
             catch (final javax.swing.UnsupportedLookAndFeelException e) {
-                System.out.println("Look and Feel not supported: " + Main.pref.get("laf"));
+                System.out.println("Look and Feel not supported: " + laf);
                 Main.pref.put("laf", defaultlaf);
             }
             toolbar = new ToolbarPreferences();
