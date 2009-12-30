@@ -687,12 +687,14 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         return result;
     }
 
-    /**
-     * Sort the relation members by the way they are linked.
+    /*
+     * Sort a collection of relation members by the way they are linked.
+     * 
+     * @param relationMembers collection of relation members
+     * @return sorted collection of relation members
      */
-    void sort() {
-        RelationNodeMap map = new RelationNodeMap(members);
-
+    private ArrayList<RelationMember> sortMembers(ArrayList<RelationMember> relationMembers) {
+        RelationNodeMap map = new RelationNodeMap(relationMembers);
         // List of groups of linked members
         //
         ArrayList<LinkedList<Integer>> allGroups = new ArrayList<LinkedList<Integer>>();
@@ -721,7 +723,6 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
             while ((next = map.popAdjacent(next)) != null) {
                 group.addFirst(next);
             }
-
         }
 
         group = new LinkedList<Integer>();
@@ -731,7 +732,35 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         ArrayList<RelationMember> newMembers = new ArrayList<RelationMember>();
         for (LinkedList<Integer> tmpGroup : allGroups) {
             for (Integer p : tmpGroup) {
-                newMembers.add(members.get(p));
+                newMembers.add(relationMembers.get(p));
+            }
+        }
+        return newMembers;
+    }
+
+    /**
+     * Sort the relation members by the way they are linked.
+     */
+    void sort() {
+        ArrayList<RelationMember> selectedMembers = new ArrayList<RelationMember>(getSelectedMembers());
+        ArrayList<RelationMember> sortedMembers = null;
+        ArrayList<RelationMember> newMembers;
+        if (selectedMembers.isEmpty()) {
+            newMembers = sortMembers(members);
+        } else {
+            sortedMembers = sortMembers(selectedMembers);
+            List<Integer> selectedIndices = getSelectedIndices();
+            newMembers = new ArrayList<RelationMember>();
+            boolean inserted = false;
+            for (int i=0; i < members.size(); i++) {
+                if (selectedIndices.contains(i)) {
+                    if (!inserted) {
+                        newMembers.addAll(sortedMembers);
+                        inserted = true;
+                    }
+                } else {
+                    newMembers.add(members.get(i));
+                }
             }
         }
 
@@ -740,6 +769,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         members.clear();
         members.addAll(newMembers);
         fireTableDataChanged();
+        setSelectedMembers(sortedMembers);
     }
 
     /**
