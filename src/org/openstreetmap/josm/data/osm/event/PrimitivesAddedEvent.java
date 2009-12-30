@@ -31,7 +31,7 @@ public class PrimitivesAddedEvent extends AbstractDatasetChangedEvent {
     }
 
     /**
-     * 
+     *
      * @return True if primitive was in dataset before (so it's not really added), but it was incomplete
      */
     public boolean wasIncomplete() {

@@ -123,8 +123,6 @@ public final class ConflictDialog extends ToggleDialog implements MapView.LayerC
         refreshView();
     }
 
-
-
     @Override
     public void tearDown() {
         MapView.removeLayerChangeListener(this);

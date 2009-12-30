@@ -10,7 +10,7 @@ import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 
 /**
  * The column model for the changeset content
- * 
+ *
  */
 public class ChangesetContentTableColumnModel extends DefaultTableColumnModel {
 

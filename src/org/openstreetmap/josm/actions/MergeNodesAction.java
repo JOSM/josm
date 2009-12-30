@@ -175,7 +175,6 @@ public class MergeNodesAction extends JosmAction {
         if (nodes == null)
             return null;
 
-
         Set<RelationToChildReference> relationToNodeReferences = RelationToChildReference.getRelationToChildReferences(nodes);
 
         // build the tag collection

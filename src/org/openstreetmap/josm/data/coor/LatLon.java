@@ -202,7 +202,7 @@ public class LatLon extends Coordinate {
     /**
      * Replies a clone of this lat LatLon, rounded to OSM precisions, i.e. to
      * MAX_SERVER_PRECISION
-     * 
+     *
      * @return a clone of this lat LatLon
      */
     public LatLon getRoundedToOsmPrecision() {
@@ -211,7 +211,6 @@ public class LatLon extends Coordinate {
                 Math.round(lon() / MAX_SERVER_PRECISION) * MAX_SERVER_PRECISION
         );
     }
-
 
     @Override
     public int hashCode() {

@@ -20,7 +20,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
  * This is the list model for the list of changeset in the current edit layer.
- * 
+ *
  */
 public class ChangesetsInActiveDataLayerListModel extends ChangesetListModel implements DataSetListener, EditLayerChangeListener {
 

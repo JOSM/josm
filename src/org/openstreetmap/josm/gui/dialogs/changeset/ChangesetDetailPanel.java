@@ -44,7 +44,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * This panel displays the properties of the currently selected changeset in the
  * {@see ChangesetCacheManager}.
- * 
+ *
  */
 public class ChangesetDetailPanel extends JPanel implements PropertyChangeListener{
 
@@ -314,7 +314,6 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         }
     }
 
-
     /**
      * Updates the current changeset from the OSM server
      *
@@ -347,9 +346,9 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     }
 
     /**
-     * Selects the primitives in the content of this changeset in the the current
+     * Selects the primitives in the content of this changeset in the current
      * data layer.
-     * 
+     *
      */
     class SelectInCurrentLayerAction extends AbstractAction implements EditLayerChangeListener{
 
@@ -416,9 +415,9 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     }
 
     /**
-     * Zooms to the primitives in the content of this changeset in the the current
+     * Zooms to the primitives in the content of this changeset in the current
      * data layer.
-     * 
+     *
      */
     class ZoomInCurrentLayerAction extends AbstractAction implements EditLayerChangeListener{
 

@@ -48,7 +48,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
     /**
      * Sets the changeset currently displayed in the detail view. Fires a property change event
      * for the property {@see #CHANGESET_IN_DETAIL_VIEW_PROP} if necessary.
-     * 
+     *
      * @param cs the changeset currently displayed in the detail view.
      */
     public void setChangesetInDetailView(Changeset cs) {
@@ -61,7 +61,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
 
     /**
      * Replies true if there is at least one selected changeset
-     * 
+     *
      * @return true if there is at least one selected changeset
      */
     public boolean hasSelectedChangesets() {
@@ -70,7 +70,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
 
     /**
      * Replies the list of selected changesets
-     * 
+     *
      * @return the list of selected changesets
      */
     public List<Changeset> getSelectedChangesets() {
@@ -86,7 +86,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
 
     /**
      * Replies a set of ids of the selected changesets
-     * 
+     *
      * @return a set of ids of the selected changesets
      */
     public Set<Integer> getSelectedChangesetIds() {
@@ -99,7 +99,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
 
     /**
      * Selects the changesets in <code>selected</code>.
-     * 
+     *
      * @param selected the collection of changesets to select. Ignored if empty.
      */
     public void setSelectedChangesets(Collection<Changeset> selected) {
@@ -116,7 +116,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
 
     /**
      * Selects the changeset displayed at row <code>row</code>
-     * 
+     *
      * @param row the row. Ignored if < 0 or >= {@see #getRowCount()}
      */
     public void setSelectedByIdx(int row) {

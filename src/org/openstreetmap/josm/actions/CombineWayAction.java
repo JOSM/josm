@@ -179,7 +179,6 @@ public class CombineWayAction extends JosmAction {
             }
         }
 
-
         // create the new way and apply the new node list
         //
         Way targetWay = getTargetWay(ways);

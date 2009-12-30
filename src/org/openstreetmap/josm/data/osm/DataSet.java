@@ -30,7 +30,6 @@ import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 
-
 /**
  * DataSet is the data behind the application. It can consists of only a few points up to the whole
  * osm database. DataSet's can be merged together, saved, (up/down/disk)loaded etc.

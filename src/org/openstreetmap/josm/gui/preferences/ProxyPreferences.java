@@ -30,8 +30,6 @@ import org.openstreetmap.josm.tools.GBC;
 
 public class ProxyPreferences implements PreferenceSetting {
 
-
-
     public static class Factory implements PreferenceSettingFactory {
         public PreferenceSetting createPreferenceSetting() {
             return new ProxyPreferences();

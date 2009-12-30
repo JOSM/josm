@@ -19,11 +19,11 @@ public class ChangesetQuery {
     /**
      * Replies a changeset query object from the query part of a OSM API URL for querying
      * changesets.
-     * 
+     *
      * @param query the query part
      * @return the query object
      * @throws ChangesetQueryUrlException thrown if query doesn't consist of valid query parameters
-     * 
+     *
      */
     static public ChangesetQuery buildFromUrlQuery(String query) throws ChangesetQueryUrlException{
         return new ChangesetQueryUrlParser().parse(query);
@@ -47,7 +47,7 @@ public class ChangesetQuery {
 
     /**
      * Restricts the query to changesets owned by the user with id <code>uid</code>.
-     * 
+     *
      * @param uid the uid of the user. >0 expected.
      * @return the query object with the applied restriction
      * @throws IllegalArgumentException thrown if uid <= 0
@@ -63,10 +63,10 @@ public class ChangesetQuery {
 
     /**
      * Restricts the query to changesets owned by the user with user name <code>username</code>.
-     * 
+     *
      * Caveat: for historical reasons the username might not be unique! It is recommended to use
      * {@see #forUser(int)} to restrict the query to a specific user.
-     * 
+     *
      * @param username the username. Must not be null.
      * @return the query object with the applied restriction
      * @throws IllegalArgumentException thrown if username is null.
@@ -82,7 +82,7 @@ public class ChangesetQuery {
     /**
      * Replies true if this query is restricted to user whom we only know the user name
      * for.
-     * 
+     *
      * @return true if this query is restricted to user whom we only know the user name
      * for
      */
@@ -93,7 +93,7 @@ public class ChangesetQuery {
     /**
      * Replies the user name which this query is restricted to. null, if this query isn't
      * restricted to a user name, i.e. if {@see #isRestrictedToPartiallyIdentifiedUser()} is false.
-     * 
+     *
      * @return the user name which this query is restricted to
      */
     public String getUserName() {
@@ -102,7 +102,7 @@ public class ChangesetQuery {
 
     /**
      * Replies true if this query is restricted to user whom know the user id for.
-     * 
+     *
      * @return true if this query is restricted to user whom know the user id for
      */
     public boolean isRestrictedToFullyIdentifiedUser() {
@@ -111,12 +111,12 @@ public class ChangesetQuery {
 
     /**
      * Replies a query which is restricted to a bounding box.
-     * 
+     *
      * @param minLon  min longitude of the bounding box. Valid longitude value expected.
      * @param minLat  min latitude of the bounding box. Valid latitude value expected.
      * @param maxLon  max longitude of the bounding box. Valid longitude value expected.
      * @param maxLat  max latitude of the bounding box.  Valid latitude value expected.
-     * 
+     *
      * @return the restricted changeset query
      * @throws IllegalArgumentException thrown if either of the parameters isn't a valid longitude or
      * latitude value
@@ -136,10 +136,10 @@ public class ChangesetQuery {
 
     /**
      * Replies a query which is restricted to a bounding box.
-     * 
+     *
      * @param min the min lat/lon coordinates of the bounding box. Must not be null.
      * @param max the max lat/lon coordiantes of the bounding box. Must not be null.
-     * 
+     *
      * @return the restricted changeset query
      * @throws IllegalArgumentException thrown if min is null
      * @throws IllegalArgumentException thrown if max is null
@@ -153,7 +153,7 @@ public class ChangesetQuery {
 
     /**
      *  Replies a query which is restricted to a bounding box given by <code>bbox</code>.
-     * 
+     *
      * @param bbox the bounding box. Must not be null.
      * @return the changeset query
      * @throws IllegalArgumentException thrown if bbox is null.
@@ -167,7 +167,7 @@ public class ChangesetQuery {
     /**
      * Restricts the result to changesets which have been closed after the date given by <code>d</code>.
      * <code>d</code> d is a date relative to the current time zone.
-     * 
+     *
      * @param d the date . Must not be null.
      * @return the restricted changeset query
      * @throws IllegalArgumentException thrown if d is null
@@ -182,7 +182,7 @@ public class ChangesetQuery {
      * Restricts the result to changesets which have been closed after <code>closedAfter</code> and which
      * habe been created before <code>createdBefore</code>. Both dates are expressed relative to the current
      * time zone.
-     * 
+     *
      * @param closedAfter only reply changesets closed after this date. Must not be null.
      * @param createdBefore only reply changesets created before this date. Must not be null.
      * @return the restricted changeset query
@@ -200,7 +200,7 @@ public class ChangesetQuery {
     /**
      * Restricts the result to changesets which are or aren't open, depending on the value of
      * <code>isOpen</code>
-     * 
+     *
      * @param isOpen whether changesets should or should not be open
      * @return the restricted changeset query
      */
@@ -212,7 +212,7 @@ public class ChangesetQuery {
     /**
      * Restricts the result to changesets which are or aren't closed, depending on the value of
      * <code>isClosed</code>
-     * 
+     *
      * @param isClosed whether changesets should or should not be open
      * @return the restricted changeset query
      */
@@ -223,7 +223,7 @@ public class ChangesetQuery {
 
     /**
      * Replies the query string to be used in a query URL for the OSM API.
-     * 
+     *
      * @return the query string
      */
     public String getQueryString() {
@@ -267,7 +267,6 @@ public class ChangesetQuery {
         }
         return sb.toString();
     }
-
 
     public static class ChangesetQueryUrlException extends Exception {
 
@@ -407,15 +406,15 @@ public class ChangesetQuery {
         /**
          * Parses the changeset query given as URL query parameters and replies a
          * {@see ChangesetQuery}
-         * 
+         *
          * <code>query</code> is the query part of a API url for querying changesets,
          * see <a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_.2Fapi.2F0.6.2Fchangesets">OSM API</a>.
-         * 
+         *
          * Example for an query string:<br>
          * <pre>
          *    uid=1234&open=true
          * </pre>
-         * 
+         *
          * @param query the query string. If null, an empty query (identical to a query for all changesets) is
          * assumed
          * @return the changeset query

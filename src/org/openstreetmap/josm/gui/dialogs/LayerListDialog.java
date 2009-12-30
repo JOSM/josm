@@ -127,7 +127,6 @@ public class LayerListDialog extends ToggleDialog {
         adaptTo(mergeLayerAction,selectionModel);
         buttonPanel.add(new SideButton(mergeLayerAction));
 
-
         //-- delete layer action
         DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
         layerList.getInputMap(JComponent.WHEN_FOCUSED).put(
@@ -771,10 +770,10 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         /**
-         * Replies true if the the currently selected layers can move up
+         * Replies true if the currently selected layers can move up
          * by one position
          *
-         * @return true if the the currently selected layers can move up
+         * @return true if the currently selected layers can move up
          * by one position
          */
         public boolean canMoveUp() {

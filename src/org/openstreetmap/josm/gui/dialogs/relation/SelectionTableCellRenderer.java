@@ -57,7 +57,6 @@ public  class SelectionTableCellRenderer extends JLabel implements TableCellRend
         setBackground(bgc);
     }
 
-
     protected void renderPrimitive(OsmPrimitive primitive) {
         setIcon(ImageProvider.get(primitive.getPrimitiveId().getType()));
         setText(primitive.getDisplayName(DefaultNameFormatter.getInstance()));

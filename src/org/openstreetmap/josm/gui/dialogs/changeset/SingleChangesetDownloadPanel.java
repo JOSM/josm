@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * This panel allows to enter the ID of single changeset and to download
  * the respective changeset.
- * 
+ *
  */
 public class SingleChangesetDownloadPanel extends JPanel {
 
@@ -62,7 +62,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
     /**
      * Replies the changeset id entered in this panel. 0 if no changeset id
      * or an invalid changeset id is currently entered.
-     * 
+     *
      * @return the changeset id entered in this panel
      */
     public int getChangsetId() {
@@ -116,7 +116,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
 
     /**
      * Validator for a changeset ID entered in a {@see JTextComponent}.
-     * 
+     *
      */
     static private class ChangesetIdValidator extends AbstractTextComponentValidator {
         static public ChangesetIdValidator decorate(JTextComponent tc) {

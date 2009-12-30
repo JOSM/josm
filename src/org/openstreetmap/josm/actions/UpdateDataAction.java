@@ -41,7 +41,7 @@ public class UpdateDataAction extends JosmAction{
     }
 
     public void updateLayer(OsmDataLayer layer) {
-        
+
     }
 
     public void actionPerformed(ActionEvent e) {

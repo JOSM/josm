@@ -119,7 +119,7 @@ public class User {
 
     /*
      * Returns the list of user names
-     * 
+     *
      * @returns list of names
      */
     public ArrayList<String> getNames() {
@@ -128,7 +128,7 @@ public class User {
 
     /*
      * Adds a user name to the list if it is not there, yet.
-     * 
+     *
      * @param name
      */
     public void addName(String name) {
@@ -137,7 +137,7 @@ public class User {
 
     /*
      * Returns true if the name is in the names list
-     * 
+     *
      * @param name
      */
     public boolean hasName(String name) {

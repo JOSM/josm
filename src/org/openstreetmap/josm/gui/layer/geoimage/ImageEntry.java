@@ -114,4 +114,3 @@ final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         return result;
     }
 }
-

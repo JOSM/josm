@@ -192,7 +192,7 @@ public class ExtendedDialog extends JDialog {
     }
 
     private boolean setupDone = false;
-    
+
     /**
      * This is called by showDialog().
      * Only invoke from outside if you need to modify the contentPane

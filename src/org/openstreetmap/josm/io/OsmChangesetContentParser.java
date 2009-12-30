@@ -273,7 +273,7 @@ public class OsmChangesetContentParser {
 
     /**
      * Create a parser
-     * 
+     *
      * @param source the input stream with the changeset content as XML document. Must not be null.
      * @throws IllegalArgumentException thrown if source is null.
      */
@@ -291,7 +291,7 @@ public class OsmChangesetContentParser {
 
     /**
      * Parses the content
-     * 
+     *
      * @param progressMonitor the progress monitor. Set to {@see NullProgressMonitor#INSTANCE}
      * if null
      * @return the parsed data
@@ -322,7 +322,7 @@ public class OsmChangesetContentParser {
 
     /**
      * Parses the content from the input source
-     * 
+     *
      * @return the parsed data
      * @throws OsmDataParsingException thrown if something went wrong. Check for chained
      * exceptions.

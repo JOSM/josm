@@ -46,7 +46,6 @@ public class OsmServerWriter {
 
     long uploadStartTime;
 
-
     public String timeLeft(int progress, int list_size) {
         long now = System.currentTimeMillis();
         long elapsed = now - uploadStartTime;

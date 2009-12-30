@@ -202,7 +202,6 @@ public abstract class RelationEditor extends ExtendedDialog {
         return ! relation.hasEqualSemanticAttributes(relationSnapshot);
     }
 
-
     /* ----------------------------------------------------------------------- */
     /* property change support                                                 */
     /* ----------------------------------------------------------------------- */

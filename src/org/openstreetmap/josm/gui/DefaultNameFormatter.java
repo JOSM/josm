@@ -207,7 +207,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     /**
      * Builds a default tooltip text for the primitive <code>primitive</code>.
-     * 
+     *
      * @param primitive the primitmive
      * @return the tooltip text
      */
@@ -243,11 +243,10 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return sb.toString();
     }
 
-
     /**
      * Decorates the name of primitive with its id, if the preference
      * <tt>osm-primitives.showid</tt> is set.
-     * 
+     *
      * The id is append to the {@see StringBuilder} passed in in <code>name</code>.
      *
      * @param name  the name without the id
@@ -258,7 +257,6 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             name.append(tr(" [id: {0}]", primitive.getId()));
         }
     }
-
 
     /**
      * Formats a name for a history node
@@ -324,7 +322,6 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return sb.toString();
     }
 
-
     /**
      * Formats a name for a {@see HistoryRelation})
      *
@@ -372,7 +369,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     /**
      * Builds a default tooltip text for an HistoryOsmPrimitive <code>primitive</code>.
-     * 
+     *
      * @param primitive the primitmive
      * @return the tooltip text
      */

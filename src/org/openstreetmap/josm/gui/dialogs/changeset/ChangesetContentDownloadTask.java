@@ -42,7 +42,7 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
 
     /**
      * Initialize the task with a collection of changeset ids to download
-     * 
+     *
      * @param ids the collection of ids. May be null.
      */
     protected void init(Collection<Integer> ids) {
@@ -60,7 +60,7 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
 
     /**
      * Creates a download task for a single changeset
-     * 
+     *
      * @param changesetId the changeset id. >0 required.
      * @throws IllegalArgumentException thrown if changesetId <= 0
      */
@@ -74,7 +74,7 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
     /**
      * Creates a download task for a collection of changesets. null values and id <=0 in
      * the collection are sillently discarded.
-     * 
+     *
      * @param changesetIds the changeset ids. Empty collection assumed, if null.
      */
     public ChangesetContentDownloadTask(Collection<Integer> changesetIds) {
@@ -84,7 +84,7 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
 
     /**
      * Creates a download task for a single changeset
-     * 
+     *
      * @param parent the parent component for the {@see PleaseWaitDialog}. Must not be null.
      * @param changesetId the changeset id. >0 required.
      * @throws IllegalArgumentException thrown if changesetId <= 0
@@ -100,7 +100,7 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
     /**
      * Creates a download task for a collection of changesets. null values and id <=0 in
      * the collection are sillently discarded.
-     * 
+     *
      * @param parent the parent component for the {@see PleaseWaitDialog}. Must not be null.
      * @param changesetIds the changeset ids. Empty collection assumed, if null.
      * @throws IllegalArgumentException thrown if parent is null
@@ -113,7 +113,7 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
     /**
      * Replies true if the local {@see ChangesetCache} already includes the changeset with
      * id <code>changesetId</code>.
-     * 
+     *
      * @param changsetId the changeset id
      * @return true if the local {@see ChangesetCache} already includes the changeset with
      * id <code>changesetId</code>
@@ -125,7 +125,7 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
     /**
      * Downloads the changeset with id <code>changesetId</code> (only "header"
      * information, no content)
-     * 
+     *
      * @param changesetId the changeset id
      * @throws OsmTransferException thrown if something went wrong
      */

@@ -17,7 +17,7 @@ class JpegFileFilter extends javax.swing.filechooser.FileFilter
     public static JpegFileFilter getInstance() {
         return instance;
     }
-    
+
     @Override public boolean accept(File f) {
         if (f.isDirectory()) {
             return true;
@@ -31,4 +31,3 @@ class JpegFileFilter extends javax.swing.filechooser.FileFilter
         return tr("JPEG images (*.jpg)");
     }
 }
-

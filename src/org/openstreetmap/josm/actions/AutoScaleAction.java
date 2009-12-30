@@ -33,7 +33,7 @@ public class AutoScaleAction extends JosmAction {
      * Zooms the current map view to the currently selected primitives.
      * Does nothing if there either isn't a current map view or if there isn't a current data
      * layer.
-     * 
+     *
      */
     public static void zoomToSelection() {
         if (Main.main == null || Main.main.getEditLayer() == null) return;

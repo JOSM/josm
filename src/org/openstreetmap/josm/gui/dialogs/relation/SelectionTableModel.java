@@ -104,7 +104,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
 
     /**
      * Replies the primitive at row <code>row</code> in this model
-     * 
+     *
      * @param row the row
      * @return  the primitive at row <code>row</code> in this model
      */

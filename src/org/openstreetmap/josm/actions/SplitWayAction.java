@@ -433,7 +433,6 @@ public class SplitWayAction extends JosmAction {
                     JOptionPane.WARNING_MESSAGE);
         }
 
-
         return new SplitWayResult(new SequenceCommand(tr("Split way {0} into {1} parts",
                 way.getDisplayName(DefaultNameFormatter.getInstance()),
                 wayChunks.size()),

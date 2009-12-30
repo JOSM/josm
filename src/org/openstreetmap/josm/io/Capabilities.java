@@ -76,7 +76,7 @@ public class Capabilities {
      * Replies the max number of objects in a changeset. -1 if either the capabilities
      * don't include this parameter or if the parameter value is illegal (not a number,
      * a negative number)
-     * 
+     *
      * @return the max number of objects in a changeset
      */
     public int getMaxChangsetSize() {

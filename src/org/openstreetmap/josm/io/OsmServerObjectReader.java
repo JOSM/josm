@@ -16,10 +16,10 @@ import org.xml.sax.SAXException;
 
 /**
  * OsmServerObjectReader reads an individual object from the OSM server.
- * 
+ *
  * It can either download the object including or not including its immediate children.
  * The former case is called a "full download".
- * 
+ *
  */
 public class OsmServerObjectReader extends OsmServerReader {
     /** the id of the object to download */
@@ -29,7 +29,7 @@ public class OsmServerObjectReader extends OsmServerReader {
 
     /**
      * Creates a new server object reader for a given id and a primitive type.
-     * 
+     *
      * @param id the object id. > 0 required.
      * @param type the type. Must not be null.
      * @param full true, if a full download is requested (i.e. a download including
@@ -48,7 +48,7 @@ public class OsmServerObjectReader extends OsmServerReader {
 
     /**
      * Creates a new server object reader for an object with the given <code>id</code>
-     * 
+     *
      * @param id the object id. Must not be null. Unique id > 0 required.
      * @param full true, if a full download is requested (i.e. a download including
      * immediate children); false, otherwise
@@ -66,7 +66,7 @@ public class OsmServerObjectReader extends OsmServerReader {
 
     /**
      * Downloads and parses the data.
-     * 
+     *
      * @param progressMonitor the progress monitor. Set to {@see NullProgressMonitor#INSTANCE} if
      * null
      * @return the downloaded data

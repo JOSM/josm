@@ -31,7 +31,7 @@ public class PrimitivesRemovedEvent extends AbstractDatasetChangedEvent {
     }
 
     /**
-     * 
+     *
      * @return True if primitive wasn't really removed from the dataset, it only become incomplete again
      */
     public boolean wasComplete() {

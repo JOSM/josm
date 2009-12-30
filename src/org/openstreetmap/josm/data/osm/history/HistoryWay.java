@@ -79,7 +79,7 @@ public class HistoryWay extends HistoryOsmPrimitive {
 
     /**
      * Replies true if this way is closed.
-     * 
+     *
      * @return true if this way is closed.
      */
     public boolean isClosed() {

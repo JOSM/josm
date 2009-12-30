@@ -209,7 +209,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        tr("<html>Failed to create an URL because the encoding ''{0}'' was<br>"
+                        tr("<html>Failed to create an URL because the encoding ''{0}''<br>"
                                 + "was missing on this system.</html>", "UTF-8"),
                                 tr("Missing encoding"),
                                 JOptionPane.ERROR_MESSAGE

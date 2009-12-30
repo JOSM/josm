@@ -25,7 +25,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.xml.sax.SAXException;
 
 /**
- * Loads the the object history of an collection of objects from the
+ * Loads the object history of an collection of objects from the
  * server.
  *
  * It provides a fluent API for configuration.
@@ -57,7 +57,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
 
     /**
      * Creates a new task
-     * 
+     *
      * @param parent the component to be used as reference to find the parent for {@see PleaseWaitDialog}.
      * Must not be null.
      * @throws IllegalArgumentException thrown if parent is null

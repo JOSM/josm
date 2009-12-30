@@ -67,7 +67,7 @@ public class OsmChangeBuilder {
 
     /**
      * Writes the prolog of the OsmChange document
-     * 
+     *
      * @throws IllegalStateException thrown if the prologs has already been written
      */
     public void start() throws IllegalStateException{
@@ -81,7 +81,7 @@ public class OsmChangeBuilder {
 
     /**
      * Appends a collection of {@see OsmPrimitive}s to the OsmChange document.
-     * 
+     *
      * @param primitives the collection of primitives. Ignored if null.
      * @throws IllegalStateException thrown if the prologs has not been written yet
      * @see #start()
@@ -98,7 +98,7 @@ public class OsmChangeBuilder {
 
     /**
      * Appends an {@see OsmPrimitive} to the OsmChange document.
-     * 
+     *
      * @param p the primitive. Ignored if null.
      * @throws IllegalStateException thrown if the prologs has not been written yet
      * @see #start()
@@ -114,7 +114,7 @@ public class OsmChangeBuilder {
 
     /**
      * Writes the epilog of the OsmChange document
-     * 
+     *
      * @throws IllegalStateException thrown if the prologs has not been written yet
      */
     public void finish() throws IllegalStateException {

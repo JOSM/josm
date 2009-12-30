@@ -51,7 +51,7 @@ public class ImageDisplay extends JComponent {
     private MediaTracker tracker = new MediaTracker(this);
 
     private String osdText = null;
-    
+
     private static int DRAG_BUTTON = Main.pref.getBoolean("geoimage.agpifo-style-drag-and-zoom", false) ? 1 : 3;
     private static int ZOOM_BUTTON = DRAG_BUTTON == 1 ? 3 : 1;
 
@@ -129,8 +129,8 @@ public class ImageDisplay extends JComponent {
             }
 
             // Calculate the mouse cursor position in image coordinates, so that we can center the zoom
-            // on that mouse position. 
-            // To avoid issues when the user tries to zoom in on the image borders, this point is not calculated 
+            // on that mouse position.
+            // To avoid issues when the user tries to zoom in on the image borders, this point is not calculated
             // again if there was less than 1.5seconds since the last event.
             if (e.getWhen() - lastTimeForMousePoint > 1500 || mousePointInImg == null) {
                 lastTimeForMousePoint = e.getWhen();
@@ -535,7 +535,7 @@ public class ImageDisplay extends JComponent {
     private Rectangle calculateDrawImageRectangle(Rectangle visibleRect) {
         return calculateDrawImageRectangle(visibleRect, new Rectangle(0, 0, getSize().width, getSize().height));
     }
-    
+
     /**
      * calculateDrawImageRectangle
      *

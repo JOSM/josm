@@ -21,7 +21,6 @@
 
 package org.openstreetmap.josm.data.osm.event;
 
-
 /**
  * A listener listening for all DataSet changes.
  * INCOMPLETE (missing relation-related events)!

@@ -183,7 +183,7 @@ public class GenericRelationEditor extends RelationEditor  {
 
     /**
      * Creates the toolbar
-     * 
+     *
      * @return the toolbar
      */
     protected JToolBar buildToolBar() {
@@ -485,7 +485,6 @@ public class GenericRelationEditor extends RelationEditor  {
     protected JToolBar buildSelectionControlButtonPanel() {
         JToolBar tb = new JToolBar(JToolBar.VERTICAL);
         tb.setFloatable(false);
-
 
         // -- add at end action
         AddSelectedAtEndAction addSelectedAtEndAction = new AddSelectedAtEndAction();

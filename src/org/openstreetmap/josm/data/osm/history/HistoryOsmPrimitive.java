@@ -191,8 +191,6 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
         return getName();
     }
 
-
-
     @Override
     public int hashCode() {
         final int prime = 31;

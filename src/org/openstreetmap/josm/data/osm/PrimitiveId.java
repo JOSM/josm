@@ -8,7 +8,7 @@ public interface PrimitiveId {
 
     /**
      * Replies true if this id represents a new primitive.
-     * 
+     *
      * @return true if this id represents a new primitive.
      */
     boolean isNew();

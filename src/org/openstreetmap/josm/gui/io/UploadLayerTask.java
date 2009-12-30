@@ -46,7 +46,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
 
     /**
      * Creates the upload task
-     * 
+     *
      * @param strategy the upload strategy specification
      * @param layer the layer. Must not be null.
      * @param monitor  a progress monitor. If monitor is null, uses {@see NullProgressMonitor#INSTANCE}

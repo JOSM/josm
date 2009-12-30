@@ -50,7 +50,7 @@ public class DialogsPanel extends JPanel {
     /**
      * Invoke before the panel is discarded. This will in turn call {@see ToggleDialog#tearDown()}
      * on every dialog.
-     * 
+     *
      */
     public void tearDown() {
         for(ToggleDialog dialog: allDialogs) {

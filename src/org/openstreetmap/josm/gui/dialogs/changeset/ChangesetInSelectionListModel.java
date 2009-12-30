@@ -22,7 +22,6 @@ public class ChangesetInSelectionListModel extends ChangesetListModel implements
         initFromPrimitives(newSelection);
     }
 
-
     /* ---------------------------------------------------------------------------- */
     /* Interface LayerChangeListener                                                */
     /* ---------------------------------------------------------------------------- */

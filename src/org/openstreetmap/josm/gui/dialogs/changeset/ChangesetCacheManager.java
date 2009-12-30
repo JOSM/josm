@@ -58,7 +58,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * and detail information about an individual changeset. It also provides actions for
  * downloading, querying, closing changesets, in addition to removing changesets from
  * the local cache.
- * 
+ *
  */
 public class ChangesetCacheManager extends JFrame {
 
@@ -67,7 +67,7 @@ public class ChangesetCacheManager extends JFrame {
 
     /**
      * Replies the unique instance of the changeset cache manager
-     * 
+     *
      * @return the unique instance of the changeset cache manager
      */
     public static ChangesetCacheManager getInstance() {
@@ -80,7 +80,7 @@ public class ChangesetCacheManager extends JFrame {
     /**
      * Hides and destroys the unique instance of the changeset cache
      * manager.
-     * 
+     *
      */
     public static void destroyInstance() {
         if (instance != null) {
@@ -89,7 +89,6 @@ public class ChangesetCacheManager extends JFrame {
             instance = null;
         }
     }
-
 
     private ChangesetCacheManagerModel model;
     private JSplitPane spContent;
@@ -100,7 +99,6 @@ public class ChangesetCacheManager extends JFrame {
     private DownloadSelectedChangesetsAction actDownloadSelectedChangesets;
     private DownloadSelectedChangesetContentAction actDownloadSelectedContent;
     private JTable tblChangesets;
-
 
     /**
      * Creates the various models required
@@ -118,7 +116,7 @@ public class ChangesetCacheManager extends JFrame {
 
     /**
      * builds the toolbar panel in the heading of the dialog
-     * 
+     *
      * @return the toolbar panel
      */
     protected JPanel buildToolbarPanel() {
@@ -134,7 +132,7 @@ public class ChangesetCacheManager extends JFrame {
 
     /**
      * builds the button panel in the footer of the dialog
-     * 
+     *
      * @return the button row pane
      */
     protected JPanel buildButtonPanel() {
@@ -155,7 +153,7 @@ public class ChangesetCacheManager extends JFrame {
 
     /**
      * Builds the panel with the changeset details
-     * 
+     *
      * @return the panel with the changeset details
      */
     protected JPanel buildChangesetDetailPanel() {
@@ -180,7 +178,7 @@ public class ChangesetCacheManager extends JFrame {
         tp.setTitleAt(0, tr("Properties"));
         tp.setToolTipTextAt(0, tr("Display the basic properties of the changeset"));
         tp.setTitleAt(1, tr("Tags"));
-        tp.setToolTipTextAt(1, tr("Display the the tags of the changeset"));
+        tp.setToolTipTextAt(1, tr("Display the tags of the changeset"));
         tp.setTitleAt(2, tr("Content"));
         tp.setToolTipTextAt(2, tr("Display the objects created, updated, and deleted by the changeset"));
 
@@ -190,7 +188,7 @@ public class ChangesetCacheManager extends JFrame {
 
     /**
      * builds the content panel of the dialog
-     * 
+     *
      * @return the content panel
      */
     protected JPanel buildContentPanel() {
@@ -209,7 +207,7 @@ public class ChangesetCacheManager extends JFrame {
     /**
      * Builds the table with actions which can be applied to the currently visible changesets
      * in the changeset table.
-     * 
+     *
      * @return
      */
     protected JPanel buildChangesetTableActionPanel() {
@@ -240,7 +238,7 @@ public class ChangesetCacheManager extends JFrame {
 
     /**
      * Builds the panel with the table of changesets
-     * 
+     *
      * @return the panel with the table of changesets
      */
     protected JPanel buildChangesetTablePanel() {
@@ -265,7 +263,6 @@ public class ChangesetCacheManager extends JFrame {
         return pnl;
     }
 
-
     protected void build() {
         setTitle(tr(("Changeset Management Dialog")));
         setIconImage(ImageProvider.get("dialogs/changeset", "changesetmanager").getImage());
@@ -288,7 +285,6 @@ public class ChangesetCacheManager extends JFrame {
         // install a window event handler
         addWindowListener(new WindowEventHandler());
     }
-
 
     public ChangesetCacheManager() {
         build();
@@ -593,7 +589,7 @@ public class ChangesetCacheManager extends JFrame {
     /**
      * Selects the changesets  in <code>changests</code>, provided the
      * respective changesets are already present in the local changeset cache.
-     * 
+     *
      * @param ids the collection of changesets. If null, the selection is cleared.
      */
     public void setSelectedChangesets(Collection<Changeset> changesets) {
@@ -607,7 +603,7 @@ public class ChangesetCacheManager extends JFrame {
     /**
      * Selects the changesets with the ids in <code>ids</code>, provided the
      * respective changesets are already present in the local changeset cache.
-     * 
+     *
      * @param ids the collection of ids. If null, the selection is cleared.
      */
     public void setSelectedChangesetsById(Collection<Integer> ids) {

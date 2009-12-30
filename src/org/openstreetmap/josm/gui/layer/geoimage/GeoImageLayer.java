@@ -72,7 +72,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
     List<ImageEntry> data;
     GpxLayer gpxLayer;
-    
+
     private Icon icon = ImageProvider.get("dialogs/geoimage/photo-marker");
     private Icon selectedIcon = ImageProvider.get("dialogs/geoimage/photo-marker-selected");
 
@@ -708,8 +708,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             updateOffscreenBuffer = true;
         }
     }
-    
-    public void loadThumbs() {    
+
+    public void loadThumbs() {
         if (useThumbs && !thumbsLoaded) {
             thumbsLoaded = true;
             thumbsloader = new ThumbsLoader(this);
@@ -718,7 +718,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             t.start();
         }
     }
-    
+
     public void updateBufferAndRepaint() {
         updateOffscreenBuffer = true;
         Main.map.mapView.repaint();

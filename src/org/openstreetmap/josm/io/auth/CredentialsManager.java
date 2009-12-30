@@ -17,7 +17,7 @@ public interface CredentialsManager {
 
     /**
      * Looks up the credentials for a given type.
-     * 
+     *
      * @param the type of service. {@see RequestorType#SERVER} for the OSM API server, {@see RequestorType#PROXY}
      * for a proxy server
      * @return the credentials
@@ -27,7 +27,7 @@ public interface CredentialsManager {
 
     /**
      * Saves the credentials in <code>credentials</code> for the given service type.
-     * 
+     *
      * @param the type of service. {@see RequestorType#SERVER} for the OSM API server, {@see RequestorType#PROXY}
      * for a proxy server
      * @param credentials the credentials
@@ -36,7 +36,7 @@ public interface CredentialsManager {
     public void store(RequestorType requestorType, PasswordAuthentication credentials) throws CredentialsManagerException;
 
     /**
-     * 
+     *
      * @param requestorType  the type of service. {@see RequestorType#SERVER} for the OSM API server, {@see RequestorType#PROXY}
      * for a proxy server
      * @param noSuccessWithLastResponse true, if the last request with the supplied credentials failed; false otherwise.

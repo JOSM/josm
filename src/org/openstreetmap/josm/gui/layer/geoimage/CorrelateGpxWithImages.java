@@ -76,7 +76,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.PrimaryDateParser;
 import org.xml.sax.SAXException;
 
-
 /** This class displays the window to select the GPX file and the offset (timezone + delta).
  * Then it correlates the images of the layer with that GPX file.
  */
@@ -545,12 +544,10 @@ public class CorrelateGpxWithImages implements ActionListener {
         gbc.gridy = y++;
         panelTf.add(panelCb, gbc);
 
-
         gbc = GBC.eol().fill(GBC.HORIZONTAL).insets(0,0,0,12);
         gbc.gridx = 0;
         gbc.gridy = y++;
         panelTf.add(new JSeparator(SwingConstants.HORIZONTAL), gbc);
-
 
         gbc = GBC.std();
         gbc.gridx = 0;
@@ -664,7 +661,6 @@ public class CorrelateGpxWithImages implements ActionListener {
         outerPanel.setLayout(new BorderLayout());
         outerPanel.add(statusBar, BorderLayout.PAGE_END);
 
-
         syncDialog = new ExtendedDialog(
                 Main.parent,
                 tr("Correlate images with GPX track"),
@@ -765,13 +761,11 @@ public class CorrelateGpxWithImages implements ActionListener {
                         Main.map.mapView.recalculateCenterScale(bbox);
                     }
 
-
                     for (ImageEntry ie : yLayer.data) {
                         ie.applyTmp();
                     }
 
                     yLayer.updateBufferAndRepaint();
-
 
                     break;
                 }
@@ -882,8 +876,6 @@ public class CorrelateGpxWithImages implements ActionListener {
 
                     tfTimezone.getDocument().addDocumentListener(statusBarListener);
                     tfOffset.getDocument().addDocumentListener(statusBarListener);
-
-
 
                     lblMatches.setText(statusBarText.getText() + tr("<br>(Time difference of {0} days)", Math.abs(dayOffset)));
 
@@ -1228,7 +1220,6 @@ public class CorrelateGpxWithImages implements ActionListener {
         return endIndex;
     }
 
-
     private String formatTimezone(double timezone) {
         StringBuffer ret = new StringBuffer();
 
@@ -1251,7 +1242,6 @@ public class CorrelateGpxWithImages implements ActionListener {
     private double parseTimezone(String timezone) throws ParseException {
 
         String error = tr("Error while parsing timezone.\nExpected format: {0}", "+H:MM");
-
 
         if (timezone.length() == 0)
             return 0;

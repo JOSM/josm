@@ -212,7 +212,7 @@ public class APIDataSet {
 
     /**
      * Replies the number of objects to upload
-     * 
+     *
      * @return the number of objects to upload
      */
     public int getSize() {

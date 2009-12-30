@@ -98,7 +98,7 @@ public class LanguagePreference implements PreferenceSetting {
 
     /**
      * Asynchronously loads available translations
-     * 
+     *
      */
     protected void reloadAvailableTranslations() {
         Main.worker.submit(new AvailableTranslationsLoader());
@@ -106,7 +106,7 @@ public class LanguagePreference implements PreferenceSetting {
 
     /**
      * Asynchronous task to lookup the available translations.
-     * 
+     *
      */
     private class AvailableTranslationsLoader extends PleaseWaitRunnable {
         public AvailableTranslationsLoader() {

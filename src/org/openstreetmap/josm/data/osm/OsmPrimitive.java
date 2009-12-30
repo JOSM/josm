@@ -153,7 +153,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     /**
      * Replies the collection of referring primitives for the primitives in <code>primitives</code>.
-     * 
+     *
      * @param primitives the collection of primitives.
      * @return the collection of referring primitives for the primitives in <code>primitives</code>;
      * empty set if primitives is null or if there are no referring primitives
@@ -166,7 +166,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         }
         return ret;
     }
-
 
     /* mappaint data */
     public ElemStyle mappaintStyle = null;
@@ -248,7 +247,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     /**
      * Creates a new primitive for the given id.
-     * 
+     *
      * If allowNegativeId is set, provided id can be < 0 and will be set to primitive without any processing.
      * If allowNegativeId is not set, then id will have to be 0 (in that case new unique id will be generated) or
      * positive number.
@@ -570,7 +569,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     /**
      * Replies a list of direction-dependent keys that make an object
      * direction dependent.
-     * 
+     *
      * @return  a list of direction-dependent keys that make an object
      * direction dependent.
      */
@@ -627,23 +626,21 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         this.user = user;
     }
 
-
     /**
      * Replies the id of the changeset this primitive was last uploaded to.
      * 0 if this primitive wasn't uploaded to a changeset yet or if the
      * changeset isn't known.
-     * 
+     *
      * @return the id of the changeset this primitive was last uploaded to.
      */
     public int getChangesetId() {
         return changesetId;
     }
 
-
     /**
      * Sets the changeset id of this primitive. Can't be set on a new
      * primitive.
-     * 
+     *
      * @param changesetId the id. >= 0 required.
      * @throws IllegalStateException thrown if this primitive is new.
      * @throws IllegalArgumentException thrown if id < 0
@@ -1135,7 +1132,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             flags &= ~FLAG_HAS_DIRECTIONS;
         }
     }
-
 
     /**
      * true if this object has direction dependent tags (e.g. oneway)

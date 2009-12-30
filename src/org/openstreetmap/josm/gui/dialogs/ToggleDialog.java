@@ -263,7 +263,7 @@ public class ToggleDialog extends JPanel implements Helpful {
     }
 
     /**
-     * Closes the the detached dialog if this toggle dialog is currently displayed
+     * Closes the detached dialog if this toggle dialog is currently displayed
      * in a detached dialog.
      *
      */

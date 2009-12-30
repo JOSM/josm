@@ -30,7 +30,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
     public boolean isBatchImporter() {
         return false;
     }
-    
+
     /**
      * Needs to be implemented if isBatchImporter() returns false.
      */
@@ -78,7 +78,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
     }
 
     /**
-     * If multiple files (with multiple file formats) are selected, 
+     * If multiple files (with multiple file formats) are selected,
      * they are opened in the order of their priorities.
      * Highest priority comes first.
      */

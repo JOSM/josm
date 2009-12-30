@@ -46,7 +46,7 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
      * initializes  the auto completion list when the table cell editor starts
      * to edit the key of a tag. In this case the auto completion list is
      * initialized with the set of standard key values and the set of current key
-     * values from the the current JOSM data set. Keys already present in the
+     * values from the current JOSM data set. Keys already present in the
      * current tag model are removed from the auto completion list.
      *
      * @param model  the tag editor model

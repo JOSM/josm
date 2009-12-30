@@ -8,7 +8,7 @@ import javax.swing.table.TableColumn;
 
 /**
  * The column model for the changeset table
- * 
+ *
  */
 public class ChangesetCacheTableColumnModel extends DefaultTableColumnModel {
 

@@ -182,7 +182,7 @@ public class ChangesetListModel extends DefaultListModel  implements ChangesetCa
 
     /**
      * Replies true if  there is at least one selected open changeset
-     * 
+     *
      * @return true if  there is at least one selected open changeset
      */
     public boolean hasSelectedOpenChangesets() {
@@ -191,7 +191,7 @@ public class ChangesetListModel extends DefaultListModel  implements ChangesetCa
 
     /**
      * Replies the selected open changesets
-     * 
+     *
      * @return the selected open changesets
      */
     public List<Changeset> getSelectedOpenChangesets() {

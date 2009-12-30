@@ -88,7 +88,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
     /**
      * Removes a layer change listener
-     * 
+     *
      * @param listener the listener. Ignored if null or already registered.
      */
     public static void removeLayerChangeListener(MapView.LayerChangeListener listener) {
@@ -99,11 +99,9 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         editLayerChangeListeners.remove(listener);
     }
 
-
-
     /**
      * Adds a layer change listener
-     * 
+     *
      * @param listener the listener. Ignored if null or already registered.
      */
     public static void addLayerChangeListener(MapView.LayerChangeListener listener) {
@@ -301,7 +299,6 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     public boolean isActiveLayerVisible() {
         return isActiveLayerDrawable() && editLayer.isVisible();
     }
-
 
     /**
      * Determines the next active data layer according to the following

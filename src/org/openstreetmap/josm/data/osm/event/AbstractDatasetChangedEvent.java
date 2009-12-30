@@ -6,7 +6,6 @@ import java.util.List;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
-
 public abstract class AbstractDatasetChangedEvent {
 
     public enum DatasetEventType {DATA_CHANGED, NODE_MOVED, PRIMITIVES_ADDED, PRIMITIVES_REMOVED,

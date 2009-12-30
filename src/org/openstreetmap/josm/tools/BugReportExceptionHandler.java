@@ -44,7 +44,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                 // do not translate the string, as translation may raise an exception
                 JOptionPane.showMessageDialog(Main.parent, "JOSM is out of memory. " +
                         "Strange things may happen.\nPlease restart JOSM with the -Xmx###M option,\n" +
-                        "where ### is the the number of MB assigned to JOSM (e.g. 256).\n" +
+                        "where ### is the number of MB assigned to JOSM (e.g. 256).\n" +
                         "Currently, " + Runtime.getRuntime().maxMemory()/1024/1024 + " MB are available to JOSM.",
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
@@ -97,7 +97,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                                         "file a bug in our bugtracker using this link:</p></html>")), GBC.eol());
                     p.add(new UrlLabel(url.toString(), "http://josm.openstreetmap.de/josmticket?..."), GBC.eop().insets(8,0,0,0));
                     p.add(new JLabel(tr("<html><p>" +
-                                        "There the the error information provided below should already be<br>" +
+                                        "There the error information provided below should already be<br>" +
                                         "filled out for you. Please include information on how to reproduce<br>" +
                                         "the error and try to supply as much detail as possible.</p></html>")), GBC.eop());
                     p.add(new JLabel(tr("<html><p>" +

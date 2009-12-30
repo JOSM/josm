@@ -218,7 +218,6 @@ public class ImageViewerDialog extends ToggleDialog {
         getInstance().btnNext.setEnabled(value);
     }
 
-
     private GeoImageLayer currentLayer = null;
     private ImageEntry currentEntry = null;
 

@@ -13,7 +13,7 @@ import javax.swing.table.TableCellEditor;
 import org.openstreetmap.josm.data.osm.RelationMember;
 
 /**
- * {@see TableCellEditor} for the the role column in a table for {@see RelationMember}s.
+ * {@see TableCellEditor} for the role column in a table for {@see RelationMember}s.
  *
  */
 public class RelationMemberTableCellEditor extends AbstractCellEditor implements TableCellEditor{

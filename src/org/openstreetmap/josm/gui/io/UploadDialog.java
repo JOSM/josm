@@ -82,7 +82,6 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
 
     private boolean canceled = false;
 
-
     /**
      * builds the content panel for the upload dialog
      *
@@ -182,7 +181,6 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         pnlTagSettings.addPropertyChangeListener(pnlBasicUploadSettings);
         pnlBasicUploadSettings.addPropertyChangeListener(pnlTagSettings);
 
-
         // make sure the the configuration panels listen to each other
         // changes
         //
@@ -239,7 +237,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
      *
      * @param toUpload the dataset with the objects to upload. If null, assumes the empty
      * set of objects to upload
-     * 
+     *
      */
     public void setUploadedPrimitives(APIDataSet toUpload) {
         if (toUpload == null) {
@@ -298,7 +296,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
 
     /**
      * Replies the {@see UploadStrategySpecification} the user entered in the dialog.
-     * 
+     *
      * @return the {@see UploadStrategySpecification} the user entered in the dialog.
      */
     public UploadStrategySpecification getUploadStrategySpecification() {

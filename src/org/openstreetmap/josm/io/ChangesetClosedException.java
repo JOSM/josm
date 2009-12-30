@@ -50,7 +50,7 @@ public class ChangesetClosedException extends OsmTransferException {
 
     /**
      * Replies true if <code>errorHeader</code> matches with {@see #ERROR_HEADER_PATTERN}
-     * 
+     *
      * @param errorHeader the error header
      * @return true if <code>errorHeader</code> matches with {@see #ERROR_HEADER_PATTERN}
      */
@@ -90,7 +90,7 @@ public class ChangesetClosedException extends OsmTransferException {
 
     /**
      * Creates the exception with the given <code>errorHeader</code>
-     * 
+     *
      * @param errorHeader the error header
      */
     public ChangesetClosedException(String errorHeader) {
@@ -102,7 +102,7 @@ public class ChangesetClosedException extends OsmTransferException {
     /**
      * Creates the exception with the given error header and the given
      * source.
-     * 
+     *
      * @param errorHeader the error header
      * @param source the source for the exception
      */
@@ -114,7 +114,7 @@ public class ChangesetClosedException extends OsmTransferException {
 
     /**
      * Creates the exception
-     * 
+     *
      * @param changesetId the id if the closed changeset
      * @param closedOn the date the changeset was closed on
      * @param source the source for the exception
@@ -128,7 +128,7 @@ public class ChangesetClosedException extends OsmTransferException {
 
     /**
      * Replies the id of the changeset which was closed
-     * 
+     *
      * @return the id of the changeset which was closed
      */
     public long getChangesetId() {
@@ -137,7 +137,7 @@ public class ChangesetClosedException extends OsmTransferException {
 
     /**
      * Replies the date the changeset was closed
-     * 
+     *
      * @return the date the changeset was closed. May be null if the date isn't known.
      */
     public Date getClosedOn() {
@@ -146,7 +146,7 @@ public class ChangesetClosedException extends OsmTransferException {
 
     /**
      * Replies the source where the exception was thrown
-     * 
+     *
      * @return the source
      */
     public Source getSource() {

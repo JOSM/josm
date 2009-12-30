@@ -669,8 +669,6 @@ public class SearchCompiler {
             return fact;
     }
 
-
-
     private Match parseKV(String key, String value) throws ParseError {
         if (value == null) {
             value = "";

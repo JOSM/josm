@@ -7,7 +7,6 @@ import java.util.List;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
-
 public class DataChangedEvent extends AbstractDatasetChangedEvent {
 
     public DataChangedEvent(DataSet dataSet) {

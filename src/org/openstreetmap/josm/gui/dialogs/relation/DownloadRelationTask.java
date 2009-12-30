@@ -35,7 +35,7 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
 
     /**
      * Creates the download task
-     * 
+     *
      * @param relations a collection of relations. Must not be null.
      * @param layer the layer which data is to be merged into
      * @throws IllegalArgumentException thrown if relations is null

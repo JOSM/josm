@@ -31,7 +31,7 @@ public class ChangesetContentTableModel extends AbstractTableModel {
 
     /**
      * Replies true if there is at least one selected primitive in the table model
-     * 
+     *
      * @return true if there is at least one selected primitive in the table model
      */
     public boolean hasSelectedPrimitives() {
@@ -63,7 +63,7 @@ public class ChangesetContentTableModel extends AbstractTableModel {
     /**
      * Populates the model with the content of a model. If ds is null, the
      * table is cleared.
-     * 
+     *
      * @param ds the changeset content.
      */
     public void populate(ChangesetDataSet ds) {
@@ -132,7 +132,7 @@ public class ChangesetContentTableModel extends AbstractTableModel {
     /**
      * The type used internally to keep information about {@see HistoryOsmPrimitive}
      * with their {@see ChangesetModificationType}.
-     * 
+     *
      */
     static private class ChangesetContentEntry implements ChangesetDataSetEntry{
         private ChangesetModificationType modificationType;

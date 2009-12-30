@@ -52,7 +52,7 @@ public class DiffResultProcessor  {
 
     /**
      * Creates a diff result reader
-     * 
+     *
      * @param primitives the collection of primitives which have been uploaded. If null,
      * assumes an empty collection.
      */
@@ -66,12 +66,12 @@ public class DiffResultProcessor  {
 
     /**
      * Parse the response from a diff upload to the OSM API.
-     * 
+     *
      * @param diffUploadResponse the response. Must not be null.
      * @param progressMonitor a progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null
      * @throws IllegalArgumentException thrown if diffUploadRequest is null
      * @throws OsmDataParsingException thrown if the diffUploadRequest can't be parsed successfully
-     * 
+     *
      */
     public  void parse(String diffUploadResponse, ProgressMonitor progressMonitor) throws OsmDataParsingException {
         if (progressMonitor == null) {
@@ -98,11 +98,11 @@ public class DiffResultProcessor  {
 
     /**
      * Postprocesses the diff result read and parsed from the server.
-     * 
+     *
      * Uploaded objects are assigned their new id (if they got assigned a new
      * id by the server), their new version (if the version was incremented),
      * and the id of the changeset to which they were uploaded.
-     * 
+     *
      * @param cs the current changeset. Ignored if null.
      * @param monitor the progress monitor. Set to {@see NullProgressMonitor#INSTANCE} if null
      * @return the collection of processed primitives

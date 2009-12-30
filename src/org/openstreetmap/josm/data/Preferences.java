@@ -133,7 +133,6 @@ public class Preferences {
 
     private final CopyOnWriteArrayList<PreferenceChangedListener> listeners = new CopyOnWriteArrayList<PreferenceChangedListener>();
 
-
     public void addPreferenceChangeListener(PreferenceChangedListener listener) {
         if (listener != null) {
             listeners.addIfAbsent(listener);
@@ -363,7 +362,6 @@ public class Preferences {
     synchronized public boolean putLong(final String key, final Long value) {
         return put(key, Long.toString(value));
     }
-
 
     /**
      * Called after every put. In case of a problem, do nothing but output the error

@@ -314,7 +314,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
 
     /**
      * Replies the set of incomplete primitives
-     * 
+     *
      * @return the set of incomplete primitives
      */
     public Set<OsmPrimitive> getIncompleteMemberPrimitives() {
@@ -329,7 +329,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
 
     /**
      * Replies the set of selected incomplete primitives
-     * 
+     *
      * @return the set of selected incomplete primitives
      */
     public Set<OsmPrimitive> getSelectedIncompleteMemberPrimitives() {
@@ -344,7 +344,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
 
     /**
      * Replies true if at least one the relation members is incomplete
-     * 
+     *
      * @return true if at least one the relation members is incomplete
      */
     public boolean hasIncompleteMembers() {
@@ -357,7 +357,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
 
     /**
      * Replies true if at least one of the selected members is incomplete
-     * 
+     *
      * @return true if at least one of the selected members is incomplete
      */
     public boolean hasIncompleteSelectedMembers() {
@@ -631,7 +631,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     /**
      * Replies true if <code>primitive</code> is currently selected in the layer this
      * model is attached to
-     * 
+     *
      * @param primitive the primitive
      * @return true if <code>primitive</code> is currently selected in the layer this
      * model is attached to, false otherwise

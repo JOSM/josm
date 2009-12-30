@@ -57,7 +57,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * It listens to property change events for {@see ChangesetCacheManagerModel#CHANGESET_IN_DETAIL_VIEW_PROP}
  * and updates its view accordingly.
- * 
+ *
  */
 public class ChangesetContentPanel extends JPanel implements PropertyChangeListener{
 
@@ -166,7 +166,6 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         Changeset cs = (Changeset)evt.getNewValue();
         setCurrentChangeset(cs);
     }
-
 
     /**
      * Downloads/Updates the content of the changeset
