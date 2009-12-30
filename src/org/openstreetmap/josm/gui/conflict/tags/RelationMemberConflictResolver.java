@@ -120,22 +120,26 @@ public class RelationMemberConflictResolver extends JPanel {
     }
 
     public void initForWayCombining() {
-       lblHeader.setText(tr("<html>The combined ways are members in one ore more relations. "
-                + "Please decide whether your want to <strong>keep</strong> these memberships "
+        lblHeader.setText(tr("<html>The combined ways are members in one ore more relations. "
+                + "Please decide whether you want to <strong>keep</strong> these memberships "
                 + "for the combined way or whether you want to <strong>remove</strong> them.<br>"
-                + "The default is to <strong>keep</strong> them: the combined way will take the place of the original way in the membership."
-                        + "</html>"));
-       invalidate();
+                + "The default is to <strong>keep</strong> the first way and <strong>remove</strong> "
+                + "the other ways that are members of the same relation: the combined way will "
+                + "take the place of the original way in the membership."
+                + "</html>"));
+        invalidate();
     }
 
     public void initForNodeMerging() {
         lblHeader.setText(tr("<html>The merged nodes are members in one ore more relations. "
-                 + "Please decide whether your want to <strong>keep</strong> these memberships "
-                 + "for the target node or whether you want to <strong>remove</strong> them.<br>"
-                 + "The default is to <strong>keep</strong> them: the target node will take the place of the original node in the membership."
-                         + "</html>"));
+                + "Please decide whether you want to <strong>keep</strong> these memberships "
+                + "for the target node or whether you want to <strong>remove</strong> them.<br>"
+                + "The default is to <strong>keep</strong> the first node and <strong>remove</strong> "
+                + "the other nodes that are members of the same relation: the target node will "
+                + "take the place of the original node in the membership."
+                + "</html>"));
         invalidate();
-     }
+    }
 
     class ApplyRoleAction extends AbstractAction {
         public ApplyRoleAction() {
@@ -182,8 +186,7 @@ public class RelationMemberConflictResolver extends JPanel {
         AutoCompletionList acList = new AutoCompletionList();
         AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).populateWithMemberRoles(acList);
         tfRole.setAutoCompletionList(acList);
-        AutoCompletingTextField editor = (AutoCompletingTextField) tblResolver.getColumnModel().getColumn(2)
-                .getCellEditor();
+        AutoCompletingTextField editor = (AutoCompletingTextField) tblResolver.getColumnModel().getColumn(2).getCellEditor();
         if (editor != null) {
             editor.setAutoCompletionList(acList);
         }

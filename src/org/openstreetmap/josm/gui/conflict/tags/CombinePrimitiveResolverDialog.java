@@ -14,8 +14,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -30,6 +32,7 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
@@ -129,21 +132,13 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             return;
         }
         if (targetPrimitive instanceof Way) {
-            setTitle(
-                    tr(
-                            "Conflicts when combining ways - combined way is ''{0}''",
-                            targetPrimitive.getDisplayName(DefaultNameFormatter.getInstance())
-                    )
-            );
+            setTitle(tr("Conflicts when combining ways - combined way is ''{0}''", targetPrimitive
+                    .getDisplayName(DefaultNameFormatter.getInstance())));
             helpAction.setHelpTopic(ht("/Action/CombineWay#ResolvingConflicts"));
             getRootPane().putClientProperty("help", ht("/Action/CombineWay#ResolvingConflicts"));
         } else if (targetPrimitive instanceof Node) {
-            setTitle(
-                    tr(
-                            "Conflicts when merging nodes - target node is ''{0}''",
-                            targetPrimitive.getDisplayName(DefaultNameFormatter.getInstance())
-                    )
-            );
+            setTitle(tr("Conflicts when merging nodes - target node is ''{0}''", targetPrimitive
+                    .getDisplayName(DefaultNameFormatter.getInstance())));
             helpAction.setHelpTopic(ht("/Action/MergeNodes#ResolvingConflicts"));
             getRootPane().putClientProperty("help", ht("/Action/MergeNodes#ResolvingConflicts"));
         }
@@ -194,7 +189,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     }
 
     public CombinePrimitiveResolverDialog(Component owner) {
-        super(JOptionPane.getFrameForComponent(owner),true /* modal */);
+        super(JOptionPane.getFrameForComponent(owner), true /* modal */);
         build();
     }
 
@@ -226,7 +221,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     public List<Command> buildResolutionCommands() {
         List<Command> cmds = new LinkedList<Command>();
 
-        if (getTagConflictResolverModel().getNumDecisions() >0) {
+        if (getTagConflictResolverModel().getNumDecisions() > 0) {
             TagCollection tc = getTagConflictResolverModel().getResolution();
             cmds.addAll(buildTagChangeCommand(targetPrimitive, tc));
         }
@@ -234,13 +229,12 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             cmds.add(new ChangePropertyCommand(targetPrimitive, "created_by", null));
         }
 
-        if (getRelationMemberConflictResolverModel().getNumDecisions() >0) {
+        if (getRelationMemberConflictResolverModel().getNumDecisions() > 0) {
             cmds.addAll(getRelationMemberConflictResolverModel().buildResolutionCommands(targetPrimitive));
         }
 
-        Command cmd = pnlRelationMemberConflictResolver.buildTagApplyCommands(
-                getRelationMemberConflictResolverModel().getModifiedRelations(targetPrimitive)
-        );
+        Command cmd = pnlRelationMemberConflictResolver.buildTagApplyCommands(getRelationMemberConflictResolverModel()
+                .getModifiedRelations(targetPrimitive));
         if (cmd != null) {
             cmds.add(cmd);
         }
@@ -249,7 +243,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
     protected void prepareDefaultTagDecisions() {
         TagConflictResolverModel model = getTagConflictResolverModel();
-        for (int i =0; i< model.getRowCount(); i++) {
+        for (int i = 0; i < model.getRowCount(); i++) {
             MultiValueResolutionDecision decision = model.getDecision(i);
             List<String> values = decision.getValues();
             values.remove("");
@@ -264,8 +258,15 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
     protected void prepareDefaultRelationDecisions() {
         RelationMemberConflictResolverModel model = getRelationMemberConflictResolverModel();
-        for (int i=0; i < model.getNumDecisions(); i++) {
-            model.getDecision(i).decide(RelationMemberConflictDecisionType.KEEP);
+        Set<Relation> relations = new HashSet<Relation>();
+        for (int i = 0; i < model.getNumDecisions(); i++) {
+            RelationMemberConflictDecision decision = model.getDecision(i);
+            if (!relations.contains(decision.getRelation())) {
+                decision.decide(RelationMemberConflictDecisionType.KEEP);
+                relations.add(decision.getRelation());
+            } else {
+                decision.decide(RelationMemberConflictDecisionType.REMOVE);
+            }
         }
         model.refresh();
     }
@@ -297,7 +298,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             // relation conflicts only
             //
             getContentPane().add(pnlRelationMemberConflictResolver, BorderLayout.CENTER);
-        } else if (tagModel.getNumDecisions() >0) {
+        } else if (tagModel.getNumDecisions() > 0) {
             // tag conflicts only
             //
             getContentPane().add(pnlTagConflictResolver, BorderLayout.CENTER);
@@ -309,7 +310,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         validate();
         int numTagDecisions = getTagConflictResolverModel().getNumDecisions();
         int numRelationDecisions = getRelationMemberConflictResolverModel().getNumDecisions();
-        if (numTagDecisions > 0 &&  numRelationDecisions > 0) {
+        if (numTagDecisions > 0 && numRelationDecisions > 0) {
             spTagConflictTypes.setDividerLocation(0.5);
         }
         pnlRelationMemberConflictResolver.prepareForEditing();
@@ -327,13 +328,8 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     public void setVisible(boolean visible) {
         if (visible) {
             prepareGUIBeforeConflictResolutionStarts();
-            new WindowGeometry(
-                    getClass().getName()  + ".geometry",
-                    WindowGeometry.centerInWindow(
-                            Main.parent,
-                            new Dimension(600,400)
-                    )
-            ).applySafe(this);
+            new WindowGeometry(getClass().getName() + ".geometry", WindowGeometry.centerInWindow(Main.parent,
+                    new Dimension(600, 400))).applySafe(this);
             setCancelled(false);
             btnApply.requestFocusInWindow();
         } else {
@@ -371,10 +367,8 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         }
 
         protected void updateEnabledState() {
-            setEnabled(
-                    pnlTagConflictResolver.getModel().getNumConflicts() == 0
-                    && pnlRelationMemberConflictResolver.getModel().getNumConflicts() == 0
-            );
+            setEnabled(pnlTagConflictResolver.getModel().getNumConflicts() == 0
+                    && pnlRelationMemberConflictResolver.getModel().getNumConflicts() == 0);
         }
 
         public void propertyChange(PropertyChangeEvent evt) {
@@ -392,7 +386,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         public void windowOpened(WindowEvent e) {
             int numTagDecisions = getTagConflictResolverModel().getNumDecisions();
             int numRelationDecisions = getRelationMemberConflictResolverModel().getNumDecisions();
-            if (numTagDecisions > 0 &&  numRelationDecisions > 0) {
+            if (numTagDecisions > 0 && numRelationDecisions > 0) {
                 spTagConflictTypes.setDividerLocation(0.5);
             }
         }
@@ -403,12 +397,12 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
         public AutoAdjustingSplitPane(int newOrientation) {
             super(newOrientation);
-            addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY,this);
+            addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, this);
             addHierarchyBoundsListener(this);
         }
 
         public void ancestorResized(HierarchyEvent e) {
-            setDividerLocation((int)(dividerLocation * getHeight()));
+            setDividerLocation((int) (dividerLocation * getHeight()));
         }
 
         public void ancestorMoved(HierarchyEvent e) {
@@ -417,9 +411,9 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
-                int newVal = (Integer)evt.getNewValue();
+                int newVal = (Integer) evt.getNewValue();
                 if (getHeight() != 0) {
-                    dividerLocation = (double)newVal / (double)getHeight();
+                    dividerLocation = (double) newVal / (double) getHeight();
                 }
             }
         }
