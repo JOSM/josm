@@ -286,7 +286,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      *
      * @param disabled true, if this primitive is disabled; false, otherwise
      */
-    void setDisabled(boolean disabled) {
+    public void setDisabled(boolean disabled) {
         if (disabled) {
             flags |= FLAG_DISABLED;
         } else {
