@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.geom.Rectangle2D;
+import java.text.DecimalFormat;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 
@@ -123,6 +124,14 @@ public class Bounds {
 
     @Override public String toString() {
         return "Bounds["+min.lat()+","+min.lon()+","+max.lat()+","+max.lon()+"]";
+    }
+
+    public String toShortString(DecimalFormat format) {
+        return
+            format.format(min.lat()) + " "
+            + format.format(min.lon()) + " / "
+            + format.format(max.lat()) + " "
+            + format.format(max.lon());
     }
 
     /**

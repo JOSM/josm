@@ -128,7 +128,7 @@ public class OsmUrlToBounds {
                 zoom - 8 - (zoomOffset % 3) - 2);
     }
 
-    private static Bounds positionToBounds(final double lat, final double lon, final int zoom) {
+    public static Bounds positionToBounds(final double lat, final double lon, final int zoom) {
         final double size = 180.0 / Math.pow(2, zoom);
         return new Bounds(
                 new LatLon(lat - size/2, lon - size),

@@ -1,12 +1,13 @@
 package org.openstreetmap.josm.gui.download;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -16,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -26,6 +28,7 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -50,7 +53,9 @@ import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -62,46 +67,60 @@ public class PlaceSelection implements DownloadSelection {
     private HistoryComboBox cbSearchExpression;
     private JButton btnSearch;
     private NamedResultTableModel model;
+    private NamedResultTableColumnModel columnmodel;
     private JTable tblSearchResults;
     private DownloadDialog parent;
+    private final static Server[] servers = new Server[]{
+        new Server("Nominatim","http://nominatim.openstreetmap.org/search?format=xml&q=",tr("Class Type"),tr("Bounds")),
+        new Server("Gazetter","http://gazetteer.openstreetmap.org/namefinder/search.xml?find=",tr("Near"),trc("placeselection", "Zoom"))
+    };
+    private final JComboBox server = new JComboBox(servers);
+
+    private static class Server {
+        public String name;
+        public String url;
+        public String thirdcol;
+        public String fourthcol;
+        public String toString() {
+            return name;
+        }
+        public Server(String n, String u, String t, String f) {
+            name = n;
+            url = u;
+            thirdcol = t;
+            fourthcol = f;
+        }
+    }
 
     protected JPanel buildSearchPanel() {
+        JPanel lpanel = new JPanel();
+        lpanel.setLayout(new GridLayout(2,2));
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
-        GridBagConstraints gc = new GridBagConstraints();
 
-        // the label for the search field
-        //
-        gc.gridwidth = 2;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx  =1.0;
-        gc.insets = new Insets(5, 5, 0, 5);
-        panel.add(new JLabel(tr("Enter a place name to search for:")), gc);
+        lpanel.add(new JLabel(tr("Choose the server for searching:")));
+        lpanel.add(server);
+        String s = Main.pref.get("namefinder.server", servers[0].name);
+        for(int i = 0; i < servers.length; ++i) {
+            if(servers[i].name.equals(s))
+                server.setSelectedIndex(i);
+        }
+        lpanel.add(new JLabel(tr("Enter a place name to search for:")));
 
-        // the search expression field
-        //
         cbSearchExpression = new HistoryComboBox();
         cbSearchExpression.setToolTipText(tr("Enter a place name to search for"));
         List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
         Collections.reverse(cmtHistory);
         cbSearchExpression.setPossibleItems(cmtHistory);
-        gc.gridx = 0;
-        gc.gridy = 1;
-        gc.gridwidth = 1;
-        panel.add(cbSearchExpression,  gc);
+        lpanel.add(cbSearchExpression);
 
-        // the search button
-        //
+        panel.add(lpanel, GBC.std().fill(GBC.HORIZONTAL).insets(5, 5, 0, 5));
         SearchAction searchAction = new SearchAction();
         btnSearch = new JButton(searchAction);
         ((JTextField)cbSearchExpression.getEditor().getEditorComponent()).getDocument().addDocumentListener(searchAction);
         ((JTextField)cbSearchExpression.getEditor().getEditorComponent()).addActionListener(searchAction);
 
-        gc.gridx = 1;
-        gc.gridy = 1;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 0.0;
-        panel.add(btnSearch,  gc);
+        panel.add(btnSearch, GBC.eol().insets(5, 5, 0, 5));
 
         return panel;
     }
@@ -118,7 +137,8 @@ public class PlaceSelection implements DownloadSelection {
 
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         model = new NamedResultTableModel(selectionModel);
-        tblSearchResults = new JTable(model, new NamedResultTableColumnModel());
+        columnmodel = new NamedResultTableColumnModel();
+        tblSearchResults = new JTable(model, columnmodel);
         tblSearchResults.setSelectionModel(selectionModel);
         JScrollPane scrollPane = new JScrollPane(tblSearchResults);
         scrollPane.setPreferredSize(new Dimension(200,200));
@@ -155,15 +175,11 @@ public class PlaceSelection implements DownloadSelection {
         public String description;
         public double lat;
         public double lon;
-        public int zoom;
+        public int zoom = 0;
+        public Bounds bounds = null;
 
         public Bounds getDownloadArea() {
-            double size = 180.0 / Math.pow(2, zoom);
-            Bounds b = new Bounds(
-                    new LatLon(lat - size / 2, lon - size),
-                    new LatLon(lat + size / 2, lon+ size)
-            );
-            return b;
+            return bounds != null ? bounds : OsmUrlToBounds.positionToBounds(lat, lon, zoom);
         }
     }
 
@@ -193,11 +209,11 @@ public class PlaceSelection implements DownloadSelection {
                     currentResult = new PlaceSelection.SearchResult();
                     currentResult.name = atts.getValue("name");
                     currentResult.info = atts.getValue("info");
+                    if(currentResult.info != null)
+                        currentResult.info = tr(currentResult.info);
                     currentResult.lat = Double.parseDouble(atts.getValue("lat"));
                     currentResult.lon = Double.parseDouble(atts.getValue("lon"));
                     currentResult.zoom = Integer.parseInt(atts.getValue("zoom"));
-                    //currentResult.osmId = Integer.parseInt(atts.getValue("id"));
-                    //currentResult.type = OsmPrimitiveType.from(atts.getValue("type"));
                     data.add(currentResult);
                 } else if (qName.equals("description") && (depth == 3)) {
                     description = new StringBuffer();
@@ -207,6 +223,19 @@ public class PlaceSelection implements DownloadSelection {
                     if ("city".equals(info) || "town".equals(info) || "village".equals(info)) {
                         currentResult.nearestPlace = atts.getValue("name");
                     }
+                } else if (qName.equals("place")) {
+                    currentResult = new PlaceSelection.SearchResult();
+                    currentResult.name = atts.getValue("display_name");
+                    currentResult.description = currentResult.name;
+                    currentResult.info = tr(atts.getValue("class"));
+                    currentResult.nearestPlace = tr(atts.getValue("type"));
+                    currentResult.lat = Double.parseDouble(atts.getValue("lat"));
+                    currentResult.lon = Double.parseDouble(atts.getValue("lon"));
+                    String[] bbox = atts.getValue("boundingbox").split(",");
+                    currentResult.bounds = new Bounds(
+                        new LatLon(Double.parseDouble(bbox[0]), Double.parseDouble(bbox[2])),
+                        new LatLon(Double.parseDouble(bbox[1]), Double.parseDouble(bbox[3])));
+                    data.add(currentResult);
                 }
             } catch (NumberFormatException x) {
                 x.printStackTrace(); // SAXException does not chain correctly
@@ -287,11 +316,14 @@ public class PlaceSelection implements DownloadSelection {
         private HttpURLConnection connection;
         private List<SearchResult> data;
         private boolean canceled = false;
+        private Server useserver;
         private Exception lastException;
 
         public NameQueryTask(String searchExpression) {
             super(tr("Querying name server"),false /* don't ignore exceptions */);
             this.searchExpression = searchExpression;
+            useserver = (Server)server.getSelectedItem();
+            Main.pref.put("namefinder.server", useserver.name);
         }
 
         @Override
@@ -312,6 +344,7 @@ public class PlaceSelection implements DownloadSelection {
                 ExceptionDialogUtil.explainException(lastException);
                 return;
             }
+            columnmodel.setHeadlines(useserver.thirdcol, useserver.fourthcol);
             model.setData(this.data);
         }
 
@@ -319,8 +352,7 @@ public class PlaceSelection implements DownloadSelection {
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
                 getProgressMonitor().indeterminateSubTask(tr("Querying name server ..."));
-                URL url = new URL("http://gazetteer.openstreetmap.org/namefinder/search.xml?find="
-                        +java.net.URLEncoder.encode(searchExpression, "UTF-8"));
+                URL url = new URL(useserver.url+java.net.URLEncoder.encode(searchExpression, "UTF-8"));
                 synchronized(this) {
                     connection = (HttpURLConnection)url.openConnection();
                 }
@@ -380,6 +412,8 @@ public class PlaceSelection implements DownloadSelection {
     }
 
     static class NamedResultTableColumnModel extends DefaultTableColumnModel {
+        TableColumn col3 = null;
+        TableColumn col4 = null;
         protected void createColumns() {
             TableColumn col = null;
             NamedResultCellRenderer renderer = new NamedResultCellRenderer();
@@ -401,20 +435,25 @@ public class PlaceSelection implements DownloadSelection {
             addColumn(col);
 
             // column 2 - Near
-            col = new TableColumn(2);
-            col.setHeaderValue(tr("Near"));
-            col.setResizable(true);
-            col.setPreferredWidth(100);
-            col.setCellRenderer(renderer);
-            addColumn(col);
+            col3 = new TableColumn(2);
+            col3.setHeaderValue(servers[0].thirdcol);
+            col3.setResizable(true);
+            col3.setPreferredWidth(100);
+            col3.setCellRenderer(renderer);
+            addColumn(col3);
 
             // column 3 - Zoom
-            col = new TableColumn(3);
-            col.setHeaderValue(tr("Zoom"));
-            col.setResizable(true);
-            col.setPreferredWidth(50);
-            col.setCellRenderer(renderer);
-            addColumn(col);
+            col4 = new TableColumn(3);
+            col4.setHeaderValue(servers[0].fourthcol);
+            col4.setResizable(true);
+            col4.setPreferredWidth(50);
+            col4.setCellRenderer(renderer);
+            addColumn(col4);
+        }
+        public void setHeadlines(String third, String fourth) {
+            col3.setHeaderValue(third);
+            col4.setHeaderValue(fourth);
+            fireColumnMarginChanged();
         }
 
         public NamedResultTableColumnModel() {
@@ -498,12 +537,14 @@ public class PlaceSelection implements DownloadSelection {
                 setText(sr.nearestPlace);
                 break;
             case 3:
-                setText(Integer.toString(sr.zoom));
+                if(sr.bounds != null)
+                    setText(sr.bounds.toShortString(new DecimalFormat("0.000")));
+                else
+                    setText(sr.zoom != 0 ? Integer.toString(sr.zoom) : tr("unknown"));
                 break;
             }
             setToolTipText(lineWrapDescription(sr.description));
             return this;
         }
     }
-
 }
