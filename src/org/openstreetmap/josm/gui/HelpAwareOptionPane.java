@@ -21,7 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.openstreetmap.josm.gui.help.HelpBrowserProxy;
+import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -110,7 +110,7 @@ public class HelpAwareOptionPane {
         HelpUtil.setHelpContext(b, helpTopic);
         Action a = new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
-                HelpBrowserProxy.getInstance().setUrlForHelpTopic(helpTopic);
+                HelpBrowser.setUrlForHelpTopic(helpTopic);
             }
         };
         b.addActionListener(a);

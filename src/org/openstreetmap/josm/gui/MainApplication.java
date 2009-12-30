@@ -54,7 +54,6 @@ public class MainApplication extends Main {
                 if (!Main.saveUnsavedModifications())
                     return;
                 Main.saveGuiGeometry();
-                Main.cleanupBeforeExit();
                 System.exit(0);
             }
         });

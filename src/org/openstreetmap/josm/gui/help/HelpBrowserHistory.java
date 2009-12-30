@@ -10,8 +10,8 @@ public class HelpBrowserHistory extends Observable {
     private ArrayList<String> history;
     private int historyPos = 0;
 
-    public HelpBrowserHistory(HelpBrowser brower) {
-        this.browser = brower;
+    public HelpBrowserHistory(HelpBrowser browser) {
+        this.browser = browser;
         history = new ArrayList<String>();
     }
 

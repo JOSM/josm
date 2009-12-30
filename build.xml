@@ -85,9 +85,6 @@ Build-Date: ${build.tstamp}
 		<!-- styles -->
 		<copy file="styles/standard/elemstyles.xml" todir="build/styles/standard"/>
 
-		<!-- css-->
-		<copy file="src/org/openstreetmap/josm/gui/help/help-browser.css" todir="build/org/openstreetmap/josm/gui/help"/>
-
 		<!-- create josm-custom.jar -->
 		<delete file="dist/josm-custom.jar"/>
 		<jar destfile="dist/josm-custom.jar" basedir="build" level="${clevel}">

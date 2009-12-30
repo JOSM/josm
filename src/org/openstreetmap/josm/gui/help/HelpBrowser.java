@@ -6,7 +6,10 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.getHelpTopicEditUrl;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -31,6 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.AttributeSet;
@@ -47,6 +51,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
+import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class HelpBrowser extends JFrame {
     static private final Logger logger = Logger.getLogger(HelpBrowser.class.getName());
@@ -65,6 +70,24 @@ public class HelpBrowser extends JFrame {
         }
         return instance;
     }
+
+    /**
+     * Show the help page for help topic <code>helpTopic</code>.
+     *
+     * @param helpTopic the help topic
+     */
+    public static void setUrlForHelpTopic(final String helpTopic) {
+        final HelpBrowser browser = getInstance();
+        Runnable r = new Runnable() {
+            public void run() {
+                browser.openHelpTopic(helpTopic);
+                browser.setVisible(true);
+                browser.toFront();
+            }
+        };
+        SwingUtilities.invokeLater(r);
+    }
+
 
     /**
      * Launches the internal help browser and directs it to the help page for
@@ -100,7 +123,7 @@ public class HelpBrowser extends JFrame {
         StyleSheet ss = new StyleSheet();
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(
-                        getClass().getResourceAsStream("help-browser.css")
+                        getClass().getResourceAsStream("/data/help-browser.css")
                 )
         );
         StringBuffer css = new StringBuffer();
@@ -161,7 +184,24 @@ public class HelpBrowser extends JFrame {
             }
         });
 
+        setMinimumSize(new Dimension(400, 200));
         setTitle(tr("JOSM Help Browser"));
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        if (visible) {
+            new WindowGeometry(
+                    getClass().getName() + ".geometry",
+                    WindowGeometry.centerInWindow(
+                            getParent(),
+                            new Dimension(600,400)
+                    )
+            ).apply(this);
+        } else if (!visible && isShowing()){
+            new WindowGeometry(this).remember(getClass().getName() + ".geometry");
+        }
+        super.setVisible(visible);
     }
 
     public HelpBrowser() {

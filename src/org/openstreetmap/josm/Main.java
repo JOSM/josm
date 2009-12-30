@@ -49,7 +49,7 @@ import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.SplashScreen;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
-import org.openstreetmap.josm.gui.help.HelpBrowserProxy;
+import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -391,16 +391,6 @@ abstract public class Main {
                 SearchAction.search(s, SearchAction.SearchMode.add, false, false);
             }
         }
-    }
-
-    /**
-     * Run any cleanup operation before exit
-     *
-     */
-    public static  void cleanupBeforeExit() {
-        // try to close and exit the help browser running in another process
-        //
-        HelpBrowserProxy.getInstance().exit();
     }
 
     public static boolean saveUnsavedModifications() {

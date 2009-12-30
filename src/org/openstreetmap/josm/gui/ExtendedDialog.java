@@ -22,7 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.help.HelpBrowserProxy;
+import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -485,7 +485,7 @@ public class ExtendedDialog extends JDialog {
         }
 
         public void actionPerformed(ActionEvent e) {
-            HelpBrowserProxy.getInstance().setUrlForHelpTopic(helpTopic);
+            HelpBrowser.setUrlForHelpTopic(helpTopic);
         }
     }
 }

@@ -11,7 +11,7 @@ import javax.swing.AbstractAction;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.help.HelpBrowserProxy;
+import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -42,12 +42,12 @@ public class HelpAction extends AbstractAction {
                 topic = HelpUtil.getContextSpecificHelpTopic(SwingUtilities.getDeepestComponentAt(Main.parent, mouse.x, mouse.y));
             }
             if (topic == null) {
-                HelpBrowserProxy.getInstance().setUrlForHelpTopic("/");
+                HelpBrowser.setUrlForHelpTopic("/");
             } else {
-                HelpBrowserProxy.getInstance().setUrlForHelpTopic(topic);
+                HelpBrowser.setUrlForHelpTopic(topic);
             }
         } else {
-            HelpBrowserProxy.getInstance().setUrlForHelpTopic("/");
+            HelpBrowser.setUrlForHelpTopic("/");
         }
     }
 }

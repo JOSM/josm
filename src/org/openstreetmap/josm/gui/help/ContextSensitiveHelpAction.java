@@ -51,7 +51,7 @@ public class ContextSensitiveHelpAction extends AbstractAction {
 
     public void actionPerformed(ActionEvent e) {
         if (helpTopic != null) {
-            HelpBrowserProxy.getInstance().setUrlForHelpTopic(helpTopic);
+            HelpBrowser.setUrlForHelpTopic(helpTopic);
         }
     }
 }
