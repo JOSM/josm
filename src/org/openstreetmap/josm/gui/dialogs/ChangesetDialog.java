@@ -40,6 +40,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetHeaderDownloadTask;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetInSelectionListModel;
@@ -183,48 +184,44 @@ public class ChangesetDialog extends ToggleDialog{
     }
 
     protected JPanel buildButtonPanel() {
-        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-        JToolBar tp = new JToolBar(JToolBar.HORIZONTAL);
-        tp.setFloatable(false);
+        JPanel tp = getButtonPanel(5);
 
         // -- select objects action
         selectObjectsAction = new SelectObjectsAction();
-        tp.add(selectObjectsAction);
+        tp.add(new SideButton(selectObjectsAction, false));
         cbInSelectionOnly.addItemListener(selectObjectsAction);
         lstInActiveDataLayer.getSelectionModel().addListSelectionListener(selectObjectsAction);
         lstInSelection.getSelectionModel().addListSelectionListener(selectObjectsAction);
 
         // -- read changesets action
         readChangesetAction = new ReadChangesetsAction();
-        tp.add(readChangesetAction);
+        tp.add(new SideButton(readChangesetAction, false));
         cbInSelectionOnly.addItemListener(readChangesetAction);
         lstInActiveDataLayer.getSelectionModel().addListSelectionListener(readChangesetAction);
         lstInSelection.getSelectionModel().addListSelectionListener(readChangesetAction);
 
         // -- close changesets action
         closeChangesetAction = new CloseOpenChangesetsAction();
-        tp.add(closeChangesetAction);
+        tp.add(new SideButton(closeChangesetAction, false));
         cbInSelectionOnly.addItemListener(closeChangesetAction);
         lstInActiveDataLayer.getSelectionModel().addListSelectionListener(closeChangesetAction);
         lstInSelection.getSelectionModel().addListSelectionListener(closeChangesetAction);
 
         // -- show info action
         showChangsetInfoAction = new ShowChangesetInfoAction();
-        tp.add(showChangsetInfoAction);
+        tp.add(new SideButton(showChangsetInfoAction, false));
         cbInSelectionOnly.addItemListener(showChangsetInfoAction);
         lstInActiveDataLayer.getSelectionModel().addListSelectionListener(showChangsetInfoAction);
         lstInSelection.getSelectionModel().addListSelectionListener(showChangsetInfoAction);
 
         // -- launch changeset manager action
         launchChangesetManagerAction = new LaunchChangesetManagerAction();
-        tp.add(launchChangesetManagerAction);
+        tp.add(new SideButton(launchChangesetManagerAction, false));
         cbInSelectionOnly.addItemListener(launchChangesetManagerAction);
         lstInActiveDataLayer.getSelectionModel().addListSelectionListener(launchChangesetManagerAction);
         lstInSelection.getSelectionModel().addListSelectionListener(launchChangesetManagerAction);
 
-        pnl.add(tp);
-        return pnl;
+        return tp;
     }
 
     protected void build() {

@@ -23,6 +23,15 @@ public class SideButton extends JButton {
         doStyle();
     }
 
+    public SideButton(Action action, boolean usename)
+    {
+        super(action);
+        if(!usename)
+            setText(null);
+        fixIcon();
+        doStyle();
+    }
+
     public SideButton(Action action, String imagename)
     {
         super(action);

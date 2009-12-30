@@ -62,7 +62,7 @@ public class FilterDialog extends ToggleDialog implements DataChangeListener, Ma
     }
 
     protected JPanel buildButtonRow() {
-        JPanel pnl = new JPanel(new GridLayout(1, 4));
+        JPanel pnl = getButtonPanel(5);
 
         addButton = new SideButton(marktr("Add"), "add", "SelectionList", tr("Add filter."),
                 new ActionListener(){

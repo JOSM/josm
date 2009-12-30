@@ -4,7 +4,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -28,7 +27,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
@@ -42,6 +40,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -97,39 +96,36 @@ public class LayerListDialog extends ToggleDialog {
     ActivateLayerAction activateLayerAction;
 
     protected JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
-
-        JToolBar tb = new JToolBar(JToolBar.HORIZONTAL);
-        tb.setFloatable(false);
+        JPanel buttonPanel = getButtonPanel(5);
 
         // -- move up action
         MoveUpAction moveUpAction = new MoveUpAction();
         adaptTo(moveUpAction, model);
         adaptTo(moveUpAction,selectionModel);
-        tb.add(moveUpAction);
+        buttonPanel.add(new SideButton(moveUpAction));
 
         // -- move down action
         MoveDownAction moveDownAction = new MoveDownAction();
         adaptTo(moveDownAction, model);
         adaptTo(moveDownAction,selectionModel);
-        tb.add(moveDownAction);
+        buttonPanel.add(new SideButton(moveDownAction));
 
         // -- activate action
         activateLayerAction = new ActivateLayerAction();
         adaptTo(activateLayerAction, selectionModel);
         MapView.addLayerChangeListener(activateLayerAction);
-        tb.add(activateLayerAction);
+        buttonPanel.add(new SideButton(activateLayerAction));
 
         // -- show hide action
         ShowHideLayerAction showHideLayerAction = new ShowHideLayerAction();
         adaptTo(showHideLayerAction, selectionModel);
-        tb.add(showHideLayerAction);
+        buttonPanel.add(new SideButton(showHideLayerAction));
 
         // -- merge layer action
         MergeAction mergeLayerAction = new MergeAction();
         adaptTo(mergeLayerAction, model);
         adaptTo(mergeLayerAction,selectionModel);
-        tb.add(mergeLayerAction);
+        buttonPanel.add(new SideButton(mergeLayerAction));
 
 
         //-- delete layer action
@@ -139,9 +135,8 @@ public class LayerListDialog extends ToggleDialog {
         );
         layerList.getActionMap().put("deleteLayer", deleteLayerAction);
         adaptTo(deleteLayerAction, selectionModel);
-        tb.add(deleteLayerAction);
+        buttonPanel.add(new SideButton(deleteLayerAction, false));
 
-        buttonPanel.add(tb);
         return buttonPanel;
     }
 

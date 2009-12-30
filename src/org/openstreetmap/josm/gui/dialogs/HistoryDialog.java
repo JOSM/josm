@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -71,7 +70,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
      * @return the rows with the command buttons
      */
     protected JPanel buildButtonRow() {
-        JPanel buttons = new JPanel(new GridLayout(1,2));
+        JPanel buttons = getButtonPanel(2);
 
         SideButton btn = new SideButton(reloadAction = new ReloadAction());
         btn.setName("btn.reload");

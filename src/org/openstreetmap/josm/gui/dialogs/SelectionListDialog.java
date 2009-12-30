@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -110,7 +109,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
 
         add(new JScrollPane(displaylist), BorderLayout.CENTER);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
+        JPanel buttonPanel = getButtonPanel(2);
 
         selectButton = new SideButton(marktr("Select"), "select", "SelectionList",
                 tr("Set the selected elements on the map to the selected items in the list above."),

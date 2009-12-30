@@ -23,7 +23,7 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
+import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -48,6 +48,7 @@ import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
+import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
@@ -99,36 +100,35 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
         // create the panel with buttons
         //
-        JToolBar tp = new JToolBar(JToolBar.HORIZONTAL);
-        tp.setFloatable(false);
+        JPanel tp = getButtonPanel(5);
         // the new action
         //
         newAction = new NewAction();
-        tp.add(newAction);
+        tp.add(new SideButton(newAction, false));
 
         // the edit action
         //
         editAction = new EditAction();
         displaylist.addListSelectionListener(editAction);
-        tp.add(editAction);
+        tp.add(new SideButton(editAction, false));
 
         // the duplicate action
         //
         DuplicateAction duplicateAction = new DuplicateAction();
         displaylist.addListSelectionListener(duplicateAction);
-        tp.add(duplicateAction);
+        tp.add(new SideButton(duplicateAction, false));
 
         // the delete action
         //
         deleteAction = new DeleteAction();
         displaylist.addListSelectionListener(deleteAction);
-        tp.add(deleteAction);
+        tp.add(new SideButton(deleteAction, false));
 
         // the select action
         //
         SelectAction selectAction = new SelectAction();
         displaylist.addListSelectionListener(selectAction);
-        tp.add(selectAction);
+        tp.add(new SideButton(selectAction, false));
 
         add(tp, BorderLayout.SOUTH);
 

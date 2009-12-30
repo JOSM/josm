@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -105,7 +104,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.LayerC
         SideButton btnSelect = new SideButton(actSelect = new SelectAction());
         lstConflicts.getSelectionModel().addListSelectionListener(actSelect);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(1,2));
+        JPanel buttonPanel = getButtonPanel(2);
         buttonPanel.add(btnResolve);
         buttonPanel.add(btnSelect);
         add(buttonPanel, BorderLayout.SOUTH);

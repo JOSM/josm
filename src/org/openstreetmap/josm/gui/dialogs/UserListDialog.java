@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -78,8 +77,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     }
 
     protected JPanel buildButtonRow() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new FlowLayout(FlowLayout.LEFT));
+        JPanel pnl = getButtonPanel(2);
 
         // -- select users primitives action
         //
