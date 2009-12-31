@@ -236,6 +236,11 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 Main.main.addLayer(layer);
                 layer.hook_up_mouse_events(); // Main.map.mapView should exist
                 // now. Can add mouse listener
+                Main.map.mapView.addPropertyChangeListener(layer);
+                if (!addedToggleDialog) {
+                    Main.map.addToggleDialog(ImageViewerDialog.getInstance());
+                    addedToggleDialog = true;
+                }
 
                 if (! cancelled && layer.data.size() > 0) {
                     boolean noGeotagFound = true;
@@ -261,10 +266,6 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
     public static void create(Collection<File> files, GpxLayer gpxLayer) {
         Loader loader = new Loader(files, gpxLayer);
         Main.worker.execute(loader);
-        if (!addedToggleDialog) {
-            Main.map.addToggleDialog(ImageViewerDialog.getInstance());
-            addedToggleDialog = true;
-        }
     }
 
     private GeoImageLayer(final List<ImageEntry> data, GpxLayer gpxLayer) {
@@ -274,7 +275,6 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         Collections.sort(data);
         this.data = data;
         this.gpxLayer = gpxLayer;
-        Main.map.mapView.addPropertyChangeListener(this);
     }
 
     @Override
