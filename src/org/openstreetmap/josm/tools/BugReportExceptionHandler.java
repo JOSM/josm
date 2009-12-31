@@ -63,11 +63,22 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
             options, options[0]);
             if (answer == 1) {
                 try {
+                    final int maxlen = 7000;
                     StringWriter stack = new StringWriter();
                     e.printStackTrace(new PrintWriter(stack));
 
                     String text = ShowStatusReportAction.getReportHeader()
                     + stack.getBuffer().toString();
+                    String urltext = text.replaceAll("\r",""); /* strip useless return chars */
+                    if(urltext.length() > maxlen)
+                    {
+                         urltext = urltext.substring(0,maxlen);
+                         int idx = urltext.lastIndexOf("\n");
+                         /* cut whole line when not loosing too much */
+                         if(maxlen-idx < 200)
+                             urltext = urltext.substring(0,idx+1);
+                         urltext += "...<snip>...\n";
+                    }
 
                     URL url = new URL("http://josm.openstreetmap.de/josmticket?" +
                                       "data="+
@@ -85,7 +96,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                                                             + "What happens instead?\n\n"
                                                             + "Please provide any additional information below. Attach a screenshot if\n"
                                                             + "possible.\n\n"
-                                                            + "{{{\n" + text + "\n}}}\n",
+                                                            + "{{{\n" + urltext + "\n}}}\n",
                                                          "UTF-8")));
 
                     JPanel p = new JPanel(new GridBagLayout());
