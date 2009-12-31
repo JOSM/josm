@@ -196,7 +196,7 @@ public class ConditionalOptionPaneUtil {
         JCheckBox cbShowDialog;
 
         public MessagePanel(boolean donotshow, Object message) {
-            cbShowDialog = new JCheckBox(tr("Do not show again"));
+            cbShowDialog = new JCheckBox(tr("Do not show again (remembers choice)"));
             cbShowDialog.setSelected(donotshow);
             setLayout(new GridBagLayout());
 

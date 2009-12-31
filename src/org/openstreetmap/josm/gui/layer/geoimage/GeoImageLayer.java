@@ -581,13 +581,12 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 .setContent(new JLabel(tr("<html><h3>Delete the file {0}  from disk?<p>The image file will be permanently lost!"
                     ,toDelete.file.getName()), ImageProvider.get("dialogs/geoimage/deletefromdisk"),SwingConstants.LEFT))
                 .toggleEnable("geoimage.deleteimagefromdisk")
-                .setToggleCheckboxText(tr("Always delete and don't show this dialog again"))
                 .setCancelButton(1)
                 .setDefaultButton(2)
                 .showDialog()
                 .getValue();
 
-            if(result == 2 || result == ExtendedDialog.DialogNotShown)
+            if(result == 2)
             {
                 data.remove(currentPhoto);
                 if (currentPhoto >= data.size()) {

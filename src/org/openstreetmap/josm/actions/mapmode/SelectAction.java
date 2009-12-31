@@ -473,10 +473,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
                                 + "Moving a large number of elements is often an error.\n"
                                 + "Really move them?", max));
                         ed.toggleEnable("movedManyElements");
-                        ed.setToggleCheckboxText(tr("Always move and don't show dialog again"));
                         ed.showDialog();
 
-                        if(ed.getValue() != 1 && ed.getValue() != ExtendedDialog.DialogNotShown)
+                        if(ed.getValue() != 1)
                         {
                             Main.main.undoRedo.undo();
                         }

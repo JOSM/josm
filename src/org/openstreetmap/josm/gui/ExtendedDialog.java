@@ -36,7 +36,7 @@ public class ExtendedDialog extends JDialog {
     private WindowGeometry defaultWindowGeometry = null;
     private String togglePref = "";
     private int toggleValue = -1;
-    private String toggleCheckboxText = tr("Do not show again");
+    private String toggleCheckboxText = tr("Do not show again (remembers choice)");
     private JCheckBox toggleCheckbox = null;
     private Component parent;
     private Component content;

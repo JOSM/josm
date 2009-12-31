@@ -42,7 +42,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
      * Needs to be implemented if isBatchImporter() returns true.
      */
     public void importData(List<File> files) throws IOException, IllegalDataException {
-        throw new IOException(tr("Could not import Files."));
+        throw new IOException(tr("Could not import files."));
     }
 
     /**
