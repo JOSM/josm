@@ -30,12 +30,12 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class ExtendedDialog extends JDialog {
     private int result = 0;
-    public static final int DialogNotShown = -99;
     public static final int DialogClosedOtherwise = 0;
     private boolean toggleable = false;
     private String rememberSizePref = "";
     private WindowGeometry defaultWindowGeometry = null;
     private String togglePref = "";
+    private int toggleValue = -1;
     private String toggleCheckboxText = tr("Do not show again");
     private JCheckBox toggleCheckbox = null;
     private Component parent;
@@ -168,7 +168,7 @@ public class ExtendedDialog extends JDialog {
     public ExtendedDialog showDialog() {
         // Check if the user has set the dialog to not be shown again
         if(toggleCheckState(togglePref)) {
-            result = ExtendedDialog.DialogNotShown;
+            result = toggleValue;
             return this;
         }
 
@@ -184,8 +184,6 @@ public class ExtendedDialog extends JDialog {
     /**
      * @return int * The selected button. The count starts with 1.
      *             * A return value of ExtendedDialog.DialogClosedOtherwise means the dialog has been closed otherwise.
-     *             * A return value of ExtendedDialog.DialogNotShown means the
-     *               dialog has been toggled off in the past
      */
     public int getValue() {
         return result;
@@ -372,8 +370,7 @@ public class ExtendedDialog extends JDialog {
     /**
      * Calling this will offer the user a "Do not show again" checkbox for the
      * dialog. Default is to not offer the choice; the dialog will be shown
-     * every time. If the dialog is not shown due to the previous choice of the
-     * user, the result <code>ExtendedDialog.DialogNotShown</code> is returned
+     * every time.
      * @param togglePref  The preference to save the checkbox state to
      */
     public ExtendedDialog toggleEnable(String togglePref) {
@@ -427,8 +424,9 @@ public class ExtendedDialog extends JDialog {
     private boolean toggleCheckState(String togglePref) {
         toggleable = togglePref != null && !togglePref.equals("");
 
+        toggleValue = Main.pref.getInteger("message."+togglePref+".value", -1);
         // No identifier given, so return false (= show the dialog)
-        if(!toggleable)
+        if(!toggleable || toggleValue == -1)
             return false;
         this.togglePref = togglePref;
         // The pref is true, if the dialog should be shown.
@@ -443,6 +441,7 @@ public class ExtendedDialog extends JDialog {
         if(!toggleable || toggleCheckbox == null || result == cancelButtonIdx || result == ExtendedDialog.DialogClosedOtherwise)
             return;
         Main.pref.put("message."+ togglePref, !toggleCheckbox.isSelected());
+        Main.pref.putInteger("message."+togglePref+".value", result);
     }
 
     /**
