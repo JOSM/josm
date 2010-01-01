@@ -99,11 +99,11 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only", true);
         showHeadArrowOnly = Main.pref.getBoolean("draw.segment.head_only", false);
         showOrderNumber = Main.pref.getBoolean("draw.segment.order_number", false);
-        selectedNodeSize = Main.pref.getInteger("mappaint.node.selected-size", 6);
+        selectedNodeSize = Main.pref.getInteger("mappaint.node.selected-size", 5);
         selectedNodeRadius = selectedNodeSize / 2;
-        unselectedNodeSize = Main.pref.getInteger("mappaint.node.unselected-size", 4);
+        unselectedNodeSize = Main.pref.getInteger("mappaint.node.unselected-size", 3);
         unselectedNodeRadius = unselectedNodeSize / 2;
-        taggedNodeSize = Main.pref.getInteger("mappaint.node.tagged-size", 6);
+        taggedNodeSize = Main.pref.getInteger("mappaint.node.tagged-size", 5);
         taggedNodeRadius = taggedNodeSize / 2;
         defaultSegmentWidth = Main.pref.getInteger("mappaint.segment.default-width", 2);
         fillSelectedNode = Main.pref.getBoolean("mappaint.node.fill-selected", true);
