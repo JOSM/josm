@@ -11,6 +11,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -40,6 +41,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
@@ -74,6 +76,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.widgets.AutoCompleteComboBox;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -471,6 +474,20 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         membershipData.setColumnIdentifiers(new String[]{tr("Member Of"),tr("Role")});
         membershipTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        membershipTable.addMouseListener(new PopupMenuLauncher() {
+            @Override
+            public void launch(MouseEvent evt) {
+                Point p = evt.getPoint();
+                int row = membershipTable.rowAtPoint(p);
+                if (row > -1) {
+                    JPopupMenu menu = new JPopupMenu();
+                    Relation relation = (Relation)membershipData.getValueAt(row, 0);
+                    menu.add(new SelectRelationAction(relation, true));
+                    menu.add(new SelectRelationAction(relation, false));
+                    menu.show(membershipTable, p.x, p.y-3);
+                }
+            }
+        });
 
         membershipTable.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
@@ -534,7 +551,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         selectSth.setPreferredSize(scrollPane.getSize());
         presets.setSize(scrollPane.getSize());
 
-        JPanel buttonPanel = new JPanel(new GridLayout(1,3));
+        JPanel buttonPanel = getButtonPanel(3);
 
         // -- add action and shortcut
         AddAction addAction = new AddAction();
@@ -901,6 +918,29 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
+        }
+    }
+
+    class SelectRelationAction extends AbstractAction {
+        boolean selectionmode;
+        Relation relation;
+        public SelectRelationAction(Relation r, boolean select) {
+            selectionmode = select;
+            relation = r;
+            if(select) {
+              putValue(NAME, tr("Select relation"));
+              putValue(SHORT_DESCRIPTION, tr("Select relation in main selection."));
+            } else {
+              putValue(NAME, tr("Select in relation list"));
+              putValue(SHORT_DESCRIPTION, tr("Select relation in relation list."));
+            }
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if(selectionmode)
+                Main.map.mapView.getEditLayer().data.setSelected(relation);
+            else
+                Main.map.relationListDialog.selectRelation(relation);
         }
     }
 }
