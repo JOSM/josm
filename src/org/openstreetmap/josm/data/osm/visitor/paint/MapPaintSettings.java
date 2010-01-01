@@ -54,9 +54,9 @@ public class MapPaintSettings implements PreferenceChangedListener {
         useStrokesDistance = Main.pref.getInteger("mappaint.strokes", 10000000);
         showIconsDistance = Main.pref.getInteger("mappaint.showicons", 10000000);
 
-        selectedNodeSize = Main.pref.getInteger("mappaint.node.selected-size", 4);
-        unselectedNodeSize = Main.pref.getInteger("mappaint.node.unselected-size", 2);
-        taggedNodeSize = Main.pref.getInteger("mappaint.node.tagged-size", 4);
+        selectedNodeSize = Main.pref.getInteger("mappaint.node.selected-size", 6);
+        unselectedNodeSize = Main.pref.getInteger("mappaint.node.unselected-size", 4);
+        taggedNodeSize = Main.pref.getInteger("mappaint.node.tagged-size", 6);
         fillSelectedNode = Main.pref.getBoolean("mappaint.node.fill-selected", true);
         fillUnselectedNode = Main.pref.getBoolean("mappaint.node.fill-unselected", false);
     }
