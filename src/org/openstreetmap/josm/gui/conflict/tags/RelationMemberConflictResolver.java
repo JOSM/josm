@@ -125,7 +125,7 @@ public class RelationMemberConflictResolver extends JPanel {
                 + "for the combined way or whether you want to <strong>remove</strong> them.<br>"
                 + "The default is to <strong>keep</strong> the first way and <strong>remove</strong> "
                 + "the other ways that are members of the same relation: the combined way will "
-                + "take the place of the original way in the membership."
+                + "take the place of the original way in the relation."
                 + "</html>"));
         invalidate();
     }
@@ -136,7 +136,7 @@ public class RelationMemberConflictResolver extends JPanel {
                 + "for the target node or whether you want to <strong>remove</strong> them.<br>"
                 + "The default is to <strong>keep</strong> the first node and <strong>remove</strong> "
                 + "the other nodes that are members of the same relation: the target node will "
-                + "take the place of the original node in the membership."
+                + "take the place of the original node in the relation."
                 + "</html>"));
         invalidate();
     }
