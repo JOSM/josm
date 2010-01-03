@@ -2969,14 +2969,14 @@ For external files the <rules> should have following elements:
 <!-- information tags -->
 	<rule>
 		<condition k="information" v="guidepost"/>
-		<icon annotate="true" src="misc/information/guidepost.png"/>
+		<icon annotate="true" src="misc/information/guidepost.png" priority="10"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="information" v="office"/>
-		<icon annotate="true" src="misc/information/informationoffice.png"/>
+		<icon annotate="true" src="misc/information/informationoffice.png" priority="10"/>
 		<area colour="tourism#e180a2"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2984,14 +2984,14 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="information" v="map"/>
-		<icon annotate="true" src="misc/information/map.png"/>
+		<icon annotate="true" src="misc/information/map.png" priority="10"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="information" v="board"/>
-		<icon annotate="true" src="misc/information/board.png"/>
+		<icon annotate="true" src="misc/information/board.png" priority="10"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
