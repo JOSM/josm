@@ -66,17 +66,16 @@ public class UrlBasedQueryPanel extends JPanel {
     protected JPanel buildHelpPanel() {
         HtmlPanel pnl = new HtmlPanel();
         pnl.setText(
-                tr("<html><body>Please enter or paste an URL to retrieve changesets from the OSM API."
-                        + "<p><strong>Examples</strong></p>"
-                        + "<ul>"
-                        + "<li><a href=\"http://www.openstreetmap.org/browse/changesets?open=true\">http://www.openstreetmap.org/browse/changesets?open=true</a></li>"
-                        + "<li><a href=\"http://api.openstreetmap.org/api/0.6/changesets?open=true\">http://api.openstreetmap.org/api/0.6/changesets?open=true</a></li>"
-                        + "</ul>"
-                        + "Note that changeset queries are currently always submitted to ''{0}'', regardless of the "
-                        + "host, port and path of the URL entered beow."
-                        + "</body></html>",
-                        OsmApi.getOsmApi().getBaseUrl()
-                )
+                "<html><body>" 
+                 + tr("Please enter or paste an URL to retrieve changesets from the OSM API.") 
+                 + "<p><strong>" + tr("Examples") + "</strong></p>"
+                 + "<ul>"
+                 + "<li><a href=\"http://www.openstreetmap.org/browse/changesets?open=true\">http://www.openstreetmap.org/browse/changesets?open=true</a></li>"
+                 + "<li><a href=\"http://api.openstreetmap.org/api/0.6/changesets?open=true\">http://api.openstreetmap.org/api/0.6/changesets?open=true</a></li>"
+                 + "</ul>"
+                 + tr("Note that changeset queries are currently always submitted to ''{0}'', regardless of the "
+                    + "host, port and path of the URL entered below.", OsmApi.getOsmApi().getBaseUrl())
+                 + "</body></html>"
         );
         pnl.getEditorPane().addHyperlinkListener(
                 new HyperlinkListener() {
