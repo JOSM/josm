@@ -377,6 +377,12 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="barrier"/>
+		<icon annotate="true" src="vehicle/restriction/barrier.png" priority="-10"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
 		<condition k="barrier" v="bollard"/>
 		<icon annotate="true" src="vehicle/restriction/bollard.png"/>
 		<line width="3" colour="barrier#F0F050" dashed="3,9"/>
@@ -411,7 +417,7 @@ For external files the <rules> should have following elements:
 	</rule>
 	<rule>
 		<condition k="barrier" v="fence"/>
-		<icon annotate="true" src="misc/deprecated.png"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
 		<line width="3" colour="barrier#F0F050"/>
 		<area colour="barrier#F0F050" closed="true"/>
 		<scale_min>1</scale_min>
@@ -845,8 +851,8 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="highway" v="construction"/>
-		<line width="2" realwidth="5" colour="construction#ffff00" dashed="true"/>
-		<icon src="misc/construction.png"/>
+		<line width="2" realwidth="5" colour="construction#ffff00" dashed="true" priority="10"/>
+		<icon src="misc/construction.png" priority="10"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -2462,7 +2468,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="amenity" v="marketplace"/>
 		<area colour="amenity_light#f7efb7"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="place/marketplace.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
