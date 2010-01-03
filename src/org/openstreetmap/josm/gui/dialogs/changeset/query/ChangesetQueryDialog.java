@@ -49,13 +49,13 @@ public class ChangesetQueryDialog extends JDialog {
         tpQueryPanels.add(pnlAdvancedQueries = new AdvancedChangesetQueryPanel());
 
         tpQueryPanels.setTitleAt(0, tr("Basic"));
-        tpQueryPanels.setToolTipTextAt(0, tr("Download changesets using a predefined queries"));
+        tpQueryPanels.setToolTipTextAt(0, tr("Download changesets using predefined queries"));
 
         tpQueryPanels.setTitleAt(1, tr("From URL"));
-        tpQueryPanels.setToolTipTextAt(1, tr("Query changesets according to an URL of the OSM server"));
+        tpQueryPanels.setToolTipTextAt(1, tr("Query changesets from a server URL"));
 
         tpQueryPanels.setTitleAt(2, tr("Advanced"));
-        tpQueryPanels.setToolTipTextAt(2, tr("Query changesets according to advanced query parameters"));
+        tpQueryPanels.setToolTipTextAt(2, tr("Use a custom changeset query"));
 
         JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(tpQueryPanels, BorderLayout.CENTER);
