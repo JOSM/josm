@@ -78,7 +78,7 @@ public class OsmApi extends OsmConnection {
     static public OsmApi getOsmApi() {
         String serverUrl = Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api");
         if (serverUrl == null)
-            throw new IllegalStateException(tr("Preference ''{0}'' missing. Can''t initialize OsmApi.", "osm-server.url"));
+            throw new IllegalStateException(tr("Preference ''{0}'' missing. Cannot initialize OsmApi.", "osm-server.url"));
         return getOsmApi(serverUrl);
     }
 
@@ -626,7 +626,7 @@ public class OsmApi extends OsmConnection {
      */
     protected void ensureValidChangeset() throws OsmTransferException {
         if (changeset == null)
-            throw new OsmTransferException(tr("Current changeset is null. Can't upload data."));
+            throw new OsmTransferException(tr("Current changeset is null. Cannot upload data."));
         if (changeset.getId() <= 0)
             throw new OsmTransferException(tr("ID of current changeset > 0 required. Current ID is {0}.", changeset.getId()));
     }
