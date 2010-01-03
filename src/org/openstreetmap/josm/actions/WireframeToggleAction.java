@@ -33,6 +33,7 @@ public class WireframeToggleAction extends JosmAction {
     public void addButtonModel(ButtonModel model) {
         if (model != null && !buttonModels.contains(model)) {
             buttonModels.add(model);
+            model.setSelected(selected);
         }
     }
 
