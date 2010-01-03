@@ -43,7 +43,7 @@ public class Version {
             }
             s = sb.toString();
         } catch (IOException e) {
-            System.err.println(tr("Failed to load load resource ''{0}''. Error is {1}", resource.toString(), e.toString()));
+            System.err.println(tr("Failed to load resource ''{0}'', error is {1}.", resource.toString(), e.toString()));
             e.printStackTrace();
         }
         return s;
