@@ -103,8 +103,8 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                 OsmApi.getOsmApi().getBaseUrl()
         );
         String msg2 = trn(
-                "There is {0} object to upload left.",
-                "There are {0} objects to upload left.",
+                "There is {0} object left to upload.",
+                "There are {0} objects left to upload.",
                 numObjectsToUploadLeft,
                 numObjectsToUploadLeft
         );
