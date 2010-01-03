@@ -3121,6 +3121,13 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="landuse" v="orchard"/>
+		<area colour="green#b1e0c2"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="landuse" v="quarry"/>
 		<area colour="quarry#888888"/>
 		<icon src="misc/landmark/mine.png"/>
@@ -3417,7 +3424,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="natural" v="water"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="nautical/water.png"/>
 		<area colour="water#0000ff"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3548,15 +3555,56 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="boundary" v="national"/>
-		<line width="1" colour="boundary#8de3cb" dashed="true"/>
+		<line width="3" colour="boundary#FF6600" dashed="true" priority="-10"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
+		<condition k="admin_level" v="1"/>
+		<line width="5" colour="boundary#FF6600" dashed="true"/>
+	</rule>
+	<rule>
+		<condition k="admin_level" v="2"/>
+		<line width="5" colour="boundary#FF6600" dashed="true"/>
+	</rule>
+	<rule>
+		<condition k="admin_level" v="3"/>
+		<line width="4" colour="boundary#FF6600" dashed="true"/>
+	</rule>
+	<rule>
+		<condition k="admin_level" v="4"/>
+		<line width="4" colour="boundary#FF6600" dashed="true"/>
+	</rule>
+	<rule>
+		<condition k="admin_level" v="5"/>
+		<line width="3" colour="boundary#FF6600" dashed="true"/>
+	</rule>
+	<rule>
+		<condition k="admin_level" v="6"/>
+		<line width="3" colour="boundary#FF6600" dashed="true"/>
+	</rule>
+	<rule>
+		<condition k="admin_level" v="7"/>
+		<line width="2" colour="boundary#FF6600" dashed="true"/>
+	</rule>
+	<rule>
+		<condition k="admin_level" v="8"/>
+		<line width="2" colour="boundary#FF6600" dashed="true"/>
+	</rule>
+	<rule>
+		<condition k="admin_level" v="9"/>
+		<line width="1" colour="boundary#FF6600" dashed="true"/>
+	</rule>
+	<rule>
+		<condition k="admin_level" v="10"/>
+		<line width="1" colour="boundary#FF6600" dashed="true"/>
+	</rule>
+
+	<rule>
 		<condition k="boundary" v="administrative"/>
-		<line width="1" colour="boundary#8de3cb" dashed="true"/>
+		<line width="1" colour="boundary#FF6600" dashed="true" priority="-10"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3564,7 +3612,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="boundary" v="civil"/>
-		<line width="1" colour="boundary#8de3cb" dashed="true"/>
+		<line width="1" colour="boundary#FF6600" dashed="true" priority="-10"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3572,7 +3620,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="boundary" v="political"/>
-		<line width="1" colour="boundary#8de3cb" dashed="true"/>
+		<line width="1" colour="boundary#FF6600" dashed="true" priority="-10"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3580,7 +3628,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="boundary" v="national_park"/>
-		<line width="1" colour="boundary#8de3cb" dashed="true"/>
+		<line width="1" colour="boundary#FF6600" dashed="true" priority="-10"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
