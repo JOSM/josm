@@ -6,6 +6,7 @@
 package org.openstreetmap.josm.gui.layer.geoimage;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -877,7 +878,7 @@ public class CorrelateGpxWithImages implements ActionListener {
                     tfTimezone.getDocument().addDocumentListener(statusBarListener);
                     tfOffset.getDocument().addDocumentListener(statusBarListener);
 
-                    lblMatches.setText(statusBarText.getText() + tr("<br>(Time difference of {0} days)", Math.abs(dayOffset)));
+                    lblMatches.setText(statusBarText.getText() + "<br>" + trn("(Time difference of {0} day)", "Time difference of {0} days", Math.abs(dayOffset)));
 
                     statusBarListener.updateStatusBar();
                     yLayer.updateBufferAndRepaint();
