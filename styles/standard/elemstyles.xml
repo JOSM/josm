@@ -3555,7 +3555,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="boundary" v="national"/>
-		<line width="3" colour="boundary#FF6600" dashed="true" priority="-10"/>
+		<line width="1" colour="boundary#FF6600" dashed="true" priority="-10"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
