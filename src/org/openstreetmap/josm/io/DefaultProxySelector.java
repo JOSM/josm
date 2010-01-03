@@ -80,12 +80,14 @@ public class DefaultProxySelector extends ProxySelector {
         int port = 0;
         try {
             port = Integer.parseInt(value);
-        } catch(NumberFormatException e){
-            System.err.println(tr("Unexpected format for port number in in preference ''{0}''. Got ''{1}''. Proxy won't be used.", property, value));
+        } catch (NumberFormatException e) {
+            System.err.println(tr("Unexpected format for port number in in preference ''{0}''. Got ''{1}''.", property, value));
+            System.err.println(tr("The proxy will not be used."));
             return 0;
         }
         if (port <= 0 || port >  65535) {
-            System.err.println(tr("Illegal port number in preference ''{0}''. Got {1}. Proxy won't be used.", property, port));
+            System.err.println(tr("Illegal port number in preference ''{0}''. Got {1}.", property, port));
+            System.err.println(tr("The proxy will not be used."));
             return 0;
         }
         return port;
@@ -98,7 +100,8 @@ public class DefaultProxySelector extends ProxySelector {
     public void initFromPreferences() {
         String value = Main.pref.get(ProxyPreferences.PROXY_POLICY);
         if (value.length() == 0) {
-            System.err.println(tr("Warning: no preference ''{0}'' found. Will use no proxy.", ProxyPreferences.PROXY_POLICY));
+            System.err.println(tr("Warning: no preference ''{0}'' found.", ProxyPreferences.PROXY_POLICY));
+            System.err.println(tr("The proxy will not be used."));
             proxyPolicy = ProxyPolicy.NO_PROXY;
         } else {
             proxyPolicy= ProxyPolicy.fromName(value);
@@ -114,7 +117,8 @@ public class DefaultProxySelector extends ProxySelector {
         } else {
             httpProxySocketAddress = null;
             if (proxyPolicy.equals(ProxyPolicy.USE_HTTP_PROXY)) {
-                System.err.println(tr("Warning: Unexpected parameters for HTTP proxy. Got host ''{0}'' and port ''{1}''. Proxy won't be used", host, port));
+                System.err.println(tr("Warning: Unexpected parameters for HTTP proxy. Got host ''{0}'' and port ''{1}''.", host, port));
+                System.err.println(tr("The proxy will not be used."));
             }
         }
 
@@ -125,7 +129,8 @@ public class DefaultProxySelector extends ProxySelector {
         } else {
             socksProxySocketAddress = null;
             if (proxyPolicy.equals(ProxyPolicy.USE_SOCKS_PROXY)) {
-                System.err.println(tr("Warning: Unexpected parameters for SOCKS proxy. Got host ''{0}'' and port ''{1}''. Proxy won't be used", host, port));
+                System.err.println(tr("Warning: Unexpected parameters for SOCKS proxy. Got host ''{0}'' and port ''{1}''.", host, port));
+                System.err.println(tr("The proxy will not be used."));
             }
         }
     }

@@ -578,7 +578,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                     tr("Delete image file from disk"),
                     new String[] {tr("Cancel"), tr("Delete")})
                 .setButtonIcons(new String[] {"cancel.png", "dialogs/delete.png"})
-                .setContent(new JLabel(tr("<html><h3>Delete the file {0}  from disk?<p>The image file will be permanently lost!"
+                .setContent(new JLabel(tr("<html><h3>Delete the file {0} from disk?<p>The image file will be permanently lost!</h3></html>"
                     ,toDelete.file.getName()), ImageProvider.get("dialogs/geoimage/deletefromdisk"),SwingConstants.LEFT))
                 .toggleEnable("geoimage.deleteimagefromdisk")
                 .setCancelButton(1)
