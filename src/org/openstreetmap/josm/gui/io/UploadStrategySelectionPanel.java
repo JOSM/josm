@@ -186,7 +186,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         gc.weightx = 1.0;
-        pnlMultiChangesetPolicyPanel.add(lblMultiChangesetPoliciesHeader = new JMultilineLabel(tr("<html>There are <strong>multiple changesets</strong> necessary in order to upload {0} objects. What policy shall be used?</html>", numUploadedObjects)), gc);
+        pnlMultiChangesetPolicyPanel.add(lblMultiChangesetPoliciesHeader = new JMultilineLabel(tr("<html>There are <strong>multiple changesets</strong> necessary in order to upload {0} objects. Which strategy do you want to use?</html>", numUploadedObjects)), gc);
         gc.gridy = 1;
         pnlMultiChangesetPolicyPanel.add(rbFillOneChangeset = new JRadioButton(tr("Fill up one changeset and return to the Upload Dialog")),gc);
         gc.gridy = 2;
@@ -331,7 +331,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
             rbStrategy.get(UploadStrategy.CHUNKED_DATASET_STRATEGY).setSelected(true);
             lblNumRequests.get(UploadStrategy.SINGLE_REQUEST_STRATEGY).setVisible(false);
 
-            lblMultiChangesetPoliciesHeader.setText(tr("<html>There are <strong>multiple changesets</strong> necessary in order to upload {0} objects. What policy shall be used?</html>", numUploadedObjects));
+            lblMultiChangesetPoliciesHeader.setText(tr("<html>There are <strong>multiple changesets</strong> necessary in order to upload {0} objects. What strategy do you want to use?</html>", numUploadedObjects));
             if (!rbFillOneChangeset.isSelected() && ! rbUseMultipleChangesets.isSelected()) {
                 rbUseMultipleChangesets.setSelected(true);
             }
