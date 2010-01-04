@@ -537,6 +537,8 @@
 		<xsl:with-param name="row" select="26"/>
     </xsl:call-template>
 
+	
+	
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'amenity'"/>
 		<xsl:with-param name="column" select="8"/>
@@ -548,7 +550,6 @@
 		<xsl:with-param name="column" select="9"/>
 		<xsl:with-param name="row" select="1"/>
     </xsl:call-template>
-	
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'parking'"/>
 		<xsl:with-param name="column" select="9"/>
@@ -560,32 +561,31 @@
 		<xsl:with-param name="column" select="10"/>
 		<xsl:with-param name="row" select="1"/>
     </xsl:call-template>
-
-    <xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'information'"/>
-		<xsl:with-param name="column" select="10"/>
-		<xsl:with-param name="row" select="16"/>
-    </xsl:call-template>
+<xsl:call-template name="topic">
+	<xsl:with-param name="key" select="'information'"/>
+	<xsl:with-param name="column" select="11"/>
+	<xsl:with-param name="row" select="33"/>
+</xsl:call-template>
 	
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'man_made'"/>
 		<xsl:with-param name="column" select="11"/>
 		<xsl:with-param name="row" select="1"/>
     </xsl:call-template>
-    <xsl:call-template name="topic">
-		<xsl:with-param name="key" select="'power'"/>
-		<xsl:with-param name="column" select="11"/>
-		<xsl:with-param name="row" select="23"/>
-    </xsl:call-template>
+<xsl:call-template name="topic">
+	<xsl:with-param name="key" select="'power'"/>
+	<xsl:with-param name="column" select="10"/>
+	<xsl:with-param name="row" select="20"/>
+</xsl:call-template>
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'power_source'"/>
 		<xsl:with-param name="column" select="11"/>
-		<xsl:with-param name="row" select="31"/>
+		<xsl:with-param name="row" select="20"/>
     </xsl:call-template>
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'vending'"/>
 		<xsl:with-param name="column" select="11"/>
-		<xsl:with-param name="row" select="39"/>
+		<xsl:with-param name="row" select="40"/>
     </xsl:call-template>
 
     <xsl:call-template name="topic">
@@ -618,7 +618,6 @@
 
 
 
-	
     <xsl:call-template name="topic">
 		<xsl:with-param name="key" select="'landuse'"/>
 		<xsl:with-param name="column" select="16"/>

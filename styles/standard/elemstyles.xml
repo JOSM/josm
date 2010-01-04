@@ -2009,6 +2009,13 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="amenity" v="grit_bin"/>
+		<icon annotate="true" src="misc/grit_bin.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="amenity" v="telephone"/>
 		<icon annotate="true" src="service/telephone.png"/>
 		<area colour="amenity_light#f7efb7"/>
