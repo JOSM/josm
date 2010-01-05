@@ -21,9 +21,9 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -45,6 +45,7 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
@@ -142,7 +143,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     @Override public void showNotify() {
         MapView.addLayerChangeListener(newAction);
         newAction.updateEnabledState();
-        DatasetEventManager.getInstance().addDatasetListener(this, true);
+        DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT);
         dataChanged(null);
     }
 
@@ -517,7 +518,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             return relations.get(idx);
         }
 
-        public synchronized void sort() {
+        public void sort() {
             Collections.sort(
                     relations,
                     new Comparator<Relation>() {
@@ -534,7 +535,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             return !r.isDeleted() && r.isVisible() && !r.isIncomplete();
         }
 
-        public synchronized void setRelations(Collection<Relation> relations) {
+        public void setRelations(Collection<Relation> relations) {
             List<Relation> sel =  getSelectedRelations();
             this.relations.clear();
             if (relations == null) {
@@ -560,7 +561,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
          * @param addedPrimitives the collection of added primitives. May include nodes,
          * ways, and relations.
          */
-        public synchronized void addRelations(Collection<? extends OsmPrimitive> addedPrimitives) {
+        public void addRelations(Collection<? extends OsmPrimitive> addedPrimitives) {
             boolean added = false;
             for (OsmPrimitive p: addedPrimitives) {
                 if (! (p instanceof Relation)) {
@@ -590,7 +591,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
          * @param removedPrimitives the removed primitives. May include nodes, ways,
          *   and relations
          */
-        public synchronized void removeRelations(Collection<? extends OsmPrimitive> removedPrimitives) {
+        public void removeRelations(Collection<? extends OsmPrimitive> removedPrimitives) {
             if (removedPrimitives == null) return;
             // extract the removed relations
             //
@@ -663,7 +664,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
          *
          * @return sel the list of selected relations
          */
-        public synchronized void setSelectedRelations(List<Relation> sel) {
+        public void setSelectedRelations(List<Relation> sel) {
             selectionModel.clearSelection();
             if (sel == null || sel.isEmpty())
                 return;

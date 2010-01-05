@@ -25,7 +25,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -38,6 +37,7 @@ import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
@@ -153,7 +153,7 @@ public class ChangesetDialog extends ToggleDialog{
     @Override
     public void showNotify() {
         registerAsListener();
-        DatasetEventManager.getInstance().addDatasetListener(inActiveDataLayerModel, true);
+        DatasetEventManager.getInstance().addDatasetListener(inActiveDataLayerModel, FireMode.IN_EDT);
     }
 
     @Override

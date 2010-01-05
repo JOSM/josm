@@ -9,8 +9,15 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 public class DataChangedEvent extends AbstractDatasetChangedEvent {
 
-    public DataChangedEvent(DataSet dataSet) {
+    private final List<AbstractDatasetChangedEvent> events;
+
+    public DataChangedEvent(DataSet dataSet, List<AbstractDatasetChangedEvent> events) {
         super(dataSet);
+        this.events = events;
+    }
+
+    public DataChangedEvent(DataSet dataSet) {
+        this(dataSet, null);
     }
 
     @Override
@@ -29,6 +36,14 @@ public class DataChangedEvent extends AbstractDatasetChangedEvent {
     @Override
     public DatasetEventType getType() {
         return DatasetEventType.DATA_CHANGED;
+    }
+
+    /**
+     * 
+     * @return List of events that caused this DataChangedEvent. Might be null
+     */
+    public List<AbstractDatasetChangedEvent> getEvents() {
+        return events;
     }
 
 }

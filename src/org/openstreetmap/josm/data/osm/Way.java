@@ -215,7 +215,7 @@ public final class Way extends OsmPrimitive {
     @Override public WayData save() {
         WayData data = new WayData();
         saveCommonAttributes(data);
-        for (Node node:getNodes()) {
+        for (Node node:nodes) {
             data.getNodes().add(node.getUniqueId());
         }
         return data;
@@ -386,7 +386,7 @@ public final class Way extends OsmPrimitive {
     }
 
     public boolean hasIncompleteNodes() {
-        for (Node node:getNodes()) {
+        for (Node node:nodes) {
             if (node.isIncomplete())
                 return true;
         }

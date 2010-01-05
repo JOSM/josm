@@ -10,7 +10,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -64,7 +63,10 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -98,7 +100,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener, MapView.EditLayerChangeListener {
+public class PropertiesDialog extends ToggleDialog implements SelectionChangedListener, MapView.EditLayerChangeListener, DataSetListenerAdapter.Listener {
     /**
      * Watches for double clicks and from editing or new property, depending on the
      * location, the click was.
@@ -143,9 +145,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final Map<String, Map<String, Integer>> valueCount = new TreeMap<String, Map<String, Integer>>();
     private final ListOfUsedTags listOfUsedTags = new ListOfUsedTags();
 
+    private DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
+
     @Override
     public void showNotify() {
-        DatasetEventManager.getInstance().addDatasetListener(listOfUsedTags, false);
+        DatasetEventManager.getInstance().addDatasetListener(listOfUsedTags, FireMode.IMMEDIATELY);
+        DatasetEventManager.getInstance().addDatasetListener(dataChangedAdapter, FireMode.IN_EDT_CONSOLIDATED);
         listOfUsedTags.rebuildNecessary();
         DataSet.selListeners.add(this);
         updateSelection();
@@ -154,6 +159,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     @Override
     public void hideNotify() {
         DatasetEventManager.getInstance().removeDatasetListener(listOfUsedTags);
+        DatasetEventManager.getInstance().removeDatasetListener(dataChangedAdapter);
         DataSet.selListeners.remove(this);
     }
 
@@ -309,6 +315,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      *
      * @param row
      */
+    @SuppressWarnings("unchecked")
     void membershipEdit(int row) {
         Relation relation = (Relation)membershipData.getValueAt(row, 0);
         Main.map.relationListDialog.selectRelation(relation);
@@ -454,13 +461,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     String str = null;
                     if (value instanceof String) {
                         str = (String) value;
-                    } else if (value instanceof Map) {
-                        Map v = (Map) value;
+                    } else if (value instanceof Map<?, ?>) {
+                        Map<?, ?> v = (Map<?, ?>) value;
                         if (v.size() != 1) {
                             str=tr("<different>");
                             c.setFont(c.getFont().deriveFont(Font.ITALIC));
                         } else {
-                            final Map.Entry entry = (Map.Entry) v.entrySet().iterator().next();
+                            final Map.Entry<?, ?> entry = v.entrySet().iterator().next();
                             str = (String) entry.getKey();
                         }
                     }
@@ -809,6 +816,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         updateSelection();
     }
 
+    public void processDatasetEvent(AbstractDatasetChangedEvent event) {
+        updateSelection();
+    }
+
     class DeleteAction extends AbstractAction implements ListSelectionListener {
 
         protected void deleteProperty(int row){
@@ -921,26 +932,27 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
     }
 
-    class SelectRelationAction extends AbstractAction {
+    static class SelectRelationAction extends AbstractAction {
         boolean selectionmode;
         Relation relation;
         public SelectRelationAction(Relation r, boolean select) {
             selectionmode = select;
             relation = r;
             if(select) {
-              putValue(NAME, tr("Select relation"));
-              putValue(SHORT_DESCRIPTION, tr("Select relation in main selection."));
+                putValue(NAME, tr("Select relation"));
+                putValue(SHORT_DESCRIPTION, tr("Select relation in main selection."));
             } else {
-              putValue(NAME, tr("Select in relation list"));
-              putValue(SHORT_DESCRIPTION, tr("Select relation in relation list."));
+                putValue(NAME, tr("Select in relation list"));
+                putValue(SHORT_DESCRIPTION, tr("Select relation in relation list."));
             }
         }
 
         public void actionPerformed(ActionEvent e) {
-            if(selectionmode)
+            if(selectionmode) {
                 Main.map.mapView.getEditLayer().data.setSelected(relation);
-            else
+            } else {
                 Main.map.relationListDialog.selectRelation(relation);
+            }
         }
     }
 }
