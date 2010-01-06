@@ -49,6 +49,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
@@ -295,10 +296,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                             commands));
         }
 
-        Main.main.getCurrentDataSet().fireSelectionChanged();
-        selectionChanged(sel); // update whole table
-        Main.parent.repaint(); // repaint all - drawing could have been changed
-
         if(!key.equals(newkey)) {
             for(int i=0; i < propertyTable.getRowCount(); i++)
                 if(propertyData.getValueAt(i, 0).toString() == newkey) {
@@ -371,10 +368,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         if (value.equals(""))
             return;
         Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, value));
-        Main.main.getCurrentDataSet().fireSelectionChanged();
-        selectionChanged(sel); // update table
-        Main.parent.repaint(); // repaint all - drawing could have been changed
-
         btnAdd.requestFocusInWindow();
     }
 
@@ -695,6 +688,14 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
     }
 
+    private int findRow(TableModel model, Object value) {
+        for (int i=0; i<model.getRowCount(); i++) {
+            if (model.getValueAt(i, 0).equals(value))
+                return i;
+        }
+        return -1;
+    }
+
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         if (!isVisible())
             return;
@@ -702,6 +703,15 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             return; // selection changed may be received in base class constructor before init
         if (propertyTable.getCellEditor() != null) {
             propertyTable.getCellEditor().cancelCellEditing();
+        }
+
+        String selectedTag = null;
+        Relation selectedRelation = null;
+        if (propertyTable.getSelectedRowCount() == 1) {
+            selectedTag = (String)propertyData.getValueAt(propertyTable.getSelectedRow(), 0);
+        }
+        if (membershipTable.getSelectedRowCount() == 1) {
+            selectedRelation = (Relation)membershipData.getValueAt(membershipTable.getSelectedRow(), 0);
         }
 
         // re-load property data
@@ -787,7 +797,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         propertyTable.setVisible(hasSelection);
         propertyTable.getTableHeader().setVisible(hasSelection);
         selectSth.setVisible(!hasSelection);
-        if(hasTags) {
+
+        int selectedIndex;
+        if (selectedTag != null && (selectedIndex = findRow(propertyData, selectedTag)) != -1) {
+            propertyTable.changeSelection(selectedIndex, 0, false, false);
+        } else if (selectedRelation != null && (selectedIndex = findRow(membershipData, selectedRelation)) != -1) {
+            membershipTable.changeSelection(selectedIndex, 0, false, false);
+        } else if(hasTags) {
             propertyTable.changeSelection(0, 0, false, false);
         } else if(hasMemberships) {
             membershipTable.changeSelection(0, 0, false, false);
@@ -824,17 +840,30 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         protected void deleteProperty(int row){
             String key = propertyData.getValueAt(row, 0).toString();
+
+            String nextKey = null;
+            int rowCount = propertyData.getRowCount();
+            if (rowCount > 1) {
+                nextKey = (String)propertyData.getValueAt((row + 1 < rowCount ? row + 1 : row - 1), 0);
+            }
+
             Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
             Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, null));
-            Main.main.getCurrentDataSet().fireSelectionChanged();
-            selectionChanged(sel); // update table
 
-            int rowCount = propertyTable.getRowCount();
-            propertyTable.changeSelection((row < rowCount ? row : (rowCount-1)), 0, false, false);
+            membershipTable.clearSelection();
+            if (nextKey != null) {
+                propertyTable.changeSelection(findRow(propertyData, nextKey), 0, false, false);
+            }
         }
 
         protected void deleteFromRelation(int row) {
             Relation cur = (Relation)membershipData.getValueAt(row, 0);
+
+            Relation nextRelation = null;
+            int rowCount = membershipTable.getRowCount();
+            if (rowCount > 1) {
+                nextRelation = (Relation)membershipData.getValueAt((row + 1 < rowCount ? row + 1 : row - 1), 0);
+            }
 
             ExtendedDialog ed = new ExtendedDialog(Main.parent,
                     tr("Change relation"),
@@ -852,8 +881,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 rel.removeMembersFor(primitive);
             }
             Main.main.undoRedo.add(new ChangeCommand(cur, rel));
-            Main.main.getCurrentDataSet().fireSelectionChanged();
-            selectionChanged(sel); // update whole table
+
+            propertyTable.clearSelection();
+            if (nextRelation != null) {
+                membershipTable.changeSelection(findRow(membershipData, nextRelation), 0, false, false);
+            }
         }
 
         public DeleteAction() {
