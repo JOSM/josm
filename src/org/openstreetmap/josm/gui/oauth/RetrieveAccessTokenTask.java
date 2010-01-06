@@ -1,0 +1,116 @@
+// License: GPL. For details, see LICENSE file.
+package org.openstreetmap.josm.gui.oauth;
+
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.Component;
+import java.io.IOException;
+
+import javax.swing.JOptionPane;
+
+import org.openstreetmap.josm.data.oauth.OAuthParameters;
+import org.openstreetmap.josm.data.oauth.OAuthToken;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.io.OsmTransferCancelledException;
+import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.xml.sax.SAXException;
+
+/**
+ * Asynchronous task for retrieving an Access Token.
+ * 
+ */
+public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
+
+    private boolean canceled;
+    private OAuthToken accessToken;
+    private OAuthParameters parameters;
+    private OsmOAuthAuthorisationClient client;
+    private OAuthToken requestToken;
+    private Component parent;
+
+    /**
+     * Creates the task
+     * 
+     * @param parent the parent component relative to which the {@see PleaseWaitRunnable}-Dialog
+     * is displayed
+     * @param parameters the OAuth parameters. Must not be null.
+     * @param requestToken the request token for which an Access Token is retrieved. Must not be null.
+     * @throws IllegalArgumentException thrown if parameters is null.
+     * @throws IllegalArgumentException thrown if requestToken is null.
+     */
+    public RetrieveAccessTokenTask(Component parent, OAuthParameters parameters, OAuthToken requestToken) {
+        super(parent, tr("Retrieving OAuth Access Token..."), false /* don't ignore exceptions */);
+        CheckParameterUtil.ensureParameterNotNull(parameters, "parameters");
+        CheckParameterUtil.ensureParameterNotNull(requestToken, "requestToken");
+        this.parameters = parameters;
+        this.requestToken = requestToken;
+        this.parent = parent;
+    }
+
+    @Override
+    protected void cancel() {
+        canceled = true;
+        synchronized(this) {
+            if (client != null) {
+                client.cancel();
+            }
+        }
+    }
+
+    @Override
+    protected void finish() { /* not used in this task */}
+
+    protected void alertRetrievingAccessTokenFailed(OsmOAuthAuthorisationException e) {
+        HelpAwareOptionPane.showOptionDialog(
+                parent,
+                tr(
+                        "<html>Retrieving an OAuth Access Token from ''{0}'' failed.</html>",
+                        parameters.getAccessTokenUrl()
+                ),
+                tr("Request Failed"),
+                JOptionPane.ERROR_MESSAGE,
+                HelpUtil.ht("/OAuth#NotAuthorizedException")
+        );
+    }
+
+    @Override
+    protected void realRun() throws SAXException, IOException, OsmTransferException {
+        try {
+            synchronized(this) {
+                client = new OsmOAuthAuthorisationClient(parameters, requestToken);
+            }
+            accessToken = client.getAccessToken(getProgressMonitor().createSubTaskMonitor(0, false));
+        } catch(OsmTransferCancelledException e) {
+            return;
+        } catch (OsmOAuthAuthorisationException e) {
+            e.printStackTrace();
+            alertRetrievingAccessTokenFailed(e);
+            accessToken = null;
+        } finally {
+            synchronized(this) {
+                client = null;
+            }
+        }
+    }
+
+    /**
+     * Replies true if the task was canceled.
+     * 
+     * @return
+     */
+    public boolean isCanceled() {
+        return canceled;
+    }
+
+    /**
+     * Replies the retrieved Access Token. null, if something went wrong.
+     * 
+     * @return the retrieved Access Token
+     */
+    public OAuthToken getAccessToken() {
+        return accessToken;
+    }
+}
