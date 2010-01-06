@@ -18,6 +18,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.io.ChangesetClosedException;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
@@ -86,6 +87,38 @@ public class ExceptionUtil {
         return msg;
     }
 
+    public static String explainFailedBasicAuthentication(OsmApiException e) {
+        e.printStackTrace();
+        return tr("<html>"
+                + "Authentication at the OSM server with the username ''{0}'' failed.<br>"
+                + "Please check the username and the password in the JOSM preferences."
+                + "</html>",
+                Main.pref.get("osm-server.username")
+        );
+    }
+
+    public static String explainFailedOAuthAuthentication(OsmApiException e) {
+        e.printStackTrace();
+        return tr("<html>"
+                + "Authentication at the OSM server with the OAuth token ''{0}'' failed.<br>"
+                + "Please launch the preferences dialog and retrieve another OAuth token."
+                + "</html>",
+                OAuthAccessTokenHolder.getInstance().getAccessTokenKey()
+        );
+    }
+
+    public static String explainFailedOAuthAuthorisation(OsmApiException e) {
+        e.printStackTrace();
+        return tr("<html>"
+                + "Authorisation at the OSM server with the OAuth token ''{0}'' failed.<br>"
+                + "The token is not authorised to access the protected resource<br>"
+                + "''{1}''.<br>"
+                + "Please launch the preferences dialog and retrieve another OAuth token."
+                + "</html>",
+                OAuthAccessTokenHolder.getInstance().getAccessTokenKey(),
+                e.getAccessedUrl() == null ? tr("unknown") : e.getAccessedUrl()
+        );
+    }
     /**
      * Explains an error due to a 409 conflict
      *

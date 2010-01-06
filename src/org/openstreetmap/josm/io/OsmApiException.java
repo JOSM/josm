@@ -7,6 +7,7 @@ public class OsmApiException extends OsmTransferException {
     private int responseCode;
     private String errorHeader;
     private String errorBody;
+    private String accessedUrl;
 
     public OsmApiException() {
         super();
@@ -59,7 +60,7 @@ public class OsmApiException extends OsmTransferException {
         StringBuilder sb = new StringBuilder();
         sb.append("ResponseCode=")
         .append(responseCode);
-        if (errorHeader != null && !errorBody.trim().equals("")) {
+        if (errorHeader != null && errorBody != null && !errorBody.trim().equals("")) {
             sb.append(", Error Header=<")
             .append(tr(errorHeader))
             .append(">");
@@ -93,5 +94,13 @@ public class OsmApiException extends OsmTransferException {
             sb.append(tr("The server replied an error with code {0}.", responseCode));
         }
         return sb.toString();
+    }
+
+    public void setAccessedUrl(String url) {
+        this.accessedUrl = url;
+    }
+
+    public String getAccessedUrl() {
+        return accessedUrl;
     }
 }

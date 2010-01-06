@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.io;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.net.HttpURLConnection;
 import java.net.Authenticator.RequestorType;
 import java.nio.ByteBuffer;
@@ -10,6 +12,12 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.logging.Logger;
 
+import oauth.signpost.OAuthConsumer;
+import oauth.signpost.exception.OAuthException;
+
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.oauth.OAuthParameters;
+import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.io.auth.CredentialsManagerException;
 import org.openstreetmap.josm.io.auth.CredentialsManagerFactory;
 import org.openstreetmap.josm.io.auth.CredentialsManagerResponse;
@@ -26,6 +34,7 @@ public class OsmConnection {
 
     protected boolean cancel = false;
     protected HttpURLConnection activeConnection;
+    protected OAuthParameters oauthParameters;
 
     /**
      * Initialize the http defaults and the authenticator.
@@ -58,7 +67,13 @@ public class OsmConnection {
         }
     }
 
-    protected void addAuth(HttpURLConnection con) throws OsmTransferException {
+    /**
+     * Adds an authentication header for basic authentication
+     * 
+     * @param con the connection
+     * @throws OsmTransferException thrown is something went wrong. Check for nested exceptions
+     */
+    protected void addBasicAuthorizationHeader(HttpURLConnection con) throws OsmTransferException {
         CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
         CredentialsManagerResponse response;
         String token;
@@ -84,6 +99,44 @@ public class OsmConnection {
             } catch(CharacterCodingException e) {
                 throw new OsmTransferException(e);
             }
+        }
+    }
+
+    /**
+     * Signs the connection with an OAuth authentication header
+     * 
+     * @param connection the connection
+     * 
+     * @throws OsmTransferException thrown if there is currently no OAuth Access Token configured
+     * @throws OsmTransferException thrown if signing fails
+     */
+    protected void addOAuthAuthorizationHeader(HttpURLConnection connection) throws OsmTransferException {
+        if (oauthParameters == null) {
+            oauthParameters = OAuthParameters.createFromPreferences(Main.pref);
+        }
+        OAuthConsumer consumer = oauthParameters.buildConsumer();
+        OAuthAccessTokenHolder holder = OAuthAccessTokenHolder.getInstance();
+        if (! holder.containsAccessToken())
+            throw new OsmTransferException(tr("Failed to add an OAuth authentication header. There is currently no OAuth Access Token configured."));
+
+        consumer.setTokenWithSecret(holder.getAccessTokenKey(), holder.getAccessTokenSecret());
+        try {
+            consumer.sign(connection);
+        } catch(OAuthException e) {
+            throw new OsmTransferException(tr("Failed to sign a HTTP connection with an OAuth Authentication header"), e);
+        }
+    }
+
+    protected void addAuth(HttpURLConnection connection) throws OsmTransferException {
+        String authMethod = Main.pref.get("osm-server.auth-method", "basic");
+        if (authMethod.equals("basic")) {
+            addBasicAuthorizationHeader(connection);
+        } else if (authMethod.equals("oauth")) {
+            addOAuthAuthorizationHeader(connection);
+        } else {
+            String msg = tr("Warning: unexpected value for preference ''{0}''. Got ''{1}''.", "osm-server.auth-method", authMethod);
+            System.err.println(msg);
+            throw new OsmTransferException(msg);
         }
     }
 

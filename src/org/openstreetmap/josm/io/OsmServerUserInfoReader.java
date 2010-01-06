@@ -24,21 +24,11 @@ import org.w3c.dom.NodeList;
 
 public class OsmServerUserInfoReader extends OsmServerReader {
 
-    public OsmServerUserInfoReader() {
-        setDoAuthenticate(true);
-    }
-
-    @Override
-    public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
-        // not implemented
-        return null;
-    }
-
-    protected String getAttribute(Node node, String name) {
+    static protected String getAttribute(Node node, String name) {
         return node.getAttributes().getNamedItem(name).getNodeValue();
     }
 
-    protected UserInfo buildFromXML(Document document) throws OsmDataParsingException{
+    static public  UserInfo buildFromXML(Document document) throws OsmDataParsingException{
         try {
             XPathFactory factory = XPathFactory.newInstance();
             XPath xpath = factory.newXPath();
@@ -120,9 +110,21 @@ public class OsmServerUserInfoReader extends OsmServerReader {
         }
     }
 
+    public OsmServerUserInfoReader() {
+        setDoAuthenticate(true);
+    }
+
+    @Override
+    public DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException {
+        // not implemented
+        return null;
+    }
+
+
+
     public UserInfo fetchUserInfo(ProgressMonitor monitor) throws OsmTransferException {
         try {
-            monitor.beginTask("Reading user info ...");
+            monitor.beginTask(tr("Reading user info ..."));
             InputStream in = getInputStream("user/details", monitor.createSubTaskMonitor(1, true));
             return buildFromXML(
                     DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in)

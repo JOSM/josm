@@ -5,11 +5,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.text.DateFormat;
@@ -27,7 +25,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.Scrollable;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
@@ -38,6 +35,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.BoundingBoxSelectionPanel;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
+import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -58,7 +56,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
     protected JPanel buildQueryPanel() {
         ItemListener stateChangeHandler = new RestrictionGroupStateChangeHandler();
-        JPanel pnl  = new QuerySpecificationPanel();
+        JPanel pnl  = new VerticallyScrollablePanel();
         pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         pnl.setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
@@ -957,28 +955,6 @@ public class AdvancedChangesetQueryPanel extends JPanel {
                     JOptionPane.ERROR_MESSAGE,
                     HelpUtil.ht("/Dialog/ChangesetQueryDialog#InvalidBoundingBox")
             );
-        }
-    }
-
-    static private class QuerySpecificationPanel extends JPanel implements Scrollable {
-        public Dimension getPreferredScrollableViewportSize() {
-            return getPreferredSize();
-        }
-
-        public int getScrollableBlockIncrement(Rectangle arg0, int arg1, int arg2) {
-            return 20;
-        }
-
-        public boolean getScrollableTracksViewportHeight() {
-            return false;
-        }
-
-        public boolean getScrollableTracksViewportWidth() {
-            return true;
-        }
-
-        public int getScrollableUnitIncrement(Rectangle arg0, int arg1, int arg2) {
-            return 10;
         }
     }
 

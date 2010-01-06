@@ -465,6 +465,11 @@ public class OsmApi extends OsmConnection {
         return Math.max(ret,0);
     }
 
+    protected boolean isUsingOAuth() {
+        String authMethod = Main.pref.get("osm-server.auth-method", "basic");
+        return authMethod.equals("oauth");
+    }
+
     private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor) throws OsmTransferException {
         return sendRequest(requestMethod, urlSuffix, requestBody, monitor, true);
     }
@@ -573,17 +578,21 @@ public class OsmApi extends OsmConnection {
                     return responseBody.toString();
                 case HttpURLConnection.HTTP_GONE:
                     throw new OsmApiPrimitiveGoneException(errorHeader, errorBody);
-                case HttpURLConnection.HTTP_UNAUTHORIZED:
-                case HttpURLConnection.HTTP_PROXY_AUTH:
-                    // if we get here with HTTP_UNAUTHORIZED or HTTP_PROXY_AUTH the user canceled the
-                    // username/password dialog. Throw an OsmTransferCancelledException.
-                    //
-                    throw new OsmTransferCancelledException();
+                    //                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                    //                    throw new OsmApiException(retCode, errorHeader, errorBody);
+                    //                case HttpURLConnection.HTTP_PROXY_AUTH:
+                    //                    throw new OsmApiException(retCode, errorHeader, errorBody);
+                    //                case HttpURLConnection.HTTP_FORBIDDEN:
+                    //                    throw new OsmApiException(retCode, errorHeader, errorBody);
                 case HttpURLConnection.HTTP_CONFLICT:
                     if (ChangesetClosedException.errorHeaderMatchesPattern(errorHeader))
                         throw new ChangesetClosedException(errorBody, ChangesetClosedException.Source.UPLOAD_DATA);
                     else
                         throw new OsmApiException(retCode, errorHeader, errorBody);
+                case HttpURLConnection.HTTP_FORBIDDEN:
+                    OsmApiException e = new OsmApiException(retCode, errorHeader, errorBody);
+                    e.setAccessedUrl(activeConnection.getURL().toString());
+                    throw e;
                 default:
                     throw new OsmApiException(retCode, errorHeader, errorBody);
                 }

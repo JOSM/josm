@@ -85,7 +85,7 @@ public final class Node extends OsmPrimitive {
      * @param clearId If true, set version to 0 and id to new unique value
      */
     public Node(Node clone, boolean clearId) {
-        super(clone.getUniqueId(), true);
+        super(clone.getUniqueId(), true /* allow negative IDs */);
         cloneFrom(clone);
         if (clearId) {
             clearOsmId();

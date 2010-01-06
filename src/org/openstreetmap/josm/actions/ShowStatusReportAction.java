@@ -89,17 +89,14 @@ public final class ShowStatusReportAction extends JosmAction {
                 String line = null;
 
                 while ((line = input.readLine()) != null) {
-                    // Skip potential private information
-                    if (line.trim().toLowerCase().startsWith("osm-server.username")) {
+                    String toCheck = line.trim().toLowerCase();
+                    if (toCheck.startsWith("osm-server.username")
+                            || toCheck.startsWith("osm-server.password")
+                            || toCheck.startsWith("marker.show")
+                            || toCheck.startsWith("oauth.access-token.key")
+                            || toCheck.startsWith("oauth.access-token.secret")) {
                         continue;
                     }
-                    if (line.trim().toLowerCase().startsWith("osm-server.password")) {
-                        continue;
-                    }
-                    if (line.trim().toLowerCase().startsWith("marker.show")) {
-                        continue;
-                    }
-
                     text.append(line);
                     text.append("\n");
                 }

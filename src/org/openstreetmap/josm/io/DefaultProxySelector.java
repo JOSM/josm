@@ -15,8 +15,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.preferences.ProxyPreferences;
-import org.openstreetmap.josm.gui.preferences.ProxyPreferences.ProxyPolicy;
+import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
+import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel.ProxyPolicy;
+
 
 /**
  * This is the default proxy selector used in JOSM.
@@ -98,20 +99,20 @@ public class DefaultProxySelector extends ProxySelector {
      * 
      */
     public void initFromPreferences() {
-        String value = Main.pref.get(ProxyPreferences.PROXY_POLICY);
+        String value = Main.pref.get(ProxyPreferencesPanel.PROXY_POLICY);
         if (value.length() == 0) {
-            System.err.println(tr("Warning: no preference ''{0}'' found.", ProxyPreferences.PROXY_POLICY));
+            System.err.println(tr("Warning: no preference ''{0}'' found.", ProxyPreferencesPanel.PROXY_POLICY));
             System.err.println(tr("The proxy will not be used."));
             proxyPolicy = ProxyPolicy.NO_PROXY;
         } else {
             proxyPolicy= ProxyPolicy.fromName(value);
             if (proxyPolicy == null) {
-                System.err.println(tr("Warning: unexpected value for preference ''{0}'' found. Got ''{1}''. Will use no proxy.", ProxyPreferences.PROXY_POLICY, value));
+                System.err.println(tr("Warning: unexpected value for preference ''{0}'' found. Got ''{1}''. Will use no proxy.", ProxyPreferencesPanel.PROXY_POLICY, value));
                 proxyPolicy = ProxyPolicy.NO_PROXY;
             }
         }
-        String host = Main.pref.get(ProxyPreferences.PROXY_HTTP_HOST, null);
-        int port = parseProxyPortValue(ProxyPreferences.PROXY_HTTP_PORT, Main.pref.get(ProxyPreferences.PROXY_HTTP_PORT, null));
+        String host = Main.pref.get(ProxyPreferencesPanel.PROXY_HTTP_HOST, null);
+        int port = parseProxyPortValue(ProxyPreferencesPanel.PROXY_HTTP_PORT, Main.pref.get(ProxyPreferencesPanel.PROXY_HTTP_PORT, null));
         if (host != null && ! host.trim().equals("") && port > 0) {
             httpProxySocketAddress = new InetSocketAddress(host,port);
         } else {
@@ -122,8 +123,8 @@ public class DefaultProxySelector extends ProxySelector {
             }
         }
 
-        host = Main.pref.get(ProxyPreferences.PROXY_SOCKS_HOST, null);
-        port = parseProxyPortValue(ProxyPreferences.PROXY_SOCKS_PORT, Main.pref.get(ProxyPreferences.PROXY_SOCKS_PORT, null));
+        host = Main.pref.get(ProxyPreferencesPanel.PROXY_SOCKS_HOST, null);
+        port = parseProxyPortValue(ProxyPreferencesPanel.PROXY_SOCKS_PORT, Main.pref.get(ProxyPreferencesPanel.PROXY_SOCKS_PORT, null));
         if (host != null && ! host.trim().equals("") && port > 0) {
             socksProxySocketAddress = new InetSocketAddress(host,port);
         } else {

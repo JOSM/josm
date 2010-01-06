@@ -89,8 +89,9 @@ public class UnGlueAction extends JosmAction {
             for (Node n : selectedNodes) {
                 int count = 0;
                 for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
-                    if (!w.isUsable())
+                    if (!w.isUsable()) {
                         continue;
+                    }
                     count++;
                 }
                 if (count >= 2) {
@@ -286,7 +287,7 @@ public class UnGlueAction extends JosmAction {
         for (Node pushNode : w.getNodes()) {
             if (originalNode == pushNode) {
                 // clone the node for all other ways
-                pushNode = new Node(pushNode, true);
+                pushNode = new Node(pushNode, true /* clear OSM ID */);
                 newNodes.add(pushNode);
                 cmds.add(new AddCommand(pushNode));
             }
@@ -306,8 +307,9 @@ public class UnGlueAction extends JosmAction {
         Relation newRel = null;
         HashSet<String> rolesToReAdd = null;
         for (Relation r : OsmPrimitive.getFilteredList(originalNode.getReferrers(), Relation.class)) {
-            if (r.isDeleted())
+            if (r.isDeleted()) {
                 continue;
+            }
             newRel = null;
             rolesToReAdd = null;
             for (RelationMember rm : r.getMembers()) {

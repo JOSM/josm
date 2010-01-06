@@ -13,6 +13,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSetMergerTest;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.tools.I18n;
 
 public class JOSMFixture {
     static private final Logger logger = Logger.getLogger(JOSMFixture.class.getName());
@@ -41,7 +42,7 @@ public class JOSMFixture {
             testProperties.load(DataSetMergerTest.class.getResourceAsStream(testPropertiesResourceName));
         } catch(Exception e){
             logger.log(Level.SEVERE, MessageFormat.format("failed to load property file ''{0}''", testPropertiesResourceName));
-            fail(MessageFormat.format("failed to load property file ''{0}''", testPropertiesResourceName));
+            fail(MessageFormat.format("failed to load property file ''{0}''. \nMake sure the path ''$project_root/test/config'' is on the classpath.", testPropertiesResourceName));
         }
 
         // check josm.home
@@ -52,10 +53,16 @@ public class JOSMFixture {
         } else {
             File f = new File(josmHome);
             if (! f.exists() || ! f.canRead()) {
-                fail(MessageFormat.format("property ''{0}'' points to ''{1}'' which is either not existing or not readable", "josm.home", josmHome));
+                fail(MessageFormat.format("property ''{0}'' points to ''{1}'' which is either not existing or not readable.\nEdit ''{2}'' and update the value ''josm.home''. ", "josm.home", josmHome,testPropertiesResourceName ));
             }
         }
         System.setProperty("josm.home", josmHome);
+        I18n.init();
+        // initialize the plaform hook, and
+        Main.determinePlatformHook();
+        // call the really early hook before we anything else
+        Main.platform.preStartupHook();
+
         Main.pref.init(false);
 
         // init projection

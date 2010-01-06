@@ -76,6 +76,10 @@ public class ServerSidePreferences extends Preferences {
                 URL u = new URL(getPreferencesDir());
                 System.out.println("uploading preferences to "+u);
                 HttpURLConnection con = (HttpURLConnection)u.openConnection();
+                // FIXME:
+                // - doesn't work if CredentialManager isn't JosmPreferencesCredentialManager
+                // - doesn't work for OAuth
+
                 con.addRequestProperty("Authorization", "Basic "+Base64.encode(get("osm-server.username")+":"+get("osm-server.password")));
                 con.setRequestMethod("POST");
                 con.setDoOutput(true);

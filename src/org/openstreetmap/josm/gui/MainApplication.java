@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.swing.JFrame;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.auth.CredentialsManagerFactory;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
@@ -58,6 +59,43 @@ public class MainApplication extends Main {
             }
         });
         mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    }
+
+    /**
+     * Displays help on the console
+     * 
+     */
+    public static void showHelp() {
+        // TODO: put in a platformHook for system that have no console by default
+        System.out.println(tr("Java OpenStreetMap Editor")+"\n\n"+
+                tr("usage")+":\n"+
+                "\tjava -jar josm.jar <options>...\n\n"+
+                tr("options")+":\n"+
+                "\t--help|-?|-h                              "+tr("Show this help")+"\n"+
+                "\t--geometry=widthxheight(+|-)x(+|-)y       "+tr("Standard unix geometry argument")+"\n"+
+                "\t[--download=]minlat,minlon,maxlat,maxlon  "+tr("Download the bounding box")+"\n"+
+                "\t[--download=]<url>                        "+tr("Download the location at the url (with lat=x&lon=y&zoom=z)")+"\n"+
+                "\t[--download=]<filename>                   "+tr("Open file (as raw gps, if .gpx)")+"\n"+
+                "\t--downloadgps=minlat,minlon,maxlat,maxlon "+tr("Download the bounding box as raw gps")+"\n"+
+                "\t--selection=<searchstring>                "+tr("Select with the given search")+"\n"+
+                "\t--[no-]maximize                           "+tr("Launch in maximized mode")+"\n"+
+                "\t--reset-preferences                       "+tr("Reset the preferences to default")+"\n\n"+
+                "\t--language=<language>                     "+tr("Set the language.")+"\n\n"+
+                tr("options provided as Java system properties")+":\n"+
+                "\t-Djosm.home="+tr("/PATH/TO/JOSM/FOLDER/         ")+tr("Change the folder for all user settings")+"\n\n"+
+                tr("note: For some tasks, JOSM needs a lot of memory. It can be necessary to add the following\n" +
+                "      Java option to increase the maximum size of allocated memory")+":\n"+
+                "\t-Xmx...m\n\n"+
+                tr("examples")+":\n"+
+                "\tjava -jar josm.jar track1.gpx track2.gpx london.osm\n"+
+                "\tjava -jar josm.jar http://www.openstreetmap.org/index.html?lat=43.2&lon=11.1&zoom=13\n"+
+                "\tjava -jar josm.jar london.osm --selection=http://www.ostertag.name/osm/OSM_errors_node-duplicate.xml\n"+
+                "\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n"+
+                "\tjava -Djosm.home=/home/user/.josm_dev -jar josm.jar\n"+
+                "\tjava -Xmx400m -jar josm.jar\n\n"+
+                tr("Parameters are read in the order they are specified, so make sure you load\n"+
+                "some data before --selection")+"\n\n"+
+                tr("Instead of --download=<bbox> you may specify osm://<bbox>\n"));
     }
 
     /**
@@ -101,44 +139,14 @@ public class MainApplication extends Main {
         }
         Main.pref.updateSystemProperties();
 
-        Authenticator.setDefault(
-                new DefaultAuthenticator(
-                        CredentialsManagerFactory.getCredentialManager()
-                )
-        );
+        DefaultAuthenticator.createInstance(CredentialsManagerFactory.getCredentialManager());
+        Authenticator.setDefault(DefaultAuthenticator.getInstance());
         ProxySelector.setDefault(new DefaultProxySelector(ProxySelector.getDefault()));
+        OAuthAccessTokenHolder.getInstance().init(Main.pref, CredentialsManagerFactory.getCredentialManager());
 
+        // asking for help? show help and exit
         if (argList.contains("--help") || argList.contains("-?") || argList.contains("-h")) {
-            // TODO: put in a platformHook for system that have no console by default
-            System.out.println(tr("Java OpenStreetMap Editor")+"\n\n"+
-                    tr("usage")+":\n"+
-                    "\tjava -jar josm.jar <options>...\n\n"+
-                    tr("options")+":\n"+
-                    "\t--help|-?|-h                              "+tr("Show this help")+"\n"+
-                    "\t--geometry=widthxheight(+|-)x(+|-)y       "+tr("Standard unix geometry argument")+"\n"+
-                    "\t[--download=]minlat,minlon,maxlat,maxlon  "+tr("Download the bounding box")+"\n"+
-                    "\t[--download=]<url>                        "+tr("Download the location at the url (with lat=x&lon=y&zoom=z)")+"\n"+
-                    "\t[--download=]<filename>                   "+tr("Open file (as raw gps, if .gpx)")+"\n"+
-                    "\t--downloadgps=minlat,minlon,maxlat,maxlon "+tr("Download the bounding box as raw gps")+"\n"+
-                    "\t--selection=<searchstring>                "+tr("Select with the given search")+"\n"+
-                    "\t--[no-]maximize                           "+tr("Launch in maximized mode")+"\n"+
-                    "\t--reset-preferences                       "+tr("Reset the preferences to default")+"\n\n"+
-                    "\t--language=<language>                     "+tr("Set the language.")+"\n\n"+
-                    tr("options provided as Java system properties")+":\n"+
-                    "\t-Djosm.home="+tr("/PATH/TO/JOSM/FOLDER/         ")+tr("Change the folder for all user settings")+"\n\n"+
-                    tr("note: For some tasks, JOSM needs a lot of memory. It can be necessary to add the following\n" +
-                    "      Java option to increase the maximum size of allocated memory")+":\n"+
-                    "\t-Xmx...m\n\n"+
-                    tr("examples")+":\n"+
-                    "\tjava -jar josm.jar track1.gpx track2.gpx london.osm\n"+
-                    "\tjava -jar josm.jar http://www.openstreetmap.org/index.html?lat=43.2&lon=11.1&zoom=13\n"+
-                    "\tjava -jar josm.jar london.osm --selection=http://www.ostertag.name/osm/OSM_errors_node-duplicate.xml\n"+
-                    "\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n"+
-                    "\tjava -Djosm.home=/home/user/.josm_dev -jar josm.jar\n"+
-                    "\tjava -Xmx400m -jar josm.jar\n\n"+
-                    tr("Parameters are read in the order they are specified, so make sure you load\n"+
-                    "some data before --selection")+"\n\n"+
-                    tr("Instead of --download=<bbox> you may specify osm://<bbox>\n"));
+            showHelp();
             System.exit(0);
         }
 
@@ -184,18 +192,13 @@ public class MainApplication extends Main {
      */
     public static void removeObsoletePreferences() {
         String[] obsolete = {
-                "sample.preference.that.does.not.exist", // sample comment, expiry date should go here
-                "osm-server.version", // remove this around 10/2009
-                "osm-server.additional-versions", // remove this around 10/2009
-                null
+                "proxy.anonymous", // 01/2010 - not needed anymore. Can be removed mid 2010
+                "proxy.enable"     // 01/2010 - not needed anymore. Can be removed mid 2010
         };
-        for (String i : obsolete) {
-            if (i == null) {
-                continue;
-            }
-            if (Main.pref.hasKey(i)) {
-                Main.pref.removeFromCollection(i, Main.pref.get(i));
-                System.out.println(tr("Preference setting {0} has been removed since it is no longer used.", i));
+        for (String key : obsolete) {
+            if (Main.pref.hasKey(key)) {
+                Main.pref.removeFromCollection(key, Main.pref.get(key));
+                System.out.println(tr("Preference setting {0} has been removed since it is no longer used.", key));
             }
         }
     }

@@ -228,6 +228,47 @@ public class ExceptionDialogUtil {
     }
 
     /**
+     * Explains a {@see OsmApiException} which was thrown because the authentication at
+     * the OSM server failed
+     *
+     * @param e the exception
+     */
+    public static void explainAuthenticationFailed(OsmApiException e) {
+        String authMethod = Main.pref.get("osm-server.auth-method", "basic");
+        String msg;
+        if (authMethod.equals("oauth")) {
+            msg = ExceptionUtil.explainFailedOAuthAuthentication(e);
+        } else {
+            msg = ExceptionUtil.explainFailedBasicAuthentication(e);
+        }
+
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                msg,
+                tr("Authentication Failed"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#AuthenticationFailed")
+        );
+    }
+
+    /**
+     * Explains a {@see OsmApiException} which was thrown because accessing a protected
+     * resource was forbidden.
+     *
+     * @param e the exception
+     */
+    public static void explainAuthorizationFailed(OsmApiException e) {
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainFailedOAuthAuthorisation(e),
+                tr("Authorisation Failed"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#AuthenticationFailed")
+        );
+    }
+
+
+    /**
      * Explains a {@see UnknownHostException} which has caused an {@see OsmTransferException}.
      * This is most likely happening when there is an error in the API URL or when
      * local DNS services are not working.
@@ -301,33 +342,34 @@ public class ExceptionDialogUtil {
 
         if (e instanceof OsmApiException) {
             OsmApiException oae = (OsmApiException) e;
-            if (oae.getResponseCode() == HttpURLConnection.HTTP_PRECON_FAILED) {
+            switch(oae.getResponseCode()) {
+            case HttpURLConnection.HTTP_PRECON_FAILED:
                 explainPreconditionFailed(oae);
                 return;
-            }
-            if (oae.getResponseCode() == HttpURLConnection.HTTP_GONE) {
+            case HttpURLConnection.HTTP_GONE:
                 explainGoneForUnknownPrimitive(oae);
                 return;
-            }
-            if (oae.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
+            case HttpURLConnection.HTTP_INTERNAL_ERROR:
                 explainInternalServerError(oae);
                 return;
-            }
-            if (oae.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST) {
+            case HttpURLConnection.HTTP_BAD_REQUEST:
                 explainBadRequest(oae);
                 return;
-            }
-            if (oae.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+            case HttpURLConnection.HTTP_NOT_FOUND:
                 explainNotFound(oae);
                 return;
-            }
-            if (oae.getResponseCode() == HttpURLConnection.HTTP_CONFLICT) {
+            case HttpURLConnection.HTTP_CONFLICT:
                 explainConflict(oae);
                 return;
+            case HttpURLConnection.HTTP_UNAUTHORIZED:
+                explainAuthenticationFailed(oae);
+                return;
+            case HttpURLConnection.HTTP_FORBIDDEN:
+                explainAuthorizationFailed(oae);
+                return;
             }
-
+            explainGeneric(e);
         }
-        explainGeneric(e);
     }
 
     /**
