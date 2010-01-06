@@ -59,7 +59,7 @@ public class DrawingPreference implements PreferenceSetting {
     private JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
     private JCheckBox useAntialiasing = new JCheckBox(tr("Smooth map graphics (antialiasing)"));
 
-    public void addGui(PreferenceDialog gui) {
+    public void addGui(PreferenceTabbedPane gui) {
         gui.display.setPreferredSize(new Dimension(400,600));
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));

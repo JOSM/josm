@@ -64,7 +64,7 @@ public class ProjectionPreference implements PreferenceSetting {
      */
     static private GBC projSubPrefPanelGBC = GBC.eol().fill(GBC.BOTH).insets(20,5,5,5);
 
-    public void addGui(PreferenceDialog gui) {
+    public void addGui(PreferenceTabbedPane gui) {
         setupProjectionCombo();
 
         for (int i = 0; i < coordinatesCombo.getItemCount(); ++i) {

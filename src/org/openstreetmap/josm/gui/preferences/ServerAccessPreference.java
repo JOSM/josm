@@ -3,20 +3,21 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Font;
-import java.net.PasswordAuthentication;
-import java.net.Authenticator.RequestorType;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
-import javax.swing.JLabel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.io.auth.CredentialsManager;
-import org.openstreetmap.josm.io.auth.CredentialsManagerException;
-import org.openstreetmap.josm.io.auth.CredentialsManagerFactory;
-import org.openstreetmap.josm.tools.GBC;
-
+import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.preferences.server.AuthenticationPreferencesPanel;
+import org.openstreetmap.josm.gui.preferences.server.BackupPreferencesPanel;
+import org.openstreetmap.josm.gui.preferences.server.OsmApiUrlInputPanel;
+import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
+import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 public class ServerAccessPreference implements PreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
@@ -25,67 +26,117 @@ public class ServerAccessPreference implements PreferenceSetting {
         }
     }
 
-    /**
-     * Editfield for the Base url to the REST API from OSM.
-     */
-    final private JTextField osmDataServerURL = new JTextField(20);
-    /**
-     * Editfield for the username to the OSM account.
-     */
-    final private JTextField osmDataUsername = new JTextField(20);
-    /**
-     * Passwordfield for the userpassword of the REST API.
-     */
-    final private JPasswordField osmDataPassword = new JPasswordField(20);
+    private OsmApiUrlInputPanel pnlApiUrlPreferences;
 
-    public void addGui(PreferenceDialog gui) {
-        CredentialsManager cm = CredentialsManagerFactory.getCredentialManager();
-        String oldServerURL = Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api");
-        String oldUsername;
-        String oldPassword;
-        try {
-            PasswordAuthentication credentials =  cm.lookup(RequestorType.SERVER);
-            oldUsername = (credentials == null || credentials.getUserName() == null) ? "" : credentials.getUserName();
-            oldPassword = (credentials == null || credentials.getPassword() == null) ? "" : String.valueOf(credentials.getPassword());
-        } catch(CredentialsManagerException e) {
-            e.printStackTrace();
-            oldUsername = "";
-            oldPassword = "";
-        }
+    private JTabbedPane tpServerPreferences;
+    /** indicates whether to use the default OSM URL or not */
+    /** panel for configuring authentication preferences */
+    private AuthenticationPreferencesPanel pnlAuthPreferences;
+    /** panel for configuring proxy preferences */
+    private ProxyPreferencesPanel pnlProxyPreferences;
+    /** panel for backup preferences */
+    private BackupPreferencesPanel pnlBackupPreferences;
 
-        osmDataServerURL.setText(oldServerURL);
-        osmDataUsername.setText(oldUsername);
-        osmDataPassword.setText(oldPassword);
-        osmDataServerURL.setToolTipText(tr("The base URL for the OSM server (REST API)"));
-        osmDataUsername.setToolTipText(tr("Login name (e-mail) to the OSM account."));
-        osmDataPassword.setToolTipText(tr("Login password to the OSM account. Leave blank to not store any password."));
-
-        gui.connection.add(new JLabel(tr("Base Server URL")), GBC.std());
-        gui.connection.add(osmDataServerURL, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
-        gui.connection.add(new JLabel(tr("OSM username (e-mail)")), GBC.std());
-        gui.connection.add(osmDataUsername, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
-        gui.connection.add(new JLabel(tr("OSM password")), GBC.std());
-        gui.connection.add(osmDataPassword, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,0));
-        JLabel warning = new JLabel(tr("<html>" +
-                "WARNING: The password is stored in plain text in the preferences file.<br>" +
-                "The password is transferred in plain text to the server, encoded in the URL.<br>" +
-        "<b>Do not use a valuable Password.</b></html>"));
-        warning.setFont(warning.getFont().deriveFont(Font.ITALIC));
-        gui.connection.add(warning, GBC.eop().fill(GBC.HORIZONTAL));
+    /**
+     * Embeds a vertically scrollable panel in a {@see JScrollPane}
+     * @param panel the panel
+     * @return the scroll pane
+     */
+    protected JScrollPane wrapVerticallyScrollablePanel(VerticallyScrollablePanel panel) {
+        JScrollPane sp = new JScrollPane(panel);
+        sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        return sp;
     }
 
+    /**
+     * Builds the tabbed pane with the server preferences
+     * 
+     * @return
+     */
+    protected JPanel buildTabbedServerPreferences() {
+        JPanel pnl = new JPanel(new BorderLayout());
+
+        tpServerPreferences = new JTabbedPane();
+        pnlAuthPreferences = new AuthenticationPreferencesPanel();
+        tpServerPreferences.add(wrapVerticallyScrollablePanel(pnlAuthPreferences));
+        pnlProxyPreferences = new ProxyPreferencesPanel();
+        tpServerPreferences.add(wrapVerticallyScrollablePanel(pnlProxyPreferences));
+        pnlBackupPreferences = new BackupPreferencesPanel();
+        tpServerPreferences.add(wrapVerticallyScrollablePanel(pnlBackupPreferences));
+
+        tpServerPreferences.setTitleAt(0, tr("Authentication"));
+        tpServerPreferences.setTitleAt(1, tr("Proxy settings"));
+        tpServerPreferences.setTitleAt(2, tr("File backup"));
+        tpServerPreferences.setToolTipTextAt(0, tr("Configure your identity and how to authenticate at the OSM server"));
+        tpServerPreferences.setToolTipTextAt(1, tr("Configure whether to use a proxy server"));
+        tpServerPreferences.setToolTipTextAt(2, tr("Configure whether to create backup files"));
+
+        pnl.add(tpServerPreferences, BorderLayout.CENTER);
+        return pnl;
+    }
+
+    /**
+     * Builds the panel for entering the server access preferences
+     * 
+     * @return
+     */
+    protected JPanel buildContentPanel() {
+        JPanel pnl = new JPanel(new GridBagLayout());
+        GridBagConstraints gc = new GridBagConstraints();
+
+        // the checkbox for the default UL
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.anchor = GridBagConstraints.NORTHWEST;
+        gc.weightx = 1.0;
+        gc.insets = new Insets(0,0,0,0);
+        pnl.add(pnlApiUrlPreferences = new OsmApiUrlInputPanel(), gc);
+
+        // the remaining access properties
+        gc.gridy = 1;
+        gc.fill = GridBagConstraints.BOTH;
+        gc.weightx = 1.0;
+        gc.weighty = 1.0;
+        gc.insets = new Insets(10,0,3,3);
+        pnl.add(buildTabbedServerPreferences(), gc);
+
+        // let the AuthPreferencesPanel know when the API URL changes
+        //
+        pnlApiUrlPreferences.addPropertyChangeListener(pnlAuthPreferences);
+
+        HelpUtil.setHelpContext(pnl, HelpUtil.ht("/Preferences/Connection"));
+        return pnl;
+    }
+
+    public void addGui(PreferenceTabbedPane gui) {
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.fill = GridBagConstraints.BOTH;
+        gc.weightx = 1.0;
+        gc.weighty = 1.0;
+        gc.anchor = GridBagConstraints.NORTHWEST;
+        gui.connection.add(buildContentPanel(), gc);
+
+        initFromPreferences();
+    }
+
+    /**
+     * Initializes the configuration panel with values from the preferences
+     */
+    public void initFromPreferences() {
+        pnlApiUrlPreferences.initFromPreferences();
+        pnlAuthPreferences.initFromPreferences();
+        pnlProxyPreferences.initFromPreferences();
+        pnlBackupPreferences.initFromPreferences();
+    }
+
+    /**
+     * Saves the values to the preferences
+     */
     public boolean ok() {
-        CredentialsManager cm = CredentialsManagerFactory.getCredentialManager();
-        Main.pref.put("osm-server.url", osmDataServerURL.getText());
-        try {
-            cm.store(RequestorType.SERVER, new PasswordAuthentication(
-                    osmDataUsername.getText(),
-                    osmDataPassword.getPassword()
-            ));
-        } catch(CredentialsManagerException e) {
-            // FIXME: Message dialog with an error message?
-            e.printStackTrace();
-        }
+        pnlApiUrlPreferences.saveToPreferences();
+        pnlAuthPreferences.saveToPreferences();
+        pnlProxyPreferences.saveToPreferences();
+        pnlBackupPreferences.saveToPreferences();
         return false;
     }
 }

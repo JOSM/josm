@@ -47,7 +47,7 @@ public class LanguagePreference implements PreferenceSetting {
     /** true, if the available translations have been loaded; false otherwise */
     private boolean translationsLoaded = false;
 
-    public void addGui(final PreferenceDialog gui) {
+    public void addGui(final PreferenceTabbedPane gui) {
         model = new LanguageComboBoxModel();
         langCombo = new JComboBox(model);
         langCombo.setRenderer(new LanguageCellRenderer(langCombo.getRenderer()));

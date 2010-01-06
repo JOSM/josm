@@ -35,7 +35,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
     private JCheckBox sortMenu;
     private JCheckBox enableDefault;
 
-    public void addGui(final PreferenceDialog gui) {
+    public void addGui(final PreferenceTabbedPane gui) {
         sortMenu = new JCheckBox(tr("Sort presets menu"),
                 Main.pref.getBoolean("taggingpreset.sortmenu", false));
         enableDefault = new JCheckBox(tr("Enable built-in defaults"),

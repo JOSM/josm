@@ -47,7 +47,7 @@ public class AudioPreference implements PreferenceSetting {
     private JTextField audioFastForwardMultiplier = new JTextField(8);
     private JTextField audioCalibration = new JTextField(8);
 
-    public void addGui(PreferenceDialog gui) {
+    public void addGui(PreferenceTabbedPane gui) {
         // audioMenuVisible
         audioMenuVisible.setSelected(! Main.pref.getBoolean("audio.menuinvisible"));
         audioMenuVisible.setToolTipText(tr("Show or hide the audio menu entry on the main menu bar."));

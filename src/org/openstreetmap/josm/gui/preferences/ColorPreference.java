@@ -145,7 +145,7 @@ public class ColorPreference implements PreferenceSetting {
         return tr(o);
     }
 
-    public void addGui(final PreferenceDialog gui) {
+    public void addGui(final PreferenceTabbedPane gui) {
         fixColorPrefixes();
         setColorModel(Main.pref.getAllColors());
 

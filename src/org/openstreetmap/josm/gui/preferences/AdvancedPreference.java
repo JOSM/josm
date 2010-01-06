@@ -45,7 +45,7 @@ public class AdvancedPreference implements PreferenceSetting {
     protected Map<String, String> data;
     protected JTextField txtFilter;
 
-    public void addGui(final PreferenceDialog gui) {
+    public void addGui(final PreferenceTabbedPane gui) {
         JPanel p = gui.createPreferenceTab("advanced", tr("Advanced Preferences"),
                 tr("Setting Preference entries directly. Use with caution!"), false);
 
@@ -214,7 +214,7 @@ public class AdvancedPreference implements PreferenceSetting {
         return false;
     }
 
-    private void editPreference(final PreferenceDialog gui, final JTable list) {
+    private void editPreference(final PreferenceTabbedPane gui, final JTable list) {
         if (list.getSelectedRowCount() != 1) {
             JOptionPane.showMessageDialog(
                     gui,
@@ -239,7 +239,7 @@ public class AdvancedPreference implements PreferenceSetting {
         }
     }
 
-    private void removePreference(final PreferenceDialog gui, final JTable list) {
+    private void removePreference(final PreferenceTabbedPane gui, final JTable list) {
         if (list.getSelectedRowCount() == 0) {
             JOptionPane.showMessageDialog(
                     gui,
@@ -255,7 +255,7 @@ public class AdvancedPreference implements PreferenceSetting {
         }
     }
 
-    private void addPreference(final PreferenceDialog gui) {
+    private void addPreference(final PreferenceTabbedPane gui) {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(tr("Key")), GBC.std().insets(0,0,5,0));
         JTextField key = new JTextField(10);

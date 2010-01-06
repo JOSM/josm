@@ -41,7 +41,7 @@ public class LafPreference implements PreferenceSetting {
     private JCheckBox drawHelperLine = new JCheckBox(tr("Draw rubber-band helper line"));
     private JCheckBox modeless = new JCheckBox(tr("Modeless working (Potlatch style)"));
 
-    public void addGui(PreferenceDialog gui) {
+    public void addGui(PreferenceTabbedPane gui) {
         lafCombo = new JComboBox(UIManager.getInstalledLookAndFeels());
 
         // let's try to load additional LookAndFeels and put them into the list

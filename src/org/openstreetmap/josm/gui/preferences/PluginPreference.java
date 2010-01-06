@@ -39,12 +39,12 @@ public class PluginPreference implements PreferenceSetting {
 
     private JPanel plugin;
     private JPanel pluginPanel = new NoHorizontalScrollPanel(new GridBagLayout());
-    private PreferenceDialog gui;
+    private PreferenceTabbedPane gui;
     private JScrollPane pluginPane;
     private PluginSelection selection = new PluginSelection();
     private JTextField txtFilter;
 
-    public void addGui(final PreferenceDialog gui) {
+    public void addGui(final PreferenceTabbedPane gui) {
         this.gui = gui;
         plugin = gui.createPreferenceTab("plugin", tr("Plugins"), tr("Configure available plugins."), false);
 

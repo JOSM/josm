@@ -31,7 +31,7 @@ public class MapPaintPreference implements PreferenceSetting {
         }
     }
 
-    public void addGui(final PreferenceDialog gui) {
+    public void addGui(final PreferenceTabbedPane gui) {
         enableDefault = new JCheckBox(tr("Enable built-in defaults"),
                 Main.pref.getBoolean("mappaint.style.enable-defaults", true));
         enableIconDefault = new JCheckBox(tr("Enable built-in icon defaults"),

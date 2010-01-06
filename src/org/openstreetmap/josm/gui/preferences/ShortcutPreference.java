@@ -19,7 +19,7 @@ public class ShortcutPreference implements PreferenceSetting {
         }
     }
 
-    public void addGui(PreferenceDialog gui) {
+    public void addGui(PreferenceTabbedPane gui) {
         // icon source: http://www.iconfinder.net/index.php?q=key&page=icondetails&iconid=8553&size=128&q=key&s12=on&s16=on&s22=on&s32=on&s48=on&s64=on&s128=on
         // icon licence: GPL
         // icon designer: Paolino, http://www.paolinoland.it/
