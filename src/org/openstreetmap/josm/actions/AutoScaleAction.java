@@ -27,7 +27,14 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class AutoScaleAction extends JosmAction {
 
-    public static final String[] MODES = { marktr("data"), marktr("layer"), marktr("selection"), marktr("conflict"), marktr("download") };
+    public static final String[] MODES = {
+        marktr("data"),
+        marktr("layer"),
+        marktr("selection"),
+        marktr("conflict"),
+        marktr("download"),
+        marktr("previous"),
+        marktr("next")};
 
     /**
      * Zooms the current map view to the currently selected primitives.
@@ -80,6 +87,12 @@ public class AutoScaleAction extends JosmAction {
         if (mode.equals("download")) {
             shortcut = KeyEvent.VK_5;
         }
+        if (mode.equals("previous")) {
+            shortcut = KeyEvent.VK_8;
+        }
+        if (mode.equals("next")) {
+            shortcut = KeyEvent.VK_9;
+        }
 
         return shortcut;
     }
@@ -98,16 +111,26 @@ public class AutoScaleAction extends JosmAction {
             putValue("help", ht("/Action/ZoomToSelection"));
         } else if (mode.equals("conflict")) {
             putValue("help", ht("/Action/ZoomToConflict"));
-        }else if (mode.equals("download")) {
+        } else if (mode.equals("download")) {
             putValue("help", ht("/Action/ZoomToDownload"));
+        } else if (mode.equals("previous")) {
+            putValue("help", ht("/Action/ZoomPrevious"));
+        } else if (mode.equals("next")) {
+            putValue("help", ht("/Action/ZoomNext"));
         }
     }
 
     public void autoScale()  {
         if (Main.map != null) {
-            BoundingXYVisitor bbox = getBoundingBox();
-            if (bbox != null && bbox.getBounds() != null) {
-                Main.map.mapView.recalculateCenterScale(bbox);
+            if (mode.equals("previous")) {
+                Main.map.mapView.zoomPrevious();
+            } else if (mode.equals("next")) {
+                Main.map.mapView.zoomNext();
+            } else {
+                BoundingXYVisitor bbox = getBoundingBox();
+                if (bbox != null && bbox.getBounds() != null) {
+                    Main.map.mapView.recalculateCenterScale(bbox);
+                }
             }
         }
         putValue("active", true);

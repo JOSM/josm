@@ -7,6 +7,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -204,8 +205,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param scale The scale to use.
      */
     private void zoomTo(EastNorth newCenter, double newScale) {
-        boolean rep = false;
-
         Bounds b = getProjection().getWorldBoundsLatLon();
         CachedLatLon cl = new CachedLatLon(newCenter);
         boolean changed = false;
@@ -218,13 +217,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if(changed) {
             newCenter = new CachedLatLon(lat, lon).getEastNorth();
         }
-        if (!newCenter.equals(center)) {
-            EastNorth oldCenter = center;
-            center = newCenter;
-            rep = true;
-            firePropertyChange("center", oldCenter, newCenter);
-        }
-
         int width = getWidth()/2;
         int height = getHeight()/2;
         LatLon l1 = new LatLon(b.getMin().lat(), lon);
@@ -249,16 +241,31 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 newScale = d;
             }
         }
+
+        if (!newCenter.equals(center) || (scale != newScale)) {
+            pushZoomUndo(center, scale);
+            zoomNoUndoTo(newCenter, newScale);
+        }
+    }
+
+    /**
+     * Zoom to the given coordinate without adding to the zoom undo buffer.
+     * @param newCenter The center x-value (easting) to zoom to.
+     * @param scale The scale to use.
+     */
+    private void zoomNoUndoTo(EastNorth newCenter, double newScale) {
+        if (!newCenter.equals(center)) {
+            EastNorth oldCenter = center;
+            center = newCenter;
+            firePropertyChange("center", oldCenter, newCenter);
+        }
         if (scale != newScale) {
             double oldScale = scale;
             scale = newScale;
-            rep = true;
             firePropertyChange("scale", oldScale, newScale);
         }
 
-        if(rep) {
-            repaint();
-        }
+        repaint();
     }
 
     public void zoomTo(EastNorth newCenter) {
@@ -312,6 +319,53 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public void zoomTo(Bounds box) {
         zoomTo(new ProjectionBounds(getProjection().latlon2eastNorth(box.getMin()),
                 getProjection().latlon2eastNorth(box.getMax())));
+    }
+
+    private class ZoomData {
+        LatLon center;
+        double scale;
+
+        public ZoomData(EastNorth center, double scale) {
+            this.center = new CachedLatLon(center);
+            this.scale = scale;
+        }
+
+        public EastNorth getCenterEastNorth() {
+            return getProjection().latlon2eastNorth(center);
+        }
+
+        public double getScale() {
+            return scale;
+        }
+    }
+
+    private LinkedList<ZoomData> zoomUndoBuffer = new LinkedList<ZoomData>();
+    private LinkedList<ZoomData> zoomRedoBuffer = new LinkedList<ZoomData>();
+    private Date zoomTimestamp = new Date();
+
+    private void pushZoomUndo(EastNorth center, double scale) {
+        Date now = new Date();
+        if ((now.getTime() - zoomTimestamp.getTime()) > (Main.pref.getDouble("zoom.delay", 1.0) * 1000)) {
+            zoomUndoBuffer.push(new ZoomData(center, scale));
+            zoomRedoBuffer.clear();
+        }
+        zoomTimestamp = now;
+    }
+
+    public void zoomPrevious() {
+        if (!zoomUndoBuffer.isEmpty()) {
+            ZoomData zoom = zoomUndoBuffer.pop();
+            zoomRedoBuffer.push(new ZoomData(center, scale));
+            zoomNoUndoTo(zoom.getCenterEastNorth(), zoom.getScale());
+        }
+    }
+
+    public void zoomNext() {
+        if (!zoomRedoBuffer.isEmpty()) {
+            ZoomData zoom = zoomRedoBuffer.pop();
+            zoomUndoBuffer.push(new ZoomData(center, scale));
+            zoomNoUndoTo(zoom.getCenterEastNorth(), zoom.getScale());
+        }
     }
 
     private BBox getSnapDistanceBBox(Point p) {
