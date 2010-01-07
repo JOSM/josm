@@ -590,12 +590,12 @@ public class OsmReader {
         OsmReader reader = new OsmReader();
         try {
             progressMonitor.beginTask(tr("Prepare OSM data...", 2));
-            progressMonitor.subTask(tr("Parsing OSM data..."));
+            progressMonitor.indeterminateSubTask(tr("Parsing OSM data..."));
             InputSource inputSource = new InputSource(new InputStreamReader(source, "UTF-8"));
             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, reader.new Parser());
             progressMonitor.worked(1);
 
-            progressMonitor.subTask(tr("Preparing data set..."));
+            progressMonitor.indeterminateSubTask(tr("Preparing data set..."));
             reader.ds.beginUpdate();
             try {
                 reader.processNodesAfterParsing();

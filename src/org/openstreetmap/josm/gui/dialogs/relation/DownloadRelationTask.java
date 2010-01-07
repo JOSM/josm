@@ -16,7 +16,6 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
@@ -75,14 +74,17 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
         try {
             final DataSet allDownloads = new DataSet();
             int i=0;
+            getProgressMonitor().setTicksCount(relations.size());
             for (Relation relation: relations) {
-                progressMonitor.subTask(tr("({0}/{1}: Downloading relation ''{2}''...", i,relations.size(),relation.getDisplayName(DefaultNameFormatter.getInstance())));
+                i++;
+                getProgressMonitor().setCustomText(tr("({0}/{1}): Downloading relation ''{2}''...", i,relations.size(),relation.getDisplayName(DefaultNameFormatter.getInstance())));
                 synchronized (this) {
                     if (cancelled) return;
                     objectReader = new OsmServerObjectReader(relation.getPrimitiveId(), true /* full download */);
                 }
-                DataSet dataSet = objectReader.parseOsm(progressMonitor
-                        .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+                DataSet dataSet = objectReader.parseOsm(
+                        getProgressMonitor().createSubTaskMonitor(0, false)
+                );
                 if (dataSet == null)
                     return;
                 synchronized (this) {
@@ -91,6 +93,7 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
                 }
                 DataSetMerger merger = new DataSetMerger(allDownloads, dataSet);
                 merger.merge();
+                getProgressMonitor().worked(1);
             }
 
             SwingUtilities.invokeAndWait(
