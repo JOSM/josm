@@ -355,22 +355,18 @@ public class MapPaintVisitor implements PaintVisitor {
         /* find the "from", "via" and "to" elements */
         for (RelationMember m : r.getMembers())
         {
-            if (m.getMember().isDeleted()) {
-                putError(r, tr("Deleted member ''{0}'' in relation.",
-                        m.getMember().getDisplayName(DefaultNameFormatter.getInstance())), true);
-            } else if(m.getMember().isIncomplete())
+            if(m.getMember().isIncomplete())
                 return;
             else
             {
                 if(m.isWay())
                 {
                     Way w = m.getWay();
-                    if(w.getNodesCount() < 2)
-                    {
-                        putError(r, tr("Way ''{0}'' with less than two points.",
-                                w.getDisplayName(DefaultNameFormatter.getInstance())), true);
+                    if(w.getNodesCount() < 2) {
+                        continue;
                     }
-                    else if("from".equals(m.getRole())) {
+
+                    if("from".equals(m.getRole())) {
                         if(fromWay != null) {
                             putError(r, tr("More than one \"from\" way found."), true);
                         } else {
@@ -670,19 +666,16 @@ public class MapPaintVisitor implements PaintVisitor {
 
         // Fill inner and outer list with valid ways
         for (RelationMember m : r.getMembers()) {
-            if (m.getMember().isDeleted()) {
-                putError(r, tr("Deleted member ''{0}'' in relation.",
-                        m.getMember().getDisplayName(DefaultNameFormatter.getInstance())), true);
-            } else if (m.getMember().isIncomplete()) {
+            if (m.getMember().isIncomplete()) {
                 incomplete = true;
             } else if(m.getMember().isDrawable()) {
                 if(m.isWay()) {
                     Way w = m.getWay();
                     if(w.getNodesCount() < 2) {
-                        putError(r, tr("Way ''{0}'' with less than two points.",
-                                w.getDisplayName(DefaultNameFormatter.getInstance())), true);
+                        continue;
                     }
-                    else if("inner".equals(m.getRole())) {
+
+                    if("inner".equals(m.getRole())) {
                         inner.add(w);
                     } else if("outer".equals(m.getRole())) {
                         outer.add(w);
