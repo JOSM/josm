@@ -99,7 +99,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
     protected UserInfo getUserDetails() throws OsmOAuthAuthorisationException, OsmDataParsingException,OsmTransferException {
         boolean authenticatorEnabled = true;
         try {
-            URL url = new URL(normalizeApiUrl(apiUrl) + "/user/details");
+            URL url = new URL(normalizeApiUrl(apiUrl) + "/0.6/user/details");
             authenticatorEnabled = DefaultAuthenticator.getInstance().isEnabled();
             DefaultAuthenticator.getInstance().setEnabled(false);
             synchronized(this) {
@@ -164,7 +164,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                         + "Failed to access the OSM server ''{0}''<br>"
                         + "with the Access Token ''{0}''.<br>"
                         + "The server rejected the Access Token as unauthorised. You will not<br>"
-                        + "able to access any protected resource on this server using this token."
+                        + "be able to access any protected resource on this server using this token."
                         +"</html>",
                         apiUrl,
                         token.getKey()
