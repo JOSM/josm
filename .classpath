@@ -7,8 +7,6 @@
 	<classpathentry kind="lib" path="lib/metadata-extractor-2.3.1-nosun.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/jfcunit.jar"/>
-	<classpathentry kind="lib" path="lib/josm-translation.jar"/>
-	<classpathentry kind="lib" path="lib/gettext-commons-0.9.6.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/debug-1.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/fest-assert-1.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/fest-reflect-1.1.jar"/>
