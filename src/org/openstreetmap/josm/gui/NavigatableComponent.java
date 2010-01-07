@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -380,8 +381,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
-    private LinkedList<ZoomData> zoomUndoBuffer = new LinkedList<ZoomData>();
-    private LinkedList<ZoomData> zoomRedoBuffer = new LinkedList<ZoomData>();
+    private Stack<ZoomData> zoomUndoBuffer = new Stack<ZoomData>();
+    private Stack<ZoomData> zoomRedoBuffer = new Stack<ZoomData>();
     private Date zoomTimestamp = new Date();
 
     private void pushZoomUndo(EastNorth center, double scale) {
@@ -389,7 +390,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if ((now.getTime() - zoomTimestamp.getTime()) > (Main.pref.getDouble("zoom.undo.delay", 1.0) * 1000)) {
             zoomUndoBuffer.push(new ZoomData(center, scale));
             if (zoomUndoBuffer.size() > Main.pref.getInteger("zoom.undo.max", 50)) {
-                zoomUndoBuffer.poll();
+                zoomUndoBuffer.remove(0);
             }
             zoomRedoBuffer.clear();
         }
