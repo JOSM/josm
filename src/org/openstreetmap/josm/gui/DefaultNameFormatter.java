@@ -46,7 +46,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     }
 
     /** the default list of tags which are used as naming tags in relations */
-    static public final String[] DEFAULT_NAMING_TAGS_FOR_RELATIONS = {"name", "ref", "restriction", "note"};
+    static public final String[] DEFAULT_NAMING_TAGS_FOR_RELATIONS = {"name", "ref", "restriction", "public_transport", ":LocationCode", "note"};
 
     /** the current list of tags used as naming tags in relations */
     static private List<String> namingTagsForRelations =  null;
@@ -160,23 +160,30 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         } else {
             name = relation.get("type");
             if (name == null) {
+                name = (relation.get("public_transport") != null) ? tr("public transport") : "";
+            }
+            if (name == null) {
                 name = tr("relation");
             }
 
             name += " (";
             String nameTag = null;
-            Set<String> namingTags = new HashSet<String>(getNamingtagsForRelations());
-            for (String n : relation.keySet()) {
-                // #3328: "note " and " note" are name tags too
-                if (namingTags.contains(n.trim())) {
+            for (String n : getNamingtagsForRelations()) { 
+                if (n.equals("name")) { 
                     if (Main.pref.getBoolean("osm-primitives.localize-name", true)) {
                         nameTag = relation.getLocalName();
                     } else {
                         nameTag = relation.getName();
                     }
-                    if (nameTag == null) {
-                        nameTag = relation.get(n);
+                } else if (n.equals(":LocationCode")) {
+                    for (String m : relation.keySet()) {
+                        if (m.endsWith(n)) {
+                            nameTag = relation.get(m);
+                            break;
+                        }
                     }
+                } else {
+                    nameTag = relation.get(n);
                 }
                 if (nameTag != null) {
                     break;
