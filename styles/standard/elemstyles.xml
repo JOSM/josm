@@ -5,8 +5,8 @@ A little help:
 	-k for the key (required)
 	-v for the value as a string
 	-b for the values yes / no (boolean, will also understand true, 1 and false, 0 respectively)
-	Although the value flags v/b for the condition are optional, using at
-	least one of them is highly recommended!
+	Both -v and -b are optional (but recommended). If both are ommitted, the rule will apply to all
+	tags with the given key - don't forget to set a priority if other rules could also apply.
 3. line attributes
 	- width absolute width in pixel in every zoom level
 	- realwidth relative width which will be scaled in meters, integer
@@ -37,7 +37,7 @@ A little help:
 	- zoom scale for display
 
 Using both area and line attributes for the same key/value pair does work. For areas
-first the rbest matching area rule is searched and the best matching line rule is
+first the best matching area rule is searched and the best matching line rule is
 connected with it. They need not have the same key/value pair.
 
 The colours can consist of the two components - name and hex code (e.g. water#0000ff).
