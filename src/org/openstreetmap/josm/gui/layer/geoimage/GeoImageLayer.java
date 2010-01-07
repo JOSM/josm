@@ -9,7 +9,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.AlphaComposite;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
@@ -30,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,22 +37,21 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.MapFrame.MapModeChangeListener;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.MapFrame.MapModeChangeListener;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -63,6 +60,7 @@ import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.lang.CompoundException;
 import com.drew.lang.Rational;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
@@ -238,7 +236,16 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 // now. Can add mouse listener
                 Main.map.mapView.addPropertyChangeListener(layer);
                 if (!addedToggleDialog) {
-                    Main.map.addToggleDialog(ImageViewerDialog.getInstance());
+                    // TODO Workaround for bug in DialogsPanel
+                    // When GeoImageLayer is added as a first layer, division by zero exception is thrown
+                    // This is caused by DialogsPanel.reconstruct method which use height of other dialogs
+                    // to calculate height of newly added ImageViewerDialog. But height of other dialogs is
+                    // zero because it's calculated by layout manager later
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            Main.map.addToggleDialog(ImageViewerDialog.getInstance());
+                        }
+                    });
                     addedToggleDialog = true;
                 }
 
@@ -514,7 +521,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             e.setCoor(new LatLon(lat, lon));
             e.exifCoor = e.getPos();
 
-        } catch (Exception p) {
+        } catch (CompoundException p) {
             e.exifCoor = null;
             e.setPos(null);
         }
@@ -530,7 +537,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         } else {
             currentPhoto = -1;
         }
-        Main.main.map.repaint();
+        Main.map.repaint();
     }
 
     public void showPreviousPhoto() {
@@ -543,7 +550,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         } else {
             currentPhoto = -1;
         }
-        Main.main.map.repaint();
+        Main.map.repaint();
     }
 
     public void checkPreviousNextButtons() {
@@ -564,7 +571,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 ImageViewerDialog.showImage(this, null);
             }
             updateOffscreenBuffer = true;
-            Main.main.map.repaint();
+            Main.map.repaint();
         }
     }
 
@@ -577,14 +584,14 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                     Main.parent,
                     tr("Delete image file from disk"),
                     new String[] {tr("Cancel"), tr("Delete")})
-                .setButtonIcons(new String[] {"cancel.png", "dialogs/delete.png"})
-                .setContent(new JLabel(tr("<html><h3>Delete the file {0} from disk?<p>The image file will be permanently lost!</h3></html>"
+            .setButtonIcons(new String[] {"cancel.png", "dialogs/delete.png"})
+            .setContent(new JLabel(tr("<html><h3>Delete the file {0} from disk?<p>The image file will be permanently lost!</h3></html>"
                     ,toDelete.file.getName()), ImageProvider.get("dialogs/geoimage/deletefromdisk"),SwingConstants.LEFT))
-                .toggleEnable("geoimage.deleteimagefromdisk")
-                .setCancelButton(1)
-                .setDefaultButton(2)
-                .showDialog()
-                .getValue();
+                    .toggleEnable("geoimage.deleteimagefromdisk")
+                    .setCancelButton(1)
+                    .setDefaultButton(2)
+                    .showDialog()
+                    .getValue();
 
             if(result == 2)
             {
@@ -602,15 +609,15 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                     System.out.println("File "+toDelete.file.toString()+" deleted. ");
                 } else {
                     JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("Image file could not be deleted."),
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE
+                            Main.parent,
+                            tr("Image file could not be deleted."),
+                            tr("Error"),
+                            JOptionPane.ERROR_MESSAGE
                     );
                 }
 
                 updateOffscreenBuffer = true;
-                Main.main.map.repaint();
+                Main.map.repaint();
             }
         }
     }
@@ -654,7 +661,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                     if (r.contains(ev.getPoint())) {
                         currentPhoto = i;
                         ImageViewerDialog.showImage(GeoImageLayer.this, e);
-                        Main.main.map.repaint();
+                        Main.map.repaint();
                         break;
                     }
                 }
@@ -671,7 +678,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             }
         };
 
-        Main.map.addMapModeChangeListener(mapModeListener);
+        MapFrame.addMapModeChangeListener(mapModeListener);
         mapModeListener.mapModeChange(null, Main.map.mapMode);
 
         MapView.addLayerChangeListener(new LayerChangeListener() {
@@ -691,7 +698,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                         thumbsloader.stop = true;
                     }
                     Main.map.mapView.removeMouseListener(mouseAdapter);
-                    Main.map.removeMapModeChangeListener(mapModeListener);
+                    MapFrame.removeMapModeChangeListener(mapModeListener);
                     currentPhoto = -1;
                     data.clear();
                     data = null;

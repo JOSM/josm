@@ -19,5 +19,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT"/>
 	<classpathentry kind="lib" path="test/build"/>
+	<classpathentry kind="lib" path="lib/signpost-core-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

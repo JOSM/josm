@@ -39,8 +39,8 @@ public class DialogsPanel extends JPanel {
         initialized = true;
         allDialogs = new ArrayList<ToggleDialog>();
 
-        for (Integer i=0; i < pAllDialogs.size(); ++i) {
-            add(pAllDialogs.get(i), false);
+        for (ToggleDialog dialog: pAllDialogs) {
+            add(dialog, false);
         }
 
         this.add(mSpltPane);
@@ -105,7 +105,7 @@ public class DialogsPanel extends JPanel {
         COLLAPSED_TO_DEFAULT,
         /*  INVISIBLE_TO_COLLAPSED,    does not happen */
         ELEMENT_SHRINKS         /* else. (Remaining elements have more space.) */
-    };
+    }
     /**
      * Reconstruct the view, if the configurations of dialogs has changed.
      * @param action what happened, so the reconstruction is necessary
@@ -118,8 +118,7 @@ public class DialogsPanel extends JPanel {
         /**
          * reset the panels
          */
-        for (int i=0; i < N; ++i) {
-            final JPanel p = panels.get(i);
+        for (JPanel p: panels) {
             p.removeAll();
             p.setVisible(false);
         }
@@ -179,18 +178,16 @@ public class DialogsPanel extends JPanel {
             int sumA = 0;   // sum of actual heights of dialogs in default view (without the triggering dialog)
             int sumC = 0;   // sum of heights of all collapsed dialogs (triggering dialog is never collapsed)
 
-            for (int i=0; i<N; ++i) {
-                final ToggleDialog dlg = allDialogs.get(i);
+            for (ToggleDialog dlg: allDialogs) {
                 if (dlg.isDialogInDefaultView()) {
                     if (dlg != triggeredBy) {
                         final int ph = dlg.getPreferredHeight();
-                        final int ah = dlg.getSize().height;
+                        final int ah = dlg.getHeight();
                         sumP += ph;
                         sumA += ah;
                     }
-                }
-                else if (dlg.isDialogInCollapsedView()) {
-                    sumC += dlg.getSize().height;
+                } else if (dlg.isDialogInCollapsedView()) {
+                    sumC += dlg.getHeight();
                 }
             }
 
@@ -233,7 +230,7 @@ public class DialogsPanel extends JPanel {
             for (int i=0; i<N; ++i) {
                 final ToggleDialog dlg = allDialogs.get(i);
                 if (dlg.isDialogInDefaultView() && dlg != triggeredBy) {
-                    final int ha = dlg.getSize().height;
+                    final int ha = dlg.getHeight();
                     final int h0 = ha * R / sumA;
                     final int he = dlg.getPreferredHeight() * s2 / (sumP + hp_trig);
                     if (h0 < he) {
@@ -245,7 +242,7 @@ public class DialogsPanel extends JPanel {
                             d = (h0-he) * D_m / D_p;
                         } catch (ArithmeticException e) { /* D_p may be zero - nothing wrong with that. */
                             d = 0;
-                        };
+                        }
                         dlg.setPreferredSize(new Dimension(Integer.MAX_VALUE, h0 - d));
                     }
                 }
