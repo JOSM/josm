@@ -142,7 +142,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
         HelpAwareOptionPane.showOptionDialog(
                 parent,
                 tr("<html>"
-                        + "Successfully used the the Access Token ''{0}'' to<br>"
+                        + "Successfully used the Access Token ''{0}'' to<br>"
                         + "access the OSM server at ''{1}''.<br>"
                         + "You''re accessing the OSM server as user ''{2}'' with id ''{3}''."
                         +"</html>",
@@ -153,7 +153,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 ),
                 tr("Success"),
                 JOptionPane.INFORMATION_MESSAGE,
-                HelpUtil.ht("/Dialog/OAuthAutorisationWizard#AccessTokenOK")
+                HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#AccessTokenOK")
         );
     }
 
@@ -171,7 +171,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 ),
                 tr("Test failed"),
                 JOptionPane.ERROR_MESSAGE,
-                HelpUtil.ht("/Dialog/OAuthAutorisationWizard#AccessTokenFailed")
+                HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#AccessTokenFailed")
         );
     }
 
@@ -189,7 +189,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 ),
                 tr("Token allows restricted access"),
                 JOptionPane.WARNING_MESSAGE,
-                HelpUtil.ht("/Dialog/OAuthAutorisationWizard#AccessTokenFailed")
+                HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#AccessTokenFailed")
         );
     }
 
@@ -208,7 +208,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 ),
                 tr("Test failed"),
                 JOptionPane.ERROR_MESSAGE,
-                HelpUtil.ht("/Dialog/OAuthAutorisationWizard#AccessTokenFailed")
+                HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#AccessTokenFailed")
         );
     }
 
@@ -225,7 +225,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 ),
                 tr("Test failed"),
                 JOptionPane.ERROR_MESSAGE,
-                HelpUtil.ht("/Dialog/OAuthAutorisationWizard#AccessTokenFailed")
+                HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#AccessTokenFailed")
         );
     }
 
@@ -241,7 +241,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 ),
                 tr("Test failed"),
                 JOptionPane.WARNING_MESSAGE,
-                HelpUtil.ht("/Dialog/OAuthAutorisationWizard#AccessTokenFailed")
+                HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#AccessTokenFailed")
         );
     }
 
