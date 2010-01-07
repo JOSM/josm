@@ -320,8 +320,10 @@ public class DataSetMerger {
             target.mergeFrom(source);
             objectsWithChildrenToMerge.add(source.getPrimitiveId());
         } else if (! target.isModified() && !source.isModified() && target.getVersion() == source.getVersion()) {
-            // both not modified. Keep mine
-            //
+            // both not modified. Merge nevertheless.
+            // This helps when updating "empty" relations, see #4295
+            target.mergeFrom(source);
+            objectsWithChildrenToMerge.add(source.getPrimitiveId());
         } else if (! target.isModified() && !source.isModified() && target.getVersion() < source.getVersion()) {
             // my not modified but other is newer. clone other onto mine.
             //
