@@ -70,7 +70,7 @@ public class I18n {
         return gettextn(text, pluralText, ctx, n);
     }
 
-    public static final String gettext(String text, String ctx)
+    private static final String gettext(String text, String ctx)
     {
         int i;
         if(ctx == null && text.startsWith("_:") && (i = text.indexOf("\n")) >= 0)
@@ -87,7 +87,7 @@ public class I18n {
         return text;
     }
 
-    public static final String gettextn(String text, String plural, String ctx, long num)
+    private static final String gettextn(String text, String plural, String ctx, long num)
     {
         int i;
         if(ctx == null && text.startsWith("_:") && (i = text.indexOf("\n")) >= 0)
@@ -171,7 +171,7 @@ public class I18n {
             Locale.setDefault(Locale.ENGLISH);
     }
 
-    public static boolean load(String l)
+    private static boolean load(String l)
     {
         if(l.equals("en"))
         {
