@@ -386,8 +386,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     private void pushZoomUndo(EastNorth center, double scale) {
         Date now = new Date();
-        if ((now.getTime() - zoomTimestamp.getTime()) > (Main.pref.getDouble("zoom.delay", 1.0) * 1000)) {
+        if ((now.getTime() - zoomTimestamp.getTime()) > (Main.pref.getDouble("zoom.undo.delay", 1.0) * 1000)) {
             zoomUndoBuffer.push(new ZoomData(center, scale));
+            if (zoomUndoBuffer.size() > Main.pref.getInteger("zoom.undo.max", 50)) {
+                zoomUndoBuffer.poll();
+            }
             zoomRedoBuffer.clear();
         }
         zoomTimestamp = now;
