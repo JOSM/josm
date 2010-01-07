@@ -116,7 +116,12 @@ public class I18n {
         {
             for (String loc : languages.keySet()) {
                 if(Main.class.getResource("/data/"+loc+".lang") != null) {
-                    v.add(new Locale(loc));
+                    int i = loc.indexOf('_');
+                    if (i > 0) {
+                        v.add(new Locale(loc.substring(0, i), loc.substring(i + 1)));
+                    } else {
+                        v.add(new Locale(loc));
+                    }
                 }
             }
         }
