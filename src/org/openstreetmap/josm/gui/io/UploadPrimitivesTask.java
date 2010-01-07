@@ -143,7 +143,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
         ChangesetCache.getInstance().update(changeset);
         Changeset newChangeSet = new Changeset();
         newChangeSet.setKeys(this.changeset.getKeys());
-        this.changeset = new Changeset();
+        this.changeset = newChangeSet;
     }
 
     protected boolean recoverFromChangsetFullException() {
