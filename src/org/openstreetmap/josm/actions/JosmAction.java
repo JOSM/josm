@@ -138,7 +138,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         return Main.main.getCurrentDataSet();
     }
 
-    private void installAdapters() {
+    protected void installAdapters() {
         // make this action listen to layer change and selection change events
         //
         layerChangeAdapter = new LayerChangeAdapter();

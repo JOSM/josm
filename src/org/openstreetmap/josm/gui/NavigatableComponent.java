@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JComponent;
 
@@ -37,6 +38,45 @@ import org.openstreetmap.josm.gui.help.Helpful;
  * @author imi
  */
 public class NavigatableComponent extends JComponent implements Helpful {
+
+    /**
+     * Interface to notify listeners of the change of the zoom area.
+     */
+    public interface ZoomChangeListener {
+        void zoomChanged();
+    }
+
+    /**
+     * the zoom listeners
+     */
+    private static final CopyOnWriteArrayList<ZoomChangeListener> zoomChangeListeners = new CopyOnWriteArrayList<ZoomChangeListener>();
+
+    /**
+     * Removes a zoom change listener
+     *
+     * @param listener the listener. Ignored if null or already absent
+     */
+    public static void removeZoomChangeListener(NavigatableComponent.ZoomChangeListener listener) {
+        zoomChangeListeners.remove(listener);
+    }
+
+    /**
+     * Adds a zoom change listener
+     *
+     * @param listener the listener. Ignored if null or already registered.
+     */
+    public static void addZoomChangeListener(NavigatableComponent.ZoomChangeListener listener) {
+        if (listener != null) {
+            zoomChangeListeners.addIfAbsent(listener);
+        }
+    }
+
+    protected static void fireZoomChanged() {
+        for (ZoomChangeListener l : zoomChangeListeners) {
+            l.zoomChanged();
+        }
+    }
+
 
     public static final int snapDistance = Main.pref.getInteger("node.snap-distance", 10);
     public static final int snapDistanceSq = sqr(snapDistance);
@@ -266,6 +306,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
 
         repaint();
+        fireZoomChanged();
     }
 
     public void zoomTo(EastNorth newCenter) {
@@ -366,6 +407,14 @@ public class NavigatableComponent extends JComponent implements Helpful {
             zoomUndoBuffer.push(new ZoomData(center, scale));
             zoomNoUndoTo(zoom.getCenterEastNorth(), zoom.getScale());
         }
+    }
+
+    public boolean hasZoomUndoEntries() {
+        return !zoomUndoBuffer.isEmpty();
+    }
+
+    public boolean hasZoomRedoEntries() {
+        return !zoomRedoBuffer.isEmpty();
     }
 
     private BBox getSnapDistanceBBox(Point p) {

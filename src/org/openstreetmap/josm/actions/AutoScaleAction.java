@@ -17,6 +17,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -225,6 +226,10 @@ public class AutoScaleAction extends JosmAction {
                 // FIXME: should also check for whether a layer is selected in the layer list dialog
                 setEnabled(true);
             }
+        } else if ("previous".equals(mode)) {
+            setEnabled(Main.map != null && Main.map.mapView != null && Main.map.mapView.hasZoomUndoEntries());
+        } else if ("next".equals(mode)) {
+            setEnabled(Main.map != null && Main.map.mapView != null && Main.map.mapView.hasZoomRedoEntries());
         } else {
             setEnabled(
                     Main.isDisplayingMapView()
@@ -239,4 +244,26 @@ public class AutoScaleAction extends JosmAction {
             setEnabled(selection != null && !selection.isEmpty());
         }
     }
+
+    @Override
+    protected void installAdapters() {
+        super.installAdapters();
+        // make this action listen to zoom change events
+        //
+        zoomChangeAdapter = new ZoomChangeAdapter();
+        MapView.addZoomChangeListener(zoomChangeAdapter);
+        initEnabledState();
+    }
+
+    /**
+     * Adapter for selection change events
+     *
+     */
+    private class ZoomChangeAdapter implements MapView.ZoomChangeListener {
+        public void zoomChanged() {
+            updateEnabledState();
+        }
+    }
+
+    private ZoomChangeAdapter zoomChangeAdapter;
 }
