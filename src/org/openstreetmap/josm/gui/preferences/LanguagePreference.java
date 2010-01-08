@@ -33,12 +33,9 @@ public class LanguagePreference implements PreferenceSetting {
     private JComboBox langCombo;
     /** the model for the combo box */
     private LanguageComboBoxModel model;
-    /** true, if the available translations have been loaded; false otherwise */
-    private boolean translationsLoaded = false;
 
     public void addGui(final PreferenceTabbedPane gui) {
         model = new LanguageComboBoxModel();
-        translationsLoaded = model.getSize() > 2;
         langCombo = new JComboBox(model);
         langCombo.setRenderer(new LanguageCellRenderer(langCombo.getRenderer()));
         model.selectLanguage(Main.pref.get("language"));
@@ -52,9 +49,6 @@ public class LanguagePreference implements PreferenceSetting {
     }
 
     public boolean ok() {
-        if (!translationsLoaded)
-            // keep the current language, don't update preferences
-            return false;
         if(langCombo.getSelectedItem() == null)
             return Main.pref.put("language", null);
         else
