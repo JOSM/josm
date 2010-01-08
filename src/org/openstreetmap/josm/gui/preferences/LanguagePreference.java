@@ -38,6 +38,7 @@ public class LanguagePreference implements PreferenceSetting {
 
     public void addGui(final PreferenceTabbedPane gui) {
         model = new LanguageComboBoxModel();
+        translationsLoaded = model.getSize() > 2;
         langCombo = new JComboBox(model);
         langCombo.setRenderer(new LanguageCellRenderer(langCombo.getRenderer()));
         model.selectLanguage(Main.pref.get("language"));
