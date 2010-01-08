@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -11,6 +12,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,12 +22,8 @@ import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
+import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.plugins.PluginHandler;
-import org.openstreetmap.josm.tools.Base64;
-
-import java.net.URL;
-import java.net.URLEncoder;
-import org.openstreetmap.josm.tools.UrlLabel;
 
 /**
  * An exception handler that asks the user to send a bug report.
@@ -46,7 +44,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                         "Strange things may happen.\nPlease restart JOSM with the -Xmx###M option,\n" +
                         "where ### is the number of MB assigned to JOSM (e.g. 256).\n" +
                         "Currently, " + Runtime.getRuntime().maxMemory()/1024/1024 + " MB are available to JOSM.",
-                        tr("Error"),
+                        "Error",
                         JOptionPane.ERROR_MESSAGE
                 );
                 return;
@@ -72,48 +70,50 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                     String urltext = text.replaceAll("\r",""); /* strip useless return chars */
                     if(urltext.length() > maxlen)
                     {
-                         urltext = urltext.substring(0,maxlen);
-                         int idx = urltext.lastIndexOf("\n");
-                         /* cut whole line when not loosing too much */
-                         if(maxlen-idx < 200)
-                             urltext = urltext.substring(0,idx+1);
-                         urltext += "...<snip>...\n";
+                        urltext = urltext.substring(0,maxlen);
+                        int idx = urltext.lastIndexOf("\n");
+                        /* cut whole line when not loosing too much */
+                        if(maxlen-idx < 200) {
+                            urltext = urltext.substring(0,idx+1);
+                        }
+                        urltext += "...<snip>...\n";
                     }
 
                     URL url = new URL("http://josm.openstreetmap.de/josmticket?" +
-                                      "data="+
-                                      Base64.encode(
-                                      // To note that it came from this code
-                                      "keywords=template_report&" +
-                                      "description=" + java.net.URLEncoder.encode(
-                                                         // Note: This doesn't use tr() intentionally, we want bug reports in English
-                                                         "What steps will reproduce the problem?\n"
-                                                            + " 1. \n"
-                                                            + " 2. \n"
-                                                            + " 3. \n"
-                                                            + "\n"
-                                                            + "What is the expected result?\n\n"
-                                                            + "What happens instead?\n\n"
-                                                            + "Please provide any additional information below. Attach a screenshot if\n"
-                                                            + "possible.\n\n"
-                                                            + "{{{\n" + urltext + "\n}}}\n",
-                                                         "UTF-8")));
+                            "data="+
+                            Base64.encode(
+                                    // To note that it came from this code
+                                    "keywords=template_report&" +
+                                    "description=" + java.net.URLEncoder.encode(
+                                            // Note: This doesn't use tr() intentionally, we want bug reports in English
+                                            "What steps will reproduce the problem?\n"
+                                            + " 1. \n"
+                                            + " 2. \n"
+                                            + " 3. \n"
+                                            + "\n"
+                                            + "What is the expected result?\n\n"
+                                            + "What happens instead?\n\n"
+                                            + "Please provide any additional information below. Attach a screenshot if\n"
+                                            + "possible.\n\n"
+                                            + "{{{\n" + urltext + "\n}}}\n",
+                                    "UTF-8")));
 
                     JPanel p = new JPanel(new GridBagLayout());
-                    p.add(new JLabel(tr("<html>" +
-                                        "<p>You've encountered an error in JOSM. Before you file a bug<br>" +
-                                        "make sure you've updated to the latest version of JOSM here:</p></html>")), GBC.eol());
+                    p.add(new JMultilineLabel(
+                            tr("You have encountered an error in JOSM. Before you file a bug report" +
+                            "make sure you have updated to the latest version of JOSM here:")), GBC.eol());
                     p.add(new UrlLabel("http://josm.openstreetmap.de/#Download"), GBC.eop().insets(8,0,0,0));
-                    p.add(new JLabel(tr("<html>You should also update your plugins. If neither of those help please<br>" +
-                                        "file a bug in our bugtracker using this link:</p></html>")), GBC.eol());
+                    p.add(new JMultilineLabel(
+                            tr("You should also update your plugins. If neither of those help please" +
+                            "file a bug report in our bugtracker using this link:")), GBC.eol());
                     p.add(new UrlLabel(url.toString(), "http://josm.openstreetmap.de/josmticket?..."), GBC.eop().insets(8,0,0,0));
-                    p.add(new JLabel(tr("<html><p>" +
-                                        "There the error information provided below should already be<br>" +
-                                        "filled out for you. Please include information on how to reproduce<br>" +
-                                        "the error and try to supply as much detail as possible.</p></html>")), GBC.eop());
-                    p.add(new JLabel(tr("<html><p>" +
-                                        "Alternatively if that doesn't work you can manually fill in the information<br>" +
-                                        "below at this URL:</p></html>")), GBC.eol());
+                    p.add(new JMultilineLabel(
+                            tr("There the error information provided below should already be" +
+                                    "filled in for you. Please include information on how to reproduce" +
+                            "the error and try to supply as much detail as possible.")), GBC.eop());
+                    p.add(new JMultilineLabel(
+                            tr("Alternatively, if that doesn't work you can manually fill in the information" +
+                            "below at this URL:")), GBC.eol());
                     p.add(new UrlLabel("http://josm.openstreetmap.de/newticket"), GBC.eop().insets(8,0,0,0));
                     try {
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(text), new ClipboardOwner(){
@@ -128,7 +128,13 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                     info.setEditable(false);
                     p.add(new JScrollPane(info), GBC.eop());
 
-                    JOptionPane.showMessageDialog(Main.parent, p, tr("You've encountered a bug in JOSM"), JOptionPane.ERROR_MESSAGE);
+                    for (Component c: p.getComponents()) {
+                        if (c instanceof JMultilineLabel) {
+                            ((JMultilineLabel)c).setMaxWidth(400);
+                        }
+                    }
+
+                    JOptionPane.showMessageDialog(Main.parent, p, tr("You have encountered a bug in JOSM"), JOptionPane.ERROR_MESSAGE);
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
