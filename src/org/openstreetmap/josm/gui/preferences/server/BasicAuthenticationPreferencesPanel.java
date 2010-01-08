@@ -105,8 +105,13 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
         CredentialsManager cm = CredentialsManagerFactory.getCredentialManager();
         try {
             PasswordAuthentication pa = cm.lookup(RequestorType.SERVER);
-            tfOsmUserName.setText(pa.getUserName() == null? "" : pa.getUserName());
-            tfOsmPassword.setText(pa.getPassword() == null ? "" : String.valueOf(pa.getPassword()));
+            if (pa == null) {
+                tfOsmUserName.setText("");
+                tfOsmPassword.setText("");
+            } else {
+                tfOsmUserName.setText(pa.getUserName() == null? "" : pa.getUserName());
+                tfOsmPassword.setText(pa.getPassword() == null ? "" : String.valueOf(pa.getPassword()));
+            }
         } catch(CredentialsManagerException e) {
             e.printStackTrace();
             System.err.println(tr("Warning: failed to retrieve OSM credentials from credential manager."));
