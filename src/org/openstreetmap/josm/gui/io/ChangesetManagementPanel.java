@@ -142,7 +142,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         cbCloseAfterUpload = new JCheckBox(tr("Close changeset after upload"));
         cbCloseAfterUpload.setToolTipText(tr("Select to close the changeset after the next upload"));
         add(cbCloseAfterUpload, gc);
-        cbCloseAfterUpload.setSelected(true);
+        cbCloseAfterUpload.setSelected(Main.pref.getBoolean("upload.changeset.close", true));
         cbCloseAfterUpload.addItemListener(new CloseAfterUploadItemStateListener());
 
         gc.gridx = 0;
@@ -256,9 +256,11 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
             switch(e.getStateChange()) {
             case ItemEvent.SELECTED:
                 firePropertyChange(CLOSE_CHANGESET_AFTER_UPLOAD, false, true);
+                Main.pref.put("upload.changeset.close", true);
                 break;
             case ItemEvent.DESELECTED:
                 firePropertyChange(CLOSE_CHANGESET_AFTER_UPLOAD, true, false);
+                Main.pref.put("upload.changeset.close", false);
                 break;
             }
         }
