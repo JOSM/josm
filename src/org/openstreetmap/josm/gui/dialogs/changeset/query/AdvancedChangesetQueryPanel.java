@@ -386,7 +386,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 0.0;
             gc.insets = new Insets(0,0,0,3);
-            pnl.add(new JLabel(tr("User ID: ")), gc);
+            pnl.add(new JLabel(tr("User ID:")), gc);
 
             gc.gridx = 1;
             pnl.add(tfUid = new JTextField(10),gc);
@@ -406,7 +406,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 0.0;
             gc.insets = new Insets(0,0,0,3);
-            pnl.add(new JLabel(tr("User name: ")), gc);
+            pnl.add(new JLabel(tr("User name:")), gc);
 
             gc.gridx = 1;
             pnl.add(tfUserName = new JTextField(10),gc);
