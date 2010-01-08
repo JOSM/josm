@@ -102,7 +102,7 @@ public class DeleteCommand extends Command {
         if (data == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be empty"));
         if (data.isEmpty())
-            throw new IllegalArgumentException(tr("At least one object to delete requird, got empty collection"));
+            throw new IllegalArgumentException(tr("At least one object to delete required, got empty collection"));
         this.toDelete = data;
     }
 
