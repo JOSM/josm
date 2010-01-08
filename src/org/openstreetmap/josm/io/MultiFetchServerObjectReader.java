@@ -50,7 +50,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     static private Logger logger = Logger.getLogger(MultiFetchServerObjectReader.class.getName());
     /**
      * the max. number of primitives retrieved in one step. Assuming IDs with 7 digits,
-     * this leads to a max. request URL of ~  1600 Bytes ((7 digits +  1 Seperator) * 200),
+     * this leads to a max. request URL of ~ 1600 Bytes ((7 digits +  1 Separator) * 200),
      * which should be safe according to the
      * <a href="http://www.boutell.com/newfaq/misc/urllength.html">WWW FAQ</a>.
      *

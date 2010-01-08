@@ -78,7 +78,7 @@ public class TaggingPresetMenu extends TaggingPreset {
         Component[] items = menu.getMenuComponents();
         PresetTextComparator comp = new PresetTextComparator();
         ArrayList<JMenuItem> sortarray = new ArrayList<JMenuItem>();
-        int lastSeperator = 0;
+        int lastSeparator = 0;
         for (int i = 0; i < items.length; i++) {
             Object item = items[i];
             if (item instanceof JMenu){
@@ -91,32 +91,32 @@ public class TaggingPresetMenu extends TaggingPreset {
                     int pos = 0;
                     for (JMenuItem menuItem : sortarray) {
                         int oldPos;
-                        if(lastSeperator == 0){
+                        if(lastSeparator == 0){
                             oldPos=pos;
                         }else {
-                            oldPos = pos+lastSeperator+1;
+                            oldPos = pos+lastSeparator+1;
                         }
                         menu.add(menuItem, oldPos);
                         pos++;
                     }
                     sortarray = new ArrayList<JMenuItem>();
-                    lastSeperator = 0;
+                    lastSeparator = 0;
                 }
             }else if (item instanceof JSeparator){
                 Collections.sort(sortarray, comp);
                 int pos = 0;
                 for (JMenuItem menuItem : sortarray) {
                     int oldPos;
-                    if(lastSeperator == 0){
+                    if(lastSeparator == 0){
                         oldPos=pos;
                     }else {
-                        oldPos = pos+lastSeperator+1;
+                        oldPos = pos+lastSeparator+1;
                     }
                     menu.add(menuItem, oldPos);
                     pos++;
                 }
                 sortarray = new ArrayList<JMenuItem>();
-                lastSeperator = i;
+                lastSeparator = i;
             }
         }
     }
