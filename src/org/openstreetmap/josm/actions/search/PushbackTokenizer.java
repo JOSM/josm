@@ -70,6 +70,7 @@ public class PushbackTokenizer {
             return Token.OR;
         case '"':
         {
+            getChar();
             StringBuilder s = new StringBuilder();
             while (c != -1 && c != '"') {
                 s.append((char)c);
