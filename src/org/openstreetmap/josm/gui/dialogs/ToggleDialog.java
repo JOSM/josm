@@ -61,7 +61,7 @@ public class ToggleDialog extends JPanel implements Helpful {
     protected boolean isShowing;
     /**
      * If isShowing is true, indicates whether the dialog is docked or not, e. g.
-     * shown as part of the main window or as a seperate dialog window.
+     * shown as part of the main window or as a separate dialog window.
      */
     protected boolean isDocked;
     /**

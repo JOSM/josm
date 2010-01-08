@@ -33,8 +33,8 @@ text: text box
 combo: combo box, with multiple choices and possible to enter free form text
   key: key to set
   text: fixed label to display
-  values: comma seperated list of values
-  display_values: comma seperated list of values to be displayed instead of the
+  values: comma separated list of values
+  display_values: comma separated list of values to be displayed instead of the
                   database values, order and number must be equal to values
   default: default string to display
   delete_if_empty: true/false
