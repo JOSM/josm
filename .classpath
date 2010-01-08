@@ -6,7 +6,6 @@
 	<classpathentry excluding="build/|dist/|src/|test/|test/unit/|test/functional/|test/build/" including="images/|presets/|styles/" kind="src" path=""/>
 	<classpathentry kind="lib" path="lib/metadata-extractor-2.3.1-nosun.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="lib" path="lib/jfcunit.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/debug-1.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/fest-assert-1.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/fest-reflect-1.1.jar"/>
@@ -14,6 +13,7 @@
 	<classpathentry kind="lib" path="test/lib/fest/fest-util-1.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/jcip-annotations-1.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/MRJToolkitStubs-1.0.jar"/>
+	<classpathentry kind="lib" path="test/lib/jfcunit.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT"/>
 	<classpathentry kind="lib" path="test/build"/>
