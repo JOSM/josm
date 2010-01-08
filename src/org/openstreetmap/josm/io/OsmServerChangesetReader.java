@@ -47,7 +47,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
      * @param monitor a progress monitor. Set to {@see NullProgressMonitor#INSTANCE} if null
      * @return the list of changesets read from the server
      * @throws IllegalArgumentException thrown if query is null
-     * @throws OsmTransferException
+     * @throws OsmTransferException thrown if something goes wrong w
      */
     public List<Changeset> queryChangesets(ChangesetQuery query, ProgressMonitor monitor) throws OsmTransferException {
         if (query == null)

@@ -12,12 +12,12 @@ import org.openstreetmap.josm.data.osm.ChangesetCacheEvent;
 import org.openstreetmap.josm.data.osm.ChangesetCacheListener;
 
 /**
- * A combobox model for the list of open changesets
- *
+ * A combobox model for the list of open changesets. The model is populated with the list
+ * of open changesets kept in the {@see ChangesetCache}.
+ * 
  */
 public class OpenChangesetComboBoxModel extends DefaultComboBoxModel implements ChangesetCacheListener {
     private List<Changeset> changesets;
-    private long uid;
     private Changeset selectedChangeset = null;
 
     protected Changeset getChangesetById(long id) {
@@ -31,26 +31,25 @@ public class OpenChangesetComboBoxModel extends DefaultComboBoxModel implements 
         this.changesets = new ArrayList<Changeset>();
     }
 
+    /**
+     * Refreshes the content of the combobox model with the current list of open
+     * changesets from the {@see ChangesetCache}.
+     */
     public void refresh() {
         changesets.clear();
         changesets.addAll(ChangesetCache.getInstance().getOpenChangesets());
         fireContentsChanged(this, 0, getSize());
         int idx = changesets.indexOf(selectedChangeset);
         if (idx < 0) {
-            setSelectedItem(null);
+            selectFirstChangeset();
         } else {
             setSelectedItem(changesets.get(idx));
         }
     }
 
-    public void setUserId(long uid) {
-        this.uid = uid;
-    }
-
-    public long getUserId() {
-        return uid;
-    }
-
+    /**
+     * Selects the first changeset in the current list of open changesets
+     */
     public void selectFirstChangeset() {
         if (changesets == null || changesets.isEmpty()) {
             setSelectedItem(null);

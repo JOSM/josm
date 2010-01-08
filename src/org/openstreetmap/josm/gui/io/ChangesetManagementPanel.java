@@ -75,7 +75,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         gc.weightx = 1.0;
         gc.weighty = 0.0;
         gc.insets = new Insets(0, 0, 5, 0);
-        add(new JMultilineLabel("Please decide what changeset data is uploaded to an whether to close the changeset after the next upload."), gc);
+        add(new JMultilineLabel(tr("Please decide what changeset data is uploaded to an whether to close the changeset after the next upload.")), gc);
 
         gc.gridwidth = 4;
         gc.gridy = 1;
@@ -133,6 +133,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         btnClose = new JButton(closeChangesetAction);
         btnClose.setMargin(new Insets(0,0,0,0));
         cbOpenChangesets.addItemListener(closeChangesetAction);
+        rbExisting.addItemListener(closeChangesetAction);
         add(btnClose, gc);
 
         gc.gridx = 0;
@@ -298,7 +299,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         }
 
         public void actionPerformed(ActionEvent e) {
-            DownloadOpenChangesetsTask task = new DownloadOpenChangesetsTask(model);
+            DownloadOpenChangesetsTask task = new DownloadOpenChangesetsTask(ChangesetManagementPanel.this);
             Main.worker.submit(task);
         }
     }
@@ -323,7 +324,11 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         }
 
         protected void refreshEnabledState() {
-            setEnabled(cbOpenChangesets.getModel().getSize() > 0 && cbOpenChangesets.getSelectedItem() != null);
+            setEnabled(
+                    cbOpenChangesets.getModel().getSize() > 0
+                    && cbOpenChangesets.getSelectedItem() != null
+                    && rbExisting.isSelected()
+            );
         }
 
         public void itemStateChanged(ItemEvent e) {
