@@ -75,7 +75,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         gc.weightx = 1.0;
         gc.weighty = 0.0;
         gc.insets = new Insets(0, 0, 5, 0);
-        add(new JMultilineLabel(tr("Please decide what changeset data is uploaded to an whether to close the changeset after the next upload.")), gc);
+        add(new JMultilineLabel(tr("Please decide what changeset the data is uploaded to and whether to close the changeset after the next upload.")), gc);
 
         gc.gridwidth = 4;
         gc.gridy = 1;
