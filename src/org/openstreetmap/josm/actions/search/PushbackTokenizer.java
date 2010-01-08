@@ -72,8 +72,14 @@ public class PushbackTokenizer {
         {
             getChar();
             StringBuilder s = new StringBuilder();
-            while (c != -1 && c != '"') {
-                s.append((char)c);
+            boolean escape = false;
+            while (c != -1 && (c != '"' || escape)) {
+                if (c == '\\' && !escape) {
+                    escape = true;
+                } else {
+                    s.append((char)c);
+                    escape = false;
+                }
                 getChar();
             }
             getChar();

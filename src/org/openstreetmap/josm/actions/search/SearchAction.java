@@ -137,7 +137,8 @@ public class SearchAction extends JosmAction{
                     + "<li>"+tr("<b>child <i>expr</i></b> - all children of objects matching the expression")+"</li>"
                     + "<li>"+tr("<b>parent <i>expr</i></b> - all parents of objects matching the expression")+"</li>"
                     + "<li>"+tr("Use <b>|</b> or <b>OR</b> to combine with logical or")+"</li>"
-                    + "<li>"+tr("Use <b>\"</b> to quote operators (e.g. if key contains :)")+"</li>"
+                    + "<li>"+tr("Use <b>\"</b> to quote operators (e.g. if key contains <b>:</b>)") + "<br/>"
+                    + tr("Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>).")+"</li>"
                     + "<li>"+tr("Use <b>(</b> and <b>)</b> to group expressions")+"</li>"
                     + "</ul></html>");
         description.setFont(description.getFont().deriveFont(Font.PLAIN));
