@@ -364,6 +364,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
 
         public void actionPerformed(ActionEvent arg0) {
             setVisible(false);
+            pnlTagConflictResolver.rememberPreferences();
         }
 
         protected void updateEnabledState() {

@@ -27,6 +27,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
     private int numConflicts;
     private PropertyChangeSupport support;
     private boolean showTagsWithConflictsOnly = false;
+    private boolean showTagsWithMultiValuesOnly = false;
 
     public TagConflictResolverModel() {
         numConflicts = 0;
@@ -90,6 +91,15 @@ public class TagConflictResolverModel extends DefaultTableModel {
         Set<String> keys = tags.getKeys();
         if (showTagsWithConflictsOnly) {
             keys.retainAll(keysWithConflicts);
+            if (showTagsWithMultiValuesOnly) {
+                Set<String> keysWithMultiValues = new HashSet<String>();
+                for (String key: keys) {
+                    if (decisions.get(key).canKeepAll()) {
+                        keysWithMultiValues.add(key);
+                    }
+                }
+                keys.retainAll(keysWithMultiValues);
+            }
             for (String key: tags.getKeys()) {
                 if (!decisions.get(key).isDecided() && !keys.contains(key)) {
                     keys.add(key);
@@ -143,12 +153,12 @@ public class TagConflictResolverModel extends DefaultTableModel {
         } else if (value instanceof MultiValueDecisionType) {
             MultiValueDecisionType type = (MultiValueDecisionType)value;
             switch(type) {
-                case KEEP_NONE:
-                    decision.keepNone();
-                    break;
-                case KEEP_ALL:
-                    decision.keepAll();
-                    break;
+            case KEEP_NONE:
+                decision.keepNone();
+                break;
+            case KEEP_ALL:
+                decision.keepAll();
+                break;
             }
         }
         fireTableDataChanged();
@@ -192,6 +202,16 @@ public class TagConflictResolverModel extends DefaultTableModel {
      */
     public void setShowTagsWithConflictsOnly(boolean showTagsWithConflictsOnly) {
         this.showTagsWithConflictsOnly = showTagsWithConflictsOnly;
+        rebuild();
+    }
+
+    /**
+     * Sets whether all conflicts or only conflicts with multiple values are displayed
+     *
+     * @param showTagsWithMultiValuesOnly if true, only tags with multiple values are displayed
+     */
+    public void setShowTagsWithMultiValuesOnly(boolean showTagsWithMultiValuesOnly) {
+        this.showTagsWithMultiValuesOnly = showTagsWithMultiValuesOnly;
         rebuild();
     }
 

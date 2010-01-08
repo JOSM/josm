@@ -29,6 +29,7 @@ public class TagConflictResolver extends JPanel {
     private TagConflictResolverModel model;
     /** selects wheter only tags with conflicts are displayed */
     private JCheckBox cbShowTagsWithConflictsOnly;
+    private JCheckBox cbShowTagsWithMultiValuesOnly;
 
     protected JPanel buildInfoPanel() {
         JPanel pnl = new JPanel();
@@ -49,12 +50,25 @@ public class TagConflictResolver extends JPanel {
                 new ChangeListener() {
                     public void stateChanged(ChangeEvent e) {
                         model.setShowTagsWithConflictsOnly(cbShowTagsWithConflictsOnly.isSelected());
+                        cbShowTagsWithMultiValuesOnly.setEnabled(cbShowTagsWithConflictsOnly.isSelected());
                     }
                 }
         );
         cbShowTagsWithConflictsOnly.setSelected(
                 Main.pref.getBoolean(getClass().getName() + ".showTagsWithConflictsOnly", false)
         );
+        pnl.add(cbShowTagsWithMultiValuesOnly = new JCheckBox(tr("Show tags with multiple values only")), gc);
+        cbShowTagsWithMultiValuesOnly.addChangeListener(
+                new ChangeListener() {
+                    public void stateChanged(ChangeEvent e) {
+                        model.setShowTagsWithMultiValuesOnly(cbShowTagsWithMultiValuesOnly.isSelected());
+                    }
+                }
+        );
+        cbShowTagsWithMultiValuesOnly.setSelected(
+                Main.pref.getBoolean(getClass().getName() + ".showTagsWithMultiValuesOnly", false)
+        );
+        cbShowTagsWithMultiValuesOnly.setEnabled(cbShowTagsWithConflictsOnly.isSelected());
         return pnl;
     }
 
@@ -64,6 +78,7 @@ public class TagConflictResolver extends JPanel {
      */
     public void rememberPreferences() {
         Main.pref.put(getClass().getName() + ".showTagsWithConflictsOnly", cbShowTagsWithConflictsOnly.isSelected());
+        Main.pref.put(getClass().getName() + ".showTagsWithMultiValuesOnly", cbShowTagsWithMultiValuesOnly.isSelected());
     }
 
     protected void build() {
