@@ -2425,6 +2425,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <text key="ref" text="Reference number" default="" delete_if_empty="true" />
             <combo key="fee" text="Fee" values="yes,no" default="" delete_if_empty="true" />
+            <combo key="wheelchair" text="Wheelchair" values="no,limited,yes" default="" delete_if_empty="true" />
             <text key="note" text="Note" default="" delete_if_empty="true" />
         </item>
         <item name="Post Box" icon="presets/letter.png" type="node">
