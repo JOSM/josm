@@ -26,7 +26,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * This is the keyboard preferences content.
  * If someone wants to merge it with ShortcutPreference.java, feel free.
  */
-public class prefJPanel extends javax.swing.JPanel {
+public class PrefJPanel extends javax.swing.JPanel {
 
         // table of shortcuts
         private TableModel model;
@@ -95,7 +95,7 @@ public class prefJPanel extends javax.swing.JPanel {
 
     /** Creates new form prefJPanel */
     // Ain't those auto-generated comments helpful or what? <g>
-    public prefJPanel(TableModel model) {
+    public PrefJPanel(TableModel model) {
         this.model = model;
         initComponents();
     }
@@ -371,8 +371,8 @@ public class prefJPanel extends javax.swing.JPanel {
     // even have some duplicated code. Feel free to refactor, If you have
     // more expirience with GUI coding than I have.
     private class cbAction extends javax.swing.AbstractAction implements ListSelectionListener {
-        private prefJPanel panel;
-            public cbAction (prefJPanel panel) {
+        private PrefJPanel panel;
+            public cbAction (PrefJPanel panel) {
                 this.panel = panel;
         }
         public void valueChanged(ListSelectionEvent e) {

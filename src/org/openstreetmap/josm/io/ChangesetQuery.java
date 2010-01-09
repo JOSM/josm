@@ -333,8 +333,7 @@ public class ChangesetQuery {
                 //
                 value = value.substring(0,value.length() - 1) + "GMT+00:00";
             }
-            DateFormat formatter = new SimpleDateFormat("MM/dd/yy");
-            formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
             try {
                 return formatter.parse(value);
             } catch(ParseException e) {

@@ -29,7 +29,7 @@ public class ShortcutPreference implements PreferenceSetting {
         JPanel p = gui.createPreferenceTab("shortcuts", tr("Shortcut Preferences"),
                 tr("Changing keyboard shortcuts manually."), false);
 
-        prefJPanel prefpanel = new prefJPanel(new scListModel());
+        PrefJPanel prefpanel = new PrefJPanel(new scListModel());
         p.add(prefpanel, GBC.eol().fill(GBC.BOTH));
 
     }

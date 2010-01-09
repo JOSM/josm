@@ -40,7 +40,7 @@ public class GpxReader {
      * The resulting gpx data
      */
     public GpxData data;
-    public enum state { init, metadata, wpt, rte, trk, ext, author, link, trkseg, copyright}
+    public enum State { init, metadata, wpt, rte, trk, ext, author, link, trkseg, copyright}
 
     private class Parser extends DefaultHandler {
 
@@ -50,10 +50,10 @@ public class GpxReader {
         private GpxRoute currentRoute;
         private WayPoint currentWayPoint;
 
-        private state currentState = state.init;
+        private State currentState = State.init;
 
         private GpxLink currentLink;
-        private Stack<state> states;
+        private Stack<State> states;
 
         private StringBuffer accumulator = new StringBuffer();
 
@@ -61,7 +61,7 @@ public class GpxReader {
 
         @Override public void startDocument() {
             accumulator = new StringBuffer();
-            states = new Stack<state>();
+            states = new Stack<State>();
             currentData = new GpxData();
         }
 
@@ -81,101 +81,101 @@ public class GpxReader {
 
         @Override public void startElement(String namespaceURI, String qName, String rqName, Attributes atts) throws SAXException {
             switch(currentState) {
-                case init:
-                    if (qName.equals("metadata")) {
-                        states.push(currentState);
-                        currentState = state.metadata;
-                    } else if (qName.equals("wpt")) {
-                        states.push(currentState);
-                        currentState = state.wpt;
-                        currentWayPoint = new WayPoint(parseLatLon(atts));
-                    } else if (qName.equals("rte")) {
-                        states.push(currentState);
-                        currentState = state.rte;
-                        currentRoute = new GpxRoute();
-                    } else if (qName.equals("trk")) {
-                        states.push(currentState);
-                        currentState = state.trk;
-                        currentTrack = new GpxTrack();
-                    } else if (qName.equals("extensions")) {
-                        states.push(currentState);
-                        currentState = state.ext;
-                    } else if (qName.equals("gpx") && atts.getValue("creator") != null && atts.getValue("creator").startsWith("Nokia Sports Tracker")) {
-                        nokiaSportsTrackerBug = true;
-                    }
-                    break;
-                case author:
-                    if (qName.equals("link")) {
-                        states.push(currentState);
-                        currentState = state.link;
-                        currentLink = new GpxLink(atts.getValue("href"));
-                    } else if (qName.equals("email")) {
-                        currentData.attr.put(GpxData.META_AUTHOR_EMAIL, atts.getValue("id") + "@" + atts.getValue("domain"));
-                    }
-                    break;
-                case trk:
-                    if (qName.equals("trkseg")) {
-                        states.push(currentState);
-                        currentState = state.trkseg;
-                        currentTrackSeg = new ArrayList<WayPoint>();
-                    } else if (qName.equals("link")) {
-                        states.push(currentState);
-                        currentState = state.link;
-                        currentLink = new GpxLink(atts.getValue("href"));
-                    } else if (qName.equals("extensions")) {
-                        states.push(currentState);
-                        currentState = state.ext;
-                    }
-                    break;
-                case metadata:
-                    if (qName.equals("author")) {
-                        states.push(currentState);
-                        currentState = state.author;
-                    } else if (qName.equals("extensions")) {
-                        states.push(currentState);
-                        currentState = state.ext;
-                    } else if (qName.equals("copyright")) {
-                        states.push(currentState);
-                        currentState = state.copyright;
-                        currentData.attr.put(GpxData.META_COPYRIGHT_AUTHOR, atts.getValue("author"));
-                    } else if (qName.equals("link")) {
-                        states.push(currentState);
-                        currentState = state.link;
-                        currentLink = new GpxLink(atts.getValue("href"));
-                    }
-                    break;
-                case trkseg:
-                    if (qName.equals("trkpt")) {
-                        states.push(currentState);
-                        currentState = state.wpt;
-                        currentWayPoint = new WayPoint(parseLatLon(atts));
-                    }
-                    break;
-                case wpt:
-                    if (qName.equals("link")) {
-                        states.push(currentState);
-                        currentState = state.link;
-                        currentLink = new GpxLink(atts.getValue("href"));
-                    } else if (qName.equals("extensions")) {
-                        states.push(currentState);
-                        currentState = state.ext;
-                    }
-                    break;
-                case rte:
-                    if (qName.equals("link")) {
-                        states.push(currentState);
-                        currentState = state.link;
-                        currentLink = new GpxLink(atts.getValue("href"));
-                    } else if (qName.equals("rtept")) {
-                        states.push(currentState);
-                        currentState = state.wpt;
-                        currentWayPoint = new WayPoint(parseLatLon(atts));
-                    } else if (qName.equals("extensions")) {
-                        states.push(currentState);
-                        currentState = state.ext;
-                    }
-                    break;
-                default:
+            case init:
+                if (qName.equals("metadata")) {
+                    states.push(currentState);
+                    currentState = State.metadata;
+                } else if (qName.equals("wpt")) {
+                    states.push(currentState);
+                    currentState = State.wpt;
+                    currentWayPoint = new WayPoint(parseLatLon(atts));
+                } else if (qName.equals("rte")) {
+                    states.push(currentState);
+                    currentState = State.rte;
+                    currentRoute = new GpxRoute();
+                } else if (qName.equals("trk")) {
+                    states.push(currentState);
+                    currentState = State.trk;
+                    currentTrack = new GpxTrack();
+                } else if (qName.equals("extensions")) {
+                    states.push(currentState);
+                    currentState = State.ext;
+                } else if (qName.equals("gpx") && atts.getValue("creator") != null && atts.getValue("creator").startsWith("Nokia Sports Tracker")) {
+                    nokiaSportsTrackerBug = true;
+                }
+                break;
+            case author:
+                if (qName.equals("link")) {
+                    states.push(currentState);
+                    currentState = State.link;
+                    currentLink = new GpxLink(atts.getValue("href"));
+                } else if (qName.equals("email")) {
+                    currentData.attr.put(GpxData.META_AUTHOR_EMAIL, atts.getValue("id") + "@" + atts.getValue("domain"));
+                }
+                break;
+            case trk:
+                if (qName.equals("trkseg")) {
+                    states.push(currentState);
+                    currentState = State.trkseg;
+                    currentTrackSeg = new ArrayList<WayPoint>();
+                } else if (qName.equals("link")) {
+                    states.push(currentState);
+                    currentState = State.link;
+                    currentLink = new GpxLink(atts.getValue("href"));
+                } else if (qName.equals("extensions")) {
+                    states.push(currentState);
+                    currentState = State.ext;
+                }
+                break;
+            case metadata:
+                if (qName.equals("author")) {
+                    states.push(currentState);
+                    currentState = State.author;
+                } else if (qName.equals("extensions")) {
+                    states.push(currentState);
+                    currentState = State.ext;
+                } else if (qName.equals("copyright")) {
+                    states.push(currentState);
+                    currentState = State.copyright;
+                    currentData.attr.put(GpxData.META_COPYRIGHT_AUTHOR, atts.getValue("author"));
+                } else if (qName.equals("link")) {
+                    states.push(currentState);
+                    currentState = State.link;
+                    currentLink = new GpxLink(atts.getValue("href"));
+                }
+                break;
+            case trkseg:
+                if (qName.equals("trkpt")) {
+                    states.push(currentState);
+                    currentState = State.wpt;
+                    currentWayPoint = new WayPoint(parseLatLon(atts));
+                }
+                break;
+            case wpt:
+                if (qName.equals("link")) {
+                    states.push(currentState);
+                    currentState = State.link;
+                    currentLink = new GpxLink(atts.getValue("href"));
+                } else if (qName.equals("extensions")) {
+                    states.push(currentState);
+                    currentState = State.ext;
+                }
+                break;
+            case rte:
+                if (qName.equals("link")) {
+                    states.push(currentState);
+                    currentState = State.link;
+                    currentLink = new GpxLink(atts.getValue("href"));
+                } else if (qName.equals("rtept")) {
+                    states.push(currentState);
+                    currentState = State.wpt;
+                    currentWayPoint = new WayPoint(parseLatLon(atts));
+                } else if (qName.equals("extensions")) {
+                    states.push(currentState);
+                    currentState = State.ext;
+                }
+                break;
+            default:
             }
             accumulator.setLength(0);
         }
@@ -200,129 +200,130 @@ public class GpxReader {
 
         private Map<String, Object> getAttr() {
             switch (currentState) {
-                case rte: return currentRoute.attr;
-                case metadata: return currentData.attr;
-                case wpt: return currentWayPoint.attr;
-                case trk: return currentTrack.attr;
-                default: return null;
+            case rte: return currentRoute.attr;
+            case metadata: return currentData.attr;
+            case wpt: return currentWayPoint.attr;
+            case trk: return currentTrack.attr;
+            default: return null;
             }
         }
 
+        @SuppressWarnings("unchecked")
         @Override public void endElement(String namespaceURI, String qName, String rqName) {
             switch (currentState) {
-                case metadata:
-                    if (qName.equals("name")) {
-                        currentData.attr.put(GpxData.META_NAME, accumulator.toString());
-                    } else if (qName.equals("desc")) {
-                        currentData.attr.put(GpxData.META_DESC, accumulator.toString());
-                    } else if (qName.equals("time")) {
-                        currentData.attr.put(GpxData.META_TIME, accumulator.toString());
-                    } else if (qName.equals("keywords")) {
-                        currentData.attr.put(GpxData.META_KEYWORDS, accumulator.toString());
-                    } else if (qName.equals("metadata")) {
-                        currentState = states.pop();
+            case metadata:
+                if (qName.equals("name")) {
+                    currentData.attr.put(GpxData.META_NAME, accumulator.toString());
+                } else if (qName.equals("desc")) {
+                    currentData.attr.put(GpxData.META_DESC, accumulator.toString());
+                } else if (qName.equals("time")) {
+                    currentData.attr.put(GpxData.META_TIME, accumulator.toString());
+                } else if (qName.equals("keywords")) {
+                    currentData.attr.put(GpxData.META_KEYWORDS, accumulator.toString());
+                } else if (qName.equals("metadata")) {
+                    currentState = states.pop();
+                }
+                //TODO: parse bounds, extensions
+                break;
+            case author:
+                if (qName.equals("author")) {
+                    currentState = states.pop();
+                } else if (qName.equals("name")) {
+                    currentData.attr.put(GpxData.META_AUTHOR_NAME, accumulator.toString());
+                } else if (qName.equals("email")) {
+                    // do nothing, has been parsed on startElement
+                } else if (qName.equals("link")) {
+                    currentData.attr.put(GpxData.META_AUTHOR_LINK, currentLink);
+                }
+                break;
+            case copyright:
+                if (qName.equals("copyright")) {
+                    currentState = states.pop();
+                } else if (qName.equals("year")) {
+                    currentData.attr.put(GpxData.META_COPYRIGHT_YEAR, accumulator.toString());
+                } else if (qName.equals("license")) {
+                    currentData.attr.put(GpxData.META_COPYRIGHT_LICENSE, accumulator.toString());
+                }
+                break;
+            case link:
+                if (qName.equals("text")) {
+                    currentLink.text = accumulator.toString();
+                } else if (qName.equals("type")) {
+                    currentLink.type = accumulator.toString();
+                } else if (qName.equals("link")) {
+                    if (currentLink.uri == null && accumulator != null && accumulator.toString().length() != 0) {
+                        currentLink = new GpxLink(accumulator.toString());
                     }
-                    //TODO: parse bounds, extensions
-                    break;
-                case author:
-                    if (qName.equals("author")) {
-                        currentState = states.pop();
-                    } else if (qName.equals("name")) {
-                        currentData.attr.put(GpxData.META_AUTHOR_NAME, accumulator.toString());
-                    } else if (qName.equals("email")) {
-                        // do nothing, has been parsed on startElement
-                    } else if (qName.equals("link")) {
-                        currentData.attr.put(GpxData.META_AUTHOR_LINK, currentLink);
+                    currentState = states.pop();
+                }
+                if (currentState == State.author) {
+                    currentData.attr.put(GpxData.META_AUTHOR_LINK, currentLink);
+                } else if (currentState != State.link) {
+                    Map<String, Object> attr = getAttr();
+                    if (!attr.containsKey(GpxData.META_LINKS)) {
+                        attr.put(GpxData.META_LINKS, new LinkedList<GpxLink>());
                     }
-                    break;
-                case copyright:
-                    if (qName.equals("copyright")) {
-                        currentState = states.pop();
-                    } else if (qName.equals("year")) {
-                        currentData.attr.put(GpxData.META_COPYRIGHT_YEAR, accumulator.toString());
-                    } else if (qName.equals("license")) {
-                        currentData.attr.put(GpxData.META_COPYRIGHT_LICENSE, accumulator.toString());
-                    }
-                    break;
-                case link:
-                    if (qName.equals("text")) {
-                        currentLink.text = accumulator.toString();
-                    } else if (qName.equals("type")) {
-                        currentLink.type = accumulator.toString();
-                    } else if (qName.equals("link")) {
-                        if (currentLink.uri == null && accumulator != null && accumulator.toString().length() != 0) {
-                            currentLink = new GpxLink(accumulator.toString());
-                        }
-                        currentState = states.pop();
-                    }
-                    if (currentState == state.author) {
-                        currentData.attr.put(GpxData.META_AUTHOR_LINK, currentLink);
-                    } else if (currentState != state.link) {
-                        Map<String, Object> attr = getAttr();
-                        if (!attr.containsKey(GpxData.META_LINKS)) {
-                            attr.put(GpxData.META_LINKS, new LinkedList<GpxLink>());
-                        }
-                        ((Collection<GpxLink>) attr.get(GpxData.META_LINKS)).add(currentLink);
-                    }
-                    break;
-                case wpt:
-                    if (   qName.equals("ele")  || qName.equals("magvar")
-                            || qName.equals("name") || qName.equals("geoidheight")
-                            || qName.equals("type") || qName.equals("sym")) {
-                        currentWayPoint.attr.put(qName, accumulator.toString());
-                    } else if(qName.equals("hdop") /*|| qName.equals("vdop") ||
+                    ((Collection<GpxLink>) attr.get(GpxData.META_LINKS)).add(currentLink);
+                }
+                break;
+            case wpt:
+                if (   qName.equals("ele")  || qName.equals("magvar")
+                        || qName.equals("name") || qName.equals("geoidheight")
+                        || qName.equals("type") || qName.equals("sym")) {
+                    currentWayPoint.attr.put(qName, accumulator.toString());
+                } else if(qName.equals("hdop") /*|| qName.equals("vdop") ||
                         qName.equals("pdop")*/) {
-                        try {
-                            currentWayPoint.attr.put(qName, Float.parseFloat(accumulator.toString()));
-                        } catch(Exception e) {
-                            currentWayPoint.attr.put(qName, new Float(0));
-                        }
-                    } else if (qName.equals("time")) {
-                        currentWayPoint.attr.put(qName, accumulator.toString());
-                        currentWayPoint.setTime();
-                    } else if (qName.equals("cmt") || qName.equals("desc")) {
-                        currentWayPoint.attr.put(qName, accumulator.toString());
-                        currentWayPoint.setTime();
-                    } else if (qName.equals("rtept")) {
-                        currentState = states.pop();
-                        currentRoute.routePoints.add(currentWayPoint);
-                    } else if (qName.equals("trkpt")) {
-                        currentState = states.pop();
-                        currentTrackSeg.add(currentWayPoint);
-                    } else if (qName.equals("wpt")) {
-                        currentState = states.pop();
-                        currentData.waypoints.add(currentWayPoint);
+                    try {
+                        currentWayPoint.attr.put(qName, Float.parseFloat(accumulator.toString()));
+                    } catch(Exception e) {
+                        currentWayPoint.attr.put(qName, new Float(0));
                     }
-                    break;
-                case trkseg:
-                    if (qName.equals("trkseg")) {
-                        currentState = states.pop();
-                        currentTrack.trackSegs.add(currentTrackSeg);
-                    }
-                    break;
-                case trk:
-                    if (qName.equals("trk")) {
-                        currentState = states.pop();
-                        currentData.tracks.add(currentTrack);
-                    } else if (qName.equals("name") || qName.equals("cmt")
-                            || qName.equals("desc") || qName.equals("src")
-                            || qName.equals("type") || qName.equals("number")
-                            || qName.equals("url")) {
-                        currentTrack.attr.put(qName, accumulator.toString());
-                    }
-                    break;
-                case ext:
-                    if (qName.equals("extensions")) {
-                        currentState = states.pop();
-                    }
-                    break;
-                default:
-                    if (qName.equals("wpt")) {
-                        currentState = states.pop();
-                    } else if (qName.equals("rte")) {
-                        currentState = states.pop();
-                        currentData.routes.add(currentRoute);
-                    }
+                } else if (qName.equals("time")) {
+                    currentWayPoint.attr.put(qName, accumulator.toString());
+                    currentWayPoint.setTime();
+                } else if (qName.equals("cmt") || qName.equals("desc")) {
+                    currentWayPoint.attr.put(qName, accumulator.toString());
+                    currentWayPoint.setTime();
+                } else if (qName.equals("rtept")) {
+                    currentState = states.pop();
+                    currentRoute.routePoints.add(currentWayPoint);
+                } else if (qName.equals("trkpt")) {
+                    currentState = states.pop();
+                    currentTrackSeg.add(currentWayPoint);
+                } else if (qName.equals("wpt")) {
+                    currentState = states.pop();
+                    currentData.waypoints.add(currentWayPoint);
+                }
+                break;
+            case trkseg:
+                if (qName.equals("trkseg")) {
+                    currentState = states.pop();
+                    currentTrack.trackSegs.add(currentTrackSeg);
+                }
+                break;
+            case trk:
+                if (qName.equals("trk")) {
+                    currentState = states.pop();
+                    currentData.tracks.add(currentTrack);
+                } else if (qName.equals("name") || qName.equals("cmt")
+                        || qName.equals("desc") || qName.equals("src")
+                        || qName.equals("type") || qName.equals("number")
+                        || qName.equals("url")) {
+                    currentTrack.attr.put(qName, accumulator.toString());
+                }
+                break;
+            case ext:
+                if (qName.equals("extensions")) {
+                    currentState = states.pop();
+                }
+                break;
+            default:
+                if (qName.equals("wpt")) {
+                    currentState = states.pop();
+                } else if (qName.equals("rte")) {
+                    currentState = states.pop();
+                    currentData.routes.add(currentRoute);
+                }
             }
         }
 

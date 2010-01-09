@@ -332,7 +332,7 @@ public class ChangesetCacheManager extends JFrame {
     /**
      * the cancel / close action
      */
-    class CancelAction extends AbstractAction {
+    static class CancelAction extends AbstractAction {
         public CancelAction() {
             putValue(NAME, tr("Close"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));

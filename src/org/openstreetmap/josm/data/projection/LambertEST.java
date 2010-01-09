@@ -57,7 +57,7 @@ public class LambertEST implements Projection {
         return new EastNorth(x,y);
     }
 
-    public  static double IterateAngle(double e, double t)
+    public static double iterateAngle(double e, double t)
     {
         double a1 = 0.0;
         double a2 = 3.1415926535897931;
@@ -87,7 +87,7 @@ public class LambertEST implements Projection {
         double T = Math.pow((r / (a * f)), (1.0/ n)) ;
         double theta = Math.atan((p.getX() - ef) / (rf - p.getY() + nf));
         double y = (theta / n + lonf) ;
-        double x = (IterateAngle(ee, T)) ;
+        double x = iterateAngle(ee, T);
         return new LatLon(Math.toDegrees(x),Math.toDegrees(y));
     }
 

@@ -45,7 +45,7 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
         double northing = z.getPuwgFalseNorthing();
         double scale = z.getPuwgScaleFactor();
         double center = z.getPuwgCentralMeridian(); /* in radians */
-        EastNorth a = MapLatLonToXY(Math.toRadians(p.lat()), Math.toRadians(p.lon()), center);
+        EastNorth a = mapLatLonToXY(Math.toRadians(p.lat()), Math.toRadians(p.lon()), center);
         return new EastNorth(a.east() * scale + easting, a.north() * scale + northing);
     }
 
@@ -56,7 +56,7 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
         double northing = z.getPuwgFalseNorthing();
         double scale = z.getPuwgScaleFactor();
         double center = z.getPuwgCentralMeridian(); /* in radians */
-        return MapXYToLatLon((p.east() - easting)/scale, (p.north() - northing)/scale, center);
+        return mapXYToLatLon((p.east() - easting)/scale, (p.north() - northing)/scale, center);
     }
 
     @Override public String toString() {

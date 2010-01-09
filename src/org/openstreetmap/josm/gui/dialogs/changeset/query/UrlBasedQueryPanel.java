@@ -66,16 +66,16 @@ public class UrlBasedQueryPanel extends JPanel {
     protected JPanel buildHelpPanel() {
         HtmlPanel pnl = new HtmlPanel();
         pnl.setText(
-                "<html><body>" 
-                 + tr("Please enter or paste an URL to retrieve changesets from the OSM API.") 
-                 + "<p><strong>" + tr("Examples") + "</strong></p>"
-                 + "<ul>"
-                 + "<li><a href=\"http://www.openstreetmap.org/browse/changesets?open=true\">http://www.openstreetmap.org/browse/changesets?open=true</a></li>"
-                 + "<li><a href=\"http://api.openstreetmap.org/api/0.6/changesets?open=true\">http://api.openstreetmap.org/api/0.6/changesets?open=true</a></li>"
-                 + "</ul>"
-                 + tr("Note that changeset queries are currently always submitted to ''{0}'', regardless of the "
-                    + "host, port and path of the URL entered below.", OsmApi.getOsmApi().getBaseUrl())
-                 + "</body></html>"
+                "<html><body>"
+                + tr("Please enter or paste an URL to retrieve changesets from the OSM API.")
+                + "<p><strong>" + tr("Examples") + "</strong></p>"
+                + "<ul>"
+                + "<li><a href=\"http://www.openstreetmap.org/browse/changesets?open=true\">http://www.openstreetmap.org/browse/changesets?open=true</a></li>"
+                + "<li><a href=\"http://api.openstreetmap.org/api/0.6/changesets?open=true\">http://api.openstreetmap.org/api/0.6/changesets?open=true</a></li>"
+                + "</ul>"
+                + tr("Note that changeset queries are currently always submitted to ''{0}'', regardless of the "
+                        + "host, port and path of the URL entered below.", OsmApi.getOsmApi().getBaseUrl())
+                        + "</body></html>"
         );
         pnl.getEditorPane().addHyperlinkListener(
                 new HyperlinkListener() {
@@ -88,13 +88,6 @@ public class UrlBasedQueryPanel extends JPanel {
                 }
         );
         return pnl;
-    }
-
-    protected ChangesetQuery buildChangesetQueryFromUrlQuery(String query) {
-        if (query == null)
-            return new ChangesetQuery();
-        query = query.trim();
-        return null;
     }
 
     protected void build() {

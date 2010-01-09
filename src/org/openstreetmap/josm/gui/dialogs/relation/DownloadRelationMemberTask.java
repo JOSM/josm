@@ -34,7 +34,6 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
     private Relation parent;
     private Collection<OsmPrimitive> children;
     private OsmDataLayer curLayer;
-    private MemberTableModel memberTableModel;
     private MultiFetchServerObjectReader objectReader;
 
     public DownloadRelationMemberTask(Relation parent, Collection<OsmPrimitive> children, OsmDataLayer curLayer, MemberTableModel memberTableModel, Dialog dialog) {
@@ -42,7 +41,6 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
         this.parent = parent;
         this.children = children;
         this.curLayer = curLayer;
-        this.memberTableModel = memberTableModel;
     }
 
     public DownloadRelationMemberTask(Relation parent, Collection<OsmPrimitive> children, OsmDataLayer curLayer, MemberTableModel memberTableModel) {
@@ -50,7 +48,6 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
         this.parent = parent;
         this.children = children;
         this.curLayer = curLayer;
-        this.memberTableModel = memberTableModel;
     }
 
     @Override

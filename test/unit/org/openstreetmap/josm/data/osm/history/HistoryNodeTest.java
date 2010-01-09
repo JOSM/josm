@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 public class HistoryNodeTest {
 
     @Test
-    public void HistoryNode() {
+    public void historyNode() {
         Date d = new Date();
         HistoryNode node = new HistoryNode(
                 1,

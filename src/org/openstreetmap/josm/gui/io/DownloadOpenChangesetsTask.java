@@ -102,9 +102,9 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
     protected void refreshUserIdentity(){
         JosmUserIdentityManager im = null;
         try {
+            im = JosmUserIdentityManager.getInstance();
             OsmServerUserInfoReader reader = new OsmServerUserInfoReader();
             UserInfo info = reader.fetchUserInfo(getProgressMonitor().createSubTaskMonitor(1, false));
-            im = JosmUserIdentityManager.getInstance();
             im.setFullyIdentified(info.getDisplayName(), info);
         } catch(OsmTransferException e) {
             // retrieving the user info can fail if the current user is not authorised to

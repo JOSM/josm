@@ -48,7 +48,7 @@ public class WindowGeometry {
         while(reference != null && ! (reference instanceof Window) ) {
             reference = reference.getParent();
         }
-        if (reference == null || ! (reference instanceof Window))
+        if (reference == null)
             return new WindowGeometry(new Point(0,0), extent);
         parentWindow = (Window)reference;
         Point topLeft = new Point(

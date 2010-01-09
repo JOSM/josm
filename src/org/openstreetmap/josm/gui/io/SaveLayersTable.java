@@ -18,8 +18,10 @@ class SaveLayersTable extends JTable implements PropertyChangeListener {
         if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
             Mode mode = (Mode)evt.getNewValue();
             switch(mode) {
-                case EDITING_DATA: setEnabled(true);
-                case UPLOADING_AND_SAVING: setEnabled(false);
+            case EDITING_DATA: setEnabled(true);
+            break;
+            case UPLOADING_AND_SAVING: setEnabled(false);
+            break;
             }
         }
     }
