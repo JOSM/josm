@@ -260,7 +260,8 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         }
 
         public String getName() {
-            if (user == null) return null;
+            if (user == null)
+                return tr("<new element>");
             return user.getName();
         }
     }
@@ -281,9 +282,6 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             HashMap<User, Integer> ret = new HashMap<User, Integer>();
             if (primitives == null || primitives.isEmpty()) return ret;
             for (OsmPrimitive primitive: primitives) {
-                if (primitive.getUser() == null) {
-                    continue;
-                }
                 if (ret.containsKey(primitive.getUser())) {
                     ret.put(primitive.getUser(), ret.get(primitive.getUser()) + 1);
                 } else {
@@ -330,17 +328,11 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         public void selectPrimitivesOwnedBy(int [] rows) {
             Set<User> users= new HashSet<User>();
             for (int index: rows) {
-                if (data.get(index).user == null) {
-                    continue;
-                }
                 users.add(data.get(index).user);
             }
             Collection<OsmPrimitive> selected = Main.main.getCurrentDataSet().getSelected();
             Collection<OsmPrimitive> byUser = new LinkedList<OsmPrimitive>();
             for (OsmPrimitive p : selected) {
-                if (p.getUser() == null) {
-                    continue;
-                }
                 if (users.contains(p.getUser())) {
                     byUser.add(p);
                 }
