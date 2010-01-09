@@ -5,13 +5,13 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -40,7 +40,8 @@ public class GpxReader {
      * The resulting gpx data
      */
     public GpxData data;
-    public enum State { init, metadata, wpt, rte, trk, ext, author, link, trkseg, copyright}
+    private enum State { init, metadata, wpt, rte, trk, ext, author, link, trkseg, copyright}
+    private InputSource inputSource;
 
     private class Parser extends DefaultHandler {
 
@@ -54,6 +55,7 @@ public class GpxReader {
 
         private GpxLink currentLink;
         private Stack<State> states;
+        private final Stack<String> elements = new Stack<String>();
 
         private StringBuffer accumulator = new StringBuffer();
 
@@ -80,6 +82,7 @@ public class GpxReader {
         }
 
         @Override public void startElement(String namespaceURI, String qName, String rqName, Attributes atts) throws SAXException {
+            elements.push(qName);
             switch(currentState) {
             case init:
                 if (qName.equals("metadata")) {
@@ -210,6 +213,7 @@ public class GpxReader {
 
         @SuppressWarnings("unchecked")
         @Override public void endElement(String namespaceURI, String qName, String rqName) {
+            elements.pop();
             switch (currentState) {
             case metadata:
                 if (qName.equals("name")) {
@@ -332,22 +336,45 @@ public class GpxReader {
                 throw new SAXException(tr("Parse error: invalid document structure for GPX document."));
             data = currentData;
         }
+
+        public void tryToFinish() throws SAXException {
+            List<String> remainingElements = new ArrayList<String>(elements);
+            for (int i=remainingElements.size() - 1; i >= 0; i--) {
+                endElement(null, remainingElements.get(i), null);
+            }
+            endDocument();
+        }
     }
 
     /**
      * Parse the input stream and store the result in trackData and markerData
      *
-     * @param relativeMarkerPath The directory to use as relative path for all &lt;wpt&gt;
-     *    marker tags. Maybe <code>null</code>, in which case no relative urls are constructed for the markers.
      */
-    public GpxReader(InputStream source, File relativeMarkerPath) throws SAXException, IOException {
+    public GpxReader(InputStream source) throws IOException {
+        this.inputSource = new InputSource(new InputStreamReader(source, "UTF-8"));
+    }
 
+    /**
+     * 
+     * @return True if file was properly parsed, false if there was error during parsing but some data were parsed anyway
+     * @throws SAXException
+     * @throws IOException
+     */
+    public boolean parse(boolean tryToFinish) throws SAXException, IOException {
         Parser parser = new Parser();
-        InputSource inputSource = new InputSource(new InputStreamReader(source, "UTF-8"));
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
             factory.newSAXParser().parse(inputSource, parser);
+            return true;
+        } catch (SAXException e) {
+            if (tryToFinish) {
+                parser.tryToFinish();
+                if (parser.currentData.isEmpty())
+                    throw e;
+                return false;
+            } else
+                throw e;
         } catch (ParserConfigurationException e) {
             e.printStackTrace(); // broken SAXException chaining
             throw new SAXException(e);

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
@@ -44,7 +45,8 @@ public class GpxImporter extends FileImporter {
                     is = new FileInputStream(file);
                 }
             }
-            final GpxReader r = new GpxReader(is, file.getAbsoluteFile().getParentFile());
+            final GpxReader r = new GpxReader(is);
+            final boolean parsedProperly = r.parse(true);
             r.data.storageFile = file;
             final GpxLayer gpxLayer = new GpxLayer(r.data, fn, true);
 
@@ -60,6 +62,9 @@ public class GpxImporter extends FileImporter {
                         if (ml.data.size() > 0) {
                             Main.main.addLayer(ml);
                         }
+                    }
+                    if (!parsedProperly) {
+                        JOptionPane.showMessageDialog(null, tr("Error occured while parsing gpx file {0}. Only part of the file will be available", file.getName()));
                     }
                 }
             };

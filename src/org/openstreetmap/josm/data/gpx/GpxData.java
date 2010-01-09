@@ -78,6 +78,10 @@ public class GpxData extends WithAttributes {
         return false;
     }
 
+    public boolean isEmpty() {
+        return !hasRoutePoints() && !hasTrackPoints() && waypoints.isEmpty();
+    }
+
     // FIXME might perhaps use visitor pattern?
     public Bounds recalculateBounds() {
         Bounds bounds = null;

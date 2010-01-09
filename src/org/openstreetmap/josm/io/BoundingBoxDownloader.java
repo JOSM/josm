@@ -50,7 +50,9 @@ public class BoundingBoxDownloader extends OsmServerReader {
                     break;
                 }
                 progressMonitor.setTicks(0);
-                GpxData currentGpx = new GpxReader(in, null).data;
+                GpxReader reader = new GpxReader(in);
+                reader.parse(false);
+                GpxData currentGpx = reader.data;
                 if (result == null) {
                     result = currentGpx;
                 } else if (currentGpx.hasTrackPoints()) {

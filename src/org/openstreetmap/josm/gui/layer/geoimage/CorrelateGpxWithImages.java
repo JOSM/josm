@@ -178,7 +178,9 @@ public class CorrelateGpxWithImages implements ActionListener {
                     } else {
                         iStream = new FileInputStream(sel);
                     }
-                    data = new GpxReader(iStream, sel).data;
+                    GpxReader reader = new GpxReader(iStream);
+                    reader.parse(false);
+                    data = reader.data;
                     data.storageFile = sel;
 
                 } catch (SAXException x) {
@@ -873,7 +875,7 @@ public class CorrelateGpxWithImages implements ActionListener {
                     tfOffset.getDocument().removeDocumentListener(statusBarListener);
 
                     tfTimezone.setText(formatTimezone(timezone));
-                    tfOffset.setText(Long.toString(delta + dayOffset*24*60*60l));    // add the day offset to the offset field
+                    tfOffset.setText(Long.toString(delta + 24*60*60L*dayOffset));    // add the day offset to the offset field
 
                     tfTimezone.getDocument().addDocumentListener(statusBarListener);
                     tfOffset.getDocument().addDocumentListener(statusBarListener);
