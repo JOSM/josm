@@ -59,11 +59,13 @@ public class OpenFileAction extends DiskAccessAction {
         setEnabled(! Main.applet);
     }
 
-    static public void openFile(File f) throws IOException, IllegalDataException {
-        for (FileImporter importer : ExtensionFileFilter.importers)
-            if (importer.acceptFile(f)) {
-                importer.importData(f);
-            }
+    /**
+     * Open a list of files. The complete list will be passed to batch importers.
+     * @param fileList A list of files
+     */
+    static public void openFiles(List<File> fileList) {
+        OpenFileTask task = new OpenFileTask(fileList, null);
+        Main.worker.submit(task);
     }
 
     static public class OpenFileTask extends PleaseWaitRunnable {

@@ -9,7 +9,6 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -49,7 +48,6 @@ import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.SplashScreen;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
-import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -58,7 +56,6 @@ import org.openstreetmap.josm.gui.preferences.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.ProjectionPreference;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
-import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
@@ -377,13 +374,60 @@ abstract public class Main {
 
     public void postConstructorProcessCmdLine(Map<String, Collection<String>> args) {
         if (args.containsKey("download")) {
+            List<File> fileList = new ArrayList<File>();
             for (String s : args.get("download")) {
-                downloadFromParamString(false, s);
+                File f = null;
+                switch(paramType(s)) {
+                case httpUrl:
+                    downloadFromParamHttp(false, s);
+                    break;
+                case bounds:
+                    downloadFromParamBounds(false, s);
+                    break;
+                case fileUrl:
+                    try {
+                        f = new File(new URI(s));
+                    } catch (URISyntaxException e) {
+                        JOptionPane.showMessageDialog(
+                                Main.parent,
+                                tr("Ignoring malformed file URL: \"{0}\"", s),
+                                tr("Warning"),
+                                JOptionPane.WARNING_MESSAGE
+                        );
+                    }
+                    if (f!=null) {
+                        fileList.add(f);
+                    }
+                    break;
+                case fileName:
+                    f = new File(s);
+                    fileList.add(f);
+                    break;
+                }
+            }
+            if(!fileList.isEmpty())
+            {
+                OpenFileAction.openFiles(fileList);
             }
         }
         if (args.containsKey("downloadgps")) {
             for (String s : args.get("downloadgps")) {
-                downloadFromParamString(true, s);
+                switch(paramType(s)) {
+                case httpUrl:
+                    downloadFromParamHttp(true, s);
+                    break;
+                case bounds:
+                    downloadFromParamBounds(true, s);
+                    break;
+                case fileUrl:
+                case fileName:
+                    JOptionPane.showMessageDialog(
+                            Main.parent,
+                            tr("Parameter \"downloadgps\" does not accept file names or file URLs"),
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                }
             }
         }
         if (args.containsKey("selection")) {
@@ -416,98 +460,78 @@ abstract public class Main {
         return true;
     }
 
-    private static void downloadFromParamString(final boolean rawGps, String s) {
-        if (s.startsWith("http:")) {
-            final Bounds b = OsmUrlToBounds.parse(s);
-            if (b == null) {
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("Ignoring malformed URL: \"{0}\"", s),
-                        tr("Warning"),
-                        JOptionPane.WARNING_MESSAGE
-                );
-            } else {
-                //DownloadTask osmTask = main.menu.download.downloadTasks.get(0);
-                DownloadTask osmTask = new DownloadOsmTask();
-                Future<?> future = osmTask.download(true, b, null);
-                Main.worker.submit(new PostDownloadHandler(osmTask, future));
-            }
-            return;
-        }
 
-        if (s.startsWith("file:")) {
-            File f = null;
-            try {
-                f = new File(new URI(s));
-            } catch (URISyntaxException e) {
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("Ignoring malformed file URL: \"{0}\"", s),
-                        tr("Warning"),
-                        JOptionPane.WARNING_MESSAGE
-                );
-            }
-            try {
-                if (f!=null) {
-                    OpenFileAction.openFile(f);
-                }
-            } catch(IllegalDataException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("<html>Could not read file ''{0}\''.<br> Error is: <br>{1}</html>", f.getName(), e.getMessage()),
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE
-                );
-            }catch(IOException e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("<html>Could not read file ''{0}\''.<br> Error is: <br>{1}</html>", f.getName(), e.getMessage()),
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE
-                );
-            }
-            return;
-        }
+    /**
+     * The type of a command line parameter, to be used in switch statements.
+     * @see paramType
+     */
+    private enum DownloadParamType { httpUrl, fileUrl, bounds, fileName }
 
+    /**
+     * Guess the type of a parameter string specified on the command line with --download= or --downloadgps.
+     * @param s A parameter string
+     * @return The guessed parameter type
+     */
+    private DownloadParamType paramType(String s) {
+        if(s.startsWith("http:")) return DownloadParamType.httpUrl;
+        if(s.startsWith("file:")) return DownloadParamType.fileUrl;
+        final StringTokenizer st = new StringTokenizer(s, ",");
+        // we assume a string with exactly 3 commas is a bounds parameter
+        if (st.countTokens() == 4) return DownloadParamType.bounds;
+        // everything else must be a file name
+        return DownloadParamType.fileName;
+    }
+
+    /**
+     * Download area specified on the command line as OSM URL.
+     * @param rawGps Flag to download raw GPS tracks
+     * @param s The URL parameter
+     */
+    private static void downloadFromParamHttp(final boolean rawGps, String s) {
+        final Bounds b = OsmUrlToBounds.parse(s);
+        if (b == null) {
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("Ignoring malformed URL: \"{0}\"", s),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE
+            );
+        } else {
+            downloadFromParamBounds(rawGps, b);
+        }
+    }
+
+    /**
+     * Download area specified on the command line as bounds string.
+     * @param rawGps Flag to download raw GPS tracks
+     * @param s The bounds parameter
+     */
+    private static void downloadFromParamBounds(final boolean rawGps, String s) {
         final StringTokenizer st = new StringTokenizer(s, ",");
         if (st.countTokens() == 4) {
             Bounds b = new Bounds(
                     new LatLon(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken())),
                     new LatLon(Double.parseDouble(st.nextToken()),Double.parseDouble(st.nextToken()))
             );
-            try {
-                DownloadTask task = rawGps ? new DownloadGpsTask() : new DownloadOsmTask();
-                // asynchronously launch the download task ...
-                Future<?> future = task.download(true, b, null);
-                // ... and the continuation when the download is finished (this will wait for the download to finish)
-                Main.worker.execute(new PostDownloadHandler(task, future));
-                return;
-            } catch (final NumberFormatException e) {
-            }
-        }
-        File f = new File(s);
-        try {
-            OpenFileAction.openFile(f);
-        }catch(IllegalDataException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("<html>Could not read file ''{0}\''.<br> Error is: <br>{1}</html>", f.getName(), e.getMessage()),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }catch(IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("<html>Could not read file ''{0}\''.<br> Error is: <br>{1}</html>", f.getName(), e.getMessage()),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
+            downloadFromParamBounds(rawGps, b);
         }
     }
+
+    /**
+     * Download area specified as Bounds value.
+     * @param rawGps Flag to download raw GPS tracks
+     * @param b The bounds value
+     * @see downloadFromParamBounds(final boolean rawGps, String s)
+     * @see downloadFromParamHttp
+     */
+    private static void downloadFromParamBounds(final boolean rawGps, Bounds b) {
+        DownloadTask task = rawGps ? new DownloadGpsTask() : new DownloadOsmTask();
+        // asynchronously launch the download task ...
+        Future<?> future = task.download(true, b, null);
+        // ... and the continuation when the download is finished (this will wait for the download to finish)
+        Main.worker.execute(new PostDownloadHandler(task, future));
+    }
+
 
     public static void determinePlatformHook() {
         String os = System.getProperty("os.name");

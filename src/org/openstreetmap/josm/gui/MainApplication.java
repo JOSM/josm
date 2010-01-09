@@ -77,6 +77,7 @@ public class MainApplication extends Main {
                 "\t[--download=]<url>                        "+tr("Download the location at the url (with lat=x&lon=y&zoom=z)")+"\n"+
                 "\t[--download=]<filename>                   "+tr("Open file (as raw gps, if .gpx)")+"\n"+
                 "\t--downloadgps=minlat,minlon,maxlat,maxlon "+tr("Download the bounding box as raw gps")+"\n"+
+                "\t--downloadgps=<url>                       "+tr("Download the location at the url (with lat=x&lon=y&zoom=z) as raw gps")+"\n"+
                 "\t--selection=<searchstring>                "+tr("Select with the given search")+"\n"+
                 "\t--[no-]maximize                           "+tr("Launch in maximized mode")+"\n"+
                 "\t--reset-preferences                       "+tr("Reset the preferences to default")+"\n\n"+
