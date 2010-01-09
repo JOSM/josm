@@ -107,7 +107,9 @@ public class Multipolygon {
 
         createPolygons(innerWays, innerPolygons);
         createPolygons(outerWays, outerPolygons);
-        addInnerToOuters();
+        if (!outerPolygons.isEmpty()) {
+            addInnerToOuters();
+        }
     }
 
     private void createPolygons(List<Way> ways, List<PolyData> result) {
