@@ -15,7 +15,6 @@ public class CheckParameterUtil {
 
     private CheckParameterUtil(){}
 
-
     public static void ensureValidPrimitiveId(PrimitiveId id, String parameterName) throws IllegalArgumentException {
         if (id == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", parameterName));
@@ -35,7 +34,7 @@ public class CheckParameterUtil {
 
     /**
      * Ensures that <code>id</code> is non-null primitive id of type {@see OsmPrimitiveType#NODE}
-     * 
+     *
      * @param id  the primitive  id
      * @param parameterName the name of the parameter to be checked
      * @throws IllegalArgumentException thrown if id is null

@@ -12,25 +12,25 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 /**
  * JosmUserStateManager is a global object which keeps track of what JOSM knows about
  * the identity of the current user.
- * 
+ *
  * JOSM can be operated anonymously provided the current user never invokes an operation
  * on the OSM server which required authentication. In this case JOSM neither knows
  * the user name of the OSM account of the current user nor its unique id. Perhaps the
  * user doesn't have one.
- * 
+ *
  * If the current user supplies a user name and a password in the JOSM preferences JOSM
  * can partially identify the user.
- * 
+ *
  * The current user is fully identified if JOSM knows both the user name and the unique
  * id of the users OSM account. The later is retrieved from the OSM server with a
  * <tt>GET /api/0.6/user/details</tt> request, submitted with the user name and password
  * of the current user.
- * 
+ *
  * The global JosmUserStateManager listens to {@see PreferenceChangeEvent}s and keeps track
  * of what the current JOSM instance knows about the current user. Other subsystems can
  * let the global JosmUserStateManager know in case they fully identify the current user, see
  * {@see #setFullyIdentified(String, long)}.
- * 
+ *
  * The information kept by the JosmUserStateManager can be used to
  * <ul>
  *   <li>safely query changesets owned by the current user based on its user id, not on its user name</li>
@@ -44,7 +44,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
 
     /**
      * Replies the unique instance of teh JOSM user identity manager
-     * 
+     *
      * @return the unique instance of teh JOSM user identity manager
      */
     static public JosmUserIdentityManager getInstance() {
@@ -73,7 +73,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
     /**
      * Remebers the fact that the current JOSM user is partially identified
      * by the user name of its OSM account.
-     * 
+     *
      * @param userName the user name. Must not be null. Must not be empty (whitespace only).
      * @throws IllegalArgumentException thrown if userName is null
      * @throws IllegalArgumentException thrown if userName is empty
@@ -89,7 +89,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
     /**
      * Remembers the fact that the current JOSM user is fully identified with a
      * verified pair of user name and user id.
-     * 
+     *
      * @param userName the user name. Must not be null. Must not be empty.
      * @param userinfo additional information about the user, retrieved from the OSM server and including the user id
      * @throws IllegalArgumentException thrown if userName is null
@@ -107,7 +107,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
 
     /**
      * Replies true if the current JOSM user is anonymous.
-     * 
+     *
      * @return true if the current user is anonymous.
      */
     public boolean isAnonymous() {
@@ -116,17 +116,16 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
 
     /**
      * Replies true if the current JOSM user is partially identified.
-     * 
+     *
      * @return true if the current JOSM user is partially identified.
      */
     public boolean isPartiallyIdentified() {
         return userName != null && userInfo == null;
     }
 
-
     /**
      * Replies true if the current JOSM user is fully identified.
-     * 
+     *
      * @return true if the current JOSM user is fully identified.
      */
     public boolean isFullyIdentified() {
@@ -135,7 +134,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
 
     /**
      * Replies the user name of the current JOSM user. null, if {@see #isAnonymous()} is true.
-     * 
+     *
      * @return  the user name of the current JOSM user
      */
     public String getUserName() {
@@ -145,7 +144,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
     /**
      * Replies the user id of the current JOSM user. 0, if {@see #isAnonymous()} or
      * {@see #isPartiallyIdentified()} is true.
-     * 
+     *
      * @return  the user id of the current JOSM user
      */
     public int getUserId() {
@@ -156,7 +155,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
     /**
      * Replies verified additional information about the current user if the user is
      * {@see #isFullyIdentified()}.
-     * 
+     *
      * @return verified additional information about the current user
      */
     public UserInfo getUserInfo() {
@@ -184,7 +183,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
     /**
      * Replies true if the user with name <code>username</code> is the current
      * user
-     * 
+     *
      * @param username the user name
      * @return true if the user with name <code>username</code> is the current
      * user

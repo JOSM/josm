@@ -65,7 +65,6 @@ public class MapPaintSettings implements PreferenceChangedListener {
         load();
     }
 
-
     public boolean isUseRealWidth() {
         return useRealWidth;
     }

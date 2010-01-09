@@ -88,7 +88,6 @@ public class HelpBrowser extends JFrame {
         SwingUtilities.invokeLater(r);
     }
 
-
     /**
      * Launches the internal help browser and directs it to the help page for
      * <code>helpTopic</code>.

@@ -45,7 +45,7 @@ public class UpdatePrimitivesTask extends PleaseWaitRunnable {
 
     /**
      * Creates the  task
-     * 
+     *
      * @param layer the layer in which primitives are updated. Must not be null.
      * @param toUpdate a collection of primitives to update from the server. Set to
      * the empty collection if null.

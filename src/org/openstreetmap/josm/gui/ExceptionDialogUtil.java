@@ -267,7 +267,6 @@ public class ExceptionDialogUtil {
         );
     }
 
-
     /**
      * Explains a {@see UnknownHostException} which has caused an {@see OsmTransferException}.
      * This is most likely happening when there is an error in the API URL or when

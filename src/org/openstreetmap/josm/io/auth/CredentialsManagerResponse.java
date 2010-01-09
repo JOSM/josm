@@ -3,11 +3,11 @@ package org.openstreetmap.josm.io.auth;
 
 /**
  * CredentialsManagerResponse represents the response from {@see CredentialsManager#getCredentials(java.net.Authenticator.RequestorType, boolean)}.
- * 
+ *
  * The response consists of the username and the password the requested credentials consists of.
  * In addition, it provides information whether authentication was canceled by the user, i.e.
  * because he or she canceled a username/password dialog (see {@see #isCanceled()}.
- * 
+ *
  */
 public class CredentialsManagerResponse {
     private String username;

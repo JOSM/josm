@@ -61,11 +61,11 @@ import org.openstreetmap.josm.tools.OpenBrowser;
  *   <li>the list of changesets the currently selected objects are assigned to</li>
  *   <li>the list of changesets objects in the current data layer are assigend to</li>
  * </ul>
- * 
+ *
  * The dialog offers actions to download and to close changesets. It can also launch an external
  * browser with information about a changeset. Furthermore, it can select all objects in
  * the current data layer being assigned to a specific changeset.
- * 
+ *
  */
 public class ChangesetDialog extends ToggleDialog{
     //static private final Logger logger = Logger.getLogger(ChangesetDialog.class.getName());
@@ -83,7 +83,6 @@ public class ChangesetDialog extends ToggleDialog{
     private ShowChangesetInfoAction showChangsetInfoAction;
     private CloseOpenChangesetsAction closeChangesetAction;
     private LaunchChangesetManagerAction launchChangesetManagerAction;
-
 
     protected void buildChangesetsLists() {
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
@@ -116,7 +115,6 @@ public class ChangesetDialog extends ToggleDialog{
         ChangesetCache.getInstance().addChangesetCacheListener(inSelectionModel);
         MapView.addEditLayerChangeListener(inSelectionModel);
         DataSet.selListeners.add(inSelectionModel);
-
 
         // let the model for changesets in the current layer listen to various
         // events and bootstrap it's content
@@ -359,7 +357,7 @@ public class ChangesetDialog extends ToggleDialog{
 
     /**
      * Downloads selected changesets
-     * 
+     *
      */
     class ReadChangesetsAction extends AbstractAction implements ListSelectionListener, ItemListener{
         public ReadChangesetsAction() {
@@ -394,7 +392,7 @@ public class ChangesetDialog extends ToggleDialog{
 
     /**
      * Closes the currently selected changesets
-     * 
+     *
      */
     class CloseOpenChangesetsAction extends AbstractAction implements ListSelectionListener, ItemListener {
         public CloseOpenChangesetsAction() {
@@ -426,7 +424,7 @@ public class ChangesetDialog extends ToggleDialog{
 
     /**
      * Show information about the currently selected changesets
-     * 
+     *
      */
     class ShowChangesetInfoAction extends AbstractAction implements ListSelectionListener, ItemListener {
         public ShowChangesetInfoAction() {
@@ -466,7 +464,7 @@ public class ChangesetDialog extends ToggleDialog{
 
     /**
      * Show information about the currently selected changesets
-     * 
+     *
      */
     class LaunchChangesetManagerAction extends AbstractAction implements ListSelectionListener, ItemListener {
         public LaunchChangesetManagerAction() {
@@ -556,7 +554,6 @@ public class ChangesetDialog extends ToggleDialog{
             updateEnabledState();
         }
     }
-
 
     class ChangesetPopupMenuLauncher extends PopupMenuLauncher {
         @Override

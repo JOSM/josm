@@ -105,11 +105,10 @@ public class JosmPreferencesCredentialManager implements CredentialsManager {
         return response;
     }
 
-
     /**
      * Lookup the current OAuth Access Token to access the OSM server. Replies null, if no
      * Access Token is currently managed by this CredentialManager.
-     * 
+     *
      * @return the current OAuth Access Token to access the OSM server.
      * @throws CredentialsManagerException thrown if something goes wrong
      */
@@ -123,7 +122,7 @@ public class JosmPreferencesCredentialManager implements CredentialsManager {
 
     /**
      * Stores the OAuth Access Token <code>accessToken</code>.
-     * 
+     *
      * @param accessToken the access Token. null, to remove the Access Token.
      * @throws CredentialsManagerException thrown if something goes wrong
      */

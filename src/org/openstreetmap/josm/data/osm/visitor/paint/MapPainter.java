@@ -53,7 +53,6 @@ public class MapPainter {
 
     private final Collection<String> regionalNameOrder;
 
-
     public MapPainter(MapPaintSettings settings, Graphics2D g, boolean inactive, NavigatableComponent nc, boolean virtual, double dist, double circum) {
         this.g = g;
         this.inactive = inactive;
@@ -150,7 +149,6 @@ public class MapPainter {
         return true;
     }
 
-
     public void drawNodeIcon(Node n, ImageIcon icon, boolean annotate, boolean selected, String name) {
         Point p = nc.getPoint(n);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
@@ -174,7 +172,6 @@ public class MapPainter {
             g.drawRect (p.x-w/2-2, p.y-h/2-2, w+4, h+4);
         }
     }
-
 
     /**
      * Draw the node as small rectangle with the given color.

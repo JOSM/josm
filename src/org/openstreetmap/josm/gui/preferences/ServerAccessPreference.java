@@ -51,7 +51,7 @@ public class ServerAccessPreference implements PreferenceSetting {
 
     /**
      * Builds the tabbed pane with the server preferences
-     * 
+     *
      * @return
      */
     protected JPanel buildTabbedServerPreferences() {
@@ -78,7 +78,7 @@ public class ServerAccessPreference implements PreferenceSetting {
 
     /**
      * Builds the panel for entering the server access preferences
-     * 
+     *
      * @return
      */
     protected JPanel buildContentPanel() {

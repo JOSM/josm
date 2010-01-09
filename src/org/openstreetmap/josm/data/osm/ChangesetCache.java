@@ -26,12 +26,12 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
  * using {@see #addChangesetCacheListener(ChangesetCacheListener)}. They can use
  * {@see #removeChangesetCacheListener(ChangesetCacheListener)} to unregister as
  * cache event listener.
- * 
+ *
  * The cache itself listens to {@see java.util.prefs.PreferenceChangeEvent}s. It
  * clears itself if the OSM API URL is changed in the preferences.
- * 
+ *
  * {@see ChangesetCacheEvent}s are delivered on the EDT.
- * 
+ *
  */
 public class ChangesetCache implements PreferenceChangedListener{
     static private final Logger logger = Logger.getLogger(ChangesetCache.class.getName());
@@ -41,7 +41,7 @@ public class ChangesetCache implements PreferenceChangedListener{
 
     /**
      * Replies the unique instance of the cache
-     * 
+     *
      * @return the unique instance of the cache
      */
     public static ChangesetCache getInstance() {
@@ -161,7 +161,7 @@ public class ChangesetCache implements PreferenceChangedListener{
     /**
      * Removes the changesets in <code>changesets</code> from the cache. A
      * {@see ChangesetCacheEvent} is fired.
-     * 
+     *
      * @param changesets the changesets to remove. Ignored if null.
      */
     public void remove(Collection<Changeset> changesets) {

@@ -51,7 +51,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
 
     /**
      * Creates the task
-     * 
+     *
      * @param strategy the upload strategy. Must not be null.
      * @param layer  the OSM data layer for which data is uploaded. Must not be null.
      * @param toUpload the collection of primitives to upload. Set to the empty collection if null.

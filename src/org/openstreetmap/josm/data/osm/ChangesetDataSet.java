@@ -32,7 +32,7 @@ public class ChangesetDataSet {
 
     /**
      * Remembers a history primitive with the given modification type
-     * 
+     *
      * @param primitive the primitive. Must not be null.
      * @param cmt the modification type. Must not be null.
      * @throws IllegalArgumentException thrown if primitive is null
@@ -70,7 +70,7 @@ public class ChangesetDataSet {
     /**
      * Replies true if the primitive with id <code>id</code> was created in this
      * changeset. Replies false, if id is null.
-     * 
+     *
      * @param id the id
      * @return true if the primitive with id <code>id</code> was created in this
      * changeset.
@@ -83,7 +83,7 @@ public class ChangesetDataSet {
     /**
      * Replies true if the primitive with id <code>id</code> was updated in this
      * changeset. Replies false, if id is null.
-     * 
+     *
      * @param id the id
      * @return true if the primitive with id <code>id</code> was updated in this
      * changeset.
@@ -96,7 +96,7 @@ public class ChangesetDataSet {
     /**
      * Replies true if the primitive with id <code>id</code> was deleted in this
      * changeset. Replies false, if id is null.
-     * 
+     *
      * @param id the id
      * @return true if the primitive with id <code>id</code> was deleted in this
      * changeset.
@@ -108,7 +108,7 @@ public class ChangesetDataSet {
 
     /**
      * Replies the set of primitives with a specific modification type
-     * 
+     *
      * @param cmt the modification type. Must not be null.
      * @return the set of primitives
      * @throws IllegalArgumentException thrown if cmt is null
@@ -126,7 +126,7 @@ public class ChangesetDataSet {
 
     /**
      * Replies the number of objects in the dataset
-     * 
+     *
      * @return the number of objects in the dataset
      */
     public int size() {
@@ -136,7 +136,7 @@ public class ChangesetDataSet {
     /**
      * Replies the {@see HistoryOsmPrimitive} with id <code>id</code> from this
      * dataset. null, if there is no such primitive in the data set.
-     * 
+     *
      * @param id the id
      * @return  the {@see HistoryOsmPrimitive} with id <code>id</code> from this
      * dataset
@@ -145,7 +145,6 @@ public class ChangesetDataSet {
         if (id == null)  return null;
         return primitives.get(id);
     }
-
 
     public Iterator<ChangesetDataSetEntry> iterator() {
         return new DefaultIterator();

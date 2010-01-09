@@ -38,7 +38,7 @@ public enum UploadStrategy {
     /**
      * Replies the value which is written to the preferences for a specific
      * upload strategy
-     * 
+     *
      * @return the value which is written to the preferences for a specific
      * upload strategy
      */
@@ -53,13 +53,13 @@ public enum UploadStrategy {
 
     /**
      * Replies the upload strategy currently configured in the preferences.
-     * 
+     *
      * First checks for the preference key <pre>osm-server.upload-strategy</pre>. If not
      * present, checks for the legacy preference key <pre>osm-server.atomic-upload</pre>.
-     * 
+     *
      * If both are missing or if the preference value is illegal, {@see #DEFAULT_UPLOAD_STRATEGY}
      * is replied.
-     * 
+     *
      * @return the upload strategy currently configured in the preferences.
      */
     public static UploadStrategy getFromPreferences() {
@@ -91,7 +91,7 @@ public enum UploadStrategy {
 
     /**
      * Saves the upload strategy <code>strategy</code> to the preferences.
-     * 
+     *
      * @param strategy the strategy to save
      */
     public static void saveToPreferences(UploadStrategy strategy) {

@@ -18,7 +18,7 @@ import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager;
 import org.openstreetmap.josm.tools.Shortcut;
 /**
  * This action toggles the visibility of the {@see ChangesetCacheManager} dialog.
- * 
+ *
  */
 public class ChangesetManagerToggleAction extends JosmAction {
     private final List<ButtonModel> buttonModels = new ArrayList<ButtonModel>();

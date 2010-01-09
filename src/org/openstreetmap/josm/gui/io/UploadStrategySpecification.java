@@ -1,12 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
-
-
 /**
  * An UploadStrategySpecification consists of the parameter describing the strategy
  * for uploading a collection of {@see OsmPrimitive}.
- * 
+ *
  * This includes:
  * <ul>
  * <li>a decision on which {@see UploadStrategy} to use</li>
@@ -38,7 +36,7 @@ public class UploadStrategySpecification  {
     /**
      * Clones another upload strategy. If other is null,assumes default
      * values.
-     * 
+     *
      * @param other the other upload strategy
      */
     public UploadStrategySpecification(UploadStrategySpecification other) {

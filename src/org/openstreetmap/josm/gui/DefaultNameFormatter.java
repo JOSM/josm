@@ -168,8 +168,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
             name += " (";
             String nameTag = null;
-            for (String n : getNamingtagsForRelations()) { 
-                if (n.equals("name")) { 
+            for (String n : getNamingtagsForRelations()) {
+                if (n.equals("name")) {
                     if (Main.pref.getBoolean("osm-primitives.localize-name", true)) {
                         nameTag = relation.getLocalName();
                     } else {

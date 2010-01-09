@@ -63,7 +63,7 @@ public class MainApplication extends Main {
 
     /**
      * Displays help on the console
-     * 
+     *
      */
     public static void showHelp() {
         // TODO: put in a platformHook for system that have no console by default

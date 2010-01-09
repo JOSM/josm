@@ -69,7 +69,7 @@ public class OsmConnection {
 
     /**
      * Adds an authentication header for basic authentication
-     * 
+     *
      * @param con the connection
      * @throws OsmTransferException thrown is something went wrong. Check for nested exceptions
      */
@@ -104,9 +104,9 @@ public class OsmConnection {
 
     /**
      * Signs the connection with an OAuth authentication header
-     * 
+     *
      * @param connection the connection
-     * 
+     *
      * @throws OsmTransferException thrown if there is currently no OAuth Access Token configured
      * @throws OsmTransferException thrown if signing fails
      */

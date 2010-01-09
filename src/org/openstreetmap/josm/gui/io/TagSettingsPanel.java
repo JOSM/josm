@@ -98,7 +98,7 @@ public class TagSettingsPanel extends JPanel implements PropertyChangeListener, 
 
     /**
      * Replies the map with the current tags in the tag editor model.
-     * 
+     *
      * @return the map with the current tags in the tag editor model.
      */
     public Map<String,String> getTags() {

@@ -78,7 +78,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
-
     public static final int snapDistance = Main.pref.getInteger("node.snap-distance", 10);
     public static final int snapDistanceSq = sqr(snapDistance);
 

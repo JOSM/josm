@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.osm.ChangesetCacheListener;
 /**
  * A combobox model for the list of open changesets. The model is populated with the list
  * of open changesets kept in the {@see ChangesetCache}.
- * 
+ *
  */
 public class OpenChangesetComboBoxModel extends DefaultComboBoxModel implements ChangesetCacheListener {
     private List<Changeset> changesets;

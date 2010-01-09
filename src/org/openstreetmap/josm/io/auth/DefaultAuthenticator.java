@@ -13,7 +13,7 @@ import org.openstreetmap.josm.Main;
  * This is the default authenticator used in JOSM. It delegates lookup of credentials
  * for the OSM API and an optional proxy server to the currently configured
  * {@see CredentialsManager}.
- * 
+ *
  */
 public  class DefaultAuthenticator extends Authenticator {
     private static final Logger logger = Logger.getLogger(DefaultAuthenticator.class.getName());
@@ -32,19 +32,17 @@ public  class DefaultAuthenticator extends Authenticator {
     private boolean enabled = true;
 
     /**
-     * 
+     *
      * @param credentialManager the credential manager
      */
     private DefaultAuthenticator(CredentialsManager credentialManager) {
         this.credentialManager = credentialManager;
     }
 
-
-
     /**
      * Called by the Java http stack when either the OSM API server or a proxy requires
      * authentication.
-     * 
+     *
      */
     @Override protected PasswordAuthentication getPasswordAuthentication() {
         if (!enabled)

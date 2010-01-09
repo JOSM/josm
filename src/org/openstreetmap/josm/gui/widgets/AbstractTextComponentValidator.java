@@ -21,15 +21,15 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * This is an abstract class for a validator on a text component.
- * 
+ *
  * Subclasses implement {@see #validate()}. {@see #validate()} is invoked whenever
  * <ul>
  *   <li>the content of the text component changes (the validator is a {@see DocumentListener})</li>
  *   <li>the text component loses focus (the validator is a {@see FocusListener})</li>
  *   <li>the text component is a {@see JTextField} and an {@see ActionEvent} is detected</li>
  * </ul>
- * 
- * 
+ *
+ *
  */
 public abstract class AbstractTextComponentValidator implements ActionListener, FocusListener, DocumentListener, PropertyChangeListener{
     static final private Border ERROR_BORDER = BorderFactory.createLineBorder(Color.RED, 1);
@@ -69,7 +69,7 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
 
     /**
      * Replies the decorated text component
-     * 
+     *
      * @return the decorated text component
      */
     public JTextComponent getComponent() {
@@ -78,7 +78,7 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
 
     /**
      * Creates the validator and weires it to the text component <code>tc</code>.
-     * 
+     *
      * @param tc the text component. Must not be null.
      * @throws IllegalArgumentException thrown if tc is null
      */
@@ -96,14 +96,14 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
 
     /**
      * Implement in subclasses to validate the content of the text component.
-     * 
+     *
      */
     public abstract void validate();
 
     /**
      * Replies true if the current content of the decorated text component is valid;
      * false otherwise
-     * 
+     *
      * @return true if the current content of the decorated text component is valid
      */
     public abstract boolean isValid();

@@ -39,7 +39,7 @@ public class DataChangedEvent extends AbstractDatasetChangedEvent {
     }
 
     /**
-     * 
+     *
      * @return List of events that caused this DataChangedEvent. Might be null
      */
     public List<AbstractDatasetChangedEvent> getEvents() {

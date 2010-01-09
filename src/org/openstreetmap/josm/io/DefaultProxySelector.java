@@ -18,10 +18,9 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel.ProxyPolicy;
 
-
 /**
  * This is the default proxy selector used in JOSM.
- * 
+ *
  */
 public class DefaultProxySelector extends ProxySelector {
     static private final Logger logger = Logger.getLogger(DefaultProxySelector.class.getName());
@@ -47,9 +46,9 @@ public class DefaultProxySelector extends ProxySelector {
      * from the system settings, if the system property <tt>java.net.useSystemProxies</tt>
      * is defined <strong>at startup</strong>. If the property is set later by the application,
      * this has no effect.
-     * 
+     *
      * @return true, if <tt>java.net.useSystemProxies</tt> was set to true at class initialization time
-     * 
+     *
      */
     public static boolean willJvmRetrieveSystemProxies() {
         return JVM_WILL_USE_SYSTEM_PROXIES;
@@ -66,7 +65,7 @@ public class DefaultProxySelector extends ProxySelector {
      *    PropertySelector delegate = PropertySelector.getDefault();
      *    PropertySelector.setDefault(new DefaultPropertySelector(delegate));
      * </pre>
-     * 
+     *
      * @param delegate the proxy selector to delegate to if system settings are used. Usually
      * this is the proxy selector found by ProxySelector.getDefault() before this proxy
      * selector is installed
@@ -96,7 +95,7 @@ public class DefaultProxySelector extends ProxySelector {
 
     /**
      * Initializes the proxy selector from the setting in the preferences.
-     * 
+     *
      */
     public void initFromPreferences() {
         String value = Main.pref.get(ProxyPreferencesPanel.PROXY_POLICY);

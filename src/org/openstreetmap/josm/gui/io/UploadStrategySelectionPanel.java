@@ -36,7 +36,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * UploadStrategySelectionPanel is a panel for selecting an upload strategy.
- * 
+ *
  * Clients can listen for property change events for the property
  * {@see #UPLOAD_STRATEGY_SPECIFICATION_PROP}.
  */

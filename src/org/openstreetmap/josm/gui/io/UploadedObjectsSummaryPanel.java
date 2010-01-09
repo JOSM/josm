@@ -21,7 +21,7 @@ import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 /**
  * This panel displays a summary of the objects to upload. It is displayed in
  * the upper part of the {@see UploadDialog}.
- * 
+ *
  */
 public class UploadedObjectsSummaryPanel extends JPanel {
     static public final String NUM_OBJECTS_TO_UPLOAD_PROP = UploadedObjectsSummaryPanel.class.getName() + ".numObjectsToUpload";
@@ -126,7 +126,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
 
     /**
      * Replies the number of objects to upload
-     * 
+     *
      * @return the number of objects to upload
      */
     public int  getNumObjectsToUpload() {

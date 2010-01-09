@@ -460,7 +460,6 @@ abstract public class Main {
         return true;
     }
 
-
     /**
      * The type of a command line parameter, to be used in switch statements.
      * @see paramType
@@ -531,7 +530,6 @@ abstract public class Main {
         // ... and the continuation when the download is finished (this will wait for the download to finish)
         Main.worker.execute(new PostDownloadHandler(task, future));
     }
-
 
     public static void determinePlatformHook() {
         String os = System.getProperty("os.name");

@@ -148,7 +148,6 @@ public class BasicUploadSettingsPanel extends JPanel implements PropertyChangeLi
         hcbUploadComment.requestFocusInWindow();
     }
 
-
     public UploadParameterSummaryPanel getUploadParameterSummaryPanel() {
         return pnlUploadParameterSummary;
     }

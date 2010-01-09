@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.oauth.OAuthToken;
  *   <li>the credential for {@see RequestorType#PROXY} which is equal to the credentials for an
  *   optional HTTP proxy server a user may use</li>
  *  </ul>
- * 
+ *
  *  In addition, it manages an OAuth Access Token for accessing the OSM server.
  */
 public interface CredentialsManager {
@@ -50,11 +50,10 @@ public interface CredentialsManager {
      */
     public CredentialsManagerResponse getCredentials(RequestorType requestorType, boolean noSuccessWithLastResponse) throws CredentialsManagerException;
 
-
     /**
      * Lookup the current OAuth Access Token to access the OSM server. Replies null, if no
      * Access Token is currently managed by this CredentialManager.
-     * 
+     *
      * @return the current OAuth Access Token to access the OSM server.
      * @throws CredentialsManagerException thrown if something goes wrong
      */
@@ -62,7 +61,7 @@ public interface CredentialsManager {
 
     /**
      * Stores the OAuth Access Token <code>accessToken</code>.
-     * 
+     *
      * @param accessToken the access Token. null, to remove the Access Token.
      * @throws CredentialsManagerException thrown if something goes wrong
      */

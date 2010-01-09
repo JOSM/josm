@@ -355,7 +355,7 @@ public class GpxReader {
     }
 
     /**
-     * 
+     *
      * @return True if file was properly parsed, false if there was error during parsing but some data were parsed anyway
      * @throws SAXException
      * @throws IOException

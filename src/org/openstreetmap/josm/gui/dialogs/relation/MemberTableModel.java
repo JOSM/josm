@@ -689,7 +689,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
 
     /*
      * Sort a collection of relation members by the way they are linked.
-     * 
+     *
      * @param relationMembers collection of relation members
      * @return sorted collection of relation members
      */
