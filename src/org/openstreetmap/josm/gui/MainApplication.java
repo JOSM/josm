@@ -75,17 +75,17 @@ public class MainApplication extends Main {
                 "\t--geometry=widthxheight(+|-)x(+|-)y       "+tr("Standard unix geometry argument")+"\n"+
                 "\t[--download=]minlat,minlon,maxlat,maxlon  "+tr("Download the bounding box")+"\n"+
                 "\t[--download=]<url>                        "+tr("Download the location at the url (with lat=x&lon=y&zoom=z)")+"\n"+
-                "\t[--download=]<filename>                   "+tr("Open file (as raw gps, if .gpx)")+"\n"+
+                "\t[--download=]<filename>                   "+tr("Open a file (any file type that can be opened with File/Open)")+"\n"+
                 "\t--downloadgps=minlat,minlon,maxlat,maxlon "+tr("Download the bounding box as raw gps")+"\n"+
                 "\t--downloadgps=<url>                       "+tr("Download the location at the url (with lat=x&lon=y&zoom=z) as raw gps")+"\n"+
                 "\t--selection=<searchstring>                "+tr("Select with the given search")+"\n"+
                 "\t--[no-]maximize                           "+tr("Launch in maximized mode")+"\n"+
                 "\t--reset-preferences                       "+tr("Reset the preferences to default")+"\n\n"+
-                "\t--language=<language>                     "+tr("Set the language.")+"\n\n"+
+                "\t--language=<language>                     "+tr("Set the language")+"\n\n"+
                 tr("options provided as Java system properties")+":\n"+
                 "\t-Djosm.home="+tr("/PATH/TO/JOSM/FOLDER/         ")+tr("Change the folder for all user settings")+"\n\n"+
                 tr("note: For some tasks, JOSM needs a lot of memory. It can be necessary to add the following\n" +
-                "      Java option to increase the maximum size of allocated memory")+":\n"+
+                "      Java option to specify the maximum size of allocated memory in megabytes")+":\n"+
                 "\t-Xmx...m\n\n"+
                 tr("examples")+":\n"+
                 "\tjava -jar josm.jar track1.gpx track2.gpx london.osm\n"+
@@ -95,8 +95,7 @@ public class MainApplication extends Main {
                 "\tjava -Djosm.home=/home/user/.josm_dev -jar josm.jar\n"+
                 "\tjava -Xmx400m -jar josm.jar\n\n"+
                 tr("Parameters are read in the order they are specified, so make sure you load\n"+
-                "some data before --selection")+"\n\n"+
-                tr("Instead of --download=<bbox> you may specify osm://<bbox>\n"));
+                "some data before --selection")+"\n");
     }
 
     /**
