@@ -6,8 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -36,6 +36,7 @@ public class JpgImporter extends FileImporter {
             return;
         LinkedList<File> files = new LinkedList<File>();
         addRecursiveFiles(files, sel);
+        if(files.isEmpty()) throw new IOException(tr("No image files found."));
         GeoImageLayer.create(files, gpx);
     }
 
