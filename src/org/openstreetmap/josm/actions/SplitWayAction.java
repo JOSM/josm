@@ -421,6 +421,7 @@ public class SplitWayAction extends JosmAction {
                                 }
                                 break;
                             }
+                            k++;
                         }
 
                         int j = i;
