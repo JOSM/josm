@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -31,6 +30,8 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
@@ -189,112 +190,6 @@ public class MapPaintVisitor implements PaintVisitor {
             }
             areaStyle.getLineStyle().paintPrimitive(w, paintSettings, painter, data.isSelected(w));
         }
-    }
-
-    public Collection<PolyData> joinWays(Collection<Way> join, OsmPrimitive errs)
-    {
-        Collection<PolyData> res = new LinkedList<PolyData>();
-        Way[] joinArray = join.toArray(new Way[join.size()]);
-        int left = join.size();
-        while(left != 0)
-        {
-            Way w = null;
-            boolean selected = false;
-            List<Node> n = null;
-            boolean joined = true;
-            while(joined && left != 0)
-            {
-                joined = false;
-                for(int i = 0; i < joinArray.length && left != 0; ++i)
-                {
-                    if(joinArray[i] != null)
-                    {
-                        Way c = joinArray[i];
-                        if(w == null)
-                        { w = c; selected = data.isSelected(w); joinArray[i] = null; --left; }
-                        else
-                        {
-                            int mode = 0;
-                            int cl = c.getNodesCount()-1;
-                            int nl;
-                            if(n == null)
-                            {
-                                nl = w.getNodesCount()-1;
-                                if(w.getNode(nl) == c.getNode(0)) {
-                                    mode = 21;
-                                } else if(w.getNode(nl) == c.getNode(cl)) {
-                                    mode = 22;
-                                } else if(w.getNode(0) == c.getNode(0)) {
-                                    mode = 11;
-                                } else if(w.getNode(0) == c.getNode(cl)) {
-                                    mode = 12;
-                                }
-                            }
-                            else
-                            {
-                                nl = n.size()-1;
-                                if(n.get(nl) == c.getNode(0)) {
-                                    mode = 21;
-                                } else if(n.get(0) == c.getNode(cl)) {
-                                    mode = 12;
-                                } else if(n.get(0) == c.getNode(0)) {
-                                    mode = 11;
-                                } else if(n.get(nl) == c.getNode(cl)) {
-                                    mode = 22;
-                                }
-                            }
-                            if(mode != 0)
-                            {
-                                joinArray[i] = null;
-                                joined = true;
-                                if(data.isSelected(c)) {
-                                    selected = true;
-                                }
-                                --left;
-                                if(n == null) {
-                                    n = w.getNodes();
-                                }
-                                n.remove((mode == 21 || mode == 22) ? nl : 0);
-                                if(mode == 21) {
-                                    n.addAll(c.getNodes());
-                                } else if(mode == 12) {
-                                    n.addAll(0, c.getNodes());
-                                } else if(mode == 22)
-                                {
-                                    for(Node node : c.getNodes()) {
-                                        n.add(nl, node);
-                                    }
-                                }
-                                else /* mode == 11 */
-                                {
-                                    for(Node node : c.getNodes()) {
-                                        n.add(0, node);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } /* for(i = ... */
-            } /* while(joined) */
-            if(n != null)
-            {
-                w = new Way(w);
-                w.setNodes(n);
-            }
-            if(!w.isClosed())
-            {
-                if(errs != null)
-                {
-                    putError(errs, tr("multipolygon way ''{0}'' is not closed.",
-                            w.getDisplayName(DefaultNameFormatter.getInstance())), true);
-                }
-            }
-            PolyData pd = new PolyData(w);
-            pd.selected = selected;
-            res.add(pd);
-        } /* while(left != 0) */
-
-        return res;
     }
 
     public void drawSelectedMember(OsmPrimitive osm, ElemStyle style, boolean area,
@@ -563,147 +458,17 @@ public class MapPaintVisitor implements PaintVisitor {
                 pVia, vx, vx2, vy, vy2, iconAngle, data.isSelected(r));
     }
 
-    class PolyData {
-        public Polygon poly = new Polygon();
-        public Way way;
-        public boolean selected = false;
-        private Point p = null;
-        private Collection<Polygon> inner = null;
-        PolyData(Way w)
-        {
-            way = w;
-            for (Node n : w.getNodes())
-            {
-                p = nc.getPoint(n);
-                poly.addPoint(p.x,p.y);
-            }
-        }
-        public int contains(Polygon p)
-        {
-            int contains = p.npoints;
-            for(int i = 0; i < p.npoints; ++i)
-            {
-                if(poly.contains(p.xpoints[i],p.ypoints[i])) {
-                    --contains;
-                }
-            }
-            if(contains == 0) return 1;
-            if(contains == p.npoints) return 0;
-            return 2;
-        }
-        public void addInner(Polygon p)
-        {
-            if(inner == null) {
-                inner = new ArrayList<Polygon>();
-            }
-            inner.add(p);
-        }
-        public boolean isClosed()
-        {
-            return (poly.npoints >= 3
-                    && poly.xpoints[0] == poly.xpoints[poly.npoints-1]
-                                                       && poly.ypoints[0] == poly.ypoints[poly.npoints-1]);
-        }
-        public Polygon get()
-        {
-            if(inner != null)
-            {
-                for (Polygon pp : inner)
-                {
-                    for(int i = 0; i < pp.npoints; ++i) {
-                        poly.addPoint(pp.xpoints[i],pp.ypoints[i]);
-                    }
-                    poly.addPoint(p.x,p.y);
-                }
-                inner = null;
-            }
-            return poly;
-        }
-    }
-    void addInnerToOuters(Relation r, boolean incomplete, PolyData pdInner, LinkedList<PolyData> outerPolygons)
-    {
-        Way wInner = pdInner.way;
-        if(wInner != null && !wInner.isClosed())
-        {
-            Point pInner = nc.getPoint(wInner.getNode(0));
-            pdInner.poly.addPoint(pInner.x,pInner.y);
-        }
-        PolyData o = null;
-        for (PolyData pdOuter : outerPolygons)
-        {
-            int c = pdOuter.contains(pdInner.poly);
-            if(c >= 1)
-            {
-                if(c > 1 && pdOuter.way != null && pdOuter.way.isClosed())
-                {
-                    putError(r, tr("Intersection between ways ''{0}'' and ''{1}''.",
-                            pdOuter.way.getDisplayName(DefaultNameFormatter.getInstance()), wInner.getDisplayName(DefaultNameFormatter.getInstance())), true);
-                }
-                if(o == null || o.contains(pdOuter.poly) > 0) {
-                    o = pdOuter;
-                }
-            }
-        }
-        if(o == null)
-        {
-            if(!incomplete)
-            {
-                putError(r, tr("Inner way ''{0}'' is outside.",
-                        wInner.getDisplayName(DefaultNameFormatter.getInstance())), true);
-            }
-            o = outerPolygons.get(0);
-        }
-        o.addInner(pdInner.poly);
-    }
-
     public boolean drawMultipolygon(Relation r) {
-        Collection<Way> inner = new LinkedList<Way>();
-        Collection<Way> outer = new LinkedList<Way>();
-        Collection<Way> innerclosed = new LinkedList<Way>();
-        Collection<Way> outerclosed = new LinkedList<Way>();
-        boolean incomplete = false;
         boolean drawn = false;
 
-        // Fill inner and outer list with valid ways
-        for (RelationMember m : r.getMembers()) {
-            if (m.getMember().isIncomplete()) {
-                incomplete = true;
-            } else if(m.getMember().isDrawable()) {
-                if(m.isWay()) {
-                    Way w = m.getWay();
-                    if(w.getNodesCount() < 2) {
-                        continue;
-                    }
-
-                    if("inner".equals(m.getRole())) {
-                        inner.add(w);
-                    } else if("outer".equals(m.getRole())) {
-                        outer.add(w);
-                    } else {
-                        putError(r, tr("No useful role ''{0}'' for Way ''{1}''.",
-                                m.getRole(), w.getDisplayName(DefaultNameFormatter.getInstance())), true);
-                        if(!m.hasRole()) {
-                            outer.add(w);
-                        } else if(data.isSelected(r)) {
-                            // TODO Is this necessary?
-                            drawSelectedMember(m.getMember(), styles != null
-                                    ? getPrimitiveStyle(m.getMember()) : null, true, true);
-                        }
-                    }
-                }
-                else
-                {
-                    putError(r, tr("Non-Way ''{0}'' in multipolygon.",
-                            m.getMember().getDisplayName(DefaultNameFormatter.getInstance())), true);
-                }
-            }
-        }
+        Multipolygon multipolygon = new Multipolygon(nc);
+        multipolygon.load(r);
 
         ElemStyle wayStyle = getPrimitiveStyle(r);
 
         // If area style was not found for relation then use style of ways
         if(styles != null && !(wayStyle instanceof AreaElemStyle)) {
-            for (Way w : outer) {
+            for (Way w : multipolygon.getOuterWays()) {
                 wayStyle = styles.getArea(w);
                 if(wayStyle != null) {
                     break;
@@ -715,58 +480,18 @@ public class MapPaintVisitor implements PaintVisitor {
         if (wayStyle instanceof AreaElemStyle) {
             boolean zoomok = isZoomOk(wayStyle);
             boolean visible = false;
-            Collection<Way> outerjoin = new LinkedList<Way>();
-            Collection<Way> innerjoin = new LinkedList<Way>();
 
             drawn = true;
-            for (Way w : outer)
-            {
-                if(w.isClosed()) {
-                    outerclosed.add(w);
-                } else {
-                    outerjoin.add(w);
-                }
-            }
-            for (Way w : inner)
-            {
-                if(w.isClosed()) {
-                    innerclosed.add(w);
-                } else {
-                    innerjoin.add(w);
-                }
-            }
 
-
-            if(outerclosed.size() == 0 && outerjoin.size() == 0)
-            {
-                putError(r, tr("No outer way for multipolygon ''{0}''.",
-                        r.getDisplayName(DefaultNameFormatter.getInstance())), true);
-                visible = true; /* prevent killing remaining ways */
-            }
-            else if(zoomok)
-            {
-                LinkedList<PolyData> outerPoly = new LinkedList<PolyData>();
-                for (Way w : outerclosed) {
-                    outerPoly.add(new PolyData(w));
-                }
-                outerPoly.addAll(joinWays(outerjoin, incomplete ? null : r));
-                for (Way wInner : innerclosed)
-                {
-                    PolyData pdInner = new PolyData(wInner);
-                    // incomplete is probably redundant
-                    addInnerToOuters(r, incomplete, pdInner, outerPoly);
-                }
-                for (PolyData pdInner : joinWays(innerjoin, incomplete ? null : r)) {
-                    addInnerToOuters(r, incomplete, pdInner, outerPoly);
-                }
+            if(zoomok && !multipolygon.getOuterWays().isEmpty()) {
                 AreaElemStyle areaStyle = (AreaElemStyle)wayStyle;
-                for (PolyData pd : outerPoly) {
+                for (PolyData pd : multipolygon.getCombinedPolygons()) {
                     Polygon p = pd.get();
                     if(!isPolygonVisible(p)) {
                         continue;
                     }
 
-                    boolean selected = pd.selected || data.isSelected(pd.way) || data.isSelected(r);
+                    boolean selected = pd.selected || data.isSelected(r);
                     painter.drawArea(p, selected ? paintSettings.getSelectedColor() : areaStyle.color, null);
                     visible = true;
                 }
@@ -774,7 +499,7 @@ public class MapPaintVisitor implements PaintVisitor {
 
             if(!visible)
                 return drawn;
-            for (Way wInner : inner)
+            for (Way wInner : multipolygon.getInnerWays())
             {
                 ElemStyle innerStyle = getPrimitiveStyle(wInner);
                 if(innerStyle == null)
@@ -782,9 +507,7 @@ public class MapPaintVisitor implements PaintVisitor {
                     if (data.isSelected(wInner)) {
                         continue;
                     }
-                    if(zoomok && (wInner.mappaintDrawnCode != paintid
-                            || outer.size() == 0))
-                    {
+                    if(zoomok && (wInner.mappaintDrawnCode != paintid || multipolygon.getOuterWays().isEmpty())) {
                         ((AreaElemStyle)wayStyle).getLineStyle().paintPrimitive(wInner, paintSettings, painter, (data.isSelected(wInner)
                                 || data.isSelected(r)));
                     }
@@ -807,7 +530,7 @@ public class MapPaintVisitor implements PaintVisitor {
                     }
                 }
             }
-            for (Way wOuter : outer)
+            for (Way wOuter : multipolygon.getOuterWays())
             {
                 ElemStyle outerStyle = getPrimitiveStyle(wOuter);
                 if(outerStyle == null)
