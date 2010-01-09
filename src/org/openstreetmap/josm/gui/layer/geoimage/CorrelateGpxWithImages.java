@@ -647,7 +647,7 @@ public class CorrelateGpxWithImages implements ActionListener {
 
                 lastNumMatched = matchGpxTrack(dateImgLst, selGpx.data, (long) (timezone * 3600) + delta);
 
-                return tr("<html>Matched <b>{0}</b> of <b>{1}</b> photos to GPX track.", lastNumMatched, dateImgLst.size());
+                return tr("<html>Matched <b>{0}</b> of <b>{1}</b> photos to GPX track.</html>", lastNumMatched, dateImgLst.size());
             }
         };
 
