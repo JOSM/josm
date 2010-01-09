@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -200,8 +201,8 @@ public class SearchAction extends JosmAction{
         public Boolean isSomething(OsmPrimitive o);
     }
 
-    public static Integer getSelection(SearchSetting s, Collection<OsmPrimitive> sel, Function f) {
-        Integer foundMatches = 0;
+    public static int getSelection(SearchSetting s, Collection<OsmPrimitive> sel, Function f) {
+        int foundMatches = 0;
         try {
             String searchText = s.text;
             if(s instanceof Filter){
@@ -210,14 +211,16 @@ public class SearchAction extends JosmAction{
             }
             /*System.out.println(searchText);*/
             SearchCompiler.Match matcher = SearchCompiler.compile(searchText, s.caseSensitive, s.regexSearch);
-            foundMatches = 0;
+
+            if (s.mode == SearchMode.replace) {
+                sel.clear();
+            }
+
             for (OsmPrimitive osm : Main.main.getCurrentDataSet().allNonDeletedCompletePrimitives()) {
                 if (s.mode == SearchMode.replace) {
                     if (matcher.match(osm)) {
                         sel.add(osm);
                         ++foundMatches;
-                    } else {
-                        sel.remove(osm);
                     }
                 } else if (s.mode == SearchMode.add && !f.isSomething(osm) && matcher.match(osm)) {
                     sel.add(osm);
@@ -261,7 +264,7 @@ public class SearchAction extends JosmAction{
         //        }
 
         final DataSet ds = Main.main.getCurrentDataSet();
-        Collection<OsmPrimitive> sel = ds.getSelected();
+        Collection<OsmPrimitive> sel = new HashSet<OsmPrimitive>(ds.getSelected());
         int foundMatches = getSelection(s, sel, new Function(){
             public Boolean isSomething(OsmPrimitive o){
                 return ds.isSelected(o);
