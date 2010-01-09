@@ -8,13 +8,10 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Locale;
-import java.util.MissingResourceException;
 import java.util.Vector;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
  * Internationalisation support.
@@ -23,7 +20,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  */
 public class I18n {
     private enum PluralMode { MODE_NOTONE, MODE_NONE, MODE_GREATERONE,
-    MODE_CS, MODE_AR, MODE_PL, MODE_RO, MODE_RU, MODE_SK, MODE_SL}
+        MODE_CS, MODE_AR, MODE_PL, MODE_RO, MODE_RU, MODE_SK, MODE_SL}
     private static PluralMode pluralMode = PluralMode.MODE_NOTONE; /* english default */
     private static HashMap<String, String> strings = null;
     private static HashMap<String, String[]> pstrings = null;
@@ -167,18 +164,19 @@ public class I18n {
         languages.put("zh_TW", PluralMode.MODE_NONE);
 
         /* try initial language settings, may be changed later again */
-        if(!load(Locale.getDefault().toString()))
+        if(!load(Locale.getDefault().toString())) {
             Locale.setDefault(Locale.ENGLISH);
+        }
     }
 
     private static boolean load(String l)
     {
-        if(l.equals("en"))
+        if(l.equals("en") || l.equals("en_US"))
         {
-          strings = null;
-          pstrings = null;
-          pluralMode = PluralMode.MODE_NOTONE;
-          return true;
+            strings = null;
+            pstrings = null;
+            pluralMode = PluralMode.MODE_NOTONE;
+            return true;
         }
         URL en = Main.class.getResource("/data/en.lang");
         if(en == null)
@@ -187,8 +185,9 @@ public class I18n {
         if(tr == null)
         {
             int i = l.indexOf('_');
-            if (i > 0)
+            if (i > 0) {
                 l = l.substring(0, i);
+            }
             tr = Main.class.getResource("/data/"+l+".lang");
             if(tr == null)
                 return false;
@@ -210,13 +209,11 @@ public class I18n {
                unsigned short (2 byte) stringlength
                string
            }
-        */
+         */
         try
         {
             InputStream ens = new BufferedInputStream(en.openStream());
             InputStream trs = new BufferedInputStream(tr.openStream());
-            if(ens == null || trs == null)
-                return false;
             byte[] enlen = new byte[2];
             byte[] trlen = new byte[2];
             boolean multimode = false;
@@ -229,8 +226,9 @@ public class I18n {
                     int trnum = trs.read();
                     if((ennum == -1 && trnum != -1) || (ennum != -1 && trnum == -1)) /* files do not match */
                         return false;
-                    if(ennum == -1) /* EOF */
+                    if(ennum == -1) {
                         break;
+                    }
                     String[] enstrings = new String[ennum];
                     String[] trstrings = new String[trnum];
                     for(int i = 0; i < ennum; ++i)
@@ -239,8 +237,9 @@ public class I18n {
                         if(val != 2) /* file corrupt */
                             return false;
                         val = (enlen[0] < 0 ? 256+enlen[0]:enlen[0])*256+(enlen[1] < 0 ? 256+enlen[1]:enlen[1]);
-                        if(val > str.length)
+                        if(val > str.length) {
                             str = new byte[val];
+                        }
                         int rval = ens.read(str, 0, val);
                         if(rval != val) /* file corrupt */
                             return false;
@@ -252,15 +251,17 @@ public class I18n {
                         if(val != 2) /* file corrupt */
                             return false;
                         val = (trlen[0] < 0 ? 256+trlen[0]:trlen[0])*256+(trlen[1] < 0 ? 256+trlen[1]:trlen[1]);
-                        if(val > str.length)
+                        if(val > str.length) {
                             str = new byte[val];
+                        }
                         int rval = trs.read(str, 0, val);
                         if(rval != val) /* file corrupt */
                             return false;
                         trstrings[i] = new String(str, 0, val, "utf-8");
                     }
-                    if(trnum > 0)
+                    if(trnum > 0) {
                         p.put(enstrings[0], trstrings);
+                    }
                 }
                 else
                 {
@@ -268,8 +269,9 @@ public class I18n {
                     int trval = trs.read(trlen);
                     if(enval != trval) /* files do not match */
                         return false;
-                    if(enval == -1) /* EOF */
+                    if(enval == -1) {
                         break;
+                    }
                     if(enval != 2) /* files corrupt */
                         return false;
                     enval = (enlen[0] < 0 ? 256+enlen[0]:enlen[0])*256+(enlen[1] < 0 ? 256+enlen[1]:enlen[1]);
@@ -282,10 +284,12 @@ public class I18n {
                     }
                     else
                     {
-                        if(enval > str.length)
+                        if(enval > str.length) {
                             str = new byte[enval];
-                        if(trval > str.length)
+                        }
+                        if(trval > str.length) {
                             str = new byte[trval];
+                        }
                         int val = ens.read(str, 0, enval);
                         if(val != enval) /* file corrupt */
                             return false;
@@ -365,20 +369,20 @@ public class I18n {
             return ((n == 1) ? 0 : (((n >= 2) && (n <= 4)) ? 1 : 2));
         case MODE_AR:
             return ((n == 0) ? 0 : ((n == 1) ? 1 : ((n == 2) ? 2 : ((((n % 100) >= 3)
-            && ((n % 100) <= 10)) ? 3 : ((((n % 100) >= 11) && ((n % 100) <= 99)) ? 4 : 5)))));
+                    && ((n % 100) <= 10)) ? 3 : ((((n % 100) >= 11) && ((n % 100) <= 99)) ? 4 : 5)))));
         case MODE_PL:
             return ((n == 1) ? 0 : (((((n % 10) >= 2) && ((n % 10) <= 4))
-            && (((n % 100) < 10) || ((n % 100) >= 20))) ? 1 : 2));
+                    && (((n % 100) < 10) || ((n % 100) >= 20))) ? 1 : 2));
         case MODE_RO:
             return ((n == 1) ? 0 : ((((n % 100) > 19) || (((n % 100) == 0) && (n != 0))) ? 2 : 1));
         case MODE_RU:
             return ((((n % 10) == 1) && ((n % 100) != 11)) ? 0 : (((((n % 10) >= 2)
-            && ((n % 10) <= 4)) && (((n % 100) < 10) || ((n % 100) >= 20))) ? 1 : 2));
+                    && ((n % 10) <= 4)) && (((n % 100) < 10) || ((n % 100) >= 20))) ? 1 : 2));
         case MODE_SK:
             return ((n == 1) ? 1 : (((n >= 2) && (n <= 4)) ? 2 : 0));
         case MODE_SL:
             return (((n % 100) == 1) ? 1 : (((n % 100) == 2) ? 2 : ((((n % 100) == 3)
-            || ((n % 100) == 4)) ? 3 : 0)));
+                    || ((n % 100) == 4)) ? 3 : 0)));
         }
         return 0;
     }
