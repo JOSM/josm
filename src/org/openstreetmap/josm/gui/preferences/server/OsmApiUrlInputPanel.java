@@ -36,6 +36,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class OsmApiUrlInputPanel extends JPanel {
     static public final String API_URL_PROP = OsmApiUrlInputPanel.class.getName() + ".apiUrl";
 
+    static private final String defaulturl = "http://api.openstreetmap.org/api";
     private JLabel lblValid;
     private JLabel lblApiUrl;
     private JTextField tfOsmServerUrl;
@@ -58,7 +59,7 @@ public class OsmApiUrlInputPanel extends JPanel {
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        JLabel lbl = new JLabel("<html>Use the default OSM server URL (<strong>http://api.openstreetmap.org/api</strong>)</html>");
+        JLabel lbl = new JLabel(tr("<html>Use the default OSM server URL (<strong>{0}</strong>)</html>", defaulturl));
         lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
         pnl.add(lbl, gc);
 
@@ -119,10 +120,10 @@ public class OsmApiUrlInputPanel extends JPanel {
         String url =  Main.pref.get("osm-server.url", null);
         if (url == null) {
             cbUseDefaultServerUrl.setSelected(true);
-            firePropertyChange(API_URL_PROP, null, "http://api.openstreetmap.org/api");
-        } else if (url.trim().equals("http://api.openstreetmap.org/api")) {
+            firePropertyChange(API_URL_PROP, null, defaulturl);
+        } else if (url.trim().equals(defaulturl)) {
             cbUseDefaultServerUrl.setSelected(true);
-            firePropertyChange(API_URL_PROP, null, "http://api.openstreetmap.org/api");
+            firePropertyChange(API_URL_PROP, null, defaulturl);
         } else {
             cbUseDefaultServerUrl.setSelected(false);
             tfOsmServerUrl.setText(url);
@@ -136,7 +137,7 @@ public class OsmApiUrlInputPanel extends JPanel {
     public void saveToPreferences() {
         if (cbUseDefaultServerUrl.isSelected()) {
             Main.pref.put("osm-server.url", null);
-        } else if (tfOsmServerUrl.getText().trim().equals("http://api.openstreetmap.org/api")) {
+        } else if (tfOsmServerUrl.getText().trim().equals(defaulturl)) {
             Main.pref.put("osm-server.url", null);
         } else {
             Main.pref.put("osm-server.url", tfOsmServerUrl.getText().trim());
@@ -250,7 +251,7 @@ public class OsmApiUrlInputPanel extends JPanel {
             switch(e.getStateChange()) {
             case ItemEvent.SELECTED:
                 setApiUrlInputEnabled(false);
-                firePropertyChange(API_URL_PROP, null, "http://api.openstreetmap.org/api");
+                firePropertyChange(API_URL_PROP, null, defaulturl);
                 break;
             case ItemEvent.DESELECTED:
                 setApiUrlInputEnabled(true);
