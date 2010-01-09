@@ -59,9 +59,16 @@ public class SearchCompiler {
         abstract public boolean match(OsmPrimitive osm);
     }
 
-    private static class Always extends Match {
+    public static class Always extends Match {
         @Override public boolean match(OsmPrimitive osm) {
             return true;
+        }
+    }
+
+    public static class Never extends Match {
+        @Override
+        public boolean match(OsmPrimitive osm) {
+            return false;
         }
     }
 
