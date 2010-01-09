@@ -100,7 +100,6 @@ Build-Date: ${build.tstamp}
 
 			<!-- All jar files necessary to run only JOSM (no tests) -->
 			<zipfileset src="lib/metadata-extractor-2.3.1-nosun.jar" />
-			<zipfileset src="lib/commons-codec-1.4.jar" />
 			<zipfileset src="lib/signpost-core-1.1.jar" />
 		</jar>
 	</target>
