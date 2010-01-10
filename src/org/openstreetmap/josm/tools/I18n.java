@@ -310,7 +310,7 @@ public class I18n {
         {
             return false;
         }
-        if(!s.isEmpty())
+        if(!s.isEmpty() && languages.containsKey(l))
         {
             strings = s;
             pstrings = p;
