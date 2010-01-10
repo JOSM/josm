@@ -450,7 +450,7 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
         @Override
         protected void finish() {}
 
-        protected void alertAutorisationFailed(OsmOAuthAuthorisationException e) {
+        protected void alertAuthorisationFailed(OsmOAuthAuthorisationException e) {
             HelpAwareOptionPane.showOptionDialog(
                     FullyAutomaticAuthorisationUI.this,
                     tr("<html>"
@@ -462,7 +462,7 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
                     ),
                     tr("OAuth authorisation failed"),
                     JOptionPane.ERROR_MESSAGE,
-                    HelpUtil.ht("/Dialog/OAuthAutorisationWizard#FullyAutomaticProcessFailed")
+                    HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#FullyAutomaticProcessFailed")
             );
         }
 
@@ -472,14 +472,14 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
                     tr("<html>"
                             + "The automatic process for retrieving an OAuth Access Token<br>"
                             + "from the OSM server failed because JOSM wasn't able to build<br>"
-                            + "a valid login URL from the OAuth Autorise Endpoint URL ''{0}''.<br><br>"
+                            + "a valid login URL from the OAuth Authorise Endpoint URL ''{0}''.<br><br>"
                             + "Please check your advanced setting and try again."
                             +"</html>",
                             getAdvancedPropertiesPanel().getAdvancedParameters().getAuthoriseUrl()
                     ),
                     tr("OAuth authorisation failed"),
                     JOptionPane.ERROR_MESSAGE,
-                    HelpUtil.ht("/Dialog/OAuthAutorisationWizard#FullyAutomaticProcessFailed")
+                    HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#FullyAutomaticProcessFailed")
             );
         }
 
@@ -504,7 +504,7 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
                     ),
                     tr("OAuth authorisation failed"),
                     JOptionPane.ERROR_MESSAGE,
-                    HelpUtil.ht("/Dialog/OAuthAutorisationWizard#FullyAutomaticProcessFailed")
+                    HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#FullyAutomaticProcessFailed")
             );
         }
 
@@ -514,7 +514,7 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
                     if (e instanceof OsmLoginFailedException) {
                         alertLoginFailed((OsmLoginFailedException)e);
                     } else {
-                        alertAutorisationFailed(e);
+                        alertAuthorisationFailed(e);
                     }
                 }
             };

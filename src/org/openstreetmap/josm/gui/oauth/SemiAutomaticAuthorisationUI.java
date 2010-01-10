@@ -233,7 +233,7 @@ public class SemiAutomaticAuthorisationUI extends AbstractAuthorisationUI {
             gc.gridy = 1;
             gc.weightx = 0.0;
             gc.gridwidth = 1;
-            pnl.add(new JLabel(tr("Autorise URL:")), gc);
+            pnl.add(new JLabel(tr("Authorise URL:")), gc);
 
             gc.gridx = 1;
             gc.weightx = 1.0;

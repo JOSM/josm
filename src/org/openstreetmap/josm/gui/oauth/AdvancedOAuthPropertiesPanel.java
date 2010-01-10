@@ -33,7 +33,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     private JTextField tfConsumerSecret;
     private JTextField tfRequestTokenURL;
     private JTextField tfAccessTokenURL;
-    private JTextField tfAutoriseURL;
+    private JTextField tfAuthoriseURL;
     private UseDefaultItemListener ilUseDefault;
 
     protected void build() {
@@ -94,16 +94,16 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         SelectAllOnFocusGainedDecorator.decorate(tfAccessTokenURL);
 
 
-        // -- autorise URL
+        // -- authorise URL
         gc.gridy = 5;
         gc.gridx = 0;
         gc.weightx = 0.0;
-        add(new JLabel(tr("Autorise URL:")), gc);
+        add(new JLabel(tr("Authorise URL:")), gc);
 
         gc.gridx = 1;
         gc.weightx = 1.0;
-        add(tfAutoriseURL = new JTextField(), gc);
-        SelectAllOnFocusGainedDecorator.decorate(tfAutoriseURL);
+        add(tfAuthoriseURL = new JTextField(), gc);
+        SelectAllOnFocusGainedDecorator.decorate(tfAuthoriseURL);
 
         cbUseDefaults.addItemListener(ilUseDefault = new UseDefaultItemListener());
     }
@@ -114,7 +114,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         || ! tfConsumerSecret.getText().equals( OAuthParameters.DEFAULT_JOSM_CONSUMER_SECRET)
         || ! tfRequestTokenURL.getText().equals( OAuthParameters.DEFAULT_REQUEST_TOKEN_URL)
         || ! tfAccessTokenURL.getText().equals( OAuthParameters.DEFAULT_ACCESS_TOKEN_URL)
-        || ! tfAutoriseURL.getText().equals( OAuthParameters.DEFAULT_AUTHORISE_URL);
+        || ! tfAuthoriseURL.getText().equals( OAuthParameters.DEFAULT_AUTHORISE_URL);
     }
 
     protected boolean confirmOverwriteCustomSettings() {
@@ -155,7 +155,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         tfConsumerSecret.setText( OAuthParameters.DEFAULT_JOSM_CONSUMER_SECRET);
         tfRequestTokenURL.setText(OAuthParameters.DEFAULT_REQUEST_TOKEN_URL);
         tfAccessTokenURL.setText(OAuthParameters.DEFAULT_ACCESS_TOKEN_URL);
-        tfAutoriseURL.setText(OAuthParameters.DEFAULT_AUTHORISE_URL);
+        tfAuthoriseURL.setText(OAuthParameters.DEFAULT_AUTHORISE_URL);
 
         setChildComponentsEnabled(false);
     }
@@ -181,7 +181,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         parameters.setConsumerSecret(tfConsumerSecret.getText());
         parameters.setRequestTokenUrl(tfRequestTokenURL.getText());
         parameters.setAccessTokenUrl(tfAccessTokenURL.getText());
-        parameters.setAuthoriseUrl(tfAutoriseURL.getText());
+        parameters.setAuthoriseUrl(tfAuthoriseURL.getText());
         return parameters;
     }
 
@@ -203,7 +203,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
             tfConsumerSecret.setText( parameters.getConsumerSecret() == null ? "" : parameters.getConsumerSecret());
             tfRequestTokenURL.setText(parameters.getRequestTokenUrl() == null ? "" : parameters.getRequestTokenUrl());
             tfAccessTokenURL.setText(parameters.getAccessTokenUrl() == null ? "" : parameters.getAccessTokenUrl());
-            tfAutoriseURL.setText(parameters.getAuthoriseUrl() == null ? "" : parameters.getAuthoriseUrl());
+            tfAuthoriseURL.setText(parameters.getAuthoriseUrl() == null ? "" : parameters.getAuthoriseUrl());
         }
     }
 
@@ -229,7 +229,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
             tfConsumerSecret.setText(pref.get("oauth.settings.consumer-secret", ""));
             tfRequestTokenURL.setText(pref.get("oauth.settings.request-token-url", ""));
             tfAccessTokenURL.setText(pref.get("oauth.settings.access-token-url", ""));
-            tfAutoriseURL.setText(pref.get("oauth.settings.authorise-url", ""));
+            tfAuthoriseURL.setText(pref.get("oauth.settings.authorise-url", ""));
             setChildComponentsEnabled(true);
         }
         ilUseDefault.setEnabled(true);
@@ -255,7 +255,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
             pref.put("oauth.settings.consumer-secret", tfConsumerSecret.getText().trim());
             pref.put("oauth.settings.request-token-url", tfRequestTokenURL.getText().trim());
             pref.put("oauth.settings.access-token-url", tfAccessTokenURL.getText().trim());
-            pref.put("oauth.settings.authorise-url", tfAutoriseURL.getText().trim());
+            pref.put("oauth.settings.authorise-url", tfAuthoriseURL.getText().trim());
         }
     }
 

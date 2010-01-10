@@ -47,8 +47,8 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
     private static final Logger logger = Logger.getLogger(OAuthAuthenticationPreferencesPanel.class.getName());
 
     private JPanel pnlAuthorisationMessage;
-    private NotYetAuthorisedPanel pnlNotYetAutorised;
-    private AlreadyAuthorisedPanel pnlAlreadyAutorised;
+    private NotYetAuthorisedPanel pnlNotYetAuthorised;
+    private AlreadyAuthorisedPanel pnlAlreadyAuthorised;
     private AdvancedOAuthPropertiesPanel pnlAdvancedProperties;
     private String apiUrl;
     private JCheckBox cbShowAdvancedParameters;
@@ -122,19 +122,19 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
         // create these two panels, they are going to be used later in refreshView
         //
-        pnlAlreadyAutorised = new AlreadyAuthorisedPanel();
-        pnlNotYetAutorised = new NotYetAuthorisedPanel();
+        pnlAlreadyAuthorised = new AlreadyAuthorisedPanel();
+        pnlNotYetAuthorised = new NotYetAuthorisedPanel();
     }
 
     protected void refreshView() {
         pnlAuthorisationMessage.removeAll();
         if (OAuthAccessTokenHolder.getInstance().containsAccessToken()) {
-            pnlAuthorisationMessage.add(pnlAlreadyAutorised, BorderLayout.CENTER);
-            pnlAlreadyAutorised.refreshView();
-            pnlAlreadyAutorised.revalidate();
+            pnlAuthorisationMessage.add(pnlAlreadyAuthorised, BorderLayout.CENTER);
+            pnlAlreadyAuthorised.refreshView();
+            pnlAlreadyAuthorised.revalidate();
         } else {
-            pnlAuthorisationMessage.add(pnlNotYetAutorised, BorderLayout.CENTER);
-            pnlNotYetAutorised.revalidate();
+            pnlAuthorisationMessage.add(pnlNotYetAuthorised, BorderLayout.CENTER);
+            pnlNotYetAuthorised.revalidate();
         }
         repaint();
     }
