@@ -54,18 +54,30 @@ for my $arg (@ARGV ? @ARGV : @default)
         $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
-      if($l =~ /ImageProvider\.get\(\"(.*?)\",\s+\"(.*?)\"\)/)
+      if($l =~ /ImageProvider\.get\(\"(.*?)\",\s*\"(.*?)\"\s*\)/)
       {
         my $i = "$1/$2";
         $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
-      if($l =~ /ImageProvider\.getCursor\(\"(.*?)\",\s+\"(.*?)\"\)/)
+      if($l =~ /ImageProvider\.overlay\(.*?,\s*\"(.*?)\",/)
+      {
+        my $i = $1;
+        $i .= ".png" if !($i =~ /\.png$/);
+        ++$icons{$i};
+      }
+      if($l =~ /getCursor\(\"(.*?)\",\s*\"(.*?)\"/)
       {
         my $i = "cursor/modifier/$2";
         $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
         $i = "cursor/$1";
+        $i .= ".png" if !($i =~ /\.png$/);
+        ++$icons{$i};
+      }
+      if($l =~ /ImageProvider\.getCursor\(\"(.*?)\",\s*null\)/)
+      {
+        my $i = "cursor/$1";
         $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
@@ -75,13 +87,40 @@ for my $arg (@ARGV ? @ARGV : @default)
         $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
-
+      if($l =~ /audiotracericon\",\s*\"(.*?)\"/s)
+      {
+        my $i = "markers/$1";
+        $i .= ".png" if !($i =~ /\.png$/);
+        ++$icons{$i};
+      }
+      if($l =~ /\"(.*?)\",\s*parentLayer/s)
+      {
+        my $i = "markers/$1";
+        $i .= ".png" if !($i =~ /\.png$/);
+        ++$icons{$i};
+      }
       if($l =~ /allowedtypes\s+=.*\{(.*)\}/s)
       {
         my $t = $1;
         while($t =~ /\"(.*?)\"/g)
         {
           ++$icons{"Mf_$1.png"};
+        }
+      }
+      if($l =~ /MODES\s+=.*\{(.*)\}/s)
+      {
+        my $t = $1;
+        while($t =~ /\"(.*?)\"/g)
+        {
+          ++$icons{"dialogs/autoscale/$1.png"};
+        }
+      }
+      if($l =~ /enum\s+DeleteMode\s*\{(.*)/s)
+      {
+        my $t = $1;
+        while($t =~ /\"(.*?)\"/g)
+        {
+          ++$icons{"cursor/modifier/$1.png"};
         }
       }
       if($l =~ /\.setButtonIcons.*\{(.*)\}/)

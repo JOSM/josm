@@ -147,14 +147,7 @@ public class Marker implements ActionListener {
         this.text = text;
         this.offset = offset;
         this.time = time;
-        Icon symbol = ImageProvider.getIfAvailable("markers",iconName);
-        if (symbol == null) {
-            symbol = ImageProvider.getIfAvailable("symbols",iconName);
-        }
-        if (symbol == null) {
-            symbol = ImageProvider.getIfAvailable("nodes",iconName);
-        }
-        this.symbol = symbol;
+        this.symbol = ImageProvider.getIfAvailable("markers",iconName);
         this.parentLayer = parentLayer;
     }
 
