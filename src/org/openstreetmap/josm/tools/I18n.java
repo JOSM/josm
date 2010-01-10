@@ -178,6 +178,8 @@ public class I18n {
             pluralMode = PluralMode.MODE_NOTONE;
             return true;
         }
+        if (!languages.containsKey(l))
+            return false;
         URL en = Main.class.getResource("/data/en.lang");
         if(en == null)
             return false;
