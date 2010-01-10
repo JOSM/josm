@@ -261,7 +261,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
         public String getName() {
             if (user == null)
-                return tr("<new element>");
+                return tr("<new object>");
             return user.getName();
         }
     }
