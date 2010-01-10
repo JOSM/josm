@@ -26,7 +26,7 @@ public class PlayHeadDragMode extends MapMode {
     private PlayHeadMarker playHeadMarker = null;
 
     public PlayHeadDragMode(PlayHeadMarker m) {
-        super("play head drag", "playheaddrag", "play head drag", null,
+        super(tr("Drag play head"), "playheaddrag", tr("Drag play head"), null,
         Main.map, Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
         playHeadMarker = m;
     }
