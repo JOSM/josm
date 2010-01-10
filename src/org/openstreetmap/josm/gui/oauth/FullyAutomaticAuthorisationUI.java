@@ -238,7 +238,7 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
                 + "You''ve sucessfully retrieved an OAuth Access Token from the OSM website. "
                 + "Click on <strong>{0}</strong> to accept the token. JOSM will use it in "
                 + "subsequent requests to gain access to the OSM API."
-                + "</html",
+                + "</html>",
                 lbl
         ));
         pnl.add(msg, gc);
