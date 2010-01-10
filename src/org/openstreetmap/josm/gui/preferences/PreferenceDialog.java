@@ -89,7 +89,7 @@ public class PreferenceDialog extends JDialog {
         public CancelAction() {
             putValue(NAME, tr("Cancel"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));
-            putValue(SHORT_DESCRIPTION, tr("Close the prefereces dialog and discard preference updates"));
+            putValue(SHORT_DESCRIPTION, tr("Close the preferences dialog and discard preference updates"));
         }
 
         public void cancel() {
