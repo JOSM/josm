@@ -94,7 +94,6 @@ Build-Date: ${build.tstamp}
 				<attribute name="Main-Version" value="${version.entry.commit.revision} SVN"/>
 				<attribute name="Main-Date" value="${version.entry.commit.date}"/>
 			</manifest>
-			<zipfileset dir="presets" prefix="presets" />
 			<zipfileset dir="images" prefix="images" />
 			<zipfileset dir="data" prefix="data" />
 

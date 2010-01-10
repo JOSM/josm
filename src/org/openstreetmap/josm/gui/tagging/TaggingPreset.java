@@ -627,7 +627,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         LinkedList<String> sources = new LinkedList<String>();
 
         if(Main.pref.getBoolean("taggingpreset.enable-defaults", true)) {
-            sources.add("resource://presets/presets.xml");
+            sources.add("resource://data/defaultpresets.xml");
         }
         sources.addAll(Main.pref.getCollection("taggingpreset.sources", new LinkedList<String>()));
 
