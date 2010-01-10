@@ -18,32 +18,32 @@ public class Bounds {
     /**
      * The minimum and maximum coordinates.
      */
-    private LatLon min, max;
+    private double minLat, minLon, maxLat, maxLon;
 
     public LatLon getMin() {
-        return min;
+        return new LatLon(minLat, minLon);
     }
 
     public LatLon getMax() {
-        return max;
+        return new LatLon(maxLat, maxLon);
     }
 
     /**
      * Construct bounds out of two points
      */
     public Bounds(LatLon min, LatLon max) {
-        this.min = min;
-        this.max = max;
+        this(min.lat(), min.lon(), max.lat(), max.lon());
     }
 
     public Bounds(LatLon b) {
-        this.min = b;
-        this.max = b;
+        this(b, b);
     }
 
     public Bounds(double minlat, double minlon, double maxlat, double maxlon) {
-        this.min = new LatLon(minlat, minlon);
-        this.max = new LatLon(maxlat, maxlon);
+        this.minLat = minlat;
+        this.minLon = minlon;
+        this.maxLat = maxlat;
+        this.maxLon = maxlon;
     }
 
     public Bounds(double [] coords) {
@@ -51,8 +51,10 @@ public class Bounds {
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "coords"));
         if (coords.length != 4)
             throw new IllegalArgumentException(tr("Expected array of length 4, got {0}", coords.length));
-        this.min = new LatLon(coords[0], coords[1]);
-        this.max = new LatLon(coords[2], coords[3]);
+        this.minLat = coords[0];
+        this.minLon = coords[1];
+        this.maxLat = coords[2];
+        this.maxLon = coords[3];
     }
 
     public Bounds(String asString, String separator) throws IllegalArgumentException {
@@ -78,18 +80,18 @@ public class Bounds {
         if (!LatLon.isValidLon(values[3]))
             throw new IllegalArgumentException(tr("Illegal latitude value ''{0}''", values[3]));
 
-        this.min = new LatLon(values[0], values[1]);
-        this.max = new LatLon(values[2], values[3]);
+        this.minLat = values[0];
+        this.minLon = values[1];
+        this.maxLat = values[2];
+        this.maxLon = values[3];
     }
 
     public Bounds(Bounds other) {
-        this.min = new LatLon(other.min);
-        this.max = new LatLon(other.max);
+        this(other.getMin(), other.getMax());
     }
 
     public Bounds(Rectangle2D rect) {
-        this.min = new LatLon(rect.getMinY(), rect.getMinX());
-        this.max = new LatLon(rect.getMaxY(), rect.getMaxX());
+        this(rect.getMinY(), rect.getMinX(), rect.getMaxY(), rect.getMaxX());
     }
 
     /**
@@ -112,26 +114,22 @@ public class Bounds {
         if (lonExtent <= 0.0)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0.0 exptected, got {1}", "lonExtent", lonExtent));
 
-        this.min = new LatLon(
-                center.lat() - latExtent / 2,
-                center.lon() - lonExtent / 2
-        );
-        this.max = new LatLon(
-                center.lat() + latExtent / 2,
-                center.lon() + lonExtent / 2
-        );
+        this.minLat = center.lat() - latExtent / 2;
+        this.minLon = center.lon() - lonExtent / 2;
+        this.maxLat = center.lat() + latExtent / 2;
+        this.maxLon = center.lon() + lonExtent / 2;
     }
 
     @Override public String toString() {
-        return "Bounds["+min.lat()+","+min.lon()+","+max.lat()+","+max.lon()+"]";
+        return "Bounds["+minLat+","+minLon+","+maxLat+","+maxLon+"]";
     }
 
     public String toShortString(DecimalFormat format) {
         return
-            format.format(min.lat()) + " "
-            + format.format(min.lon()) + " / "
-            + format.format(max.lat()) + " "
-            + format.format(max.lon());
+        format.format(minLat) + " "
+        + format.format(minLon) + " / "
+        + format.format(maxLat) + " "
+        + format.format(maxLon);
     }
 
     /**
@@ -139,27 +137,38 @@ public class Bounds {
      */
     public LatLon getCenter()
     {
-        return min.getCenter(max);
+        return getMin().getCenter(getMax());
     }
 
     /**
      * Extend the bounds if necessary to include the given point.
      */
     public void extend(LatLon ll) {
-        if (ll.lat() < min.lat() || ll.lon() < min.lon()) {
-            min = new LatLon(Math.min(ll.lat(), min.lat()), Math.min(ll.lon(), min.lon()));
+        if (ll.lat() < minLat) {
+            minLat = ll.lat();
         }
-        if (ll.lat() > max.lat() || ll.lon() > max.lon()) {
-            max = new LatLon(Math.max(ll.lat(), max.lat()), Math.max(ll.lon(), max.lon()));
+        if (ll.lon() < minLon) {
+            minLon = ll.lon();
         }
+        if (ll.lat() > maxLat) {
+            maxLat = ll.lat();
+        }
+        if (ll.lon() > maxLon) {
+            maxLon = ll.lon();
+        }
+    }
+
+    public void extend(Bounds b) {
+        extend(b.getMin());
+        extend(b.getMax());
     }
     /**
      * Is the given point within this bounds?
      */
     public boolean contains(LatLon ll) {
-        if (ll.lat() < min.lat() || ll.lon() < min.lon())
+        if (ll.lat() < minLat || ll.lon() < minLon)
             return false;
-        if (ll.lat() > max.lat() || ll.lon() > max.lon())
+        if (ll.lat() > maxLat || ll.lon() > maxLon)
             return false;
         return true;
     }
@@ -169,18 +178,18 @@ public class Bounds {
      * @return the bounding box to Rectangle2D.Double
      */
     public Rectangle2D.Double asRect() {
-        return new Rectangle2D.Double(min.lon(), min.lat(), max.lon()-min.lon(), max.lat()-min.lat());
+        return new Rectangle2D.Double(minLon, minLat, maxLon-minLon, maxLat-minLat);
     }
 
     public double getArea() {
-        return (max.lon() - min.lon()) * (max.lat() - min.lat());
+        return (maxLon - minLon) * (maxLat - minLat);
     }
 
     public String encodeAsString(String separator) {
         StringBuffer sb = new StringBuffer();
-        sb.append(min.lat()).append(separator).append(min.lon())
-        .append(separator).append(max.lat()).append(separator)
-        .append(max.lon());
+        sb.append(minLat).append(separator).append(minLon)
+        .append(separator).append(maxLat).append(separator)
+        .append(maxLon);
         return sb.toString();
     }
 
@@ -188,8 +197,15 @@ public class Bounds {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((max == null) ? 0 : max.hashCode());
-        result = prime * result + ((min == null) ? 0 : min.hashCode());
+        long temp;
+        temp = Double.doubleToLongBits(maxLat);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(maxLon);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(minLat);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(minLon);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
 
@@ -202,15 +218,13 @@ public class Bounds {
         if (getClass() != obj.getClass())
             return false;
         Bounds other = (Bounds) obj;
-        if (max == null) {
-            if (other.max != null)
-                return false;
-        } else if (!max.equals(other.max))
+        if (Double.doubleToLongBits(maxLat) != Double.doubleToLongBits(other.maxLat))
             return false;
-        if (min == null) {
-            if (other.min != null)
-                return false;
-        } else if (!min.equals(other.min))
+        if (Double.doubleToLongBits(maxLon) != Double.doubleToLongBits(other.maxLon))
+            return false;
+        if (Double.doubleToLongBits(minLat) != Double.doubleToLongBits(other.minLat))
+            return false;
+        if (Double.doubleToLongBits(minLon) != Double.doubleToLongBits(other.minLon))
             return false;
         return true;
     }
