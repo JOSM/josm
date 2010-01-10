@@ -435,8 +435,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         // just re-use it.
         if (null == offscreenBuffer || offscreenBuffer.getWidth() != getWidth()
                 || offscreenBuffer.getHeight() != getHeight()) {
-            offscreenBuffer = new BufferedImage(getWidth(), getHeight(),
-                    BufferedImage.TYPE_INT_ARGB);
+            offscreenBuffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_3BYTE_BGR);
         }
 
         Graphics2D tempG = offscreenBuffer.createGraphics();
