@@ -196,4 +196,6 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
     public boolean isNew() {
         return id <= 0;
     }
+
+    public abstract OsmPrimitiveType getType();
 }

@@ -2,26 +2,27 @@
 // Author: David Earl
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddPrimitivesCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.NodeData;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
 import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.WayData;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -42,6 +43,7 @@ public final class PasteAction extends JosmAction {
     public  void pasteData(PrimitiveDeepCopy pasteBuffer, Layer source, ActionEvent e) {
         /* Find the middle of the pasteBuffer area */
         double maxEast = -1E100, minEast = 1E100, maxNorth = -1E100, minNorth = 1E100;
+        boolean incomplete = false;
         for (PrimitiveData data : pasteBuffer.getAll()) {
             if (data instanceof NodeData) {
                 NodeData n = (NodeData)data;
@@ -52,6 +54,14 @@ public final class PasteAction extends JosmAction {
                 if (north > maxNorth) { maxNorth = north; }
                 if (north < minNorth) { minNorth = north; }
             }
+            if (data.isIncomplete()) {
+                incomplete = true;
+            }
+        }
+
+        // Allow to cancel paste if there are incomplete primitives
+        if (incomplete) {
+            if (!confirmDeleteIncomplete()) return;
         }
 
         EastNorth mPosition;
@@ -71,11 +81,22 @@ public final class PasteAction extends JosmAction {
 
         // Make a copy of pasteBuffer and map from old id to copied data id
         List<PrimitiveData> bufferCopy = new ArrayList<PrimitiveData>();
-        Map<Long, Long> newIds = new HashMap<Long, Long>();
-        for (PrimitiveData data:pasteBuffer.getAll()) {
+        Map<Long, Long> newNodeIds = new HashMap<Long, Long>();
+        Map<Long, Long> newWayIds = new HashMap<Long, Long>();
+        Map<Long, Long> newRelationIds = new HashMap<Long, Long>();
+        for (PrimitiveData data: pasteBuffer.getAll()) {
+            if (data.isIncomplete()) {
+                continue;
+            }
             PrimitiveData copy = data.makeCopy();
             copy.clearOsmId();
-            newIds.put(data.getId(), copy.getId());
+            if (data instanceof NodeData) {
+                newNodeIds.put(data.getId(), copy.getId());
+            } else if (data instanceof WayData) {
+                newWayIds.put(data.getId(), copy.getId());
+            } else if (data instanceof RelationData) {
+                newRelationIds.put(data.getId(), copy.getId());
+            }
             bufferCopy.add(copy);
         }
 
@@ -87,16 +108,35 @@ public final class PasteAction extends JosmAction {
                     nodeData.setEastNorth(nodeData.getEastNorth().add(offsetEast, offsetNorth));
                 }
             } else if (data instanceof WayData) {
-                ListIterator<Long> it = ((WayData)data).getNodes().listIterator();
-                while (it.hasNext()) {
-                    it.set(newIds.get(it.next()));
+                List<Long> newNodes = new ArrayList<Long>();
+                for (Long oldNodeId: ((WayData)data).getNodes()) {
+                    Long newNodeId = newNodeIds.get(oldNodeId);
+                    if (newNodeId != null) {
+                        newNodes.add(newNodeId);
+                    }
                 }
+                ((WayData)data).setNodes(newNodes);
             } else if (data instanceof RelationData) {
-                ListIterator<RelationMemberData> it = ((RelationData)data).getMembers().listIterator();
-                while (it.hasNext()) {
-                    RelationMemberData member = it.next();
-                    it.set(new RelationMemberData(member.getRole(), member.getMemberType(), newIds.get(member.getMemberId())));
+                List<RelationMemberData> newMembers = new ArrayList<RelationMemberData>();
+                for (RelationMemberData member: ((RelationData)data).getMembers()) {
+                    OsmPrimitiveType memberType = member.getMemberType();
+                    Long newId = null;
+                    switch (memberType) {
+                    case NODE:
+                        newId = newNodeIds.get(member.getMemberId());
+                        break;
+                    case WAY:
+                        newId = newWayIds.get(member.getMemberId());
+                        break;
+                    case RELATION:
+                        newId = newRelationIds.get(member.getMemberId());
+                        break;
+                    }
+                    if (newId != null) {
+                        newMembers.add(new RelationMemberData(member.getRole(), memberType, newId));
+                    }
                 }
+                ((RelationData)data).setMembers(newMembers);
             }
         }
 
@@ -104,6 +144,18 @@ public final class PasteAction extends JosmAction {
 
         Main.main.undoRedo.add(new AddPrimitivesCommand(bufferCopy));
         Main.map.mapView.repaint();
+    }
+
+    protected boolean confirmDeleteIncomplete() {
+        ExtendedDialog ed = new ExtendedDialog(Main.parent,
+                tr("Delete incomplete members?"),
+                new String[] {tr("Paste without incomplete members"), tr("Cancel")});
+        ed.setButtonIcons(new String[] {"dialogs/relation/deletemembers.png", "cancel.png"});
+        ed.setContent(tr("The copied data contains incomplete primitives.  "
+                + "When pasting the incomplete primitives are removed.  "
+                + "Do you want to paste the data without the incomplete primitives?"));
+        ed.showDialog();
+        return ed.getValue() == 1;
     }
 
     @Override

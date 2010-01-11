@@ -6,7 +6,7 @@ import java.util.List;
 
 public class WayData extends PrimitiveData {
 
-    private final List<Long> nodes = new ArrayList<Long>();
+    private List<Long> nodes = new ArrayList<Long>();
 
     public WayData() {
 
@@ -21,6 +21,10 @@ public class WayData extends PrimitiveData {
         return nodes;
     }
 
+    public void setNodes(List<Long> nodes) {
+        this.nodes = new ArrayList<Long>(nodes);
+    }
+
     @Override
     public WayData makeCopy() {
         return new WayData(this);
@@ -31,8 +35,8 @@ public class WayData extends PrimitiveData {
         return super.toString() + " WAY" + nodes.toString();
     }
 
+    @Override
     public OsmPrimitiveType getType() {
         return OsmPrimitiveType.WAY;
     }
-
 }
