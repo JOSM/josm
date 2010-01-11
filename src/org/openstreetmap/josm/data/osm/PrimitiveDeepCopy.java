@@ -35,31 +35,33 @@ public class PrimitiveDeepCopy {
         directlyAdded.clear();
         referenced.clear();
 
-        final Set<Long> visitedIds = new HashSet<Long>();
+        final Set<Long> visitedNodeIds = new HashSet<Long>();
+        final Set<Long> visitedWayIds = new HashSet<Long>();
+        final Set<Long> visitedRelationIds = new HashSet<Long>();
 
         new AbstractVisitor() {
             boolean firstIteration;
 
             public void visit(Node n) {
-                if (!visitedIds.add(n.getUniqueId()))
+                if (!visitedNodeIds.add(n.getUniqueId()))
                     return;
-                (firstIteration?directlyAdded:referenced).add(n.save());
+                (firstIteration ? directlyAdded : referenced).add(n.save());
             }
             public void visit(Way w) {
-                if (!visitedIds.add(w.getUniqueId()))
+                if (!visitedWayIds.add(w.getUniqueId()))
                     return;
-                (firstIteration?directlyAdded:referenced).add(w.save());
+                (firstIteration ? directlyAdded : referenced).add(w.save());
                 firstIteration = false;
                 for (Node n : w.getNodes()) {
                     visit(n);
                 }
             }
-            public void visit(Relation e) {
-                if (!visitedIds.add(e.getUniqueId()))
+            public void visit(Relation r) {
+                if (!visitedRelationIds.add(r.getUniqueId()))
                     return;
-                (firstIteration?directlyAdded:referenced).add(e.save());
+                (firstIteration ? directlyAdded : referenced).add(r.save());
                 firstIteration = false;
-                for (RelationMember m : e.getMembers()) {
+                for (RelationMember m : r.getMembers()) {
                     m.getMember().visit(this);
                 }
             }
