@@ -46,6 +46,7 @@ public class TagConflictResolver extends JPanel {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.weighty = 0.0;
         pnl.add(cbShowTagsWithConflictsOnly = new JCheckBox(tr("Show tags with conflicts only")), gc);
+        pnl.add(cbShowTagsWithMultiValuesOnly = new JCheckBox(tr("Show tags with multiple values only")), gc);
         cbShowTagsWithConflictsOnly.addChangeListener(
                 new ChangeListener() {
                     public void stateChanged(ChangeEvent e) {
@@ -57,7 +58,6 @@ public class TagConflictResolver extends JPanel {
         cbShowTagsWithConflictsOnly.setSelected(
                 Main.pref.getBoolean(getClass().getName() + ".showTagsWithConflictsOnly", false)
         );
-        pnl.add(cbShowTagsWithMultiValuesOnly = new JCheckBox(tr("Show tags with multiple values only")), gc);
         cbShowTagsWithMultiValuesOnly.addChangeListener(
                 new ChangeListener() {
                     public void stateChanged(ChangeEvent e) {
