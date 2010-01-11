@@ -201,7 +201,7 @@ public class Preferences {
         return new File(getPreferencesDirFile(), "preferences");
     }
 
-    public File getPluginsDirFile() {
+    public File getPluginsDirectory() {
         return new File(getPreferencesDirFile(), "plugins");
     }
 
@@ -747,4 +747,28 @@ public class Preferences {
         sysProp.put("http.agent", Version.getInstance().getAgentString());
         System.setProperties(sysProp);
     }
+
+    /**
+     * The default plugin site
+     */
+    private final static String[] DEFAULT_PLUGIN_SITE = {"http://josm.openstreetmap.de/plugin"};
+
+    /**
+     * Replies the collection of plugin site URLs from where plugin lists can be downloaded
+     * 
+     * @return
+     */
+    public Collection<String> getPluginSites() {
+        return getCollection("pluginmanager.sites", Arrays.asList(DEFAULT_PLUGIN_SITE));
+    }
+
+    /**
+     * Sets the collection of plugin site URLs.
+     * 
+     * @param sites the site URLs
+     */
+    public void setPluginSites(Collection<String> sites) {
+        putCollection("pluginmanager.sites", sites);
+    }
+
 }

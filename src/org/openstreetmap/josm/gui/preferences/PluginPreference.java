@@ -2,34 +2,55 @@
 package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.Dimension;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Rectangle;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.Scrollable;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.plugins.PluginDownloader;
-import org.openstreetmap.josm.plugins.PluginSelection;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.preferences.plugin.PluginPreferencesModel;
+import org.openstreetmap.josm.gui.preferences.plugin.PluginPreferencesPanel;
+import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
+import org.openstreetmap.josm.plugins.PluginDownloadTask;
+import org.openstreetmap.josm.plugins.PluginInformation;
+import org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask;
+import org.openstreetmap.josm.plugins.ReadRemotePluginInformationTask;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 public class PluginPreference implements PreferenceSetting {
+    private final static Logger logger = Logger.getLogger(PluginPreference.class.getName());
 
     public static class Factory implements PreferenceSettingFactory {
         public PreferenceSetting createPreferenceSetting() {
@@ -37,82 +58,114 @@ public class PluginPreference implements PreferenceSetting {
         }
     }
 
-    private JPanel plugin;
-    private JPanel pluginPanel = new NoHorizontalScrollPanel(new GridBagLayout());
-    private PreferenceTabbedPane gui;
-    private JScrollPane pluginPane;
-    private PluginSelection selection = new PluginSelection();
-    private JTextField txtFilter;
+    public static String buildDownloadSummary(PluginDownloadTask task) {
+        Collection<PluginInformation> downloaded = task.getDownloadedPlugins();
+        Collection<PluginInformation> failed = task.getFailedPlugins();
+        StringBuilder sb = new StringBuilder();
+        if (! downloaded.isEmpty()) {
+            sb.append(trn(
+                    "The following plugin has been downloaded <strong>successfully</strong>:",
+                    "The following {0} plugins have been downloaded successfully:",
+                    downloaded.size(),
+                    downloaded.size()
+            ));
+            sb.append("<ul>");
+            for(PluginInformation pi: downloaded) {
+                sb.append("<li>").append(pi.name).append("</li>");
+            }
+            sb.append("</ul>");
+        }
+        if (! failed.isEmpty()) {
+            sb.append(trn(
+                    "Downloading the following plugin has <strong>failed</strong>:",
+                    "Downloading the following {0} plugins has <strong>failed</strong>:",
+                    failed.size(),
+                    failed.size()
+            ));
+            sb.append("<ul>");
+            for(PluginInformation pi: failed) {
+                sb.append("<li>").append(pi.name).append("</li>");
+            }
+            sb.append("</ul>");
+        }
+        return sb.toString();
+    }
+
+    private JTextField tfFilter;
+    private PluginPreferencesPanel pnlPluginPreferences;
+    private PluginPreferencesModel model;
+    private JScrollPane spPluginPreferences;
+
+    protected JPanel buildSearchFieldPanel() {
+        JPanel pnl  = new JPanel(new GridBagLayout());
+        pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        GridBagConstraints gc = new GridBagConstraints();
+
+        gc.anchor = GridBagConstraints.NORTHWEST;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.weightx = 0.0;
+        gc.insets = new Insets(0,0,0,3);
+        pnl.add(new JLabel(tr("Search:")), gc);
+
+        gc.gridx = 1;
+        gc.weightx = 1.0;
+        pnl.add(tfFilter = new JTextField(), gc);
+        tfFilter.setToolTipText(tr("Enter a search expression"));
+        SelectAllOnFocusGainedDecorator.decorate(tfFilter);
+        tfFilter.getDocument().addDocumentListener(new SearchFieldAdapter());
+        return pnl;
+    }
+
+    protected JPanel buildActionPanel() {
+        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+        pnl.add(new JButton(new DownloadAvailablePluginsAction()));
+        pnl.add(new JButton(new UpdateSelectedPluginsAction()));
+        pnl.add(new JButton(new ConfigureSitesAction()));
+        return pnl;
+    }
+
+    protected JPanel buildContentPane() {
+        JPanel pnl = new JPanel(new BorderLayout());
+        pnl.add(buildSearchFieldPanel(), BorderLayout.NORTH);
+        model  = new PluginPreferencesModel();
+        spPluginPreferences = new JScrollPane(pnlPluginPreferences = new PluginPreferencesPanel(model));
+        spPluginPreferences.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        spPluginPreferences.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        spPluginPreferences.getVerticalScrollBar().addComponentListener(
+                new ComponentAdapter(){
+                    @Override
+                    public void componentShown(ComponentEvent e) {
+                        spPluginPreferences.setBorder(UIManager.getBorder("ScrollPane.border"));
+                    }
+                    @Override
+                    public void componentHidden(ComponentEvent e) {
+                        spPluginPreferences.setBorder(null);
+                    }
+                }
+        );
+
+        pnl.add(spPluginPreferences, BorderLayout.CENTER);
+        pnl.add(buildActionPanel(), BorderLayout.SOUTH);
+        return pnl;
+    }
 
     public void addGui(final PreferenceTabbedPane gui) {
-        this.gui = gui;
-        plugin = gui.createPreferenceTab("plugin", tr("Plugins"), tr("Configure available plugins."), false);
-
-        txtFilter = new JTextField();
-        JLabel lbFilter = new JLabel(tr("Search: "));
-        lbFilter.setLabelFor(txtFilter);
-        plugin.add(lbFilter);
-        plugin.add(txtFilter, GBC.eol().fill(GBC.HORIZONTAL));
-        txtFilter.getDocument().addDocumentListener(new DocumentListener(){
-            public void changedUpdate(DocumentEvent e) {
-                action();
-            }
-
-            public void insertUpdate(DocumentEvent e) {
-                action();
-            }
-
-            public void removeUpdate(DocumentEvent e) {
-                action();
-            }
-
-            private void action() {
-                selection.drawPanel(pluginPanel);
-            }
-        });
-        plugin.add(GBC.glue(0,10), GBC.eol());
-
-        /* main plugin area */
-        pluginPane = new JScrollPane(pluginPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        pluginPane.setBorder(null);
-        plugin.add(pluginPane, GBC.eol().fill(GBC.BOTH));
-        plugin.add(GBC.glue(0,10), GBC.eol());
-
-        /* buttons at the bottom */
-        JButton morePlugins = new JButton(tr("Download List"));
-        morePlugins.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                selection.updateDescription(pluginPanel);
-            }
-        });
-        plugin.add(morePlugins, GBC.std().insets(0,0,10,0));
-
-        JButton update = new JButton(tr("Update"));
-        update.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                selection.update(pluginPanel);
-            }
-        });
-        plugin.add(update, GBC.std().insets(0,0,10,0));
-
-        JButton configureSites = new JButton(tr("Configure Sites..."));
-        configureSites.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                configureSites();
-            }
-        });
-        plugin.add(configureSites, GBC.std());
-
-        selection.passTxtFilter(txtFilter);
-        selection.loadPlugins();
-        selection.drawPanel(pluginPanel);
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.weightx = 1.0;
+        gc.weighty = 1.0;
+        gc.anchor = GridBagConstraints.NORTHWEST;
+        gc.fill = GridBagConstraints.BOTH;
+        gui.plugins.add(buildContentPane(), gc);
+        pnlPluginPreferences.refreshView();
+        gui.addChangeListener(new PluginPreferenceActivationListener(gui.plugins));
     }
 
     private void configureSites() {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(tr("Add JOSM Plugin description URL.")), GBC.eol());
         final DefaultListModel model = new DefaultListModel();
-        for (String s : PluginDownloader.getSites()) {
+        for (String s : Main.pref.getPluginSites()) {
             model.addElement(s);
         }
         final JList list = new JList(model);
@@ -121,7 +174,7 @@ public class PluginPreference implements PreferenceSetting {
         buttons.add(new JButton(new AbstractAction(tr("Add")){
             public void actionPerformed(ActionEvent e) {
                 String s = JOptionPane.showInputDialog(
-                        gui,
+                        JOptionPane.getFrameForComponent(pnlPluginPreferences),
                         tr("Add JOSM Plugin description URL."),
                         tr("Enter URL"),
                         JOptionPane.QUESTION_MESSAGE
@@ -135,7 +188,7 @@ public class PluginPreference implements PreferenceSetting {
             public void actionPerformed(ActionEvent e) {
                 if (list.getSelectedValue() == null) {
                     JOptionPane.showMessageDialog(
-                            gui,
+                            JOptionPane.getFrameForComponent(pnlPluginPreferences),
                             tr("Please select an entry."),
                             tr("Warning"),
                             JOptionPane.WARNING_MESSAGE
@@ -158,7 +211,7 @@ public class PluginPreference implements PreferenceSetting {
             public void actionPerformed(ActionEvent event) {
                 if (list.getSelectedValue() == null) {
                     JOptionPane.showMessageDialog(
-                            gui,
+                            JOptionPane.getFrameForComponent(pnlPluginPreferences),
                             tr("Please select an entry."),
                             tr("Warning"),
                             JOptionPane.WARNING_MESSAGE
@@ -170,7 +223,7 @@ public class PluginPreference implements PreferenceSetting {
         }), GBC.eol().fill(GBC.HORIZONTAL));
         p.add(buttons, GBC.eol());
         int answer = JOptionPane.showConfirmDialog(
-                gui,
+                JOptionPane.getFrameForComponent(pnlPluginPreferences),
                 p,
                 tr("Configure Plugin Sites"), JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE);
@@ -180,36 +233,185 @@ public class PluginPreference implements PreferenceSetting {
         for (int i = 0; i < model.getSize(); ++i) {
             sites.add((String)model.getElementAt(i));
         }
-        PluginDownloader.setSites(sites);
+        Main.pref.setPluginSites(sites);
+    }
+
+    /**
+     * Replies the list of plugins waiting for update or download
+     * 
+     * @return the list of plugins waiting for update or download
+     */
+    public List<PluginInformation> getPluginsScheduledForUpdateOrDownload() {
+        return model.getPluginsScheduledForUpdateOrDownload();
     }
 
     public boolean ok() {
-        return selection.finish();
-    }
-
-    private static class NoHorizontalScrollPanel extends JPanel implements Scrollable {
-        public NoHorizontalScrollPanel(GridBagLayout gridBagLayout) {
-            super(gridBagLayout);
-        }
-
-        public Dimension getPreferredScrollableViewportSize() {
-            return super.getPreferredSize();
-        }
-
-        public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-            return 30;
-        }
-
-        public boolean getScrollableTracksViewportHeight() {
-            return false;
-        }
-
-        public boolean getScrollableTracksViewportWidth() {
+        if (model.isActivePluginsChanged()) {
+            Main.pref.putCollection("plugins", model.getSelectedPluginNames());
             return true;
         }
+        return false;
+    }
 
-        public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-            return 10;
+    public void readLocalPluginInformation() {
+        final ReadLocalPluginInformationTask task = new ReadLocalPluginInformationTask();
+        Runnable r = new Runnable() {
+            public void run() {
+                if (task.isCanceled()) return;
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        model.setAvailablePlugins(task.getAvailablePlugins());
+                        pnlPluginPreferences.refreshView();
+                    }
+                });
+            };
+        };
+        Main.worker.submit(task);
+        Main.worker.submit(r);
+    }
+
+    /**
+     * The action for downloading the list of available plugins
+     *
+     */
+    class DownloadAvailablePluginsAction extends AbstractAction {
+
+        public DownloadAvailablePluginsAction() {
+            putValue(NAME,tr("Download list"));
+            putValue(SHORT_DESCRIPTION, tr("Download the list of available plugins"));
+            putValue(SMALL_ICON, ImageProvider.get("download"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            final ReadRemotePluginInformationTask task = new ReadRemotePluginInformationTask(Main.pref.getPluginSites());
+            Runnable continuation = new Runnable() {
+                public void run() {
+                    if (task.isCanceled()) return;
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            model.setAvailablePlugins(task.getAvailabePlugins());
+                            pnlPluginPreferences.refreshView();
+
+                        }
+                    });
+                }
+            };
+            Main.worker.submit(task);
+            Main.worker.submit(continuation);
+        }
+    }
+
+    /**
+     * The action for downloading the list of available plugins
+     *
+     */
+    class UpdateSelectedPluginsAction extends AbstractAction {
+        public UpdateSelectedPluginsAction() {
+            putValue(NAME,tr("Update plugins"));
+            putValue(SHORT_DESCRIPTION, tr("Update the selected plugins"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
+        }
+
+        protected void notifyDownloadResults(PluginDownloadTask task) {
+            Collection<PluginInformation> downloaded = task.getDownloadedPlugins();
+            Collection<PluginInformation> failed = task.getFailedPlugins();
+            StringBuilder sb = new StringBuilder();
+            sb.append("<html>");
+            sb.append(buildDownloadSummary(task));
+            if (!downloaded.isEmpty()) {
+                sb.append("Please restart JOSM to activate the downloaded plugins.");
+            }
+            sb.append("</html>");
+            HelpAwareOptionPane.showOptionDialog(
+                    pnlPluginPreferences,
+                    sb.toString(),
+                    tr("Update plugins"),
+                    failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
+                            // FIXME: check help topic
+                            HelpUtil.ht("/Preferences/Plugin")
+            );
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            List<PluginInformation> toUpdate = model.getSelectedPlugins();
+            final PluginDownloadTask task = new PluginDownloadTask(
+                    pnlPluginPreferences,
+                    toUpdate,
+                    tr("Update plugins")
+            );
+            Runnable r = new Runnable() {
+                public void run() {
+                    if (task.isCanceled())
+                        return;
+                    notifyDownloadResults(task);
+                    model.refreshLocalPluginVersion(task.getDownloadedPlugins());
+                    pnlPluginPreferences.refreshView();
+                }
+            };
+            Main.worker.submit(task);
+            Main.worker.submit(r);
+        }
+    }
+
+
+    /**
+     * The action for configuring the plugin download sites
+     *
+     */
+    class ConfigureSitesAction extends AbstractAction {
+        public ConfigureSitesAction() {
+            putValue(NAME,tr("Configure sites..."));
+            putValue(SHORT_DESCRIPTION, tr("Configure the list of sites where plugins are downloaded from"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            configureSites();
+        }
+    }
+
+    /**
+     * Listens to the activation of the plugin preferences tab. On activation it
+     * reloads plugin information from the local file system.
+     *
+     */
+    class PluginPreferenceActivationListener implements ChangeListener {
+        private Component pane;
+        public PluginPreferenceActivationListener(Component preferencesPane) {
+            pane = preferencesPane;
+        }
+
+        public void stateChanged(ChangeEvent e) {
+            JTabbedPane tp = (JTabbedPane)e.getSource();
+            if (tp.getSelectedComponent() == pane) {
+                readLocalPluginInformation();
+            }
+        }
+    }
+
+    /**
+     * Applies the current filter condition in the filter text field to the
+     * model
+     */
+    class SearchFieldAdapter implements DocumentListener {
+        public void filter() {
+            String expr = tfFilter.getText().trim();
+            if (expr.equals("")) {
+                expr = null;
+            }
+            model.filterDisplayedPlugins(expr);
+            pnlPluginPreferences.refreshView();
+        }
+
+        public void changedUpdate(DocumentEvent arg0) {
+            filter();
+        }
+
+        public void insertUpdate(DocumentEvent arg0) {
+            filter();
+        }
+
+        public void removeUpdate(DocumentEvent arg0) {
+            filter();
         }
     }
 }

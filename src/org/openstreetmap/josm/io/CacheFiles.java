@@ -58,7 +58,7 @@ public class CacheFiles {
     }
 
     public CacheFiles(String ident, boolean isPlugin) {
-        String pref = isPlugin ? Main.pref.getPluginsDirFile().getPath() : Main.pref.getPreferencesDir();
+        String pref = isPlugin ? Main.pref.getPluginsDirectory().getPath() : Main.pref.getPreferencesDir();
 
         boolean dir_writeable;
         this.ident = ident;

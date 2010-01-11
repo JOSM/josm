@@ -46,7 +46,6 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.GettingStarted;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.SplashScreen;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -173,7 +172,7 @@ abstract public class Main {
 
         Main.map = map;
 
-        PluginHandler.setMapFrame(old, map);
+        PluginHandler.notifyMapFrameChanged(old, map);
     }
 
     /**
@@ -191,19 +190,11 @@ abstract public class Main {
     }
 
     public Main() {
-        this(null);
-    }
-
-    public Main(SplashScreen splash) {
         main = this;
         //        platform = determinePlatformHook();
         platform.startupHook();
         contentPane.add(panel, BorderLayout.CENTER);
         panel.add(gettingStarted, BorderLayout.CENTER);
-
-        if(splash != null) {
-            splash.setStatus(tr("Creating main GUI"));
-        }
         menu = new MainMenu();
 
         undoRedo.listenerCommands.add(redoUndoListener);

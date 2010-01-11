@@ -22,9 +22,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
@@ -46,6 +49,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
     public final JPanel connection = createPreferenceTab("connection", I18n.tr("Connection Settings"), I18n.tr("Connection Settings for the OSM server."),false);
     public final JPanel map = createPreferenceTab("map", I18n.tr("Map Settings"), I18n.tr("Settings for the map projection and data interpretation."));
     public final JPanel audio = createPreferenceTab("audio", I18n.tr("Audio Settings"), I18n.tr("Settings for the audio player and audio markers."));
+    public final JPanel plugins = createPreferenceTab("plugin", tr("Plugins"), tr("Configure available plugins."), false);
 
     public final javax.swing.JTabbedPane displaycontent = new javax.swing.JTabbedPane();
     public final javax.swing.JTabbedPane mapcontent = new javax.swing.JTabbedPane();
@@ -94,23 +98,91 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
         return p;
     }
 
+    protected PluginPreference getPluginPreference() {
+        for (PreferenceSetting setting: settings) {
+            if (setting instanceof PluginPreference)
+                return (PluginPreference) setting;
+        }
+        return null;
+    }
+
     public void savePreferences() {
-        boolean requiresRestart = false;
-        for (PreferenceSetting setting : settings)
-        {
-            if(setting.ok()) {
-                requiresRestart = true;
+
+        // create a task for downloading plugins if the user has activated, yet not downloaded,
+        // new plugins
+        //
+        final PluginPreference preference = getPluginPreference();
+        final List<PluginInformation> toDownload = preference.getPluginsScheduledForUpdateOrDownload();
+        final PluginDownloadTask task;
+        if (! toDownload.isEmpty()) {
+            task = new PluginDownloadTask(this, toDownload, tr("Download plugins"));
+        } else {
+            task = null;
+        }
+
+        // this is the task which will run *after* the plugins are downloaded
+        //
+        final Runnable continuation = new Runnable() {
+            public void run() {
+                boolean requiresRestart = false;
+                if (task != null && !task.isCanceled()) {
+                    if (!task.getDownloadedPlugins().isEmpty()) {
+                        requiresRestart = true;
+                    }
+                }
+
+                for (PreferenceSetting setting : settings) {
+                    if (setting.ok()) {
+                        requiresRestart = true;
+                    }
+                }
+
+                // build the messages. We only display one message, including the status
+                // information from the plugin download task and - if necessary - a hint
+                // to restart JOSM
+                //
+                StringBuffer sb = new StringBuffer();
+                sb.append("<html>");
+                if (task != null && !task.isCanceled()) {
+                    sb.append(PluginPreference.buildDownloadSummary(task));
+                }
+                if (requiresRestart) {
+                    sb.append(tr("You have to restart JOSM for some settings to take effect."));
+                }
+                sb.append("</html>");
+
+                // display the message, if necessary
+                //
+                if ((task != null && !task.isCanceled()) || requiresRestart) {
+                    JOptionPane.showMessageDialog(
+                            Main.parent,
+                            sb.toString(),
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                }
+                Main.parent.repaint();
             }
-        }
-        if (requiresRestart) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("You have to restart JOSM for some settings to take effect."),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
+        };
+
+        if (task != null) {
+            // if we have to launch a plugin download task we do it asynchronously, followed
+            // by the remaining "save preferences" activites run on the Swing EDT.
+            //
+            Main.worker.submit(task);
+            Main.worker.submit(
+                    new Runnable() {
+                        public void run() {
+                            SwingUtilities.invokeLater(continuation);
+                        }
+                    }
             );
+        } else {
+            // no need for asynchronous activities. Simply run the remaining "save preference"
+            // activities on this thread (we are already on the Swing EDT
+            //
+            continuation.run();
         }
-        Main.parent.repaint();
     }
 
     /**

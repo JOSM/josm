@@ -52,7 +52,7 @@ public abstract class Plugin {
      * @return The directory for the plugin to store all kind of stuff.
      */
     public final String getPluginDir() {
-        return new File(Main.pref.getPluginsDirFile(), info.name).getPath();
+        return new File(Main.pref.getPluginsDirectory(), info.name).getPath();
     }
 
     /**
@@ -80,13 +80,15 @@ public abstract class Plugin {
     public void copy(String from, String to) throws FileNotFoundException, IOException {
         String pluginDirName = Main.pref.getPreferencesDir()+"plugins/"+info.name+"/";
         File pluginDir = new File(pluginDirName);
-        if (!pluginDir.exists())
+        if (!pluginDir.exists()) {
             pluginDir.mkdirs();
+        }
         FileOutputStream out = new FileOutputStream(pluginDirName+to);
         InputStream in = getClass().getResourceAsStream(from);
         byte[] buffer = new byte[8192];
-        for(int len = in.read(buffer); len > 0; len = in.read(buffer))
+        for(int len = in.read(buffer); len > 0; len = in.read(buffer)) {
             out.write(buffer, 0, len);
+        }
         in.close();
         out.close();
     }

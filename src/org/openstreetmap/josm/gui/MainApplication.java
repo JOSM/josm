@@ -21,10 +21,12 @@ import javax.swing.JFrame;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.auth.CredentialsManagerFactory;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -44,8 +46,8 @@ public class MainApplication extends Main {
      * Construct an main frame, ready sized and operating. Does not
      * display the frame.
      */
-    public MainApplication(JFrame mainFrame, SplashScreen splash) {
-        super(splash);
+    public MainApplication(JFrame mainFrame) {
+        super();
         mainFrame.setContentPane(contentPane);
         mainFrame.setJMenuBar(menu);
         mainFrame.setBounds(bounds);
@@ -150,27 +152,45 @@ public class MainApplication extends Main {
             System.exit(0);
         }
 
-        SplashScreen splash = new SplashScreen(Main.pref.getBoolean("draw.splashscreen", true));
+        SplashScreen splash = new SplashScreen();
+        ProgressMonitor monitor = splash.getProgressMonitor();
+        monitor.beginTask(tr("Initializing"));
+        monitor.setTicksCount(7);
+        splash.setVisible(Main.pref.getBoolean("draw.splashscreen", true));
 
-        splash.setStatus(tr("Activating updated plugins"));
-        PluginHandler.earlyCleanup();
+        List<PluginInformation> pluginsToLoad = PluginHandler.buildListOfPluginsToLoad(monitor.createSubTaskMonitor(1, false));
+        if (!pluginsToLoad.isEmpty() && PluginHandler.checkAndConfirmPluginUpdate()) {
+            monitor.subTask(tr("Updating plugins..."));
+            PluginHandler.updatePlugins(pluginsToLoad, monitor.createSubTaskMonitor(1, false));
+        }
+        monitor.worked(1);
 
-        splash.setStatus(tr("Loading early plugins"));
-        PluginHandler.loadPlugins(true);
+        monitor.subTask(tr("Installing updated plugins"));
+        PluginHandler.installDownloadedPlugins();
+        monitor.worked(1);
 
-        splash.setStatus(tr("Setting defaults"));
+        monitor.subTask(tr("Loading early plugins"));
+        PluginHandler.loadEarlyPlugins(pluginsToLoad, monitor.createSubTaskMonitor(1, false));
+        monitor.worked(1);
+
+        monitor.subTask(tr("Setting defaults"));
         preConstructorInit(args);
         removeObsoletePreferences();
-        splash.setStatus(tr("Creating main GUI"));
+        monitor.worked(1);
+
+        monitor.indeterminateSubTask(tr("Creating main GUI"));
         JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));
         Main.parent = mainFrame;
-        final Main main = new MainApplication(mainFrame, splash);
-        splash.setStatus(tr("Loading plugins"));
-        PluginHandler.loadPlugins(false);
-        toolbar.refreshToolbarControl();
+        final Main main = new MainApplication(mainFrame);
+        monitor.worked(1);
 
+        monitor.subTask(tr("Loading plugins"));
+        PluginHandler.loadLatePlugins(pluginsToLoad,  monitor.createSubTaskMonitor(1, false));
+        monitor.worked(1);
+        toolbar.refreshToolbarControl();
+        splash.setVisible(false);
+        splash.dispose();
         mainFrame.setVisible(true);
-        splash.closeSplash();
 
         if (((!args.containsKey("no-maximize") && !args.containsKey("geometry")
                 && Main.pref.get("gui.geometry").length() == 0) || args.containsKey("maximize"))

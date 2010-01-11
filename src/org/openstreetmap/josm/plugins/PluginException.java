@@ -10,13 +10,25 @@ import static org.openstreetmap.josm.tools.I18n.tr;
  *
  * @author Immanuel.Scholz
  */
-public class PluginException extends RuntimeException {
+public class PluginException extends Exception {
     public final PluginProxy plugin;
     public final String name;
 
     public PluginException(PluginProxy plugin, String name, Throwable cause) {
         super(tr("An error occurred in plugin {0}", name), cause);
         this.plugin = plugin;
+        this.name = name;
+    }
+
+    public PluginException(String name, String message) {
+        super(message);
+        this.plugin = null;
+        this.name = name;
+    }
+
+    public PluginException(String name, Throwable cause) {
+        super(tr("An error occurred in plugin {0}", name), cause);
+        this.plugin = null;
         this.name = name;
     }
 }

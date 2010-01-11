@@ -42,6 +42,7 @@ public class PluginInformation {
     public String author = null;
     public int stage = 50;
     public String version = null;
+    public String localversion = null;
     public String downloadlink = null;
     public List<URL> libraries = new LinkedList<URL>();
 
@@ -59,27 +60,33 @@ public class PluginInformation {
     /**
      * @param file the plugin jar file.
      */
-    public PluginInformation(File file) {
+    public PluginInformation(File file) throws PluginException{
         this(file, file.getName().substring(0, file.getName().length()-4));
     }
 
-    public PluginInformation(File file, String name) {
+    public PluginInformation(File file, String name) throws PluginException{
         this.name = name;
         this.file = file;
+        JarInputStream jar = null;
         try {
-            JarInputStream jar = new JarInputStream(new FileInputStream(file));
+            jar = new JarInputStream(new FileInputStream(file));
             Manifest manifest = jar.getManifest();
             if (manifest == null)
-                throw new IOException(file+" contains no manifest.");
+                throw new PluginException(name, tr("The plugin file ''{0}'' doesn't include a Manifest.", file.toString()));
             scanManifest(manifest, false);
             libraries.add(0, fileToURL(file));
-            jar.close();
         } catch (IOException e) {
-            throw new PluginException(null, name, e);
+            throw new PluginException(name, e);
+        } finally {
+            if (jar != null) {
+                try {
+                    jar.close();
+                } catch(IOException e) { /* ignore */ }
+            }
         }
     }
 
-    public PluginInformation(InputStream manifestStream, String name, String url) {
+    public PluginInformation(InputStream manifestStream, String name, String url) throws PluginException {
         this.name = name;
         try {
             Manifest manifest = new Manifest();
@@ -89,7 +96,7 @@ public class PluginInformation {
             }
             scanManifest(manifest, url != null);
         } catch (IOException e) {
-            throw new PluginException(null, name, e);
+            throw new PluginException(name, e);
         }
     }
 
@@ -166,38 +173,48 @@ public class PluginInformation {
         }
     }
 
-    public String getLinkDescription()
-    {
-        String d = description == null ? tr("no description available") : description;
-        if(link != null) {
-            d += " <A HREF=\""+link+"\">"+tr("More details")+"</A>";
+    /**
+     * Replies the description as HTML document, including a link to a web page with
+     * more information, provided such a link is available.
+     * 
+     * @return the description as HTML document
+     */
+    public String getDescriptionAsHtml() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<html><body>");
+        sb.append(description == null ? tr("no description available") : description);
+        if (link != null) {
+            sb.append(" <a href=\"").append(link).append("\">").append(tr("More info...")).append("</a>");
         }
-        return d;
+        sb.append("</body></html>");
+        return sb.toString();
     }
 
     /**
      * Load and instantiate the plugin
      */
-    public PluginProxy load(Class<?> klass) {
+    public PluginProxy load(Class<?> klass) throws PluginException{
         try {
             currentPluginInitialization = this;
             return new PluginProxy(klass.newInstance(), this);
-        } catch (Exception e) {
-            throw new PluginException(null, name, e);
+        } catch(IllegalAccessException e) {
+            throw new PluginException(name, e);
+        } catch (InstantiationException e) {
+            throw new PluginException(name, e);
         }
     }
 
     /**
      * Load the class of the plugin
      */
-    public Class<?> loadClass(ClassLoader classLoader) {
+    public Class<?> loadClass(ClassLoader classLoader) throws PluginException {
         if (className == null)
             return null;
-        try {
+        try{
             Class<?> realClass = Class.forName(className, true, classLoader);
             return realClass;
-        } catch (Exception e) {
-            throw new PluginException(null, name, e);
+        } catch (ClassNotFoundException e) {
+            throw new PluginException(name, e);
         }
     }
 
@@ -271,4 +288,75 @@ public class PluginInformation {
         }
         return all;
     }
+
+    /**
+     * Replies true if the plugin with the given information is most likely outdated with
+     * respect to the referenceVersion.
+     * 
+     * @param referenceVersion the reference version. Can be null if we don't know a
+     * reference version
+     * 
+     * @return true, if the plugin needs to be updated; false, otherweise
+     */
+    public boolean isUpdateRequired(String referenceVersion) {
+        if (this.version == null && referenceVersion!= null)
+            return true;
+        if (this.version != null && !this.version.equals(referenceVersion))
+            return true;
+        return false;
+    }
+
+    /**
+     * Replies true if this this plugin should be updated/downloaded because either
+     * it is not available locally (its local version is null) or its local version is
+     * older than the available version on the server.
+     * 
+     * @return true if the plugin should be updated
+     */
+    public boolean isUpdateRequired() {
+        if (this.localversion == null) return false;
+        return isUpdateRequired(this.localversion);
+    }
+
+    protected boolean matches(String filter, String value) {
+        if (filter == null) return true;
+        if (value == null) return false;
+        return value.toLowerCase().contains(filter.toLowerCase());
+    }
+
+    /**
+     * Replies true if either the name, the description, or the version match (case insensitive)
+     * one of the words in filter. Replies true if filter is null.
+     * 
+     * @param filter the filter expression
+     * @return true if this plugin info matches with the filter
+     */
+    public boolean matches(String filter) {
+        if (filter == null) return true;
+        String words[] = filter.split("\\s+");
+        for (String word: words) {
+            if (matches(word, name)
+                    || matches(word, description)
+                    || matches(word, version)
+                    || matches(word, localversion))
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Replies the name of the plugin
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the name
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
 }
