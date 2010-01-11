@@ -224,98 +224,98 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="bicycle" b="no"/>
-		<icon src="vehicle/restriction/bicycle.png"/>
+		<icon src="vehicle/restriction/bicycle.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
 		<condition k="bicycle" v="designated"/>
 		<!-- see trac #1559 <line width="1" realwidth="2" colour="bicycle#ff00ff"/>-->
-		<icon annotate="true" src="vehicle/restriction/bicycle-designated.png"/>
+		<icon annotate="true" src="vehicle/restriction/bicycle-designated.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="foot" b="no"/>
-		<icon src="vehicle/restriction/foot.png"/>
+		<icon src="vehicle/restriction/foot.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
 		<condition k="foot" v="designated"/>
 		<!-- see trac #1559 <line width="1" realwidth="1" colour="foot#00ff00"/>-->
-		<icon annotate="true" src="vehicle/restriction/foot-designated.png"/>
+		<icon annotate="true" src="vehicle/restriction/foot-designated.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>10000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="goods" b="no"/>
-		<icon src="vehicle/restriction/goods.png"/>
+		<icon src="vehicle/restriction/goods.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="hgv" b="no"/>
-		<icon src="vehicle/restriction/goods.png"/>
+		<icon src="vehicle/restriction/goods.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="horse" b="no"/>
-		<icon src="vehicle/restriction/horse.png"/>
+		<icon src="vehicle/restriction/horse.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 	<rule>
 		<condition k="horse" v="designated"/>
 		<!-- see trac #1559 <line width="1" realwidth="2" colour="horse#c08000"/>-->
-		<icon src="vehicle/restriction/horse-designated.png"/>
+		<icon src="vehicle/restriction/horse-designated.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>30000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="motorcycle" b="no"/>
-		<icon src="vehicle/restriction/motorbike.png"/>
+		<icon src="vehicle/restriction/motorbike.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="motorcar" b="no"/>
-		<icon src="vehicle/restriction/motorcar.png"/>
+		<icon src="vehicle/restriction/motorcar.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="psv" b="no"/>
-		<icon src="vehicle/restriction/psv.png"/>
+		<icon src="vehicle/restriction/psv.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="motorboat" b="no"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="misc/no_icon.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="boat" b="no"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="misc/no_icon.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="noexit" b="yes"/>
-		<icon src="vehicle/restriction/dead_end.png"/>
+		<icon src="vehicle/restriction/dead_end.png" priority="-100"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
