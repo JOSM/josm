@@ -939,7 +939,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
         public void fillInQuery(ChangesetQuery query) {
             if (!isValidChangesetQuery())
-                throw new IllegalStateException(tr("Can''t restrict the changeset query to a specific bounding box. The input is invalid."));
+                throw new IllegalStateException(tr("Can't restrict the changeset query to a specific bounding box. The input is invalid."));
             query.inBbox(getBoundingBox());
         }
 

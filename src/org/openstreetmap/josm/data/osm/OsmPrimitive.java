@@ -1037,7 +1037,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         if (other == null)
             throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "other"));
         if (other.isNew() ^ isNew())
-            throw new DataIntegrityProblemException(tr("Can''t merge because either of the participating primitives is new and the other is not"));
+            throw new DataIntegrityProblemException(tr("Can't merge because either of the participating primitives is new and the other is not"));
         if (! other.isNew() && other.getId() != id)
             throw new DataIntegrityProblemException(tr("Can''t merge primitives with different ids. This id is {0}, the other is {1}", id, other.getId()));
 

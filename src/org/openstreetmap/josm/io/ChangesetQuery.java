@@ -358,11 +358,11 @@ public class ChangesetQuery {
             for (String k: queryParams.keySet()) {
                 if (k.equals("uid")) {
                     if (queryParams.containsKey("display_name"))
-                        throw new ChangesetQueryUrlException(tr("Can''t create a changeset query including both the query parameters ''uid'' and ''display_name''"));
+                        throw new ChangesetQueryUrlException(tr("Can't create a changeset query including both the query parameters 'uid' and 'display_name'"));
                     csQuery.forUser(parseUid(queryParams.get("uid")));
                 } else if (k.equals("display_name")) {
                     if (queryParams.containsKey("uid"))
-                        throw new ChangesetQueryUrlException(tr("Can''t create a changeset query including both the query parameters ''uid'' and ''display_name''"));
+                        throw new ChangesetQueryUrlException(tr("Can't create a changeset query including both the query parameters 'uid' and 'display_name'"));
                     csQuery.forUser(queryParams.get("display_name"));
                 } else if (k.equals("open")) {
                     boolean b = parseBoolean(queryParams.get(k), "open");
