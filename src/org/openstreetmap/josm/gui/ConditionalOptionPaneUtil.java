@@ -146,10 +146,9 @@ public class ConditionalOptionPaneUtil {
      * @see JOptionPane#ERROR_MESSAGE
      */
     static public boolean showConfirmationDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, int trueOption) throws HeadlessException {
-        boolean donotshow = getDialogShowingEnabled(preferenceKey);
-        if (donotshow && (getDialogReturnValue(preferenceKey) >= 0))
+        if (!getDialogShowingEnabled(preferenceKey) && (getDialogReturnValue(preferenceKey) >= 0))
             return getDialogReturnValue(preferenceKey) == trueOption;
-        MessagePanel pnl = new MessagePanel(donotshow, message);
+        MessagePanel pnl = new MessagePanel(false, message);
         int ret = JOptionPane.showConfirmDialog(parent, pnl, title, optionType, messageType);
         if ((ret >= 0) && !pnl.getDialogShowingEnabled()) {
             setDialogShowingEnabled(preferenceKey, false);
