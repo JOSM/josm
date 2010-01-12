@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -113,6 +114,9 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
             URL url = new URL(site);
             synchronized(this) {
                 connection = (HttpURLConnection)url.openConnection();
+                connection.setRequestProperty("Cache-Control", "no-cache");
+                connection.setRequestProperty("User-Agent",Version.getInstance().getAgentString());
+                connection.setRequestProperty("Host", url.getHost());
             }
             in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
             String line;

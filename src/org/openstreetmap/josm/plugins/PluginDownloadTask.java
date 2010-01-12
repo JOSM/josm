@@ -80,8 +80,6 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
         }
     }
 
-
-
     @Override protected void finish() {}
 
     protected void download(PluginInformation pi, File file) throws PluginDownloadException{
@@ -111,6 +109,9 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
             URL url = new URL(pi.downloadlink);
             synchronized(this) {
                 downloadConnection = (HttpURLConnection)url.openConnection();
+                downloadConnection.setRequestProperty("Cache-Control", "no-cache");
+                downloadConnection.setRequestProperty("User-Agent",Version.getInstance().getAgentString());
+                downloadConnection.setRequestProperty("Host", url.getHost());
                 downloadConnection.connect();
             }
             in = downloadConnection.getInputStream();
