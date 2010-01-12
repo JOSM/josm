@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.io;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -40,15 +42,18 @@ public class MirroredInputStream extends InputStream {
             url = new URL(name);
             if (url.getProtocol().equals("file")) {
                 file = new File(name.substring("file:/".length()));
-                if (!file.exists())
+                if (!file.exists()) {
                     file = new File(name.substring("file://".length()));
+                }
             } else {
                 file = checkLocal(url, destDir, maxTime);
             }
         } catch (java.net.MalformedURLException e) {
             if(name.startsWith("resource://")) {
                 fs = getClass().getResourceAsStream(
-                name.substring("resource:/".length()));
+                        name.substring("resource:/".length()));
+                if (fs == null)
+                    throw new IOException(tr("Failed to open input stream for resource ''{0}''", name));
                 return;
             }
             file = new File(name);
@@ -60,12 +65,12 @@ public class MirroredInputStream extends InputStream {
 
     public File getFile()
     {
-       return file;
+        return file;
     }
 
     static public void cleanup(String name)
     {
-      cleanup(name, null);
+        cleanup(name, null);
     }
     static public void cleanup(String name, String destDir)
     {
@@ -79,8 +84,9 @@ public class MirroredInputStream extends InputStream {
                 {
                     String[] lp = localPath.split(";");
                     File lfile = new File(lp[1]);
-                    if(lfile.exists())
+                    if(lfile.exists()) {
                         lfile.delete();
+                    }
                 }
                 Main.pref.put("mirror." + url, null);
             }
@@ -93,20 +99,22 @@ public class MirroredInputStream extends InputStream {
         if (localPath != null && localPath.length() > 0) {
             String[] lp = localPath.split(";");
             file = new File(lp[1]);
-            if (maxTime <= 0)
+            if (maxTime <= 0) {
                 maxTime = Main.pref.getInteger("mirror.maxtime", 7*24*60*60);
+            }
             if (System.currentTimeMillis() - Long.parseLong(lp[0]) < maxTime*1000) {
-                if(file.exists()) {
+                if(file.exists())
                     return file;
-                }
             }
         }
-        if(destDir == null)
+        if(destDir == null) {
             destDir = Main.pref.getPreferencesDir();
+        }
 
         File destDirFile = new File(destDir);
-        if (!destDirFile.exists())
+        if (!destDirFile.exists()) {
             destDirFile.mkdirs();
+        }
 
         String a = url.toString().replaceAll("[^A-Za-z0-9_.-]", "_");
         localPath = "mirror_" + a;
@@ -120,8 +128,9 @@ public class MirroredInputStream extends InputStream {
             bos = new BufferedOutputStream( new FileOutputStream(destDirFile));
             byte[] buffer = new byte[4096];
             int length;
-            while ((length = bis.read(buffer)) > -1)
+            while ((length = bis.read(buffer)) > -1) {
                 bos.write(buffer, 0, length);
+            }
         } catch(IOException ioe) {
             if (file != null)
                 return file;
@@ -148,16 +157,22 @@ public class MirroredInputStream extends InputStream {
 
         return file;
     }
+    @Override
     public int available() throws IOException
     { return fs.available(); }
+    @Override
     public void close() throws IOException
     { fs.close(); }
+    @Override
     public int read() throws IOException
     { return fs.read(); }
+    @Override
     public int read(byte[] b) throws IOException
     { return fs.read(b); }
+    @Override
     public int read(byte[] b, int off, int len) throws IOException
     { return fs.read(b,off, len); }
+    @Override
     public long skip(long n) throws IOException
     { return fs.skip(n); }
 }
