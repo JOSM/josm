@@ -7,9 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -196,7 +194,7 @@ public class HelpBrowser extends JFrame {
                             getParent(),
                             new Dimension(600,400)
                     )
-            ).apply(this);
+            ).applySafe(this);
         } else if (!visible && isShowing()){
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }

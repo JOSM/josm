@@ -347,7 +347,7 @@ public class DownloadDialog extends JDialog  {
                             getParent(),
                             new Dimension(1000,600)
                     )
-            ).apply(this);
+            ).applySafe(this);
         } else if (!visible && isShowing()){
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }

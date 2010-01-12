@@ -299,7 +299,7 @@ public class ChangesetCacheManager extends JFrame {
                             getParent(),
                             new Dimension(1000,600)
                     )
-            ).apply(this);
+            ).applySafe(this);
             needsSplitPaneAdjustment = true;
             model.init();
 

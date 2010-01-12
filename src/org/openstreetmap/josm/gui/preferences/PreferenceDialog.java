@@ -78,7 +78,7 @@ public class PreferenceDialog extends JDialog {
                             getParent(),
                             new Dimension(600,800)
                     )
-            ).apply(this);
+            ).applySafe(this);
         } else if (!visible && isShowing()){
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }

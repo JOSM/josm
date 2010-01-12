@@ -148,7 +148,7 @@ public class ChangesetQueryDialog extends JDialog {
                             getParent(),
                             new Dimension(400,400)
                     )
-            ).apply(this);
+            ).applySafe(this);
             setCanceled(false);
             startUserInput();
         } else if (!visible && isShowing()){

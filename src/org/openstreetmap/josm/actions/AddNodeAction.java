@@ -263,7 +263,7 @@ public final class AddNodeAction extends JosmAction {
         public void setVisible(boolean visible) {
             if (visible) {
                 setCanceled(false);
-                WindowGeometry.centerInWindow(Main.parent, getSize()).apply(this);
+                WindowGeometry.centerInWindow(Main.parent, getSize()).applySafe(this);
             }
             super.setVisible(visible);
         }

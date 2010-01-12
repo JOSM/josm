@@ -315,7 +315,7 @@ public class OAuthAuthorisationWizard extends JDialog {
                             Main.parent,
                             new Dimension(400,400)
                     )
-            ).apply(this);
+            ).applySafe(this);
             initFromPreferences();
         } else if (!visible && isShowing()){
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");

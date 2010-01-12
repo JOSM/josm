@@ -341,7 +341,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
                             Main.parent,
                             new Dimension(400,600)
                     )
-            ).apply(this);
+            ).applySafe(this);
             startUserInput();
         } else if (!visible && isShowing()){
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");

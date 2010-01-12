@@ -171,7 +171,7 @@ public class UploadSelectionDialog extends JDialog {
                             Main.parent,
                             new Dimension(200,400)
                     )
-            ).apply(this);
+            ).applySafe(this);
         } else if (!visible && isShowing()){
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }

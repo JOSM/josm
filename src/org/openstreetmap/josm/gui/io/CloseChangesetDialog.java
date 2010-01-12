@@ -102,7 +102,7 @@ public class CloseChangesetDialog extends JDialog {
             new WindowGeometry(
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(Main.parent, new Dimension(300,300))
-            ).apply(this);
+            ).applySafe(this);
         } else {
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }
