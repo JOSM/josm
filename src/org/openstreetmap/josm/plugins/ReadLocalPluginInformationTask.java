@@ -75,20 +75,20 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
                     }
                 }
         );
-        if (siteCacheFiles != null || siteCacheFiles.length > 0) {
-            monitor.subTask(tr("Processing plugin site cache files..."));
-            monitor.setTicksCount(siteCacheFiles.length);
-            for (File f: siteCacheFiles) {
-                String fname = f.getName();
-                monitor.setCustomText(tr("Processing file ''{0}''", fname));
-                try {
-                    processLocalPluginInformationFile(f);
-                } catch(PluginListParseException e) {
-                    System.err.println(tr("Warning: Failed to scan file ''{0}'' for plugin information. Skipping.", fname));
-                    e.printStackTrace();
-                }
-                monitor.worked(1);
+        if (siteCacheFiles == null || siteCacheFiles.length == 0)
+            return;
+        monitor.subTask(tr("Processing plugin site cache files..."));
+        monitor.setTicksCount(siteCacheFiles.length);
+        for (File f: siteCacheFiles) {
+            String fname = f.getName();
+            monitor.setCustomText(tr("Processing file ''{0}''", fname));
+            try {
+                processLocalPluginInformationFile(f);
+            } catch(PluginListParseException e) {
+                System.err.println(tr("Warning: Failed to scan file ''{0}'' for plugin information. Skipping.", fname));
+                e.printStackTrace();
             }
+            monitor.worked(1);
         }
     }
 
@@ -100,26 +100,26 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
                     }
                 }
         );
-        if (pluginFiles != null || pluginFiles.length > 0) {
-            monitor.subTask(tr("Processing plugin files..."));
-            monitor.setTicksCount(pluginFiles.length);
-            for (File f: pluginFiles) {
-                String fname = f.getName();
-                monitor.setCustomText(tr("Processing file ''{0}''", fname));
-                try {
-                    if (fname.endsWith(".jar")) {
-                        String pluginName = fname.substring(0, fname.length() - 4);
-                        processJarFile(f, pluginName);
-                    } else if (fname.endsWith(".jar.new")) {
-                        String pluginName = fname.substring(0, fname.length() - 8);
-                        processJarFile(f, pluginName);
-                    }
-                } catch(PluginException e){
-                    System.err.println(tr("Warning: Failed to scan file ''{0}'' for plugin information. Skipping.", fname));
-                    e.printStackTrace();
+        if (pluginFiles == null || pluginFiles.length == 0)
+            return;
+        monitor.subTask(tr("Processing plugin files..."));
+        monitor.setTicksCount(pluginFiles.length);
+        for (File f: pluginFiles) {
+            String fname = f.getName();
+            monitor.setCustomText(tr("Processing file ''{0}''", fname));
+            try {
+                if (fname.endsWith(".jar")) {
+                    String pluginName = fname.substring(0, fname.length() - 4);
+                    processJarFile(f, pluginName);
+                } else if (fname.endsWith(".jar.new")) {
+                    String pluginName = fname.substring(0, fname.length() - 8);
+                    processJarFile(f, pluginName);
                 }
-                monitor.worked(1);
+            } catch(PluginException e){
+                System.err.println(tr("Warning: Failed to scan file ''{0}'' for plugin information. Skipping.", fname));
+                e.printStackTrace();
             }
+            monitor.worked(1);
         }
     }
 
