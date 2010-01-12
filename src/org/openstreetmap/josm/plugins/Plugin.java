@@ -14,9 +14,6 @@ import org.openstreetmap.josm.gui.download.DownloadSelection;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 
 /**
- * All plugins *must* have an standard constructor taking no arguments.
- *
- * This constructor is called at JOSM startup, after all Main-objects have been initialized.
  * For all purposes of loading dynamic resources, the Plugin's class loader should be used
  * (or else, the plugin jar will not be within the class path).
  *
@@ -46,7 +43,43 @@ public abstract class Plugin {
      * (The actual implementation to request the info from a static variable
      * is a bit hacky, but it works).
      */
-    public final PluginInformation info = PluginInformation.currentPluginInitialization;
+    private PluginInformation info = null;
+
+    /**
+     * The no-arg constructor is deprecated.
+     * 
+     * @deprecated use {@see Plugin(PluginInformation)} instead
+     */
+    @Deprecated
+    public Plugin() {
+
+    }
+    /**
+     * Creates the plugin
+     * 
+     * @param info the plugin information describing the plugin.
+     */
+    public Plugin(PluginInformation info) {
+        this.info = info;
+    }
+
+    /**
+     * Replies the plugin information object for this plugin
+     * 
+     * @return the plugin information object
+     */
+    public PluginInformation getPluginInformation() {
+        return info;
+    }
+
+    /**
+     * Sets the plugin information object for this plugin
+     * 
+     * @parma info the plugin information object
+     */
+    public void setPluginInformation(PluginInformation info) {
+        this.info = info;
+    }
 
     /**
      * @return The directory for the plugin to store all kind of stuff.
@@ -78,7 +111,7 @@ public abstract class Plugin {
      * Copies the ressource 'from' to the file in the plugin directory named 'to'.
      */
     public void copy(String from, String to) throws FileNotFoundException, IOException {
-        String pluginDirName = Main.pref.getPreferencesDir()+"plugins/"+info.name+"/";
+        String pluginDirName = Main.pref.getPluginsDirectory() + "/" + info.name + "/";
         File pluginDir = new File(pluginDirName);
         if (!pluginDir.exists()) {
             pluginDir.mkdirs();

@@ -18,11 +18,10 @@ import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 public class PluginProxy extends Plugin {
 
     public final Object plugin;
-    public final PluginInformation info;
 
     public PluginProxy(Object plugin, PluginInformation info) {
+        super(info);
         this.plugin = plugin;
-        this.info = info;
     }
 
     @Override public void mapFrameInitialized(MapFrame oldFrame, MapFrame newFrame) {
@@ -30,7 +29,7 @@ public class PluginProxy extends Plugin {
             plugin.getClass().getMethod("mapFrameInitialized", MapFrame.class, MapFrame.class).invoke(plugin, oldFrame, newFrame);
         } catch (NoSuchMethodException e) {
         } catch (Exception e) {
-            BugReportExceptionHandler.handleException(new PluginException(this, info.name, e));
+            BugReportExceptionHandler.handleException(new PluginException(this, getPluginInformation().name, e));
         }
     }
 
@@ -40,7 +39,7 @@ public class PluginProxy extends Plugin {
         } catch (NoSuchMethodException e) {
             return null;
         } catch (Exception e) {
-            BugReportExceptionHandler.handleException(new PluginException(this, info.name, e));
+            BugReportExceptionHandler.handleException(new PluginException(this, getPluginInformation().name, e));
         }
         return null;
     }
@@ -51,7 +50,7 @@ public class PluginProxy extends Plugin {
         } catch (NoSuchMethodException e) {
             // ignore
         } catch (Exception e) {
-            BugReportExceptionHandler.handleException(new PluginException(this, info.name, e));
+            BugReportExceptionHandler.handleException(new PluginException(this, getPluginInformation().name, e));
         }
     }
 }

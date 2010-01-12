@@ -7,6 +7,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -47,15 +50,6 @@ public class PluginInformation {
     public List<URL> libraries = new LinkedList<URL>();
 
     public final Map<String, String> attr = new TreeMap<String, String>();
-
-    /**
-     * Used in the Plugin constructor to make the information of the plugin
-     * that is currently initializing available.
-     *
-     * If you think this is hacky, you are probably right. But it is
-     * convinient anyway ;-)
-     */
-    static PluginInformation currentPluginInitialization = null;
 
     /**
      * @param file the plugin jar file.
@@ -192,20 +186,51 @@ public class PluginInformation {
 
     /**
      * Load and instantiate the plugin
+     * 
+     * @param the plugin class
+     * @return the instantiated and initialized plugin
      */
     public PluginProxy load(Class<?> klass) throws PluginException{
         try {
-            currentPluginInitialization = this;
-            return new PluginProxy(klass.newInstance(), this);
+            try {
+                Constructor<?> c = klass.getDeclaredConstructor(PluginInformation.class);
+                Object plugin = c.newInstance(this);
+                return new PluginProxy(plugin, this);
+            } catch(NoSuchMethodException e) {
+                // do nothing - try again with the noarg constructor for legacy support
+            }
+            // FIXME: This is legacy support. It is necessary because of a former ugly hack in the
+            // plugin bootstrap procedure. Plugins should be migrated to the new required
+            // constructor with PluginInformation as argument, new plugins should only use this
+            // constructor. The following is legacy support and should be removed by Q2/2010.
+            // Note that this is not fool proof because it isn't
+            // completely equivalent with the former hack: plugins derived from the Plugin
+            // class can't access their local "info" object any more from within the noarg-
+            // constructor. It is only set *after* constructor invocation.
+            //
+            Constructor<?> c = klass.getConstructor();
+            Object plugin = c.newInstance();
+            if (plugin instanceof Plugin) {
+                Method m = klass.getMethod("setPluginInformation", PluginInformation.class);
+                m.invoke(plugin, this);
+            }
+            return new PluginProxy(plugin, this);
+        } catch(NoSuchMethodException e) {
+            throw new PluginException(name, e);
         } catch(IllegalAccessException e) {
             throw new PluginException(name, e);
         } catch (InstantiationException e) {
+            throw new PluginException(name, e);
+        } catch(InvocationTargetException e) {
             throw new PluginException(name, e);
         }
     }
 
     /**
      * Load the class of the plugin
+     * 
+     * @param classLoader the class loader to use
+     * @return the loaded class
      */
     public Class<?> loadClass(ClassLoader classLoader) throws PluginException {
         if (className == null)
@@ -214,6 +239,8 @@ public class PluginInformation {
             Class<?> realClass = Class.forName(className, true, classLoader);
             return realClass;
         } catch (ClassNotFoundException e) {
+            throw new PluginException(name, e);
+        } catch(ClassCastException e) {
             throw new PluginException(name, e);
         }
     }

@@ -1,4 +1,3 @@
-//License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.plugins;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
@@ -597,7 +596,7 @@ public class PluginHandler {
 
     public static Object getPlugin(String name) {
         for (PluginProxy plugin : pluginList)
-            if(plugin.info.name.equals(name))
+            if(plugin.getPluginInformation().name.equals(name))
                 return plugin.plugin;
         return null;
     }
@@ -665,7 +664,7 @@ public class PluginHandler {
              */
             for (PluginProxy p : pluginList)
             {
-                String baseClass = p.info.className;
+                String baseClass = p.getPluginInformation().className;
                 int i = baseClass.lastIndexOf(".");
                 baseClass = baseClass.substring(0, i);
                 for (StackTraceElement element : e.getStackTrace())
@@ -692,10 +691,10 @@ public class PluginHandler {
             dialog.setButtonIcons(new String[] {"dialogs/delete.png", "cancel.png"});
             dialog.setContent(
                     tr("<html>") +
-                    tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.", plugin.info.name)
+                    tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.", plugin.getPluginInformation().name)
                     + "<br>"
-                    + (plugin.info.author != null
-                            ? tr("According to the information within the plugin, the author is {0}.", plugin.info.author)
+                    + (plugin.getPluginInformation().author != null
+                            ? tr("According to the information within the plugin, the author is {0}.", plugin.getPluginInformation().author)
                                     : "")
                                     + "<br>"
                                     + tr("Try updating to the newest version of this plugin before reporting a bug.")
@@ -708,8 +707,8 @@ public class PluginHandler {
 
             if (answer == 1) {
                 List<String> plugins = new ArrayList<String>(Main.pref.getCollection("plugins", Collections.<String>emptyList()));
-                if (plugins.contains(plugin.info.name)) {
-                    while (plugins.remove(plugin.info.name)) {}
+                if (plugins.contains(plugin.getPluginInformation().name)) {
+                    while (plugins.remove(plugin.getPluginInformation().name)) {}
                     Main.pref.putCollection("plugins", plugins);
                     JOptionPane.showMessageDialog(Main.parent,
                             tr("The plugin has been removed from the configuration. Please restart JOSM to unload the plugin."),
@@ -737,8 +736,8 @@ public class PluginHandler {
         }
         for (final PluginProxy pp : pluginList) {
             text += "Plugin "
-                + pp.info.name
-                + (pp.info.version != null && !pp.info.version.equals("") ? " Version: " + pp.info.version + "\n"
+                + pp.getPluginInformation().name
+                + (pp.getPluginInformation().version != null && !pp.getPluginInformation().version.equals("") ? " Version: " + pp.getPluginInformation().version + "\n"
                         : "\n");
         }
         return text;
@@ -747,14 +746,15 @@ public class PluginHandler {
     public static JPanel getInfoPanel() {
         JPanel pluginTab = new JPanel(new GridBagLayout());
         for (final PluginProxy p : pluginList) {
-            String name = p.info.name
-            + (p.info.version != null && !p.info.version.equals("") ? " Version: " + p.info.version : "");
+            final PluginInformation info = p.getPluginInformation();
+            String name = info.name
+            + (info.version != null && !info.version.equals("") ? " Version: " + info.version : "");
             pluginTab.add(new JLabel(name), GBC.std());
             pluginTab.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
             pluginTab.add(new JButton(new AbstractAction(tr("Information")) {
                 public void actionPerformed(ActionEvent event) {
                     StringBuilder b = new StringBuilder();
-                    for (Entry<String, String> e : p.info.attr.entrySet()) {
+                    for (Entry<String, String> e : info.attr.entrySet()) {
                         b.append(e.getKey());
                         b.append(": ");
                         b.append(e.getValue());
@@ -768,8 +768,8 @@ public class PluginHandler {
                 }
             }), GBC.eol());
 
-            JTextArea description = new JTextArea((p.info.description == null ? tr("no description available")
-                    : p.info.description));
+            JTextArea description = new JTextArea((info.description == null ? tr("no description available")
+                    : info.description));
             description.setEditable(false);
             description.setFont(new JLabel().getFont().deriveFont(Font.ITALIC));
             description.setLineWrap(true);

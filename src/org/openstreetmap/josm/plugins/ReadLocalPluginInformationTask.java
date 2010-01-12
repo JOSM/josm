@@ -160,11 +160,12 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
 
     protected void analyseInProcessPlugins() {
         for (PluginProxy proxy : PluginHandler.pluginList) {
+            PluginInformation info = proxy.getPluginInformation();
             if (canceled)return;
-            if (!availablePlugins.containsKey(proxy.info.name)) {
-                availablePlugins.put(proxy.info.name, proxy.info);
+            if (!availablePlugins.containsKey(info.name)) {
+                availablePlugins.put(info.name, info);
             } else {
-                availablePlugins.get(proxy.info.name).localversion = proxy.info.version;
+                availablePlugins.get(info.name).localversion = info.version;
             }
         }
     }
