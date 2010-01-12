@@ -21,6 +21,7 @@ import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -46,6 +47,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  */
 public class OsmApi extends OsmConnection {
+    static private final Logger logger = Logger.getLogger(OsmApi.class.getName());
     /** max number of retries to send a request in case of HTTP 500 errors or timeouts */
     static public final int DEFAULT_MAX_NUM_RETRIES = 5;
 
@@ -578,12 +580,6 @@ public class OsmApi extends OsmConnection {
                     return responseBody.toString();
                 case HttpURLConnection.HTTP_GONE:
                     throw new OsmApiPrimitiveGoneException(errorHeader, errorBody);
-                    //                case HttpURLConnection.HTTP_UNAUTHORIZED:
-                    //                    throw new OsmApiException(retCode, errorHeader, errorBody);
-                    //                case HttpURLConnection.HTTP_PROXY_AUTH:
-                    //                    throw new OsmApiException(retCode, errorHeader, errorBody);
-                    //                case HttpURLConnection.HTTP_FORBIDDEN:
-                    //                    throw new OsmApiException(retCode, errorHeader, errorBody);
                 case HttpURLConnection.HTTP_CONFLICT:
                     if (ChangesetClosedException.errorHeaderMatchesPattern(errorHeader))
                         throw new ChangesetClosedException(errorBody, ChangesetClosedException.Source.UPLOAD_DATA);

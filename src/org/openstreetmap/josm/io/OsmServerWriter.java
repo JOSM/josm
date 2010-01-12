@@ -120,8 +120,6 @@ public class OsmServerWriter {
             processed.addAll(api.uploadDiff(primitives, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)));
         } catch(OsmTransferException e) {
             throw e;
-        } catch(Exception e) {
-            throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
         }
@@ -160,8 +158,6 @@ public class OsmServerWriter {
             }
         } catch(OsmTransferException e) {
             throw e;
-        } catch(Exception e) {
-            throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
         }
@@ -206,8 +202,6 @@ public class OsmServerWriter {
             }
         } catch(OsmTransferException e) {
             throw e;
-        } catch(Exception e) {
-            throw new OsmTransferException(e);
         } finally {
             monitor.finishTask();
             api.setChangeset(null);

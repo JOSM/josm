@@ -315,6 +315,10 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                     return;
                 if (lastException instanceof ChangesetClosedException) {
                     ChangesetClosedException e = (ChangesetClosedException)lastException;
+                    if (e.getSource().equals(ChangesetClosedException.Source.UPDATE_CHANGESET)) {
+                        handleFailedUpload(lastException);
+                        return;
+                    }
                     if (strategy.getPolicy() == null)
                         /* do nothing if unknown policy */
                         return;
