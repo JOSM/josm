@@ -96,8 +96,9 @@ public class MainApplication extends Main {
                 "\tjava -jar josm.jar 43.2,11.1,43.4,11.4\n"+
                 "\tjava -Djosm.home=/home/user/.josm_dev -jar josm.jar\n"+
                 "\tjava -Xmx400m -jar josm.jar\n\n"+
-                tr("Parameters are read in the order they are specified, so make sure you load\n"+
-                "some data before --selection")+"\n");
+                tr("Parameters --download, --downloadgps and --selection are processed in this order.")+"\n"+
+                tr("Make sure you load some data if you use --selection.")+"\n"
+        );
     }
 
     /**
