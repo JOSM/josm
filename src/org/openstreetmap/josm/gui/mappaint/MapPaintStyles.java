@@ -63,7 +63,7 @@ public class MapPaintStyles {
         if(Main.pref.getBoolean("mappaint.style.enable-defaults", true))
         {
             LinkedList<String> f = new LinkedList<String>();
-            f.add("resource://styles/standard/elemstyles.xml");
+            f.add("resource://data/elemstyles.xml");
             f.addAll(files);
             files = f;
         }

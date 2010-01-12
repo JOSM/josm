@@ -83,7 +83,7 @@ Build-Date: ${build.tstamp}
 		<copy file="LICENSE" todir="build"/>
 
 		<!-- styles -->
-		<copy file="styles/standard/elemstyles.xml" todir="build/styles/standard"/>
+		<copy file="styles/standard/elemstyles.xml" todir="build/data"/>
 
 		<!-- create josm-custom.jar -->
 		<delete file="dist/josm-custom.jar"/>
