@@ -122,7 +122,7 @@ public class OsmServerUserInfoReader extends OsmServerReader {
 
     public UserInfo fetchUserInfo(ProgressMonitor monitor) throws OsmTransferException {
         try {
-            monitor.beginTask(tr(""));
+            monitor.beginTask("");
             monitor.indeterminateSubTask(tr("Reading user info ..."));
             InputStream in = getInputStream("user/details", monitor.createSubTaskMonitor(1, true));
             return buildFromXML(

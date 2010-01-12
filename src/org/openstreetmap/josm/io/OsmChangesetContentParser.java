@@ -303,7 +303,7 @@ public class OsmChangesetContentParser {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
         try {
-            progressMonitor.beginTask(tr(""));
+            progressMonitor.beginTask("");
             progressMonitor.indeterminateSubTask(tr("Parsing changeset content ..."));
             SAXParserFactory.newInstance().newSAXParser().parse(source, new Parser());
         } catch(OsmDataParsingException e){

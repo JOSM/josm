@@ -184,7 +184,7 @@ public class CredentialDialog extends JDialog {
             gc.fill = GridBagConstraints.BOTH;
             gc.weightx = 1.0;
             gc.weighty = 0.0;
-            lblWarning = new JMultilineLabel(tr(""));
+            lblWarning = new JMultilineLabel("");
             lblWarning.setFont(lblWarning.getFont().deriveFont(Font.ITALIC));
             add(lblWarning, gc);
 
