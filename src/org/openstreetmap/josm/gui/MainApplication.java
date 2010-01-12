@@ -10,7 +10,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.Authenticator;
 import java.net.ProxySelector;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -115,9 +114,12 @@ public class MainApplication extends Main {
         Main.platform.preStartupHook();
 
         // construct argument table
-        List<String> argList = Arrays.asList(argArray);
         final Map<String, Collection<String>> args = new HashMap<String, Collection<String>>();
         for (String arg : argArray) {
+            if ("-h".equals(arg) || "-?".equals(arg)) {
+                arg = "--help";
+            }
+            // handle simple arguments like file names, URLs, bounds
             if (!arg.startsWith("--")) {
                 arg = "--download="+arg;
             }
@@ -148,7 +150,7 @@ public class MainApplication extends Main {
         OAuthAccessTokenHolder.getInstance().init(Main.pref, CredentialsManagerFactory.getCredentialManager());
 
         // asking for help? show help and exit
-        if (argList.contains("--help") || argList.contains("-?") || argList.contains("-h")) {
+        if (args.containsKey("help")) {
             showHelp();
             System.exit(0);
         }
