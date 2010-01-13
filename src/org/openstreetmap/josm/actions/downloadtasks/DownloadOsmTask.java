@@ -91,7 +91,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 dataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             } catch(Exception e) {
                 if (isCanceled()) {
-                    logger.warning(tr("Ignoring exception because download has been cancelled. Exception was: {0}" + e.toString()));
+                    logger.warning(tr("Ignoring exception because download has been cancelled. Exception was: {0}", e.toString()));
                     return;
                 }
                 if (e instanceof OsmTransferCancelledException) {

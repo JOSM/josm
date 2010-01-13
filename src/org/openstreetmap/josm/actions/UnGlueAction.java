@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -102,7 +103,7 @@ public class UnGlueAction extends JosmAction {
                 if (selection.size() > 1) {
                     errMsg =  tr("None of these nodes are glued to anything else.");
                 } else {
-                    errMsg = tr("None of this way's nodes are glued to anything else.");
+                    errMsg = tr("None of this way''s nodes are glued to anything else.");
                 }
             } else {
                 // and then do the work.
@@ -389,7 +390,8 @@ public class UnGlueAction extends JosmAction {
         }
         cmds.add(new ChangeCommand(selectedWay, tmpWay)); // only one changeCommand for a way, else garbage will happen
 
-        Main.main.undoRedo.add(new SequenceCommand(tr("Dupe {0} nodes into {1} nodes", selectedNodes.size(), selectedNodes.size()+allNewNodes.size()), cmds));
+        Main.main.undoRedo.add(new SequenceCommand(
+                trn("Dupe {0} node into {1} nodes", "Dupe {0} nodes into {1} nodes", selectedNodes.size(), selectedNodes.size(), selectedNodes.size()+allNewNodes.size()), cmds));
         getCurrentDataSet().setSelected(allNewNodes);
     }
 

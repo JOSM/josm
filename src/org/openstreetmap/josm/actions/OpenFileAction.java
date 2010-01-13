@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -160,7 +161,7 @@ public class OpenFileAction extends DiskAccessAction {
                 if (files.size() == 1) {
                     msg = tr("Opening 1 file...");
                 } else {
-                    msg = tr("Opening {0} files...", files.size());
+                    msg = trn("Opening {0} file...", "Opening {0} files...", files.size(), files.size());
                 }
                 getProgressMonitor().indeterminateSubTask(msg);
                 importer.importDataHandleExceptions(files);

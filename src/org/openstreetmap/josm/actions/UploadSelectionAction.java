@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.io.UploadSelectionDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmServerBackreferenceReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.xml.sax.SAXException;
 
@@ -232,8 +233,7 @@ public class UploadSelectionAction extends JosmAction{
          * @throws IllegalArgumentException thrown if base is null
          */
         public Set<OsmPrimitive> build(Collection<OsmPrimitive> base) throws IllegalArgumentException{
-            if (base == null)
-                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "base"));
+            CheckParameterUtil.ensureParameterNotNull(base, "base");
             hull = new HashSet<OsmPrimitive>();
             for (OsmPrimitive p: base) {
                 p.visit(this);

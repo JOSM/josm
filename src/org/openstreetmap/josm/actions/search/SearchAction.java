@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions.search;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Font;
 import java.awt.GridBagLayout;
@@ -114,12 +115,12 @@ public class SearchAction extends JosmAction{
         JPanel right = new JPanel();
         JLabel description =
             new JLabel("<html><ul>"
-                    + "<li>"+tr("<b>Baker Street</b> - 'Baker' and 'Street' in any key or name.")+"</li>"
-                    + "<li>"+tr("<b>\"Baker Street\"</b> - 'Baker Street' in any key or name.")+"</li>"
-                    + "<li>"+tr("<b>name:Bak</b> - 'Bak' anywhere in the name.")+"</li>"
-                    + "<li>"+tr("<b>type=route</b> - key 'type' with value exactly 'route'.") + "</li>"
-                    + "<li>"+tr("<b>type=*</b> - key 'type' with any value. Try also <b>*=value</b>, <b>type=</b>, <b>*=*</b>, <b>*=</b>") + "</li>"
-                    + "<li>"+tr("<b>-name:Bak</b> - not 'Bak' in the name.")+"</li>"
+                    + "<li>"+tr("<b>Baker Street</b> - ''Baker'' and ''Street'' in any key or name.")+"</li>"
+                    + "<li>"+tr("<b>\"Baker Street\"</b> - ''Baker Street'' in any key or name.")+"</li>"
+                    + "<li>"+tr("<b>name:Bak</b> - ''Bak'' anywhere in the name.")+"</li>"
+                    + "<li>"+tr("<b>type=route</b> - key ''type'' with value exactly ''route''.") + "</li>"
+                    + "<li>"+tr("<b>type=*</b> - key ''type'' with any value. Try also <b>*=value</b>, <b>type=</b>, <b>*=*</b>, <b>*=</b>") + "</li>"
+                    + "<li>"+tr("<b>-name:Bak</b> - not ''Bak'' in the name.")+"</li>"
                     + "<li>"+tr("<b>foot:</b> - key=foot set to any value.")+"</li>"
                     + "<li>"+tr("<u>Special targets:</u>")+"</li>"
                     + "<li>"+tr("<b>type:</b> - type of the object (<b>node</b>, <b>way</b>, <b>relation</b>)")+"</li>"
@@ -318,8 +319,8 @@ public class SearchAction extends JosmAction{
 
         @Override
         public String toString() {
-            String cs = caseSensitive ? tr("CS") : tr("CI");
-            String rx = regexSearch ? (", " + tr("RX")) : "";
+            String cs = caseSensitive ? trc("case sensitive", "CS") : trc("case insensitive", "CI");
+            String rx = regexSearch ? (", " + trc("regex search", "RX")) : "";
             return "\"" + text + "\" (" + cs + rx + ", " + mode + ")";
         }
 

@@ -45,7 +45,7 @@ public class RelationUploadOrderHook implements UploadHook {
         JPanel pnl = new JPanel();
         pnl.setLayout(new BorderLayout());
         String msg = tr("<html>{0} relations build a cycle because they refer to each other.<br>"
-                + "JOSM can''t upload them. Please edit the relations and remove the "
+                + "JOSM cannot upload them. Please edit the relations and remove the "
                 + "cyclic dependency.</html>", dep.size()-1);
         pnl.add(new JLabel(msg), BorderLayout.NORTH);
 

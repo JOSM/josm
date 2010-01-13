@@ -74,7 +74,7 @@ public class UpdateSelectionAction extends JosmAction {
             throw new IllegalStateException(tr("No current dataset found"));
         OsmPrimitive primitive = getEditLayer().data.getPrimitiveById(id);
         if (primitive == null)
-            throw new IllegalStateException(tr("Didn''t find an object with id {0} in the current dataset", id));
+            throw new IllegalStateException(tr("Did not find an object with id {0} in the current dataset", id));
         updatePrimitives(Collections.singleton(primitive));
     }
 

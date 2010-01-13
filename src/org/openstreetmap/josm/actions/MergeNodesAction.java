@@ -34,6 +34,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 /**
@@ -168,10 +169,8 @@ public class MergeNodesAction extends JosmAction {
      * @throw IllegalArgumentException thrown if layer is null
      */
     public static Command mergeNodes(OsmDataLayer layer,Collection<Node> nodes, Node targetNode) {
-        if (layer == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "nodes"));
-        if (targetNode == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "targetNode"));
+        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
+        CheckParameterUtil.ensureParameterNotNull(targetNode, "targetNode");
         if (nodes == null)
             return null;
 

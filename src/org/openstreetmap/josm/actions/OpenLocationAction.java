@@ -67,7 +67,7 @@ public class OpenLocationAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
 
         JCheckBox layer = new JCheckBox(tr("Separate Layer"));
-        layer.setToolTipText(tr("Select if the data should be downloaded in a new layer"));
+        layer.setToolTipText(tr("Select if the data should be downloaded into a new layer"));
         layer.setSelected(Main.pref.getBoolean("download.newlayer"));
         JPanel all = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.GridBagLayout;
 import java.awt.Polygon;
@@ -135,7 +136,7 @@ public class JoinAreasAction extends JosmAction {
         List<Node> allNodes = new ArrayList<Node>();
         for (Way way: ways) {
             if(!way.isClosed()) {
-                JOptionPane.showMessageDialog(Main.parent, tr("\"{0}\" is not closed and therefore can't be joined.", way.getName()));
+                JOptionPane.showMessageDialog(Main.parent, tr("\"{0}\" is not closed and therefore cannot be joined.", way.getName()));
                 return;
             }
 
@@ -148,9 +149,11 @@ public class JoinAreasAction extends JosmAction {
             for (Node node: allNodes) {
                 if (!dataSourceArea.contains(node.getCoor())) {
                     int option = JOptionPane.showConfirmDialog(Main.parent,
-                            tr("The selected way(s) have nodes outside of the downloaded data region.\n"
-                                    + "This can lead to nodes being deleted accidentally.\n"
-                                    + "Are you really sure to continue?"),
+                            trn("The selected way has nodes outside of the downloaded data region.",
+                                    "The selected ways have nodes outside of the downloaded data region.",
+                                    ways.size()) + "\n"
+                                    + tr("This can lead to nodes being deleted accidentally.") + "\n"
+                                    + tr("Are you really sure to continue?"),
                                     tr("Please abort if you are not sure"), JOptionPane.YES_NO_OPTION,
                                     JOptionPane.WARNING_MESSAGE);
 

@@ -284,7 +284,7 @@ public final class AddNodeAction extends JosmAction {
         class CancelAction extends AbstractAction {
             public CancelAction() {
                 putValue(NAME, tr("Cancel"));
-                putValue(SHORT_DESCRIPTION, tr("Close the dialog, don't create a new node"));
+                putValue(SHORT_DESCRIPTION, tr("Close the dialog, do not create a new node"));
                 putValue(SMALL_ICON, ImageProvider.get("cancel"));
             }
 

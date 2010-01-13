@@ -3,10 +3,12 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +27,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerBackreferenceReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
@@ -84,9 +87,8 @@ public class DownloadReferrersAction extends JosmAction{
      */
     static public void downloadReferrers(OsmDataLayer targetLayer, long id, OsmPrimitiveType type) throws IllegalArgumentException {
         if (id <= 0)
-            throw new IllegalArgumentException(tr("Id > 0 required, got {0}", id));
-        if (type == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "type"));
+            throw new IllegalArgumentException(MessageFormat.format("Id > 0 required, got {0}", id));
+        CheckParameterUtil.ensureParameterNotNull(type, "type");
         Main.worker.submit(new DownloadReferrersTask(targetLayer, id, type));
     }
 
@@ -124,8 +126,7 @@ public class DownloadReferrersAction extends JosmAction{
          */
         public DownloadReferrersTask(OsmDataLayer targetLayer, Collection<OsmPrimitive> children) {
             super("Download referrers", false /* don't ignore exception*/);
-            if (targetLayer == null)
-                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "targetLayer"));
+            CheckParameterUtil.ensureParameterNotNull(targetLayer, "targetLayer");
             cancelled = false;
             this.children = new HashMap<Long, OsmPrimitiveType>();
             if (children != null) {
@@ -149,8 +150,7 @@ public class DownloadReferrersAction extends JosmAction{
          */
         public DownloadReferrersTask(OsmDataLayer targetLayer, Map<Long, OsmPrimitiveType> children) {
             super("Download referrers", false /* don't ignore exception*/);
-            if (targetLayer == null)
-                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "targetLayer"));
+            CheckParameterUtil.ensureParameterNotNull(targetLayer, "targetLayer");
             cancelled = false;
             this.children = new HashMap<Long, OsmPrimitiveType>();
             if (children != null) {
@@ -177,12 +177,10 @@ public class DownloadReferrersAction extends JosmAction{
          */
         public DownloadReferrersTask(OsmDataLayer targetLayer, long id, OsmPrimitiveType type) throws IllegalArgumentException {
             super("Download referrers", false /* don't ignore exception*/);
-            if (targetLayer == null)
-                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "targetLayer"));
+            CheckParameterUtil.ensureParameterNotNull(targetLayer, "targetLayer");
             if (id <= 0)
-                throw new IllegalArgumentException(tr("Id > 0 required, got {0}", id));
-            if (type == null)
-                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "type"));
+                throw new IllegalArgumentException(MessageFormat.format("Id > 0 required, got {0}", id));
+            CheckParameterUtil.ensureParameterNotNull(type, "type");
             cancelled = false;
             this.children = new HashMap<Long, OsmPrimitiveType>();
             this.children.put(id, type);
@@ -225,10 +223,12 @@ public class DownloadReferrersAction extends JosmAction{
             targetLayer.getConflicts().add(visitor.getConflicts());
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("There were {0} conflicts during import.",
+                    trn("There was {0} conflict during import.",
+                            "There were {0} conflicts during import.",
+                            visitor.getConflicts().size(),
                             visitor.getConflicts().size()
                     ),
-                    tr("Conflicts during download"),
+                    trn("Conflict during download", "Conflicts during download", visitor.getConflicts().size()),
                     JOptionPane.WARNING_MESSAGE
             );
         }

@@ -83,7 +83,7 @@ public abstract class AbstractInfoAction extends JosmAction {
 
     public static boolean confirmLaunchMultiple(int numBrowsers) {
         String msg  = tr(
-                "You''re about to launch {0} browser windows.<br>"
+                "You are about to launch {0} browser windows.<br>"
                 + "This may both clutter your screen with browser windows<br>"
                 + "and take some time to finish.", numBrowsers);
         msg = "<html>" + msg + "</html>";

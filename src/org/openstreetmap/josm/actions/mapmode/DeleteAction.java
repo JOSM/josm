@@ -24,6 +24,7 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationDialogManager;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -242,7 +243,7 @@ public class DeleteAction extends MapMode implements AWTEventListener {
     }
 
     @Override public String getModeHelpText() {
-        return tr("Click to delete. Shift: delete way segment. Alt: don't delete unused nodes when deleting a way. Ctrl: delete referring objects.");
+        return tr("Click to delete. Shift: delete way segment. Alt: do not delete unused nodes when deleting a way. Ctrl: delete referring objects.");
     }
 
     @Override public boolean layerIsSupported(Layer l) {
@@ -264,10 +265,8 @@ public class DeleteAction extends MapMode implements AWTEventListener {
      * @exception IllegalArgumentException thrown if toDelete is nul
      */
     public static void deleteRelation(OsmDataLayer layer, Relation toDelete) {
-        if (layer == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
-        if (toDelete == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "toDelete"));
+        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
+        CheckParameterUtil.ensureParameterNotNull(toDelete, "toDelete");
 
         Command cmd = DeleteCommand.delete(layer, Collections.singleton(toDelete));
         if (cmd != null) {

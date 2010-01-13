@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions.audio;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -15,7 +16,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class AudioFwdAction extends JosmAction {
     public AudioFwdAction() {
         super(tr("Forward"), "audio-fwd", tr("Jump forward"),
-        Shortcut.registerShortcut("audio:forward", tr("Audio: {0}", tr("Forward")), KeyEvent.VK_F7, Shortcut.GROUP_DIRECT), true);
+        Shortcut.registerShortcut("audio:forward", tr("Audio: {0}", trc("audio", "Forward")), KeyEvent.VK_F7, Shortcut.GROUP_DIRECT), true);
     }
 
     public void actionPerformed(ActionEvent e) {

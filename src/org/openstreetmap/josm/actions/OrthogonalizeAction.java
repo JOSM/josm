@@ -35,11 +35,11 @@ import org.openstreetmap.josm.tools.Shortcut;
  * See USAGE String below.
  */
 public final class OrthogonalizeAction extends JosmAction {
-    String USAGE = "<h3>"+
-    "When one or more ways are selected, the shape is adjusted, such that all angles are 90 or 180 degrees.<h3>"+
-    "You can add two nodes to the selection. Then the direction is fixed by these two reference nodes.<h3>"+
+    String USAGE = tr(
+    "When one or more ways are selected, the shape is adjusted such, that all angles are 90 or 180 degrees.<h3>"+
+    "You can add two nodes to the selection. Then, the direction is fixed by these two reference nodes."+
     "(Afterwards, you can undo the movement for certain nodes:<br>"+
-    "Select them and press the shortcut for Orthogonalize / Undo. The default is Shift-Q.)";
+    "Select them and press the shortcut for Orthogonalize / Undo. The default is Shift-Q.)");
 
     public OrthogonalizeAction() {
         super(tr("Orthogonalize Shape"),
@@ -193,14 +193,14 @@ public final class OrthogonalizeAction extends JosmAction {
             if (ex.getMessage().equals("usage")) {
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        "<html><h2>"+tr("Usage")+tr(USAGE),
+                        "<html><h2>" + tr("Usage") + "</h2>" + USAGE + "</html>",
                         tr("Orthogonalize Shape"),
                         JOptionPane.INFORMATION_MESSAGE);
             }
             else {
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        "<html><h3>"+tr(ex.getMessage())+"<br><hr><h3>"+tr("Usage")+tr(USAGE),
+                        "<html>" + tr(ex.getMessage()) + "<br><hr><h2>" + tr("Usage") + "</h2>" + USAGE + "</html>",
                         tr("Selected Elements cannot be orthogonalized"),
                         JOptionPane.INFORMATION_MESSAGE);
             }

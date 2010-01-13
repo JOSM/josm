@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.actions.audio;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-
+import static org.openstreetmap.josm.tools.I18n.trc;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.net.URL;
@@ -16,7 +16,7 @@ public class AudioPlayPauseAction extends JosmAction {
 
     public AudioPlayPauseAction() {
         super(tr("Play/Pause"), "audio-playpause", tr("Play/pause audio."),
-        Shortcut.registerShortcut("audio:pause", tr("Audio: {0}", tr("Play/Pause")), KeyEvent.VK_PERIOD, Shortcut.GROUP_DIRECT), true);
+        Shortcut.registerShortcut("audio:pause", tr("Audio: {0}", trc("audio", "Play/Pause")), KeyEvent.VK_PERIOD, Shortcut.GROUP_DIRECT), true);
     }
 
     public void actionPerformed(ActionEvent e) {

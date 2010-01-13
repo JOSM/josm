@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import javax.swing.JOptionPane;
 
@@ -17,6 +18,7 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.FileExporter;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -66,10 +68,9 @@ public class GpxExportAction extends DiskAccessAction {
      *  nor of {@see GpxLayer}
      */
     public void export(Layer layer) {
-        if (layer == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
+        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         if (! (layer instanceof OsmDataLayer) && ! (layer instanceof GpxLayer))
-            throw new IllegalArgumentException(tr("Expected instance of OsmDataLayer or GpxLayer. Got ''{0}''.", layer.getClass().getName()));
+            throw new IllegalArgumentException(MessageFormat.format("Expected instance of OsmDataLayer or GpxLayer. Got ''{0}''.", layer.getClass().getName()));
 
         File file = createAndOpenSaveFileChooser(tr("Export GPX file"), ".gpx");
         if (file == null)
