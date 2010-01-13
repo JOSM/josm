@@ -2,6 +2,9 @@
 package org.openstreetmap.josm.gui.progress;
 
 import javax.swing.SwingUtilities;
+
+import org.openstreetmap.josm.tools.CheckParameterUtil;
+
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
@@ -23,8 +26,7 @@ public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
      */
     public SwingRenderingProgressMonitor(ProgressRenderer delegate) {
         super(new CancelHandler());
-        if (delegate == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "delegate"));
+        CheckParameterUtil.ensureParameterNotNull(delegate, "delegate");
         this.delegate = delegate;
     }
 

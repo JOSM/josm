@@ -157,7 +157,7 @@ public class BoundingBoxSelectionPanel extends JPanel {
             try {
                 value = Double.parseDouble(getComponent().getText());
             } catch(NumberFormatException ex) {
-                feedbackInvalid(tr("The string ''{0}'' isn''t a valid double value.", getComponent().getText()));
+                feedbackInvalid(tr("The string ''{0}'' is not a valid double value.", getComponent().getText()));
                 return;
             }
             if (!LatLon.isValidLat(value)) {
@@ -197,7 +197,7 @@ public class BoundingBoxSelectionPanel extends JPanel {
             try {
                 value = Double.parseDouble(getComponent().getText());
             } catch(NumberFormatException ex) {
-                feedbackInvalid(tr("The string ''{0}'' isn''t a valid double value.", getComponent().getText()));
+                feedbackInvalid(tr("The string ''{0}'' is not a valid double value.", getComponent().getText()));
                 return;
             }
             if (!LatLon.isValidLon(value)) {

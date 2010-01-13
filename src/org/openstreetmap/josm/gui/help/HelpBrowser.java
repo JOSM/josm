@@ -508,7 +508,7 @@ public class HelpBrowser extends JFrame {
                         return true;
                     }
                 } catch(BadLocationException e) {
-                    System.err.println(tr("Warning: bad location in HTML document. Exception was: " + e.toString()));
+                    System.err.println(tr("Warning: bad location in HTML document. Exception was: {0}", e.toString()));
                     e.printStackTrace();
                 }
             }

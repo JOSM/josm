@@ -288,7 +288,7 @@ public class CorrelateGpxWithImages implements ActionListener {
             gc.weightx = gc.weighty = 0.0;
             gc.fill = GridBagConstraints.NONE;
             gc.anchor = GridBagConstraints.WEST;
-            panelTf.add(new JLabel(tr("I'm in the timezone of: ")), gc);
+            panelTf.add(new JLabel(tr("I am in the timezone of: ")), gc);
 
             Vector<String> vtTimezones = new Vector<String>();
             String[] tmp = TimeZone.getAvailableIDs();
@@ -361,7 +361,7 @@ public class CorrelateGpxWithImages implements ActionListener {
             });
             panelLst.add(new JScrollPane(imgList), BorderLayout.CENTER);
 
-            JButton openButton = new JButton(tr("Open an other photo"));
+            JButton openButton = new JButton(tr("Open another photo"));
             openButton.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent arg0) {
@@ -649,7 +649,9 @@ public class CorrelateGpxWithImages implements ActionListener {
 
                 lastNumMatched = matchGpxTrack(dateImgLst, selGpx.data, (long) (timezone * 3600) + delta);
 
-                return tr("<html>Matched <b>{0}</b> of <b>{1}</b> photos to GPX track.</html>", lastNumMatched, dateImgLst.size());
+                return trn("<html>Matched <b>{0}</b> of <b>{1}</b> photo to GPX track.</html>",
+                        "<html>Matched <b>{0}</b> of <b>{1}</b> photos to GPX track.</html>",
+                        dateImgLst.size(), lastNumMatched, dateImgLst.size());
             }
         };
 
@@ -880,7 +882,7 @@ public class CorrelateGpxWithImages implements ActionListener {
                     tfTimezone.getDocument().addDocumentListener(statusBarListener);
                     tfOffset.getDocument().addDocumentListener(statusBarListener);
 
-                    lblMatches.setText(statusBarText.getText() + "<br>" + trn("(Time difference of {0} day)", "Time difference of {0} days", Math.abs(dayOffset)));
+                    lblMatches.setText(statusBarText.getText() + "<br>" + trn("(Time difference of {0} day)", "Time difference of {0} days", Math.abs(dayOffset), Math.abs(dayOffset)));
 
                     statusBarListener.updateStatusBar();
                     yLayer.updateBufferAndRepaint();
@@ -945,8 +947,8 @@ public class CorrelateGpxWithImages implements ActionListener {
             // no images found, exit
             if(imgs.size() <= 0) {
                 JOptionPane.showMessageDialog(Main.parent,
-                        tr("The selected photos don't contain time information."),
-                        tr("Photos don't contain time information"), JOptionPane.WARNING_MESSAGE);
+                        tr("The selected photos do not contain time information."),
+                        tr("Photos do not contain time information"), JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -974,7 +976,7 @@ public class CorrelateGpxWithImages implements ActionListener {
             // No GPX timestamps found, exit
             if(firstGPXDate < 0) {
                 JOptionPane.showMessageDialog(Main.parent,
-                        tr("The selected GPX track doesn't contain timestamps. Please select another one."),
+                        tr("The selected GPX track does not contain timestamps. Please select another one."),
                         tr("GPX Track has no time information"), JOptionPane.WARNING_MESSAGE);
                 return;
             }

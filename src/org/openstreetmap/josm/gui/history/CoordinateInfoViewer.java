@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * An UI widget for displaying differences in the coordinates of two
@@ -91,8 +92,7 @@ public class CoordinateInfoViewer extends JPanel {
      * @throws IllegalArgumentException thrown if model is null
      */
     public CoordinateInfoViewer(HistoryBrowserModel model) throws IllegalArgumentException{
-        if (model == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "model"));
+        CheckParameterUtil.ensureParameterNotNull(model, "model");
         setModel(model);
         build();
         registerAsObserver(model);

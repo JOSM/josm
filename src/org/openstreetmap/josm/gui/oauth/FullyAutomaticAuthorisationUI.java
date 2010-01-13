@@ -235,7 +235,7 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
         msg.setFont(msg.getFont().deriveFont(Font.PLAIN));
         String lbl = tr("Accept Access Token");
         msg.setText(tr("<html>"
-                + "You''ve sucessfully retrieved an OAuth Access Token from the OSM website. "
+                + "You have sucessfully retrieved an OAuth Access Token from the OSM website. "
                 + "Click on <strong>{0}</strong> to accept the token. JOSM will use it in "
                 + "subsequent requests to gain access to the OSM API."
                 + "</html>",
@@ -408,7 +408,7 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
             if (isValid()) {
                 feedbackValid(tr("Please enter your OSM user name"));
             } else {
-                feedbackInvalid(tr("The user name can't be empty. Please enter your OSM user name"));
+                feedbackInvalid(tr("The user name cannot be empty. Please enter your OSM user name"));
             }
         }
     }
@@ -429,7 +429,7 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
             if (isValid()) {
                 feedbackValid(tr("Please enter your OSM password"));
             } else {
-                feedbackInvalid(tr("The password can't be empty. Please enter your OSM password"));
+                feedbackInvalid(tr("The password cannot be empty. Please enter your OSM password"));
             }
         }
     }
@@ -471,10 +471,10 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
                     FullyAutomaticAuthorisationUI.this,
                     tr("<html>"
                             + "The automatic process for retrieving an OAuth Access Token<br>"
-                            + "from the OSM server failed because JOSM wasn't able to build<br>"
+                            + "from the OSM server failed because JOSM was not able to build<br>"
                             + "a valid login URL from the OAuth Authorise Endpoint URL ''{0}''.<br><br>"
                             + "Please check your advanced setting and try again."
-                            +"</html>",
+                            + "</html>",
                             getAdvancedPropertiesPanel().getAdvancedParameters().getAuthoriseUrl()
                     ),
                     tr("OAuth authorisation failed"),

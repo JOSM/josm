@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -77,9 +78,8 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      */
     public HistoryLoadTask add(long id, OsmPrimitiveType type) throws IllegalArgumentException {
         if (id <= 0)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected. Got {1}.", "id", id));
-        if (type == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "type"));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected. Got {1}.", "id", id));
+        CheckParameterUtil.ensureParameterNotNull(type, "type");
         SimplePrimitiveId pid = new SimplePrimitiveId(id, type);
         toLoad.add(pid);
         return this;
@@ -91,11 +91,8 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      * @param pid  the primitive id. Must not be null. Id > 0 required.
      * @return this task
      */
-    public HistoryLoadTask add(PrimitiveId pid) throws IllegalArgumentException {
-        if (pid == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "pid"));
-        if (pid.getUniqueId() <= 0)
-            throw new IllegalArgumentException(tr("id in parameter ''{0}'' > 0 expected, got {1}.", "pid", pid.getUniqueId()));
+    public HistoryLoadTask add(PrimitiveId pid) {
+        CheckParameterUtil.ensureValidPrimitiveId(pid, "pid");
         toLoad.add(pid);
         return this;
     }
@@ -107,9 +104,8 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      * @return this task
      * @throws IllegalArgumentException thrown if primitive is null
      */
-    public HistoryLoadTask add(HistoryOsmPrimitive primitive) throws IllegalArgumentException  {
-        if (primitive == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitive"));
+    public HistoryLoadTask add(HistoryOsmPrimitive primitive) {
+        CheckParameterUtil.ensureParameterNotNull(primitive, "primitive");
         toLoad.add(primitive.getPrimitiveId());
         return this;
     }
@@ -121,9 +117,8 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      * @return this task
      * @throws IllegalArgumentException thrown if history is null
      */
-    public HistoryLoadTask add(History history)throws IllegalArgumentException {
-        if (history == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "history"));
+    public HistoryLoadTask add(History history) {
+        CheckParameterUtil.ensureParameterNotNull(history, "history");
         toLoad.add(history.getPrimitmiveId());
         return this;
     }
@@ -136,11 +131,8 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      * @throws IllegalArgumentException thrown if the primitive is null
      * @throws IllegalArgumentException thrown if primitive.getId() <= 0
      */
-    public HistoryLoadTask add(OsmPrimitive primitive) throws IllegalArgumentException {
-        if (primitive == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitive"));
-        if (primitive.getId() <= 0)
-            throw new IllegalArgumentException(tr("Object id > 0 expected. Got {0}", primitive.getId()));
+    public HistoryLoadTask add(OsmPrimitive primitive) {
+        CheckParameterUtil.ensureValidPrimitiveId(primitive, "primitive");
         toLoad.add(primitive.getPrimitiveId());
         return this;
     }
@@ -153,9 +145,8 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      * @throws IllegalArgumentException thrown if primitives is null
      * @throws IllegalArgumentException thrown if one of the ids in the collection <= 0
      */
-    public HistoryLoadTask add(Collection<? extends OsmPrimitive> primitives) throws IllegalArgumentException{
-        if (primitives == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitives"));
+    public HistoryLoadTask add(Collection<? extends OsmPrimitive> primitives) {
+        CheckParameterUtil.ensureParameterNotNull(primitives, "primitives");
         for (OsmPrimitive primitive: primitives) {
             if (primitive == null) {
                 continue;

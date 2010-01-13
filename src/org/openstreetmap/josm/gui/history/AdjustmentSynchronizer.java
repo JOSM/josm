@@ -15,6 +15,8 @@ import java.util.Observer;
 
 import javax.swing.JCheckBox;
 
+import org.openstreetmap.josm.tools.CheckParameterUtil;
+
 /**
  * Synchronizes scrollbar adjustments between a set of
  * {@see Adjustable}s. Whenever the adjustment of one of
@@ -72,11 +74,9 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
      * @param adjustable the adjustable
      */
     protected void setParticipatingInSynchronizedScrolling(Adjustable adjustable, boolean isParticipating) {
-        if (adjustable == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "adjustable"));
-
+        CheckParameterUtil.ensureParameterNotNull(adjustable, "adjustable");
         if (! synchronizedAdjustables.contains(adjustable))
-            throw new IllegalStateException(tr("Adjustable {0} not registered yet. Can't set participation in synchronized adjustment.", adjustable));
+            throw new IllegalStateException(tr("Adjustable {0} not registered yet. Cannot set participation in synchronized adjustment.", adjustable));
 
         enabledMap.put(adjustable, isParticipating);
         observable.notifyObservers();
@@ -112,11 +112,9 @@ public class AdjustmentSynchronizer implements AdjustmentListener {
      * @exception IllegalArgumentException thrown, if view is null
      * @exception IllegalArgumentException thrown, if adjustable is null
      */
-    protected void adapt(final JCheckBox view, final Adjustable adjustable) throws IllegalArgumentException, IllegalStateException {
-        if (adjustable == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "adjustable"));
-        if (view == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "view"));
+    protected void adapt(final JCheckBox view, final Adjustable adjustable) throws IllegalStateException {
+        CheckParameterUtil.ensureParameterNotNull(adjustable, "adjustable");
+        CheckParameterUtil.ensureParameterNotNull(view, "view");
 
         if (! synchronizedAdjustables.contains(adjustable)) {
             participateInSynchronizedScrolling(adjustable);

@@ -117,7 +117,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 throw new OsmApiException(HttpURLConnection.HTTP_UNAUTHORIZED, tr("Retrieving user details with Access Token Key ''{0}'' was rejected.", token.getKey()), null);
 
             if (connection.getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN)
-                throw new OsmApiException(HttpURLConnection.HTTP_FORBIDDEN, tr("Retrieving user details with Access Token Key ''{0}'' was forbidded.", token.getKey()), null);
+                throw new OsmApiException(HttpURLConnection.HTTP_FORBIDDEN, tr("Retrieving user details with Access Token Key ''{0}'' was forbidden.", token.getKey()), null);
 
             if (connection.getResponseCode() != HttpURLConnection.HTTP_OK)
                 throw new OsmApiException(connection.getResponseCode(),connection.getHeaderField("Error"), null);
@@ -144,8 +144,8 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 tr("<html>"
                         + "Successfully used the Access Token ''{0}'' to<br>"
                         + "access the OSM server at ''{1}''.<br>"
-                        + "You''re accessing the OSM server as user ''{2}'' with id ''{3}''."
-                        +"</html>",
+                        + "You are accessing the OSM server as user ''{2}'' with id ''{3}''."
+                        + "</html>",
                         token.getKey(),
                         apiUrl,
                         userInfo.getDisplayName(),
@@ -234,8 +234,8 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 parent,
                 tr("<html>"
                         + "The test failed because the server responded with an internal error.<br>"
-                        + "JOSM couldn''t decide whether the token is valid. Please try again later."
-                        +"</html>",
+                        + "JOSM could not decide whether the token is valid. Please try again later."
+                        + "</html>",
                         apiUrl,
                         token.getKey()
                 ),

@@ -22,6 +22,7 @@ import org.openstreetmap.josm.actions.AbstractInfoAction;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.UrlLabel;
 
 /**
@@ -117,10 +118,8 @@ public class VersionInfoPanel extends JPanel implements Observer{
      *
      */
     public VersionInfoPanel(HistoryBrowserModel model, PointInTimeType pointInTimeType) throws IllegalArgumentException {
-        if (pointInTimeType == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "pointInTimeType"));
-        if (model == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "model"));
+        CheckParameterUtil.ensureParameterNotNull(pointInTimeType, "pointInTimeType");
+        CheckParameterUtil.ensureParameterNotNull(model, "model");
 
         this.model = model;
         this.pointInTimeType = pointInTimeType;

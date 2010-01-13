@@ -217,14 +217,14 @@ public class SemiAutomaticAuthorisationUI extends AbstractAuthorisationUI {
             gc.weightx = 1.0;
             gc.gridwidth = 2;
             HtmlPanel html = new HtmlPanel();
-            html.setText(tr("<html><body>"
+            html.setText(tr("<html>"
                     + "JOSM successfully retrieved a Request Token. "
                     + "JOSM is now launching an authorisation page in an external browser. "
                     + "Please login with your OSM username and password and follow the instructions "
                     + "to authorise the Request Token. Then switch back to this dialog and click on "
                     + "<strong>{0}</strong><br><br>"
                     + "If launching the external browser fails you can copy the following authorise URL "
-                    + "and paste it into the address field of your browser.",
+                    + "and paste it into the address field of your browser.</html>",
                     tr("Request Access Token")
             ));
             pnl.add(html, gc);
@@ -303,11 +303,11 @@ public class SemiAutomaticAuthorisationUI extends AbstractAuthorisationUI {
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             HtmlPanel html = new HtmlPanel();
-            html.setText(tr("<html><body>"
+            html.setText(tr("<html>"
                     + "JOSM has successfully retrieved an Access Token. "
-                    + "You can now accept this token. JOSM will used it the future for authentication "
-                    + "and authorisation at the OSM server.<br><br>"
-                    + "The access token is: "
+                    + "You can now accept this token. JOSM will use it in the future for authentication "
+                    + "and authorisation to the OSM server.<br><br>"
+                    + "The access token is: </html>"
             ));
             pnl.add(html, gc);
 

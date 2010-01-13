@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.text.MessageFormat;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
@@ -81,7 +83,7 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
     public void setPartiallyIdentified(String userName) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(userName, "userName");
         if (userName.trim().equals(""))
-            throw new IllegalArgumentException(tr("Expected non-empty value for parameter ''{0}'', got ''{1}''", "userName", userName));
+            throw new IllegalArgumentException(MessageFormat.format("Expected non-empty value for parameter ''{0}'', got ''{1}''", "userName", userName));
         this.userName = userName;
         userInfo = null;
     }

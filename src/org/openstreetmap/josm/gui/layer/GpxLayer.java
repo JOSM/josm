@@ -217,7 +217,7 @@ public class GpxLayer extends Layer {
         importAudio.addActionListener(new ActionListener() {
             private void warnCantImportIntoServerLayer(GpxLayer layer) {
                 String msg = tr("<html>The data in the GPX layer ''{0}'' has been downloaded from the server.<br>"
-                        + "Because its way points don''t include a timestamp we can''t correlate them with audio data.</html>",
+                        + "Because its way points do not include a timestamp we cannot correlate them with audio data.</html>",
                         layer.getName()
                 );
                 HelpAwareOptionPane.showOptionDialog(
@@ -304,7 +304,7 @@ public class GpxLayer extends Layer {
 
             private void warnCantImportIntoServerLayer(GpxLayer layer) {
                 String msg = tr("<html>The data in the GPX layer ''{0}'' has been downloaded from the server.<br>"
-                        + "Because its way points don''t include a timestamp we can''t correlate them with images.</html>",
+                        + "Because its way points do not include a timestamp we cannot correlate them with images.</html>",
                         layer.getName()
                 );
                 HelpAwareOptionPane.showOptionDialog(
@@ -945,12 +945,10 @@ public class GpxLayer extends Layer {
 
             msg = new JPanel(new GridBagLayout());
 
-            msg
-            .add(
-                    new JLabel(
-                            tr(
-                                    "<html>This action will require {0} individual<br>download requests. Do you wish<br>to continue?</html>",
-                                    toDownload.size())), GBC.eol());
+            msg.add(new JLabel(
+                    tr("<html>This action will require {0} individual<br>"
+                            + "download requests. Do you wish<br>to continue?</html>",
+                            toDownload.size())), GBC.eol());
 
             if (toDownload.size() > 1) {
                 ret = JOptionPane.showConfirmDialog(

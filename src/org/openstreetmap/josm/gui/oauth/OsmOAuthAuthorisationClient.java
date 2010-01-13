@@ -296,7 +296,7 @@ public class OsmOAuthAuthorisationClient {
             connection.connect();
             String sessionId = extractOsmSession(connection);
             if (sessionId == null)
-                throw new OsmOAuthAuthorisationException(tr("OSM website didn''t reply a session cookie in response to ''{0}'',", url.toString()));
+                throw new OsmOAuthAuthorisationException(tr("OSM website did not return a session cookie in response to ''{0}'',", url.toString()));
             return sessionId;
         } catch(IOException e) {
             throw new OsmOAuthAuthorisationException(e);

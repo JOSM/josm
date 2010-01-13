@@ -216,7 +216,7 @@ public class BoundingBoxSelection implements DownloadSelection {
             try {
                 value = Double.parseDouble(tfLatValue.getText());
             } catch(NumberFormatException ex) {
-                setErrorMessage(tfLatValue,tr("The string ''{0}'' isn''t a valid double value.", tfLatValue.getText()));
+                setErrorMessage(tfLatValue,tr("The string ''{0}'' is not a valid double value.", tfLatValue.getText()));
                 return;
             }
             if (!LatLon.isValidLat(value)) {
@@ -248,7 +248,7 @@ public class BoundingBoxSelection implements DownloadSelection {
             try {
                 value = Double.parseDouble(tfLonValue.getText());
             } catch(NumberFormatException ex) {
-                setErrorMessage(tfLonValue,tr("The string ''{0}'' isn''t a valid double value.", tfLonValue.getText()));
+                setErrorMessage(tfLonValue,tr("The string ''{0}'' is not a valid double value.", tfLonValue.getText()));
                 return;
             }
             if (!LatLon.isValidLon(value)) {

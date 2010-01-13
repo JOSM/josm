@@ -94,7 +94,7 @@ public class FullyAutomaticPropertiesPanel extends JPanel {
             if (isValid()) {
                 feedbackValid(tr("Please enter your OSM user name"));
             } else {
-                feedbackInvalid(tr("The user name can't be empty. Please enter your OSM user name"));
+                feedbackInvalid(tr("The user name cannot be empty. Please enter your OSM user name"));
             }
         }
     }

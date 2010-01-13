@@ -54,12 +54,10 @@ public class ManualAuthorisationUI extends AbstractAuthorisationUI{
         gc.gridwidth = 2;
         gc.insets = new Insets(0,0,5,0);
         pnlMessage= new HtmlPanel();
-        pnlMessage.setText(tr("<html><body>"
-                + "Please enter an OAuth Access Token which is authorised to access the OSM server "
-                + "''{0}''."
-                + "</body></html>",
-                getApiUrl()
-        ));
+        pnlMessage.setText("<html><body>"
+                + tr("Please enter an OAuth Access Token which is authorised to access the OSM server "
+                + "''{0}''.",
+                getApiUrl()) + "</body></html>");
         pnl.add(pnlMessage, gc);
 
         // the access token key input field

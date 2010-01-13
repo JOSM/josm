@@ -317,8 +317,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             if (e.getPos() != null) {
                 i++;
             }
-        return data.size() + " " + trn("image", "images", data.size())
-        + " loaded. " + tr("{0} were found to be gps tagged.", i);
+        return trn("{0} image loaded.", "{0} images loaded.", data.size(), data.size())
+        + " " + trn("{0} was found to be GPS tagged.", "{0} were found to be GPS tagged.", i, i);
     }
 
     @Override
