@@ -319,8 +319,10 @@ public class SearchAction extends JosmAction{
 
         @Override
         public String toString() {
-            String cs = caseSensitive ? trc("case sensitive", "CS") : trc("case insensitive", "CI");
-            String rx = regexSearch ? (", " + trc("regex search", "RX")) : "";
+            String cs = caseSensitive ?
+                    trc("search", "CS") :                                /*case sensitive*/
+                        trc("search", "CI");                             /*case insensitive*/
+            String rx = regexSearch ? (", " + trc("search", "RX")) : ""; /*regex search*/
             return "\"" + text + "\" (" + cs + rx + ", " + mode + ")";
         }
 

@@ -139,12 +139,12 @@ public class Filters extends AbstractTableModel{
     @Override
     public String getColumnName(int column){
         String[] names = { /* translators notes must be in front */
-                /* column header: enable filter */             trc("enable filter","E"),
-                /* column header: hide filter */               trc("hide filter", "H"),
+                /* column header: enable filter */             trc("filter","E"),
+                /* column header: hide filter */               trc("filter", "H"),
                 /* column header: filter text */               trc("filter", "Text"),
-                /* column header: apply filter for children */ trc("filter children", "C"),
-                /* column header: inverted filter */           trc("invert filter", "I"),
-                /* column header: filter mode */               trc("filter mode", "M")
+                /* column header: apply filter for children */ trc("filter", "C"),
+                /* column header: inverted filter */           trc("filter", "I"),
+                /* column header: filter mode */               trc("filter", "M")
         };
         return names[column];
     }
@@ -207,10 +207,10 @@ public class Filters extends AbstractTableModel{
         case 4: return f.inverted;
         case 5:
             switch(f.mode){ /* translators notes must be in front */
-            case replace:      /* filter mode: replace */      return trc("filter mode replace", "R");
-            case add:          /* filter mode: add */          return trc("filter mode add", "A");
-            case remove:       /* filter mode: remove */       return trc("filter mode remove", "D");
-            case in_selection: /* filter mode: in selection */ return trc("filter mode in selection", "F");
+            case replace:      /* filter mode: replace */      return trc("filter", "R");
+            case add:          /* filter mode: add */          return trc("filter", "A");
+            case remove:       /* filter mode: remove */       return trc("filter", "D");
+            case in_selection: /* filter mode: in selection */ return trc("filter", "F");
             }
         }
         return null;
