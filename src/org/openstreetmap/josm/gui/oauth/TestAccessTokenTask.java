@@ -179,7 +179,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
         HelpAwareOptionPane.showOptionDialog(
                 parent,
                 tr("<html>"
-                        + "The AccessToken ''{1}'' is known to the OSM server ''{0}''.<br>"
+                        + "The Access Token ''{1}'' is known to the OSM server ''{0}''.<br>"
                         + "The test to retrieve the user details for this token failed, though.<br>"
                         + "Depending on what rights are granted to this token you may nevertheless use it<br>"
                         + "to upload data, upload GPS traces, and/or access other protected resources."
@@ -198,7 +198,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 parent,
                 tr("<html>"
                         + "Failed to retrieve information about the current user"
-                        + "from the OSM server ''{0}''.<br>"
+                        + " from the OSM server ''{0}''.<br>"
                         + "This is probably not a problem caused by the tested Access Token, but<br>"
                         + "rather a problem with the server configuration. Carefully check the server<br>"
                         + "URL and your Internet connection."
