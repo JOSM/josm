@@ -48,7 +48,7 @@ public class MapPaintStyles {
         ImageIcon i = ImageProvider.getIfAvailable(dirs, "mappaint."+styleName, null, name);
         if(i == null)
         {
-            System.out.println("Mappaint-Style \""+styleName+"\" icon \"" + name + "\" not found.");
+            System.out.println("Mappaint style \""+styleName+"\" icon \"" + name + "\" not found.");
             i = ImageProvider.getIfAvailable(dirs, "mappaint."+styleName, null, "misc/no_icon.png");
         }
         return i;
@@ -88,10 +88,10 @@ public class MapPaintStyles {
                 MirroredInputStream in = new MirroredInputStream(a[1]);
                 xmlReader.parse(new InputSource(in));
             } catch(IOException e) {
-                System.err.println(tr("Warning: failed to load Mappaint-Styles from ''{0}''. Exception was: {1}", a[1], e.toString()));
+                System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", a[1], e.toString()));
                 e.printStackTrace();
             } catch(SAXException e) {
-                System.err.println(tr("Warning: failed to parse Mappaint-Styles from ''{0}''. Exception was: {1}", a[1], e.toString()));
+                System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Exception was: {1}", a[1], e.toString()));
                 e.printStackTrace();
             }
         }
