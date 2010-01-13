@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -177,7 +178,7 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
                 break;
             default:
                 // should not happen
-                throw new RuntimeException(tr("Unexpected column index. Got {0}.", column));
+                throw new RuntimeException(MessageFormat.format("Unexpected column index. Got {0}.", column));
         }
         return this;
     }

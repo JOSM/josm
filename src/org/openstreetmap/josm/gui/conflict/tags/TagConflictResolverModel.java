@@ -16,6 +16,7 @@ import java.util.Set;
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.data.osm.TagCollection;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public class TagConflictResolverModel extends DefaultTableModel {
     static public final String NUM_CONFLICTS_PROP = TagConflictResolverModel.class.getName() + ".numConflicts";
@@ -120,8 +121,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
      * @throws IllegalArgumentException thrown if tags is null
      */
     public void populate(TagCollection tags, Set<String> keysWithConflicts) {
-        if (tags == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "tags"));
+        CheckParameterUtil.ensureParameterNotNull(tags, "tags");
         this.tags = tags;
         displayedKeys = new ArrayList<String>();
         this.keysWithConflicts = keysWithConflicts == null ? new HashSet<String>() : keysWithConflicts;

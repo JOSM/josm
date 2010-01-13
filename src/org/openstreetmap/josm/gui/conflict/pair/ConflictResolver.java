@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.conflict.pair;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
@@ -165,8 +166,8 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
                 tabbedPane.setToolTipTextAt(1, tr("No pending tag conflicts to be resolved"));
                 tabbedPane.setIconAt(1, mergeComplete);
             } else {
-                tabbedPane.setTitleAt(1, tr("Tags({0} conflicts)", newValue));
-                tabbedPane.setToolTipTextAt(1, tr("{0} pending tag conflicts to be resolved"));
+                tabbedPane.setTitleAt(1, trn("Tags({0} conflict)", "Tags({0} conflicts)", newValue, newValue));
+                tabbedPane.setToolTipTextAt(1, trn("{0} pending tag conflict to be resolved", "{0} pending tag conflicts to be resolved", newValue, newValue));
                 tabbedPane.setIconAt(1, mergeIncomplete);
             }
             updateResolvedCompletely();

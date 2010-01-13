@@ -13,6 +13,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.ListRole;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public class NodeListMergeModel extends ListMergeModel<Node>{
 
@@ -28,10 +29,8 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
      * @exception IllegalArgumentException  thrown, if their is null
      */
     public void populate(Way my, Way their) {
-        if (my == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "my"));
-        if (their == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "their"));
+        CheckParameterUtil.ensureParameterNotNull(my, "my");
+        CheckParameterUtil.ensureParameterNotNull(their, "their");
         getMergedEntries().clear();
         getMyEntries().clear();
         getTheirEntries().clear();
@@ -62,12 +61,10 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
      * @exception IllegalStateException thrown, if the merge is not yet frozen
      */
     public WayNodesConflictResolverCommand buildResolveCommand(Way my, Way their) {
-        if (my == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "my"));
-        if (their == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "their"));
+        CheckParameterUtil.ensureParameterNotNull(my, "my");
+        CheckParameterUtil.ensureParameterNotNull(their, "their");
         if (! isFrozen())
-            throw new IllegalArgumentException(tr("Merged nodes not frozen yet. Can't build resolution command."));
+            throw new IllegalArgumentException(tr("Merged nodes not frozen yet. Cannot build resolution command."));
         return new WayNodesConflictResolverCommand(my, their, getMergedEntries());
     }
 

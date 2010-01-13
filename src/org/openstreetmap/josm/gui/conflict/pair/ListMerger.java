@@ -34,6 +34,7 @@ import javax.swing.JToggleButton;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -865,11 +866,9 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
          * @param adjustable the adjustable
          */
         protected void setParticipatingInSynchronizedScrolling(Adjustable adjustable, boolean isParticipating) {
-            if (adjustable == null)
-                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "adjustable"));
-
+            CheckParameterUtil.ensureParameterNotNull(adjustable, "adjustable");
             if (! synchronizedAdjustables.contains(adjustable))
-                throw new IllegalStateException(tr("Adjustable {0} not registered yet. Can't set participation in synchronized adjustment.", adjustable));
+                throw new IllegalStateException(tr("Adjustable {0} not registered yet. Cannot set participation in synchronized adjustment.", adjustable));
 
             enabledMap.put(adjustable, isParticipating);
             observable.notifyObservers();
@@ -905,11 +904,9 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
          * @exception IllegalArgumentException thrown, if view is null
          * @exception IllegalArgumentException thrown, if adjustable is null
          */
-        protected void adapt(final JCheckBox view, final Adjustable adjustable) throws IllegalArgumentException, IllegalStateException {
-            if (adjustable == null)
-                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "adjustable"));
-            if (view == null)
-                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "view"));
+        protected void adapt(final JCheckBox view, final Adjustable adjustable) throws IllegalStateException {
+            CheckParameterUtil.ensureParameterNotNull(adjustable, "adjustable");
+            CheckParameterUtil.ensureParameterNotNull(view, "view");
 
             if (! synchronizedAdjustables.contains(adjustable)) {
                 participateInSynchronizedScrolling(adjustable);

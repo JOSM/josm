@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.text.MessageFormat;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -36,7 +37,7 @@ public abstract class TagMergeTableCellRenderer extends JLabel implements TableC
             break;
         default:
             // should not happen, but just in case
-            throw new IllegalArgumentException(tr("Parameter 'col' must be 0 or 1. Got {0}.", col));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter 'col' must be 0 or 1. Got {0}.", col));
         }
         return this;
     }

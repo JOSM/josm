@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * TagMergeItem represents an individual merge action for a specific pair of key/value.
@@ -29,9 +30,7 @@ public class TagMergeItem {
      * @throws IllegalArgumentException if key is null
      */
     public TagMergeItem(String key, String myTagValue, String theirTagValue) {
-        if (key == null) {
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "key"));
-        }
+        CheckParameterUtil.ensureParameterNotNull(key, "key");
         this.key  = key;
         this.myTagValue = myTagValue;
         this.theirTagValue = theirTagValue;
@@ -49,9 +48,9 @@ public class TagMergeItem {
      * @throws IllegalArgumentException thrown if their is null
      */
     public TagMergeItem(String key, OsmPrimitive my, OsmPrimitive their) {
-        if (key == null) throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "key"));
-        if (my == null) throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "my"));
-        if (their == null) throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "their"));
+        CheckParameterUtil.ensureParameterNotNull(key, "key");
+        CheckParameterUtil.ensureParameterNotNull(my, "my");
+        CheckParameterUtil.ensureParameterNotNull(their, "their");
         this.key = key;
         myTagValue = my.get(key);
         theirTagValue = their.get(key);
@@ -65,7 +64,7 @@ public class TagMergeItem {
      *
      */
     public void decide(MergeDecisionType decision) throws IllegalArgumentException {
-        if (decision == null) throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "decision"));
+        CheckParameterUtil.ensureParameterNotNull(decision, "decision");
         this.mergeDecision = decision;
     }
 
@@ -95,7 +94,7 @@ public class TagMergeItem {
      * @exception IllegalStateException  thrown, if this merge item is undecided
      */
     public void applyToMyPrimitive(OsmPrimitive primitive) throws IllegalArgumentException, IllegalStateException {
-        if (primitive == null) throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitive"));
+        CheckParameterUtil.ensureParameterNotNull(primitive, "primitive");
         if (mergeDecision == MergeDecisionType.UNDECIDED) {
             throw new IllegalStateException(tr("Cannot apply undecided tag merge item."));
         } else if (mergeDecision == MergeDecisionType.KEEP_THEIR) {

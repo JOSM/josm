@@ -13,6 +13,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.ListRole;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 /**
  * The model for merging two lists of relation members
  *
@@ -63,10 +64,8 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
      * @throws IllegalArgumentException if their is null
      */
     public void populate(Relation my, Relation their) {
-        if (my == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "my"));
-        if (their == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "their"));
+        CheckParameterUtil.ensureParameterNotNull(my, "my");
+        CheckParameterUtil.ensureParameterNotNull(their, "their");
 
         getMergedEntries().clear();
         getMyEntries().clear();
@@ -106,12 +105,10 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
      * @exception IllegalStateException thrown, if the merge is not yet frozen
      */
     public RelationMemberConflictResolverCommand buildResolveCommand(Relation my, Relation their) {
-        if (my == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "my"));
-        if (their == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "their"));
+        CheckParameterUtil.ensureParameterNotNull(my, "my");
+        CheckParameterUtil.ensureParameterNotNull(their, "their");
         if (! isFrozen())
-            throw new IllegalArgumentException(tr("Merged nodes not frozen yet. Can't build resolution command"));
+            throw new IllegalArgumentException(tr("Merged nodes not frozen yet. Cannot build resolution command"));
         ArrayList<RelationMember> entries = getMergedEntries();
         return new RelationMemberConflictResolverCommand(my, their, entries);
     }

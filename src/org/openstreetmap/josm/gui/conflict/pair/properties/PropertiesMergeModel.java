@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.conflict.pair.properties;
 
 import static org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType.UNDECIDED;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -30,6 +31,7 @@ import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * This is the model for resolving conflicts in the properties of the
@@ -291,8 +293,7 @@ public class PropertiesMergeModel extends Observable {
      * @throws IllegalArgumentException thrown, if decision is null
      */
     public void decideDeletedStateConflict(MergeDecisionType decision) throws IllegalArgumentException{
-        if (decision == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "decision"));
+        CheckParameterUtil.ensureParameterNotNull(decision, "decision");
         this.deletedMergeDecision = decision;
         setChanged();
         notifyObservers();
@@ -306,8 +307,7 @@ public class PropertiesMergeModel extends Observable {
      * @throws IllegalArgumentException thrown, if decision is null
      */
     public void decideVisibleStateConflict(MergeDecisionType decision) throws IllegalArgumentException {
-        if (decision == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "decision"));
+        CheckParameterUtil.ensureParameterNotNull(decision, "decision");
         this.visibleMergeDecision = decision;
         setChanged();
         notifyObservers();
@@ -467,17 +467,22 @@ public class PropertiesMergeModel extends Observable {
         };
         int ret = JOptionPane.showOptionDialog(
                 Main.parent,
-                tr("<html>There are {0} additional nodes used by way {1}<br>"
-                        + "which are deleted on the server.<br>"
-                        + "<br>"
-                        + "Do you want to undelete these nodes too?</html>",
-                        Long.toString(dependent.size()), Long.toString(way.getId())),
-                        tr("Undelete additional nodes?"),
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        options,
-                        options[0]
+                "<html>" + trn("There is {0} additional node used by way {1}<br>"
+                        + "which is deleted on the server."
+                        + "<br><br>"
+                        + "Do you want to undelete this node too?",
+                        "There are {0} additional nodes used by way {1}<br>"
+                        + "which are deleted on the server."
+                        + "<br><br>"
+                        + "Do you want to undelete these nodes too?",
+                        dependent.size(), dependent.size(), way.getId())
+                        + "</html>",
+                tr("Undelete additional nodes?"),
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
         );
 
         switch(ret) {
@@ -496,17 +501,22 @@ public class PropertiesMergeModel extends Observable {
         };
         int ret = JOptionPane.showOptionDialog(
                 Main.parent,
-                tr("<html>There are {0} additional primitives referred to by relation {1}<br>"
-                        + "which are deleted on the server.<br>"
-                        + "<br>"
-                        + "Do you want to undelete them too?</html>",
-                        Long.toString(dependent.size()), Long.toString(r.getId())),
-                        tr("Undelete dependent primitives?"),
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        options,
-                        options[0]
+                "<html>" + trn("There is {0} additional primitive referred to by relation {1}<br>"
+                        + "which is deleted on the server."
+                        + "<br><br>"
+                        + "Do you want to undelete this too?",
+                        "There are {0} additional primitives referred to by relation {1}<br>"
+                        + "which are deleted on the server."
+                        + "<br><br>"
+                        + "Do you want to undelete these too?",
+                        dependent.size(), dependent.size(), r.getId())
+                        + "</html>",
+                tr("Undelete dependent primitives?"),
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
         );
 
         switch(ret) {

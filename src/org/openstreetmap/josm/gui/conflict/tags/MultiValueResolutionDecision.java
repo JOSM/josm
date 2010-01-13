@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.conflict.tags;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +15,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 /**
  * Represents a decision for a conflict due to multiple possible value for a tag.
  *
@@ -47,12 +49,11 @@ public class MultiValueResolutionDecision {
      * @exception IllegalArgumentException thrown if tags is empty
      */
     public MultiValueResolutionDecision(TagCollection tags) throws IllegalArgumentException {
-        if (tags == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "tags"));
+        CheckParameterUtil.ensureParameterNotNull(tags, "tags");
         if (tags.isEmpty())
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be empty.", "tags"));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' must not be empty.", "tags"));
         if (tags.getKeys().size() != 1)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' with tags for exactly one key expected. Got {1}.", "tags", tags.getKeys().size()));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' with tags for exactly one key expected. Got {1}.", "tags", tags.getKeys().size()));
         this.tags = tags;
         autoDecide();
     }
@@ -95,10 +96,9 @@ public class MultiValueResolutionDecision {
      * @throws IllegalStateException thrown if value is not in the list of known values for this tag
      */
     public void keepOne(String value) throws IllegalArgumentException, IllegalStateException {
-        if (value == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "value"));
+        CheckParameterUtil.ensureParameterNotNull(value, "value");
         if (!tags.getValues().contains(value))
-            throw new IllegalStateException(tr("Tag collection doesn't include the selected value ''{0}''.", value));
+            throw new IllegalStateException(tr("Tag collection does not include the selected value ''{0}''.", value));
         this.value = value;
         this.type = MultiValueDecisionType.KEEP_ONE;
     }
@@ -245,8 +245,7 @@ public class MultiValueResolutionDecision {
      * @throws IllegalStateException thrown if this resolution is not resolved yet
      */
     public Command buildChangeCommand(OsmPrimitive primitive) throws IllegalArgumentException, IllegalStateException {
-        if (primitive == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitive"));
+        CheckParameterUtil.ensureParameterNotNull(primitive, "primitive");
         if (!isDecided())
             throw new IllegalStateException(tr("Not decided yet."));
         String key = tags.getKeys().iterator().next();
@@ -264,8 +263,7 @@ public class MultiValueResolutionDecision {
      * @throws IllegalStateException thrown if this resolution is not resolved yet
      */
     public Command buildChangeCommand(Collection<? extends OsmPrimitive> primitives) {
-        if (primitives == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitives"));
+        CheckParameterUtil.ensureParameterNotNull(primitives, "primitives");
         if (!isDecided())
             throw new IllegalStateException(tr("Not decided yet."));
         String key = tags.getKeys().iterator().next();

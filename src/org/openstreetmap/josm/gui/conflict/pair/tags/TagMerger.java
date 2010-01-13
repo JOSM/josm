@@ -252,7 +252,7 @@ public class TagMerger extends JPanel {
                 putValue(Action.SMALL_ICON, icon);
                 putValue(Action.NAME, "");
             } else {
-                putValue(Action.NAME, tr(">"));
+                putValue(Action.NAME, ">");
             }
             putValue(Action.SHORT_DESCRIPTION, tr("Keep the selected key/value pairs from the local dataset"));
             setEnabled(false);
@@ -281,7 +281,7 @@ public class TagMerger extends JPanel {
                 putValue(Action.SMALL_ICON, icon);
                 putValue(Action.NAME, "");
             } else {
-                putValue(Action.NAME, tr(">"));
+                putValue(Action.NAME, ">");
             }
             putValue(Action.SHORT_DESCRIPTION, tr("Keep the selected key/value pairs from the server dataset"));
             setEnabled(false);

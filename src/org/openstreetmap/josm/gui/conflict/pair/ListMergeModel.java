@@ -11,6 +11,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Observable;
@@ -319,7 +320,7 @@ public abstract class ListMergeModel<T> extends Observable {
             return;
         ArrayList<T> mergedEntries = getMergedEntries();
         if (current < 0 || current >= mergedEntries.size())
-            throw new IllegalArgumentException(tr("Parameter current out of range. Got {0}.", current));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter current out of range. Got {0}.", current));
         for (int i=rows.length -1; i>=0; i--) {
             int row = rows[i];
             T n = entries.get(source).get(row);
@@ -371,7 +372,7 @@ public abstract class ListMergeModel<T> extends Observable {
         ArrayList<T> mergedEntries = getMergedEntries();
 
         if (current < 0 || current >= mergedEntries.size())
-            throw new IllegalArgumentException(tr("Parameter current out of range. Got {0}.", current));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter current out of range. Got {0}.", current));
         if (current == mergedEntries.size() -1) {
             copyToEnd(source, rows);
         } else {
