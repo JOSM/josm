@@ -58,9 +58,9 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
         HelpAwareOptionPane.showOptionDialog(
                 parent,
                 tr("<html>"
-                        + "''{0}'' isn't a valid OSM API URL.<br>"
+                        + "''{0}'' is not a valid OSM API URL.<br>"
                         + "Please check the spelling and validate again."
-                        +"</html>",
+                        + "</html>",
                         url
                 ),
                 tr("Invalid API URL"),
@@ -122,8 +122,8 @@ public class ApiUrlTestTask extends PleaseWaitRunnable{
         HelpAwareOptionPane.showOptionDialog(
                 parent,
                 tr("<html>"
-                        + "The OSM API server at ''{0}'' didn''t return a valid response.<br>"
-                        + "It is likely that ''{0}'' isn''t an OSM API server.<br>"
+                        + "The OSM API server at ''{0}'' did not return a valid response.<br>"
+                        + "It is likely that ''{0}'' is not an OSM API server.<br>"
                         + "Please check the spelling of ''{0}'' and validate again."
                         + "</html>",
                         getNormalizedApiUrl()

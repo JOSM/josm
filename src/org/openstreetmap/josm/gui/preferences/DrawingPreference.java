@@ -101,14 +101,14 @@ public class DrawingPreference implements PreferenceSetting {
 
         // drawRawGpsMaxLineLengthLocal
         drawRawGpsMaxLineLengthLocal.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.max-line-length.local", -1)));
-        drawRawGpsMaxLineLengthLocal.setToolTipText(tr("Maximum length (in meters) to draw lines for local files. Set to '-1' to draw all lines."));
+        drawRawGpsMaxLineLengthLocal.setToolTipText(tr("Maximum length (in meters) to draw lines for local files. Set to ''-1'' to draw all lines."));
         drawRawGpsMaxLineLengthLocal.setEnabled(!drawRawGpsLinesNone.isSelected());
         panel.add(new JLabel(tr("Maximum length for local files (meters)")), GBC.std().insets(40,0,0,0));
         panel.add(drawRawGpsMaxLineLengthLocal, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
 
         // drawRawGpsMaxLineLength
         drawRawGpsMaxLineLength.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.max-line-length", 200)));
-        drawRawGpsMaxLineLength.setToolTipText(tr("Maximum length (in meters) to draw lines. Set to '-1' to draw all lines."));
+        drawRawGpsMaxLineLength.setToolTipText(tr("Maximum length (in meters) to draw lines. Set to ''-1'' to draw all lines."));
         drawRawGpsMaxLineLength.setEnabled(!drawRawGpsLinesNone.isSelected());
         panel.add(new JLabel(tr("Maximum length (meters)")), GBC.std().insets(40,0,0,0));
         panel.add(drawRawGpsMaxLineLength, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
@@ -138,7 +138,7 @@ public class DrawingPreference implements PreferenceSetting {
         panel.add(drawGpsArrowsFast, GBC.eop().insets(60,0,0,0));
 
         // drawGpsArrowsMinDist
-        drawGpsArrowsMinDist.setToolTipText(tr("Don't draw arrows if they are not at least this distance away from the last one."));
+        drawGpsArrowsMinDist.setToolTipText(tr("Do not draw arrows if they are not at least this distance away from the last one."));
         drawGpsArrowsMinDist.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.min-arrow-distance", 0)));
         drawGpsArrowsMinDist.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
         panel.add(new JLabel(tr("Minimum distance (pixels)")), GBC.std().insets(60,0,0,0));

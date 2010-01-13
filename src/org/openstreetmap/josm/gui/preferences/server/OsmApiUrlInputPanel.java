@@ -236,7 +236,7 @@ public class OsmApiUrlInputPanel extends JPanel {
                 return;
             }
             if (!isValid()) {
-                feedbackInvalid(tr("The current value isn't a valid URL"));
+                feedbackInvalid(tr("The current value is not a valid URL"));
             } else {
                 feedbackValid(tr("Please enter the OSM API URL."));
             }

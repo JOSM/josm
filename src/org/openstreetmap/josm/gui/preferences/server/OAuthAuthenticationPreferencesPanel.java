@@ -183,7 +183,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             JLabel lbl;
-            add(lbl = new JMultilineLabel(tr("You don't have an Access Token yet to access the OSM server using OAuth. Please authorise first.")), gc);
+            add(lbl = new JMultilineLabel(tr("You do not have an Access Token yet to access the OSM server using OAuth. Please authorise first.")), gc);
             lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
 
             // Action for authorising now

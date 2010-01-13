@@ -180,7 +180,7 @@ public class PrefJPanel extends javax.swing.JPanel {
                       +"of shortcuts there are three alternatives. JOSM will try those alternative in the listed order when managing a "
                       +"conflict. If all alternatives would result in shortcuts that are already taken, it will assign a random shortcut "
                       +"instead.</p>")+
-                    tr("<p>The pseudo-modifier 'disabled' will disable the shortcut when encountered.</p>")
+                    tr("<p>The pseudo-modifier ''disabled'' will disable the shortcut when encountered.</p>")
                 );
                 editor.setCaretPosition(0); // scroll up
                 prefTabPane.addTab(tr("Read First"), new JScrollPane(editor));
