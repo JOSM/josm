@@ -193,10 +193,12 @@ public class PluginInformation {
     public PluginProxy load(Class<?> klass) throws PluginException{
         try {
             try {
-                Constructor<?> c = klass.getDeclaredConstructor(PluginInformation.class);
+                Constructor<?> c = klass.getConstructor(PluginInformation.class);
                 Object plugin = c.newInstance(this);
                 return new PluginProxy(plugin, this);
             } catch(NoSuchMethodException e) {
+                // do nothing - try again with the noarg constructor for legacy support
+            } catch(InstantiationException e) {
                 // do nothing - try again with the noarg constructor for legacy support
             }
             // FIXME: This is legacy support. It is necessary because of a former ugly hack in the
