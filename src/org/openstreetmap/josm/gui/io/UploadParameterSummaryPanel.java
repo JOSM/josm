@@ -55,7 +55,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
         } else {
             msg.append(tr("The changeset is <strong>left open</strong> after this upload"));
         }
-        msg.append(tr(" (<a href=\"urn:changeset-configuration\">configure changeset</a>)"));
+        msg.append(tr(" (<a href=\"urn:changeset-configuration\">" + tr("configure changeset") + "</a>)"));
         return msg.toString();
     }
 
@@ -90,7 +90,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
             } else if (numRequests > 1){
                 msg = tr("Uploading <strong>{0} objects</strong> to <strong>1 changeset</strong> using <strong>{1} requests</strong>", numObjects, numRequests);
             }
-            msg = msg + " (<a href=\"urn:advanced-configuration\">advanced configuration</a>)";
+            msg = msg + " (<a href=\"urn:advanced-configuration\">" + tr("advanced configuration") + "</a>)";
         } else {
             lblWarning.setVisible(true);
             if (numRequests == 0) {
@@ -98,7 +98,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
                         numObjects, maxChunkSize, OsmApi.getOsmApi().getBaseUrl());
             } else if (numRequests > 1){
                 msg = tr("Uploading <strong>{0} objects</strong> to <strong>multiple changesets</strong> using <strong>{1} requests</strong>", numObjects, numRequests);
-                msg = msg + " (<a href=\"urn:advanced-configuration\">advanced configuration</a>)";
+                msg = msg + " (<a href=\"urn:advanced-configuration\">" + tr("advanced configuration") + "</a>)";
             }
         }
         return msg;
