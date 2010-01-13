@@ -158,7 +158,7 @@ public class PluginHandler {
                     + "Update plugins now?"
                     + "</html>"
             );
-            togglePreferenceKey = "pluginmanger.version";
+            togglePreferenceKey = "pluginmanager.version";
         }  else {
             long tim = System.currentTimeMillis();
             long last = Main.pref.getLong("pluginmanager.lastupdate", 0);
