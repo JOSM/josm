@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -77,8 +78,7 @@ public class DiffResultProcessor  {
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
-        if (diffUploadResponse == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "source"));
+        CheckParameterUtil.ensureParameterNotNull(diffUploadResponse, "diffUploadResponse");
         try {
             progressMonitor.beginTask(tr("Parsing response from server..."));
             InputSource inputSource = new InputSource(new StringReader(diffUploadResponse));

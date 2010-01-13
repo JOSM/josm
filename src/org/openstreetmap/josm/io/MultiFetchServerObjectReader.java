@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Retrieves a set of {@see OsmPrimitive}s from an OSM server using the so called
@@ -106,8 +107,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
      *   id=<code>id</code>
      */
     protected void remember(DataSet ds, long id, OsmPrimitiveType type) throws IllegalArgumentException, NoSuchElementException{
-        if (ds == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "ds"));
+        CheckParameterUtil.ensureParameterNotNull(ds, "ds");
         if (id <= 0) return;
         OsmPrimitive primitive = ds.getPrimitiveById(id, type);
         if (primitive == null)

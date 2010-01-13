@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.text.MessageFormat;
 
 import javax.swing.JOptionPane;
 
@@ -42,7 +43,7 @@ public class OsmExporter extends FileExporter {
         if (layer instanceof OsmDataLayer) {
             save(file, (OsmDataLayer) layer);
         } else
-            throw new IllegalArgumentException(tr("Expected instance of OsmDataLayer. Got ''{0}''.", layer
+            throw new IllegalArgumentException(MessageFormat.format("Expected instance of OsmDataLayer. Got ''{0}''.", layer
                     .getClass().getName()));
     }
 

@@ -4,6 +4,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -32,6 +33,7 @@ import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -324,7 +326,7 @@ public class OsmReader {
                 long id = Long.parseLong(uid);
                 return User.createOsmUser(id, name);
             } catch(NumberFormatException e) {
-                throwException(tr("Illegal value for attribute ''uid''. Got ''{0}''.", uid));
+                throwException(MessageFormat.format("Illegal value for attribute ''uid''. Got ''{0}''.", uid));
             }
             return null;
         }
@@ -585,8 +587,7 @@ public class OsmReader {
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;
         }
-        if (source == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "source"));
+        CheckParameterUtil.ensureParameterNotNull(source, "source");
         OsmReader reader = new OsmReader();
         try {
             progressMonitor.beginTask(tr("Prepare OSM data...", 2));

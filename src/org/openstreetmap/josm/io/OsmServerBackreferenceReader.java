@@ -4,6 +4,7 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -15,6 +16,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * OsmServerBackreferenceReader fetches the primitives from the OSM server which
@@ -49,10 +51,7 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      * @exception IllegalArgumentException thrown if primitive.id <= 0
      */
     public OsmServerBackreferenceReader(OsmPrimitive primitive) throws IllegalArgumentException {
-        if (primitive == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "primitive"));
-        if (primitive.isNew())
-            throw new IllegalArgumentException(tr("ID parameter ''{0}'' > 0 expected. Got ''{1}''.", "primitive", primitive.getId()));
+        CheckParameterUtil.ensureValidPrimitiveId(primitive, "primitive");
         this.id = primitive.getId();
         this.primitiveType = OsmPrimitiveType.from(primitive);
         this.readFull = false;
@@ -70,9 +69,8 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
      */
     public OsmServerBackreferenceReader(long id, OsmPrimitiveType type) throws IllegalArgumentException   {
         if (id <= 0)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected. Got ''{1}''.", "id", id));
-        if (type == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "type"));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected. Got ''{1}''.", "id", id));
+        CheckParameterUtil.ensureParameterNotNull(type, "type");
         this.id = id;
         this.primitiveType = type;
         this.readFull = false;

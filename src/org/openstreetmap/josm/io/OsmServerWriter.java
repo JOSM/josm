@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,6 +18,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.io.UploadStrategySpecification;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Class that uploads all changes to the osm server.
@@ -153,7 +155,10 @@ public class OsmServerWriter {
                     j++;
                     chunk.add(it.next());
                 }
-                progressMonitor.setCustomText(tr("({0}/{1}) Uploading {2} objects...", i,numChunks,chunk.size()));
+                progressMonitor.setCustomText(
+                        trn("({0}/{1}) Uploading {2} object...",
+                                "({0}/{1}) Uploading {2} objects...",
+                                chunk.size(), i, numChunks, chunk.size()));
                 processed.addAll(api.uploadDiff(chunk, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false)));
             }
         } catch(OsmTransferException e) {
@@ -175,8 +180,7 @@ public class OsmServerWriter {
      * @throws OsmTransferException thrown if something goes wrong
      */
     public void uploadOsm(UploadStrategySpecification strategy, Collection<OsmPrimitive> primitives, Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
-        if (changeset == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "changeset"));
+        CheckParameterUtil.ensureParameterNotNull(changeset, "changeset");
         processed = new LinkedList<OsmPrimitive>();
         monitor = monitor == null ? NullProgressMonitor.INSTANCE : monitor;
         monitor.beginTask(tr("Uploading data ..."));

@@ -4,6 +4,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -194,7 +195,7 @@ public class OsmChangesetParser {
                 long id = Long.parseLong(uid);
                 return User.createOsmUser(id, name);
             } catch(NumberFormatException e) {
-                throwException(tr("Illegal value for attribute ''uid''. Got ''{0}''.", uid));
+                throwException(MessageFormat.format("Illegal value for attribute ''uid''. Got ''{0}''.", uid));
             }
             return null;
         }

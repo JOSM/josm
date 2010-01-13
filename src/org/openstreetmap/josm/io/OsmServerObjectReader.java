@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.MessageFormat;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -12,6 +13,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.xml.sax.SAXException;
 
 /**
@@ -39,9 +41,8 @@ public class OsmServerObjectReader extends OsmServerReader {
      */
     public OsmServerObjectReader(long id, OsmPrimitiveType type, boolean full) throws IllegalArgumentException {
         if (id <= 0)
-            throw new IllegalArgumentException(tr("Expected value > 0 for parameter ''{0}'', got {1}", "id", id));
-        if (type == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "type"));
+            throw new IllegalArgumentException(MessageFormat.format("Expected value > 0 for parameter ''{0}'', got {1}", "id", id));
+        CheckParameterUtil.ensureParameterNotNull(type, "type");
         this.id = new SimplePrimitiveId(id, type);
         this.full = full;
     }
@@ -56,10 +57,7 @@ public class OsmServerObjectReader extends OsmServerReader {
      * @throws IllegalArgumentException thrown if id.getUniqueId() <= 0
      */
     public OsmServerObjectReader(PrimitiveId id, boolean full) {
-        if (id == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "id"));
-        if (id.getUniqueId() <= 0)
-            throw new IllegalArgumentException(tr("Expected value > 0 for parameter ''{0}'', got {1}", "id.getUniqueId()", id.getUniqueId()));
+        CheckParameterUtil.ensureValidPrimitiveId(id, "id");
         this.id = id;
         this.full = full;
     }

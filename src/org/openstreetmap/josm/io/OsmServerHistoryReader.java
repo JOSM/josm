@@ -4,11 +4,13 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.InputStream;
+import java.text.MessageFormat;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Reads the history of an {@see OsmPrimitive} from the OSM API server.
@@ -29,10 +31,9 @@ public class OsmServerHistoryReader extends OsmServerReader {
      *  @exception IllegalArgumentException thrown, if type is null
      */
     public OsmServerHistoryReader(OsmPrimitiveType type, long id) throws IllegalArgumentException {
-        if (type == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "type"));
+        CheckParameterUtil.ensureParameterNotNull(type, "type");
         if (id < 0)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' >= 0 expected. Got ''{1}''.", "id", id));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' >= 0 expected. Got ''{1}''.", "id", id));
         this.primitiveType = type;
         this.id = id;
     }

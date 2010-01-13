@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,6 +18,7 @@ import org.openstreetmap.josm.data.osm.ChangesetDataSet;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Reads the history of an {@see OsmPrimitive} from the OSM API server.
@@ -50,8 +52,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
      * @throws OsmTransferException thrown if something goes wrong w
      */
     public List<Changeset> queryChangesets(ChangesetQuery query, ProgressMonitor monitor) throws OsmTransferException {
-        if (query == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "query"));
+        CheckParameterUtil.ensureParameterNotNull(query, "query");
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
@@ -85,7 +86,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
      */
     public Changeset readChangeset(long id, ProgressMonitor monitor) throws OsmTransferException {
         if (id <= 0)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected. Got ''{1}''.", "id", id));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected. Got ''{1}''.", "id", id));
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
@@ -170,7 +171,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
      */
     public ChangesetDataSet downloadChangeset(int id, ProgressMonitor monitor) throws IllegalArgumentException, OsmTransferException {
         if (id <= 0)
-            throw new IllegalArgumentException(tr("Expected value of type integer > 0 for parameter ''{0}'', got {1}", "id", id));
+            throw new IllegalArgumentException(MessageFormat.format("Expected value of type integer > 0 for parameter ''{0}'', got {1}", "id", id));
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }

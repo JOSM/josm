@@ -149,7 +149,7 @@ public class DefaultProxySelector extends ProxySelector {
         switch(proxyPolicy) {
         case USE_SYSTEM_SETTINGS:
             if (!JVM_WILL_USE_SYSTEM_PROXIES) {
-                System.err.println(tr("Warning: the JVM is not configured to lookup proxies from the system settings. The property 'java.net.useSystemProxies' was missing at startup time. Won't use a proxy."));
+                System.err.println(tr("Warning: the JVM is not configured to lookup proxies from the system settings. The property ''java.net.useSystemProxies'' was missing at startup time.  Will not use a proxy."));
                 return Collections.singletonList(Proxy.NO_PROXY);
             }
             // delegate to the former proxy selector

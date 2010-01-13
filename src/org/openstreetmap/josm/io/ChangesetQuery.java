@@ -4,6 +4,7 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -55,7 +56,7 @@ public class ChangesetQuery {
      */
     public ChangesetQuery forUser(int uid) throws IllegalArgumentException{
         if (uid <= 0)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected. Got ''{1}''.", "uid", uid));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected. Got ''{1}''.", "uid", uid));
         this.uid = uid;
         this.userName = null;
         return this;
@@ -358,11 +359,11 @@ public class ChangesetQuery {
             for (String k: queryParams.keySet()) {
                 if (k.equals("uid")) {
                     if (queryParams.containsKey("display_name"))
-                        throw new ChangesetQueryUrlException(tr("Can't create a changeset query including both the query parameters 'uid' and 'display_name'"));
+                        throw new ChangesetQueryUrlException(tr("Cannot create a changeset query including both the query parameters ''uid'' and ''display_name''"));
                     csQuery.forUser(parseUid(queryParams.get("uid")));
                 } else if (k.equals("display_name")) {
                     if (queryParams.containsKey("uid"))
-                        throw new ChangesetQueryUrlException(tr("Can't create a changeset query including both the query parameters 'uid' and 'display_name'"));
+                        throw new ChangesetQueryUrlException(tr("Cannot create a changeset query including both the query parameters ''uid'' and ''display_name''"));
                     csQuery.forUser(queryParams.get("display_name"));
                 } else if (k.equals("open")) {
                     boolean b = parseBoolean(queryParams.get(k), "open");

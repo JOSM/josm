@@ -238,7 +238,7 @@ public class OsmChangesetContentParser {
                     || qName.equals("way")
                     || qName.equals("relation")) {
                 if (currentModificationType == null) {
-                    throwException(tr("Illegal document structure. Found node, way, or relation outside of 'create', 'modify', or 'delete'."));
+                    throwException(tr("Illegal document structure. Found node, way, or relation outside of ''create'', ''modify'', or ''delete''."));
                 }
                 data.put(currentPrimitive, currentModificationType);
             } else if (qName.equals("osmChange")) {

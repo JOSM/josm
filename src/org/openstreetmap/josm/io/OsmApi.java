@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -32,6 +33,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -131,8 +133,7 @@ public class OsmApi extends OsmConnection {
      * @exception IllegalArgumentException thrown, if serverUrl is null
      */
     protected OsmApi(String serverUrl)  {
-        if (serverUrl == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "serverUrl"));
+        CheckParameterUtil.ensureParameterNotNull(serverUrl, "serverUrl");
         this.serverUrl = serverUrl;
     }
 
@@ -305,8 +306,7 @@ public class OsmApi extends OsmConnection {
      * @throws IllegalArgumentException thrown if changeset is null
      */
     public void openChangeset(Changeset changeset, ProgressMonitor progressMonitor) throws OsmTransferException {
-        if (changeset == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "changeset"));
+        CheckParameterUtil.ensureParameterNotNull(changeset, "changeset");
         try {
             progressMonitor.beginTask((tr("Creating changeset...")));
             initialize(progressMonitor);
@@ -337,8 +337,7 @@ public class OsmApi extends OsmConnection {
      *
      */
     public void updateChangeset(Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
-        if (changeset == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "changeset"));
+        CheckParameterUtil.ensureParameterNotNull(changeset, "changeset");
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
@@ -378,8 +377,7 @@ public class OsmApi extends OsmConnection {
      * @throws IllegalArgumentException thrown if changeset.getId() <= 0
      */
     public void closeChangeset(Changeset changeset, ProgressMonitor monitor) throws OsmTransferException {
-        if (changeset == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "changeset"));
+        CheckParameterUtil.ensureParameterNotNull(changeset, "changeset");
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
@@ -422,7 +420,8 @@ public class OsmApi extends OsmConnection {
 
             // Upload to the server
             //
-            monitor.indeterminateSubTask(tr("Uploading {0} objects...", list.size()));
+            monitor.indeterminateSubTask(
+                    trn("Uploading {0} object...", "Uploading {0} objects...", list.size(), list.size()));
             String diffUploadResponse = sendRequest("POST", "changeset/" + changeset.getId() + "/upload", diffUploadRequest,monitor);
 
             // Process the response from the server

@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.Calendar;
 
 import javax.swing.JButton;
@@ -32,6 +33,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 
 public class GpxExporter extends FileExporter {
@@ -51,13 +53,11 @@ public class GpxExporter extends FileExporter {
 
     @Override
     public void exportData(File file, Layer layer) throws IOException {
-        if (layer == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
+        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         if (!(layer instanceof OsmDataLayer) && !(layer instanceof GpxLayer))
-            throw new IllegalArgumentException(tr("Expected instance of OsmDataLayer or GpxLayer. Got ''{0}''.", layer
+            throw new IllegalArgumentException(MessageFormat.format("Expected instance of OsmDataLayer or GpxLayer. Got ''{0}''.", layer
                     .getClass().getName()));
-        if (file == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "file"));
+        CheckParameterUtil.ensureParameterNotNull(file, "file");
 
         String fn = file.getPath();
         if (fn.indexOf('.') == -1) {
