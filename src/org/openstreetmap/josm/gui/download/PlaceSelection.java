@@ -72,7 +72,7 @@ public class PlaceSelection implements DownloadSelection {
     private DownloadDialog parent;
     private final static Server[] servers = new Server[]{
         new Server("Nominatim","http://nominatim.openstreetmap.org/search?format=xml&q=",tr("Class Type"),tr("Bounds")),
-        new Server("Gazetter","http://gazetteer.openstreetmap.org/namefinder/search.xml?find=",tr("Near"),trc("placeselection", "Zoom"))
+        new Server("Namefinder","http://gazetteer.openstreetmap.org/namefinder/search.xml?find=",tr("Near"),trc("placeselection", "Zoom"))
     };
     private final JComboBox server = new JComboBox(servers);
 
