@@ -35,11 +35,11 @@ public class I18n {
     }
 
     public static final String tr(String text) {
-        return gettext(text, null);
+        return MessageFormat.format(gettext(text, null), (Object)null);
     }
 
     public static final String trc(String ctx, String text) {
-        return gettext(text, ctx);
+        return MessageFormat.format(gettext(text, ctx), (Object)null);
     }
 
     /* NOTE: marktr does NOT support context strings - use marktrc instead */
@@ -56,7 +56,7 @@ public class I18n {
     }
 
     public static final String trn(String text, String pluralText, long n) {
-        return gettextn(text, pluralText, null, n);
+        return MessageFormat.format(gettextn(text, pluralText, null, n), (Object)null);
     }
 
     public static final String trnc(String ctx, String text, String pluralText, long n, Object... objects) {
@@ -64,7 +64,7 @@ public class I18n {
     }
 
     public static final String trnc(String ctx, String text, String pluralText, long n) {
-        return gettextn(text, pluralText, ctx, n);
+        return MessageFormat.format(gettextn(text, pluralText, ctx, n), (Object)null);
     }
 
     private static final String gettext(String text, String ctx)
