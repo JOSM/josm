@@ -55,7 +55,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
         } else {
             msg.append(tr("The changeset is <strong>left open</strong> after this upload"));
         }
-        msg.append(tr(" (<a href=\"urn:changeset-configuration\">" + tr("configure changeset") + "</a>)"));
+        msg.append(" (<a href=\"urn:changeset-configuration\">" + tr("configure changeset") + "</a>)");
         return msg.toString();
     }
 
