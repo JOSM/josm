@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * SaveLayerTask saves the data managed by an {@see OsmDataLayer} to the
@@ -34,8 +35,7 @@ class SaveLayerTask extends AbstractIOTask {
      * @throws IllegalArgumentException thrown if layer is null
      */
     protected SaveLayerTask(SaveLayerInfo layerInfo, ProgressMonitor monitor) {
-        if (layerInfo == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layerInfo"));
+        CheckParameterUtil.ensureParameterNotNull(layerInfo, "layerInfo");
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }

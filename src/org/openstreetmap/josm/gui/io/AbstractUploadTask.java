@@ -62,7 +62,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
             throw new IllegalStateException(tr("Failed to update primitive with id {0} because current edit layer is null", id));
         OsmPrimitive p = layer.data.getPrimitiveById(id, type);
         if (p == null)
-            throw new IllegalStateException(tr("Failed to update primitive with id {0} because current edit layer doesn't include such a primitive", id));
+            throw new IllegalStateException(tr("Failed to update primitive with id {0} because current edit layer does not include such a primitive", id));
         Main.worker.execute(new UpdatePrimitivesTask(layer, Collections.singleton(p)));
     }
 
@@ -191,7 +191,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
      *
      */
     protected void handleUploadConflictForClosedChangeset(long changsetId, Date d) {
-        String msg =  tr("<html>Uploading <strong>failed</strong> because you''ve been using<br>"
+        String msg =  tr("<html>Uploading <strong>failed</strong> because you have been using<br>"
                 + "changeset {0} which was already closed at {1}.<br>"
                 + "Please upload again with a new or an existing open changeset.</html>",
                 changsetId, new SimpleDateFormat().format(d)

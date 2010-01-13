@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.io;
 import java.io.File;
 
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
+
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
@@ -27,8 +29,7 @@ class SaveLayerInfo implements Comparable<SaveLayerInfo> {
      * @throws IllegalArgumentException thrown if layer is null
      */
     public SaveLayerInfo(OsmDataLayer layer) {
-        if (layer == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
+        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
         this.doSaveToFile = layer.requiresSaveToFile();
         this.doUploadToServer = layer.requiresUploadToServer();

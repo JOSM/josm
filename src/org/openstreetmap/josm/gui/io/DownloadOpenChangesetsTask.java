@@ -60,12 +60,11 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
         if (JosmUserIdentityManager.getInstance().isAnonymous()) {
             JOptionPane.showMessageDialog(
                     JOptionPane.getFrameForComponent(parent),
-                    tr("<html>Could not retrieve the list of your open changesets because<br>"
-                            + "JOSM doesn't know your identity.<br>"
-                            + "You've either chosen to work anonymously or you are not entitled<br>"
-                            + "to know the identity of the user on whose behalf you are working."
-                            + "</html>"
-                    ),
+                    "<html>" + tr("Could not retrieve the list of your open changesets because<br>"
+                            + "JOSM does not know your identity.<br>"
+                            + "You have either chosen to work anonymously or you are not entitled<br>"
+                            + "to know the identity of the user on whose behalf you are working.")
+                            + "</html>",
                     tr("Missing user identity"),
                     JOptionPane.ERROR_MESSAGE
             );

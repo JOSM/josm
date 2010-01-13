@@ -237,8 +237,8 @@ public class CredentialDialog extends JDialog {
             tfUserName.setToolTipText(tr("Please enter the user name of your OSM account"));
             tfPassword.setToolTipText(tr("Please enter the password name of your OSM account"));
             lblHeading.setText(
-                    tr("<html>Authenticating at the OSM API ''{0}'' failed. Please enter a valid username and a valid password.</html>",
-                            OsmApi.getOsmApi().getBaseUrl()));
+                    "<html>" + tr("Authenticating at the OSM API ''{0}'' failed. Please enter a valid username and a valid password.",
+                            OsmApi.getOsmApi().getBaseUrl()) + "</html>");
             lblWarning.setText(tr("Warning: The password is transferred unencrypted."));
         }
 
@@ -254,9 +254,9 @@ public class CredentialDialog extends JDialog {
             tfUserName.setToolTipText(tr("Please enter the user name for authenticating at your proxy server"));
             tfPassword.setToolTipText(tr("Please enter the password for authenticating at your proxy server"));
             lblHeading.setText(
-                    tr("<html>Authenticating at the HTTP proxy ''{0}'' failed. Please enter a valid username and a valid password.</html>",
-                            System.getProperty("http.proxyHost") + ":" + System.getProperty("http.proxyPort")));
-            lblWarning.setText(tr("<html>Warning: depending on the authentication method the proxy server uses the password may be transferred unencrypted.</html>"));
+                    "<html>" + tr("Authenticating at the HTTP proxy ''{0}'' failed. Please enter a valid username and a valid password.",
+                            System.getProperty("http.proxyHost") + ":" + System.getProperty("http.proxyPort")) + "</html>");
+            lblWarning.setText("<html>" + tr("Warning: depending on the authentication method the proxy server uses the password may be transferred unencrypted.") + "</html>");
         }
 
         public HttpProxyCredentialsPanel() {

@@ -321,7 +321,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
             JLabel lbl = lblStrategies.get(UploadStrategy.SINGLE_REQUEST_STRATEGY);
             lbl.setIcon(ImageProvider.get("warning-small.png"));
             lbl.setText(tr("Upload in one request not possible (too many objects to upload)"));
-            lbl.setToolTipText(tr("<html>Can''t upload {0} objects in one request because the<br>"
+            lbl.setToolTipText(tr("<html>Cannot upload {0} objects in one request because the<br>"
                     + "max. changeset size {1} on server ''{2}'' is exceeded.</html>",
                     numUploadedObjects,
                     maxChunkSize,

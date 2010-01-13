@@ -486,7 +486,7 @@ public class SaveLayersDialog extends JDialog {
         protected void warnBecauseOfUnsavedData() {
             int numProblems = model.getNumCancel() + model.getNumFailed();
             if (numProblems == 0) return;
-            String msg = tr(
+            String msg = trn(
                     "<html>An upload and/or save operation of one layer with modifications<br>"
                     + "was cancelled or has failed.</html>",
                     "<html>Upload and/or save operations of {0} layers with modifications<br>"

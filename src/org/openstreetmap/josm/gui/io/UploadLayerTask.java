@@ -19,6 +19,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiPrimitiveGoneException;
 import org.openstreetmap.josm.io.OsmServerWriter;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * UploadLayerTask uploads the data managed by an {@see OsmDataLayer} asynchronously.
@@ -55,10 +56,8 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
      * @throws IllegalArgumentException thrown if strategy is null
      */
     public UploadLayerTask(UploadStrategySpecification strategy, OsmDataLayer layer, ProgressMonitor monitor, Changeset changeset) {
-        if (layer == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
-        if (strategy == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "strategy"));
+        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
+        CheckParameterUtil.ensureParameterNotNull(strategy, "strategy");
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
