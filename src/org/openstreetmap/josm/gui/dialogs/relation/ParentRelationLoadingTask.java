@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerBackreferenceReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.xml.sax.SAXException;
 
 /**
@@ -73,12 +74,8 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
      */
     public ParentRelationLoadingTask(Relation child, OsmDataLayer layer, boolean full, PleaseWaitProgressMonitor monitor ) {
         super(tr("Download referring relations"), monitor, false /* don't ignore exception */);
-        if (child == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "child"));
-        if (layer == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
-        if (child.isNew())
-            throw new IllegalArgumentException(tr("Value of child.getId() > 0 expected. Got {1}.", child.getId()));
+        CheckParameterUtil.ensureValidPrimitiveId(child, "child");
+        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         referrers = null;
         this.layer = layer;
         parents = new ArrayList<Relation>();

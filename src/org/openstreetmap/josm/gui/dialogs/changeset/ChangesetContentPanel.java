@@ -321,7 +321,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         protected void alertNoPrimitivesToSelect(Collection<HistoryOsmPrimitive> primitives) {
             HelpAwareOptionPane.showOptionDialog(
                     ChangesetContentPanel.this,
-                    trn("<html>The selected object isn''t available in the current<br>"
+                    trn("<html>The selected object is not available in the current<br>"
                             + "edit layer ''{0}''.</html>",
                             "<html>None of the selected objects is available in the current<br>"
                             + "edit layer ''{0}''.</html>",
@@ -383,7 +383,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         protected void alertNoPrimitivesToZoomTo(Collection<HistoryOsmPrimitive> primitives) {
             HelpAwareOptionPane.showOptionDialog(
                     ChangesetContentPanel.this,
-                    trn("<html>The selected object isn''t available in the current<br>"
+                    trn("<html>The selected object is not available in the current<br>"
                             + "edit layer ''{0}''.</html>",
                             "<html>None of the selected objects is available in the current<br>"
                             + "edit layer ''{0}''.</html>",

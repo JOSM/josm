@@ -2,6 +2,7 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -1086,7 +1087,7 @@ public class GenericRelationEditor extends RelationEditor  {
             int ret = HelpAwareOptionPane.showOptionDialog(
                     Main.parent,
                     tr("<html>This relation has been changed outside of the editor.<br>"
-                            + "You can't apply your changes and continue editing.<br>"
+                            + "You cannot apply your changes and continue editing.<br>"
                             + "<br>"
                             + "Do you want to create a conflict and close the editor?</html>"),
                             tr("Conflict in data"),
@@ -1302,12 +1303,16 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         protected boolean confirmSettingEmptyRole(int onNumMembers) {
-            String message = tr("<html>You are setting an empty role on {0} primitives.<br>"
-                    + "This is equal to deleting the roles of these primitives.<br>"
-                    + "Do you really want to apply the new role?</html>", onNumMembers);
+            String message = "<html>"
+                + trn("You are setting an empty role on {0} primitive.",
+                        "You are setting an empty role on {0} primitives.", onNumMembers, onNumMembers)
+                        + "<br>"
+                        + tr("This is equal to deleting the roles of these primitives.") +
+                        "<br>"
+                        + tr("Do you really want to apply the new role?") + "</html>";
             String [] options = new String[] {
                     tr("Yes, apply it"),
-                    tr("No, don't apply")
+                    tr("No, do not apply")
             };
             int ret = ConditionalOptionPaneUtil.showOptionDialog(
                     "relation_editor.confirm_applying_empty_role",

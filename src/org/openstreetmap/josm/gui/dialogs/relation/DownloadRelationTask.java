@@ -18,6 +18,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.xml.sax.SAXException;
 
 /**
@@ -42,10 +43,8 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
      */
     public DownloadRelationTask(Collection<Relation> relations, OsmDataLayer layer) throws IllegalArgumentException{
         super(tr("Download relations"), false /* don't ignore exception */);
-        if (relations == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "relations"));
-        if (layer == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "layer"));
+        CheckParameterUtil.ensureParameterNotNull(relations, "relations");
+        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.relations = relations;
         this.layer = layer;
     }

@@ -49,6 +49,7 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.ImageProvider.OverlayPosition;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * This is a toggle dialog which displays the list of layers. Actions allow to
@@ -80,7 +81,7 @@ public class LayerListDialog extends ToggleDialog {
      */
     static public LayerListDialog getInstance() throws IllegalStateException {
         if (instance == null)
-            throw new IllegalStateException(tr("Dialog not created yet. Invoke createInstance() first"));
+            throw new IllegalStateException("Dialog not created yet. Invoke createInstance() first");
         return instance;
     }
 
@@ -310,8 +311,7 @@ public class LayerListDialog extends ToggleDialog {
          */
         public ShowHideLayerAction(Layer layer) throws IllegalArgumentException {
             this();
-            if (layer == null)
-                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
+            CheckParameterUtil.ensureParameterNotNull(layer, "layer");
             this.layer = layer;
             putValue(NAME, tr("Show/Hide"));
             updateEnabledState();
@@ -355,10 +355,9 @@ public class LayerListDialog extends ToggleDialog {
     public final class ActivateLayerAction extends AbstractAction implements IEnabledStateUpdating, MapView.LayerChangeListener{
         private  Layer layer;
 
-        public ActivateLayerAction(Layer layer) throws IllegalArgumentException {
+        public ActivateLayerAction(Layer layer) {
             this();
-            if (layer == null)
-                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
+            CheckParameterUtil.ensureParameterNotNull(layer, "layer");
             this.layer = layer;
             putValue(NAME, tr("Activate"));
             updateEnabledState();
@@ -422,8 +421,7 @@ public class LayerListDialog extends ToggleDialog {
 
         public MergeAction(Layer layer) throws IllegalArgumentException {
             this();
-            if (layer == null)
-                throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
+            CheckParameterUtil.ensureParameterNotNull(layer, "layer");
             this.layer = layer;
             putValue(NAME, tr("Merge"));
             updateEnabledState();

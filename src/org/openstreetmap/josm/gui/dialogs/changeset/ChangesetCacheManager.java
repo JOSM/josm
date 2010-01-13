@@ -515,7 +515,7 @@ public class ChangesetCacheManager extends JFrame {
         protected void alertAnonymousUser() {
             HelpAwareOptionPane.showOptionDialog(
                     ChangesetCacheManager.this,
-                    tr("<html>JOSM is currently running with an anonymous user. It can't download<br>"
+                    tr("<html>JOSM is currently running with an anonymous user. It cannot download<br>"
                             + "your changesets from the OSM server unless you enter your OSM user name<br>"
                             + "in the JOSM preferences.</html>"
                     ),

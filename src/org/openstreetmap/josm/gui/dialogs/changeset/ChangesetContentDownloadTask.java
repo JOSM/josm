@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -67,7 +68,7 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
     public ChangesetContentDownloadTask(int changesetId) throws IllegalArgumentException{
         super(tr("Downloading changeset content"), false /* don't ignore exceptions */);
         if (changesetId <= 0)
-            throw new IllegalArgumentException(tr("Expected integer value > 0 for parameter ''{0}'', got ''{1}''", "changesetId", changesetId));
+            throw new IllegalArgumentException(MessageFormat.format("Expected integer value > 0 for parameter ''{0}'', got ''{1}''", "changesetId", changesetId));
         init(Collections.singleton(changesetId));
     }
 
@@ -93,7 +94,7 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
     public ChangesetContentDownloadTask(Component parent, int changesetId) throws IllegalArgumentException{
         super(parent, tr("Downloading changeset content"), false /* don't ignore exceptions */);
         if (changesetId <= 0)
-            throw new IllegalArgumentException(tr("Expected integer value > 0 for parameter ''{0}'', got ''{1}''", "changesetId", changesetId));
+            throw new IllegalArgumentException(MessageFormat.format("Expected integer value > 0 for parameter ''{0}'', got ''{1}''", "changesetId", changesetId));
         init(Collections.singleton(changesetId));
     }
 

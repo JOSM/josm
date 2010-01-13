@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs.relation;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -42,6 +43,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.SAXException;
 
@@ -116,8 +118,7 @@ public class ChildRelationBrowser extends JPanel {
      * @exception IllegalArgumentException thrown, if layer is null
      */
     public ChildRelationBrowser(OsmDataLayer layer) throws IllegalArgumentException {
-        if (layer == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
+        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
         model = new RelationTreeModel();
         build();
@@ -325,8 +326,10 @@ public class ChildRelationBrowser extends JPanel {
             if (conflictsCount > 0) {
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        tr("There were {0} conflicts during import.", conflictsCount),
-                        tr("Conflicts in data"),
+                        trn("There was {0} conflict during import.",
+                                "There were {0} conflicts during import.",
+                                conflictsCount, conflictsCount),
+                        trn("Conflict in data", "Conflicts in data", conflictsCount),
                         JOptionPane.WARNING_MESSAGE
                 );
             }
@@ -341,7 +344,7 @@ public class ChildRelationBrowser extends JPanel {
         protected void warnBecauseOfDeletedRelation(Relation r) {
             String message = tr("<html>The child relation<br>"
                     + "{0}<br>"
-                    + "is deleted on the server. It can't be loaded",
+                    + "is deleted on the server. It cannot be loaded",
                     r.getDisplayName(DefaultNameFormatter.getInstance())
             );
 
@@ -478,8 +481,10 @@ public class ChildRelationBrowser extends JPanel {
             if (conflictsCount > 0) {
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        tr("There were {0} conflicts during import.", conflictsCount),
-                        tr("Conflicts in data"),
+                        trn("There was {0} conflict during import.",
+                                "There were {0} conflicts during import.",
+                                conflictsCount, conflictsCount),
+                        trn("Conflict in data", "Conflicts in data", conflictsCount),
                         JOptionPane.WARNING_MESSAGE
                 );
             }

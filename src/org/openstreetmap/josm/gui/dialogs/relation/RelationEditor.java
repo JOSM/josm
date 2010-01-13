@@ -15,6 +15,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public abstract class RelationEditor extends ExtendedDialog {
     /** the property name for the current relation.
@@ -119,8 +120,7 @@ public abstract class RelationEditor extends ExtendedDialog {
                 new String[] { tr("Apply Changes"), tr("Cancel")},
                 false
         );
-        if (layer == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
+        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
         setRelation(relation);
     }

@@ -524,16 +524,16 @@ public class AdvancedChangesetQueryPanel extends JPanel {
                 } else if (im.isFullyIdentified()) {
                     query.forUser(im.getUserId());
                 } else
-                    throw new IllegalStateException(tr("Can't restrict changeset query to the current user because the current user is anonymous"));
+                    throw new IllegalStateException(tr("Cannot restrict changeset query to the current user because the current user is anonymous"));
             } else if (rbRestrictToUid.isSelected()) {
                 int uid  = valUid.getUid();
                 if (uid > 0) {
                     query.forUser(uid);
                 } else
-                    throw new IllegalStateException(tr("Current value ''{0}'' for user ID isn''t valid", tfUid.getText()));
+                    throw new IllegalStateException(tr("Current value ''{0}'' for user ID is not valid", tfUid.getText()));
             } else if (rbRestrictToUserName.isSelected()) {
                 if (! valUserName.isValid())
-                    throw new IllegalStateException(tr("Can''t restrict the changeset query to the user name ''{0}''", tfUserName.getText()));
+                    throw new IllegalStateException(tr("Cannot restrict the changeset query to the user name ''{0}''", tfUserName.getText()));
                 query.forUser(tfUserName.getText());
             }
         }
@@ -834,7 +834,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
         public void fillInQuery(ChangesetQuery query) throws IllegalStateException{
             if (!isValidChangesetQuery())
-                throw new IllegalStateException(tr("Can't build changeset query with time based restrictions. Input isn't valid."));
+                throw new IllegalStateException(tr("Cannot build changeset query with time based restrictions. Input is not valid."));
             if (rbClosedAfter.isSelected()) {
                 GregorianCalendar cal = new GregorianCalendar();
                 Date d1 = valClosedAfterDate1.getDate();
@@ -939,7 +939,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
         public void fillInQuery(ChangesetQuery query) {
             if (!isValidChangesetQuery())
-                throw new IllegalStateException(tr("Can't restrict the changeset query to a specific bounding box. The input is invalid."));
+                throw new IllegalStateException(tr("Cannot restrict the changeset query to a specific bounding box. The input is invalid."));
             query.inBbox(getBoundingBox());
         }
 
@@ -986,11 +986,11 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             try {
                 int uid = Integer.parseInt(value);
                 if (uid <= 0) {
-                    feedbackInvalid(tr("The current value isn't a valid user ID. Please enter an integer value > 0"));
+                    feedbackInvalid(tr("The current value is not a valid user ID. Please enter an integer value > 0"));
                     return;
                 }
             } catch(NumberFormatException e) {
-                feedbackInvalid(tr("The current value isn't a valid user ID. Please enter an integer value > 0"));
+                feedbackInvalid(tr("The current value is not a valid user ID. Please enter an integer value > 0"));
                 return;
             }
             feedbackValid(tr("Please enter an integer value > 0"));
@@ -1027,7 +1027,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         public void validate() {
             String value  = getComponent().getText();
             if (value.trim().length() == 0) {
-                feedbackInvalid(tr("<html>The  current value isn't a valid user name.<br>Please enter an non-empty user name.</html>"));
+                feedbackInvalid(tr("<html>The  current value is not a valid user name.<br>Please enter an non-empty user name.</html>"));
                 return;
             }
             feedbackValid(tr("Please enter an non-empty user name"));

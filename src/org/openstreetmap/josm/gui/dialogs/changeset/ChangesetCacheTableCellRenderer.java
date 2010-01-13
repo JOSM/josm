@@ -59,9 +59,9 @@ public class ChangesetCacheTableCellRenderer extends JLabel implements TableCell
 
     protected void renderOpen(Changeset cs) {
         if (cs.isOpen()) {
-            setText(trc("changeset.open", "Open"));
+            setText(trc("changeset.state", "Open"));
         } else {
-            setText(trc("changeset.open", "Closed"));
+            setText(trc("changeset.state", "Closed"));
         }
         setToolTipText("");
     }

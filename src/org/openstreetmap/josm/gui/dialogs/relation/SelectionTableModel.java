@@ -1,7 +1,5 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -15,6 +13,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public class SelectionTableModel extends AbstractTableModel implements SelectionChangedListener, MapView.LayerChangeListener{
 
@@ -29,8 +28,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
      * @exception IllegalArgumentException thrown if layer is null
      */
     public SelectionTableModel(OsmDataLayer layer) throws IllegalArgumentException {
-        if (layer == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "layer"));
+        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
         cache = new ArrayList<OsmPrimitive>();
         MapView.addLayerChangeListener(this);

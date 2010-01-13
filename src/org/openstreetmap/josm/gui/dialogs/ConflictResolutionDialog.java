@@ -213,7 +213,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
                         tr("Close anyway"),
                         tr("Continue resolving")};
                 int ret = JOptionPane.showOptionDialog(Main.parent,
-                        tr("<html>You didn''t finish to merge the differences in this conflict.<br>"
+                        tr("<html>You did not finish to merge the differences in this conflict.<br>"
                                 + "Conflict resolutions won't be applied unless all differences<br>"
                                 + "are resolved."
                                 + "Click <strong>{0}</strong> to close anyway.<strong>Already<br>"

@@ -138,7 +138,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
         @Override
         public void validate() {
             if (!isValid()) {
-                feedbackInvalid(tr("The current value isn't a valid changeset ID. Please enter an integer value > 0"));
+                feedbackInvalid(tr("The current value is not a valid changeset ID. Please enter an integer value > 0"));
             } else {
                 feedbackValid(tr("Please enter an integer value > 0"));
             }
