@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,7 +58,7 @@ public class UndeletePrimitivesCommand extends ConflictResolveCommand {
     public MutableTreeNode description() {
         return new DefaultMutableTreeNode(
                 new JLabel(
-                        tr("Undelete {0} primitives", toUndelete.size()),
+                        trn("Undelete {0} primitive", "Undelete {0} primitives", toUndelete.size(), toUndelete.size()),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
                 )

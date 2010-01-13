@@ -38,9 +38,9 @@ public class ModifiedConflictResolveCommand extends ConflictResolveCommand {
     public MutableTreeNode description() {
         String msg = "";
         switch(OsmPrimitiveType.from(conflict.getMy())) {
-        case NODE: msg = marktr("Set the 'modified' flag for node {0}"); break;
-        case WAY: msg = marktr("Set the 'modified' flag for way {0}"); break;
-        case RELATION: msg = marktr("Set the 'modified' flag for relation {0}"); break;
+        case NODE: msg = marktr("Set the ''modified'' flag for node {0}"); break;
+        case WAY: msg = marktr("Set the ''modified'' flag for way {0}"); break;
+        case RELATION: msg = marktr("Set the ''modified'' flag for relation {0}"); break;
         }
         return new DefaultMutableTreeNode(
                 new JLabel(

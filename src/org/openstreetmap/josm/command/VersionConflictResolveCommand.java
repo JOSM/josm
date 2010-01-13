@@ -38,9 +38,9 @@ public class VersionConflictResolveCommand extends ConflictResolveCommand {
     public MutableTreeNode description() {
         String msg = "";
         switch(OsmPrimitiveType.from(conflict.getMy())) {
-            case NODE: msg = marktr("Resolve version conflicts for node {0}"); break;
-            case WAY: msg = marktr("Resolve version conflicts for way {0}"); break;
-            case RELATION: msg = marktr("Resolve version conflicts for relation {0}"); break;
+            case NODE: msg = marktr("Resolve version conflict for node {0}"); break;
+            case WAY: msg = marktr("Resolve version conflict for way {0}"); break;
+            case RELATION: msg = marktr("Resolve version conflict for relation {0}"); break;
         }
         return new DefaultMutableTreeNode(
                 new JLabel(

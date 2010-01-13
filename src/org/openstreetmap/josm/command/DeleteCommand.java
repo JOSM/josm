@@ -3,6 +3,7 @@ package org.openstreetmap.josm.command;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.GridBagLayout;
 import java.awt.geom.Area;
@@ -34,6 +35,7 @@ import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.actionsupport.DeleteFromRelationConfirmationDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -54,7 +56,7 @@ public class DeleteCommand extends Command {
      */
     public DeleteCommand(Collection<? extends OsmPrimitive> data) throws IllegalArgumentException {
         if (data == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be empty"));
+            throw new IllegalArgumentException("Parameter 'data' must not be empty");
         if (data.isEmpty())
             throw new IllegalArgumentException(tr("At least one object to delete required, got empty collection"));
         this.toDelete = data;
@@ -67,8 +69,7 @@ public class DeleteCommand extends Command {
      * @throws IllegalArgumentException thrown if data is null
      */
     public DeleteCommand(OsmPrimitive data) throws IllegalArgumentException {
-        if (data == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "data"));
+        CheckParameterUtil.ensureParameterNotNull(data, "data");
         this.toDelete = Collections.singleton(data);
     }
 
@@ -83,8 +84,7 @@ public class DeleteCommand extends Command {
      */
     public DeleteCommand(OsmDataLayer layer, OsmPrimitive data) throws IllegalArgumentException {
         super(layer);
-        if (data == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "data"));
+        CheckParameterUtil.ensureParameterNotNull(data, "data");
         this.toDelete = Collections.singleton(data);
     }
 
@@ -100,7 +100,7 @@ public class DeleteCommand extends Command {
     public DeleteCommand(OsmDataLayer layer, Collection<? extends OsmPrimitive> data) throws IllegalArgumentException{
         super(layer);
         if (data == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be empty"));
+            throw new IllegalArgumentException("Parameter 'data' must not be empty");
         if (data.isEmpty())
             throw new IllegalArgumentException(tr("At least one object to delete required, got empty collection"));
         this.toDelete = data;
@@ -158,9 +158,9 @@ public class DeleteCommand extends Command {
             OsmPrimitive primitive = toDelete.iterator().next();
             String msg = "";
             switch(OsmPrimitiveType.from(primitive)) {
-            case NODE: msg = "Delete node {0}"; break;
-            case WAY: msg = "Delete way {0}"; break;
-            case RELATION:msg = "Delete relation {0}"; break;
+            case NODE: msg = marktr("Delete node {0}"); break;
+            case WAY: msg = marktr("Delete way {0}"); break;
+            case RELATION:msg = marktr("Delete relation {0}"); break;
             }
 
             return new DefaultMutableTreeNode(new JLabel(tr(msg, primitive.getDisplayName(DefaultNameFormatter.getInstance())),
@@ -212,8 +212,7 @@ public class DeleteCommand extends Command {
      * @throws IllegalArgumentException thrown if layer is null
      */
     public static Command deleteWithReferences(OsmDataLayer layer, Collection<? extends OsmPrimitive> selection, boolean silent) throws IllegalArgumentException {
-        if (layer == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "layer"));
+        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         if (selection == null || selection.isEmpty()) return null;
         Set<OsmPrimitive> parents = OsmPrimitive.getReferrer(selection);
         parents.addAll(selection);
@@ -435,7 +434,7 @@ public class DeleteCommand extends Command {
                                 // connection.
                                 tr("You are about to delete nodes outside of the area you have downloaded."
                                         + "<br>"
-                                        + "This can cause problems because other objects (that you don't see) might use them."
+                                        + "This can cause problems because other objects (that you do not see) might use them."
                                         + "<br>" + "Do you really want to delete?") + "</html>"));
                         return ConditionalOptionPaneUtil.showConfirmationDialog(
                                 "delete_outside_nodes",

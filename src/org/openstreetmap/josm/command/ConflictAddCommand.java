@@ -31,7 +31,7 @@ public class ConflictAddCommand extends Command {
                 Main.parent,
                 tr("<html>Layer ''{0}'' already has a conflict for primitive<br>"
                         + "''{1}''.<br>"
-                        + "This conflict can't be added.</html>",
+                        + "This conflict cannot be added.</html>",
                         getLayer().getName(),
                         conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance())
                 ),
@@ -51,7 +51,7 @@ public class ConflictAddCommand extends Command {
 
     @Override public void undoCommand() {
         if (! Main.map.mapView.hasLayer(getLayer())) {
-            System.out.println(tr("Warning: Layer ''{0}'' doesn't exist any more. Can't remove conflict for primitive ''{1}''.",
+            System.out.println(tr("Warning: Layer ''{0}'' does not exist any more. Cannot remove conflict for primitive ''{1}''.",
                     getLayer().getName(),
                     conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance())
             ));

@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,7 +46,7 @@ public class AddPrimitivesCommand extends Command {
     @Override
     public MutableTreeNode description() {
         return new DefaultMutableTreeNode(
-                new JLabel(tr("Added {0} objects", data.size()), null,
+                new JLabel(trn("Added {0} object", "Added {0} objects", data.size(), data.size()), null,
                         JLabel.HORIZONTAL
                 )
         );

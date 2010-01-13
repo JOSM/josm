@@ -114,8 +114,8 @@ public class ChangePropertyCommand extends Command {
             }
         } else {
             text = value == null
-            ? tr("Remove \"{0}\" for {1} {2}", key, objects.size(), trn("object","objects",objects.size()))
-                    : tr("Set {0}={1} for {2} {3}",key,value, objects.size(), trn("object","objects",objects.size()));
+            ? tr("Remove \"{0}\" for {1} objects", key, objects.size())
+                    : tr("Set {0}={1} for {2} objects", key, value, objects.size());
         }
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(new JLabel(text, ImageProvider.get("data", "key"), JLabel.HORIZONTAL));
         if (objects.size() == 1)

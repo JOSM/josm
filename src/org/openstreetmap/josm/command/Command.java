@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Classes implementing Command modify a dataset in a specific way. A command is
@@ -62,8 +63,7 @@ abstract public class Command {
      * @throws IllegalArgumentException thrown if layer is null
      */
     public Command(OsmDataLayer layer) throws IllegalArgumentException {
-        if (layer == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "layer"));
+        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
     }
 

@@ -64,7 +64,7 @@ public abstract class ConflictResolveCommand extends Command {
         super.undoCommand();
 
         if (! Main.map.mapView.hasLayer(getLayer())) {
-            logger.warning(tr("Can''t undo command ''{0}'' because layer ''{1}'' is not present any more",
+            logger.warning(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
                     this.toString(),
                     getLayer().toString()
             ));

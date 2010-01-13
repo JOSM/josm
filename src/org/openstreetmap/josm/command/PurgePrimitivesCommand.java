@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.command;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -108,7 +109,7 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
     protected MutableTreeNode getDescription(Collection<OsmPrimitive> primitives) {
 
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(
-                tr("Purged {0} objects", primitives.size())
+                trn("Purged {0} object", "Purged {0} objects", primitives.size(), primitives.size())
         );
         for (OsmPrimitive p : primitives) {
             root.add(getDescription(p));
@@ -200,7 +201,7 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
     @Override
     public void undoCommand() {
         if (! Main.map.mapView.hasLayer(getLayer())) {
-            logger.warning(tr("Can''t undo command ''{0}'' because layer ''{1}'' is not present any more",
+            logger.warning(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
                     this.toString(),
                     getLayer().toString()
             ));
