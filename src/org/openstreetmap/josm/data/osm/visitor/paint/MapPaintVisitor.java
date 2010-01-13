@@ -320,11 +320,11 @@ public class MapPaintVisitor implements PaintVisitor {
         {
             viaNode = (Node) via;
             if(!fromWay.isFirstLastNode(viaNode)) {
-                putError(r, tr("The \"from\" way doesn't start or end at a \"via\" node."), true);
+                putError(r, tr("The \"from\" way does not start or end at a \"via\" node."), true);
                 return;
             }
             if(!toWay.isFirstLastNode(viaNode)) {
-                putError(r, tr("The \"to\" way doesn't start or end at a \"via\" node."), true);
+                putError(r, tr("The \"to\" way does not start or end at a \"via\" node."), true);
             }
         }
         else
@@ -352,11 +352,11 @@ public class MapPaintVisitor implements PaintVisitor {
             } else if (!onewayvia && fromWay.isFirstLastNode(lastNode)) {
                 viaNode = lastNode;
             } else {
-                putError(r, tr("The \"from\" way doesn't start or end at the \"via\" way."), true);
+                putError(r, tr("The \"from\" way does not start or end at the \"via\" way."), true);
                 return;
             }
             if(!toWay.isFirstLastNode(viaNode == firstNode ? lastNode : firstNode)) {
-                putError(r, tr("The \"to\" way doesn't start or end at the \"via\" way."), true);
+                putError(r, tr("The \"to\" way does not start or end at the \"via\" way."), true);
             }
         }
 

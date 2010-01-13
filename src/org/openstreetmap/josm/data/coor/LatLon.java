@@ -8,6 +8,7 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -82,8 +83,8 @@ public class LatLon extends Coordinate {
         switch(d) {
         case DECIMAL_DEGREES: return cDdFormatter.format(y);
         case DEGREES_MINUTES_SECONDS: return dms(y) + ((y < 0) ?
-                /* short symbol for South */ tr("S") :
-                    /* short symbol for North */ tr("N"));
+                /* short symbol for South */ trc("compass", "S") :
+                    /* short symbol for North */ trc("compass", "N"));
         default: return "ERR";
         }
     }
@@ -96,8 +97,8 @@ public class LatLon extends Coordinate {
         switch(d) {
         case DECIMAL_DEGREES: return cDdFormatter.format(x);
         case DEGREES_MINUTES_SECONDS: return dms(x) + ((x < 0) ?
-                /* short symbol for West */ tr("W") :
-                    /* short symbol for East */ tr("E"));
+                /* short symbol for West */ trc("compass", "W") :
+                    /* short symbol for East */ trc("compass", "E"));
         default: return "ERR";
         }
     }

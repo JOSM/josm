@@ -137,7 +137,7 @@ public class Version {
     public void init() {
         URL u = Main.class.getResource("/REVISION");
         if (u == null) {
-            System.err.println(tr("Warning: the revision file '/REVISION' is missing."));
+            System.err.println(tr("Warning: the revision file ''/REVISION'' is missing."));
             version = 0;
             revision = "";
             return;

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +26,7 @@ import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * An OSM primitive can be associated with a key/value pair. It can be created, deleted
@@ -261,7 +263,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             this.id = id;
         } else {
             if (id < 0)
-                throw new IllegalArgumentException(tr("Expected ID >= 0. Got {0}.", id));
+                throw new IllegalArgumentException(MessageFormat.format("Expected ID >= 0. Got {0}.", id));
             else if (id == 0) {
                 this.id = generateUniqueId();
             } else {
@@ -398,7 +400,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      */
     public void setVisible(boolean visible) throws IllegalStateException{
         if (isNew() && visible == false)
-            throw new IllegalStateException(tr("A primitive with ID = 0 can't be invisible."));
+            throw new IllegalStateException(tr("A primitive with ID = 0 cannot be invisible."));
         if (visible) {
             flags |= FLAG_VISIBLE;
         } else {
@@ -649,9 +651,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         if (this.changesetId == changesetId)
             return;
         if (changesetId < 0)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' >= 0 expected, got {1}", "changesetId", changesetId));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' >= 0 expected, got {1}", "changesetId", changesetId));
         if (isNew() && changesetId > 0)
-            throw new IllegalStateException(tr("Can''t assign a changesetId > 0 to a new primitive. Value of changesetId is {0}", changesetId));
+            throw new IllegalStateException(tr("Cannot assign a changesetId > 0 to a new primitive. Value of changesetId is {0}", changesetId));
         int old = this.changesetId;
         this.changesetId = changesetId;
         if (dataSet != null) {
@@ -1034,12 +1036,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @throws DataIntegrityProblemException thrown if other isn't new and other.getId() != this.getId()
      */
     public void mergeFrom(OsmPrimitive other) {
-        if (other == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "other"));
+        CheckParameterUtil.ensureParameterNotNull(other, "other");
         if (other.isNew() ^ isNew())
-            throw new DataIntegrityProblemException(tr("Can't merge because either of the participating primitives is new and the other is not"));
+            throw new DataIntegrityProblemException(tr("Cannot merge because either of the participating primitives is new and the other is not"));
         if (! other.isNew() && other.getId() != id)
-            throw new DataIntegrityProblemException(tr("Can''t merge primitives with different ids. This id is {0}, the other is {1}", id, other.getId()));
+            throw new DataIntegrityProblemException(tr("Cannot merge primitives with different ids. This id is {0}, the other is {1}", id, other.getId()));
 
         setKeys(other.getKeys());
         timestamp = other.timestamp;

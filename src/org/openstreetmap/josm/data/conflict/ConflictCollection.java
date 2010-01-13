@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * This is a collection of {@see Conflict}s. This collection is {@see Iterable}, i.e.
@@ -86,9 +87,8 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
      * @throws IllegalStateException thrown if this collection already includes a conflict for conflict.getMy()
      *
      */
-    public void add(Conflict<?> conflict) throws IllegalStateException, IllegalArgumentException {
-        if (conflict == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "conflict"));
+    public void add(Conflict<?> conflict) throws IllegalStateException {
+        CheckParameterUtil.ensureParameterNotNull(conflict, "conflict");
         addConflict(conflict);
         fireConflictAdded();
     }

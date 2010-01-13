@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -10,6 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * A data set holding histories of OSM primitives.
@@ -71,11 +73,10 @@ public class HistoryDataSet {
      */
     public HistoryOsmPrimitive get(long id, OsmPrimitiveType type, long version){
         if (id <= 0)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected, got {1}", "id", id));
-        if (type == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "type"));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected, got {1}", "id", id));
+        CheckParameterUtil.ensureParameterNotNull(type, "type");
         if (version <= 0)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected, got {1}", "version", version));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected, got {1}", "version", version));
 
         SimplePrimitiveId pid = new SimplePrimitiveId(id, type);
         ArrayList<HistoryOsmPrimitive> versions = data.get(pid);
@@ -115,9 +116,8 @@ public class HistoryDataSet {
      */
     public History getHistory(long id, OsmPrimitiveType type) throws IllegalArgumentException{
         if (id <= 0)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected, got {1}", "id", id));
-        if (type == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "type"));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected, got {1}", "id", id));
+        CheckParameterUtil.ensureParameterNotNull(type, "type");
         SimplePrimitiveId pid = new SimplePrimitiveId(id, type);
         return getHistory(pid);
     }
@@ -132,8 +132,7 @@ public class HistoryDataSet {
      * @throws IllegalArgumentException thrown if pid is null
      */
     public History getHistory(PrimitiveId pid) throws IllegalArgumentException{
-        if (pid == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "pid"));
+        CheckParameterUtil.ensureParameterNotNull(pid, "pid");
         ArrayList<HistoryOsmPrimitive> versions = data.get(pid);
         if (versions == null)
             return null;

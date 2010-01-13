@@ -446,10 +446,10 @@ public class Preferences {
         File prefDir = getPreferencesDirFile();
         if (prefDir.exists()) {
             if(!prefDir.isDirectory()) {
-                System.err.println(tr("Warning: Failed to initialize preferences. Preference directory ''{0}'' isn't a directory.", prefDir.getAbsoluteFile()));
+                System.err.println(tr("Warning: Failed to initialize preferences. Preference directory ''{0}'' is not a directory.", prefDir.getAbsoluteFile()));
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        tr("<html>Failed to initialize preferences.<br>Preference directory ''{0}'' isn't a directory.</html>", prefDir.getAbsoluteFile()),
+                        tr("<html>Failed to initialize preferences.<br>Preference directory ''{0}'' is not a directory.</html>", prefDir.getAbsoluteFile()),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
                 );

@@ -5,8 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
+import java.text.MessageFormat;
 
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * This is a simple data class for "rectangular" areas of the world, given in
@@ -47,10 +49,9 @@ public class Bounds {
     }
 
     public Bounds(double [] coords) {
-        if (coords == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "coords"));
+        CheckParameterUtil.ensureParameterNotNull(coords, "coords");
         if (coords.length != 4)
-            throw new IllegalArgumentException(tr("Expected array of length 4, got {0}", coords.length));
+            throw new IllegalArgumentException(MessageFormat.format("Expected array of length 4, got {0}", coords.length));
         this.minLat = coords[0];
         this.minLon = coords[1];
         this.maxLat = coords[2];
@@ -58,17 +59,16 @@ public class Bounds {
     }
 
     public Bounds(String asString, String separator) throws IllegalArgumentException {
-        if (asString == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "asString"));
+        CheckParameterUtil.ensureParameterNotNull(asString, "asString");
         String[] components = asString.split(separator);
         if (components.length != 4)
-            throw new IllegalArgumentException(tr("Exactly four doubles excpected in string, got {0}", components.length));
+            throw new IllegalArgumentException(MessageFormat.format("Exactly four doubles excpected in string, got {0}", components.length));
         double[] values = new double[4];
         for (int i=0; i<4; i++) {
             try {
                 values[i] = Double.parseDouble(components[i]);
             } catch(NumberFormatException e) {
-                throw new IllegalArgumentException(tr("Illegal double value ''{0}''", components[i]));
+                throw new IllegalArgumentException(MessageFormat.format("Illegal double value ''{0}''", components[i]));
             }
         }
         if (!LatLon.isValidLat(values[0]))
@@ -107,12 +107,11 @@ public class Bounds {
      * @throws IllegalArgumentException thrown if lonExtent <= 0
      */
     public Bounds(LatLon center, double latExtent, double lonExtent) {
-        if (center == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "center"));
+        CheckParameterUtil.ensureParameterNotNull(center, "center");
         if (latExtent <= 0.0)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0.0 exptected, got {1}", "latExtent", latExtent));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0.0 exptected, got {1}", "latExtent", latExtent));
         if (lonExtent <= 0.0)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0.0 exptected, got {1}", "lonExtent", lonExtent));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0.0 exptected, got {1}", "lonExtent", lonExtent));
 
         this.minLat = center.lat() - latExtent / 2;
         this.minLon = center.lon() - lonExtent / 2;

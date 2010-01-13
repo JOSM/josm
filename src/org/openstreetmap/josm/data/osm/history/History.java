@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,6 +13,7 @@ import java.util.List;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Represents the history of an OSM primitive. The history consists
@@ -51,9 +53,8 @@ public class History{
      */
     protected History(long id, OsmPrimitiveType type, List<HistoryOsmPrimitive> versions) {
         if (id <= 0)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected, got {1}", "id", id));
-        if (type == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "type"));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected, got {1}", "id", id));
+        CheckParameterUtil.ensureParameterNotNull(type, "type");
         this.id = id;
         this.type = type;
         this.versions = new ArrayList<HistoryOsmPrimitive>();
@@ -215,7 +216,7 @@ public class History{
 
     public HistoryOsmPrimitive get(int idx) {
         if (idx < 0 || idx >= versions.size())
-            throw new IndexOutOfBoundsException(tr("Parameter ''{0}'' in range 0..{1} expected. Got ''{2}''.", "idx", versions.size()-1, idx));
+            throw new IndexOutOfBoundsException(MessageFormat.format("Parameter ''{0}'' in range 0..{1} expected. Got ''{2}''.", "idx", versions.size()-1, idx));
         return versions.get(idx);
     }
 

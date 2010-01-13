@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.data.osm;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.text.MessageFormat;
+
 public enum OsmPrimitiveType {
 
     NODE ("node", Node.class, NodeData.class),
@@ -34,7 +36,7 @@ public enum OsmPrimitiveType {
         for (OsmPrimitiveType type : OsmPrimitiveType.values()) {
             if (type.getAPIName().equals(typeName)) return type;
         }
-        throw new IllegalArgumentException(tr("Parameter ''{0}'' is not a valid type name. Got ''{1}''.", "typeName", typeName));
+        throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' is not a valid type name. Got ''{1}''.", "typeName", typeName));
     }
 
     public static OsmPrimitiveType from(OsmPrimitive obj) {
@@ -45,14 +47,14 @@ public enum OsmPrimitiveType {
         if (cls.equals(Node.class)) return NODE;
         if (cls.equals(Way.class)) return WAY;
         if (cls.equals(Relation.class)) return RELATION;
-        throw new IllegalArgumentException(tr("Parameter ''{0}'' is not an acceptable class. Got ''{1}''.", "cls", cls.toString()));
+        throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' is not an acceptable class. Got ''{1}''.", "cls", cls.toString()));
     }
 
     public static OsmPrimitiveType fromData(Class<? extends PrimitiveData> cls) {
         if (cls.equals(NodeData.class)) return NODE;
         if (cls.equals(WayData.class)) return WAY;
         if (cls.equals(RelationData.class)) return RELATION;
-        throw new IllegalArgumentException(tr("Parameter ''{0}'' is not an acceptable class. Got ''{1}''.", "cls", cls.toString()));
+        throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' is not an acceptable class. Got ''{1}''.", "cls", cls.toString()));
     }
 
     public static OsmPrimitiveType fromData(PrimitiveData data) {

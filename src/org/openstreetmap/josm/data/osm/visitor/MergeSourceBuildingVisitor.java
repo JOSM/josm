@@ -13,6 +13,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * MergeSourceBuildingVisitor helps to build the "hull" of a collection of {@see OsmPrimitive}s
@@ -40,8 +41,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
      *
      */
     public MergeSourceBuildingVisitor(DataSet selectionBase) throws IllegalArgumentException {
-        if (selectionBase == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "selectionBase"));
+        CheckParameterUtil.ensureParameterNotNull(selectionBase, "selectionBase");
         this.selectionBase = selectionBase;
         this.hull = new DataSet();
         this.mappedPrimitives = new HashMap<OsmPrimitive, OsmPrimitive>();

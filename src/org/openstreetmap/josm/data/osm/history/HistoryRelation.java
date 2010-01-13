@@ -3,12 +3,14 @@ package org.openstreetmap.josm.data.osm.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Represents an immutable OSM relation in the context of a historical view on
@@ -86,7 +88,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      */
     public RelationMember getRelationMember(int idx) throws IndexOutOfBoundsException  {
         if (idx < 0 || idx >= members.size())
-            throw new IndexOutOfBoundsException(tr("Parameter {0} not in range 0..{1}. Got ''{2}''.", "idx", members.size(),idx));
+            throw new IndexOutOfBoundsException(MessageFormat.format("Parameter {0} not in range 0..{1}. Got ''{2}''.", "idx", members.size(),idx));
         return members.get(idx);
     }
 
@@ -106,8 +108,7 @@ public class HistoryRelation extends HistoryOsmPrimitive{
      * @exception IllegalArgumentException thrown, if member is null
      */
     public void addMember(RelationMember member) throws IllegalArgumentException {
-        if (member == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", "member"));
+        CheckParameterUtil.ensureParameterNotNull(member, "member");
         members.add(member);
     }
 

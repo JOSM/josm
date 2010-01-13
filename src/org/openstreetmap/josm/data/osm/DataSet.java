@@ -204,7 +204,7 @@ public class DataSet implements Cloneable {
     public void addPrimitive(OsmPrimitive primitive) {
         if (getPrimitiveById(primitive) != null)
             throw new DataIntegrityProblemException(
-                    tr("Unable to add primitive {0} to the dataset because it's already included", primitive.toString()));
+                    tr("Unable to add primitive {0} to the dataset because it is already included", primitive.toString()));
 
         if (primitive instanceof Node) {
             nodes.add((Node) primitive);
@@ -646,7 +646,7 @@ public class DataSet implements Cloneable {
     private OsmPrimitive getPrimitiveByIdChecked(PrimitiveId primitiveId) {
         OsmPrimitive result = getPrimitiveById(primitiveId);
         if (result == null) {
-            System.out.println(tr("JOSM expected to find primitive [{0} {1}] in dataset but it's not there. Please report this "
+            System.out.println(tr("JOSM expected to find primitive [{0} {1}] in dataset but it is not there. Please report this "
                     + " at http://josm.openstreetmap.de . This is not a critical error, it should be safe to continue in your work.",
                     primitiveId.getType(), Long.toString(primitiveId.getUniqueId())));
             new Exception().printStackTrace();

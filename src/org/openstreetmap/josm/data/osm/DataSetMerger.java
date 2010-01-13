@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * A dataset merger which takes a target and a source dataset and merges the source data set
@@ -50,8 +51,7 @@ public class DataSetMerger {
      * @throws IllegalArgumentException thrown if myDataSet is null
      */
     public DataSetMerger(DataSet targetDataSet, DataSet sourceDataSet) throws IllegalArgumentException {
-        if (targetDataSet == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", "targetDataSet"));
+        CheckParameterUtil.ensureParameterNotNull(targetDataSet, "targetDataSet");
         this.targetDataSet = targetDataSet;
         this.sourceDataSet = sourceDataSet;
         conflicts = new ConflictCollection();
@@ -277,7 +277,7 @@ public class DataSetMerger {
             //
             logger.warning(tr("Target object with id {0} and version {1} is visible although "
                     + "source object with lower version {2} is not visible. "
-                    + "Can''t deal with this inconsistency. Keeping target object. ",
+                    + "Cannot deal with this inconsistency. Keeping target object. ",
                     Long.toString(target.getId()),Long.toString(target.getVersion()), Long.toString(source.getVersion())
             ));
         } else if (target.isVisible() && ! source.isVisible()) {

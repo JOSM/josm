@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import java.util.Map;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Represents an immutable OSM primitive in the context of a historical view on
@@ -31,12 +33,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
 
     protected void ensurePositiveLong(long value, String name) {
         if (value <= 0)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' > 0 expected. Got ''{1}''.", name, value));
-    }
-
-    protected void ensureNotNull(Object obj, String name) {
-        if (obj == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null.", name));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected. Got ''{1}''.", name, value));
     }
 
     /**
@@ -58,8 +55,8 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
         if(uid != -1) {
             ensurePositiveLong(uid, "uid");
         }
-        ensureNotNull(user, "user");
-        ensureNotNull(timestamp, "timestamp");
+        CheckParameterUtil.ensureParameterNotNull(user, "user");
+        CheckParameterUtil.ensureParameterNotNull(timestamp, "timestamp");
         this.id = id;
         this.version = version;
         this.visible = visible;
@@ -112,7 +109,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
 
     public int compareTo(HistoryOsmPrimitive o) {
         if (this.id != o.id)
-            throw new ClassCastException(tr("Can''t compare primitive with ID ''{0}'' to primitive with ID ''{1}''.", o.id, this.id));
+            throw new ClassCastException(tr("Cannot compare primitive with ID ''{0}'' to primitive with ID ''{1}''.", o.id, this.id));
         return Long.valueOf(this.version).compareTo(o.version);
     }
 
