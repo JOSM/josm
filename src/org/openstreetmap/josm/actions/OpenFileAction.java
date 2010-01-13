@@ -22,7 +22,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.io.AllFormatsImporter;
 import org.openstreetmap.josm.io.FileImporter;
-import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -109,7 +108,7 @@ public class OpenFileAction extends DiskAccessAction {
             if (chosenImporter instanceof AllFormatsImporter) {
                 chosenImporter = null;
             }
-            getProgressMonitor().setTicks(files.size());
+            getProgressMonitor().setTicksCount(files.size());
 
             if (chosenImporter != null) { // The importer was expicitely chosen, so use it.
                 //System.err.println("Importer: " +chosenImporter.getClass().getName());
@@ -131,17 +130,16 @@ public class OpenFileAction extends DiskAccessAction {
             }
             else {    // find apropriate importer
                 MultiMap<FileImporter, File> map = new MultiMap<FileImporter, File>();
-                while (! files.isEmpty()) {
-                    File f = files.get(0);
-                    for (FileImporter importer : ExtensionFileFilter.importers) {
-                        if (importer.acceptFile(f)) {
-                            map.add(importer, f);
-                            files.remove(f);
+                FILES:
+                    for (File f: files) {
+                        for (FileImporter importer : ExtensionFileFilter.importers) {
+                            if (importer.acceptFile(f)) {
+                                map.add(importer, f);
+                                continue FILES;
+                            }
                         }
-                    }
-                    if (files.contains(f))
                         throw new RuntimeException(); // no importer found
-                }
+                    }
                 List<FileImporter> ims = new ArrayList<FileImporter>(map.keySet());
                 Collections.sort(ims);
                 Collections.reverse(ims);
@@ -164,14 +162,12 @@ public class OpenFileAction extends DiskAccessAction {
                     msg = trn("Opening {0} file...", "Opening {0} files...", files.size(), files.size());
                 }
                 getProgressMonitor().indeterminateSubTask(msg);
-                importer.importDataHandleExceptions(files);
-                getProgressMonitor().worked(files.size());
+                importer.importDataHandleExceptions(files, getProgressMonitor().createSubTaskMonitor(files.size(), false));
             } else {
                 for (File f : files) {
                     if (cancelled) return;
                     getProgressMonitor().indeterminateSubTask(tr("Opening file ''{0}'' ...", f.getAbsolutePath()));
-                    importer.importDataHandleExceptions(f);
-                    getProgressMonitor().worked(1);
+                    importer.importDataHandleExceptions(f, getProgressMonitor().createSubTaskMonitor(1, false));
                 }
             }
         }

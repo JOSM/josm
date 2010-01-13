@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public class OsmGzipImporter extends OsmImporter {
 
@@ -17,7 +18,7 @@ public class OsmGzipImporter extends OsmImporter {
     }
 
     @Override
-    public void importData(File file) throws IOException, IllegalDataException {
+    public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         GZIPInputStream in = new GZIPInputStream(new FileInputStream(file));
         importData(in, file);
     }

@@ -17,6 +17,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.xml.sax.SAXException;
 
 public class GpxImporter extends FileImporter {
@@ -25,7 +26,7 @@ public class GpxImporter extends FileImporter {
         super(new ExtensionFileFilter("gpx,gpx.gz", "gpx", tr("GPX Files") + " (*.gpx *.gpx.gz)"));
     }
 
-    @Override public void importData(final File file) throws IOException {
+    @Override public void importData(final File file, ProgressMonitor progressMonitor) throws IOException {
         final String fn = file.getName();
 
         try {

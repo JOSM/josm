@@ -65,6 +65,7 @@ import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.io.JpgImporter;
 import org.openstreetmap.josm.tools.AudioUtil;
@@ -283,14 +284,12 @@ public class GpxLayer extends Layer {
                     }
                     MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", getName()) + names,
                             getAssociatedFile(), me);
-                    if (sel != null) {
-                        double firstStartTime = sel[0].lastModified() / 1000.0 /* ms -> seconds */
-                        - AudioUtil.getCalibratedDuration(sel[0]);
+                    double firstStartTime = sel[0].lastModified() / 1000.0 /* ms -> seconds */
+                    - AudioUtil.getCalibratedDuration(sel[0]);
 
-                        Markers m = new Markers();
-                        for (int i = 0; i < sel.length; i++) {
-                            importAudio(sel[i], ml, firstStartTime, m);
-                        }
+                    Markers m = new Markers();
+                    for (int i = 0; i < sel.length; i++) {
+                        importAudio(sel[i], ml, firstStartTime, m);
                     }
                     Main.main.addLayer(ml);
                     Main.map.repaint();
@@ -333,7 +332,7 @@ public class GpxLayer extends Layer {
                 if (sel == null || sel.length == 0)
                     return;
                 addRecursiveFiles(files, sel);
-                importer.importDataHandleExceptions(files);
+                importer.importDataHandleExceptions(files, NullProgressMonitor.INSTANCE);
             }
 
             private void addRecursiveFiles(LinkedList<File> files, File[] sel) {
@@ -525,7 +524,7 @@ public class GpxLayer extends Layer {
          ********** STEP 2a - CHECK CACHE VALIDITY **********************
          ****************************************************************/
         if ((computeCacheMaxLineLengthUsed != maxLineLength) || (!neutralColor.equals(computeCacheColorUsed))
-                        || (computeCacheColored != colored) || (computeCacheColorTracksTune != colorTracksTune)) {
+                || (computeCacheColored != colored) || (computeCacheColorTracksTune != colorTracksTune)) {
             // System.out.println("(re-)computing gpx line styles, reason: CCIS=" +
             // computeCacheInSync + " CCMLLU=" + (computeCacheMaxLineLengthUsed != maxLineLength) +
             // " CCCU=" + (!neutralColor.equals(computeCacheColorUsed)) + " CCC=" +

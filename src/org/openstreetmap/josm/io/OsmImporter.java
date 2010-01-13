@@ -16,6 +16,7 @@ import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public class OsmImporter extends FileImporter {
 
@@ -27,7 +28,7 @@ public class OsmImporter extends FileImporter {
         super(filter);
     }
 
-    @Override public void importData(File file) throws IOException, IllegalDataException {
+    @Override public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         try {
             FileInputStream in = new FileInputStream(file);
             importData(in, file);

@@ -13,6 +13,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public class NMEAImporter extends FileImporter {
 
@@ -22,7 +23,7 @@ public class NMEAImporter extends FileImporter {
                         + " (*.nmea *.nme *.nma *.log *.txt)"));
     }
 
-    @Override public void importData(File file) throws IOException {
+    @Override public void importData(File file, ProgressMonitor progressMonitor) throws IOException {
         String fn = file.getName();
         NmeaReader r = new NmeaReader(new FileInputStream(file), file.getAbsoluteFile().getParentFile());
         if (r.getNumberOfCoordinates() > 0) {

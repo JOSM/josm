@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public class OsmBzip2Importer extends OsmImporter {
 
@@ -19,7 +20,7 @@ public class OsmBzip2Importer extends OsmImporter {
     }
 
     @Override
-    public void importData(File file) throws IOException, IllegalDataException {
+    public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
         int b = bis.read();
         if (b != 'B')

@@ -11,10 +11,11 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public abstract class FileImporter implements Comparable<FileImporter> {
 
-    public ExtensionFileFilter filter;
+    public final ExtensionFileFilter filter;
 
     public FileImporter(ExtensionFileFilter filter) {
         this.filter = filter;
@@ -33,25 +34,27 @@ public abstract class FileImporter implements Comparable<FileImporter> {
 
     /**
      * Needs to be implemented if isBatchImporter() returns false.
+     * @throws IllegalDataException
      */
-    public void importData(File file) throws IOException, IllegalDataException {
+    public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         throw new IOException(tr("Could not import ''{0}''.", file.getName()));
     }
 
     /**
      * Needs to be implemented if isBatchImporter() returns true.
+     * @throws IllegalDataException
      */
-    public void importData(List<File> files) throws IOException, IllegalDataException {
+    public void importData(List<File> files, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         throw new IOException(tr("Could not import files."));
     }
 
     /**
      * Wrapper to give meaningful output if things go wrong.
      */
-    public void importDataHandleExceptions(File f) {
+    public void importDataHandleExceptions(File f, ProgressMonitor progressMonitor) {
         try {
             System.out.println("Open file: " + f.getAbsolutePath() + " (" + f.length() + " bytes)");
-            importData(f);
+            importData(f, progressMonitor);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(
@@ -62,10 +65,10 @@ public abstract class FileImporter implements Comparable<FileImporter> {
             );
         }
     }
-    public void importDataHandleExceptions(List<File> files) {
+    public void importDataHandleExceptions(List<File> files, ProgressMonitor progressMonitor) {
         try {
             System.out.println("Open "+files.size()+" files");
-            importData(files);
+            importData(files, progressMonitor);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(
@@ -89,4 +92,5 @@ public abstract class FileImporter implements Comparable<FileImporter> {
     public int compareTo(FileImporter other) {
         return (new Double(this.getPriority())).compareTo(other.getPriority());
     }
+
 }
