@@ -223,7 +223,7 @@ public class ExceptionUtil {
 
         String message = tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''<br>"
                 + "for security reasons. This is most likely because you are running<br>"
-                + "in an applet and because you didn''t load your applet from ''{1}''.</html>", apiUrl, host);
+                + "in an applet and because you did not load your applet from ''{1}''.</html>", apiUrl, host);
         return message;
     }
 
@@ -304,10 +304,10 @@ public class ExceptionUtil {
      */
     public static String explainNotFound(OsmApiException e) {
         String apiUrl = OsmApi.getOsmApi().getBaseUrl();
-        String message = tr("The OSM server ''{0}'' doesn''t know about an object<br>"
+        String message = tr("The OSM server ''{0}'' does not know about an object<br>"
                 + "you tried to read, update, or delete. Either the respective object<br>"
-                + "doesn''t exist on the server or you''re using an invalid URL to access<br>"
-                + "it. Please carefully check the servers address ''{0}'' for typos."
+                + "does not exist on the server or you are using an invalid URL to access<br>"
+                + "it. Please carefully check the server''s address ''{0}'' for typos."
                 , apiUrl);
         message = "<html>" + message + "</html>";
         e.printStackTrace();
@@ -332,7 +332,7 @@ public class ExceptionUtil {
         }
 
         String message = tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''.<br>"
-                + "Host name ''{1}'' couldn''t be resolved. <br>"
+                + "Host name ''{1}'' could not be resolved. <br>"
                 + "Please check the API URL in your preferences and your internet connection.</html>", apiUrl, host);
         e.printStackTrace();
         return message;

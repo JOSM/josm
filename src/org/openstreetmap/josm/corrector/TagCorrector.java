@@ -40,7 +40,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
 
     private String[] applicationOptions = new String[] {
             tr("Apply selected changes"),
-            tr("Don't apply changes"),
+            tr("Do not apply changes"),
             tr("Cancel")
     };
 

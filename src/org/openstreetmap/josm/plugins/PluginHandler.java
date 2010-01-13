@@ -130,7 +130,7 @@ public class PluginHandler {
             if (!plugins.contains(unmaintained)) {
                 continue;
             }
-            String msg =  tr("<html>Loading of {0} plugin was requested."
+            String msg =  tr("<html>Loading of the plugin \"{0}\" was requested."
                     + "<br>This plugin is no longer developed and very likely will produce errors."
                     +"<br>It should be disabled.<br>Delete from preferences?</html>", unmaintained);
             if (confirmDisablePlugin(msg,unmaintained)) {
@@ -199,8 +199,8 @@ public class PluginHandler {
     private static void alertMissingRequiredPlugin(String plugin, Set<String> missingRequiredPlugin) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
-        sb.append(trn("A required plugin for plugin {0} was not found. The required plugin is:",
-                "{1} required plugins for plugin {0} were not found. The required plugins are:",
+        sb.append(trn("A required plugin for plugin {0} was not found. The missing plugin is:",
+                "{1} required plugins for plugin {0} were not found. The missing plugins are:",
                 missingRequiredPlugin.size(),
                 plugin,
                 missingRequiredPlugin.size()
@@ -690,7 +690,7 @@ public class PluginHandler {
             );
             dialog.setButtonIcons(new String[] {"dialogs/delete.png", "cancel.png"});
             dialog.setContent(
-                    tr("<html>") +
+                    "<html>" +
                     tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.", plugin.getPluginInformation().name)
                     + "<br>"
                     + (plugin.getPluginInformation().author != null

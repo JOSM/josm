@@ -66,7 +66,7 @@ public class PluginInformation {
             jar = new JarInputStream(new FileInputStream(file));
             Manifest manifest = jar.getManifest();
             if (manifest == null)
-                throw new PluginException(name, tr("The plugin file ''{0}'' doesn't include a Manifest.", file.toString()));
+                throw new PluginException(name, tr("The plugin file ''{0}'' does not include a Manifest.", file.toString()));
             scanManifest(manifest, false);
             libraries.add(0, fileToURL(file));
         } catch (IOException e) {

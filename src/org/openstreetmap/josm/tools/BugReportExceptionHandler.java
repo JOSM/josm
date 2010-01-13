@@ -112,7 +112,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                                     "filled in for you. Please include information on how to reproduce" +
                             "the error and try to supply as much detail as possible.")), GBC.eop());
                     p.add(new JMultilineLabel(
-                            tr("Alternatively, if that doesn't work you can manually fill in the information" +
+                            tr("Alternatively, if that does not work you can manually fill in the information" +
                             "below at this URL:")), GBC.eol());
                     p.add(new UrlLabel("http://josm.openstreetmap.de/newticket"), GBC.eop().insets(8,0,0,0));
                     try {

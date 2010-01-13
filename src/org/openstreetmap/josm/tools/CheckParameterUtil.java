@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import java.text.MessageFormat;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
@@ -16,20 +16,19 @@ public class CheckParameterUtil {
     private CheckParameterUtil(){}
 
     public static void ensureValidPrimitiveId(PrimitiveId id, String parameterName) throws IllegalArgumentException {
-        if (id == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", parameterName));
+        ensureParameterNotNull(id, parameterName);
         if (id.getUniqueId() <= 0)
-            throw new IllegalArgumentException(tr("Expected unique id > 0 for primitive id, got {0}", id.getUniqueId()));
+            throw new IllegalArgumentException(MessageFormat.format("Expected unique id > 0 for primitive ''{1}'', got {0}", id.getUniqueId(), parameterName));
     }
 
     public static void ensureValidVersion(long version, String parameterName) throws IllegalArgumentException {
         if (version < 0)
-            throw new IllegalArgumentException(tr("Expected value of type long > 0 for parameter ''{0}'', got {1}", parameterName, version));
+            throw new IllegalArgumentException(MessageFormat.format("Expected value of type long > 0 for parameter ''{0}'', got {1}", parameterName, version));
     }
 
     public static void ensureParameterNotNull(Object value, String parameterName) {
         if (value == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", parameterName));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' must not be null", parameterName));
     }
 
     /**
@@ -41,9 +40,8 @@ public class CheckParameterUtil {
      * @throws IllegalArgumentException thrown if id.getType() != NODE
      */
     public static void ensureValidNodeId(PrimitiveId id, String parameterName) throws IllegalArgumentException {
-        if (id == null)
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' must not be null", parameterName));
+        ensureParameterNotNull(id, parameterName);
         if (! id.getType().equals(OsmPrimitiveType.NODE))
-            throw new IllegalArgumentException(tr("Parameter ''{0}'' of type node expected, got ''{1}''", parameterName, id.getType().getAPIName()));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' of type node expected, got ''{1}''", parameterName, id.getType().getAPIName()));
     }
 }
