@@ -735,10 +735,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     }
 
     public void dataChanged(DataChangedEvent event) {
-        Layer l = Main.main.getEditLayer();
-        if (l != null) {
-            initFromLayer(l);
-        }
+        initFromLayer(Main.main.getEditLayer());
     }
 
     public void otherDatasetChange(AbstractDatasetChangedEvent event) {/* ignore */}

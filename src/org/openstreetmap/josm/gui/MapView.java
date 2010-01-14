@@ -311,18 +311,16 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      *
      * @return the next active data layer
      */
-    protected Layer determineNextActiveLayer(Layer ignoredLayer) {
+    protected Layer determineNextActiveLayer(List<Layer> layersList) {
         // First look for data layer
-        for (Layer layer:layers) {
-            if (layer instanceof OsmDataLayer && layer != ignoredLayer)
+        for (Layer layer:layersList) {
+            if (layer instanceof OsmDataLayer)
                 return layer;
         }
 
         // Then any layer
-        for (Layer layer:layers) {
-            if (layer != ignoredLayer)
-                return layer;
-        }
+        if (!layersList.isEmpty())
+            return layersList.get(0);
 
         // and then give up
         return null;
@@ -334,12 +332,19 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * an LayerChange event is fired.
      */
     public void removeLayer(Layer layer) {
+        List<Layer> layersList = new ArrayList<Layer>(layers);
+
+        if (!layersList.remove(layer))
+            return;
+
+        setEditLayer(layersList);
+
         if (layer == activeLayer) {
-            setActiveLayer(determineNextActiveLayer(activeLayer));
+            setActiveLayer(determineNextActiveLayer(layersList), false);
         }
-        if (layers.remove(layer)) {
-            fireLayerRemoved(layer);
-        }
+
+        layers.remove(layer);
+        fireLayerRemoved(layer);
         layer.removePropertyChangeListener(this);
         layer.destroy();
         AudioPlayer.reset();
@@ -377,7 +382,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         } else {
             layers.add(pos, layer);
         }
-        setEditLayer();
+        setEditLayer(layers);
         AudioPlayer.reset();
         repaint();
     }
@@ -576,16 +581,16 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         return getNumLayers() > 0;
     }
 
-    private void setEditLayer() {
-        OsmDataLayer newEditLayer = editLayer;
+    private void setEditLayer(List<Layer> layersList) {
+        OsmDataLayer newEditLayer = layersList.contains(editLayer)?editLayer:null;
         OsmDataLayer oldEditLayer = editLayer;
 
         // Find new edit layer
-        if (activeLayer != editLayer) {
-            if (activeLayer instanceof OsmDataLayer) {
+        if (activeLayer != editLayer || !layersList.contains(editLayer)) {
+            if (activeLayer instanceof OsmDataLayer && layersList.contains(activeLayer)) {
                 newEditLayer = (OsmDataLayer) activeLayer;
             } else {
-                for (Layer layer:layers) {
+                for (Layer layer:layersList) {
                     if (layer instanceof OsmDataLayer) {
                         newEditLayer = (OsmDataLayer) layer;
                         break;
@@ -615,6 +620,10 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * @exception IllegalArgumentException thrown if layer is not in the lis of layers
      */
     public void setActiveLayer(Layer layer) {
+        setActiveLayer(layer, true);
+    }
+
+    private void setActiveLayer(Layer layer, boolean setEditLayer) {
         if (layer != null && !layers.contains(layer))
             throw new IllegalArgumentException(tr("Layer ''{0}'' must be in list of layers", layer.toString()));
 
@@ -623,7 +632,9 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
         Layer old = activeLayer;
         activeLayer = layer;
-        setEditLayer();
+        if (setEditLayer) {
+            setEditLayer(layers);
+        }
         fireActiveLayerChanged(old, layer);
 
         /* This only makes the buttons look disabled. Disabling the actions as well requires
