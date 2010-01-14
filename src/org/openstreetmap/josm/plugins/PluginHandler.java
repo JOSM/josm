@@ -230,8 +230,8 @@ public class PluginHandler {
     private static void alertMissingRequiredPlugin(Window parent, String plugin, Set<String> missingRequiredPlugin) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
-        sb.append(trn("A required plugin for plugin {0} was not found. The missing plugin is:",
-                "{1} required plugins for plugin {0} were not found. The missing plugins are:",
+        sb.append(trn("Plugin {0} requires a plugin which was not found. The missing plugin is:",
+                "Plugin {0} requires {1} plugins which were not found. The missing plugins are:",
                 missingRequiredPlugin.size(),
                 plugin,
                 missingRequiredPlugin.size()
@@ -252,9 +252,9 @@ public class PluginHandler {
     private static void alertJOSMUpdateRequired(Window parent, String plugin, int requiredVersion) {
         HelpAwareOptionPane.showOptionDialog(
                 parent,
-                tr("<html>Plugin {0} requires JOSM version {1}. The current JOSM version is {1}.<br>"
+                tr("<html>Plugin {0} requires JOSM version {1}. The current JOSM version is {2}.<br>"
                         +"You have to update JOSM in order to use this plugin.</html>",
-                        plugin, requiredVersion
+                        plugin, requiredVersion, Version.getInstance().getVersion()
                 ),
                 tr("Warning"),
                 JOptionPane.WARNING_MESSAGE,
