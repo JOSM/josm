@@ -95,6 +95,11 @@ public class PluginPreference implements PreferenceSetting {
     private PluginPreferencesPanel pnlPluginPreferences;
     private PluginPreferencesModel model;
     private JScrollPane spPluginPreferences;
+    /**
+     * is set to true if this preference pane has been selected
+     * by the user
+     */
+    private boolean pluginPreferencesActivated = false;
 
     protected JPanel buildSearchFieldPanel() {
         JPanel pnl  = new JPanel(new GridBagLayout());
@@ -246,6 +251,8 @@ public class PluginPreference implements PreferenceSetting {
     }
 
     public boolean ok() {
+        if (! pluginPreferencesActivated)
+            return false;
         if (model.isActivePluginsChanged()) {
             Main.pref.putCollection("plugins", model.getSelectedPluginNames());
             return true;
@@ -253,6 +260,12 @@ public class PluginPreference implements PreferenceSetting {
         return false;
     }
 
+    /**
+     * Reads locally available information about plugins from the local file system.
+     * Scans cached plugin lists from plugin download sites and locally available
+     * plugin jar files.
+     * 
+     */
     public void readLocalPluginInformation() {
         final ReadLocalPluginInformationTask task = new ReadLocalPluginInformationTask();
         Runnable r = new Runnable() {
@@ -362,6 +375,7 @@ public class PluginPreference implements PreferenceSetting {
         public ConfigureSitesAction() {
             putValue(NAME,tr("Configure sites..."));
             putValue(SHORT_DESCRIPTION, tr("Configure the list of sites where plugins are downloaded from"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "propertiesdialog"));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -384,6 +398,7 @@ public class PluginPreference implements PreferenceSetting {
             JTabbedPane tp = (JTabbedPane)e.getSource();
             if (tp.getSelectedComponent() == pane) {
                 readLocalPluginInformation();
+                pluginPreferencesActivated = true;
             }
         }
     }

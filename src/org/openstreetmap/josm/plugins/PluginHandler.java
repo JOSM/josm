@@ -656,27 +656,23 @@ public class PluginHandler {
             plugin = ((PluginException)e).plugin;
         }
 
-        if (plugin == null)
-        {
+        if (plugin == null) {
             /**
              * Analyze the stack of the argument and find a name of a plugin, if
              * some known problem pattern has been found.
              */
-            for (PluginProxy p : pluginList)
-            {
+            for (PluginProxy p : pluginList) {
                 String baseClass = p.getPluginInformation().className;
                 int i = baseClass.lastIndexOf(".");
                 baseClass = baseClass.substring(0, i);
-                for (StackTraceElement element : e.getStackTrace())
-                {
+                for (StackTraceElement element : e.getStackTrace()) {
                     String c = element.getClassName();
-                    if(c.startsWith(baseClass))
-                    {
+                    if (c.startsWith(baseClass)) {
                         plugin = p;
                         break;
                     }
                 }
-                if(plugin != null) {
+                if (plugin != null) {
                     break;
                 }
             }
