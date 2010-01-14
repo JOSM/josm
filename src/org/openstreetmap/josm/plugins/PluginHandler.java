@@ -5,7 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -33,6 +36,7 @@ import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -42,9 +46,12 @@ import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
-import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -81,7 +88,7 @@ public class PluginHandler {
      * 
      * @param plugins the collection of plugins
      */
-    private static void filterDeprecatedPlugins(Collection<String> plugins) {
+    private static void filterDeprecatedPlugins(Window parent, Collection<String> plugins) {
         Set<String> removedPlugins = new HashSet<String>();
         for (String p : DEPRECATED_PLUGINS) {
             if (plugins.contains(p)) {
@@ -109,7 +116,7 @@ public class PluginHandler {
         sb.append("</ul>");
         sb.append("</html>");
         JOptionPane.showMessageDialog(
-                Main.parent,
+                parent,
                 sb.toString(),
                 tr("Warning"),
                 JOptionPane.WARNING_MESSAGE
@@ -125,7 +132,7 @@ public class PluginHandler {
      * 
      * @param plugins the collection of plugins
      */
-    private static void filterUnmaintainedPlugins(Collection<String> plugins) {
+    private static void filterUnmaintainedPlugins(Window parent, Collection<String> plugins) {
         for (String unmaintained : UNMAINTAINED_PLUGINS) {
             if (!plugins.contains(unmaintained)) {
                 continue;
@@ -133,7 +140,7 @@ public class PluginHandler {
             String msg =  tr("<html>Loading of the plugin \"{0}\" was requested."
                     + "<br>This plugin is no longer developed and very likely will produce errors."
                     +"<br>It should be disabled.<br>Delete from preferences?</html>", unmaintained);
-            if (confirmDisablePlugin(msg,unmaintained)) {
+            if (confirmDisablePlugin(parent, msg,unmaintained)) {
                 Main.pref.removeFromCollection("plugins", unmaintained);
                 plugins.remove(unmaintained);
             }
@@ -146,18 +153,22 @@ public class PluginHandler {
      * JOSM was updated to a new version since the last plugin updates or
      * if the plugins were last updated a long time ago.
      * 
+     * @param parent the parent window relative to which the confirmation dialog
+     * is to be displayed
      * @return true if a plugin update should be run; false, otherwise
      */
-    public static boolean checkAndConfirmPluginUpdate() {
+    public static boolean checkAndConfirmPluginUpdate(Window parent) {
         String message = null;
         String togglePreferenceKey = null;
         int v = Version.getInstance().getVersion();
         if (Main.pref.getInteger("pluginmanager.version", 0) < v) {
-            message = tr("<html>You updated your JOSM software.<br>"
-                    + "To prevent problems the plugins should be updated as well.<br><br>"
-                    + "Update plugins now?"
-                    + "</html>"
-            );
+            message =
+                "<html>"
+                + tr("You updated your JOSM software.<br>"
+                        + "To prevent problems the plugins should be updated as well.<br><br>"
+                        + "Update plugins now?"
+                )
+                + "</html>";
             togglePreferenceKey = "pluginmanager.version";
         }  else {
             long tim = System.currentTimeMillis();
@@ -167,27 +178,47 @@ public class PluginHandler {
             if ((last <= 0) || (maxTime <= 0)) {
                 Main.pref.put("pluginmanager.lastupdate", Long.toString(tim));
             } else if (d > maxTime) {
-                message = tr("Last plugin update more than {0} days ago.", d);
+                message =
+                    "<html>"
+                    + tr("Last plugin update more than {0} days ago.", d)
+                    + "</html>";
                 togglePreferenceKey = "pluginmanager.time";
             }
         }
         if (message == null) return false;
 
-        // ask whether update is fine
-        //
-        ExtendedDialog dialog = new ExtendedDialog(
-                Main.parent,
+        ButtonSpec [] options = new ButtonSpec[] {
+                new ButtonSpec(
+                        tr("Update plugins"),
+                        ImageProvider.get("dialogs", "refresh"),
+                        tr("Click to update the activated plugins"),
+                        null /* no specific help context */
+                ),
+                new ButtonSpec(
+                        tr("Skip update"),
+                        ImageProvider.get("cancel"),
+                        tr("Click to skip updating the activated plugins"),
+                        null /* no specific help context */
+                )
+        };
+
+        UpdatePluginsMessagePanel pnlMessage = new UpdatePluginsMessagePanel();
+        pnlMessage.setMessage(message);
+        pnlMessage.initDontShowAgain(togglePreferenceKey);
+
+        int ret = HelpAwareOptionPane.showOptionDialog(
+                parent,
+                pnlMessage,
                 tr("Update plugins"),
-                new String[] {
-                    tr("Update plugins"), tr("Skip update")
-                }
+                JOptionPane.WARNING_MESSAGE,
+                null,
+                options,
+                options[0],
+                ht("/Plugin/AutomaticUpdate")
         );
-        dialog.setContent(message);
-        dialog.toggleEnable(togglePreferenceKey);
-        dialog.setButtonIcons( new String[] {"dialogs/refresh.png", "cancel.png"});
-        dialog.configureContextsensitiveHelp(ht("/Plugin/AutomaticUpdate"), true /* show help button */);
-        dialog.showDialog();
-        return dialog.getValue() == 1;
+
+        pnlMessage.rememberDontShowAgain(togglePreferenceKey);
+        return ret == 0;
     }
 
     /**
@@ -196,7 +227,7 @@ public class PluginHandler {
      * @param plugin the the plugin
      * @param missingRequiredPlugin the missing required plugin
      */
-    private static void alertMissingRequiredPlugin(String plugin, Set<String> missingRequiredPlugin) {
+    private static void alertMissingRequiredPlugin(Window parent, String plugin, Set<String> missingRequiredPlugin) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append(trn("A required plugin for plugin {0} was not found. The missing plugin is:",
@@ -211,10 +242,23 @@ public class PluginHandler {
         }
         sb.append("</ul>").append("</html>");
         JOptionPane.showMessageDialog(
-                Main.parent,
+                parent,
                 sb.toString(),
                 tr("Error"),
                 JOptionPane.ERROR_MESSAGE
+        );
+    }
+
+    private static void alertJOSMUpdateRequired(Window parent, String plugin, int requiredVersion) {
+        HelpAwareOptionPane.showOptionDialog(
+                parent,
+                tr("<html>Plugin {0} requires JOSM version {1}. The current JOSM version is {1}.<br>"
+                        +"You have to update JOSM in order to use this plugin.</html>",
+                        plugin, requiredVersion
+                ),
+                tr("Warning"),
+                JOptionPane.WARNING_MESSAGE,
+                HelpUtil.ht("/Plugin/Loading#JOSMUpdateRequired")
         );
     }
 
@@ -227,19 +271,13 @@ public class PluginHandler {
      * @param plugin the plugin for which preconditions are checked
      * @return true, if the preconditions are met; false otherwise
      */
-    public static boolean checkLoadPreconditions(Collection<PluginInformation> plugins, PluginInformation plugin) {
+    public static boolean checkLoadPreconditions(Window parent, Collection<PluginInformation> plugins, PluginInformation plugin) {
 
         // make sure the plugin is compatible with the current JOSM version
         //
         int josmVersion = Version.getInstance().getVersion();
         if (plugin.mainversion > josmVersion && josmVersion != Version.JOSM_UNKNOWN_VERSION) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("Plugin {0} requires JOSM update to version {1}.", plugin.name,
-                            plugin.mainversion),
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE
-            );
+            alertJOSMUpdateRequired(parent, plugin.name, plugin.mainversion);
             return false;
         }
 
@@ -257,7 +295,7 @@ public class PluginHandler {
                 }
             }
             if (!missingPlugins.isEmpty()) {
-                alertMissingRequiredPlugin(plugin.name, missingPlugins);
+                alertMissingRequiredPlugin(parent, plugin.name, missingPlugins);
                 return false;
             }
         }
@@ -299,7 +337,7 @@ public class PluginHandler {
      * @param plugin the plugin
      * @param pluginClassLoader the plugin class loader
      */
-    public static void loadPlugin(PluginInformation plugin, ClassLoader pluginClassLoader) {
+    public static void loadPlugin(Window parent, PluginInformation plugin, ClassLoader pluginClassLoader) {
         try {
             Class<?> klass = plugin.loadClass(pluginClassLoader);
             if (klass != null) {
@@ -309,7 +347,7 @@ public class PluginHandler {
         } catch (Throwable e) {
             e.printStackTrace();
             String msg = tr("Could not load plugin {0}. Delete from preferences?", plugin.name);
-            if (confirmDisablePlugin(msg, plugin.name)) {
+            if (confirmDisablePlugin(parent, msg, plugin.name)) {
                 Main.pref.removeFromCollection("plugins", plugin.name);
             }
         }
@@ -322,7 +360,7 @@ public class PluginHandler {
      * @param plugins the list of plugins
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
      */
-    public static void loadPlugins(Collection<PluginInformation> plugins, ProgressMonitor monitor) {
+    public static void loadPlugins(Window parent,Collection<PluginInformation> plugins, ProgressMonitor monitor) {
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
@@ -344,7 +382,7 @@ public class PluginHandler {
             );
             monitor.subTask(tr("Checking plugin preconditions..."));
             for (PluginInformation pi: plugins) {
-                if (checkLoadPreconditions(plugins, pi)) {
+                if (checkLoadPreconditions(parent, plugins, pi)) {
                     toLoad.add(pi);
                 }
             }
@@ -356,7 +394,7 @@ public class PluginHandler {
             monitor.setTicksCount(toLoad.size());
             for (PluginInformation info : toLoad) {
                 monitor.setExtraText(tr("Loading plugin ''{0}''...", info.name));
-                loadPlugin(info, pluginClassLoader);
+                loadPlugin(parent, info, pluginClassLoader);
                 monitor.worked(1);
             }
         } finally {
@@ -371,14 +409,14 @@ public class PluginHandler {
      * @param plugins the collection of plugins
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
      */
-    public static void loadEarlyPlugins(Collection<PluginInformation> plugins, ProgressMonitor monitor) {
+    public static void loadEarlyPlugins(Window parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) {
         List<PluginInformation> earlyPlugins = new ArrayList<PluginInformation>(plugins.size());
         for (PluginInformation pi: plugins) {
             if (pi.early) {
                 earlyPlugins.add(pi);
             }
         }
-        loadPlugins(earlyPlugins, monitor);
+        loadPlugins(parent, earlyPlugins, monitor);
     }
 
     /**
@@ -388,14 +426,14 @@ public class PluginHandler {
      * @param plugins the collection of plugins
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
      */
-    public static void loadLatePlugins(Collection<PluginInformation> plugins, ProgressMonitor monitor) {
+    public static void loadLatePlugins(Window parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) {
         List<PluginInformation> latePlugins = new ArrayList<PluginInformation>(plugins.size());
         for (PluginInformation pi: plugins) {
             if (!pi.early) {
                 latePlugins.add(pi);
             }
         }
-        loadPlugins(latePlugins, monitor);
+        loadPlugins(parent, latePlugins, monitor);
     }
 
     /**
@@ -433,7 +471,7 @@ public class PluginHandler {
         }
     }
 
-    private static void alertMissingPluginInformation(Collection<String> plugins) {
+    private static void alertMissingPluginInformation(Window parent, Collection<String> plugins) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append(trn("JOSM could not find information about the following plugin:",
@@ -448,11 +486,12 @@ public class PluginHandler {
                 "The plugins are not going to be loaded.",
                 plugins.size()));
         sb.append("</html>");
-        JOptionPane.showMessageDialog(
-                Main.parent,
+        HelpAwareOptionPane.showOptionDialog(
+                parent,
                 sb.toString(),
                 tr("Warning"),
-                JOptionPane.WARNING_MESSAGE
+                JOptionPane.WARNING_MESSAGE,
+                HelpUtil.ht("/Plugin/Loading#MissingPluginInfos")
         );
     }
 
@@ -464,7 +503,7 @@ public class PluginHandler {
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
      * @return the set of plugins to load (as set of plugin names)
      */
-    public static List<PluginInformation> buildListOfPluginsToLoad(ProgressMonitor monitor) {
+    public static List<PluginInformation> buildListOfPluginsToLoad(Window parent, ProgressMonitor monitor) {
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
@@ -476,9 +515,9 @@ public class PluginHandler {
                 plugins.addAll(Arrays.asList(System.getProperty("josm.plugins").split(",")));
             }
             monitor.subTask(tr("Removing deprecated plugins..."));
-            filterDeprecatedPlugins(plugins);
+            filterDeprecatedPlugins(parent, plugins);
             monitor.subTask(tr("Removing umaintained plugins..."));
-            filterUnmaintainedPlugins(plugins);
+            filterUnmaintainedPlugins(parent, plugins);
             Map<String, PluginInformation> infos = loadLocallyAvailablePluginInformation(monitor.createSubTaskMonitor(1,false));
             List<PluginInformation> ret = new LinkedList<PluginInformation>();
             for (Iterator<String> it = plugins.iterator(); it.hasNext();) {
@@ -489,7 +528,7 @@ public class PluginHandler {
                 }
             }
             if (!plugins.isEmpty()) {
-                alertMissingPluginInformation(plugins);
+                alertMissingPluginInformation(parent, plugins);
             }
             return ret;
         } finally {
@@ -497,7 +536,7 @@ public class PluginHandler {
         }
     }
 
-    private static void alertFailedPluginUpdate(Collection<PluginInformation> plugins) {
+    private static void alertFailedPluginUpdate(Window parent, Collection<PluginInformation> plugins) {
         StringBuffer sb = new StringBuffer();
         sb.append("<html>");
         sb.append(trn(
@@ -511,13 +550,18 @@ public class PluginHandler {
             sb.append("<li>").append(pi.name).append("</li>");
         }
         sb.append("</ul>");
-        sb.append(tr("Please open the Preference Dialog after JOSM has started and try to update them manually."));
+        sb.append(trn(
+                "Please open the Preference Dialog after JOSM has started and try to update it manually.",
+                "Please open the Preference Dialog after JOSM has started and try to update them manually.",
+                plugins.size()
+        ));
         sb.append("</html>");
-        JOptionPane.showMessageDialog(
-                Main.parent,
+        HelpAwareOptionPane.showOptionDialog(
+                parent,
                 sb.toString(),
                 tr("Plugin update failed"),
-                JOptionPane.ERROR_MESSAGE
+                JOptionPane.ERROR_MESSAGE,
+                HelpUtil.ht("/Plugin/Loading#FailedPluginUpdated")
         );
     }
 
@@ -528,7 +572,7 @@ public class PluginHandler {
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
      * @throws IllegalArgumentException thrown if plugins is null
      */
-    public static void updatePlugins(Collection<PluginInformation> plugins, ProgressMonitor monitor) throws IllegalArgumentException{
+    public static void updatePlugins(Window parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) throws IllegalArgumentException{
         CheckParameterUtil.ensureParameterNotNull(plugins, "plugins");
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
@@ -549,7 +593,7 @@ public class PluginHandler {
                 e.printStackTrace();
             }
             if (! task.getFailedPlugins().isEmpty()) {
-                alertFailedPluginUpdate(task.getFailedPlugins());
+                alertFailedPluginUpdate(parent, task.getFailedPlugins());
                 return;
             }
         } finally {
@@ -568,18 +612,32 @@ public class PluginHandler {
      * @param name the plugin name
      * @return true, if the plugin shall be disabled; false, otherwise
      */
-    public static boolean confirmDisablePlugin(String reason, String name) {
-        ExtendedDialog dialog = new ExtendedDialog(
-                Main.parent,
+    public static boolean confirmDisablePlugin(Window parent, String reason, String name) {
+        ButtonSpec [] options = new ButtonSpec[] {
+                new ButtonSpec(
+                        tr("Disable plugin"),
+                        ImageProvider.get("dialogs", "delete"),
+                        tr("Click to delete the plugin ''{0}''", name),
+                        null /* no specific help context */
+                ),
+                new ButtonSpec(
+                        tr("Keep plugin"),
+                        ImageProvider.get("cancel"),
+                        tr("Click to keep the plugin ''{0}''", name),
+                        null /* no specific help context */
+                )
+        };
+        int ret = HelpAwareOptionPane.showOptionDialog(
+                parent,
+                reason,
                 tr("Disable plugin"),
-                new String[] {
-                    tr("Disable plugin"), tr("Keep plugin")
-                }
+                JOptionPane.WARNING_MESSAGE,
+                null,
+                options,
+                options[0],
+                null // FIXME: add help topic
         );
-        dialog.setContent(reason);
-        dialog.setButtonIcons(new String[] { "dialogs/delete.png", "cancel.png" });
-        dialog.showDialog();
-        return dialog.getValue() == 1;
+        return ret == 0;
     }
 
     /**
@@ -647,79 +705,92 @@ public class PluginHandler {
         return;
     }
 
-    public static boolean checkException(Throwable e)
-    {
+    private static boolean confirmDisablingPluginAfterException(PluginProxy plugin) {
+        ButtonSpec [] options = new ButtonSpec[] {
+                new ButtonSpec(
+                        tr("Disable plugin"),
+                        ImageProvider.get("dialogs", "delete"),
+                        tr("Click to disable the plugin ''{0}''", plugin.getPluginInformation().name),
+                        null /* no specific help context */
+                ),
+                new ButtonSpec(
+                        tr("Keep plugin"),
+                        ImageProvider.get("cancel"),
+                        tr("Click to keep the plugin ''{0}''",plugin.getPluginInformation().name),
+                        null /* no specific help context */
+                )
+        };
+
+        StringBuffer msg = new StringBuffer();
+        msg.append("<html>");
+        msg.append(tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.", plugin.getPluginInformation().name));
+        msg.append("<br>");
+        if(plugin.getPluginInformation().author != null) {
+            msg.append(tr("According to the information within the plugin, the author is {0}.", plugin.getPluginInformation().author));
+            msg.append("<br>");
+        }
+        msg.append(tr("Try updating to the newest version of this plugin before reporting a bug."));
+        msg.append("<br>");
+        msg.append(tr("Should the plugin be disabled?"));
+        msg.append("</html>");
+
+        int ret = HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                msg.toString(),
+                tr("Update plugins"),
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0],
+                ht("/ErrorMessages#ErrorInPlugin")
+        );
+        return ret == 0;
+    }
+
+    private static PluginProxy getPluginCausingException(Throwable ex) {
+        for (PluginProxy p : pluginList) {
+            String baseClass = p.getPluginInformation().className;
+            int i = baseClass.lastIndexOf(".");
+            baseClass = baseClass.substring(0, i);
+            for (StackTraceElement element : ex.getStackTrace()) {
+                String c = element.getClassName();
+                if (c.startsWith(baseClass))
+                    return p;
+            }
+        }
+        return null;
+    }
+
+    public static boolean checkException(Throwable e) {
         PluginProxy plugin = null;
 
         // Check for an explicit problem when calling a plugin function
         if (e instanceof PluginException) {
-            plugin = ((PluginException)e).plugin;
+            plugin = ((PluginException) e).plugin;
         }
 
         if (plugin == null) {
-            /**
-             * Analyze the stack of the argument and find a name of a plugin, if
-             * some known problem pattern has been found.
-             */
-            for (PluginProxy p : pluginList) {
-                String baseClass = p.getPluginInformation().className;
-                int i = baseClass.lastIndexOf(".");
-                baseClass = baseClass.substring(0, i);
-                for (StackTraceElement element : e.getStackTrace()) {
-                    String c = element.getClassName();
-                    if (c.startsWith(baseClass)) {
-                        plugin = p;
-                        break;
-                    }
-                }
-                if (plugin != null) {
-                    break;
-                }
-            }
+            plugin = getPluginCausingException(e);
         }
 
-        if (plugin != null) {
-            ExtendedDialog dialog = new ExtendedDialog(
-                    Main.parent,
-                    tr("Disable plugin"),
-                    new String[] {tr("Disable plugin"), tr("Cancel")}
-            );
-            dialog.setButtonIcons(new String[] {"dialogs/delete.png", "cancel.png"});
-            dialog.setContent(
-                    "<html>" +
-                    tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.", plugin.getPluginInformation().name)
-                    + "<br>"
-                    + (plugin.getPluginInformation().author != null
-                            ? tr("According to the information within the plugin, the author is {0}.", plugin.getPluginInformation().author)
-                                    : "")
-                                    + "<br>"
-                                    + tr("Try updating to the newest version of this plugin before reporting a bug.")
-                                    + "<br>"
-                                    + tr("Should the plugin be disabled?")
-                                    + "</html>"
-            );
-            dialog.showDialog();
-            int answer = dialog.getValue();
-
-            if (answer == 1) {
-                List<String> plugins = new ArrayList<String>(Main.pref.getCollection("plugins", Collections.<String>emptyList()));
-                if (plugins.contains(plugin.getPluginInformation().name)) {
-                    while (plugins.remove(plugin.getPluginInformation().name)) {}
-                    Main.pref.putCollection("plugins", plugins);
-                    JOptionPane.showMessageDialog(Main.parent,
-                            tr("The plugin has been removed from the configuration. Please restart JOSM to unload the plugin."),
-                            tr("Information"),
-                            JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            tr("The plugin could not be removed. Probably it was already disabled"),
-                            tr("Error"),
-                            JOptionPane.ERROR_MESSAGE
-                    );
+        if (plugin != null && confirmDisablingPluginAfterException(plugin)) {
+            List<String> plugins = new ArrayList<String>(Main.pref.getCollection("plugins", Collections
+                    .<String> emptyList()));
+            if (plugins.contains(plugin.getPluginInformation().name)) {
+                while (plugins.remove(plugin.getPluginInformation().name)) {
                 }
-                return true;
+                Main.pref.putCollection("plugins", plugins);
+                JOptionPane
+                .showMessageDialog(
+                        Main.parent,
+                        tr("The plugin has been removed from the configuration. Please restart JOSM to unload the plugin."),
+                        tr("Information"), JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(Main.parent,
+                        tr("The plugin could not be removed. Probably it was already disabled"), tr("Error"),
+                        JOptionPane.ERROR_MESSAGE);
             }
+            return true;
         }
         return false;
     }
@@ -776,5 +847,44 @@ public class PluginHandler {
             pluginTab.add(description, GBC.eop().fill(GBC.HORIZONTAL));
         }
         return pluginTab;
+    }
+
+    static private class UpdatePluginsMessagePanel extends JPanel {
+        private JMultilineLabel lblMessage;
+        private JCheckBox cbDontShowAgain;
+
+        protected void build() {
+            setLayout(new GridBagLayout());
+            GridBagConstraints gc = new GridBagConstraints();
+            gc.anchor = GridBagConstraints.NORTHWEST;
+            gc.fill = GridBagConstraints.BOTH;
+            gc.weightx = 1.0;
+            gc.weighty = 1.0;
+            gc.insets = new Insets(5,5,5,5);
+            add(lblMessage = new JMultilineLabel(""), gc);
+            lblMessage.setFont(lblMessage.getFont().deriveFont(Font.PLAIN));
+
+            gc.gridy = 1;
+            gc.fill = GridBagConstraints.HORIZONTAL;
+            gc.weighty = 0.0;
+            add(cbDontShowAgain = new JCheckBox(tr("Do not show again (remembers choice)")), gc);
+            cbDontShowAgain.setFont(cbDontShowAgain.getFont().deriveFont(Font.PLAIN));
+        }
+
+        public UpdatePluginsMessagePanel() {
+            build();
+        }
+
+        public void setMessage(String message) {
+            lblMessage.setText(message);
+        }
+
+        public void initDontShowAgain(String preferencesKey) {
+            cbDontShowAgain.setSelected(Main.pref.getBoolean(preferencesKey, false));
+        }
+
+        public void rememberDontShowAgain(String preferenceKey) {
+            Main.pref.put(preferenceKey, cbDontShowAgain.isSelected());
+        }
     }
 }

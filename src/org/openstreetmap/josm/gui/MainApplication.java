@@ -100,6 +100,29 @@ public class MainApplication extends Main {
         );
     }
 
+    private static Map<String, Collection<String>> buildCommandLineArgumentMap(String[] args) {
+        Map<String, Collection<String>> argMap = new HashMap<String, Collection<String>>();
+        for (String arg : args) {
+            if ("-h".equals(arg) || "-?".equals(arg)) {
+                arg = "--help";
+            }
+            // handle simple arguments like file names, URLs, bounds
+            if (!arg.startsWith("--")) {
+                arg = "--download="+arg;
+            }
+            int i = arg.indexOf('=');
+            String key = i == -1 ? arg.substring(2) : arg.substring(2,i);
+            String value = i == -1 ? "" : arg.substring(i+1);
+            Collection<String> v = argMap.get(key);
+            if (v == null) {
+                v = new LinkedList<String>();
+            }
+            v.add(value);
+            argMap.put(key, v);
+        }
+        return argMap;
+    }
+
     /**
      * Main application Startup
      */
@@ -114,25 +137,7 @@ public class MainApplication extends Main {
         Main.platform.preStartupHook();
 
         // construct argument table
-        final Map<String, Collection<String>> args = new HashMap<String, Collection<String>>();
-        for (String arg : argArray) {
-            if ("-h".equals(arg) || "-?".equals(arg)) {
-                arg = "--help";
-            }
-            // handle simple arguments like file names, URLs, bounds
-            if (!arg.startsWith("--")) {
-                arg = "--download="+arg;
-            }
-            int i = arg.indexOf('=');
-            String key = i == -1 ? arg.substring(2) : arg.substring(2,i);
-            String value = i == -1 ? "" : arg.substring(i+1);
-            Collection<String> v = args.get(key);
-            if (v == null) {
-                v = new LinkedList<String>();
-            }
-            v.add(value);
-            args.put(key, v);
-        }
+        final Map<String, Collection<String>> args = buildCommandLineArgumentMap(argArray);
 
         Main.pref.init(args.containsKey("reset-preferences"));
 
@@ -161,10 +166,10 @@ public class MainApplication extends Main {
         monitor.setTicksCount(7);
         splash.setVisible(Main.pref.getBoolean("draw.splashscreen", true));
 
-        List<PluginInformation> pluginsToLoad = PluginHandler.buildListOfPluginsToLoad(monitor.createSubTaskMonitor(1, false));
-        if (!pluginsToLoad.isEmpty() && PluginHandler.checkAndConfirmPluginUpdate()) {
+        List<PluginInformation> pluginsToLoad = PluginHandler.buildListOfPluginsToLoad(splash,monitor.createSubTaskMonitor(1, false));
+        if (!pluginsToLoad.isEmpty() && PluginHandler.checkAndConfirmPluginUpdate(splash)) {
             monitor.subTask(tr("Updating plugins..."));
-            PluginHandler.updatePlugins(pluginsToLoad, monitor.createSubTaskMonitor(1, false));
+            PluginHandler.updatePlugins(splash,pluginsToLoad, monitor.createSubTaskMonitor(1, false));
         }
         monitor.worked(1);
 
@@ -173,7 +178,7 @@ public class MainApplication extends Main {
         monitor.worked(1);
 
         monitor.subTask(tr("Loading early plugins"));
-        PluginHandler.loadEarlyPlugins(pluginsToLoad, monitor.createSubTaskMonitor(1, false));
+        PluginHandler.loadEarlyPlugins(splash,pluginsToLoad, monitor.createSubTaskMonitor(1, false));
         monitor.worked(1);
 
         monitor.subTask(tr("Setting defaults"));
@@ -188,7 +193,7 @@ public class MainApplication extends Main {
         monitor.worked(1);
 
         monitor.subTask(tr("Loading plugins"));
-        PluginHandler.loadLatePlugins(pluginsToLoad,  monitor.createSubTaskMonitor(1, false));
+        PluginHandler.loadLatePlugins(splash,pluginsToLoad,  monitor.createSubTaskMonitor(1, false));
         monitor.worked(1);
         toolbar.refreshToolbarControl();
         splash.setVisible(false);
