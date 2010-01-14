@@ -11,7 +11,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class AudioFasterAction extends AudioFastSlowAction {
 
     public AudioFasterAction() {
-        super(tr("Faster"), "audio-faster", tr("Faster Forward"),
+        super(trc("audio", "Faster"), "audio-faster", trc("audio", "Faster Forward"),
         Shortcut.registerShortcut("audio:faster", tr("Audio: {0}", trc("audio", "Faster")), KeyEvent.VK_F9, Shortcut.GROUP_DIRECT), true);
     }
 }

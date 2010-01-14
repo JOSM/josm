@@ -15,7 +15,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class AudioFwdAction extends JosmAction {
     public AudioFwdAction() {
-        super(tr("Forward"), "audio-fwd", tr("Jump forward"),
+        super(trc("audio", "Forward"), "audio-fwd", trc("audio", "Jump forward"),
         Shortcut.registerShortcut("audio:forward", tr("Audio: {0}", trc("audio", "Forward")), KeyEvent.VK_F7, Shortcut.GROUP_DIRECT), true);
     }
 

@@ -16,7 +16,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class AudioBackAction extends JosmAction {
 
     public AudioBackAction() {
-        super(tr("Back"), "audio-back", tr("Jump back."),
+        super(trc("audio", "Back"), "audio-back", trc("audio", "Jump back."),
         Shortcut.registerShortcut("audio:back", tr("Audio: {0}", trc("audio", "Back")), KeyEvent.VK_F6, Shortcut.GROUP_DIRECT), true);
         this.putValue("help", "Action/Back");
     }
