@@ -705,7 +705,7 @@ public class PluginHandler {
         return;
     }
 
-    private static boolean confirmDisablingPluginAfterException(PluginProxy plugin) {
+    private static boolean confirmDeactivatingPluginAfterException(PluginProxy plugin) {
         ButtonSpec [] options = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Disable plugin"),
@@ -747,6 +747,12 @@ public class PluginHandler {
         return ret == 0;
     }
 
+    /**
+     * Replies the plugin which most likely threw the exception <code>ex</code>.
+     * 
+     * @param ex the exception
+     * @return the plugin; null, if the exception proably wasn't thrown from a plugin
+     */
     private static PluginProxy getPluginCausingException(Throwable ex) {
         for (PluginProxy p : pluginList) {
             String baseClass = p.getPluginInformation().className;
@@ -761,38 +767,47 @@ public class PluginHandler {
         return null;
     }
 
-    public static boolean checkException(Throwable e) {
+    /**
+     * Checks whether the exception <code>e</code> was thrown by a plugin. If so,
+     * conditionally deactivates the plugin, but asks the user first.
+     * 
+     * @param e the exception
+     */
+    public static void disablePluginAfterException(Throwable e) {
         PluginProxy plugin = null;
-
         // Check for an explicit problem when calling a plugin function
         if (e instanceof PluginException) {
             plugin = ((PluginException) e).plugin;
         }
-
         if (plugin == null) {
             plugin = getPluginCausingException(e);
         }
+        if (plugin == null)
+            // don't know what plugin threw the exception
+            return;
 
-        if (plugin != null && confirmDisablingPluginAfterException(plugin)) {
-            List<String> plugins = new ArrayList<String>(Main.pref.getCollection("plugins", Collections
-                    .<String> emptyList()));
-            if (plugins.contains(plugin.getPluginInformation().name)) {
-                while (plugins.remove(plugin.getPluginInformation().name)) {
-                }
-                Main.pref.putCollection("plugins", plugins);
-                JOptionPane
-                .showMessageDialog(
-                        Main.parent,
-                        tr("The plugin has been removed from the configuration. Please restart JOSM to unload the plugin."),
-                        tr("Information"), JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(Main.parent,
-                        tr("The plugin could not be removed. Probably it was already disabled"), tr("Error"),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-            return true;
-        }
-        return false;
+        Set<String> plugins = new HashSet<String>(
+                Main.pref.getCollection("plugins",Collections.<String> emptySet())
+        );
+        if (! plugins.contains(plugin.getPluginInformation().name))
+            // plugin not activated ? strange in this context but anyway, don't bother
+            // the user with dialogs, skip condiational deactivation
+            return;
+
+        if (!confirmDeactivatingPluginAfterException(plugin))
+            // user doesn't want to deactivate the plugin
+            return;
+
+        // deactivate the plugin
+        plugins.remove(plugin.getPluginInformation().name);
+        Main.pref.putCollection("plugins", plugins);
+        JOptionPane.showMessageDialog(
+                Main.parent,
+                tr("The plugin has been removed from the configuration. Please restart JOSM to unload the plugin."),
+                tr("Information"),
+                JOptionPane.INFORMATION_MESSAGE
+        );
+        return;
     }
 
     public static String getBugReportText() {
