@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.ChangesetClosedException;
+import org.openstreetmap.josm.io.MissingOAuthAccessTokenException;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -268,6 +269,22 @@ public class ExceptionDialogUtil {
     }
 
     /**
+     * Explains a {@see OsmApiException} which was thrown because accessing a protected
+     * resource was forbidden.
+     *
+     * @param e the exception
+     */
+    public static void explainMissingOAuthAccessTokenException(MissingOAuthAccessTokenException e) {
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainMissingOAuthAccessTokenException(e),
+                tr("Authenticationi failed"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#MissingOAuthAccessToken")
+        );
+    }
+
+    /**
      * Explains a {@see UnknownHostException} which has caused an {@see OsmTransferException}.
      * This is most likely happening when there is an error in the API URL or when
      * local DNS services are not working.
@@ -339,6 +356,11 @@ public class ExceptionDialogUtil {
             return;
         }
 
+        if (e instanceof MissingOAuthAccessTokenException) {
+            explainMissingOAuthAccessTokenException((MissingOAuthAccessTokenException)e);
+            return;
+        }
+
         if (e instanceof OsmApiException) {
             OsmApiException oae = (OsmApiException) e;
             switch(oae.getResponseCode()) {
@@ -367,8 +389,8 @@ public class ExceptionDialogUtil {
                 explainAuthorizationFailed(oae);
                 return;
             }
-            explainGeneric(e);
         }
+        explainGeneric(e);
     }
 
     /**

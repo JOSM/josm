@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.io.ChangesetClosedException;
+import org.openstreetmap.josm.io.MissingOAuthAccessTokenException;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -40,6 +41,25 @@ public class ExceptionUtil {
                 "<html>Failed to initialize communication with the OSM server {0}.<br>"
                 + "Check the server URL in your preferences and your internet connection.</html>", Main.pref.get(
                         "osm-server.url", "http://api.openstreetmap.org/api"));
+        return msg;
+    }
+
+
+    /**
+     *  Creates the error message
+     *
+     * @param e the exception
+     */
+    public static String explainMissingOAuthAccessTokenException(MissingOAuthAccessTokenException e) {
+        e.printStackTrace();
+        String msg = tr(
+                "<html>Failed to authenticate at the OSM server ''{0}''.<br>"
+                + "You are using OAuth to authenticate but currently there is no<br>"
+                + "OAuth Access Token configured.<br>"
+                + "Please open the Preferences Dialog and generate or enter an Access Token."
+                + "</html>",
+                Main.pref.get("osm-server.url", "http://api.openstreetmap.org/api")
+        );
         return msg;
     }
 

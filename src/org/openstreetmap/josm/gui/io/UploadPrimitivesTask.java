@@ -227,7 +227,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
 
     @Override protected void realRun() throws SAXException, IOException {
         try {
-            uploadloop: while(true) {
+            uploadloop:while(true) {
                 try {
                     getProgressMonitor().subTask(tr("Uploading {0} objects ...", toUpload.getSize()));
                     synchronized(this) {
@@ -240,6 +240,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                     //
                     break;
                 } catch(OsmTransferCancelledException e) {
+                    e.printStackTrace();
                     uploadCancelled = true;
                     return;
                 } catch(OsmApiPrimitiveGoneException e) {
@@ -342,7 +343,6 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                 } else {
                     handleFailedUpload(lastException);
                 }
-
             }
         };
         if (SwingUtilities.isEventDispatchThread()) {

@@ -117,8 +117,7 @@ public class OsmConnection {
         OAuthConsumer consumer = oauthParameters.buildConsumer();
         OAuthAccessTokenHolder holder = OAuthAccessTokenHolder.getInstance();
         if (! holder.containsAccessToken())
-            throw new OsmTransferException(tr("Failed to add an OAuth authentication header. There is currently no OAuth Access Token configured."));
-
+            throw new MissingOAuthAccessTokenException();
         consumer.setTokenWithSecret(holder.getAccessTokenKey(), holder.getAccessTokenSecret());
         try {
             consumer.sign(connection);
