@@ -1,6 +1,9 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions.search;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.IOException;
 import java.io.Reader;
 
@@ -18,7 +21,23 @@ public class PushbackTokenizer {
         getChar();
     }
 
-    public enum Token {NOT, OR, LEFT_PARENT, RIGHT_PARENT, COLON, EQUALS, KEY, EOF}
+    public enum Token {
+        NOT(marktr("<not>")), OR(marktr("<or>")), LEFT_PARENT(marktr("<left parent>")),
+        RIGHT_PARENT(marktr("<right parent>")), COLON(marktr("<colon>")), EQUALS(marktr("<equals>")),
+        KEY(marktr("<key>")), QUESTION_MARK(marktr("<question mark>")), EOF(marktr("<end-of-file>"));
+
+        private Token(String name) {
+            this.name = name;
+        }
+
+        private final String name;
+
+        @Override
+        public String toString() {
+            return tr(name);
+        }
+    }
+
 
     private void getChar() {
         try {
@@ -68,6 +87,9 @@ public class PushbackTokenizer {
         case '|':
             getChar();
             return Token.OR;
+        case '?':
+            getChar();
+            return Token.QUESTION_MARK;
         case '"':
         {
             getChar();
@@ -89,7 +111,7 @@ public class PushbackTokenizer {
         default:
         {
             StringBuilder s = new StringBuilder();
-            while (!(c == -1 || Character.isWhitespace(c) || c == '"'|| c == ':' || c == '(' || c == ')' || c == '|' || c == '=')) {
+            while (!(c == -1 || Character.isWhitespace(c) || c == '"'|| c == ':' || c == '(' || c == ')' || c == '|' || c == '=' || c == '?')) {
                 s.append((char)c);
                 getChar();
             }

@@ -121,6 +121,7 @@ public class SearchAction extends JosmAction{
                     + "<li>"+tr("<b>type=route</b> - key ''type'' with value exactly ''route''.") + "</li>"
                     + "<li>"+tr("<b>type=*</b> - key ''type'' with any value. Try also <b>*=value</b>, <b>type=</b>, <b>*=*</b>, <b>*=</b>") + "</li>"
                     + "<li>"+tr("<b>-name:Bak</b> - not ''Bak'' in the name.")+"</li>"
+                    + "<li>"+tr("<b>oneway?</b> - oneway=yes, true, 1 or on")+"</li>"
                     + "<li>"+tr("<b>foot:</b> - key=foot set to any value.")+"</li>"
                     + "<li>"+tr("<u>Special targets:</u>")+"</li>"
                     + "<li>"+tr("<b>type:</b> - type of the object (<b>node</b>, <b>way</b>, <b>relation</b>)")+"</li>"
@@ -320,11 +321,11 @@ public class SearchAction extends JosmAction{
         @Override
         public String toString() {
             String cs = caseSensitive ?
-                    /*case sensitive*/  trc("search", "CS") :                                
+                    /*case sensitive*/  trc("search", "CS") :
                         /*case insensitive*/  trc("search", "CI");
                     /*regex search*/
-            String rx = regexSearch ? (", " + trc("search", "RX")) : ""; 
-            return "\"" + text + "\" (" + cs + rx + ", " + mode + ")";
+                    String rx = regexSearch ? (", " + trc("search", "RX")) : "";
+                    return "\"" + text + "\" (" + cs + rx + ", " + mode + ")";
         }
 
         @Override

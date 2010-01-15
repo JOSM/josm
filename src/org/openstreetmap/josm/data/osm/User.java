@@ -117,7 +117,7 @@ public class User {
         return sb.toString();
     }
 
-    /*
+    /**
      * Returns the list of user names
      *
      * @returns list of names
@@ -126,7 +126,7 @@ public class User {
         return new ArrayList<String>(names);
     }
 
-    /*
+    /**
      * Adds a user name to the list if it is not there, yet.
      *
      * @param name
@@ -135,7 +135,7 @@ public class User {
         names.add(name);
     }
 
-    /*
+    /**
      * Returns true if the name is in the names list
      *
      * @param name

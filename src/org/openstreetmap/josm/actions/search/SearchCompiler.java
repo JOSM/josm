@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.PushbackReader;
 import java.io.StringReader;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,9 +15,9 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.PushbackTokenizer.Token;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.DateUtils;
 
@@ -35,6 +34,7 @@ expression =
 fact =
  ( expression )
  -fact
+ term?
  term=term
  term:term
  term
@@ -79,6 +79,24 @@ public class SearchCompiler {
             return !match.match(osm);
         }
         @Override public String toString() {return "!"+match;}
+    }
+
+    private static class BooleanMatch extends Match {
+        private final String key;
+        private final boolean defaultValue;
+
+        public BooleanMatch(String key, boolean defaultValue) {
+            this.key = key;
+            this.defaultValue = defaultValue;
+        }
+        @Override
+        public boolean match(OsmPrimitive osm) {
+            Boolean ret = OsmUtils.getOsmBoolean(osm.get(key));
+            if (ret == null)
+                return defaultValue;
+            else
+                return ret;
+        }
     }
 
     private static class And extends Match {
@@ -429,29 +447,24 @@ public class SearchCompiler {
     }
 
     private static class UserMatch extends Match {
-        private User user;
+        private String user;
         public UserMatch(String user) {
             if (user.equals("anonymous")) {
                 this.user = null;
             } else {
-                List<User> users = User.getByName(user);
-                if (!users.isEmpty()) {
-                    // selecting an arbitrary user
-                    this.user = users.get(0);
-                } else {
-                    this.user = User.createLocalUser(user);
-                }
+                this.user = user;
             }
         }
 
         @Override public boolean match(OsmPrimitive osm) {
-            if (osm.getUser() == null && user == null) return true;
-            if (osm.getUser() == null) return false;
-            return osm.getUser().equals(user);
+            if (osm.getUser() == null)
+                return user == null;
+            else
+                return osm.getUser().hasName(user);
         }
 
         @Override public String toString() {
-            return "user=" + user == null ? "" : user.getName();
+            return "user=" + user == null ? "" : user;
         }
     }
 
@@ -640,7 +653,7 @@ public class SearchCompiler {
         if (tokenizer.readIfEqual(Token.LEFT_PARENT)) {
             Match expression = parseExpression();
             if (!tokenizer.readIfEqual(Token.RIGHT_PARENT))
-                throw new ParseError(tr("Missing right parenthesis"));
+                throw new ParseError(tr("Unexpected token. Expected {0}, found {1}", Token.RIGHT_PARENT, tokenizer.nextToken()));
             return expression;
         } else if (tokenizer.readIfEqual(Token.NOT))
             return new Not(parseFactor(tr("Missing operator for NOT")));
@@ -650,6 +663,8 @@ public class SearchCompiler {
                 return new ExactKeyValue(regexSearch, key, tokenizer.readText());
             else if (tokenizer.readIfEqual(Token.COLON))
                 return parseKV(key, tokenizer.readText());
+            else if (tokenizer.readIfEqual(Token.QUESTION_MARK))
+                return new BooleanMatch(key, false);
             else if ("modified".equals(key))
                 return new Modified();
             else if ("incomplete".equals(key))
