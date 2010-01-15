@@ -34,8 +34,8 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmTransferCancelledException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
-public class OsmOAuthAuthorisationClient {
-    static private final Logger logger = Logger.getLogger(OsmOAuthAuthorisationClient.class.getName());
+public class OsmOAuthAuthorizationClient {
+    static private final Logger logger = Logger.getLogger(OsmOAuthAuthorizationClient.class.getName());
 
     private OAuthParameters oauthProviderParameters;
     private OAuthConsumer consumer;
@@ -47,7 +47,7 @@ public class OsmOAuthAuthorisationClient {
      * Creates a new authorisation client with default OAuth parameters
      * 
      */
-    public OsmOAuthAuthorisationClient() {
+    public OsmOAuthAuthorizationClient() {
         oauthProviderParameters = OAuthParameters.createDefault();
         consumer = oauthProviderParameters.buildConsumer();
         provider = oauthProviderParameters.buildProvider(consumer);
@@ -59,7 +59,7 @@ public class OsmOAuthAuthorisationClient {
      * @param parameters the OAuth parameters. Must not be null.
      * @throws IllegalArgumentException thrown if parameters is null
      */
-    public OsmOAuthAuthorisationClient(OAuthParameters parameters) throws IllegalArgumentException {
+    public OsmOAuthAuthorizationClient(OAuthParameters parameters) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(parameters, "parameters");
         oauthProviderParameters = new OAuthParameters(parameters);
         consumer = oauthProviderParameters.buildConsumer();
@@ -75,7 +75,7 @@ public class OsmOAuthAuthorisationClient {
      * @throws IllegalArgumentException thrown if parameters is null
      * @throws IllegalArgumentException thrown if requestToken is null
      */
-    public OsmOAuthAuthorisationClient(OAuthParameters parameters, OAuthToken requestToken) throws IllegalArgumentException {
+    public OsmOAuthAuthorizationClient(OAuthParameters parameters, OAuthToken requestToken) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(parameters, "parameters");
         oauthProviderParameters = new OAuthParameters(parameters);
         consumer = oauthProviderParameters.buildConsumer();
@@ -118,9 +118,9 @@ public class OsmOAuthAuthorisationClient {
      * 
      * @param monitor a progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null
      * @return the OAuth Request Token
-     * @throws OsmOAuthAuthorisationException thrown if something goes wrong when retrieving the request token
+     * @throws OsmOAuthAuthorizationException thrown if something goes wrong when retrieving the request token
      */
-    public OAuthToken getRequestToken(ProgressMonitor monitor) throws OsmOAuthAuthorisationException, OsmTransferCancelledException {
+    public OAuthToken getRequestToken(ProgressMonitor monitor) throws OsmOAuthAuthorizationException, OsmTransferCancelledException {
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
@@ -132,11 +132,11 @@ public class OsmOAuthAuthorisationClient {
         } catch(OAuthCommunicationException e){
             if (canceled)
                 throw new OsmTransferCancelledException();
-            throw new OsmOAuthAuthorisationException(e);
+            throw new OsmOAuthAuthorizationException(e);
         } catch(OAuthException e){
             if (canceled)
                 throw new OsmTransferCancelledException();
-            throw new OsmOAuthAuthorisationException(e);
+            throw new OsmOAuthAuthorizationException(e);
         } finally {
             monitor.finishTask();
         }
@@ -150,10 +150,10 @@ public class OsmOAuthAuthorisationClient {
      * 
      * @param monitor a progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null
      * @return the OAuth Access Token
-     * @throws OsmOAuthAuthorisationException thrown if something goes wrong when retrieving the request token
+     * @throws OsmOAuthAuthorizationException thrown if something goes wrong when retrieving the request token
      * @see #getRequestToken(ProgressMonitor)
      */
-    public OAuthToken getAccessToken(ProgressMonitor monitor) throws OsmOAuthAuthorisationException, OsmTransferCancelledException {
+    public OAuthToken getAccessToken(ProgressMonitor monitor) throws OsmOAuthAuthorizationException, OsmTransferCancelledException {
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
         }
@@ -165,11 +165,11 @@ public class OsmOAuthAuthorisationClient {
         } catch(OAuthCommunicationException e){
             if (canceled)
                 throw new OsmTransferCancelledException();
-            throw new OsmOAuthAuthorisationException(e);
+            throw new OsmOAuthAuthorizationException(e);
         } catch(OAuthException e){
             if (canceled)
                 throw new OsmTransferCancelledException();
-            throw new OsmOAuthAuthorisationException(e);
+            throw new OsmOAuthAuthorizationException(e);
         } finally {
             monitor.finishTask();
         }
@@ -218,7 +218,7 @@ public class OsmOAuthAuthorisationClient {
         return null;
     }
 
-    protected String buildPostRequest(Map<String,String> parameters) throws OsmOAuthAuthorisationException {
+    protected String buildPostRequest(Map<String,String> parameters) throws OsmOAuthAuthorizationException {
         try {
             StringBuilder sb = new StringBuilder();
 
@@ -233,7 +233,7 @@ public class OsmOAuthAuthorisationClient {
             }
             return sb.toString();
         } catch(UnsupportedEncodingException e) {
-            throw new OsmOAuthAuthorisationException(e);
+            throw new OsmOAuthAuthorizationException(e);
         }
     }
 
@@ -241,10 +241,10 @@ public class OsmOAuthAuthorisationClient {
      * Derives the OSM login URL from the OAuth Authorization Website URL
      * 
      * @return the OSM login URL
-     * @throws OsmOAuthAuthorisationException thrown if something went wrong, in particular if the
+     * @throws OsmOAuthAuthorizationException thrown if something went wrong, in particular if the
      * URLs are malformed
      */
-    public String buildOsmLoginUrl() throws OsmOAuthAuthorisationException{
+    public String buildOsmLoginUrl() throws OsmOAuthAuthorizationException{
         try {
             URL autUrl = new URL(oauthProviderParameters.getAuthoriseUrl());
             // FIXME: as soon as the OSM website provides HTTPS protected access to the login
@@ -253,7 +253,7 @@ public class OsmOAuthAuthorisationClient {
             URL url = new URL("http", autUrl.getHost(), autUrl.getPort(), "/login");
             return url.toString();
         } catch(MalformedURLException e) {
-            throw new OsmOAuthAuthorisationException(e);
+            throw new OsmOAuthAuthorizationException(e);
         }
     }
 
@@ -261,16 +261,16 @@ public class OsmOAuthAuthorisationClient {
      * Derives the OSM logout URL from the OAuth Authorization Website URL
      * 
      * @return the OSM logout URL
-     * @throws OsmOAuthAuthorisationException thrown if something went wrong, in particular if the
+     * @throws OsmOAuthAuthorizationException thrown if something went wrong, in particular if the
      * URLs are malformed
      */
-    protected String buildOsmLogoutUrl() throws OsmOAuthAuthorisationException{
+    protected String buildOsmLogoutUrl() throws OsmOAuthAuthorizationException{
         try {
             URL autUrl = new URL(oauthProviderParameters.getAuthoriseUrl());
             URL url = new URL("http", autUrl.getHost(), autUrl.getPort(), "/logout");
             return url.toString();
         } catch(MalformedURLException e) {
-            throw new OsmOAuthAuthorisationException(e);
+            throw new OsmOAuthAuthorizationException(e);
         }
     }
 
@@ -279,9 +279,9 @@ public class OsmOAuthAuthorisationClient {
      * a cookie.
      * 
      * @return the session ID
-     * @throws OsmOAuthAuthorisationException thrown if something went wrong
+     * @throws OsmOAuthAuthorizationException thrown if something went wrong
      */
-    protected String fetchOsmWebsiteSessionId() throws OsmOAuthAuthorisationException {
+    protected String fetchOsmWebsiteSessionId() throws OsmOAuthAuthorizationException {
         try {
             StringBuilder sb = new StringBuilder();
             sb.append(buildOsmLoginUrl()).append("?cookie_test=true");
@@ -296,10 +296,10 @@ public class OsmOAuthAuthorisationClient {
             connection.connect();
             String sessionId = extractOsmSession(connection);
             if (sessionId == null)
-                throw new OsmOAuthAuthorisationException(tr("OSM website did not return a session cookie in response to ''{0}'',", url.toString()));
+                throw new OsmOAuthAuthorizationException(tr("OSM website did not return a session cookie in response to ''{0}'',", url.toString()));
             return sessionId;
         } catch(IOException e) {
-            throw new OsmOAuthAuthorisationException(e);
+            throw new OsmOAuthAuthorizationException(e);
         } finally {
             synchronized(this) {
                 connection = null;
@@ -347,8 +347,8 @@ public class OsmOAuthAuthorisationClient {
             //
             int retCode = connection.getResponseCode();
             if (retCode != HttpURLConnection.HTTP_MOVED_TEMP)
-                throw new OsmOAuthAuthorisationException(tr("Failed to authenticate user ''{0}'' with password ''***'' as OAuth user", userName));
-        } catch(OsmOAuthAuthorisationException e) {
+                throw new OsmOAuthAuthorizationException(tr("Failed to authenticate user ''{0}'' with password ''***'' as OAuth user", userName));
+        } catch(OsmOAuthAuthorizationException e) {
             throw new OsmLoginFailedException(e.getCause());
         } catch(IOException e) {
             throw new OsmLoginFailedException(e);
@@ -364,7 +364,7 @@ public class OsmOAuthAuthorisationClient {
         }
     }
 
-    protected void logoutOsmSession(String sessionId) throws OsmOAuthAuthorisationException {
+    protected void logoutOsmSession(String sessionId) throws OsmOAuthAuthorizationException {
         try {
             URL url = new URL(buildOsmLogoutUrl());
             synchronized(this) {
@@ -376,9 +376,9 @@ public class OsmOAuthAuthorisationClient {
             setHttpRequestParameters(connection);
             connection.connect();
         }catch(MalformedURLException e) {
-            throw new OsmOAuthAuthorisationException(e);
+            throw new OsmOAuthAuthorizationException(e);
         } catch(IOException e) {
-            throw new OsmOAuthAuthorisationException(e);
+            throw new OsmOAuthAuthorizationException(e);
         }  finally {
             synchronized(this) {
                 connection = null;
@@ -386,7 +386,7 @@ public class OsmOAuthAuthorisationClient {
         }
     }
 
-    protected void sendAuthorisationRequest(String sessionId, OAuthToken requestToken, OsmPrivileges privileges) throws OsmOAuthAuthorisationException {
+    protected void sendAuthorisationRequest(String sessionId, OAuthToken requestToken, OsmPrivileges privileges) throws OsmOAuthAuthorizationException {
         Map<String, String> parameters = new HashMap<String, String>();
         parameters.put("oauth_token", requestToken.getKey());
         parameters.put("oauth_callback", "");
@@ -434,11 +434,11 @@ public class OsmOAuthAuthorisationClient {
 
             int retCode = connection.getResponseCode();
             if (retCode != HttpURLConnection.HTTP_MOVED_TEMP)
-                throw new OsmOAuthAuthorisationException(tr("Failed to authorise OAuth request  ''{0}''", requestToken.getKey()));
+                throw new OsmOAuthAuthorizationException(tr("Failed to authorise OAuth request  ''{0}''", requestToken.getKey()));
         } catch(MalformedURLException e) {
-            throw new OsmOAuthAuthorisationException(e);
+            throw new OsmOAuthAuthorizationException(e);
         } catch(IOException e) {
-            throw new OsmOAuthAuthorisationException(e);
+            throw new OsmOAuthAuthorizationException(e);
         } finally {
             if (dout != null) {
                 try {
@@ -468,10 +468,10 @@ public class OsmOAuthAuthorisationClient {
      * @throws IllegalArgumentException thrown if osmUserName is null
      * @throws IllegalArgumentException thrown if osmPassword is null
      * @throws IllegalArgumentException thrown if privileges is null
-     * @throws OsmOAuthAuthorisationException thrown if the authorisation fails
+     * @throws OsmOAuthAuthorizationException thrown if the authorisation fails
      * @throws OsmTransferCancelledException thrown if the task is cancelled by the user
      */
-    public void authorise(OAuthToken requestToken, String osmUserName, String osmPassword, OsmPrivileges privileges, ProgressMonitor monitor) throws IllegalArgumentException, OsmOAuthAuthorisationException, OsmTransferCancelledException{
+    public void authorise(OAuthToken requestToken, String osmUserName, String osmPassword, OsmPrivileges privileges, ProgressMonitor monitor) throws IllegalArgumentException, OsmOAuthAuthorizationException, OsmTransferCancelledException{
         CheckParameterUtil.ensureParameterNotNull(requestToken, "requestToken");
         CheckParameterUtil.ensureParameterNotNull(osmUserName, "osmUserName");
         CheckParameterUtil.ensureParameterNotNull(osmPassword, "osmPassword");
@@ -506,7 +506,7 @@ public class OsmOAuthAuthorisationClient {
             if (canceled)
                 throw new OsmTransferCancelledException();
             monitor.worked(1);
-        } catch(OsmOAuthAuthorisationException e) {
+        } catch(OsmOAuthAuthorizationException e) {
             if (canceled)
                 throw new OsmTransferCancelledException();
             throw e;

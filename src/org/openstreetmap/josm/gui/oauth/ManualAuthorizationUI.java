@@ -32,7 +32,7 @@ import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-public class ManualAuthorisationUI extends AbstractAuthorisationUI{
+public class ManualAuthorizationUI extends AbstractAuthorizationUI{
 
     private JTextField tfAccessTokenKey;
     private AccessTokenKeyValidator valAccessTokenKey;
@@ -151,7 +151,7 @@ public class ManualAuthorisationUI extends AbstractAuthorisationUI{
         add(buildActionsPanel(), BorderLayout.SOUTH);
     }
 
-    public ManualAuthorisationUI() {
+    public ManualAuthorizationUI() {
         build();
     }
 
@@ -236,7 +236,7 @@ public class ManualAuthorisationUI extends AbstractAuthorisationUI{
 
         public void actionPerformed(ActionEvent evt) {
             TestAccessTokenTask task = new TestAccessTokenTask(
-                    ManualAuthorisationUI.this,
+                    ManualAuthorizationUI.this,
                     getApiUrl(),
                     getAdvancedPropertiesPanel().getAdvancedParameters(),
                     getAccessToken()
@@ -249,7 +249,7 @@ public class ManualAuthorisationUI extends AbstractAuthorisationUI{
         }
 
         public void propertyChange(PropertyChangeEvent evt) {
-            if (! evt.getPropertyName().equals(AbstractAuthorisationUI.ACCESS_TOKEN_PROP))
+            if (! evt.getPropertyName().equals(AbstractAuthorizationUI.ACCESS_TOKEN_PROP))
                 return;
             updateEnabledState();
         }

@@ -12,21 +12,21 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 
-public class AuthorisationProcedureComboBox extends JComboBox {
+public class AuthorizationProcedureComboBox extends JComboBox {
 
-    public AuthorisationProcedureComboBox() {
+    public AuthorizationProcedureComboBox() {
         setModel(new AuthorisationProcedureComboBoxModel());
         setRenderer(new AuthorisationProcedureCellRenderer());
-        setSelectedItem(AuthorisationProcedure.FULLY_AUTOMATIC);
+        setSelectedItem(AuthorizationProcedure.FULLY_AUTOMATIC);
     }
 
     static private class AuthorisationProcedureComboBoxModel extends DefaultComboBoxModel {
         @Override
         public Object getElementAt(int index) {
             switch(index) {
-            case 0: return AuthorisationProcedure.FULLY_AUTOMATIC;
-            case 1: return AuthorisationProcedure.SEMI_AUTOMATIC;
-            case 2: return AuthorisationProcedure.MANUALLY;
+            case 0: return AuthorizationProcedure.FULLY_AUTOMATIC;
+            case 1: return AuthorizationProcedure.SEMI_AUTOMATIC;
+            case 2: return AuthorizationProcedure.MANUALLY;
             }
             return null;
         }
@@ -52,7 +52,7 @@ public class AuthorisationProcedureComboBox extends JComboBox {
             }
         }
 
-        protected void renderText(AuthorisationProcedure value) {
+        protected void renderText(AuthorizationProcedure value) {
             switch(value) {
             case FULLY_AUTOMATIC:
                 setText(tr("Fully automatic"));
@@ -66,7 +66,7 @@ public class AuthorisationProcedureComboBox extends JComboBox {
             }
         }
 
-        protected void renderToolTipText(AuthorisationProcedure value) {
+        protected void renderToolTipText(AuthorizationProcedure value) {
             switch(value) {
             case FULLY_AUTOMATIC:
                 setToolTipText(tr(
@@ -93,7 +93,7 @@ public class AuthorisationProcedureComboBox extends JComboBox {
         }
 
         public Component getListCellRendererComponent(JList list, Object value, int idx, boolean isSelected, boolean hasFocus) {
-            AuthorisationProcedure procedure = (AuthorisationProcedure)value;
+            AuthorizationProcedure procedure = (AuthorizationProcedure)value;
             renderColors(isSelected);
             renderText(procedure);
             renderToolTipText(procedure);

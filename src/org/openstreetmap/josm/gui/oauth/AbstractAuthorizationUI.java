@@ -12,11 +12,11 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * 
  * 
  */
-public abstract class AbstractAuthorisationUI extends VerticallyScrollablePanel{
+public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel{
     /**
      * The property name for the Access Token property
      */
-    static public final String ACCESS_TOKEN_PROP = AbstractAuthorisationUI.class.getName() + ".accessToken";
+    static public final String ACCESS_TOKEN_PROP = AbstractAuthorizationUI.class.getName() + ".accessToken";
 
     private String apiUrl;
     private AdvancedOAuthPropertiesPanel pnlAdvancedProperties;
@@ -26,7 +26,7 @@ public abstract class AbstractAuthorisationUI extends VerticallyScrollablePanel{
         firePropertyChange(ACCESS_TOKEN_PROP, oldValue, newValue);
     }
 
-    public AbstractAuthorisationUI() {
+    public AbstractAuthorizationUI() {
         pnlAdvancedProperties = new AdvancedOAuthPropertiesPanel();
     }
 

@@ -96,7 +96,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
         return url;
     }
 
-    protected UserInfo getUserDetails() throws OsmOAuthAuthorisationException, OsmDataParsingException,OsmTransferException {
+    protected UserInfo getUserDetails() throws OsmOAuthAuthorizationException, OsmDataParsingException,OsmTransferException {
         boolean authenticatorEnabled = true;
         try {
             URL url = new URL(normalizeApiUrl(apiUrl) + "/0.6/user/details");
@@ -132,7 +132,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
         } catch(IOException e){
             throw new OsmTransferException(e);
         } catch(OAuthException e) {
-            throw new OsmOAuthAuthorisationException(e);
+            throw new OsmOAuthAuthorizationException(e);
         } finally {
             DefaultAuthenticator.getInstance().setEnabled(authenticatorEnabled);
         }
@@ -252,7 +252,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
             UserInfo userInfo = getUserDetails();
             if (canceled) return;
             notifySuccess(userInfo);
-        }catch(OsmOAuthAuthorisationException e) {
+        }catch(OsmOAuthAuthorizationException e) {
             if (canceled) return;
             e.printStackTrace();
             alertFailedSigning();

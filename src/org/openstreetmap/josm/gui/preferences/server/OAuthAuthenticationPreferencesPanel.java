@@ -30,7 +30,7 @@ import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.oauth.AdvancedOAuthPropertiesPanel;
-import org.openstreetmap.josm.gui.oauth.OAuthAuthorisationWizard;
+import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.oauth.TestAccessTokenTask;
 import org.openstreetmap.josm.io.auth.CredentialsManagerFactory;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -308,7 +308,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
         }
         public void actionPerformed(ActionEvent arg0) {
-            OAuthAuthorisationWizard wizard = new OAuthAuthorisationWizard(
+            OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
                     OAuthAuthenticationPreferencesPanel.this,
                     apiUrl
             );
@@ -333,7 +333,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
         }
         public void actionPerformed(ActionEvent arg0) {
-            OAuthAuthorisationWizard wizard = new OAuthAuthorisationWizard(
+            OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
                     OAuthAuthenticationPreferencesPanel.this,
                     apiUrl
             );

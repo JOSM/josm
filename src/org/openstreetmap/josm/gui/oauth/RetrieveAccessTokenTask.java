@@ -27,7 +27,7 @@ public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
     private boolean canceled;
     private OAuthToken accessToken;
     private OAuthParameters parameters;
-    private OsmOAuthAuthorisationClient client;
+    private OsmOAuthAuthorizationClient client;
     private OAuthToken requestToken;
     private Component parent;
 
@@ -63,7 +63,7 @@ public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
     @Override
     protected void finish() { /* not used in this task */}
 
-    protected void alertRetrievingAccessTokenFailed(OsmOAuthAuthorisationException e) {
+    protected void alertRetrievingAccessTokenFailed(OsmOAuthAuthorizationException e) {
         HelpAwareOptionPane.showOptionDialog(
                 parent,
                 tr(
@@ -80,12 +80,12 @@ public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         try {
             synchronized(this) {
-                client = new OsmOAuthAuthorisationClient(parameters, requestToken);
+                client = new OsmOAuthAuthorizationClient(parameters, requestToken);
             }
             accessToken = client.getAccessToken(getProgressMonitor().createSubTaskMonitor(0, false));
         } catch(OsmTransferCancelledException e) {
             return;
-        } catch (OsmOAuthAuthorisationException e) {
+        } catch (OsmOAuthAuthorizationException e) {
             e.printStackTrace();
             alertRetrievingAccessTokenFailed(e);
             accessToken = null;

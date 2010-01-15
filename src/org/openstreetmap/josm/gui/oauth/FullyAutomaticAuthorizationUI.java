@@ -53,7 +53,7 @@ import org.xml.sax.SAXException;
  * automatic process.
  * 
  */
-public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
+public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
     private JTextField tfUserName;
     private JPasswordField tfPassword;
@@ -310,7 +310,7 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
         return String.valueOf(tfPassword.getPassword());
     }
 
-    public FullyAutomaticAuthorisationUI() {
+    public FullyAutomaticAuthorizationUI() {
         build();
     }
 
@@ -337,7 +337,7 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
         }
 
         public void actionPerformed(ActionEvent evt) {
-            Main.worker.submit(new FullyAutomaticAuthorisationTask(FullyAutomaticAuthorisationUI.this));
+            Main.worker.submit(new FullyAutomaticAuthorisationTask(FullyAutomaticAuthorizationUI.this));
         }
 
         protected void updateEnabledState() {
@@ -384,7 +384,7 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
 
         public void actionPerformed(ActionEvent arg0) {
             Main.worker.submit(new TestAccessTokenTask(
-                    FullyAutomaticAuthorisationUI.this,
+                    FullyAutomaticAuthorizationUI.this,
                     getApiUrl(),
                     getAdvancedPropertiesPanel().getAdvancedParameters(),
                     getAccessToken()
@@ -436,7 +436,7 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
 
     class FullyAutomaticAuthorisationTask extends PleaseWaitRunnable {
         private boolean canceled;
-        private OsmOAuthAuthorisationClient authClient;
+        private OsmOAuthAuthorizationClient authClient;
 
         public FullyAutomaticAuthorisationTask(Component parent) {
             super(parent, tr("Authorise JOSM to access the OSM API"), false /* don't ignore exceptions */);
@@ -450,9 +450,9 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
         @Override
         protected void finish() {}
 
-        protected void alertAuthorisationFailed(OsmOAuthAuthorisationException e) {
+        protected void alertAuthorisationFailed(OsmOAuthAuthorizationException e) {
             HelpAwareOptionPane.showOptionDialog(
-                    FullyAutomaticAuthorisationUI.this,
+                    FullyAutomaticAuthorizationUI.this,
                     tr("<html>"
                             + "The automatic process for retrieving an OAuth Access Token<br>"
                             + "from the OSM server failed.<br><br>"
@@ -468,7 +468,7 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
 
         protected void alertInvalidLoginUrl() {
             HelpAwareOptionPane.showOptionDialog(
-                    FullyAutomaticAuthorisationUI.this,
+                    FullyAutomaticAuthorizationUI.this,
                     tr("<html>"
                             + "The automatic process for retrieving an OAuth Access Token<br>"
                             + "from the OSM server failed because JOSM was not able to build<br>"
@@ -487,12 +487,12 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
             String loginUrl = null;
             try {
                 loginUrl = authClient.buildOsmLoginUrl();
-            } catch(OsmOAuthAuthorisationException e1) {
+            } catch(OsmOAuthAuthorizationException e1) {
                 alertInvalidLoginUrl();
                 return;
             }
             HelpAwareOptionPane.showOptionDialog(
-                    FullyAutomaticAuthorisationUI.this,
+                    FullyAutomaticAuthorizationUI.this,
                     tr("<html>"
                             + "The automatic process for retrieving an OAuth Access Token<br>"
                             + "from the OSM server failed. JOSM failed to log into {0}<br>"
@@ -508,7 +508,7 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
             );
         }
 
-        protected void handleException(final OsmOAuthAuthorisationException e) {
+        protected void handleException(final OsmOAuthAuthorizationException e) {
             Runnable r = new Runnable() {
                 public void run() {
                     if (e instanceof OsmLoginFailedException) {
@@ -530,7 +530,7 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             try {
                 getProgressMonitor().setTicksCount(3);
-                authClient = new OsmOAuthAuthorisationClient(
+                authClient = new OsmOAuthAuthorizationClient(
                         getAdvancedPropertiesPanel().getAdvancedParameters()
                 );
                 OAuthToken requestToken = authClient.getRequestToken(
@@ -563,7 +563,7 @@ public class FullyAutomaticAuthorisationUI extends AbstractAuthorisationUI {
                 } else {
                     SwingUtilities.invokeLater(r);
                 }
-            } catch(final OsmOAuthAuthorisationException e) {
+            } catch(final OsmOAuthAuthorizationException e) {
                 handleException(e);
             }
         }

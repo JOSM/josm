@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.oauth;
 
-public class OsmLoginFailedException extends OsmOAuthAuthorisationException{
+public class OsmLoginFailedException extends OsmOAuthAuthorizationException{
 
     public OsmLoginFailedException() {
         super();

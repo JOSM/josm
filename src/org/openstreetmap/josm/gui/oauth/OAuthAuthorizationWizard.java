@@ -50,17 +50,17 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * allows JOSM to access the OSM API on the users behalf.
  * 
  */
-public class OAuthAuthorisationWizard extends JDialog {
-    static private final Logger logger = Logger.getLogger(OAuthAuthorisationWizard.class.getName());
+public class OAuthAuthorizationWizard extends JDialog {
+    static private final Logger logger = Logger.getLogger(OAuthAuthorizationWizard.class.getName());
 
     private HtmlPanel pnlMessage;
     private boolean canceled;
     private String apiUrl;
 
-    private AuthorisationProcedureComboBox cbAuthorisationProcedure;
-    private FullyAutomaticAuthorisationUI pnlFullyAutomaticAuthorisationUI;
-    private SemiAutomaticAuthorisationUI pnlSemiAutomaticAuthorisationUI;
-    private ManualAuthorisationUI pnlManualAuthorisationUI;
+    private AuthorizationProcedureComboBox cbAuthorisationProcedure;
+    private FullyAutomaticAuthorizationUI pnlFullyAutomaticAuthorisationUI;
+    private SemiAutomaticAuthorizationUI pnlSemiAutomaticAuthorisationUI;
+    private ManualAuthorizationUI pnlManualAuthorisationUI;
     private JScrollPane spAuthorisationProcedureUI;
 
     /**
@@ -125,7 +125,7 @@ public class OAuthAuthorisationWizard extends JDialog {
         gc.gridx = 1;
         gc.gridwidth = 1;
         gc.weightx = 1.0;
-        pnl.add(cbAuthorisationProcedure = new AuthorisationProcedureComboBox(),gc);
+        pnl.add(cbAuthorisationProcedure = new AuthorizationProcedureComboBox(),gc);
         cbAuthorisationProcedure.addItemListener(new AuthorisationProcedureChangeListener());
         return pnl;
     }
@@ -135,7 +135,7 @@ public class OAuthAuthorisationWizard extends JDialog {
      * currently selected
      */
     protected void refreshAuthorisationProcedurePanel() {
-        AuthorisationProcedure procedure = (AuthorisationProcedure)cbAuthorisationProcedure.getSelectedItem();
+        AuthorizationProcedure procedure = (AuthorizationProcedure)cbAuthorisationProcedure.getSelectedItem();
         switch(procedure) {
         case FULLY_AUTOMATIC:
             spAuthorisationProcedureUI.getViewport().setView(pnlFullyAutomaticAuthorisationUI);
@@ -161,13 +161,13 @@ public class OAuthAuthorisationWizard extends JDialog {
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(buildHeaderInfoPanel(), BorderLayout.NORTH);
 
-        pnlFullyAutomaticAuthorisationUI = new FullyAutomaticAuthorisationUI();
+        pnlFullyAutomaticAuthorisationUI = new FullyAutomaticAuthorizationUI();
         pnlFullyAutomaticAuthorisationUI.setApiUrl(apiUrl);
 
-        pnlSemiAutomaticAuthorisationUI = new SemiAutomaticAuthorisationUI();
+        pnlSemiAutomaticAuthorisationUI = new SemiAutomaticAuthorizationUI();
         pnlSemiAutomaticAuthorisationUI.setApiUrl(apiUrl);
 
-        pnlManualAuthorisationUI = new ManualAuthorisationUI();
+        pnlManualAuthorisationUI = new ManualAuthorizationUI();
         pnlManualAuthorisationUI.setApiUrl(apiUrl);
 
         spAuthorisationProcedureUI = new JScrollPane(new JPanel());
@@ -205,7 +205,7 @@ public class OAuthAuthorisationWizard extends JDialog {
      * @param apiUrl the API URL. Must not be null.
      * @throws IllegalArgumentException thrown if apiUrl is null
      */
-    public OAuthAuthorisationWizard(String apiUrl) throws IllegalArgumentException {
+    public OAuthAuthorizationWizard(String apiUrl) throws IllegalArgumentException {
         super(JOptionPane.getFrameForComponent(Main.parent),true /* modal */);
         CheckParameterUtil.ensureParameterNotNull(apiUrl, "apiUrl");
         build();
@@ -219,7 +219,7 @@ public class OAuthAuthorisationWizard extends JDialog {
      * @param apiUrl the API URL. Must not be null.
      * @throws IllegalArgumentException thrown if apiUrl is null
      */
-    public OAuthAuthorisationWizard(Component parent, String apiUrl) {
+    public OAuthAuthorizationWizard(Component parent, String apiUrl) {
         super(JOptionPane.getFrameForComponent(parent),true /* modal */);
         CheckParameterUtil.ensureParameterNotNull(apiUrl, "apiUrl");
         build();
@@ -258,8 +258,8 @@ public class OAuthAuthorisationWizard extends JDialog {
         return canceled;
     }
 
-    protected AbstractAuthorisationUI getCurrentAuthorisationUI() {
-        switch((AuthorisationProcedure)cbAuthorisationProcedure.getSelectedItem()) {
+    protected AbstractAuthorizationUI getCurrentAuthorisationUI() {
+        switch((AuthorizationProcedure)cbAuthorisationProcedure.getSelectedItem()) {
         case FULLY_AUTOMATIC: return pnlFullyAutomaticAuthorisationUI;
         case MANUALLY: return pnlManualAuthorisationUI;
         case SEMI_AUTOMATIC: return pnlSemiAutomaticAuthorisationUI;
@@ -370,7 +370,7 @@ public class OAuthAuthorisationWizard extends JDialog {
         }
 
         public void propertyChange(PropertyChangeEvent evt) {
-            if (!evt.getPropertyName().equals(AbstractAuthorisationUI.ACCESS_TOKEN_PROP))
+            if (!evt.getPropertyName().equals(AbstractAuthorizationUI.ACCESS_TOKEN_PROP))
                 return;
             token = (OAuthToken)evt.getNewValue();
             updateEnabledState(token);

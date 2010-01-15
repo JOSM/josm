@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.oauth;
 
-public enum AuthorisationProcedure {
+public enum AuthorizationProcedure {
     /**
      * Run a fully automatic procedure to get an access token from the OSM website.
      * JOSM accesses the OSM website on behalf of the JOSM user and interacts
