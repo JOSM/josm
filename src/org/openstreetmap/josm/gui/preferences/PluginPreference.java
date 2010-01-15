@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -254,7 +255,9 @@ public class PluginPreference implements PreferenceSetting {
         if (! pluginPreferencesActivated)
             return false;
         if (model.isActivePluginsChanged()) {
-            Main.pref.putCollection("plugins", model.getSelectedPluginNames());
+            LinkedList<String> l = new LinkedList<String>(model.getSelectedPluginNames());
+            Collections.sort(l);
+            Main.pref.putCollection("plugins", l);
             return true;
         }
         return false;

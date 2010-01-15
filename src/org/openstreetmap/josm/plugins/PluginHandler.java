@@ -366,7 +366,13 @@ public class PluginHandler {
         }
         try {
             monitor.beginTask(tr("Loading plugins ..."));
+            monitor.subTask(tr("Checking plugin preconditions..."));
             List<PluginInformation> toLoad = new LinkedList<PluginInformation>();
+            for (PluginInformation pi: plugins) {
+                if (checkLoadPreconditions(parent, plugins, pi)) {
+                    toLoad.add(pi);
+                }
+            }
             // sort the plugins according to their "staging" equivalence class. The
             // lower the value of "stage" the earlier the plugin should be loaded.
             //
@@ -380,12 +386,6 @@ public class PluginHandler {
                         }
                     }
             );
-            monitor.subTask(tr("Checking plugin preconditions..."));
-            for (PluginInformation pi: plugins) {
-                if (checkLoadPreconditions(parent, plugins, pi)) {
-                    toLoad.add(pi);
-                }
-            }
             if (toLoad.isEmpty())
                 return;
 
