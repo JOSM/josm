@@ -169,7 +169,7 @@ public class PluginHandler {
                         + "Update plugins now?"
                 )
                 + "</html>";
-            togglePreferenceKey = "pluginmanager.version";
+            togglePreferenceKey = "pluginmanager.dontshowagain.version";
         }  else {
             long tim = System.currentTimeMillis();
             long last = Main.pref.getLong("pluginmanager.lastupdate", 0);
@@ -182,7 +182,7 @@ public class PluginHandler {
                     "<html>"
                     + tr("Last plugin update more than {0} days ago.", d)
                     + "</html>";
-                togglePreferenceKey = "pluginmanager.time";
+                togglePreferenceKey = "pluginmanager.dontshowagain.time";
             }
         }
         if (message == null) return false;
@@ -205,6 +205,11 @@ public class PluginHandler {
         UpdatePluginsMessagePanel pnlMessage = new UpdatePluginsMessagePanel();
         pnlMessage.setMessage(message);
         pnlMessage.initDontShowAgain(togglePreferenceKey);
+
+        // check whether automatic update at startup was disabled
+        //
+        boolean doAsk = !Main.pref.getBoolean(togglePreferenceKey, false);
+        if (! doAsk) return false;
 
         int ret = HelpAwareOptionPane.showOptionDialog(
                 parent,
@@ -791,7 +796,7 @@ public class PluginHandler {
         );
         if (! plugins.contains(plugin.getPluginInformation().name))
             // plugin not activated ? strange in this context but anyway, don't bother
-            // the user with dialogs, skip condiational deactivation
+            // the user with dialogs, skip conditional deactivation
             return;
 
         if (!confirmDeactivatingPluginAfterException(plugin))
@@ -882,7 +887,7 @@ public class PluginHandler {
             gc.gridy = 1;
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weighty = 0.0;
-            add(cbDontShowAgain = new JCheckBox(tr("Do not show again (remembers choice)")), gc);
+            add(cbDontShowAgain = new JCheckBox(tr("Do not check and ask again at startup (remembers choice)")), gc);
             cbDontShowAgain.setFont(cbDontShowAgain.getFont().deriveFont(Font.PLAIN));
         }
 
