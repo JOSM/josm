@@ -4,6 +4,7 @@
 package org.openstreetmap.josm.data.gpx;
 
 import java.awt.Color;
+import java.util.Date;
 
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -52,5 +53,9 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>
     public int compareTo(WayPoint w)
     {
         return Double.compare(time, w.time);
+    }
+
+    public Date getTime() {
+        return new Date((long) (time * 1000));
     }
 }

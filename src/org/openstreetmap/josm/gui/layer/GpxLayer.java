@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -374,9 +373,9 @@ public class GpxLayer extends Layer {
         }
 
         if (data.tracks.size() > 0) {
-            info.append("<table><thead align=\"center\"><tr><td colspan=\"5\">"
+            info.append("<table><thead align='center'><tr><td colspan='5'>"
                     + trn("{0} track", "{0} tracks", data.tracks.size(), data.tracks.size())
-                    + "</td></tr><tr><td>" + tr("Name") + "</td><td>"
+                    + "</td></tr><tr align='center'><td>" + tr("Name") + "</td><td>"
                     + tr("Description") + "</td><td>" + tr("Timespan")
                     + "</td><td>" + tr("Length") + "</td><td>" + tr("URL")
                     + "</td></tr></thead>");
@@ -409,9 +408,19 @@ public class GpxLayer extends Layer {
                 }
 
                 if (earliest != null && latest != null) {
-                    DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT);
-                    info.append(df.format(new Date((long) (earliest.time * 1000))) + " - "
-                            + df.format(new Date((long) (latest.time * 1000))));
+                    DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT);
+                    String earliestDate = df.format(earliest.getTime());
+                    String latestDate = df.format(latest.getTime());
+
+                    if (earliestDate.equals(latestDate)) {
+                        DateFormat tf = DateFormat.getTimeInstance(DateFormat.SHORT);
+                        info.append(earliestDate).append(" ");
+                        info.append(tf.format(earliest.getTime())).append(" - ").append(tf.format(latest.getTime()));
+                    } else {
+                        DateFormat dtf = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
+                        info.append(dtf.format(earliest.getTime())).append(" - ").append(dtf.format(latest.getTime()));
+                    }
+
                     int diff = (int) (latest.time - earliest.time);
                     info.append(" (" + (diff / 3600) + ":" + ((diff % 3600) / 60) + ")");
                 }
