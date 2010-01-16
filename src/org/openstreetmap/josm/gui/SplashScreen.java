@@ -13,11 +13,11 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
-import javax.swing.JWindow;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
@@ -32,13 +32,14 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Show a splash screen so the user knows what is happening during startup.
  *
  */
-public class SplashScreen extends JWindow {
+public class SplashScreen extends JFrame {
 
     private SplashScreenProgressRenderer progressRenderer;
     private SwingRenderingProgressMonitor progressMonitor;
 
     public SplashScreen() {
         super();
+        setUndecorated(true);
 
         // Add a nice border to the main splash screen
         JPanel contentPane = (JPanel)this.getContentPane();
