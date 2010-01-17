@@ -1,6 +1,6 @@
 <!--
     Pics have been derived from
-    http://commons.wikipedia.org (german street sign SVGs)
+    http://de.wikipedia.org/wiki/Bildtafel_der_Verkehrszeichen_in_Deutschland (german street sign SVGs)
     http://commons.wikimedia.org/wiki/Image:National_Park_Service_sample_pictographs.svg (various monochrome pictograms)
     http://www.kde.org
     http://openclipart.org/media/view/media/clip_art
@@ -486,6 +486,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="foot" text="Foot" values="yes,designated,no" default="" delete_if_empty="true" />
                 <combo key="bicycle" text="Bicycle" values="yes,designated,no" default="" delete_if_empty="true" />
                 <combo key="horse" text="Horse" values="yes,designated,no" default="" delete_if_empty="true" />
+                <combo key="wheelchair" text="Wheelchairs" values="unknown,yes,no" default="" delete_if_empty="true" />
                 <combo key="ski" text="Ski" values="yes,designated,no" default="" delete_if_empty="true" />
                 <combo key="snowmobile" text="Snowmobile" values="yes,designated,no" default="" delete_if_empty="true" />
                 <!-- <combo key="motorcar" text="Motorcar" values="yes,designated,no" default="no" delete_if_empty="true" /> -->
@@ -530,7 +531,50 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="foot" text="Pedestrians" values="unknown,yes,no" default="" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
-                <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+            </optional>
+        </item>
+        <item name="Segregated Foot- and Cycleway" icon="presets/foot_and_cycleway_segregated.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cycleway"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=cycleway"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=cycleway" />
+            <label text="Edit Cycleway" />
+            <space />
+            <key key="highway" value="path" />
+            <key key="bicycle" value="designated" />
+            <key key="foot" value="designated" />
+            <key key="segregated" value="yes" />
+            <optional>
+                <text key="name" text="Name" default="" delete_if_empty="true" />
+                <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
+                <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
+                <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
+                <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
+                <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+            </optional>
+        </item>
+        <item name="Combined Foot- and Cycleway" icon="presets/foot_and_cycleway_combined.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=cycleway"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=cycleway"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=cycleway" />
+            <label text="Edit Cycleway" />
+            <space />
+            <key key="highway" value="path" />
+            <key key="bicycle" value="designated" />
+            <key key="foot" value="designated" />
+            <key key="segregated" value="no" />
+            <optional>
+                <text key="name" text="Name" default="" delete_if_empty="true" />
+                <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
+                <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
+                <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
+                <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
+                <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
