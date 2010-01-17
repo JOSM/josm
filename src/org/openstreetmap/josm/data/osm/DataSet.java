@@ -270,7 +270,7 @@ public class DataSet implements Cloneable {
      * themselves for any dataset selection changes that occur, regardless of the current active
      * dataset. (However, the selection does only change in the active layer)
      */
-    public static Collection<SelectionChangedListener> selListeners =
+    public static final Collection<SelectionChangedListener> selListeners =
         Collections.synchronizedList(new LinkedList<SelectionChangedListener>());
 
     /**

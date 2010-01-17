@@ -93,9 +93,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
             Main.contentPane.getActionMap().remove(sc.getKeyStroke());
         }
         MapView.removeLayerChangeListener(layerChangeAdapter);
-        if (DataSet.selListeners != null) {
-            DataSet.selListeners.remove(selectionChangeAdapter);
-        }
+        DataSet.selListeners.remove(selectionChangeAdapter);
     }
 
     /**

@@ -105,7 +105,7 @@ public class ToggleDialog extends JPanel implements Helpful {
         /** Override any minimum sizes of child elements so the user can resize freely */
         setMinimumSize(new Dimension(0,0));
         this.preferredHeight = preferredHeight;
-        toggleAction = new ToggleDialogAction(name, "dialogs/"+iconName, tooltip, shortcut, iconName);
+        toggleAction = new ToggleDialogAction(this, name, "dialogs/"+iconName, tooltip, shortcut, iconName);
         String helpId = "Dialog/"+getClass().getName().substring(getClass().getName().lastIndexOf('.')+1);
         toggleAction.putValue("help", helpId.substring(0, helpId.length()-6));
 
@@ -133,25 +133,35 @@ public class ToggleDialog extends JPanel implements Helpful {
      * </ul>
      *
      */
-    public final class ToggleDialogAction extends JosmAction {
-        private ToggleDialogAction(String name, String iconName, String tooltip, Shortcut shortcut, String prefname) {
+    public final static class ToggleDialogAction extends JosmAction {
+
+        private ToggleDialog dialog;
+
+        private ToggleDialogAction(ToggleDialog dialog, String name, String iconName, String tooltip, Shortcut shortcut, String prefname) {
             super(name, iconName, tooltip, shortcut, false);
+            this.dialog = dialog;
         }
 
         public void actionPerformed(ActionEvent e) {
-            toggleButtonHook();
-            if (isShowing) {
-                hideDialog();
-                dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
+            dialog.toggleButtonHook();
+            if (dialog.isShowing) {
+                dialog.hideDialog();
+                dialog.dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
             } else {
-                showDialog();
-                if (isDocked && isCollapsed) {
-                    expand();
+                dialog.showDialog();
+                if (dialog.isDocked && dialog.isCollapsed) {
+                    dialog.expand();
                 }
-                if (isDocked) {
-                    dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, ToggleDialog.this);
+                if (dialog.isDocked) {
+                    dialog.dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, dialog);
                 }
             }
+        }
+
+        @Override
+        public void destroy() {
+            super.destroy();
+            dialog = null;
         }
     }
 

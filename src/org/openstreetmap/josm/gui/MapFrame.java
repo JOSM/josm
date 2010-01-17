@@ -186,11 +186,11 @@ public class MapFrame extends JPanel implements Destroyable {
         dialogsPanel.destroy();
         for (int i = 0; i < toolBarActions.getComponentCount(); ++i)
             if (toolBarActions.getComponent(i) instanceof Destroyable) {
-                ((Destroyable)toolBarActions).destroy();
+                ((Destroyable)toolBarActions.getComponent(i)).destroy();
             }
         for (int i = 0; i < toolBarToggle.getComponentCount(); ++i)
             if (toolBarToggle.getComponent(i) instanceof Destroyable) {
-                ((Destroyable)toolBarToggle).destroy();
+                ((Destroyable)toolBarToggle.getComponent(i)).destroy();
             }
 
         // remove menu entries

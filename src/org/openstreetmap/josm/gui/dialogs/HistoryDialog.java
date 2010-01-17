@@ -64,6 +64,14 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
     protected ShowHistoryAction showHistoryAction;
     protected ReloadAction reloadAction;
 
+    public HistoryDialog() {
+        super(tr("History"), "history", tr("Display the history of all selected items."),
+                Shortcut.registerShortcut("subwindow:history", tr("Toggle: {0}", tr("History")), KeyEvent.VK_H,
+                        Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
+        build();
+        DataSet.selListeners.add(model);
+    }
+
     /**
      * builds the row with the command buttons
      *
@@ -127,13 +135,14 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         historyTable.getSelectionModel().addListSelectionListener(reloadAction);
     }
 
-    public HistoryDialog() {
-        super(tr("History"), "history", tr("Display the history of all selected items."),
-                Shortcut.registerShortcut("subwindow:history", tr("Toggle: {0}", tr("History")), KeyEvent.VK_H,
-                        Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
-        build();
-        DataSet.selListeners.add(model);
+    @Override
+    public void showNotify() {
         HistoryDataSet.getInstance().addHistoryDataSetListener(this);
+    }
+
+    @Override
+    public void hideNotify() {
+        HistoryDataSet.getInstance().removeHistoryDataSetListener(this);
     }
 
     public void historyUpdated(HistoryDataSet source, PrimitiveId primitiveId) {

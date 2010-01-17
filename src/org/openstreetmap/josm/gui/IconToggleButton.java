@@ -9,13 +9,15 @@ import java.beans.PropertyChangeListener;
 import javax.swing.Action;
 import javax.swing.JToggleButton;
 
+import org.openstreetmap.josm.tools.Destroyable;
+
 /**
  * Just a toggle button, with smaller border and icon only to display in
  * MapFrame toolbars.
  *
  * @author imi
  */
-public class IconToggleButton extends JToggleButton implements PropertyChangeListener {
+public class IconToggleButton extends JToggleButton implements PropertyChangeListener, Destroyable {
 
     public boolean groupbutton;
 
@@ -46,6 +48,13 @@ public class IconToggleButton extends JToggleButton implements PropertyChangeLis
             requestFocusInWindow();
         } else if (evt.getPropertyName().equals("selected")) {
             setSelected((Boolean)evt.getNewValue());
+        }
+    }
+
+    public void destroy() {
+        Action action = getAction();
+        if (action instanceof Destroyable) {
+            ((Destroyable) action).destroy();
         }
     }
 }
