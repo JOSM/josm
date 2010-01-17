@@ -68,7 +68,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         @Override
         public String toString()
         {
-            return super.toString()+ "["+level+"]: " + bbox;
+            return super.toString()+ "["+level+"]: " + bbox();
         }
         public QBLevel(QBLevel parent)
         {
@@ -141,7 +141,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             if (debug) {
                 out("splitting "+this.bbox()+" level "+level+" with "
                         + content.size() + " entries (my dimensions: "
-                        + this.bbox.width()+", "+this.bbox.height()+")");
+                        + this.bbox().width()+", "+this.bbox().height()+")");
             }
             // deferring allocation of children until use
             // seems a bit faster
@@ -585,7 +585,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         {
             return width()/2;
         }
-        BBox bbox = null;
+        private BBox bbox = null;
         public BBox bbox()
         {
             if (bbox != null)
@@ -763,7 +763,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     {
         return this.remove(convert(o));
     }
-    public boolean remove_slow(T removeme)
+    private boolean remove_slow(T removeme)
     {
         boolean ret = false;
         Iterator<T> i = this.iterator();
@@ -798,6 +798,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         if (debug) {
             out("qb remove result: " + ret);
         }
+        search_cache = null; // Search cache might point to one of removed buckets
         return ret;
     }
     public boolean contains(Object o)
