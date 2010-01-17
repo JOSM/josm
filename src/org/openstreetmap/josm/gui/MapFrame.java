@@ -198,10 +198,13 @@ public class MapFrame extends JPanel implements Destroyable {
 
         // MapFrame gets destroyed when the last layer is removed, but the status line background
         // thread that collects the information doesn't get destroyed automatically.
-        if(statusLine.thread == null) return;
-        try {
-            statusLine.thread.interrupt();
-        } catch (Exception e) {}
+        if(statusLine.thread != null) {
+            try {
+                statusLine.thread.interrupt();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public Action getDefaultButtonAction() {
@@ -213,13 +216,6 @@ public class MapFrame extends JPanel implements Destroyable {
      */
     public void initializeDialogsPane() {
         dialogsPanel.initialize(allDialogs);
-    }
-
-    /**
-     *
-     */
-    public void tearDownDialogsPane() {
-        dialogsPanel.tearDown();
     }
 
     /**

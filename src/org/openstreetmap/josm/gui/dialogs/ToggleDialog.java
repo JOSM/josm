@@ -6,10 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.Graphics;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -559,22 +559,10 @@ public class ToggleDialog extends JPanel implements Helpful {
     protected void stateChanged() {
     }
 
-    /**
-     * This method is called by hosting panel before the panel with the toggle dialogs
-     * and the toggle dialogs themself are discared, for instance because no layer is
-     * left in JOSM and  the main screen turns from the map editor to the MOTD panel.
-     *
-     * Override in subclasses to unregister as listener. After tearDown() is invoked
-     * the dialog should be registered as listener.
-     *
-     * The default implementation is empty.
-     */
-    public void tearDown() {}
-
     protected JPanel getButtonPanel(int columns) {
         JPanel pnl = new JPanel();
         pnl.setLayout(Main.pref.getBoolean("dialog.align.left", false)
-        ? new FlowLayout(FlowLayout.LEFT) : new GridLayout(1,columns));
+                ? new FlowLayout(FlowLayout.LEFT) : new GridLayout(1,columns));
         return pnl;
     }
 }

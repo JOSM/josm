@@ -144,11 +144,6 @@ public class ChangesetDialog extends ToggleDialog{
     }
 
     @Override
-    public void tearDown() {
-        unregisterAsListener();
-    }
-
-    @Override
     public void showNotify() {
         registerAsListener();
         DatasetEventManager.getInstance().addDatasetListener(inActiveDataLayerModel, FireMode.IN_EDT);

@@ -143,6 +143,7 @@ public class MapStatus extends JPanel implements Helpful {
          */
         public void run() {
             for (;;) {
+
                 MouseState ms = new MouseState();
                 synchronized (this) {
                     try {wait();} catch (InterruptedException e) {}
@@ -594,7 +595,7 @@ public class MapStatus extends JPanel implements Helpful {
     }
 
     @Override
-    public void addMouseListener(MouseListener ml) {
+    public synchronized void addMouseListener(MouseListener ml) {
         //super.addMouseListener(ml);
         lonText.addMouseListener(ml);
         latText.addMouseListener(ml);

@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -14,7 +13,6 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -46,18 +44,20 @@ public class FilterDialog extends ToggleDialog implements DataChangeListener, Ma
     private SideButton deleteButton;
     private SideButton upButton;
     private SideButton downButton;
-    private JPopupMenu popupMenu;
 
     public FilterDialog(){
         super(tr("Filter"), "filter", tr("Filter objects and hide/disable them."),
                 Shortcut.registerShortcut("subwindow:filter", tr("Toggle: {0}", tr("Filter")), KeyEvent.VK_F, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 162);
-
-        MapView.addLayerChangeListener(this);
         build();
     }
 
     @Override
-    public void tearDown() {
+    public void showNotify() {
+        MapView.addLayerChangeListener(this);
+    }
+
+    @Override
+    public void hideNotify() {
         MapView.removeLayerChangeListener(this);
     }
 
@@ -143,7 +143,6 @@ public class FilterDialog extends ToggleDialog implements DataChangeListener, Ma
                 return new JTableHeader(columnModel) {
                     @Override
                     public String getToolTipText(MouseEvent e) {
-                        String tip = null;
                         java.awt.Point p = e.getPoint();
                         int index = columnModel.getColumnIndexAtX(p.x);
                         int realIndex = columnModel.getColumn(index).getModelIndex();

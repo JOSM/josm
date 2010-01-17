@@ -46,10 +46,10 @@ import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.ImageProvider.OverlayPosition;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * This is a toggle dialog which displays the list of layers. Actions allow to
@@ -69,6 +69,8 @@ public class LayerListDialog extends ToggleDialog {
      * @param mapFrame the map frame
      */
     static public void createInstance(MapFrame mapFrame) {
+        if (instance != null)
+            throw new IllegalStateException("Dialog was already created");
         instance = new LayerListDialog(mapFrame);
     }
 
@@ -114,7 +116,6 @@ public class LayerListDialog extends ToggleDialog {
         // -- activate action
         activateLayerAction = new ActivateLayerAction();
         adaptTo(activateLayerAction, selectionModel);
-        MapView.addLayerChangeListener(activateLayerAction);
         buttonPanel.add(new SideButton(activateLayerAction));
 
         // -- show hide action
@@ -152,7 +153,6 @@ public class LayerListDialog extends ToggleDialog {
         selectionModel = new DefaultListSelectionModel();
         selectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         model = new LayerListModel(selectionModel);
-        MapView.addLayerChangeListener(model);
 
         // create the list control
         //
@@ -184,7 +184,13 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     @Override
-    public void tearDown() {
+    public void showNotify() {
+        MapView.addLayerChangeListener(activateLayerAction);
+        MapView.addLayerChangeListener(model);
+    }
+
+    @Override
+    public void hideNotify() {
         MapView.removeLayerChangeListener(model);
         MapView.removeLayerChangeListener(activateLayerAction);
     }
@@ -239,6 +245,12 @@ public class LayerListDialog extends ToggleDialog {
                     }
                 }
         );
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        instance = null;
     }
 
     /**

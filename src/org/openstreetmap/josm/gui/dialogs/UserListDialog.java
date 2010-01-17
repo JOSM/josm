@@ -66,12 +66,16 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
                 Shortcut.registerShortcut("subwindow:authors", tr("Toggle: {0}", tr("Authors")), KeyEvent.VK_A, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
 
         build();
+    }
+
+    @Override
+    public void showNotify() {
         DataSet.selListeners.add(this);
         MapView.addLayerChangeListener(this);
     }
 
     @Override
-    public void tearDown() {
+    public void hideNotify() {
         MapView.removeLayerChangeListener(this);
         DataSet.selListeners.remove(this);
     }

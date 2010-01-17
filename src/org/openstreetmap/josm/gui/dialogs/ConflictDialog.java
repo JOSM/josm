@@ -118,13 +118,17 @@ public final class ConflictDialog extends ToggleDialog implements MapView.LayerC
                 Shortcut.registerShortcut("subwindow:conflict", tr("Toggle: {0}", tr("Conflict")), KeyEvent.VK_C, Shortcut.GROUP_LAYER), 100);
 
         build();
-        DataSet.selListeners.add(this);
-        MapView.addLayerChangeListener(this);
         refreshView();
     }
 
     @Override
-    public void tearDown() {
+    public void showNotify() {
+        DataSet.selListeners.add(this);
+        MapView.addLayerChangeListener(this);
+    }
+
+    @Override
+    public void hideNotify() {
         MapView.removeLayerChangeListener(this);
         DataSet.selListeners.remove(this);
     }

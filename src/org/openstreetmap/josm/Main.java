@@ -110,11 +110,6 @@ abstract public class Main {
      */
     public static MapFrame map;
     /**
-     * The dialog that gets displayed during background task execution.
-     */
-    //public static PleaseWaitDialog pleaseWaitDlg;
-
-    /**
      * True, when in applet mode
      */
     public static boolean applet = false;
@@ -183,7 +178,6 @@ abstract public class Main {
         if (map != null) {
             map.mapView.removeLayer(layer);
             if (map.mapView.getAllLayers().isEmpty()) {
-                map.tearDownDialogsPane();
                 setMapFrame(null);
             }
         }

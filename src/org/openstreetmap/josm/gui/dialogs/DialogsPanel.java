@@ -47,17 +47,6 @@ public class DialogsPanel extends JPanel {
         reconstruct(Action.ELEMENT_SHRINKS, null);
     }
 
-    /**
-     * Invoke before the panel is discarded. This will in turn call {@see ToggleDialog#tearDown()}
-     * on every dialog.
-     *
-     */
-    public void tearDown() {
-        for(ToggleDialog dialog: allDialogs) {
-            dialog.tearDown();
-        }
-    }
-
     public void add(ToggleDialog dlg) {
         add(dlg, true);
     }

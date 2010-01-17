@@ -154,6 +154,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         DatasetEventManager.getInstance().addDatasetListener(dataChangedAdapter, FireMode.IN_EDT_CONSOLIDATED);
         listOfUsedTags.rebuildNecessary();
         DataSet.selListeners.add(this);
+        MapView.addEditLayerChangeListener(this);
         updateSelection();
     }
 
@@ -162,6 +163,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         DatasetEventManager.getInstance().removeDatasetListener(listOfUsedTags);
         DatasetEventManager.getInstance().removeDatasetListener(dataChangedAdapter);
         DataSet.selListeners.remove(this);
+        MapView.removeEditLayerChangeListener(this);
     }
 
     /**
@@ -586,13 +588,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         getActionMap().put("delete", deleteAction);
         buttonPanel.add(this.btnDel);
         add(buttonPanel, BorderLayout.SOUTH);
-
-        MapView.addEditLayerChangeListener(this);
-    }
-
-    @Override
-    public void tearDown() {
-        MapView.removeEditLayerChangeListener(this);
     }
 
     @Override public void setVisible(boolean b) {

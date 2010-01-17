@@ -158,23 +158,19 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
             selectionChanged(Main.main.getCurrentDataSet().getSelected());
         }
 
-        MapView.addEditLayerChangeListener(this);
-    }
-
-    @Override
-    public void tearDown() {
-        MapView.removeEditLayerChangeListener(this);
     }
 
     @Override
     public void showNotify() {
         DataSet.selListeners.add(this);
+        MapView.addEditLayerChangeListener(this);
         updateSelection();
     }
 
     @Override
     public void hideNotify() {
         DataSet.selListeners.remove(this);
+        MapView.removeEditLayerChangeListener(this);
     }
 
     private BasicArrowButton createArrowButton(SideButton parentButton) {
