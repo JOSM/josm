@@ -1022,6 +1022,13 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="waterway" v="ditch"/>
+		<line width="1" colour="water#0000ff"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+	<rule>
 		<condition k="waterway" v="drain"/>
 		<line width="1" colour="water#0000ff"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
@@ -1084,6 +1091,14 @@ For external files the <rules> should have following elements:
 		<condition k="waterway" v="weir"/>
 		<icon annotate="true" src="nautical/weir.png"/>
 		<line width="2" colour="manmade#d8d8d8"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="waterway" v="rapids"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<line width="2" colour="rapids#8080ff"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1403,6 +1418,14 @@ For external files the <rules> should have following elements:
 		<scale_max>50000</scale_max>
 	</rule>
 
+	<rule>
+		<condition k="aerialway" v="pylon"/>
+		<area colour="aerialway#663300"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
 <!-- piste tags -->
 
 	<rule>
@@ -1697,6 +1720,14 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="man_made" v="works"/>
 		<icon annotate="true" src="misc/landmark/works.png"/>
+		<area colour="manmade#d8d8d8"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="man_made" v="water_works"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
 		<area colour="manmade#d8d8d8"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
