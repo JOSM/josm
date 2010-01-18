@@ -10,6 +10,7 @@ import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.DateUtils;
+import org.openstreetmap.josm.tools.PrimaryDateParser;
 
 public class WayPoint extends WithAttributes implements Comparable<WayPoint>
 {
@@ -41,11 +42,12 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>
      * Convert the time stamp of the waypoint into seconds from the epoch
      */
     public void setTime() {
-        if(attr.containsKey("time"))
-        {
-            double t = DateUtils.fromString(attr.get("time").toString()).getTime();
-            if(t != 0.0) {
-                time = t / 1000.0; /* ms => seconds */
+        if(attr.containsKey("time")) {
+            PrimaryDateParser dateParser = new PrimaryDateParser();
+            try {
+                time = dateParser.parse(attr.get("time").toString()).getTime() / 1000.; /* ms => seconds */
+            } catch(Exception e) {
+                time = 0;
             }
         }
     }
