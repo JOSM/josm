@@ -189,6 +189,7 @@ public class MainApplication extends Main {
         monitor.indeterminateSubTask(tr("Creating main GUI"));
         JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));
         Main.parent = mainFrame;
+        Main.addListener();
         final Main main = new MainApplication(mainFrame);
         monitor.worked(1);
 
@@ -200,10 +201,17 @@ public class MainApplication extends Main {
         splash.dispose();
         mainFrame.setVisible(true);
 
-        if (((!args.containsKey("no-maximize") && !args.containsKey("geometry")
-                && Main.pref.get("gui.geometry").length() == 0) || args.containsKey("maximize"))
-                && Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH)) {
-            mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        boolean maximized = Boolean.parseBoolean(Main.pref.get("gui.maximized"));
+        if ((!args.containsKey("no-maximize") && maximized) || args.containsKey("maximize")) {
+            if (Toolkit.getDefaultToolkit().isFrameStateSupported(JFrame.MAXIMIZED_BOTH)) {
+                // Main.debug("Main window maximized");
+                Main.windowState = JFrame.MAXIMIZED_BOTH;
+                mainFrame.setExtendedState(Main.windowState);
+            } else {
+                Main.debug("Main window: maximizing not supported");
+            }
+        } else {
+            // Main.debug("Main window not maximized");
         }
 
         EventQueue.invokeLater(new Runnable() {

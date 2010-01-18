@@ -7,7 +7,11 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -273,6 +277,7 @@ abstract public class Main {
     public static JPanel panel = new JPanel(new BorderLayout());
 
     protected static Rectangle bounds;
+    protected static int windowState = JFrame.NORMAL;
 
     private final CommandQueueListener redoUndoListener = new CommandQueueListener(){
         public void commandChanged(final int queueSize, final int redoSize) {
@@ -323,9 +328,13 @@ abstract public class Main {
         }
 
         Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
-        String geometry = Main.pref.get("gui.geometry");
+        String geometry = null;
         if (args.containsKey("geometry")) {
             geometry = args.get("geometry").iterator().next();
+            // Main.debug("Main window geometry from args: \""+geometry+"\"");
+        } else {
+            geometry = Main.pref.get("gui.geometry");
+            // Main.debug("Main window geometry from preferences: \""+geometry+"\"");
         }
         if (geometry.length() != 0) {
             final Matcher m = Pattern.compile("(\\d+)x(\\d+)(([+-])(\\d+)([+-])(\\d+))?").matcher(geometry);
@@ -343,9 +352,17 @@ abstract public class Main {
                         y = screenDimension.height - y - h;
                     }
                 }
+                // copied from WindowsGeometry.applySafe()
+                if (x > Toolkit.getDefaultToolkit().getScreenSize().width - 10) {
+                    x = 0;
+                }
+                if (y > Toolkit.getDefaultToolkit().getScreenSize().height - 10) {
+                    y = 0;
+                }
                 bounds = new Rectangle(x,y,w,h);
                 if(!Main.pref.get("gui.geometry").equals(geometry)) {
                     // remember this geometry
+                    // Main.debug("Main window: saving geometry \"" + geometry + "\"");
                     Main.pref.put("gui.geometry", geometry);
                 }
             } else {
@@ -355,6 +372,7 @@ abstract public class Main {
         if (bounds == null) {
             bounds = !args.containsKey("no-maximize") ? new Rectangle(0,0,screenDimension.width,screenDimension.height) : new Rectangle(1000,740);
         }
+        // Main.debug("window geometry: "+bounds);
     }
 
     public void postConstructorProcessCmdLine(Map<String, Collection<String>> args) {
@@ -540,27 +558,24 @@ abstract public class Main {
         String newGeometry = "";
         String newToggleDlgWidth = null;
         try {
-            if (((JFrame)parent).getExtendedState() == JFrame.NORMAL) {
-                Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
-                Rectangle bounds = parent.getBounds();
-                int width = (int)bounds.getWidth();
-                int height = (int)bounds.getHeight();
-                int x = (int)bounds.getX();
-                int y = (int)bounds.getY();
-                if (width > screenDimension.width) {
-                    width = screenDimension.width;
-                }
-                if (height > screenDimension.height) {
-                    width = screenDimension.height;
-                }
-                if (x < 0) {
-                    x = 0;
-                }
-                if (y < 0) {
-                    y = 0;
-                }
-                newGeometry = width + "x" + height + "+" + x + "+" + y;
+            Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
+            int width = (int)bounds.getWidth();
+            int height = (int)bounds.getHeight();
+            int x = (int)bounds.getX();
+            int y = (int)bounds.getY();
+            if (width > screenDimension.width) {
+                width = screenDimension.width;
             }
+            if (height > screenDimension.height) {
+                width = screenDimension.height;
+            }
+            if (x < 0) {
+                x = 0;
+            }
+            if (y < 0) {
+                y = 0;
+            }
+            newGeometry = width + "x" + height + "+" + x + "+" + y;
 
             if (map  != null) {
                 newToggleDlgWidth = Integer.toString(map.getToggleDlgWidth());
@@ -570,12 +585,55 @@ abstract public class Main {
             }
         }
         catch (Exception e) {
-            System.out.println("Failed to save GUI geometry: " + e);
+            System.out.println("Failed to get GUI geometry: " + e);
             e.printStackTrace();
         }
+        boolean maximized = (windowState & JFrame.MAXIMIZED_BOTH) != 0;
+        // Main.debug("Main window: saving geometry \"" + newGeometry + "\" " + (maximized?"maximized":"normal"));
+        pref.put("gui.maximized", maximized);
         pref.put("gui.geometry", newGeometry);
         if (newToggleDlgWidth != null) {
             pref.put("toggleDialogs.width", newToggleDlgWidth);
         }
+    }
+    private static class WindowPositionSizeListener extends WindowAdapter implements
+    ComponentListener {
+
+        @Override
+        public void windowStateChanged(WindowEvent e) {
+            Main.windowState = e.getNewState();
+            // Main.debug("Main window state changed to " + Main.windowState);
+        }
+
+        public void componentHidden(ComponentEvent e) {
+        }
+
+        public void componentMoved(ComponentEvent e) {
+            handleComponentEvent(e);
+        }
+
+        public void componentResized(ComponentEvent e) {
+            handleComponentEvent(e);
+        }
+
+        public void componentShown(ComponentEvent e) {
+        }
+
+        private void handleComponentEvent(ComponentEvent e) {
+            Component c = e.getComponent();
+            if (c instanceof JFrame) {
+                if (Main.windowState == JFrame.NORMAL) {
+                    Main.bounds = ((JFrame) c).getBounds();
+                    // Main.debug("Main window: new geometry " + Main.bounds);
+                } else {
+                    // Main.debug("Main window state is " + Main.windowState);
+                }
+            }
+        }
+
+    }
+    public static void addListener() {
+        parent.addComponentListener(new WindowPositionSizeListener());
+        ((JFrame)parent).addWindowStateListener(new WindowPositionSizeListener());
     }
 }

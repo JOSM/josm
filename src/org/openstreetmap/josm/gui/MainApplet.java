@@ -9,7 +9,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
@@ -101,6 +100,7 @@ public class MainApplet extends JApplet {
         ((ServerSidePreferences)Main.pref).download(username, password);
         Main.preConstructorInit(args);
         Main.parent = this;
+        Main.addListener();
 
         // initialize the plaform hook, and
         Main.determinePlatformHook();
