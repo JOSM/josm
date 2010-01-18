@@ -202,7 +202,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
         protected JPanel buildTitlePanel() {
             JPanel pnl = new JPanel(new BorderLayout());
-            JLabel lbl = new JLabel(tr("<html>Step 2/3: Authorise and retrieve an Access Token</html>"));
+            JLabel lbl = new JLabel(tr("<html>Step 2/3: Authorize and retrieve an Access Token</html>"));
             lbl.setFont(lbl.getFont().deriveFont(16f));
             pnl.add(lbl, BorderLayout.CENTER);
             return pnl;
@@ -219,11 +219,11 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             HtmlPanel html = new HtmlPanel();
             html.setText(tr("<html>"
                     + "JOSM successfully retrieved a Request Token. "
-                    + "JOSM is now launching an authorisation page in an external browser. "
+                    + "JOSM is now launching an authorization page in an external browser. "
                     + "Please login with your OSM username and password and follow the instructions "
-                    + "to authorise the Request Token. Then switch back to this dialog and click on "
+                    + "to authorize the Request Token. Then switch back to this dialog and click on "
                     + "<strong>{0}</strong><br><br>"
-                    + "If launching the external browser fails you can copy the following authorise URL "
+                    + "If launching the external browser fails you can copy the following authorize URL "
                     + "and paste it into the address field of your browser.</html>",
                     tr("Request Access Token")
             ));
@@ -233,7 +233,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             gc.gridy = 1;
             gc.weightx = 0.0;
             gc.gridwidth = 1;
-            pnl.add(new JLabel(tr("Authorise URL:")), gc);
+            pnl.add(new JLabel(tr("Authorize URL:")), gc);
 
             gc.gridx = 1;
             gc.weightx = 1.0;
@@ -306,7 +306,7 @@ public class SemiAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             html.setText(tr("<html>"
                     + "JOSM has successfully retrieved an Access Token. "
                     + "You can now accept this token. JOSM will use it in the future for authentication "
-                    + "and authorisation to the OSM server.<br><br>"
+                    + "and authorization to the OSM server.<br><br>"
                     + "The access token is: </html>"
             ));
             pnl.add(html, gc);

@@ -163,7 +163,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                 tr("<html>"
                         + "Failed to access the OSM server ''{0}''<br>"
                         + "with the Access Token ''{0}''.<br>"
-                        + "The server rejected the Access Token as unauthorised. You will not<br>"
+                        + "The server rejected the Access Token as unauthorized. You will not<br>"
                         + "be able to access any protected resource on this server using this token."
                         +"</html>",
                         apiUrl,

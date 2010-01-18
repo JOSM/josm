@@ -434,7 +434,7 @@ public class OsmOAuthAuthorizationClient {
 
             int retCode = connection.getResponseCode();
             if (retCode != HttpURLConnection.HTTP_MOVED_TEMP)
-                throw new OsmOAuthAuthorizationException(tr("Failed to authorise OAuth request  ''{0}''", requestToken.getKey()));
+                throw new OsmOAuthAuthorizationException(tr("Failed to authorize OAuth request  ''{0}''", requestToken.getKey()));
         } catch(MalformedURLException e) {
             throw new OsmOAuthAuthorizationException(e);
         } catch(IOException e) {
@@ -481,7 +481,7 @@ public class OsmOAuthAuthorizationClient {
             monitor = NullProgressMonitor.INSTANCE;
         }
         try {
-            monitor.beginTask(tr("Authorising OAuth Request token ''{0}'' at the OSM website ...", requestToken.getKey()));
+            monitor.beginTask(tr("Authorizing OAuth Request token ''{0}'' at the OSM website ...", requestToken.getKey()));
             monitor.setTicksCount(4);
             monitor.indeterminateSubTask(tr("Initializing a session at the OSM website..."));
             String sessionId = fetchOsmWebsiteSessionId();
@@ -495,7 +495,7 @@ public class OsmOAuthAuthorizationClient {
                 throw new OsmTransferCancelledException();
             monitor.worked(1);
 
-            monitor.indeterminateSubTask(tr("Authorising request token ''{0}''...", requestToken.getKey()));
+            monitor.indeterminateSubTask(tr("Authorizing request token ''{0}''...", requestToken.getKey()));
             sendAuthorisationRequest(sessionId, requestToken, privileges);
             if (canceled)
                 throw new OsmTransferCancelledException();

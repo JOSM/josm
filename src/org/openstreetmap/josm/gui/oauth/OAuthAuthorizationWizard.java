@@ -118,7 +118,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         gc.gridy  = 2;
         gc.gridwidth = 1;
         gc.weightx = 0.0;
-        lbl = new JLabel(tr("Please select an authorisation procedure: "));
+        lbl = new JLabel(tr("Please select an authorization procedure: "));
         lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
         pnl.add(lbl,gc);
 
@@ -337,7 +337,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         public CancelAction() {
             putValue(NAME, tr("Cancel"));
             putValue(SMALL_ICON, ImageProvider.get("cancel"));
-            putValue(SHORT_DESCRIPTION, tr("Close the dialog and cancel authorisation"));
+            putValue(SHORT_DESCRIPTION, tr("Close the dialog and cancel authorization"));
         }
 
         public void cancel() {

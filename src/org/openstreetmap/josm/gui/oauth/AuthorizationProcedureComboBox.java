@@ -72,7 +72,7 @@ public class AuthorizationProcedureComboBox extends JComboBox {
                 setToolTipText(tr(
                         "<html>Run a fully automatic procedure to get an access token from the OSM website.<br>"
                         + "JOSM accesses the OSM website on behalf of the JOSM user and fully<br>"
-                        + "automatically authorises the user and retrieves an Access Token.</html>"
+                        + "automatically authorizes the user and retrieves an Access Token.</html>"
                 ));
                 break;
             case SEMI_AUTOMATIC:

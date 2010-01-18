@@ -183,7 +183,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             JLabel lbl;
-            add(lbl = new JMultilineLabel(tr("You do not have an Access Token yet to access the OSM server using OAuth. Please authorise first.")), gc);
+            add(lbl = new JMultilineLabel(tr("You do not have an Access Token yet to access the OSM server using OAuth. Please authorize first.")), gc);
             lbl.setFont(lbl.getFont().deriveFont(Font.PLAIN));
 
             // Action for authorising now
@@ -302,8 +302,8 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
      */
     private class AuthoriseNowAction extends AbstractAction {
         public AuthoriseNowAction() {
-            putValue(NAME, tr("Authorise now"));
-            putValue(SHORT_DESCRIPTION, tr("Click to step through the OAuth authorisation process"));
+            putValue(NAME, tr("Authorize now"));
+            putValue(SHORT_DESCRIPTION, tr("Click to step through the OAuth authorization process"));
             putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth"));
 
         }
@@ -328,7 +328,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
     private class RenewAuthorisationAction extends AbstractAction {
         public RenewAuthorisationAction() {
             putValue(NAME, tr("New Access Token"));
-            putValue(SHORT_DESCRIPTION, tr("Click to step through the OAuth authorisation process and generate a new Access Token"));
+            putValue(SHORT_DESCRIPTION, tr("Click to step through the OAuth authorization process and generate a new Access Token"));
             putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth"));
 
         }

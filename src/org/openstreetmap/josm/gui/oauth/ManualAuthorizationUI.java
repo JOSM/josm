@@ -55,7 +55,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
         gc.insets = new Insets(0,0,5,0);
         pnlMessage= new HtmlPanel();
         pnlMessage.setText("<html><body>"
-                + tr("Please enter an OAuth Access Token which is authorised to access the OSM server "
+                + tr("Please enter an OAuth Access Token which is authorized to access the OSM server "
                 + "''{0}''.",
                 getApiUrl()) + "</body></html>");
         pnl.add(pnlMessage, gc);
@@ -137,7 +137,7 @@ public class ManualAuthorizationUI extends AbstractAuthorizationUI{
     public void setApiUrl(String apiUrl) {
         super.setApiUrl(apiUrl);
         pnlMessage.setText(tr("<html><body>"
-                + "Please enter an OAuth Access Token which is authorised to access the OSM server "
+                + "Please enter an OAuth Access Token which is authorized to access the OSM server "
                 + "''{0}''."
                 + "</body></html>",
                 getApiUrl()

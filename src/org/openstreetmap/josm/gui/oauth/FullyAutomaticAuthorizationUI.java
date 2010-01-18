@@ -330,9 +330,9 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
      */
     class RunAuthorisationAction extends AbstractAction implements DocumentListener{
         public RunAuthorisationAction() {
-            putValue(NAME, tr("Authorise now"));
+            putValue(NAME, tr("Authorize now"));
             putValue(SMALL_ICON, ImageProvider.get("oauth", "oauth"));
-            putValue(SHORT_DESCRIPTION, tr("Click to redirect you to the authorisation form on the JOSM web site"));
+            putValue(SHORT_DESCRIPTION, tr("Click to redirect you to the authorization form on the JOSM web site"));
             updateEnabledState();
         }
 
@@ -363,7 +363,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     class BackAction extends AbstractAction {
         public BackAction() {
             putValue(NAME, tr("Back"));
-            putValue(SHORT_DESCRIPTION, tr("Run the automatic authorisation steps again"));
+            putValue(SHORT_DESCRIPTION, tr("Run the automatic authorization steps again"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "previous"));
         }
 
@@ -439,7 +439,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         private OsmOAuthAuthorizationClient authClient;
 
         public FullyAutomaticAuthorisationTask(Component parent) {
-            super(parent, tr("Authorise JOSM to access the OSM API"), false /* don't ignore exceptions */);
+            super(parent, tr("Authorize JOSM to access the OSM API"), false /* don't ignore exceptions */);
         }
 
         @Override
@@ -456,11 +456,11 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                     tr("<html>"
                             + "The automatic process for retrieving an OAuth Access Token<br>"
                             + "from the OSM server failed.<br><br>"
-                            + "Please try again or choose another kind of authorisation process,<br>"
-                            + "i.e. semi-automatic or manual authorisation."
+                            + "Please try again or choose another kind of authorization process,<br>"
+                            + "i.e. semi-automatic or manual authorization."
                             +"</html>"
                     ),
-                    tr("OAuth authorisation failed"),
+                    tr("OAuth authorization failed"),
                     JOptionPane.ERROR_MESSAGE,
                     HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#FullyAutomaticProcessFailed")
             );
@@ -472,12 +472,12 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                     tr("<html>"
                             + "The automatic process for retrieving an OAuth Access Token<br>"
                             + "from the OSM server failed because JOSM was not able to build<br>"
-                            + "a valid login URL from the OAuth Authorise Endpoint URL ''{0}''.<br><br>"
+                            + "a valid login URL from the OAuth Authorize Endpoint URL ''{0}''.<br><br>"
                             + "Please check your advanced setting and try again."
                             + "</html>",
                             getAdvancedPropertiesPanel().getAdvancedParameters().getAuthoriseUrl()
                     ),
-                    tr("OAuth authorisation failed"),
+                    tr("OAuth authorization failed"),
                     JOptionPane.ERROR_MESSAGE,
                     HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#FullyAutomaticProcessFailed")
             );
@@ -502,7 +502,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                             loginUrl,
                             getOsmUserName()
                     ),
-                    tr("OAuth authorisation failed"),
+                    tr("OAuth authorization failed"),
                     JOptionPane.ERROR_MESSAGE,
                     HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#FullyAutomaticProcessFailed")
             );

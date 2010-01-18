@@ -98,7 +98,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
         gc.gridy = 5;
         gc.gridx = 0;
         gc.weightx = 0.0;
-        add(new JLabel(tr("Authorise URL:")), gc);
+        add(new JLabel(tr("Authorize URL:")), gc);
 
         gc.gridx = 1;
         gc.weightx = 1.0;
