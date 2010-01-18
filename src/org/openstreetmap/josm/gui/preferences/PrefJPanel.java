@@ -28,70 +28,70 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class PrefJPanel extends javax.swing.JPanel {
 
-        // table of shortcuts
-        private TableModel model;
-        // comboboxes of modifier groups, mapping selectedIndex to real data
-        private static int[] modifInts = new int[]{
-            -1,
-            0,
-            KeyEvent.SHIFT_DOWN_MASK,
-            KeyEvent.CTRL_DOWN_MASK,
-            KeyEvent.ALT_DOWN_MASK,
-            KeyEvent.META_DOWN_MASK,
-            KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK,
-            KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK,
-            KeyEvent.META_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK,
-            KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK,
-            KeyEvent.CTRL_DOWN_MASK | KeyEvent.META_DOWN_MASK,
-            KeyEvent.ALT_DOWN_MASK | KeyEvent.META_DOWN_MASK,
-            KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK | KeyEvent.ALT_DOWN_MASK,
-            KeyEvent.META_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK | KeyEvent.ALT_DOWN_MASK
-        };
-        // and here are the texts fro the comboboxes
-        private static String[] modifList = new String[] {
-            tr("disabled"),
-            tr("no modifier"),
-            KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[2]).getModifiers()),
-            KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[3]).getModifiers()),
-            KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[4]).getModifiers()),
-            KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[5]).getModifiers()),
-            KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[6]).getModifiers()),
-            KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[7]).getModifiers()),
-            KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[8]).getModifiers()),
-            KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[9]).getModifiers()),
-            KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[10]).getModifiers()),
-            KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[11]).getModifiers()),
-            KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[12]).getModifiers()),
-            KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[13]).getModifiers())
-        };
-        // this are the display(!) texts for the checkboxes. Let the JVM do the i18n for us <g>.
-        // Ok, there's a real reason for this: The JVM should know best how the keys are labelled
-        // on the physical keyboard. What language pack is installed in JOSM is completely
-        // independent from the keyboard's labelling. But the operation system's locale
-        // usually matches the keyboard. This even works with my English Windows and my German
-        // keyboard.
-        private static String SHIFT = KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.SHIFT_DOWN_MASK).getModifiers());
-        private static String CTRL  = KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK).getModifiers());
-        private static String ALT   = KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.ALT_DOWN_MASK).getModifiers());
-        private static String META  = KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.META_DOWN_MASK).getModifiers());
+    // table of shortcuts
+    private TableModel model;
+    // comboboxes of modifier groups, mapping selectedIndex to real data
+    private static int[] modifInts = new int[]{
+        -1,
+        0,
+        KeyEvent.SHIFT_DOWN_MASK,
+        KeyEvent.CTRL_DOWN_MASK,
+        KeyEvent.ALT_DOWN_MASK,
+        KeyEvent.META_DOWN_MASK,
+        KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK,
+        KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK,
+        KeyEvent.META_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK,
+        KeyEvent.CTRL_DOWN_MASK | KeyEvent.ALT_DOWN_MASK,
+        KeyEvent.CTRL_DOWN_MASK | KeyEvent.META_DOWN_MASK,
+        KeyEvent.ALT_DOWN_MASK | KeyEvent.META_DOWN_MASK,
+        KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK | KeyEvent.ALT_DOWN_MASK,
+        KeyEvent.META_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK | KeyEvent.ALT_DOWN_MASK
+    };
+    // and here are the texts fro the comboboxes
+    private static String[] modifList = new String[] {
+        tr("disabled"),
+        tr("no modifier"),
+        KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[2]).getModifiers()),
+        KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[3]).getModifiers()),
+        KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[4]).getModifiers()),
+        KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[5]).getModifiers()),
+        KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[6]).getModifiers()),
+        KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[7]).getModifiers()),
+        KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[8]).getModifiers()),
+        KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[9]).getModifiers()),
+        KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[10]).getModifiers()),
+        KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[11]).getModifiers()),
+        KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[12]).getModifiers()),
+        KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, modifInts[13]).getModifiers())
+    };
+    // this are the display(!) texts for the checkboxes. Let the JVM do the i18n for us <g>.
+    // Ok, there's a real reason for this: The JVM should know best how the keys are labelled
+    // on the physical keyboard. What language pack is installed in JOSM is completely
+    // independent from the keyboard's labelling. But the operation system's locale
+    // usually matches the keyboard. This even works with my English Windows and my German
+    // keyboard.
+    private static String SHIFT = KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.SHIFT_DOWN_MASK).getModifiers());
+    private static String CTRL  = KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK).getModifiers());
+    private static String ALT   = KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.ALT_DOWN_MASK).getModifiers());
+    private static String META  = KeyEvent.getKeyModifiersText(javax.swing.KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.META_DOWN_MASK).getModifiers());
 
-        // A list of keys to present the user. Sadly this really is a list of keys Java knows about,
-        // not a list of real physical keys. If someone knows how to get that list?
-        private static Map<Integer, String> keyList = setKeyList();
+    // A list of keys to present the user. Sadly this really is a list of keys Java knows about,
+    // not a list of real physical keys. If someone knows how to get that list?
+    private static Map<Integer, String> keyList = setKeyList();
 
-        private static Map<Integer, String> setKeyList() {
-            Map<Integer, String> list = new LinkedHashMap<Integer, String>();
-            // I hate this, but I found no alternative...
-            for (int i = 0; i < 65534; i++) {
-                String s = KeyEvent.getKeyText(i);
-                if (s != null && s.length() > 0 && !s.contains("Unknown")) {
-                    list.put(Integer.valueOf(i), s);
-                    //System.out.println(i+": "+s);
-                }
+    private static Map<Integer, String> setKeyList() {
+        Map<Integer, String> list = new LinkedHashMap<Integer, String>();
+        // I hate this, but I found no alternative...
+        for (int i = 0; i < 65534; i++) {
+            String s = KeyEvent.getKeyText(i);
+            if (s != null && s.length() > 0 && !s.contains("Unknown")) {
+                list.put(Integer.valueOf(i), s);
+                //System.out.println(i+": "+s);
             }
-            list.put(Integer.valueOf(-1), "");
-            return list;
         }
+        list.put(Integer.valueOf(-1), "");
+        return list;
+    }
 
     /** Creates new form prefJPanel */
     // Ain't those auto-generated comments helpful or what? <g>
@@ -155,35 +155,35 @@ public class PrefJPanel extends javax.swing.JPanel {
 
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
-                // If someone wants to move this text into some resource, feel free.
-                infoTab.setLayout(new javax.swing.BoxLayout(shortcutTab, javax.swing.BoxLayout.Y_AXIS));
-                JEditorPane editor = new JEditorPane();
-                editor.setEditable(false);
-                editor.setContentType("text/html");
-                editor.setText(
-                    tr("<h1><a name=\"top\">Keyboard Shortcuts</a></h1>")+
-                    tr("<p>Please note that shortcuts keys are assigned to the actions when JOSM is started. So you need to <b>restart</b> "
-                      +"JOSM to see your changes.</p>")+
-                    tr("<p>Furthermore, the shortcuts are activated when the actions are assigned to a menu entry of button for the first "
-                      +"time. So some of your changes may become active even without restart --- but also without collistion handling. "
-                      +"This is another reason to <b>restart</b> JOSM after making any changes here.</p>")+
-                    tr("<p>You may notice that the key selection list on the next page lists all keys that exist on all kinds of keyboards "
-                      +"Java knows about, not just those keys that exist on your keyboard. Please use only those values that correspond to "
-                      +"a real key on your keyboard. So if your keyboard has no 'Copy' key (PC keyboard don't have them, Sun keyboards do), "
-                      +"the do not use it. Also there will be 'keys' listed that correspond to a shortcut on your keyboard (e.g. ':'/Colon). "
-                      +"Please also do not use them, use the base key (';'/Semicolon on US keyboards, '.'/Period on German keyboards, ...) "
-                      +"instead. Not doing so may result in conflicts, as there is no way for JOSM to know that Ctrl+Shift+; and Ctrl+: "
-                      +"actually is the same thing on an US keyboard...</p>")+
-                    tr("<p>Thank you for your understanding</p>")+
-                    tr("<h1>Modifier Groups</h1>")+
-                    tr("<p>The last page lists the modifier keys JOSM will automatically assign to shortcuts. For every of the four kinds "
-                      +"of shortcuts there are three alternatives. JOSM will try those alternative in the listed order when managing a "
-                      +"conflict. If all alternatives would result in shortcuts that are already taken, it will assign a random shortcut "
-                      +"instead.</p>")+
-                    tr("<p>The pseudo-modifier ''disabled'' will disable the shortcut when encountered.</p>")
-                );
-                editor.setCaretPosition(0); // scroll up
-                prefTabPane.addTab(tr("Read First"), new JScrollPane(editor));
+        // If someone wants to move this text into some resource, feel free.
+        infoTab.setLayout(new javax.swing.BoxLayout(shortcutTab, javax.swing.BoxLayout.Y_AXIS));
+        JEditorPane editor = new JEditorPane();
+        editor.setEditable(false);
+        editor.setContentType("text/html");
+        editor.setText(
+                tr("<h1><a name=\"top\">Keyboard Shortcuts</a></h1>")+
+                tr("<p>Please note that shortcuts keys are assigned to the actions when JOSM is started. So you need to <b>restart</b> "
+                        +"JOSM to see your changes.</p>")+
+                        tr("<p>Furthermore, the shortcuts are activated when the actions are assigned to a menu entry of button for the first "
+                                +"time. So some of your changes may become active even without restart --- but also without collistion handling. "
+                                +"This is another reason to <b>restart</b> JOSM after making any changes here.</p>")+
+                                tr("<p>You may notice that the key selection list on the next page lists all keys that exist on all kinds of keyboards "
+                                        +"Java knows about, not just those keys that exist on your keyboard. Please use only those values that correspond to "
+                                        +"a real key on your keyboard. So if your keyboard has no ''Copy'' key (PC keyboard do not have them, Sun keyboards do), "
+                                        +"the do not use it. Also there will be ''keys'' listed that correspond to a shortcut on your keyboard (e.g. '':''/Colon). "
+                                        +"Please also do not use them, use the base key ('';''/Semicolon on US keyboards, ''.''/Period on German keyboards, ...) "
+                                        +"instead. Not doing so may result in conflicts, as there is no way for JOSM to know that Ctrl+Shift+; and Ctrl+: "
+                                        +"actually is the same thing on an US keyboard...</p>")+
+                                        tr("<p>Thank you for your understanding</p>")+
+                                        tr("<h1>Modifier Groups</h1>")+
+                                        tr("<p>The last page lists the modifier keys JOSM will automatically assign to shortcuts. For every of the four kinds "
+                                                +"of shortcuts there are three alternatives. JOSM will try those alternative in the listed order when managing a "
+                                                +"conflict. If all alternatives would result in shortcuts that are already taken, it will assign a random shortcut "
+                                                +"instead.</p>")+
+                                                tr("<p>The pseudo-modifier ''disabled'' will disable the shortcut when encountered.</p>")
+        );
+        editor.setCaretPosition(0); // scroll up
+        prefTabPane.addTab(tr("Read First"), new JScrollPane(editor));
 
         shortcutTab.setLayout(new javax.swing.BoxLayout(shortcutTab, javax.swing.BoxLayout.Y_AXIS));
 
@@ -341,19 +341,19 @@ public class PrefJPanel extends javax.swing.JPanel {
         bxTer4.setModel(new javax.swing.DefaultComboBoxModel(modifList));
         subwindowGroupPane.add(bxTer4);
 
-                initbx();
-                bxPrim1.setAction(action2);
-                bxSec1.setAction(action2);
-                bxTer1.setAction(action2);
-                bxPrim2.setAction(action2);
-                bxSec2.setAction(action2);
-                bxTer2.setAction(action2);
-                bxPrim3.setAction(action2);
-                bxSec3.setAction(action2);
-                bxTer3.setAction(action2);
-                bxPrim4.setAction(action2);
-                bxSec4.setAction(action2);
-                bxTer4.setAction(action2);
+        initbx();
+        bxPrim1.setAction(action2);
+        bxSec1.setAction(action2);
+        bxTer1.setAction(action2);
+        bxPrim2.setAction(action2);
+        bxSec2.setAction(action2);
+        bxTer2.setAction(action2);
+        bxPrim3.setAction(action2);
+        bxSec3.setAction(action2);
+        bxTer3.setAction(action2);
+        bxPrim4.setAction(action2);
+        bxSec4.setAction(action2);
+        bxTer4.setAction(action2);
 
         modifierTab.add(subwindowGroupPane);
 
@@ -372,8 +372,8 @@ public class PrefJPanel extends javax.swing.JPanel {
     // more expirience with GUI coding than I have.
     private class cbAction extends javax.swing.AbstractAction implements ListSelectionListener {
         private PrefJPanel panel;
-            public cbAction (PrefJPanel panel) {
-                this.panel = panel;
+        public cbAction (PrefJPanel panel) {
+            this.panel = panel;
         }
         public void valueChanged(ListSelectionEvent e) {
             ListSelectionModel lsm = panel.shortcutTable.getSelectionModel(); // can't use e here
@@ -426,10 +426,10 @@ public class PrefJPanel extends javax.swing.JPanel {
                         sc.setAssignedModifier(KeyEvent.VK_CANCEL);
                     } else {
                         sc.setAssignedModifier(
-                            (panel.cbShift.isSelected() ? KeyEvent.SHIFT_DOWN_MASK : 0) |
-                            (panel.cbCtrl.isSelected() ? KeyEvent.CTRL_DOWN_MASK : 0) |
-                            (panel.cbAlt.isSelected() ? KeyEvent.ALT_DOWN_MASK : 0) |
-                            (panel.cbMeta.isSelected() ? KeyEvent.META_DOWN_MASK : 0)
+                                (panel.cbShift.isSelected() ? KeyEvent.SHIFT_DOWN_MASK : 0) |
+                                (panel.cbCtrl.isSelected() ? KeyEvent.CTRL_DOWN_MASK : 0) |
+                                (panel.cbAlt.isSelected() ? KeyEvent.ALT_DOWN_MASK : 0) |
+                                (panel.cbMeta.isSelected() ? KeyEvent.META_DOWN_MASK : 0)
                         );
                         for (Map.Entry<Integer, String> entry : keyList.entrySet()) {
                             if (entry.getValue().equals(panel.tfKey.getSelectedItem())) {

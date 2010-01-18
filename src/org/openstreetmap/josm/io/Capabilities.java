@@ -85,12 +85,12 @@ public class Capabilities {
         try {
             int n = Integer.parseInt(v);
             if (n <= 0) {
-                System.err.println(tr("Warning: illegal value of attribute '{0}'' of element ''{1}'' in server capabilities. Got ''{2}", "changesets", "maximum_elements", n ));
+                System.err.println(tr("Warning: illegal value of attribute ''{0}'' of element ''{1}'' in server capabilities. Got ''{2}''", "changesets", "maximum_elements", n ));
                 return -1;
             }
             return n;
         } catch(NumberFormatException e) {
-            System.err.println(tr("Warning: illegal value of attribute '{0}'' of element ''{1}'' in server capabilities. Got ''{2}", "changesets", "maximum_elements", v ));
+            System.err.println(tr("Warning: illegal value of attribute ''{0}'' of element ''{1}'' in server capabilities. Got ''{2}''", "changesets", "maximum_elements", v ));
             return -1;
         }
     }

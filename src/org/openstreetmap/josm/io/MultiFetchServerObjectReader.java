@@ -111,7 +111,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         if (id <= 0) return;
         OsmPrimitive primitive = ds.getPrimitiveById(id, type);
         if (primitive == null)
-            throw new NoSuchElementException(tr("No primitive with id {0} in local dataset. Can't infer primitive type.", id));
+            throw new NoSuchElementException(tr("No primitive with id {0} in local dataset. Cannot infer primitive type.", id));
         remember(primitive.getPrimitiveId());
         return;
     }

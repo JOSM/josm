@@ -229,11 +229,11 @@ public class SaveLayersDialog extends JDialog {
 
     protected void warnLayersWithIllegalFilesAndSaveRequest(List<SaveLayerInfo> infos) {
         String msg = trn("<html>{0} layer needs saving but has an associated file<br>"
-                + "which can't be written.<br>"
+                + "which cannot be written.<br>"
                 + "Either select another file for this layer or discard the changes.<br>"
                 + "Layer with a non-writable file:</html>",
                 "<html>{0} layers need saving but have associated files<br>"
-                + "which can't be written.<br>"
+                + "which cannot be written.<br>"
                 + "Either select another file for each of them or discard the changes.<br>"
                 + "Layers with non-writable files:</html>",
                 infos.size(),
