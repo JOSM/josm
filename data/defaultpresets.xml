@@ -232,6 +232,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="passing_places" text="Passing Places" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
@@ -305,6 +306,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="passing_places" text="Passing Places" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
@@ -351,6 +353,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="toll" text="Toll" default="off" delete_if_empty="true"  />
             <check key="noexit" text="No exit (cul-de-sac)" default="off" delete_if_empty="true"  />
             <combo key="access" text="Access" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
+            <combo key="agricultural" text="Agricultural" values="yes,designated,destination,permissive,no" default="" delete_if_empty="true" />
             <combo key="bicycle" text="Bicycle" values="yes,private,designated,destination,permissive,unknown,no" default="" delete_if_empty="true"  />
             <combo key="foot" text="Foot" values="yes,private,designated,destination,permissive,unknown,no" default="" delete_if_empty="true" />
             <combo key="goods" text="Goods" values="yes,private,designated,destination,permissive,unknown,no" default="" delete_if_empty="true" />
@@ -359,8 +362,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="motorcycle" text="Motorcycle" values="yes,private,designated,destination,permissive,unknown,no" default="" delete_if_empty="true" />
             <combo key="motorcar" text="Motorcar" values="yes,private,designated,destination,permissive,agricultural,unknown,no" default="" delete_if_empty="true" />
             <combo key="psv" text="Public Service Vehicles (psv)" values="yes,private,designated,destination,permissive,unknown,no" default="" delete_if_empty="true" />
-            <combo key="motorboat" text="Motorboat" values="yes,private,designated,destination,permissive,unknown,no" default="" delete_if_empty="true" />
-            <combo key="boat" text="Boat" values="yes,private,designated,destination,permissive,unknown,no" default="" delete_if_empty="true" />
             <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
             <text key="minspeed" text="Min. speed (km/h)" default="" delete_if_empty="true" />
             <text key="maxweight" text="Max. weight (tonnes)" default="" delete_if_empty="true" />
@@ -423,10 +424,8 @@ are supplied, then "values" will be treated as "display_values" and translated i
     <group name="Ways" icon="presets/way_unclassified.png">
         <item name="Construction" icon="presets/construction.png" type="way">
             <label text="Edit Highway Under Construction" />
-<!--     FIXME: no entry in the Wiki
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=construction"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=construction" />
--->
             <space />
             <key key="highway" value="construction" />
             <optional>
@@ -483,6 +482,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" default="" delete_if_empty="true" />
                 <combo key="sac_scale" text="SAC Scale" values="hiking,mountain_hiking,demanding_mountain_hiking,alpine_hiking,demanding_alpine_hiking,difficult_alpine_hiking" default="" delete_if_empty="true" />
+                <combo key="trail_visibility" text="Visibility" values="excellent,good,intermediate,bad,horrible,no" default="" delete_if_empty="true" />
                 <combo key="foot" text="Foot" values="yes,designated,no" default="" delete_if_empty="true" />
                 <combo key="bicycle" text="Bicycle" values="yes,designated,no" default="" delete_if_empty="true" />
                 <combo key="horse" text="Horse" values="yes,designated,no" default="" delete_if_empty="true" />
@@ -573,6 +573,8 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="passing_places" text="Passing Places" default="off" delete_if_empty="true" />
+                <combo key="surface" text="Surface" values="paved,concrete,cobblestone,gravel,ground,grass,sand" default="" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
@@ -591,6 +593,8 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="passing_places" text="Passing Places" default="off" delete_if_empty="true" />
+                <combo key="surface" text="Surface" values="paved,concrete,cobblestone" default="" delete_if_empty="true" />
                 <combo key="bicycle" text="Bikes" values="unknown,yes,no" default="" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
@@ -664,6 +668,16 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="supervised" text="Crossing attendant" default="off" delete_if_empty="true" />
             <combo key="crossing_ref" text="Type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" default="" delete_if_empty="true" />
         </item>
+        <item name="Traffic Calming" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_calming"/>
+            <label text="Edit Traffic Calming" />
+            <combo key="traffic_calming" text="Type" values="yes,bump,chicane,choker,cushion,hump,table" default="" delete_if_empty="true" />
+        </item>
+        <item name="Passing Place" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=passing_place"/>
+            <label text="Edit Passing Place" />
+            <key key="highway" value="passing_place" />
+        </item>
         <item name="Mini-roundabout" icon="presets/roundabout_left.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=mini_roundabout"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=mini_roundabout"
@@ -677,6 +691,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="highway" value="turning_circle" />
         </item>
         <item name="City Limit" icon="presets/citylimit.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:traffic_sign%3Dcity_limit" />
             <label text="Edit City Limit Sign" />
             <space />
             <key key="traffic_sign" value="city_limit" />
@@ -685,6 +700,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="alt_name" text="Second Name" default="" delete_if_empty="true" />
         </item>
         <item name="Speed Camera" icon="presets/speed_camera.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway%3Dspeed_camera" />
             <key key="highway" value="speed_camera" />
         </item>
         <item name="Emergency Phone" icon="presets/telephone.png" type="node">
@@ -695,6 +711,10 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
         <item name="Incline Steep" icon="presets/incline_steep.png" type="node,way">
             <key key="highway" value="incline_steep" />
+        </item>
+        <item name="Grit Bin" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dgrit_bin" />
+            <key key="amenity" value="grit_bin" />
         </item>
         <separator/>
         <item name="Ford" icon="presets/ford.png" type="node,way">
@@ -796,7 +816,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item> <!-- hedge -->
         <item name="Fence" icon="presets/empty.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=fence" />
-            <key key="barrier" value="fence" />
+            <combo key="barrier" text="Fence" values="fence,wood_fence,wire_fence" default="" delete_if_empty="true" />
         </item> <!-- fence -->
         <item name="Wall" icon="presets/empty.png" type="way,closedway">
             <key key="barrier" value="wall" />
@@ -933,6 +953,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
         </item>
+        <item name="Ditch" icon="presets/waterway.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=ditch" />
+            <label text="Edit Ditch" />
+            <space />
+            <key key="waterway" value="ditch" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+        </item>
         <item name="Stream" icon="presets/waterway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=stream" />
             <label text="Edit Stream" />
@@ -1062,7 +1090,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <separator/>
-        <item name="Dam" icon="presets/empty.png" type="way,closedway">
+        <item name="Dam" icon="presets/empty.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=dam" />
             <label text="Edit Dam" />
             <space />
@@ -1126,44 +1154,85 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Rail" />
             <space />
             <key key="railway" value="rail" />
-            <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+            <optional>
+                <combo key="gauge" text="Gauge (mm)" values="standard,1435,1495,1520,1524,1600,1668,1676" default="" delete_if_empty="true" />
+                <combo key="service" text="Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+                <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" default="" delete_if_empty="true" />
+                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" default="" delete_if_empty="true" />
+                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" default="" delete_if_empty="true" />
+            </optional>
         </item>
         <item name="Narrow Gauge Rail" icon="presets/railway.png" type="way">
             <label text="Edit Narrow Gauge Rail" />
             <space />
             <key key="railway" value="narrow_gauge" />
-            <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+            <optional>
+                <combo key="gauge" text="Gauge (mm)" values="381,400,457,500,610,760,891,950,1000,1067" default="" delete_if_empty="true" />
+                <combo key="service" text="Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+                <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" default="" delete_if_empty="true" />
+                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" default="" delete_if_empty="true" />
+                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" default="" delete_if_empty="true" />
+            </optional>
         </item>
         <item name="Monorail" icon="presets/railway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=monorail" />
             <label text="Edit Monorail" />
             <space />
             <key key="railway" value="monorail" />
-            <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+            <optional>
+                <combo key="service" text="Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+                <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" default="" delete_if_empty="true" />
+                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" default="" delete_if_empty="true" />
+                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" default="" delete_if_empty="true" />
+            </optional>
         </item>
         <item name="Preserved" icon="presets/rail_preserved.png" type="way">
             <label text="Edit Preserved Railway" />
             <space />
             <key key="railway" value="preserved" />
-            <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+            <optional>
+                <combo key="gauge" text="Gauge (mm)" values="381,400,457,500,610,760,891,950,1000,1067,1435,1495,1520,1524,1600,1668,1676" default="" delete_if_empty="true" />
+                <combo key="service" text="Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+                <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" default="" delete_if_empty="true" />
+                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" default="" delete_if_empty="true" />
+                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" default="" delete_if_empty="true" />
+            </optional>
         </item>
         <item name="Light Rail" icon="presets/rail_light.png" type="way">
             <label text="Edit Light Rail" />
             <space />
             <key key="railway" value="light_rail" />
-            <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+            <optional>
+                <combo key="gauge" text="Gauge (mm)" values="381,400,457,500,610,760,891,950,1000,1067,1435,1495,1520,1524,1600,1668,1676" default="" delete_if_empty="true" />
+                <combo key="service" text="Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+                <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" default="" delete_if_empty="true" />
+                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" default="" delete_if_empty="true" />
+                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" default="" delete_if_empty="true" />
+            </optional>
         </item>
         <item name="Subway" icon="presets/rail_light.png" type="way">
             <label text="Edit Subway" />
             <space />
             <key key="railway" value="subway" />
-            <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+            <optional>
+                <combo key="gauge" text="Gauge (mm)" values="381,400,457,500,610,760,891,950,1000,1067,1435,1495,1520,1524,1600,1668,1676" default="" delete_if_empty="true" />
+                <combo key="service" text="Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+                <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" default="" delete_if_empty="true" />
+                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" default="" delete_if_empty="true" />
+                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" default="" delete_if_empty="true" />
+            </optional>
         </item>
         <item name="Tram" icon="presets/tram.png" type="way">
             <label text="Edit Tram" />
             <space />
             <key key="railway" value="tram" />
-            <combo key="service" text="Optional Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+            <optional>
+                <combo key="gauge" text="Gauge (mm)" values="381,400,457,500,610,760,891,950,1000,1067,1435,1495,1520,1524,1600,1668,1676" default="" delete_if_empty="true" />
+                <combo key="service" text="Types" values="yard,siding,spur" default="" delete_if_empty="true" />
+                <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" default="" delete_if_empty="true" />
+                <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" default="" delete_if_empty="true" />
+                <combo key="frequency" text="Frequency (Hz)" values="0,16.7,50,60" default="" delete_if_empty="true" />
+            </optional>
         </item>
         <item name="Bus Guideway" icon="presets/busway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=bus_guideway" />
@@ -1212,6 +1281,10 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=turntable" />
             <key key="railway" value="turntable" />
         </item>
+        <item name="Buffer Stop" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway%3Dbuffer_stop" />
+            <key key="railway" value="buffer_stop" />
+        </item>
     </group> <!-- Railway -->
     <group name="Aerialway" icon="presets/aerialway.png">
         <item name="Chair Lift" icon="presets/chair_lift.png" type="way">
@@ -1239,9 +1312,15 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Station" name_context="aerialway" icon="presets/aerialway_station.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps" />
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#aerialway" />
             <label text="Edit Station" text_context="aerialway" />
             <key key="aerialway" value="station" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Pylon" name_context="aerialway" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#aerialway" />
+            <label text="Edit Pylon" text_context="aerialway" />
+            <key key="aerialway" value="pylon" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Aerialway -->
@@ -1253,9 +1332,26 @@ are supplied, then "values" will be treated as "display_values" and translated i
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=fuel" />
             <label text="Edit Fuel" />
             <key key="amenity" value="fuel" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <text key="operator" text="Operator" default="" delete_if_empty="true" />
-            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+            <combo key="operator" text="Operator" values="Agip,Aral,Avia,BP,Esso,OMV,Q8,Repsol,Shell,Statoil,Tamoil,Texaco,Total,Indipend." default="" delete_if_empty="true" />
+            <optional>
+				<text key="name" text="Name" default="" delete_if_empty="true" />
+				<combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+				<label text="Fuel types:" />
+				<check key="fuel:diesel" text="Diesel" default="off" delete_if_empty="true" />
+				<check key="fuel:biodiesel" text="Bio Diesel" default="off" delete_if_empty="true" />
+				<check key="fuel:GTL_diesel" text="Diesel (Gas To Liquid - ultimate diesel)" default="off" delete_if_empty="true" />
+				<check key="fuel:HGV_diesel" text="Diesel for Heavy Good Vehicles" default="off" delete_if_empty="true" />
+				<check key="fuel:octane 91" text="Octane 91" default="off" delete_if_empty="true" />
+				<check key="fuel:octane 95" text="Octane 95" default="off" delete_if_empty="true" />
+				<check key="fuel:octane 98" text="Octane 98" default="off" delete_if_empty="true" />
+				<check key="fuel:octane 100" text="Octane 100" default="off" delete_if_empty="true" />
+				<check key="fuel:e10" text="E10 (10% Ethanol mix)" default="off" delete_if_empty="true" />
+				<check key="fuel:e85" text="E85 (85% Ethanol mix)" default="off" delete_if_empty="true" />
+				<check key="fuel:lpg" text="LPG (Liquefied petroleum gas)" default="off" delete_if_empty="true" />
+				<check key="fuel:cng" text="CNG (Compressed Natural Gas)" default="off" delete_if_empty="true" />
+				<check key="fuel:1_25" text="1/25 mix (mofa/moped)" default="off" delete_if_empty="true" />
+				<check key="fuel:1_50" text="1/50 mix (mofa/moped)" default="off" delete_if_empty="true" />
+            </optional>
         </item>
         <item name="Parking" icon="presets/parking.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=parking"
@@ -1411,19 +1507,78 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="amenity" value="taxi" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <separator/>
-        <item name="Airport" icon="presets/plane.png" type="node,closedway">
+    </group> <!-- Public Transport -->
+    <separator/>
+    <group name="Airport" icon="presets/plane.png">
+        <item name="Airport Ground" icon="presets/plane.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=aerodrome" />
-            <label text="Edit Airport" />
+            <label text="Edit Airport Ground" />
             <key key="aeroway" value="aerodrome" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <optional>
-                <text key="ref" text="Reference" default="" delete_if_empty="true" />
                 <text key="iata" text="IATA" default="" delete_if_empty="true" />
                 <text key="icao" text="ICAO" default="" delete_if_empty="true" />
             </optional>
         </item>
-    </group> <!-- Public Transport -->
+        <separator/>
+        <item name="Runway" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=runway" />
+            <label text="Edit Runway" />
+            <key key="aeroway" value="runway" />
+            <optional>
+                <text key="ref" text="Reference" default="" delete_if_empty="true" />
+            </optional>
+        </item>
+        <item name="Taxiway" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=taxiway" />
+            <label text="Edit Taxiway" />
+            <key key="aeroway" value="taxiway" />
+            <optional>
+                <text key="ref" text="Reference" default="" delete_if_empty="true" />
+            </optional>
+        </item>
+        <item name="Helipad" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=helipad" />
+            <label text="Edit Helipad" />
+            <key key="aeroway" value="helipad" />
+            <optional>
+                <text key="ref" text="Reference" default="" delete_if_empty="true" />
+            </optional>
+        </item>
+        <item name="Apron" type="closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=apron" />
+            <label text="Apron" />
+            <key key="aeroway" value="apron" />
+        </item>
+        <item name="Hangar" type="closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=hangar" />
+            <label text="Hangar" />
+            <key key="building" value="hangar" />
+        </item>
+        <item name="Beacon" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dbeacon" />
+            <label text="Beacon" />
+            <key key="man_made" value="beacon" />
+        </item>
+        <item name="Windsock" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=windsock" />
+            <label text="Windsock" />
+            <key key="aeroway" value="windsock" />
+        </item>
+        <separator/>
+        <item name="Terminal" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=terminal" />
+            <label text="Edit Terminal" />
+            <key key="aeroway" value="terminal" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Gate" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=gate" />
+            <label text="Edit Terminal Gate" />
+            <key key="aeroway" value="gate" />
+            <text key="ref" text="Reference" default="" delete_if_empty="true" />
+        </item>
+    </group> <!-- Aeroway -->
   </group>
   <group name="Travel" icon="presets/bed.png">
     <group name="Accomodation" icon="presets/bed.png">
@@ -1482,7 +1637,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Restaurant" />
             <key key="amenity" value="restaurant" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebab,turkish,asian,thai,mexican,japanese" default="" delete_if_empty="true" />
+            <combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebab,turkish,asian,thai,mexican,japanese,french,sandwich,sushi" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Fast Food" icon="presets/fastfood.png" type="node,closedway">
@@ -1490,7 +1645,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Fast Food Restaurant" />
             <key key="amenity" value="fast_food" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebab,turkish,asian,thai,mexican,japanese" default="" delete_if_empty="true" />
+            <combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebab,turkish,asian,thai,mexican,japanese,french,sandwich,sushi,fish_and_chips,chicken" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Cafe" icon="presets/cafe.png" type="node,closedway">
@@ -1883,7 +2038,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Skiing" icon="presets/skiing_downhill.png" type="node,closedway">
+        <item name="Skiing" icon="presets/skiing_downhill.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps"/>
             <label text="Edit Skiing" />
             <key key="sport" value="skiing" />
@@ -2195,7 +2350,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Pipeline" />
             <key key="man_made" value="pipeline" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
-            <combo key="type" text="Type" values="water,oil,gas,sewage,heat,any substance" default="" delete_if_empty="true" />
+            <combo key="type" text="Type" values="water,gas,heat,oil,sewage,any substance" default="" delete_if_empty="true" />
             <combo key="location" text="Location" values="underground,underwater,overground" default="" delete_if_empty="true" />
         </item>
         <item name="Wastewater Plant" icon="presets/wastewater_plant.png" type="node,closedway">
@@ -2229,6 +2384,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Surveillance Camera" />
             <key key="man_made" value="surveillance" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="surveillance" text="Type" values="indoor,outdoor,public" default="" />
         </item>
         <separator/>
         <item name="Power Generator" icon="presets/power.png" type="node,closedway">
@@ -2257,7 +2413,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <text key="ref" text="Line reference" default="" delete_if_empty="true" />
         </item>
-        <item name="Power Tower" icon="presets/power_tower.png" type="node">
+        <item name="Power Tower" icon="presets/power_tower.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=tower"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=tower"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:power=tower"
@@ -2273,7 +2429,8 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="power" text="Line type" values="line,minor_line" default="line" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <text key="ref" text="Line reference" default="" delete_if_empty="true" />
-            <text key="voltage" text="Voltage" default="" delete_if_empty="true" />
+			<!-- TODO: voltage values used are a mixture of power lines and railways - needs cleanup -->
+            <combo key="voltage" text="Voltage" values="3000,10000,15000,20000,25000,110000,220000,380000" default="" delete_if_empty="true" />
             <text key="cables" text="Amount of Cables" default="" delete_if_empty="true" />
             <combo key="wires" text="Number of wires (better: conductors) per power cable" values="single,double,triple,quad" default="" delete_if_empty="true" />
         </item>
@@ -2319,6 +2476,11 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="recycling:paper" text="Paper" default="off" delete_if_empty="true" />
             <check key="recycling:scrap_metal" text="Scrap Metal" default="off" delete_if_empty="true" />
         </item>
+        <item name="Waste Basket" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dwaste_basket" />
+            <label text="Edit Waste Basket" />
+            <key key="amenity" value="waste_basket" />
+        </item>
         <item name="Bench" icon="presets/bench.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bench" />
             <key key="amenity" value="bench" />
@@ -2348,6 +2510,12 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Drinking Water" />
             <key key="amenity" value="drinking_water" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Fire Hydrant" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=fire hydrant"
+                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:fire hydrant" />
+            <label text="Edit Fire Hydrant" />
+            <key key="amenity" value="fire_hydrant" />
         </item>
         <item name="Baby Hatch" icon="presets/empty.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=baby_hatch" />
