@@ -67,7 +67,7 @@ public class DatasetConsistencyTest {
 
     private void searchNodes() {
         for (Node n:dataSet.getNodes()) {
-            if (!n.isIncomplete()) {
+            if (!n.isIncomplete() && !n.isDeleted()) {
                 LatLon c = n.getCoor();
                 BBox box = new BBox(new LatLon(c.lat() - 0.0001, c.lon() - 0.0001), new LatLon(c.lat() + 0.0001, c.lon() + 0.0001));
                 if (!dataSet.searchNodes(box).contains(n)) {
@@ -79,7 +79,7 @@ public class DatasetConsistencyTest {
 
     private void searchWays() {
         for (Way w:dataSet.getWays()) {
-            if (!w.isIncomplete() && !dataSet.searchWays(w.getBBox()).contains(w)) {
+            if (!w.isIncomplete() && !w.isDeleted() && !dataSet.searchWays(w.getBBox()).contains(w)) {
                 writer.println(String.format("%s not found using Dataset.searchWays()", w));
             }
         }

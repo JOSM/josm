@@ -21,7 +21,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  * (it's no longer necessary to register for layer events and reregister every time
  * new layer is selected)
  *
- * Events in EDT are supported, see {@link #addDatasetListener(DataSetListener, boolean)}
+ * Events in EDT are supported, see {@link #addDatasetListener(DataSetListener, FireMode}
  *
  */
 public class DatasetEventManager implements MapView.EditLayerChangeListener, Listener {
