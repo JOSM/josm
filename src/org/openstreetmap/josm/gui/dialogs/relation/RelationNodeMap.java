@@ -87,7 +87,6 @@ public class RelationNodeMap {
             Map.Entry<Node,TreeSet<Integer>> nodeLinks = it.next();
 
             if (nodeLinks.getValue().size() < 2) {
-//                System.err.println("DELETE: "+nodeLinks.getKey()+" "+nodeLinks.getValue());
                 if (nodeLinks.getValue().size() != 1) throw new AssertionError();
 
                 Integer d_way = nodeLinks.getValue().iterator().next();
@@ -97,16 +96,7 @@ public class RelationNodeMap {
                 it.remove();
                 continue;
             }
-//            System.err.println(nodeLinks.getKey()+" "+nodeLinks.getValue());
-
         }
-//        System.err.println("");
-//        System.err.println(remaining);
-//        System.err.println("");
-//        System.err.println(nodesMap);
-//        System.err.println("");
-//        System.err.println(waysMap);
-
     }
 
     private void addPair(Node n, int i) {
@@ -131,17 +121,13 @@ public class RelationNodeMap {
      * Return null if there is no such member left.
      */
     public Integer popAdjacent(Integer i) {
-//        System.err.print("Adjacent["+i+"]:");
         TreeSet<Node> nodes = waysMap.get(i);
-//        System.err.print(nodes);
         for (Node n : nodes) {
-//            System.err.print(" {"+n.getId()+"} ");
             TreeSet<Integer> adj = nodesMap.get(n);
             if (!adj.isEmpty()) {
                 Integer j = adj.iterator().next();
                 done(j);
                 waysMap.get(j).remove(n);
-//                System.err.println(j);
                 return j;
             }
         }

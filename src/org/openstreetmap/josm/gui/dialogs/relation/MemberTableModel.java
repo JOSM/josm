@@ -545,7 +545,19 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
                 selectedIndices.add(idx);
             }
         }
+        setSelectedMembersIdx(selectedIndices);
+    }
 
+    /**
+     * Selects the members in the collection selectedIndices
+     *
+     * @param selectedIndices the collection of selected member indices
+     */
+    public void setSelectedMembersIdx(Collection<Integer> selectedIndices) {
+        if (selectedIndices == null || selectedIndices.isEmpty()) {
+            getSelectionModel().clearSelection();
+            return;
+        }
         // select the members
         //
         getSelectionModel().setValueIsAdjusting(true);
@@ -739,14 +751,15 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     }
 
     /**
-     * Sort the relation members by the way they are linked.
+     * Sort the selected relation members by the way they are linked.
      */
     void sort() {
         ArrayList<RelationMember> selectedMembers = new ArrayList<RelationMember>(getSelectedMembers());
         ArrayList<RelationMember> sortedMembers = null;
         ArrayList<RelationMember> newMembers;
-        if (selectedMembers.isEmpty()) {
+        if (selectedMembers.size() <= 1) {
             newMembers = sortMembers(members);
+            sortedMembers = newMembers;
         } else {
             sortedMembers = sortMembers(selectedMembers);
             List<Integer> selectedIndices = getSelectedIndices();
@@ -773,14 +786,6 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     }
 
     /**
-     * Reverse the relation members.
-     */
-    void reverse() {
-        Collections.reverse(members);
-        fireTableDataChanged();
-    }
-
-    /**
      * Determines the direction of way k with respect to the way ref_i.
      * The way ref_i is assumed to have the direction ref_direction and
      * to be the predecessor of k.
@@ -789,7 +794,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      *
      * Else the direction is given as follows:
      * Let the relation be a route of oneway streets, and someone travels them in the given order.
-     * Direction is FORWARD for if it is legel and BACKWARD if it is illegal to do so for the given way.
+     * Direction is FORWARD if it is legel and BACKWARD if it is illegal to do so for the given way.
      *
      **/
     private Direction determineDirection(int ref_i,Direction ref_direction, int k) {
@@ -854,7 +859,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     /**
      * determine, if the way i is a roundabout and if yes, what type of roundabout
      */
-    private Direction roundaboutType(int i) { //FIXME
+    private Direction roundaboutType(int i) {
         RelationMember m = members.get(i);
         if (m == null || !m.isWay()) return NONE;
         Way w = m.getWay();
@@ -890,6 +895,34 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
 
     public void tableChanged(TableModelEvent e) {
         connectionType = null;
+    }
+
+    /**
+     * Reverse the relation members.
+     */
+    void reverse() {
+        List<Integer> selectedIndices = getSelectedIndices();
+        List<Integer> selectedIndicesReversed = getSelectedIndices();
+
+        if (selectedIndices.size() <= 1) {
+            Collections.reverse(members);
+            fireTableDataChanged();
+            setSelectedMembers(members);
+        } else {
+            Collections.reverse(selectedIndicesReversed);
+
+            ArrayList<RelationMember> newMembers = new ArrayList<RelationMember>(members);
+
+            for (int i=0; i < selectedIndices.size(); i++) {
+                newMembers.set(selectedIndices.get(i), members.get(selectedIndicesReversed.get(i)));
+            }
+
+            if (members.size() != newMembers.size()) throw new AssertionError();
+            members.clear();
+            members.addAll(newMembers);
+            fireTableDataChanged();
+            setSelectedMembersIdx(selectedIndices);
+        }
     }
 
     /**
