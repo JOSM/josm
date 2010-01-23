@@ -483,6 +483,9 @@ public class ToggleDialog extends JPanel implements Helpful {
      */
     public void setTitle(String title) {
         titleBar.setTitle(title);
+        if (detachedDialog != null) {
+            detachedDialog.setTitle(title);
+        }
     }
 
     protected void setIsShowing(boolean val) {
