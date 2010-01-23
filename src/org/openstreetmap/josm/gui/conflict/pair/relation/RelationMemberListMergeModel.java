@@ -100,7 +100,7 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
         OsmPrimitive primitive = myDataset.getPrimitiveById(entry.getMember());
         if (primitive.isDeleted()) {
             JOptionPane.showMessageDialog(null,
-                    tr("Primitive {0} cannot be added to the relation because it was removed.",
+                    tr("Primitive {0} cannot be added to the relation because it was deleted.",
                             primitive.getDisplayName(DefaultNameFormatter.getInstance())));
             return null;
         } else

@@ -4,20 +4,23 @@ package org.openstreetmap.josm.gui.conflict.pair.nodes;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.command.WayNodesConflictResolverCommand;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.ListRole;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public class NodeListMergeModel extends ListMergeModel<Node>{
+    //private static final Logger logger = Logger.getLogger(NodeListMergeModel.class.getName());
 
-    private static final Logger logger = Logger.getLogger(NodeListMergeModel.class.getName());
+    private DataSet myDataset;
 
     /**
      * Populates the model with the nodes in the two {@see Way}s <code>my</code> and
@@ -29,6 +32,8 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
      * @exception IllegalArgumentException  thrown, if their is null
      */
     public void populate(Way my, Way their) {
+        this.myDataset = my.getDataSet();
+
         CheckParameterUtil.ensureParameterNotNull(my, "my");
         CheckParameterUtil.ensureParameterNotNull(their, "their");
         getMergedEntries().clear();
@@ -83,6 +88,11 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
 
     @Override
     protected Node cloneEntryForMergedList(Node entry) {
-        return entry;
+        Node node = (Node) myDataset.getPrimitiveById(entry);
+        if (node.isDeleted()) {
+            JOptionPane.showMessageDialog(null, tr("Node {0} cannot be added to the way because it was deleted", node.getDisplayName(DefaultNameFormatter.getInstance())));
+            return null;
+        } else
+            return node;
     }
 }
