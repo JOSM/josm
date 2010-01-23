@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.history.HistoryNameFormatter;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
@@ -196,7 +197,20 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             }
 
             int mbno = relation.getMembersCount();
-            name += trn("{0} member", "{0} members", mbno, mbno) + ")";
+            name += trn("{0} member", "{0} members", mbno, mbno);
+
+            boolean incomplete = false;
+            for (RelationMember m : relation.getMembers()) {
+                if (m.getMember().isIncomplete()) {
+                    incomplete = true;
+                    break;
+                }
+            }
+            if (incomplete) {
+                name += ", "+tr("incomplete");
+            }
+
+            name += ")";
         }
         name = decorateNameWithId(name, relation);
         return name;

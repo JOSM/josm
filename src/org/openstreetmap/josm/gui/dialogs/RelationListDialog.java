@@ -94,7 +94,15 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         model = new RelationListModel(selectionModel);
         displaylist = new JList(model);
         displaylist.setSelectionModel(selectionModel);
-        displaylist.setCellRenderer(new OsmPrimitivRenderer());
+        displaylist.setCellRenderer(new OsmPrimitivRenderer() {
+            /**
+             * Don't show the default tooltip in the relation list.
+             */
+            @Override
+            protected String getComponentToolTipText(OsmPrimitive value) {
+                return null;
+            }
+        });
         displaylist.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         displaylist.addMouseListener(new MouseEventHandler());
         add(new JScrollPane(displaylist), BorderLayout.CENTER);

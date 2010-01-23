@@ -66,9 +66,9 @@ public class OsmPrimitivRenderer implements ListCellRenderer, TableCellRenderer 
      */
     private Component renderer(Component def, OsmPrimitive value) {
         if (def != null && value != null && def instanceof JLabel) {
-            ((JLabel)def).setText(value.getDisplayName(DefaultNameFormatter.getInstance()));
+            ((JLabel)def).setText(getComponentText(value));
             ((JLabel)def).setIcon(ImageProvider.get(value.getType()));
-            ((JLabel)def).setToolTipText(formatter.buildDefaultToolTip(value));
+            ((JLabel)def).setToolTipText(getComponentToolTipText(value));
         }
         return def;
     }
@@ -87,5 +87,19 @@ public class OsmPrimitivRenderer implements ListCellRenderer, TableCellRenderer 
             ((JLabel)def).setToolTipText(formatter.buildDefaultToolTip(value));
         }
         return def;
+    }
+
+    /**
+     * Can be overridden to customize the Text
+     */
+    protected String getComponentText(OsmPrimitive value) {
+        return value.getDisplayName(DefaultNameFormatter.getInstance());
+    }
+
+    /**
+     * Can be overridden to customize the ToolTipText
+     */
+    protected String getComponentToolTipText(OsmPrimitive value) {
+        return formatter.buildDefaultToolTip(value);
     }
 }
