@@ -553,7 +553,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
                 Main.pref.put("tags.direction", builder.toString());
             }
 
-            String defaultValue = "oneway=* | incline=* | incline_steep=* | aerialway=*";
+            String defaultValue = "oneway? | incline=* | incline_steep=* | aerialway=* | waterway=stream | waterway=river | waterway=canal | waterway=drain | \"piste:type\"=downhill | \"piste:type\"=sled | man_made=\"piste:halfpipe\" ";
             try {
                 directionKeys = SearchCompiler.compile(Main.pref.get("tags.direction", defaultValue), false, false);
             } catch (ParseError e) {
