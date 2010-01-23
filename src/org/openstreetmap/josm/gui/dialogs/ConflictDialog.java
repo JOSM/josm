@@ -45,7 +45,6 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -55,7 +54,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * dialog on the right of the main frame.
  *
  */
-public final class ConflictDialog extends ToggleDialog implements MapView.LayerChangeListener, IConflictListener, SelectionChangedListener{
+public final class ConflictDialog extends ToggleDialog implements MapView.EditLayerChangeListener, IConflictListener, SelectionChangedListener{
 
     static public Color getColor() {
         return Main.pref.getColor(marktr("conflict"), Color.gray);
@@ -71,8 +70,6 @@ public final class ConflictDialog extends ToggleDialog implements MapView.LayerC
 
     private ResolveAction actResolve;
     private SelectAction actSelect;
-
-    private OsmDataLayer layer = null;
 
     /**
      * builds the GUI
@@ -124,12 +121,13 @@ public final class ConflictDialog extends ToggleDialog implements MapView.LayerC
     @Override
     public void showNotify() {
         DataSet.selListeners.add(this);
-        MapView.addLayerChangeListener(this);
+        MapView.addEditLayerChangeListener(this);
+        refreshView();
     }
 
     @Override
     public void hideNotify() {
-        MapView.removeLayerChangeListener(this);
+        MapView.removeEditLayerChangeListener(this);
         DataSet.selListeners.remove(this);
     }
 
@@ -163,6 +161,8 @@ public final class ConflictDialog extends ToggleDialog implements MapView.LayerC
      * refreshes the view of this dialog
      */
     public final void refreshView() {
+        OsmDataLayer editLayer =  Main.main.getEditLayer();
+        conflicts = editLayer == null?new ConflictCollection():editLayer.getConflicts();
         model.fireContentChanged();
     }
 
@@ -209,6 +209,17 @@ public final class ConflictDialog extends ToggleDialog implements MapView.LayerC
         }
     }
 
+    public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
+        if (oldLayer != null) {
+            oldLayer.getConflicts().removeConflictListener(this);
+        }
+        if (newLayer != null) {
+            newLayer.getConflicts().addConflictListener(this);
+        }
+        refreshView();
+    }
+
+
     /**
      * replies the conflict collection currently held by this dialog; may be null
      *
@@ -216,34 +227,6 @@ public final class ConflictDialog extends ToggleDialog implements MapView.LayerC
      */
     public ConflictCollection getConflicts() {
         return conflicts;
-    }
-
-    /**
-     * invoked if the active {@see Layer} changes
-     */
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        if (oldLayer instanceof OsmDataLayer) {
-            this.layer = (OsmDataLayer)oldLayer;
-            this.layer.getConflicts().removeConflictListener(this);
-        }
-        this.layer = null;
-        if (newLayer instanceof OsmDataLayer) {
-            this.layer = (OsmDataLayer)newLayer;
-            layer.getConflicts().addConflictListener(this);
-            this.conflicts = layer.getConflicts();
-        }
-        refreshView();
-    }
-
-    public void layerAdded(Layer newLayer) {
-        // ignore
-    }
-
-    public void layerRemoved(Layer oldLayer) {
-        if (this.layer == oldLayer) {
-            this.layer = null;
-            refreshView();
-        }
     }
 
     public void onConflictsAdded(ConflictCollection conflicts) {
@@ -375,4 +358,5 @@ public final class ConflictDialog extends ToggleDialog implements MapView.LayerC
             setEnabled(enabled);
         }
     }
+
 }
