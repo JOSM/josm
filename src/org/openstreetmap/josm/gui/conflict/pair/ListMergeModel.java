@@ -11,9 +11,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Observable;
 
 import javax.swing.AbstractListModel;
@@ -228,13 +228,7 @@ public abstract class ListMergeModel<T> extends Observable {
     }
 
     protected void copyToTop(ListRole role, int []rows) {
-        if (rows == null || rows.length == 0)
-            return;
-        for (int i = rows.length - 1; i >= 0; i--) {
-            int row = rows[i];
-            T n = entries.get(role).get(row);
-            entries.get(MERGED_ENTRIES).add(0, cloneEntryForMergedList(n));
-        }
+        copy(role, rows, 0);
         fireModelDataChanged();
         mergedEntriesSelectionModel.setSelectionInterval(0, rows.length -1);
     }
@@ -271,15 +265,9 @@ public abstract class ListMergeModel<T> extends Observable {
      */
 
     public void copyToEnd(ListRole source, int [] rows) {
-        if (rows == null || rows.length == 0)
-            return;
-        ArrayList<T> mergedEntries = getMergedEntries();
-        for (int row : rows) {
-            T n = entries.get(source).get(row);
-            mergedEntries.add(cloneEntryForMergedList(n));
-        }
+        copy(source, rows, getMergedEntriesSize());
         fireModelDataChanged();
-        mergedEntriesSelectionModel.setSelectionInterval(mergedEntries.size()-rows.length, mergedEntries.size() -1);
+        mergedEntriesSelectionModel.setSelectionInterval(getMergedEntriesSize()-rows.length, getMergedEntriesSize() -1);
 
     }
 
@@ -305,6 +293,18 @@ public abstract class ListMergeModel<T> extends Observable {
         copyToEnd(THEIR_ENTRIES, rows);
     }
 
+    private void copy(ListRole sourceRole, int[] rows, int position) {
+        List<T> newItems = new ArrayList<T>(rows.length);
+        List<T> source = entries.get(sourceRole);
+        for (int row: rows) {
+            T clone = cloneEntryForMergedList(source.get(row));
+            if (clone != null) {
+                newItems.add(clone);
+            }
+        }
+        getMergedEntries().addAll(position, newItems);
+    }
+
     /**
      * Copies the nodes given by indices in rows from the list of  nodes <code>source</code> to the
      * list of merged nodes. Inserts the nodes before row given by current.
@@ -316,16 +316,7 @@ public abstract class ListMergeModel<T> extends Observable {
      *
      */
     protected void copyBeforeCurrent(ListRole source, int [] rows, int current) {
-        if (rows == null || rows.length == 0)
-            return;
-        ArrayList<T> mergedEntries = getMergedEntries();
-        if (current < 0 || current >= mergedEntries.size())
-            throw new IllegalArgumentException(MessageFormat.format("Parameter current out of range. Got {0}.", current));
-        for (int i=rows.length -1; i>=0; i--) {
-            int row = rows[i];
-            T n = entries.get(source).get(row);
-            mergedEntries.add(current, cloneEntryForMergedList(n));
-        }
+        copy(source, rows, current);
         fireModelDataChanged();
         mergedEntriesSelectionModel.setSelectionInterval(current, current + rows.length-1);
     }
@@ -367,21 +358,7 @@ public abstract class ListMergeModel<T> extends Observable {
      *
      */
     protected void copyAfterCurrent(ListRole source, int [] rows, int current) {
-        if (rows == null || rows.length == 0)
-            return;
-        ArrayList<T> mergedEntries = getMergedEntries();
-
-        if (current < 0 || current >= mergedEntries.size())
-            throw new IllegalArgumentException(MessageFormat.format("Parameter current out of range. Got {0}.", current));
-        if (current == mergedEntries.size() -1) {
-            copyToEnd(source, rows);
-        } else {
-            for (int i=rows.length -1; i>=0; i--) {
-                int row = rows[i];
-                T n = entries.get(source).get(row);
-                mergedEntries.add(current+1, cloneEntryForMergedList(n));
-            }
-        }
+        copy(source, rows, current + 1);
         fireModelDataChanged();
         mergedEntriesSelectionModel.setSelectionInterval(current+1, current + rows.length-1);
         notifyObservers();
@@ -550,7 +527,7 @@ public abstract class ListMergeModel<T> extends Observable {
             ListMergeModel.this.setValueAt(this, value,row,col);
         }
 
-        public ListMergeModel getListMergeModel() {
+        public ListMergeModel<T> getListMergeModel() {
             return ListMergeModel.this;
         }
 

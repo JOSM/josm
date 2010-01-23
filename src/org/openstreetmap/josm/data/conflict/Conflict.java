@@ -17,8 +17,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
  *
  */
 public class  Conflict<T extends OsmPrimitive> {
-    private T my;
-    private T their;
+    private final T my;
+    private final T their;
 
     public Conflict(T my, T their) {
         this.my = my;

@@ -3,14 +3,17 @@ package org.openstreetmap.josm.gui.conflict.pair.relation;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.ArrayList;
-import java.util.logging.Logger;
+import java.util.List;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.command.RelationMemberConflictResolverCommand;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.ListRole;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -19,8 +22,9 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  */
 public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>{
+    //private static final Logger logger = Logger.getLogger(RelationMemberListMergeModel.class.getName());
 
-    private static final Logger logger = Logger.getLogger(RelationMemberListMergeModel.class.getName());
+    private DataSet myDataset;
 
     @Override
     public boolean isEqualEntry(RelationMember e1, RelationMember e2) {
@@ -64,6 +68,8 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
      * @throws IllegalArgumentException if their is null
      */
     public void populate(Relation my, Relation their) {
+        this.myDataset = my.getDataSet();
+
         CheckParameterUtil.ensureParameterNotNull(my, "my");
         CheckParameterUtil.ensureParameterNotNull(their, "their");
 
@@ -91,7 +97,14 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
 
     @Override
     protected RelationMember cloneEntryForMergedList(RelationMember entry) {
-        return new RelationMember(entry);
+        OsmPrimitive primitive = myDataset.getPrimitiveById(entry.getMember());
+        if (primitive.isDeleted()) {
+            JOptionPane.showMessageDialog(null,
+                    tr("Primitive {0} cannot be added to the relation because it was removed.",
+                            primitive.getDisplayName(DefaultNameFormatter.getInstance())));
+            return null;
+        } else
+            return new RelationMember(entry.getRole(), primitive);
     }
 
     /**
@@ -109,7 +122,7 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
         CheckParameterUtil.ensureParameterNotNull(their, "their");
         if (! isFrozen())
             throw new IllegalArgumentException(tr("Merged nodes not frozen yet. Cannot build resolution command"));
-        ArrayList<RelationMember> entries = getMergedEntries();
+        List<RelationMember> entries = getMergedEntries();
         return new RelationMemberConflictResolverCommand(my, their, entries);
     }
 }
