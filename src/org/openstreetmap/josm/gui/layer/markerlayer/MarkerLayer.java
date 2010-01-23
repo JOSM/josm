@@ -153,17 +153,20 @@ public class MarkerLayer extends Layer {
     }
 
     @Override public void paint(Graphics2D g, MapView mv, Bounds box) {
-        boolean mousePressedTmp = mousePressed;
-        Point mousePos = mv.getMousePosition();
         String mkrTextShow = Main.pref.get("marker.show "+getName(), "show");
-
         g.setColor(getColor(getName()));
 
-        for (Marker mkr : data) {
-            if (mousePos != null && mkr.containsPoint(mousePos)) {
-                mkr.paint(g, mv, mousePressedTmp, mkrTextShow);
-                mousePressedTmp = false;
-            } else {
+        if (mousePressed) {
+            boolean mousePressedTmp = mousePressed;
+            Point mousePos = mv.getMousePosition(); // Get mouse position only when necessary (it's the slowest part of marker layer painting)
+            for (Marker mkr : data) {
+                if (mousePos != null && mkr.containsPoint(mousePos)) {
+                    mkr.paint(g, mv, mousePressedTmp, mkrTextShow);
+                    mousePressedTmp = false;
+                }
+            }
+        } else {
+            for (Marker mkr : data) {
                 mkr.paint(g, mv, false, mkrTextShow);
             }
         }
