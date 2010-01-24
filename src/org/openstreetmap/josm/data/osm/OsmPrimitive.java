@@ -107,6 +107,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     private static final int FLAG_FILTERED = 1 << 4;
     private static final int FLAG_HAS_DIRECTIONS = 1 << 5;
     private static final int FLAG_TAGGED = 1 << 6;
+    private static final int FLAG_DIRECTION_REVERSED = 1 << 7;
 
     /**
      * Replies the sub-collection of {@see OsmPrimitive}s of type <code>type</code> present in
@@ -531,39 +532,50 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     private static volatile Match directionKeys = null;
+    private static volatile Match reversedDirectionKeys = null;
 
     /**
      * Contains a list of direction-dependent keys that make an object
      * direction dependent.
      * Initialized by checkDirectionTagged()
      */
-    public static void initDirectionKeys() {
-        if(directionKeys == null) {
-
-            // Legacy support - convert list of keys to search pattern
-            if (Main.pref.isCollection("tags.direction", false)) {
-                System.out.println("Collection of keys in tags.direction is no longer supported, value will converted to search pattern");
-                Collection<String> keys = Main.pref.getCollection("tags.direction", null);
-                StringBuilder builder = new StringBuilder();
-                for (String key:keys) {
-                    builder.append(key);
-                    builder.append("=* | ");
-                }
-                builder.delete(builder.length() - 3, builder.length());
-                Main.pref.put("tags.direction", builder.toString());
+    static {
+        // Legacy support - convert list of keys to search pattern
+        if (Main.pref.isCollection("tags.direction", false)) {
+            System.out.println("Collection of keys in tags.direction is no longer supported, value will converted to search pattern");
+            Collection<String> keys = Main.pref.getCollection("tags.direction", null);
+            StringBuilder builder = new StringBuilder();
+            for (String key:keys) {
+                builder.append(key);
+                builder.append("=* | ");
             }
+            builder.delete(builder.length() - 3, builder.length());
+            Main.pref.put("tags.direction", builder.toString());
+        }
 
-            String defaultValue = "oneway? | incline=* | incline_steep=* | aerialway=* | waterway=stream | waterway=river | waterway=canal | waterway=drain | \"piste:type\"=downhill | \"piste:type\"=sled | man_made=\"piste:halfpipe\" ";
+        String reversedDirectionDefault = "oneway=\"-1\" | incline=down | incline=\"-*\"";
+        String directionDefault = "oneway? | incline=* | aerialway=* | waterway=stream | waterway=river | waterway=canal | waterway=drain | waterway=rapids | \"piste:type\"=downhill | \"piste:type\"=sled | man_made=\"piste:halfpipe\" ";
+
+        try {
+            reversedDirectionKeys = SearchCompiler.compile(Main.pref.get("tags.reversed_direction", reversedDirectionDefault), false, false);
+        } catch (ParseError e) {
+            System.err.println("Unable to compile pattern for tags.reversed_direction, trying default pattern: " + e.getMessage());
+
             try {
-                directionKeys = SearchCompiler.compile(Main.pref.get("tags.direction", defaultValue), false, false);
-            } catch (ParseError e) {
-                System.err.println("Unable to compile pattern for tags.direction, trying default pattern: " + e.getMessage());
+                reversedDirectionKeys = SearchCompiler.compile(reversedDirectionDefault, false, false);
+            } catch (ParseError e2) {
+                throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage());
+            }
+        }
+        try {
+            directionKeys = SearchCompiler.compile(Main.pref.get("tags.direction", directionDefault), false, false);
+        } catch (ParseError e) {
+            System.err.println("Unable to compile pattern for tags.direction, trying default pattern: " + e.getMessage());
 
-                try {
-                    directionKeys = SearchCompiler.compile(defaultValue, false, false);
-                } catch (ParseError e2) {
-                    throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage());
-                }
+            try {
+                directionKeys = SearchCompiler.compile(directionDefault, false, false);
+            } catch (ParseError e2) {
+                throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage());
             }
         }
     }
@@ -575,6 +587,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @return  a list of direction-dependent keys that make an object
      * direction dependent.
      */
+    @Deprecated
     public static Collection<String> getDirectionKeys() {
         return Main.pref.getCollection("tags.direction",
                 Arrays.asList("oneway","incline","incline_steep","aerialway"));
@@ -862,7 +875,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     private void keysChangedImpl(Map<String, String> originalKeys) {
         clearCached();
-        updateHasDirectionKeys();
+        updateDirectionFlags();
         updateTagged();
         if (dataSet != null) {
             dataSet.fireTagsChanged(this, originalKeys);
@@ -1125,9 +1138,23 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return (flags & FLAG_TAGGED) != 0;
     }
 
-    private void updateHasDirectionKeys() {
-        initDirectionKeys();
+    private void updateDirectionFlags() {
+        boolean hasDirections = false;
+        boolean directionReversed = false;
+        if (reversedDirectionKeys.match(this)) {
+            hasDirections = true;
+            directionReversed = true;
+        }
         if (directionKeys.match(this)) {
+            hasDirections = true;
+        }
+
+        if (directionReversed) {
+            flags |= FLAG_DIRECTION_REVERSED;
+        } else {
+            flags &= ~FLAG_DIRECTION_REVERSED;
+        }
+        if (hasDirections) {
             flags |= FLAG_HAS_DIRECTIONS;
         } else {
             flags &= ~FLAG_HAS_DIRECTIONS;
@@ -1141,6 +1168,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return (flags & FLAG_HAS_DIRECTIONS) != 0;
     }
 
+    public boolean reversedDirection() {
+        return (flags & FLAG_DIRECTION_REVERSED) != 0;
+    }
     /**
      * Replies the name of this primitive. The default implementation replies the value
      * of the tag <tt>name</tt> or null, if this tag is not present.
@@ -1221,7 +1251,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     protected String getFlagsAsString() {
-
         StringBuilder builder = new StringBuilder();
 
         if (isIncomplete()) {
@@ -1239,11 +1268,19 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         if (isFiltered()) {
             builder.append("f");
         }
-
-        if (isDeleted()) {
+        if (isDisabled()) {
             builder.append("d");
         }
-
+        if (isTagged()) {
+            builder.append("T");
+        }
+        if (hasDirectionKeys()) {
+            if (reversedDirection()) {
+                builder.append("<");
+            } else {
+                builder.append(">");
+            }
+        }
         return builder.toString();
     }
 

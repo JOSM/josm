@@ -145,6 +145,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
         (even if the tag is negated as in oneway=false) or the way is selected */
         boolean showDirection = selected || ((!paintSettings.isUseRealWidth()) && (paintSettings.isShowDirectionArrow()
                 && (!paintSettings.isShowRelevantDirectionsOnly() || w.hasDirectionKeys())));
+        boolean reversedDirection = w.reversedDirection();
         /* head only takes over control if the option is true,
         the direction should be shown at all and not only because it's selected */
         boolean showOnlyHeadArrowOnly = showDirection && selected && paintSettings.isShowHeadArrowOnly();
@@ -188,20 +189,20 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
             for(LineElemStyle s : overlays) {
                 if(!s.over) {
                     painter.drawWay(w, s.color != null && selected ? myColor: s.color, s.getWidth(myWidth),
-                            s.getDashed(), s.dashedColor, false, false);
+                            s.getDashed(), s.dashedColor, false, false, false);
                 }
             }
         }
 
         /* draw the way */
-        painter.drawWay(w, myColor, myWidth, dashed, dashedColor, showDirection, showOnlyHeadArrowOnly);
+        painter.drawWay(w, myColor, myWidth, dashed, dashedColor, showDirection, selected ? false : reversedDirection, showOnlyHeadArrowOnly);
 
         /* draw overlays above the way */
         if(overlays != null)  {
             for(LineElemStyle s : overlays) {
                 if(s.over) {
                     painter.drawWay(w, s.color != null && selected ? myColor : s.color, s.getWidth(myWidth),
-                            s.getDashed(), s.dashedColor, false, false);
+                            s.getDashed(), s.dashedColor, false, false, false);
                 }
             }
         }

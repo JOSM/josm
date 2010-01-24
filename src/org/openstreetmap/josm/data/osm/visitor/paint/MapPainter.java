@@ -26,8 +26,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
 public class MapPainter {
-    private static final double PHI = Math.toRadians(20);
-
     private final Graphics2D g;
     private final NavigatableComponent nc;
     private final boolean inactive;
@@ -80,7 +78,7 @@ public class MapPainter {
     }
 
     public void drawWay(Way way, Color color, int width, float dashed[], Color dashedColor, boolean showDirection,
-            boolean showHeadArrowOnly) {
+            boolean reversedDirection, boolean showHeadArrowOnly) {
 
         GeneralPath path = new GeneralPath();
 
@@ -90,7 +88,7 @@ public class MapPainter {
             Node n = it.next();
             Point p = nc.getPoint(n);
             if(lastPoint != null) {
-                drawSegment(path, lastPoint, p, (showHeadArrowOnly ? !it.hasNext() : showDirection));
+                drawSegment(path, lastPoint, p, showHeadArrowOnly ? !it.hasNext() : showDirection, reversedDirection);
             }
             lastPoint = p;
         }
@@ -127,16 +125,34 @@ public class MapPainter {
         }
     }
 
-    private void drawSegment(GeneralPath path, Point p1, Point p2, boolean showDirection) {
+    private static final double PHI = Math.toRadians(20);
+    private static final double cosPHI = Math.cos(PHI);
+    private static final double sinPHI = Math.sin(PHI);
+
+    private void drawSegment(GeneralPath path, Point p1, Point p2, boolean showDirection, boolean reversedDirection) {
         if (isSegmentVisible(p1, p2)) {
+
+            /* draw segment line */
             path.moveTo(p1.x, p1.y);
             path.lineTo(p2.x, p2.y);
 
+            /* draw arrow */
             if (showDirection) {
-                double t = Math.atan2(p2.y-p1.y, p2.x-p1.x) + Math.PI;
-                path.lineTo((int)(p2.x + 10*Math.cos(t-PHI)), (int)(p2.y + 10*Math.sin(t-PHI)));
-                path.moveTo((int)(p2.x + 10*Math.cos(t+PHI)), (int)(p2.y + 10*Math.sin(t+PHI)));
-                path.lineTo(p2.x, p2.y);
+                Point q1 = p1;
+                Point q2 = p2;
+                if (reversedDirection) {
+                    q1 = p2;
+                    q2 = p1;
+                    path.moveTo(q2.x, q2.y);
+                }
+                final double l =  10. / q1.distance(q2);
+
+                final double sx = l * (q1.x - q2.x);
+                final double sy = l * (q1.y - q2.y);
+
+                path.lineTo (q2.x + (int) Math.round(cosPHI * sx - sinPHI * sy), q2.y + (int) Math.round(sinPHI * sx + cosPHI * sy));
+                path.moveTo (q2.x + (int) Math.round(cosPHI * sx + sinPHI * sy), q2.y + (int) Math.round(- sinPHI * sx + cosPHI * sy));
+                path.lineTo(q2.x, q2.y);
             }
         }
     }
