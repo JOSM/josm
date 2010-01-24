@@ -117,7 +117,7 @@ public class OpenFileAction extends DiskAccessAction {
                         if (f.isDirectory()) {
                             JOptionPane.showMessageDialog(
                                     Main.parent,
-                                    tr("<html>Cannot open directory.<br>Please select a file!"),
+                                    tr("<html>Cannot open directory.<br>Please select a file!</html>"),
                                     tr("Open file"),
                                     JOptionPane.INFORMATION_MESSAGE
                             );
