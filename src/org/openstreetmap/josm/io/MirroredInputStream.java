@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.openstreetmap.josm.Main;
 
@@ -61,6 +64,39 @@ public class MirroredInputStream extends InputStream {
         if (file == null)
             throw new IOException();
         fs = new FileInputStream(file);
+    }
+
+    public InputStream getZipEntry(String extension, String namepart)
+    {
+        InputStream res = null;
+        try {
+            if(file != null && (file.getName().endsWith(".zip")
+            || file.getName().endsWith(".ZIP")))
+            {
+                ZipFile zipFile = new ZipFile(file);
+                ZipEntry resentry = null;
+                Enumeration entries = zipFile.entries();
+                while(entries.hasMoreElements()) {
+                    ZipEntry entry = (ZipEntry)entries.nextElement();
+                    if(entry.getName().endsWith("."+extension)) {
+                        /* choose any file with correct extension. When more than
+                        one file, prefer the one which matches namepart */
+                        if(resentry == null || entry.getName().indexOf(namepart) >= 0) {
+                            resentry = entry;
+                        }
+                    }
+                }
+                if(resentry != null) {
+                    res = zipFile.getInputStream(resentry);
+                }
+                else {
+                    zipFile.close();
+                }
+            }
+        } catch (Exception e) {
+            System.err.println(tr("Warning: failed to handle zip file ''{0}''. Exception was: {1}", file.getName(), e.toString()));
+        }
+        return res;
     }
 
     public File getFile()

@@ -11,12 +11,15 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -71,6 +74,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public String name_context;
     public String locale_name;
     public final static String OPTIONAL_TOOLTIP_TEXT = "Optional tooltip text";
+    private static File zipIcons = null;
 
     public static abstract class Item {
         protected void initAutoCompletionField(AutoCompletingTextField field, String key) {
@@ -549,7 +553,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      */
     public void setIcon(String iconName) {
         Collection<String> s = Main.pref.getCollection("taggingpreset.icon.sources", null);
-        ImageIcon icon = ImageProvider.getIfAvailable(s, "presets", null, iconName);
+        ImageIcon icon = ImageProvider.getIfAvailable(s, "presets", null, iconName, zipIcons);
         if (icon == null)
         {
             System.out.println("Could not get presets icon " + iconName);
@@ -635,14 +639,17 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         {
             try {
                 MirroredInputStream s = new MirroredInputStream(source);
+                InputStream zip = s.getZipEntry("xml","preset");
+                if(zip != null)
+                    zipIcons = s.getFile();
                 InputStreamReader r;
                 try
                 {
-                    r = new InputStreamReader(s, "UTF-8");
+                    r = new InputStreamReader(zip == null ? s : zip, "UTF-8");
                 }
                 catch (UnsupportedEncodingException e)
                 {
-                    r = new InputStreamReader(s);
+                    r = new InputStreamReader(zip == null ? s: zip);
                 }
                 allPresets.addAll(TaggingPreset.readAll(new BufferedReader(r)));
             } catch (IOException e) {
@@ -662,6 +669,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                         JOptionPane.ERROR_MESSAGE
                 );
             }
+            zipIcons = null;
         }
         return allPresets;
     }

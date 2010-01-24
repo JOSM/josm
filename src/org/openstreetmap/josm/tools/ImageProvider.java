@@ -16,6 +16,7 @@ import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,6 +26,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -87,6 +90,10 @@ public class ImageProvider {
      * is found. Use this, if the image to retrieve is optional.
      */
     public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name) {
+        return getIfAvailable(dirs, id, subdir, name, null);
+    }
+
+    public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive) {
         if (name == null)
             return null;
         if (name.startsWith("http://")) {
@@ -115,19 +122,48 @@ public class ImageProvider {
         /* cache separately */
         if (dirs != null && dirs.size() > 0) {
             cache_name = "id:" + id + ":" + full_name;
+            if(archive != null)
+                cache_name += ":" + archive.getName();
         }
 
         Image img = cache.get(cache_name);
         if (img == null) {
+            if(archive != null)
+            {
+                try
+                {
+                    ZipFile zipFile = new ZipFile(archive);
+                    ZipEntry entry = zipFile.getEntry(full_name);
+                    if(entry != null)
+                    {
+                        int size = (int)entry.getSize();
+                        int offs = 0;
+                        byte[] buf = new byte[size];
+                        InputStream is = zipFile.getInputStream(entry);
+                        while(size > 0)
+                        {
+                            int l = is.read(buf, offs, size);
+                            offs += l;
+                            size -= l;
+                        }
+                        img = Toolkit.getDefaultToolkit().createImage(buf);
+                    }
+                } catch (Exception e) {
+                    System.err.println(tr("Warning: failed to handle zip file ''{0}''. Exception was: {1}", archive.getName(), e.toString()));
+                }
+            }
             // getImageUrl() does a ton of "stat()" calls and gets expensive
             // and redundant when you have a whole ton of objects. So,
             // index the cache by the name of the icon we're looking for
             // and don't bother to create a URL unless we're actually
             // creating the image.
-            URL path = getImageUrl(full_name, dirs);
-            if (path == null)
-                return null;
-            img = Toolkit.getDefaultToolkit().createImage(path);
+            if(img == null)
+            {
+                URL path = getImageUrl(full_name, dirs);
+                if (path == null)
+                    return null;
+                img = Toolkit.getDefaultToolkit().createImage(path);
+            }
             cache.put(cache_name, img);
         }
 

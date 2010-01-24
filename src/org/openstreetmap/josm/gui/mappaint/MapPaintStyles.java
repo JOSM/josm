@@ -2,6 +2,8 @@ package org.openstreetmap.josm.gui.mappaint;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,6 +24,7 @@ public class MapPaintStyles {
 
     private static ElemStyles styles = new ElemStyles();
     private static Collection<String> iconDirs;
+    private static File zipIcons;
 
     public static ElemStyles getStyles()
     {
@@ -45,7 +48,7 @@ public class MapPaintStyles {
                 dirs.add(a[1]);
             }
         }
-        ImageIcon i = ImageProvider.getIfAvailable(dirs, "mappaint."+styleName, null, name);
+        ImageIcon i = ImageProvider.getIfAvailable(dirs, "mappaint."+styleName, null, name, zipIcons);
         if(i == null)
         {
             System.out.println("Mappaint style \""+styleName+"\" icon \"" + name + "\" not found.");
@@ -86,7 +89,14 @@ public class MapPaintStyles {
                 xmlReader.setContentHandler(handler);
                 xmlReader.setErrorHandler(handler);
                 MirroredInputStream in = new MirroredInputStream(a[1]);
-                xmlReader.parse(new InputSource(in));
+                InputStream zip = in.getZipEntry("xml","style");
+                if(zip != null)
+                {
+                    zipIcons = in.getFile();
+                    xmlReader.parse(new InputSource(zip));
+                }
+                else
+                    xmlReader.parse(new InputSource(in));
             } catch(IOException e) {
                 System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", a[1], e.toString()));
                 e.printStackTrace();
@@ -96,5 +106,6 @@ public class MapPaintStyles {
             }
         }
         iconDirs = null;
+        zipIcons = null;
     }
 }
