@@ -33,7 +33,7 @@ public class LatLon extends Coordinate {
 
     private static DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
     private static DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
-    private static DecimalFormat cDdFormatter = new DecimalFormat("###0.0000");
+    private static DecimalFormat cDdFormatter = new DecimalFormat("###0.00000");
 
     /**
      * Replies true if lat is in the range [-90,90]
@@ -55,6 +55,9 @@ public class LatLon extends Coordinate {
         return lon >= -180d && lon <= 180d;
     }
 
+    /**
+     * Replies the coordinate in degrees/minutes/seconds format
+     */
     public static String dms(double pCoordinate) {
 
         double tAbsCoord = Math.abs(pCoordinate);

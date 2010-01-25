@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -48,6 +49,7 @@ public class BookmarkSelection implements DownloadSelection {
 
     /** displays information about the current download area */
     private JMultilineLabel lblCurrentDownloadArea;
+    final private JTextArea bboxDisplay = new JTextArea();
     /** the add action */
     private AddAction actAdd;
 
@@ -84,12 +86,15 @@ public class BookmarkSelection implements DownloadSelection {
 
         GridBagConstraints  gc = new GridBagConstraints();
         gc.anchor = GridBagConstraints.NORTHWEST;
-        gc.fill = GridBagConstraints.BOTH;
+        gc.insets = new Insets(5,5,5,5);
+        pnl.add(lblCurrentDownloadArea = new JMultilineLabel(""), gc);
+        
         gc.weightx = 1.0;
         gc.weighty = 1.0;
-        gc.insets = new Insets(5,5,5,5);
-
-        pnl.add(lblCurrentDownloadArea = new JMultilineLabel(""), gc);
+        bboxDisplay.setEditable(false);
+        bboxDisplay.setBackground(pnl.getBackground());
+        bboxDisplay.addFocusListener(new BoundingBoxSelection.SelectAllOnFocusHandler(bboxDisplay));
+        pnl.add(bboxDisplay, gc);
 
         gc.anchor = GridBagConstraints.NORTHEAST;
         gc.fill = GridBagConstraints.HORIZONTAL;
@@ -146,12 +151,12 @@ public class BookmarkSelection implements DownloadSelection {
         if (currentArea == null) {
             lblCurrentDownloadArea.setText(tr("<html>There is currently no download area selected.</html>"));
         } else {
-            lblCurrentDownloadArea.setText(tr("<html><strong>Current download area</strong> (minlat,minlon, maxlat, maxlon): {0}, {1}, {2}, {3}</html>",
-                    currentArea.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES),
-                    currentArea.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES),
-                    currentArea.getMax().latToString(CoordinateFormat.DECIMAL_DEGREES),
+            lblCurrentDownloadArea.setText(tr("<html><strong>Current download area</strong> (minlat,minlon, maxlat, maxlon): </html>"));
+            bboxDisplay.setText(
+                    currentArea.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES)+","+
+                    currentArea.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES)+","+
+                    currentArea.getMax().latToString(CoordinateFormat.DECIMAL_DEGREES)+","+
                     currentArea.getMax().lonToString(CoordinateFormat.DECIMAL_DEGREES)
-            )
             );
         }
     }
