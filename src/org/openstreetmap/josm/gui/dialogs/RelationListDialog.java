@@ -220,6 +220,10 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             model.setSelectedRelations(null);
         } else {
             model.setSelectedRelations(Collections.singletonList(relation));
+            Integer i = model.getRelationIndex(relation);
+            if (i == null)
+                throw new AssertionError(); /* the relation list should contain *all* relations */
+            displaylist.scrollRectToVisible(displaylist.getCellBounds(i, i));
         }
     }
 
@@ -684,6 +688,20 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
                 selectionModel.addSelectionInterval(i,i);
             }
         }
+
+        /**
+         * Returns the index of the relation
+         *
+         * @return index of relation (null if it cannot be found) 
+         */
+        public Integer getRelationIndex(Relation rel) {
+            int i = relations.indexOf(rel);
+            if (i<0) {
+                return null;
+            }
+            return i;
+        }
+            
     }
 
     class RelationDialogPopupMenu extends JPopupMenu {
