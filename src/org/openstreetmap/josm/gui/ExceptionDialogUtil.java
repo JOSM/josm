@@ -278,7 +278,7 @@ public class ExceptionDialogUtil {
         HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
                 ExceptionUtil.explainMissingOAuthAccessTokenException(e),
-                tr("Authenticationi failed"),
+                tr("Authentication failed"),
                 JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#MissingOAuthAccessToken")
         );
