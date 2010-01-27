@@ -8,7 +8,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -81,6 +80,7 @@ public class PlaceSelection implements DownloadSelection {
         public String url;
         public String thirdcol;
         public String fourthcol;
+        @Override
         public String toString() {
             return name;
         }
@@ -102,8 +102,9 @@ public class PlaceSelection implements DownloadSelection {
         lpanel.add(server);
         String s = Main.pref.get("namefinder.server", servers[0].name);
         for(int i = 0; i < servers.length; ++i) {
-            if(servers[i].name.equals(s))
+            if(servers[i].name.equals(s)) {
                 server.setSelectedIndex(i);
+            }
         }
         lpanel.add(new JLabel(tr("Enter a place name to search for:")));
 
@@ -209,8 +210,9 @@ public class PlaceSelection implements DownloadSelection {
                     currentResult = new PlaceSelection.SearchResult();
                     currentResult.name = atts.getValue("name");
                     currentResult.info = atts.getValue("info");
-                    if(currentResult.info != null)
+                    if(currentResult.info != null) {
                         currentResult.info = tr(currentResult.info);
+                    }
                     currentResult.lat = Double.parseDouble(atts.getValue("lat"));
                     currentResult.lon = Double.parseDouble(atts.getValue("lon"));
                     currentResult.zoom = Integer.parseInt(atts.getValue("zoom"));
@@ -233,8 +235,8 @@ public class PlaceSelection implements DownloadSelection {
                     currentResult.lon = Double.parseDouble(atts.getValue("lon"));
                     String[] bbox = atts.getValue("boundingbox").split(",");
                     currentResult.bounds = new Bounds(
-                        new LatLon(Double.parseDouble(bbox[0]), Double.parseDouble(bbox[2])),
-                        new LatLon(Double.parseDouble(bbox[1]), Double.parseDouble(bbox[3])));
+                            new LatLon(Double.parseDouble(bbox[0]), Double.parseDouble(bbox[2])),
+                            new LatLon(Double.parseDouble(bbox[1]), Double.parseDouble(bbox[3])));
                     data.add(currentResult);
                 }
             } catch (NumberFormatException x) {
@@ -463,12 +465,7 @@ public class PlaceSelection implements DownloadSelection {
 
     class ListSelectionHandler implements ListSelectionListener {
         public void valueChanged(ListSelectionEvent lse) {
-            SearchResult r = null;
-            try {
-                r = (SearchResult) model.getValueAt(lse.getFirstIndex(), 0);
-            } catch (Exception x) {
-                // Ignore
-            }
+            SearchResult r = model.getSelectedSearchResult();
             if (r != null) {
                 parent.boundingBoxChanged(r.getDownloadArea(), PlaceSelection.this);
             }
@@ -537,10 +534,11 @@ public class PlaceSelection implements DownloadSelection {
                 setText(sr.nearestPlace);
                 break;
             case 3:
-                if(sr.bounds != null)
+                if(sr.bounds != null) {
                     setText(sr.bounds.toShortString(new DecimalFormat("0.000")));
-                else
+                } else {
                     setText(sr.zoom != 0 ? Integer.toString(sr.zoom) : tr("unknown"));
+                }
                 break;
             }
             setToolTipText(lineWrapDescription(sr.description));
