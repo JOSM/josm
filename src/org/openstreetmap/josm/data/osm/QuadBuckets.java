@@ -14,13 +14,13 @@ import org.openstreetmap.josm.data.coor.QuadTiling;
 
 public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
 {
-    public static boolean debug = false;
-    static boolean consistency_testing = false;
+    private static boolean debug = false;
+    private static final boolean consistency_testing = false;
     /*
      * Functions prefixed with __ need locking before
      * being called.
      */
-    private Object split_lock = new Object();
+    private final Object split_lock = new Object();
 
     static void abort(String s)
     {
@@ -74,16 +74,23 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         {
             init(parent);
         }
-        synchronized boolean remove_content(T o)
+        boolean remove_content(T o)
         {
-            boolean ret = this.content.remove(o);
-            if (this.content.size() == 0) {
-                this.content = null;
+            synchronized (split_lock) {
+                // If two threads try to remove item at the same time from different buckets of this QBLevel,
+                // it might happen that one thread removes bucket but don't remove parent because it still sees
+                // another bucket set. Second thread do the same. Due to thread memory caching, it's possible that
+                // changes made by threads will show up in children array too late, leading to QBLevel with all children
+                // set to null
+                boolean ret = this.content.remove(o);
+                if (this.content.size() == 0) {
+                    this.content = null;
+                }
+                if (this.canRemove()) {
+                    this.remove_from_parent();
+                }
+                return ret;
             }
-            if (this.canRemove()) {
-                this.remove_from_parent();
-            }
-            return ret;
         }
         QBLevel[] newChildren()
         {
