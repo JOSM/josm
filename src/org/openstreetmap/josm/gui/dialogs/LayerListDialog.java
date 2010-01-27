@@ -187,6 +187,7 @@ public class LayerListDialog extends ToggleDialog {
     public void showNotify() {
         MapView.addLayerChangeListener(activateLayerAction);
         MapView.addLayerChangeListener(model);
+        model.populate();
     }
 
     @Override
