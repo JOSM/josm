@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -701,19 +702,41 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             p.add(pp, GBC.eol());
         }
 
+        JPanel items = new JPanel(new GridBagLayout());
         for (Item i : data){
             if(i instanceof Link) {
                 l.add(i);
             } else {
-                if(i.addToPanel(p, selected)) {
+                if(i.addToPanel(items, selected)) {
                     p.hasElements = true;
                 }
             }
         }
+        p.add(items, GBC.eol().fill());
+        if (selected.size() == 0) {
+            setEnabledRec(items, false);
+        }
+
         for(Item link : l) {
             link.addToPanel(p, selected);
         }
+
         return p;
+    }
+
+    /**
+     * setEnabled() does not propagate to child elements, so we need this workaround.
+     */
+    static void setEnabledRec(Container root, boolean enabled) {
+        root.setEnabled(enabled);
+        Component children[] = root.getComponents();
+        for(int i = 0; i < children.length; i++) {
+            if(children[i] instanceof Container) {
+                setEnabledRec((Container)children[i], enabled);
+            } else {
+                children[i].setEnabled(enabled);
+            }
+        }
     }
 
     public boolean isShowable()

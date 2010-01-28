@@ -1341,10 +1341,10 @@ are supplied, then "values" will be treated as "display_values" and translated i
 				<check key="fuel:biodiesel" text="Bio Diesel" default="off" delete_if_empty="true" />
 				<check key="fuel:GTL_diesel" text="Diesel (Gas To Liquid - ultimate diesel)" default="off" delete_if_empty="true" />
 				<check key="fuel:HGV_diesel" text="Diesel for Heavy Good Vehicles" default="off" delete_if_empty="true" />
-				<check key="fuel:octane 91" text="Octane 91" default="off" delete_if_empty="true" />
-				<check key="fuel:octane 95" text="Octane 95" default="off" delete_if_empty="true" />
-				<check key="fuel:octane 98" text="Octane 98" default="off" delete_if_empty="true" />
-				<check key="fuel:octane 100" text="Octane 100" default="off" delete_if_empty="true" />
+				<check key="fuel:octane_91" text="Octane 91" default="off" delete_if_empty="true" />
+				<check key="fuel:octane_95" text="Octane 95" default="off" delete_if_empty="true" />
+				<check key="fuel:octane_98" text="Octane 98" default="off" delete_if_empty="true" />
+				<check key="fuel:octane_100" text="Octane 100" default="off" delete_if_empty="true" />
 				<check key="fuel:e10" text="E10 (10% Ethanol mix)" default="off" delete_if_empty="true" />
 				<check key="fuel:e85" text="E85 (85% Ethanol mix)" default="off" delete_if_empty="true" />
 				<check key="fuel:lpg" text="LPG (Liquefied petroleum gas)" default="off" delete_if_empty="true" />

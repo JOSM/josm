@@ -553,8 +553,13 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             Main.pref.put("tags.direction", builder.toString());
         }
 
+        // FIXME: incline=\"-*\" search pattern does not work.
         String reversedDirectionDefault = "oneway=\"-1\" | incline=down | incline=\"-*\"";
-        String directionDefault = "oneway? | incline=* | aerialway=* | waterway=stream | waterway=river | waterway=canal | waterway=drain | waterway=rapids | \"piste:type\"=downhill | \"piste:type\"=sled | man_made=\"piste:halfpipe\" ";
+        
+        String directionDefault = "oneway? | incline=* | aerialway=* | "+
+                                  "waterway=stream | waterway=river | waterway=canal | waterway=drain | waterway=rapids | "+
+                                  "\"piste:type\"=downhill | \"piste:type\"=sled | man_made=\"piste:halfpipe\" | "+
+                                  "junction=roundabout";
 
         try {
             reversedDirectionKeys = SearchCompiler.compile(Main.pref.get("tags.reversed_direction", reversedDirectionDefault), false, false);

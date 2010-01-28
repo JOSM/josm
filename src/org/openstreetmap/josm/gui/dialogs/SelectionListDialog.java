@@ -257,20 +257,6 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
         for (OsmPrimitive osm : selArr) {
             list.setElementAt(osm, i++);
         }
-        if (selectionHistory != null && newSelection.size() > 0 && !newSelection.equals(historyIgnoreSelection)) {
-            historyIgnoreSelection = null;
-            try {
-                // Check if the newSelection has already been added to the history
-                Collection<? extends OsmPrimitive> first = selectionHistory.getFirst();
-                if (first.equals(newSelection))
-                    return;
-            } catch (NoSuchElementException e) {
-            }
-            selectionHistory.addFirst(newSelection);
-            while (selectionHistory.size() > SELECTION_HISTORY_SIZE) {
-                selectionHistory.removeLast();
-            }
-        }
 
         int ways = 0;
         int nodes = 0;
@@ -289,6 +275,21 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
             setTitle(tr("Sel.: Rel.:{0} / Ways:{1} / Nodes:{2}", relations, ways, nodes));
         } else {
             setTitle(tr("Selection"));
+        }
+        
+        if (selectionHistory != null && newSelection.size() > 0 && !newSelection.equals(historyIgnoreSelection)) {
+            historyIgnoreSelection = null;
+            try {
+                // Check if the newSelection has already been added to the history
+                Collection<? extends OsmPrimitive> first = selectionHistory.getFirst();
+                if (first.equals(newSelection))
+                    return;
+            } catch (NoSuchElementException e) {
+            }
+            selectionHistory.addFirst(newSelection);
+            while (selectionHistory.size() > SELECTION_HISTORY_SIZE) {
+                selectionHistory.removeLast();
+            }
         }
     }
 
