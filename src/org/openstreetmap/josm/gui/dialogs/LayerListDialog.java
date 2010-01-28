@@ -37,6 +37,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.DuplicateLayerAction;
 import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
@@ -128,6 +129,12 @@ public class LayerListDialog extends ToggleDialog {
         adaptTo(mergeLayerAction, model);
         adaptTo(mergeLayerAction,selectionModel);
         buttonPanel.add(new SideButton(mergeLayerAction));
+
+        // -- duplicate layer action
+        DuplicateAction duplicateLayerAction = new DuplicateAction();
+        adaptTo(duplicateLayerAction, model);
+        adaptTo(duplicateLayerAction, selectionModel);
+        buttonPanel.add(new SideButton(duplicateLayerAction));
 
         //-- delete layer action
         DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
@@ -474,6 +481,55 @@ public class LayerListDialog extends ToggleDialog {
             } else {
                 List<Layer> targets = getModel().getPossibleMergeTargets(layer);
                 setEnabled(!targets.isEmpty());
+            }
+        }
+    }
+
+    /**
+     * The action to merge the currently selected layer into another layer.
+     */
+    public final class DuplicateAction extends AbstractAction implements IEnabledStateUpdating {
+        private  Layer layer;
+
+        public DuplicateAction(Layer layer) throws IllegalArgumentException {
+            this();
+            CheckParameterUtil.ensureParameterNotNull(layer, "layer");
+            this.layer = layer;
+            putValue(NAME, tr("Duplicate"));
+            updateEnabledState();
+        }
+
+        public DuplicateAction() {
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "duplicatelayer"));
+            putValue(SHORT_DESCRIPTION, tr("Duplicate this layer"));
+            putValue("help", HelpUtil.ht("/Dialog/LayerDialog#DuplicateLayer"));
+            updateEnabledState();
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (layer != null) {
+                new DuplicateLayerAction().duplicate(layer);
+            } else {
+                Layer selectedLayer = getModel().getSelectedLayers().get(0);
+                new DuplicateLayerAction().duplicate(selectedLayer);
+            }
+        }
+
+        protected boolean isActiveLayer(Layer layer) {
+            if (Main.map == null) return false;
+            if (Main.map.mapView == null) return false;
+            return Main.map.mapView.getActiveLayer() == layer;
+        }
+
+        public void updateEnabledState() {
+            if (layer == null) {
+                if (getModel().getSelectedLayers().size() == 1) {
+                    setEnabled(DuplicateLayerAction.canDuplicate(getModel().getSelectedLayers().get(0)));
+                } else {
+                    setEnabled(false);
+                }
+            } else {
+                setEnabled(DuplicateLayerAction.canDuplicate(layer));
             }
         }
     }
