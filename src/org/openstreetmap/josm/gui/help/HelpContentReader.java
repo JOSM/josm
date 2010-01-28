@@ -52,7 +52,7 @@ public class HelpContentReader {
             url = new URL(helpTopicUrl);
             con = (HttpURLConnection)url.openConnection();
             con.connect();
-            in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            in = new BufferedReader(new InputStreamReader(con.getInputStream(),"utf-8"));
             return prepareHelpContent(in);
         } catch(MalformedURLException e) {
             throw new HelpContentReaderException(e);
