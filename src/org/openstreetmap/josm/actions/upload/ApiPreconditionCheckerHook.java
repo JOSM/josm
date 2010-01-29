@@ -4,7 +4,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
 
@@ -49,23 +48,24 @@ public class ApiPreconditionCheckerHook implements UploadHook {
 
     private boolean checkMaxNodes(Collection<OsmPrimitive> primitives, long maxNodes) {
         for (OsmPrimitive osmPrimitive : primitives) {
-            for (Entry<String,String> e : osmPrimitive.entrySet()) {
-                if(e.getValue().length() > 255) {
+            for (String key: osmPrimitive.keySet()) {
+                String value = osmPrimitive.get(key);
+                if(key.length() > 255) {
                     if (osmPrimitive.isDeleted()) {
                         // if OsmPrimitive is going to be deleted we automatically shorten the
                         // value
                         System.out.println(
                                 tr("Warning: automatically truncating value of tag ''{0}'' on deleted object {1}",
-                                        e.getKey(),
+                                        key,
                                         Long.toString(osmPrimitive.getId())
                                 )
                         );
-                        osmPrimitive.put(e.getKey(), e.getValue().substring(0, 255));
+                        osmPrimitive.put(key, value.substring(0, 255));
                         continue;
                     }
                     JOptionPane.showMessageDialog(Main.parent,
                             tr("Length of value for tag ''{0}'' on object {1} exceeds the max. allowed length {2}. Values length is {3}.",
-                                    e.getKey(), Long.toString(osmPrimitive.getId()), 255, e.getValue().length()
+                                    key, Long.toString(osmPrimitive.getId()), 255, value.length()
                             ),
                             tr("Precondition Violation"),
                             JOptionPane.ERROR_MESSAGE

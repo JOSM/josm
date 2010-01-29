@@ -728,15 +728,16 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             } else {
                 ++ways;
             }
-            for (Entry<String, String> e : osm.entrySet()) {
-                keyCount.put(e.getKey(), keyCount.containsKey(e.getKey()) ? keyCount.get(e.getKey())+1 : 1);
-                if (valueCount.containsKey(e.getKey())) {
-                    Map<String, Integer> v = valueCount.get(e.getKey());
-                    v.put(e.getValue(), v.containsKey(e.getValue())? v.get(e.getValue())+1 : 1 );
+            for (String key: osm.keySet()) {
+                String value = osm.get(key);
+                keyCount.put(key, keyCount.containsKey(key) ? keyCount.get(key) + 1 : 1);
+                if (valueCount.containsKey(key)) {
+                    Map<String, Integer> v = valueCount.get(key);
+                    v.put(value, v.containsKey(value)? v.get(value) + 1 : 1 );
                 } else {
                     TreeMap<String,Integer> v = new TreeMap<String, Integer>();
-                    v.put(e.getValue(), 1);
-                    valueCount.put(e.getKey(), v);
+                    v.put(value, 1);
+                    valueCount.put(key, v);
                 }
             }
         }

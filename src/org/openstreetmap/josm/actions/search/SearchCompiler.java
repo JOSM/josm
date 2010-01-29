@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.PushbackReader;
 import java.io.StringReader;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -193,9 +192,8 @@ public class SearchCompiler {
                  * and only then try to match against the value
                  */
 
-                for (Entry<String, String> e : osm.entrySet()) {
-                    String k = e.getKey();
-                    String v = e.getValue();
+                for (String k: osm.keySet()) {
+                    String v = osm.get(k);
 
                     Matcher matcherKey = keyPattern.matcher(k);
                     boolean matchedKey = matcherKey.find();
@@ -329,10 +327,10 @@ public class SearchCompiler {
                 return false;
             case ANY_VALUE_REGEXP:
             case EXACT_REGEXP:
-                for (Entry<String, String> entry:osm.entrySet()) {
-                    if (keyPattern.matcher(entry.getKey()).matches()) {
+                for (String key: osm.keySet()) {
+                    if (keyPattern.matcher(key).matches()) {
                         if (mode == Mode.ANY_VALUE_REGEXP
-                                || valuePattern.matcher(entry.getValue()).matches())
+                                || valuePattern.matcher(osm.get(key)).matches())
                             return true;
                     }
                 }
@@ -383,10 +381,9 @@ public class SearchCompiler {
 
             // is not Java 1.5
             //search = java.text.Normalizer.normalize(search, java.text.Normalizer.Form.NFC);
-            for (Entry<String, String> e : osm.entrySet()) {
+            for (String key: osm.keySet()) {
+                String value = osm.get(key);
                 if (searchRegex != null) {
-                    String key = e.getKey();
-                    String value = e.getValue();
 
                     // is not Java 1.5
                     //value = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
@@ -400,8 +397,10 @@ public class SearchCompiler {
                     if (keyMatchFound || valMatchFound)
                         return true;
                 } else {
-                    String key = caseSensitive ? e.getKey() : e.getKey().toLowerCase();
-                    String value = caseSensitive ? e.getValue() : e.getValue().toLowerCase();
+                    if (caseSensitive) {
+                        key = key.toLowerCase();
+                        value = value.toLowerCase();
+                    }
 
                     // is not Java 1.5
                     //value = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFC);

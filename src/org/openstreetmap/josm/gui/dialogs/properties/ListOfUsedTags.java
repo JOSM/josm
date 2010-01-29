@@ -69,8 +69,8 @@ public class ListOfUsedTags implements DataSetListener {
     }
 
     private void addPrimitive(OsmPrimitive primitive) {
-        for (Entry<String, String> entry: primitive.entrySet()) {
-            addKey(entry.getKey(), entry.getValue());
+        for (String key: primitive.keySet()) {
+            addKey(key, primitive.get(key));
         }
     }
 

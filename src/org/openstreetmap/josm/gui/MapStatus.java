@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -435,8 +434,8 @@ public class MapStatus extends JPanel implements Helpful {
                 text.append(" [" + tr("User:") + " " + osm.getUser().getName() + "]");
             }
 
-            for (Entry<String, String> e1 : osm.entrySet()) {
-                text.append("<br>" + e1.getKey() + "=" + e1.getValue());
+            for (String key : osm.keySet()) {
+                text.append("<br>" + key + "=" + osm.get(key));
             }
 
             final JLabel l = new JLabel(

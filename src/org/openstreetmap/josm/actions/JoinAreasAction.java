@@ -249,14 +249,14 @@ public class JoinAreasAction extends JosmAction {
         ways.add(a);
         ways.add(b);
 
-        // This is mostly copied and pasted from CombineWayAction.java and one day should be moved into tools
+        // FIXME: This is mostly copied and pasted from CombineWayAction.java and one day should be moved into tools
         Map<String, Set<String>> props = new TreeMap<String, Set<String>>();
         for (Way w : ways) {
-            for (Entry<String,String> e : w.entrySet()) {
-                if (!props.containsKey(e.getKey())) {
-                    props.put(e.getKey(), new TreeSet<String>());
+            for (String key: w.keySet()) {
+                if (!props.containsKey(key)) {
+                    props.put(key, new TreeSet<String>());
                 }
-                props.get(e.getKey()).add(e.getValue());
+                props.get(key).add(w.get(key));
             }
         }
 

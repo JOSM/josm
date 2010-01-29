@@ -46,60 +46,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return idCounter.decrementAndGet();
     }
 
-    private static class KeysEntry implements Entry<String, String>{
-
-        private final String key;
-        private final String value;
-
-        private KeysEntry(String key, String value) {
-            this.key = key;
-            this.value = value;
-        }
-
-        public String getKey() {
-            return key;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public String setValue(String value) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((key == null) ? 0 : key.hashCode());
-            result = prime * result + ((value == null) ? 0 : value.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            KeysEntry other = (KeysEntry) obj;
-            if (key == null) {
-                if (other.key != null)
-                    return false;
-            } else if (!key.equals(other.key))
-                return false;
-            if (value == null) {
-                if (other.value != null)
-                    return false;
-            } else if (!value.equals(other.value))
-                return false;
-            return true;
-        }
-    }
-
     private static final int FLAG_MODIFIED = 1 << 0;
     private static final int FLAG_VISIBLE  = 1 << 1;
     private static final int FLAG_DISABLED = 1 << 2;
@@ -555,11 +501,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
         // FIXME: incline=\"-*\" search pattern does not work.
         String reversedDirectionDefault = "oneway=\"-1\" | incline=down | incline=\"-*\"";
-        
+
         String directionDefault = "oneway? | incline=* | aerialway=* | "+
-                                  "waterway=stream | waterway=river | waterway=canal | waterway=drain | waterway=rapids | "+
-                                  "\"piste:type\"=downhill | \"piste:type\"=sled | man_made=\"piste:halfpipe\" | "+
-                                  "junction=roundabout";
+        "waterway=stream | waterway=river | waterway=canal | waterway=drain | waterway=rapids | "+
+        "\"piste:type\"=downhill | \"piste:type\"=sled | man_made=\"piste:halfpipe\" | "+
+        "junction=roundabout";
 
         try {
             reversedDirectionKeys = SearchCompiler.compile(Main.pref.get("tags.reversed_direction", reversedDirectionDefault), false, false);
@@ -845,19 +791,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return null;
     }
 
-    // FIXME: why replying a collection of entries? Should be replaced by
-    // a method Map<String,String> getTags()
-    //
-    public final Collection<Entry<String, String>> entrySet() {
-        if (keys == null || keys.length ==0)
-            return Collections.emptySet();
-        Set<Entry<String, String>> result = new HashSet<Entry<String,String>>();
-        for (int i=0; i<keys.length; i+=2) {
-            result.add(new KeysEntry(keys[i], keys[i+1]));
-        }
-        return result;
-    }
-
     public final Collection<String> keySet() {
         if (keys == null || keys.length == 0)
             return Collections.emptySet();
@@ -909,7 +842,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @return true if other isn't null and has the same tags (key/value-pairs) as this.
      */
     public boolean hasSameTags(OsmPrimitive other) {
-        return entrySet().equals(other.entrySet());
+        return keySet().equals(other.keySet());
     }
 
     /*------------

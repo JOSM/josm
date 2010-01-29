@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
@@ -39,9 +38,8 @@ public class ElemStyles
         private IconElemStyle getNode(OsmPrimitive primitive)
         {
             IconElemStyle ret = null;
-            for (Entry<String, String> entry:primitive.entrySet()) {
-                String key = entry.getKey();
-                String val = entry.getValue();
+            for (String key: primitive.keySet()) {
+                String val = primitive.get(key);
                 IconElemStyle style;
                 if((style = icons.get("n" + key + "=" + val)) != null)
                 {
@@ -76,9 +74,8 @@ public class ElemStyles
             LineElemStyle retLine = null;
             String linestring = null;
             HashMap<String, LineElemStyle> over = new HashMap<String, LineElemStyle>();
-            for (Entry<String, String> entry:primitive.entrySet()) {
-                String key = entry.getKey();
-                String val = entry.getValue();
+            for (String key: primitive.keySet()) {
+                String val = primitive.get(key);
                 AreaElemStyle styleArea;
                 LineElemStyle styleLine;
                 String idx = "n" + key + "=" + val;
