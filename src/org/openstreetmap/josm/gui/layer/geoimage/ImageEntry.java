@@ -16,7 +16,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
  * Stores info about each image
  */
 
-final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
+final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     File file;
     Date time;
     LatLon exifCoor;
@@ -29,6 +29,14 @@ final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
 
     Image thumbnail;
 
+    /**
+     * When the corralation dialog is open, we like to show the image position
+     * for the current time offset on the map in real time.
+     * On the other hand, when the user aborts this operation, the old values
+     * should be restored. We have a temprary copy, that overrides
+     * the normal values if it is not null. (This may be not the most elegant
+     * solution for this, but it works.)
+     */
     ImageEntry tmp;
 
     public CachedLatLon getPos() {
@@ -54,6 +62,10 @@ final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     }
     public void setElevation(Double elevation) {
         this.elevation = elevation;
+    }
+    
+    public File getFile() {
+        return file;
     }
 
     @Override

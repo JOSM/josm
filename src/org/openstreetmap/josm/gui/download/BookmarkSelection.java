@@ -151,12 +151,12 @@ public class BookmarkSelection implements DownloadSelection {
         if (currentArea == null) {
             lblCurrentDownloadArea.setText(tr("<html>There is currently no download area selected.</html>"));
         } else {
-            lblCurrentDownloadArea.setText(tr("<html><strong>Current download area</strong> (minlat,minlon, maxlat, maxlon): </html>"));
+            lblCurrentDownloadArea.setText(tr("<html><strong>Current download area</strong> (minlon, minlat, maxlon, maxlat): </html>"));
             bboxDisplay.setText(
-                    currentArea.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES)+","+
                     currentArea.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES)+","+
-                    currentArea.getMax().latToString(CoordinateFormat.DECIMAL_DEGREES)+","+
-                    currentArea.getMax().lonToString(CoordinateFormat.DECIMAL_DEGREES)
+                    currentArea.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES)+","+
+                    currentArea.getMax().lonToString(CoordinateFormat.DECIMAL_DEGREES)+","+
+                    currentArea.getMax().latToString(CoordinateFormat.DECIMAL_DEGREES)
             );
         }
     }

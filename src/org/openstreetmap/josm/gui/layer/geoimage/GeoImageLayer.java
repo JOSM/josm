@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.Icon;
@@ -54,6 +55,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.MapFrame.MapModeChangeListener;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
+import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ExifReader;
@@ -288,11 +290,14 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
     public Icon getIcon() {
         return ImageProvider.get("dialogs/geoimage");
     }
+    
+    public static interface LayerMenuAddition {
+        public Component getComponent(Layer layer);
+    }
 
-    @Override
-    public Object getInfoComponent() {
-        // TODO Auto-generated method stub
-        return null;
+    private static List<LayerMenuAddition> menuAdditions = new LinkedList<LayerMenuAddition>();
+    public static void registerMenuAddition(LayerMenuAddition addition) {
+        menuAdditions.add(addition);
     }
 
     @Override
@@ -300,18 +305,24 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
         JMenuItem correlateItem = new JMenuItem(tr("Correlate to GPX"), ImageProvider.get("dialogs/geoimage/gpx2img"));
         correlateItem.addActionListener(new CorrelateGpxWithImages(this));
+        
+        List<Component> entries = new ArrayList<Component>();
+        entries.add(new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)));
+        entries.add(new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)));
+        entries.add(new JMenuItem(new RenameLayerAction(null, this)));
+        entries.add(new JSeparator());
+        entries.add(correlateItem);
+        for (LayerMenuAddition addition : menuAdditions) {
+            entries.add(addition.getComponent(this));
+        }
+        entries.add(new JSeparator());
+        entries.add(new JMenuItem(new LayerListPopup.InfoAction(this)));
 
-        return new Component[] {
-                new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)),
-                new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)),
-                new JMenuItem(new RenameLayerAction(null, this)),
-                new JSeparator(),
-                correlateItem
-        };
+        return entries.toArray(new Component[0]);
+        
     }
 
-    @Override
-    public String getToolTipText() {
+    private String infoText() {
         int i = 0;
         for (ImageEntry e : data)
             if (e.getPos() != null) {
@@ -319,6 +330,15 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             }
         return trn("{0} image loaded.", "{0} images loaded.", data.size(), data.size())
         + " " + trn("{0} was found to be GPS tagged.", "{0} were found to be GPS tagged.", i, i);
+    }
+    
+    @Override public Object getInfoComponent() {
+        return infoText();
+    }
+
+    @Override
+    public String getToolTipText() {
+        return infoText();
     }
 
     @Override
@@ -728,5 +748,13 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
     public void updateBufferAndRepaint() {
         updateOffscreenBuffer = true;
         Main.map.mapView.repaint();
+    }
+    
+    public List<ImageEntry> getImages() {
+        List<ImageEntry> copy = new ArrayList<ImageEntry>();
+        for (ImageEntry ie : data) {
+            copy.add(ie.clone());
+        }
+        return copy;
     }
 }
