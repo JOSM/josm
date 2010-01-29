@@ -20,7 +20,6 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -326,11 +325,17 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
             String[] value_array = values.split(",");
             String[] display_array;
+
             if(locale_display_values != null) {
                 display_array = locale_display_values.split(",");
             } else if(display_values != null) {
                 display_array = display_values.split(",");
             } else {
+                display_array = value_array;
+            }
+
+            if (display_array.length != value_array.length) {
+                System.err.println(tr("Broken tagging preset \"{0}-{1}\" - number of items in display_values must be the same as in values", key, text));
                 display_array = value_array;
             }
 
@@ -641,8 +646,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             try {
                 MirroredInputStream s = new MirroredInputStream(source);
                 InputStream zip = s.getZipEntry("xml","preset");
-                if(zip != null)
+                if(zip != null) {
                     zipIcons = s.getFile();
+                }
                 InputStreamReader r;
                 try
                 {
