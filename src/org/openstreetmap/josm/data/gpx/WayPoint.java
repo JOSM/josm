@@ -18,6 +18,12 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>
     public boolean drawLine;
     public int dir;
 
+    private static ThreadLocal<PrimaryDateParser> dateParser = new ThreadLocal<PrimaryDateParser>() {
+        @Override protected PrimaryDateParser initialValue() {
+            return new PrimaryDateParser();
+        }
+    };
+
     private final CachedLatLon coor;
 
     public final LatLon getCoor() {
@@ -42,9 +48,8 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>
      */
     public void setTime() {
         if(attr.containsKey("time")) {
-            PrimaryDateParser dateParser = new PrimaryDateParser();
             try {
-                time = dateParser.parse(attr.get("time").toString()).getTime() / 1000.; /* ms => seconds */
+                time = dateParser.get().parse(attr.get("time").toString()).getTime() / 1000.; /* ms => seconds */
             } catch(Exception e) {
                 time = 0;
             }
