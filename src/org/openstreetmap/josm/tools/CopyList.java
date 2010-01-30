@@ -48,7 +48,7 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess, 
         this(array, array.length);
     }
 
-    private CopyList(E[] array, int size) {
+    public CopyList(E[] array, int size) {
         this.array = array;
         this.size = size;
         pristine = true;

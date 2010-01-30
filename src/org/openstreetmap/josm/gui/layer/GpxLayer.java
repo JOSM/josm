@@ -52,6 +52,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -196,8 +197,8 @@ public class GpxLayer extends Layer {
             public void actionPerformed(ActionEvent e) {
                 GpxData namedTrackPoints = new GpxData();
                 for (GpxTrack track : data.tracks) {
-                    for (Collection<WayPoint> seg : track.trackSegs) {
-                        for (WayPoint point : seg)
+                    for (GpxTrackSegment seg : track.getSegments()) {
+                        for (WayPoint point : seg.getWayPoints())
                             if (point.attr.containsKey("name") || point.attr.containsKey("desc")) {
                                 namedTrackPoints.waypoints.add(point);
                             }
@@ -384,17 +385,17 @@ public class GpxLayer extends Layer {
                 WayPoint earliest = null, latest = null;
 
                 info.append("<tr><td>");
-                if (trk.attr.containsKey("name")) {
-                    info.append(trk.attr.get("name"));
+                if (trk.getAttributes().containsKey("name")) {
+                    info.append(trk.getAttributes().get("name"));
                 }
                 info.append("</td><td>");
-                if (trk.attr.containsKey("desc")) {
-                    info.append(" ").append(trk.attr.get("desc"));
+                if (trk.getAttributes().containsKey("desc")) {
+                    info.append(" ").append(trk.getAttributes().get("desc"));
                 }
                 info.append("</td><td>");
 
-                for (Collection<WayPoint> seg : trk.trackSegs) {
-                    for (WayPoint pnt : seg) {
+                for (GpxTrackSegment seg : trk.getSegments()) {
+                    for (WayPoint pnt : seg.getWayPoints()) {
                         if (latest == null) {
                             latest = earliest = pnt;
                         } else {
@@ -428,8 +429,8 @@ public class GpxLayer extends Layer {
                 info.append("</td><td>");
                 info.append(new DecimalFormat("#0.00").format(trk.length() / 1000) + "km");
                 info.append("</td><td>");
-                if (trk.attr.containsKey("url")) {
-                    info.append(trk.attr.get("url"));
+                if (trk.getAttributes().containsKey("url")) {
+                    info.append(trk.getAttributes().get("url"));
                 }
                 info.append("</td></tr>");
             }
@@ -551,11 +552,11 @@ public class GpxLayer extends Layer {
         if (!computeCacheInSync) { // don't compute if the cache is good
             WayPoint oldWp = null;
             for (GpxTrack trk : data.tracks) {
-                for (Collection<WayPoint> segment : trk.trackSegs) {
+                for (GpxTrackSegment segment : trk.getSegments()) {
                     if (!forceLines) { // don't draw lines between segments, unless forced to
                         oldWp = null;
                     }
-                    for (WayPoint trkPnt : segment) {
+                    for (WayPoint trkPnt : segment.getWayPoints()) {
                         LatLon c = trkPnt.getCoor();
                         if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
                             continue;
@@ -608,30 +609,37 @@ public class GpxLayer extends Layer {
             computeCacheInSync = true;
         }
 
+        List<Collection<WayPoint>> visibleSegments = new ArrayList<Collection<WayPoint>>();
+        for (GpxTrack trk: data.tracks) {
+            for (GpxTrackSegment trkSeg: trk.getSegments()) {
+                if (trkSeg.getBounds().asRect().intersects(box.asRect())) {
+                    visibleSegments.add(trkSeg.getWayPoints());
+                }
+            }
+        }
+
         /****************************************************************
          ********** STEP 3a - DRAW LINES ********************************
          ****************************************************************/
         if (lines) {
             Point old = null;
-            for (GpxTrack trk : data.tracks) {
-                for (Collection<WayPoint> segment : trk.trackSegs) {
-                    for (WayPoint trkPnt : segment) {
-                        LatLon c = trkPnt.getCoor();
-                        if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
-                            continue;
+            for (Collection<WayPoint> segment : visibleSegments) {
+                for (WayPoint trkPnt : segment) {
+                    LatLon c = trkPnt.getCoor();
+                    if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
+                        continue;
+                    }
+                    Point screen = mv.getPoint(trkPnt.getEastNorth());
+                    if (trkPnt.drawLine) {
+                        // skip points that are on the same screenposition
+                        if (old != null && ((old.x != screen.x) || (old.y != screen.y))) {
+                            g.setColor(trkPnt.customColoring);
+                            g.drawLine(old.x, old.y, screen.x, screen.y);
                         }
-                        Point screen = mv.getPoint(trkPnt.getEastNorth());
-                        if (trkPnt.drawLine) {
-                            // skip points that are on the same screenposition
-                            if (old != null && ((old.x != screen.x) || (old.y != screen.y))) {
-                                g.setColor(trkPnt.customColoring);
-                                g.drawLine(old.x, old.y, screen.x, screen.y);
-                            }
-                        }
-                        old = screen;
-                    } // end for trkpnt
-                } // end for segment
-            } // end for trk
+                    }
+                    old = screen;
+                } // end for trkpnt
+            } // end for segment
         } // end if lines
 
         /****************************************************************
@@ -640,32 +648,30 @@ public class GpxLayer extends Layer {
         if (lines && direction && !alternatedirection) {
             Point old = null;
             Point oldA = null; // last arrow painted
-            for (GpxTrack trk : data.tracks) {
-                for (Collection<WayPoint> segment : trk.trackSegs) {
-                    for (WayPoint trkPnt : segment) {
-                        LatLon c = trkPnt.getCoor();
-                        if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
-                            continue;
+            for (Collection<WayPoint> segment : visibleSegments) {
+                for (WayPoint trkPnt : segment) {
+                    LatLon c = trkPnt.getCoor();
+                    if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
+                        continue;
+                    }
+                    if (trkPnt.drawLine) {
+                        Point screen = mv.getPoint(trkPnt.getEastNorth());
+                        // skip points that are on the same screenposition
+                        if (old != null
+                                && (oldA == null || screen.x < oldA.x - delta || screen.x > oldA.x + delta
+                                        || screen.y < oldA.y - delta || screen.y > oldA.y + delta)) {
+                            g.setColor(trkPnt.customColoring);
+                            double t = Math.atan2(screen.y - old.y, screen.x - old.x) + Math.PI;
+                            g.drawLine(screen.x, screen.y, (int) (screen.x + 10 * Math.cos(t - PHI)),
+                                    (int) (screen.y + 10 * Math.sin(t - PHI)));
+                            g.drawLine(screen.x, screen.y, (int) (screen.x + 10 * Math.cos(t + PHI)),
+                                    (int) (screen.y + 10 * Math.sin(t + PHI)));
+                            oldA = screen;
                         }
-                        if (trkPnt.drawLine) {
-                            Point screen = mv.getPoint(trkPnt.getEastNorth());
-                            // skip points that are on the same screenposition
-                            if (old != null
-                                    && (oldA == null || screen.x < oldA.x - delta || screen.x > oldA.x + delta
-                                            || screen.y < oldA.y - delta || screen.y > oldA.y + delta)) {
-                                g.setColor(trkPnt.customColoring);
-                                double t = Math.atan2(screen.y - old.y, screen.x - old.x) + Math.PI;
-                                g.drawLine(screen.x, screen.y, (int) (screen.x + 10 * Math.cos(t - PHI)),
-                                        (int) (screen.y + 10 * Math.sin(t - PHI)));
-                                g.drawLine(screen.x, screen.y, (int) (screen.x + 10 * Math.cos(t + PHI)),
-                                        (int) (screen.y + 10 * Math.sin(t + PHI)));
-                                oldA = screen;
-                            }
-                            old = screen;
-                        }
-                    } // end for trkpnt
-                } // end for segment
-            } // end for trk
+                        old = screen;
+                    }
+                } // end for trkpnt
+            } // end for segment
         } // end if lines
 
         /****************************************************************
@@ -674,31 +680,29 @@ public class GpxLayer extends Layer {
         if (lines && direction && alternatedirection) {
             Point old = null;
             Point oldA = null; // last arrow painted
-            for (GpxTrack trk : data.tracks) {
-                for (Collection<WayPoint> segment : trk.trackSegs) {
-                    for (WayPoint trkPnt : segment) {
-                        LatLon c = trkPnt.getCoor();
-                        if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
-                            continue;
+            for (Collection<WayPoint> segment : visibleSegments) {
+                for (WayPoint trkPnt : segment) {
+                    LatLon c = trkPnt.getCoor();
+                    if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
+                        continue;
+                    }
+                    if (trkPnt.drawLine) {
+                        Point screen = mv.getPoint(trkPnt.getEastNorth());
+                        // skip points that are on the same screenposition
+                        if (old != null
+                                && (oldA == null || screen.x < oldA.x - delta || screen.x > oldA.x + delta
+                                        || screen.y < oldA.y - delta || screen.y > oldA.y + delta)) {
+                            g.setColor(trkPnt.customColoring);
+                            g.drawLine(screen.x, screen.y, screen.x + dir[trkPnt.dir][0], screen.y
+                                    + dir[trkPnt.dir][1]);
+                            g.drawLine(screen.x, screen.y, screen.x + dir[trkPnt.dir][2], screen.y
+                                    + dir[trkPnt.dir][3]);
+                            oldA = screen;
                         }
-                        if (trkPnt.drawLine) {
-                            Point screen = mv.getPoint(trkPnt.getEastNorth());
-                            // skip points that are on the same screenposition
-                            if (old != null
-                                    && (oldA == null || screen.x < oldA.x - delta || screen.x > oldA.x + delta
-                                            || screen.y < oldA.y - delta || screen.y > oldA.y + delta)) {
-                                g.setColor(trkPnt.customColoring);
-                                g.drawLine(screen.x, screen.y, screen.x + dir[trkPnt.dir][0], screen.y
-                                        + dir[trkPnt.dir][1]);
-                                g.drawLine(screen.x, screen.y, screen.x + dir[trkPnt.dir][2], screen.y
-                                        + dir[trkPnt.dir][3]);
-                                oldA = screen;
-                            }
-                            old = screen;
-                        }
-                    } // end for trkpnt
-                } // end for segment
-            } // end for trk
+                        old = screen;
+                    }
+                } // end for trkpnt
+            } // end for segment
         } // end if lines
 
         /****************************************************************
@@ -706,31 +710,29 @@ public class GpxLayer extends Layer {
          ****************************************************************/
         if (large || hdopcircle) {
             g.setColor(neutralColor);
-            for (GpxTrack trk : data.tracks) {
-                for (Collection<WayPoint> segment : trk.trackSegs) {
-                    for (WayPoint trkPnt : segment) {
-                        LatLon c = trkPnt.getCoor();
-                        if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
-                            continue;
+            for (Collection<WayPoint> segment : visibleSegments) {
+                for (WayPoint trkPnt : segment) {
+                    LatLon c = trkPnt.getCoor();
+                    if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
+                        continue;
+                    }
+                    Point screen = mv.getPoint(trkPnt.getEastNorth());
+                    g.setColor(trkPnt.customColoring);
+                    if (hdopcircle && trkPnt.attr.get("hdop") != null) {
+                        // hdop value
+                        float hdop = ((Float)trkPnt.attr.get("hdop")).floatValue();
+                        if (hdop < 0) {
+                            hdop = 0;
                         }
-                        Point screen = mv.getPoint(trkPnt.getEastNorth());
-                        g.setColor(trkPnt.customColoring);
-                        if (hdopcircle && trkPnt.attr.get("hdop") != null) {
-                            // hdop value
-                            float hdop = ((Float)trkPnt.attr.get("hdop")).floatValue();
-                            if (hdop < 0) {
-                                hdop = 0;
-                            }
-                            // hdop pixels
-                            int hdopp = mv.getPoint(new LatLon(trkPnt.getCoor().lat(), trkPnt.getCoor().lon() + 2*6*hdop*360/40000000)).x - screen.x;
-                            g.drawArc(screen.x-hdopp/2, screen.y-hdopp/2, hdopp, hdopp, 0, 360);
-                        }
-                        if (large) {
-                            g.fillRect(screen.x-1, screen.y-1, 3, 3);
-                        }
-                    } // end for trkpnt
-                } // end for segment
-            } // end for trk
+                        // hdop pixels
+                        int hdopp = mv.getPoint(new LatLon(trkPnt.getCoor().lat(), trkPnt.getCoor().lon() + 2*6*hdop*360/40000000)).x - screen.x;
+                        g.drawArc(screen.x-hdopp/2, screen.y-hdopp/2, hdopp, hdopp, 0, 360);
+                    }
+                    if (large) {
+                        g.fillRect(screen.x-1, screen.y-1, 3, 3);
+                    }
+                } // end for trkpnt
+            } // end for segment
         } // end if large || hdopcircle
 
         /****************************************************************
@@ -738,20 +740,18 @@ public class GpxLayer extends Layer {
          ****************************************************************/
         if (!large && lines) {
             g.setColor(neutralColor);
-            for (GpxTrack trk : data.tracks) {
-                for (Collection<WayPoint> segment : trk.trackSegs) {
-                    for (WayPoint trkPnt : segment) {
-                        LatLon c = trkPnt.getCoor();
-                        if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
-                            continue;
-                        }
-                        if (!trkPnt.drawLine) {
-                            Point screen = mv.getPoint(trkPnt.getEastNorth());
-                            g.drawRect(screen.x, screen.y, 0, 0);
-                        }
-                    } // end for trkpnt
-                } // end for segment
-            } // end for trk
+            for (Collection<WayPoint> segment : visibleSegments) {
+                for (WayPoint trkPnt : segment) {
+                    LatLon c = trkPnt.getCoor();
+                    if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
+                        continue;
+                    }
+                    if (!trkPnt.drawLine) {
+                        Point screen = mv.getPoint(trkPnt.getEastNorth());
+                        g.drawRect(screen.x, screen.y, 0, 0);
+                    }
+                } // end for trkpnt
+            } // end for segment
         } // end if large
 
         /****************************************************************
@@ -759,19 +759,17 @@ public class GpxLayer extends Layer {
          ****************************************************************/
         if (!large && !lines) {
             g.setColor(neutralColor);
-            for (GpxTrack trk : data.tracks) {
-                for (Collection<WayPoint> segment : trk.trackSegs) {
-                    for (WayPoint trkPnt : segment) {
-                        LatLon c = trkPnt.getCoor();
-                        if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
-                            continue;
-                        }
-                        Point screen = mv.getPoint(trkPnt.getEastNorth());
-                        g.setColor(trkPnt.customColoring);
-                        g.drawRect(screen.x, screen.y, 0, 0);
-                    } // end for trkpnt
-                } // end for segment
-            } // end for trk
+            for (Collection<WayPoint> segment : visibleSegments) {
+                for (WayPoint trkPnt : segment) {
+                    LatLon c = trkPnt.getCoor();
+                    if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
+                        continue;
+                    }
+                    Point screen = mv.getPoint(trkPnt.getEastNorth());
+                    g.setColor(trkPnt.customColoring);
+                    g.drawRect(screen.x, screen.y, 0, 0);
+                } // end for trkpnt
+            } // end for segment
         } // end if large
 
         // Long duration = System.currentTimeMillis() - startTime;
@@ -801,9 +799,9 @@ public class GpxLayer extends Layer {
                 return;
             DataSet ds = new DataSet();
             for (GpxTrack trk : data.tracks) {
-                for (Collection<WayPoint> segment : trk.trackSegs) {
+                for (GpxTrackSegment segment : trk.getSegments()) {
                     List<Node> nodes = new ArrayList<Node>();
-                    for (WayPoint p : segment) {
+                    for (WayPoint p : segment.getWayPoints()) {
                         Node n = new Node(p.getCoor());
                         String timestr = p.getString("time");
                         if (timestr != null) {
@@ -886,8 +884,8 @@ public class GpxLayer extends Layer {
             int latcnt = 0;
 
             for (GpxTrack trk : data.tracks) {
-                for (Collection<WayPoint> segment : trk.trackSegs) {
-                    for (WayPoint p : segment) {
+                for (GpxTrackSegment segment : trk.getSegments()) {
+                    for (WayPoint p : segment.getWayPoints()) {
                         latsum += p.getCoor().lat();
                         latcnt++;
                     }
@@ -919,8 +917,8 @@ public class GpxLayer extends Layer {
              */
             LatLon previous = null;
             for (GpxTrack trk : data.tracks) {
-                for (Collection<WayPoint> segment : trk.trackSegs) {
-                    for (WayPoint p : segment) {
+                for (GpxTrackSegment segment : trk.getSegments()) {
+                    for (WayPoint p : segment.getWayPoints()) {
                         LatLon c = p.getCoor();
                         if (previous == null || c.greatCircleDistance(previous) > buffer_dist) {
                             // we add a buffer around the point.
@@ -1046,11 +1044,8 @@ public class GpxLayer extends Layer {
         double firstTime = -1.0;
         if (data.tracks != null && !data.tracks.isEmpty()) {
             for (GpxTrack track : data.tracks) {
-                if (track.trackSegs == null) {
-                    continue;
-                }
-                for (Collection<WayPoint> seg : track.trackSegs) {
-                    for (WayPoint w : seg) {
+                for (GpxTrackSegment seg : track.getSegments()) {
+                    for (WayPoint w : seg.getWayPoints()) {
                         firstTime = w.time;
                         break;
                     }
@@ -1110,11 +1105,8 @@ public class GpxLayer extends Layer {
         if ((Main.pref.getBoolean("marker.audiofromnamedtrackpoints", false)) && data.tracks != null
                 && !data.tracks.isEmpty()) {
             for (GpxTrack track : data.tracks) {
-                if (track.trackSegs == null) {
-                    continue;
-                }
-                for (Collection<WayPoint> seg : track.trackSegs) {
-                    for (WayPoint w : seg) {
+                for (GpxTrackSegment seg : track.getSegments()) {
+                    for (WayPoint w : seg.getWayPoints()) {
                         if (w.attr.containsKey("name") || w.attr.containsKey("desc")) {
                             waypoints.add(w);
                         }
@@ -1136,11 +1128,8 @@ public class GpxLayer extends Layer {
             WayPoint w2 = null;
 
             for (GpxTrack track : data.tracks) {
-                if (track.trackSegs == null) {
-                    continue;
-                }
-                for (Collection<WayPoint> seg : track.trackSegs) {
-                    for (WayPoint w : seg) {
+                for (GpxTrackSegment seg : track.getSegments()) {
+                    for (WayPoint w : seg.getWayPoints()) {
                         if (startTime < w.time) {
                             w2 = w;
                             break;
@@ -1176,11 +1165,8 @@ public class GpxLayer extends Layer {
                 && !data.tracks.isEmpty()) {
             boolean gotOne = false;
             for (GpxTrack track : data.tracks) {
-                if (track.trackSegs == null) {
-                    continue;
-                }
-                for (Collection<WayPoint> seg : track.trackSegs) {
-                    for (WayPoint w : seg) {
+                for (GpxTrackSegment seg : track.getSegments()) {
+                    for (WayPoint w : seg.getWayPoints()) {
                         WayPoint wStart = new WayPoint(w.getCoor());
                         wStart.attr.put("name", "start");
                         wStart.time = w.time;
@@ -1289,12 +1275,9 @@ public class GpxLayer extends Layer {
         if (data.tracks == null)
             return null;
         for (GpxTrack track : data.tracks) {
-            if (track.trackSegs == null) {
-                continue;
-            }
-            for (Collection<WayPoint> seg : track.trackSegs) {
+            for (GpxTrackSegment seg : track.getSegments()) {
                 WayPoint R = null;
-                for (WayPoint S : seg) {
+                for (WayPoint S : seg.getWayPoints()) {
                     EastNorth c = S.getEastNorth();
                     if (R == null) {
                         R = S;

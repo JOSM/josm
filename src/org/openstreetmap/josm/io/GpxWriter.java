@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.GpxRoute;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 
 /**
@@ -160,10 +161,10 @@ public class GpxWriter extends XmlWriter {
     private void writeTracks() {
         for (GpxTrack trk : data.tracks) {
             open("trk");
-            writeAttr(trk.attr);
-            for (Collection<WayPoint> seg : trk.trackSegs) {
+            writeAttr(trk.getAttributes());
+            for (GpxTrackSegment seg : trk.getSegments()) {
                 openln("trkseg");
-                for (WayPoint pnt : seg) {
+                for (WayPoint pnt : seg.getWayPoints()) {
                     wayPoint(pnt, TRACK_POINT);
                 }
                 closeln("trkseg");

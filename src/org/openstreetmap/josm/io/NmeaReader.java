@@ -11,11 +11,12 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.tools.DateUtils;
 
@@ -172,8 +173,7 @@ public class NmeaReader {
 
         // create the data tree
         data = new GpxData();
-        GpxTrack currentTrack = new GpxTrack();
-        data.tracks.add(currentTrack);
+        Collection<Collection<WayPoint>> currentTrack = new ArrayList<Collection<WayPoint>>();
 
         try {
             BufferedReader rd =
@@ -206,7 +206,8 @@ public class NmeaReader {
                 }
             }
             rd.close();
-            currentTrack.trackSegs.add(ps.waypoints);
+            currentTrack.add(ps.waypoints);
+            data.tracks.add(new ImmutableGpxTrack(currentTrack, Collections.<String, Object>emptyMap()));
             data.recalculateBounds();
 
         } catch (final IOException e) {

@@ -62,8 +62,8 @@ public class GpxData extends WithAttributes {
 
     public boolean hasTrackPoints() {
         for (GpxTrack trk : tracks) {
-            for (Collection<WayPoint> trkseg : trk.trackSegs) {
-                if (!trkseg.isEmpty())
+            for (GpxTrackSegment trkseg : trk.getSegments()) {
+                if (!trkseg.getWayPoints().isEmpty())
                     return true;
             }
         }
@@ -102,13 +102,12 @@ public class GpxData extends WithAttributes {
             }
         }
         for (GpxTrack trk : tracks) {
-            for (Collection<WayPoint> trkseg : trk.trackSegs) {
-                for (WayPoint wpt : trkseg) {
-                    if (bounds == null) {
-                        bounds = new Bounds(wpt.getCoor());
-                    } else {
-                        bounds.extend(wpt.getCoor());
-                    }
+            Bounds trkBounds = trk.getBounds();
+            if (trkBounds != null) {
+                if (bounds == null) {
+                    bounds = new Bounds(trkBounds);
+                } else {
+                    bounds.extend(trkBounds);
                 }
             }
         }

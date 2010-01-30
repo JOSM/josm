@@ -11,8 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Collection;
-import java.util.Iterator;
 
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
@@ -23,6 +21,7 @@ import org.openstreetmap.josm.actions.mapmode.PlayHeadDragMode;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -310,9 +309,8 @@ public class PlayHeadMarker extends Marker {
         WayPoint w2 = null;
 
         for (GpxTrack track : trackLayer.data.tracks) {
-            for (Collection<WayPoint> trackseg : track.trackSegs) {
-                for (Iterator<WayPoint> it = trackseg.iterator(); it.hasNext();) {
-                    WayPoint w = it.next();
+            for (GpxTrackSegment trackseg : track.getSegments()) {
+                for (WayPoint w: trackseg.getWayPoints()) {
                     if (audioTime < w.time) {
                         w2 = w;
                         break;

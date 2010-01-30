@@ -65,6 +65,7 @@ import javax.swing.filechooser.FileFilter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -958,8 +959,8 @@ public class CorrelateGpxWithImages implements ActionListener {
             long firstGPXDate = -1;
             // Finds first GPX point
             outer: for (GpxTrack trk : gpx.tracks) {
-                for (Collection<WayPoint> segment : trk.trackSegs) {
-                    for (WayPoint curWp : segment) {
+                for (GpxTrackSegment segment : trk.getSegments()) {
+                    for (WayPoint curWp : segment.getWayPoints()) {
                         String curDateWpStr = (String) curWp.attr.get("time");
                         if (curDateWpStr == null) {
                             continue;
@@ -1086,12 +1087,12 @@ public class CorrelateGpxWithImages implements ActionListener {
         PrimaryDateParser dateParser = new PrimaryDateParser();
 
         for (GpxTrack trk : selectedGpx.tracks) {
-            for (Collection<WayPoint> segment : trk.trackSegs) {
+            for (GpxTrackSegment segment : trk.getSegments()) {
 
                 long prevDateWp = 0;
                 WayPoint prevWp = null;
 
-                for (WayPoint curWp : segment) {
+                for (WayPoint curWp : segment.getWayPoints()) {
 
                     String curDateWpStr = (String) curWp.attr.get("time");
                     if (curDateWpStr != null) {

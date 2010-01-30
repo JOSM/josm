@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.GpxRoute;
-import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -46,7 +47,8 @@ public class GpxReader {
     private class Parser extends DefaultHandler {
 
         private GpxData currentData;
-        private GpxTrack currentTrack;
+        private Collection<Collection<WayPoint>> currentTrack;
+        private Map<String, Object> currentTrackAttr;
         private Collection<WayPoint> currentTrackSeg;
         private GpxRoute currentRoute;
         private WayPoint currentWayPoint;
@@ -99,7 +101,8 @@ public class GpxReader {
                 } else if (qName.equals("trk")) {
                     states.push(currentState);
                     currentState = State.trk;
-                    currentTrack = new GpxTrack();
+                    currentTrack = new ArrayList<Collection<WayPoint>>();
+                    currentTrackAttr = new HashMap<String, Object>();
                 } else if (qName.equals("extensions")) {
                     states.push(currentState);
                     currentState = State.ext;
@@ -206,7 +209,7 @@ public class GpxReader {
             case rte: return currentRoute.attr;
             case metadata: return currentData.attr;
             case wpt: return currentWayPoint.attr;
-            case trk: return currentTrack.attr;
+            case trk: return currentTrackAttr;
             default: return null;
             }
         }
@@ -302,18 +305,18 @@ public class GpxReader {
             case trkseg:
                 if (qName.equals("trkseg")) {
                     currentState = states.pop();
-                    currentTrack.trackSegs.add(currentTrackSeg);
+                    currentTrack.add(currentTrackSeg);
                 }
                 break;
             case trk:
                 if (qName.equals("trk")) {
                     currentState = states.pop();
-                    currentData.tracks.add(currentTrack);
+                    currentData.tracks.add(new ImmutableGpxTrack(currentTrack, currentTrackAttr));
                 } else if (qName.equals("name") || qName.equals("cmt")
                         || qName.equals("desc") || qName.equals("src")
                         || qName.equals("type") || qName.equals("number")
                         || qName.equals("url")) {
-                    currentTrack.attr.put(qName, accumulator.toString());
+                    currentTrackAttr.put(qName, accumulator.toString());
                 }
                 break;
             case ext:

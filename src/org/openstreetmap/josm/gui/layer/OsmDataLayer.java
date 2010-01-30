@@ -22,9 +22,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
@@ -46,7 +48,7 @@ import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.GpxTrack;
+import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
@@ -572,11 +574,11 @@ public class OsmDataLayer extends Layer {
             if (!w.isUsable()) {
                 continue;
             }
-            GpxTrack trk = new GpxTrack();
-            gpxData.tracks.add(trk);
+            Collection<Collection<WayPoint>> trk = new ArrayList<Collection<WayPoint>>();
+            Map<String, Object> trkAttr = new HashMap<String, Object>();
 
             if (w.get("name") != null) {
-                trk.attr.put("name", w.get("name"));
+                trkAttr.put("name", w.get("name"));
             }
 
             ArrayList<WayPoint> trkseg = null;
@@ -587,7 +589,7 @@ public class OsmDataLayer extends Layer {
                 }
                 if (trkseg == null) {
                     trkseg = new ArrayList<WayPoint>();
-                    trk.trackSegs.add(trkseg);
+                    trk.add(trkseg);
                 }
                 if (!n.isTagged()) {
                     doneNodes.add(n);
@@ -599,6 +601,8 @@ public class OsmDataLayer extends Layer {
                 }
                 trkseg.add(wpt);
             }
+
+            gpxData.tracks.add(new ImmutableGpxTrack(trk, trkAttr));
         }
 
         // what is this loop meant to do? it creates waypoints but never

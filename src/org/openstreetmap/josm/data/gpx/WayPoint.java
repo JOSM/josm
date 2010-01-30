@@ -9,7 +9,6 @@ import java.util.Date;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.PrimaryDateParser;
 
 public class WayPoint extends WithAttributes implements Comparable<WayPoint>
@@ -19,7 +18,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>
     public boolean drawLine;
     public int dir;
 
-    private CachedLatLon coor;
+    private final CachedLatLon coor;
 
     public final LatLon getCoor() {
         return coor;

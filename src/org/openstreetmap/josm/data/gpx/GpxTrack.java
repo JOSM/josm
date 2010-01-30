@@ -4,31 +4,21 @@
 package org.openstreetmap.josm.data.gpx;
 
 import java.util.Collection;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Map;
 
-public class GpxTrack extends WithAttributes {
-    public final Collection<Collection<WayPoint>> trackSegs
-    = new ConcurrentLinkedQueue<Collection<WayPoint>>();
+import org.openstreetmap.josm.data.Bounds;
 
-    /**
-     * calculates the length of the track
-     */
-    public double length(){
-        double result = 0.0; // in meters
-        WayPoint last = null;
 
-        for (Collection<WayPoint> trkseg : trackSegs) {
-            for (WayPoint tpt : trkseg) {
-                if(last != null){
-                    Double d = last.getCoor().greatCircleDistance(tpt.getCoor());
-                    if(!d.isNaN() && !d.isInfinite()) {
-                        result += d;
-                    }
-                }
-                last = tpt;
-            }
-            last = null; // restart for each track segment
-        }
-        return result;
-    }
+/**
+ * Read-only gpx track. Implementations doesn't have to be immutable, but should always be thread safe.
+ *
+ */
+
+public interface GpxTrack {
+
+    Collection<GpxTrackSegment> getSegments();
+    Map<String, Object> getAttributes();
+    Bounds getBounds();
+    double length();
+
 }
