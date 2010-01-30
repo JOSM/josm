@@ -501,7 +501,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
         try {
             int deg;
-            float min, sec;
+            double min, sec;
             double lon, lat;
 
             Metadata metadata = JpegMetadataReader.readMetadata(e.file);

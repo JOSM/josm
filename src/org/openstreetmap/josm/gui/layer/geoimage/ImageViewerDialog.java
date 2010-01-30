@@ -246,6 +246,9 @@ public class ImageViewerDialog extends ToggleDialog {
             if (entry.getSpeed() != null) {
                 osd.append(tr("\n{0} km/h", Math.round(entry.getSpeed())));
             }
+            //if (entry.getPos()  != null) {
+            //    osd.append(tr("\nlat: {0}, lon: {1}", Double.toString(entry.getPos().lat()), Double.toString(entry.getPos().lon())));
+            //}
             imgDisplay.setOsdText(osd.toString());
         } else {
             imgDisplay.setImage(null);
