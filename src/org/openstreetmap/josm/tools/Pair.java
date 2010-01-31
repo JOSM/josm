@@ -14,7 +14,7 @@ public final class Pair<A,B> {
     }
 
     @Override public int hashCode() {
-        return a.hashCode() ^ b.hashCode();
+        return a.hashCode() + b.hashCode();
     }
 
     @Override public boolean equals(Object other) {
