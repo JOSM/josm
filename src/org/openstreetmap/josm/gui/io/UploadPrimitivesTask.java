@@ -96,10 +96,10 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                 )
         };
         int numObjectsToUploadLeft = toUpload.getSize() - processedPrimitives.size();
-        String msg1 = tr("The server reported that the current changset was closed.<br>"
+        String msg1 = tr("The server reported that the current changeset was closed.<br>"
                 + "This is most likely because the changesets size exceeded the max. size<br>"
                 + "of {0} objects on the server ''{1}''.",
-                OsmApi.getOsmApi().getCapabilities().getMaxChangsetSize(),
+                OsmApi.getOsmApi().getCapabilities().getMaxChangesetSize(),
                 OsmApi.getOsmApi().getBaseUrl()
         );
         String msg2 = trn(
@@ -109,7 +109,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                 numObjectsToUploadLeft
         );
         String msg3 = tr(
-                "Click ''<strong>{0}</strong>'' to continue uploading to additional new changsets.<br>"
+                "Click ''<strong>{0}</strong>'' to continue uploading to additional new changesets.<br>"
                 + "Click ''<strong>{1}</strong>'' to return to the upload dialog.<br>"
                 + "Click ''<strong>{2}</strong>'' to abort uploading and return to map editing.<br>",
                 specs[0].text,
@@ -125,7 +125,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                 null, /* no special icon */
                 specs,
                 specs[0],
-                ht("/Action/UploadAction#ChangsetFull")
+                ht("/Action/UploadAction#ChangesetFull")
         );
         switch(ret) {
         case 0: return MaxChangesetSizeExceededPolicy.AUTOMATICALLY_OPEN_NEW_CHANGESETS;
@@ -137,7 +137,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
         return null;
     }
 
-    protected void openNewChangset() {
+    protected void openNewChangeset() {
         // make sure the current changeset is removed from the upload dialog.
         //
         ChangesetCache.getInstance().update(changeset);
@@ -146,7 +146,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
         this.changeset = newChangeSet;
     }
 
-    protected boolean recoverFromChangsetFullException() {
+    protected boolean recoverFromChangesetFullException() {
         if (toUpload.getSize() - processedPrimitives.size() == 0) {
             strategy.setPolicy(MaxChangesetSizeExceededPolicy.ABORT);
             return false;
@@ -167,7 +167,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
         case AUTOMATICALLY_OPEN_NEW_CHANGESETS:
             // prepare the state of the task for a next iteration in uploading.
             //
-            openNewChangset();
+            openNewChangeset();
             toUpload.removeProcessed(processedPrimitives);
             return true;
         }
@@ -263,9 +263,9 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                     case UPLOAD_DATA:
                         // Most likely the changeset is full. Try to recover and continue
                         // with a new changeset, but let the user decide first (see
-                        // recoverFromChangsetFullException)
+                        // recoverFromChangesetFullException)
                         //
-                        if (recoverFromChangsetFullException()) {
+                        if (recoverFromChangesetFullException()) {
                             continue;
                         }
                         lastException = e;

@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class SingleChangesetDownloadPanel extends JPanel {
 
-    private JTextField tfChangsetId;
+    private JTextField tfChangesetId;
     private DownloadAction actDownload;
     private ChangesetIdValidator valChangesetId;
 
@@ -43,15 +43,15 @@ public class SingleChangesetDownloadPanel extends JPanel {
         );
 
         add(new JLabel(tr("Changeset ID: ")));
-        add(tfChangsetId = new JTextField(10));
-        tfChangsetId.setToolTipText(tr("Enter a changset id"));
-        valChangesetId  =ChangesetIdValidator.decorate(tfChangsetId);
-        SelectAllOnFocusGainedDecorator.decorate(tfChangsetId);
+        add(tfChangesetId = new JTextField(10));
+        tfChangesetId.setToolTipText(tr("Enter a changeset id"));
+        valChangesetId  =ChangesetIdValidator.decorate(tfChangesetId);
+        SelectAllOnFocusGainedDecorator.decorate(tfChangesetId);
 
         actDownload = new DownloadAction();
         SideButton btn = new SideButton(actDownload);
-        tfChangsetId.addActionListener(actDownload);
-        tfChangsetId.getDocument().addDocumentListener(actDownload);
+        tfChangesetId.addActionListener(actDownload);
+        tfChangesetId.getDocument().addDocumentListener(actDownload);
         add(btn);
     }
 
@@ -65,7 +65,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
      *
      * @return the changeset id entered in this panel
      */
-    public int getChangsetId() {
+    public int getChangesetId() {
         return valChangesetId.getChangesetId();
     }
 
@@ -83,7 +83,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
         public void actionPerformed(ActionEvent arg0) {
             if (!isEnabled())
                 return;
-            int id = getChangsetId();
+            int id = getChangesetId();
             if (id == 0) return;
             ChangesetContentDownloadTask task =  new ChangesetContentDownloadTask(
                     SingleChangesetDownloadPanel.this,
@@ -93,7 +93,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
         }
 
         protected void updateEnabledState() {
-            String v = tfChangsetId.getText();
+            String v = tfChangesetId.getText();
             if (v == null || v.trim().length() == 0) {
                 setEnabled(false);
                 return;

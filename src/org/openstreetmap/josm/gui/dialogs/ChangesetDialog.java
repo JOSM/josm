@@ -80,7 +80,7 @@ public class ChangesetDialog extends ToggleDialog{
     // the actions
     private SelectObjectsAction selectObjectsAction;
     private  ReadChangesetsAction readChangesetAction;
-    private ShowChangesetInfoAction showChangsetInfoAction;
+    private ShowChangesetInfoAction showChangesetInfoAction;
     private CloseOpenChangesetsAction closeChangesetAction;
     private LaunchChangesetManagerAction launchChangesetManagerAction;
 
@@ -201,11 +201,11 @@ public class ChangesetDialog extends ToggleDialog{
         lstInSelection.getSelectionModel().addListSelectionListener(closeChangesetAction);
 
         // -- show info action
-        showChangsetInfoAction = new ShowChangesetInfoAction();
-        tp.add(new SideButton(showChangsetInfoAction, false));
-        cbInSelectionOnly.addItemListener(showChangsetInfoAction);
-        lstInActiveDataLayer.getSelectionModel().addListSelectionListener(showChangsetInfoAction);
-        lstInSelection.getSelectionModel().addListSelectionListener(showChangsetInfoAction);
+        showChangesetInfoAction = new ShowChangesetInfoAction();
+        tp.add(new SideButton(showChangesetInfoAction, false));
+        cbInSelectionOnly.addItemListener(showChangesetInfoAction);
+        lstInActiveDataLayer.getSelectionModel().addListSelectionListener(showChangesetInfoAction);
+        lstInSelection.getSelectionModel().addListSelectionListener(showChangesetInfoAction);
 
         // -- launch changeset manager action
         launchChangesetManagerAction = new LaunchChangesetManagerAction();
@@ -573,7 +573,7 @@ public class ChangesetDialog extends ToggleDialog{
             add(readChangesetAction);
             add(closeChangesetAction);
             addSeparator();
-            add(showChangsetInfoAction);
+            add(showChangesetInfoAction);
         }
     }
 }

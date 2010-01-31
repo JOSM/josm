@@ -225,7 +225,7 @@ public class HelpBrowser extends JFrame {
         String message = tr("<html><p class=\"warning-header\">Help content for help topic missing</p>"
                 + "<p class=\"warning-body\">Help content for the help topic <strong>{0}</strong> is "
                 + "not available yet. It is missing both in your local language ({1}) and in english.<br><br>"
-                + "Please help to improve the JOSM help system and fill in the missing information."
+                + "Please help to improve the JOSM help system and fill in the missing information. "
                 + "You can both edit the <a href=\"{2}\">help topic in your local language ({1})</a> and "
                 + "the <a href=\"{3}\">help topic in english</a>."
                 + "</p></html>",
@@ -347,7 +347,7 @@ public class HelpBrowser extends JFrame {
                         Main.parent,
                         tr(
                                 "<html>Failed to open help page for url {0}.<br>"
-                                + "This is most likely due to a network problem, please check your<br>"
+                                + "This is most likely due to a network problem, please check<br>"
                                 + "your internet connection</html>",
                                 url.toString()
                         ),

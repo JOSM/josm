@@ -220,7 +220,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         gc.weighty = 1.0;
         add(new JPanel(), gc);
 
-        int maxChunkSize = OsmApi.getOsmApi().getCapabilities().getMaxChangsetSize();
+        int maxChunkSize = OsmApi.getOsmApi().getCapabilities().getMaxChangesetSize();
         pnlMultiChangesetPolicyPanel.setVisible(
                 maxChunkSize > 0 && numUploadedObjects > maxChunkSize
         );
@@ -315,7 +315,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
     }
 
     protected void updateNumRequestsLabels() {
-        int maxChunkSize = OsmApi.getOsmApi().getCapabilities().getMaxChangsetSize();
+        int maxChunkSize = OsmApi.getOsmApi().getCapabilities().getMaxChangesetSize();
         if (maxChunkSize > 0 && numUploadedObjects > maxChunkSize) {
             rbStrategy.get(UploadStrategy.SINGLE_REQUEST_STRATEGY).setEnabled(false);
             JLabel lbl = lblStrategies.get(UploadStrategy.SINGLE_REQUEST_STRATEGY);
@@ -406,7 +406,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         protected void valiateChunkSize() {
             try {
                 int chunkSize = Integer.parseInt(tfChunkSize.getText().trim());
-                int maxChunkSize = OsmApi.getOsmApi().getCapabilities().getMaxChangsetSize();
+                int maxChunkSize = OsmApi.getOsmApi().getCapabilities().getMaxChangesetSize();
                 if (chunkSize <= 0) {
                     setErrorFeedback(tfChunkSize, tr("Illegal chunk size <= 0. Please enter an integer > 1"));
                 } else if (maxChunkSize > 0 && chunkSize > maxChunkSize) {

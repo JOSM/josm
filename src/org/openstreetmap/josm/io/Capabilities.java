@@ -79,7 +79,7 @@ public class Capabilities {
      *
      * @return the max number of objects in a changeset
      */
-    public int getMaxChangsetSize() {
+    public int getMaxChangesetSize() {
         String v = get("changesets", "maximum_elements");
         if (v == null) return -1;
         try {

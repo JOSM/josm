@@ -38,7 +38,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
     private boolean closeChangesetAfterNextUpload;
     private ConfigurationParameterRequestHandler configHandler;
 
-    protected String buildChangsetSummary() {
+    protected String buildChangesetSummary() {
         StringBuffer msg = new StringBuffer();
         if (selectedChangeset == null || selectedChangeset.isNew()) {
             msg.append(tr("Objects are uploaded to a <strong>new changeset</strong>."));
@@ -66,7 +66,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
         // multiple changesets
         //
         boolean useOneChangeset = true;
-        int maxChunkSize = OsmApi.getOsmApi().getCapabilities().getMaxChangsetSize();
+        int maxChunkSize = OsmApi.getOsmApi().getCapabilities().getMaxChangesetSize();
         if (maxChunkSize > 0 && numObjects > maxChunkSize) {
             useOneChangeset = false;
         }
@@ -173,7 +173,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
         sb.append("<html>");
         sb.append(buildStrategySummary());
         sb.append("<br><br>");
-        sb.append(buildChangsetSummary());
+        sb.append(buildChangesetSummary());
         sb.append("</html>");
         jepMessage.setText(sb.toString());
     }

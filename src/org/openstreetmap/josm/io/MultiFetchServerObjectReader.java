@@ -155,7 +155,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
     }
 
     /**
-     * appends a {@see Way}s id and the list of ids of nodes the way refers to to the list of ids which will be fetched from the server.
+     * appends a {@see Way}s id and the list of ids of nodes the way refers to the list of ids which will be fetched from the server.
      *
      * @param way the way (ignored, if null)
      * @return this

@@ -13,7 +13,7 @@ import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlParser;
 
 import static org.junit.Assert.*;
 
-class ChangsetQueryUrlParserTest {
+class ChangesetQueryUrlParserTest {
 	final shouldFail = new GroovyTestCase().&shouldFail
 	
 	@Test

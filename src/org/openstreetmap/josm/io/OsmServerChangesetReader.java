@@ -163,9 +163,9 @@ public class OsmServerChangesetReader extends OsmServerReader {
     /**
      * Downloads the content of a changeset
      *
-     * @param id the changset id. >0 required.
+     * @param id the changeset id. >0 required.
      * @param monitor the progress monitor. {@see NullProgressMonitor#INSTANCE} assumed if null.
-     * @return the changset content
+     * @return the changeset content
      * @throws IllegalArgumentException thrown if id <= 0
      * @throws OsmTransferException thrown if something went wrong
      */

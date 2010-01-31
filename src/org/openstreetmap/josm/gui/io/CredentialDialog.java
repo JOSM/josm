@@ -235,7 +235,7 @@ public class CredentialDialog extends JDialog {
         protected void build() {
             super.build();
             tfUserName.setToolTipText(tr("Please enter the user name of your OSM account"));
-            tfPassword.setToolTipText(tr("Please enter the password name of your OSM account"));
+            tfPassword.setToolTipText(tr("Please enter the password of your OSM account"));
             lblHeading.setText(
                     "<html>" + tr("Authenticating at the OSM API ''{0}'' failed. Please enter a valid username and a valid password.",
                             OsmApi.getOsmApi().getBaseUrl()) + "</html>");

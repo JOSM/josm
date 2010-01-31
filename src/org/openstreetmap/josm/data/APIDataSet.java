@@ -276,7 +276,7 @@ public class APIDataSet {
     }
 
     /**
-     * Utility class to sort a collection of of new relations with their dependencies
+     * Utility class to sort a collection of new relations with their dependencies
      * topologically.
      *
      */

@@ -115,12 +115,12 @@ public class ChangesetContentDownloadTask extends PleaseWaitRunnable implements 
      * Replies true if the local {@see ChangesetCache} already includes the changeset with
      * id <code>changesetId</code>.
      *
-     * @param changsetId the changeset id
+     * @param changesetId the changeset id
      * @return true if the local {@see ChangesetCache} already includes the changeset with
      * id <code>changesetId</code>
      */
-    protected boolean isAvailableLocally(int changsetId) {
-        return ChangesetCache.getInstance().get(changsetId) != null;
+    protected boolean isAvailableLocally(int changesetId) {
+        return ChangesetCache.getInstance().get(changesetId) != null;
     }
 
     /**

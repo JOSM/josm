@@ -190,11 +190,11 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
      * know what {@see OsmPrimitive} actually caused the conflict (for whatever reason)
      *
      */
-    protected void handleUploadConflictForClosedChangeset(long changsetId, Date d) {
+    protected void handleUploadConflictForClosedChangeset(long changesetId, Date d) {
         String msg =  tr("<html>Uploading <strong>failed</strong> because you have been using<br>"
                 + "changeset {0} which was already closed at {1}.<br>"
                 + "Please upload again with a new or an existing open changeset.</html>",
-                changsetId, new SimpleDateFormat().format(d)
+                changesetId, new SimpleDateFormat().format(d)
         );
         JOptionPane.showMessageDialog(
                 Main.parent,

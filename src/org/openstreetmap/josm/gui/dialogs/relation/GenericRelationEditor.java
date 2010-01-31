@@ -1079,7 +1079,7 @@ public class GenericRelationEditor extends RelationEditor  {
                     new ButtonSpec(
                             tr("No, continue editing"),
                             ImageProvider.get("cancel"),
-                            tr("Click to to return to the relation editor and to resume relation editing") ,
+                            tr("Click to return to the relation editor and to resume relation editing") ,
                             null /* no specific help topic */
                     )
             };

@@ -37,7 +37,7 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
     private ChangesetQuery query;
     /** true if the task was canceled */
     private boolean canceled;
-    /** the set of downloaded changsets */
+    /** the set of downloaded changesets */
     private Set<Changeset> downloadedChangesets;
     /** the last exception remembered, if any */
     private Exception lastException;

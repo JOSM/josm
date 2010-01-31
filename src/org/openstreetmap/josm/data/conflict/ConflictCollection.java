@@ -82,7 +82,7 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
     /**
      * Adds a conflict to the collection of conflicts.
      *
-     * @param conflict the conflict to to add. Must not be null.
+     * @param conflict the conflict to add. Must not be null.
      * @throws IllegalArgumentException thrown, if conflict is null
      * @throws IllegalStateException thrown if this collection already includes a conflict for conflict.getMy()
      *
