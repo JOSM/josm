@@ -58,7 +58,6 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -67,6 +66,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
+import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -153,7 +153,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         DatasetEventManager.getInstance().addDatasetListener(listOfUsedTags, FireMode.IMMEDIATELY);
         DatasetEventManager.getInstance().addDatasetListener(dataChangedAdapter, FireMode.IN_EDT_CONSOLIDATED);
         listOfUsedTags.rebuildNecessary();
-        DataSet.selListeners.add(this);
+        SelectionEventManager.getInstance().addSelectionListener(this, FireMode.IN_EDT_CONSOLIDATED);
         MapView.addEditLayerChangeListener(this);
         updateSelection();
     }
@@ -162,7 +162,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     public void hideNotify() {
         DatasetEventManager.getInstance().removeDatasetListener(listOfUsedTags);
         DatasetEventManager.getInstance().removeDatasetListener(dataChangedAdapter);
-        DataSet.selListeners.remove(this);
+        SelectionEventManager.getInstance().removeSelectionListener(this);
         MapView.removeEditLayerChangeListener(this);
     }
 

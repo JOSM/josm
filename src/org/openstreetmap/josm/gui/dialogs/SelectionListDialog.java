@@ -39,6 +39,8 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
@@ -162,14 +164,14 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
 
     @Override
     public void showNotify() {
-        DataSet.selListeners.add(this);
+        SelectionEventManager.getInstance().addSelectionListener(this, FireMode.IN_EDT_CONSOLIDATED);
         MapView.addEditLayerChangeListener(this);
         updateSelection();
     }
 
     @Override
     public void hideNotify() {
-        DataSet.selListeners.remove(this);
+        SelectionEventManager.getInstance().removeSelectionListener(this);
         MapView.removeEditLayerChangeListener(this);
     }
 
@@ -276,7 +278,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
         } else {
             setTitle(tr("Selection"));
         }
-        
+
         if (selectionHistory != null && newSelection.size() > 0 && !newSelection.equals(historyIgnoreSelection)) {
             historyIgnoreSelection = null;
             try {

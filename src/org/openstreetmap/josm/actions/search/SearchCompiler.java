@@ -59,6 +59,7 @@ public class SearchCompiler {
     }
 
     public static class Always extends Match {
+        public static Always INSTANCE = new Always();
         @Override public boolean match(OsmPrimitive osm) {
             return true;
         }

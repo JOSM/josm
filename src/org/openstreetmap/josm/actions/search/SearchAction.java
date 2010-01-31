@@ -56,7 +56,7 @@ public class SearchAction extends JosmAction{
             return;
         SearchSetting s = lastSearch;
         if (s == null) {
-            s = new SearchSetting("", SearchMode.replace, false /* case insensitive */, false /* no regexp */);
+            s = new SearchSetting();
         }
         SearchSetting se = showSearchDialog(s);
         if(se != null) {
@@ -302,8 +302,11 @@ public class SearchAction extends JosmAction{
         public boolean caseSensitive;
         public boolean regexSearch;
 
+        public SearchSetting() {
+            this("", SearchMode.replace, false /* case insensitive */, false /* no regexp */);
+        }
+
         public SearchSetting(String text, SearchMode mode, boolean caseSensitive, boolean regexSearch) {
-            super();
             this.caseSensitive = caseSensitive;
             this.regexSearch = regexSearch;
             this.mode = mode;
@@ -311,11 +314,7 @@ public class SearchAction extends JosmAction{
         }
 
         public SearchSetting(SearchSetting original) {
-            super();
-            this.caseSensitive = original.caseSensitive;
-            this.regexSearch = original.regexSearch;
-            this.mode = original.mode;
-            this.text = original.text;
+            this(original.text, original.mode, original.caseSensitive, original.regexSearch);
         }
 
         @Override
