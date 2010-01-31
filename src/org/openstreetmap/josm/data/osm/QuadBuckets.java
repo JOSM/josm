@@ -647,6 +647,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 parent.children[i] = null;
                 nr_siblings--;
             }
+            if (nr_siblings == 0) {
+                parent.children = null;
+            }
             if (parent.canRemove()) {
                 parent.remove_from_parent();
             }
