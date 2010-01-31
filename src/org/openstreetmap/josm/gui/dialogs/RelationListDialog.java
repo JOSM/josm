@@ -221,9 +221,9 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         } else {
             model.setSelectedRelations(Collections.singletonList(relation));
             Integer i = model.getRelationIndex(relation);
-            if (i == null)
-                throw new AssertionError(); /* the relation list should contain *all* relations */
-            displaylist.scrollRectToVisible(displaylist.getCellBounds(i, i));
+            if (i != null) { // Not all relations have to be in the list (for example when the relation list is hidden, it's not updated with new relations)
+                displaylist.scrollRectToVisible(displaylist.getCellBounds(i, i));
+            }
         }
     }
 
@@ -692,16 +692,15 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         /**
          * Returns the index of the relation
          *
-         * @return index of relation (null if it cannot be found) 
+         * @return index of relation (null if it cannot be found)
          */
         public Integer getRelationIndex(Relation rel) {
             int i = relations.indexOf(rel);
-            if (i<0) {
+            if (i<0)
                 return null;
-            }
             return i;
         }
-            
+
     }
 
     class RelationDialogPopupMenu extends JPopupMenu {
