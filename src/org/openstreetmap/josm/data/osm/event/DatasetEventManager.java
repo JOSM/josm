@@ -141,19 +141,45 @@ public class DatasetEventManager implements MapView.EditLayerChangeListener, Lis
                     // DataSet changed - fire consolidated event early
                     if (consolidatedEvent != null && dataSet != event.getDataset()) {
                         fireConsolidatedEvents(inEDTListeners, consolidatedEvent);
-                        dataSet = event.getDataset();
                         consolidatedEvent = null;
                     }
 
+                    dataSet = event.getDataset();
+
                     // Build consolidated event
-                    if (consolidatedEvent == null) {
-                        consolidatedEvent = event;
-                        dataSet = event.getDataset();
-                    } else if (consolidatedEvent instanceof DataChangedEvent) {
-                        ((DataChangedEvent)consolidatedEvent).getEvents().add(event);
+                    if (event instanceof DataChangedEvent) {
+                        // DataChangeEvent can contains other events, so it gets special handling
+                        DataChangedEvent dataEvent = (DataChangedEvent) event;
+                        if (dataEvent.getEvents() == null) {
+                            consolidatedEvent = dataEvent; // Dataset was completely changed, we can ignore older events
+                        } else {
+                            if (consolidatedEvent == null) {
+                                consolidatedEvent = new DataChangedEvent(dataSet, dataEvent.getEvents());
+                            } else if (consolidatedEvent instanceof DataChangedEvent) {
+                                List<AbstractDatasetChangedEvent> evts = ((DataChangedEvent) consolidatedEvent).getEvents();
+                                if (evts != null) {
+                                    evts.addAll(dataEvent.getEvents());
+                                }
+                            } else {
+                                AbstractDatasetChangedEvent oldConsolidateEvent = consolidatedEvent;
+                                consolidatedEvent = new DataChangedEvent(dataSet, dataEvent.getEvents());
+                                ((DataChangedEvent) consolidatedEvent).getEvents().add(oldConsolidateEvent);
+                            }
+                        }
                     } else {
-                        consolidatedEvent = new DataChangedEvent(dataSet,
-                                new ArrayList<AbstractDatasetChangedEvent>(Arrays.asList(consolidatedEvent)));
+                        // Normal events
+                        if (consolidatedEvent == null) {
+                            consolidatedEvent = event;
+                        } else if (consolidatedEvent instanceof DataChangedEvent) {
+                            List<AbstractDatasetChangedEvent> evs = ((DataChangedEvent) consolidatedEvent).getEvents();
+                            if (evs != null) {
+                                evs.add(event);
+                            }
+                        } else {
+                            consolidatedEvent = new DataChangedEvent(dataSet,
+                                    new ArrayList<AbstractDatasetChangedEvent>(Arrays.asList(consolidatedEvent)));
+                        }
+
                     }
                 }
 
