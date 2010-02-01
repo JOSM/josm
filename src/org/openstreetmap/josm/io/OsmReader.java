@@ -257,7 +257,11 @@ public class OsmReader {
                             tr("Illegal value of attribute ''ref'' of element <nd>. Got {0}.", id)
                     );
                 }
-                list.add(id);
+                if (current.deleted) {
+                    logger.info(tr("Deleted way {0} contains nodes", current.id));
+                } else {
+                    list.add(id);
+                }
 
                 // ---- PARSING RELATIONS ----
 
@@ -299,7 +303,11 @@ public class OsmReader {
                     throwException(tr("Incomplete <member> specification with ref=0"));
                 }
 
-                list.add(emd);
+                if (current.deleted) {
+                    logger.info(tr("Deleted relation {0} contains members", current.id));
+                } else {
+                    list.add(emd);
+                }
 
                 // ---- PARSING TAGS (applicable to all objects) ----
 
@@ -480,7 +488,11 @@ public class OsmReader {
                         ds.addPrimitive(n);
                     }
                 }
-                wayNodes.add(n);
+                if (n.isDeleted()) {
+                    logger.warning(tr("Deleted node {0} was removed from way {1}", id, w.getId()));
+                } else {
+                    wayNodes.add(n);
+                }
             }
             w.setNodes(wayNodes);
             if (w.hasIncompleteNodes()) {
@@ -566,7 +578,11 @@ public class OsmReader {
                     ds.addPrimitive(primitive);
                     externalIdMap.put(new SimplePrimitiveId(rm.id, OsmPrimitiveType.fromApiTypeName(rm.type)), primitive);
                 }
-                relationMembers.add(new RelationMember(rm.role, primitive));
+                if (primitive.isDeleted()) {
+                    logger.warning(tr("Deleted member {0} was removed from relation {1}", primitive.getId(), relation.getId()));
+                } else {
+                    relationMembers.add(new RelationMember(rm.role, primitive));
+                }
             }
             relation.setMembers(relationMembers);
             ds.addPrimitive(relation);
