@@ -450,7 +450,7 @@ public class HelpBrowser extends JFrame {
             history.back();
         }
         public void update(Observable o, Object arg) {
-            System.out.println("BackAction: canGoBoack=" + history.canGoBack() );
+            //System.out.println("BackAction: canGoBoack=" + history.canGoBack() );
             setEnabled(history.canGoBack());
         }
     }
