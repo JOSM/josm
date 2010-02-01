@@ -23,7 +23,6 @@ public class OsmPrimitiveKeyHandling {
         assertTrue(!n.hasKeys());
         assertTrue(!n.hasKey("nosuchkey"));
         assertTrue(n.keySet().isEmpty());
-        assertTrue(n.entrySet().isEmpty());
 
         n.remove("nosuchkey"); // should work
     }
@@ -41,9 +40,6 @@ public class OsmPrimitiveKeyHandling {
 
         assertTrue(n.keySet().size() == 1);
         assertTrue(n.keySet().contains("akey"));
-        assertTrue(n.entrySet().size() == 1);
-        assertTrue(n.entrySet().iterator().next().getKey().equals("akey"));
-        assertTrue(n.entrySet().iterator().next().getValue().equals("avalue"));
     }
 
     /**
