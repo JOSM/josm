@@ -33,6 +33,7 @@ public class Version {
      * @return  the content of the resource file; null, if an error occurred
      */
     static public String loadResourceFile(URL resource) {
+        if (resource == null) return null;
         BufferedReader in;
         String s = null;
         try {
@@ -73,8 +74,12 @@ public class Version {
         if (content == null) return properties;
         Pattern p = Pattern.compile("^([^:]+):(.*)$");
         for (String line: content.split("\n")) {
-            if (line == null || line.trim().equals("")) continue;
-            if (line.matches("^\\s*#.*$")) continue;
+            if (line == null || line.trim().equals("")) {
+                continue;
+            }
+            if (line.matches("^\\s*#.*$")) {
+                continue;
+            }
             Matcher m = p.matcher(line);
             if (m.matches()) {
                 properties.put(m.group(1), m.group(2));
