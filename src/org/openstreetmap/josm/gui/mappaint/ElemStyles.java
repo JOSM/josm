@@ -304,7 +304,7 @@ public class ElemStyles
     /* called from class users, never return null */
     public StyleSet getStyleSet()
     {
-        return getStyleSet(null, false);
+        return getStyleSet(null, true);
     }
 
     public Collection<String> getStyleNames()
