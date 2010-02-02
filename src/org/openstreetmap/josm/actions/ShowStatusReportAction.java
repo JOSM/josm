@@ -58,7 +58,7 @@ public final class ShowStatusReportAction extends JosmAction {
         text.append(Runtime.getRuntime().freeMemory()/1024/1024);
         text.append(" MB allocated, but free)");
         text.append("\n");
-        text.append("Java version: " + System.getProperty("java.version"));
+        text.append("Java version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor") + ", " + System.getProperty("os.name"));
         text.append("\n\n");
         DataSet dataset = Main.main.getCurrentDataSet();
         if (dataset != null) {
