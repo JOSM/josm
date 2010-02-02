@@ -23,12 +23,16 @@ public class DatasetConsistencyTest {
         this.writer = new PrintWriter(writer);
     }
 
+    private void printError(String type, String message, Object... args) {
+        writer.println("[" + type + "] " + String.format(message, args));
+    }
+
     private void checkReferrers() {
         for (Way way:dataSet.getWays()) {
             if (!way.isDeleted()) {
                 for (Node n:way.getNodes()) {
                     if (!n.getReferrers().contains(way)) {
-                        writer.println(String.format("%s is part of %s but is not in referrers", n, way));
+                        printError("WAY NOT IN REFERRERS", "%s is part of %s but is not in referrers", n, way);
                     }
                 }
             }
@@ -38,7 +42,7 @@ public class DatasetConsistencyTest {
             if (!relation.isDeleted()) {
                 for (RelationMember m:relation.getMembers()) {
                     if (!m.getMember().getReferrers().contains(relation)) {
-                        writer.println(String.format("%s is part of %s but is not in referrers", m.getMember(), relation));
+                        printError("RELATION NOT IN REFERRERS", "%s is part of %s but is not in referrers", m.getMember(), relation);
                     }
                 }
             }
@@ -50,7 +54,7 @@ public class DatasetConsistencyTest {
             if (way.isUsable()) {
                 for (Node node:way.getNodes()) {
                     if (node.isIncomplete()) {
-                        writer.println(String.format("%s is usable but contains incomplete node '%s'", way, node));
+                        printError("USABLE HAS INCOMPLETE", "%s is usable but contains incomplete node '%s'", way, node);
                     }
                 }
             }
@@ -60,7 +64,7 @@ public class DatasetConsistencyTest {
     private void checkCompleteNodesWithoutCoordinates() {
         for (Node node:dataSet.getNodes()) {
             if (!node.isIncomplete() && (node.getCoor() == null || node.getEastNorth() == null)) {
-                writer.println(String.format("%s is not incomplete but has null coordinates", node));
+                printError("COMPLETE WITHOUT COORDINATES", "%s is not incomplete but has null coordinates", node);
             }
         }
     }
@@ -71,7 +75,7 @@ public class DatasetConsistencyTest {
                 LatLon c = n.getCoor();
                 BBox box = new BBox(new LatLon(c.lat() - 0.0001, c.lon() - 0.0001), new LatLon(c.lat() + 0.0001, c.lon() + 0.0001));
                 if (!dataSet.searchNodes(box).contains(n)) {
-                    writer.println(String.format("%s not found using Dataset.searchNodes()", n));
+                    printError("SEARCH NODES", "%s not found using Dataset.searchNodes()", n);
                 }
             }
         }
@@ -80,20 +84,20 @@ public class DatasetConsistencyTest {
     private void searchWays() {
         for (Way w:dataSet.getWays()) {
             if (!w.isIncomplete() && !w.isDeleted() && !dataSet.searchWays(w.getBBox()).contains(w)) {
-                writer.println(String.format("%s not found using Dataset.searchWays()", w));
+                printError("SEARCH WAYS", "%s not found using Dataset.searchWays()", w);
             }
         }
     }
 
     private void checkReferredPrimitive(OsmPrimitive primitive, OsmPrimitive parent) {
         if (dataSet.getPrimitiveById(primitive) == null) {
-            writer.println(String.format("%s is referenced by %s but not found in dataset", primitive, parent));
+            printError("REFERENCED BUT NOT IN DATA", "%s is referenced by %s but not found in dataset", primitive, parent);
         }
         if (dataSet.getPrimitiveById(primitive) != primitive) {
-            writer.println(String.format("%s is different instance that referred by %s", primitive, parent));
+            printError("DIFFERENT INSTANCE", "%s is different instance that referred by %s", primitive, parent);
         }
         if (primitive.isDeleted()) {
-            writer.println(String.format("%s refers to deleted primitive %s", parent, primitive));
+            printError("DELETED REFERENCED", "%s refers to deleted primitive %s", parent, primitive);
         }
     }
 
@@ -111,12 +115,13 @@ public class DatasetConsistencyTest {
         }
     }
 
+
     private void checkZeroNodesWays() {
         for (Way way:dataSet.getWays()) {
             if (way.isUsable() && way.getNodesCount() == 0) {
-                writer.println(String.format("Way %s has zero nodes", way));
+                printError("WARN - ZERO NODES", "Way %s has zero nodes", way);
             } else if (way.isUsable() && way.getNodesCount() == 1) {
-                writer.println(String.format("Way %s has only one node", way));
+                printError("WARN - NO NODES", "Way %s has only one node", way);
             }
         }
     }
