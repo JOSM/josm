@@ -108,7 +108,7 @@ public abstract class Plugin {
     public void addDownloadSelection(List<DownloadSelection> list) {}
 
     /**
-     * Copies the ressource 'from' to the file in the plugin directory named 'to'.
+     * Copies the resource 'from' to the file in the plugin directory named 'to'.
      */
     public void copy(String from, String to) throws FileNotFoundException, IOException {
         String pluginDirName = Main.pref.getPluginsDirectory() + "/" + info.name + "/";

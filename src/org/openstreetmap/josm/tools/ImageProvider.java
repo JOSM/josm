@@ -56,7 +56,7 @@ public class ImageProvider {
     private static Map<String, Image> cache = new HashMap<String, Image>();
 
     /**
-     * Add here all ClassLoader whose ressource should be searched. Plugin's class loaders are added
+     * Add here all ClassLoader whose resource should be searched. Plugin's class loaders are added
      * by main.
      */
     public static final List<ClassLoader> sources = new LinkedList<ClassLoader>();
@@ -201,7 +201,7 @@ public class ImageProvider {
                         return u;
                 } catch (SecurityException e) {
                     System.out.println(tr(
-                            "Warning: failed to acccess directory ''{0}'' for security reasons. Exception was: {1}",
+                            "Warning: failed to access directory ''{0}'' for security reasons. Exception was: {1}",
                             name, e.toString()));
                 }
 
@@ -215,7 +215,7 @@ public class ImageProvider {
                 return u;
         } catch (SecurityException e) {
             System.out.println(tr(
-                    "Warning: failed to acccess directory ''{0}'' for security reasons. Exception was: {1}", dir, e
+                    "Warning: failed to access directory ''{0}'' for security reasons. Exception was: {1}", dir, e
                     .toString()));
         }
 
@@ -224,7 +224,7 @@ public class ImageProvider {
         if (u != null)
             return u;
 
-        // Try all other ressource directories
+        // Try all other resource directories
         for (String location : Main.pref.getAllPossiblePreferenceDirs()) {
             u = getImageUrl(location + "images", imageName);
             if (u != null)

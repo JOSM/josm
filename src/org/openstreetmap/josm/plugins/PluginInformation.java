@@ -264,8 +264,8 @@ public class PluginInformation {
      *    If found, the plugin is loaded using the bootstrap classloader.
      *<li>If not found, look for a jar file in the user specific plugin directory
      *    (~/.josm/plugins/<plugin name>.jar)
-     *<li>If not found and the environment variable JOSM_RESSOURCES + "/plugins/" exist, look there.
-     *<li>Try for the java property josm.ressources + "/plugins/" (set via java -Djosm.plugins.path=...)
+     *<li>If not found and the environment variable JOSM_RESOURCES + "/plugins/" exist, look there.
+     *<li>Try for the java property josm.resources + "/plugins/" (set via java -Djosm.plugins.path=...)
      *<li>If the environment variable ALLUSERSPROFILE and APPDATA exist, look in
      *    ALLUSERSPROFILE/<the last stuff from APPDATA>/JOSM/plugins.
      *    (*sic* There is no easy way under Windows to get the All User's application

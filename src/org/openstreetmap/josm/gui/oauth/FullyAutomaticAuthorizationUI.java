@@ -235,7 +235,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         msg.setFont(msg.getFont().deriveFont(Font.PLAIN));
         String lbl = tr("Accept Access Token");
         msg.setText(tr("<html>"
-                + "You have sucessfully retrieved an OAuth Access Token from the OSM website. "
+                + "You have successfully retrieved an OAuth Access Token from the OSM website. "
                 + "Click on <strong>{0}</strong> to accept the token. JOSM will use it in "
                 + "subsequent requests to gain access to the OSM API."
                 + "</html>",
