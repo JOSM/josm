@@ -217,12 +217,13 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
             data.clear();
             selectionModel.clearSelection();
-            if (newSelection == null || newSelection.isEmpty()) return;
-            for (OsmPrimitive primitive: newSelection) {
-                if (primitive.isNew()) {
-                    continue;
+            if (newSelection != null && !newSelection.isEmpty()) {
+                for (OsmPrimitive primitive: newSelection) {
+                    if (primitive.isNew()) {
+                        continue;
+                    }
+                    data.add(primitive);
                 }
-                data.add(primitive);
             }
             fireTableDataChanged();
             selectionModel.addSelectionInterval(0, data.size()-1);
