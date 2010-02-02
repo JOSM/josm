@@ -24,17 +24,17 @@ import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
-public class PluginPreferencesPanel extends VerticallyScrollablePanel{
-    private static final Logger logger = Logger.getLogger(PluginPreferencesPanel.class.getName());
+public class PluginListPanel extends VerticallyScrollablePanel{
+    private static final Logger logger = Logger.getLogger(PluginListPanel.class.getName());
 
     private PluginPreferencesModel model;
 
-    public PluginPreferencesPanel() {
+    public PluginListPanel() {
         model = new PluginPreferencesModel();
         setLayout(new GridBagLayout());
     }
 
-    public PluginPreferencesPanel(PluginPreferencesModel model) {
+    public PluginListPanel(PluginPreferencesModel model) {
         this.model = model;
         setLayout(new GridBagLayout());
     }

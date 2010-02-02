@@ -1,0 +1,247 @@
+// License: GPL. For details, see LICENSE file.
+package org.openstreetmap.josm.gui.preferences.plugin;
+
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.JMultilineLabel;
+import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
+
+/**
+ * A panel for configuring whether JOSM shall update plugins at startup.
+ *
+ */
+public class PluginUpdatePolicyPanel extends JPanel {
+
+    private enum Policy {
+        ASK ("ask"),
+        ALWAYS("always"),
+        NEVER("never");
+
+        private String preferenceValue;
+        Policy(String preferenceValue) {
+            this.preferenceValue = preferenceValue;
+        }
+
+        public String getPreferencesValue() {
+            return preferenceValue;
+        }
+
+        static Policy fromPreferenceValue(String preferenceValue) {
+            if (preferenceValue == null) return null;
+            preferenceValue = preferenceValue.trim().toLowerCase();
+            for (Policy p: Policy.values()) {
+                if (p.getPreferencesValue().equals(preferenceValue))
+                    return p;
+            }
+            return null;
+        }
+    }
+
+    private ButtonGroup bgVersionBasedUpdatePolicy;
+    private ButtonGroup bgTimeBasedUpdatePolicy;
+    private Map<Policy, JRadioButton> rbVersionBasedUpatePolicy;
+    private Map<Policy, JRadioButton> rbTimeBasedUpatePolicy;
+    private JTextField tfUpdateInterval;
+    private JLabel lblUpdateInterval;
+
+    protected JPanel buildVersionBasedUpdatePolicyPanel() {
+        JPanel pnl = new JPanel(new GridBagLayout());
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.anchor = GridBagConstraints.NORTHWEST;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.weightx  =1.0;
+
+        bgVersionBasedUpdatePolicy = new ButtonGroup();
+        rbVersionBasedUpatePolicy = new HashMap<Policy, JRadioButton>();
+        JRadioButton btn = new JRadioButton(tr("Ask before updating"));
+        rbVersionBasedUpatePolicy.put(Policy.ASK, btn);
+        bgVersionBasedUpdatePolicy.add(btn);
+
+        btn = new JRadioButton(tr("Always update withouth asking"));
+        rbVersionBasedUpatePolicy.put(Policy.ALWAYS, btn);
+        bgVersionBasedUpdatePolicy.add(btn);
+
+        btn = new JRadioButton(tr("Never update"));
+        rbVersionBasedUpatePolicy.put(Policy.NEVER, btn);
+        bgVersionBasedUpdatePolicy.add(btn);
+
+        JMultilineLabel lbl = new JMultilineLabel(tr("Please decide whether JOSM shall automatically update active plugins at startup after an update of JOSM itself."));
+        gc.gridy=0;
+        pnl.add(lbl, gc);
+        for (Policy p: Policy.values()) {
+            gc.gridy++;
+            pnl.add(rbVersionBasedUpatePolicy.get(p), gc);
+        }
+        return pnl;
+    }
+
+    protected JPanel buildUpdateIntervalPanel() {
+        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        pnl.add(lblUpdateInterval = new JLabel(tr("Update interval (in days):")));
+        pnl.add(tfUpdateInterval = new JTextField(5));
+        SelectAllOnFocusGainedDecorator.decorate(tfUpdateInterval);
+        return pnl;
+    }
+
+    protected JPanel buildTimeBasedUpdatePolicyPanel() {
+        JPanel pnl = new JPanel(new GridBagLayout());
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.anchor = GridBagConstraints.NORTHWEST;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.weightx  =1.0;
+
+        TimeBasedPolicyChangeListener changeListener = new TimeBasedPolicyChangeListener();
+
+        bgTimeBasedUpdatePolicy = new ButtonGroup();
+        rbTimeBasedUpatePolicy = new HashMap<Policy, JRadioButton>();
+        JRadioButton btn = new JRadioButton(tr("Ask before updating"));
+        btn.addChangeListener(changeListener);
+        rbTimeBasedUpatePolicy.put(Policy.ASK, btn);
+        bgTimeBasedUpdatePolicy.add(btn);
+
+        btn = new JRadioButton(tr("Always update withouth asking"));
+        btn.addChangeListener(changeListener);
+        rbTimeBasedUpatePolicy.put(Policy.ALWAYS, btn);
+        bgTimeBasedUpdatePolicy.add(btn);
+
+        btn = new JRadioButton(tr("Never update"));
+        btn.addChangeListener(changeListener);
+        rbTimeBasedUpatePolicy.put(Policy.NEVER, btn);
+        bgTimeBasedUpdatePolicy.add(btn);
+
+        JMultilineLabel lbl = new JMultilineLabel(tr("Please decide whether JOSM shall automatically update active plugins after a certain periode of time."));
+        gc.gridy=0;
+        pnl.add(lbl, gc);
+        for (Policy p: Policy.values()) {
+            gc.gridy++;
+            pnl.add(rbTimeBasedUpatePolicy.get(p), gc);
+        }
+        gc.gridy++;
+        pnl.add(buildUpdateIntervalPanel(), gc);
+        return pnl;
+    }
+
+    protected void build() {
+        setLayout(new GridBagLayout());
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.anchor = GridBagConstraints.NORTHWEST;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.weightx  =1.0;
+        gc.insets = new Insets(5,5,10,5);
+
+        add(buildVersionBasedUpdatePolicyPanel(), gc);
+        gc.gridy = 1;
+        add(buildTimeBasedUpdatePolicyPanel(), gc);
+
+        gc.gridy = 2;
+        gc.weighty = 1.0;
+        gc.fill = GridBagConstraints.BOTH;
+        add(new JPanel(), gc);
+    }
+
+    public PluginUpdatePolicyPanel() {
+        build();
+        initFromPreferences();
+    }
+
+    /**
+     * Loads the relevant preference values from the JOSM preferences
+     * 
+     */
+    public void initFromPreferences() {
+        String pref = Main.pref.get("pluginmanager.version-based-update.policy", "ask");
+        Policy p = Policy.fromPreferenceValue(pref);
+        if (p == null) {
+            p = Policy.ASK;
+        }
+        rbVersionBasedUpatePolicy.get(p).setSelected(true);
+
+        pref = Main.pref.get("pluginmanager.time-based-update.policy", "ask");
+        p = Policy.fromPreferenceValue(pref);
+        if (p == null) {
+            p = Policy.ASK;
+        }
+        rbTimeBasedUpatePolicy.get(p).setSelected(true);
+
+        pref = Main.pref.get("pluginmanager.warntime", null);
+        int days = 0;
+        if (pref != null) {
+            // remove legacy preference
+            Main.pref.put("pluginmanager.warntime", null);
+            pref = pref.trim();
+            try {
+                days = Integer.parseInt(pref);
+            } catch(NumberFormatException e) {
+                // ignore - load from preference pluginmanager.time-based-update.interval
+            }
+            if (days <= 0) {
+                days = 60;
+            }
+        }
+        if (days == 0) {
+            days =Main.pref.getInteger("preference pluginmanager.time-based-update.interval", 60);
+        }
+        tfUpdateInterval.setText(Integer.toString(days));
+    }
+
+    /**
+     * Remebers the update policy preference settings on the JOSM preferences
+     */
+    public void rememberInPreferences() {
+
+        // remember policy for version based update
+        //
+        for (Policy p: Policy.values()) {
+            if (rbVersionBasedUpatePolicy.get(p).isSelected()) {
+                Main.pref.put("pluginmanager.version-based-update.policy", p.getPreferencesValue());
+                break;
+            }
+        }
+
+        // remember policy for time based update
+        //
+        for (Policy p: Policy.values()) {
+            if (rbTimeBasedUpatePolicy.get(p).isSelected()) {
+                Main.pref.put("pluginmanager.time-based-update.policy", p.getPreferencesValue());
+                break;
+            }
+        }
+
+        // remember update interval
+        //
+        int days = 0;
+        try {
+            days = Integer.parseInt(tfUpdateInterval.getText().trim());
+            if (days <= 0) {
+                days = 60;
+            }
+        } catch(NumberFormatException e) {
+            days = 60;
+        }
+        Main.pref.putInteger("pluginmanager.time-based-update.interval", days);
+    }
+
+    class TimeBasedPolicyChangeListener implements ChangeListener {
+        public void stateChanged(ChangeEvent e) {
+            lblUpdateInterval.setEnabled(!rbTimeBasedUpatePolicy.get(Policy.NEVER).isSelected());
+            tfUpdateInterval.setEnabled(!rbTimeBasedUpatePolicy.get(Policy.NEVER).isSelected());
+        }
+    }
+
+}

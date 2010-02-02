@@ -40,8 +40,9 @@ import javax.swing.event.DocumentListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.preferences.plugin.PluginListPanel;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginPreferencesModel;
-import org.openstreetmap.josm.gui.preferences.plugin.PluginPreferencesPanel;
+import org.openstreetmap.josm.gui.preferences.plugin.PluginUpdatePolicyPanel;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
@@ -93,9 +94,11 @@ public class PluginPreference implements PreferenceSetting {
     }
 
     private JTextField tfFilter;
-    private PluginPreferencesPanel pnlPluginPreferences;
+    private PluginListPanel pnlPluginPreferences;
     private PluginPreferencesModel model;
     private JScrollPane spPluginPreferences;
+    private PluginUpdatePolicyPanel pnlPluginUpdatePolicy;
+
     /**
      * is set to true if this preference pane has been selected
      * by the user
@@ -131,11 +134,11 @@ public class PluginPreference implements PreferenceSetting {
         return pnl;
     }
 
-    protected JPanel buildContentPane() {
+    protected JPanel buildPluginListPanel() {
         JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(buildSearchFieldPanel(), BorderLayout.NORTH);
         model  = new PluginPreferencesModel();
-        spPluginPreferences = new JScrollPane(pnlPluginPreferences = new PluginPreferencesPanel(model));
+        spPluginPreferences = new JScrollPane(pnlPluginPreferences = new PluginListPanel(model));
         spPluginPreferences.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         spPluginPreferences.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         spPluginPreferences.getVerticalScrollBar().addComponentListener(
@@ -156,13 +159,25 @@ public class PluginPreference implements PreferenceSetting {
         return pnl;
     }
 
+    protected JPanel buildContentPanel() {
+        JPanel pnl = new JPanel(new BorderLayout());
+        JTabbedPane tpPluginPreferences = new JTabbedPane();
+        tpPluginPreferences.add(buildPluginListPanel());
+        tpPluginPreferences.add(pnlPluginUpdatePolicy  =new PluginUpdatePolicyPanel());
+        tpPluginPreferences.setTitleAt(0, tr("Plugins"));
+        tpPluginPreferences.setTitleAt(1, tr("Plugin update policy"));
+
+        pnl.add(tpPluginPreferences, BorderLayout.CENTER);
+        return pnl;
+    }
+
     public void addGui(final PreferenceTabbedPane gui) {
         GridBagConstraints gc = new GridBagConstraints();
         gc.weightx = 1.0;
         gc.weighty = 1.0;
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.fill = GridBagConstraints.BOTH;
-        gui.plugins.add(buildContentPane(), gc);
+        gui.plugins.add(buildContentPanel(), gc);
         pnlPluginPreferences.refreshView();
         gui.addChangeListener(new PluginPreferenceActivationListener(gui.plugins));
     }
@@ -254,6 +269,7 @@ public class PluginPreference implements PreferenceSetting {
     public boolean ok() {
         if (! pluginPreferencesActivated)
             return false;
+        pnlPluginUpdatePolicy.rememberInPreferences();
         if (model.isActivePluginsChanged()) {
             LinkedList<String> l = new LinkedList<String>(model.getSelectedPluginNames());
             Collections.sort(l);

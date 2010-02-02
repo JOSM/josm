@@ -169,11 +169,11 @@ public class PluginHandler {
                         + "Update plugins now?"
                 )
                 + "</html>";
-            togglePreferenceKey = "pluginmanager.dontshowagain.version";
+            togglePreferenceKey = "pluginmanager.version-based-update.policy";
         }  else {
             long tim = System.currentTimeMillis();
             long last = Main.pref.getLong("pluginmanager.lastupdate", 0);
-            Integer maxTime = Main.pref.getInteger("pluginmanager.warntime", 60);
+            Integer maxTime = Main.pref.getInteger("pluginmanager.time-based-update.interval", 60);
             long d = (tim - last) / (24 * 60 * 60 * 1000l);
             if ((last <= 0) || (maxTime <= 0)) {
                 Main.pref.put("pluginmanager.lastupdate", Long.toString(tim));
@@ -182,7 +182,7 @@ public class PluginHandler {
                     "<html>"
                     + tr("Last plugin update more than {0} days ago.", d)
                     + "</html>";
-                togglePreferenceKey = "pluginmanager.dontshowagain.time";
+                togglePreferenceKey = "pluginmanager.time-based-update.policy";
             }
         }
         if (message == null) return false;
@@ -208,9 +208,29 @@ public class PluginHandler {
 
         // check whether automatic update at startup was disabled
         //
-        boolean doAsk = !Main.pref.getBoolean(togglePreferenceKey, false);
-        if (! doAsk) return false;
+        String policy = Main.pref.get(togglePreferenceKey, "ask");
+        policy = policy.trim().toLowerCase();
+        if (policy.equals("never")) {
+            if (togglePreferenceKey.equals("pluginmanager.version-based-update.policy")) {
+                System.out.println(tr("Skipping plugin update after JOSM upgrade. Automatic update at startup is disabled."));
+            } else if (togglePreferenceKey.equals("pluginmanager.time-based-update.policy")) {
+                System.out.println(tr("Skipping plugin update after elapsed update interval. Automatic update at startup is disabled."));
+            }
+            return false;
+        }
 
+        if (policy.equals("always")) {
+            if (togglePreferenceKey.equals("pluginmanager.time-based-update.policy")) {
+                System.out.println(tr("Running plugin update after JOSM upgrade. Automatic update at startup is enabled."));
+            } else if (togglePreferenceKey.equals("pluginmanager.time-based-update.policy")) {
+                System.out.println(tr("Running plugin update after elapsed update interval. Automatic update at startup is disabled."));
+            }
+            return true;
+        }
+
+        if (!policy.equals("ask")) {
+            System.err.println(tr("Unexpected value ''{0}'' for preference ''{1}''. Assuming value ''ask''.", policy, togglePreferenceKey));
+        }
         int ret = HelpAwareOptionPane.showOptionDialog(
                 parent,
                 pnlMessage,
@@ -219,10 +239,22 @@ public class PluginHandler {
                 null,
                 options,
                 options[0],
-                ht("/Plugin/AutomaticUpdate")
+                ht("/Preferences/Plugins#AutomaticUpdate")
         );
 
-        pnlMessage.rememberDontShowAgain(togglePreferenceKey);
+        if (pnlMessage.isRememberDecision()) {
+            switch(ret) {
+            case 0:
+                Main.pref.put(togglePreferenceKey, "always");
+                break;
+            case JOptionPane.CLOSED_OPTION:
+            case 1:
+                Main.pref.put(togglePreferenceKey, "never");
+                break;
+            }
+        } else {
+            Main.pref.put(togglePreferenceKey, "ask");
+        }
         return ret == 0;
     }
 
@@ -887,7 +919,7 @@ public class PluginHandler {
             gc.gridy = 1;
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weighty = 0.0;
-            add(cbDontShowAgain = new JCheckBox(tr("Do not check and ask again at startup (remembers choice)")), gc);
+            add(cbDontShowAgain = new JCheckBox(tr("Do not ask again and remember my decision (go to Preferences->Plugins to change it later)")), gc);
             cbDontShowAgain.setFont(cbDontShowAgain.getFont().deriveFont(Font.PLAIN));
         }
 
@@ -900,11 +932,13 @@ public class PluginHandler {
         }
 
         public void initDontShowAgain(String preferencesKey) {
-            cbDontShowAgain.setSelected(Main.pref.getBoolean(preferencesKey, false));
+            String policy = Main.pref.get(preferencesKey, "ask");
+            policy = policy.trim().toLowerCase();
+            cbDontShowAgain.setSelected(! policy.equals("ask"));
         }
 
-        public void rememberDontShowAgain(String preferenceKey) {
-            Main.pref.put(preferenceKey, cbDontShowAgain.isSelected());
+        public boolean isRememberDecision() {
+            return cbDontShowAgain.isSelected();
         }
     }
 }
