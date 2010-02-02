@@ -1,14 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
 
 public enum OsmPrimitiveType {
 
-    NODE ("node", Node.class, NodeData.class),
-    WAY  ("way", Way.class, WayData.class),
-    RELATION ("relation", Relation.class, RelationData.class);
+    NODE (marktr("node"), Node.class, NodeData.class),
+    WAY  (marktr("way"), Way.class, WayData.class),
+    RELATION (marktr("relation"), Relation.class, RelationData.class);
 
     private final String apiTypeName;
     private final Class<? extends OsmPrimitive> osmClass;
@@ -70,4 +71,8 @@ public enum OsmPrimitiveType {
         return null;
     }
 
+    @Override
+    public String toString() {
+        return tr(getAPIName());
+    }
 }
