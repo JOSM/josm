@@ -145,11 +145,11 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 // of person having time that couldn't be parsed, but valid GPS info
 
                 try {
-                    e.time = ExifReader.readTime(f);
+                    e.setExifTime(ExifReader.readTime(f));
                 } catch (ParseException e1) {
-                    e.time = null;
+                    e.setExifTime(null);
                 }
-                e.file = f;
+                e.setFile(f);
                 extractExif(e);
                 data.add(e);
             }
@@ -312,6 +312,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         entries.add(new JMenuItem(new RenameLayerAction(null, this)));
         entries.add(new JSeparator());
         entries.add(correlateItem);
+        if (!menuAdditions.isEmpty()) {
+            entries.add(new JSeparator());
+        }
         for (LayerMenuAddition addition : menuAdditions) {
             entries.add(addition.getComponent(this));
         }
@@ -364,7 +367,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             ImageEntry prev = data.get(data.size() - 1);
             for (int i = data.size() - 2; i >= 0; i--) {
                 cur = data.get(i);
-                if (cur.file.equals(prev.file)) {
+                if (cur.getFile().equals(prev.getFile())) {
                     data.remove(i);
                 } else {
                     prev = cur;
@@ -504,13 +507,12 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             double min, sec;
             double lon, lat;
 
-            Metadata metadata = JpegMetadataReader.readMetadata(e.file);
+            Metadata metadata = JpegMetadataReader.readMetadata(e.getFile());
             Directory dir = metadata.getDirectory(GpsDirectory.class);
 
             // longitude
 
-            Rational[] components = dir
-            .getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
+            Rational[] components = dir.getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
 
             deg = components[0].intValue();
             min = components[1].floatValue();
@@ -538,11 +540,11 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
             // Store values
 
-            e.setCoor(new LatLon(lat, lon));
-            e.exifCoor = e.getPos();
+            e.setExifCoor(new LatLon(lat, lon));
+            e.setPos(e.getExifCoor());
 
         } catch (CompoundException p) {
-            e.exifCoor = null;
+            e.setExifCoor(null);
             e.setPos(null);
         }
     }
@@ -606,7 +608,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                     new String[] {tr("Cancel"), tr("Delete")})
             .setButtonIcons(new String[] {"cancel.png", "dialogs/delete.png"})
             .setContent(new JLabel(tr("<html><h3>Delete the file {0} from disk?<p>The image file will be permanently lost!</h3></html>"
-                    ,toDelete.file.getName()), ImageProvider.get("dialogs/geoimage/deletefromdisk"),SwingConstants.LEFT))
+                    ,toDelete.getFile().getName()), ImageProvider.get("dialogs/geoimage/deletefromdisk"),SwingConstants.LEFT))
                     .toggleEnable("geoimage.deleteimagefromdisk")
                     .setCancelButton(1)
                     .setDefaultButton(2)
@@ -625,8 +627,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                     ImageViewerDialog.showImage(this, null);
                 }
 
-                if (toDelete.file.delete()) {
-                    System.out.println("File "+toDelete.file.toString()+" deleted. ");
+                if (toDelete.getFile().delete()) {
+                    System.out.println("File "+toDelete.getFile().toString()+" deleted. ");
                 } else {
                     JOptionPane.showMessageDialog(
                             Main.parent,

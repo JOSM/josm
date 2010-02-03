@@ -13,7 +13,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 
@@ -237,9 +236,9 @@ public class ImageViewerDialog extends ToggleDialog {
         }
 
         if (entry != null) {
-            imgDisplay.setImage(entry.file);
-            setTitle("Geotagged Images" + (entry.file != null ? " - " + entry.file.getName() : ""));
-            StringBuffer osd = new StringBuffer(entry.file != null ? entry.file.getName() : "");
+            imgDisplay.setImage(entry.getFile());
+            setTitle("Geotagged Images" + (entry.getFile() != null ? " - " + entry.getFile().getName() : ""));
+            StringBuffer osd = new StringBuffer(entry.getFile() != null ? entry.getFile().getName() : "");
             if (entry.getElevation() != null) {
                 osd.append(tr("\nAltitude: {0} m", entry.getElevation().longValue()));
             }
@@ -249,6 +248,12 @@ public class ImageViewerDialog extends ToggleDialog {
             //if (entry.getPos()  != null) {
             //    osd.append(tr("\nlat: {0}, lon: {1}", Double.toString(entry.getPos().lat()), Double.toString(entry.getPos().lon())));
             //}
+            //osd.append(tr("\nfile mtime: {0}", Long.toString(entry.getFile().lastModified())));
+            //osd.append(tr("\nImage exif time: {0}", Long.toString(entry.getExifTime().getTime())));
+            //if (entry.getGpsTime() != null) {
+            //    osd.append(tr("\nImage gps time: {0}", Long.toString(entry.getGpsTime().getTime())));
+            //}
+            
             imgDisplay.setOsdText(osd.toString());
         } else {
             imgDisplay.setImage(null);

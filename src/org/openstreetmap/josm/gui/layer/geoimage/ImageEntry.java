@@ -17,17 +17,19 @@ import org.openstreetmap.josm.data.coor.LatLon;
  */
 
 final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
-    File file;
-    Date time;
-    LatLon exifCoor;
+    private File file;
+    private LatLon exifCoor;
+    private Date exifTime;
+    Image thumbnail;
 
+    /** The following values are computed from the correlation with the gpx track */
     private CachedLatLon pos;
     /** Speed in kilometer per second */
     private Double speed;
     /** Elevation (altitude) in meters */
     private Double elevation;
-
-    Image thumbnail;
+    /** The time after correlation with a gpx track */
+    private Date gpsTime;
 
     /**
      * When the corralation dialog is open, we like to show the image position
@@ -39,6 +41,9 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
      */
     ImageEntry tmp;
 
+    /**
+     * getter methods that refer to the temporary value
+     */
     public CachedLatLon getPos() {
         if (tmp != null)
             return tmp.pos;
@@ -54,8 +59,32 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             return tmp.elevation;
         return elevation;
     }
+    public Date getGpsTime() {
+        if (tmp != null)
+            return tmp.gpsTime;
+        return gpsTime;
+    }
+
+    /**
+     * other getter methods
+     */
+    public File getFile() {
+        return file;
+    }
+    public Date getExifTime() {
+        return exifTime;
+    }
+    LatLon getExifCoor() {
+        return exifCoor;
+    }
+    /**
+     * setter methods
+     */
     public void setPos(CachedLatLon pos) {
         this.pos = pos;
+    }
+    public void setPos(LatLon pos) {
+        this.pos = new CachedLatLon(pos);
     }
     public void setSpeed(Double speed) {
         this.speed = speed;
@@ -63,9 +92,17 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     public void setElevation(Double elevation) {
         this.elevation = elevation;
     }
-    
-    public File getFile() {
-        return file;
+    void setFile(File file) {
+        this.file = file;
+    }
+    void setExifTime(Date exifTime) {
+        this.exifTime = exifTime;
+    }
+    void setGpsTime(Date gpsTime) {
+        this.gpsTime = gpsTime;
+    }
+    void setExifCoor(LatLon exifCoor) {
+        this.exifCoor = exifCoor;
     }
 
     @Override
@@ -79,42 +116,48 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         return (ImageEntry) c;
     }
 
-    public void setCoor(LatLon latlon)
-    {
-        pos = new CachedLatLon(latlon);
-    }
-
     public int compareTo(ImageEntry image) {
-        if (time != null && image.time != null)
-            return time.compareTo(image.time);
-        else if (time == null && image.time == null)
+        if (exifTime != null && image.exifTime != null)
+            return exifTime.compareTo(image.exifTime);
+        else if (exifTime == null && image.exifTime == null)
             return 0;
-        else if (time == null)
+        else if (exifTime == null)
             return -1;
         else
             return 1;
     }
 
-    public void applyTmp() {
-        if (tmp != null) {
-            pos = tmp.pos;
-            speed = tmp.speed;
-            elevation = tmp.elevation;
-            tmp = null;
-        }
-    }
+    /**
+     * Make a fresh copy and save it in the temporary variable.
+     */
     public void cleanTmp() {
         tmp = clone();
         tmp.setPos(null);
         tmp.tmp = null;
     }
 
+    /**
+     * Copy the values from the temporary variable to the main instance.
+     */
+    public void applyTmp() {
+        if (tmp != null) {
+            pos = tmp.pos;
+            speed = tmp.speed;
+            elevation = tmp.elevation;
+            gpsTime = tmp.gpsTime;
+            tmp = null;
+        }
+    }
+
+    /**
+     * If it has been tagged i.e. matched to a gpx track or retrieved lat/lon from exif
+     */
     public boolean isTagged() {
         return pos != null;
     }
 
     /**
-     * only partial info
+     * String representation. (only partial info)
      */
     @Override
     public String toString() {

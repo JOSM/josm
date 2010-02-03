@@ -1,7 +1,6 @@
 // License: GPL. See LICENSE file for details.
 // Copyright 2007 by Christian Gallioz (aka khris78)
 // Parts of code from Geotagged plugin (by Rob Neild)
-// and the core JOSM source code (by Immanuel Scholz and others)
 
 package org.openstreetmap.josm.gui.layer.geoimage;
 
@@ -332,7 +331,7 @@ public class CorrelateGpxWithImages implements ActionListener {
 
             imgList = new JList(new AbstractListModel() {
                 public Object getElementAt(int i) {
-                    return yLayer.data.get(i).file.getName();
+                    return yLayer.data.get(i).getFile().getName();
                 }
 
                 public int getSize() {
@@ -344,8 +343,8 @@ public class CorrelateGpxWithImages implements ActionListener {
 
                 public void valueChanged(ListSelectionEvent arg0) {
                     int index = imgList.getSelectedIndex();
-                    imgDisp.setImage(yLayer.data.get(index).file);
-                    Date date = yLayer.data.get(index).time;
+                    imgDisp.setImage(yLayer.data.get(index).getFile());
+                    Date date = yLayer.data.get(index).getExifTime();
                     if (date != null) {
                         lbExifTime.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(date));
                         tfGpsTime.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(date));
@@ -648,7 +647,8 @@ public class CorrelateGpxWithImages implements ActionListener {
                 if (selGpx == null)
                     return tr("No gpx selected");
 
-                lastNumMatched = matchGpxTrack(dateImgLst, selGpx.data, (long) (timezone * 3600) + delta);
+                final long offset_ms = ((long) (timezone * 3600) + delta) * 1000; // in milliseconds
+                lastNumMatched = matchGpxTrack(dateImgLst, selGpx.data, offset_ms);
 
                 return trn("<html>Matched <b>{0}</b> of <b>{1}</b> photo to GPX track.</html>",
                         "<html>Matched <b>{0}</b> of <b>{1}</b> photos to GPX track.</html>",
@@ -745,7 +745,7 @@ public class CorrelateGpxWithImages implements ActionListener {
                     Main.pref.put("geoimage.delta", Long.toString(delta * 1000));
                     Main.pref.put("geoimage.showThumbs", yLayer.useThumbs);
 
-                    yLayer.useThumbs = cbShowThumbs.isSelected();//FIXME
+                    yLayer.useThumbs = cbShowThumbs.isSelected();
                     yLayer.loadThumbs();
 
                     // Search whether an other layer has yet defined some bounding box.
@@ -954,7 +954,7 @@ public class CorrelateGpxWithImages implements ActionListener {
             }
 
             // Init variables
-            long firstExifDate = imgs.get(0).time.getTime()/1000;
+            long firstExifDate = imgs.get(0).getExifTime().getTime()/1000;
 
             long firstGPXDate = -1;
             // Finds first GPX point
@@ -1040,17 +1040,17 @@ public class CorrelateGpxWithImages implements ActionListener {
     private ArrayList<ImageEntry> getSortedImgList(boolean exif, boolean tagged) {
         ArrayList<ImageEntry> dateImgLst = new ArrayList<ImageEntry>(yLayer.data.size());
         for (ImageEntry e : yLayer.data) {
-            if (e.time == null) {
+            if (e.getExifTime() == null) {
                 continue;
             }
 
-            if (e.exifCoor != null) {
+            if (e.getExifCoor() != null) {
                 if (!exif) {
                     continue;
                 }
             }
 
-            if (e.isTagged() && e.exifCoor == null) {
+            if (e.isTagged() && e.getExifCoor() == null) {
                 if (!tagged) {
                     continue;
                 }
@@ -1061,7 +1061,7 @@ public class CorrelateGpxWithImages implements ActionListener {
 
         Collections.sort(dateImgLst, new Comparator<ImageEntry>() {
             public int compare(ImageEntry arg0, ImageEntry arg1) {
-                return arg0.time.compareTo(arg1.time);
+                return arg0.getExifTime().compareTo(arg1.getExifTime());
             }
         });
 
@@ -1081,7 +1081,11 @@ public class CorrelateGpxWithImages implements ActionListener {
         return (GpxDataWrapper) item;
     }
 
-    private int matchGpxTrack(ArrayList<ImageEntry> dateImgLst, GpxData selectedGpx, long offset) {
+    /**
+     * Match a list of photos to a gpx track with a given offset.
+     * All images need a exifTime attribute and the List must be sorted according to these times.
+     */
+    private int matchGpxTrack(ArrayList<ImageEntry> images, GpxData selectedGpx, long offset) {
         int ret = 0;
 
         PrimaryDateParser dateParser = new PrimaryDateParser();
@@ -1089,30 +1093,30 @@ public class CorrelateGpxWithImages implements ActionListener {
         for (GpxTrack trk : selectedGpx.tracks) {
             for (GpxTrackSegment segment : trk.getSegments()) {
 
-                long prevDateWp = 0;
+                long prevWpTime = 0;
                 WayPoint prevWp = null;
 
                 for (WayPoint curWp : segment.getWayPoints()) {
 
-                    String curDateWpStr = (String) curWp.attr.get("time");
-                    if (curDateWpStr != null) {
+                    String curWpTimeStr = (String) curWp.attr.get("time");
+                    if (curWpTimeStr != null) {
 
                         try {
-                            long curDateWp = dateParser.parse(curDateWpStr).getTime()/1000 + offset;
-                            ret += matchPoints(dateImgLst, prevWp, prevDateWp, curWp, curDateWp);
+                            long curWpTime = dateParser.parse(curWpTimeStr).getTime() + offset;
+                            ret += matchPoints(images, prevWp, prevWpTime, curWp, curWpTime, offset);
 
                             prevWp = curWp;
-                            prevDateWp = curDateWp;
+                            prevWpTime = curWpTime;
 
                         } catch(ParseException e) {
-                            System.err.println("Error while parsing date \"" + curDateWpStr + '"');
+                            System.err.println("Error while parsing date \"" + curWpTimeStr + '"');
                             e.printStackTrace();
                             prevWp = null;
-                            prevDateWp = 0;
+                            prevWpTime = 0;
                         }
                     } else {
                         prevWp = null;
-                        prevDateWp = 0;
+                        prevWpTime = 0;
                     }
                 }
             }
@@ -1120,15 +1124,15 @@ public class CorrelateGpxWithImages implements ActionListener {
         return ret;
     }
 
-    private int matchPoints(ArrayList<ImageEntry> dateImgLst, WayPoint prevWp, long prevDateWp,
-            WayPoint curWp, long curDateWp) {
+    private int matchPoints(ArrayList<ImageEntry> images, WayPoint prevWp, long prevWpTime,
+            WayPoint curWp, long curWpTime, long offset) {
         // Time between the track point and the previous one, 5 sec if first point, i.e. photos take
         // 5 sec before the first track point can be assumed to be take at the starting position
-        long interval = prevDateWp > 0 ? ((int)Math.abs(curDateWp - prevDateWp)) : 5;
+        long interval = prevWpTime > 0 ? ((long)Math.abs(curWpTime - prevWpTime)) : 5*1000;
         int ret = 0;
 
         // i is the index of the timewise last photo that has the same or earlier EXIF time
-        int i = getLastIndexOfListBefore(dateImgLst, curDateWp);
+        int i = getLastIndexOfListBefore(images, curWpTime);
 
         // no photos match
         if (i < 0)
@@ -1141,8 +1145,8 @@ public class CorrelateGpxWithImages implements ActionListener {
         if (prevWp != null) {
             double distance = prevWp.getCoor().greatCircleDistance(curWp.getCoor());
             // This is in km/h, 3.6 * m/s
-            if (curDateWp > prevDateWp) {
-                speed = 3.6 * distance / (curDateWp - prevDateWp);
+            if (curWpTime > prevWpTime) {
+                speed = 3.6 * distance / (curWpTime - prevWpTime);
             }
             try {
                 prevElevation = new Double((String) prevWp.attr.get("ele"));
@@ -1155,13 +1159,19 @@ public class CorrelateGpxWithImages implements ActionListener {
 
         // First trackpoint, then interval is set to five seconds, i.e. photos up to five seconds
         // before the first point will be geotagged with the starting point
-        if(prevDateWp == 0 || curDateWp <= prevDateWp) {
-            while(i >= 0 && (dateImgLst.get(i).time.getTime()/1000) <= curDateWp
-                    && (dateImgLst.get(i).time.getTime()/1000) >= (curDateWp - interval)) {
-                if(dateImgLst.get(i).tmp.getPos() == null) {
-                    dateImgLst.get(i).tmp.setCoor(curWp.getCoor());
-                    dateImgLst.get(i).tmp.setSpeed(speed);
-                    dateImgLst.get(i).tmp.setElevation(curElevation);
+        if(prevWpTime == 0 || curWpTime <= prevWpTime) {
+            while (true) {
+                if (i < 0)
+                    break;
+                final ImageEntry curImg = images.get(i);
+                if (curImg.getExifTime().getTime() > curWpTime
+                    || curImg.getExifTime().getTime() < curWpTime - interval)
+                        break;
+                if(curImg.tmp.getPos() == null) {
+                    curImg.tmp.setPos(curWp.getCoor());
+                    curImg.tmp.setSpeed(speed);
+                    curImg.tmp.setElevation(curElevation);
+                    curImg.tmp.setGpsTime(new Date(curImg.getExifTime().getTime() - offset));
                     ret++;
                 }
                 i--;
@@ -1171,19 +1181,24 @@ public class CorrelateGpxWithImages implements ActionListener {
 
         // This code gives a simple linear interpolation of the coordinates between current and
         // previous track point assuming a constant speed in between
-        long imgDate;
-        while(i >= 0 && (imgDate = dateImgLst.get(i).time.getTime()/1000) >= prevDateWp) {
+        while (true) {
+            if (i < 0)
+                break;
+            ImageEntry curImg = images.get(i);
+            long imgTime = curImg.getExifTime().getTime();
+            if (imgTime < prevWpTime)
+                break;
 
-            if(dateImgLst.get(i).tmp.getPos() == null) {
+            if(curImg.tmp.getPos() == null) {
                 // The values of timeDiff are between 0 and 1, it is not seconds but a dimensionless
                 // variable
-                double timeDiff = (double)(imgDate - prevDateWp) / interval;
-                dateImgLst.get(i).tmp.setCoor(prevWp.getCoor().interpolate(curWp.getCoor(), timeDiff));
-                dateImgLst.get(i).tmp.setSpeed(speed);
-
+                double timeDiff = (double)(imgTime - prevWpTime) / interval;
+                curImg.tmp.setPos(prevWp.getCoor().interpolate(curWp.getCoor(), timeDiff));
+                curImg.tmp.setSpeed(speed);
                 if (curElevation != null && prevElevation != null) {
-                    dateImgLst.get(i).setElevation(prevElevation + (curElevation - prevElevation) * timeDiff);
+                    curImg.setElevation(prevElevation + (curElevation - prevElevation) * timeDiff);
                 }
+                curImg.tmp.setGpsTime(new Date(curImg.getExifTime().getTime() - offset));
 
                 ret++;
             }
@@ -1192,15 +1207,15 @@ public class CorrelateGpxWithImages implements ActionListener {
         return ret;
     }
 
-    private int getLastIndexOfListBefore(ArrayList<ImageEntry> dateImgLst, long searchedDate) {
-        int lstSize= dateImgLst.size();
+    private int getLastIndexOfListBefore(ArrayList<ImageEntry> images, long searchedTime) {
+        int lstSize= images.size();
 
         // No photos or the first photo taken is later than the search period
-        if(lstSize == 0 || searchedDate < dateImgLst.get(0).time.getTime()/1000)
+        if(lstSize == 0 || searchedTime < images.get(0).getExifTime().getTime())
             return -1;
 
         // The search period is later than the last photo
-        if (searchedDate > dateImgLst.get(lstSize - 1).time.getTime() / 1000)
+        if (searchedTime > images.get(lstSize - 1).getExifTime().getTime())
             return lstSize-1;
 
         // The searched index is somewhere in the middle, do a binary search from the beginning
@@ -1209,18 +1224,18 @@ public class CorrelateGpxWithImages implements ActionListener {
         int endIndex= lstSize-1;
         while (endIndex - startIndex > 1) {
             curIndex= (endIndex + startIndex) / 2;
-            if (searchedDate > dateImgLst.get(curIndex).time.getTime()/1000) {
+            if (searchedTime > images.get(curIndex).getExifTime().getTime()) {
                 startIndex= curIndex;
             } else {
                 endIndex= curIndex;
             }
         }
-        if (searchedDate < dateImgLst.get(endIndex).time.getTime()/1000)
+        if (searchedTime < images.get(endIndex).getExifTime().getTime())
             return startIndex;
 
         // This final loop is to check if photos with the exact same EXIF time follows
-        while ((endIndex < (lstSize-1)) && (dateImgLst.get(endIndex).time.getTime()
-                == dateImgLst.get(endIndex + 1).time.getTime())) {
+        while ((endIndex < (lstSize-1)) && (images.get(endIndex).getExifTime().getTime()
+                == images.get(endIndex + 1).getExifTime().getTime())) {
             endIndex++;
         }
         return endIndex;

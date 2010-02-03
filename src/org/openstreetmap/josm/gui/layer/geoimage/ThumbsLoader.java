@@ -71,7 +71,7 @@ public class ThumbsLoader implements Runnable {
         }
 
         private BufferedImage loadThumb(ImageEntry entry) {
-            final String cacheIdent = entry.file.toString()+":"+maxSize;
+            final String cacheIdent = entry.getFile().toString()+":"+maxSize;
 
             if (!cacheOff) {
                 BufferedImage cached = cache.getImg(cacheIdent);
@@ -81,7 +81,7 @@ public class ThumbsLoader implements Runnable {
                 }
             }
 
-            Image img = Toolkit.getDefaultToolkit().createImage(entry.file.getPath());
+            Image img = Toolkit.getDefaultToolkit().createImage(entry.getFile().getPath());
             tracker.addImage(img, 0);
             try {
                 tracker.waitForID(0);
