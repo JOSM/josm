@@ -86,9 +86,9 @@ public class ConditionalOptionPaneUtil {
      * Set <code>optionType</code> to {@see JOptionPane#YES_NO_CANCEL_OPTION} for a dialog with a YES,
      * a NO and a CANCEL button
      *
-     * Replies true, if the selected option is equal to <code>trueOption</code>, otherwise false.
-     * Replies true, if the dialog is not displayed because the respective preference option
-     * <code>preferenceKey</code> is set to false.
+     * Returns one of the constants JOptionPane.YES_OPTION, JOptionPane.NO_OPTION,
+     * JOptionPane.CANCEL_OPTION or JOptionPane.CLOSED_OPTION depending on the action chosen by
+     * the user.
      *
      * @param preferenceKey the preference key
      * @param parent  the parent component
@@ -99,24 +99,24 @@ public class ConditionalOptionPaneUtil {
      * @param options a list of options
      * @param defaultOption the default option
      *
-     *
-     * @return the index of the selected option. {@see JOptionPane#CLOSED_OPTION} if the dialog was closed.
-     * {@see ConditionalOptionPaneUtil#DIALOG_DISABLED_OPTION} if the dialog is disabled.
-     *
+     * @return the option selected by user. {@see JOptionPane#CLOSED_OPTION} if the dialog was closed.
      */
     static public int showOptionDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, Object [] options, Object defaultOption) throws HeadlessException {
-        if (!getDialogShowingEnabled(preferenceKey))
-            return DIALOG_DISABLED_OPTION;
+        int ret = getDialogReturnValue(preferenceKey);
+        if (!getDialogShowingEnabled(preferenceKey) && ((ret == JOptionPane.YES_OPTION) || (ret == JOptionPane.NO_OPTION)))
+            return ret;
         MessagePanel pnl = new MessagePanel(false, message);
-        int ret = JOptionPane.showOptionDialog(parent, pnl, title, optionType, messageType, null,options,defaultOption);
+        ret = JOptionPane.showOptionDialog(parent, pnl, title, optionType, messageType, null, options, defaultOption);
 
-        if(!pnl.getDialogShowingEnabled())
+        if (((ret == JOptionPane.YES_OPTION) || (ret == JOptionPane.NO_OPTION)) && !pnl.getDialogShowingEnabled()) {
             setDialogShowingEnabled(preferenceKey, false);
+            setDialogReturnValue(preferenceKey, ret);
+        }
         return ret;
     }
 
     /**
-     * Displays an confirmation dialog with some option buttons given by <code>optionType</code>.
+     * Displays a confirmation dialog with some option buttons given by <code>optionType</code>.
      * It is always on top even if there are other open windows like detached dialogs,
      * relation editors, history browsers and the like.
      *
@@ -128,7 +128,8 @@ public class ConditionalOptionPaneUtil {
      *
      * Replies true, if the selected option is equal to <code>trueOption</code>, otherwise false.
      * Replies true, if the dialog is not displayed because the respective preference option
-     * <code>preferenceKey</code> is set to false.
+     * <code>preferenceKey</code> is set to false and the user has previously chosen
+     * <code>trueOption</code>.
      *
      * @param preferenceKey the preference key
      * @param parent  the parent component
@@ -146,11 +147,12 @@ public class ConditionalOptionPaneUtil {
      * @see JOptionPane#ERROR_MESSAGE
      */
     static public boolean showConfirmationDialog(String preferenceKey, Component parent, Object message, String title, int optionType, int messageType, int trueOption) throws HeadlessException {
-        if (!getDialogShowingEnabled(preferenceKey) && (getDialogReturnValue(preferenceKey) >= 0))
-            return getDialogReturnValue(preferenceKey) == trueOption;
+        int ret = getDialogReturnValue(preferenceKey);
+        if (!getDialogShowingEnabled(preferenceKey) && ((ret == JOptionPane.YES_OPTION) || (ret == JOptionPane.NO_OPTION)))
+            return ret == trueOption;
         MessagePanel pnl = new MessagePanel(false, message);
-        int ret = JOptionPane.showConfirmDialog(parent, pnl, title, optionType, messageType);
-        if ((ret >= 0) && !pnl.getDialogShowingEnabled()) {
+        ret = JOptionPane.showConfirmDialog(parent, pnl, title, optionType, messageType);
+        if (((ret == JOptionPane.YES_OPTION) || (ret == JOptionPane.NO_OPTION)) && !pnl.getDialogShowingEnabled()) {
             setDialogShowingEnabled(preferenceKey, false);
             setDialogReturnValue(preferenceKey, ret);
         }
@@ -180,8 +182,9 @@ public class ConditionalOptionPaneUtil {
             return;
         MessagePanel pnl = new MessagePanel(false, message);
         JOptionPane.showMessageDialog(parent, pnl, title, messageType);
-        if(!pnl.getDialogShowingEnabled())
+        if(!pnl.getDialogShowingEnabled()) {
             setDialogShowingEnabled(preferenceKey, false);
+        }
     }
 
     /**
