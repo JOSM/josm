@@ -20,6 +20,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
@@ -41,6 +42,8 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
 
     /** the conflict resolver component */
     private ConflictResolver resolver;
+
+    private ApplyResolutionAction applyResolutionAction;
 
     /**
      * restore position and size on screen from preference settings
@@ -97,14 +100,26 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
     }
 
     @Override
+    public void removeNotify() {
+        super.removeNotify();
+        unregisterListeners();
+    }
+
+    @Override
     public void setVisible(boolean isVisible) {
         if (isVisible){
             restorePositionAndDimension();
             toFront();
         } else {
             rememberPositionAndDimension();
+            unregisterListeners();
         }
         super.setVisible(isVisible);
+    }
+
+    private void closeDialog() {
+        setVisible(false);
+        dispose();
     }
 
     /**
@@ -116,8 +131,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         JPanel pnl = new JPanel();
         pnl.setLayout(new FlowLayout(FlowLayout.CENTER));
 
-        ApplyResolutionAction applyResolutionAction = new ApplyResolutionAction();
-        resolver.addPropertyChangeListener(applyResolutionAction);
+        applyResolutionAction = new ApplyResolutionAction();
         JButton btn = new JButton(applyResolutionAction);
         btn.setName("button.apply");
         pnl.add(btn);
@@ -134,10 +148,19 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         return pnl;
     }
 
+    private void registerListeners() {
+        resolver.addPropertyChangeListener(applyResolutionAction);
+    }
+
+    private void unregisterListeners() {
+        resolver.removePropertyChangeListener(applyResolutionAction);
+    }
+
     /**
      * builds the GUI
      */
     protected void build() {
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         updateTitle();
         getContentPane().setLayout(new BorderLayout());
 
@@ -148,6 +171,8 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
 
         resolver.addPropertyChangeListener(this);
         HelpUtil.setHelpContext(this.getRootPane(), "Dialog/ConflictDialog");
+
+        registerListeners();
     }
 
     public ConflictResolutionDialog(Component parent) {
@@ -171,7 +196,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         }
 
         public void actionPerformed(ActionEvent arg0) {
-            setVisible(false);
+            closeDialog();
         }
     }
 
@@ -230,7 +255,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
                 );
                 switch(ret) {
                 case JOptionPane.YES_OPTION:
-                    setVisible(false);
+                    closeDialog();
                     break;
                 default:
                     return;
@@ -239,7 +264,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
             try {
                 Command cmd = resolver.buildResolveCommand();
                 Main.main.undoRedo.add(cmd);
-                setVisible(false);
+                closeDialog();
             } catch(OperationCancelledException e) {
                 // do nothing. Exception already reported
             }

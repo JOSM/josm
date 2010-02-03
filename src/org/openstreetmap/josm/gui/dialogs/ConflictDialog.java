@@ -164,6 +164,15 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         OsmDataLayer editLayer =  Main.main.getEditLayer();
         conflicts = editLayer == null?new ConflictCollection():editLayer.getConflicts();
         model.fireContentChanged();
+        updateTitle(conflicts.size());
+    }
+
+    private void updateTitle(int conflictsCount) {
+        if (conflictsCount > 0) {
+            setTitle(tr("Conflicts: {0} unresolved", conflicts.size()));
+        } else {
+            setTitle(tr("Conflict"));
+        }
     }
 
     /**

@@ -173,6 +173,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
     public void hideNotify() {
         SelectionEventManager.getInstance().removeSelectionListener(this);
         MapView.removeEditLayerChangeListener(this);
+        updateTitle(0, 0, 0);
     }
 
     private BasicArrowButton createArrowButton(SideButton parentButton) {
@@ -273,11 +274,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
             }
         }
 
-        if( (nodes+ways+relations) != 0) {
-            setTitle(tr("Sel.: Rel.:{0} / Ways:{1} / Nodes:{2}", relations, ways, nodes));
-        } else {
-            setTitle(tr("Selection"));
-        }
+        updateTitle(nodes, ways, relations);
 
         if (selectionHistory != null && newSelection.size() > 0 && !newSelection.equals(historyIgnoreSelection)) {
             historyIgnoreSelection = null;
@@ -292,6 +289,14 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
             while (selectionHistory.size() > SELECTION_HISTORY_SIZE) {
                 selectionHistory.removeLast();
             }
+        }
+    }
+
+    private void updateTitle(int nodes, int ways, int relations) {
+        if( (nodes+ways+relations) != 0) {
+            setTitle(tr("Sel.: Rel.:{0} / Ways:{1} / Nodes:{2}", relations, ways, nodes));
+        } else {
+            setTitle(tr("Selection"));
         }
     }
 

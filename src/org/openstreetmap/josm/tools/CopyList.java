@@ -129,7 +129,7 @@ public final class CopyList<E> extends AbstractList<E> implements RandomAccess, 
     }
 
     private void rangeCheck(int index) {
-        if (index >= size || index < 0) throw new IndexOutOfBoundsException();
+        if (index >= size || index < 0) throw new IndexOutOfBoundsException("Index:" + index + " Size:" + size);
     }
 
     private void changeCheck() {
