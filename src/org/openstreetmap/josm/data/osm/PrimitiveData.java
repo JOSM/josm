@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
     private long id;
     private User user;
     private int version;
-    private int timestamp;
+    private Date timestamp = new Date();
     private int changesetId;
 
     public boolean isModified() {
@@ -68,7 +69,7 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
         this.deleted = deleted;
     }
     public long getId() {
-        return id;
+        return id > 0 ? id : 0;
     }
     public void setId(long id) {
         this.id = id;
@@ -85,10 +86,10 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
     public void setVersion(int version) {
         this.version = version;
     }
-    public int getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
-    public void setTimestamp(int timestamp) {
+    public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -191,6 +192,15 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
      */
     public long getUniqueId() {
         return id;
+    }
+
+    /**
+     * Returns a PrimitiveId object for this primitive
+     *
+     * @return the PrimitiveId for this primitive
+     */
+    public PrimitiveId getPrimitiveId() {
+        return new SimplePrimitiveId(getUniqueId(), getType());
     }
 
     public boolean isNew() {

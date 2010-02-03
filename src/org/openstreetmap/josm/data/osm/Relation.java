@@ -171,13 +171,12 @@ public final class Relation extends OsmPrimitive {
     }
 
     /**
-     * Creates new complete relation
+     * Creates new relation
      * @param id
      * @param version
      */
     public Relation(long id, int version) {
-        super(id, false);
-        setOsmId(id, version);
+        super(id, version, false);
     }
 
     @Override public void cloneFrom(OsmPrimitive osm) {

@@ -182,13 +182,12 @@ public final class Way extends OsmPrimitive {
     }
 
     /**
-     * Creates new way with given id and version. Way is marked as complete
+     * Creates new way with given id and version.
      * @param id
      * @param version
      */
     public Way(long id, int version) {
-        super(id, false);
-        setOsmId(id, version);
+        super(id, version, false);
     }
 
     /**

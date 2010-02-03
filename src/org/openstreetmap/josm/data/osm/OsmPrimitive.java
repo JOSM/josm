@@ -222,9 +222,23 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         this.setIncomplete(id > 0);
     }
 
-    protected OsmPrimitive(PrimitiveData data) {
-        version = data.getVersion();
-        id = data.getId();
+    /**
+     * Creates a new primitive for the given id and version.
+     *
+     * If allowNegativeId is set, provided id can be < 0 and will be set to primitive without any processing.
+     * If allowNegativeId is not set, then id will have to be 0 (in that case new unique id will be generated) or
+     * positive number.
+     * 
+     * If id is not > 0 version is ignored and set to 0.
+     *
+     * @param id
+     * @param version
+     * @param allowNegativeId
+     * @throws IllegalArgumentException thrown if id < 0 and allowNegativeId is false
+     */
+    protected OsmPrimitive(long id, int version, boolean allowNegativeId) throws IllegalArgumentException {
+        this(id, allowNegativeId);
+        this.version = (id > 0 ? version : 0);
     }
 
     /* ------------------------------------------------------------------------------------ */
@@ -1160,7 +1174,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      */
     public void load(PrimitiveData data) {
         setKeys(data.getKeys());
-        timestamp = data.getTimestamp();
+        setTimestamp(data.getTimestamp());
         user = data.getUser();
         setChangesetId(data.getChangesetId());
         setDeleted(data.isDeleted());
@@ -1179,7 +1193,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         data.setId(id);
         data.getKeys().clear();
         data.getKeys().putAll(getKeys());
-        data.setTimestamp(timestamp);
+        data.setTimestamp(getTimestamp());
         data.setUser(user);
         data.setDeleted(isDeleted());
         data.setModified(isModified());

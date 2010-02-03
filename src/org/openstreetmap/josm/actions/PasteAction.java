@@ -91,11 +91,11 @@ public final class PasteAction extends JosmAction {
             PrimitiveData copy = data.makeCopy();
             copy.clearOsmId();
             if (data instanceof NodeData) {
-                newNodeIds.put(data.getId(), copy.getId());
+                newNodeIds.put(data.getUniqueId(), copy.getUniqueId());
             } else if (data instanceof WayData) {
-                newWayIds.put(data.getId(), copy.getId());
+                newWayIds.put(data.getUniqueId(), copy.getUniqueId());
             } else if (data instanceof RelationData) {
-                newRelationIds.put(data.getId(), copy.getId());
+                newRelationIds.put(data.getUniqueId(), copy.getUniqueId());
             }
             bufferCopy.add(copy);
         }

@@ -70,13 +70,12 @@ public final class Node extends OsmPrimitive {
     }
 
     /**
-     * Create new complete node
+     * Create new node
      * @param id
      * @param version
      */
     public Node(long id, int version) {
-        super(id, false);
-        setOsmId(id, version);
+        super(id, version, false);
     }
 
     /**
