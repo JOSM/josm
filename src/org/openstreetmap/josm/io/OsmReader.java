@@ -431,8 +431,9 @@ public class OsmReader {
                 }
                 if (n.isDeleted()) {
                     logger.warning(tr("Deleted node {0} is part of way {1}", id, w.getId()));
+                } else {
+                    wayNodes.add(n);
                 }
-                wayNodes.add(n);
             }
             w.setNodes(wayNodes);
             if (w.hasIncompleteNodes()) {
@@ -509,8 +510,9 @@ public class OsmReader {
                 }
                 if (primitive.isDeleted()) {
                     logger.warning(tr("Deleted member {0} is used by relation {1}", primitive.getId(), relation.getId()));
+                } else {
+                    relationMembers.add(new RelationMember(rm.role, primitive));
                 }
-                relationMembers.add(new RelationMember(rm.role, primitive));
             }
             relation.setMembers(relationMembers);
             ds.addPrimitive(relation);
