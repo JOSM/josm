@@ -305,9 +305,12 @@ public class DataSetMerger {
         } else if (target.isDeleted() && ! source.isDeleted() && target.getVersion() == source.getVersion()) {
             // same version, but target is deleted. Assume target takes precedence
             // otherwise too many conflicts when refreshing from the server
-            // but, if source has referrers there is a conflict
-            if (!source.getReferrers().isEmpty()) {
-                conflicts.add(target, source);
+            // but, if source has a referrer that is not in the target dataset there is a conflict
+            for (OsmPrimitive referrer: source.getReferrers()) {
+                if (targetDataSet.getPrimitiveById(referrer.getPrimitiveId()) == null) {
+                    conflicts.add(target, source);
+                    break;
+                }
             }
         } else if (target.isDeleted() != source.isDeleted()) {
             // differences in deleted state have to be resolved manually. This can
