@@ -652,6 +652,12 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
     }
 
     public void deletePrimitive(boolean deleted) {
-        // Do nothing
+        if (deleted) {
+            if (model.getMergedCoords() == null) {
+                model.decideCoordsConflict(MergeDecisionType.KEEP_MINE);
+            }
+        } else {
+            model.decideCoordsConflict(MergeDecisionType.UNDECIDED);
+        }
     }
 }
