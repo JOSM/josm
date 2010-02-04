@@ -343,7 +343,7 @@ public class PluginInformation {
      * @return true if the plugin should be updated
      */
     public boolean isUpdateRequired() {
-        if (this.localversion == null) return false;
+        if (this.localversion == null) return true;
         return isUpdateRequired(this.localversion);
     }
 
