@@ -217,7 +217,7 @@ public class DataSetMerger {
         for (Node sourceNode : source.getNodes()) {
             Node targetNode = (Node)getMergeTarget(sourceNode);
             if (targetNode != null) {
-                if (!targetNode.isDeleted() && targetNode.isVisible()) {
+                if (targetNode.isVisible()) {
                     newNodes.add(targetNode);
                 } else {
                     target.setModified(true);
@@ -244,7 +244,7 @@ public class DataSetMerger {
             OsmPrimitive targetMember = getMergeTarget(sourceMember.getMember());
             if (targetMember == null)
                 throw new IllegalStateException(tr("Missing merge target of type {0} with id {1}", sourceMember.getType(), sourceMember.getUniqueId()));
-            if (! targetMember.isDeleted() && targetMember.isVisible()) {
+            if (targetMember.isVisible()) {
                 RelationMember newMember = new RelationMember(sourceMember.getRole(), targetMember);
                 newMembers.add(newMember);
             } else {
@@ -274,7 +274,8 @@ public class DataSetMerger {
             return true;
         if (! target.isVisible() && source.isVisible()) {
             // should not happen
-            //
+            // FIXME: this message does not make sense, source version can not be lower than
+            //        target version at this point
             logger.warning(tr("Target object with id {0} and version {1} is visible although "
                     + "source object with lower version {2} is not visible. "
                     + "Cannot deal with this inconsistency. Keeping target object. ",
@@ -304,6 +305,10 @@ public class DataSetMerger {
         } else if (target.isDeleted() && ! source.isDeleted() && target.getVersion() == source.getVersion()) {
             // same version, but target is deleted. Assume target takes precedence
             // otherwise too many conflicts when refreshing from the server
+            // but, if source has referrers there is a conflict
+            if (!source.getReferrers().isEmpty()) {
+                conflicts.add(target, source);
+            }
         } else if (target.isDeleted() != source.isDeleted()) {
             // differences in deleted state have to be resolved manually. This can
             // happen if one layer is merged onto another layer
@@ -312,13 +317,16 @@ public class DataSetMerger {
         } else if (! target.isModified() && source.isModified()) {
             // target not modified. We can assume that source is the most recent version.
             // clone it into target. But check first, whether source is deleted. if so,
-            // make sure that target is not referenced any more in myDataSet.
-            //
+            // make sure that target is not referenced any more in myDataSet. If it is there
+            // is a conflict
             if (source.isDeleted()) {
-                deletedObjectsToUnlink.add(source);
+                if (!target.getReferrers().isEmpty()) {
+                    conflicts.add(target, source);
+                }
+            } else {
+                target.mergeFrom(source);
+                objectsWithChildrenToMerge.add(source.getPrimitiveId());
             }
-            target.mergeFrom(source);
-            objectsWithChildrenToMerge.add(source.getPrimitiveId());
         } else if (! target.isModified() && !source.isModified() && target.getVersion() == source.getVersion()) {
             // both not modified. Merge nevertheless.
             // This helps when updating "empty" relations, see #4295
