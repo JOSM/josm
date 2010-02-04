@@ -36,8 +36,8 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class OsmHistoryReader {
 
-    private InputStream in;
-    private HistoryDataSet data;
+    private final InputStream in;
+    private final HistoryDataSet data;
 
     private class Parser extends DefaultHandler {
 
@@ -130,8 +130,8 @@ public class OsmHistoryReader {
             if (v == null) {
                 throwException(tr("Missing mandatory attribute ''{0}''.", name));
             }
-            if (v.equals("true")) return true;
-            if (v.equals("false")) return false;
+            if ("true".equals(v)) return true;
+            if ("false".equals(v)) return false;
             throwException(tr("Illegal value for mandatory attribute ''{0}'' of type boolean. Got ''{1}''.", name, v));
             // not reached
             return false;
@@ -230,7 +230,7 @@ public class OsmHistoryReader {
 
     public OsmHistoryReader(InputStream source) {
         this.in = source;
-        data = new HistoryDataSet();
+        this.data = new HistoryDataSet();
     }
 
     public HistoryDataSet parse(ProgressMonitor progressMonitor) throws SAXException, IOException {

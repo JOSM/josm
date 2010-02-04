@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -29,7 +30,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * of {@see OsmPrimitive}.
  *
  */
-public class PropertiesMerger extends JPanel implements Observer {
+public class PropertiesMerger extends JPanel implements Observer, IConflictResolver {
     private static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000000");
 
     public final static Color BGCOLOR_NO_CONFLICT = new Color(234,234,234);
@@ -648,5 +649,9 @@ public class PropertiesMerger extends JPanel implements Observer {
         public void update(Observable o, Object arg) {
             setEnabled(model.hasVisibleStateConflict() && model.isDecidedVisibleState());
         }
+    }
+
+    public void deletePrimitive(boolean deleted) {
+        // Do nothing
     }
 }

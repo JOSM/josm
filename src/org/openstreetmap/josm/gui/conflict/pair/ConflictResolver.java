@@ -8,7 +8,7 @@ import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.logging.Logger;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -66,13 +66,14 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
      */
     static public final String THEIR_PRIMITIVE_PROP = ConflictResolver.class.getName() + ".theirPrimitive";
 
-    private static final Logger logger = Logger.getLogger(ConflictResolver.class.getName());
+    //private static final Logger logger = Logger.getLogger(ConflictResolver.class.getName());
 
     private JTabbedPane tabbedPane = null;
     private TagMerger tagMerger;
     private NodeListMerger nodeListMerger;
     private RelationMemberMerger relationMemberMerger;
     private PropertiesMerger propertiesMerger;
+    private final List<IConflictResolver> conflictResolvers = new ArrayList<IConflictResolver>();
     private OsmPrimitive my;
     private OsmPrimitive their;
 
@@ -118,6 +119,11 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
 
         setLayout(new BorderLayout());
         add(tabbedPane, BorderLayout.CENTER);
+
+        conflictResolvers.add(propertiesMerger);
+        conflictResolvers.add(tagMerger);
+        conflictResolvers.add(nodeListMerger);
+        conflictResolvers.add(relationMemberMerger);
     }
 
     /**
@@ -173,23 +179,26 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
             updateResolvedCompletely();
         } else if (evt.getPropertyName().equals(ListMergeModel.FROZEN_PROP)) {
             boolean frozen = (Boolean)evt.getNewValue();
-            if (frozen && evt.getSource() == nodeListMerger.getModel()) {
-                tabbedPane.setTitleAt(2, tr("Nodes(resolved)"));
-                tabbedPane.setToolTipTextAt(2, tr("Merged node list frozen. No pending conflicts in the node list of this way"));
-                tabbedPane.setIconAt(2, mergeComplete);
-            } else {
-                tabbedPane.setTitleAt(2, tr("Nodes(with conflicts)"));
-                tabbedPane.setToolTipTextAt(2,tr("Pending conflicts in the node list of this way"));
-                tabbedPane.setIconAt(2, mergeIncomplete);
-            }
-            if (frozen && evt.getSource() == relationMemberMerger.getModel()) {
-                tabbedPane.setTitleAt(3, tr("Members(resolved)"));
-                tabbedPane.setToolTipTextAt(3, tr("Merged member list frozen. No pending conflicts in the member list of this relation"));
-                tabbedPane.setIconAt(3, mergeComplete);
-            } else {
-                tabbedPane.setTitleAt(3, tr("Members(with conflicts)"));
-                tabbedPane.setToolTipTextAt(3, tr("Pending conflicts in the member list of this relation"));
-                tabbedPane.setIconAt(3, mergeIncomplete);
+            if (evt.getSource() == nodeListMerger.getModel() && my instanceof Way) {
+                if (frozen) {
+                    tabbedPane.setTitleAt(2, tr("Nodes(resolved)"));
+                    tabbedPane.setToolTipTextAt(2, tr("Merged node list frozen. No pending conflicts in the node list of this way"));
+                    tabbedPane.setIconAt(2, mergeComplete);
+                } else {
+                    tabbedPane.setTitleAt(2, tr("Nodes(with conflicts)"));
+                    tabbedPane.setToolTipTextAt(2,tr("Pending conflicts in the node list of this way"));
+                    tabbedPane.setIconAt(2, mergeIncomplete);
+                }
+            } else if (evt.getSource() == relationMemberMerger.getModel() && my instanceof Relation) {
+                if (frozen) {
+                    tabbedPane.setTitleAt(3, tr("Members(resolved)"));
+                    tabbedPane.setToolTipTextAt(3, tr("Merged member list frozen. No pending conflicts in the member list of this relation"));
+                    tabbedPane.setIconAt(3, mergeComplete);
+                } else {
+                    tabbedPane.setTitleAt(3, tr("Members(with conflicts)"));
+                    tabbedPane.setToolTipTextAt(3, tr("Pending conflicts in the member list of this relation"));
+                    tabbedPane.setIconAt(3, mergeIncomplete);
+                }
             }
             updateResolvedCompletely();
         } else if (evt.getPropertyName().equals(PropertiesMergeModel.RESOLVED_COMPLETELY_PROP)) {
@@ -204,6 +213,10 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
                 tabbedPane.setIconAt(0, mergeIncomplete);
             }
             updateResolvedCompletely();
+        } else if (PropertiesMergeModel.DELETE_PRIMITIVE_PROP.equals(evt.getPropertyName())) {
+            for (IConflictResolver resolver: conflictResolvers) {
+                resolver.deletePrimitive((Boolean) evt.getNewValue());
+            }
         }
     }
 

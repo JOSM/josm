@@ -25,13 +25,14 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * UI component for resolving conflicts in the tag sets of two {@see OsmPrimitive}s.
  *
  */
-public class TagMerger extends JPanel {
+public class TagMerger extends JPanel implements IConflictResolver {
 
     private JTable mineTable;
     private JTable mergedTable;
@@ -390,6 +391,14 @@ public class TagMerger extends JPanel {
 
         public void valueChanged(ListSelectionEvent e) {
             setEnabled(mergedTable.getSelectedRowCount() > 0);
+        }
+    }
+
+    public void deletePrimitive(boolean deleted) {
+        // Use my entries, as it doesn't really matter
+        MergeDecisionType decision = deleted?MergeDecisionType.KEEP_MINE:MergeDecisionType.UNDECIDED;
+        for (int i=0; i<model.getRowCount(); i++) {
+            model.decide(i, decision);
         }
     }
 }

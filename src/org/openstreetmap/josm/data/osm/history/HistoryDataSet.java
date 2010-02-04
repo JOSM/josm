@@ -53,7 +53,7 @@ public class HistoryDataSet {
         listeners.remove(listener);
     }
 
-    protected void fireHistoryUpdated(SimplePrimitiveId id) {
+    protected void fireHistoryUpdated(PrimitiveId id) {
         for (HistoryDataSetListener l : listeners) {
             l.historyUpdated(this, id);
         }
@@ -93,7 +93,7 @@ public class HistoryDataSet {
      * @param primitive  the history primitive to add
      */
     public void put(HistoryOsmPrimitive primitive) {
-        SimplePrimitiveId id = new SimplePrimitiveId(primitive.getId(), primitive.getType());
+        PrimitiveId id = new SimplePrimitiveId(primitive.getId(), primitive.getType());
         if (data.get(id) == null) {
             data.put(id, new ArrayList<HistoryOsmPrimitive>());
         }

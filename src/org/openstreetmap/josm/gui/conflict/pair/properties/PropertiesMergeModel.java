@@ -52,6 +52,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class PropertiesMergeModel extends Observable {
 
     static public final String RESOLVED_COMPLETELY_PROP = PropertiesMergeModel.class.getName() + ".resolvedCompletely";
+    static public final String DELETE_PRIMITIVE_PROP = PropertiesMergeModel.class.getName() + ".deletePrimitive";
 
     private OsmPrimitive my;
 
@@ -286,6 +287,17 @@ public class PropertiesMergeModel extends Observable {
         return null;
     }
 
+    private boolean getMergedDeletedState(MergeDecisionType decision) {
+        switch (decision) {
+        case KEEP_MINE:
+            return myDeletedState;
+        case KEEP_THEIR:
+            return theirDeletedState;
+        default:
+            return false;
+        }
+    }
+
     /**
      * decides the conflict between two deleted states
      * @param decision the decision (must not be null)
@@ -294,10 +306,18 @@ public class PropertiesMergeModel extends Observable {
      */
     public void decideDeletedStateConflict(MergeDecisionType decision) throws IllegalArgumentException{
         CheckParameterUtil.ensureParameterNotNull(decision, "decision");
+
+        boolean oldMergedDeletedState = getMergedDeletedState(this.deletedMergeDecision);
+        boolean newMergedDeletedState = getMergedDeletedState(decision);
+
         this.deletedMergeDecision = decision;
         setChanged();
         notifyObservers();
         fireCompletelyResolved();
+
+        if (oldMergedDeletedState != newMergedDeletedState) {
+            support.firePropertyChange(DELETE_PRIMITIVE_PROP, oldMergedDeletedState, newMergedDeletedState);
+        }
     }
 
     /**
@@ -477,12 +497,12 @@ public class PropertiesMergeModel extends Observable {
                         + "Do you want to undelete these nodes too?",
                         dependent.size(), dependent.size(), way.getId())
                         + "</html>",
-                tr("Undelete additional nodes?"),
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[0]
+                        tr("Undelete additional nodes?"),
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        options,
+                        options[0]
         );
 
         switch(ret) {
@@ -511,12 +531,12 @@ public class PropertiesMergeModel extends Observable {
                         + "Do you want to undelete these too?",
                         dependent.size(), dependent.size(), r.getId())
                         + "</html>",
-                tr("Undelete dependent primitives?"),
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[0]
+                        tr("Undelete dependent primitives?"),
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        options,
+                        options[0]
         );
 
         switch(ret) {

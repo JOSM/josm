@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.history;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,8 +36,8 @@ public class History{
     /** the list of object snapshots */
     private ArrayList<HistoryOsmPrimitive> versions;
     /** the object id */
-    private long id;
-    private OsmPrimitiveType type;
+    private final long id;
+    private final OsmPrimitiveType type;
 
     /**
      * Creates a new history for an OSM primitive

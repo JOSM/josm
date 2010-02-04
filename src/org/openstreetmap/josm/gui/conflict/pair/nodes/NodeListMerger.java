@@ -1,20 +1,19 @@
 package org.openstreetmap.josm.gui.conflict.pair.nodes;
 
-import java.util.logging.Logger;
-
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.ListMerger;
 
 /**
  * A UI component for resolving conflicts in the node lists of two {@see Way}s.
  *
  */
-public class NodeListMerger extends ListMerger<Node> {
-    private static final Logger logger = Logger.getLogger(NodeListMerger.class.getName());
+public class NodeListMerger extends ListMerger<Node> implements IConflictResolver {
+    //private static final Logger logger = Logger.getLogger(NodeListMerger.class.getName());
 
     public NodeListMerger() {
         super(new NodeListMergeModel());
@@ -64,5 +63,14 @@ public class NodeListMerger extends ListMerger<Node> {
 
     public void populate(Way my, Way their) {
         ((NodeListMergeModel)model).populate(my, their);
+    }
+
+    public void deletePrimitive(boolean deleted) {
+        if (deleted) {
+            model.setFrozen(true);
+            model.clearMerged();
+        } else {
+            model.setFrozen(false);
+        }
     }
 }

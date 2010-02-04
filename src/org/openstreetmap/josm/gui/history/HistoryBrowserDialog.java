@@ -108,10 +108,8 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
     }
 
     public void historyUpdated(HistoryDataSet source, PrimitiveId primitiveId) {
-        if (primitiveId == null) {
+        if (primitiveId == null || primitiveId.equals(browser.getHistory().getPrimitmiveId())) {
             browser.populate(source.getHistory(browser.getHistory().getPrimitmiveId()));
-        } else if (primitiveId.equals(browser.getHistory().getPrimitmiveId())) {
-            browser.populate(source.getHistory(primitiveId));
         }
     }
 

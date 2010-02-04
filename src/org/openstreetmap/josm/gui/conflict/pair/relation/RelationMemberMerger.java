@@ -1,20 +1,19 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair.relation;
 
-import java.util.logging.Logger;
-
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.ListMerger;
 
 /**
  * A UI component for resolving conflicts in the member lists of two {@see Relation}
  */
-public class RelationMemberMerger extends ListMerger<RelationMember> {
-    private static final Logger logger = Logger.getLogger(RelationMemberMerger.class.getName());
+public class RelationMemberMerger extends ListMerger<RelationMember> implements IConflictResolver {
+    //private static final Logger logger = Logger.getLogger(RelationMemberMerger.class.getName());
 
     @Override
     protected JScrollPane buildMyElementsTable() {
@@ -60,5 +59,14 @@ public class RelationMemberMerger extends ListMerger<RelationMember> {
 
     public RelationMemberMerger() {
         super(new RelationMemberListMergeModel());
+    }
+
+    public void deletePrimitive(boolean deleted) {
+        if (deleted) {
+            model.clearMerged();
+            model.setFrozen(true);
+        } else {
+            model.setFrozen(false);
+        }
     }
 }

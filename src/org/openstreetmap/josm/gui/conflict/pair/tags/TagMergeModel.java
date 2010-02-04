@@ -6,7 +6,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -28,7 +27,7 @@ import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
  *
  */
 public class TagMergeModel extends DefaultTableModel {
-    private static final Logger logger = Logger.getLogger(TagMergeModel.class.getName());
+    //private static final Logger logger = Logger.getLogger(TagMergeModel.class.getName());
 
     static public final String PROP_NUM_UNDECIDED_TAGS = TagMergeModel.class.getName() + ".numUndecidedTags";
 

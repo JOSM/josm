@@ -116,15 +116,15 @@ public abstract class ListMergeModel<T> extends Observable {
         mergedEntriesTableModel = new EntriesTableModel(MERGED_ENTRIES);
     }
 
-    protected ArrayList<T> getMergedEntries() {
+    protected List<T> getMergedEntries() {
         return entries.get(MERGED_ENTRIES);
     }
 
-    protected ArrayList<T> getMyEntries() {
+    protected List<T> getMyEntries() {
         return entries.get(MY_ENTRIES);
     }
 
-    protected ArrayList<T> getTheirEntries() {
+    protected List<T> getTheirEntries() {
         return entries.get(THEIR_ENTRIES);
     }
 
@@ -229,7 +229,6 @@ public abstract class ListMergeModel<T> extends Observable {
 
     protected void copyToTop(ListRole role, int []rows) {
         copy(role, rows, 0);
-        fireModelDataChanged();
         mergedEntriesSelectionModel.setSelectionInterval(0, rows.length -1);
     }
 
@@ -266,7 +265,6 @@ public abstract class ListMergeModel<T> extends Observable {
 
     public void copyToEnd(ListRole source, int [] rows) {
         copy(source, rows, getMergedEntriesSize());
-        fireModelDataChanged();
         mergedEntriesSelectionModel.setSelectionInterval(getMergedEntriesSize()-rows.length, getMergedEntriesSize() -1);
 
     }
@@ -293,6 +291,11 @@ public abstract class ListMergeModel<T> extends Observable {
         copyToEnd(THEIR_ENTRIES, rows);
     }
 
+    public void clearMerged() {
+        getMergedEntries().clear();
+        fireModelDataChanged();
+    }
+
     private void copy(ListRole sourceRole, int[] rows, int position) {
         List<T> newItems = new ArrayList<T>(rows.length);
         List<T> source = entries.get(sourceRole);
@@ -303,6 +306,7 @@ public abstract class ListMergeModel<T> extends Observable {
             }
         }
         getMergedEntries().addAll(position, newItems);
+        fireModelDataChanged();
     }
 
     /**
@@ -317,7 +321,6 @@ public abstract class ListMergeModel<T> extends Observable {
      */
     protected void copyBeforeCurrent(ListRole source, int [] rows, int current) {
         copy(source, rows, current);
-        fireModelDataChanged();
         mergedEntriesSelectionModel.setSelectionInterval(current, current + rows.length-1);
     }
 
@@ -359,7 +362,6 @@ public abstract class ListMergeModel<T> extends Observable {
      */
     protected void copyAfterCurrent(ListRole source, int [] rows, int current) {
         copy(source, rows, current + 1);
-        fireModelDataChanged();
         mergedEntriesSelectionModel.setSelectionInterval(current+1, current + rows.length-1);
         notifyObservers();
     }
@@ -403,7 +405,7 @@ public abstract class ListMergeModel<T> extends Observable {
         if (rows[0] == 0)
             // can't move up
             return;
-        ArrayList<T> mergedEntries = getMergedEntries();
+        List<T> mergedEntries = getMergedEntries();
         for (int row: rows) {
             T n = mergedEntries.get(row);
             mergedEntries.remove(row);
@@ -426,7 +428,7 @@ public abstract class ListMergeModel<T> extends Observable {
     public void moveDownMerged(int [] rows) {
         if (rows == null || rows.length == 0)
             return;
-        ArrayList<T> mergedEntries = getMergedEntries();
+        List<T> mergedEntries = getMergedEntries();
         if (rows[rows.length -1] == mergedEntries.size() -1)
             // can't move down
             return;
@@ -454,7 +456,7 @@ public abstract class ListMergeModel<T> extends Observable {
         if (rows == null || rows.length == 0)
             return;
 
-        ArrayList<T> mergedEntries = getMergedEntries();
+        List<T> mergedEntries = getMergedEntries();
 
         for (int i = rows.length-1; i>=0;i--) {
             mergedEntries.remove(rows[i]);
