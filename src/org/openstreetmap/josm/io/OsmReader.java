@@ -210,7 +210,7 @@ public class OsmReader {
                 Relation r = new Relation(rd.getId(), rd.getVersion());
                 r.load(rd);
                 externalIdMap.put(rd.getPrimitiveId(), r);
-                relations.put(r.getUniqueId(), new LinkedList<RelationMemberData>());
+                relations.put(rd.getUniqueId(), new LinkedList<RelationMemberData>());
                 currentPrimitive = r;
                 currentExternalId = rd.getUniqueId();
             } else if (qName.equals("member")) {
