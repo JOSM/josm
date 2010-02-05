@@ -52,7 +52,7 @@ public class UpdateDataAction extends JosmAction{
 
         List<Area> areas = new ArrayList<Area>();
         for(DataSource ds : getEditLayer().data.dataSources) {
-            areas.add(new Area(ds.bounds.getRoundedToOsmPrecision().asRect()));
+            areas.add(new Area(ds.bounds.asRect()));
         }
 
         // The next two blocks removes every intersection from every DataSource Area

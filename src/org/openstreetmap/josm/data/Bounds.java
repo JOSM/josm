@@ -12,7 +12,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * This is a simple data class for "rectangular" areas of the world, given in
- * lat/lon min/max values.
+ * lat/lon min/max values.  The values are rounded to LatLon.OSM_SERVER_PRECISION
  *
  * @author imi
  */
@@ -42,20 +42,20 @@ public class Bounds {
     }
 
     public Bounds(double minlat, double minlon, double maxlat, double maxlon) {
-        this.minLat = minlat;
-        this.minLon = minlon;
-        this.maxLat = maxlat;
-        this.maxLon = maxlon;
+        this.minLat = roundToOsmPrecision(minlat);
+        this.minLon = roundToOsmPrecision(minlon);
+        this.maxLat = roundToOsmPrecision(maxlat);
+        this.maxLon = roundToOsmPrecision(maxlon);
     }
 
     public Bounds(double [] coords) {
         CheckParameterUtil.ensureParameterNotNull(coords, "coords");
         if (coords.length != 4)
             throw new IllegalArgumentException(MessageFormat.format("Expected array of length 4, got {0}", coords.length));
-        this.minLat = coords[0];
-        this.minLon = coords[1];
-        this.maxLat = coords[2];
-        this.maxLon = coords[3];
+        this.minLat = roundToOsmPrecision(coords[0]);
+        this.minLon = roundToOsmPrecision(coords[1]);
+        this.maxLat = roundToOsmPrecision(coords[2]);
+        this.maxLon = roundToOsmPrecision(coords[3]);
     }
 
     public Bounds(String asString, String separator) throws IllegalArgumentException {
@@ -80,10 +80,10 @@ public class Bounds {
         if (!LatLon.isValidLon(values[3]))
             throw new IllegalArgumentException(tr("Illegal latitude value ''{0}''", values[3]));
 
-        this.minLat = values[0];
-        this.minLon = values[1];
-        this.maxLat = values[2];
-        this.maxLon = values[3];
+        this.minLat = roundToOsmPrecision(values[0]);
+        this.minLon = roundToOsmPrecision(values[1]);
+        this.maxLat = roundToOsmPrecision(values[2]);
+        this.maxLon = roundToOsmPrecision(values[3]);
     }
 
     public Bounds(Bounds other) {
@@ -113,10 +113,10 @@ public class Bounds {
         if (lonExtent <= 0.0)
             throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0.0 exptected, got {1}", "lonExtent", lonExtent));
 
-        this.minLat = center.lat() - latExtent / 2;
-        this.minLon = center.lon() - lonExtent / 2;
-        this.maxLat = center.lat() + latExtent / 2;
-        this.maxLon = center.lon() + lonExtent / 2;
+        this.minLat = roundToOsmPrecision(center.lat() - latExtent / 2);
+        this.minLon = roundToOsmPrecision(center.lon() - lonExtent / 2);
+        this.maxLat = roundToOsmPrecision(center.lat() + latExtent / 2);
+        this.maxLon = roundToOsmPrecision(center.lon() + lonExtent / 2);
     }
 
     @Override public String toString() {
@@ -144,16 +144,16 @@ public class Bounds {
      */
     public void extend(LatLon ll) {
         if (ll.lat() < minLat) {
-            minLat = ll.lat();
+            minLat = roundToOsmPrecision(ll.lat());
         }
         if (ll.lon() < minLon) {
-            minLon = ll.lon();
+            minLon = roundToOsmPrecision(ll.lon());
         }
         if (ll.lat() > maxLat) {
-            maxLat = ll.lat();
+            maxLat = roundToOsmPrecision(ll.lat());
         }
         if (ll.lon() > maxLon) {
-            maxLon = ll.lon();
+            maxLon = roundToOsmPrecision(ll.lon());
         }
     }
 
@@ -171,18 +171,18 @@ public class Bounds {
             return false;
         return true;
     }
-    
+
     /**
      * The two bounds intersect? Compared to java Shape.intersects, if does not use
      * the interior but the closure. (">=" instead of ">")
      */
     public boolean intersects(Bounds b) {
-	    return b.getMax().lat() >= minLat &&
-		    b.getMax().lon() >= minLon &&
-		    b.getMin().lat() <= maxLat &&
-		    b.getMin().lon() <= maxLon;
+        return b.getMax().lat() >= minLat &&
+        b.getMax().lon() >= minLon &&
+        b.getMin().lat() <= maxLat &&
+        b.getMin().lon() <= maxLon;
     }
-    
+
 
     /**
      * Converts the lat/lon bounding box to an object of type Rectangle2D.Double
@@ -241,17 +241,12 @@ public class Bounds {
     }
 
     /**
-     * Returns a clone of this Bounds, rounded to OSM precisions, i.e. to
+     * Returns the value rounded to OSM precisions, i.e. to
      * LatLon.MAX_SERVER_PRECISION
      *
-     * @return a clone of this Bounds
+     * @return rounded value
      */
-    public Bounds getRoundedToOsmPrecision() {
-        return new Bounds(
-                Math.round(minLat / LatLon.MAX_SERVER_PRECISION) * LatLon.MAX_SERVER_PRECISION,
-                Math.round(minLon / LatLon.MAX_SERVER_PRECISION) * LatLon.MAX_SERVER_PRECISION,
-                Math.round(maxLat / LatLon.MAX_SERVER_PRECISION) * LatLon.MAX_SERVER_PRECISION,
-                Math.round(maxLon / LatLon.MAX_SERVER_PRECISION) * LatLon.MAX_SERVER_PRECISION
-        );
+    private double roundToOsmPrecision(double value) {
+        return Math.round(value / LatLon.MAX_SERVER_PRECISION) * LatLon.MAX_SERVER_PRECISION;
     }
 }
