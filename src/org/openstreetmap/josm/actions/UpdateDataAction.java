@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -50,10 +50,9 @@ public class UpdateDataAction extends JosmAction{
         if (getEditLayer() == null)
             return;
 
-        int bboxCount = 0;
         List<Area> areas = new ArrayList<Area>();
         for(DataSource ds : getEditLayer().data.dataSources) {
-            areas.add(new Area(ds.bounds.asRect()));
+            areas.add(new Area(ds.bounds.getRoundedToOsmPrecision().asRect()));
         }
 
         // The next two blocks removes every intersection from every DataSource Area
@@ -72,14 +71,15 @@ public class UpdateDataAction extends JosmAction{
             }
         }
 
+        List<Area> areasToDownload = new ArrayList<Area>();
         for(Area a : areas) {
             if(a.isEmpty()) {
                 continue;
             }
-            bboxCount++;
+            areasToDownload.add(a);
         }
 
-        if(bboxCount == 0) {
+        if(areasToDownload.isEmpty()) {
             // no bounds defined in the dataset? we update all primitives in the data set
             // using a series of multi fetch requests
             //
@@ -88,7 +88,7 @@ public class UpdateDataAction extends JosmAction{
             // bounds defined? => use the bbox downloader
             //
             final PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download data"));
-            final Future<?> future = new DownloadOsmTaskList().download(false /* no new layer */, areas, monitor);
+            final Future<?> future = new DownloadOsmTaskList().download(false /* no new layer */, areasToDownload, monitor);
             Main.worker.submit(
                     new Runnable() {
                         public void run() {

@@ -240,4 +240,18 @@ public class Bounds {
         return true;
     }
 
+    /**
+     * Returns a clone of this Bounds, rounded to OSM precisions, i.e. to
+     * LatLon.MAX_SERVER_PRECISION
+     *
+     * @return a clone of this Bounds
+     */
+    public Bounds getRoundedToOsmPrecision() {
+        return new Bounds(
+                Math.round(minLat / LatLon.MAX_SERVER_PRECISION) * LatLon.MAX_SERVER_PRECISION,
+                Math.round(minLon / LatLon.MAX_SERVER_PRECISION) * LatLon.MAX_SERVER_PRECISION,
+                Math.round(maxLat / LatLon.MAX_SERVER_PRECISION) * LatLon.MAX_SERVER_PRECISION,
+                Math.round(maxLon / LatLon.MAX_SERVER_PRECISION) * LatLon.MAX_SERVER_PRECISION
+        );
+    }
 }
