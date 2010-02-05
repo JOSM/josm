@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -21,6 +22,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -52,6 +55,9 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
     private JLabel lblMyVisibleState;
     private JLabel lblMergedVisibleState;
     private JLabel lblTheirVisibleState;
+
+    private JLabel lblMyReferrers;
+    private JLabel lblTheirReferrers;
 
     private final PropertiesMergeModel model;
 
@@ -161,7 +167,6 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         gc.anchor = GridBagConstraints.CENTER;
         gc.weightx = 0.0;
         gc.weighty = 0.0;
-        gc.insets = new Insets(0,5,20,5);
         UndecideCoordinateConflictAction actUndecideCoordinates = new UndecideCoordinateConflictAction();
         model.addObserver(actUndecideCoordinates);
         JButton btnUndecideCoordinates = new JButton(actUndecideCoordinates);
@@ -320,12 +325,44 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         add(btnUndecideVisibleState, gc);
     }
 
+    protected void buildReferrersRow() {
+        GridBagConstraints gc = new GridBagConstraints();
+
+        gc.gridx = 0;
+        gc.gridy = 7;
+        gc.gridwidth = 1;
+        gc.gridheight = 1;
+        gc.fill = GridBagConstraints.BOTH;
+        gc.anchor = GridBagConstraints.LINE_START;
+        gc.weightx = 0.0;
+        gc.weighty = 0.0;
+        gc.insets = new Insets(0,5,0,5);
+        add(new JLabel(tr("Referenced by:")), gc);
+
+        gc.gridx = 1;
+        gc.gridy = 7;
+        gc.fill = GridBagConstraints.BOTH;
+        gc.anchor = GridBagConstraints.CENTER;
+        gc.weightx = 0.33;
+        gc.weighty = 0.0;
+        add(lblMyReferrers = buildValueLabel("label.myreferrers"), gc);
+
+        gc.gridx = 5;
+        gc.gridy = 7;
+        gc.fill = GridBagConstraints.BOTH;
+        gc.anchor = GridBagConstraints.CENTER;
+        gc.weightx = 0.33;
+        gc.weighty = 0.0;
+        add(lblTheirReferrers = buildValueLabel("label.theirreferrers"), gc);
+    }
+
     protected void build() {
         setLayout(new GridBagLayout());
         buildHeaderRow();
         buildCoordinateConflictRows();
         buildDeletedStateConflictRows();
         buildVisibleStateRows();
+        buildReferrersRow();
     }
 
     public PropertiesMerger() {
@@ -371,6 +408,17 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
             return tr("Keep a clone of the local version");
         else
             return tr("Physically delete from local dataset");
+    }
+
+    public String referrersToString(List<OsmPrimitive> referrers) {
+        if (referrers.isEmpty())
+            return tr("(none)");
+        String str = "<html>";
+        for (OsmPrimitive r: referrers) {
+            str = str + r.getDisplayName(DefaultNameFormatter.getInstance()) + "<br>";
+        }
+        str = str + "</html>";
+        return str;
     }
 
     protected void updateCoordinates() {
@@ -456,10 +504,18 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         }
     }
 
+    protected void updateReferrers() {
+        lblMyReferrers.setText(referrersToString(model.getMyReferrers()));
+        lblMyReferrers.setBackground(BGCOLOR_NO_CONFLICT);
+        lblTheirReferrers.setText(referrersToString(model.getTheirReferrers()));
+        lblTheirReferrers.setBackground(BGCOLOR_NO_CONFLICT);
+    }
+
     public void update(Observable o, Object arg) {
         updateCoordinates();
         updateDeletedState();
         updateVisibleState();
+        updateReferrers();
     }
 
     public PropertiesMergeModel getModel() {

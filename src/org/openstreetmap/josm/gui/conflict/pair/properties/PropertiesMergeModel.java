@@ -64,6 +64,8 @@ public class PropertiesMergeModel extends Observable {
     private boolean theirDeletedState;
     private boolean myVisibleState;
     private boolean theirVisibleState;
+    private List<OsmPrimitive> myReferrers;
+    private List<OsmPrimitive> theirReferrers;
     private MergeDecisionType deletedMergeDecision;
     private MergeDecisionType visibleMergeDecision;
     private final PropertyChangeSupport support;
@@ -174,6 +176,9 @@ public class PropertiesMergeModel extends Observable {
         myVisibleState = my.isVisible();
         theirVisibleState = their.isVisible();
 
+        myReferrers = my.getReferrers();
+        theirReferrers = their.getReferrers();
+
         coordMergeDecision = UNDECIDED;
         deletedMergeDecision = UNDECIDED;
         visibleMergeDecision = UNDECIDED;
@@ -269,6 +274,22 @@ public class PropertiesMergeModel extends Observable {
      */
     public  Boolean getTheirVisibleState() {
         return theirVisibleState;
+    }
+
+    /**
+     * returns my referrers,
+     * @return my referrers
+     */
+    public List<OsmPrimitive> getMyReferrers() {
+        return myReferrers;
+    }
+
+    /**
+     * returns their referrers,
+     * @return their referrers
+     */
+    public List<OsmPrimitive> getTheirReferrers() {
+        return theirReferrers;
     }
 
     /**
