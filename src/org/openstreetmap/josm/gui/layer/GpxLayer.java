@@ -612,7 +612,7 @@ public class GpxLayer extends Layer {
         List<Collection<WayPoint>> visibleSegments = new ArrayList<Collection<WayPoint>>();
         for (GpxTrack trk: data.tracks) {
             for (GpxTrackSegment trkSeg: trk.getSegments()) {
-                if (trkSeg.getBounds().asRect().intersects(box.asRect())) {
+                if (trkSeg.getBounds().intersects(box)) {
                     visibleSegments.add(trkSeg.getWayPoints());
                 }
             }

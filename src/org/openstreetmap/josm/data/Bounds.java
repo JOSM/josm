@@ -171,6 +171,18 @@ public class Bounds {
             return false;
         return true;
     }
+    
+    /**
+     * The two bounds intersect? Compared to java Shape.intersects, if does not use
+     * the interior but the closure. (">=" instead of ">")
+     */
+    public boolean intersects(Bounds b) {
+	    return b.getMax().lat() >= minLat &&
+		    b.getMax().lon() >= minLon &&
+		    b.getMin().lat() <= maxLat &&
+		    b.getMin().lon() <= maxLon;
+    }
+    
 
     /**
      * Converts the lat/lon bounding box to an object of type Rectangle2D.Double
