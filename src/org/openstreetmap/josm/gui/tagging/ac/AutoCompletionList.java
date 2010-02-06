@@ -156,9 +156,18 @@ public class AutoCompletionList extends AbstractTableModel {
             valutToItemMap.put(toadd.getValue(), toadd);
         } else {
             // new item already exists. Update priority if necessary
-            //
-            if (toadd.getPriority().compareTo(item.getPriority()) < 0) {
-                item.setPriority(toadd.getPriority());
+
+            // If it is both in the dataset and in the presets, update the priority.
+            final AutoCompletionItemPritority IS_IN_DATASET = AutoCompletionItemPritority.IS_IN_DATASET;
+            final AutoCompletionItemPritority IS_IN_STANDARD = AutoCompletionItemPritority.IS_IN_STANDARD;
+            if ((toadd.getPriority() == IS_IN_STANDARD && item.getPriority() == IS_IN_DATASET) ||
+                (toadd.getPriority() == IS_IN_DATASET && item.getPriority() == IS_IN_STANDARD)) {
+
+                item.setPriority(AutoCompletionItemPritority.IS_IN_STANDARD_AND_IN_DATASET);
+            } else {
+                if (toadd.getPriority().compareTo(item.getPriority()) < 0) {
+                    item.setPriority(toadd.getPriority());
+                }
             }
         }
     }

@@ -9,11 +9,14 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.tagging.TaggingPreset;
+import org.openstreetmap.josm.tools.MultiMap;
 
 /**
  * AutoCompletionCache temporarily holds a cache of keys with a list of
@@ -66,46 +69,26 @@ public class AutoCompletionCache {
         return cache;
     }
 
-    /** the cached tags give by a tag key and a list of values for this tag*/
-    private HashMap<String, Set<String>> tagCache;
-    /** the cached list of member roles */
-    private  Set<String> roleCache;
+    /** the cached tags given by a tag key and a list of values for this tag */
+    private MultiMap<String, String> tagCache;
     /**  the layer this cache is built for */
     private OsmDataLayer layer;
+    /** the same as tagCache but for the preset keys and values */
+    private static MultiMap<String, String> presetTagCache = new MultiMap<String, String>();
+    /** the cached list of member roles */
+    private  Set<String> roleCache;
 
     /**
      * constructor
      */
     public AutoCompletionCache(OsmDataLayer layer) {
-        tagCache = new HashMap<String, Set<String>>();
+        tagCache = new MultiMap<String, String>();
         roleCache = new HashSet<String>();
         this.layer = layer;
     }
 
     public AutoCompletionCache() {
         this(null);
-    }
-
-    /**
-     * make sure, <code>key</code> is in the cache
-     *
-     * @param key  the key
-     */
-    protected void cacheKey(String key) {
-        if (tagCache.containsKey(key))
-            return;
-        tagCache.put(key, new HashSet<String>());
-    }
-
-    /**
-     * make sure, value is one of the auto completion values allowed for key
-     *
-     * @param key the key
-     * @param value the value
-     */
-    protected void cacheValue(String key, String value) {
-        cacheKey(key);
-        tagCache.get(key).add(value);
     }
 
     /**
@@ -117,7 +100,7 @@ public class AutoCompletionCache {
     protected void cachePrimitive(OsmPrimitive primitive) {
         for (String key: primitive.keySet()) {
             String value = primitive.get(key);
-            cacheValue(key, value);
+            tagCache.put(key, value);
         }
     }
 
@@ -140,7 +123,7 @@ public class AutoCompletionCache {
      *
      */
     public void initFromDataSet() {
-        tagCache = new HashMap<String, Set<String>>();
+        tagCache = new MultiMap<String, String>();
         if (layer == null)
             return;
         Collection<OsmPrimitive> ds = layer.data.allNonDeletedPrimitives();
@@ -156,12 +139,45 @@ public class AutoCompletionCache {
     }
 
     /**
+     * Initialize the cache for presets. This is done only once.
+     */
+    public static void cachePresets(Collection<TaggingPreset> presets) {
+        for (final TaggingPreset p : presets) {
+            for (TaggingPreset.Item item : p.data) {
+                if (item instanceof TaggingPreset.Check) {
+                    TaggingPreset.Check ch = (TaggingPreset.Check) item;
+                    presetTagCache.put(ch.key, OsmUtils.falseval);
+                    presetTagCache.put(ch.key, OsmUtils.trueval);
+                } else if (item instanceof TaggingPreset.Combo) {
+                    TaggingPreset.Combo co = (TaggingPreset.Combo) item;
+                    for (String value : co.values.split(",")) {
+                        presetTagCache.put(co.key, value);
+                    }
+                } else if (item instanceof TaggingPreset.Key) {
+                    TaggingPreset.Key ky = (TaggingPreset.Key) item;
+                    presetTagCache.put(ky.key, ky.value);
+                } else if (item instanceof TaggingPreset.Text) {
+                    TaggingPreset.Text tt = (TaggingPreset.Text) item;
+                    presetTagCache.putVoid(tt.key);
+                    if (tt.default_ != null && !tt.default_.equals("")) {
+                        presetTagCache.put(tt.key, tt.default_);
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
      * replies the keys held by the cache
      *
      * @return the list of keys held by the cache
      */
-    public List<String> getKeys() {
+    protected List<String> getDataKeys() {
         return new ArrayList<String>(tagCache.keySet());
+    }
+
+    protected List<String> getPresetKeys() {
+        return new ArrayList<String>(presetTagCache.keySet());
     }
 
     /**
@@ -171,10 +187,12 @@ public class AutoCompletionCache {
      * @param key
      * @return the list of auto completion values
      */
-    public List<String> getValues(String key) {
-        if (!tagCache.containsKey(key))
-            return new ArrayList<String>();
-        return new ArrayList<String>(tagCache.get(key));
+    protected List<String> getDataValues(String key) {
+        return new ArrayList<String>(tagCache.getValues(key));
+    }
+
+    protected static List<String> getPresetValues(String key) {
+        return new ArrayList<String>(presetTagCache.getValues(key));
     }
 
     /**
@@ -210,7 +228,8 @@ public class AutoCompletionCache {
         if (!append) {
             list.clear();
         }
-        list.add(getValues(key), AutoCompletionItemPritority.IS_IN_DATASET);
+        list.add(getDataValues(key), AutoCompletionItemPritority.IS_IN_DATASET);
+        list.add(getPresetValues(key), AutoCompletionItemPritority.IS_IN_STANDARD);
     }
 
     /**
@@ -225,6 +244,7 @@ public class AutoCompletionCache {
         if (!append) {
             list.clear();
         }
-        list.add(tagCache.keySet(), AutoCompletionItemPritority.IS_IN_DATASET);
+        list.add(getDataKeys(), AutoCompletionItemPritority.IS_IN_DATASET);
+        list.add(getPresetKeys(), AutoCompletionItemPritority.IS_IN_STANDARD);
     }
 }

@@ -81,8 +81,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             OsmDataLayer layer = Main.main.getEditLayer();
             if (layer == null) return;
             AutoCompletionList list  = new AutoCompletionList();
-            List<String> values = AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).getValues(key);
-            list.add(values,AutoCompletionItemPritority.IS_IN_DATASET);
+            AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).populateWithTagValues(list, key, false);
             field.setAutoCompletionList(list);
         }
 

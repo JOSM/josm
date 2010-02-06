@@ -134,7 +134,7 @@ public class OpenFileAction extends DiskAccessAction {
                     for (File f: files) {
                         for (FileImporter importer : ExtensionFileFilter.importers) {
                             if (importer.acceptFile(f)) {
-                                map.add(importer, f);
+                                map.put(importer, f);
                                 continue FILES;
                             }
                         }
@@ -145,7 +145,7 @@ public class OpenFileAction extends DiskAccessAction {
                 Collections.reverse(ims);
                 for (FileImporter importer : ims) {
                     //System.err.println("Using "+importer.getClass().getName());
-                    List<File> files = map.get(importer);
+                    List<File> files = new ArrayList<File>(map.get(importer));
                     //System.err.println("for files: "+files);
                     importData(importer, files);
                 }

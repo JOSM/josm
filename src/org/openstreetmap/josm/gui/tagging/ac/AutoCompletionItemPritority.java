@@ -3,20 +3,28 @@ package org.openstreetmap.josm.gui.tagging.ac;
 
 public enum AutoCompletionItemPritority implements Comparable<AutoCompletionItemPritority> {
 
-    /** indicates that a value is in the current selection */
+    /** Indicates that a value is in the current selection. */
     IS_IN_SELECTION,
 
-    /** indicates that this is a standard value, i.e. a standard tag name
-     *  or a standard value for a given tag name
+    /**
+     * Indicates, that the value is standard and it is found in the data.
+     * This has higher priority than some arbitrary standard value that is
+     * usually not used by the user.
+     */
+    IS_IN_STANDARD_AND_IN_DATASET,
+
+    /**
+     * Indicates that this is a standard value, i.e. a standard tag name
+     * or a standard value for a given tag name (from the presets).
      */
     IS_IN_STANDARD,
 
     /**
-     * indicates that this is an arbitrary value from the data set, i.e.
-     * the value of a tag name=xxx
+     * Indicates that this is an arbitrary value from the data set, i.e.
+     * the value of a tag name=*.
      */
     IS_IN_DATASET,
 
-    /** unknown priority. This is the lowest priority. */
+    /** Unknown priority. This is the lowest priority. */
     UNKNOWN
 }

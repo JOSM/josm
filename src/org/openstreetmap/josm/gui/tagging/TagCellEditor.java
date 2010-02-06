@@ -61,11 +61,7 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
 
         // add the list of keys in the current data set
         //
-        for (String key : acCache.getKeys()) {
-            autoCompletionList.add(
-                    new AutoCompletionListItem(key, AutoCompletionItemPritority.IS_IN_DATASET)
-            );
-        }
+        acCache.populateWithKeys(autoCompletionList, true);
 
         // remove the keys already present in the current tag model
         //
@@ -90,12 +86,7 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
             logger.warning("autoCompletionList is null. Make sure an instance of AutoCompletionList is injected into TableCellEditor.");
             return;
         }
-        autoCompletionList.clear();
-        for (String value : acCache.getValues(forKey)) {
-            autoCompletionList.add(
-                    new AutoCompletionListItem(value, AutoCompletionItemPritority.IS_IN_DATASET)
-            );
-        }
+        acCache.populateWithTagValues(autoCompletionList, forKey, false);
     }
 
     /**
