@@ -25,6 +25,7 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -242,6 +243,21 @@ public class TagMerger extends JPanel implements IConflictResolver {
         return model;
     }
 
+    private void selectNextConflict(int[] rows) {
+        int max = rows[0];
+        for (int row: rows) {
+            if (row > max) {
+                max = row;
+            }
+        }
+        int index = model.getFirstUndecided(max+1);
+        if (index == -1) {
+            index = model.getFirstUndecided(0);
+        }
+        mineTable.getSelectionModel().setSelectionInterval(index, index);
+        theirTable.getSelectionModel().setSelectionInterval(index, index);
+    }
+
     /**
      * Keeps the currently selected tags in my table in the list of merged tags.
      *
@@ -264,6 +280,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
             if (rows == null || rows.length == 0)
                 return;
             model.decide(rows, MergeDecisionType.KEEP_MINE);
+            selectNextConflict(rows);
         }
 
         public void valueChanged(ListSelectionEvent e) {
@@ -293,6 +310,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
             if (rows == null || rows.length == 0)
                 return;
             model.decide(rows, MergeDecisionType.KEEP_THEIR);
+            selectNextConflict(rows);
         }
 
         public void valueChanged(ListSelectionEvent e) {
@@ -400,5 +418,11 @@ public class TagMerger extends JPanel implements IConflictResolver {
         for (int i=0; i<model.getRowCount(); i++) {
             model.decide(i, decision);
         }
+    }
+
+    public void populate(OsmPrimitive my, OsmPrimitive their) {
+        model.populate(my, their);
+        mineTable.getSelectionModel().setSelectionInterval(0, 0);
+        theirTable.getSelectionModel().setSelectionInterval(0, 0);
     }
 }

@@ -309,6 +309,12 @@ public abstract class ListMergeModel<T> extends Observable {
         fireModelDataChanged();
     }
 
+    public void copyAll(ListRole source) {
+        getMergedEntries().clear();
+        getMergedEntries().addAll(entries.get(source));
+        fireModelDataChanged();
+    }
+
     /**
      * Copies the nodes given by indices in rows from the list of  nodes <code>source</code> to the
      * list of merged nodes. Inserts the nodes before row given by current.

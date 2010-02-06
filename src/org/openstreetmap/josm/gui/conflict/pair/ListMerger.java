@@ -56,11 +56,13 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
     private CopyBeforeCurrentLeftAction copyBeforeCurrentLeftAction;
     private CopyAfterCurrentLeftAction copyAfterCurrentLeftAction;
     private CopyEndLeftAction copyEndLeftAction;
+    private CopyAllLeft copyAllLeft;
 
     private CopyStartRightAction copyStartRightAction;
     private CopyBeforeCurrentRightAction copyBeforeCurrentRightAction;
     private CopyAfterCurrentRightAction copyAfterCurrentRightAction;
     private CopyEndRightAction copyEndRightAction;
+    private CopyAllRight copyAllRight;
 
     private MoveUpMergedAction moveUpMergedAction;
     private MoveDownMergedAction moveDownMergedAction;
@@ -117,6 +119,11 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         mergedEntriesTable.getSelectionModel().addListSelectionListener(moveUpMergedAction);
         mergedEntriesTable.getSelectionModel().addListSelectionListener(moveDownMergedAction);
         mergedEntriesTable.getSelectionModel().addListSelectionListener(removeMergedAction);
+
+        model.addObserver(copyAllLeft);
+        model.addObserver(copyAllRight);
+        model.addPropertyChangeListener(copyAllLeft);
+        model.addPropertyChangeListener(copyAllRight);
     }
 
     protected JPanel buildLeftButtonPanel() {
@@ -152,6 +159,13 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         btn.setName("button.copyendleft");
         pnl.add(btn, gc);
 
+        gc.gridx = 0;
+        gc.gridy = 4;
+        copyAllLeft = new CopyAllLeft();
+        btn = new JButton(copyAllLeft);
+        btn.setName("button.copyallleft");
+        pnl.add(btn, gc);
+
         return pnl;
     }
 
@@ -179,6 +193,11 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         gc.gridy = 3;
         copyEndRightAction = new CopyEndRightAction();
         pnl.add(new JButton(copyEndRightAction), gc);
+
+        gc.gridx = 0;
+        gc.gridy = 4;
+        copyAllRight = new CopyAllRight();
+        pnl.add(new JButton(copyAllRight), gc);
 
         return pnl;
     }
@@ -613,6 +632,58 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
                     !theirEntriesTable.getSelectionModel().isSelectionEmpty()
                     && ! mergedEntriesTable.getSelectionModel().isSelectionEmpty()
             );
+        }
+    }
+
+    class CopyAllLeft extends AbstractAction implements Observer, PropertyChangeListener {
+
+        public CopyAllLeft() {
+            ImageIcon icon = ImageProvider.get("dialogs/conflict", "useallleft.png");
+            putValue(Action.SMALL_ICON, icon);
+            putValue(Action.SHORT_DESCRIPTION, tr("Use all mine elements"));
+        }
+
+        public void actionPerformed(ActionEvent arg0) {
+            model.copyAll(ListRole.MY_ENTRIES);
+            model.setFrozen(true);
+        }
+
+        private void updateEnabledState() {
+            setEnabled(model.getMergedEntries().isEmpty() && !model.isFrozen());
+        }
+
+        public void update(Observable o, Object arg) {
+            updateEnabledState();
+        }
+
+        public void propertyChange(PropertyChangeEvent evt) {
+            updateEnabledState();
+        }
+    }
+
+    class CopyAllRight extends AbstractAction implements Observer, PropertyChangeListener {
+
+        public CopyAllRight() {
+            ImageIcon icon = ImageProvider.get("dialogs/conflict", "useallright.png");
+            putValue(Action.SMALL_ICON, icon);
+            putValue(Action.SHORT_DESCRIPTION, tr("Use all their elements"));
+        }
+
+        public void actionPerformed(ActionEvent arg0) {
+            model.copyAll(ListRole.THEIR_ENTRIES);
+            model.setFrozen(true);
+        }
+
+        private void updateEnabledState() {
+            setEnabled(model.getMergedEntries().isEmpty() && !model.isFrozen());
+        }
+
+        public void update(Observable o, Object arg) {
+            updateEnabledState();
+        }
+
+        public void propertyChange(PropertyChangeEvent evt) {
+            updateEnabledState();
         }
     }
 

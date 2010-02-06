@@ -136,24 +136,22 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
      *
      */
     private final void resolve() {
-        if (conflicts == null) return;
-        if (conflicts.size() == 1) {
-            lstConflicts.setSelectedIndex(0);
+        if (conflicts == null || model.getSize() == 0) return;
+
+        int index = lstConflicts.getSelectedIndex();
+        if (index < 0) {
+            index = 0;
         }
 
-        if (lstConflicts.getSelectedIndex() == -1)
-            return;
-
-        int [] selectedRows = lstConflicts.getSelectedIndices();
-        if (selectedRows == null || selectedRows.length == 0)
-            return;
-        int row = selectedRows[0];
-        Conflict<?> c = conflicts.get(row);
+        Conflict<?> c = conflicts.get(index);
         OsmPrimitive my = c.getMy();
         OsmPrimitive their = c.getTheir();
         ConflictResolutionDialog dialog = new ConflictResolutionDialog(Main.parent);
         dialog.getConflictResolver().populate(my, their);
         dialog.setVisible(true);
+
+        lstConflicts.setSelectedIndex(index);
+
         Main.map.mapView.repaint();
     }
 

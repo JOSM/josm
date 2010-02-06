@@ -230,7 +230,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
     public void populate(OsmPrimitive my, OsmPrimitive their) {
         setMy(my);
         setTheir(their);
-        propertiesMerger.getModel().populate(my, their);
+        propertiesMerger.populate(my, their);
         if (propertiesMerger.getModel().hasVisibleStateConflict()) {
             tabbedPane.setEnabledAt(1, false);
             tabbedPane.setEnabledAt(2, false);
@@ -238,20 +238,20 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
             return;
         }
         tabbedPane.setEnabledAt(0, true);
-        tagMerger.getModel().populate(my, their);
+        tagMerger.populate(my, their);
         tabbedPane.setEnabledAt(1, true);
 
         if (my instanceof Node) {
             tabbedPane.setEnabledAt(2,false);
             tabbedPane.setEnabledAt(3,false);
         } else if (my instanceof Way) {
-            nodeListMerger.populate((Way)my, (Way)their);
+            nodeListMerger.populate(my, their);
             tabbedPane.setEnabledAt(2, true);
             tabbedPane.setEnabledAt(3, false);
             tabbedPane.setTitleAt(3,tr("Members"));
             tabbedPane.setIconAt(3, null);
         } else if (my instanceof Relation) {
-            relationMemberMerger.populate((Relation)my, (Relation)their);
+            relationMemberMerger.populate(my, their);
             tabbedPane.setEnabledAt(2, false);
             tabbedPane.setTitleAt(2,tr("Nodes"));
             tabbedPane.setIconAt(2, null);

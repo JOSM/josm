@@ -5,6 +5,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.table.DefaultTableModel;
@@ -32,10 +33,10 @@ public class TagMergeModel extends DefaultTableModel {
     static public final String PROP_NUM_UNDECIDED_TAGS = TagMergeModel.class.getName() + ".numUndecidedTags";
 
     /** the list of tag merge items */
-    private final ArrayList<TagMergeItem> tagMergeItems;
+    private final List<TagMergeItem> tagMergeItems;
 
     /** the property change listeners */
-    private final ArrayList<PropertyChangeListener> listeners;
+    private final List<PropertyChangeListener> listeners;
 
     private int numUndecidedTags = 0;
 
@@ -208,5 +209,13 @@ public class TagMergeModel extends DefaultTableModel {
         }
         return n;
 
+    }
+
+    public int getFirstUndecided(int startIndex) {
+        for (int i=startIndex; i<tagMergeItems.size(); i++) {
+            if (tagMergeItems.get(i).getMergeDecision() == MergeDecisionType.UNDECIDED)
+                return i;
+        }
+        return -1;
     }
 }
