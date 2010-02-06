@@ -699,12 +699,20 @@ public class DataSet implements Cloneable {
      */
     public void unlinkPrimitiveFromRelations(OsmPrimitive primitive) {
         for (Relation relation : relations) {
-            Iterator<RelationMember> it = relation.getMembers().iterator();
+            List<RelationMember> members = relation.getMembers();
+
+            Iterator<RelationMember> it = members.iterator();
+            boolean removed = false;
             while(it.hasNext()) {
                 RelationMember member = it.next();
                 if (member.getMember().equals(primitive)) {
                     it.remove();
+                    removed = true;
                 }
+            }
+
+            if (removed) {
+                relation.setMembers(members);
             }
         }
     }
