@@ -7,7 +7,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -19,10 +18,7 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
-import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -30,7 +26,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -41,6 +36,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -80,12 +77,14 @@ public class UploadSelectionDialog extends JDialog {
     protected JPanel buildButtonPanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new FlowLayout());
-        pnl.add(new SideButton(new CancelAction()));
         ContinueAction continueAction = new ContinueAction();
         pnl.add(btnContinue = new SideButton(continueAction));
         btnContinue.setFocusable(true);
         lstDeletedPrimitives.getSelectionModel().addListSelectionListener(continueAction);
         lstSelectedPrimitives.getSelectionModel().addListSelectionListener(continueAction);
+
+        pnl.add(new SideButton(new CancelAction()));
+        pnl.add(new SideButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Dialog/UploadSelection"))));
         return pnl;
     }
 
@@ -111,11 +110,7 @@ public class UploadSelectionDialog extends JDialog {
                 }
         );
         setTitle(tr("Select objects to upload"));
-        ActionMap am = getRootPane().getActionMap();
-        InputMap im = getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "help");
-        am.put("help", Main.main.menu.help);
-        getRootPane().putClientProperty("help", "Dialog/UploadSelection");
+        HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Dialog/UploadSelection"));
     }
 
     public UploadSelectionDialog() {
