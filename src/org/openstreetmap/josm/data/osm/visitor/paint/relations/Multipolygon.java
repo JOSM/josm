@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm.visitor.paint.relations;
 
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -23,6 +24,7 @@ public class Multipolygon {
         public Polygon poly = new Polygon();
         public final boolean selected;
         private Point lastP;
+        private Rectangle bounds;
 
         public PolyData(NavigatableComponent nc, List<Node> nodes, boolean selected) {
             this.selected = selected;
@@ -67,6 +69,18 @@ public class Multipolygon {
 
         public Polygon get() {
             return poly;
+        }
+
+        public Rectangle getBounds() {
+            if (bounds == null) {
+                bounds = poly.getBounds();
+            }
+            return bounds;
+        }
+
+        @Override
+        public String toString() {
+            return "Points: " + poly.npoints + " Selected: " + selected;
         }
     }
 
@@ -227,11 +241,35 @@ public class Multipolygon {
 
     public PolyData findOuterPolygon(PolyData inner, List<PolyData> outerPolygons) {
         PolyData result = null;
+
+        {// First try to test only bbox, use precise testing only if we don't get unique result
+            Rectangle innerBox = inner.getBounds();
+            PolyData insidePolygon = null;
+            PolyData intersectingPolygon = null;
+            int insideCount = 0;
+            int intersectingCount = 0;
+
+            for (PolyData outer: outerPolygons) {
+                if (outer.getBounds().contains(innerBox)) {
+                    insidePolygon = outer;
+                    insideCount++;
+                } else if (outer.getBounds().intersects(innerBox)) {
+                    intersectingPolygon = outer;
+                    intersectingCount++;
+                }
+            }
+
+            if (insideCount == 1)
+                return insidePolygon;
+            else if (intersectingCount == 1)
+                return intersectingPolygon;
+        }
+
         for (PolyData combined : outerPolygons) {
             Intersection c = combined.contains(inner.poly);
             if(c != Intersection.OUTSIDE)
             {
-                if(result == null || result.contains(combined.poly) != Intersection.OUTSIDE) {
+                if(result == null || result.contains(combined.poly) != Intersection.INSIDE) {
                     result = combined;
                 }
             }
