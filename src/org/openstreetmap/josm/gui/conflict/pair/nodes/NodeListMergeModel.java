@@ -5,14 +5,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.command.WayNodesConflictResolverCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.ListRole;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -88,11 +87,12 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
 
     @Override
     protected Node cloneEntryForMergedList(Node entry) {
-        Node node = (Node) myDataset.getPrimitiveById(entry);
-        if (node.isDeleted()) {
-            JOptionPane.showMessageDialog(null, tr("Node {0} cannot be added to the way because it was deleted", node.getDisplayName(DefaultNameFormatter.getInstance())));
-            return null;
-        } else
-            return node;
+        return (Node) getMyPrimitive(entry);
     }
+
+    @Override
+    protected OsmPrimitive getMyPrimitive(Node entry) {
+        return myDataset.getPrimitiveById(entry);
+    }
+
 }

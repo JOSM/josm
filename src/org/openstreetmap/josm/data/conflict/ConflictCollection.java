@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * </ul>
  */
 public class ConflictCollection implements Iterable<Conflict<?>>{
-    private ArrayList<Conflict<?>> conflicts;
+    private final List<Conflict<?>> conflicts;
     private CopyOnWriteArrayList<IConflictListener> listeners;
 
     public ConflictCollection() {
@@ -311,5 +311,10 @@ public class ConflictCollection implements Iterable<Conflict<?>>{
      */
     public boolean isEmpty() {
         return size() == 0;
+    }
+
+    @Override
+    public String toString() {
+        return conflicts.toString();
     }
 }

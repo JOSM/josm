@@ -19,8 +19,12 @@ import java.util.Observable;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 
 /**
  * ListMergeModel is a model for interactively comparing and merging two list of entries
@@ -58,6 +62,8 @@ public abstract class ListMergeModel<T> extends Observable {
     //private static final Logger logger = Logger.getLogger(ListMergeModel.class.getName());
 
     public static final String FROZEN_PROP = ListMergeModel.class.getName() + ".frozen";
+
+    private static final int MAX_DELETED_PRIMITIVE_IN_DIALOG = 5;
 
     protected HashMap<ListRole, ArrayList<T>> entries;
 
@@ -103,6 +109,13 @@ public abstract class ListMergeModel<T> extends Observable {
      * @see TableModel#setValueAt(Object, int, int)
      */
     protected abstract void setValueAt(DefaultTableModel model, Object value, int row, int col);
+
+    /**
+     * 
+     * @param entry
+     * @return Primitive from my dataset referenced by entry
+     */
+    protected abstract OsmPrimitive getMyPrimitive(T entry);
 
     protected void buildMyEntriesTableModel() {
         myEntriesTableModel = new EntriesTableModel(MY_ENTRIES);
@@ -299,20 +312,39 @@ public abstract class ListMergeModel<T> extends Observable {
     private void copy(ListRole sourceRole, int[] rows, int position) {
         List<T> newItems = new ArrayList<T>(rows.length);
         List<T> source = entries.get(sourceRole);
+        List<PrimitiveId> deletedIds = new ArrayList<PrimitiveId>();
         for (int row: rows) {
-            T clone = cloneEntryForMergedList(source.get(row));
-            if (clone != null) {
+            T entry = source.get(row);
+            OsmPrimitive primitive = getMyPrimitive(entry);
+            if (!primitive.isDeleted()) {
+                T clone = cloneEntryForMergedList(entry);
                 newItems.add(clone);
+            } else {
+                deletedIds.add(primitive.getPrimitiveId());
             }
         }
         getMergedEntries().addAll(position, newItems);
         fireModelDataChanged();
+        if (!deletedIds.isEmpty()) {
+            List<String> items = new ArrayList<String>();
+            for (int i=0; i<Math.min(MAX_DELETED_PRIMITIVE_IN_DIALOG, deletedIds.size()); i++) {
+                items.add(deletedIds.get(i).toString());
+            }
+            if (deletedIds.size() > MAX_DELETED_PRIMITIVE_IN_DIALOG) {
+                items.add(tr("{0} more...", deletedIds.size() - MAX_DELETED_PRIMITIVE_IN_DIALOG));
+            }
+            JOptionPane.showMessageDialog(null, tr("Following primitives could not be added because they are deleted: {0}", items));
+        }
     }
 
     public void copyAll(ListRole source) {
         getMergedEntries().clear();
-        getMergedEntries().addAll(entries.get(source));
-        fireModelDataChanged();
+
+        int[] rows = new int[entries.get(source).size()];
+        for (int i=0; i<rows.length; i++) {
+            rows[i] = i;
+        }
+        copy(source, rows, 0);
     }
 
     /**

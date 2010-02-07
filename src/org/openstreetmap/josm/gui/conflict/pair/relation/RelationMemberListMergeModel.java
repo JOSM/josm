@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.List;
 
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.command.RelationMemberConflictResolverCommand;
@@ -13,7 +12,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.ListRole;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -97,14 +95,13 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
 
     @Override
     protected RelationMember cloneEntryForMergedList(RelationMember entry) {
-        OsmPrimitive primitive = myDataset.getPrimitiveById(entry.getMember());
-        if (primitive.isDeleted()) {
-            JOptionPane.showMessageDialog(null,
-                    tr("Primitive {0} cannot be added to the relation because it was deleted.",
-                            primitive.getDisplayName(DefaultNameFormatter.getInstance())));
-            return null;
-        } else
-            return new RelationMember(entry.getRole(), primitive);
+        OsmPrimitive primitive = getMyPrimitive(entry);
+        return new RelationMember(entry.getRole(), primitive);
+    }
+
+    @Override
+    protected OsmPrimitive getMyPrimitive(RelationMember entry) {
+        return myDataset.getPrimitiveById(entry.getMember());
     }
 
     /**
