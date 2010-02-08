@@ -36,15 +36,15 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public final class OrthogonalizeAction extends JosmAction {
     private String USAGE = tr(
-        "<h3>When one or more ways are selected, the shape is adjusted such, that all angles are 90 or 180 degrees.</h3>"+
-        "You can add two nodes to the selection. Then, the direction is fixed by these two reference nodes. "+
-        "(Afterwards, you can undo the movement for certain nodes:<br>"+
-        "Select them and press the shortcut for Orthogonalize / Undo. The default is Shift-Q.)");
+            "<h3>When one or more ways are selected, the shape is adjusted such, that all angles are 90 or 180 degrees.</h3>"+
+            "You can add two nodes to the selection. Then, the direction is fixed by these two reference nodes. "+
+            "(Afterwards, you can undo the movement for certain nodes:<br>"+
+    "Select them and press the shortcut for Orthogonalize / Undo. The default is Shift-Q.)");
 
     public OrthogonalizeAction() {
         super(tr("Orthogonalize Shape"),
                 "ortho",
-                tr("Move nodes so all angles are 90 or 270 degrees"),
+                tr("Move nodes so all angles are 90 or 180 degrees"),
                 Shortcut.registerShortcut("tools:orthogonalize", tr("Tool: {0}", tr("Orthogonalize Shape")),
                         KeyEvent.VK_Q,
                         Shortcut.GROUP_EDIT), true);
@@ -104,7 +104,7 @@ public final class OrthogonalizeAction extends JosmAction {
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("Orthogonalize Shape / Undo\n"+
-                           "Please select nodes that were moved by the previous Orthogonalize Shape action!"),
+                        "Please select nodes that were moved by the previous Orthogonalize Shape action!"),
                         tr("Undo Orthogonalize Shape"),
                         JOptionPane.INFORMATION_MESSAGE);
             }
@@ -118,7 +118,7 @@ public final class OrthogonalizeAction extends JosmAction {
             String msg = tr("<html>You are using the EPSG:4326 projection which might lead<br>" +
                     "to undesirable results when doing rectangular alignments.<br>" +
                     "Change your projection to get rid of this warning.<br>" +
-                    "Do you want to continue?</html>");
+            "Do you want to continue?</html>");
             if (!ConditionalOptionPaneUtil.showConfirmationDialog(
                     "align_rectangular_4326",
                     Main.parent,
@@ -260,7 +260,7 @@ public final class OrthogonalizeAction extends JosmAction {
         } catch (RejectedAngleException ex) {
             throw new InvalidUserInputException(
                     tr("<html>Please make sure all selected ways head in a similar direction<br>"+
-                       "or orthogonalize them one by one.</html>"));
+                    "or orthogonalize them one by one.</html>"));
         }
 
         // put the nodes of all ways in a set
