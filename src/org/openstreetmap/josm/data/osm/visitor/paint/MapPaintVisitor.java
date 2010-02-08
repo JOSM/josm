@@ -332,7 +332,7 @@ public class MapPaintVisitor implements PaintVisitor {
             Way viaWay = (Way) via;
             Node firstNode = viaWay.firstNode();
             Node lastNode = viaWay.lastNode();
-            boolean onewayvia = false;
+            Boolean onewayvia = false;
 
             String onewayviastr = viaWay.get("oneway");
             if(onewayviastr != null)
@@ -344,6 +344,9 @@ public class MapPaintVisitor implements PaintVisitor {
                     lastNode = tmp;
                 } else {
                     onewayvia = OsmUtils.getOsmBoolean(onewayviastr);
+                    if (onewayvia == null) {
+                        onewayvia = false;
+                    }
                 }
             }
 
