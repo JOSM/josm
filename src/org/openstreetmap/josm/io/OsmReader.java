@@ -356,7 +356,8 @@ public class OsmReader {
                 // do nothing
             } else if (action.equals("delete")) {
                 current.setDeleted(true);
-            } else if (action.startsWith("modify")) { //FIXME: why startsWith()? why not equals()?
+                current.setModified(true);
+            } else if (action.equals("modify")) {
                 current.setModified(true);
             }
 
