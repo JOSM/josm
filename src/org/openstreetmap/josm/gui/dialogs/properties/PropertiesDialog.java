@@ -266,6 +266,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             newkey = key;
             value = null; // delete the key instead
         }
+        if (key.equals(newkey) && tr("<different>").equals(value)) {
+            return;
+        }
         if (key.equals(newkey) || value == null) {
             Main.main.undoRedo.add(new ChangePropertyCommand(sel, newkey, value));
         } else {
