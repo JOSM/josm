@@ -20,10 +20,13 @@ import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
 import org.openstreetmap.josm.io.OsmServerBackreferenceReader;
+import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ExceptionUtil;
@@ -36,7 +39,7 @@ import org.xml.sax.SAXException;
 public class DownloadReferrersTask extends PleaseWaitRunnable {
     private boolean cancelled;
     private Exception lastException;
-    private OsmServerBackreferenceReader reader;
+    private OsmServerReader reader;
     /** the target layer */
     private OsmDataLayer targetLayer;
     /** the collection of child primitives */
@@ -183,12 +186,26 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
 
     protected void downloadParents(long id, OsmPrimitiveType type, ProgressMonitor progressMonitor) throws OsmTransferException{
         reader = new OsmServerBackreferenceReader(id, type);
-        DataSet ds = reader.parseOsm(progressMonitor);
+        DataSet ds = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
         synchronized(this) { // avoid race condition in cancel()
             reader = null;
         }
-        DataSetMerger visitor = new DataSetMerger(parents, ds);
-        visitor.merge();
+        Collection<Way> ways = ds.getWays();
+        DataSetMerger merger;
+        if (!ways.isEmpty()) {
+            reader = new MultiFetchServerObjectReader();
+            for (Way w: ways) {
+                ((MultiFetchServerObjectReader)reader).append(w.getNodes());
+            }
+            DataSet wayNodes = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
+            synchronized(this) { // avoid race condition in cancel()
+                reader = null;
+            }
+            merger = new DataSetMerger(ds, wayNodes);
+            merger.merge();
+        }
+        merger = new DataSetMerger(parents, ds);
+        merger.merge();
     }
 
     @Override
@@ -206,7 +223,7 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
                 case RELATION: msg = tr("({0}/{1}) Loading parents of relation {2}", i+1,children.size(), entry.getKey()); break;
                 }
                 progressMonitor.subTask(msg);
-                downloadParents(entry.getKey(), entry.getValue(), progressMonitor.createSubTaskMonitor(1, false));
+                downloadParents(entry.getKey(), entry.getValue(), progressMonitor);
                 i++;
             }
         } catch(Exception e) {
