@@ -72,12 +72,13 @@ public class DrawingPreference implements PreferenceSetting {
 
         /* ensure that default is in data base */
         Boolean lf = Main.pref.getBoolean("draw.rawgps.lines.localfiles", false);
-        if(Main.pref.getBoolean("draw.rawgps.lines", true))
+        if(Main.pref.getBoolean("draw.rawgps.lines", true)) {
             drawRawGpsLinesAll.setSelected(true);
-        else if (lf)
+        } else if (lf) {
             drawRawGpsLinesLocal.setSelected(true);
-        else
+        } else {
             drawRawGpsLinesNone.setSelected(true);
+        }
 
         panel.add(new JLabel(tr("Draw lines between raw GPS points")), GBC.eol().insets(20,0,0,0));
         panel.add(drawRawGpsLinesNone, GBC.eol().insets(40,0,0,0));
@@ -122,8 +123,8 @@ public class DrawingPreference implements PreferenceSetting {
         // drawGpsArrows
         drawGpsArrows.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                            drawGpsArrowsFast.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
-                            drawGpsArrowsMinDist.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
+                drawGpsArrowsFast.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
+                drawGpsArrowsMinDist.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
             }
         });
         drawGpsArrows.setToolTipText(tr("Draw direction arrows for lines, connecting GPS points."));
@@ -167,15 +168,15 @@ public class DrawingPreference implements PreferenceSetting {
         });
 
         switch(Main.pref.getInteger("draw.rawgps.colors", 0)) {
-            case 0:
-                colorTypeNone.setSelected(true);
-                break;
-            case 1:
-                colorTypeVelocity.setSelected(true);
-                break;
-            case 2:
-                colorTypeDilution.setSelected(true);
-                break;
+        case 0:
+            colorTypeNone.setSelected(true);
+            break;
+        case 1:
+            colorTypeVelocity.setSelected(true);
+            break;
+        case 2:
+            colorTypeDilution.setSelected(true);
+            break;
         }
 
         colorTypeNone.setToolTipText(tr("All points and track segments will have the same color. Can be customized in Layer Manager."));
@@ -273,12 +274,13 @@ public class DrawingPreference implements PreferenceSetting {
         Main.pref.put("draw.rawgps.direction", drawGpsArrows.isSelected());
         Main.pref.put("draw.rawgps.alternatedirection", drawGpsArrowsFast.isSelected());
         Main.pref.put("draw.rawgps.min-arrow-distance", drawGpsArrowsMinDist.getText());
-        if(colorTypeVelocity.isSelected())
+        if(colorTypeVelocity.isSelected()) {
             Main.pref.putInteger("draw.rawgps.colors", 1);
-        else if(colorTypeDilution.isSelected())
+        } else if(colorTypeDilution.isSelected()) {
             Main.pref.putInteger("draw.rawgps.colors", 2);
-        else
+        } else {
             Main.pref.putInteger("draw.rawgps.colors", 0);
+        }
         int ccti=colorTypeVelocityTune.getSelectedIndex();
         Main.pref.putInteger("draw.rawgps.colorTracksTune", ccti==2 ? 10 : (ccti==1 ? 20 : 45));
         Main.pref.put("draw.rawgps.hdopcircle", hdopCircleGpsPoints.isSelected());
@@ -291,7 +293,9 @@ public class DrawingPreference implements PreferenceSetting {
         Main.pref.put("draw.data.inactive_color", inactive.isSelected());
         Main.pref.put("mappaint.use-antialiasing", useAntialiasing.isSelected());
         int vn = Main.pref.getInteger("mappaint.node.virtual-size", 8);
-        if(virtualNodes.isSelected()) { if (vn < 1) vn = 8; }
+        if(virtualNodes.isSelected()) { if (vn < 1) {
+            vn = 8;
+        } }
         else { vn = 0; }
         Main.pref.putInteger("mappaint.node.virtual-size", vn);
         return false;
