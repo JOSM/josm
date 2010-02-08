@@ -180,7 +180,7 @@ public class DrawingPreference implements PreferenceSetting {
 
         colorTypeNone.setToolTipText(tr("All points and track segments will have the same color. Can be customized in Layer Manager."));
         colorTypeVelocity.setToolTipText(tr("Colors points and track segments by velocity."));
-        colorTypeDilution.setToolTipText(tr("Colors points and track segments by dilution of position (HDOP). Your capture device needs to logs that information."));
+        colorTypeDilution.setToolTipText(tr("Colors points and track segments by dilution of position (HDOP). Your capture device needs to log that information."));
 
         // color Tracks by Velocity Tune
         int ccts = Main.pref.getInteger("draw.rawgps.colorTracksTune", 45);

@@ -79,7 +79,7 @@ public class OsmChangesetParser {
                 throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "id", value));
             }
             if (id <= 0) {
-                throwException(tr("Illegal nummeric value for attribute ''{0}''. Got ''{1}''.", "id", id));
+                throwException(tr("Illegal numeric value for attribute ''{0}''. Got ''{1}''.", "id", id));
             }
             current.setId(id);
 

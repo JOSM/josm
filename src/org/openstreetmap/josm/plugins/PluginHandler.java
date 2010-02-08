@@ -553,7 +553,7 @@ public class PluginHandler {
             }
             monitor.subTask(tr("Removing deprecated plugins..."));
             filterDeprecatedPlugins(parent, plugins);
-            monitor.subTask(tr("Removing umaintained plugins..."));
+            monitor.subTask(tr("Removing unmaintained plugins..."));
             filterUnmaintainedPlugins(parent, plugins);
             Map<String, PluginInformation> infos = loadLocallyAvailablePluginInformation(monitor.createSubTaskMonitor(1,false));
             List<PluginInformation> ret = new LinkedList<PluginInformation>();
@@ -730,13 +730,13 @@ public class PluginHandler {
             if (plugin.exists()) {
                 if (!plugin.delete()) {
                     System.err.println(tr("Warning: failed to delete outdated plugin ''{0}''.", plugin.toString()));
-                    System.err.println(tr("Warning: failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM still going to load the old plugin version.", pluginName));
+                    System.err.println(tr("Warning: failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.", pluginName));
                     continue;
                 }
             }
             if (!updatedPlugin.renameTo(plugin)) {
                 System.err.println(tr("Warning: failed to install plugin ''{0}'' from temporary download file ''{1}''. Renaming failed.", plugin.toString(), updatedPlugin.toString()));
-                System.err.println(tr("Warning: failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM still going to load the old plugin version.", pluginName));
+                System.err.println(tr("Warning: failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.", pluginName));
             }
         }
         return;

@@ -67,7 +67,7 @@ public class PluginPreference implements PreferenceSetting {
         if (! downloaded.isEmpty()) {
             sb.append(trn(
                     "The following plugin has been downloaded <strong>successfully</strong>:",
-                    "The following {0} plugins have been downloaded successfully:",
+                    "The following {0} plugins have been downloaded <strong>successfully</strong>:",
                     downloaded.size(),
                     downloaded.size()
             ));

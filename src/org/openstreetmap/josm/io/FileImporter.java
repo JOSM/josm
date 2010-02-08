@@ -59,7 +59,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
             e.printStackTrace();
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("<html>Could not read file ''{0}\''.<br> Error is: <br>{1}</html>", f.getName(), e.getMessage()),
+                    tr("<html>Could not read file ''{0}''.<br>Error is:<br>{1}</html>", f.getName(), e.getMessage()),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
             );
@@ -73,7 +73,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
             e.printStackTrace();
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("<html>Could not read files.<br> Error is: <br>{0}</html>", e.getMessage()),
+                    tr("<html>Could not read files.<br>Error is:<br>{0}</html>", e.getMessage()),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
             );
