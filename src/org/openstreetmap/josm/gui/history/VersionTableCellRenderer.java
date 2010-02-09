@@ -134,7 +134,7 @@ public class VersionTableCellRenderer extends JLabel implements TableCellRendere
     }
 
     public void renderVersionFromHistory(HistoryOsmPrimitive primitive, JTable table, int row, boolean isSelected) {
-        renderIcon(primitive.getType());
+        renderIcon(primitive == null? null : primitive.getType());
         renderText(primitive);
         renderBackground(table, row, isSelected);
     }
