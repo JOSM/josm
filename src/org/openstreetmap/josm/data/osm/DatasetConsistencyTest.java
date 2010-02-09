@@ -15,8 +15,10 @@ import org.openstreetmap.josm.data.coor.LatLon;
  */
 public class DatasetConsistencyTest {
 
+    private static final int MAX_ERRORS = 100;
     private final DataSet dataSet;
     private final PrintWriter writer;
+    private int errorCount;
 
     public DatasetConsistencyTest(DataSet dataSet, Writer writer) {
         this.dataSet = dataSet;
@@ -24,10 +26,13 @@ public class DatasetConsistencyTest {
     }
 
     private void printError(String type, String message, Object... args) {
-        writer.println("[" + type + "] " + String.format(message, args));
+        errorCount++;
+        if (errorCount <= MAX_ERRORS) {
+            writer.println("[" + type + "] " + String.format(message, args));
+        }
     }
 
-    private void checkReferrers() {
+    public void checkReferrers() {
         for (Way way:dataSet.getWays()) {
             if (!way.isDeleted()) {
                 for (Node n:way.getNodes()) {
@@ -49,7 +54,7 @@ public class DatasetConsistencyTest {
         }
     }
 
-    private void checkCompleteWaysWithIncompleteNodes() {
+    public void checkCompleteWaysWithIncompleteNodes() {
         for (Way way:dataSet.getWays()) {
             if (way.isUsable()) {
                 for (Node node:way.getNodes()) {
@@ -61,7 +66,7 @@ public class DatasetConsistencyTest {
         }
     }
 
-    private void checkCompleteNodesWithoutCoordinates() {
+    public void checkCompleteNodesWithoutCoordinates() {
         for (Node node:dataSet.getNodes()) {
             if (!node.isIncomplete() && (node.getCoor() == null || node.getEastNorth() == null)) {
                 printError("COMPLETE WITHOUT COORDINATES", "%s is not incomplete but has null coordinates", node);
@@ -69,7 +74,7 @@ public class DatasetConsistencyTest {
         }
     }
 
-    private void searchNodes() {
+    public void searchNodes() {
         for (Node n:dataSet.getNodes()) {
             if (!n.isIncomplete() && !n.isDeleted()) {
                 LatLon c = n.getCoor();
@@ -81,9 +86,9 @@ public class DatasetConsistencyTest {
         }
     }
 
-    private void searchWays() {
+    public void searchWays() {
         for (Way w:dataSet.getWays()) {
-            if (!w.isIncomplete() && !w.isDeleted() && !dataSet.searchWays(w.getBBox()).contains(w)) {
+            if (!w.isIncomplete() && !w.isDeleted() && w.getNodesCount() >= 2 && !dataSet.searchWays(w.getBBox()).contains(w)) {
                 printError("SEARCH WAYS", "%s not found using Dataset.searchWays()", w);
             }
         }
@@ -101,7 +106,7 @@ public class DatasetConsistencyTest {
         }
     }
 
-    private void referredPrimitiveNotInDataset() {
+    public void referredPrimitiveNotInDataset() {
         for (Way way:dataSet.getWays()) {
             for (Node node:way.getNodes()) {
                 checkReferredPrimitive(node, way);
@@ -116,7 +121,7 @@ public class DatasetConsistencyTest {
     }
 
 
-    private void checkZeroNodesWays() {
+    public void checkZeroNodesWays() {
         for (Way way:dataSet.getWays()) {
             if (way.isUsable() && way.getNodesCount() == 0) {
                 printError("WARN - ZERO NODES", "Way %s has zero nodes", way);
@@ -135,6 +140,9 @@ public class DatasetConsistencyTest {
             searchWays();
             referredPrimitiveNotInDataset();
             checkZeroNodesWays();
+            if (errorCount > MAX_ERRORS) {
+                writer.println((errorCount - MAX_ERRORS) + " more...");
+            }
         } catch (Exception e) {
             writer.println("Exception during dataset integrity test:");
             e.printStackTrace(writer);
