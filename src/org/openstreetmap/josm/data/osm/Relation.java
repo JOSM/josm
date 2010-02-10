@@ -344,8 +344,13 @@ public final class Relation extends OsmPrimitive {
     }
 
     private void fireMembersChanged() {
-        if (getDataSet() != null) {
-            getDataSet().fireRelationMembersChanged(this);
+        DataSet dataSet = getDataSet();
+        if (dataSet != null) {
+            for (RelationMember rm: members) {
+                if (rm.getMember().getDataSet() != dataSet)
+                    throw new DataIntegrityProblemException("Relation member must be part of the same dataset as relation");
+            }
+            dataSet.fireRelationMembersChanged(this);
         }
     }
 }

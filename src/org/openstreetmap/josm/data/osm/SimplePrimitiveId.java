@@ -50,4 +50,9 @@ public class SimplePrimitiveId implements PrimitiveId {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        return type + " " + id;
+    }
 }
