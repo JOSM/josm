@@ -398,7 +398,7 @@ public class SearchCompiler {
                     if (keyMatchFound || valMatchFound)
                         return true;
                 } else {
-                    if (caseSensitive) {
+                    if (!caseSensitive) {
                         key = key.toLowerCase();
                         value = value.toLowerCase();
                     }
