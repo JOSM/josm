@@ -107,15 +107,23 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         browser.populate(history);
     }
 
+    public void unlinkAsListener() {
+        getHistoryBrowser().getModel().unlinkAsListener();
+    }
+
+    /* ---------------------------------------------------------------------------------- */
+    /* interface HistoryDataSetListener                                                   */
+    /* ---------------------------------------------------------------------------------- */
     public void historyUpdated(HistoryDataSet source, PrimitiveId primitiveId) {
         if (primitiveId == null || primitiveId.equals(browser.getHistory().getPrimitmiveId())) {
             browser.populate(source.getHistory(browser.getHistory().getPrimitmiveId()));
         }
     }
 
-    public void unlinkAsListener() {
-        getHistoryBrowser().getModel().unlinkAsListener();
+    public void historyDataSetCleared(HistoryDataSet source) {
+        closeAction.run();
     }
+
 
     class CloseAction extends AbstractAction {
         public CloseAction() {

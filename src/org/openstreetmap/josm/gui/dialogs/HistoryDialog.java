@@ -42,6 +42,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSetListener;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.gui.history.HistoryLoadTask;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
@@ -70,6 +71,8 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
                         Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
         build();
         DataSet.selListeners.add(model);
+
+        HelpUtil.setHelpContext(this, HelpUtil.ht("/Dialog/HistoryDialog"));
     }
 
     /**
@@ -145,7 +148,14 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         HistoryDataSet.getInstance().removeHistoryDataSetListener(this);
     }
 
+    /* ----------------------------------------------------------------------------- */
+    /* interface HistoryDataSetListener                                              */
+    /* ----------------------------------------------------------------------------- */
     public void historyUpdated(HistoryDataSet source, PrimitiveId primitiveId) {
+        model.refresh();
+    }
+
+    public void historyDataSetCleared(HistoryDataSet source) {
         model.refresh();
     }
 
@@ -316,8 +326,14 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
 
         protected List<OsmPrimitive> filterPrimitivesWithUnloadedHistory(Collection<OsmPrimitive> primitives) {
             ArrayList<OsmPrimitive> ret = new ArrayList<OsmPrimitive>(primitives.size());
+            HistoryDataSet hds = HistoryDataSet.getInstance();
             for (OsmPrimitive p: primitives) {
-                if (HistoryDataSet.getInstance().getHistory(p.getPrimitiveId()) == null) {
+                if (hds.getHistory(p.getPrimitiveId()) == null) {
+                    // reload if the history is not in the cache yet
+                    ret.add(p);
+                } else if (!p.isNew() && hds.getHistory(p.getPrimitiveId()).getByVersion(p.getUniqueId()) == null) {
+                    // reload if the history object of the selected object is not in the cache
+                    // yet
                     ret.add(p);
                 }
             }

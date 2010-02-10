@@ -6,9 +6,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -16,7 +20,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  *
  */
-public class HistoryDataSet {
+public class HistoryDataSet implements LayerChangeListener{
     //private final static Logger logger = Logger.getLogger(HistoryDataSet.class.getName());
 
     /** the unique instance */
@@ -30,6 +34,7 @@ public class HistoryDataSet {
     public static HistoryDataSet getInstance() {
         if (historyDataSet == null) {
             historyDataSet = new HistoryDataSet();
+            MapView.addLayerChangeListener(historyDataSet);
         }
         return  historyDataSet;
     }
@@ -56,6 +61,12 @@ public class HistoryDataSet {
     protected void fireHistoryUpdated(PrimitiveId id) {
         for (HistoryDataSetListener l : listeners) {
             l.historyUpdated(this, id);
+        }
+    }
+
+    protected void fireCacheCleared() {
+        for (HistoryDataSetListener l : listeners) {
+            l.historyDataSetCleared(this);
         }
     }
 
@@ -149,5 +160,18 @@ public class HistoryDataSet {
             this.data.put(id, other.data.get(id));
         }
         fireHistoryUpdated(null);
+    }
+
+    /* ------------------------------------------------------------------------------ */
+    /* interface LayerChangeListener                                                  */
+    /* ------------------------------------------------------------------------------ */
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {/* irrelevant in this context */}
+    public void layerAdded(Layer newLayer) {/* irrelevant in this context */}
+    public void layerRemoved(Layer oldLayer) {
+        if (Main.map == null || Main.map.mapView == null) return;
+        if (Main.map.mapView.getNumLayers() == 0) {
+            data.clear();
+            fireCacheCleared();
+        }
     }
 }
