@@ -148,15 +148,15 @@ public class MapFrame extends JPanel implements Destroyable {
         LayerListDialog.createInstance(this);
         addToggleDialog(LayerListDialog.getInstance());
         addToggleDialog(new PropertiesDialog(this));
-        addToggleDialog(new HistoryDialog());
         addToggleDialog(new SelectionListDialog());
+        addToggleDialog(relationListDialog = new RelationListDialog());
+        addToggleDialog(new CommandStackDialog(this));
+        addToggleDialog(new UserListDialog());
+        addToggleDialog(new HistoryDialog());
+        addToggleDialog(conflictDialog = new ConflictDialog());
         if(Main.pref.getBoolean("displayfilter", false)) {
             addToggleDialog(new FilterDialog());
         }
-        addToggleDialog(new UserListDialog());
-        addToggleDialog(conflictDialog = new ConflictDialog());
-        addToggleDialog(new CommandStackDialog(this));
-        addToggleDialog(relationListDialog = new RelationListDialog());
         addToggleDialog(new ChangesetDialog(this));
 
         // status line below the map
