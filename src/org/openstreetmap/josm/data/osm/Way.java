@@ -363,15 +363,27 @@ public final class Way extends OsmPrimitive {
         return OsmPrimitiveType.WAY;
     }
 
-    private void fireNodesChanged() {
+    private void checkNodes() {
         DataSet dataSet = getDataSet();
         if (dataSet != null) {
             for (Node n: nodes) {
                 if (n.getDataSet() != dataSet)
                     throw new DataIntegrityProblemException("Nodes in way must be in the same dataset");
             }
+        }
+    }
+
+    private void fireNodesChanged() {
+        checkNodes();
+        if (getDataSet() != null) {
             getDataSet().fireWayNodesChanged(this);
         }
+    }
+
+    @Override
+    public void setDataset(DataSet dataSet) {
+        super.setDataset(dataSet);
+        checkNodes();
     }
 
     @Override
