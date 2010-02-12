@@ -4236,7 +4236,7 @@ For external files the <rules> should have following elements:
 	<!-- special display of unreviewed tiger data (USA) -->
 	<rule>
 		<condition k="tiger:reviewed" v="no"/>
-		<linemod mode="under" width="10" colour="#808000"/>
+		<linemod mode="under" width="10" colour="tiger_data#808000"/>
 	</rule>
 
 	<!-- lot's of "openGeoDB:..." tags can be found in germany -->
