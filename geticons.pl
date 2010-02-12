@@ -4,7 +4,7 @@
 
 my @default = (
   "styles/standard/*.xml",
-  "presets/*.xml",
+  "data/*.xml",
   "src/org/openstreetmap/josm/*.java",
   "src/org/openstreetmap/josm/*/*.java",
   "src/org/openstreetmap/josm/*/*/*.java",
