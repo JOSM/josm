@@ -468,6 +468,15 @@ public class OsmReader {
      *
      */
     private void processRelationsAfterParsing() throws IllegalDataException {
+
+        // First add all relations to make sure that when relation reference other relation, the referenced will be already in dataset
+        for (Long externalRelationId : relations.keySet()) {
+            Relation relation = (Relation) externalIdMap.get(
+                    new SimplePrimitiveId(externalRelationId, OsmPrimitiveType.RELATION)
+            );
+            ds.addPrimitive(relation);
+        }
+
         for (Long externalRelationId : relations.keySet()) {
             Relation relation = (Relation) externalIdMap.get(
                     new SimplePrimitiveId(externalRelationId, OsmPrimitiveType.RELATION)
@@ -516,7 +525,6 @@ public class OsmReader {
                 }
             }
             relation.setMembers(relationMembers);
-            ds.addPrimitive(relation);
         }
     }
 
