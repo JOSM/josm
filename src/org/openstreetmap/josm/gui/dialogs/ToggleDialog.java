@@ -49,6 +49,7 @@ public class ToggleDialog extends JPanel implements Helpful {
     /** The action to toggle this dialog */
     protected ToggleDialogAction toggleAction;
     protected String preferencePrefix;
+    final protected String name;
 
     /** DialogsPanel that manages all ToggleDialogs */
     protected DialogsPanel dialogsPanel;
@@ -99,6 +100,7 @@ public class ToggleDialog extends JPanel implements Helpful {
     public ToggleDialog(String name, String iconName, String tooltip, Shortcut shortcut, int preferredHeight, boolean defShow) {
         super(new BorderLayout());
         this.preferencePrefix = iconName;
+        this.name = name;
 
         /** Use the full width of the parent element */
         setPreferredSize(new Dimension(0, preferredHeight));
@@ -515,6 +517,12 @@ public class ToggleDialog extends JPanel implements Helpful {
         help = help.substring(help.lastIndexOf('.')+1, help.length()-6);
         return "Dialog/"+help;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
     /**
      * Replies true if this dialog is showing either as docked or as detached dialog
      */

@@ -121,9 +121,8 @@ public class DialogsPanel extends JPanel {
          * If there are no dialogs in default view, show the collapsed ones
          * in the last panel anyway.
          */
-        int k = N-1;                // index of the current Panel (start with last one)
-        JPanel p = panels.get(k);   // current Panel
-        k = -1;                     // indicates that the current Panel index is N-1, but no default-view-Dialog was added to this Panel yet.
+        JPanel p = panels.get(N-1); // current Panel (start with last one)
+        int k = -1;                 // indicates that the current Panel index is N-1, but no default-view-Dialog has been added to this Panel yet.
         for (int i=N-1; i >= 0 ; --i) {
             final ToggleDialog dlg = allDialogs.get(i);
             if (dlg.isDialogInDefaultView()) {
@@ -170,14 +169,22 @@ public class DialogsPanel extends JPanel {
             for (ToggleDialog dlg: allDialogs) {
                 if (dlg.isDialogInDefaultView()) {
                     if (dlg != triggeredBy) {
-                        final int ph = dlg.getPreferredHeight();
-                        final int ah = dlg.getHeight();
-                        sumP += ph;
-                        sumA += ah;
+                        sumP += dlg.getPreferredHeight();
+                        sumA += dlg.getHeight();
                     }
                 } else if (dlg.isDialogInCollapsedView()) {
                     sumC += dlg.getHeight();
                 }
+            }
+            
+            /**
+             * If we add additional dialogs on startup (e.g. geoimage), they may 
+             * not have an actual height yet.
+             * In this case we simply reset everything to it's preferred size.
+             */
+            if (sumA == 0) {
+                reconstruct(Action.ELEMENT_SHRINKS, null);
+                return;
             }
 
             /** total Height */

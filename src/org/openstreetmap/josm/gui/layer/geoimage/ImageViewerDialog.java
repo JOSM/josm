@@ -43,16 +43,20 @@ public class ImageViewerDialog extends ToggleDialog {
     private ImageDisplay imgDisplay = new ImageDisplay();
     private boolean centerView = false;
 
-    // Only one instance of that class
-    static private ImageViewerDialog INSTANCE = null;
+    // Only one instance of that class is present at one time
+    private static ImageViewerDialog dialog;
 
     private boolean collapseButtonClicked = false;
 
+    static void newInstance() {
+        dialog = new ImageViewerDialog();
+    }
+
     public static ImageViewerDialog getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new ImageViewerDialog();
+        if (dialog == null) {
+            throw new AssertionError(); // a new instance needs to be created first
         }
-        return INSTANCE;
+        return dialog;
     }
 
     private JButton btnNext;
@@ -62,16 +66,10 @@ public class ImageViewerDialog extends ToggleDialog {
     private ImageViewerDialog() {
         super(tr("Geotagged Images"), "geoimage", tr("Display geotagged images"), Shortcut.registerShortcut("tools:geotagged", tr("Tool: {0}", tr("Display geotagged images")), KeyEvent.VK_Y, Shortcut.GROUP_EDIT), 200);
 
-        if (INSTANCE != null) {
-            throw new IllegalStateException("Image viewer dialog should not be instanciated twice !");
-        }
-
         /* Don't show a detached dialog right from the start. */
         if (isShowing && !isDocked) {
             setIsShowing(false);
         }
-
-        INSTANCE = this;
 
         JPanel content = new JPanel();
         content.setLayout(new BorderLayout());
@@ -253,7 +251,7 @@ public class ImageViewerDialog extends ToggleDialog {
             //if (entry.getGpsTime() != null) {
             //    osd.append(tr("\nImage gps time: {0}", Long.toString(entry.getGpsTime().getTime())));
             //}
-            
+
             imgDisplay.setOsdText(osd.toString());
         } else {
             imgDisplay.setImage(null);

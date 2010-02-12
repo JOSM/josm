@@ -235,20 +235,12 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             if (layer != null) {
                 Main.main.addLayer(layer);
                 layer.hook_up_mouse_events(); // Main.map.mapView should exist
-                // now. Can add mouse listener
+                                              // now. Can add mouse listener
                 Main.map.mapView.addPropertyChangeListener(layer);
-                if (!addedToggleDialog) {
-                    // TODO Workaround for bug in DialogsPanel
-                    // When GeoImageLayer is added as a first layer, division by zero exception is thrown
-                    // This is caused by DialogsPanel.reconstruct method which use height of other dialogs
-                    // to calculate height of newly added ImageViewerDialog. But height of other dialogs is
-                    // zero because it's calculated by layout manager later
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            Main.map.addToggleDialog(ImageViewerDialog.getInstance());
-                        }
-                    });
-                    addedToggleDialog = true;
+                if (Main.map.getToggleDialog(ImageViewerDialog.class) == null) {
+                    System.err.println("JO");
+                    ImageViewerDialog.newInstance();// = new ImageViewerDialog();
+                    Main.map.addToggleDialog(ImageViewerDialog.getInstance());
                 }
 
                 if (! cancelled && layer.data.size() > 0) {
@@ -270,8 +262,6 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         }
     }
 
-    private static boolean addedToggleDialog = false;
-
     public static void create(Collection<File> files, GpxLayer gpxLayer) {
         Loader loader = new Loader(files, gpxLayer);
         Main.worker.execute(loader);
@@ -290,7 +280,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
     public Icon getIcon() {
         return ImageProvider.get("dialogs/geoimage");
     }
-    
+
     public static interface LayerMenuAddition {
         public Component getComponent(Layer layer);
     }
@@ -305,7 +295,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
         JMenuItem correlateItem = new JMenuItem(tr("Correlate to GPX"), ImageProvider.get("dialogs/geoimage/gpx2img"));
         correlateItem.addActionListener(new CorrelateGpxWithImages(this));
-        
+
         List<Component> entries = new ArrayList<Component>();
         entries.add(new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)));
         entries.add(new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)));
@@ -322,7 +312,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         entries.add(new JMenuItem(new LayerListPopup.InfoAction(this)));
 
         return entries.toArray(new Component[0]);
-        
+
     }
 
     private String infoText() {
@@ -334,7 +324,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         return trn("{0} image loaded.", "{0} images loaded.", data.size(), data.size())
         + " " + trn("{0} was found to be GPS tagged.", "{0} were found to be GPS tagged.", i, i);
     }
-    
+
     @Override public Object getInfoComponent() {
         return infoText();
     }
@@ -751,7 +741,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         updateOffscreenBuffer = true;
         Main.map.mapView.repaint();
     }
-    
+
     public List<ImageEntry> getImages() {
         List<ImageEntry> copy = new ArrayList<ImageEntry>();
         for (ImageEntry ie : data) {
