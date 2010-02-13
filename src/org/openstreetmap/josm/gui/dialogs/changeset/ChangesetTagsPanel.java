@@ -6,6 +6,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -25,8 +26,11 @@ public class ChangesetTagsPanel extends JPanel implements PropertyChangeListener
     protected void build() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+        DefaultListSelectionModel rowSelectionModel = new DefaultListSelectionModel();
+        DefaultListSelectionModel colSelectionModel = new DefaultListSelectionModel();
 
-        tblTags = new TagTable(model = new TagEditorModel());
+        model = new TagEditorModel(rowSelectionModel, colSelectionModel);
+        tblTags = new TagTable(model, rowSelectionModel, colSelectionModel);
         tblTags.setEnabled(false);
         add(new JScrollPane(tblTags), BorderLayout.CENTER);
     }

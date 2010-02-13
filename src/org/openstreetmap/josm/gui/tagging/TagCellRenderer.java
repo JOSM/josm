@@ -3,16 +3,13 @@ package org.openstreetmap.josm.gui.tagging;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.util.logging.Logger;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.border.Border;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 
@@ -24,21 +21,13 @@ import javax.swing.table.TableCellRenderer;
  */
 public class TagCellRenderer extends JLabel implements TableCellRenderer  {
 
-    private static Logger logger = Logger.getLogger(TagCellRenderer.class.getName());
-
-    public static final Color BG_COLOR_SELECTED = new Color(143,170,255);
-    public static final Color BG_COLOR_HIGHLIGHTED = new Color(255,255,204);
-
-    public static final Border BORDER_EMPHASIZED = BorderFactory.createLineBorder(new Color(253,75,45));
-
-    /** the icon displayed for deleting a tag */
-    private ImageIcon deleteIcon = null;
+    private static final Logger logger = Logger.getLogger(TagCellRenderer.class.getName());
 
     private Font fontStandard = null;
     private Font fontItalic = null;
 
     public TagCellRenderer() {
-        fontStandard = getFont();
+        fontStandard = UIManager.getFont("Table.font");
         fontItalic = fontStandard.deriveFont(Font.ITALIC);
         setOpaque(true);
         setBorder(new EmptyBorder(5,5,5,5));
@@ -66,7 +55,7 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
         } else if (tag.getValueCount() == 1) {
             setText(tag.getValues().get(0));
         } else if (tag.getValueCount() >  1) {
-            setText(tr("<multiple>"));
+            setText(tr("multiple"));
             setFont(fontItalic);
         }
     }
@@ -85,16 +74,13 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
     }
 
     /**
-     * renders the background color. The default color is white. It is
-     * set to {@see TableCellRenderer#BG_COLOR_HIGHLIGHTED} if this cell
-     * displays the tag which is suggested by the currently selected
-     * preset.
-     *
+     * renders the background color.
+     * 
      * @param tagModel the tag model
      * @param model the tag editor model
      */
     protected void renderBackgroundColor(TagModel tagModel, TagEditorModel model) {
-        setBackground(Color.WHITE); // standard color
+        setBackground(UIManager.getColor("Table.background")); // standard color
     }
 
     /**
@@ -116,7 +102,8 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
         // set background color
         //
         if (isSelected){
-            setBackground(BG_COLOR_SELECTED);
+            setBackground(UIManager.getColor("Table.selectionBackground"));
+            setForeground(UIManager.getColor("Table.selectionForeground"));
         } else {
             renderBackgroundColor(getModel(table).get(rowIndex), getModel(table));
         }
@@ -129,8 +116,6 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
         }
         if (hasFocus && isSelected) {
             if (table.getSelectedColumnCount() == 1 && table.getSelectedRowCount() == 1) {
-                boolean success = table.editCellAt(rowIndex, vColIndex);
-
                 if (table.getEditorComponent() != null) {
                     table.getEditorComponent().requestFocusInWindow();
                 }

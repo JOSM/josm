@@ -146,22 +146,30 @@ public class AutoCompletionCache {
             for (TaggingPreset.Item item : p.data) {
                 if (item instanceof TaggingPreset.Check) {
                     TaggingPreset.Check ch = (TaggingPreset.Check) item;
-                    if (ch.key == null) continue;
+                    if (ch.key == null) {
+                        continue;
+                    }
                     presetTagCache.put(ch.key, OsmUtils.falseval);
                     presetTagCache.put(ch.key, OsmUtils.trueval);
                 } else if (item instanceof TaggingPreset.Combo) {
                     TaggingPreset.Combo co = (TaggingPreset.Combo) item;
-                    if (co.key == null || co.values == null) continue;
+                    if (co.key == null || co.values == null) {
+                        continue;
+                    }
                     for (String value : co.values.split(",")) {
                         presetTagCache.put(co.key, value);
                     }
                 } else if (item instanceof TaggingPreset.Key) {
                     TaggingPreset.Key ky = (TaggingPreset.Key) item;
-                    if (ky.key == null || ky.value == null) continue;
+                    if (ky.key == null || ky.value == null) {
+                        continue;
+                    }
                     presetTagCache.put(ky.key, ky.value);
                 } else if (item instanceof TaggingPreset.Text) {
                     TaggingPreset.Text tt = (TaggingPreset.Text) item;
-                    if (tt.key == null) continue;
+                    if (tt.key == null) {
+                        continue;
+                    }
                     presetTagCache.putVoid(tt.key);
                     if (tt.default_ != null && !tt.default_.equals("")) {
                         presetTagCache.put(tt.key, tt.default_);
@@ -170,7 +178,7 @@ public class AutoCompletionCache {
             }
         }
     }
-    
+
     /**
      * replies the keys held by the cache
      *

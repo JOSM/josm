@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -41,13 +42,17 @@ public class TagEditorModel extends AbstractTableModel {
     /** indicates whether the model is dirty */
     private boolean dirty =  false;
     private PropertyChangeSupport propChangeSupport = null;
+    private DefaultListSelectionModel rowSelectionModel;
+    private DefaultListSelectionModel colSelectionModel;
 
     /**
      * constructor
      */
-    public TagEditorModel(){
+    public TagEditorModel(DefaultListSelectionModel rowSelectionModel, DefaultListSelectionModel colSelectionModel){
         tags = new ArrayList<TagModel>();
         propChangeSupport = new PropertyChangeSupport(this);
+        this.rowSelectionModel = rowSelectionModel;
+        this.colSelectionModel  = colSelectionModel;
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -85,10 +90,29 @@ public class TagEditorModel extends AbstractTableModel {
         TagModel tag = tags.get(rowIndex);
         switch(columnIndex) {
         case 0:
-        case 1: return tag;
+        case 1:
+            return tag;
 
         default:
             throw new IndexOutOfBoundsException("unexpected columnIndex: columnIndex=" + columnIndex);
+        }
+    }
+
+    @Override
+    public void setValueAt(Object value, int row, int col) {
+        TagModel tag = get(row);
+        if (tag == null) return;
+        switch(col) {
+        case 0:
+            updateTagName(tag, (String)value);
+            break;
+        case 1:
+            String v = (String)value;
+            if (tag.getValueCount() > 1 && ! v.equals("")) {
+                updateTagValue(tag, v);
+            } else if (tag.getValueCount() <= 1) {
+                updateTagValue(tag, v);
+            }
         }
     }
 
@@ -165,6 +189,7 @@ public class TagEditorModel extends AbstractTableModel {
     }
 
     public TagModel get(int idx) {
+        if (idx >= tags.size()) return null;
         TagModel tagModel = tags.get(idx);
         return tagModel;
     }
@@ -452,7 +477,9 @@ public class TagEditorModel extends AbstractTableModel {
         if (! newName.equals(oldName)) {
             setDirty(true);
         }
+        SelectionStateMemento memento = new SelectionStateMemento();
         fireTableDataChanged();
+        memento.apply();
     }
 
     /**
@@ -468,7 +495,9 @@ public class TagEditorModel extends AbstractTableModel {
         if (! newValue.equals(oldValue)) {
             setDirty(true);
         }
+        SelectionStateMemento memento = new SelectionStateMemento();
         fireTableDataChanged();
+        memento.apply();
     }
 
     /**
@@ -478,5 +507,32 @@ public class TagEditorModel extends AbstractTableModel {
      */
     public boolean isDirty() {
         return dirty;
+    }
+
+    class SelectionStateMemento {
+        private int rowMin;
+        private int rowMax;
+        private int colMin;
+        private int colMax;
+
+        public SelectionStateMemento() {
+            rowMin = rowSelectionModel.getMinSelectionIndex();
+            rowMax = rowSelectionModel.getMaxSelectionIndex();
+            colMin = colSelectionModel.getMinSelectionIndex();
+            colMax = colSelectionModel.getMaxSelectionIndex();
+        }
+
+        public void apply() {
+            rowSelectionModel.setValueIsAdjusting(true);
+            colSelectionModel.setValueIsAdjusting(true);
+            if (rowMin >= 0 && rowMax >=0) {
+                rowSelectionModel.setSelectionInterval(rowMin, rowMax);
+            }
+            if (colMin >=0 && colMax >= 0) {
+                colSelectionModel.setSelectionInterval(colMin, colMax);
+            }
+            rowSelectionModel.setValueIsAdjusting(false);
+            colSelectionModel.setValueIsAdjusting(false);
+        }
     }
 }

@@ -3,22 +3,31 @@ package org.openstreetmap.josm.gui.tagging;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.applet.Applet;
 import java.awt.AWTException;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.KeyboardFocusManager;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.EventObject;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
+import javax.swing.CellEditor;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.JViewport;
@@ -34,18 +43,24 @@ import javax.swing.table.TableModel;
 import org.openstreetmap.josm.gui.dialogs.relation.RunnableAction;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This is the tabular editor component for OSM tags.
  *
  */
-@SuppressWarnings("serial")
 public class TagTable extends JTable  {
 
-    private static Logger logger = Logger.getLogger(TagTable.class.getName());
+    private static final Logger logger = Logger.getLogger(TagTable.class.getName());
 
     /** the table cell editor used by this table */
     private TagCellEditor editor = null;
+
+    /** a list of components to which focus can be transferred withouth stopping
+     * cell editing this table.
+     */
+    private final CopyOnWriteArrayList<Component> doNotStopCellEditingWhenFocused = new CopyOnWriteArrayList<Component>();
+    private CellEditorRemover editorRemover;
 
     /**
      * The table has two columns. The first column is used for editing rendering and
@@ -53,8 +68,8 @@ public class TagTable extends JTable  {
      *
      */
     static class TagTableColumnModel extends DefaultTableColumnModel {
-
-        public TagTableColumnModel() {
+        public TagTableColumnModel(DefaultListSelectionModel selectionModel) {
+            setSelectionModel(selectionModel);
             TableColumn col = null;
             TagCellRenderer renderer = new TagCellRenderer();
 
@@ -71,7 +86,6 @@ public class TagTable extends JTable  {
             col.setResizable(true);
             col.setCellRenderer(renderer);
             addColumn(col);
-
         }
     }
 
@@ -84,8 +98,6 @@ public class TagTable extends JTable  {
      *   <li>it automatically add a new empty row when the user leaves the
      *   last cell in the table</li>
      * <ul>
-     *
-     * @author gubaer
      *
      */
     class SelectNextColumnCellAction extends AbstractAction  {
@@ -166,6 +178,14 @@ public class TagTable extends JTable  {
      */
     class DeleteAction extends RunnableAction implements ListSelectionListener {
 
+        public DeleteAction() {
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+            putValue(SHORT_DESCRIPTION, tr("Delete the selection in the tag table"));
+            getSelectionModel().addListSelectionListener(this);
+            getColumnModel().getSelectionModel().addListSelectionListener(this);
+            updateEnabledState();
+        }
+
         /**
          * delete a selection of tag names
          */
@@ -193,21 +213,12 @@ public class TagTable extends JTable  {
             model.deleteTags(rows);
         }
 
-        /**
-         * constructor
-         */
-        public DeleteAction() {
-            putValue(Action.NAME, tr("Delete"));
-            getSelectionModel().addListSelectionListener(this);
-            getColumnModel().getSelectionModel().addListSelectionListener(this);
-        }
-
         @Override
         public void run() {
             if (!isEnabled())
                 return;
-            getCellEditor().stopCellEditing();
-            if (getSelectedColumnCount() == 1) {
+            switch(getSelectedColumnCount()) {
+            case 1:
                 if (getSelectedColumn() == 0) {
                     deleteTagNames();
                 } else if (getSelectedColumn() == 1) {
@@ -215,10 +226,20 @@ public class TagTable extends JTable  {
                 } else
                     // should not happen
                     //
-                    throw new IllegalStateException("unexpected selected clolumn: getSelectedColumn() is " + getSelectedColumn());
-            } else if (getSelectedColumnCount() == 2) {
+                    throw new IllegalStateException("unexpected selected column: getSelectedColumn() is " + getSelectedColumn());
+                break;
+            case 2:
                 deleteTags();
+                break;
             }
+
+            if (isEditing()) {
+                CellEditor editor = getCellEditor();
+                if (editor != null) {
+                    editor.cancelCellEditing();
+                }
+            }
+
             TagEditorModel model = (TagEditorModel)getModel();
             if (model.getRowCount() == 0) {
                 model.ensureOneTag();
@@ -230,6 +251,10 @@ public class TagTable extends JTable  {
          * listens to the table selection model
          */
         public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+
+        protected void updateEnabledState() {
             if (isEditing() && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1) {
                 setEnabled(false);
             } else if (!isEditing() && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1) {
@@ -239,7 +264,6 @@ public class TagTable extends JTable  {
             } else {
                 setEnabled(false);
             }
-
         }
     }
 
@@ -248,18 +272,31 @@ public class TagTable extends JTable  {
      *
      *
      */
-    class AddAction extends RunnableAction {
-
+    class AddAction extends RunnableAction implements PropertyChangeListener{
         public AddAction() {
-            putValue(Action.NAME, tr("Add"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
+            putValue(SHORT_DESCRIPTION, tr("Add a new tag"));
+            TagTable.this.addPropertyChangeListener(this);
+            updateEnabledState();
         }
 
         @Override
         public void run() {
-            getCellEditor().stopCellEditing();
+            CellEditor editor = getCellEditor();
+            if (editor != null) {
+                getCellEditor().stopCellEditing();
+            }
             ((TagEditorModel)getModel()).appendNewTag();
             final int rowIdx = getModel().getRowCount()-1;
             requestFocusInCell(rowIdx, 0);
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(TagTable.this.isEnabled());
+        }
+
+        public void propertyChange(PropertyChangeEvent evt) {
+            updateEnabledState();
         }
     }
 
@@ -286,9 +323,10 @@ public class TagTable extends JTable  {
      */
     protected void init() {
         setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        setCellSelectionEnabled(true);
+        //setCellSelectionEnabled(true);
+        setRowSelectionAllowed(true);
+        setColumnSelectionAllowed(true);
         setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
         // make ENTER behave like TAB
         //
@@ -315,9 +353,16 @@ public class TagTable extends JTable  {
         // create the table cell editor and set it to key and value columns
         //
         editor = new TagCellEditor();
-        editor.setTagEditorModel((TagEditorModel)getModel());
         getColumnModel().getColumn(0).setCellEditor(editor);
         getColumnModel().getColumn(1).setCellEditor(editor);
+
+        getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+            public void valueChanged(ListSelectionEvent e) {
+                ListSelectionModel rm = getSelectionModel();
+                ListSelectionModel cm = getColumnModel().getSelectionModel();
+            }
+        });
     }
 
     /**
@@ -326,8 +371,8 @@ public class TagTable extends JTable  {
      * @param model
      * @param columnModel
      */
-    public TagTable(TableModel model) {
-        super(model, new TagTableColumnModel());
+    public TagTable(TableModel model, DefaultListSelectionModel rowSelectionModel, DefaultListSelectionModel colSelectionModel) {
+        super(model, new TagTableColumnModel(colSelectionModel), rowSelectionModel);
         init();
     }
 
@@ -427,6 +472,106 @@ public class TagTable extends JTable  {
         } catch(AWTException e) {
             logger.log(Level.SEVERE, "failed to simulate mouse click event at (" + r.x + "," + r.y + "). Exception: " + e.toString());
             return;
+        }
+    }
+
+    public void addComponentNotStoppingCellEditing(Component component) {
+        if (component == null) return;
+        doNotStopCellEditingWhenFocused.addIfAbsent(component);
+    }
+
+    public void removeComponentNotStoppingCellEditing(Component component) {
+        if (component == null) return;
+        doNotStopCellEditingWhenFocused.remove(component);
+    }
+
+    @Override
+    public boolean editCellAt(int row, int column, EventObject e){
+
+        // a snipped copied from the Java 1.5 implementation of JTable
+        //
+        if (cellEditor != null && !cellEditor.stopCellEditing())
+            return false;
+
+        if (row < 0 || row >= getRowCount() ||
+                column < 0 || column >= getColumnCount())
+            return false;
+
+        if (!isCellEditable(row, column))
+            return false;
+
+        // make sure our custom implementation of CellEditorRemover is created
+        if (editorRemover == null) {
+            KeyboardFocusManager fm =
+                KeyboardFocusManager.getCurrentKeyboardFocusManager();
+            editorRemover = new CellEditorRemover(fm);
+            fm.addPropertyChangeListener("permanentFocusOwner", editorRemover);
+        }
+
+        // delegate to the default implementation
+        return super.editCellAt(row, column,e);
+    }
+
+
+    @Override
+    public void removeEditor() {
+        // make sure we unregister our custom implementation of CellEditorRemover
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().
+        removePropertyChangeListener("permanentFocusOwner", editorRemover);
+        editorRemover = null;
+        super.removeEditor();
+    }
+
+    @Override
+    public void removeNotify() {
+        // make sure we unregister our custom implementation of CellEditorRemover
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().
+        removePropertyChangeListener("permanentFocusOwner", editorRemover);
+        editorRemover = null;
+        super.removeNotify();
+    }
+
+    /**
+     * This is a custom implementation of the CellEditorRemover used in JTable
+     * to handle the client property <tt>terminateEditOnFocusLost</tt>.
+     * 
+     * This implementation also checks whether focus is transferred to one of a list
+     * of dedicated components, see {@see TagTable#doNotStopCellEditingWhenFocused}.
+     * A typical example for such a component is a button in {@see TagEditorPanel}
+     * which isn't a child component of {@see TagTable} but which should respond to
+     * to focus transfer in a similar way to a child of TagTable.
+     *
+     */
+    class CellEditorRemover implements PropertyChangeListener {
+        KeyboardFocusManager focusManager;
+
+        public CellEditorRemover(KeyboardFocusManager fm) {
+            this.focusManager = fm;
+        }
+
+        public void propertyChange(PropertyChangeEvent ev) {
+            if (!isEditing())
+                return;
+
+            Component c = focusManager.getPermanentFocusOwner();
+            while (c != null) {
+                if (c == TagTable.this)
+                    // focus remains inside the table
+                    return;
+                if (doNotStopCellEditingWhenFocused.contains(c))
+                    // focus remains on one of the associated components
+                    return;
+                else if ((c instanceof Window) ||
+                        (c instanceof Applet && c.getParent() == null)) {
+                    if (c == SwingUtilities.getRoot(TagTable.this)) {
+                        if (!getCellEditor().stopCellEditing()) {
+                            getCellEditor().cancelCellEditing();
+                        }
+                    }
+                    break;
+                }
+                c = c.getParent();
+            }
         }
     }
 }
