@@ -121,9 +121,11 @@ public class SearchCompiler {
 
     private static class Id extends Match {
         private long id;
-        public Id(long id) {this.id = id;}
+        public Id(long id) {
+            this.id = id;
+        }
         @Override public boolean match(OsmPrimitive osm) {
-            return osm.getId() == id;
+            return osm.getUniqueId() == id;
         }
         @Override public String toString() {return "id="+id;}
     }
@@ -662,7 +664,10 @@ public class SearchCompiler {
             if (tokenizer.readIfEqual(Token.EQUALS))
                 return new ExactKeyValue(regexSearch, key, tokenizer.readText());
             else if (tokenizer.readIfEqual(Token.COLON))
-                return parseKV(key, tokenizer.readText());
+                if ("id".equals(key))
+                    return new Id(tokenizer.readNumber(tr("Primitive id expected")));
+                else
+                    return parseKV(key, tokenizer.readText());
             else if (tokenizer.readIfEqual(Token.QUESTION_MARK))
                 return new BooleanMatch(key, false);
             else if ("modified".equals(key))
@@ -724,12 +729,6 @@ public class SearchCompiler {
                 throw new ParseError(tr("Incorrect value of nodes operator: {0}. Nodes operator expects number of nodes or range, for example nodes:10-20", value));
             }
 
-        } else if (key.equals("id")) {
-            try {
-                return new Id(Long.parseLong(value));
-            } catch (NumberFormatException x) {
-                throw new ParseError(tr("Incorrect value of id operator: {0}. Number is expected.", value));
-            }
         } else if (key.equals("changeset")) {
             try {
                 return new ChangesetId(Integer.parseInt(value));

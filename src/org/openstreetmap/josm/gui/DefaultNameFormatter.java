@@ -72,7 +72,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     /**
      * Decorates the name of primitive with its id, if the preference
-     * <tt>osm-primitives.showid</tt> is set.
+     * <tt>osm-primitives.showid</tt> is set. Shows unique id if osm-primitives.showid.new-primitives is set
      *
      * @param name  the name without the id
      * @param primitive the primitive
@@ -80,7 +80,10 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      */
     protected String decorateNameWithId(String name, OsmPrimitive primitive) {
         if (Main.pref.getBoolean("osm-primitives.showid"))
-            return name + tr(" [id: {0}]", primitive.getId());
+            if (Main.pref.getBoolean("osm-primitives.showid.new-primitives"))
+                return name + tr(" [id: {0}]", primitive.getUniqueId());
+            else
+                return name + tr(" [id: {0}]", primitive.getId());
         else
             return name;
     }

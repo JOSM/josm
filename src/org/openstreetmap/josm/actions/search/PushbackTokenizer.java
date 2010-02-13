@@ -14,6 +14,7 @@ public class PushbackTokenizer {
 
     private Token currentToken;
     private String currentText;
+    private long currentNumber;
     private int c;
 
     public PushbackTokenizer(Reader search) {
@@ -24,7 +25,8 @@ public class PushbackTokenizer {
     public enum Token {
         NOT(marktr("<not>")), OR(marktr("<or>")), LEFT_PARENT(marktr("<left parent>")),
         RIGHT_PARENT(marktr("<right parent>")), COLON(marktr("<colon>")), EQUALS(marktr("<equals>")),
-        KEY(marktr("<key>")), QUESTION_MARK(marktr("<question mark>")), EOF(marktr("<end-of-file>"));
+        KEY(marktr("<key>")), QUESTION_MARK(marktr("<question mark>")), NUMBER(marktr("<number>")),
+        EOF(marktr("<end-of-file>"));
 
         private Token(String name) {
             this.name = name;
@@ -45,6 +47,15 @@ public class PushbackTokenizer {
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    private long getNumber() {
+        long result = 0;
+        while (Character.isDigit(c)) {
+            result = result * 10 + (c - '0');
+            getChar();
+        }
+        return result;
     }
 
     /**
@@ -77,7 +88,11 @@ public class PushbackTokenizer {
             return Token.EQUALS;
         case '-':
             getChar();
-            return Token.NOT;
+            if (Character.isDigit(c)) {
+                currentNumber = -1 * getNumber();
+                return Token.NUMBER;
+            } else
+                return Token.NOT;
         case '(':
             getChar();
             return Token.LEFT_PARENT;
@@ -110,6 +125,11 @@ public class PushbackTokenizer {
         }
         default:
         {
+            if (Character.isDigit(c)) {
+                currentNumber = getNumber();
+                return Token.NUMBER;
+            }
+
             StringBuilder s = new StringBuilder();
             while (!(c == -1 || Character.isWhitespace(c) || c == '"'|| c == ':' || c == '(' || c == ')' || c == '|' || c == '=' || c == '?')) {
                 s.append((char)c);
@@ -146,6 +166,13 @@ public class PushbackTokenizer {
             throw new ParseError(errorMessage);
         else
             return text;
+    }
+
+    public long readNumber(String errorMessage) throws ParseError {
+        if (nextToken() == Token.NUMBER)
+            return currentNumber;
+        else
+            throw new ParseError(errorMessage);
     }
 
     public String getText() {
