@@ -1,12 +1,12 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -16,7 +16,6 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -26,140 +25,244 @@ import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class SimplifyWayAction extends JosmAction {
     public SimplifyWayAction() {
         super(tr("Simplify Way"), "simplify", tr("Delete unnecessary nodes from a way."), Shortcut.registerShortcut("tools:simplify", tr("Tool: {0}", tr("Simplify Way")),
-        KeyEvent.VK_Y, Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), true);
+                KeyEvent.VK_Y, Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), true);
+        putValue("help", ht("/Action/SimplifyWay"));
     }
 
-    public void actionPerformed(ActionEvent e) {
-        Collection<OsmPrimitive> selection = Main.main.getCurrentDataSet().getSelected();
-
-        int ways = 0;
+    protected List<Bounds> getCurrentEditBounds() {
         LinkedList<Bounds> bounds = new LinkedList<Bounds>();
         OsmDataLayer dataLayer = Main.map.mapView.getEditLayer();
         for (DataSource ds : dataLayer.data.dataSources) {
-            if (ds.bounds != null)
+            if (ds.bounds != null) {
                 bounds.add(ds.bounds);
-        }
-        for (OsmPrimitive prim : selection) {
-            if (prim instanceof Way) {
-                if (bounds.size() > 0) {
-                    Way way = (Way) prim;
-                    // We check if each node of each way is at least in one download
-                    // bounding box. Otherwise nodes may get deleted that are necessary by
-                    // unloaded ways (see Ticket #1594)
-                    for (Node node : way.getNodes()) {
-                        boolean isInsideOneBoundingBox = false;
-                        for (Bounds b : bounds) {
-                            if (b.contains(node.getCoor())) {
-                                isInsideOneBoundingBox = true;
-                                break;
-                            }
-                        }
-                        if (!isInsideOneBoundingBox) {
-                            int option = JOptionPane.showConfirmDialog(Main.parent,
-                                    trn("The selected way has nodes outside of the downloaded data region.",
-                                            "The selected ways have nodes outside of the downloaded data region.",
-                                            Main.main.getCurrentDataSet().getSelectedWays().size()) + "\n"
-                                            + tr("This can lead to nodes being deleted accidentally.") + "\n"
-                                            + tr("Are you really sure to continue?"),
-                                    tr("Please abort if you are not sure"), JOptionPane.YES_NO_CANCEL_OPTION,
-                                    JOptionPane.WARNING_MESSAGE);
-
-                            if (option != JOptionPane.YES_OPTION)
-                                return;
-                            break;
-                        }
-                    }
-                }
-
-                ways++;
             }
         }
+        return bounds;
+    }
 
-        if (ways == 0) {
-            JOptionPane.showMessageDialog(Main.parent, tr("Please select at least one way to simplify."));
+    protected boolean isInBounds(Node node, List<Bounds> bounds) {
+        for (Bounds b : bounds) {
+            if (b.contains(node.getCoor()))
+                return true;
+        }
+        return false;
+    }
+
+    protected boolean confirmWayWithNodesOutsideBoundingBox() {
+        ButtonSpec[] options = new ButtonSpec[] {
+                new ButtonSpec(
+                        tr("Yes, delete nodes"),
+                        ImageProvider.get("ok"),
+                        tr("Delete nodes outside of downloaded data regions"),
+                        null
+                ),
+                new ButtonSpec(
+                        tr("No, abort"),
+                        ImageProvider.get("cancel"),
+                        tr("Cancel operation"),
+                        null
+                )
+        };
+        int ret = HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                "<html>"
+                + trn("The selected way has nodes outside of the downloaded data region.",
+                        "The selected ways have nodes outside of the downloaded data region.",
+                        getCurrentDataSet().getSelectedWays().size())
+
+                        + "<br>"
+                        + tr("This can lead to nodes being deleted accidentally.") + "<br>"
+                        + tr("Do you want to delete them anyway?")
+                        + "</html>",
+                        tr("Delete nodes outside of data regions?"),
+                        JOptionPane.WARNING_MESSAGE,
+                        null, // no special icon
+                        options,
+                        options[0],
+                        HelpUtil.ht("/Action/SimplifyAction#ConfirmDeleteNodesOutsideBoundingBoxes")
+        );
+        return ret == 0;
+    }
+
+    protected void alertSelectAtLeastOneWay() {
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                tr("Please select at least one way to simplify."),
+                tr("Warning"),
+                JOptionPane.WARNING_MESSAGE,
+                HelpUtil.ht("/Action/SimplifyAction#SelectAWayToSimplify")
+        );
+    }
+
+    protected boolean confirmSimplifyManyWays(int numWays) {
+        ButtonSpec[] options = new ButtonSpec[] {
+                new ButtonSpec(
+                        tr("Yes"),
+                        ImageProvider.get("ok"),
+                        tr("Simplify all selected ways"),
+                        null
+                ),
+                new ButtonSpec(
+                        tr("Cancel"),
+                        ImageProvider.get("cancel"),
+                        tr("Cancel operation"),
+                        null
+                )
+        };
+        int ret = HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                tr(
+                        "The selection contains {0} ways. Are you sure you want to simplify them all?",
+                        numWays
+                ),
+                tr("Simplify ways?"),
+                JOptionPane.WARNING_MESSAGE,
+                null, // no special icon
+                options,
+                options[0],
+                HelpUtil.ht("/Action/SimplifyAction#ConfirmSimplifyAll")
+        );
+        return ret == 0;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
+
+        List<Bounds> bounds = getCurrentEditBounds();
+        for (OsmPrimitive prim : selection) {
+            if (! (prim instanceof Way)) {
+                continue;
+            }
+            if (bounds.size() > 0) {
+                Way way = (Way) prim;
+                // We check if each node of each way is at least in one download
+                // bounding box. Otherwise nodes may get deleted that are necessary by
+                // unloaded ways (see Ticket #1594)
+                for (Node node : way.getNodes()) {
+                    if (!isInBounds(node, bounds)) {
+                        if (!confirmWayWithNodesOutsideBoundingBox())
+                            return;
+                        break;
+                    }
+                }
+            }
+        }
+        List<Way> ways = OsmPrimitive.getFilteredList(selection, Way.class);
+        if (ways.isEmpty()) {
+            alertSelectAtLeastOneWay();
             return;
-        } else if (ways > 10) {
-            int option = JOptionPane.showConfirmDialog(Main.parent, trn(
-                    "The selection contains {0} way. Are you sure you want to simplify it?",
-                    "The selection contains {0} ways. Are you sure you want to simplify them all?",
-                    ways,ways),
-                    tr("Are you sure?"), JOptionPane.YES_NO_OPTION);
-            if (option != JOptionPane.YES_OPTION)
+        } else if (ways.size() > 10) {
+            if (!confirmSimplifyManyWays(ways.size()))
                 return;
         }
 
-        for (OsmPrimitive prim : selection) {
-            if (prim instanceof Way) {
-                simplifyWay((Way) prim);
+        Collection<Command> allCommands = new LinkedList<Command>();
+        for (Way way: ways) {
+            SequenceCommand simplifyCommand = simplifyWay(way);
+            if (simplifyCommand == null) {
+                continue;
             }
+            allCommands.add(simplifyCommand);
         }
+        if (allCommands.isEmpty()) return;
+        SequenceCommand rootCommand = new SequenceCommand(
+                trn("Simplify {0} way", "Simplify {0} ways", allCommands.size(), allCommands.size()),
+                allCommands
+        );
+        Main.main.undoRedo.add(rootCommand);
+        Main.map.repaint();
     }
 
-    public void simplifyWay(Way w) {
-        double threshold = Double.parseDouble(Main.pref.get("simplify-way.max-error", "3"));
-
-        Way wnew = new Way(w);
-
-        int toI = wnew.getNodesCount() - 1;
-        List<OsmPrimitive> parents = new ArrayList<OsmPrimitive>();
-        for (int i = wnew.getNodesCount() - 1; i >= 0; i--) {
-            parents.addAll(w.getNode(i).getReferrers());
-            boolean used = false;
-            if (parents.size() == 2) {
-                used = Collections.frequency(w.getNodes(), wnew.getNode(i)) > 1;
-            } else {
-                parents.remove(w);
-                parents.remove(wnew);
-                used = !parents.isEmpty();
-            }
-            if (!used)
-                used = wnew.getNode(i).isTagged();
-
-            if (used) {
-                simplifyWayRange(wnew, i, toI, threshold);
-                toI = i;
-            }
+    /**
+     * Replies true if <code>node</code> is a required node which can't be removed
+     * in order to simplify the way.
+     * 
+     * @param way the way to be simplified
+     * @param node the node to check
+     * @return true if <code>node</code> is a required node which can't be removed
+     * in order to simplify the way.
+     */
+    protected boolean isRequiredNode(Way way, Node node) {
+        boolean isRequired =  Collections.frequency(way.getNodes(), node) > 1;
+        if (! isRequired) {
+            List<OsmPrimitive> parents = new LinkedList<OsmPrimitive>();
+            parents.addAll(node.getReferrers());
+            parents.remove(way);
+            isRequired = !parents.isEmpty();
         }
-        simplifyWayRange(wnew, 0, toI, threshold);
+        if (!isRequired) {
+            isRequired = node.isTagged();
+        }
+        return isRequired;
+    }
+
+    /**
+     * Simplifies a way
+     * 
+     * @param w the way to simplify
+     */
+    public SequenceCommand simplifyWay(Way w) {
+        double threshold = Double.parseDouble(Main.pref.get("simplify-way.max-error", "3"));
+        int lower = 0;
+        int i = 0;
+        List<Node> newNodes = new LinkedList<Node>();
+        while(i < w.getNodesCount()){
+            if (isRequiredNode(w,w.getNode(i))) {
+                // copy a required node to the list of new nodes. Simplify not
+                // possible
+                newNodes.add(w.getNode(i));
+                i++;
+                lower++;
+                continue;
+            }
+            i++;
+            // find the longest sequence of not required nodes ...
+            while(i<w.getNodesCount() && !isRequiredNode(w,w.getNode(i))) {
+                i++;
+            }
+            // ... and simplify them
+            buildSimplifiedNodeList(w, lower, Math.min(w.getNodesCount()-1, i), threshold,newNodes);
+            lower=i;
+            i++;
+        }
 
         HashSet<Node> delNodes = new HashSet<Node>();
         delNodes.addAll(w.getNodes());
-        delNodes.removeAll(wnew.getNodes());
+        delNodes.removeAll(newNodes);
 
-        if (wnew.getNodesCount() != w.getNodesCount()) {
-            Collection<Command> cmds = new LinkedList<Command>();
-            cmds.add(new ChangeCommand(w, wnew));
-            cmds.add(new DeleteCommand(delNodes));
-            Main.main.undoRedo.add(new SequenceCommand(trn("Simplify Way (remove {0} node)", "Simplify Way (remove {0} nodes)", delNodes.size(), delNodes.size()), cmds));
-            Main.map.repaint();
-        }
+        if (delNodes.isEmpty()) return null;
+
+        Collection<Command> cmds = new LinkedList<Command>();
+        Way newWay = new Way(w);
+        newWay.setNodes(newNodes);
+        cmds.add(new ChangeCommand(w, newWay));
+        cmds.add(new DeleteCommand(delNodes));
+        return new SequenceCommand(trn("Simplify Way (remove {0} node)", "Simplify Way (remove {0} nodes)", delNodes.size(), delNodes.size()), cmds);
     }
 
-    public void simplifyWayRange(Way wnew, int from, int to, double thr) {
-        if (to - from >= 2) {
-            ArrayList<Node> ns = new ArrayList<Node>();
-            simplifyWayRange(wnew, from, to, ns, thr);
-            List<Node> nodes = wnew.getNodes();
-            for (int j = to - 1; j > from; j--) {
-                nodes.remove(j);
-            }
-            nodes.addAll(from + 1, ns);
-            wnew.setNodes(nodes);
-        }
-    }
-
-    /*
-     * Takes an interval [from,to] and adds nodes from (from,to) to ns.
-     * (from and to are indices of wnew.nodes.)
+    /**
+     * Builds the simplified list of nodes for a way segment given by a lower index <code>from</code>
+     * and an upper index <code>to</code>
+     * 
+     * @param wnew the way to simplify
+     * @param from the lower index
+     * @param to the upper index
+     * @param threshold
      */
-    public void simplifyWayRange(Way wnew, int from, int to, ArrayList<Node> ns, double thr) {
-        Node fromN = wnew.getNode(from), toN = wnew.getNode(to);
+    protected void buildSimplifiedNodeList(Way wnew, int from, int to, double threshold, List<Node> simplifiedNodes) {
+
+        Node fromN = wnew.getNode(from);
+        Node toN = wnew.getNode(to);
 
         int imax = -1;
         double xtemax = 0;
@@ -175,10 +278,17 @@ public class SimplifyWayAction extends JosmAction {
             }
         }
 
-        if (imax != -1 && xtemax >= thr) {
-            simplifyWayRange(wnew, from, imax, ns, thr);
-            ns.add(wnew.getNode(imax));
-            simplifyWayRange(wnew, imax, to, ns, thr);
+        if (imax != -1 && xtemax >= threshold) {
+            buildSimplifiedNodeList(wnew, from, imax,threshold,simplifiedNodes);
+            simplifiedNodes.add(wnew.getNode(imax));
+            buildSimplifiedNodeList(wnew, imax, to, threshold,simplifiedNodes);
+        } else {
+            if (simplifiedNodes.isEmpty() || simplifiedNodes.get(simplifiedNodes.size()-1) != fromN) {
+                simplifiedNodes.add(fromN);
+            }
+            if (simplifiedNodes.isEmpty() || simplifiedNodes.get(simplifiedNodes.size()-1) != toN) {
+                simplifiedNodes.add(toN);
+            }
         }
     }
 
