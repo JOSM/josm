@@ -54,7 +54,7 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
     /**
      * Execute the command and add it to the intern command queue.
      */
-    public void add(final Command c) {
+    synchronized public void add(final Command c) {
         addNoRedraw(c);
         afterAdd();
     }
@@ -62,7 +62,7 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
     /**
      * Undoes the last added command.
      */
-    public void undo() {
+    synchronized public void undo() {
         if (commands.isEmpty())
             return;
         Collection<? extends OsmPrimitive> oldSelection = Main.main.getCurrentDataSet().getSelected();
