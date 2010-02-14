@@ -3,8 +3,6 @@ package org.openstreetmap.josm.gui.dialogs.changeset.query;
 
 import javax.swing.JFrame;
 
-import org.openstreetmap.josm.fixtures.JOSMFixture;
-
 public class ChangesetQueryDialogTest extends JFrame {
 
     private ChangesetQueryDialog dialog;
@@ -13,7 +11,6 @@ public class ChangesetQueryDialogTest extends JFrame {
     }
 
     public void start() {
-        JOSMFixture fixture = JOSMFixture.createFunctionalTestFixture();
         dialog = new ChangesetQueryDialog(this);
         dialog.initForUserInput();
         dialog.setVisible(true);

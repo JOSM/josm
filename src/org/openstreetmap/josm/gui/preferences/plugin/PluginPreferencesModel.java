@@ -38,7 +38,7 @@ public class PluginPreferencesModel extends Observable{
         if (filter == null) {
             displayedPlugins.clear();
             displayedPlugins.addAll(availablePlugins);
-            this.filterExpression = filter;
+            this.filterExpression = null;
             return;
         }
         displayedPlugins.clear();

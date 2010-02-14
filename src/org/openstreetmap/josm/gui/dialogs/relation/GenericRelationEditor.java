@@ -551,7 +551,6 @@ public class GenericRelationEditor extends RelationEditor  {
             DataSet.selListeners.remove(memberTableModel);
             DataSet.selListeners.remove(selectionTableModel);
             getLayer().data.removeDataSetListener(memberTableModel);
-            getLayer().listenerDataChanged.remove(memberTableModel);
             memberTable.unlinkAsListener();
             dispose();
         }

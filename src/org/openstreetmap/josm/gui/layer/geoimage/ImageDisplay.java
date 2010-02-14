@@ -124,9 +124,8 @@ public class ImageDisplay extends JComponent {
             mouseIsDragging = false;
             selectedRect = null;
 
-            if (image == null) {
+            if (image == null)
                 return;
-            }
 
             // Calculate the mouse cursor position in image coordinates, so that we can center the zoom
             // on that mouse position.
@@ -195,13 +194,11 @@ public class ImageDisplay extends JComponent {
                 visibleRect = ImageDisplay.this.visibleRect;
             }
 
-            if (image == null) {
+            if (image == null)
                 return;
-            }
 
-            if (e.getButton() != DRAG_BUTTON) {
+            if (e.getButton() != DRAG_BUTTON)
                 return;
-            }
 
             // Calculate the translation to set the clicked point the center of the view.
             Point click = comp2imgCoord(visibleRect, e.getX(), e.getY());
@@ -229,19 +226,16 @@ public class ImageDisplay extends JComponent {
                 return;
             }
 
-            File file;
             Image image;
             Rectangle visibleRect;
 
             synchronized (ImageDisplay.this) {
-                file = ImageDisplay.this.file;
                 image = ImageDisplay.this.image;
                 visibleRect = ImageDisplay.this.visibleRect;
             }
 
-            if (image == null) {
+            if (image == null)
                 return;
-            }
 
             if (e.getButton() == DRAG_BUTTON) {
                 mousePointInImg = comp2imgCoord(visibleRect, e.getX(), e.getY());
@@ -260,9 +254,8 @@ public class ImageDisplay extends JComponent {
         }
 
         public void mouseDragged(MouseEvent e) {
-            if (! mouseIsDragging && selectedRect == null) {
+            if (! mouseIsDragging && selectedRect == null)
                 return;
-            }
 
             File file;
             Image image;
@@ -309,18 +302,15 @@ public class ImageDisplay extends JComponent {
         }
 
         public void mouseReleased(MouseEvent e) {
-            if (! mouseIsDragging && selectedRect == null) {
+            if (! mouseIsDragging && selectedRect == null)
                 return;
-            }
 
             File file;
             Image image;
-            Rectangle visibleRect;
 
             synchronized (ImageDisplay.this) {
                 file = ImageDisplay.this.file;
                 image = ImageDisplay.this.image;
-                visibleRect = ImageDisplay.this.visibleRect;
             }
 
             if (image == null) {
@@ -423,6 +413,7 @@ public class ImageDisplay extends JComponent {
         this.osdText = text;
     }
 
+    @Override
     public void paintComponent(Graphics g) {
         Image image;
         File file;
@@ -442,32 +433,32 @@ public class ImageDisplay extends JComponent {
             Rectangle2D noImageSize = g.getFontMetrics(g.getFont()).getStringBounds(noImageStr, g);
             Dimension size = getSize();
             g.drawString(noImageStr,
-                         (int) ((size.width - noImageSize.getWidth()) / 2),
-                         (int) ((size.height - noImageSize.getHeight()) / 2));
+                    (int) ((size.width - noImageSize.getWidth()) / 2),
+                    (int) ((size.height - noImageSize.getHeight()) / 2));
         } else if (image == null) {
             g.setColor(Color.black);
             String loadingStr;
             if (! errorLoading) {;
-                loadingStr = tr("Loading {0}", file.getName());
+            loadingStr = tr("Loading {0}", file.getName());
             } else {
                 loadingStr = tr("Error on file {0}", file.getName());
             }
             Rectangle2D noImageSize = g.getFontMetrics(g.getFont()).getStringBounds(loadingStr, g);
             Dimension size = getSize();
             g.drawString(loadingStr,
-                         (int) ((size.width - noImageSize.getWidth()) / 2),
-                         (int) ((size.height - noImageSize.getHeight()) / 2));
+                    (int) ((size.width - noImageSize.getWidth()) / 2),
+                    (int) ((size.height - noImageSize.getHeight()) / 2));
         } else {
             Rectangle target = calculateDrawImageRectangle(visibleRect);
             g.drawImage(image,
-                        target.x, target.y, target.x + target.width, target.y + target.height,
-                        visibleRect.x, visibleRect.y, visibleRect.x + visibleRect.width, visibleRect.y + visibleRect.height,
-                        null);
+                    target.x, target.y, target.x + target.width, target.y + target.height,
+                    visibleRect.x, visibleRect.y, visibleRect.x + visibleRect.width, visibleRect.y + visibleRect.height,
+                    null);
             if (selectedRect != null) {
                 Point topLeft = img2compCoord(visibleRect, selectedRect.x, selectedRect.y);
                 Point bottomRight = img2compCoord(visibleRect,
-                                                  selectedRect.x + selectedRect.width,
-                                                  selectedRect.y + selectedRect.height);
+                        selectedRect.x + selectedRect.width,
+                        selectedRect.y + selectedRect.height);
                 g.setColor(new Color(128, 128, 128, 180));
                 g.fillRect(target.x, target.y, target.width, topLeft.y - target.y);
                 g.fillRect(target.x, target.y, topLeft.x - target.x, target.height);
@@ -481,8 +472,8 @@ public class ImageDisplay extends JComponent {
                 Rectangle2D noImageSize = g.getFontMetrics(g.getFont()).getStringBounds(loadingStr, g);
                 Dimension size = getSize();
                 g.drawString(loadingStr,
-                             (int) ((size.width - noImageSize.getWidth()) / 2),
-                             (int) ((size.height - noImageSize.getHeight()) / 2));
+                        (int) ((size.width - noImageSize.getWidth()) / 2),
+                        (int) ((size.height - noImageSize.getHeight()) / 2));
             }
             if (osdText != null) {
                 FontMetrics metrics = g.getFontMetrics(g.getFont());
@@ -518,18 +509,18 @@ public class ImageDisplay extends JComponent {
     private final Point img2compCoord(Rectangle visibleRect, int xImg, int yImg) {
         Rectangle drawRect = calculateDrawImageRectangle(visibleRect);
         return new Point(drawRect.x + ((xImg - visibleRect.x) * drawRect.width) / visibleRect.width,
-                         drawRect.y + ((yImg - visibleRect.y) * drawRect.height) / visibleRect.height);
+                drawRect.y + ((yImg - visibleRect.y) * drawRect.height) / visibleRect.height);
     }
 
     private final Point comp2imgCoord(Rectangle visibleRect, int xComp, int yComp) {
         Rectangle drawRect = calculateDrawImageRectangle(visibleRect);
         return new Point(visibleRect.x + ((xComp - drawRect.x) * visibleRect.width) / drawRect.width,
-                         visibleRect.y + ((yComp - drawRect.y) * visibleRect.height) / drawRect.height);
+                visibleRect.y + ((yComp - drawRect.y) * visibleRect.height) / drawRect.height);
     }
 
-   private final Point getCenterImgCoord(Rectangle visibleRect) {
+    private final Point getCenterImgCoord(Rectangle visibleRect) {
         return new Point(visibleRect.x + visibleRect.width / 2,
-                                 visibleRect.y + visibleRect.height / 2);
+                visibleRect.y + visibleRect.height / 2);
     }
 
     private Rectangle calculateDrawImageRectangle(Rectangle visibleRect) {
@@ -575,9 +566,8 @@ public class ImageDisplay extends JComponent {
             visibleRect = ImageDisplay.this.visibleRect;
         }
 
-        if (image == null) {
+        if (image == null)
             return;
-        }
 
         if (visibleRect.width != image.getWidth(null) || visibleRect.height != image.getHeight(null)) {
             // The display is not at best fit. => Zoom to best fit
@@ -587,7 +577,7 @@ public class ImageDisplay extends JComponent {
             // The display is at best fit => zoom to 1:1
             Point center = getCenterImgCoord(visibleRect);
             visibleRect = new Rectangle(center.x - getWidth() / 2, center.y - getHeight() / 2,
-                                        getWidth(), getHeight());
+                    getWidth(), getHeight());
             checkVisibleRectPos(image, visibleRect);
         }
 

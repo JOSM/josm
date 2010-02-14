@@ -841,7 +841,6 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         if (oldLayer != null && oldLayer instanceof OsmDataLayer) {
             OsmDataLayer l = (OsmDataLayer)oldLayer;
             l.data.removeDataSetListener(this);
-            l.listenerDataChanged.remove(this);
         }
         if (newLayer == null || ! (newLayer instanceof OsmDataLayer)) {
             latest = null;

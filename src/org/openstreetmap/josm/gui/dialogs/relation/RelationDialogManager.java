@@ -43,8 +43,8 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
      *
      */
     static private class DialogContext {
-        public Relation relation;
-        public OsmDataLayer layer;
+        public final Relation relation;
+        public final OsmDataLayer layer;
 
         public DialogContext(OsmDataLayer layer, Relation relation) {
             this.layer = layer;
@@ -93,7 +93,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
     }
 
     /** the map of open dialogs */
-    private HashMap<DialogContext, RelationEditor> openDialogs;
+    private final HashMap<DialogContext, RelationEditor> openDialogs;
 
     /**
      * constructor

@@ -6,6 +6,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 
 import org.openstreetmap.josm.Main;
@@ -123,8 +124,9 @@ public abstract class CacheCustomContent {
      * @return the data
      */
     public byte[] getData() {
-        if(data == null)
+        if(data == null) {
             loadFromDisk();
+        }
         return data;
     }
 
@@ -145,7 +147,7 @@ public abstract class CacheCustomContent {
             this.data = new byte[input.available()];
             input.read(this.data);
             input.close();
-        } catch(Exception e) {
+        } catch(IOException e) {
             this.data = updateForce();
         }
     }
@@ -159,7 +161,9 @@ public abstract class CacheCustomContent {
             output.write(this.data);
             output.flush();
             output.close();
-        } catch(Exception e) {}
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

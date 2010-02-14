@@ -59,19 +59,11 @@ public class ChangesetCache implements PreferenceChangedListener{
     }
 
     public void addChangesetCacheListener(ChangesetCacheListener listener) {
-        synchronized(listeners) {
-            if (listener != null && ! listeners.contains(listener)) {
-                listeners.add(listener);
-            }
-        }
+        listeners.addIfAbsent(listener);
     }
 
     public void removeChangesetCacheListener(ChangesetCacheListener listener) {
-        synchronized(listeners) {
-            if (listener != null && listeners.contains(listener)) {
-                listeners.remove(listener);
-            }
-        }
+        listeners.remove(listener);
     }
 
     protected void fireChangesetCacheEvent(final ChangesetCacheEvent e) {

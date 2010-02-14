@@ -347,20 +347,18 @@ public class DeleteAction extends MapMode implements AWTEventListener {
     private void setCursor(final DeleteMode c) {
         if(currentMode.equals(c) || (!drawTargetCursor && currentMode.equals(DeleteMode.none)))
             return;
-        try {
-            // We invoke this to prevent strange things from happening
-            EventQueue.invokeLater(new Runnable() {
-                public void run() {
-                    // Don't change cursor when mode has changed already
-                    if(!(Main.map.mapMode instanceof DeleteAction))
-                        return;
+        // We invoke this to prevent strange things from happening
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                // Don't change cursor when mode has changed already
+                if(!(Main.map.mapMode instanceof DeleteAction))
+                    return;
 
-                    Main.map.mapView.setCursor(c.cursor());
-                    //System.out.println("Set cursor to: " + c.name());
-                }
-            });
-            currentMode = c;
-        } catch(Exception e) {}
+                Main.map.mapView.setCursor(c.cursor());
+                //System.out.println("Set cursor to: " + c.name());
+            }
+        });
+        currentMode = c;
     }
 
     /**

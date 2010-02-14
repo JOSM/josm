@@ -11,7 +11,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import org.openstreetmap.josm.fixtures.JOSMFixture;
 import org.openstreetmap.josm.gui.io.UploadStrategySelectionPanel;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 
@@ -55,7 +54,6 @@ public class UploadStrategySelectionPanelTest extends JFrame {
     }
 
     public static void main(String args[]) throws OsmApiInitializationException, OsmTransferCancelledException{
-        JOSMFixture josmFixture = JOSMFixture.createFunctionalTestFixture();
         OsmApi.getOsmApi().initialize(NullProgressMonitor.INSTANCE);
         new UploadStrategySelectionPanelTest().setVisible(true);
     }

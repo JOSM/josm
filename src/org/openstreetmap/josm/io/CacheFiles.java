@@ -42,9 +42,9 @@ public class CacheFiles {
     private boolean updateModTime = true;
 
     // If the cache is full, we don't want to delete just one file
-    private final int cleanUpThreshold = 20;
+    private static final int cleanUpThreshold = 20;
     // We don't want to clean after every file-write
-    private final int cleanUpInterval = 5;
+    private static final int cleanUpInterval = 5;
     // Stores how many files have been written
     private int writes = 0;
 
