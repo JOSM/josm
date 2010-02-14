@@ -23,7 +23,7 @@ public class DataSetMerger {
     private static Logger logger = Logger.getLogger(DataSetMerger.class.getName());
 
     /** the collection of conflicts created during merging */
-    private ConflictCollection conflicts;
+    private final ConflictCollection conflicts;
 
     /** the target dataset for merging */
     private final DataSet targetDataSet;
@@ -34,12 +34,12 @@ public class DataSetMerger {
      * A map of all primitives that got replaced with other primitives.
      * Key is the primitive id in their dataset, the value is the id in my dataset
      */
-    private Map<Long, Long> mergedMap;
+    private final Map<Long, Long> mergedMap;
     /** a set of primitive ids for which we have to fix references (to nodes and
      * to relation members) after the first phase of merging
      */
-    private Set<PrimitiveId> objectsWithChildrenToMerge;
-    private Set<OsmPrimitive> deletedObjectsToUnlink;
+    private final Set<PrimitiveId> objectsWithChildrenToMerge;
+    private final Set<OsmPrimitive> deletedObjectsToUnlink;
 
     /**
      * constructor

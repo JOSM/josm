@@ -99,7 +99,6 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
                     new Runnable() {
                         public void run() {
                             layer.mergeFrom(allDownloads);
-                            layer.fireDataChange();
                             layer.onPostDownloadFromServer();
                             Main.map.repaint();
                         }

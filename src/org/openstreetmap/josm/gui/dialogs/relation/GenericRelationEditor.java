@@ -114,7 +114,6 @@ public class GenericRelationEditor extends RelationEditor  {
         memberTableModel = new MemberTableModel(getLayer());
         DataSet.selListeners.add(memberTableModel);
         getLayer().data.addDataSetListener(memberTableModel);
-        getLayer().listenerDataChanged.add(memberTableModel);
         selectionTableModel = new SelectionTableModel(getLayer());
         DataSet.selListeners.add(selectionTableModel);
         referrerModel = new ReferringRelationsBrowserModel(relation);
@@ -1030,7 +1029,6 @@ public class GenericRelationEditor extends RelationEditor  {
             // make sure everybody is notified about the changes
             //
             getLayer().data.fireSelectionChanged();
-            getLayer().fireDataChange();
             GenericRelationEditor.this.setRelation(newRelation);
             RelationDialogManager.getRelationDialogManager().updateContext(
                     getLayer(),

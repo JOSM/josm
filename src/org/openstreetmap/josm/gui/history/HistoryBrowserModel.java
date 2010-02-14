@@ -36,7 +36,6 @@ import org.openstreetmap.josm.data.osm.history.HistoryWay;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
-import org.openstreetmap.josm.gui.layer.DataChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -66,7 +65,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  * @see HistoryBrowser
  */
-public class HistoryBrowserModel extends Observable implements LayerChangeListener, DataSetListener, DataChangeListener {
+public class HistoryBrowserModel extends Observable implements LayerChangeListener, DataSetListener {
     //private static Logger logger = Logger.getLogger(HistoryBrowserModel.class.getName());
 
     /** the history of an OsmPrimitive */
@@ -101,7 +100,6 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
 
         if (getEditLayer() != null) {
             getEditLayer().data.addDataSetListener(this);
-            getEditLayer().listenerDataChanged.add(this);
         }
         MapView.addLayerChangeListener(this);
     }
@@ -821,19 +819,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     }
 
     public void dataChanged(DataChangedEvent event) {
-        dataChanged(getEditLayer());
-    }
-
-    public void otherDatasetChange(AbstractDatasetChangedEvent event) {
-        // Irrelevant
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /* DataChangeListener                                                     */
-    /* ---------------------------------------------------------------------- */
-    public void dataChanged(OsmDataLayer l) {
-        if (l != getEditLayer()) return;
-        OsmPrimitive primitive = l.data.getPrimitiveById(history.getId(), history.getType());
+        OsmPrimitive primitive = event.getDataset().getPrimitiveById(history.getId(), history.getType());
         HistoryOsmPrimitive latest;
         if (canShowAsLatest(primitive)) {
             latest = new HistoryPrimitiveBuilder().build(primitive);
@@ -842,6 +828,10 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
         setLatest(latest);
         fireModelChange();
+    }
+
+    public void otherDatasetChange(AbstractDatasetChangedEvent event) {
+        // Irrelevant
     }
 
     /* ---------------------------------------------------------------------- */
@@ -860,7 +850,6 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
         OsmDataLayer l = (OsmDataLayer)newLayer;
         l.data.addDataSetListener(this);
-        l.listenerDataChanged.add(this);
         OsmPrimitive primitive = l.data.getPrimitiveById(history.getId(), history.getType());
         HistoryOsmPrimitive latest;
         if (canShowAsLatest(primitive)) {

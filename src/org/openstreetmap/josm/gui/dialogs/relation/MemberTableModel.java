@@ -42,10 +42,9 @@ import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction;
-import org.openstreetmap.josm.gui.layer.DataChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
-public class MemberTableModel extends AbstractTableModel implements TableModelListener, SelectionChangedListener, DataChangeListener, DataSetListener{
+public class MemberTableModel extends AbstractTableModel implements TableModelListener, SelectionChangedListener, DataSetListener {
 
     /**
      * data of the table model: The list of members and the cached WayConnectionType of each member.
@@ -82,16 +81,6 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         setSelectedMembers(sel);
     }
 
-    /* --------------------------------------------------------------------------- */
-    /* Interface DataChangeListener                                                */
-    /* --------------------------------------------------------------------------- */
-    public void dataChanged(OsmDataLayer l) {
-        if (l != this.layer) return;
-        // just trigger a repaint
-        Collection<RelationMember> sel = getSelectedMembers();
-        fireTableDataChanged();
-        setSelectedMembers(sel);
-    }
     /* --------------------------------------------------------------------------- */
     /* Interface DataSetListener                                                   */
     /* --------------------------------------------------------------------------- */

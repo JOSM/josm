@@ -99,7 +99,6 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
                     new Runnable() {
                         public void run() {
                             curLayer.mergeFrom(dataSet);
-                            curLayer.fireDataChange();
                             curLayer.onPostDownloadFromServer();
                         }
                     }

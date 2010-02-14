@@ -25,18 +25,21 @@ import javax.swing.table.TableCellRenderer;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.Filters;
-import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSetListener;
+import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
+import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter.Listener;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.layer.DataChangeListener;
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  *
  * @author Petr_Dlouhý
  */
-public class FilterDialog extends ToggleDialog implements DataChangeListener, MapView.LayerChangeListener, TableModelListener {
+public class FilterDialog extends ToggleDialog implements Listener , TableModelListener {
+
     private JTable userTable;
     private Filters filters = new Filters();
     private SideButton addButton;
@@ -44,6 +47,8 @@ public class FilterDialog extends ToggleDialog implements DataChangeListener, Ma
     private SideButton deleteButton;
     private SideButton upButton;
     private SideButton downButton;
+
+    private final DataSetListener listenerAdapter = new DataSetListenerAdapter(this);
 
     public FilterDialog(){
         super(tr("Filter"), "filter", tr("Filter objects and hide/disable them."),
@@ -53,12 +58,12 @@ public class FilterDialog extends ToggleDialog implements DataChangeListener, Ma
 
     @Override
     public void showNotify() {
-        MapView.addLayerChangeListener(this);
+        DatasetEventManager.getInstance().addDatasetListener(listenerAdapter, FireMode.IN_EDT_CONSOLIDATED);
     }
 
     @Override
     public void hideNotify() {
-        MapView.removeLayerChangeListener(this);
+        DatasetEventManager.getInstance().removeDatasetListener(listenerAdapter);
     }
 
     protected JPanel buildButtonRow() {
@@ -181,23 +186,7 @@ public class FilterDialog extends ToggleDialog implements DataChangeListener, Ma
         add(pnl, BorderLayout.CENTER);
     }
 
-    public void layerRemoved(Layer a) {
-        if (a instanceof OsmDataLayer) {
-            ((OsmDataLayer)a).listenerDataChanged.remove(this);
-        }
-    }
-
-    public void layerAdded(Layer a) {
-        if (a instanceof OsmDataLayer) {
-            ((OsmDataLayer)a).listenerDataChanged.add(this);
-        }
-    }
-
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        filters.filter();
-    }
-
-    public void dataChanged(OsmDataLayer l){
+    public void processDatasetEvent(AbstractDatasetChangedEvent event) {
         filters.filter();
     }
 

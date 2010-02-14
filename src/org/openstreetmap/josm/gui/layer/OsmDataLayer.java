@@ -158,6 +158,11 @@ public class OsmDataLayer extends Layer {
      */
     private ConflictCollection conflicts;
 
+    /**
+     * @deprecated Use {@link DataSet#addDataSetListener(org.openstreetmap.josm.data.osm.event.DataSetListener)} instead
+     * @see DataSetListener, DatasetEventManager
+     */
+    @Deprecated
     public final LinkedList<DataChangeListener> listenerDataChanged = new LinkedList<DataChangeListener>();
 
     /**
