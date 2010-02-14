@@ -11,7 +11,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JFileChooser;
@@ -19,7 +21,9 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.AllFormatsImporter;
 import org.openstreetmap.josm.io.FileImporter;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -88,6 +92,59 @@ public class OpenFileAction extends DiskAccessAction {
             // do nothing
         }
 
+        protected void alertFilesNotMatchingWithImporter(Collection<File> files, FileImporter importer) {
+            StringBuffer msg = new StringBuffer();
+            msg.append("<html>");
+            msg.append(
+                    trn(
+                            "Cannot open {0} file with the file importer ''{1}''. Skipping the following files:",
+                            "Cannot open {0} files with the file importer ''{1}''. Skipping the following files:",
+                            files.size(),
+                            files.size(),
+                            importer.filter.getDescription()
+                    )
+            ).append("<br>");
+            msg.append("<ul>");
+            for (File f: files) {
+                msg.append("<li>").append(f.getAbsolutePath()).append("</li>");
+            }
+            msg.append("</ul>");
+
+            HelpAwareOptionPane.showOptionDialog(
+                    Main.parent,
+                    msg.toString(),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE,
+                    HelpUtil.ht("/Action/OpenFile#ImporterCantImportFiles")
+            );
+        }
+
+        protected void alertFilesWithUnknownImporter(Collection<File> files) {
+            StringBuffer msg = new StringBuffer();
+            msg.append("<html>");
+            msg.append(
+                    trn(
+                            "Cannot open {0} file because no suitable file importer is available. Skipping the following files:",
+                            "Cannot open {0} files because no suitable file importer is available. Skipping the following files:",
+                            files.size(),
+                            files.size()
+                    )
+            ).append("<br>");
+            msg.append("<ul>");
+            for (File f: files) {
+                msg.append("<li>").append(f.getAbsolutePath()).append("</li>");
+            }
+            msg.append("</ul>");
+
+            HelpAwareOptionPane.showOptionDialog(
+                    Main.parent,
+                    msg.toString(),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE,
+                    HelpUtil.ht("/Action/OpenFile#MissingImporterForFiles")
+            );
+        }
+
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
             if (files == null || files.isEmpty()) return;
@@ -110,43 +167,53 @@ public class OpenFileAction extends DiskAccessAction {
             }
             getProgressMonitor().setTicksCount(files.size());
 
-            if (chosenImporter != null) { // The importer was expicitely chosen, so use it.
-                //System.err.println("Importer: " +chosenImporter.getClass().getName());
+            if (chosenImporter != null) {
+                // The importer was expicitely chosen, so use it.
+                List<File> filesNotMatchingWithImporter = new LinkedList<File>();
+                List<File> filesMatchingWithImporter = new LinkedList<File>();
                 for (File f : files) {
                     if (!chosenImporter.acceptFile(f)) {
                         if (f.isDirectory()) {
-                            JOptionPane.showMessageDialog(
-                                    Main.parent,
-                                    tr("<html>Cannot open directory.<br>Please select a file!</html>"),
-                                    tr("Open file"),
-                                    JOptionPane.INFORMATION_MESSAGE
-                            );
-                            return;
-                        } else
-                            throw new IllegalStateException();
+                            JOptionPane.showMessageDialog(Main.parent, tr(
+                                    "<html>Cannot open directory ''{0}''.<br>Please select a file.</html>", f
+                                    .getAbsolutePath()), tr("Open file"), JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            filesNotMatchingWithImporter.add(f);
+                        }
+                    } else {
+                        filesMatchingWithImporter.add(f);
                     }
                 }
-                importData(chosenImporter, files);
-            }
-            else {    // find apropriate importer
+
+                if (!filesNotMatchingWithImporter.isEmpty()) {
+                    alertFilesNotMatchingWithImporter(filesNotMatchingWithImporter, chosenImporter);
+                }
+                if (!filesNotMatchingWithImporter.isEmpty()) {
+                    importData(chosenImporter, filesMatchingWithImporter);
+                }
+            } else {
+                // find appropriate importer
                 MultiMap<FileImporter, File> map = new MultiMap<FileImporter, File>();
-                FILES:
-                    for (File f: files) {
-                        for (FileImporter importer : ExtensionFileFilter.importers) {
-                            if (importer.acceptFile(f)) {
-                                map.put(importer, f);
-                                continue FILES;
-                            }
+                List<File> filesWithKnownImporter = new LinkedList<File>();
+                List<File> filesWithUnknownImporter = new LinkedList<File>();
+                FILES: for (File f : files) {
+                    for (FileImporter importer : ExtensionFileFilter.importers) {
+                        if (importer.acceptFile(f)) {
+                            map.put(importer, f);
+                            filesWithKnownImporter.add(f);
+                            continue FILES;
                         }
-                        throw new RuntimeException(); // no importer found
                     }
+                    filesWithUnknownImporter.add(f);
+                }
+                if (!filesWithUnknownImporter.isEmpty()) {
+                    alertFilesWithUnknownImporter(filesWithUnknownImporter);
+                }
                 List<FileImporter> ims = new ArrayList<FileImporter>(map.keySet());
                 Collections.sort(ims);
                 Collections.reverse(ims);
                 for (FileImporter importer : ims) {
-                    //System.err.println("Using "+importer.getClass().getName());
                     List<File> files = new ArrayList<File>(map.get(importer));
-                    //System.err.println("for files: "+files);
                     importData(importer, files);
                 }
             }
@@ -161,6 +228,7 @@ public class OpenFileAction extends DiskAccessAction {
                 } else {
                     msg = trn("Opening {0} file...", "Opening {0} files...", files.size(), files.size());
                 }
+                getProgressMonitor().setCustomText(msg);
                 getProgressMonitor().indeterminateSubTask(msg);
                 importer.importDataHandleExceptions(files, getProgressMonitor().createSubTaskMonitor(files.size(), false));
             } else {

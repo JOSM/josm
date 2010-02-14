@@ -12,6 +12,7 @@ import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor.CancelListener;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.xml.sax.SAXException;
 
@@ -102,7 +103,11 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
                 // Exception has to thrown in EDT to be shown to user
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        ExceptionDialogUtil.explainException(e);
+                        if (e instanceof RuntimeException) {
+                            BugReportExceptionHandler.handleException(e);
+                        } else {
+                            ExceptionDialogUtil.explainException(e);
+                        }
                     }
                 });
             }
