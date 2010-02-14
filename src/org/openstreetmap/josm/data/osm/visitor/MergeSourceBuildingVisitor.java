@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.visitor;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,9 +8,13 @@ import java.util.List;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -29,7 +31,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class MergeSourceBuildingVisitor extends AbstractVisitor {
     private DataSet selectionBase;
     private DataSet hull;
-    private HashMap<OsmPrimitive, OsmPrimitive> mappedPrimitives;
+    private HashMap<OsmPrimitive, PrimitiveData> mappedPrimitives;
 
     /**
      * Creates the visitor. The visitor starts to build the "hull" from
@@ -44,7 +46,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         CheckParameterUtil.ensureParameterNotNull(selectionBase, "selectionBase");
         this.selectionBase = selectionBase;
         this.hull = new DataSet();
-        this.mappedPrimitives = new HashMap<OsmPrimitive, OsmPrimitive>();
+        this.mappedPrimitives = new HashMap<OsmPrimitive, PrimitiveData>();
     }
 
     protected boolean isInSelectionBase(OsmPrimitive primitive) {
@@ -63,8 +65,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
     protected void rememberNode(Node n) {
         if (isAlreadyRemembered(n))
             return;
-        Node clone = new Node(n);
-        mappedPrimitives.put(n, clone);
+        mappedPrimitives.put(n, n.save());
     }
 
     /**
@@ -75,10 +76,10 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
     protected void rememberWay(Way w) {
         if (isAlreadyRemembered(w))
             return;
-        Way clone = new Way(w);
-        List<Node> newNodes = new ArrayList<Node>(w.getNodesCount());
+        WayData clone = w.save();
+        List<Long> newNodes = new ArrayList<Long>(w.getNodesCount());
         for (Node n: w.getNodes()) {
-            newNodes.add((Node)mappedPrimitives.get(n));
+            newNodes.add(mappedPrimitives.get(n).getUniqueId());
         }
         clone.setNodes(newNodes);
         mappedPrimitives.put(w, clone);
@@ -90,65 +91,37 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
      * @param r the relation
      */
     protected void rememberRelation(Relation r) {
-        Relation clone;
+        RelationData clone;
         if (isAlreadyRemembered(r)) {
-            clone = (Relation)mappedPrimitives.get(r);
-            clone.cloneFrom(r);
+            clone = (RelationData)mappedPrimitives.get(r);
         } else {
-            clone = new Relation(r);
+            clone = r.save();
+            mappedPrimitives.put(r, clone);
         }
 
-        List<RelationMember> newMembers = new ArrayList<RelationMember>();
+        List<RelationMemberData> newMembers = new ArrayList<RelationMemberData>();
         for (RelationMember member: r.getMembers()) {
             newMembers.add(
-                    new RelationMember(member.getRole(), mappedPrimitives.get(member.getMember())));
+                    new RelationMemberData(member.getRole(), mappedPrimitives.get(member.getMember())));
 
         }
         clone.setMembers(newMembers);
-
-        if (!isAlreadyRemembered(r)) {
-            mappedPrimitives.put(r, clone);
-        }
     }
 
     protected void rememberRelationPartial(Relation r) {
         if (isAlreadyRemembered(r))
             return;
-        Relation clone = new Relation(r);
-        clone.setMembers(null);
+        RelationData clone = r.save();
+        clone.getMembers().clear();
         mappedPrimitives.put(r, clone);
     }
 
     protected void rememberIncomplete(OsmPrimitive primitive) {
         if (isAlreadyRemembered(primitive))
             return;
-        OsmPrimitive clone = null;
-        if (primitive instanceof Node) {
-            clone = new Node(primitive.getId());
-        } else if (primitive instanceof Way) {
-            clone = new Way(primitive.getId());
-        } else if (primitive instanceof Relation) {
-            clone = new Relation(primitive.getId());
-        }
+        PrimitiveData clone = primitive.save();
+        clone.setIncomplete(true);
         mappedPrimitives.put(primitive, clone);
-    }
-
-    protected void rememberNodeIncomplete(Node n) {
-        if (!isAlreadyRemembered(n)) {
-            mappedPrimitives.put(n, new Node(n.getId()));
-        }
-    }
-
-    protected void rememberWayIncomplete(Way w) {
-        if (!isAlreadyRemembered(w)) {
-            mappedPrimitives.put(w, new Way(w.getId()));
-        }
-    }
-
-    protected void rememberRelationIncomplete(Relation r) {
-        if (!isAlreadyRemembered(r)) {
-            mappedPrimitives.put(r, new Relation(r.getId()));
-        }
     }
 
     public void visit(Node n) {
@@ -176,42 +149,25 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
                 //
                 continue;
             }
-            if (member.isNode()) {
-                Node node = member.getNode();
-                if (isInSelectionBase(node)) {
-                    rememberNode(node);
-                } else if (node.isNew()) {
-                    rememberNode(node);
-                } else  {
-                    rememberNodeIncomplete(node);
-                }
-            } else if (member.isWay()) {
-                Way way = member.getWay();
-                if (isInSelectionBase(way)) {
-                    way.visit(this);
-                } else if (way.isNew()) {
-                    way.visit(this);
-                } else {
-                    rememberWayIncomplete(way);
-                }
-            } else if (member.isRelation()) {
-                Relation relation = member.getRelation();
-                if (isInSelectionBase(member.getMember())) {
-                    relation.visit(this);
-                } else if (relation.isNew()) {
-                    relation.visit(this);
-                } else {
-                    rememberRelationIncomplete(relation);
-                }
+            if (isInSelectionBase(member.getMember()) || member.getMember().isNew()) {
+                member.getMember().visit(this);
+            } else {
+                rememberIncomplete(member.getMember());
             }
         }
         rememberRelation(r);
     }
 
     protected void buildHull() {
-        for (OsmPrimitive primitive : mappedPrimitives.keySet()) {
-            OsmPrimitive clone = mappedPrimitives.get(primitive);
-            hull.addPrimitive(clone);
+        // Create all primitives first
+        for (PrimitiveData primitive: mappedPrimitives.values()) {
+            hull.getPrimitiveById(primitive, true);
+        }
+        // Then fill them with data
+        for (PrimitiveData primitive : mappedPrimitives.values()) {
+            if (!primitive.isIncomplete()) {
+                hull.getPrimitiveById(primitive).load(primitive);
+            }
         }
     }
 
