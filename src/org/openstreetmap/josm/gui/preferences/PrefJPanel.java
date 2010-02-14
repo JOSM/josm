@@ -163,24 +163,23 @@ public class PrefJPanel extends javax.swing.JPanel {
         editor.setText(
                 tr("<h1><a name=\"top\">Keyboard Shortcuts</a></h1>")+
                 tr("<p>Please note that shortcut keys are assigned to the actions when JOSM is started. So you need to <b>restart</b> "
-                   +"JOSM to see your changes.</p>")+
-                tr("<p>Furthermore, the shortcuts are activated when the actions are assigned to a menu entry of button for the first "
-                   +"time. So some of your changes may become active even without restart --- but also without collision handling. "
-                   +"This is another reason to <b>restart</b> JOSM after making any changes here.</p>")+
-                tr("<p>You may notice that the key selection list on the next page lists all keys that exist on all kinds of keyboards "
-                   +"Java knows about, not just those keys that exist on your keyboard. Please use only those values that correspond to "
-                   +"a real key on your keyboard. So if your keyboard has no ''Copy'' key (PC keyboard do not have them, Sun keyboards do), "
-                   +"then do not use it. Also there will be ''keys'' listed that correspond to a shortcut on your keyboard (e.g. '':''/Colon). "
-                   +"Please also do not use them, use the base key ('';''/Semicolon on US keyboards, ''.''/Period on German keyboards, ...) "
-                   +"instead. Not doing so may result in conflicts, as there is no way for JOSM to know that Ctrl+Shift+; and Ctrl+: "
-                   +"actually is the same thing on an US keyboard...</p>")+
-                tr("<p>Thank you for your understanding</p>")+
-                tr("<h1>Modifier Groups</h1>")+
-                tr("<p>The last page lists the modifier keys JOSM will automatically assign to shortcuts. For every of the four kinds "
-                   +"of shortcuts there are three alternatives. JOSM will try those alternatives in the listed order when managing a "
-                   +"conflict. If all alternatives would result in shortcuts that are already taken, it will assign a random shortcut "
-                   +"instead.</p>")+
-                tr("<p>The pseudo-modifier ''disabled'' will disable the shortcut when encountered.</p>")
+                        +"JOSM to see your changes.</p>")+
+                        tr("<p>Furthermore, the shortcuts are activated when the actions are assigned to a menu entry of a button for the first "
+                                +"time. So some of your changes may become active even without restart --- but also without collision handling. "
+                                +"This is another reason to <b>restart</b> JOSM after making any changes here.</p>")+
+                                tr("<p>You may notice that the key selection list on the next page lists all keys that exist on all kinds of keyboards "
+                                        +"Java knows about, not just those keys that exist on your keyboard. Please only use values that correspond to "
+                                        +"a real key on your keyboard. If your keyboard has no ''Copy'' key (PC keyboard do not have them, Sun keyboards do), "
+                                        +"then do not use it. Also there are ''keys'' listed that correspond to a shortcut on your keyboard (e.g. '':''/Colon). "
+                                        +"Please do not use them either, use the base key ('';''/Semicolon on US keyboards, ''.''/Period on German keyboards, etc.) "
+                                        +"instead. Not doing so may result in conflicts, as there is no way for JOSM to know that Ctrl+Shift+; and Ctrl+: "
+                                        +"actually is the same thing on an US keyboard.</p>")+
+                                        tr("<h1>Modifier Groups</h1>")+
+                                        tr("<p>The last page lists the modifier keys JOSM will automatically assign to shortcuts. For every of the four kinds "
+                                                +"of shortcuts there are three alternatives. JOSM will try those alternatives in the listed order when managing a "
+                                                +"conflict. If all alternatives result in shortcuts that are already taken, it will assign a random shortcut "
+                                                +"instead.</p>")+
+                                                tr("<p>The pseudo-modifier ''disabled'' will disable the shortcut when encountered.</p>")
         );
         editor.setCaretPosition(0); // scroll up
         prefTabPane.addTab(tr("Read First"), new JScrollPane(editor));
