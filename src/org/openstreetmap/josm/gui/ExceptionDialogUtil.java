@@ -85,13 +85,7 @@ public class ExceptionDialogUtil {
      */
     public static void explainGeneric(Exception e) {
         e.printStackTrace();
-        HelpAwareOptionPane.showOptionDialog(
-                Main.parent,
-                ExceptionUtil.explainGeneric(e),
-                tr("Error"),
-                JOptionPane.ERROR_MESSAGE,
-                ht("/ErrorMessages#GenericException")
-        );
+        BugReportExceptionHandler.handleException(e);
     }
 
     /**
