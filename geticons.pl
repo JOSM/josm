@@ -87,6 +87,12 @@ for my $arg (@ARGV ? @ARGV : @default)
         $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
+      if($l =~ /super\(\s*trc\(\".*?\",\s*\".*?\"\),\s*\"(.*?)\"/s)
+      {
+        my $i = "$extends$1";
+        $i .= ".png" if !($i =~ /\.png$/);
+        ++$icons{$i};
+      }
       if($l =~ /audiotracericon\",\s*\"(.*?)\"/s)
       {
         my $i = "markers/$1";
@@ -148,7 +154,7 @@ for my $arg (@ARGV ? @ARGV : @default)
 
 my %haveicons;
 
-for($i = 0; my @ifiles = glob("images".("/*" x $i).".png"); ++$i)
+for($i = 1; my @ifiles = glob("images".("/*" x $i).".png"); ++$i)
 {
   for my $ifile (sort @ifiles)
   {
