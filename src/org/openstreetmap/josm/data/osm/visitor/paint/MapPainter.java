@@ -130,8 +130,22 @@ public class MapPainter {
     private static final double sinPHI = Math.sin(PHI);
 
     private void drawSegment(GeneralPath path, Point p1, Point p2, boolean showDirection, boolean reversedDirection) {
-        if (isSegmentVisible(p1, p2)) {
-
+        boolean drawIt = false;
+        if (Main.isOpenjdk) {
+            /**
+             * Work around openjdk bug. It leads to drawing artefacts when zooming in a lot. (#4289, #4424)
+             * (It looks like int overflow when clipping.) We do custom clipping.
+             */
+            Rectangle bounds = g.getClipBounds();
+            bounds.grow(100, 100);                  // avoid arrow heads at the border
+            LineClip clip = new LineClip();
+            drawIt = clip.cohenSutherland(p1.x, p1.y, p2.x, p2.y, bounds.x, bounds.y, bounds.x+bounds.width, bounds.y+bounds.height);
+            p1 = clip.getP1();
+            p2 = clip.getP2();
+        } else {
+            drawIt = isSegmentVisible(p1, p2);
+        }
+        if (drawIt) {
             /* draw segment line */
             path.moveTo(p1.x, p1.y);
             path.lineTo(p2.x, p2.y);

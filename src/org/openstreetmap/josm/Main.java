@@ -154,6 +154,12 @@ abstract public class Main {
     public static PlatformHook platform;
 
     /**
+     * Wheather or not the java vm is openjdk
+     * We use this to work around openjdk bugs
+     */
+    public static boolean isOpenjdk;
+
+    /**
      * Set or clear (if passed <code>null</code>) the map.
      */
     public final void setMapFrame(final MapFrame map) {
@@ -189,7 +195,7 @@ abstract public class Main {
 
     public Main() {
         main = this;
-        //        platform = determinePlatformHook();
+        isOpenjdk = System.getProperty("java.vm.name").toUpperCase().indexOf("OPENJDK") != -1;
         platform.startupHook();
         contentPane.add(panel, BorderLayout.CENTER);
         panel.add(gettingStarted, BorderLayout.CENTER);
