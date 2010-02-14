@@ -23,6 +23,8 @@ public final class Relation extends OsmPrimitive {
      */
     private final List<RelationMember> members = new ArrayList<RelationMember>();
 
+    private BBox bbox;
+
     /**
      * @return Members of the relation. Changes made in returned list are not mapped
      * back to the primitive, use setMembers() to modify the members
@@ -335,12 +337,40 @@ public final class Relation extends OsmPrimitive {
 
     @Override
     public BBox getBBox() {
-        return new BBox(0, 0, 0, 0);
+        if (bbox == null) {
+            calculateBBox(new HashSet<PrimitiveId>());
+            if (bbox == null) {
+                bbox = new BBox(0, 0, 0, 0); // No members
+            }
+        }
+        return  bbox;
+    }
+
+    private BBox calculateBBox(Set<PrimitiveId> visitedRelations) {
+        if (visitedRelations.contains(this))
+            return null;
+        visitedRelations.add(this);
+        if (members.isEmpty())
+            return null;
+        else {
+            BBox result = null;
+            for (RelationMember rm:members) {
+                BBox box = rm.isRelation()?rm.getRelation().calculateBBox(visitedRelations):rm.getMember().getBBox();
+                if (box != null) {
+                    if (result == null) {
+                        result = box;
+                    } else {
+                        result.add(box);
+                    }
+                }
+            }
+            return result;
+        }
     }
 
     @Override
     public void updatePosition() {
-        // Do nothing for now
+        bbox = calculateBBox(new HashSet<PrimitiveId>());
     }
 
     @Override
@@ -354,7 +384,7 @@ public final class Relation extends OsmPrimitive {
         if (dataSet != null) {
             for (RelationMember rm: members) {
                 if (rm.getMember().getDataSet() != dataSet)
-                    throw new DataIntegrityProblemException("Relation member must be part of the same dataset as relation");
+                    throw new DataIntegrityProblemException(String.format("Relation member must be part of the same dataset as relation(%s, %s)", getPrimitiveId(), rm.getMember().getPrimitiveId()));
             }
         }
     }

@@ -243,6 +243,7 @@ public class MapPaintVisitor implements PaintVisitor {
     }
 
     public void drawRestriction(Relation r) {
+
         Way fromWay = null;
         Way toWay = null;
         OsmPrimitive via = null;
@@ -673,7 +674,7 @@ public class MapPaintVisitor implements PaintVisitor {
             Collection<Way> noAreaWays = new LinkedList<Way>();
 
             /*** RELATIONS ***/
-            for (final Relation osm: data.getRelations()) {
+            for (final Relation osm: data.searchRelations(bbox)) {
                 if (osm.isDrawable()) {
                     paintUnselectedRelation(osm);
                 }
@@ -698,7 +699,7 @@ public class MapPaintVisitor implements PaintVisitor {
             drawMultipolygon = false;
 
             /*** RELATIONS ***/
-            for (final Relation osm: data.getRelations()) {
+            for (final Relation osm: data.searchRelations(bbox)) {
                 if (osm.isDrawable()) {
                     paintUnselectedRelation(osm);
                 }

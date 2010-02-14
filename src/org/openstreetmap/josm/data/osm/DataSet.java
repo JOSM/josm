@@ -135,6 +135,17 @@ public class DataSet implements Cloneable {
         return Collections.unmodifiableCollection(relations);
     }
 
+    public List<Relation> searchRelations(BBox bbox) {
+        // QuadBuckets might be useful here (don't forget to do reindexing after some of rm is changed)
+        List<Relation> result = new ArrayList<Relation>();
+        for (Relation r: relations) {
+            if (r.getBBox().intersects(bbox)) {
+                result.add(r);
+            }
+        }
+        return result;
+    }
+
     /**
      * All data sources of this DataSet.
      */
@@ -199,7 +210,7 @@ public class DataSet implements Cloneable {
     /**
      * Adds a primitive to the dataset
      *
-     * @param primitive the primitive. Ignored if null.
+     * @param primitive the primitive.
      */
     public void addPrimitive(OsmPrimitive primitive) {
         if (getPrimitiveById(primitive) != null)
@@ -778,35 +789,38 @@ public class DataSet implements Cloneable {
         return false;
     }
 
-    /**
-     * Reindex all nodes and ways after their coordinates were changed. This is a temporary solution, reindexing should
-     * be automatic in the future
-     * @deprecated Reindexing should be automatic
-     */
-    @Deprecated
-    public void reindexAll() {
-        List<Node> ntmp = new ArrayList<Node>(nodes);
-        nodes.clear();
-        nodes.addAll(ntmp);
-        List<Way> wtmp = new ArrayList<Way>(ways);
-        ways.clear();
-        ways.addAll(wtmp);
-    }
-
     private void reindexNode(Node node) {
         nodes.remove(node);
         nodes.add(node);
-        for (Way way:OsmPrimitive.getFilteredList(node.getReferrers(), Way.class)) {
-            ways.remove(way);
-            way.updatePosition();
-            ways.add(way);
+        for (OsmPrimitive primitive: node.getReferrers()) {
+            if (primitive instanceof Way) {
+                reindexWay((Way)primitive);
+            } else {
+                reindexRelation((Relation) primitive);
+            }
         }
     }
 
     private void reindexWay(Way way) {
+        BBox before = way.getBBox();
         ways.remove(way);
         way.updatePosition();
         ways.add(way);
+        if (!way.getBBox().equals(before)) {
+            for (OsmPrimitive primitive: way.getReferrers()) {
+                reindexRelation((Relation)primitive);
+            }
+        }
+    }
+
+    private void reindexRelation(Relation relation) {
+        BBox before = relation.getBBox();
+        relation.updatePosition();
+        if (!before.equals(relation.getBBox())) {
+            for (OsmPrimitive primitive: relation.getReferrers()) {
+                reindexRelation((Relation) primitive);
+            }
+        }
     }
 
     public void addDataSetListener(DataSetListener dsl) {
@@ -873,6 +887,7 @@ public class DataSet implements Cloneable {
     }
 
     void fireRelationMembersChanged(Relation r) {
+        reindexRelation(r);
         fireEvent(new RelationMembersChangedEvent(this, r));
     }
 

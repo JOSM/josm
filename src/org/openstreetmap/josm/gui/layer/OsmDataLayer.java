@@ -396,34 +396,35 @@ public class OsmDataLayer extends Layer {
      */
     protected PurgePrimitivesCommand buildPurgeCommand() {
         ArrayList<OsmPrimitive> toPurge = new ArrayList<OsmPrimitive>();
-        conflictLoop: for (Conflict<?> c: conflicts) {
-            if (c.getMy().isDeleted() && !c.getTheir().isVisible()) {
-                // Local and server version of the primitive are deleted. We
-                // can purge it from the local dataset.
-                //
-                toPurge.add(c.getMy());
-            } else if (!c.getMy().isModified() && ! c.getTheir().isVisible()) {
-                // We purge deleted *ways* and *relations* automatically if they are
-                // deleted on the server and if they aren't modified in the local
-                // dataset.
-                //
-                if (c.getMy() instanceof Way || c.getMy() instanceof Relation) {
+        conflictLoop:
+            for (Conflict<?> c: conflicts) {
+                if (c.getMy().isDeleted() && !c.getTheir().isVisible()) {
+                    // Local and server version of the primitive are deleted. We
+                    // can purge it from the local dataset.
+                    //
                     toPurge.add(c.getMy());
-                    continue conflictLoop;
-                }
-                // We only purge nodes if they aren't part of a modified way.
-                // Otherwise the number of nodes of a modified way could drop
-                // below 2 and we would lose the modified data when the way
-                // gets purged.
-                //
-                for (OsmPrimitive parent: c.getMy().getReferrers()) {
-                    if (parent.isModified() && parent instanceof Way) {
+                } else if (!c.getMy().isModified() && ! c.getTheir().isVisible()) {
+                    // We purge deleted *ways* and *relations* automatically if they are
+                    // deleted on the server and if they aren't modified in the local
+                    // dataset.
+                    //
+                    if (c.getMy() instanceof Way || c.getMy() instanceof Relation) {
+                        toPurge.add(c.getMy());
                         continue conflictLoop;
                     }
+                    // We only purge nodes if they aren't part of a modified way.
+                    // Otherwise the number of nodes of a modified way could drop
+                    // below 2 and we would lose the modified data when the way
+                    // gets purged.
+                    //
+                    for (OsmPrimitive parent: c.getMy().getReferrers()) {
+                        if (parent.isModified() && parent instanceof Way) {
+                            continue conflictLoop;
+                        }
+                    }
+                    toPurge.add(c.getMy());
                 }
-                toPurge.add(c.getMy());
             }
-        }
         if (toPurge.isEmpty()) return null;
         PurgePrimitivesCommand cmd = new PurgePrimitivesCommand(this, toPurge);
         return cmd;

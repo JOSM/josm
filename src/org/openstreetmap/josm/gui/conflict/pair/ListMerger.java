@@ -640,7 +640,7 @@ public abstract class ListMerger<T> extends JPanel implements PropertyChangeList
         public CopyAllLeft() {
             ImageIcon icon = ImageProvider.get("dialogs/conflict", "useallleft.png");
             putValue(Action.SMALL_ICON, icon);
-            putValue(Action.SHORT_DESCRIPTION, tr("Use all mine elements"));
+            putValue(Action.SHORT_DESCRIPTION, tr("Use all my elements"));
         }
 
         public void actionPerformed(ActionEvent arg0) {

@@ -68,6 +68,11 @@ public class BBox {
         sanity();
     }
 
+    public void add(BBox box) {
+        add(box.getTopLeft());
+        add(box.getBottomRight());
+    }
+
     public void addPrimitive(OsmPrimitive primitive, double extraSpace) {
         BBox primBbox = primitive.getBBox();
         add(primBbox.xmin - extraSpace, primBbox.ymin - extraSpace);
@@ -135,6 +140,20 @@ public class BBox {
 
     public LatLon getBottomRight() {
         return new LatLon(ymin, xmax);
+    }
+
+    @Override
+    public int hashCode() {
+        return (int)(ymin * xmin);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof BBox) {
+            BBox b = (BBox)o;
+            return b.xmax == xmax && b.ymax == ymax && b.xmin == xmin && b.ymin == ymin;
+        } else
+            return false;
     }
 
     @Override
