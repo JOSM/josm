@@ -14,9 +14,12 @@ import java.util.Stack;
 import java.util.logging.Logger;
 
 import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
+import org.openstreetmap.josm.data.conflict.Conflict;
+import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -136,6 +139,51 @@ public class APIDataSet {
     public APIDataSet(DataSet ds) {
         this();
         init(ds);
+    }
+
+    /**
+     * Replies true if one of the primitives to be updated or to be deleted
+     * participates in the conflict <code>conflict</code>
+     * 
+     * @param conflict the conflict
+     * @return true if one of the primitives to be updated or to be deleted
+     * participates in the conflict <code>conflict</code>
+     */
+    public boolean participatesInConflict(Conflict<?> conflict) {
+        if (conflict == null) return false;
+        for (OsmPrimitive p: toUpdate) {
+            if (conflict.isParticipating(p)) return true;
+        }
+        for (OsmPrimitive p: toDelete) {
+            if (conflict.isParticipating(p)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Replies true if one of the primitives to be updated or to be deleted
+     * participates in at least one conflict in <code>conflicts</code>
+     * 
+     * @param conflicts the collection of conflicts
+     * @return true if one of the primitives to be updated or to be deleted
+     * participates in at least one conflict in <code>conflicts</code>
+     */
+    public boolean participatesInConflict(ConflictCollection conflicts) {
+        if (conflicts == null || conflicts.isEmpty()) return false;
+        Set<PrimitiveId> idsParticipatingInConflicts = new HashSet<PrimitiveId>();
+        for (OsmPrimitive p: conflicts.getMyConflictParties()) {
+            idsParticipatingInConflicts.add(p.getPrimitiveId());
+        }
+        for (OsmPrimitive p: conflicts.getTheirConflictParties()) {
+            idsParticipatingInConflicts.add(p.getPrimitiveId());
+        }
+        for (OsmPrimitive p: toUpdate) {
+            if (idsParticipatingInConflicts.contains(p.getPrimitiveId())) return true;
+        }
+        for (OsmPrimitive p: toDelete) {
+            if (idsParticipatingInConflicts.contains(p.getPrimitiveId())) return true;
+        }
+        return false;
     }
 
     /**

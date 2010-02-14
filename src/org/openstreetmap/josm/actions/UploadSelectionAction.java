@@ -132,12 +132,21 @@ public class UploadSelectionAction extends JosmAction{
         uploadPrimitives(getEditLayer(), toUpload);
     }
 
+    /**
+     * Replies true if there is at least one non-new, deleted primitive in
+     * <code>primitives</code>
+     * 
+     * @param primitives the primitives to scan
+     * @return true if there is at least one non-new, deleted primitive in
+     * <code>primitives</code>
+     */
     protected boolean hasPrimitivesToDelete(Collection<OsmPrimitive> primitives) {
         for (OsmPrimitive p: primitives)
             if (p.isDeleted() && p.isModified() && !p.isNew())
                 return true;
         return false;
     }
+
     /**
      * Uploads the primitives in <code>toUpload</code> to the server. Only
      * uploads primitives which are either new, modified or deleted.

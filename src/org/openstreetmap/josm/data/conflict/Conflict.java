@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.conflict;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
 
 /**
  * Represents a conflict between two {@see OsmPrimitive}s. It is represented as
@@ -39,6 +40,34 @@ public class  Conflict<T extends OsmPrimitive> {
 
     public boolean isMatchingTheir(OsmPrimitive their) {
         return this.their == their;
+    }
+
+    /**
+     * Replies true if the primitive <code>primitive</code> is participating
+     * in this conflict
+     * 
+     * @param primitive the primitive
+     * @return true if the primitive <code>primitive</code> is participating
+     * in this conflict
+     */
+    public boolean isParticipating(OsmPrimitive primitive) {
+        if (primitive == null) return false;
+        return primitive.getPrimitiveId().equals(my.getPrimitiveId())
+        || primitive.getPrimitiveId().equals(their.getPrimitiveId());
+    }
+
+    /**
+     * Replies true if the primitive with id <code>id</code> is participating
+     * in this conflict
+     * 
+     * @param id the primitive id
+     * @return true if the primitive <code>primitive</code> is participating
+     * in this conflict
+     */
+    public boolean isParticipating(PrimitiveId id) {
+        if (id == null) return false;
+        return id.equals(my.getPrimitiveId())
+        || id.equals(their.getPrimitiveId());
     }
 
     @Override

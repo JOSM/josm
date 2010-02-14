@@ -17,6 +17,8 @@ import org.openstreetmap.josm.actions.upload.RelationUploadOrderHook;
 import org.openstreetmap.josm.actions.upload.UploadHook;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.UploadDialog;
 import org.openstreetmap.josm.gui.io.UploadPrimitivesTask;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -100,20 +102,36 @@ public class UploadAction extends JosmAction{
         return checkPreUploadConditions(layer, new APIDataSet(layer.data));
     }
 
+    protected void alertUnresolvedConflicts(OsmDataLayer layer) {
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                tr("<html>The data to be uploaded participates in unresolved conflicts of layer ''{0}''.<br>"
+                        + "You have to resolve them first.</html>", layer.getName()
+                ),
+                tr("Warning"),
+                JOptionPane.WARNING_MESSAGE,
+                HelpUtil.ht("/Action/Upload#PrimitivesParticipateInConflicts")
+        );
+    }
+
+    /**
+     * Check whether the preconditions are met to upload data in <code>apiData</code>.
+     * Makes sure primitives in <code>apiData</code> don't participate in conflicts and
+     * runs the installed {@see UploadHook}s.
+     * 
+     * @param layer the source layer of the data to be uploaded
+     * @param apiData the data to be uploaded
+     * @return true, if the preconditions are met; false, otherwise
+     */
     public boolean checkPreUploadConditions(OsmDataLayer layer, APIDataSet apiData) {
         ConflictCollection conflicts = layer.getConflicts();
-        if (conflicts !=null && !conflicts.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("<html>There are unresolved conflicts in layer ''{0}''.<br>"
-                            + "You have to resolve them first.</html>", layer.getName()),
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE
-            );
+        if (apiData.participatesInConflict(conflicts)) {
+            alertUnresolvedConflicts(layer);
             return false;
         }
-        // Call all upload hooks in sequence. The upload confirmation dialog
-        // is one of these.
+        // Call all upload hooks in sequence.
+        // FIXME: this should become an asynchronous task
+        //
         for(UploadHook hook : uploadHooks)
             if(!hook.checkUpload(apiData))
                 return false;
@@ -121,6 +139,12 @@ public class UploadAction extends JosmAction{
         return true;
     }
 
+    /**
+     * Uploads data to the OSM API.
+     * 
+     * @param layer the source layer for the data to upload
+     * @param apiData the primitives to be added, updated, or deleted
+     */
     public void uploadData(OsmDataLayer layer, APIDataSet apiData) {
         if (apiData.isEmpty()) {
             JOptionPane.showMessageDialog(
