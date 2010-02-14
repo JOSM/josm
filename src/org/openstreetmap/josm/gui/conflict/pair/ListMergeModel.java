@@ -23,8 +23,11 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.help.HelpUtil;
 
 /**
  * ListMergeModel is a model for interactively comparing and merging two list of entries
@@ -309,6 +312,32 @@ public abstract class ListMergeModel<T> extends Observable {
         fireModelDataChanged();
     }
 
+    protected void alertCopyFailedForDeletedPrimitives(List<PrimitiveId> deletedIds) {
+        List<String> items = new ArrayList<String>();
+        for (int i=0; i<Math.min(MAX_DELETED_PRIMITIVE_IN_DIALOG, deletedIds.size()); i++) {
+            items.add(deletedIds.get(i).toString());
+        }
+        if (deletedIds.size() > MAX_DELETED_PRIMITIVE_IN_DIALOG) {
+            items.add(tr("{0} more...", deletedIds.size() - MAX_DELETED_PRIMITIVE_IN_DIALOG));
+        }
+        StringBuffer sb = new StringBuffer();
+        sb.append("<html>");
+        sb.append(tr("The following primitives could not be copied to the target primitive<br>because they are deleted in the target dataset:"));
+        sb.append("<ul>");
+        for (String item: items) {
+            sb.append("<li>").append(item).append("</li>");
+        }
+        sb.append("</ul>");
+        sb.append("</html>");
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                sb.toString(),
+                tr("Merging deleted primitives failed"),
+                JOptionPane.WARNING_MESSAGE,
+                HelpUtil.ht("/Dialog/ConflictResolution#MergingDeletedPrimitivesFailed")
+        );
+    }
+
     private void copy(ListRole sourceRole, int[] rows, int position) {
         List<T> newItems = new ArrayList<T>(rows.length);
         List<T> source = entries.get(sourceRole);
@@ -326,14 +355,7 @@ public abstract class ListMergeModel<T> extends Observable {
         getMergedEntries().addAll(position, newItems);
         fireModelDataChanged();
         if (!deletedIds.isEmpty()) {
-            List<String> items = new ArrayList<String>();
-            for (int i=0; i<Math.min(MAX_DELETED_PRIMITIVE_IN_DIALOG, deletedIds.size()); i++) {
-                items.add(deletedIds.get(i).toString());
-            }
-            if (deletedIds.size() > MAX_DELETED_PRIMITIVE_IN_DIALOG) {
-                items.add(tr("{0} more...", deletedIds.size() - MAX_DELETED_PRIMITIVE_IN_DIALOG));
-            }
-            JOptionPane.showMessageDialog(null, tr("Following primitives could not be added because they are deleted: {0}", items));
+            alertCopyFailedForDeletedPrimitives(deletedIds);
         }
     }
 
