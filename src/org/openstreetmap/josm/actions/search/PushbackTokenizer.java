@@ -10,11 +10,31 @@ import java.io.Reader;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 
 public class PushbackTokenizer {
+
+    public class Range {
+        private final long start;
+        private final long end;
+
+        public Range(long start, long end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        public long getStart() {
+            return start;
+        }
+
+        public long getEnd() {
+            return end;
+        }
+    }
+
     private final Reader search;
 
     private Token currentToken;
     private String currentText;
     private long currentNumber;
+    private long currentRange;
     private int c;
 
     public PushbackTokenizer(Reader search) {
@@ -26,7 +46,7 @@ public class PushbackTokenizer {
         NOT(marktr("<not>")), OR(marktr("<or>")), LEFT_PARENT(marktr("<left parent>")),
         RIGHT_PARENT(marktr("<right parent>")), COLON(marktr("<colon>")), EQUALS(marktr("<equals>")),
         KEY(marktr("<key>")), QUESTION_MARK(marktr("<question mark>")), NUMBER(marktr("<number>")),
-        EOF(marktr("<end-of-file>"));
+        RANGE(marktr("range")), EOF(marktr("<end-of-file>"));
 
         private Token(String name) {
             this.name = name;
@@ -127,7 +147,13 @@ public class PushbackTokenizer {
         {
             if (Character.isDigit(c)) {
                 currentNumber = getNumber();
-                return Token.NUMBER;
+                if (c == '-') {
+                    getChar();
+                    currentRange = getNumber();
+                    return Token.RANGE;
+                } else
+                    return Token.NUMBER;
+
             }
 
             StringBuilder s = new StringBuilder();
@@ -152,20 +178,14 @@ public class PushbackTokenizer {
         return false;
     }
 
-    public String readText() {
+    public String readTextOrNumber() {
         Token nextTok = nextToken();
         if (nextTok == Token.KEY)
             return currentText;
+        if (nextTok == Token.NUMBER)
+            return String.valueOf(currentNumber);
         currentToken = nextTok;
         return null;
-    }
-
-    public String readText(String errorMessage) throws ParseError {
-        String text = readText();
-        if (text == null)
-            throw new ParseError(errorMessage);
-        else
-            return text;
     }
 
     public long readNumber(String errorMessage) throws ParseError {
@@ -173,6 +193,20 @@ public class PushbackTokenizer {
             return currentNumber;
         else
             throw new ParseError(errorMessage);
+    }
+
+    public long getReadNumber() {
+        return currentNumber;
+    }
+
+    public Range readRange() throws ParseError {
+        Token token = nextToken();
+        if (token == Token.NUMBER)
+            return new Range(currentNumber, currentNumber);
+        else if (token == Token.RANGE)
+            return new Range(currentNumber, currentRange);
+        else
+            throw new ParseError(Token.NUMBER, token);
     }
 
     public String getText() {

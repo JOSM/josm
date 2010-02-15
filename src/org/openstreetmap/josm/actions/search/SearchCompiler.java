@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.search.PushbackTokenizer.Range;
 import org.openstreetmap.josm.actions.search.PushbackTokenizer.Token;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -253,15 +254,15 @@ public class SearchCompiler {
                 throw new ParseError(tr("Key cannot be empty when tag operator is used. Sample use: key=value"));
             this.key = key;
             this.value = value == null?"":value;
-            if ("".equals(value) && "*".equals(key)) {
+            if ("".equals(this.value) && "*".equals(key)) {
                 mode = Mode.NONE;
-            } else if ("".equals(value)) {
+            } else if ("".equals(this.value)) {
                 if (regexp) {
                     mode = Mode.MISSING_KEY_REGEXP;
                 } else {
                     mode = Mode.MISSING_KEY;
                 }
-            } else if ("*".equals(key) && "*".equals(value)) {
+            } else if ("*".equals(key) && "*".equals(this.value)) {
                 mode = Mode.ANY;
             } else if ("*".equals(key)) {
                 if (regexp) {
@@ -269,7 +270,7 @@ public class SearchCompiler {
                 } else {
                     mode = Mode.ANY_KEY;
                 }
-            } else if ("*".equals(value)) {
+            } else if ("*".equals(this.value)) {
                 if (regexp) {
                     mode = Mode.ANY_VALUE_REGEXP;
                 } else {
@@ -288,9 +289,9 @@ public class SearchCompiler {
             } else {
                 keyPattern = null;
             }
-            if (regexp && value.length() > 0 && !value.equals("*")) {
+            if (regexp && this.value.length() > 0 && !this.value.equals("*")) {
                 try {
-                    valuePattern = Pattern.compile(value);
+                    valuePattern = Pattern.compile(this.value);
                 } catch (PatternSyntaxException e) {
                     throw new ParseError(tr("Pattern Syntax Error: Pattern {0} in {1} is illegal!", e.getPattern(), value));
                 }
@@ -470,15 +471,6 @@ public class SearchCompiler {
         }
     }
 
-    private static class NodeCount extends Match {
-        private int count;
-        public NodeCount(int count) {this.count = count;}
-        @Override public boolean match(OsmPrimitive osm) {
-            return osm instanceof Way && ((Way) osm).getNodesCount() == count;
-        }
-        @Override public String toString() {return "nodes="+count;}
-    }
-
     private static class NodeCountRange extends Match {
         private int minCount;
         private int maxCount;
@@ -497,16 +489,6 @@ public class SearchCompiler {
             return (size >= minCount) && (size <= maxCount);
         }
         @Override public String toString() {return "nodes="+minCount+"-"+maxCount;}
-    }
-
-    private static class TagCount extends Match {
-        private int count;
-        public TagCount(int count) {this.count = count;}
-        @Override public boolean match(OsmPrimitive osm) {
-            int size = osm.getKeys().size();
-            return size == count;
-        }
-        @Override public String toString() {return "tags="+count;}
     }
 
     private static class TagCountRange extends Match {
@@ -609,6 +591,9 @@ public class SearchCompiler {
         public ParseError(String msg) {
             super(msg);
         }
+        public ParseError(Token expected, Token found) {
+            this(tr("Unexpected token. Expected {0}, found {1}", expected, found));
+        }
     }
 
     public static Match compile(String searchStr, boolean caseSensitive, boolean regexSearch)
@@ -655,20 +640,30 @@ public class SearchCompiler {
         if (tokenizer.readIfEqual(Token.LEFT_PARENT)) {
             Match expression = parseExpression();
             if (!tokenizer.readIfEqual(Token.RIGHT_PARENT))
-                throw new ParseError(tr("Unexpected token. Expected {0}, found {1}", Token.RIGHT_PARENT, tokenizer.nextToken()));
+                throw new ParseError(Token.RIGHT_PARENT, tokenizer.nextToken());
             return expression;
         } else if (tokenizer.readIfEqual(Token.NOT))
             return new Not(parseFactor(tr("Missing operator for NOT")));
         else if (tokenizer.readIfEqual(Token.KEY)) {
             String key = tokenizer.getText();
             if (tokenizer.readIfEqual(Token.EQUALS))
-                return new ExactKeyValue(regexSearch, key, tokenizer.readText());
-            else if (tokenizer.readIfEqual(Token.COLON))
+                return new ExactKeyValue(regexSearch, key, tokenizer.readTextOrNumber());
+            else if (tokenizer.readIfEqual(Token.COLON)) {
                 if ("id".equals(key))
                     return new Id(tokenizer.readNumber(tr("Primitive id expected")));
+                else if ("tags".equals(key)) {
+                    Range range = tokenizer.readRange();
+                    return new TagCountRange((int)range.getStart(), (int)range.getEnd());
+                } else if ("nodes".equals("nodes")) {
+                    Range range = tokenizer.readRange();
+                    return new NodeCountRange((int)range.getStart(), (int)range.getEnd());
+                } else if ("changeset".equals(key))
+                    return new ChangesetId(tokenizer.readNumber(tr("Changeset id expected")));
+                else if ("version".equals(key))
+                    return new Version(tokenizer.readNumber(tr("Version expected")));
                 else
-                    return parseKV(key, tokenizer.readText());
-            else if (tokenizer.readIfEqual(Token.QUESTION_MARK))
+                    return parseKV(key, tokenizer.readTextOrNumber());
+            } else if (tokenizer.readIfEqual(Token.QUESTION_MARK))
                 return new BooleanMatch(key, false);
             else if ("modified".equals(key))
                 return new Modified();
@@ -704,45 +699,6 @@ public class SearchCompiler {
             return new ExactType(value);
         else if (key.equals("user"))
             return new UserMatch(value);
-        else if (key.equals("tags")) {
-            try {
-                String[] range = value.split("-");
-                if (range.length == 1)
-                    return new TagCount(Integer.parseInt(value));
-                else if (range.length == 2)
-                    return new TagCountRange(Integer.parseInt(range[0]), Integer.parseInt(range[1]));
-                else
-                    throw new ParseError(tr("Wrong number of parameters for tags operator."));
-            } catch (NumberFormatException e) {
-                throw new ParseError(tr("Incorrect value of tags operator: {0}. Tags operator expects number of tags or range, for example tags:1 or tags:2-5", value));
-            }
-        } else if (key.equals("nodes")) {
-            try {
-                String[] range = value.split("-");
-                if (range.length == 1)
-                    return new NodeCount(Integer.parseInt(value));
-                else if (range.length == 2)
-                    return new NodeCountRange(Integer.parseInt(range[0]), Integer.parseInt(range[1]));
-                else
-                    throw new ParseError(tr("Wrong number of parameters for nodes operator."));
-            } catch (NumberFormatException e) {
-                throw new ParseError(tr("Incorrect value of nodes operator: {0}. Nodes operator expects number of nodes or range, for example nodes:10-20", value));
-            }
-
-        } else if (key.equals("changeset")) {
-            try {
-                return new ChangesetId(Integer.parseInt(value));
-            } catch (NumberFormatException x) {
-                throw new ParseError(tr("Incorrect value of changeset operator: {0}. Number is expected.", value));
-            }
-
-        }   else if (key.equals("version")) {
-            try {
-                return new Version(Long.parseLong(value));
-            } catch (NumberFormatException x) {
-                throw new ParseError(tr("Incorrect value of version operator: {0}. Number is expected.", value));
-            }
-        }
         else
             return new KeyValue(key, value, regexSearch, caseSensitive);
     }
