@@ -214,7 +214,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
         RelationEditor editor = (RelationEditor)e.getWindow();
         DialogContext context = null;
         for (DialogContext c : openDialogs.keySet()) {
-            if (openDialogs.get(c).equals(editor)) {
+            if (editor.equals(openDialogs.get(c))) {
                 context = c;
                 break;
             }
