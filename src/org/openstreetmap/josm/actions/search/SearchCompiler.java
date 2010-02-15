@@ -654,7 +654,7 @@ public class SearchCompiler {
                 else if ("tags".equals(key)) {
                     Range range = tokenizer.readRange();
                     return new TagCountRange((int)range.getStart(), (int)range.getEnd());
-                } else if ("nodes".equals("nodes")) {
+                } else if ("nodes".equals(key)) {
                     Range range = tokenizer.readRange();
                     return new NodeCountRange((int)range.getStart(), (int)range.getEnd());
                 } else if ("changeset".equals(key))
