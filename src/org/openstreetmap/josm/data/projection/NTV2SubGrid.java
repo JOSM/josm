@@ -19,8 +19,8 @@
  */
 package org.openstreetmap.josm.data.projection;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 
 /**
@@ -33,8 +33,6 @@ import java.io.Serializable;
  *   file reading by group of 4 bytes from a jar file.
  */
 public class NTV2SubGrid implements Cloneable, Serializable {
-
-    private static final int REC_SIZE = 16;
 
     private String subGridName;
     private String parentSubGridName;

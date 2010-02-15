@@ -49,6 +49,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  */
 public class OsmApi extends OsmConnection {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(OsmApi.class.getName());
     /** max number of retries to send a request in case of HTTP 500 errors or timeouts */
     static public final int DEFAULT_MAX_NUM_RETRIES = 5;

@@ -34,6 +34,7 @@ import org.xml.sax.SAXException;
  * @see RelationTreeModel
  */
 public class RelationTree extends JTree {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(RelationTree.class.getName());
 
     /**

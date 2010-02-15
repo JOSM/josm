@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.conflict.pair.relation;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -26,7 +25,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public  class RelationMemberTableCellRenderer extends JLabel implements TableCellRenderer {
-    private final static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000");
     public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
     public final static Color BGCOLOR_EMPTY_ROW = new Color(234,234,234);
 
@@ -193,25 +191,25 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         renderBackground(getModel(table), member, row, column, isSelected);
         renderForeground(getModel(table), member, row, column, isSelected);
         switch(column) {
-            case 0:
-                renderRowId(row);
-                break;
-            case 1:
-                if (member == null) {
-                    renderEmptyRow();
-                } else {
-                    renderRole(member);
-                }
-                break;
-            case 2:
-                if (member == null) {
-                    renderEmptyRow();
-                } else {
-                    renderPrimitive(member);
-                }
-                break;
-            default:
-                // should not happen
+        case 0:
+            renderRowId(row);
+            break;
+        case 1:
+            if (member == null) {
+                renderEmptyRow();
+            } else {
+                renderRole(member);
+            }
+            break;
+        case 2:
+            if (member == null) {
+                renderEmptyRow();
+            } else {
+                renderPrimitive(member);
+            }
+            break;
+        default:
+            // should not happen
         }
         return this;
     }

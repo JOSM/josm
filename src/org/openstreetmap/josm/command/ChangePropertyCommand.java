@@ -3,7 +3,6 @@ package org.openstreetmap.josm.command;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -99,16 +98,16 @@ public class ChangePropertyCommand extends Command {
             String msg = "";
             if (value == null) {
                 switch(OsmPrimitiveType.from(primitive)) {
-                    case NODE: msg = marktr("Remove \"{0}\" for node ''{1}''"); break;
-                    case WAY: msg = marktr("Remove \"{0}\" for way ''{1}''"); break;
-                    case RELATION: msg = marktr("Remove \"{0}\" for relation ''{1}''"); break;
+                case NODE: msg = marktr("Remove \"{0}\" for node ''{1}''"); break;
+                case WAY: msg = marktr("Remove \"{0}\" for way ''{1}''"); break;
+                case RELATION: msg = marktr("Remove \"{0}\" for relation ''{1}''"); break;
                 }
                 text = tr(msg, key, primitive.getDisplayName(DefaultNameFormatter.getInstance()));
             } else {
                 switch(OsmPrimitiveType.from(primitive)) {
-                    case NODE: msg = marktr("Set {0}={1} for node ''{2}''"); break;
-                    case WAY: msg = marktr("Set {0}={1} for way ''{2}''"); break;
-                    case RELATION: msg = marktr("Set {0}={1} for relation ''{2}''"); break;
+                case NODE: msg = marktr("Set {0}={1} for node ''{2}''"); break;
+                case WAY: msg = marktr("Set {0}={1} for way ''{2}''"); break;
+                case RELATION: msg = marktr("Set {0}={1} for relation ''{2}''"); break;
                 }
                 text = tr(msg, key, value, primitive.getDisplayName(DefaultNameFormatter.getInstance()));
             }

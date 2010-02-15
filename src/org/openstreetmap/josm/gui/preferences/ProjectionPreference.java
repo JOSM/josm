@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.util.Collection;
 
 import javax.swing.BorderFactory;
@@ -109,8 +108,9 @@ public class ProjectionPreference implements PreferenceSetting {
 
         String projname = proj.getClass().getName();
         Collection<String> prefs = null;
-        if(projHasPrefs(proj))
+        if(projHasPrefs(proj)) {
             prefs = ((ProjectionSubPrefs) proj).getPreferences(projSubPrefPanel);
+        }
 
         Main.pref.put("projection", projname);
         setProjection(projname, prefs);
@@ -142,7 +142,7 @@ public class ProjectionPreference implements PreferenceSetting {
     static public void setProjection()
     {
         setProjection(Main.pref.get("projection", Mercator.class.getName()),
-        Main.pref.getCollection("projection.sub", null));
+                Main.pref.getCollection("projection.sub", null));
     }
 
     static public void setProjection(String name, Collection<String> coll)
@@ -166,8 +166,9 @@ public class ProjectionPreference implements PreferenceSetting {
         Main.pref.putCollection("projection.sub", coll);
         String sname = name.substring(name.lastIndexOf(".")+1);
         Main.pref.putCollection("projection.sub."+sname, coll);
-        if(projHasPrefs(Main.proj))
+        if(projHasPrefs(Main.proj)) {
             ((ProjectionSubPrefs) Main.proj).setPreferences(coll);
+        }
         if(b != null && (!Main.proj.getClass().getName().equals(oldProj.getClass().getName()) || Main.proj.hashCode() != oldProj.hashCode()))
         {
             Main.map.mapView.zoomTo(b);
@@ -180,17 +181,17 @@ public class ProjectionPreference implements PreferenceSetting {
         private Projection p;
         public SBPanel(Projection pr)
         {
-          super();
-          p = pr;
+            super();
+            p = pr;
         }
         @Override
         public void paint(java.awt.Graphics g)
         {
-          super.paint(g);
-          ((ProjectionSubPrefs) p).setPreferences(((ProjectionSubPrefs) p).getPreferences(this));
-          updateMeta(p);
+            super.paint(g);
+            ((ProjectionSubPrefs) p).setPreferences(((ProjectionSubPrefs) p).getPreferences(this));
+            updateMeta(p);
         }
-    };
+    }
 
     /**
      * Handles all the work related to update the projection-specific
@@ -227,8 +228,9 @@ public class ProjectionPreference implements PreferenceSetting {
             Projection proj = (Projection)projectionCombo.getItemAt(i);
             String name = proj.getClass().getName();
             String sname = name.substring(name.lastIndexOf(".")+1);
-            if(projHasPrefs(proj))
+            if(projHasPrefs(proj)) {
                 ((ProjectionSubPrefs) proj).setPreferences(Main.pref.getCollection("projection.sub."+sname, null));
+            }
             if (name.equals(Main.pref.get("projection", Mercator.class.getName()))) {
                 projectionCombo.setSelectedIndex(i);
                 selectedProjectionChanged(proj);

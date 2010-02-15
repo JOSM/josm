@@ -6,8 +6,6 @@ import java.io.File;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 /**
  * SaveLayerInfo represents the information, user preferences and save/upload states of
  * a layer which might be uploaded/saved.

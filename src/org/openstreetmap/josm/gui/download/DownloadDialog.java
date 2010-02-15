@@ -50,6 +50,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  *
  */
 public class DownloadDialog extends JDialog  {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(DownloadDialog.class.getName());
 
     /** the unique instance of the download dialog */

@@ -76,6 +76,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  */
 public class GenericRelationEditor extends RelationEditor  {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(GenericRelationEditor.class.getName());
 
     /** the tag table and its model */

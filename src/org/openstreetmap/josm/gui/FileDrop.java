@@ -784,7 +784,7 @@ public class FileDrop
          * @param fetcher The {@link Fetcher} that will return the data object
          * @since 1.1
          */
-        public TransferableObject( Class dataClass, Fetcher fetcher )
+        public TransferableObject(Class<?> dataClass, Fetcher fetcher )
         {   this.fetcher = fetcher;
         this.customFlavor = new java.awt.datatransfer.DataFlavor( dataClass, MIME_TYPE );
         }   // end constructor

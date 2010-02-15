@@ -51,6 +51,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * 
  */
 public class OAuthAuthorizationWizard extends JDialog {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(OAuthAuthorizationWizard.class.getName());
 
     private HtmlPanel pnlMessage;

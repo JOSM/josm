@@ -26,7 +26,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class UploadParameterSummaryPanel extends JPanel implements HyperlinkListener, PropertyChangeListener{
-
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(UploadParameterSummaryPanel.class.getName());
 
     private UploadStrategySpecification spec = new UploadStrategySpecification();

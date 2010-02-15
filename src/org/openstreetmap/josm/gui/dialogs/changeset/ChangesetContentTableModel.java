@@ -135,8 +135,8 @@ public class ChangesetContentTableModel extends AbstractTableModel {
      *
      */
     static private class ChangesetContentEntry implements ChangesetDataSetEntry{
-        private ChangesetModificationType modificationType;
-        private HistoryOsmPrimitive primitive;
+        private final ChangesetModificationType modificationType;
+        private final HistoryOsmPrimitive primitive;
 
         public ChangesetContentEntry(ChangesetModificationType modificationType, HistoryOsmPrimitive primitive) {
             this.modificationType = modificationType;
@@ -144,21 +144,14 @@ public class ChangesetContentTableModel extends AbstractTableModel {
         }
 
         public ChangesetContentEntry(ChangesetDataSetEntry entry) {
-            this.modificationType = entry.getModificationType();
-            this.primitive = entry.getPrimitive();
+            this(entry.getModificationType(), entry.getPrimitive());
         }
 
         public ChangesetModificationType getModificationType() {
             return modificationType;
         }
-        public void setModificationType(ChangesetModificationType modificationType) {
-            this.modificationType = modificationType;
-        }
         public HistoryOsmPrimitive getPrimitive() {
             return primitive;
-        }
-        public void setPrimitive(HistoryOsmPrimitive primitive) {
-            this.primitive = primitive;
         }
     }
 }

@@ -26,6 +26,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class DownloadAction extends JosmAction {
+    @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(DownloadAction.class.getName());
 
     public DownloadAction() {

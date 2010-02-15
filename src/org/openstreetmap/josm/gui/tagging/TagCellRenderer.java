@@ -20,7 +20,7 @@ import javax.swing.table.TableCellRenderer;
  *
  */
 public class TagCellRenderer extends JLabel implements TableCellRenderer  {
-
+    @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(TagCellRenderer.class.getName());
 
     private Font fontStandard = null;

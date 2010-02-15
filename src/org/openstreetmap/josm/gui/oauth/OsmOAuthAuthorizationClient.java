@@ -35,6 +35,7 @@ import org.openstreetmap.josm.io.OsmTransferCancelledException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public class OsmOAuthAuthorizationClient {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(OsmOAuthAuthorizationClient.class.getName());
 
     private OAuthParameters oauthProviderParameters;

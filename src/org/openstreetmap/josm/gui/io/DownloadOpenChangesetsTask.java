@@ -65,8 +65,8 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
                             + "You have either chosen to work anonymously or you are not entitled<br>"
                             + "to know the identity of the user on whose behalf you are working.")
                             + "</html>",
-                    tr("Missing user identity"),
-                    JOptionPane.ERROR_MESSAGE
+                            tr("Missing user identity"),
+                            JOptionPane.ERROR_MESSAGE
             );
             return;
         }
@@ -99,9 +99,8 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
      *
      */
     protected void refreshUserIdentity(){
-        JosmUserIdentityManager im = null;
+        JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
         try {
-            im = JosmUserIdentityManager.getInstance();
             OsmServerUserInfoReader reader = new OsmServerUserInfoReader();
             UserInfo info = reader.fetchUserInfo(getProgressMonitor().createSubTaskMonitor(1, false));
             im.setFullyIdentified(info.getDisplayName(), info);

@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel.Proxy
  *
  */
 public class DefaultProxySelector extends ProxySelector {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(DefaultProxySelector.class.getName());
 
     /**

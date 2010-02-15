@@ -374,15 +374,15 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         if(!Main.map.mapView.isActiveLayerVisible())
             return;
 
-        if (mode == mode.select) {
+        if (mode == Mode.select) {
             // Nothing to be done
         } else {
-            if (mode == mode.extrude) {
+            if (mode == Mode.extrude) {
                 if (e.getPoint().distance(initialMousePos) > 10 && newN1en != null) {
                     // Commit extrusion
 
                     Node n1 = selectedSegment.way.getNode(selectedSegment.lowerIndex);
-                    Node n2 = selectedSegment.way.getNode(selectedSegment.lowerIndex+1);
+                    //Node n2 = selectedSegment.way.getNode(selectedSegment.lowerIndex+1);
                     Node n3 = new Node(Main.proj.eastNorth2latlon(newN2en));
                     Node n4 = new Node(Main.proj.eastNorth2latlon(newN1en));
                     Way wnew = new Way(selectedSegment.way);
@@ -398,7 +398,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     Command c = new SequenceCommand(tr("Extrude Way"), cmds);
                     Main.main.undoRedo.add(c);
                 }
-            } else if (mode == mode.translate) {
+            } else if (mode == Mode.translate) {
                 // I don't think there's anything to do
             }
 

@@ -1,11 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -41,34 +38,34 @@ public class ExtensionFileFilter extends FileFilter {
         importers = new ArrayList<FileImporter>();
 
         String[] importerNames = {
-            "org.openstreetmap.josm.io.OsmImporter",
-            "org.openstreetmap.josm.io.OsmGzipImporter",
-            "org.openstreetmap.josm.io.GpxImporter",
-            "org.openstreetmap.josm.io.NMEAImporter",
-            "org.openstreetmap.josm.io.OsmBzip2Importer",
-            "org.openstreetmap.josm.io.JpgImporter",
-            "org.openstreetmap.josm.io.AllFormatsImporter"
+                "org.openstreetmap.josm.io.OsmImporter",
+                "org.openstreetmap.josm.io.OsmGzipImporter",
+                "org.openstreetmap.josm.io.GpxImporter",
+                "org.openstreetmap.josm.io.NMEAImporter",
+                "org.openstreetmap.josm.io.OsmBzip2Importer",
+                "org.openstreetmap.josm.io.JpgImporter",
+                "org.openstreetmap.josm.io.AllFormatsImporter"
         };
 
         for (String classname : importerNames) {
             try {
-                Class klass = Class.forName(classname);
-                importers.add((FileImporter)klass.newInstance());
+                Class<?> klass = Class.forName(classname);
+                importers.add((FileImporter) klass.newInstance());
             } catch (Exception e) {}
         }
 
         exporters = new ArrayList<FileExporter>();
 
         String[] exporterNames = {
-            "org.openstreetmap.josm.io.GpxExporter",
-            "org.openstreetmap.josm.io.OsmExporter",
-            "org.openstreetmap.josm.io.OsmGzipExporter",
-            "org.openstreetmap.josm.io.OsmBzip2Exporter"
+                "org.openstreetmap.josm.io.GpxExporter",
+                "org.openstreetmap.josm.io.OsmExporter",
+                "org.openstreetmap.josm.io.OsmGzipExporter",
+                "org.openstreetmap.josm.io.OsmBzip2Exporter"
         };
 
         for (String classname : exporterNames) {
             try {
-                Class klass = Class.forName(classname);
+                Class<?> klass = Class.forName(classname);
                 exporters.add((FileExporter)klass.newInstance());
             } catch (Exception e) {}
         }

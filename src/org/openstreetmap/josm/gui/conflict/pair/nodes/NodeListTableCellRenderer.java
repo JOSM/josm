@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair.nodes;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.text.MessageFormat;
@@ -166,19 +164,19 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
         Node node = (Node)value;
         reset();
         switch(column) {
-            case 0:
-                renderRowId(getModel(table),row, isSelected);
-                break;
-            case 1:
-                if (node == null) {
-                    renderEmptyRow();
-                } else {
-                    renderNode(getModel(table), node, row, isSelected);
-                }
-                break;
-            default:
-                // should not happen
-                throw new RuntimeException(MessageFormat.format("Unexpected column index. Got {0}.", column));
+        case 0:
+            renderRowId(getModel(table),row, isSelected);
+            break;
+        case 1:
+            if (node == null) {
+                renderEmptyRow();
+            } else {
+                renderNode(getModel(table), node, row, isSelected);
+            }
+            break;
+        default:
+            // should not happen
+            throw new RuntimeException(MessageFormat.format("Unexpected column index. Got {0}.", column));
         }
         return this;
     }

@@ -38,6 +38,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  */
 public class OsmChangesetParser {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(OsmChangesetParser.class.getName());
 
     private List<Changeset> changesets;

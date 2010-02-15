@@ -728,7 +728,7 @@ public class NodeListMergeModelTest {
             public void propertyChange(PropertyChangeEvent evt) {
                 events.add(evt);
             }
-        };
+        }
         MyListener listener = new MyListener();
         model.addPropertyChangeListener(listener);
         boolean oldValue = model.isFrozen();

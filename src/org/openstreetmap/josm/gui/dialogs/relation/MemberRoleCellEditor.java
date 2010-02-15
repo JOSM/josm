@@ -14,8 +14,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 
 public class MemberRoleCellEditor extends AbstractCellEditor implements TableCellEditor {
-
-    /** the logger object */
+    @SuppressWarnings("unused")
     static private Logger logger = Logger.getLogger(MemberRoleCellEditor.class.getName());
 
     private AutoCompletingTextField editor = null;

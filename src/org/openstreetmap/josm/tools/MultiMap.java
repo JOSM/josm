@@ -1,9 +1,8 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.tools;
 
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 
 /**
  * Maps keys to ordered sets of values.
@@ -20,7 +19,7 @@ public class MultiMap<A, B> extends HashMap<A, LinkedHashSet<B>> {
         }
         vals.add(value);
     }
-    
+
     /**
      * Put a key that maps to nothing.
      */

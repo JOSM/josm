@@ -35,6 +35,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class UploadAction extends JosmAction{
+    @SuppressWarnings("unused")
     static private Logger logger = Logger.getLogger(UploadAction.class.getName());
     /**
      * The list of upload hooks. These hooks will be called one after the other

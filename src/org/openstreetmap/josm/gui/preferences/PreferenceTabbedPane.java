@@ -39,6 +39,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListener {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(PreferenceTabbedPane.class.getName());
 
     private final static Collection<PreferenceSettingFactory> settingsFactory = new LinkedList<PreferenceSettingFactory>();

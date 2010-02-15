@@ -71,13 +71,13 @@ public class MirroredInputStream extends InputStream {
         InputStream res = null;
         try {
             if(file != null && (file.getName().endsWith(".zip")
-            || file.getName().endsWith(".ZIP")))
+                    || file.getName().endsWith(".ZIP")))
             {
                 ZipFile zipFile = new ZipFile(file);
                 ZipEntry resentry = null;
-                Enumeration entries = zipFile.entries();
+                Enumeration<? extends ZipEntry> entries = zipFile.entries();
                 while(entries.hasMoreElements()) {
-                    ZipEntry entry = (ZipEntry)entries.nextElement();
+                    ZipEntry entry = entries.nextElement();
                     if(entry.getName().endsWith("."+extension)) {
                         /* choose any file with correct extension. When more than
                         one file, prefer the one which matches namepart */

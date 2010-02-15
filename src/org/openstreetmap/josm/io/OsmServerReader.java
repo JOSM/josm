@@ -28,6 +28,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  * @author imi
  */
 public abstract class OsmServerReader extends OsmConnection {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(OsmServerReader.class.getName());
     private OsmApi api = OsmApi.getOsmApi();
     private boolean doAuthenticate = false;

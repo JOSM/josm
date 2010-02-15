@@ -203,22 +203,21 @@ public class MultiFetchServerObjectReaderTest {
         logger.info("uploading test data set ...");
         createDataSetOnServer(testDataSet);
 
-        PrintWriter pw = null;
         try {
-            pw = new PrintWriter(
+            PrintWriter pw = new PrintWriter(
                     new FileWriter(dataSetCacheOutputFile)
             );
+            logger.info(MessageFormat.format("caching test data set in ''{0}'' ...", dataSetCacheOutputFile.toString()));
+            OsmWriter w = new OsmWriter(pw, false, testDataSet.getVersion());
+            w.header();
+            w.writeDataSources(testDataSet);
+            w.writeContent(testDataSet);
+            w.footer();
+            w.close();
+            pw.close();
         } catch(IOException e) {
             fail(MessageFormat.format("failed to open file ''{0}'' for writing", dataSetCacheOutputFile.toString()));
         }
-        logger.info(MessageFormat.format("caching test data set in ''{0}'' ...", dataSetCacheOutputFile.toString()));
-        OsmWriter w = new OsmWriter(pw, false, testDataSet.getVersion());
-        w.header();
-        w.writeDataSources(testDataSet);
-        w.writeContent(testDataSet);
-        w.footer();
-        w.close();
-        pw.close();
     }
 
     private DataSet ds;

@@ -5,8 +5,6 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 /**
  * SwingRenderingProgressMonitor is progress monitor which delegates the rendering
  * of progress information to a {@see ProgressRenderer}.

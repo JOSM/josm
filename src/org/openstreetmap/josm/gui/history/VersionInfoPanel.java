@@ -31,6 +31,7 @@ import org.openstreetmap.josm.tools.UrlLabel;
  *
  */
 public class VersionInfoPanel extends JPanel implements Observer{
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(VersionInfoPanel.class.getName());
 
     private PointInTimeType pointInTimeType;

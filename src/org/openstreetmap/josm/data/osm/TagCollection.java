@@ -639,7 +639,7 @@ public class TagCollection implements Iterable<Tag> {
      */
     public TagCollection intersect(TagCollection other) {
         if (other == null) {
-            new TagCollection();
+            other = new TagCollection();
         }
         TagCollection ret = new TagCollection(this);
         for (Tag tag: tags) {

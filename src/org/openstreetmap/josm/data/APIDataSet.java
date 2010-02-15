@@ -329,6 +329,7 @@ public class APIDataSet {
      *
      */
     private class RelationUploadDependencyGraph {
+        @SuppressWarnings("unused")
         private final Logger logger = Logger.getLogger(RelationUploadDependencyGraph.class.getName());
         private HashMap<Relation, Set<Relation>> children;
         private Collection<Relation> relations;

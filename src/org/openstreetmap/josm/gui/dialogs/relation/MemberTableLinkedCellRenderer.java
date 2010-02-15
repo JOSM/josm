@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -10,8 +8,8 @@ import java.awt.Image;
 
 import javax.swing.JTable;
 
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
 
@@ -37,9 +35,8 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (value == null || !value.isValid()) {
+        if (value == null || !value.isValid())
             return;
-        }
 
         int ymax=this.getSize().height - 1;
         int xloop = 8;
@@ -101,12 +98,12 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         /* special icons */
         Image arrow = null;
         switch (value.direction) {
-            case FORWARD:
-                arrow = arrowDown;
-                break;
-            case BACKWARD:
-                arrow = arrowUp;
-                break;
+        case FORWARD:
+            arrow = arrowDown;
+            break;
+        case BACKWARD:
+            arrow = arrowUp;
+            break;
         }
         if ((arrow != null) && (value.linkPrev || value.linkNext)) {
             g.drawImage(arrow, xoff-3, (y1 + y2) / 2 - 2, null);

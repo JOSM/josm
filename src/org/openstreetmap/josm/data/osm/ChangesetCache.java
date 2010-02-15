@@ -34,6 +34,7 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
  *
  */
 public class ChangesetCache implements PreferenceChangedListener{
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(ChangesetCache.class.getName());
 
     /** the unique instance */

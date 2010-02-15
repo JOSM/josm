@@ -13,6 +13,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 
 public class OAuthAccessTokenHolder {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(OAuthAccessTokenHolder.class.getName());
 
     private  static OAuthAccessTokenHolder instance;

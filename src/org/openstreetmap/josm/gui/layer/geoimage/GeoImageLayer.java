@@ -40,7 +40,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
@@ -235,7 +234,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             if (layer != null) {
                 Main.main.addLayer(layer);
                 layer.hook_up_mouse_events(); // Main.map.mapView should exist
-                                              // now. Can add mouse listener
+                // now. Can add mouse listener
                 Main.map.mapView.addPropertyChangeListener(layer);
                 if (Main.map.getToggleDialog(ImageViewerDialog.class) == null) {
                     System.err.println("JO");

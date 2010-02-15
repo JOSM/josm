@@ -36,6 +36,7 @@ import org.openstreetmap.josm.tools.MultiMap;
  *
  */
 public class AutoCompletionCache {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(AutoCompletionCache.class.getName());
 
     private static HashMap<OsmDataLayer, AutoCompletionCache> caches;

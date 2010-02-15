@@ -25,6 +25,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
  *
  */
 public class TagEditorPanel extends JPanel {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(TagEditorPanel.class.getName());
     /** the tag editor model */
     private TagEditorModel model;

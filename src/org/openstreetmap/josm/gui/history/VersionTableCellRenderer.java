@@ -27,6 +27,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class VersionTableCellRenderer extends JLabel implements TableCellRenderer {
 
+    @SuppressWarnings("unused")
     static private Logger logger = Logger.getLogger(VersionTableCellRenderer.class.getName());
 
     public final static Color BGCOLOR_SELECTED = new Color(143,170,255);

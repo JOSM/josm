@@ -15,6 +15,7 @@ import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.conflict.pair.tags.TagMergeItem;
 import org.openstreetmap.josm.gui.conflict.pair.tags.TagMergeModel;
 
+@SuppressWarnings("unchecked")
 public class TagMergeModelTest {
 
     @Test

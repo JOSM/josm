@@ -38,6 +38,7 @@ import org.xml.sax.SAXException;
  *
  */
 public class UploadPrimitivesTask extends  AbstractUploadTask {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(UploadPrimitivesTask.class.getName());
 
     private boolean uploadCancelled = false;

@@ -34,6 +34,7 @@ import org.xml.sax.SAXException;
  * 
  */
 public class PluginDownloadTask extends PleaseWaitRunnable{
+    @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(PluginDownloadTask.class.getName());
 
     private final Collection<PluginInformation> toUpdate;

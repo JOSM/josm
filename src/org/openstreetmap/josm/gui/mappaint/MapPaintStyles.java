@@ -3,8 +3,8 @@ package org.openstreetmap.josm.gui.mappaint;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -57,6 +57,7 @@ public class MapPaintStyles {
         return i;
     }
 
+    @SuppressWarnings("null")
     public static void readFromPreferences() {
         iconDirs = Main.pref.getCollection("mappaint.icon.sources", Collections.<String>emptySet());
         if(Main.pref.getBoolean("mappaint.icon.enable-defaults", true))
@@ -94,9 +95,9 @@ public class MapPaintStyles {
                 {
                     zipIcons = in.getFile();
                     xmlReader.parse(new InputSource(zip));
-                }
-                else
+                } else {
                     xmlReader.parse(new InputSource(in));
+                }
             } catch(IOException e) {
                 System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", a[1], e.toString()));
                 e.printStackTrace();

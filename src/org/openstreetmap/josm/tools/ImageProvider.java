@@ -16,8 +16,8 @@ import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -102,10 +102,8 @@ public class ImageProvider {
                 try {
                     MirroredInputStream is = new MirroredInputStream(name, new File(Main.pref.getPreferencesDir(),
                     "images").toString());
-                    if (is != null) {
-                        img = Toolkit.getDefaultToolkit().createImage(is.getFile().toURI().toURL());
-                        cache.put(name, img);
-                    }
+                    img = Toolkit.getDefaultToolkit().createImage(is.getFile().toURI().toURL());
+                    cache.put(name, img);
                 } catch (IOException e) {
                 }
             }
@@ -122,8 +120,9 @@ public class ImageProvider {
         /* cache separately */
         if (dirs != null && dirs.size() > 0) {
             cache_name = "id:" + id + ":" + full_name;
-            if(archive != null)
+            if(archive != null) {
                 cache_name += ":" + archive.getName();
+            }
         }
 
         Image img = cache.get(cache_name);

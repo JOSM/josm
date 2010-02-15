@@ -211,18 +211,18 @@ public class PluginHandler {
         String policy = Main.pref.get(togglePreferenceKey, "ask");
         policy = policy.trim().toLowerCase();
         if (policy.equals("never")) {
-            if (togglePreferenceKey.equals("pluginmanager.version-based-update.policy")) {
+            if ("pluginmanager.version-based-update.policy".equals(togglePreferenceKey)) {
                 System.out.println(tr("Skipping plugin update after JOSM upgrade. Automatic update at startup is disabled."));
-            } else if (togglePreferenceKey.equals("pluginmanager.time-based-update.policy")) {
+            } else if ("pluginmanager.time-based-update.policy".equals(togglePreferenceKey)) {
                 System.out.println(tr("Skipping plugin update after elapsed update interval. Automatic update at startup is disabled."));
             }
             return false;
         }
 
         if (policy.equals("always")) {
-            if (togglePreferenceKey.equals("pluginmanager.time-based-update.policy")) {
+            if ("pluginmanager.time-based-update.policy".equals(togglePreferenceKey)) {
                 System.out.println(tr("Running plugin update after JOSM upgrade. Automatic update at startup is enabled."));
-            } else if (togglePreferenceKey.equals("pluginmanager.time-based-update.policy")) {
+            } else if ("pluginmanager.time-based-update.policy".equals(togglePreferenceKey)) {
                 System.out.println(tr("Running plugin update after elapsed update interval. Automatic update at startup is disabled."));
             }
             return true;

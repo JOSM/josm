@@ -23,6 +23,7 @@ import org.xml.sax.SAXException;
  * @author Imi
  */
 public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
+    @SuppressWarnings("unused")
     private final static Logger logger = Logger.getLogger(PleaseWaitRunnable.class.getName());
 
     private boolean cancelled = false;

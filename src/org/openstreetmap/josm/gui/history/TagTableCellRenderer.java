@@ -18,7 +18,7 @@ import javax.swing.table.TableCellRenderer;
  *
  */
 public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
-
+    @SuppressWarnings("unused")
     static private Logger logger = Logger.getLogger(TagTableCellRenderer.class.getName());
 
     public final static Color BGCOLOR_DIFFERENCE = new Color(255,197,197);

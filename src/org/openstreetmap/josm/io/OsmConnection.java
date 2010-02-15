@@ -30,6 +30,7 @@ import org.openstreetmap.josm.tools.Base64;
  * @author imi
  */
 public class OsmConnection {
+    @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(OsmConnection.class.getName());
 
     protected boolean cancel = false;

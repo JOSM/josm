@@ -1,9 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
+import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.NONE;
 import static org.openstreetmap.josm.tools.I18n.tr;
-
-import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.*;
 
 public class WayConnectionType {
 
@@ -31,7 +30,7 @@ public class WayConnectionType {
         public boolean isRoundabout() {
             return this == ROUNDABOUT_RIGHT || this == ROUNDABOUT_LEFT;
         }
-    };
+    }
 
     /** True, if the element is part of a closed loop of ways. */
     public boolean isLoop;
@@ -65,20 +64,15 @@ public class WayConnectionType {
     }
 
     public String getToolTip() {
-        if (!isValid()) {
+        if (!isValid())
             return "";
-        }
-        else if (linkPrev && linkNext) {
+        else if (linkPrev && linkNext)
             return tr("way is connected");
-        }
-        else if (linkPrev) {
+        else if (linkPrev)
             return tr("way is connected to previous relation member");
-        }
-        else if (linkNext) {
+        else if (linkNext)
             return tr("way is connected to next relation member");
-        }
-        else {
+        else
             return tr("way is not connected to previous or next relation member");
-        }//FIXME: isLoop & direction
     }
 }

@@ -33,6 +33,7 @@ import org.xml.sax.SAXException;
  *
  */
 public class UpdatePrimitivesTask extends PleaseWaitRunnable {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(UpdatePrimitivesTask.class.getName());
 
     private DataSet ds;

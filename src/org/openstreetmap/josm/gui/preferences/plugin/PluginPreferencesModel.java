@@ -20,6 +20,7 @@ import org.openstreetmap.josm.plugins.PluginException;
 import org.openstreetmap.josm.plugins.PluginInformation;
 
 public class PluginPreferencesModel extends Observable{
+    @SuppressWarnings("unused")
     private final static Logger logger = Logger.getLogger(PluginPreferencesModel.class.getName());
 
     private final ArrayList<PluginInformation> availablePlugins = new ArrayList<PluginInformation>();
@@ -156,13 +157,12 @@ public class PluginPreferencesModel extends Observable{
         PluginInformation pi = getPluginInformation(name);
         if (pi != null) {
             selectedPluginsMap.put(pi,selected);
+            if (pi.isUpdateRequired()) {
+                pendingDownloads.add(pi.name);
+            }
         }
         if (!selected) {
             pendingDownloads.remove(name);
-            return;
-        }
-        if (pi.isUpdateRequired()) {
-            pendingDownloads.add(pi.name);
         }
     }
 

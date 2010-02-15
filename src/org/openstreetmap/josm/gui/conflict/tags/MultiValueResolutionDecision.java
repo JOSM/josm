@@ -7,7 +7,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -133,10 +132,10 @@ public class MultiValueResolutionDecision {
      */
     public String getChosenValue() throws IllegalStateException {
         switch(type) {
-            case UNDECIDED: throw new IllegalStateException(tr("Not decided yet."));
-            case KEEP_ONE: return value;
-            case KEEP_NONE: return null;
-            case KEEP_ALL: return tags.getJoinedValues(getKey());
+        case UNDECIDED: throw new IllegalStateException(tr("Not decided yet."));
+        case KEEP_ONE: return value;
+        case KEEP_NONE: return null;
+        case KEEP_ALL: return tags.getJoinedValues(getKey());
         }
         // should not happen
         return null;
@@ -281,10 +280,10 @@ public class MultiValueResolutionDecision {
      */
     public Tag getResolution() {
         switch(type) {
-            case KEEP_ALL: return new Tag(getKey(), tags.getJoinedValues(getKey()));
-            case KEEP_ONE: return new Tag(getKey(),value);
-            case KEEP_NONE: return new Tag(getKey(), "");
-            case UNDECIDED: return null;
+        case KEEP_ALL: return new Tag(getKey(), tags.getJoinedValues(getKey()));
+        case KEEP_ONE: return new Tag(getKey(),value);
+        case KEEP_NONE: return new Tag(getKey(), "");
+        case UNDECIDED: return null;
         }
         return null;
     }

@@ -24,6 +24,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class TagConflictResolveCommand extends ConflictResolveCommand {
+    @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(TagConflictResolveCommand.class.getName());
 
     /** the conflict to resolve */
@@ -63,9 +64,9 @@ public class TagConflictResolveCommand extends ConflictResolveCommand {
     public MutableTreeNode description() {
         String msg = "";
         switch(OsmPrimitiveType.from(conflict.getMy())) {
-            case NODE: msg = marktr("Resolve {0} tag conflicts in node {1}"); break;
-            case WAY: msg = marktr("Resolve {0} tag conflicts in way {1}"); break;
-            case RELATION: msg = marktr("Resolve {0} tag conflicts in relation {1}"); break;
+        case NODE: msg = marktr("Resolve {0} tag conflicts in node {1}"); break;
+        case WAY: msg = marktr("Resolve {0} tag conflicts in way {1}"); break;
+        case RELATION: msg = marktr("Resolve {0} tag conflicts in relation {1}"); break;
         }
         return new DefaultMutableTreeNode(
                 new JLabel(

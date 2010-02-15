@@ -223,7 +223,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
      * @return
      */
     protected JPanel buildResultsPanel() {
-        JPanel pnl = new JPanel(new GridBagLayout());;
+        JPanel pnl = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
         pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 

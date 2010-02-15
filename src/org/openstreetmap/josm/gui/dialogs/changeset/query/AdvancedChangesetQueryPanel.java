@@ -1085,18 +1085,12 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         }
 
         public Date getDate() {
-            for (int i = 0; i< 4; i++) {
+            for (int format: new int[] {DateFormat.SHORT, DateFormat.MEDIUM, DateFormat.LONG, DateFormat.FULL}) {
+                DateFormat df = DateFormat.getDateInstance(format);
                 try {
-                    DateFormat df = null;
-                    switch(i) {
-                    case 0: df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault()); break;
-                    case 1: df = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault()); break;
-                    case 2: df = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault()); break;
-                    case 3: df = DateFormat.getDateInstance(DateFormat.FULL,Locale.getDefault()); break;
-                    }
                     return df.parse(getComponent().getText());
-                } catch(ParseException e) {
-                    continue;
+                } catch (ParseException e) {
+                    // Try next format
                 }
             }
             return null;

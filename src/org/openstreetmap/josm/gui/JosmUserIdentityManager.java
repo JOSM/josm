@@ -45,9 +45,9 @@ public class JosmUserIdentityManager implements PreferenceChangedListener{
     static private JosmUserIdentityManager instance;
 
     /**
-     * Replies the unique instance of teh JOSM user identity manager
+     * Replies the unique instance of the JOSM user identity manager
      *
-     * @return the unique instance of teh JOSM user identity manager
+     * @return the unique instance of the JOSM user identity manager
      */
     static public JosmUserIdentityManager getInstance() {
         if (instance == null) {

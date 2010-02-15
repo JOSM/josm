@@ -82,7 +82,7 @@ public class ImageDisplay extends JComponent {
             }
 
             boolean error = tracker.isErrorID(1);
-            if (img != null && (img.getWidth(null) == 0 || img.getHeight(null) == 0)) {
+            if (img.getWidth(null) == 0 || img.getHeight(null) == 0) {
                 error = true;
             }
 
@@ -438,8 +438,8 @@ public class ImageDisplay extends JComponent {
         } else if (image == null) {
             g.setColor(Color.black);
             String loadingStr;
-            if (! errorLoading) {;
-            loadingStr = tr("Loading {0}", file.getName());
+            if (! errorLoading) {
+                loadingStr = tr("Loading {0}", file.getName());
             } else {
                 loadingStr = tr("Error on file {0}", file.getName());
             }

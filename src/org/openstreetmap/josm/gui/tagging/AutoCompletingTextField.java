@@ -32,7 +32,7 @@ import org.openstreetmap.josm.gui.util.TableCellEditorSupport;
  *
  */
 public class AutoCompletingTextField extends JTextField implements ComboBoxEditor, TableCellEditor {
-
+    @SuppressWarnings("unused")
     static private Logger logger = Logger.getLogger(AutoCompletingTextField.class.getName());
 
     /**

@@ -44,6 +44,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * 
  */
 public class OAuthAuthenticationPreferencesPanel extends JPanel implements PropertyChangeListener {
+    @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(OAuthAuthenticationPreferencesPanel.class.getName());
 
     private JPanel pnlAuthorisationMessage;

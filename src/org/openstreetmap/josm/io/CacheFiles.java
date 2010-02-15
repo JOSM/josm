@@ -42,9 +42,9 @@ public class CacheFiles {
     private boolean updateModTime = true;
 
     // If the cache is full, we don't want to delete just one file
-    private static final int cleanUpThreshold = 20;
+    private static final int CLEANUP_TRESHOLD = 20;
     // We don't want to clean after every file-write
-    private static final int cleanUpInterval = 5;
+    private static final int CLEANUP_INTERVAL = 5;
     // Stores how many files have been written
     private int writes = 0;
 
@@ -220,7 +220,7 @@ public class CacheFiles {
      * Checks if a clean up is needed and will do so if necessary
      */
     public void checkCleanUp() {
-        if(this.writes > this.cleanUpInterval) {
+        if(this.writes > CLEANUP_INTERVAL) {
             cleanUp();
         }
     }
@@ -253,7 +253,7 @@ public class CacheFiles {
             modtime.get(it.next()).delete();
 
             // Delete a couple of files, then check again
-            if(i % cleanUpThreshold == 0 && getDirSize() < maxsize)
+            if(i % CLEANUP_TRESHOLD == 0 && getDirSize() < maxsize)
                 return;
         }
         writes = 0;

@@ -28,6 +28,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * deleted. - All remaining objects with modified flag set are updated.
  */
 public class OsmServerWriter {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(OsmServerWriter.class.getName());
 
     /**

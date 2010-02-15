@@ -27,7 +27,7 @@ public class HelpAction extends AbstractAction {
 
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand() == null) {
-            String topic = null;
+            String topic;
             if (e.getSource() instanceof Component) {
                 Component c = SwingUtilities.getRoot((Component)e.getSource());
                 Point mouse = c.getMousePosition();

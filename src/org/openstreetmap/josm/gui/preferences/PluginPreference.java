@@ -52,6 +52,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class PluginPreference implements PreferenceSetting {
+    @SuppressWarnings("unused")
     private final static Logger logger = Logger.getLogger(PluginPreference.class.getName());
 
     public static class Factory implements PreferenceSettingFactory {
@@ -296,7 +297,7 @@ public class PluginPreference implements PreferenceSetting {
                         pnlPluginPreferences.refreshView();
                     }
                 });
-            };
+            }
         };
         Main.worker.submit(task);
         Main.worker.submit(r);

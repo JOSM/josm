@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.osm.Tagged;
  */
 @SuppressWarnings("serial")
 public class TagEditorModel extends AbstractTableModel {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(TagEditorModel.class.getName());
 
     static public final String PROP_DIRTY = TagEditorModel.class.getName() + ".dirty";

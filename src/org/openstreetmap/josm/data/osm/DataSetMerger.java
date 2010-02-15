@@ -93,6 +93,7 @@ public class DataSetMerger {
             case NODE: candidates = targetDataSet.getNodes(); break;
             case WAY: candidates  =targetDataSet.getWays(); break;
             case RELATION: candidates = targetDataSet.getRelations(); break;
+            default: throw new AssertionError();
             }
             for (OsmPrimitive target : candidates) {
                 if (!target.isNew()) {
@@ -126,6 +127,7 @@ public class DataSetMerger {
         case NODE: target = source.isNew() ? new Node() : new Node(source.getId()); break;
         case WAY: target = source.isNew() ? new Way() : new Way(source.getId()); break;
         case RELATION: target = source.isNew() ? new Relation() : new Relation(source.getId()); break;
+        default: throw new AssertionError();
         }
         target.mergeFrom(source);
         targetDataSet.addPrimitive(target);

@@ -134,8 +134,8 @@ public class OsmChangesetContentParser {
             if (v == null) {
                 throwException(tr("Missing mandatory attribute ''{0}''.", name));
             }
-            if (v.equals("true")) return true;
-            if (v.equals("false")) return false;
+            if ("true".equals(v)) return true;
+            if ("false".equals(v)) return false;
             throwException(tr("Illegal value for mandatory attribute ''{0}'' of type boolean. Got ''{1}''.", name, v));
             // not reached
             return false;

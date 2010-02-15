@@ -25,6 +25,7 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
 public class PluginListPanel extends VerticallyScrollablePanel{
+    @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(PluginListPanel.class.getName());
 
     private PluginPreferencesModel model;

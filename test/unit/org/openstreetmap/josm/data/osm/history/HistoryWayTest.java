@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.data.osm.history;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 public class HistoryWayTest {
 
     @Test
-    public void HistoryWayTest() {
+    public void wayTest() {
         Date d = new Date();
         HistoryWay way = new HistoryWay(
                 1,

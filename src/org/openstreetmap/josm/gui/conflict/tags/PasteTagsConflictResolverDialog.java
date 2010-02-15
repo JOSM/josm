@@ -432,6 +432,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
     }
 
     static private class StatisticsInfoRenderer extends JLabel implements TableCellRenderer {
+        @SuppressWarnings("unused")
         static private final Logger logger = Logger.getLogger(StatisticsInfoRenderer.class.getName());
 
         protected void reset() {
@@ -460,9 +461,9 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
                 }
                 String msg = "";
                 switch(type) {
-                    case NODE: msg = trn("{0} node", "{0} nodes", numPrimitives,numPrimitives); break;
-                    case WAY: msg = trn("{0} way", "{0} ways", numPrimitives, numPrimitives); break;
-                    case RELATION: msg = trn("{0} relation", "{0} relations", numPrimitives, numPrimitives); break;
+                case NODE: msg = trn("{0} node", "{0} nodes", numPrimitives,numPrimitives); break;
+                case WAY: msg = trn("{0} way", "{0} ways", numPrimitives, numPrimitives); break;
+                case RELATION: msg = trn("{0} relation", "{0} relations", numPrimitives, numPrimitives); break;
                 }
                 text = text.equals("") ? msg : text + ", " + msg;
             }
@@ -487,9 +488,9 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
                 StatisticsInfo info = (StatisticsInfo) value;
 
                 switch(column) {
-                    case 0: renderNumTags(info); break;
-                    case 1: renderFrom(info); break;
-                    case 2: renderTo(info); break;
+                case 0: renderNumTags(info); break;
+                case 1: renderFrom(info); break;
+                case 2: renderTo(info); break;
                 }
             }
             return this;

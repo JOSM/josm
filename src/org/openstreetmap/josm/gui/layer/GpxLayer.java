@@ -256,16 +256,14 @@ public class GpxLayer extends Layer {
                     }
 
                     File sel[] = fc.getSelectedFiles();
-                    if (sel != null) {
-                        // sort files in increasing order of timestamp (this is the end time, but so
-                        // long as they don't overlap, that's fine)
-                        if (sel.length > 1) {
-                            Arrays.sort(sel, new Comparator<File>() {
-                                public int compare(File a, File b) {
-                                    return a.lastModified() <= b.lastModified() ? -1 : 1;
-                                }
-                            });
-                        }
+                    // sort files in increasing order of timestamp (this is the end time, but so
+                    // long as they don't overlap, that's fine)
+                    if (sel.length > 1) {
+                        Arrays.sort(sel, new Comparator<File>() {
+                            public int compare(File a, File b) {
+                                return a.lastModified() <= b.lastModified() ? -1 : 1;
+                            }
+                        });
                     }
 
                     String names = null;
