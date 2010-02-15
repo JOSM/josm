@@ -18,6 +18,7 @@ import java.util.List;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
@@ -93,12 +94,12 @@ public class OpenFileAction extends DiskAccessAction {
         }
 
         protected void alertFilesNotMatchingWithImporter(Collection<File> files, FileImporter importer) {
-            StringBuffer msg = new StringBuffer();
+            final StringBuffer msg = new StringBuffer();
             msg.append("<html>");
             msg.append(
                     trn(
-                            "Cannot open {0} file with the file importer ''{1}''. Skipping the following files:",
-                            "Cannot open {0} files with the file importer ''{1}''. Skipping the following files:",
+                            "Cannot open {0} file with the file importer ''{1}''.",
+                            "Cannot open {0} files with the file importer ''{1}''.",
                             files.size(),
                             files.size(),
                             importer.filter.getDescription()
@@ -110,22 +111,26 @@ public class OpenFileAction extends DiskAccessAction {
             }
             msg.append("</ul>");
 
-            HelpAwareOptionPane.showOptionDialog(
-                    Main.parent,
-                    msg.toString(),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE,
-                    HelpUtil.ht("/Action/OpenFile#ImporterCantImportFiles")
-            );
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    HelpAwareOptionPane.showOptionDialog(
+                            Main.parent,
+                            msg.toString(),
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE,
+                            HelpUtil.ht("/Action/OpenFile#ImporterCantImportFiles")
+                    );
+                }
+            });
         }
 
         protected void alertFilesWithUnknownImporter(Collection<File> files) {
-            StringBuffer msg = new StringBuffer();
+            final StringBuffer msg = new StringBuffer();
             msg.append("<html>");
             msg.append(
                     trn(
-                            "Cannot open {0} file because no suitable file importer is available. Skipping the following files:",
-                            "Cannot open {0} files because no suitable file importer is available. Skipping the following files:",
+                            "Cannot open {0} file because no suitable file importer is available.",
+                            "Cannot open {0} files because no suitable file importer is available.",
                             files.size(),
                             files.size()
                     )
@@ -135,14 +140,18 @@ public class OpenFileAction extends DiskAccessAction {
                 msg.append("<li>").append(f.getAbsolutePath()).append("</li>");
             }
             msg.append("</ul>");
-
-            HelpAwareOptionPane.showOptionDialog(
-                    Main.parent,
-                    msg.toString(),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE,
-                    HelpUtil.ht("/Action/OpenFile#MissingImporterForFiles")
-            );
+            
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    HelpAwareOptionPane.showOptionDialog(
+                            Main.parent,
+                            msg.toString(),
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE,
+                            HelpUtil.ht("/Action/OpenFile#MissingImporterForFiles")
+                    );
+                }
+            });
         }
 
         @Override
@@ -171,12 +180,20 @@ public class OpenFileAction extends DiskAccessAction {
                 // The importer was expicitely chosen, so use it.
                 List<File> filesNotMatchingWithImporter = new LinkedList<File>();
                 List<File> filesMatchingWithImporter = new LinkedList<File>();
-                for (File f : files) {
+                for (final File f : files) {
                     if (!chosenImporter.acceptFile(f)) {
                         if (f.isDirectory()) {
-                            JOptionPane.showMessageDialog(Main.parent, tr(
-                                    "<html>Cannot open directory ''{0}''.<br>Please select a file.</html>", f
-                                    .getAbsolutePath()), tr("Open file"), JOptionPane.ERROR_MESSAGE);
+                            SwingUtilities.invokeLater(new Runnable() {
+                                public void run() {
+                                    JOptionPane.showMessageDialog(Main.parent, tr(
+                                            "<html>Cannot open directory ''{0}''.<br>Please select a file.</html>", 
+                                            f.getAbsolutePath()), tr("Open file"), JOptionPane.ERROR_MESSAGE);
+                                }
+                            });
+                            // TODO when changing to Java 6: Don't cancel the 
+                            // task here but use different modality. (Currently 2 dialogs
+                            // would block each other.)
+                            return;
                         } else {
                             filesNotMatchingWithImporter.add(f);
                         }
@@ -187,8 +204,12 @@ public class OpenFileAction extends DiskAccessAction {
 
                 if (!filesNotMatchingWithImporter.isEmpty()) {
                     alertFilesNotMatchingWithImporter(filesNotMatchingWithImporter, chosenImporter);
+                    // TODO when changing to Java 6: Don't cancel the 
+                    // task here but use different modality. (Currently 2 dialogs
+                    // would block each other.)
+                    return;
                 }
-                if (!filesNotMatchingWithImporter.isEmpty()) {
+                if (!filesMatchingWithImporter.isEmpty()) {
                     importData(chosenImporter, filesMatchingWithImporter);
                 }
             } else {
@@ -208,6 +229,10 @@ public class OpenFileAction extends DiskAccessAction {
                 }
                 if (!filesWithUnknownImporter.isEmpty()) {
                     alertFilesWithUnknownImporter(filesWithUnknownImporter);
+                    // TODO when changing to Java 6: Don't cancel the 
+                    // task here but use different modality. (Currently 2 dialogs
+                    // would block each other.)
+                    return;
                 }
                 List<FileImporter> ims = new ArrayList<FileImporter>(map.keySet());
                 Collections.sort(ims);
