@@ -219,7 +219,10 @@ public class TagTable extends JTable  {
                 return;
             switch(getSelectedColumnCount()) {
             case 1:
-                if (getSelectedColumn() == 0) {
+                if (isEditing()) {
+                    getCellEditor().cancelCellEditing();
+                    deleteTags();
+                } else if (getSelectedColumn() == 0) {
                     deleteTagNames();
                 } else if (getSelectedColumn() == 1) {
                     deleteTagValues();
@@ -256,7 +259,7 @@ public class TagTable extends JTable  {
 
         protected void updateEnabledState() {
             if (isEditing() && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1) {
-                setEnabled(false);
+                setEnabled(true);
             } else if (!isEditing() && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1) {
                 setEnabled(true);
             } else if (getSelectedColumnCount() > 1 || getSelectedRowCount() > 1) {
