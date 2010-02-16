@@ -558,14 +558,36 @@ public class DataSet implements Cloneable {
 
     @Override public DataSet clone() {
         DataSet ds = new DataSet();
+        HashMap<OsmPrimitive, OsmPrimitive> primitivesMap = new HashMap<OsmPrimitive, OsmPrimitive>();
         for (Node n : nodes) {
-            ds.addPrimitive(new Node(n));
+            Node newNode = new Node(n);
+            primitivesMap.put(n, newNode);
+            ds.addPrimitive(newNode);
         }
         for (Way w : ways) {
-            ds.addPrimitive(new Way(w));
+            Way newWay = new Way(w);
+            primitivesMap.put(w, newWay);
+            List<Node> newNodes = new ArrayList<Node>();
+            for (Node n: w.getNodes()) {
+                newNodes.add((Node)primitivesMap.get(n));
+            }
+            newWay.setNodes(newNodes);
+            ds.addPrimitive(newWay);
         }
-        for (Relation e : relations) {
-            ds.addPrimitive(new Relation(e));
+        // Because relations can have other relations as members we first clone all relations
+        // and then get the cloned members
+        for (Relation r : relations) {
+            Relation newRelation = new Relation(r);
+            primitivesMap.put(r, newRelation);
+        }
+        for (Relation r : relations) {
+            Relation newRelation = (Relation)primitivesMap.get(r);
+            List<RelationMember> newMembers = new ArrayList<RelationMember>();
+            for (RelationMember rm: r.getMembers()) {
+                newMembers.add(new RelationMember(rm.getRole(), primitivesMap.get(rm.getMember())));
+            }
+            newRelation.setMembers(newMembers);
+            ds.addPrimitive(newRelation);
         }
         for (DataSource source : dataSources) {
             ds.dataSources.add(new DataSource(source.bounds, source.origin));
