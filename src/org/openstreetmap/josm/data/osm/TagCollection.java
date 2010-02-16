@@ -116,13 +116,12 @@ public class TagCollection implements Iterable<Tag> {
         return tags;
     }
 
-    private HashSet<Tag> tags;
+    private final HashSet<Tag> tags = new HashSet<Tag>();
 
     /**
      * Creates an empty tag collection
      */
     public TagCollection() {
-        tags = new HashSet<Tag>();
     }
 
     /**
@@ -132,7 +131,6 @@ public class TagCollection implements Iterable<Tag> {
      * @param other the other collection
      */
     public TagCollection(TagCollection other) {
-        this();
         if (other != null) {
             tags.addAll(other.tags);
         }

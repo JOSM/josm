@@ -109,9 +109,8 @@ public class Tag {
         if (obj instanceof Tag) {
             Tag other = (Tag) obj;
             return key.equals(other.getKey()) && value.equals(other.getValue());
-        } else {
+        } else
             return false;
-        }
     }
 
     @Override

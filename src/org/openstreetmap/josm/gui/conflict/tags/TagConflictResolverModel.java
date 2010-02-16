@@ -181,10 +181,20 @@ public class TagConflictResolverModel extends DefaultTableModel {
         return getRowCount();
     }
 
+    //TODO Should this method work with all decisions or only with displayed decisions? For MergeNodes it should be
+    //all decisions, but this method is also used on other places, so I've made new method just for MergeNodes
     public TagCollection getResolution() {
         TagCollection tc = new TagCollection();
         for (String key: displayedKeys) {
             tc.add(decisions.get(key).getResolution());
+        }
+        return tc;
+    }
+
+    public TagCollection getAllResolutions() {
+        TagCollection tc = new TagCollection();
+        for (MultiValueResolutionDecision value: decisions.values()) {
+            tc.add(value.getResolution());
         }
         return tc;
     }

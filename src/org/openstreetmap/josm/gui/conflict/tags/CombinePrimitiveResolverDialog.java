@@ -221,9 +221,9 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     public List<Command> buildResolutionCommands() {
         List<Command> cmds = new LinkedList<Command>();
 
-        if (getTagConflictResolverModel().getNumDecisions() > 0) {
-            TagCollection tc = getTagConflictResolverModel().getResolution();
-            cmds.addAll(buildTagChangeCommand(targetPrimitive, tc));
+        TagCollection allResolutions = getTagConflictResolverModel().getAllResolutions();
+        if (allResolutions.size() > 0) {
+            cmds.addAll(buildTagChangeCommand(targetPrimitive, allResolutions));
         }
         if (targetPrimitive.get("created_by") != null) {
             cmds.add(new ChangePropertyCommand(targetPrimitive, "created_by", null));
