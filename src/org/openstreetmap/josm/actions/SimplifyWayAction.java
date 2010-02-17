@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -215,7 +216,7 @@ public class SimplifyWayAction extends JosmAction {
         double threshold = Double.parseDouble(Main.pref.get("simplify-way.max-error", "3"));
         int lower = 0;
         int i = 0;
-        List<Node> newNodes = new LinkedList<Node>();
+        List<Node> newNodes = new ArrayList<Node>(w.getNodesCount());
         while(i < w.getNodesCount()){
             if (isRequiredNode(w,w.getNode(i))) {
                 // copy a required node to the list of new nodes. Simplify not
@@ -231,7 +232,7 @@ public class SimplifyWayAction extends JosmAction {
                 i++;
             }
             // ... and simplify them
-            buildSimplifiedNodeList(w, lower, Math.min(w.getNodesCount()-1, i), threshold,newNodes);
+            buildSimplifiedNodeList(w.getNodes(), lower, Math.min(w.getNodesCount()-1, i), threshold,newNodes);
             lower=i;
             i++;
         }
@@ -259,15 +260,16 @@ public class SimplifyWayAction extends JosmAction {
      * @param to the upper index
      * @param threshold
      */
-    protected void buildSimplifiedNodeList(Way wnew, int from, int to, double threshold, List<Node> simplifiedNodes) {
+    protected void buildSimplifiedNodeList(List<Node> wnew, int from, int to, double threshold, List<Node> simplifiedNodes) {
 
-        Node fromN = wnew.getNode(from);
-        Node toN = wnew.getNode(to);
+        Node fromN = wnew.get(from);
+        Node toN = wnew.get(to);
 
+        // Get max xte
         int imax = -1;
         double xtemax = 0;
         for (int i = from + 1; i < to; i++) {
-            Node n = wnew.getNode(i);
+            Node n = wnew.get(i);
             double xte = Math.abs(EARTH_RAD
                     * xtd(fromN.getCoor().lat() * Math.PI / 180, fromN.getCoor().lon() * Math.PI / 180, toN.getCoor().lat() * Math.PI
                             / 180, toN.getCoor().lon() * Math.PI / 180, n.getCoor().lat() * Math.PI / 180, n.getCoor().lon() * Math.PI
@@ -279,14 +281,16 @@ public class SimplifyWayAction extends JosmAction {
         }
 
         if (imax != -1 && xtemax >= threshold) {
+            // Segment cannot be simplified - try shorter segments
             buildSimplifiedNodeList(wnew, from, imax,threshold,simplifiedNodes);
-            simplifiedNodes.add(wnew.getNode(imax));
+            //simplifiedNodes.add(wnew.get(imax));
             buildSimplifiedNodeList(wnew, imax, to, threshold,simplifiedNodes);
         } else {
+            // Simplify segment
             if (simplifiedNodes.isEmpty() || simplifiedNodes.get(simplifiedNodes.size()-1) != fromN) {
                 simplifiedNodes.add(fromN);
             }
-            if (simplifiedNodes.isEmpty() || simplifiedNodes.get(simplifiedNodes.size()-1) != toN) {
+            if (fromN != toN) {
                 simplifiedNodes.add(toN);
             }
         }
