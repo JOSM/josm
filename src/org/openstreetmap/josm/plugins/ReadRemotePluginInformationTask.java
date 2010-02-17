@@ -15,8 +15,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -181,6 +184,25 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
     }
 
     /**
+     * Filter information about deprecated plugins from the list of downloaded
+     * plugins
+     * 
+     * @param plugins the plugin informations
+     * @return the plugin informations, without deprecated plugins
+     */
+    protected List<PluginInformation> filterDeprecatedPlugins(List<PluginInformation> plugins) {
+        List<PluginInformation> ret = new ArrayList<PluginInformation>(plugins.size());
+        HashSet<String> deprecatedPluginNames = new HashSet<String>(Arrays.asList(PluginHandler.DEPRECATED_PLUGINS));
+        for (PluginInformation plugin: plugins) {
+            if (deprecatedPluginNames.contains(plugin.name)) {
+                continue;
+            }
+            ret.add(plugin);
+        }
+        return ret;
+    }
+
+    /**
      * Parses the plugin list
      * 
      * @param site the site from where the list was downloaded
@@ -191,7 +213,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
             getProgressMonitor().subTask(tr("Parsing plugin list from site ''{0}''", site));
             InputStream in = new ByteArrayInputStream(doc.getBytes("UTF-8"));
             List<PluginInformation> pis = new PluginListParser().parse(in);
-            availabePlugins.addAll(pis);
+            availabePlugins.addAll(filterDeprecatedPlugins(pis));
         } catch(UnsupportedEncodingException e) {
             System.err.println(tr("Failed to parse plugin list document from site ''{0}''. Skipping site. Exception was: {1}", site, e.toString()));
             e.printStackTrace();
