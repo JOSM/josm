@@ -577,8 +577,10 @@ public class DataSet implements Cloneable {
         // Because relations can have other relations as members we first clone all relations
         // and then get the cloned members
         for (Relation r : relations) {
-            Relation newRelation = new Relation(r);
+            Relation newRelation = new Relation(r, r.isNew());
+            newRelation.setMembers(null);
             primitivesMap.put(r, newRelation);
+            ds.addPrimitive(newRelation);
         }
         for (Relation r : relations) {
             Relation newRelation = (Relation)primitivesMap.get(r);
@@ -587,7 +589,6 @@ public class DataSet implements Cloneable {
                 newMembers.add(new RelationMember(rm.getRole(), primitivesMap.get(rm.getMember())));
             }
             newRelation.setMembers(newMembers);
-            ds.addPrimitive(newRelation);
         }
         for (DataSource source : dataSources) {
             ds.dataSources.add(new DataSource(source.bounds, source.origin));
