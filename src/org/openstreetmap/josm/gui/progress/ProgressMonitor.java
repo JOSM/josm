@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.progress;
 
 /**
- * Typical usecase is:
+ * Typical use case is:
  * <pre>
  *   monitor.beginTask()
  *   try {
@@ -21,10 +21,10 @@ package org.openstreetmap.josm.gui.progress;
  *
  * If task consists of multiple tasks then {@link #createSubTaskMonitor(int, boolean)} may be used. It
  * will create new ProgressMonitor, then can be passed to the subtask. Subtask doesn't know whether
- * it runs standalono or as a part of other task. Progressbar will be updated so that total progress is
+ * it runs standalone or as a part of other task. Progressbar will be updated so that total progress is
  * shown, not just progress of the subtask
  *
- * All ProgressMonitor implemenenatations should be thread safe.
+ * All ProgressMonitor implementations should be thread safe.
  *
  */
 public interface ProgressMonitor {
@@ -44,7 +44,7 @@ public interface ProgressMonitor {
     void beginTask(String title);
 
     /**
-     * Starts this progress monitor. Must be called excatly once
+     * Starts this progress monitor. Must be called exactly once
      * @param title
      * @param ticks
      */
@@ -52,7 +52,7 @@ public interface ProgressMonitor {
     /**
      * Finish this progress monitor, close the dialog or inform the parent progress monitor
      * that it can continue with other tasks. Must be called at least once (if called multiply times
-     * then futher calls are ignored)
+     * then further calls are ignored)
      */
     void finishTask();
     /**
@@ -86,7 +86,7 @@ public interface ProgressMonitor {
     void worked(int ticks);
 
     /**
-     * Subtask that will show progress runing back and forworth
+     * Subtask that will show progress running back and forth
      * @param title Can be null, in that case task title is not changed
      */
     void indeterminateSubTask(String title);
@@ -96,7 +96,7 @@ public interface ProgressMonitor {
      */
     void subTask(String title);
     /**
-     * Shows additonal text
+     * Shows additional text
      */
     void setCustomText(String text);
     /**
