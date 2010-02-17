@@ -83,11 +83,9 @@ public class ProgressInputStream extends InputStream {
         if (readSoFar / 1024 != lastDialogUpdate) {
             lastDialogUpdate++;
             if (sizeKnown) {
-                progressMonitor.setExtraText(readSoFar/1024 + " KB");
                 progressMonitor.setTicks(readSoFar);
-            } else {
-                progressMonitor.setExtraText("??? KB");
             }
+            progressMonitor.setExtraText(readSoFar/1024 + " KB");
         }
     }
 
