@@ -481,15 +481,30 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     private static volatile Collection<String> uninteresting = null;
     /**
      * Contains a list of "uninteresting" keys that do not make an object
-     * "tagged".
-     * Initialized by checkTagged()
+     * "tagged".  Entries that end with ':' are causing a whole namespace to be considered
+     * "uninteresting".  Only the first level namespace is considered.
+     * Initialized by isUninterestingKey()
      */
     public static Collection<String> getUninterestingKeys() {
         if (uninteresting == null) {
             uninteresting = Main.pref.getCollection("tags.uninteresting",
-                    Arrays.asList(new String[]{"source","note","comment","converted_by","created_by"}));
+                    Arrays.asList(new String[]{"source", "source_ref", "source:", "note", "comment",
+                            "converted_by", "created_by", "watch", "watch:"}));
         }
         return uninteresting;
+    }
+
+    /**
+     * Returns true if key is considered "uninteresting".
+     */
+    public static boolean isUninterestingKey(String key) {
+        getUninterestingKeys();
+        if (uninteresting.contains(key))
+            return true;
+        int pos = key.indexOf(':');
+        if (pos > 0)
+            return uninteresting.contains(key.substring(0, pos + 1));
+        return false;
     }
 
     private static volatile Match directionKeys = null;
@@ -1069,10 +1084,9 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     private void updateTagged() {
-        getUninterestingKeys();
         if (keys != null) {
-            for (Entry<String,String> e : getKeys().entrySet()) {
-                if (!uninteresting.contains(e.getKey())) {
+            for (String key: keySet()) {
+                if (!isUninterestingKey(key)) {
                     flags |= FLAG_TAGGED;
                     return;
                 }
