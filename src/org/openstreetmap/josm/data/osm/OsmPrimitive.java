@@ -1196,6 +1196,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         setModified(data.isModified());
         setVisible(data.isVisible());
         setIncomplete(data.isIncomplete());
+        version = data.getVersion();
     }
 
     /**
@@ -1215,6 +1216,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         data.setVisible(isVisible());
         data.setIncomplete(isIncomplete());
         data.setChangesetId(changesetId);
+        data.setVersion(version);
     }
 
     protected String getFlagsAsString() {
