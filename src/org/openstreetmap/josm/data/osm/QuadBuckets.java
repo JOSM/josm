@@ -274,6 +274,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             boolean found_me = false;
             if (parent == null)
                 return null;
+            if (parent.children == null)
+                return null;
             int __nr = 0;
             for (QBLevel sibling : parent.children) {
                 __nr++;
@@ -931,7 +933,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             // 2. move the index back since we removed
             //    an element
             content_index--;
-            T object = peek(); //TODO Is the call to peek() necessary?
+            T object = peek();
             current_node.remove_content(object);
         }
     }
