@@ -26,9 +26,6 @@ import org.openstreetmap.josm.data.osm.Tagged;
 /**
  * TagEditorModel is a table model.
  *
- *
- * @author gubaer
- *
  */
 @SuppressWarnings("serial")
 public class TagEditorModel extends AbstractTableModel {
@@ -38,7 +35,7 @@ public class TagEditorModel extends AbstractTableModel {
     static public final String PROP_DIRTY = TagEditorModel.class.getName() + ".dirty";
 
     /** the list holding the tags */
-    private  ArrayList<TagModel> tags = null;
+    protected ArrayList<TagModel> tags = null;
 
     /** indicates whether the model is dirty */
     private boolean dirty =  false;
