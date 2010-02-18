@@ -182,6 +182,8 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
                 trn("Conflict during download", "Conflicts during download", visitor.getConflicts().size()),
                 JOptionPane.WARNING_MESSAGE
         );
+        Main.map.conflictDialog.unfurlDialog();
+        Main.map.repaint();
     }
 
     protected void downloadParents(long id, OsmPrimitiveType type, ProgressMonitor progressMonitor) throws OsmTransferException{

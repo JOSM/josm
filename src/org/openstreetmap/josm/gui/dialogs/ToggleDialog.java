@@ -186,6 +186,28 @@ public class ToggleDialog extends JPanel implements Helpful {
     }
 
     /**
+     * Changes the state of the dialog such that the user can see the content
+     * and takes care of the panel reconstruction.
+     */
+    public void unfurlDialog()
+    {
+        if (isDialogInDefaultView())
+            return;
+        if (isDialogInCollapsedView()) {
+            expand();
+            dialogsPanel.reconstruct(Action.COLLAPSED_TO_DEFAULT, this);
+        } else if (!isDialogShowing()) {
+            showDialog();
+            if (isDocked && isCollapsed) {
+                expand();
+            }
+            if (isDocked) {
+                dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, this);
+            }
+        }
+    }
+
+    /**
      * Hides the dialog
      */
     public void hideDialog() {
@@ -342,7 +364,7 @@ public class ToggleDialog extends JPanel implements Helpful {
                     new MouseAdapter() {
                         @Override
                         public void mouseClicked(MouseEvent e) {
-                            // toggleExpandedState();
+                            // toggleExpandedState
                             if (isCollapsed) {
                                 expand();
                                 dialogsPanel.reconstruct(Action.COLLAPSED_TO_DEFAULT, ToggleDialog.this);
