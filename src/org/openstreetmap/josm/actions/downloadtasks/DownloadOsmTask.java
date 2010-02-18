@@ -154,6 +154,9 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 //
                 OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
                 Main.main.addLayer(layer);
+                BoundingXYVisitor v = new BoundingXYVisitor();
+                v.visit(currentBounds);
+                Main.map.mapView.recalculateCenterScale(v);
             } else {
                 OsmDataLayer target;
                 target = getEditLayer();

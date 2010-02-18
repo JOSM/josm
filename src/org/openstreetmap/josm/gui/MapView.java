@@ -178,8 +178,14 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                 add(scaler);
                 scaler.setLocation(10,30);
 
-                if (!zoomToEditLayerBoundingBox()) {
-                    new AutoScaleAction("data").actionPerformed(null);
+                OsmDataLayer layer = getEditLayer();
+                if (layer != null) {
+                    if (!zoomToDataSetBoundingBox(layer.data)) {
+                        // no bounding box defined
+                        new AutoScaleAction("data").actionPerformed(null);
+                    }
+                } else {
+                    new AutoScaleAction("layer").actionPerformed(null);
                 }
 
                 new MapMover(MapView.this, Main.contentPane);
@@ -681,26 +687,24 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * Tries to zoom to the download boundingbox[es] of the current edit layer
      * (aka {@link OsmDataLayer}). If the edit layer has multiple download bounding
      * boxes it zooms to a large virtual bounding box containing all smaller ones.
-     * This implementation can be used for resolving ticket #1461.
      *
      * @return <code>true</code> if a zoom operation has been performed
      */
-    public boolean zoomToEditLayerBoundingBox() {
-        // workaround for #1461 (zoom to download bounding box instead of all data)
+    public boolean zoomToDataSetBoundingBox(DataSet ds) {
         // In case we already have an existing data layer ...
         OsmDataLayer layer= getEditLayer();
         if (layer == null)
             return false;
-        Collection<DataSource> dataSources = layer.data.dataSources;
+        Collection<DataSource> dataSources = ds.dataSources;
         // ... with bounding box[es] of data loaded from OSM or a file...
         BoundingXYVisitor bbox = new BoundingXYVisitor();
-        for (DataSource ds : dataSources) {
-            bbox.visit(ds.bounds);
-            if (bbox.hasExtend()) {
-                // ... we zoom to it's bounding box
-                recalculateCenterScale(bbox);
-                return true;
-            }
+        for (DataSource source : dataSources) {
+            bbox.visit(source.bounds);
+        }
+        if (bbox.hasExtend()) {
+            // ... we zoom to it's bounding box
+            recalculateCenterScale(bbox);
+            return true;
         }
         return false;
     }
