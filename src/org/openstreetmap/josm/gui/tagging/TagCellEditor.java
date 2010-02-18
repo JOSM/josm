@@ -21,14 +21,14 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
     /** the logger object */
     static private Logger logger = Logger.getLogger(TagCellEditor.class.getName());
 
-    private AutoCompletingTextField editor = null;
-    private TagModel currentTag = null;
+    protected AutoCompletingTextField editor = null;
+    protected TagModel currentTag = null;
 
     /** the cache of auto completion items derived from the current JOSM data set */
-    private AutoCompletionCache acCache = null;
+    protected AutoCompletionCache acCache = null;
 
     /** user input is matched against this list of auto completion items */
-    private AutoCompletionList autoCompletionList = null;
+    protected AutoCompletionList autoCompletionList = null;
 
     /**
      * constructor
