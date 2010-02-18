@@ -355,17 +355,7 @@ public class TagTable extends JTable  {
 
         // create the table cell editor and set it to key and value columns
         //
-        editor = new TagCellEditor();
-        getColumnModel().getColumn(0).setCellEditor(editor);
-        getColumnModel().getColumn(1).setCellEditor(editor);
-
-        getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-
-            public void valueChanged(ListSelectionEvent e) {
-                ListSelectionModel rm = getSelectionModel();
-                ListSelectionModel cm = getColumnModel().getSelectionModel();
-            }
-        });
+        setTagCellEditor(new TagCellEditor());
     }
 
     /**
@@ -443,6 +433,20 @@ public class TagTable extends JTable  {
         } else {
             editor.getEditor().addKeyListener(l);
         }
+    }
+
+    /**
+     * Inject a tag cell editor in the tag table
+     * 
+     * @param editor
+     */
+    public void setTagCellEditor(TagCellEditor editor) {
+        if (isEditing()) {
+            this.editor.cancelCellEditing();
+        }
+        this.editor = editor;
+        getColumnModel().getColumn(0).setCellEditor(editor);
+        getColumnModel().getColumn(1).setCellEditor(editor);
     }
 
     public void requestFocusInCell(final int row, final int col) {
