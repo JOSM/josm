@@ -78,6 +78,8 @@ public class MirroredInputStream extends InputStream {
      * there was no matching file in the ZIP file
      */
     public InputStream getZipEntry(String extension, String namepart) {
+        if (file == null)
+            return null;
         InputStream res = null;
         try {
             ZipFile zipFile = new ZipFile(file);
