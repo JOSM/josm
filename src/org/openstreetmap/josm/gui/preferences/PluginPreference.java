@@ -395,7 +395,7 @@ public class PluginPreference implements PreferenceSetting {
         public ConfigureSitesAction() {
             putValue(NAME,tr("Configure sites..."));
             putValue(SHORT_DESCRIPTION, tr("Configure the list of sites where plugins are downloaded from"));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "propertiesdialog"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "settings"));
         }
 
         public void actionPerformed(ActionEvent e) {
