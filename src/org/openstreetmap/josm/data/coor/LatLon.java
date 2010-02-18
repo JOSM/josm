@@ -1,16 +1,18 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.coor;
 
+import static org.openstreetmap.josm.tools.I18n.trc;
+
 import static java.lang.Math.PI;
 import static java.lang.Math.asin;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
-import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Locale;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -32,7 +34,13 @@ public class LatLon extends Coordinate {
 
     private static DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
     private static DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
-    private static DecimalFormat cDdFormatter = new DecimalFormat("###0.00000");
+    private static DecimalFormat cDdFormatter;
+    static {
+        // Don't use the localized decimal separator. This way we can present
+        // a comma separated list of coordinates.
+        cDdFormatter = (DecimalFormat) NumberFormat.getInstance(Locale.UK);
+        cDdFormatter.applyPattern("###0.00000");
+    }
 
     /**
      * Replies true if lat is in the range [-90,90]
