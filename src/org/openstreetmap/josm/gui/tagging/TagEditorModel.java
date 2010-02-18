@@ -358,15 +358,10 @@ public class TagEditorModel extends AbstractTableModel {
 
             // tag name holds an empty key. Don't apply it to the selection.
             //
-            if (tag.getName().trim().equals("")) {
+            if (tag.getName().trim().equals("") || tag.getValue().trim().equals("")) {
                 continue;
             }
-            // tag has an empty value => don't apply the tag
-            //
-            if (tag.getValue().trim().equals("")) {
-                continue;
-            }
-            tags.put(tag.getName(), tag.getValue());
+            tags.put(tag.getName().trim(), tag.getValue().trim());
         }
     }
 
