@@ -175,11 +175,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
         OsmDataLayer l = (OsmDataLayer)layer;
         model.setRelations(l.data.getRelations());
-        if(model.getSize() > 0) {
-            setTitle(tr("Relations: {0}", model.getSize()));
-        } else {
-            setTitle(tr("Relations"));
-        }
+        model.updateTitle();
     }
 
     /**
@@ -518,7 +514,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
      * dialog.
      *
      */
-    private static  class RelationListModel extends AbstractListModel {
+    private class RelationListModel extends AbstractListModel {
         private final ArrayList<Relation> relations = new ArrayList<Relation>();
         private DefaultListSelectionModel selectionModel;
 
@@ -701,6 +697,13 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             return i;
         }
 
+        public void updateTitle() {
+            if (getSize() > 0) {
+                RelationListDialog.this.setTitle(tr("Relations: {0}", getSize()));
+            } else {
+                RelationListDialog.this.setTitle(tr("Relations"));
+            }
+        }
     }
 
     class RelationDialogPopupMenu extends JPopupMenu {
@@ -733,10 +736,12 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
     public void primtivesAdded(final PrimitivesAddedEvent event) {
         model.addRelations(event.getPrimitives());
+        model.updateTitle();
     }
 
     public void primtivesRemoved(final PrimitivesRemovedEvent event) {
         model.removeRelations(event.getPrimitives());
+        model.updateTitle();
     }
 
     public void relationMembersChanged(final RelationMembersChangedEvent event) {
