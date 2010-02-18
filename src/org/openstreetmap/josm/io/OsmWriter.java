@@ -4,6 +4,11 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
@@ -60,20 +65,33 @@ public class OsmWriter extends XmlWriter implements Visitor {
         out.println("</osm>");
     }
 
+    private static final Comparator<OsmPrimitive> byIdComparator = new Comparator<OsmPrimitive>() {
+        public int compare(OsmPrimitive o1, OsmPrimitive o2) {
+            return (o1.getUniqueId()<o2.getUniqueId() ? -1 : (o1.getUniqueId()==o2.getUniqueId() ? 0 : 1));
+        }
+    };
+
+    private Collection<OsmPrimitive> sortById(Collection<? extends OsmPrimitive> primitives) {
+        List<OsmPrimitive> result = new ArrayList<OsmPrimitive>(primitives.size());
+        result.addAll(primitives);
+        Collections.sort(result, byIdComparator);
+        return result;
+    }
+
     public void writeContent(DataSet ds) {
-        for (Node n : ds.getNodes()) {
+        for (OsmPrimitive n : sortById(ds.getNodes())) {
             if (shouldWrite(n)) {
-                visit(n);
+                visit((Node)n);
             }
         }
-        for (Way w : ds.getWays()) {
+        for (OsmPrimitive w : sortById(ds.getWays())) {
             if (shouldWrite(w)) {
-                visit(w);
+                visit((Way)w);
             }
         }
-        for (Relation e : ds.getRelations()) {
+        for (OsmPrimitive e: sortById(ds.getRelations())) {
             if (shouldWrite(e)) {
-                visit(e);
+                visit((Relation)e);
             }
         }
     }
@@ -161,12 +179,20 @@ public class OsmWriter extends XmlWriter implements Visitor {
         addTags(cs, "changeset", false); // also writes closing </changeset>
     }
 
+    private static final Comparator<Entry<String, String>> byKeyComparator = new Comparator<Entry<String,String>>() {
+        public int compare(Entry<String, String> o1, Entry<String, String> o2) {
+            return o1.getKey().compareTo(o2.getKey());
+        }
+    };
+
     private void addTags(Tagged osm, String tagname, boolean tagOpen) {
         if (osm.hasKeys()) {
             if (tagOpen) {
                 out.println(">");
             }
-            for (Entry<String, String> e : osm.getKeys().entrySet()) {
+            List<Entry<String, String>> entries = new ArrayList<Entry<String,String>>(osm.getKeys().entrySet());
+            Collections.sort(entries, byKeyComparator);
+            for (Entry<String, String> e : entries) {
                 if ((osm instanceof Changeset) || !("created_by".equals(e.getKey()))) {
                     out.println("    <tag k='"+ XmlWriter.encode(e.getKey()) +
                             "' v='"+XmlWriter.encode(e.getValue())+ "' />");
