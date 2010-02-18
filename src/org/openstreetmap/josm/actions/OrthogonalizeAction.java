@@ -54,9 +54,11 @@ public final class OrthogonalizeAction extends JosmAction {
     /**
      * excepted deviation from an angle of 0, 90, 180, 360 degrees
      * maximum value: 45 degrees
+     *
+     * Current policy is to except just everything, no matter how strange the result would be.
      */
-    private static final double TOLERANCE1 = Math.toRadians(35.);   // within a way
-    private static final double TOLERANCE2 = Math.toRadians(35.);   // ways relative to each other
+    private static final double TOLERANCE1 = Math.toRadians(45.);   // within a way
+    private static final double TOLERANCE2 = Math.toRadians(45.);   // ways relative to each other
 
     /**
      * Remember movements, so the user can later undo it for certain nodes
