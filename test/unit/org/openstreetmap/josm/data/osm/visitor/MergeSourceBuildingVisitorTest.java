@@ -150,14 +150,15 @@ public class MergeSourceBuildingVisitorTest {
     @Test
     public void test_OneRelation_ExistingMembersSelected() {
         DataSet source = new DataSet();
-        Relation r1 = new Relation(1);
+        Relation r1 = new Relation(1, 1);
         Node n20 = new Node(20, 1);
+        n20.setCoor(new LatLon(0, 0));
         r1.addMember(new RelationMember("node-20",n20));
         Way w30 = new Way(30, 1);
-        Node n21;
-        w30.addNode(n21 = new Node(21));
-        Node n22;
-        w30.addNode(n22 = new Node(22));
+        Node n21  = new Node(21);
+        w30.addNode(n21);
+        Node n22 = new Node(22);
+        w30.addNode(n22);
         r1.addMember(new RelationMember("way-30",w30));
         Relation r40 = new Relation(40);
         r1.addMember(new RelationMember("relation-40", r40));
@@ -165,8 +166,8 @@ public class MergeSourceBuildingVisitorTest {
         source.addPrimitive(n21);
         source.addPrimitive(n22);
         source.addPrimitive(w30);
-        source.addPrimitive(r1);
         source.addPrimitive(r40);
+        source.addPrimitive(r1);
         source.setSelected(r1,n20,w30,r40);
 
         MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(source);
@@ -208,7 +209,7 @@ public class MergeSourceBuildingVisitorTest {
     @Test
     public void test_OneRelation_ExistingMembersNotSelected() {
         DataSet source = new DataSet();
-        Relation r1 = new Relation(1);
+        Relation r1 = new Relation(1, 1);
         Node n20 = new Node(20);
         r1.addMember(new RelationMember("node-20",n20));
         Way w30 = new Way(30, 1);
@@ -223,8 +224,8 @@ public class MergeSourceBuildingVisitorTest {
         source.addPrimitive(n21);
         source.addPrimitive(n22);
         source.addPrimitive(w30);
-        source.addPrimitive(r1);
         source.addPrimitive(r40);
+        source.addPrimitive(r1);
         source.setSelected(r1);
 
         MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(source);
@@ -290,8 +291,8 @@ public class MergeSourceBuildingVisitorTest {
         source.addPrimitive(n21);
         source.addPrimitive(n22);
         source.addPrimitive(w30);
-        source.addPrimitive(r1);
         source.addPrimitive(r40);
+        source.addPrimitive(r1);
         source.setSelected(r1);
 
         MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(source);
@@ -334,7 +335,7 @@ public class MergeSourceBuildingVisitorTest {
     @Test
     public void test_OneRelation_Existing_Recursive() {
         DataSet source = new DataSet();
-        Relation r1 = new Relation(1);
+        Relation r1 = new Relation(1, 1);
         r1.addMember(new RelationMember("relation-1",r1));
         source.addPrimitive(r1);
         source.setSelected(r1);
@@ -373,12 +374,12 @@ public class MergeSourceBuildingVisitorTest {
     @Test
     public void test_TwoRelation_Existing_Circular() {
         DataSet source = new DataSet();
-        Relation r1 = new Relation(1);
-        Relation r2 = new Relation(2);
+        Relation r1 = new Relation(1, 1);
+        source.addPrimitive(r1);
+        Relation r2 = new Relation(2, 3);
+        source.addPrimitive(r2);
         r1.addMember(new RelationMember("relation-2",r2));
         r2.addMember(new RelationMember("relation-1",r1));
-        source.addPrimitive(r1);
-        source.addPrimitive(r2);
         source.setSelected(r1,r2);
 
         MergeSourceBuildingVisitor builder = new MergeSourceBuildingVisitor(source);

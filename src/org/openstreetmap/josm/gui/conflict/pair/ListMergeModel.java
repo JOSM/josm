@@ -78,7 +78,7 @@ public abstract class ListMergeModel<T> extends Observable {
     protected EntriesSelectionModel theirEntriesSelectionModel;
     protected EntriesSelectionModel mergedEntriesSelectionModel;
 
-    private final ArrayList<PropertyChangeListener> listeners;
+    private final List<PropertyChangeListener> listeners;
     private boolean isFrozen = false;
     private final ComparePairListModel comparePairListModel;
 
@@ -339,6 +339,8 @@ public abstract class ListMergeModel<T> extends Observable {
     }
 
     private void copy(ListRole sourceRole, int[] rows, int position) {
+        if (position < 0 || position > getMergedEntriesSize())
+            throw new IllegalArgumentException();
         List<T> newItems = new ArrayList<T>(rows.length);
         List<T> source = entries.get(sourceRole);
         List<PrimitiveId> deletedIds = new ArrayList<PrimitiveId>();

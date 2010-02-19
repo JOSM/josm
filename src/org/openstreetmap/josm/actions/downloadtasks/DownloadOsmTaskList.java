@@ -86,7 +86,7 @@ public class DownloadOsmTaskList {
     public Future<?> download(boolean newLayer, Collection<Area> areas, ProgressMonitor progressMonitor) {
         progressMonitor.beginTask(tr("Updating data"));
         try {
-            List<Rectangle2D> rects = new LinkedList<Rectangle2D>();
+            List<Rectangle2D> rects = new ArrayList<Rectangle2D>(areas.size());
             for (Area a : areas) {
                 rects.add(a.getBounds2D());
             }

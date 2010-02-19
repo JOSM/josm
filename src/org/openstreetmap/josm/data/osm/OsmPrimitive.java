@@ -872,7 +872,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @return true if other isn't null and has the same tags (key/value-pairs) as this.
      */
     public boolean hasSameTags(OsmPrimitive other) {
-        return keySet().equals(other.keySet());
+        return getKeys().equals(other.getKeys());
     }
 
     /*------------

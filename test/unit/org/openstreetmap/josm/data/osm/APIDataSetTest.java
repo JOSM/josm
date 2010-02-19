@@ -36,17 +36,16 @@ public class APIDataSetTest {
 
     @Test
     public void newParentChildPair() {
+        DataSet ds = new DataSet();
         Relation r1 = new Relation();
+        ds.addPrimitive(r1);
         r1.put("name", "r1");
 
         Relation r2 = new Relation();
+        ds.addPrimitive(r2);
         r2.put("name", "r2");
 
         r1.addMember(new RelationMember("", r2));
-
-        DataSet ds = new DataSet();
-        ds.addPrimitive(r1);
-        ds.addPrimitive(r2);
 
         APIDataSet apiDataSet = new APIDataSet();
         apiDataSet.init(ds);
@@ -64,27 +63,27 @@ public class APIDataSetTest {
 
     @Test
     public void oneExistingAndThreNewInAChain() {
+        DataSet ds = new DataSet();
+
         Relation r1 = new Relation();
+        ds.addPrimitive(r1);
         r1.put("name", "r1");
 
         Relation r2 = new Relation();
+        ds.addPrimitive(r2);
         r2.put("name", "r2");
 
         Relation r3 = new Relation();
+        ds.addPrimitive(r3);
         r3.put("name", "r3");
 
         Relation r4 = new Relation(1, 1);
+        ds.addPrimitive(r4);
         r4.put("name", "r4");
         r4.setModified(true);
 
         r1.addMember(new RelationMember("", r2));
         r2.addMember(new RelationMember("", r3));
-
-        DataSet ds = new DataSet();
-        ds.addPrimitive(r1);
-        ds.addPrimitive(r2);
-        ds.addPrimitive(r3);
-        ds.addPrimitive(r4);
 
         APIDataSet apiDataSet = new APIDataSet();
         apiDataSet.init(ds);
@@ -107,22 +106,22 @@ public class APIDataSetTest {
 
     @Test
     public void oneParentTwoNewChildren() {
+        DataSet ds = new DataSet();
         Relation r1 = new Relation();
+        ds.addPrimitive(r1);
         r1.put("name", "r1");
 
         Relation r2 = new Relation();
+        ds.addPrimitive(r2);
         r2.put("name", "r2");
 
         Relation r3 = new Relation();
+        ds.addPrimitive(r3);
         r3.put("name", "r3");
 
         r1.addMember(new RelationMember("", r2));
         r1.addMember(new RelationMember("", r3));
 
-        DataSet ds = new DataSet();
-        ds.addPrimitive(r1);
-        ds.addPrimitive(r2);
-        ds.addPrimitive(r3);
 
         APIDataSet apiDataSet = new APIDataSet();
         apiDataSet.init(ds);
@@ -140,23 +139,22 @@ public class APIDataSetTest {
 
     @Test
     public void oneCycle() {
+        DataSet ds = new DataSet();
         Relation r1 = new Relation();
+        ds.addPrimitive(r1);
         r1.put("name", "r1");
 
         Relation r2 = new Relation();
+        ds.addPrimitive(r2);
         r2.put("name", "r2");
 
         Relation r3 = new Relation();
+        ds.addPrimitive(r3);
         r3.put("name", "r3");
 
         r1.addMember(new RelationMember("", r2));
         r2.addMember(new RelationMember("", r3));
         r3.addMember(new RelationMember("", r1));
-
-        DataSet ds = new DataSet();
-        ds.addPrimitive(r1);
-        ds.addPrimitive(r2);
-        ds.addPrimitive(r3);
 
         APIDataSet apiDataSet = new APIDataSet();
         apiDataSet.init(ds);

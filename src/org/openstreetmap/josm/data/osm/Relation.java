@@ -16,11 +16,6 @@ import org.openstreetmap.josm.tools.CopyList;
  */
 public final class Relation extends OsmPrimitive {
 
-    /**
-     * All members of this relation. Note that after changing this,
-     * makeBackReferences and/or removeBackReferences should be called.
-     *
-     */
     private final List<RelationMember> members = new ArrayList<RelationMember>();
 
     private BBox bbox;

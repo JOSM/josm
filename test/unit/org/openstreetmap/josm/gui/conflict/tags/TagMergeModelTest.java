@@ -7,7 +7,7 @@ import static org.junit.Assert.assertNull;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.Node;
@@ -28,7 +28,7 @@ public class TagMergeModelTest {
         };
         model.addPropertyChangeListener(listener);
 
-        ArrayList<?> list = field("listeners").ofType(ArrayList.class)
+        List<?> list = field("listeners").ofType(List.class)
         .in(model)
         .get();
 
@@ -47,8 +47,8 @@ public class TagMergeModelTest {
         model.addPropertyChangeListener(listener);
         model.removePropertyChangeListener(listener);
 
-        ArrayList<?> list = field("listeners")
-        .ofType(ArrayList.class)
+        List<?> list = field("listeners")
+        .ofType(List.class)
         .in(model)
         .get();
 
@@ -62,8 +62,8 @@ public class TagMergeModelTest {
         TagMergeModel model = new TagMergeModel();
         model.populate(my, their);
 
-        ArrayList<TagMergeItem> list = field("tagMergeItems")
-        .ofType(ArrayList.class)
+        List<TagMergeItem> list = field("tagMergeItems")
+        .ofType(List.class)
         .in(model)
         .get();
 
@@ -79,8 +79,8 @@ public class TagMergeModelTest {
         TagMergeModel model = new TagMergeModel();
         model.populate(my, their);
 
-        ArrayList<TagMergeItem> list = field("tagMergeItems")
-        .ofType(ArrayList.class)
+        List<TagMergeItem> list = field("tagMergeItems")
+        .ofType(List.class)
         .in(model)
         .get();
 
@@ -95,8 +95,8 @@ public class TagMergeModelTest {
         TagMergeModel model = new TagMergeModel();
         model.populate(my, their);
 
-        ArrayList<TagMergeItem> list = field("tagMergeItems")
-        .ofType(ArrayList.class)
+        List<TagMergeItem> list = field("tagMergeItems")
+        .ofType(List.class)
         .in(model)
         .get();
 
@@ -116,8 +116,8 @@ public class TagMergeModelTest {
         TagMergeModel model = new TagMergeModel();
         model.populate(my, their);
 
-        ArrayList<TagMergeItem> list = field("tagMergeItems")
-        .ofType(ArrayList.class)
+        List<TagMergeItem> list = field("tagMergeItems")
+        .ofType(List.class)
         .in(model)
         .get();
 
@@ -138,8 +138,8 @@ public class TagMergeModelTest {
         TagMergeModel model = new TagMergeModel();
         model.populate(my, their);
 
-        ArrayList<TagMergeItem> list = field("tagMergeItems")
-        .ofType(ArrayList.class)
+        List<TagMergeItem> list = field("tagMergeItems")
+        .ofType(List.class)
         .in(model)
         .get();
 
@@ -157,8 +157,8 @@ public class TagMergeModelTest {
         TagMergeModel model = new TagMergeModel();
         model.addItem(item);
 
-        ArrayList<TagMergeItem> list = field("tagMergeItems")
-        .ofType(ArrayList.class)
+        List<TagMergeItem> list = field("tagMergeItems")
+        .ofType(List.class)
         .in(model)
         .get();
 
@@ -176,8 +176,8 @@ public class TagMergeModelTest {
         TagMergeModel model = new TagMergeModel();
         model.addItem(item);
 
-        ArrayList<TagMergeItem> list = field("tagMergeItems")
-        .ofType(ArrayList.class)
+        List<TagMergeItem> list = field("tagMergeItems")
+        .ofType(List.class)
         .in(model)
         .get();
 
@@ -206,8 +206,8 @@ public class TagMergeModelTest {
             model.addItem(new TagMergeItem("key-" + i, "myvalue-" + i, "theirvalue-" +i));
         }
 
-        ArrayList<TagMergeItem> list = field("tagMergeItems")
-        .ofType(ArrayList.class)
+        List<TagMergeItem> list = field("tagMergeItems")
+        .ofType(List.class)
         .in(model)
         .get();
 

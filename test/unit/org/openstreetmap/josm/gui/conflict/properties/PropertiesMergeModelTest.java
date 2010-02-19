@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.properties;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.*;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
@@ -47,23 +48,36 @@ public class PropertiesMergeModelTest {
 
     @Test
     public void populate() {
+        DataSet d1 = new DataSet();
+        DataSet d2 = new DataSet();
         Node n1 = new Node(1);
         Node n2 = new Node(1);
+        d1.addPrimitive(n1);
+        d2.addPrimitive(n2);
         model.populate(n1, n2);
 
         Way w1 = new Way(1);
         Way w2 = new Way(1);
+        d1.addPrimitive(w1);
+        d2.addPrimitive(w2);
         model.populate(w2, w2);
 
         Relation r1 = new Relation(1);
         Relation r2 = new Relation(1);
+        d1.addPrimitive(r1);
+        d2.addPrimitive(r2);
         model.populate(r1, r2);
     }
 
     @Test
     public void decidingAboutCoords() {
+        DataSet d1 = new DataSet();
+        DataSet d2 = new DataSet();
+
         Node n1 = new Node(1);
         Node n2 = new Node(1);
+        d1.addPrimitive(n1);
+        d2.addPrimitive(n2);
         model.populate(n1, n2);
         assertFalse(model.hasCoordConflict());
 
@@ -72,7 +86,7 @@ public class PropertiesMergeModelTest {
         assertTrue(model.hasCoordConflict());
 
 
-        n1 = new Node(1);
+        n1.cloneFrom(new Node(1));
         n2.setCoor(new LatLon(2,2));
         model.populate(n1, n2);
         assertTrue(model.hasCoordConflict());

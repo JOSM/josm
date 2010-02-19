@@ -16,12 +16,17 @@ import java.util.List;
 import javax.swing.DefaultListSelectionModel;
 
 import org.junit.Test;
+import org.openstreetmap.josm.data.osm.DatasetFactory;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.pair.nodes.NodeListMergeModel;
 
 public class NodeListMergeModelTest {
 
+    private DatasetFactory my = new DatasetFactory();
+    private DatasetFactory their = new DatasetFactory();
+
+    @SuppressWarnings("unchecked")
     protected List<Node> inspectNodeList(NodeListMergeModel model, String name) {
         return method("get" + name + "Entries")
         .withReturnType(List.class)
@@ -45,7 +50,7 @@ public class NodeListMergeModelTest {
             }
             try {
                 int rows[] = (int[])idx[i];
-                if (rows == null || rows.length != 2) {
+                if (rows.length != 2) {
                     fail("illegal selection range. Either null or not length 2: " + Arrays.toString(rows));
                 }
                 if (rows[0] > rows[1]) {
@@ -64,10 +69,11 @@ public class NodeListMergeModelTest {
     public void test_copyMyNodesToTop_1() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1, 1);
-        myWay.addNode(new Node(2));
-        myWay.addNode(new Node(3));
-        Way theirWay = new Way(1);
+        Way myWay = my.addWay(1, 1);
+        myWay.addNode(my.addNode(2));
+        myWay.addNode(my.addNode(3));
+
+        Way theirWay = their.addWay(1);
 
         model.populate(myWay, theirWay);
         model.copyMyToTop(new int[]{0});
@@ -87,11 +93,11 @@ public class NodeListMergeModelTest {
     public void test_copyMyNodesToTop_2() {
         NodeListMergeModel model = new NodeListMergeModel();
 
+        Way myWay = my.addWay(1, 1);
+        myWay.addNode(my.addNode(2));
+        myWay.addNode(my.addNode(3));
 
-        Way myWay = new Way(1, 1);
-        myWay.addNode(new Node(2));
-        myWay.addNode(new Node(3));
-        Way theirWay = new Way(1);
+        Way theirWay = their.addWay(1);
 
         model.populate(myWay, theirWay);
 
@@ -110,19 +116,14 @@ public class NodeListMergeModelTest {
 
     }
 
-
-
-
-
     @Test
     public void test_copyMyNodesToTop_3() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-
-        Way myWay = new Way(1, 1);
-        myWay.addNode(new Node(2));
-        myWay.addNode(new Node(3));
-        Way theirWay = new Way(1);
+        Way myWay = my.addWay(1, 1);
+        myWay.addNode(my.addNode(2));
+        myWay.addNode(my.addNode(3));
+        Way theirWay = their.addWay(1);
 
 
         model.populate(myWay, theirWay);
@@ -145,12 +146,11 @@ public class NodeListMergeModelTest {
     public void test_copyMyNodesToTop_4() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-
-        Way myWay = new Way(1, 1);
-        myWay.addNode(new Node(2));
-        myWay.addNode(new Node(3));
-        myWay.addNode(new Node(4));
-        Way theirWay = new Way(1);
+        Way myWay = my.addWay(1, 1);
+        myWay.addNode(my.addNode(2));
+        myWay.addNode(my.addNode(3));
+        myWay.addNode(my.addNode(4));
+        Way theirWay = their.addWay(1);
 
         model.populate(myWay, theirWay);
 
@@ -174,10 +174,10 @@ public class NodeListMergeModelTest {
     public void test_copyMyNodesToEnd_1() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1, 1);
-        myWay.addNode(new Node(2));
-        myWay.addNode(new Node(3));
-        Way theirWay = new Way(1);
+        Way myWay = my.addWay(1, 1);
+        myWay.addNode(my.addNode(2));
+        myWay.addNode(my.addNode(3));
+        Way theirWay = their.addWay(1);
 
         model.populate(myWay, theirWay);
         model.copyMyToEnd(new int[]{0});
@@ -195,10 +195,10 @@ public class NodeListMergeModelTest {
     public void test_copyMyNodesToEnd_2() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1, 1);
-        myWay.addNode(new Node(2));
-        myWay.addNode(new Node(3));
-        Way theirWay = new Way(1);
+        Way myWay = my.addWay(1, 1);
+        myWay.addNode(my.addNode(2));
+        myWay.addNode(my.addNode(3));
+        Way theirWay = their.addWay(1);
 
         model.populate(myWay, theirWay);
 
@@ -221,10 +221,10 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
 
-        Way myWay = new Way(1, 1);
-        myWay.addNode(new Node(2));
-        myWay.addNode(new Node(3));
-        Way theirWay = new Way(1);
+        Way myWay = my.addWay(1, 1);
+        myWay.addNode(my.addNode(2));
+        myWay.addNode(my.addNode(3));
+        Way theirWay = their.addWay(1);
 
         model.populate(myWay, theirWay);
 
@@ -248,11 +248,11 @@ public class NodeListMergeModelTest {
         NodeListMergeModel model = new NodeListMergeModel();
 
 
-        Way myWay = new Way(1, 1);
-        myWay.addNode(new Node(2));
-        myWay.addNode(new Node(3));
-        myWay.addNode(new Node(4));
-        Way theirWay = new Way(1);
+        Way myWay = my.addWay(1, 1);
+        myWay.addNode(my.addNode(2));
+        myWay.addNode(my.addNode(3));
+        myWay.addNode(my.addNode(4));
+        Way theirWay = their.addWay(1);
 
         model.populate(myWay, theirWay);
 
@@ -280,10 +280,10 @@ public class NodeListMergeModelTest {
     public void test_copyMyNodesBeforeCurrent_1() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1, 1);
-        myWay.addNode(new Node(1));
-        myWay.addNode(new Node(2));
-        Way theirWay = new Way(1);
+        Way myWay = my.addWay(1, 1);
+        myWay.addNode(my.addNode(1));
+        myWay.addNode(my.addNode(2));
+        Way theirWay = their.addWay(1);
 
         model.populate(myWay, theirWay);
         List<Node> mergedNodes = inspectNodeList(model, "Merged");
@@ -308,10 +308,10 @@ public class NodeListMergeModelTest {
     public void test_copyMyNodesBeforeCurrent_2() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1, 1);
-        myWay.addNode(new Node(1));
-        myWay.addNode(new Node(2));
-        Way theirWay = new Way(1);
+        Way myWay = my.addWay(1, 1);
+        myWay.addNode(my.addNode(1));
+        myWay.addNode(my.addNode(2));
+        Way theirWay = their.addWay(1);
 
         model.populate(myWay, theirWay);
         List<Node> mergedNodes = inspectNodeList(model, "Merged");
@@ -336,10 +336,10 @@ public class NodeListMergeModelTest {
     public void test_copyMyNodesBeforeCurrent_3() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1, 1);
-        myWay.addNode(new Node(1));
-        myWay.addNode(new Node(2));
-        Way theirWay = new Way(1);
+        Way myWay = my.addWay(1, 1);
+        myWay.addNode(my.addNode(1));
+        myWay.addNode(my.addNode(2));
+        Way theirWay = their.addWay(1);
 
         model.populate(myWay, theirWay);
         List<Node> mergedNodes = inspectNodeList(model, "Merged");
@@ -355,7 +355,7 @@ public class NodeListMergeModelTest {
         }
 
         try {
-            model.copyMyBeforeCurrent(new int[]{0,1}, 3);
+            model.copyMyBeforeCurrent(new int[]{0,1}, 4);
             fail("expected IllegalArgumentException");
         } catch(IllegalArgumentException e) {
             // OK
@@ -369,10 +369,10 @@ public class NodeListMergeModelTest {
     public void test_copyMyNodesAfterCurrent_1() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1, 1);
-        myWay.addNode(new Node(1));
-        myWay.addNode(new Node(2));
-        Way theirWay = new Way(1);
+        Way myWay = my.addWay(1, 1);
+        myWay.addNode(my.addNode(1));
+        myWay.addNode(my.addNode(2));
+        Way theirWay = their.addWay(1);
 
         model.populate(myWay, theirWay);
         List<Node> mergedNodes = inspectNodeList(model, "Merged");
@@ -397,11 +397,11 @@ public class NodeListMergeModelTest {
     public void test_copyMyNodesAfterCurrent_2() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1, 1);
-        myWay.addNode(new Node(1));
-        myWay.addNode(new Node(2));
-        myWay.addNode(new Node(3));
-        Way theirWay = new Way(1);
+        Way myWay = my.addWay(1, 1);
+        myWay.addNode(my.addNode(1));
+        myWay.addNode(my.addNode(2));
+        myWay.addNode(my.addNode(3));
+        Way theirWay = their.addWay(1);
 
         model.populate(myWay, theirWay);
         List<Node> mergedNodes = inspectNodeList(model, "Merged");
@@ -427,11 +427,11 @@ public class NodeListMergeModelTest {
     public void test_copyMyNodesAfterCurrent_3() {
         NodeListMergeModel model = new NodeListMergeModel();
 
-        Way myWay = new Way(1, 1);
-        myWay.addNode(new Node(1));
-        myWay.addNode(new Node(2));
-        myWay.addNode(new Node(3));
-        Way theirWay = new Way(1);
+        Way myWay = my.addWay(1, 1);
+        myWay.addNode(my.addNode(1));
+        myWay.addNode(my.addNode(2));
+        myWay.addNode(my.addNode(3));
+        Way theirWay = their.addWay(1);
 
         model.populate(myWay, theirWay);
         List<Node> mergedNodes = inspectNodeList(model, "Merged");
@@ -452,35 +452,6 @@ public class NodeListMergeModelTest {
         ensureSelected(mergedSelection, 1,2); // position 1,2 selected
     }
 
-    @Test
-    public void test_copyMyNodesAfterCurrent_4() {
-        NodeListMergeModel model = new NodeListMergeModel();
-
-        Way myWay = new Way(1, 1);
-        myWay.addNode(new Node(1));
-        myWay.addNode(new Node(2));
-        Way theirWay = new Way(1);
-
-        model.populate(myWay, theirWay);
-        List<Node> mergedNodes = inspectNodeList(model, "Merged");
-        mergedNodes.add(new Node(10));
-        mergedNodes.add(new Node(11));
-        mergedNodes.add(new Node(12));
-
-        try {
-            model.copyMyAfterCurrent(new int[]{0,1}, -1);
-            fail("expected IllegalArgumentException");
-        } catch(IllegalArgumentException e) {
-            // OK
-        }
-
-        try {
-            model.copyMyAfterCurrent(new int[]{0,1}, 3);
-            fail("expected IllegalArgumentException");
-        } catch(IllegalArgumentException e) {
-            // OK
-        }
-    }
 
     /* ----------------------------------------------------------------------------- */
     /* moveUpMergedNodes                                                       */
@@ -663,6 +634,7 @@ public class NodeListMergeModelTest {
     /* ----------------------------------------------------------------------------- */
     /* PropertyChangeListener                                                        */
     /* ----------------------------------------------------------------------------- */
+    @SuppressWarnings("unchecked")
     @Test
     public void addPropertyChangeListener() {
         NodeListMergeModel model = new NodeListMergeModel();
@@ -675,8 +647,8 @@ public class NodeListMergeModelTest {
 
         model.addPropertyChangeListener(listener);
 
-        ArrayList<PropertyChangeListener> listeners = field("listeners")
-        .ofType(ArrayList.class)
+        List<PropertyChangeListener> listeners = field("listeners")
+        .ofType(List.class)
         .in(model)
         .get();
 
@@ -684,6 +656,7 @@ public class NodeListMergeModelTest {
         assertEquals(listener, listeners.get(0));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void removePropertyChangeListener() {
         NodeListMergeModel model = new NodeListMergeModel();
@@ -697,8 +670,8 @@ public class NodeListMergeModelTest {
         model.addPropertyChangeListener(listener);
         model.removePropertyChangeListener(listener);
 
-        ArrayList<PropertyChangeListener> listeners = field("listeners")
-        .ofType(ArrayList.class)
+        List<PropertyChangeListener> listeners = field("listeners")
+        .ofType(List.class)
         .in(model)
         .get();
 
