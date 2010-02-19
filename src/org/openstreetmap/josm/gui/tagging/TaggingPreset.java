@@ -183,10 +183,12 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 originalValue = DIFFERENT;
             }
             if(locale_text == null) {
-                if(text_context != null) {
-                    locale_text = trc(text_context, text);
-                } else {
-                    locale_text = tr(text);
+                if (text != null) {
+                    if(text_context != null) {
+                        locale_text = trc(text_context, text);
+                    } else {
+                        locale_text = tr(text);
+                    }
                 }
             }
             p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
