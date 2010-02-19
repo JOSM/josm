@@ -176,7 +176,8 @@ Build-Date: ${build.tstamp}
 				<pathelement path="${test.dir}/config"/>
 			</classpath>
 			<formatter type="plain"/>
-			<batchtest fork="no" todir="${test.dir}/report">
+			<formatter type="xml"/>
+			<batchtest fork="yes" todir="${test.dir}/report">
 				<fileset dir="${test.dir}/unit" includes="**/*.java"/>
 			</batchtest>
 		</junit>
