@@ -54,7 +54,7 @@ public abstract class OsmServerReader extends OsmConnection {
         try {
             URL url = null;
             try {
-                url = new URL(urlStr);
+                url = new URL(urlStr.replace(" ", "%20"));
             } catch(MalformedURLException e) {
                 throw new OsmTransferException(e);
             }
