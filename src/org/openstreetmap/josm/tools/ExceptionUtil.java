@@ -305,7 +305,9 @@ public class ExceptionUtil {
     public static String explainBadRequest(OsmApiException e) {
         String apiUrl = OsmApi.getOsmApi().getBaseUrl();
         String message = tr("The OSM server ''{0}'' reported a bad request.<br>", apiUrl);
-        if (e.getErrorHeader() != null && e.getErrorHeader().startsWith("The maximum bbox")) {
+        if (e.getErrorHeader() != null && 
+                (e.getErrorHeader().startsWith("The maximum bbox") || 
+                e.getErrorHeader().startsWith("You requested too many nodes"))) {
             message += "<br>"
                 + tr("The area you tried to download is too big or your request was too large."
                         + "<br>Either request a smaller area or use an export file provided by the OSM community.");
