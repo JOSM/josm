@@ -74,16 +74,6 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
     }
 
     /**
-     * renders the background color.
-     * 
-     * @param tagModel the tag model
-     * @param model the tag editor model
-     */
-    protected void renderBackgroundColor(TagModel tagModel, TagEditorModel model) {
-        setBackground(UIManager.getColor("Table.background")); // standard color
-    }
-
-    /**
      * replies the cell renderer component for a specific cell
      *
      * @param table  the table
@@ -105,7 +95,8 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
             setBackground(UIManager.getColor("Table.selectionBackground"));
             setForeground(UIManager.getColor("Table.selectionForeground"));
         } else {
-            renderBackgroundColor(getModel(table).get(rowIndex), getModel(table));
+            setBackground(UIManager.getColor("Table.background")); // standard color
+            setForeground(UIManager.getColor("Table.foreground"));
         }
 
         switch(vColIndex) {
