@@ -109,6 +109,7 @@ public class AdvancedPreference implements PreferenceSetting {
             }
         };
         final JTable list = new JTable(model);
+        list.putClientProperty("terminateEditOnFocusLost", true);
         list.getColumn(tr("Key")).setCellRenderer(renderer);
         JScrollPane scroll = new JScrollPane(list);
         p.add(scroll, GBC.eol().fill(GBC.BOTH));
