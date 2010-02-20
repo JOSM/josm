@@ -88,6 +88,7 @@ public class StyleSourceEditor extends JPanel {
 
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         tblActiveStyles = new JTable(activeStylesModel = new ActiveStylesModel(selectionModel));
+        tblActiveStyles.putClientProperty("terminateEditOnFocusLost", true);
         tblActiveStyles.setSelectionModel(selectionModel);
         tblActiveStyles.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         tblActiveStyles.setTableHeader(null);
@@ -960,4 +961,5 @@ public class StyleSourceEditor extends JPanel {
             }
         }
     }
+
 }
