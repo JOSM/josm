@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CopyList;
 import org.openstreetmap.josm.tools.Pair;
@@ -369,6 +370,12 @@ public final class Way extends OsmPrimitive {
             for (Node n: nodes) {
                 if (n.getDataSet() != dataSet)
                     throw new DataIntegrityProblemException("Nodes in way must be in the same dataset");
+            }
+            if (Main.pref.getBoolean("debug.checkDeleteReferenced")) {
+                for (Node n: nodes) {
+                    if (n.isDeleted())
+                        throw new DataIntegrityProblemException("Deleted node referenced: " + toString());
+                }
             }
         }
     }
