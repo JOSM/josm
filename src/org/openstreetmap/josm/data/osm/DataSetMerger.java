@@ -2,6 +2,7 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -215,12 +216,15 @@ public class DataSetMerger {
         if (target == null)
             throw new IllegalStateException(tr("Missing merge target for way with id {0}", source.getUniqueId()));
 
-        List<Node> newNodes = new LinkedList<Node>();
+        List<Node> newNodes = new ArrayList<Node>(source.getNodesCount());
         for (Node sourceNode : source.getNodes()) {
             Node targetNode = (Node)getMergeTarget(sourceNode);
             if (targetNode != null) {
                 if (targetNode.isVisible()) {
                     newNodes.add(targetNode);
+                    if (targetNode.isDeleted() && !conflicts.hasConflictForMy(targetNode)) {
+                        conflicts.add(targetNode, sourceNode);
+                    }
                 } else {
                     target.setModified(true);
                 }
@@ -249,6 +253,9 @@ public class DataSetMerger {
             if (targetMember.isVisible()) {
                 RelationMember newMember = new RelationMember(sourceMember.getRole(), targetMember);
                 newMembers.add(newMember);
+                if (targetMember.isDeleted() && !conflicts.hasConflictForMy(targetMember)) {
+                    conflicts.add(targetMember, sourceMember.getMember());
+                }
             } else {
                 target.setModified(true);
             }
@@ -308,6 +315,7 @@ public class DataSetMerger {
             // same version, but target is deleted. Assume target takes precedence
             // otherwise too many conflicts when refreshing from the server
             // but, if source has a referrer that is not in the target dataset there is a conflict
+            // If target dataset refers to the deleted primitive, conflict will be added in fixReferences method
             for (OsmPrimitive referrer: source.getReferrers()) {
                 if (targetDataSet.getPrimitiveById(referrer.getPrimitiveId()) == null) {
                     conflicts.add(target, source);
