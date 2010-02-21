@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadPrimitiveTask;
@@ -61,6 +62,8 @@ public class DownloadPrimitiveAction extends JosmAction {
         all.add(new JLabel(tr("Object ID:")), gc);
         OsmIdTextField tfId = new OsmIdTextField();
         tfId.setToolTipText(tr("Enter the ID of the object that should be downloaded"));
+        // forward the enter key stroke to the download button
+        tfId.getKeymap().removeKeyStrokeBinding(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false));
         gc.weightx = 1;
         all.add(tfId, gc);
         gc.gridy = 2;
@@ -80,6 +83,7 @@ public class DownloadPrimitiveAction extends JosmAction {
                 tr("Start downloading"),
                 tr("Close dialog and cancel downloading")
         });
+        dialog.setDefaultButton(1);
         dialog.configureContextsensitiveHelp("/Action/DownloadObject", true /* show help button */);
         dialog.showDialog();
         if (dialog.getValue() != 1) return;

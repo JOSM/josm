@@ -83,13 +83,23 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
      * @throws IllegalArgumentException thrown if tc is null
      */
     public AbstractTextComponentValidator(JTextComponent tc) throws IllegalArgumentException {
+        this(tc, true);
+    }
+
+    /**
+     * Alternative constructor that allows to turn off the actionListener.
+     * This can be useful if the enter key stroke needs to be forwarded to the default button in a dialog.
+     */
+    public AbstractTextComponentValidator(JTextComponent tc, boolean addActionListener) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(tc, "tc");
         this.tc = tc;
         tc.addFocusListener(this);
         tc.getDocument().addDocumentListener(this);
-        if (tc instanceof JTextField) {
-            JTextField tf = (JTextField)tc;
-            tf.addActionListener(this);
+        if (addActionListener) {
+            if (tc instanceof JTextField) {
+                JTextField tf = (JTextField)tc;
+                tf.addActionListener(this);
+            }
         }
         tc.addPropertyChangeListener("enabled", this);
     }

@@ -32,7 +32,7 @@ public class OsmIdTextField extends JTextField {
         }
 
         public OsmIdValidator(JTextComponent tc) {
-            super(tc);
+            super(tc, false);
         }
 
         @Override
