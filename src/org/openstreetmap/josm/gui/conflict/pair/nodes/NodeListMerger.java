@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.conflict.pair.nodes;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -62,8 +63,8 @@ public class NodeListMerger extends ListMerger<Node> implements IConflictResolve
         return embeddInScrollPane(theirEntriesTable);
     }
 
-    public void populate(OsmPrimitive my, OsmPrimitive their) {
-        ((NodeListMergeModel)model).populate((Way)my, (Way)their);
+    public void populate(Conflict<? extends OsmPrimitive> conflict) {
+        ((NodeListMergeModel)model).populate((Way)conflict.getMy(), (Way)conflict.getTheir());
     }
 
     public void deletePrimitive(boolean deleted) {

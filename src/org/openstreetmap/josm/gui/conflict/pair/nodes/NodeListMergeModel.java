@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.command.WayNodesConflictResolverCommand;
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -60,16 +61,12 @@ public class NodeListMergeModel extends ListMergeModel<Node>{
      * @param my  my way. Must not be null.
      * @param their  their way. Must not be null
      * @return the command
-     * @exception IllegalArgumentException thrown, if my is null or not a {@see Way}
-     * @exception IllegalArgumentException thrown, if their is null or not a {@see Way}
      * @exception IllegalStateException thrown, if the merge is not yet frozen
      */
-    public WayNodesConflictResolverCommand buildResolveCommand(Way my, Way their) {
-        CheckParameterUtil.ensureParameterNotNull(my, "my");
-        CheckParameterUtil.ensureParameterNotNull(their, "their");
+    public WayNodesConflictResolverCommand buildResolveCommand(Conflict<? extends OsmPrimitive> conflict) {
         if (! isFrozen())
             throw new IllegalArgumentException(tr("Merged nodes not frozen yet. Cannot build resolution command."));
-        return new WayNodesConflictResolverCommand(my, their, getMergedEntries());
+        return new WayNodesConflictResolverCommand(conflict, getMergedEntries());
     }
 
     @Override

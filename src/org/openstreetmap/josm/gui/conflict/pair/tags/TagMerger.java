@@ -25,6 +25,7 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
@@ -420,8 +421,8 @@ public class TagMerger extends JPanel implements IConflictResolver {
         }
     }
 
-    public void populate(OsmPrimitive my, OsmPrimitive their) {
-        model.populate(my, their);
+    public void populate(Conflict<? extends OsmPrimitive> conflict) {
+        model.populate(conflict.getMy(), conflict.getTheir());
         mineTable.getSelectionModel().setSelectionInterval(0, 0);
         theirTable.getSelectionModel().setSelectionInterval(0, 0);
     }

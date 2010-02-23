@@ -32,8 +32,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *   <li>{@see #removeConflictListener(IConflictListener)}</li>
  * </ul>
  */
-public class ConflictCollection implements Iterable<Conflict<?>>{
-    private final List<Conflict<?>> conflicts;
+public class ConflictCollection implements Iterable<Conflict<? extends OsmPrimitive>>{
+    private final List<Conflict<? extends OsmPrimitive>> conflicts;
     private CopyOnWriteArrayList<IConflictListener> listeners;
 
     public ConflictCollection() {

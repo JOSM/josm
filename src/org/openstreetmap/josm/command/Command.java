@@ -1,9 +1,10 @@
 //License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.command;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -31,7 +32,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 abstract public class Command {
 
     private static final class CloneVisitor extends AbstractVisitor {
-        public Map<OsmPrimitive, PrimitiveData> orig = new HashMap<OsmPrimitive, PrimitiveData>();
+        public final Map<OsmPrimitive, PrimitiveData> orig = new LinkedHashMap<OsmPrimitive, PrimitiveData>();
 
         public void visit(Node n) {
             orig.put(n, n.save());
@@ -71,7 +72,7 @@ abstract public class Command {
      */
     public boolean executeCommand() {
         CloneVisitor visitor = new CloneVisitor();
-        Collection<OsmPrimitive> all = new HashSet<OsmPrimitive>();
+        Collection<OsmPrimitive> all = new ArrayList<OsmPrimitive>();
         fillModifiedData(all, all, all);
         for (OsmPrimitive osm : all) {
             osm.visit(visitor);

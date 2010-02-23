@@ -814,8 +814,8 @@ public class DataSetMergerTest {
      * My dataset includes a deleted node.
      * Their dataset includes a way with three nodes, the first one being my node.
      *
-     * => the merged way should include two nodes only. the deleted node should still be
-     * in the data set.
+     * => the merged way should include all three nodes. Deleted node should have deleted=false and
+     * special conflict with isDeleted should exist
      *
      */
     @Test
@@ -847,11 +847,7 @@ public class DataSetMergerTest {
         theirWay.addNode(tn1);
         theirWay.addNode(tn2);
         theirWay.addNode(tn3);
-        User user = User.getById(1111);
-        if (user == null) {
-            User.createOsmUser(1111, "their");
-        }
-        theirWay.setUser(user);
+        theirWay.setUser(User.createOsmUser(1111, "their"));
         theirWay.setTimestamp(new Date());
         their.addPrimitive(theirWay);
 
@@ -859,69 +855,70 @@ public class DataSetMergerTest {
         visitor.merge();
 
         assertEquals(1, visitor.getConflicts().size());
+        assertTrue(visitor.getConflicts().get(0).isMyDeleted());
 
         Way myWay = (Way)my.getPrimitiveById(4, OsmPrimitiveType.WAY);
         assertEquals(3, myWay.getNodesCount());
 
         Node n = (Node)my.getPrimitiveById(1,OsmPrimitiveType.NODE);
-        assertTrue(!myWay.getNodes().contains(n));
-        assertTrue(n != null);
+        assertTrue(myWay.getNodes().contains(n));
 
-        //a node was removed from the way,it should thus be modified
-        assertTrue(myWay.isModified());
+        assertFalse(myWay.isModified());
     }
 
     /**
      * My dataset includes a deleted node.
      * Their dataset includes a relation with three nodes, the first one being my node.
      *
-     * => the merged relation should include two nodes only. the deleted node should still be
-     * in the data set
+     * => the merged relation should include all three nodes. There should be conflict for deleted
+     * node with isMyDeleted set
      *
      */
     @Test
     public void relationComplex_mergingADeletedNode() {
 
 
-        Node n1 = new Node(new LatLon(0,0));
-        n1.setOsmId(1,1);
-        n1.setDeleted(true);
-        my.addPrimitive(n1);
+        Node mn1 = new Node(new LatLon(0,0));
+        mn1.setOsmId(1,1);
+        mn1.setDeleted(true);
+        my.addPrimitive(mn1);
 
 
-        Node n3 = new Node(new LatLon(0,0));
-        n3.setOsmId(1,1);
-        their.addPrimitive(n3);
+        Node tn1 = new Node(new LatLon(0,0));
+        tn1.setOsmId(1,1);
+        their.addPrimitive(tn1);
 
-        Node n4 = new Node(new LatLon(1,1));
-        n4.setOsmId(2,1);
-        their.addPrimitive(n4);
+        Node tn2 = new Node(new LatLon(1,1));
+        tn2.setOsmId(2,1);
+        their.addPrimitive(tn2);
 
-        Node n5 = new Node(new LatLon(2,2));
-        n5.setOsmId(3,1);
-        their.addPrimitive(n5);
+        Node tn3 = new Node(new LatLon(2,2));
+        tn3.setOsmId(3,1);
+        their.addPrimitive(tn3);
 
 
         Relation theirRelation = new Relation();
         theirRelation.setOsmId(4,1);
 
-        theirRelation.addMember(new RelationMember("", n3));
-        theirRelation.addMember(new RelationMember("", n4));
-        theirRelation.addMember(new RelationMember("", n5));
+        theirRelation.addMember(new RelationMember("", tn1));
+        theirRelation.addMember(new RelationMember("", tn2));
+        theirRelation.addMember(new RelationMember("", tn3));
         their.addPrimitive(theirRelation);
 
         DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
-        assertEquals(0,visitor.getConflicts().size());
-
-        Relation r = (Relation)my.getPrimitiveById(4,OsmPrimitiveType.RELATION);
-        assertEquals(2, r.getMembersCount());
-
         Node n = (Node)my.getPrimitiveById(1,OsmPrimitiveType.NODE);
         assertTrue(n != null);
 
-        assertTrue(r.isModified());
+        assertEquals(1, visitor.getConflicts().size());
+        assertTrue(visitor.getConflicts().hasConflictForMy(n));
+        assertTrue(visitor.getConflicts().get(0).isMyDeleted());
+
+        Relation r = (Relation)my.getPrimitiveById(4,OsmPrimitiveType.RELATION);
+        assertEquals(3, r.getMembersCount());
+
+        assertFalse(r.isModified());
     }
 
     /**

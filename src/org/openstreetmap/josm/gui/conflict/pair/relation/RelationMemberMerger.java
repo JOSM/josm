@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.conflict.pair.relation;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -53,9 +54,9 @@ public class RelationMemberMerger extends ListMerger<RelationMember> implements 
         return embeddInScrollPane(theirEntriesTable);
     }
 
-    public void populate(OsmPrimitive my, OsmPrimitive their) {
+    public void populate(Conflict<? extends OsmPrimitive> conflict) {
         RelationMemberListMergeModel model = (RelationMemberListMergeModel)getModel();
-        model.populate((Relation)my, (Relation)their);
+        model.populate((Relation)conflict.getMy(), (Relation)conflict.getTheir());
     }
 
     public RelationMemberMerger() {

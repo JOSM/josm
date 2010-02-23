@@ -23,15 +23,15 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class ModifiedConflictResolveCommand extends ConflictResolveCommand {
 
     /** the conflict to resolve */
-    private Conflict<OsmPrimitive> conflict;
+    private Conflict<? extends OsmPrimitive> conflict;
 
     /**
      * constructor
      * @param my  my primitive (i.e. the primitive from the local dataset)
      * @param their their primitive (i.e. the primitive from the server)
      */
-    public ModifiedConflictResolveCommand(OsmPrimitive my, OsmPrimitive their) {
-        conflict = new Conflict<OsmPrimitive>(my, their);
+    public ModifiedConflictResolveCommand(Conflict<? extends OsmPrimitive> conflict) {
+        this.conflict = conflict;
     }
 
     @Override

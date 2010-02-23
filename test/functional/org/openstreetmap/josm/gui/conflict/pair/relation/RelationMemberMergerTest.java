@@ -5,11 +5,12 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.conflict.pair.relation.RelationMemberMerger;
 
 public class RelationMemberMergerTest extends JFrame {
 
@@ -27,7 +28,7 @@ public class RelationMemberMergerTest extends JFrame {
         r2.addMember(new RelationMember("role2", new Way(2)));
         r2.addMember(new RelationMember("role3", new Relation(3)));
 
-        merger.populate(r1, r2);
+        merger.populate(new Conflict<OsmPrimitive>(r1, r2));
 
     }
 

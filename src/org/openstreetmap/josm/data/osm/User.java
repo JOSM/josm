@@ -26,9 +26,7 @@ public class User {
     private static HashMap<Long,User> userMap = new HashMap<Long,User>();
 
     private static long getNextLocalUid() {
-        synchronized(User.class) {
-            return uidCounter.decrementAndGet();
-        }
+        return uidCounter.decrementAndGet();
     }
 
     /**

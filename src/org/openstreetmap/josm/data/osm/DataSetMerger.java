@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -159,6 +160,7 @@ public class DataSetMerger {
      *
      * @param other
      */
+    //TODO This method is probably useless
     protected void fixIncompleteParentWays(Node other) {
         Node myNode = (Node)getMergeTarget(other);
         if (myNode == null)
@@ -223,7 +225,8 @@ public class DataSetMerger {
                 if (targetNode.isVisible()) {
                     newNodes.add(targetNode);
                     if (targetNode.isDeleted() && !conflicts.hasConflictForMy(targetNode)) {
-                        conflicts.add(targetNode, sourceNode);
+                        conflicts.add(new Conflict<OsmPrimitive>(targetNode, sourceNode, true));
+                        targetNode.setDeleted(false);
                     }
                 } else {
                     target.setModified(true);
@@ -254,7 +257,8 @@ public class DataSetMerger {
                 RelationMember newMember = new RelationMember(sourceMember.getRole(), targetMember);
                 newMembers.add(newMember);
                 if (targetMember.isDeleted() && !conflicts.hasConflictForMy(targetMember)) {
-                    conflicts.add(targetMember, sourceMember.getMember());
+                    conflicts.add(new Conflict<OsmPrimitive>(targetMember, sourceMember.getMember(), true));
+                    targetMember.setDeleted(false);
                 }
             } else {
                 target.setModified(true);
@@ -318,7 +322,8 @@ public class DataSetMerger {
             // If target dataset refers to the deleted primitive, conflict will be added in fixReferences method
             for (OsmPrimitive referrer: source.getReferrers()) {
                 if (targetDataSet.getPrimitiveById(referrer.getPrimitiveId()) == null) {
-                    conflicts.add(target, source);
+                    conflicts.add(new Conflict<OsmPrimitive>(target, source, true));
+                    target.setDeleted(false);
                     break;
                 }
             }

@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
@@ -717,7 +718,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         }
     }
 
-    public void populate(OsmPrimitive my, OsmPrimitive their) {
-        model.populate(my, their);
+    public void populate(Conflict<? extends OsmPrimitive> conflict) {
+        model.populate(conflict);
     }
 }

@@ -28,7 +28,7 @@ public class TagConflictResolveCommand extends ConflictResolveCommand {
     private static final Logger logger = Logger.getLogger(TagConflictResolveCommand.class.getName());
 
     /** the conflict to resolve */
-    private Conflict<OsmPrimitive> conflict;
+    private Conflict<? extends OsmPrimitive> conflict;
 
     /** the list of merge decisions, represented as {@see TagMergeItem}s */
     private final List<TagMergeItem> mergeItems;
@@ -55,8 +55,8 @@ public class TagConflictResolveCommand extends ConflictResolveCommand {
      * @param their  their primitive
      * @param mergeItems the list of merge decisions, represented as {@see TagMergeItem}s
      */
-    public TagConflictResolveCommand(OsmPrimitive my, OsmPrimitive their, List<TagMergeItem> mergeItems) {
-        this.conflict = new Conflict<OsmPrimitive>(my,their);
+    public TagConflictResolveCommand(Conflict<? extends OsmPrimitive> conflict, List<TagMergeItem> mergeItems) {
+        this.conflict = conflict;
         this.mergeItems = mergeItems;
     }
 

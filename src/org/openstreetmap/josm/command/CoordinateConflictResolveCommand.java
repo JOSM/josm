@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
 
     /** the conflict to resolve */
-    private Conflict<Node> conflict;
+    private Conflict<? extends OsmPrimitive> conflict;
 
     /** the merge decision */
     private final MergeDecisionType decision;
@@ -34,8 +34,8 @@ public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
      * @param their  their node
      * @param decision the merge decision
      */
-    public CoordinateConflictResolveCommand(Node my, Node their, MergeDecisionType decision) {
-        this.conflict = new Conflict<Node>(my,their);
+    public CoordinateConflictResolveCommand(Conflict<? extends OsmPrimitive> conflict, MergeDecisionType decision) {
+        this.conflict = conflict;
         this.decision = decision;
     }
 
@@ -60,8 +60,8 @@ public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
         if (decision.equals(MergeDecisionType.KEEP_MINE)) {
             // do nothing
         } else if (decision.equals(MergeDecisionType.KEEP_THEIR)) {
-            Node my = conflict.getMy();
-            Node their = conflict.getTheir();
+            Node my = (Node)conflict.getMy();
+            Node their = (Node)conflict.getTheir();
             my.setCoor(their.getCoor());
         } else
             // should not happen

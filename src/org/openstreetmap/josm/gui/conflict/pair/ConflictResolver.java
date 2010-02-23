@@ -18,6 +18,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.ModifiedConflictResolveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.command.VersionConflictResolveCommand;
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -76,6 +77,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
     private final List<IConflictResolver> conflictResolvers = new ArrayList<IConflictResolver>();
     private OsmPrimitive my;
     private OsmPrimitive their;
+    private Conflict<? extends OsmPrimitive> conflict;
 
     private ImageIcon mergeComplete;
     private ImageIcon mergeIncomplete;
@@ -227,10 +229,11 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
      * @param their their primitive (i.e. the primitive in the server dataset)
      *
      */
-    public void populate(OsmPrimitive my, OsmPrimitive their) {
-        setMy(my);
-        setTheir(their);
-        propertiesMerger.populate(my, their);
+    public void populate(Conflict<? extends OsmPrimitive> conflict) {
+        setMy(conflict.getMy());
+        setTheir(conflict.getTheir());
+        this.conflict = conflict;
+        propertiesMerger.populate(conflict);
         if (propertiesMerger.getModel().hasVisibleStateConflict()) {
             tabbedPane.setEnabledAt(1, false);
             tabbedPane.setEnabledAt(2, false);
@@ -238,20 +241,20 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
             return;
         }
         tabbedPane.setEnabledAt(0, true);
-        tagMerger.populate(my, their);
+        tagMerger.populate(conflict);
         tabbedPane.setEnabledAt(1, true);
 
         if (my instanceof Node) {
             tabbedPane.setEnabledAt(2,false);
             tabbedPane.setEnabledAt(3,false);
         } else if (my instanceof Way) {
-            nodeListMerger.populate(my, their);
+            nodeListMerger.populate(conflict);
             tabbedPane.setEnabledAt(2, true);
             tabbedPane.setEnabledAt(3, false);
             tabbedPane.setTitleAt(3,tr("Members"));
             tabbedPane.setIconAt(3, null);
         } else if (my instanceof Relation) {
-            relationMemberMerger.populate(my, their);
+            relationMemberMerger.populate(conflict);
             tabbedPane.setEnabledAt(2, false);
             tabbedPane.setTitleAt(2,tr("Nodes"));
             tabbedPane.setIconAt(2, null);
@@ -270,23 +273,23 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
         ArrayList<Command> commands = new ArrayList<Command>();
         if (propertiesMerger.getModel().hasVisibleStateConflict()) {
             if (propertiesMerger.getModel().isDecidedVisibleState()) {
-                commands.addAll(propertiesMerger.getModel().buildResolveCommand(my, their));
+                commands.addAll(propertiesMerger.getModel().buildResolveCommand(conflict));
             }
         } else {
             if (tagMerger.getModel().getNumResolvedConflicts() > 0) {
-                commands.add(tagMerger.getModel().buildResolveCommand(my, their));
+                commands.add(tagMerger.getModel().buildResolveCommand(conflict));
             }
-            commands.addAll(propertiesMerger.getModel().buildResolveCommand(my, their));
+            commands.addAll(propertiesMerger.getModel().buildResolveCommand(conflict));
             if (my instanceof Way && nodeListMerger.getModel().isFrozen()) {
                 NodeListMergeModel model  =(NodeListMergeModel)nodeListMerger.getModel();
-                commands.add(model.buildResolveCommand((Way)my, (Way)their));
+                commands.add(model.buildResolveCommand(conflict));
             } else if (my instanceof Relation && relationMemberMerger.getModel().isFrozen()) {
                 RelationMemberListMergeModel model  =(RelationMemberListMergeModel)relationMemberMerger.getModel();
                 commands.add(model.buildResolveCommand((Relation)my, (Relation)their));
             }
             if (isResolvedCompletely()) {
-                commands.add(new VersionConflictResolveCommand(my, their));
-                commands.add(new ModifiedConflictResolveCommand(my, their));
+                commands.add(new VersionConflictResolveCommand(conflict));
+                commands.add(new ModifiedConflictResolveCommand(conflict));
             }
         }
         return new SequenceCommand(tr("Conflict Resolution"), commands);

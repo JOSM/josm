@@ -3,7 +3,9 @@ package org.openstreetmap.josm.gui.dialogs;
 
 import javax.swing.JFrame;
 
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 
 public class ConflictResolutionDialogTest extends JFrame {
@@ -26,7 +28,7 @@ public class ConflictResolutionDialogTest extends JFrame {
         w2.addNode(new Node(10));
         w2.addNode(new Node(11));
 
-        dialog.getConflictResolver().populate(w1, w2);
+        dialog.getConflictResolver().populate(new Conflict<OsmPrimitive>(w1, w2));
     }
 
     public void showDialog() {

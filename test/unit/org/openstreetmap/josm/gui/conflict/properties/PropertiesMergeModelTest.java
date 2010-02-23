@@ -11,9 +11,11 @@ import java.util.Observer;
 import org.junit.Before;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.Epsg4326;
@@ -46,6 +48,10 @@ public class PropertiesMergeModelTest {
         Main.proj = new Epsg4326();
     }
 
+    private void populate(OsmPrimitive my, OsmPrimitive their) {
+        model.populate(new Conflict<OsmPrimitive>(my, their));
+    }
+
     @Test
     public void populate() {
         DataSet d1 = new DataSet();
@@ -54,19 +60,19 @@ public class PropertiesMergeModelTest {
         Node n2 = new Node(1);
         d1.addPrimitive(n1);
         d2.addPrimitive(n2);
-        model.populate(n1, n2);
+        populate(n1, n2);
 
         Way w1 = new Way(1);
         Way w2 = new Way(1);
         d1.addPrimitive(w1);
         d2.addPrimitive(w2);
-        model.populate(w2, w2);
+        populate(w2, w2);
 
         Relation r1 = new Relation(1);
         Relation r2 = new Relation(1);
         d1.addPrimitive(r1);
         d2.addPrimitive(r2);
-        model.populate(r1, r2);
+        populate(r1, r2);
     }
 
     @Test
@@ -78,22 +84,22 @@ public class PropertiesMergeModelTest {
         Node n2 = new Node(1);
         d1.addPrimitive(n1);
         d2.addPrimitive(n2);
-        model.populate(n1, n2);
+        populate(n1, n2);
         assertFalse(model.hasCoordConflict());
 
         n1.setCoor(new LatLon(1,1));
-        model.populate(n1, n2);
+        populate(n1, n2);
         assertTrue(model.hasCoordConflict());
 
 
         n1.cloneFrom(new Node(1));
         n2.setCoor(new LatLon(2,2));
-        model.populate(n1, n2);
+        populate(n1, n2);
         assertTrue(model.hasCoordConflict());
 
         n1.setCoor(new LatLon(1,1));
         n2.setCoor(new LatLon(2,2));
-        model.populate(n1, n2);
+        populate(n1, n2);
         assertTrue(model.hasCoordConflict());
 
         // decide KEEP_MINE  and ensure notification via Observable

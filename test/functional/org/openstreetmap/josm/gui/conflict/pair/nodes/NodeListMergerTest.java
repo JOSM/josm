@@ -5,9 +5,10 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.conflict.pair.nodes.NodeListMerger;
 
 public class NodeListMergerTest extends JFrame {
 
@@ -34,7 +35,7 @@ public class NodeListMergerTest extends JFrame {
         w2.addNode(new Node(5));
         w2.addNode(new Node(6));
 
-        nodeListMerger.populate(w1, w2);
+        nodeListMerger.populate(new Conflict<OsmPrimitive>(w1, w2));
 
     }
 
@@ -48,7 +49,7 @@ public class NodeListMergerTest extends JFrame {
         for (int i = 1; i < 200; i+=2) {
             w2.addNode(new Node(i));
         }
-        nodeListMerger.populate(w1, w2);
+        nodeListMerger.populate(new Conflict<OsmPrimitive>(w1, w2));
 
     }
 

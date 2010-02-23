@@ -20,6 +20,7 @@ import org.openstreetmap.josm.command.CoordinateConflictResolveCommand;
 import org.openstreetmap.josm.command.DeletedStateConflictResolveCommand;
 import org.openstreetmap.josm.command.PurgePrimitivesCommand;
 import org.openstreetmap.josm.command.UndeletePrimitivesCommand;
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -160,8 +161,9 @@ public class PropertiesMergeModel extends Observable {
      * @param my my version of the primitive
      * @param their their version of the primitive
      */
-    public void populate(OsmPrimitive my, OsmPrimitive their) {
-        this.my = my;
+    public void populate(Conflict<? extends OsmPrimitive> conflict) {
+        this.my = conflict.getMy();
+        OsmPrimitive their = conflict.getTheir();
         if (my instanceof Node) {
             myCoords = ((Node)my).getCoor();
             theirCoords = ((Node)their).getCoor();
@@ -170,7 +172,7 @@ public class PropertiesMergeModel extends Observable {
             theirCoords = null;
         }
 
-        myDeletedState = my.isDeleted();
+        myDeletedState =  conflict.isMyDeleted() || my.isDeleted();
         theirDeletedState = their.isDeleted();
 
         myVisibleState = my.isVisible();
@@ -417,8 +419,9 @@ public class PropertiesMergeModel extends Observable {
      * @param their their primitive
      * @return the list of commands
      */
-    public List<Command> buildResolveCommand(OsmPrimitive my, OsmPrimitive their) throws OperationCancelledException{
-        ArrayList<Command> cmds = new ArrayList<Command>();
+    public List<Command> buildResolveCommand(Conflict<? extends OsmPrimitive> conflict) throws OperationCancelledException{
+        OsmPrimitive my = conflict.getMy();
+        List<Command> cmds = new ArrayList<Command>();
         if (hasVisibleStateConflict() && isDecidedVisibleState()) {
             if (isVisibleStateDecision(MergeDecisionType.KEEP_MINE)) {
                 try {
@@ -435,10 +438,10 @@ public class PropertiesMergeModel extends Observable {
             }
         }
         if (hasCoordConflict() && isDecidedCoord()) {
-            cmds.add(new CoordinateConflictResolveCommand((Node)my, (Node)their, coordMergeDecision));
+            cmds.add(new CoordinateConflictResolveCommand(conflict, coordMergeDecision));
         }
         if (hasDeletedStateConflict() && isDecidedDeletedState()) {
-            cmds.add(new DeletedStateConflictResolveCommand(my, their, deletedMergeDecision));
+            cmds.add(new DeletedStateConflictResolveCommand(conflict, deletedMergeDecision));
         }
         return cmds;
     }

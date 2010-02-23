@@ -6,10 +6,11 @@ import java.awt.BorderLayout;
 import javax.swing.JFrame;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.projection.Epsg4326;
-import org.openstreetmap.josm.gui.conflict.pair.properties.PropertiesMerger;
 
 public class PropertiesMergerTest extends JFrame{
 
@@ -30,7 +31,7 @@ public class PropertiesMergerTest extends JFrame{
         Node their = new Node(2);
         their.setCoor(new LatLon(10,10));
 
-        merger.getModel().populate(my, their);
+        merger.getModel().populate(new Conflict<OsmPrimitive>(my, their));
     }
 
     public PropertiesMergerTest() {

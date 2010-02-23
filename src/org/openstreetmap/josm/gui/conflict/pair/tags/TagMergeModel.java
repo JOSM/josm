@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.command.TagConflictResolveCommand;
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 
@@ -188,8 +189,8 @@ public class TagMergeModel extends DefaultTableModel {
         return false;
     }
 
-    public TagConflictResolveCommand buildResolveCommand(OsmPrimitive my, OsmPrimitive their) {
-        return new TagConflictResolveCommand(my,  their, tagMergeItems);
+    public TagConflictResolveCommand buildResolveCommand(Conflict<? extends OsmPrimitive> conflict) {
+        return new TagConflictResolveCommand(conflict, tagMergeItems);
     }
 
     public boolean isResolvedCompletely() {

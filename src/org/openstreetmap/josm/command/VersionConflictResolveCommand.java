@@ -23,24 +23,24 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class VersionConflictResolveCommand extends ConflictResolveCommand {
 
     /** the conflict to resolve */
-    private Conflict<OsmPrimitive> conflict;
+    private Conflict<? extends OsmPrimitive> conflict;
 
     /**
      * constructor
      * @param my  my primitive (i.e. the primitive from the local dataset)
      * @param their their primitive (i.e. the primitive from the server)
      */
-    public VersionConflictResolveCommand(OsmPrimitive my, OsmPrimitive their) {
-        conflict = new Conflict<OsmPrimitive>(my, their);
+    public VersionConflictResolveCommand(Conflict<? extends OsmPrimitive> conflict) {
+        this.conflict = conflict;
     }
 
     @Override
     public MutableTreeNode description() {
         String msg = "";
         switch(OsmPrimitiveType.from(conflict.getMy())) {
-            case NODE: msg = marktr("Resolve version conflict for node {0}"); break;
-            case WAY: msg = marktr("Resolve version conflict for way {0}"); break;
-            case RELATION: msg = marktr("Resolve version conflict for relation {0}"); break;
+        case NODE: msg = marktr("Resolve version conflict for node {0}"); break;
+        case WAY: msg = marktr("Resolve version conflict for way {0}"); break;
+        case RELATION: msg = marktr("Resolve version conflict for relation {0}"); break;
         }
         return new DefaultMutableTreeNode(
                 new JLabel(

@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
 
     /** the conflict to resolve */
-    private Conflict<OsmPrimitive> conflict;
+    private Conflict<? extends OsmPrimitive> conflict;
 
     /** the merge decision */
     private final MergeDecisionType decision;
@@ -34,8 +34,8 @@ public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
      * @param their  their node
      * @param decision the merge decision
      */
-    public DeletedStateConflictResolveCommand(OsmPrimitive my, OsmPrimitive their, MergeDecisionType decision) {
-        this.conflict = new Conflict<OsmPrimitive>(my, their);
+    public DeletedStateConflictResolveCommand(Conflict<? extends OsmPrimitive> conflict, MergeDecisionType decision) {
+        this.conflict = conflict;
         this.decision = decision;
     }
 
@@ -60,11 +60,12 @@ public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
         OsmDataLayer layer = getLayer();
 
         if (decision.equals(MergeDecisionType.KEEP_MINE)) {
-            if (conflict.getMy().isDeleted()) {
+            if (conflict.getMy().isDeleted() || conflict.isMyDeleted()) {
                 // because my was involved in a conflict it my still be referred
                 // to from a way or a relation. Fix this now.
                 //
                 layer.data.unlinkReferencesToPrimitive(conflict.getMy());
+                conflict.getMy().setDeleted(true);
             }
         } else if (decision.equals(MergeDecisionType.KEEP_THEIR)) {
             if (conflict.getTheir().isDeleted()) {
@@ -85,5 +86,6 @@ public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
     public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted,
             Collection<OsmPrimitive> added) {
         modified.add(conflict.getMy());
+        modified.addAll(conflict.getMy().getReferrers());
     }
 }

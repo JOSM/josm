@@ -40,8 +40,9 @@ public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
      * @param their their way
      * @param mergedNodeList  the list of merged nodes
      */
-    public WayNodesConflictResolverCommand(Way my, Way their, List<Node> mergedNodeList) {
-        conflict = new Conflict<Way>(my,their);
+    @SuppressWarnings("unchecked")
+    public WayNodesConflictResolverCommand(Conflict<? extends OsmPrimitive> conflict, List<Node> mergedNodeList) {
+        this.conflict = (Conflict<Way>) conflict;
         this.mergedNodeList = mergedNodeList;
     }
 

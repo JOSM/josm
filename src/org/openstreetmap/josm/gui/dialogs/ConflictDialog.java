@@ -143,11 +143,9 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             index = 0;
         }
 
-        Conflict<?> c = conflicts.get(index);
-        OsmPrimitive my = c.getMy();
-        OsmPrimitive their = c.getTheir();
+        Conflict<? extends OsmPrimitive> c = conflicts.get(index);
         ConflictResolutionDialog dialog = new ConflictResolutionDialog(Main.parent);
-        dialog.getConflictResolver().populate(my, their);
+        dialog.getConflictResolver().populate(c);
         dialog.setVisible(true);
 
         lstConflicts.setSelectedIndex(index);

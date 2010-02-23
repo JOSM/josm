@@ -20,10 +20,16 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
 public class  Conflict<T extends OsmPrimitive> {
     private final T my;
     private final T their;
+    private final boolean isMyDeleted;
 
     public Conflict(T my, T their) {
+        this(my, their, false);
+    }
+
+    public Conflict(T my, T their, boolean isMyDeleted) {
         this.my = my;
         this.their = their;
+        this.isMyDeleted = isMyDeleted;
     }
 
     public T getMy() {
@@ -94,5 +100,14 @@ public class  Conflict<T extends OsmPrimitive> {
         if(their != other.their)
             return false;
         return true;
+    }
+
+    /**
+     * 
+     * @return True if my primitive was deleted but it has set non deleted status because it's referred by another
+     * primitive and references to deleted primitives are not allowed.
+     */
+    public boolean isMyDeleted() {
+        return isMyDeleted;
     }
 }
