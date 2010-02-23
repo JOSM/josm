@@ -11,9 +11,9 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -50,7 +50,7 @@ public class ReferringRelationsBrowser extends JPanel {
         setLayout(new BorderLayout());
         referrers = new JList(model);
         referrers.setCellRenderer(new OsmPrimitivRenderer());
-        add(referrers, BorderLayout.CENTER);
+        add(new JScrollPane(referrers), BorderLayout.CENTER);
         referrers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         referrers.addMouseListener(new DblClickMouseAdapter());
 
@@ -60,8 +60,7 @@ public class ReferringRelationsBrowser extends JPanel {
         ReloadAction reloadAction = new ReloadAction();
         referrers.getModel().addListDataListener(reloadAction);
         pnl.add(new SideButton(reloadAction));
-        pnl.add(new JLabel(tr("including immediate children of parent relations")));
-        pnl.add(cbReadFull = new JCheckBox());
+        pnl.add(cbReadFull = new JCheckBox(tr("including immediate children of parent relations")));
 
         editAction = new EditAction();
         referrers.getSelectionModel().addListSelectionListener(editAction);
