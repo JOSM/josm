@@ -70,6 +70,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * This dialog is for editing relations.
@@ -106,6 +107,9 @@ public class GenericRelationEditor extends RelationEditor  {
     public GenericRelationEditor(OsmDataLayer layer, Relation relation, Collection<RelationMember> selectedMembers) {
         super(layer, relation, selectedMembers);
 
+        setRememberWindowGeometry(getClass().getName() + ".geometry", 
+                WindowGeometry.centerInWindow(Main.parent, new Dimension(700, 650)));
+        
         // initialize the autocompletion infrastructure
         //
         AutoCompletionCache.getCacheForLayer(getLayer()).initFromDataSet();
@@ -535,7 +539,6 @@ public class GenericRelationEditor extends RelationEditor  {
 
     @Override
     protected Dimension findMaxDialogSize() {
-        // FIXME: Make it remember dialog size
         return new Dimension(700, 650);
     }
 
