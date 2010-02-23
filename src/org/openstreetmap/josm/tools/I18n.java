@@ -81,6 +81,11 @@ public class I18n {
             if(trans != null)
                 return trans;
         }
+        if(pstrings != null) {
+            String[] trans = pstrings.get(ctx == null ? text : "_:"+ctx+"\n"+text);
+            if(trans != null)
+                return trans[0];
+        }
         return text;
     }
 
