@@ -34,9 +34,9 @@ public class DataSetMerger {
 
     /**
      * A map of all primitives that got replaced with other primitives.
-     * Key is the primitive id in their dataset, the value is the id in my dataset
+     * Key is the PrimitiveId in their dataset, the value is the PrimitiveId in my dataset
      */
-    private final Map<Long, Long> mergedMap;
+    private final Map<PrimitiveId, PrimitiveId> mergedMap;
     /** a set of primitive ids for which we have to fix references (to nodes and
      * to relation members) after the first phase of merging
      */
@@ -57,7 +57,7 @@ public class DataSetMerger {
         this.targetDataSet = targetDataSet;
         this.sourceDataSet = sourceDataSet;
         conflicts = new ConflictCollection();
-        mergedMap = new HashMap<Long, Long>();
+        mergedMap = new HashMap<PrimitiveId, PrimitiveId>();
         objectsWithChildrenToMerge = new HashSet<PrimitiveId>();
         deletedObjectsToUnlink = new HashSet<OsmPrimitive>();
     }
@@ -105,7 +105,7 @@ public class DataSetMerger {
                     continue;
                 }
                 if (target.hasEqualSemanticAttributes(source)) {
-                    mergedMap.put(source.getUniqueId(), target.getUniqueId());
+                    mergedMap.put(source.getPrimitiveId(), target.getPrimitiveId());
                     // copy the technical attributes from other
                     // version
                     target.setVisible(source.isVisible());
@@ -130,15 +130,15 @@ public class DataSetMerger {
         }
         target.mergeFrom(source);
         targetDataSet.addPrimitive(target);
-        mergedMap.put(source.getUniqueId(), target.getUniqueId());
+        mergedMap.put(source.getPrimitiveId(), target.getPrimitiveId());
         objectsWithChildrenToMerge.add(source.getPrimitiveId());
     }
 
     protected OsmPrimitive getMergeTarget(OsmPrimitive mergeSource) throws IllegalStateException{
-        Long targetId = mergedMap.get(mergeSource.getUniqueId());
+        PrimitiveId targetId = mergedMap.get(mergeSource.getPrimitiveId());
         if (targetId == null)
             return null;
-        return targetDataSet.getPrimitiveById(targetId, mergeSource.getType());
+        return targetDataSet.getPrimitiveById(targetId);
     }
 
     protected void fixIncomplete(Way other) {
@@ -277,7 +277,7 @@ public class DataSetMerger {
         if (target == null)
             return false;
         // found a corresponding target, remember it
-        mergedMap.put(source.getUniqueId(), target.getUniqueId());
+        mergedMap.put(source.getPrimitiveId(), target.getPrimitiveId());
 
         if (target.getVersion() > source.getVersion())
             // target.version > source.version => keep target version
