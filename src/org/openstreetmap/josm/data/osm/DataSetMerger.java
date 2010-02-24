@@ -87,6 +87,9 @@ public class DataSetMerger {
             // ignore it
             //    return;
         } else {
+            // ignore deleted primitives from source
+            if (source.isDeleted()) return;
+
             // try to merge onto a primitive  which has no id assigned
             // yet but which is equal in its semantic attributes
             //
@@ -98,24 +101,18 @@ public class DataSetMerger {
             default: throw new AssertionError();
             }
             for (OsmPrimitive target : candidates) {
-                if (!target.isNew()) {
+                if (!target.isNew() || target.isDeleted()) {
                     continue;
                 }
                 if (target.hasEqualSemanticAttributes(source)) {
                     mergedMap.put(source.getUniqueId(), target.getUniqueId());
-                    if (target.isDeleted() != source.isDeleted()) {
-                        // differences in deleted state have to be merged manually
-                        //
-                        conflicts.add(target, source);
-                    } else {
-                        // copy the technical attributes from other
-                        // version
-                        target.setVisible(source.isVisible());
-                        target.setUser(source.getUser());
-                        target.setTimestamp(source.getTimestamp());
-                        target.setModified(source.isModified());
-                        objectsWithChildrenToMerge.add(source.getPrimitiveId());
-                    }
+                    // copy the technical attributes from other
+                    // version
+                    target.setVisible(source.isVisible());
+                    target.setUser(source.getUser());
+                    target.setTimestamp(source.getTimestamp());
+                    target.setModified(source.isModified());
+                    objectsWithChildrenToMerge.add(source.getPrimitiveId());
                     return;
                 }
             }
