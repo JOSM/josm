@@ -101,7 +101,10 @@ public class MirroredInputStream extends InputStream {
                 zipFile.close();
             }
         } catch (Exception e) {
-            System.err.println(tr("Warning: failed to open file with extension ''{2}'' and namepart ''{3}'' in zip file ''{0}''. Exception was: {1}", file.getName(), e.toString(), extension, namepart));
+            if(file.getName().endsWith(".zip")) {
+                System.err.println(tr("Warning: failed to open file with extension ''{2}'' and namepart ''{3}'' in zip file ''{0}''. Exception was: {1}",
+                file.getName(), e.toString(), extension, namepart));
+            }
         }
         return res;
     }

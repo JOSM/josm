@@ -2513,7 +2513,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="amenity" value="drinking_water" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Fire Hydrant" type="node">
+        <item name="Fire Hydrant" icon="presets/fire_hydrant.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=fire hydrant"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:fire hydrant" />
             <label text="Edit Fire Hydrant" />
@@ -2810,7 +2810,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="(Use international code, like +12-345-67890)" />
             <space />
         </item>
-        <item name="Veterinary" icon="presets/empty.png" type="node,closedway">
+        <item name="Veterinary" icon="styles/standard/health/veterinary.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=veterinary"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=veterinary" />
             <label text="Edit Veterinary" />
