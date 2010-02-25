@@ -951,7 +951,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      */
 
     public final List<OsmPrimitive> getReferrers() {
-        checkDataset();
         // Method copied from OsmPrimitive in josm-ng
         // Returns only referrers that are members of the same dataset (primitive can have some fake references, for example
         // when way is cloned
