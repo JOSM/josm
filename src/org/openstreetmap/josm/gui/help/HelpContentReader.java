@@ -44,7 +44,7 @@ public class HelpContentReader {
      * @throws HelpContentReaderException thrown if problem occurs
      * @throws MissingHelpContentException thrown if this helpTopicUrl doesn't point to an existing Wiki help page
      */
-    public String fetchHelpTopicContent(String helpTopicUrl) throws HelpContentReaderException {
+    public String fetchHelpTopicContent(String helpTopicUrl, boolean dotest) throws HelpContentReaderException {
         URL url = null;
         HttpURLConnection con = null;
         BufferedReader in = null;
@@ -53,7 +53,7 @@ public class HelpContentReader {
             con = (HttpURLConnection)url.openConnection();
             con.connect();
             in = new BufferedReader(new InputStreamReader(con.getInputStream(),"utf-8"));
-            return prepareHelpContent(in);
+            return prepareHelpContent(in, dotest);
         } catch(MalformedURLException e) {
             throw new HelpContentReaderException(e);
         } catch(IOException e) {
@@ -89,13 +89,16 @@ public class HelpContentReader {
      * @throws HelpContentReaderException thrown if an exception occurs
      * @throws MissingHelpContentException thrown, if the content read isn't a help page
      */
-    protected String prepareHelpContent(BufferedReader in) throws HelpContentReaderException {
+    protected String prepareHelpContent(BufferedReader in, boolean dotest) throws HelpContentReaderException {
         boolean isInContent = false;
         boolean isInTranslationsSideBar = false;
         boolean isExistingHelpPage = false;
+        StringBuffer sball = new StringBuffer();
         StringBuffer sb = new StringBuffer();
         try {
             for (String line = in.readLine(); line != null; line = in.readLine()) {
+                sball.append(line);
+                sball.append("\n");
                 if (line.contains("<div id=\"searchable\">")) {
                     isInContent = true;
                 } else if (line.contains("<div class=\"wiki-toc trac-nav\"")) {
@@ -129,10 +132,12 @@ public class HelpContentReader {
         } catch(IOException e) {
             throw new HelpContentReaderException(e);
         }
+        if(!dotest && sb.length() == 0)
+            sb = sball;
+        else if (dotest && !isExistingHelpPage)
+            throw new MissingHelpContentException();
         sb.insert(0, "<html>");
         sb.append("<html>");
-        if (! isExistingHelpPage)
-            throw new MissingHelpContentException();
         return sb.toString();
     }
 }

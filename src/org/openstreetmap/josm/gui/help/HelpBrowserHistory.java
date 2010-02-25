@@ -49,7 +49,11 @@ public class HelpBrowserHistory extends Observable {
     }
 
     public void setCurrentUrl(String url) {
-        if (historyPos == history.size() -1) {
+        boolean add=true;
+
+        if (historyPos >= 0 && historyPos < history.size() && history.get(historyPos).toString().equals(url.toString())) {
+            add = false;
+        } else if (historyPos == history.size() -1) {
             // do nothing just append
         } else if (historyPos ==0 && history.size() > 0) {
             history = new ArrayList<String>(Collections.singletonList(history.get(0)));
@@ -58,8 +62,11 @@ public class HelpBrowserHistory extends Observable {
         } else {
             history = new ArrayList<String>();
         }
-        history.add(url);
-        historyPos = history.size()-1;
+        if(add)
+        {
+          history.add(url);
+          historyPos = history.size()-1;
+        }
         setChanged();
         notifyObservers();
     }

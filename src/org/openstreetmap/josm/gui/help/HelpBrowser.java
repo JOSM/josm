@@ -272,12 +272,12 @@ public class HelpBrowser extends JFrame {
         String url = HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic(relativeHelpTopic));
         String content = null;
         try {
-            content = reader.fetchHelpTopicContent(url);
+            content = reader.fetchHelpTopicContent(url, true);
         } catch(MissingHelpContentException e) {
             url = HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic(relativeHelpTopic, Locale.ENGLISH));
             try {
                 logger.info("fetching url: " + url);
-                content = reader.fetchHelpTopicContent(url);
+                content = reader.fetchHelpTopicContent(url, true);
             } catch(MissingHelpContentException e1) {
                 handleMissingHelpContent(relativeHelpTopic);
                 return;
@@ -307,7 +307,7 @@ public class HelpBrowser extends JFrame {
         String url = HelpUtil.getHelpTopicUrl(absoluteHelpTopic);
         String content = null;
         try {
-            content = reader.fetchHelpTopicContent(url);
+            content = reader.fetchHelpTopicContent(url, true);
         } catch(MissingHelpContentException e) {
             handleMissingHelpContent(absoluteHelpTopic);
             return;
@@ -341,8 +341,12 @@ public class HelpBrowser extends JFrame {
         if (helpTopic == null) {
             try {
                 this.url = url;
-                help.setPage(url);
-            } catch(IOException e) {
+                String content = reader.fetchHelpTopicContent(url, false);
+                help.setText(content);
+                history.setCurrentUrl(url);
+                this.url = url;
+                scrollToTop();
+            } catch(Exception e) {
                 HelpAwareOptionPane.showOptionDialog(
                         Main.parent,
                         tr(
