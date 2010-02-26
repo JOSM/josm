@@ -80,11 +80,11 @@ public class PushbackTokenizer {
         return result;
     }
 
-    private static final List<Integer> specialChars = Arrays.asList(new Integer[] {'"', ':', '(', ')', '|', '=', '?'});
-    private static final List<Integer> specialCharsQuoted = Arrays.asList(new Integer[] {'"'});
+    private static final List<Character> specialChars = Arrays.asList(new Character[] {'"', ':', '(', ')', '|', '=', '?'});
+    private static final List<Character> specialCharsQuoted = Arrays.asList(new Character[] {'"'});
 
     private String getString(boolean quoted) {
-        List<Integer> sChars = quoted ? specialCharsQuoted : specialChars;
+        List<Character> sChars = quoted ? specialCharsQuoted : specialChars;
         StringBuilder s = new StringBuilder();
         boolean escape = false;
         while (c != -1 && (escape || (!sChars.contains(c) && (quoted || !Character.isWhitespace(c))))) {
