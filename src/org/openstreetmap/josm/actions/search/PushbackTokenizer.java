@@ -87,7 +87,7 @@ public class PushbackTokenizer {
         List<Character> sChars = quoted ? specialCharsQuoted : specialChars;
         StringBuilder s = new StringBuilder();
         boolean escape = false;
-        while (c != -1 && (escape || (!sChars.contains(c) && (quoted || !Character.isWhitespace(c))))) {
+        while (c != -1 && (escape || (!sChars.contains((char)c) && (quoted || !Character.isWhitespace(c))))) {
             if (c == '\\' && !escape) {
                 escape = true;
             } else {
