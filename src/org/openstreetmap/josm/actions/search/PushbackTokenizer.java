@@ -6,6 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
+import java.util.List;
 
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 
@@ -33,8 +35,8 @@ public class PushbackTokenizer {
 
     private Token currentToken;
     private String currentText;
-    private long currentNumber;
-    private long currentRange;
+    private Long currentNumber;
+    private Long currentRange;
     private int c;
 
     public PushbackTokenizer(Reader search) {
@@ -45,8 +47,8 @@ public class PushbackTokenizer {
     public enum Token {
         NOT(marktr("<not>")), OR(marktr("<or>")), LEFT_PARENT(marktr("<left parent>")),
         RIGHT_PARENT(marktr("<right parent>")), COLON(marktr("<colon>")), EQUALS(marktr("<equals>")),
-        KEY(marktr("<key>")), QUESTION_MARK(marktr("<question mark>")), NUMBER(marktr("<number>")),
-        RANGE(marktr("range")), EOF(marktr("<end-of-file>"));
+        KEY(marktr("<key>")), QUESTION_MARK(marktr("<question mark>")),
+        EOF(marktr("<end-of-file>"));
 
         private Token(String name) {
             this.name = name;
@@ -78,6 +80,29 @@ public class PushbackTokenizer {
         return result;
     }
 
+    private static final List<Integer> specialChars = Arrays.asList(new Integer[] {'"', ':', '(', ')', '|', '=', '?'});
+    private static final List<Integer> specialCharsQuoted = Arrays.asList(new Integer[] {'"'});
+
+    private String getString(boolean quoted) {
+        List<Integer> sChars = quoted ? specialCharsQuoted : specialChars;
+        StringBuilder s = new StringBuilder();
+        boolean escape = false;
+        while (c != -1 && (escape || (!sChars.contains(c) && (quoted || !Character.isWhitespace(c))))) {
+            if (c == '\\' && !escape) {
+                escape = true;
+            } else {
+                s.append((char)c);
+                escape = false;
+            }
+            getChar();
+        }
+        return s.toString();
+    }
+
+    private String getString() {
+        return getString(false);
+    }
+
     /**
      * The token returned is <code>null</code> or starts with an identifier character:
      * - for an '-'. This will be the only character
@@ -106,13 +131,6 @@ public class PushbackTokenizer {
         case '=':
             getChar();
             return Token.EQUALS;
-        case '-':
-            getChar();
-            if (Character.isDigit(c)) {
-                currentNumber = -1 * getNumber();
-                return Token.NUMBER;
-            } else
-                return Token.NOT;
         case '(':
             getChar();
             return Token.LEFT_PARENT;
@@ -126,47 +144,37 @@ public class PushbackTokenizer {
             getChar();
             return Token.QUESTION_MARK;
         case '"':
-        {
             getChar();
-            StringBuilder s = new StringBuilder();
-            boolean escape = false;
-            while (c != -1 && (c != '"' || escape)) {
-                if (c == '\\' && !escape) {
-                    escape = true;
-                } else {
-                    s.append((char)c);
-                    escape = false;
-                }
-                getChar();
-            }
+            currentText = getString(true);
             getChar();
-            currentText = s.toString();
             return Token.KEY;
-        }
         default:
-        {
-            if (Character.isDigit(c)) {
-                currentNumber = getNumber();
-                if (c == '-') {
-                    getChar();
-                    currentRange = getNumber();
-                    return Token.RANGE;
-                } else
-                    return Token.NUMBER;
-
-            }
-
-            StringBuilder s = new StringBuilder();
-            while (!(c == -1 || Character.isWhitespace(c) || c == '"'|| c == ':' || c == '(' || c == ')' || c == '|' || c == '=' || c == '?')) {
-                s.append((char)c);
+            String prefix = "";
+            if (c == '-') {
                 getChar();
+                if (!Character.isDigit(c))
+                    return Token.NOT;
+                prefix = "-";
             }
-            currentText = s.toString();
+            currentText = prefix + getString();
             if ("or".equals(currentText))
                 return Token.OR;
-            else
-                return Token.KEY;
-        }
+            try {
+                currentNumber = Long.parseLong(currentText);
+            } catch (NumberFormatException e) {
+                currentNumber = null;
+            }
+            int pos = currentText.indexOf('-', 1);
+            if (pos > 0) {
+                try {
+                    currentNumber = Long.parseLong(currentText.substring(0, pos));
+                    currentRange = Long.parseLong(currentText.substring(pos + 1));
+                } catch (NumberFormatException e) {
+                    currentNumber = null;
+                    currentRange = null;
+                }
+            }
+            return Token.KEY;
         }
     }
 
@@ -182,31 +190,29 @@ public class PushbackTokenizer {
         Token nextTok = nextToken();
         if (nextTok == Token.KEY)
             return currentText;
-        if (nextTok == Token.NUMBER)
-            return String.valueOf(currentNumber);
         currentToken = nextTok;
         return null;
     }
 
     public long readNumber(String errorMessage) throws ParseError {
-        if (nextToken() == Token.NUMBER)
+        if ((nextToken() == Token.KEY) && (currentNumber != null))
             return currentNumber;
         else
             throw new ParseError(errorMessage);
     }
 
     public long getReadNumber() {
-        return currentNumber;
+        return (currentNumber != null) ? currentNumber : 0;
     }
 
-    public Range readRange() throws ParseError {
-        Token token = nextToken();
-        if (token == Token.NUMBER)
-            return new Range(currentNumber, currentNumber);
-        else if (token == Token.RANGE)
-            return new Range(currentNumber, currentRange);
-        else
-            throw new ParseError(Token.NUMBER, token);
+    public Range readRange(String errorMessage) throws ParseError {
+        if ((nextToken() == Token.KEY) && (currentNumber != null)) {
+            if (currentRange == null)
+                return new Range(currentNumber, currentNumber);
+            else
+                return new Range(currentNumber, currentRange);
+        } else
+            throw new ParseError(errorMessage);
     }
 
     public String getText() {

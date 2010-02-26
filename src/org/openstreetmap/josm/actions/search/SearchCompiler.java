@@ -652,10 +652,10 @@ public class SearchCompiler {
                 if ("id".equals(key))
                     return new Id(tokenizer.readNumber(tr("Primitive id expected")));
                 else if ("tags".equals(key)) {
-                    Range range = tokenizer.readRange();
+                    Range range = tokenizer.readRange(tr("Range of numbers expected"));
                     return new TagCountRange((int)range.getStart(), (int)range.getEnd());
                 } else if ("nodes".equals(key)) {
-                    Range range = tokenizer.readRange();
+                    Range range = tokenizer.readRange(tr("Range of numbers expected"));
                     return new NodeCountRange((int)range.getStart(), (int)range.getEnd());
                 } else if ("changeset".equals(key))
                     return new ChangesetId(tokenizer.readNumber(tr("Changeset id expected")));
