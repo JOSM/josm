@@ -161,7 +161,6 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 // If the mapView is not there yet, we cannot calculate the bounds (see constructor of MapView).
                 // Otherwise jump to the current download.
                 if (isDisplayingMapView) {
-                    System.err.println("TRUE!");
                     BoundingXYVisitor v = new BoundingXYVisitor();
                     v.visit(currentBounds);
                     Main.map.mapView.recalculateCenterScale(v);
