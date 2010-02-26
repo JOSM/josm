@@ -107,9 +107,9 @@ public class GenericRelationEditor extends RelationEditor  {
     public GenericRelationEditor(OsmDataLayer layer, Relation relation, Collection<RelationMember> selectedMembers) {
         super(layer, relation, selectedMembers);
 
-        setRememberWindowGeometry(getClass().getName() + ".geometry", 
+        setRememberWindowGeometry(getClass().getName() + ".geometry",
                 WindowGeometry.centerInWindow(Main.parent, new Dimension(700, 650)));
-        
+
         // initialize the autocompletion infrastructure
         //
         AutoCompletionCache.getCacheForLayer(getLayer()).initFromDataSet();
@@ -1020,13 +1020,25 @@ public class GenericRelationEditor extends RelationEditor  {
          * apply updates to a new relation
          */
         protected void applyNewRelation() {
-            // If the user wanted to create a new relation, but hasn't added any members or
-            // tags, don't add an empty relation
-            if (memberTableModel.getRowCount() == 0 && tagEditorPanel.getModel().getKeys().isEmpty())
-                return;
             Relation newRelation = new Relation();
             tagEditorPanel.getModel().applyToPrimitive(newRelation);
             memberTableModel.applyToRelation(newRelation);
+            List<RelationMember> newMembers = new ArrayList<RelationMember>();
+            for (RelationMember rm: newRelation.getMembers()) {
+                if (!rm.getMember().isDeleted()) {
+                    newMembers.add(rm);
+                }
+            }
+            if (newRelation.getMembersCount() != newMembers.size()) {
+                newRelation.setMembers(newMembers);
+                String msg = tr("One or more members of this new relation have been deleted while the relation editor\n" +
+                "was open. They have been removed from the relation members list.");
+                JOptionPane.showMessageDialog(Main.parent, msg, tr("Warning"), JOptionPane.WARNING_MESSAGE);
+            }
+            // If the user wanted to create a new relation, but hasn't added any members or
+            // tags, don't add an empty relation
+            if (newRelation.getMembersCount() == 0 && !newRelation.hasKeys())
+                return;
             Main.main.undoRedo.add(new AddCommand(getLayer(),newRelation));
 
             // make sure everybody is notified about the changes
