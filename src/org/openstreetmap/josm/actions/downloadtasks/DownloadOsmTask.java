@@ -146,6 +146,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 // area doesn't work
                 dataSet.dataSources.add(new DataSource(currentBounds, "OpenStreetMap server"));
             }
+
             rememberDownloadedData(dataSet);
             int numDataLayers = getNumDataLayers();
             if (newLayer || numDataLayers == 0 || (numDataLayers > 1 && getEditLayer() == null)) {
@@ -153,10 +154,18 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 // or it is not clear which layer to merge to
                 //
                 OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
+                final boolean isDisplayingMapView = Main.isDisplayingMapView();
+                
                 Main.main.addLayer(layer);
-                BoundingXYVisitor v = new BoundingXYVisitor();
-                v.visit(currentBounds);
-                Main.map.mapView.recalculateCenterScale(v);
+
+                // If the mapView is not there yet, we cannot calculate the bounds (see constructor of MapView).
+                // Otherwise jump to the current download.
+                if (isDisplayingMapView) {
+                    System.err.println("TRUE!");
+                    BoundingXYVisitor v = new BoundingXYVisitor();
+                    v.visit(currentBounds);
+                    Main.map.mapView.recalculateCenterScale(v);
+                }
             } else {
                 OsmDataLayer target;
                 target = getEditLayer();
