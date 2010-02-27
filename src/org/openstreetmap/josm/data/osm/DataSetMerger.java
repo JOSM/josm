@@ -148,24 +148,6 @@ public class DataSetMerger {
     }
 
     /**
-     * A way in the target dataset might be incomplete because at least one of its nodes is incomplete.
-     * The nodes might have become complete because a complete node was merged into in the
-     * merge operation.
-     *
-     * This method loops over all parent ways of such nodes and turns them into complete ways
-     * if necessary.
-     *
-     * @param other
-     */
-    //TODO This method is probably useless
-    protected void fixIncompleteParentWays(Node other) {
-        Node myNode = (Node)getMergeTarget(other);
-        if (myNode == null)
-            throw new RuntimeException(tr("Missing merge target for node with id {0}", other.getUniqueId()));
-        if (myNode.isIncomplete() || myNode.isDeleted() || !myNode.isVisible()) return;
-    }
-
-    /**
      * Postprocess the dataset and fix all merged references to point to the actual
      * data.
      */
@@ -187,19 +169,6 @@ public class DataSetMerger {
                 throw new RuntimeException(tr("Missing merge target for object with id {0}", source.getUniqueId()));
             targetDataSet.unlinkReferencesToPrimitive(target);
         }
-        // objectsWithChildrenToMerge also includes complete nodes which have
-        // been merged into their incomplete equivalents.
-        //
-        for (PrimitiveId id: objectsWithChildrenToMerge) {
-            if (!id.getType().equals(OsmPrimitiveType.NODE)) {
-                continue;
-            }
-            Node n = (Node)sourceDataSet.getPrimitiveById(id);
-            if (!conflicts.hasConflictForTheir(n)) {
-                fixIncompleteParentWays(n);
-            }
-        }
-
     }
 
     /**

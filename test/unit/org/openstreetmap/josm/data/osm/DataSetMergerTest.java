@@ -291,9 +291,8 @@ public class DataSetMergerTest {
 
     /**
      * My and their node are new but semantically equal. My node is deleted.
-     *
-     * => create a conflict
-     *
+     * 
+     * => Ignore my node, no conflict
      */
     @Test
     public void nodeSimple_DeleteConflict_3() {
@@ -308,7 +307,7 @@ public class DataSetMergerTest {
         DataSetMerger visitor = new DataSetMerger(my,their);
         visitor.merge();
 
-        assertEquals(1,visitor.getConflicts().size());
+        assertEquals(0, visitor.getConflicts().size());
         assertTrue(n.getDataSet() == my);
         assertTrue(n1.getDataSet() == their);
     }
