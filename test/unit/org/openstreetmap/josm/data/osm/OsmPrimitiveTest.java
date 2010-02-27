@@ -109,4 +109,25 @@ public class OsmPrimitiveTest {
         compareReferrers(w1, r1);
     }
 
+    @Test
+    public void nodeFromMultipleDatasets() {
+        // n has two referrers - w1 and w2. But only w1 is returned because it is in the same dataset as n
+        Node n = new Node();
+
+        Way w1 = new Way();
+        w1.addNode(n);
+        dataSet.addPrimitive(n);
+        dataSet.addPrimitive(w1);
+        new Way(w1);
+
+        Assert.assertEquals(n.getReferrers().size(), 1);
+        Assert.assertEquals(n.getReferrers().get(0), w1);
+    }
+
+    @Test(expected=DataIntegrityProblemException.class)
+    public void checkMustBeInDatasate() {
+        Node n = new Node();
+        n.getReferrers();
+    }
+
 }
