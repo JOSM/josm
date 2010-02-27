@@ -288,7 +288,7 @@ public class PluginPreferencesModel extends Observable{
         File pluginDir = Main.pref.getPluginsDirectory();
         for (PluginInformation pi : plugins) {
             File downloadedPluginFile = new File(pluginDir, pi.name + ".jar.new");
-            if (! downloadedPluginFile.exists() && downloadedPluginFile.canRead()) {
+            if (!(downloadedPluginFile.exists() && downloadedPluginFile.canRead())) {
                 continue;
             }
             try {

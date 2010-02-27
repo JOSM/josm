@@ -713,7 +713,7 @@ public class PluginHandler {
      * ".jar" files.
      * 
      */
-    public static void installDownloadedPlugins() {
+    public static void installDownloadedPlugins(boolean dowarn) {
         File pluginDir = Main.pref.getPluginsDirectory();
         if (! pluginDir.exists() || ! pluginDir.isDirectory() || ! pluginDir.canWrite())
             return;
@@ -728,13 +728,13 @@ public class PluginHandler {
             File plugin = new File(filePath.substring(0, filePath.length() - 4));
             String pluginName = updatedPlugin.getName().substring(0, updatedPlugin.getName().length() - 8);
             if (plugin.exists()) {
-                if (!plugin.delete()) {
+                if (!plugin.delete() && !dowarn) {
                     System.err.println(tr("Warning: failed to delete outdated plugin ''{0}''.", plugin.toString()));
                     System.err.println(tr("Warning: failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.", pluginName));
                     continue;
                 }
             }
-            if (!updatedPlugin.renameTo(plugin)) {
+            if (!updatedPlugin.renameTo(plugin) && !dowarn) {
                 System.err.println(tr("Warning: failed to install plugin ''{0}'' from temporary download file ''{1}''. Renaming failed.", plugin.toString(), updatedPlugin.toString()));
                 System.err.println(tr("Warning: failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.", pluginName));
             }

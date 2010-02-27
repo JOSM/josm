@@ -172,6 +172,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
             }
             downloaded.add(d);
         }
+        PluginHandler.installDownloadedPlugins(false);
     }
 
     /**

@@ -174,7 +174,7 @@ public class MainApplication extends Main {
         monitor.worked(1);
 
         monitor.subTask(tr("Installing updated plugins"));
-        PluginHandler.installDownloadedPlugins();
+        PluginHandler.installDownloadedPlugins(true);
         monitor.worked(1);
 
         monitor.subTask(tr("Loading early plugins"));
