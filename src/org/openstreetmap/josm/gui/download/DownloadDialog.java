@@ -10,6 +10,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -24,7 +25,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -87,18 +87,20 @@ public class DownloadDialog extends JDialog  {
     }
 
     public JPanel buildMainPanel() {
+        // generic constraints used by different components
+        GridBagConstraints gridBagConstraints;
+
         JPanel pnl = new JPanel();
         pnl.setLayout(new GridBagLayout());
-        pnl.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
         // adding the download tasks
-        pnl.add(new JLabel(tr("Data Sources and Types")), GBC.eol().insets(0,5,0,0));
+        pnl.add(new JLabel(tr("Data Sources and Types:")), GBC.std().insets(5,5,1,5));
         cbDownloadOsmData = new JCheckBox(tr("OpenStreetMap data"), true);
         cbDownloadOsmData.setToolTipText(tr("Select to download OSM data in the selected download area."));
-        pnl.add(cbDownloadOsmData,  GBC.eol().insets(20,0,0,0));
+        pnl.add(cbDownloadOsmData,  GBC.std().insets(1,5,1,5));
         cbDownloadGpxData = new JCheckBox(tr("Raw GPS data"));
         cbDownloadGpxData.setToolTipText(tr("Select to download GPS traces in the selected download area."));
-        pnl.add(cbDownloadGpxData,  GBC.eol().insets(20,0,0,0));
+        pnl.add(cbDownloadGpxData,  GBC.eol().insets(5,5,1,5));
 
         // predefined download selections
         downloadSelections.add(new SlippyMapChooser());
@@ -117,12 +119,6 @@ public class DownloadDialog extends JDialog  {
             s.addGui(this);
         }
 
-        cbNewLayer = new JCheckBox(tr("Download as new layer"));
-        cbNewLayer.setToolTipText(tr("<html>Select to download data into a new data layer.<br>"
-                +"Unselect to download into the currently active data layer.</html>"));
-        pnl.add(cbNewLayer, GBC.eol().insets(0,5,0,0));
-
-        pnl. add(new JLabel(tr("Download Area")), GBC.eol().insets(0,5,0,0));
         pnl.add(tpDownloadAreaSelectors, GBC.eol().fill());
 
         try {
@@ -133,7 +129,14 @@ public class DownloadDialog extends JDialog  {
 
         Font labelFont = sizeCheck.getFont();
         sizeCheck.setFont(labelFont.deriveFont(Font.PLAIN, labelFont.getSize()));
-        pnl.add(sizeCheck, GBC.eop().insets(0,5,5,10));
+        
+        cbNewLayer = new JCheckBox(tr("Download as new layer"));
+        cbNewLayer.setToolTipText(tr("<html>Select to download data into a new data layer.<br>"
+                +"Unselect to download into the currently active data layer.</html>"));
+
+        pnl.add(cbNewLayer, GBC.std().anchor(GBC.WEST).insets(5,5,5,5));
+        pnl.add(sizeCheck,  GBC.eol().anchor(GBC.EAST).insets(5,5,5,5));
+
         return pnl;
     }
 

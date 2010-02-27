@@ -13,7 +13,6 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.util.Vector;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
@@ -116,9 +115,6 @@ public class SlippyMapChooser extends JMapViewer implements DownloadSelection {
         slipyyMapTabPanel = new JPanel();
         slipyyMapTabPanel.setLayout(new BorderLayout());
         slipyyMapTabPanel.add(this, BorderLayout.CENTER);
-        String labelText = tr("<b>Zoom:</b> Mousewheel, double click or Ctrl + Up/Down "
-                + "<b>Move map:</b> Hold right mousebutton and move mouse or use cursor keys. <b>Select:</b> Hold left mousebutton and draw a frame.");
-        slipyyMapTabPanel.add(new JLabel("<html>" + labelText + "</html>"), BorderLayout.SOUTH);
         iGui.addDownloadAreaSelector(slipyyMapTabPanel, tr("Slippy map"));
         new OsmMapControl(this, slipyyMapTabPanel, iSizeButton, iSourceButton);
     }

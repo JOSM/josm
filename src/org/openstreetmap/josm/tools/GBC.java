@@ -96,6 +96,18 @@ public class GBC extends GridBagConstraints {
     }
 
     /**
+     * Specifies how to distribute extra horizontal space.
+     * @param weidhtx   Weight in horizontal direction
+     * @param weighty   Weight in vertical direction
+     * @return This constraint for chaining.
+     */
+    public GBC weight(int weightx, int weighty) {
+        this.weightx = weightx;
+        this.weighty = weighty;
+        return this;
+    }
+
+    /**
      * This is a helper to easily create a glue with a minimum default value.
      * @param x If higher than 0, this will be a horizontal glue with x as minimum
      *      horizontal strut.
