@@ -1,20 +1,23 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.command;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
-import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.GridBagLayout;
 import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -27,6 +30,7 @@ import org.openstreetmap.josm.actions.SplitWayAction;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationToChildReference;
 import org.openstreetmap.josm.data.osm.Way;
@@ -47,6 +51,7 @@ public class DeleteCommand extends Command {
      * The primitives that get deleted.
      */
     private final Collection<? extends OsmPrimitive> toDelete;
+    private final Map<OsmPrimitive, PrimitiveData> clonedPrimitives = new HashMap<OsmPrimitive, PrimitiveData>();
 
     /**
      * Constructor. Deletes a collection of primitives in the current edit layer.
@@ -106,44 +111,37 @@ public class DeleteCommand extends Command {
         this.toDelete = data;
     }
 
-    protected void removeNewNodesFromDeletedWay(Way w) {
-        // #2707: ways to be deleted can include new nodes (with node.id == 0).
-        // Remove them from the way before the way is deleted. Otherwise the
-        // deleted way is saved (or sent to the API) with a dangling reference to a node
-        // Example:
-        // <node id='2' action='delete' visible='true' version='1' ... />
-        // <node id='1' action='delete' visible='true' version='1' ... />
-        // <!-- missing node with id -1 because new deleted nodes are not persisted -->
-        // <way id='3' action='delete' visible='true' version='1'>
-        // <nd ref='1' />
-        // <nd ref='-1' /> <!-- here's the problem -->
-        // <nd ref='2' />
-        // </way>
-        if (w.isNew())
-            return; // process existing ways only
-        List<Node> nodesToKeep = new ArrayList<Node>();
-        // lookup new nodes which have been added to the set of deleted
-        // nodes ...
-        Iterator<Node> it = nodesToKeep.iterator();
-        while(it.hasNext()) {
-            Node n = it.next();
-            if (n.isNew()) {
-                it.remove();
+    @Override
+    public boolean executeCommand() {
+        // Make copy and remove all references (to prevent inconsistent dataset (delete referenced) while command is executed)
+        for (OsmPrimitive osm: toDelete) {
+            if (osm.isDeleted())
+                throw new IllegalArgumentException(osm.toString() + " is already deleted");
+            clonedPrimitives.put(osm, osm.save());
+
+            if (osm instanceof Way) {
+                ((Way) osm).setNodes(null);
+            } else if (osm instanceof Relation) {
+                ((Relation) osm).setMembers(null);
             }
         }
-        w.setNodes(nodesToKeep);
+
+        for (OsmPrimitive osm: toDelete) {
+            osm.setDeleted(true);
+        }
+
+        return true;
     }
 
     @Override
-    public boolean executeCommand() {
-        super.executeCommand();
-        for (OsmPrimitive osm : toDelete) {
-            osm.setDeleted(true);
-            if (osm instanceof Way) {
-                removeNewNodesFromDeletedWay((Way)osm);
-            }
+    public void undoCommand() {
+        for (OsmPrimitive osm: toDelete) {
+            osm.setDeleted(false);
         }
-        return true;
+
+        for (Entry<OsmPrimitive, PrimitiveData> entry: clonedPrimitives.entrySet()) {
+            entry.getKey().load(entry.getValue());
+        }
     }
 
     @Override
