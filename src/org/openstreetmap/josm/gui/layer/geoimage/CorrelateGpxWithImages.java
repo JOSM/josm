@@ -15,6 +15,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
@@ -119,7 +121,6 @@ public class CorrelateGpxWithImages implements ActionListener {
     JCheckBox cbTaggedImg;
     JCheckBox cbShowThumbs;
     JLabel statusBarText;
-    StatusBarListener statusBarListener;
 
     // remember the last number of matched photos
     int lastNumMatched = 0;
@@ -215,7 +216,8 @@ public class CorrelateGpxWithImages implements ActionListener {
         }
     }
 
-    /** This action listener is called when the user has a photo of the time of his GPS receiver. It
+    /** 
+     * This action listener is called when the user has a photo of the time of his GPS receiver. It
      * displays the list of photos of the layer, and upon selection displays the selected photo.
      * From that photo, the user can key in the time of the GPS.
      * Then values of timezone and delta are set.
@@ -432,7 +434,7 @@ public class CorrelateGpxWithImages implements ActionListener {
                 isOk = true;
 
             }
-            statusBarListener.updateStatusBar();
+            statusBarUpdater.updateStatusBar();
             yLayer.updateBufferAndRepaint();
         }
     }
@@ -445,9 +447,8 @@ public class CorrelateGpxWithImages implements ActionListener {
         while (iterLayer.hasNext()) {
             Layer cur = iterLayer.next();
             if (cur instanceof GpxLayer) {
-                GpxDataWrapper gdw = new GpxDataWrapper(((GpxLayer) cur).getName(),
-                        ((GpxLayer) cur).data,
-                        ((GpxLayer) cur).data.storageFile);
+                GpxLayer curGpx = (GpxLayer) cur;
+                GpxDataWrapper gdw = new GpxDataWrapper(curGpx.getName(), curGpx.data, curGpx.data.storageFile);
                 gpxLst.add(gdw);
                 if (cur == yLayer.gpxLayer) {
                     defaultItem = gdw;
@@ -472,6 +473,7 @@ public class CorrelateGpxWithImages implements ActionListener {
         if (defaultItem != null) {
             cbGpx.setSelectedItem(defaultItem);
         }
+        cbGpx.addActionListener(statusBarUpdaterWithRepaint);
         panelCb.add(cbGpx);
 
         JButton buttonOpen = new JButton(tr("Open another GPX trace"));
@@ -499,7 +501,7 @@ public class CorrelateGpxWithImages implements ActionListener {
         } catch (ParseException e) {
             delta = 0;
         }
-        delta = delta / 1000;
+        delta = delta / 1000;  // milliseconds -> seconds
 
         tfOffset = new JTextField(10);
         tfOffset.setText(Long.toString(delta));
@@ -624,44 +626,15 @@ public class CorrelateGpxWithImages implements ActionListener {
         statusBarText.setFont(statusBarText.getFont().deriveFont(8));
         statusBar.add(statusBarText);
 
-        statusBarListener = new StatusBarListener() {
-            @Override
-            public void updateStatusBar() {
-                statusBarText.setText(statusText());
-            }
-            private String statusText() {
-                try {
-                    timezone = parseTimezone(tfTimezone.getText().trim());
-                    delta = parseOffset(tfOffset.getText().trim());
-                } catch (ParseException e) {
-                    return e.getMessage();
-                }
+        tfTimezone.addFocusListener(repaintTheMap);
+        tfOffset.addFocusListener(repaintTheMap);
+        
+        tfTimezone.getDocument().addDocumentListener(statusBarUpdater);
+        tfOffset.getDocument().addDocumentListener(statusBarUpdater);
+        cbExifImg.addItemListener(statusBarUpdaterWithRepaint);
+        cbTaggedImg.addItemListener(statusBarUpdaterWithRepaint);
 
-                // Construct a list of images that have a date, and sort them on the date.
-                ArrayList<ImageEntry> dateImgLst = getSortedImgList();
-                for (ImageEntry ie : dateImgLst) {
-                    ie.cleanTmp();
-                }
-
-                GpxDataWrapper selGpx = selectedGPX(false);
-                if (selGpx == null)
-                    return tr("No gpx selected");
-
-                final long offset_ms = ((long) (timezone * 3600) + delta) * 1000; // in milliseconds
-                lastNumMatched = matchGpxTrack(dateImgLst, selGpx.data, offset_ms);
-
-                return trn("<html>Matched <b>{0}</b> of <b>{1}</b> photo to GPX track.</html>",
-                        "<html>Matched <b>{0}</b> of <b>{1}</b> photos to GPX track.</html>",
-                        dateImgLst.size(), lastNumMatched, dateImgLst.size());
-            }
-        };
-
-        tfTimezone.getDocument().addDocumentListener(statusBarListener);
-        tfOffset.getDocument().addDocumentListener(statusBarListener);
-        cbExifImg.addItemListener(statusBarListener);
-        cbTaggedImg.addItemListener(statusBarListener);
-
-        statusBarListener.updateStatusBar();
+        statusBarUpdater.updateStatusBar();
 
         outerPanel = new JPanel();
         outerPanel.setLayout(new BorderLayout());
@@ -783,7 +756,16 @@ public class CorrelateGpxWithImages implements ActionListener {
         syncDialog.showDialog();
     }
 
-    private static abstract class StatusBarListener implements  DocumentListener, ItemListener {
+    StatusBarUpdater statusBarUpdater = new StatusBarUpdater(false);
+    StatusBarUpdater statusBarUpdaterWithRepaint = new StatusBarUpdater(true);
+    
+    private class StatusBarUpdater implements  DocumentListener, ItemListener, ActionListener {
+        private boolean doRepaint;
+
+        public StatusBarUpdater(boolean doRepaint) {
+            this.doRepaint = doRepaint;
+        }
+        
         public void insertUpdate(DocumentEvent ev) {
             updateStatusBar();
         }
@@ -795,7 +777,59 @@ public class CorrelateGpxWithImages implements ActionListener {
         public void itemStateChanged(ItemEvent e) {
             updateStatusBar();
         }
-        abstract public void updateStatusBar();
+        public void actionPerformed(ActionEvent e) {
+            updateStatusBar();
+        }
+
+        public void updateStatusBar() {
+            statusBarText.setText(statusText());
+            if (doRepaint) {
+                yLayer.updateBufferAndRepaint();
+            }
+        }
+        
+        private String statusText() {
+            try {
+                timezone = parseTimezone(tfTimezone.getText().trim());
+                delta = parseOffset(tfOffset.getText().trim());
+            } catch (ParseException e) {
+                return e.getMessage();
+            }
+
+            // The selection of images we are about to correlate may have changed.
+            // So reset all images.
+            for (ImageEntry ie: yLayer.data) {
+                ie.tmp = null;
+            }
+            
+            // Construct a list of images that have a date, and sort them on the date.
+            ArrayList<ImageEntry> dateImgLst = getSortedImgList();
+            // Create a temporary copy for each image
+            for (ImageEntry ie : dateImgLst) {
+                ie.cleanTmp();
+            }
+
+            GpxDataWrapper selGpx = selectedGPX(false);
+            if (selGpx == null)
+                return tr("No gpx selected");
+
+            final long offset_ms = ((long) (timezone * 3600) + delta) * 1000; // in milliseconds
+            lastNumMatched = matchGpxTrack(dateImgLst, selGpx.data, offset_ms);
+
+            return trn("<html>Matched <b>{0}</b> of <b>{1}</b> photo to GPX track.</html>",
+                    "<html>Matched <b>{0}</b> of <b>{1}</b> photos to GPX track.</html>",
+                    dateImgLst.size(), lastNumMatched, dateImgLst.size());
+        }
+    }
+
+    RepaintTheMapListener repaintTheMap = new RepaintTheMapListener();
+    private class RepaintTheMapListener implements FocusListener {
+        public void focusGained(FocusEvent e) { // do nothing
+        }
+        
+        public void focusLost(FocusEvent e) {
+            yLayer.updateBufferAndRepaint();
+        }
     }
 
     /**
@@ -874,18 +908,18 @@ public class CorrelateGpxWithImages implements ActionListener {
                     }
                     delta = sldMinutes.getValue()*60 + sldSeconds.getValue();
 
-                    tfTimezone.getDocument().removeDocumentListener(statusBarListener);
-                    tfOffset.getDocument().removeDocumentListener(statusBarListener);
+                    tfTimezone.getDocument().removeDocumentListener(statusBarUpdater);
+                    tfOffset.getDocument().removeDocumentListener(statusBarUpdater);
 
                     tfTimezone.setText(formatTimezone(timezone));
                     tfOffset.setText(Long.toString(delta + 24*60*60L*dayOffset));    // add the day offset to the offset field
 
-                    tfTimezone.getDocument().addDocumentListener(statusBarListener);
-                    tfOffset.getDocument().addDocumentListener(statusBarListener);
+                    tfTimezone.getDocument().addDocumentListener(statusBarUpdater);
+                    tfOffset.getDocument().addDocumentListener(statusBarUpdater);
 
                     lblMatches.setText(statusBarText.getText() + "<br>" + trn("(Time difference of {0} day)", "Time difference of {0} days", Math.abs(dayOffset), Math.abs(dayOffset)));
 
-                    statusBarListener.updateStatusBar();
+                    statusBarUpdater.updateStatusBar();
                     yLayer.updateBufferAndRepaint();
                 }
             }
@@ -1008,17 +1042,17 @@ public class CorrelateGpxWithImages implements ActionListener {
             System.out.println("fix  " + timezone);
             System.out.println("offt " + delta);*/
 
-            tfTimezone.getDocument().removeDocumentListener(statusBarListener);
-            tfOffset.getDocument().removeDocumentListener(statusBarListener);
+            tfTimezone.getDocument().removeDocumentListener(statusBarUpdater);
+            tfOffset.getDocument().removeDocumentListener(statusBarUpdater);
 
             tfTimezone.setText(formatTimezone(timezone));
             tfOffset.setText(Long.toString(delta));
             tfOffset.requestFocus();
 
-            tfTimezone.getDocument().addDocumentListener(statusBarListener);
-            tfOffset.getDocument().addDocumentListener(statusBarListener);
+            tfTimezone.getDocument().addDocumentListener(statusBarUpdater);
+            tfOffset.getDocument().addDocumentListener(statusBarUpdater);
 
-            statusBarListener.updateStatusBar();
+            statusBarUpdater.updateStatusBar();
             yLayer.updateBufferAndRepaint();
         }
     }
