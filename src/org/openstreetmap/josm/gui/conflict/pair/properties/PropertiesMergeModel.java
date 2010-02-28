@@ -8,6 +8,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
@@ -178,8 +179,8 @@ public class PropertiesMergeModel extends Observable {
         myVisibleState = my.isVisible();
         theirVisibleState = their.isVisible();
 
-        myReferrers = my.getReferrers();
-        theirReferrers = their.getReferrers();
+        myReferrers = my.getDataSet() == null?Collections.<OsmPrimitive>emptyList():my.getReferrers();
+        theirReferrers = their.getDataSet() == null?Collections.<OsmPrimitive>emptyList():their.getReferrers();
 
         coordMergeDecision = UNDECIDED;
         deletedMergeDecision = UNDECIDED;
