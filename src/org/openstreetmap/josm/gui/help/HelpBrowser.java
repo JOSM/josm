@@ -279,6 +279,7 @@ public class HelpBrowser extends JFrame {
                 logger.info("fetching url: " + url);
                 content = reader.fetchHelpTopicContent(url, true);
             } catch(MissingHelpContentException e1) {
+                this.url = url;
                 handleMissingHelpContent(relativeHelpTopic);
                 return;
             } catch(HelpContentReaderException e1) {
@@ -309,6 +310,7 @@ public class HelpBrowser extends JFrame {
         try {
             content = reader.fetchHelpTopicContent(url, true);
         } catch(MissingHelpContentException e) {
+            this.url = url;
             handleMissingHelpContent(absoluteHelpTopic);
             return;
         } catch(HelpContentReaderException e) {
@@ -405,7 +407,10 @@ public class HelpBrowser extends JFrame {
         }
 
         public void actionPerformed(ActionEvent e) {
-            if (!getUrl().startsWith(HelpUtil.getWikiBaseHelpUrl())) {
+            String url = getUrl();
+            if(url == null)
+                return;
+            if (!url.startsWith(HelpUtil.getWikiBaseHelpUrl())) {
                 String message = tr(
                         "<html>The current URL <tt>{0}</tt><br>"
                         + "is an external URL. Editing is only possible for help topics<br>"
@@ -421,7 +426,6 @@ public class HelpBrowser extends JFrame {
                 );
                 return;
             }
-            String url = getUrl();
             url = url.replaceAll("#[^#]*$", "");
             OpenBrowser.displayUrl(url+"?action=edit");
         }
