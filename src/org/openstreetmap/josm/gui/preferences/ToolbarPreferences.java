@@ -63,7 +63,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     private Map<String, Action> actions = new HashMap<String, Action>();
     private Map<String, Action> regactions = new HashMap<String, Action>();
 
-    private DefaultMutableTreeNode rootActionsNode = new DefaultMutableTreeNode("Actions");
+    private DefaultMutableTreeNode rootActionsNode = new DefaultMutableTreeNode(tr("Actions"));
 
     public JToolBar control = new JToolBar();
 

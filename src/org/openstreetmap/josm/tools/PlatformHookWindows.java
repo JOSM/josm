@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 
@@ -44,13 +46,13 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
     }
     public void initSystemShortcuts() {
         // This list if far from complete!
-        Shortcut.registerSystemShortcut("system:exit", "unused", KeyEvent.VK_F4, KeyEvent.ALT_DOWN_MASK).setAutomatic(); // items with automatic shortcuts will not be added to the menu bar at all
-        Shortcut.registerSystemShortcut("system:menuexit", "unused", KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK);
-        Shortcut.registerSystemShortcut("system:copy", "unused", KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK);
-        Shortcut.registerSystemShortcut("system:paste", "unused", KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK);
-        Shortcut.registerSystemShortcut("system:cut", "unused", KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK);
-        Shortcut.registerSystemShortcut("system:duplicate", "unused", KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK); // not really system, but to avoid odd results
-        Shortcut.registerSystemShortcut("system:help", "unused", KeyEvent.VK_F1, 0);
+        Shortcut.registerSystemShortcut("system:exit", tr("unused"), KeyEvent.VK_F4, KeyEvent.ALT_DOWN_MASK).setAutomatic(); // items with automatic shortcuts will not be added to the menu bar at all
+        Shortcut.registerSystemShortcut("system:menuexit", tr("unused"), KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK);
+        Shortcut.registerSystemShortcut("system:copy", tr("unused"), KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK);
+        Shortcut.registerSystemShortcut("system:paste", tr("unused"), KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK);
+        Shortcut.registerSystemShortcut("system:cut", tr("unused"), KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK);
+        Shortcut.registerSystemShortcut("system:duplicate", tr("unused"), KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK); // not really system, but to avoid odd results
+        Shortcut.registerSystemShortcut("system:help", tr("unused"), KeyEvent.VK_F1, 0);
     }
 
     public String getDefaultStyle()
