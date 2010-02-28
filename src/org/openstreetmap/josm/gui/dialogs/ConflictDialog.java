@@ -150,6 +150,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
         lstConflicts.setSelectedIndex(index);
 
+        refreshView();
         Main.map.mapView.repaint();
     }
 
@@ -239,6 +240,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     }
 
     public void onConflictsRemoved(ConflictCollection conflicts) {
+        System.err.println("1 conflict has been resolved.");
         refreshView();
     }
 
