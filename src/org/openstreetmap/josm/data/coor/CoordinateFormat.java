@@ -17,7 +17,12 @@ public enum CoordinateFormat {
     /**
      * the minutes/seconds format 99" 99'
      */
-    DEGREES_MINUTES_SECONDS (tr("Degrees Minutes Seconds"));
+    DEGREES_MINUTES_SECONDS (tr("Degrees Minutes Seconds")),
+
+    /**
+     * coordinates East/North
+     */
+    EAST_NORTH (tr("Projected Coordinates"));
 
     private String displayName;
     private CoordinateFormat(String displayName) {

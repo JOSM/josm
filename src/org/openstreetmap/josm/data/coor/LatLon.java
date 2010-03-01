@@ -95,6 +95,7 @@ public class LatLon extends Coordinate {
         case DEGREES_MINUTES_SECONDS: return dms(y) + ((y < 0) ?
                 /* short symbol for South */ trc("compass", "S") :
                     /* short symbol for North */ trc("compass", "N"));
+        case EAST_NORTH: return cDdFormatter.format(Main.proj.latlon2eastNorth(this).north());
         default: return "ERR";
         }
     }
@@ -109,6 +110,7 @@ public class LatLon extends Coordinate {
         case DEGREES_MINUTES_SECONDS: return dms(x) + ((x < 0) ?
                 /* short symbol for West */ trc("compass", "W") :
                     /* short symbol for East */ trc("compass", "E"));
+        case EAST_NORTH: return cDdFormatter.format(Main.proj.latlon2eastNorth(this).east());
         default: return "ERR";
         }
     }
