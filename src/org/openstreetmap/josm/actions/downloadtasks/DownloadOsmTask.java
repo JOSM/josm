@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
@@ -63,7 +62,8 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         downloadTask = new DownloadTask(new_layer,
                 new OsmServerLocationReader(url),
                 progressMonitor);
-        currentBounds = new Bounds(new LatLon(0,0), new LatLon(0,0));
+        //currentBounds = new Bounds(new LatLon(0,0), new LatLon(0,0));
+        currentBounds = null;
         return Main.worker.submit(downloadTask);
     }
 
@@ -138,8 +138,8 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 return;
             if (dataSet == null)
                 return; // user canceled download or error occurred
-            if (currentBounds == null)
-                return; // no data retrieved
+            //if (currentBounds == null)
+            //  return; // no data retrieved
             if (dataSet.allPrimitives().isEmpty()) {
                 rememberErrorMessage(tr("No data found in this area."));
                 // need to synthesize a download bounds lest the visual indication of downloaded
@@ -155,14 +155,18 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 //
                 OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
                 final boolean isDisplayingMapView = Main.isDisplayingMapView();
-                
+
                 Main.main.addLayer(layer);
 
                 // If the mapView is not there yet, we cannot calculate the bounds (see constructor of MapView).
                 // Otherwise jump to the current download.
                 if (isDisplayingMapView) {
                     BoundingXYVisitor v = new BoundingXYVisitor();
-                    v.visit(currentBounds);
+                    if (currentBounds != null) {
+                        v.visit(currentBounds);
+                    } else {
+                        v.computeBoundingBox(dataSet.getNodes());
+                    }
                     Main.map.mapView.recalculateCenterScale(v);
                 }
             } else {
@@ -173,7 +177,11 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 }
                 target.mergeFrom(dataSet);
                 BoundingXYVisitor v = new BoundingXYVisitor();
-                v.visit(currentBounds);
+                if (currentBounds != null) {
+                    v.visit(currentBounds);
+                } else {
+                    v.computeBoundingBox(dataSet.getNodes());
+                }
                 Main.map.mapView.recalculateCenterScale(v);
                 target.onPostDownloadFromServer();
             }
