@@ -62,7 +62,6 @@ public class DownloadOsmTask extends AbstractDownloadTask {
         downloadTask = new DownloadTask(new_layer,
                 new OsmServerLocationReader(url),
                 progressMonitor);
-        //currentBounds = new Bounds(new LatLon(0,0), new LatLon(0,0));
         currentBounds = null;
         return Main.worker.submit(downloadTask);
     }
@@ -138,8 +137,6 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 return;
             if (dataSet == null)
                 return; // user canceled download or error occurred
-            //if (currentBounds == null)
-            //  return; // no data retrieved
             if (dataSet.allPrimitives().isEmpty()) {
                 rememberErrorMessage(tr("No data found in this area."));
                 // need to synthesize a download bounds lest the visual indication of downloaded
