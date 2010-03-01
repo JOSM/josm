@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
@@ -141,7 +142,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 rememberErrorMessage(tr("No data found in this area."));
                 // need to synthesize a download bounds lest the visual indication of downloaded
                 // area doesn't work
-                dataSet.dataSources.add(new DataSource(currentBounds, "OpenStreetMap server"));
+                dataSet.dataSources.add(new DataSource(currentBounds != null ? currentBounds : new Bounds(new LatLon(0, 0)), "OpenStreetMap server"));
             }
 
             rememberDownloadedData(dataSet);
