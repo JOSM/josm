@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.io.ChangesetClosedException;
+import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.MissingOAuthAccessTokenException;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiException;
@@ -282,6 +283,21 @@ public class ExceptionUtil {
     }
 
     /**
+     * Explains a {@see IllegalDataException} which has caused an {@see OsmTransferException}.
+     * This is most likely happening when JOSM tries to load data in in an unsupported format.
+     *
+     * @param e the exception
+     */
+    public static String explainNestedIllegalDataException(OsmTransferException e) {
+        IllegalDataException ide = getNestedException(e, IllegalDataException.class);
+        String message = tr("<html>Failed to download data."
+                + "Its format is either unsupported, ill-formed, and/or inconsistent.<br>"
+                + "<br>Details(untranslated): {0}</html>", ide.getMessage());
+        e.printStackTrace();
+        return message;
+    }
+
+    /**
      * Explains a {@see OsmApiException} which was thrown because of an internal server
      * error in the OSM API server..
      *
@@ -305,9 +321,9 @@ public class ExceptionUtil {
     public static String explainBadRequest(OsmApiException e) {
         String apiUrl = OsmApi.getOsmApi().getBaseUrl();
         String message = tr("The OSM server ''{0}'' reported a bad request.<br>", apiUrl);
-        if (e.getErrorHeader() != null && 
-                (e.getErrorHeader().startsWith("The maximum bbox") || 
-                e.getErrorHeader().startsWith("You requested too many nodes"))) {
+        if (e.getErrorHeader() != null &&
+                (e.getErrorHeader().startsWith("The maximum bbox") ||
+                        e.getErrorHeader().startsWith("You requested too many nodes"))) {
             message += "<br>"
                 + tr("The area you tried to download is too big or your request was too large."
                         + "<br>Either request a smaller area or use an export file provided by the OSM community.");

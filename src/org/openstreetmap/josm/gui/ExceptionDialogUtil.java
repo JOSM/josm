@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.ChangesetClosedException;
+import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.MissingOAuthAccessTokenException;
 import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -139,6 +140,23 @@ public class ExceptionDialogUtil {
                 tr("IO Exception"),
                 JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#NestedIOException")
+        );
+    }
+
+    /**
+     * Explains a {@see IllegalDataException} which has caused an {@see OsmTransferException}.
+     * This is most likely happening when JOSM tries to load data in in an unsupported format.
+     *
+     * @param e the exception
+     */
+
+    public static void explainNestedIllegalDataException(OsmTransferException e) {
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainNestedIllegalDataException(e),
+                tr("Illegal Data"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#IllegalDataException")
         );
     }
 
@@ -338,6 +356,10 @@ public class ExceptionDialogUtil {
         }
         if (getNestedException(e, IOException.class) != null) {
             explainNestedIOException(e);
+            return;
+        }
+        if (getNestedException(e, IllegalDataException.class) != null) {
+            explainNestedIllegalDataException(e);
             return;
         }
         if (e instanceof OsmApiInitializationException) {
