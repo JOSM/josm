@@ -219,17 +219,11 @@ public class TagTable extends JTable  {
                 return;
             switch(getSelectedColumnCount()) {
             case 1:
-                if (isEditing()) {
-                    getCellEditor().cancelCellEditing();
-                    deleteTags();
-                } else if (getSelectedColumn() == 0) {
+                if (getSelectedColumn() == 0) {
                     deleteTagNames();
                 } else if (getSelectedColumn() == 1) {
                     deleteTagValues();
-                } else
-                    // should not happen
-                    //
-                    throw new IllegalStateException("unexpected selected column: getSelectedColumn() is " + getSelectedColumn());
+                }
                 break;
             case 2:
                 deleteTags();
@@ -389,6 +383,12 @@ public class TagTable extends JTable  {
         // handle delete key
         //
         if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+            if (isEditing() && getSelectedColumnCount() == 1 && getSelectedRowCount() == 1)
+                // if DEL was pressed and only the currently edited cell is selected,
+                // don't run the delete action. DEL is handled by the CellEditor as normal
+                // DEL in the text input.
+                //
+                return super.processKeyBinding(ks, e, condition, pressed);
             getDeleteAction().run();
         }
         return super.processKeyBinding(ks, e, condition, pressed);
