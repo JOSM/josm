@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -192,30 +191,8 @@ public class PluginInformation {
      */
     public PluginProxy load(Class<?> klass) throws PluginException{
         try {
-            try {
-                Constructor<?> c = klass.getConstructor(PluginInformation.class);
-                Object plugin = c.newInstance(this);
-                return new PluginProxy(plugin, this);
-            } catch(NoSuchMethodException e) {
-                // do nothing - try again with the noarg constructor for legacy support
-            } catch(InstantiationException e) {
-                // do nothing - try again with the noarg constructor for legacy support
-            }
-            // FIXME: This is legacy support. It is necessary because of a former ugly hack in the
-            // plugin bootstrap procedure. Plugins should be migrated to the new required
-            // constructor with PluginInformation as argument, new plugins should only use this
-            // constructor. The following is legacy support and should be removed by Q2/2010.
-            // Note that this is not fool proof because it isn't
-            // completely equivalent with the former hack: plugins derived from the Plugin
-            // class can't access their local "info" object any more from within the noarg-
-            // constructor. It is only set *after* constructor invocation.
-            //
-            Constructor<?> c = klass.getConstructor();
-            Object plugin = c.newInstance();
-            if (plugin instanceof Plugin) {
-                Method m = klass.getMethod("setPluginInformation", PluginInformation.class);
-                m.invoke(plugin, this);
-            }
+            Constructor<?> c = klass.getConstructor(PluginInformation.class);
+            Object plugin = c.newInstance(this);
             return new PluginProxy(plugin, this);
         } catch(NoSuchMethodException e) {
             throw new PluginException(name, e);

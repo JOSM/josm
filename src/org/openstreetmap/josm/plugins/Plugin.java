@@ -46,15 +46,6 @@ public abstract class Plugin {
     private PluginInformation info = null;
 
     /**
-     * The no-arg constructor is deprecated.
-     * 
-     * @deprecated use {@see Plugin(PluginInformation)} instead
-     */
-    @Deprecated
-    public Plugin() {
-
-    }
-    /**
      * Creates the plugin
      * 
      * @param info the plugin information describing the plugin.
