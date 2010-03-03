@@ -144,6 +144,16 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         }
     }
 
+    @Override
+    public void showDialog() {
+        super.showDialog();
+        Layer layer = Main.main.getActiveLayer();
+        if (layer instanceof OsmDataLayer) {
+            refresh(((OsmDataLayer)layer).data.getSelected());
+        }
+
+    }
+
     class SelectUsersPrimitivesAction extends AbstractAction implements ListSelectionListener{
         public SelectUsersPrimitivesAction() {
             putValue(NAME, tr("Select"));

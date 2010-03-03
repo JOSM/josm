@@ -244,9 +244,7 @@ abstract public class Main {
      * @return true if there is an edit layer
      */
     public boolean hasEditLayer() {
-        if (map == null) return false;
-        if (map.mapView == null) return false;
-        if (map.mapView.getEditLayer() == null) return false;
+        if (getEditLayer() == null) return false;
         return true;
     }
 
@@ -269,6 +267,17 @@ abstract public class Main {
     public DataSet getCurrentDataSet() {
         if (!hasEditLayer()) return null;
         return getEditLayer().data;
+    }
+
+    /**
+     * Returns the currently active  layer
+     *
+     * @return the currently active layer. null, if currently no active layer exists
+     */
+    public Layer getActiveLayer() {
+        if (map == null) return null;
+        if (map.mapView == null) return null;
+        return map.mapView.getActiveLayer();
     }
 
     /**
