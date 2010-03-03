@@ -1251,7 +1251,6 @@ public class GenericRelationEditor extends RelationEditor  {
         protected void updateEnabledState() {
             setEnabled(
                     getRelation() != null
-                    && !getRelation().isNew()
                     && memberTableModel.hasIncompleteMembers()
             );
         }
@@ -1286,7 +1285,6 @@ public class GenericRelationEditor extends RelationEditor  {
         protected void updateEnabledState() {
             setEnabled(
                     getRelation() != null
-                    && !getRelation().isNew()
                     && memberTableModel.hasIncompleteSelectedMembers()
             );
         }
