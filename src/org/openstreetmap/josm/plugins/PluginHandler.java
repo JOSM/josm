@@ -378,7 +378,7 @@ public class PluginHandler {
         try {
             Class<?> klass = plugin.loadClass(pluginClassLoader);
             if (klass != null) {
-                System.out.println(tr("loading plugin ''{0}''", plugin.name));
+                System.out.println(tr("loading plugin ''{0}'' ({1})", plugin.name, plugin.localversion));
                 pluginList.add(plugin.load(klass));
             }
         } catch (Throwable e) {

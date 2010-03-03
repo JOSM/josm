@@ -165,7 +165,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
             if (!availablePlugins.containsKey(info.name)) {
                 availablePlugins.put(info.name, info);
             } else {
-                availablePlugins.get(info.name).localversion = info.version;
+                availablePlugins.get(info.name).localversion = info.localversion;
             }
         }
     }
