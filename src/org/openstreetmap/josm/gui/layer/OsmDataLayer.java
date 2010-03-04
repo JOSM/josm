@@ -388,6 +388,8 @@ public class OsmDataLayer extends Layer {
                     options[0],
                     ht("/Concepts/Conflict#WarningAboutDetectedConflicts")
             );
+            Main.map.conflictDialog.unfurlDialog();
+            Main.map.repaint();
         }
     }
 

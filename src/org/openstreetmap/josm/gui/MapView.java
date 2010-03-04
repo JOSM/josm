@@ -110,6 +110,21 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         }
     }
 
+    /**
+     * Adds a edit layer change listener
+     *
+     * @param listener the listener. Ignored if null or already registered.
+     * @param initialFire Fire an edit-layer-changed-event right after adding the listener.
+     */
+    public static void addEditLayerChangeListener(EditLayerChangeListener listener, boolean initialFire) {
+        addEditLayerChangeListener(listener);
+        if (initialFire) {
+            if (Main.map != null && Main.map.mapView != null && Main.map.mapView.getEditLayer() != null) {
+                fireEditLayerChanged(null, Main.map.mapView.getEditLayer());
+            }
+        }
+    }
+
     public static void addEditLayerChangeListener(EditLayerChangeListener listener) {
         if (listener != null) {
             editLayerChangeListeners.addIfAbsent(listener);
