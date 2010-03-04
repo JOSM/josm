@@ -64,6 +64,15 @@ public class PluginListParser {
             String name = null;
             String url = null;
             StringBuilder manifest = new StringBuilder();
+            /*
+            code structure:
+                for () {
+                    A;
+                    B;
+                    C;
+                }
+                B;
+            */
             for (String line = r.readLine(); line != null; line = r.readLine()) {
                 if (line.startsWith("\t")) {
                     line = line.substring(1);
@@ -77,6 +86,11 @@ public class PluginListParser {
                 if (name != null) {
                     PluginInformation info = createInfo(name, url, manifest.toString());
                     if (info != null) {
+                        for (PluginProxy plugin : PluginHandler.pluginList) {
+                            if (plugin.getPluginInformation().name.equals(info.getName())) {
+                                info.localversion = plugin.getPluginInformation().localversion;
+                            }
+                        }
                         ret.add(info);
                     }
                 }
@@ -89,6 +103,11 @@ public class PluginListParser {
             if (name != null) {
                 PluginInformation info = createInfo(name, url, manifest.toString());
                 if (info != null) {
+                    for (PluginProxy plugin : PluginHandler.pluginList) {
+                        if (plugin.getPluginInformation().name.equals(info.getName())) {
+                            info.localversion = plugin.getPluginInformation().localversion;
+                        }
+                    }
                     ret.add(info);
                 }
             }
