@@ -206,7 +206,7 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
                     )
             ).applySafe(this);
             setCanceled(false);
-        } else {
+        } else if(!visible && isShowing()) {
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }
         super.setVisible(visible);
