@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -145,9 +144,7 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
                 if (!origVersionsOfTouchedPrimitives.contains(w)) {
                     origVersionsOfTouchedPrimitives.add(w);
                 }
-                List<Node> wayNodes = w.getNodes();
-                wayNodes.remove(child);
-                w.setNodes(wayNodes);
+                w.removeNode((Node)child);
                 // if a way ends up with less than two nodes we
                 // remember it on the "hive"
                 //
