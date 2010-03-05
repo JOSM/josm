@@ -327,35 +327,40 @@ public class PluginPreference implements PreferenceSetting {
 
         public void actionPerformed(ActionEvent e) {
             List<PluginInformation> toUpdate = model.getSelectedPlugins();
-            final PluginDownloadTask task = new PluginDownloadTask(
+            // the async task for downloading plugins
+            final PluginDownloadTask pluginDownloadTask = new PluginDownloadTask(
                     pnlPluginPreferences,
                     toUpdate,
                     tr("Update plugins")
             );
+            // the async task for downloading plugin information
+            final ReadRemotePluginInformationTask pluginInfoDownloadTask = new ReadRemotePluginInformationTask(Main.pref.getPluginSites());
 
-            final ReadRemotePluginInformationTask task2 = new ReadRemotePluginInformationTask(Main.pref.getPluginSites());
-
-            final Runnable r2 = new Runnable() {
+            // to be run asynchronously after the plugin download
+            //
+            final Runnable pluginDownloadContinuation = new Runnable() {
                 public void run() {
-                    if (task2.isCanceled())
+                    if (pluginDownloadTask.isCanceled())
                         return;
-                    notifyDownloadResults(task);
-                    model.refreshLocalPluginVersion(task.getDownloadedPlugins());
+                    notifyDownloadResults(pluginDownloadTask);
+                    model.refreshLocalPluginVersion(pluginDownloadTask.getDownloadedPlugins());
                     pnlPluginPreferences.refreshView();
                 }
             };
 
-            final Runnable r1 = new Runnable() {
+            // to be run asynchronously after the plugin list download
+            //
+            final Runnable pluginInfoDownloadContinuation = new Runnable() {
                 public void run() {
-                    if (task.isCanceled())
+                    if (pluginInfoDownloadTask.isCanceled())
                         return;
-                    Main.worker.submit(task2);
-                    Main.worker.submit(r2);
+                    Main.worker.submit(pluginDownloadTask);
+                    Main.worker.submit(pluginDownloadContinuation);
                 }
             };
 
-            Main.worker.submit(task);
-            Main.worker.submit(r1);
+            Main.worker.submit(pluginInfoDownloadTask);
+            Main.worker.submit(pluginInfoDownloadContinuation);
         }
     }
 
