@@ -109,9 +109,9 @@ public class OAuthAuthorizationWizard extends JDialog {
         gc.insets = new Insets(5,0,0,5);
         pnlMessage = new HtmlPanel();
         pnlMessage.setText("<html><body>"
-                + "With OAuth you grant JOSM the right to upload map data and GPS tracks "
-                + "on your behalf (<a href=\"urn:josm-oauth-info\">more info...</a>)."
-                + "</body></html>"
+                + tr("With OAuth you grant JOSM the right to upload map data and GPS tracks "
+                        + "on your behalf (<a href=\"urn:josm-oauth-info\">more info...</a>).")
+                        + "</body></html>"
         );
         pnl.add(pnlMessage, gc);
 

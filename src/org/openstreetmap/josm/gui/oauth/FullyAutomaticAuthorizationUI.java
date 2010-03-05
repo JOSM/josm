@@ -93,12 +93,12 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         HTMLEditorKit kit = (HTMLEditorKit)pnlMessage.getEditorPane().getEditorKit();
         kit.getStyleSheet().addRule(".warning-body {background-color:rgb(253,255,221);padding: 10pt; border-color:rgb(128,128,128);border-style: solid;border-width: 1px;}");
         kit.getStyleSheet().addRule("ol {margin-left: 1cm}");
-        pnlMessage.setText("<html><body>"
-                + "Please enter your OSM user name and password. The password will <strong>not</strong> be saved "
-                + "in clear text in the JOSM preferences and it will be submitted to the OSM server <strong>only once</strong>. "
-                + "Subsequent data upload requests don't use your password any more. "
-                + "</p>"
-                + "</body></html>"
+        pnlMessage.setText("<html><body><p class=\"warning-body\">"
+                + tr("Please enter your OSM user name and password. The password will <strong>not</strong> be saved "
+                        + "in clear text in the JOSM preferences and it will be submitted to the OSM server <strong>only once</strong>. "
+                        + "Subsequent data upload requests don't use your password any more.")
+                        + "</p>"
+                        + "</body></html>"
         );
         pnl.add(pnlMessage, gc);
 
@@ -145,11 +145,11 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         kit.getStyleSheet().addRule("ol {margin-left: 1cm}");
         pnlMessage.setText("<html><body>"
                 + "<p class=\"warning-body\">"
-                + "<strong>Warning:</strong> The password is transferred <strong>once</strong> in clear text "
-                + "to the OSM website. <strong>Do not</strong> use a sensitive "
-                + "password until the OSM server provides an encrypted communication channel (HTTPS)."
-                + "</p>"
-                + "</body></html>"
+                + tr("<strong>Warning:</strong> The password is transferred <strong>once</strong> in clear text "
+                        + "to the OSM website. <strong>Do not</strong> use a sensitive "
+                        + "password until the OSM server provides an encrypted communication channel (HTTPS).")
+                        + "</p>"
+                        + "</body></html>"
         );
         pnl.add(pnlMessage, gc);
 
