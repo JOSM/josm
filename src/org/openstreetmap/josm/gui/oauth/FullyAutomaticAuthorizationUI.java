@@ -98,8 +98,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                         + "in clear text in the JOSM preferences and it will be submitted to the OSM server <strong>only once</strong>. "
                         + "Subsequent data upload requests don't use your password any more.")
                         + "</p>"
-                        + "</body></html>"
-        );
+                        + "</body></html>");
         pnl.add(pnlMessage, gc);
 
         // the user name input field
@@ -149,8 +148,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                         + "to the OSM website. <strong>Do not</strong> use a sensitive "
                         + "password until the OSM server provides an encrypted communication channel (HTTPS).")
                         + "</p>"
-                        + "</body></html>"
-        );
+                        + "</body></html>");
         pnl.add(pnlMessage, gc);
 
         // filler - grab remaining space
@@ -238,9 +236,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                 + "You have successfully retrieved an OAuth Access Token from the OSM website. "
                 + "Click on <strong>{0}</strong> to accept the token. JOSM will use it in "
                 + "subsequent requests to gain access to the OSM API."
-                + "</html>",
-                lbl
-        ));
+                + "</html>",lbl));
         pnl.add(msg, gc);
 
         // infos about the access token
@@ -458,8 +454,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                             + "from the OSM server failed.<br><br>"
                             + "Please try again or choose another kind of authorization process,<br>"
                             + "i.e. semi-automatic or manual authorization."
-                            +"</html>"
-                    ),
+                            +"</html>"),
                     tr("OAuth authorization failed"),
                     JOptionPane.ERROR_MESSAGE,
                     HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#FullyAutomaticProcessFailed")
@@ -475,8 +470,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                             + "a valid login URL from the OAuth Authorize Endpoint URL ''{0}''.<br><br>"
                             + "Please check your advanced setting and try again."
                             + "</html>",
-                            getAdvancedPropertiesPanel().getAdvancedParameters().getAuthoriseUrl()
-                    ),
+                            getAdvancedPropertiesPanel().getAdvancedParameters().getAuthoriseUrl()),
                     tr("OAuth authorization failed"),
                     JOptionPane.ERROR_MESSAGE,
                     HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#FullyAutomaticProcessFailed")
@@ -500,8 +494,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                             + "Please check username and password and try again."
                             +"</html>",
                             loginUrl,
-                            getOsmUserName()
-                    ),
+                            getOsmUserName()),
                     tr("OAuth authorization failed"),
                     JOptionPane.ERROR_MESSAGE,
                     HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#FullyAutomaticProcessFailed")
