@@ -13,6 +13,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -39,6 +40,7 @@ import javax.swing.event.DocumentListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginListPanel;
 import org.openstreetmap.josm.gui.preferences.plugin.PluginPreferencesModel;
@@ -184,77 +186,35 @@ public class PluginPreference implements PreferenceSetting {
     }
 
     private void configureSites() {
-        JPanel p = new JPanel(new GridBagLayout());
-        p.add(new JLabel(tr("Add JOSM Plugin description URL.")), GBC.eol());
-        final DefaultListModel model = new DefaultListModel();
-        for (String s : Main.pref.getPluginSites()) {
-            model.addElement(s);
-        }
-        final JList list = new JList(model);
-        p.add(new JScrollPane(list), GBC.std().fill());
-        JPanel buttons = new JPanel(new GridBagLayout());
-        buttons.add(new JButton(new AbstractAction(tr("Add")){
-            public void actionPerformed(ActionEvent e) {
-                String s = JOptionPane.showInputDialog(
-                        JOptionPane.getFrameForComponent(pnlPluginPreferences),
-                        tr("Add JOSM Plugin description URL."),
-                        tr("Enter URL"),
-                        JOptionPane.QUESTION_MESSAGE
-                );
-                if (s != null) {
-                    model.addElement(s);
-                }
-            }
-        }), GBC.eol().fill(GBC.HORIZONTAL));
-        buttons.add(new JButton(new AbstractAction(tr("Edit")){
-            public void actionPerformed(ActionEvent e) {
-                if (list.getSelectedValue() == null) {
-                    JOptionPane.showMessageDialog(
-                            JOptionPane.getFrameForComponent(pnlPluginPreferences),
-                            tr("Please select an entry."),
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE
-                    );
-                    return;
-                }
-                String s = (String)JOptionPane.showInputDialog(
-                        Main.parent,
-                        tr("Edit JOSM Plugin description URL."),
-                        tr("JOSM Plugin description URL"),
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        null,
-                        list.getSelectedValue()
-                );
-                model.setElementAt(s, list.getSelectedIndex());
-            }
-        }), GBC.eol().fill(GBC.HORIZONTAL));
-        buttons.add(new JButton(new AbstractAction(tr("Delete")){
-            public void actionPerformed(ActionEvent event) {
-                if (list.getSelectedValue() == null) {
-                    JOptionPane.showMessageDialog(
-                            JOptionPane.getFrameForComponent(pnlPluginPreferences),
-                            tr("Please select an entry."),
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE
-                    );
-                    return;
-                }
-                model.removeElement(list.getSelectedValue());
-            }
-        }), GBC.eol().fill(GBC.HORIZONTAL));
-        p.add(buttons, GBC.eol());
-        int answer = JOptionPane.showConfirmDialog(
-                JOptionPane.getFrameForComponent(pnlPluginPreferences),
-                p,
-                tr("Configure Plugin Sites"), JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE);
-        if (answer != JOptionPane.OK_OPTION)
+        ButtonSpec[] options = new ButtonSpec[] {
+                new ButtonSpec(
+                        tr("OK"),
+                        ImageProvider.get("ok"),
+                        tr("Accept the new plugin sites and close the dialog"),
+                        null /* no special help topic */
+                ),
+                new ButtonSpec(
+                        tr("Cancel"),
+                        ImageProvider.get("cancel"),
+                        tr("Close the dialog"),
+                        null /* no special help topic */
+                )
+        };
+        PluginConfigurationSitesPanel pnl = new PluginConfigurationSitesPanel();
+
+        int answer = HelpAwareOptionPane.showOptionDialog(
+                pnlPluginPreferences,
+                pnl,
+                tr("Configure Plugin Sites"),
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0],
+                null /* no help topic */
+        );
+        if (answer != 0 /* OK */)
             return;
-        Collection<String> sites = new LinkedList<String>();
-        for (int i = 0; i < model.getSize(); ++i) {
-            sites.add((String)model.getElementAt(i));
-        }
+        List<String> sites = pnl.getUpdateSites();
         Main.pref.setPluginSites(sites);
     }
 
@@ -447,6 +407,87 @@ public class PluginPreference implements PreferenceSetting {
 
         public void removeUpdate(DocumentEvent arg0) {
             filter();
+        }
+    }
+
+    static private class PluginConfigurationSitesPanel extends JPanel {
+
+        private DefaultListModel model;
+
+        protected void build() {
+            setLayout(new GridBagLayout());
+            add(new JLabel(tr("Add JOSM Plugin description URL.")), GBC.eol());
+            model = new DefaultListModel();
+            for (String s : Main.pref.getPluginSites()) {
+                model.addElement(s);
+            }
+            final JList list = new JList(model);
+            add(new JScrollPane(list), GBC.std().fill());
+            JPanel buttons = new JPanel(new GridBagLayout());
+            buttons.add(new JButton(new AbstractAction(tr("Add")){
+                public void actionPerformed(ActionEvent e) {
+                    String s = JOptionPane.showInputDialog(
+                            JOptionPane.getFrameForComponent(PluginConfigurationSitesPanel.this),
+                            tr("Add JOSM Plugin description URL."),
+                            tr("Enter URL"),
+                            JOptionPane.QUESTION_MESSAGE
+                    );
+                    if (s != null) {
+                        model.addElement(s);
+                    }
+                }
+            }), GBC.eol().fill(GBC.HORIZONTAL));
+            buttons.add(new JButton(new AbstractAction(tr("Edit")){
+                public void actionPerformed(ActionEvent e) {
+                    if (list.getSelectedValue() == null) {
+                        JOptionPane.showMessageDialog(
+                                JOptionPane.getFrameForComponent(PluginConfigurationSitesPanel.this),
+                                tr("Please select an entry."),
+                                tr("Warning"),
+                                JOptionPane.WARNING_MESSAGE
+                        );
+                        return;
+                    }
+                    String s = (String)JOptionPane.showInputDialog(
+                            Main.parent,
+                            tr("Edit JOSM Plugin description URL."),
+                            tr("JOSM Plugin description URL"),
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            null,
+                            list.getSelectedValue()
+                    );
+                    model.setElementAt(s, list.getSelectedIndex());
+                }
+            }), GBC.eol().fill(GBC.HORIZONTAL));
+            buttons.add(new JButton(new AbstractAction(tr("Delete")){
+                public void actionPerformed(ActionEvent event) {
+                    if (list.getSelectedValue() == null) {
+                        JOptionPane.showMessageDialog(
+                                JOptionPane.getFrameForComponent(PluginConfigurationSitesPanel.this),
+                                tr("Please select an entry."),
+                                tr("Warning"),
+                                JOptionPane.WARNING_MESSAGE
+                        );
+                        return;
+                    }
+                    model.removeElement(list.getSelectedValue());
+                }
+            }), GBC.eol().fill(GBC.HORIZONTAL));
+            add(buttons, GBC.eol());
+        }
+
+        public PluginConfigurationSitesPanel() {
+            build();
+        }
+
+        public List<String> getUpdateSites() {
+            if (model.getSize() == 0) return Collections.emptyList();
+            List<String> ret = new ArrayList<String>(model.getSize());
+            for (int i=0; i< model.getSize();i++){
+                ret.add((String)model.get(i));
+            }
+            return ret;
         }
     }
 }
