@@ -312,7 +312,7 @@ public class PluginPreference implements PreferenceSetting {
             sb.append("<html>");
             sb.append(buildDownloadSummary(task));
             if (!downloaded.isEmpty()) {
-                sb.append("Please restart JOSM to activate the downloaded plugins.");
+                sb.append(tr("Please restart JOSM to activate the downloaded plugins."));
             }
             sb.append("</html>");
             HelpAwareOptionPane.showOptionDialog(
@@ -332,17 +332,30 @@ public class PluginPreference implements PreferenceSetting {
                     toUpdate,
                     tr("Update plugins")
             );
-            Runnable r = new Runnable() {
+
+            final ReadRemotePluginInformationTask task2 = new ReadRemotePluginInformationTask(Main.pref.getPluginSites());
+
+            final Runnable r2 = new Runnable() {
                 public void run() {
-                    if (task.isCanceled())
+                    if (task2.isCanceled())
                         return;
                     notifyDownloadResults(task);
                     model.refreshLocalPluginVersion(task.getDownloadedPlugins());
                     pnlPluginPreferences.refreshView();
                 }
             };
+
+            final Runnable r1 = new Runnable() {
+                public void run() {
+                    if (task.isCanceled())
+                        return;
+                    Main.worker.submit(task2);
+                    Main.worker.submit(r2);
+                }
+            };
+
             Main.worker.submit(task);
-            Main.worker.submit(r);
+            Main.worker.submit(r1);
         }
     }
 

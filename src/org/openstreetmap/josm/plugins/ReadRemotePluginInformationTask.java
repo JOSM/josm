@@ -27,6 +27,7 @@ import java.util.List;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
@@ -43,6 +44,14 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
     private HttpURLConnection connection;
     private List<PluginInformation> availabePlugins;
 
+    protected void init(Collection<String> sites){
+        this.sites = sites;
+        if (sites == null) {
+            this.sites = Collections.emptySet();
+        }
+        availabePlugins = new LinkedList<PluginInformation>();
+
+    }
     /**
      * Creates the task
      * 
@@ -50,12 +59,20 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
      */
     public ReadRemotePluginInformationTask(Collection<String> sites) {
         super(tr("Download plugin list..."), false /* don't ignore exceptions */);
-        this.sites = sites;
-        if (sites == null) {
-            this.sites = Collections.emptySet();
-        }
-        availabePlugins = new LinkedList<PluginInformation>();
+        init(sites);
     }
+
+    /**
+     * Creates the task
+     * 
+     * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null
+     * @param sites the collection of download sites. Defaults to the empty collection if null.
+     */
+    public ReadRemotePluginInformationTask(ProgressMonitor monitor, Collection<String> sites) {
+        super(tr("Download plugin list..."), monitor == null ? NullProgressMonitor.INSTANCE: monitor, false /* don't ignore exceptions */);
+        init(sites);
+    }
+
 
     @Override
     protected void cancel() {

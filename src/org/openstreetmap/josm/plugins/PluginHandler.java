@@ -605,6 +605,7 @@ public class PluginHandler {
     /**
      * Updates the plugins in <code>plugins</code>.
      * 
+     * @param parent the parent window for message boxes
      * @param plugins the collection of plugins to update. Must not be null.
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
      * @throws IllegalArgumentException thrown if plugins is null
@@ -615,22 +616,52 @@ public class PluginHandler {
             monitor = NullProgressMonitor.INSTANCE;
         }
         try {
-            PluginDownloadTask task = new PluginDownloadTask(
-                    monitor,
+            monitor.beginTask("");
+            ExecutorService service = Executors.newSingleThreadExecutor();
+
+            // try to download the plugin lists
+            //
+            ReadRemotePluginInformationTask task1 = new ReadRemotePluginInformationTask(
+                    monitor.createSubTaskMonitor(1,false),
+                    Main.pref.getPluginSites()
+            );
+            Future<?> future = service.submit(task1);
+            try {
+                future.get();
+            } catch(ExecutionException e) {
+                System.out.println(tr("Warning: failed to download plugin information list"));
+                e.printStackTrace();
+                // don't abort in case of error, continue with downloading plugins below
+            } catch(InterruptedException e) {
+                System.out.println(tr("Warning: failed to download plugin information list"));
+                e.printStackTrace();
+                // don't abort in case of error, continue with downloading plugins below
+            }
+
+            // try to update the locally installed plugins
+            //
+            PluginDownloadTask task2 = new PluginDownloadTask(
+                    monitor.createSubTaskMonitor(1,false),
                     plugins,
                     tr("Update plugins")
             );
-            ExecutorService service = Executors.newSingleThreadExecutor();
-            Future<?> future = service.submit(task);
+
+            future = service.submit(task2);
             try {
                 future.get();
             } catch(ExecutionException e) {
                 e.printStackTrace();
+                alertFailedPluginUpdate(parent, plugins);
+                return;
             } catch(InterruptedException e) {
                 e.printStackTrace();
+                alertFailedPluginUpdate(parent, plugins);
+                return;
             }
-            if (! task.getFailedPlugins().isEmpty()) {
-                alertFailedPluginUpdate(parent, task.getFailedPlugins());
+            // notify user if downloading a locally installed plugin failed
+            //
+            if (! task2.getFailedPlugins().isEmpty()) {
+                alertFailedPluginUpdate(parent, task2.getFailedPlugins());
                 return;
             }
         } finally {
