@@ -141,6 +141,8 @@ public class ToggleDialog extends JPanel implements Helpful {
 
         private ToggleDialogAction(ToggleDialog dialog, String name, String iconName, String tooltip, Shortcut shortcut, String prefname) {
             super(name, iconName, tooltip, shortcut, false);
+            if (dialog == null)
+                throw new IllegalArgumentException("The ToggleDialog supplied for " + name + " cannot be null.");
             this.dialog = dialog;
         }
 
