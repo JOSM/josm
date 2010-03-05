@@ -155,13 +155,13 @@ public class UpdatePrimitivesTask extends PleaseWaitRunnable {
             }
             DataSetMerger merger = new DataSetMerger(ds, theirDataSet);
             merger.merge();
-            // a way loaded with MultiFetch may be incomplete because at least one of its
+            // a way loaded with MultiFetch may have incomplete nodes because at least one of its
             // nodes isn't present in the local data set. We therefore fully load all
-            // incomplete ways.
+            // ways with incomplete nodes.
             //
             for (Way w : ds.getWays()) {
                 if (canceled) return;
-                if (w.isIncomplete()) {
+                if (w.hasIncompleteNodes()) {
                     synchronized(this) {
                         if (canceled) return;
                         objectReader = new OsmServerObjectReader(w.getId(), OsmPrimitiveType.WAY, true /* full */);
