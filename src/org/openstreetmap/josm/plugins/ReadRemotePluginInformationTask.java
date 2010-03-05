@@ -6,10 +6,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -120,6 +121,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
                 connection.setRequestProperty("Cache-Control", "no-cache");
                 connection.setRequestProperty("User-Agent",Version.getInstance().getAgentString());
                 connection.setRequestProperty("Host", url.getHost());
+                connection.setRequestProperty("Accept-Charset", "utf-8");
             }
             in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
             String line;
@@ -168,10 +170,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
             }
             File cacheFile = new File(pluginDir, createSiteCacheFileName(site));
             getProgressMonitor().subTask(tr("Writing plugin list to local cache ''{0}''", cacheFile.toString()));
-            writer = new PrintWriter(
-                    new FileWriter(cacheFile)
-            );
-            writer.print(list);
+            writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(cacheFile), "utf-8"));
+            writer.write(list);
         } catch(IOException e) {
             // just failed to write the cache file. No big deal, but log the exception anyway
             e.printStackTrace();
