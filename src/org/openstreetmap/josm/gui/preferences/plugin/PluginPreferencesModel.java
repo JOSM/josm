@@ -73,6 +73,41 @@ public class PluginPreferencesModel extends Observable{
         notifyObservers();
     }
 
+    protected  void updateAvailablePlugin(PluginInformation other) {
+        if (other == null) return;
+        PluginInformation pi = getPluginInformation(other.name);
+        if (pi == null) {
+            availablePlugins.add(other);
+            return;
+        }
+        pi.updateFromPluginSite(other);
+    }
+
+    /**
+     * Updates the list of plugin information objects with new information from
+     * plugin update sites.
+     * 
+     * @param fromPluginSite plugin information read from plugin update sites
+     */
+    public void updateAvailablePlugins(Collection<PluginInformation> fromPluginSite) {
+        for (PluginInformation other: fromPluginSite) {
+            updateAvailablePlugin(other);
+        }
+        sort();
+        filterDisplayedPlugins(filterExpression);
+        Set<String> activePlugins = new HashSet<String>();
+        activePlugins.addAll(Main.pref.getCollection("plugins", activePlugins));
+        for (PluginInformation pi: availablePlugins) {
+            if (selectedPluginsMap.get(pi) == null) {
+                if (activePlugins.contains(pi.name)) {
+                    selectedPluginsMap.put(pi, true);
+                }
+            }
+        }
+        clearChanged();
+        notifyObservers();
+    }
+
     /**
      * Replies the list of selected plugin information objects
      * 
@@ -112,8 +147,8 @@ public class PluginPreferencesModel extends Observable{
                 availablePlugins,
                 new Comparator<PluginInformation>() {
                     public int compare(PluginInformation o1, PluginInformation o2) {
-                        String n1 = o1.getName() == null ? "" : o1.getName();
-                        String n2 = o2.getName() == null ? "" : o2.getName();
+                        String n1 = o1.getName() == null ? "" : o1.getName().toLowerCase();
+                        String n2 = o2.getName() == null ? "" : o2.getName().toLowerCase();
                         return n1.compareTo(n2);
                     }
                 }
@@ -163,6 +198,19 @@ public class PluginPreferencesModel extends Observable{
         }
         if (!selected) {
             pendingDownloads.remove(name);
+        }
+    }
+
+    /**
+     * Removes all the plugin in {@code plugins} from the list of plugins
+     * with a pending download
+     * 
+     * @param plugins the list of plugins to clear for a pending download
+     */
+    public void clearPendingPlugins(Collection<PluginInformation> plugins){
+        if (plugins == null || plugins.isEmpty()) return;
+        for(PluginInformation pi: plugins) {
+            pendingDownloads.remove(pi.name);
         }
     }
 

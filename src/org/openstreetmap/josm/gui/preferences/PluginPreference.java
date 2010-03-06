@@ -16,6 +16,7 @@ import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -76,7 +77,7 @@ public class PluginPreference implements PreferenceSetting {
             ));
             sb.append("<ul>");
             for(PluginInformation pi: downloaded) {
-                sb.append("<li>").append(pi.name).append("</li>");
+                sb.append("<li>").append(pi.name).append(" (").append(pi.version).append(")").append("</li>");
             }
             sb.append("</ul>");
         }
@@ -282,9 +283,8 @@ public class PluginPreference implements PreferenceSetting {
                     if (task.isCanceled()) return;
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                            model.setAvailablePlugins(task.getAvailabePlugins());
+                            model.updateAvailablePlugins(task.getAvailabePlugins());
                             pnlPluginPreferences.refreshView();
-
                         }
                     });
                 }
@@ -319,14 +319,24 @@ public class PluginPreference implements PreferenceSetting {
                     pnlPluginPreferences,
                     sb.toString(),
                     tr("Update plugins"),
-                    failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
+                    !failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
                             // FIXME: check help topic
                             HelpUtil.ht("/Preferences/Plugin")
             );
         }
 
+        protected void alertNothingToUpdate() {
+            HelpAwareOptionPane.showOptionDialog(
+                    pnlPluginPreferences,
+                    tr("All installed plugins are up to date. JOSM does not have to download newer versions."),
+                    tr("Plugins up to date"),
+                    JOptionPane.INFORMATION_MESSAGE,
+                    null // FIXME: provide help context
+            );
+        }
+
         public void actionPerformed(ActionEvent e) {
-            List<PluginInformation> toUpdate = model.getSelectedPlugins();
+            final List<PluginInformation> toUpdate = model.getSelectedPlugins();
             // the async task for downloading plugins
             final PluginDownloadTask pluginDownloadTask = new PluginDownloadTask(
                     pnlPluginPreferences,
@@ -344,6 +354,7 @@ public class PluginPreference implements PreferenceSetting {
                         return;
                     notifyDownloadResults(pluginDownloadTask);
                     model.refreshLocalPluginVersion(pluginDownloadTask.getDownloadedPlugins());
+                    model.clearPendingPlugins(pluginDownloadTask.getDownloadedPlugins());
                     pnlPluginPreferences.refreshView();
                 }
             };
@@ -354,6 +365,21 @@ public class PluginPreference implements PreferenceSetting {
                 public void run() {
                     if (pluginInfoDownloadTask.isCanceled())
                         return;
+                    model.updateAvailablePlugins(pluginInfoDownloadTask.getAvailabePlugins());
+                    // select plugins which actually have to be updated
+                    //
+                    Iterator<PluginInformation> it = toUpdate.iterator();
+                    while(it.hasNext()) {
+                        PluginInformation pi = it.next();
+                        if (!pi.isUpdateRequired()) {
+                            it.remove();
+                        }
+                    }
+                    if (toUpdate.isEmpty()) {
+                        alertNothingToUpdate();
+                        return;
+                    }
+                    pluginDownloadTask.setPluginsToDownload(toUpdate);
                     Main.worker.submit(pluginDownloadTask);
                     Main.worker.submit(pluginDownloadContinuation);
                 }

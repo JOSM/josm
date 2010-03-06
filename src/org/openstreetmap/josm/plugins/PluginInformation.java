@@ -47,16 +47,29 @@ public class PluginInformation {
     public String localversion = null;
     public String downloadlink = null;
     public List<URL> libraries = new LinkedList<URL>();
-
     public final Map<String, String> attr = new TreeMap<String, String>();
 
     /**
-     * @param file the plugin jar file.
+     * Creates a plugin information object by reading the plugin information from
+     * the manifest in the plugin jar.
+     * 
+     * The plugin name is derived from the file name.
+     * 
+     * @param file the plugin jar file
+     * @throws PluginException if reading the manifest fails
      */
     public PluginInformation(File file) throws PluginException{
         this(file, file.getName().substring(0, file.getName().length()-4));
     }
 
+    /**
+     * Creates a plugin information object for the plugin with name {@code name}.
+     * Information about the plugin is extracted from the maifest file in the the plugin jar
+     * {@code file}.
+     * @param file the plugin jar
+     * @param name the plugin name
+     * @throws PluginException thrown if reading the manifest file fails
+     */
     public PluginInformation(File file, String name) throws PluginException{
         this.name = name;
         this.file = file;
@@ -79,6 +92,15 @@ public class PluginInformation {
         }
     }
 
+    /**
+     * Creates a plugin information object by reading plugin information in Manifest format
+     * from the input stream {@code manifestStream}.
+     * 
+     * @param manifestStream the stream to read the manifest from
+     * @param name the plugin name
+     * @param url the download URL for the plugin
+     * @throws PluginException thrown if the plugin information can't be read from the input stream
+     */
     public PluginInformation(InputStream manifestStream, String name, String url) throws PluginException {
         this.name = name;
         try {
@@ -93,8 +115,31 @@ public class PluginInformation {
         }
     }
 
-    private void scanManifest(Manifest manifest, boolean oldcheck)
-    {
+    /**
+     * Updates the plugin information of this plugin information object with the
+     * plugin information in a plugin information object retrieved from a plugin
+     * update site.
+     * 
+     * @param other the plugin information object retrieved from the update
+     * site
+     */
+    public void updateFromPluginSite(PluginInformation other) {
+        this.mainversion = other.mainversion;
+        this.className = other.className;
+        this.requires = other.requires;
+        this.link = other.link;
+        this.description = other.description;
+        this.early = other.early;
+        this.author = other.author;
+        this.stage = other.stage;
+        this.version = other.version;
+        this.downloadlink = other.downloadlink;
+        this.libraries = other.libraries;
+        this.attr.clear();
+        this.attr.putAll(other.attr);
+    }
+
+    private void scanManifest(Manifest manifest, boolean oldcheck){
         String lang = LanguageInfo.getLanguageCodeManifest();
         Attributes attr = manifest.getMainAttributes();
         className = attr.getValue("Plugin-Class");

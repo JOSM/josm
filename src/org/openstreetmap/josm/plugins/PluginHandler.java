@@ -381,7 +381,16 @@ public class PluginHandler {
                 System.out.println(tr("loading plugin ''{0}'' ({1})", plugin.name, plugin.localversion));
                 pluginList.add(plugin.load(klass));
             }
-        } catch (Throwable e) {
+        } catch(PluginException e) {
+            if (e.getCause() instanceof ClassNotFoundException) {
+                e.printStackTrace();
+                String msg = tr("<html>Could not load plugin {0} because the plugin<br>main class ''{1}'' was not found.<br>"
+                        + "Delete from preferences?", plugin.name, plugin.className);
+                if (confirmDisablePlugin(parent, msg, plugin.name)) {
+                    Main.pref.removeFromCollection("plugins", plugin.name);
+                }
+            }
+        }  catch (Throwable e) {
             e.printStackTrace();
             String msg = tr("Could not load plugin {0}. Delete from preferences?", plugin.name);
             if (confirmDisablePlugin(parent, msg, plugin.name)) {
@@ -638,31 +647,43 @@ public class PluginHandler {
                 // don't abort in case of error, continue with downloading plugins below
             }
 
-            // try to update the locally installed plugins
+            // filter plugins which actually have to be updated
             //
-            PluginDownloadTask task2 = new PluginDownloadTask(
-                    monitor.createSubTaskMonitor(1,false),
-                    plugins,
-                    tr("Update plugins")
-            );
-
-            future = service.submit(task2);
-            try {
-                future.get();
-            } catch(ExecutionException e) {
-                e.printStackTrace();
-                alertFailedPluginUpdate(parent, plugins);
-                return;
-            } catch(InterruptedException e) {
-                e.printStackTrace();
-                alertFailedPluginUpdate(parent, plugins);
-                return;
+            Iterator<PluginInformation> it = plugins.iterator();
+            while(it.hasNext()) {
+                PluginInformation pi = it.next();
+                if (!pi.isUpdateRequired()) {
+                    it.remove();
+                }
             }
-            // notify user if downloading a locally installed plugin failed
-            //
-            if (! task2.getFailedPlugins().isEmpty()) {
-                alertFailedPluginUpdate(parent, task2.getFailedPlugins());
-                return;
+
+            if (!plugins.isEmpty()) {
+                // try to update the locally installed plugins
+                //
+                PluginDownloadTask task2 = new PluginDownloadTask(
+                        monitor.createSubTaskMonitor(1,false),
+                        plugins,
+                        tr("Update plugins")
+                );
+
+                future = service.submit(task2);
+                try {
+                    future.get();
+                } catch(ExecutionException e) {
+                    e.printStackTrace();
+                    alertFailedPluginUpdate(parent, plugins);
+                    return;
+                } catch(InterruptedException e) {
+                    e.printStackTrace();
+                    alertFailedPluginUpdate(parent, plugins);
+                    return;
+                }
+                // notify user if downloading a locally installed plugin failed
+                //
+                if (! task2.getFailedPlugins().isEmpty()) {
+                    alertFailedPluginUpdate(parent, task2.getFailedPlugins());
+                    return;
+                }
             }
         } finally {
             monitor.finishTask();
@@ -743,6 +764,11 @@ public class PluginHandler {
      * Installs downloaded plugins. Moves files with the suffix ".jar.new" to the corresponding
      * ".jar" files.
      * 
+     * If {@code dowarn} is true, this methods emits warning messages on the console if a downloaded
+     * but not yet installed plugin .jar can't be be installed. If {@code dowarn} is false, the
+     * installation of the respective plugin is sillently skipped.
+     * 
+     * @param dowarn if true, warning messages are displayed; false otherwise
      */
     public static void installDownloadedPlugins(boolean dowarn) {
         File pluginDir = Main.pref.getPluginsDirectory();
@@ -759,13 +785,13 @@ public class PluginHandler {
             File plugin = new File(filePath.substring(0, filePath.length() - 4));
             String pluginName = updatedPlugin.getName().substring(0, updatedPlugin.getName().length() - 8);
             if (plugin.exists()) {
-                if (!plugin.delete() && !dowarn) {
+                if (!plugin.delete() && dowarn) {
                     System.err.println(tr("Warning: failed to delete outdated plugin ''{0}''.", plugin.toString()));
                     System.err.println(tr("Warning: failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.", pluginName));
                     continue;
                 }
             }
-            if (!updatedPlugin.renameTo(plugin) && !dowarn) {
+            if (!updatedPlugin.renameTo(plugin) && dowarn) {
                 System.err.println(tr("Warning: failed to install plugin ''{0}'' from temporary download file ''{1}''. Renaming failed.", plugin.toString(), updatedPlugin.toString()));
                 System.err.println(tr("Warning: failed to install already downloaded plugin ''{0}''. Skipping installation. JOSM is still going to load the old plugin version.", pluginName));
             }

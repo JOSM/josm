@@ -37,7 +37,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     @SuppressWarnings("unused")
     private static final Logger logger = Logger.getLogger(PluginDownloadTask.class.getName());
 
-    private final Collection<PluginInformation> toUpdate;
+    private final Collection<PluginInformation> toUpdate = new LinkedList<PluginInformation>();
     private final Collection<PluginInformation> failed = new LinkedList<PluginInformation>();
     private final Collection<PluginInformation> downloaded = new LinkedList<PluginInformation>();
     private Exception lastException;
@@ -55,7 +55,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     public PluginDownloadTask(Component parent, Collection<PluginInformation> toUpdate, String title) throws IllegalArgumentException{
         super(parent, title == null ? "" : title, false /* don't ignore exceptions */);
         CheckParameterUtil.ensureParameterNotNull(toUpdate, "toUpdate");
-        this.toUpdate = toUpdate;
+        this.toUpdate.addAll(toUpdate);
     }
 
     /**
@@ -69,7 +69,19 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
     public PluginDownloadTask(ProgressMonitor monitor, Collection<PluginInformation> toUpdate, String title) {
         super(title, monitor == null? NullProgressMonitor.INSTANCE: monitor, false /* don't ignore exceptions */);
         CheckParameterUtil.ensureParameterNotNull(toUpdate, "toUpdate");
-        this.toUpdate = toUpdate;
+        this.toUpdate.addAll(toUpdate);
+    }
+
+    /**
+     * Sets the collection of plugins to update.
+     * 
+     * @param toUpdate the collection of plugins to update. Must not be null.
+     * @throws IllegalArgumentException thrown if toUpdate is null
+     */
+    public void setPluginsToDownload(Collection<PluginInformation> toUpdate) throws IllegalArgumentException{
+        CheckParameterUtil.ensureParameterNotNull(toUpdate, "toUpdate");
+        this.toUpdate.clear();
+        this.toUpdate.addAll(toUpdate);
     }
 
     @Override protected void cancel() {
