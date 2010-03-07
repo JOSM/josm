@@ -1,4 +1,4 @@
-package org.openstreetmap.josm.gui.download;
+package org.openstreetmap.josm.gui.bbox;
 
 import java.awt.Graphics;
 import java.awt.Point;

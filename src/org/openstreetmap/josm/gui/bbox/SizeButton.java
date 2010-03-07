@@ -1,5 +1,5 @@
 // License: GPL. Copyright 2007 by Tim Haussmann
-package org.openstreetmap.josm.gui.download;
+package org.openstreetmap.josm.gui.bbox;
 
 import java.awt.Graphics;
 import java.awt.Point;

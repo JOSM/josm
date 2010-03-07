@@ -1,6 +1,6 @@
 // This code has been adapted and copied from code that has been written by Immanuel Scholz and others for JOSM.
 // License: GPL. Copyright 2007 by Tim Haussmann
-package org.openstreetmap.josm.gui.download;
+package org.openstreetmap.josm.gui.bbox;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -20,6 +20,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+
 /**
  * This class controls the user input by listening to mouse and key events.
  * Currently implemented is: - zooming in and out with scrollwheel - zooming in
@@ -28,7 +29,7 @@ import javax.swing.KeyStroke;
  *
  * @author Tim Haussmann
  */
-public class OsmMapControl extends MouseAdapter implements MouseMotionListener, MouseListener {
+public class SlippyMapControler extends MouseAdapter implements MouseMotionListener, MouseListener {
 
     /** A Timer for smoothly moving the map area */
     private static final Timer timer = new Timer(true);
@@ -50,7 +51,7 @@ public class OsmMapControl extends MouseAdapter implements MouseMotionListener, 
     private Point iEndSelectionPoint;
 
     // the SlippyMapChooserComponent
-    private final SlippyMapChooser iSlippyMapChooser;
+    private final SlippyMapBBoxChooser iSlippyMapChooser;
 
     private SizeButton iSizeButton = null;
     private SourceButton iSourceButton = null;
@@ -58,7 +59,7 @@ public class OsmMapControl extends MouseAdapter implements MouseMotionListener, 
     /**
      * Create a new OsmMapControl
      */
-    public OsmMapControl(SlippyMapChooser navComp, JPanel contentPane, SizeButton sizeButton, SourceButton sourceButton) {
+    public SlippyMapControler(SlippyMapBBoxChooser navComp, JPanel contentPane, SizeButton sizeButton, SourceButton sourceButton) {
         this.iSlippyMapChooser = navComp;
         iSlippyMapChooser.addMouseListener(this);
         iSlippyMapChooser.addMouseMotionListener(this);
@@ -124,6 +125,7 @@ public class OsmMapControl extends MouseAdapter implements MouseMotionListener, 
 
     }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
         if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK) {
             if (iStartSelectionPoint != null) {
@@ -166,6 +168,7 @@ public class OsmMapControl extends MouseAdapter implements MouseMotionListener, 
         }
     }
 
+    @Override
     public void mouseMoved(MouseEvent e) {
     }
 
@@ -230,9 +233,9 @@ public class OsmMapControl extends MouseAdapter implements MouseMotionListener, 
 
             if (newMoveTaskState != scheduled) {
                 scheduled = newMoveTaskState;
-                if (newMoveTaskState)
+                if (newMoveTaskState) {
                     timer.schedule(this, 0, timerInterval);
-                else {
+                } else {
                     // We have to create a new instance because rescheduling a
                     // once canceled TimerTask is not possible
                     moveTask = new MoveTask();
@@ -246,46 +249,55 @@ public class OsmMapControl extends MouseAdapter implements MouseMotionListener, 
             // update the x speed
             switch (directionX) {
             case -1:
-                if (speedX > -1)
+                if (speedX > -1) {
                     speedX = -1;
-                if (speedX > -1 * MAX_SPEED)
+                }
+                if (speedX > -1 * MAX_SPEED) {
                     speedX -= ACCELERATION;
+                }
                 break;
             case 0:
                 speedX = 0;
                 break;
             case 1:
-                if (speedX < 1)
+                if (speedX < 1) {
                     speedX = 1;
-                if (speedX < MAX_SPEED)
+                }
+                if (speedX < MAX_SPEED) {
                     speedX += ACCELERATION;
+                }
                 break;
             }
 
             // update the y speed
             switch (directionY) {
             case -1:
-                if (speedY > -1)
+                if (speedY > -1) {
                     speedY = -1;
-                if (speedY > -1 * MAX_SPEED)
+                }
+                if (speedY > -1 * MAX_SPEED) {
                     speedY -= ACCELERATION;
+                }
                 break;
             case 0:
                 speedY = 0;
                 break;
             case 1:
-                if (speedY < 1)
+                if (speedY < 1) {
                     speedY = 1;
-                if (speedY < MAX_SPEED)
+                }
+                if (speedY < MAX_SPEED) {
                     speedY += ACCELERATION;
+                }
                 break;
             }
 
             // move the map
             int moveX = (int) Math.floor(speedX);
             int moveY = (int) Math.floor(speedY);
-            if (moveX != 0 || moveY != 0)
+            if (moveX != 0 || moveY != 0) {
                 iSlippyMapChooser.moveMap(moveX, moveY);
+            }
         }
     }
 
@@ -302,5 +314,4 @@ public class OsmMapControl extends MouseAdapter implements MouseMotionListener, 
             iSlippyMapChooser.zoomOut();
         }
     }
-
 }
