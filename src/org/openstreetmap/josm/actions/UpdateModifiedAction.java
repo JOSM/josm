@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -49,5 +50,11 @@ public class UpdateModifiedAction extends UpdateSelectionAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+    }
+
+    @Override
+    public Collection<OsmPrimitive> getData() {
+        if (getCurrentDataSet() == null) return Collections.emptyList();
+        return getCurrentDataSet().allModifiedPrimitives();
     }
 }

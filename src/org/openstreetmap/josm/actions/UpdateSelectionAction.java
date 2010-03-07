@@ -117,8 +117,8 @@ public class UpdateSelectionAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         if (! isEnabled())
             return;
-        Collection<OsmPrimitive> selection =getCurrentDataSet().getSelected();
-        if (selection.size() == 0) {
+        Collection<OsmPrimitive> toUpdate =getData();
+        if (toUpdate.size() == 0) {
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("There are no selected objects to update."),
@@ -127,6 +127,10 @@ public class UpdateSelectionAction extends JosmAction {
             );
             return;
         }
-        updatePrimitives(selection);
+        updatePrimitives(toUpdate);
+    }
+
+    public Collection<OsmPrimitive> getData() {
+        return getCurrentDataSet().getSelected();
     }
 }
