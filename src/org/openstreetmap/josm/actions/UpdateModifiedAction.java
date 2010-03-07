@@ -31,13 +31,23 @@ public class UpdateModifiedAction extends UpdateSelectionAction {
         putValue("help", ht("/Action/UpdateModified"));
     }
 
+    // FIXME: overrides the behaviour of UpdateSelectionAction. Doesn't update
+    // the enabled state based on the current selection because
+    // it doesn't depend on it.
+    // The action should be enabled/disabled based on whether there is a least
+    // one modified object in the current dataset. Unfortunately, there is no
+    // efficient way to find out here. getDataSet().allModifiedPrimitives() is
+    // too heavy weight because it loops over the whole dataset.
+    // Perhaps this action should  be a DataSetListener? Or it could listen to the
+    // REQUIRES_SAVE_TO_DISK_PROP and REQUIRES_UPLOAD_TO_SERVER_PROP properties
+    // in the OsmLayer?
+    //
     @Override
-    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        super.updateEnabledState(getData());
+    protected void updateEnabledState() {
+        setEnabled(getCurrentDataSet() != null);
     }
 
     @Override
-    protected Collection<OsmPrimitive> getData() {
-        return getCurrentDataSet().allModifiedPrimitives();
+    protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
     }
 }

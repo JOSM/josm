@@ -102,7 +102,7 @@ public class UpdateSelectionAction extends JosmAction {
         if (getCurrentDataSet() == null) {
             setEnabled(false);
         } else {
-            updateEnabledState(getData());
+            updateEnabledState(getCurrentDataSet().getSelected());
         }
     }
 
@@ -117,7 +117,7 @@ public class UpdateSelectionAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         if (! isEnabled())
             return;
-        Collection<OsmPrimitive> selection = getData();
+        Collection<OsmPrimitive> selection =getCurrentDataSet().getSelected();
         if (selection.size() == 0) {
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -128,9 +128,5 @@ public class UpdateSelectionAction extends JosmAction {
             return;
         }
         updatePrimitives(selection);
-    }
-
-    protected Collection<OsmPrimitive> getData() {
-        return getCurrentDataSet().getSelected();
     }
 }
