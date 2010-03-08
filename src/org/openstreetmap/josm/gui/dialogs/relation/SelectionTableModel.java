@@ -31,8 +31,12 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
         cache = new ArrayList<OsmPrimitive>();
-        MapView.addLayerChangeListener(this);
         populateSelectedPrimitives(layer);
+    }
+
+    public void register() {
+        DataSet.selListeners.add(this);
+        MapView.addLayerChangeListener(this);
     }
 
     public void unregister() {

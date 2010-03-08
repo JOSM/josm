@@ -27,6 +27,7 @@ import javax.swing.table.AbstractTableModel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -49,8 +50,8 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     /**
      * data of the table model: The list of members and the cached WayConnectionType of each member.
      **/
-    private ArrayList<RelationMember> members;
-    private ArrayList<WayConnectionType> connectionType = null;
+    private List<RelationMember> members;
+    private List<WayConnectionType> connectionType = null;
 
     private DefaultListSelectionModel listSelectionModel;
     private CopyOnWriteArrayList<IMemberModelListener> listeners;
@@ -68,6 +69,16 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
 
     public OsmDataLayer getLayer() {
         return layer;
+    }
+
+    public void register() {
+        DataSet.selListeners.add(this);
+        getLayer().data.addDataSetListener(this);
+    }
+
+    public void unregister() {
+        DataSet.selListeners.remove(this);
+        getLayer().data.removeDataSetListener(this);
     }
 
     /* --------------------------------------------------------------------------- */
@@ -694,7 +705,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      * @param relationMembers collection of relation members
      * @return sorted collection of relation members
      */
-    private ArrayList<RelationMember> sortMembers(ArrayList<RelationMember> relationMembers) {
+    private List<RelationMember> sortMembers(List<RelationMember> relationMembers) {
         RelationNodeMap map = new RelationNodeMap(relationMembers);
         // List of groups of linked members
         //
@@ -743,9 +754,9 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      * Sort the selected relation members by the way they are linked.
      */
     void sort() {
-        ArrayList<RelationMember> selectedMembers = new ArrayList<RelationMember>(getSelectedMembers());
-        ArrayList<RelationMember> sortedMembers = null;
-        ArrayList<RelationMember> newMembers;
+        List<RelationMember> selectedMembers = new ArrayList<RelationMember>(getSelectedMembers());
+        List<RelationMember> sortedMembers = null;
+        List<RelationMember> newMembers;
         if (selectedMembers.size() <= 1) {
             newMembers = sortMembers(members);
             sortedMembers = newMembers;

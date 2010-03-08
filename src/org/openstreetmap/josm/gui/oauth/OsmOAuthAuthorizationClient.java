@@ -46,7 +46,7 @@ public class OsmOAuthAuthorizationClient {
 
     /**
      * Creates a new authorisation client with default OAuth parameters
-     * 
+     *
      */
     public OsmOAuthAuthorizationClient() {
         oauthProviderParameters = OAuthParameters.createDefault();
@@ -56,7 +56,7 @@ public class OsmOAuthAuthorizationClient {
 
     /**
      * Creates a new authorisation client with the parameters <code>parameters</code>.
-     * 
+     *
      * @param parameters the OAuth parameters. Must not be null.
      * @throws IllegalArgumentException thrown if parameters is null
      */
@@ -70,7 +70,7 @@ public class OsmOAuthAuthorizationClient {
     /**
      * Creates a new authorisation client with the parameters <code>parameters</code>
      * and an already known Request Token.
-     * 
+     *
      * @param parameters the OAuth parameters. Must not be null.
      * @param requestToken the request token. Must not be null.
      * @throws IllegalArgumentException thrown if parameters is null
@@ -116,7 +116,7 @@ public class OsmOAuthAuthorizationClient {
     /**
      * Submits a request for a Request Token to the Request Token Endpoint Url of the OAuth Service
      * Provider and replies the request token.
-     * 
+     *
      * @param monitor a progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null
      * @return the OAuth Request Token
      * @throws OsmOAuthAuthorizationException thrown if something goes wrong when retrieving the request token
@@ -146,9 +146,9 @@ public class OsmOAuthAuthorizationClient {
     /**
      * Submits a request for an Access Token to the Access Token Endpoint Url of the OAuth Service
      * Provider and replies the request token.
-     * 
+     *
      * You must have requested a Request Token using {@see #getRequestToken(ProgressMonitor)} first.
-     * 
+     *
      * @param monitor a progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null
      * @return the OAuth Access Token
      * @throws OsmOAuthAuthorizationException thrown if something goes wrong when retrieving the request token
@@ -179,7 +179,7 @@ public class OsmOAuthAuthorizationClient {
     /**
      * Builds the authorise URL for a given Request Token. Users can be redirected to this URL.
      * There they can login to OSM and authorise the request.
-     * 
+     *
      * @param requestToken  the request token
      * @return  the authorise URL for this request
      */
@@ -240,7 +240,7 @@ public class OsmOAuthAuthorizationClient {
 
     /**
      * Derives the OSM login URL from the OAuth Authorization Website URL
-     * 
+     *
      * @return the OSM login URL
      * @throws OsmOAuthAuthorizationException thrown if something went wrong, in particular if the
      * URLs are malformed
@@ -260,7 +260,7 @@ public class OsmOAuthAuthorizationClient {
 
     /**
      * Derives the OSM logout URL from the OAuth Authorization Website URL
-     * 
+     *
      * @return the OSM logout URL
      * @throws OsmOAuthAuthorizationException thrown if something went wrong, in particular if the
      * URLs are malformed
@@ -278,7 +278,7 @@ public class OsmOAuthAuthorizationClient {
     /**
      * Submits a request to the OSM website for a login form. The OSM website replies a session ID in
      * a cookie.
-     * 
+     *
      * @return the session ID
      * @throws OsmOAuthAuthorizationException thrown if something went wrong
      */
@@ -459,7 +459,7 @@ public class OsmOAuthAuthorizationClient {
 
     /**
      * Automatically authorises a request token for a set of privileges.
-     * 
+     *
      * @param requestToken the request token. Must not be null.
      * @param osmUserName the OSM user name. Must not be null.
      * @param osmPassword the OSM password. Must not be null.

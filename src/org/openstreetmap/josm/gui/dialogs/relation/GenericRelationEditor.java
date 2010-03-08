@@ -117,10 +117,9 @@ public class GenericRelationEditor extends RelationEditor  {
         // init the various models
         //
         memberTableModel = new MemberTableModel(getLayer());
-        DataSet.selListeners.add(memberTableModel);
-        getLayer().data.addDataSetListener(memberTableModel);
+        memberTableModel.register();
         selectionTableModel = new SelectionTableModel(getLayer());
-        DataSet.selListeners.add(selectionTableModel);
+        selectionTableModel.register();
         referrerModel = new ReferringRelationsBrowserModel(relation);
 
         tagEditorPanel = new TagEditorPanel();
@@ -552,9 +551,7 @@ public class GenericRelationEditor extends RelationEditor  {
             // make sure all registered listeners are unregistered
             //
             selectionTableModel.unregister();
-            DataSet.selListeners.remove(memberTableModel);
-            DataSet.selListeners.remove(selectionTableModel);
-            getLayer().data.removeDataSetListener(memberTableModel);
+            memberTableModel.unregister();
             memberTable.unlinkAsListener();
             dispose();
         }
@@ -1053,7 +1050,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         /**
-         * Apply the updates for an existing relation which has not been changed
+         * Apply the updates for an existing relation which has been changed
          * outside of the relation editor.
          *
          */
@@ -1066,7 +1063,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         /**
-         * Apply the updates for an existing relation which has been changed
+         * Apply the updates for an existing relation which has not been changed
          * outside of the relation editor.
          *
          */

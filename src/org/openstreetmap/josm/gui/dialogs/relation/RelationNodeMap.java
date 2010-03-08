@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
+import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.NONE;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,8 +13,6 @@ import java.util.TreeSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-
-import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.*;
 
 /**
  * Auxiliary class for relation sorting.
@@ -30,10 +30,6 @@ import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Dire
  */
 public class RelationNodeMap {
     /*
-     * read only list of all relation members
-     */
-    private final List<RelationMember> members;
-    /*
      * the maps. (Need TreeMap for efficiency.)
      */
     private TreeMap<Node, TreeSet<Integer>> nodesMap;
@@ -48,9 +44,7 @@ public class RelationNodeMap {
      */
     private List<Integer> notSortable = new ArrayList<Integer>();
 
-    RelationNodeMap(ArrayList<RelationMember> members) {
-        this.members = members;
-
+    RelationNodeMap(List<RelationMember> members) {
         nodesMap = new TreeMap<Node, TreeSet<Integer>>();
         waysMap = new TreeMap<Integer, TreeSet<Node>>();
 

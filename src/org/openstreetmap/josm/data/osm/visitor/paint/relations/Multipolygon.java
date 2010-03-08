@@ -6,7 +6,6 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.Node;
@@ -18,6 +17,28 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 
 public class Multipolygon {
 
+    public static class JoinedWay {
+        private final List<Node> nodes;
+        private final boolean selected;
+
+        public JoinedWay(List<Node> nodes, boolean selected) {
+            this.nodes = nodes;
+            this.selected = selected;
+        }
+
+        public List<Node> getNodes() {
+            return nodes;
+        }
+
+        public boolean isSelected() {
+            return selected;
+        }
+
+        public boolean isClosed() {
+            return nodes.isEmpty() || nodes.get(nodes.size() - 1).equals(nodes.get(0));
+        }
+    }
+
     public static class PolyData {
         public enum Intersection {INSIDE, OUTSIDE, CROSSING}
 
@@ -25,6 +46,10 @@ public class Multipolygon {
         public final boolean selected;
         private Point lastP;
         private Rectangle bounds;
+
+        public PolyData(NavigatableComponent nc, JoinedWay joinedWay) {
+            this(nc, joinedWay.getNodes(), joinedWay.isSelected());
+        }
 
         public PolyData(NavigatableComponent nc, List<Node> nodes, boolean selected) {
             this.selected = selected;
@@ -91,7 +116,6 @@ public class Multipolygon {
     private final List<PolyData> innerPolygons = new ArrayList<PolyData>();
     private final List<PolyData> outerPolygons = new ArrayList<PolyData>();
     private final List<PolyData> combinedPolygons = new ArrayList<PolyData>();
-    private boolean hasNonClosedWays;
 
     public Multipolygon(NavigatableComponent nc) {
         this.nc = nc;
@@ -136,12 +160,14 @@ public class Multipolygon {
             }
         }
 
-        result.addAll(joinWays(waysToJoin));
+        for (JoinedWay jw: joinWays(waysToJoin)) {
+            result.add(new PolyData(nc, jw));
+        }
     }
 
-    public Collection<PolyData> joinWays(Collection<Way> join)
+    public static Collection<JoinedWay> joinWays(Collection<Way> join)
     {
-        Collection<PolyData> res = new LinkedList<PolyData>();
+        Collection<JoinedWay> res = new ArrayList<JoinedWay>();
         Way[] joinArray = join.toArray(new Way[join.size()]);
         int left = join.size();
         while(left != 0)
@@ -229,11 +255,7 @@ public class Multipolygon {
                 n = w.getNodes();
             }
 
-            if(!n.isEmpty() && !n.get(n.size() - 1).equals(n.get(0))) {
-                hasNonClosedWays = true;
-            }
-            PolyData pd = new PolyData(nc, n, selected);
-            res.add(pd);
+            res.add(new JoinedWay(n, selected));
         } /* while(left != 0) */
 
         return res;
@@ -320,10 +342,6 @@ public class Multipolygon {
 
     public List<PolyData> getCombinedPolygons() {
         return combinedPolygons;
-    }
-
-    public boolean hasNonClosedWays() {
-        return hasNonClosedWays;
     }
 
 }
