@@ -281,6 +281,38 @@ public class ExceptionDialogUtil {
     }
 
     /**
+     * Explains a {@see OsmApiException} which was thrown because of a
+     * client timeout (HTTP 408)
+     *
+     * @param e the exception
+     */
+    public static void explainClientTimeout(OsmApiException e) {
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainClientTimeout(e),
+                tr("Client Time Out"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#ClientTimeOut")
+        );
+    }
+
+    /**
+     * Explains a {@see OsmApiException} with a generic error
+     * message.
+     *
+     * @param e the exception
+     */
+    public static void explainGenericHttpException(OsmApiException e) {
+        HelpAwareOptionPane.showOptionDialog(
+                Main.parent,
+                ExceptionUtil.explainClientTimeout(e),
+                tr("Communication with OSM server failed"),
+                JOptionPane.ERROR_MESSAGE,
+                ht("/ErrorMessages#GenericCommunicationError")
+        );
+    }
+
+    /**
      * Explains a {@see OsmApiException} which was thrown because accessing a protected
      * resource was forbidden.
      *
@@ -403,6 +435,12 @@ public class ExceptionDialogUtil {
                 return;
             case HttpURLConnection.HTTP_FORBIDDEN:
                 explainAuthorizationFailed(oae);
+                return;
+            case HttpURLConnection.HTTP_CLIENT_TIMEOUT:
+                explainClientTimeout(oae);
+                return;
+            default:
+                explainGenericHttpException(oae);
                 return;
             }
         }

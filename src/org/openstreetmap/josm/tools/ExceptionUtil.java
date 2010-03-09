@@ -140,6 +140,49 @@ public class ExceptionUtil {
                 e.getAccessedUrl() == null ? tr("unknown") : e.getAccessedUrl()
         );
     }
+
+    /**
+     * Explains an OSM API exception because of a client timeout (HTTP 408).
+     * 
+     * @param e the exception
+     * @return the message
+     */
+    public static String explainClientTimeout(OsmApiException e) {
+        e.printStackTrace();
+        return tr("<html>"
+                + "Communication with the OSM server ''{0}'' timed out. Please retry later."
+                + "</html>",
+                OsmApi.getOsmApi().getBaseUrl()
+        );
+    }
+
+    /**
+     * Replies a generic error message for an OSM API exception
+     * 
+     * @param e the exception
+     * @return the message
+     */
+    public static String explainGenericOsmApiException(OsmApiException e) {
+        e.printStackTrace();
+        String errMsg = e.getErrorHeader();
+        if (errMsg == null) {
+            errMsg = e.getErrorBody();
+        }
+        if (errMsg == null) {
+            errMsg = tr("no error message available");
+        }
+        return tr("<html>"
+                + "Communication with the OSM server ''{0}''failed. The server replied<br>"
+                + "the following error code and the following error message:<br>"
+                + "<strong>Error code:<strong> {1}<br>"
+                + "<strong>Error message (untranslated)</strong>: {2}"
+                + "</html>",
+                OsmApi.getOsmApi().getBaseUrl(),
+                e.getResponseCode(),
+                errMsg
+        );
+    }
+
     /**
      * Explains an error due to a 409 conflict
      *

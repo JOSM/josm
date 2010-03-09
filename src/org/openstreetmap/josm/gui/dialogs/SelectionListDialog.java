@@ -117,14 +117,6 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
         add(new JScrollPane(displaylist), BorderLayout.CENTER);
 
         JPanel buttonPanel = getButtonPanel(2);
-        //
-        //        selectButton = new SideButton(marktr("Select"), "select", "SelectionList",
-        //                tr("Set the selected elements on the map to the selected items in the list above."),
-        //                new ActionListener() {
-        //            public void actionPerformed(ActionEvent e) {
-        //                updateMap();
-        //            }
-        //        });
         selectButton = new SideButton(actSelect = new SelectAction());
         buttonPanel.add(selectButton);
         BasicArrowButton selectionHistoryMenuButton = createArrowButton(selectButton);
