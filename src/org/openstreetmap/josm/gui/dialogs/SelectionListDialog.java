@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -45,7 +46,9 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
+import org.openstreetmap.josm.gui.MapView.EditLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -74,6 +77,8 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
     private SideButton searchButton;
     private JPopupMenu popupMenu;
     private JMenuItem zoomToElement;
+
+    private SelectAction actSelect;
 
     /**
      * If the selection changed event is triggered with newSelection equals
@@ -112,14 +117,15 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
         add(new JScrollPane(displaylist), BorderLayout.CENTER);
 
         JPanel buttonPanel = getButtonPanel(2);
-
-        selectButton = new SideButton(marktr("Select"), "select", "SelectionList",
-                tr("Set the selected elements on the map to the selected items in the list above."),
-                new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                updateMap();
-            }
-        });
+        //
+        //        selectButton = new SideButton(marktr("Select"), "select", "SelectionList",
+        //                tr("Set the selected elements on the map to the selected items in the list above."),
+        //                new ActionListener() {
+        //            public void actionPerformed(ActionEvent e) {
+        //                updateMap();
+        //            }
+        //        });
+        selectButton = new SideButton(actSelect = new SelectAction());
         buttonPanel.add(selectButton);
         BasicArrowButton selectionHistoryMenuButton = createArrowButton(selectButton);
         selectionHistoryMenuButton.addActionListener(new ActionListener() {
@@ -166,6 +172,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
     public void showNotify() {
         SelectionEventManager.getInstance().addSelectionListener(this, FireMode.IN_EDT_CONSOLIDATED);
         MapView.addEditLayerChangeListener(this);
+        MapView.addEditLayerChangeListener(actSelect);
         updateSelection();
     }
 
@@ -173,6 +180,7 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
     public void hideNotify() {
         SelectionEventManager.getInstance().removeSelectionListener(this);
         MapView.removeEditLayerChangeListener(this);
+        MapView.removeEditLayerChangeListener(actSelect);
         updateTitle(0, 0, 0);
     }
 
@@ -389,5 +397,28 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
 
     public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
         updateSelection();
+    }
+
+    class SelectAction extends AbstractAction implements EditLayerChangeListener {
+        public SelectAction() {
+            putValue(NAME, tr("Select"));
+            putValue(SHORT_DESCRIPTION,  tr("Set the selected elements on the map to the selected items in the list above."));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs","select"));
+            updateEnabledState();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            updateMap();
+        }
+
+        public void updateEnabledState() {
+            setEnabled(Main.main != null && Main.main.getEditLayer() != null);
+        }
+
+        @Override
+        public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
+            updateEnabledState();
+        }
     }
 }
