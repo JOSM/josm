@@ -130,6 +130,8 @@ public class MainApplication extends Main {
         I18n.init();
 
         Thread.setDefaultUncaughtExceptionHandler(new BugReportExceptionHandler());
+        // http://stuffthathappens.com/blog/2007/10/15/one-more-note-on-uncaught-exception-handlers/
+        System.setProperty("sun.awt.exception.handler", BugReportExceptionHandler.class.getName());
 
         // initialize the plaform hook, and
         Main.determinePlatformHook();
