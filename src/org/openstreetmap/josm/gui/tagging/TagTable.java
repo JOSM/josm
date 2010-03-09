@@ -126,6 +126,7 @@ public class TagTable extends JTable  {
                 row++;
             }
             changeSelection(row, col, false, false);
+            requestFocusInCell(row,col);
         }
     }
 
@@ -152,6 +153,7 @@ public class TagTable extends JTable  {
                 row--;
             }
             changeSelection(row, col, false, false);
+            requestFocusInCell(row,col);
         }
     }
 
