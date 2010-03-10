@@ -649,20 +649,19 @@ public class PluginHandler {
 
             // filter plugins which actually have to be updated
             //
-            Iterator<PluginInformation> it = plugins.iterator();
-            while(it.hasNext()) {
-                PluginInformation pi = it.next();
-                if (!pi.isUpdateRequired()) {
-                    it.remove();
+            Collection<PluginInformation> pluginsToUpdate = new ArrayList<PluginInformation>();
+            for(PluginInformation pi: plugins) {
+                if (pi.isUpdateRequired()) {
+                    pluginsToUpdate.add(pi);
                 }
             }
 
-            if (!plugins.isEmpty()) {
+            if (!pluginsToUpdate.isEmpty()) {
                 // try to update the locally installed plugins
                 //
                 PluginDownloadTask task2 = new PluginDownloadTask(
                         monitor.createSubTaskMonitor(1,false),
-                        plugins,
+                        pluginsToUpdate,
                         tr("Update plugins")
                 );
 
@@ -671,11 +670,11 @@ public class PluginHandler {
                     future.get();
                 } catch(ExecutionException e) {
                     e.printStackTrace();
-                    alertFailedPluginUpdate(parent, plugins);
+                    alertFailedPluginUpdate(parent, pluginsToUpdate);
                     return;
                 } catch(InterruptedException e) {
                     e.printStackTrace();
-                    alertFailedPluginUpdate(parent, plugins);
+                    alertFailedPluginUpdate(parent, pluginsToUpdate);
                     return;
                 }
                 // notify user if downloading a locally installed plugin failed
