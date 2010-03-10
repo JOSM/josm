@@ -178,6 +178,9 @@ public class SelectionListDialog extends ToggleDialog  {
         SelectionEventManager.getInstance().addSelectionListener(model, FireMode.IN_EDT_CONSOLIDATED);
         DatasetEventManager.getInstance().addDatasetListener(model, FireMode.IN_EDT);
         MapView.addEditLayerChangeListener(actSearch);
+        if (Main.map.mapView.getEditLayer() != null) {
+            model.setJOSMSelection(Main.map.mapView.getEditLayer().data.getSelected());
+        }
     }
 
     @Override
