@@ -64,4 +64,34 @@ public class RelationTest {
         Assert.assertEquals(w1.getBBox(), r2.getBBox());
     }
 
+    @Test
+    public void testBBoxNotInDataset() {
+        Node n1 = new Node(new LatLon(10, 10));
+        Node n2 = new Node(new LatLon(20, 20));
+        Way w1 = new Way();
+        w1.addNode(n1);
+        w1.addNode(n2);
+        Relation r1 = new Relation();
+        r1.getBBox();
+        r1.addMember(new RelationMember("", w1));
+
+        Assert.assertEquals(new BBox(w1), r1.getBBox());
+
+        DataSet ds = new DataSet();
+        ds.addPrimitive(n1);
+        ds.addPrimitive(n2);
+        ds.addPrimitive(w1);
+        ds.addPrimitive(r1);
+
+        Assert.assertEquals(new BBox(w1), r1.getBBox());
+
+        ds.removePrimitive(r1);
+
+        n1.setCoor(new LatLon(30, 40));
+        Assert.assertEquals(new BBox(w1), r1.getBBox());
+
+        ds.addPrimitive(r1);
+        Assert.assertEquals(new BBox(w1), r1.getBBox());
+    }
+
 }

@@ -333,13 +333,17 @@ public final class Relation extends OsmPrimitive {
 
     @Override
     public BBox getBBox() {
-        if (bbox == null) {
-            calculateBBox(new HashSet<PrimitiveId>());
+        if (getDataSet() == null)
+            return calculateBBox(new HashSet<PrimitiveId>());
+        else {
             if (bbox == null) {
-                bbox = new BBox(0, 0, 0, 0); // No members
+                bbox = calculateBBox(new HashSet<PrimitiveId>());
+                if (bbox == null) {
+                    bbox = new BBox(0, 0, 0, 0); // No members
+                }
             }
+            return  bbox;
         }
-        return  bbox;
     }
 
     private BBox calculateBBox(Set<PrimitiveId> visitedRelations) {
@@ -373,6 +377,7 @@ public final class Relation extends OsmPrimitive {
     public void setDataset(DataSet dataSet) {
         super.setDataset(dataSet);
         checkMembers();
+        bbox = null; // bbox might have changed if relation was in ds, was removed, modified, added back to dataset
     }
 
     private void checkMembers() {
@@ -400,7 +405,7 @@ public final class Relation extends OsmPrimitive {
 
     /**
      * Replies true if at least one child primitive is incomplete
-     * 
+     *
      * @return true if at least one child primitive is incomplete
      */
     public boolean hasIncompleteMembers() {
@@ -413,7 +418,7 @@ public final class Relation extends OsmPrimitive {
     /**
      * Replies a collection with the incomplete children this relation
      * refers to
-     * 
+     *
      * @return the incomplete children. Empty collection if no children are incomplete.
      */
     public Collection<OsmPrimitive> getIncompleteMembers() {
