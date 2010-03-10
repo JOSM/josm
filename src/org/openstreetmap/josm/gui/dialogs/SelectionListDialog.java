@@ -269,7 +269,6 @@ public class SelectionListDialog extends ToggleDialog  {
             setEnabled(Main.main != null && Main.main.getEditLayer() != null);
         }
 
-        @Override
         public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
             updateEnabledState();
         }
@@ -287,7 +286,6 @@ public class SelectionListDialog extends ToggleDialog  {
             updateEnabledState();
         }
 
-        @Override
         public void actionPerformed(ActionEvent e) {
             Collection<OsmPrimitive> sel = model.getSelected();
             if (sel.isEmpty())return;
@@ -316,7 +314,7 @@ public class SelectionListDialog extends ToggleDialog  {
             putValue(SMALL_ICON, ImageProvider.get("dialogs/autoscale", "selection"));
             updateEnabledState();
         }
-        @Override
+
         public void actionPerformed(ActionEvent e) {
             new AutoScaleAction("selection").autoScale();
         }
@@ -442,12 +440,10 @@ public class SelectionListDialog extends ToggleDialog  {
             return history;
         }
 
-        @Override
         public Object getElementAt(int index) {
             return selection.get(index);
         }
 
-        @Override
         public int getSize() {
             return selection.size();
         }
@@ -516,9 +512,8 @@ public class SelectionListDialog extends ToggleDialog  {
                     this.selection,
                     new Comparator<OsmPrimitive>() {
                         NameFormatter nf = DefaultNameFormatter.getInstance();
-                        @Override
-                        public int compare(OsmPrimitive o1, OsmPrimitive o2) {
 
+                        public int compare(OsmPrimitive o1, OsmPrimitive o2) {
                             if (o1.getType() != o2.getType())
                                 return o1.getType().compareTo(o2.getType());
                             return o1.getDisplayName(nf).compareTo(o2.getDisplayName(nf));
@@ -623,9 +618,7 @@ public class SelectionListDialog extends ToggleDialog  {
             update(event.getPrimitives());
         }
 
-        @Override
         public void primtivesAdded(PrimitivesAddedEvent event) {/* ignored - handled by SelectionChangeListener */}
-        @Override
         public void primtivesRemoved(PrimitivesRemovedEvent event) {/* ignored - handled by SelectionChangeListener*/}
     }
 

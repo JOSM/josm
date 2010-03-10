@@ -42,7 +42,6 @@ public class SlippyMapChooser extends JPanel implements DownloadSelection, Prope
         pnlSlippyMapBBoxChooser.setBoundingBox(area);
     }
 
-    @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(BBoxChooser.BBOX_PROP)) {
             if (iGui != null) {

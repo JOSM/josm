@@ -219,7 +219,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         }
     }
 
-    @Override
     public Bounds getBoundingBox() {
         return bbox;
     }
@@ -230,7 +229,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
      * 
      * @param bbox the bounding box. null to reset the bounding box
      */
-    @Override
     public void setBoundingBox(Bounds bbox) {
         if (bbox == null) {
             this.bbox = null;
