@@ -397,4 +397,33 @@ public final class Relation extends OsmPrimitive {
             getDataSet().fireRelationMembersChanged(this);
         }
     }
+
+    /**
+     * Replies true if at least one child primitive is incomplete
+     * 
+     * @return true if at least one child primitive is incomplete
+     */
+    public boolean hasIncompleteMembers() {
+        for (RelationMember rm: members) {
+            if (rm.getMember().isIncomplete()) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Replies a collection with the incomplete children this relation
+     * refers to
+     * 
+     * @return the incomplete children. Empty collection if no children are incomplete.
+     */
+    public Collection<OsmPrimitive> getIncompleteMembers() {
+        Set<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+        for (RelationMember rm: members) {
+            if (!rm.getMember().isIncomplete()) {
+                continue;
+            }
+            ret.add(rm.getMember());
+        }
+        return ret;
+    }
 }

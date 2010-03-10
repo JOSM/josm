@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -312,15 +311,13 @@ public class DataSet implements Cloneable {
     }
 
     /**
-     * Return a list of all selected objects. Even keys are returned.
-     * @return List of all selected objects.
+     * Replies an unmodifiable collection of primitives currently selected
+     * in this dataset
+     * 
+     * @return unmodifiable collection of primitives
      */
     public Collection<OsmPrimitive> getSelected() {
-        // It would be nice to have this be a copy-on-write list
-        // or an Collections.unmodifiableList().  It would be
-        // much faster for large selections.  May users just
-        // call this, and only check the .size().
-        return new ArrayList<OsmPrimitive>(selectedPrimitives);
+        return Collections.unmodifiableSet(selectedPrimitives);
     }
 
     /**
@@ -609,35 +606,6 @@ public class DataSet implements Cloneable {
             a.add(new Area(source.bounds.asRect()));
         }
         return a;
-    }
-
-    // Provide well-defined sorting for collections of OsmPrimitives.
-    // FIXME: probably not a good place to put this code.
-    public static OsmPrimitive[] sort(Collection<? extends OsmPrimitive> list) {
-        OsmPrimitive[] selArr = new OsmPrimitive[list.size()];
-        final HashMap<Object, String> h = new HashMap<Object, String>();
-        selArr = list.toArray(selArr);
-        Arrays.sort(selArr, new Comparator<OsmPrimitive>() {
-            public int compare(OsmPrimitive a, OsmPrimitive b) {
-                if (a.getClass() == b.getClass()) {
-                    String as = h.get(a);
-                    if (as == null) {
-                        as = a.getName() != null ? a.getName() : Long.toString(a.getId());
-                        h.put(a, as);
-                    }
-                    String bs = h.get(b);
-                    if (bs == null) {
-                        bs = b.getName() != null ? b.getName() : Long.toString(b.getId());
-                        h.put(b, bs);
-                    }
-                    int res = as.compareTo(bs);
-                    if (res != 0)
-                        return res;
-                }
-                return a.compareTo(b);
-            }
-        });
-        return selArr;
     }
 
     /**

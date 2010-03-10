@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -673,6 +674,7 @@ public class MapPaintVisitor implements PaintVisitor {
         if (fillAreas > dist && styles != null && styles.hasAreas()) {
             Collection<Way> noAreaWays = new LinkedList<Way>();
 
+            List<Relation> relations = data.searchRelations(bbox);
             /*** RELATIONS ***/
             for (final Relation osm: data.searchRelations(bbox)) {
                 if (osm.isDrawable()) {

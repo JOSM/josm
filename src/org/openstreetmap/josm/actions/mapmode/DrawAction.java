@@ -323,7 +323,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         DataSet ds = getCurrentDataSet();
         Collection<OsmPrimitive> selection = ds.getSelected();
         Collection<Command> cmds = new LinkedList<Command>();
-        Collection<OsmPrimitive> newSelection = ds.getSelected();
+        Collection<OsmPrimitive> newSelection = new LinkedList<OsmPrimitive>(ds.getSelected());
 
         ArrayList<Way> reuseWays = new ArrayList<Way>(),
         replacedWays = new ArrayList<Way>();

@@ -7,6 +7,8 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.Dialog;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.SwingUtilities;
 
@@ -31,21 +33,36 @@ import org.xml.sax.SAXException;
 public class DownloadRelationMemberTask extends PleaseWaitRunnable {
     private boolean cancelled;
     private Exception lastException;
-    private Relation parent;
+    private final Set<Relation> parents = new HashSet<Relation>();
     private Collection<OsmPrimitive> children;
     private OsmDataLayer curLayer;
     private MultiFetchServerObjectReader objectReader;
 
-    public DownloadRelationMemberTask(Relation parent, Collection<OsmPrimitive> children, OsmDataLayer curLayer, MemberTableModel memberTableModel, Dialog dialog) {
+    public DownloadRelationMemberTask(Relation parent, Collection<OsmPrimitive> children, OsmDataLayer curLayer, Dialog dialog) {
         super(tr("Download relation members"), new PleaseWaitProgressMonitor(dialog), false /* don't ignore exception */);
-        this.parent = parent;
+        this.parents.add(parent);
         this.children = children;
         this.curLayer = curLayer;
     }
 
-    public DownloadRelationMemberTask(Relation parent, Collection<OsmPrimitive> children, OsmDataLayer curLayer, MemberTableModel memberTableModel) {
+    public DownloadRelationMemberTask(Relation parent, Collection<OsmPrimitive> children, OsmDataLayer curLayer) {
         super(tr("Download relation members"), false /* don't ignore exception */);
-        this.parent = parent;
+        this.parents.add(parent);
+        this.children = children;
+        this.curLayer = curLayer;
+    }
+
+    /**
+     * Creates a download task for downloading the child primitives {@code children} for all parent
+     * relations in {@code parents}.
+     * 
+     * @param parents the collection of parent relations
+     * @param children the collection of child primitives to download
+     * @param curLayer the current OSM layer
+     */
+    public DownloadRelationMemberTask(Collection<Relation> parents, Collection<OsmPrimitive> children, OsmDataLayer curLayer) {
+        super(tr("Download relation members"), false /* don't ignore exception */);
+        this.parents.addAll(parents);
         this.children = children;
         this.curLayer = curLayer;
     }
@@ -70,6 +87,24 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
         }
     }
 
+    protected String buildDownloadFeedbackMessage() {
+        if (parents.size() == 1) {
+            Relation parent = parents.iterator().next();
+            return trn("Downloading {0} incomplete child of relation ''{1}''",
+                    "Downloading {0} incomplete children of relation ''{1}''",
+                    children.size(),
+                    children.size(),
+                    parent.getDisplayName(DefaultNameFormatter.getInstance())
+            );
+        } else
+            return trn("Downloading {0} incomplete child of {1} parent relations",
+                    "Downloading {0} incomplete children of  {1} parent relations",
+                    children.size(),
+                    children.size(),
+                    parents.size()
+            );
+    }
+
     @Override
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         try {
@@ -79,12 +114,7 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
             }
             objectReader.append(children);
             progressMonitor.indeterminateSubTask(
-                    trn("Downloading {0} incomplete child of relation ''{1}''",
-                            "Downloading {0} incomplete children of relation ''{1}''",
-                            children.size(),
-                            children.size(),
-                            parent.getDisplayName(DefaultNameFormatter.getInstance())
-                    )
+                    buildDownloadFeedbackMessage()
             );
             final DataSet dataSet = objectReader.parseOsm(progressMonitor
                     .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));

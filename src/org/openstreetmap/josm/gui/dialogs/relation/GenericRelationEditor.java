@@ -1240,7 +1240,6 @@ public class GenericRelationEditor extends RelationEditor  {
                     getRelation(),
                     memberTableModel.getIncompleteMemberPrimitives(),
                     getLayer(),
-                    memberTableModel,
                     GenericRelationEditor.this)
             );
         }
@@ -1274,7 +1273,6 @@ public class GenericRelationEditor extends RelationEditor  {
                     getRelation(),
                     memberTableModel.getSelectedIncompleteMemberPrimitives(),
                     getLayer(),
-                    memberTableModel,
                     GenericRelationEditor.this)
             );
         }

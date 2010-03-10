@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -51,6 +52,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
+import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -233,6 +235,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         }
 
         @Override public void mouseClicked(MouseEvent e) {
+            if (Main.main.getEditLayer() == null) return;
             if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
                 if (e.isControlDown()) {
                     editCurrentRelation();
@@ -253,11 +256,13 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             popupMenu.show(displaylist, p.x, p.y-3);
         }
         @Override public void mousePressed(MouseEvent e) {
+            if (Main.main.getEditLayer() == null) return;
             if (e.isPopupTrigger()) {
                 openPopup(e);
             }
         }
         @Override public void mouseReleased(MouseEvent e) {
+            if (Main.main.getEditLayer() == null) return;
             if (e.isPopupTrigger()) {
                 openPopup(e);
             }
@@ -510,6 +515,47 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     }
 
     /**
+     * Action for downloading incomplete members of selected relations
+     * 
+     */
+    class DownloadSelectedIncompleteMembersAction extends AbstractAction implements ListSelectionListener{
+        public DownloadSelectedIncompleteMembersAction() {
+            putValue(SHORT_DESCRIPTION, tr("Download incomplete members of selected relations"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));
+            putValue(NAME, tr("Download incomplete members"));
+            updateEnabledState();
+        }
+
+        public Set<OsmPrimitive> buildSetOfIncompleteMembers(List<Relation> rels) {
+            Set<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+            for(Relation r: rels) {
+                ret.addAll(r.getIncompleteMembers());
+            }
+            return ret;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (!isEnabled())
+                return;
+            List<Relation> rels = model.getSelectedRelationsWithIncompleteMembers();
+            if (rels.isEmpty()) return;
+            Main.worker.submit(new DownloadRelationMemberTask(
+                    rels,
+                    buildSetOfIncompleteMembers(rels),
+                    Main.map.mapView.getEditLayer()
+            ));
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(!model.getSelectedRelationsWithIncompleteMembers().isEmpty());
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+    }
+
+    /**
      * The list model for the list of relations displayed in the relation list
      * dialog.
      *
@@ -622,6 +668,23 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             }
         }
 
+        /**
+         * Replies the list of selected relations with incomplete members
+         * 
+         * @return the list of selected relations with incomplete members
+         */
+        public List<Relation> getSelectedRelationsWithIncompleteMembers() {
+            List<Relation> ret = getSelectedNonNewRelations();
+            Iterator<Relation> it = ret.iterator();
+            while(it.hasNext()) {
+                Relation r = it.next();
+                if (!r.hasIncompleteMembers()) {
+                    it.remove();
+                }
+            }
+            return ret;
+        }
+
         public Object getElementAt(int index) {
             return relations.get(index);
         }
@@ -713,6 +776,14 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             DownloadMembersAction downloadMembersAction = new DownloadMembersAction();
             displaylist.addListSelectionListener(downloadMembersAction);
             add(downloadMembersAction);
+
+            // -- download incomplete members action
+            //
+            DownloadSelectedIncompleteMembersAction downloadSelectedIncompleteMembers = new DownloadSelectedIncompleteMembersAction();
+            displaylist.addListSelectionListener(downloadSelectedIncompleteMembers);
+            add(downloadSelectedIncompleteMembers);
+
+            addSeparator();
 
             // -- select members action
             //

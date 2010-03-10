@@ -54,14 +54,7 @@ public class SearchAction extends JosmAction{
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        SearchSetting s = lastSearch;
-        if (s == null) {
-            s = new SearchSetting();
-        }
-        SearchSetting se = showSearchDialog(s);
-        if(se != null) {
-            searchWithHistory(se);
-        }
+        search();
     }
 
     public static List<String> getSearchExpressionHistory() {
@@ -73,7 +66,9 @@ public class SearchAction extends JosmAction{
     }
 
     public static SearchSetting showSearchDialog(SearchSetting initialValues) {
-
+        if (initialValues == null) {
+            initialValues = new SearchSetting();
+        }
         // -- prepare the combo box with the search expressions
         //
         JLabel label = new JLabel( initialValues instanceof Filter ? tr("Please enter a filter string.") : tr("Please enter a search string."));
@@ -174,6 +169,17 @@ public class SearchAction extends JosmAction{
         initialValues.caseSensitive = caseSensitive.isSelected();
         initialValues.regexSearch = regexSearch.isSelected();
         return initialValues;
+    }
+
+    /**
+     * Launches the dialog for specifying search criteria and runs
+     * a search
+     */
+    public static void search() {
+        SearchSetting se = showSearchDialog(lastSearch);
+        if(se != null) {
+            searchWithHistory(se);
+        }
     }
 
     /**

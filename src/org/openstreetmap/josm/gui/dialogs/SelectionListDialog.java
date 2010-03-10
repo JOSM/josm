@@ -1,26 +1,32 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.dialogs;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
+import java.util.List;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
+import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
+import javax.swing.DefaultListSelectionModel;
+import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -28,155 +34,161 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicArrowButton;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
-import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.data.SelectionChangedListener;
-import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSetListener;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
+import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
+import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
+import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
+import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.MapView.EditLayerChangeListener;
+import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
- * A small tool dialog for displaying the current selection. The selection manager
- * respects clicks into the selection list. Ctrl-click will remove entries from
- * the list while single click will make the clicked entry the only selection.
- *
- * @author imi
+ * A small tool dialog for displaying the current selection.
+ * 
  */
-public class SelectionListDialog extends ToggleDialog implements SelectionChangedListener, MapView.EditLayerChangeListener {
+public class SelectionListDialog extends ToggleDialog  {
 
-    private static final int SELECTION_HISTORY_SIZE = 10;
-
-    /**
-     * The selection's list data.
-     */
-    private final DefaultListModel list = new DefaultListModel();
-
-    private LinkedList<Collection<? extends OsmPrimitive>> selectionHistory;
-
-    /**
-     * The display list.
-     */
-    private JList displaylist = new JList(list);
-    private SideButton selectButton;
-    private SideButton searchButton;
-    private JPopupMenu popupMenu;
-    private JMenuItem zoomToElement;
+    private JList lstPrimitives;
+    private SelectionListModel model;
 
     private SelectAction actSelect;
+    private SearchAction actSearch;
+    private ZoomToJOSMSelectionAction actZoomToJOSMSelection;
+    private ZoomToListSelection actZoomToListSelection;
+    private DownloadSelectedIncompleteMembersAction actDownloadSelectedIncompleteMembers;
 
     /**
-     * If the selection changed event is triggered with newSelection equals
-     * this element, the newSelection will not be added to the selection history
+     * Builds the panel with the list of selected OSM primitives
+     * 
+     * @return the panel with the list of selected OSM primitives
      */
-    private Collection<? extends OsmPrimitive> historyIgnoreSelection = null;
+    protected JPanel buildListPanel() {
+        JPanel pnl = new JPanel(new BorderLayout());
+        DefaultListSelectionModel selectionModel  = new DefaultListSelectionModel();
+        model = new SelectionListModel(selectionModel);
+        lstPrimitives = new JList(model);
+        lstPrimitives.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        lstPrimitives.setSelectionModel(selectionModel);
+        lstPrimitives.setCellRenderer(new OsmPrimitivRenderer());
+        pnl.add(new JScrollPane(lstPrimitives), BorderLayout.CENTER);
 
-    public SelectionListDialog() {
-        super(tr("Current Selection"), "selectionlist", tr("Open a selection list window."),
-                Shortcut.registerShortcut("subwindow:selection", tr("Toggle: {0}", tr("Current Selection")), KeyEvent.VK_T, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150, true);
+        return pnl;
+    }
 
-        selectionHistory = new LinkedList<Collection<? extends OsmPrimitive>>();
-        popupMenu = new JPopupMenu();
-        displaylist.setCellRenderer(new OsmPrimitivRenderer());
-        displaylist.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        displaylist.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-                    updateMap();
-                }
-            }
+    /**
+     * Builds the row of action buttons at the bottom of this dialog
+     * 
+     * @return the panel
+     */
+    protected JPanel buildActionPanel() {
+        JPanel pnl = new  JPanel(new GridLayout(1,2));
 
-            @Override
-            public void mousePressed(MouseEvent e) {
-                showPopupMenu(e);
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                showPopupMenu(e);
-            }
-
-        });
-
-        add(new JScrollPane(displaylist), BorderLayout.CENTER);
-
-        JPanel buttonPanel = getButtonPanel(2);
-        selectButton = new SideButton(actSelect = new SelectAction());
-        buttonPanel.add(selectButton);
+        // the select action
+        final JButton selectButton = new SideButton(actSelect = new SelectAction());
+        lstPrimitives.getSelectionModel().addListSelectionListener(actSelect);
+        pnl.add(selectButton);
         BasicArrowButton selectionHistoryMenuButton = createArrowButton(selectButton);
         selectionHistoryMenuButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                showSelectionHistoryMenu();
-            }
-        });
-        add(buttonPanel, BorderLayout.SOUTH);
-
-        zoomToElement = new JMenuItem(tr("Zoom to selected element(s)"));
-        zoomToElement.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                zoomToSelectedElement();
+                SelectionHistoryPopup.launch(selectButton, model.getSelectionHistory());
             }
         });
 
-        searchButton = new SideButton(marktr("Search"), "search", "SelectionList", tr("Search for objects."),
-                Main.main.menu.search);
-        buttonPanel.add(searchButton);
+        // the search button
+        final JButton searchButton = new SideButton(actSearch = new SearchAction());
+        pnl.add(searchButton);
 
         BasicArrowButton searchHistoryMenuButton = createArrowButton(searchButton);
         searchHistoryMenuButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                showSearchHistoryMenu();
+                SearchPopupMenu.launch(searchButton);
             }
         });
 
-        popupMenu.add(zoomToElement);
-        JMenuItem zoomToSelection = new JMenuItem(tr("Zoom to selection"));
-        zoomToSelection.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                zoomToSelection();
-            }
-        });
-        popupMenu.add(zoomToSelection);
+        return pnl;
+    }
 
-        if (Main.main.getCurrentDataSet() != null) {
-            selectionChanged(Main.main.getCurrentDataSet().getSelected());
-        }
+    /**
+     * Builds the content panel for this dialog
+     * 
+     * @return the content panel
+     */
+    protected JPanel buildContentPanel() {
+        JPanel pnl = new JPanel(new BorderLayout());
+        pnl.add(buildListPanel(), BorderLayout.CENTER);
+        pnl.add(buildActionPanel(), BorderLayout.SOUTH);
+        return pnl;
+    }
 
+    public SelectionListDialog() {
+        super(tr("Current Selection"), "selectionlist", tr("Open a selection list window."),
+                Shortcut.registerShortcut("subwindow:selection", tr("Toggle: {0}", tr("Current Selection")), KeyEvent.VK_T, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT),
+                150, // default height
+                true // default is "show dialog"
+        );
+
+        add(buildContentPanel(), BorderLayout.CENTER);
+        model.addListDataListener(new TitleUpdater());
+        actZoomToJOSMSelection = new ZoomToJOSMSelectionAction();
+        model.addListDataListener(actZoomToJOSMSelection);
+
+        actZoomToListSelection = new ZoomToListSelection();
+        lstPrimitives.getSelectionModel().addListSelectionListener(actZoomToListSelection);
+
+        actDownloadSelectedIncompleteMembers = new DownloadSelectedIncompleteMembersAction();
+        lstPrimitives.getSelectionModel().addListSelectionListener(actDownloadSelectedIncompleteMembers);
+
+        lstPrimitives.addMouseListener(new SelectionPopupMenuLauncher());
     }
 
     @Override
     public void showNotify() {
-        SelectionEventManager.getInstance().addSelectionListener(this, FireMode.IN_EDT_CONSOLIDATED);
-        MapView.addEditLayerChangeListener(this);
-        MapView.addEditLayerChangeListener(actSelect);
-        updateSelection();
+        MapView.addEditLayerChangeListener(model);
+        SelectionEventManager.getInstance().addSelectionListener(model, FireMode.IN_EDT_CONSOLIDATED);
+        DatasetEventManager.getInstance().addDatasetListener(model, FireMode.IN_EDT);
+        MapView.addEditLayerChangeListener(actSearch);
     }
 
     @Override
     public void hideNotify() {
-        SelectionEventManager.getInstance().removeSelectionListener(this);
-        MapView.removeEditLayerChangeListener(this);
-        MapView.removeEditLayerChangeListener(actSelect);
-        updateTitle(0, 0, 0);
+        MapView.removeEditLayerChangeListener(actSearch);
+        MapView.removeEditLayerChangeListener(model);
+        SelectionEventManager.getInstance().removeSelectionListener(model);
+        DatasetEventManager.getInstance().removeDatasetListener(model);
     }
 
-    private BasicArrowButton createArrowButton(SideButton parentButton) {
+    private BasicArrowButton createArrowButton(JButton parentButton) {
         BasicArrowButton arrowButton = new BasicArrowButton(SwingConstants.SOUTH, null, null, Color.BLACK, null);
         arrowButton.setBorder(BorderFactory.createEmptyBorder());
         parentButton.setLayout(new BorderLayout());
@@ -184,179 +196,434 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
         return arrowButton;
     }
 
-    @Override
-    public void setVisible(boolean b) {
-        super.setVisible(b);
-        if (b && Main.main.getCurrentDataSet() != null) {
-            selectionChanged(Main.main.getCurrentDataSet().getSelected());
-        }
-    }
-
-    protected void showPopupMenu(MouseEvent e) {
-        if (e.isPopupTrigger()) {
-            zoomToElement.setVisible(displaylist.getSelectedIndex() >= 0);
-            popupMenu.show(e.getComponent(), e.getX(), e.getY());
-        }
-    }
-
-    public void zoomToSelection() {
-        new AutoScaleAction("selection").actionPerformed(null);
-    }
-
     /**
-     * Zooms to the element(s) selected in {@link #displaylist}
+     * The popup menu launcher
      */
-    public void zoomToSelectedElement() {
-        BoundingXYVisitor box = new BoundingXYVisitor();
-        int[] selected = displaylist.getSelectedIndices();
-        if (selected.length == 0)
-            return;
-        for (int i = 0; i < selected.length; i++) {
-            Object o = list.get(selected[i]);
-            if (o instanceof OsmPrimitive) {
-                ((OsmPrimitive) o).visit(box);
+    class SelectionPopupMenuLauncher extends PopupMenuLauncher {
+        private SelectionPopup popup = new SelectionPopup();
+
+        @Override
+        public void launch(MouseEvent evt) {
+            if (model.getSelected().isEmpty()) {
+                int idx = lstPrimitives.locationToIndex(evt.getPoint());
+                if (idx < 0) return;
+                model.setSelected(Collections.singleton((OsmPrimitive)model.getElementAt(idx)));
             }
-        }
-        if (box.getBounds() == null)
-            return;
-        box.enlargeBoundingBox();
-        Main.map.mapView.recalculateCenterScale(box);
-    }
-
-    private void showSelectionHistoryMenu() {
-        if (selectionHistory.size() == 0)
-            return;
-        JPopupMenu historyMenu = new JPopupMenu();
-        for (Collection<? extends OsmPrimitive> sel : selectionHistory) {
-            SelectionMenuItem item = new SelectionMenuItem(sel);
-            historyMenu.add(item);
-        }
-        Rectangle r = selectButton.getBounds();
-        historyMenu.show(selectButton, r.x, r.y + r.height);
-    }
-
-    private void showSearchHistoryMenu() {
-        if (SearchAction.searchHistory.size() == 0)
-            return;
-        JPopupMenu historyMenu = new JPopupMenu();
-        for (SearchAction.SearchSetting s : SearchAction.searchHistory) {
-            SearchMenuItem item = new SearchMenuItem(s);
-            historyMenu.add(item);
-        }
-        Rectangle r = searchButton.getBounds();
-        historyMenu.show(searchButton, r.x, r.y + r.height);
-    }
-
-    /**
-     * Called when the selection in the dataset changed.
-     * @param newSelection The new selection array.
-     */
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        if (list == null || !isVisible())
-            return; // selection changed may be received in base class constructor before init
-        OsmPrimitive selArr[] = DataSet.sort(newSelection);
-        list.setSize(selArr.length);
-        int i = 0;
-        for (OsmPrimitive osm : selArr) {
-            list.setElementAt(osm, i++);
-        }
-
-        int ways = 0;
-        int nodes = 0;
-        int relations = 0;
-        for (OsmPrimitive o : newSelection) {
-            if (o instanceof Way) {
-                ways++;
-            } else if (o instanceof Node) {
-                nodes++;
-            } else if (o instanceof Relation) {
-                relations++;
-            }
-        }
-
-        updateTitle(nodes, ways, relations);
-
-        if (selectionHistory != null && newSelection.size() > 0 && !newSelection.equals(historyIgnoreSelection)) {
-            historyIgnoreSelection = null;
-            try {
-                // Check if the newSelection has already been added to the history
-                Collection<? extends OsmPrimitive> first = selectionHistory.getFirst();
-                if (first.equals(newSelection))
-                    return;
-            } catch (NoSuchElementException e) {
-            }
-            selectionHistory.addFirst(newSelection);
-            while (selectionHistory.size() > SELECTION_HISTORY_SIZE) {
-                selectionHistory.removeLast();
-            }
-        }
-    }
-
-    private void updateTitle(int nodes, int ways, int relations) {
-        if( (nodes+ways+relations) != 0) {
-            setTitle(tr("Sel.: Rel.:{0} / Ways:{1} / Nodes:{2}", relations, ways, nodes));
-        } else {
-            setTitle(tr("Selection"));
+            popup.show(lstPrimitives, evt.getX(), evt.getY());
         }
     }
 
     /**
-     * Sets the selection of the map to the current selected items.
+     * The popup menu for the selection list
      */
-    public void updateMap() {
-        Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
-        for (int i = 0; i < list.getSize(); ++i)
-            if (displaylist.isSelectedIndex(i)) {
-                sel.add((OsmPrimitive) list.get(i));
-            }
-        Main.main.getCurrentDataSet().setSelected(sel);
+    class SelectionPopup extends JPopupMenu {
+        public SelectionPopup() {
+            add(actZoomToJOSMSelection);
+            add(actZoomToListSelection);
+            addSeparator();
+            add(actDownloadSelectedIncompleteMembers);
+        }
     }
 
     /**
-     * A specialized {@link JMenuItem} for presenting one entry of the selection history
-     *
-     * @author Jan Peter Stotz
+     * Updates the dialog title with a summary of the current JOSM selection
      */
-    protected class SelectionMenuItem extends JMenuItem implements ActionListener {
-        protected Collection<? extends OsmPrimitive> sel;
+    class TitleUpdater implements ListDataListener {
+        protected void updateTitle() {
+            setTitle(model.getJOSMSelectionSummary());
+        }
 
-        public SelectionMenuItem(Collection<? extends OsmPrimitive> sel) {
-            super();
-            this.sel = sel;
-            int ways = 0;
-            int nodes = 0;
-            int relations = 0;
-            for (OsmPrimitive o : sel) {
-                if (o instanceof Way) {
-                    ways++;
-                } else if (o instanceof Node) {
-                    nodes++;
-                } else if (o instanceof Relation) {
-                    relations++;
-                }
-            }
-            String text = "";
-            if(ways != 0) {
-                text += (text.length() > 0 ? ", " : "")
-                + trn("{0} way", "{0} ways", ways, ways);
-            }
-            if(nodes != 0) {
-                text += (text.length() > 0 ? ", " : "")
-                + trn("{0} node", "{0} nodes", nodes, nodes);
-            }
-            if(relations != 0) {
-                text += (text.length() > 0 ? ", " : "")
-                + trn("{0} relation", "{0} relations", relations, relations);
-            }
-            setText(tr("Selection: {0}", text));
-            addActionListener(this);
+        public void contentsChanged(ListDataEvent e) {
+            updateTitle();
+        }
+
+        public void intervalAdded(ListDataEvent e) {
+            updateTitle();
+        }
+
+        public void intervalRemoved(ListDataEvent e) {
+            updateTitle();
+        }
+    }
+
+    /**
+     * Launches the search dialog
+     */
+    class SearchAction extends AbstractAction implements EditLayerChangeListener {
+        public SearchAction() {
+            putValue(NAME, tr("Search"));
+            putValue(SHORT_DESCRIPTION,   tr("Search for objects"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs","select"));
+            updateEnabledState();
         }
 
         public void actionPerformed(ActionEvent e) {
-            historyIgnoreSelection = sel;
-            Main.main.getCurrentDataSet().setSelected(sel);
+            if (!isEnabled()) return;
+            org.openstreetmap.josm.actions.search.SearchAction.search();
         }
 
+        public void updateEnabledState() {
+            setEnabled(Main.main != null && Main.main.getEditLayer() != null);
+        }
+
+        @Override
+        public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
+            updateEnabledState();
+        }
+    }
+
+    /**
+     * Sets the current JOSM selection to the OSM primitives selected in the list
+     * of this dialog
+     */
+    class SelectAction extends AbstractAction implements ListSelectionListener {
+        public SelectAction() {
+            putValue(NAME, tr("Select"));
+            putValue(SHORT_DESCRIPTION,  tr("Set the selected elements on the map to the selected items in the list above."));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs","select"));
+            updateEnabledState();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Collection<OsmPrimitive> sel = model.getSelected();
+            if (sel.isEmpty())return;
+            if (Main.map == null || Main.map.mapView == null || Main.map.mapView.getEditLayer() == null) return;
+            Main.map.mapView.getEditLayer().data.setSelected(sel);
+        }
+
+        public void updateEnabledState() {
+            setEnabled(!model.getSelected().isEmpty());
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+    }
+
+    /**
+     * The action for zooming to the primitives in the current JOSM selection
+     * 
+     */
+    class ZoomToJOSMSelectionAction extends AbstractAction implements ListDataListener {
+
+        public ZoomToJOSMSelectionAction() {
+            putValue(NAME,tr("Zoom to selection"));
+            putValue(SHORT_DESCRIPTION, tr("Zoom to selection"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/autoscale", "selection"));
+            updateEnabledState();
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            new AutoScaleAction("selection").autoScale();
+        }
+
+        public void updateEnabledState() {
+            setEnabled(model.getSize() > 0);
+        }
+
+        public void contentsChanged(ListDataEvent e) {
+            updateEnabledState();
+        }
+
+        public void intervalAdded(ListDataEvent e) {
+            updateEnabledState();
+        }
+
+        public void intervalRemoved(ListDataEvent e) {
+            updateEnabledState();
+        }
+    }
+
+    /**
+     * The action for zooming to the primitives which are currently selected in
+     * the list displaying the JOSM selection
+     * 
+     */
+    class ZoomToListSelection extends AbstractAction implements ListSelectionListener{
+        public ZoomToListSelection() {
+            putValue(NAME, tr("Zoom to selected element(s)"));
+            putValue(SHORT_DESCRIPTION, tr("Zoom to selected element(s)"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/autoscale", "selection"));
+            updateEnabledState();
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            BoundingXYVisitor box = new BoundingXYVisitor();
+            Collection<OsmPrimitive> sel = model.getSelected();
+            if (sel.isEmpty()) return;
+            box.computeBoundingBox(sel);
+            if (box.getBounds() == null)
+                return;
+            box.enlargeBoundingBox();
+            Main.map.mapView.recalculateCenterScale(box);
+        }
+
+        public void updateEnabledState() {
+            setEnabled(!model.getSelected().isEmpty());
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+    }
+
+    /**
+     * The list model for the list of OSM primitives in the current JOSM selection.
+     * 
+     * The model also maintains a history of the last {@see SelectionListModel#SELECTION_HISTORY_SIZE}
+     * JOSM selection.
+     * 
+     */
+    static private class SelectionListModel extends AbstractListModel implements EditLayerChangeListener, SelectionChangedListener, DataSetListener{
+
+        private static final int SELECTION_HISTORY_SIZE = 10;
+
+        private final LinkedList<Collection<? extends OsmPrimitive>> history = new LinkedList<Collection<? extends OsmPrimitive>>();
+        private final List<OsmPrimitive> selection = new ArrayList<OsmPrimitive>();
+        private DefaultListSelectionModel selectionModel;
+
+        /**
+         * Constructor
+         * @param selectionModel the selection model used in the list
+         */
+        public SelectionListModel(DefaultListSelectionModel selectionModel) {
+            this.selectionModel = selectionModel;
+        }
+
+        /**
+         * Replies a summary of the current JOSM selection
+         * 
+         * @return a summary of the current JOSM selection
+         */
+        public String getJOSMSelectionSummary() {
+            if (selection.isEmpty()) return tr("Selection");
+            int numNodes = 0;
+            int numWays = 0;
+            int numRelations = 0;
+            for (OsmPrimitive p: selection) {
+                switch(p.getType()) {
+                case NODE: numNodes++; break;
+                case WAY: numWays++; break;
+                case RELATION: numRelations++; break;
+                }
+            }
+            return tr("Sel.: Rel.:{0} / Ways:{1} / Nodes:{2}", numRelations, numWays, numNodes);
+        }
+
+        /**
+         * Remembers a JOSM selection the history of JOSM selections
+         * 
+         * @param selection the JOSM selection. Ignored if null or empty.
+         */
+        public void remember(Collection<? extends OsmPrimitive> selection) {
+            if (selection == null)return;
+            if (selection.isEmpty())return;
+            if (history.isEmpty()) {
+                history.add(selection);
+                return;
+            }
+            if (history.getFirst().equals(selection)) return;
+            history.addFirst(selection);
+            while (history.size() > SELECTION_HISTORY_SIZE) {
+                history.removeLast();
+            }
+        }
+
+        /**
+         * Replies the history of JOSM selections
+         * 
+         * @return
+         */
+        public List<Collection<? extends OsmPrimitive>> getSelectionHistory() {
+            return history;
+        }
+
+        @Override
+        public Object getElementAt(int index) {
+            return selection.get(index);
+        }
+
+        @Override
+        public int getSize() {
+            return selection.size();
+        }
+
+        /**
+         * Replies the collection of OSM primitives currently selected in the view
+         * of this model
+         * 
+         * @return
+         */
+        public Collection<OsmPrimitive> getSelected() {
+            Set<OsmPrimitive> sel = new HashSet<OsmPrimitive>();
+            for(int i=0; i< getSize();i++) {
+                if (selectionModel.isSelectedIndex(i)) {
+                    sel.add(selection.get(i));
+                }
+            }
+            return sel;
+        }
+
+        /**
+         * Sets the OSM primitives to be selected in the view of this model
+         * 
+         * @param sel the collection of primitives to select
+         */
+        public void setSelected(Collection<OsmPrimitive> sel) {
+            selectionModel.clearSelection();
+            if (sel == null) return;
+            for (OsmPrimitive p: sel){
+                int i = selection.indexOf(p);
+                if (i >= 0){
+                    selectionModel.addSelectionInterval(i, i);
+                }
+            }
+        }
+
+        @Override
+        protected void fireContentsChanged(Object source, int index0, int index1) {
+            Collection<OsmPrimitive> sel = getSelected();
+            super.fireContentsChanged(source, index0, index1);
+            setSelected(sel);
+        }
+
+        /**
+         * Sets the collection of currently selected OSM objects
+         * 
+         * @param selection the collection of currently selected OSM objects
+         */
+        public void setJOSMSelection(Collection<? extends OsmPrimitive> selection) {
+            this.selection.clear();
+            if (selection == null) {
+                fireContentsChanged(this, 0, getSize());
+                return;
+            }
+            this.selection.addAll(selection);
+            sort();
+            fireContentsChanged(this, 0, getSize());
+            remember(selection);
+        }
+
+        /**
+         * Sorts the primitives in the list
+         */
+        public void sort() {
+            Collections.sort(
+                    this.selection,
+                    new Comparator<OsmPrimitive>() {
+                        NameFormatter nf = DefaultNameFormatter.getInstance();
+                        @Override
+                        public int compare(OsmPrimitive o1, OsmPrimitive o2) {
+
+                            if (o1.getType() != o2.getType())
+                                return o1.getType().compareTo(o2.getType());
+                            return o1.getDisplayName(nf).compareTo(o2.getDisplayName(nf));
+                        }
+                    }
+            );
+        }
+
+        /**
+         * Triggers a refresh of the view for all primitives in {@code toUpdate}
+         * which are currently displayed in the view
+         * 
+         * @param toUpdate the collection of primitives to update
+         */
+        public void update(Collection<? extends OsmPrimitive> toUpdate) {
+            if (toUpdate == null) return;
+            if (toUpdate.isEmpty()) return;
+            Collection<OsmPrimitive> sel = getSelected();
+            for (OsmPrimitive p: toUpdate){
+                int i = selection.indexOf(p);
+                if (i >= 0) {
+                    super.fireContentsChanged(this, i,i);
+                }
+            }
+            setSelected(sel);
+        }
+
+        /**
+         * Replies the list of selected relations with incomplete members
+         * 
+         * @return the list of selected relations with incomplete members
+         */
+        public List<Relation> getSelectedRelationsWithIncompleteMembers() {
+            List<Relation> ret = new LinkedList<Relation>();
+            for(int i=0; i<getSize(); i++) {
+                if (!selectionModel.isSelectedIndex(i)) {
+                    continue;
+                }
+                OsmPrimitive p = selection.get(i);
+                if (! (p instanceof Relation)) {
+                    continue;
+                }
+                if (p.isNew()) {
+                    continue;
+                }
+                Relation r = (Relation)p;
+                if (r.hasIncompleteMembers()) {
+                    ret.add(r);
+                }
+            }
+            return ret;
+        }
+
+        /* ------------------------------------------------------------------------ */
+        /* interface EditLayerChangeListener                                        */
+        /* ------------------------------------------------------------------------ */
+        public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
+            if (newLayer == null) {
+                setJOSMSelection(null);
+            } else {
+                setJOSMSelection(newLayer.data.getSelected());
+            }
+        }
+
+        /* ------------------------------------------------------------------------ */
+        /* interface SelectionChangeListener                                        */
+        /* ------------------------------------------------------------------------ */
+        public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+            setJOSMSelection(newSelection);
+        }
+
+        /* ------------------------------------------------------------------------ */
+        /* interface DataSetListener                                                */
+        /* ------------------------------------------------------------------------ */
+        public void dataChanged(DataChangedEvent event) {
+            // refresh the whole list
+            fireContentsChanged(this, 0, getSize());
+        }
+
+        public void nodeMoved(NodeMovedEvent event) {
+            // may influence the display name of primitives, update the data
+            update(event.getPrimitives());
+        }
+
+        public void otherDatasetChange(AbstractDatasetChangedEvent event) {
+            // may influence the display name of primitives, update the data
+            update(event.getPrimitives());
+        }
+
+        public void relationMembersChanged(RelationMembersChangedEvent event) {
+            // may influence the display name of primitives, update the data
+            update(event.getPrimitives());
+        }
+
+        public void tagsChanged(TagsChangedEvent event) {
+            // may influence the display name of primitives, update the data
+            update(event.getPrimitives());
+        }
+
+        public void wayNodesChanged(WayNodesChangedEvent event) {
+            // may influence the display name of primitives, update the data
+            update(event.getPrimitives());
+        }
+
+        @Override
+        public void primtivesAdded(PrimitivesAddedEvent event) {/* ignored - handled by SelectionChangeListener */}
+        @Override
+        public void primtivesRemoved(PrimitivesRemovedEvent event) {/* ignored - handled by SelectionChangeListener*/}
     }
 
     /**
@@ -374,42 +641,131 @@ public class SelectionListDialog extends ToggleDialog implements SelectionChange
         }
 
         public void actionPerformed(ActionEvent e) {
-            SearchAction.searchWithoutHistory(s);
-        }
-
-    }
-
-    private void updateSelection() {
-        if (Main.main.getCurrentDataSet() == null) {
-            selectionChanged(Collections.<OsmPrimitive>emptyList());
-        } else {
-            selectionChanged(Main.main.getCurrentDataSet().getSelected());
+            org.openstreetmap.josm.actions.search.SearchAction.searchWithoutHistory(s);
         }
     }
 
-    public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
-        updateSelection();
+    /**
+     * The popup menu for the search history entries
+     * 
+     */
+    protected static class SearchPopupMenu extends JPopupMenu {
+        static public void launch(Component parent) {
+            if (org.openstreetmap.josm.actions.search.SearchAction.searchHistory.isEmpty())
+                return;
+            JPopupMenu menu = new SearchPopupMenu();
+            Rectangle r = parent.getBounds();
+            menu.show(parent, r.x, r.y + r.height);
+        }
+
+        public SearchPopupMenu() {
+            for (SearchSetting ss: org.openstreetmap.josm.actions.search.SearchAction.searchHistory) {
+                add(new SearchMenuItem(ss));
+            }
+        }
     }
 
-    class SelectAction extends AbstractAction implements EditLayerChangeListener {
-        public SelectAction() {
-            putValue(NAME, tr("Select"));
-            putValue(SHORT_DESCRIPTION,  tr("Set the selected elements on the map to the selected items in the list above."));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs","select"));
+    /**
+     * A specialized {@link JMenuItem} for presenting one entry of the selection history
+     *
+     * @author Jan Peter Stotz
+     */
+    protected static class SelectionMenuItem extends JMenuItem implements ActionListener {
+        protected Collection<? extends OsmPrimitive> sel;
+
+        public SelectionMenuItem(Collection<? extends OsmPrimitive> sel) {
+            super();
+            this.sel = sel;
+            int ways = 0;
+            int nodes = 0;
+            int relations = 0;
+            for (OsmPrimitive o : sel) {
+                if (o instanceof Way) {
+                    ways++;
+                } else if (o instanceof Node) {
+                    nodes++;
+                } else if (o instanceof Relation) {
+                    relations++;
+                }
+            }
+            StringBuffer text = new StringBuffer();
+            if(ways != 0) {
+                text.append(text.length() > 0 ? ", " : "")
+                .append(trn("{0} way", "{0} ways", ways, ways));
+            }
+            if(nodes != 0) {
+                text.append(text.length() > 0 ? ", " : "")
+                .append(trn("{0} node", "{0} nodes", nodes, nodes));
+            }
+            if(relations != 0) {
+                text.append(text.length() > 0 ? ", " : "")
+                .append(trn("{0} relation", "{0} relations", relations, relations));
+            }
+            setText(tr("Selection: {0}", text));
+            addActionListener(this);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            Main.main.getCurrentDataSet().setSelected(sel);
+        }
+    }
+
+    /**
+     * The popup menue for the JOSM selection history entries
+     *
+     */
+    protected static class SelectionHistoryPopup extends JPopupMenu {
+        static public void launch(Component parent, Collection<Collection<? extends OsmPrimitive>> history) {
+            if (history == null || history.isEmpty()) return;
+            JPopupMenu menu = new SelectionHistoryPopup(history);
+            Rectangle r = parent.getBounds();
+            menu.show(parent, r.x, r.y + r.height);
+        }
+
+        public SelectionHistoryPopup(Collection<Collection<? extends OsmPrimitive>> history) {
+            for (Collection<? extends OsmPrimitive> sel : history) {
+                add(new SelectionMenuItem(sel));
+            }
+        }
+    }
+
+    /**
+     * Action for downloading incomplete members of selected relations
+     * 
+     */
+    class DownloadSelectedIncompleteMembersAction extends AbstractAction implements ListSelectionListener{
+        public DownloadSelectedIncompleteMembersAction() {
+            putValue(SHORT_DESCRIPTION, tr("Download incomplete members of selected relations"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));
+            putValue(NAME, tr("Download incomplete members"));
             updateEnabledState();
         }
 
-        @Override
+        public Set<OsmPrimitive> buildSetOfIncompleteMembers(List<Relation> rels) {
+            Set<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+            for(Relation r: rels) {
+                ret.addAll(r.getIncompleteMembers());
+            }
+            return ret;
+        }
+
         public void actionPerformed(ActionEvent e) {
-            updateMap();
+            if (!isEnabled())
+                return;
+            List<Relation> rels = model.getSelectedRelationsWithIncompleteMembers();
+            if (rels.isEmpty()) return;
+            Main.worker.submit(new DownloadRelationMemberTask(
+                    rels,
+                    buildSetOfIncompleteMembers(rels),
+                    Main.map.mapView.getEditLayer()
+            ));
         }
 
-        public void updateEnabledState() {
-            setEnabled(Main.main != null && Main.main.getEditLayer() != null);
+        protected void updateEnabledState() {
+            setEnabled(!model.getSelectedRelationsWithIncompleteMembers().isEmpty());
         }
 
-        @Override
-        public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
+        public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
         }
     }
