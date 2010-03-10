@@ -193,7 +193,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
             // make the each dimension 90% of the absolute display size
             w = iScreenSize.width * 90 / 100;
             h = iScreenSize.height * 90 / 100;
-            //iDownloadDialogDimension = iGui.getSize();
         }
         // shrink
         else {
@@ -202,8 +201,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
             h = iDownloadDialogDimension.height;
             iDownloadDialogDimension = null;
         }
-        // resize and center the DownloadDialog
-        //iGui.setBounds((iScreenSize.width - w) / 2, (iScreenSize.height - h) / 2, w, h);
 
         repaint();
     }
@@ -227,19 +224,21 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         return bbox;
     }
 
+    /**
+     * Sets the current bounding box in this bbox chooser without
+     * emiting a property change event.
+     * 
+     * @param bbox the bounding box. null to reset the bounding box
+     */
     @Override
     public void setBoundingBox(Bounds bbox) {
         if (bbox == null) {
-            Bounds oldValue = this.bbox;
             this.bbox = null;
-            firePropertyChange(BBOX_PROP, oldValue, this.bbox);
             return;
         }
         // test if a bounding box has been set
         if (bbox.getMin().lat() == 0.0 && bbox.getMin().lon() == 0.0 && bbox.getMax().lat() == 0.0 && bbox.getMax().lon() == 0.0) {
-            Bounds oldValue = this.bbox;
             this.bbox = null;
-            firePropertyChange(BBOX_PROP, oldValue, this.bbox);
         }
 
         int y1 = OsmMercator.LatToY(bbox.getMin().lat(), MAX_ZOOM);
@@ -260,9 +259,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         setMapMarkerList(marker);
         setDisplayToFitMapMarkers();
         zoomOut();
-
-        Bounds oldValue = this.bbox;
         this.bbox = bbox;
-        firePropertyChange(BBOX_PROP, oldValue, this.bbox);
     }
 }

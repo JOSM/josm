@@ -129,7 +129,7 @@ public class DownloadDialog extends JDialog  {
 
         Font labelFont = sizeCheck.getFont();
         sizeCheck.setFont(labelFont.deriveFont(Font.PLAIN, labelFont.getSize()));
-        
+
         cbNewLayer = new JCheckBox(tr("Download as new layer"));
         cbNewLayer.setToolTipText(tr("<html>Select to download data into a new data layer.<br>"
                 +"Unselect to download into the currently active data layer.</html>"));
