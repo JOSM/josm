@@ -12,6 +12,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +35,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
@@ -170,6 +172,7 @@ public class SelectionListDialog extends ToggleDialog  {
         lstPrimitives.getSelectionModel().addListSelectionListener(actDownloadSelectedIncompleteMembers);
 
         lstPrimitives.addMouseListener(new SelectionPopupMenuLauncher());
+        lstPrimitives.addMouseListener(new DblClickHandler());
     }
 
     @Override
@@ -197,6 +200,21 @@ public class SelectionListDialog extends ToggleDialog  {
         parentButton.setLayout(new BorderLayout());
         parentButton.add(arrowButton, BorderLayout.EAST);
         return arrowButton;
+    }
+
+    /**
+     * Responds to double clicks on the list of selected objects
+     */
+    class DblClickHandler extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() < 2 || ! SwingUtilities.isLeftMouseButton(e)) return;
+            int idx = lstPrimitives.locationToIndex(e.getPoint());
+            if (idx < 0) return;
+            OsmDataLayer layer = Main.main.getEditLayer();
+            if(layer == null) return;
+            layer.data.setSelected(Collections.singleton((OsmPrimitive)model.getElementAt(idx)));
+        }
     }
 
     /**
