@@ -181,6 +181,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     private BufferedImage offscreenBuffer;
     // Layers that wasn't changed since last paint
     private final List<Layer> nonChangedLayers = new ArrayList<Layer>();
+    private int lastViewID;
 
     public MapView() {
         addComponentListener(new ComponentAdapter(){
@@ -470,7 +471,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             }
         }
 
-        boolean canUseBuffer = nonChangedLayers.size() <= nonChangedLayersCount;
+        boolean canUseBuffer = nonChangedLayers.size() <= nonChangedLayersCount && lastViewID == getViewID();
         if (canUseBuffer) {
             for (int i=0; i<nonChangedLayers.size(); i++) {
                 if (visibleLayers.get(i) != nonChangedLayers.get(i)) {
@@ -508,6 +509,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         for (int i=0; i<nonChangedLayersCount; i++) {
             nonChangedLayers.add(visibleLayers.get(i));
         }
+        lastViewID = getViewID();
 
         tempG.drawImage(offscreenBuffer, 0, 0, null);
 

@@ -90,7 +90,6 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     private boolean requiresUploadToServer = false;
     private boolean isChanged = true;
     private int highlightUpdateCount;
-    private int viewId;
 
     protected void setRequiresSaveToFile(boolean newValue) {
         boolean oldValue = requiresSaveToFile;
@@ -225,7 +224,6 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     @Override public void paint(final Graphics2D g, final MapView mv, Bounds box) {
         isChanged = false;
         highlightUpdateCount = data.getHighlightUpdateCount();
-        viewId = Main.map.mapView.getViewID();
 
         boolean active = mv.getActiveLayer() == this;
         boolean inactive = !active && Main.pref.getBoolean("draw.data.inactive_color", true);
@@ -725,7 +723,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
 
     @Override
     public boolean isChanged() {
-        return isChanged || highlightUpdateCount != data.getHighlightUpdateCount() || viewId != Main.map.mapView.getViewID();
+        return isChanged || highlightUpdateCount != data.getHighlightUpdateCount();
     }
 
     /**
