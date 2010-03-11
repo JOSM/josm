@@ -106,7 +106,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         model = new OpenChangesetComboBoxModel();
         ChangesetCache.getInstance().addChangesetCacheListener(model);
         cbOpenChangesets = new JComboBox(model);
-        cbOpenChangesets.setToolTipText("Select an open changeset");
+        cbOpenChangesets.setToolTipText(tr("Select an open changeset"));
         cbOpenChangesets.setRenderer(new ChangesetCellRenderer());
         cbOpenChangesets.addItemListener(new ChangesetListItemStateListener());
         Dimension d = cbOpenChangesets.getPreferredSize();
