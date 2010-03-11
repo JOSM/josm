@@ -387,7 +387,7 @@ public final class Relation extends OsmPrimitive {
                 if (rm.getMember().getDataSet() != dataSet)
                     throw new DataIntegrityProblemException(String.format("Relation member must be part of the same dataset as relation(%s, %s)", getPrimitiveId(), rm.getMember().getPrimitiveId()));
             }
-            if (Main.pref.getBoolean("debug.checkDeleteReferenced")) {
+            if (Main.pref.getBoolean("debug.checkDeleteReferenced", true)) {
                 for (RelationMember rm: members) {
                     if (rm.getMember().isDeleted())
                         throw new DataIntegrityProblemException("Deleted member referenced: " + toString());

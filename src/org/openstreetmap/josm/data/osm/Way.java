@@ -371,7 +371,7 @@ public final class Way extends OsmPrimitive {
                 if (n.getDataSet() != dataSet)
                     throw new DataIntegrityProblemException("Nodes in way must be in the same dataset");
             }
-            if (Main.pref.getBoolean("debug.checkDeleteReferenced")) {
+            if (Main.pref.getBoolean("debug.checkDeleteReferenced", true)) {
                 for (Node n: nodes) {
                     if (n.isDeleted())
                         throw new DataIntegrityProblemException("Deleted node referenced: " + toString());
