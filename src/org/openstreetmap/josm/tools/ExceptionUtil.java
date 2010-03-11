@@ -334,7 +334,7 @@ public class ExceptionUtil {
     public static String explainNestedIllegalDataException(OsmTransferException e) {
         IllegalDataException ide = getNestedException(e, IllegalDataException.class);
         String message = tr("<html>Failed to download data. "
-                + "It's format is either unsupported, ill-formed, and/or inconsistent.<br>"
+                + "Its format is either unsupported, ill-formed, and/or inconsistent.<br>"
                 + "<br>Details (untranslated): {0}</html>", ide.getMessage());
         e.printStackTrace();
         return message;
