@@ -314,7 +314,7 @@ public class OAuthAuthorizationWizard extends JDialog {
                     getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(
                             Main.parent,
-                            new Dimension(400,400)
+                            new Dimension(450,540)
                     )
             ).applySafe(this);
             initFromPreferences();
