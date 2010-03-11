@@ -6,9 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
@@ -130,7 +130,7 @@ public class PluginPreference implements PreferenceSetting {
     }
 
     protected JPanel buildActionPanel() {
-        JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel pnl = new JPanel(new GridLayout(1,3));
 
         pnl.add(new JButton(new DownloadAvailablePluginsAction()));
         pnl.add(new JButton(new UpdateSelectedPluginsAction()));

@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.preferences.plugin;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -13,12 +12,10 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent.EventType;
 
-import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.plugins.PluginInformation;
@@ -77,9 +74,7 @@ public class PluginListPanel extends VerticallyScrollablePanel{
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
 
-        JMultilineLabel hint = new JMultilineLabel("");
-        hint.setFont(hint.getFont().deriveFont(Font.PLAIN));
-        hint.setHorizontalAlignment(JLabel.CENTER);
+        HtmlPanel hint = new HtmlPanel();
         hint.setText(
                 "<html>"
                 + tr("Please click on <strong>Download list</strong> to download and display a list of available plugins.")
