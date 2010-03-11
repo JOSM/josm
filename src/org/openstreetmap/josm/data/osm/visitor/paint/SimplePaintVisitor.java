@@ -226,7 +226,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
 
         if (inactive || n.isDisabled()) {
             drawNode(n, inactiveColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
-        } else if (n.highlighted) {
+        } else if (n.isHighlighted()) {
             drawNode(n, highlightColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
         } else if (ds.isSelected(n)) {
             drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
@@ -303,7 +303,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
 
         if (inactive || w.isDisabled()) {
             wayColor = inactiveColor;
-        } else if(w.highlighted) {
+        } else if(w.isHighlighted()) {
             wayColor = highlightColor;
         } else if(ds.isSelected(w)) {
             wayColor = selectedColor;

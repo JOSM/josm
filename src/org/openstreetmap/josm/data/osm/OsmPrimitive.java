@@ -228,7 +228,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * If allowNegativeId is set, provided id can be < 0 and will be set to primitive without any processing.
      * If allowNegativeId is not set, then id will have to be 0 (in that case new unique id will be generated) or
      * positive number.
-     * 
+     *
      * If id is not > 0 version is ignored and set to 0.
      *
      * @param id
@@ -474,7 +474,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * If set to true, this object is highlighted. Currently this is only used to
      * show which ways/nodes will connect
      */
-    public volatile boolean highlighted = false;
+    private volatile boolean highlighted = false;
 
     private int timestamp;
 
@@ -1286,5 +1286,18 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     public boolean isSelected() {
         return dataSet != null && dataSet.isSelected(this);
+    }
+
+    public void setHighlighted(boolean highlighted) {
+        if (this.highlighted != highlighted) {
+            this.highlighted = highlighted;
+            if (dataSet != null) {
+                dataSet.fireHighlightingChanged(this);
+            }
+        }
+    }
+
+    public boolean isHighlighted() {
+        return highlighted;
     }
 }

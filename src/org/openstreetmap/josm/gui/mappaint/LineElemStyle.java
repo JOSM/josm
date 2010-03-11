@@ -176,7 +176,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
             }
         }
 
-        if(w.highlighted) {
+        if(w.isHighlighted()) {
             myColor = paintSettings.getHighlightColor();
         } else if (selected) {
             myColor = paintSettings.getSelectedColor();

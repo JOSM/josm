@@ -20,7 +20,7 @@ public class SimpleNodeElemStyle extends ElemStyle {
             boolean selected) {
         Node n = (Node)primitive;
         String name = painter.isShowNames()?painter.getNodeName(n):null;
-        if (n.highlighted) {
+        if (n.isHighlighted()) {
             painter.drawNode(n, settings.getHighlightColor(), settings.getSelectedNodeSize(), settings.isFillSelectedNode(), name);
         } else if (selected) {
             painter.drawNode(n, settings.getSelectedColor(), settings.getSelectedNodeSize(), settings.isFillSelectedNode(), name);

@@ -171,7 +171,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             // We also need this list for the statusbar help text
             oldHighlights.add(mouseOnExistingNode);
             if(drawTargetHighlight) {
-                mouseOnExistingNode.highlighted = true;
+                mouseOnExistingNode.setHighlighted(true);
             }
             return;
         }
@@ -188,7 +188,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         oldHighlights.addAll(mouseOnExistingWays);
         if (!drawTargetHighlight) return;
         for (Way w : mouseOnExistingWays) {
-            w.highlighted = true;
+            w.setHighlighted(true);
         }
     }
 
@@ -197,7 +197,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      */
     private void removeHighlighting() {
         for(OsmPrimitive prim : oldHighlights) {
-            prim.highlighted = false;
+            prim.setHighlighted(false);
         }
         oldHighlights = new HashSet<OsmPrimitive>();
     }

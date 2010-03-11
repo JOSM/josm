@@ -158,7 +158,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     /**
      * A list of all layers currently loaded.
      */
-    private ArrayList<Layer> layers = new ArrayList<Layer>();
+    private final List<Layer> layers = new ArrayList<Layer>();
     /**
      * The play head marker: there is only one of these so it isn't in any specific layer
      */
@@ -179,6 +179,8 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     private LinkedList<MapViewPaintable> temporaryLayers = new LinkedList<MapViewPaintable>();
 
     private BufferedImage offscreenBuffer;
+    // Layers that wasn't changed since last paint
+    private final List<Layer> nonChangedLayers = new ArrayList<Layer>();
 
     public MapView() {
         addComponentListener(new ComponentAdapter(){
@@ -457,23 +459,62 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         if (center == null)
             return; // no data loaded yet.
 
-        // re-create offscreen-buffer if we've been resized, otherwise
-        // just re-use it.
-        if (null == offscreenBuffer || offscreenBuffer.getWidth() != getWidth()
-                || offscreenBuffer.getHeight() != getHeight()) {
-            offscreenBuffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+        List<Layer> visibleLayers = getVisibleLayersInZOrder();
+
+        int nonChangedLayersCount = 0;
+        for (Layer l: visibleLayers) {
+            if (l.isChanged()) {
+                break;
+            } else {
+                nonChangedLayersCount++;
+            }
         }
 
-        Graphics2D tempG = offscreenBuffer.createGraphics();
-        tempG.setClip(g.getClip());
-        tempG.setColor(PaintColors.BACKGROUND.get());
-        tempG.fillRect(0, 0, getWidth(), getHeight());
+        boolean canUseBuffer = nonChangedLayers.size() <= nonChangedLayersCount;
+        if (canUseBuffer) {
+            for (int i=0; i<nonChangedLayers.size(); i++) {
+                if (visibleLayers.get(i) != nonChangedLayers.get(i)) {
+                    canUseBuffer = false;
+                    break;
+                }
+            }
+        }
 
+        Graphics2D tempG = (Graphics2D) g;
         Bounds box = getLatLonBounds(g.getClipBounds());
 
-        for (Layer l: getVisibleLayersInZOrder()) {
-            l.paint(tempG, this, box);
+        if (!canUseBuffer || offscreenBuffer == null) {
+            if (null == offscreenBuffer || offscreenBuffer.getWidth() != getWidth() || offscreenBuffer.getHeight() != getHeight()) {
+                offscreenBuffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+            }
+            Graphics2D g2 = offscreenBuffer.createGraphics();
+            g2.setColor(PaintColors.BACKGROUND.get());
+            g2.fillRect(0, 0, getWidth(), getHeight());
+
+            for (int i=0; i<nonChangedLayersCount; i++) {
+                visibleLayers.get(i).paint(g2, this, box);
+            }
+        } else {
+            // Maybe there were more unchanged layers then last time - draw them to buffer
+            if (nonChangedLayers.size() != nonChangedLayersCount) {
+                Graphics2D g2 = offscreenBuffer.createGraphics();
+                for (int i=nonChangedLayers.size(); i<nonChangedLayersCount; i++) {
+                    visibleLayers.get(i).paint(g2, this, box);
+                }
+            }
         }
+
+        nonChangedLayers.clear();
+        for (int i=0; i<nonChangedLayersCount; i++) {
+            nonChangedLayers.add(visibleLayers.get(i));
+        }
+
+        tempG.drawImage(offscreenBuffer, 0, 0, null);
+
+        for (int i=nonChangedLayersCount; i<visibleLayers.size(); i++) {
+            visibleLayers.get(i).paint(tempG, this, box);
+        }
+
         for (MapViewPaintable mvp : temporaryLayers) {
             mvp.paint(tempG, this, box);
         }
@@ -514,8 +555,8 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             path.lineTo(p.x, p.y);
         }
 
-        int w = offscreenBuffer.getWidth();
-        int h = offscreenBuffer.getHeight();
+        int w = getWidth();
+        int h = getHeight();
 
         // Work around OpenJDK having problems when drawing out of bounds
         final Area border = new Area(path);
@@ -529,7 +570,6 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             playHeadMarker.paint(tempG, this);
         }
 
-        g.drawImage(offscreenBuffer, 0, 0, null);
         super.paint(g);
     }
 

@@ -58,6 +58,17 @@ public class DataSet implements Cloneable {
     // Number of open calls to beginUpdate
     private int updateCount;
 
+    private int highlightUpdateCount;
+
+    /**
+     * This method can be used to detect changes in highlight state of primitives. If highlighting was changed
+     * then the method will return different number.
+     * @return
+     */
+    public int getHighlightUpdateCount() {
+        return highlightUpdateCount;
+    }
+
     /**
      * The API version that created this data set, if any.
      */
@@ -313,7 +324,7 @@ public class DataSet implements Cloneable {
     /**
      * Replies an unmodifiable collection of primitives currently selected
      * in this dataset
-     * 
+     *
      * @return unmodifiable collection of primitives
      */
     public Collection<OsmPrimitive> getSelected() {
@@ -894,6 +905,10 @@ public class DataSet implements Cloneable {
 
     void fireChangesetIdChanged(OsmPrimitive primitive, int oldChangesetId, int newChangesetId) {
         fireEvent(new ChangesetIdChangedEvent(this, Collections.singletonList(primitive), oldChangesetId, newChangesetId));
+    }
+
+    void fireHighlightingChanged(OsmPrimitive primitive) {
+        highlightUpdateCount++;
     }
 
     public void clenupDeletedPrimitives() {

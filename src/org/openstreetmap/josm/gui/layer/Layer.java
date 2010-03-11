@@ -228,6 +228,15 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
     }
 
     /**
+     *
+     *
+     * @return True if layer was changed since last paint
+     */
+    public boolean isChanged() {
+        return true;
+    }
+
+    /**
      * The action to save a layer
      *
      */

@@ -43,6 +43,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.command.PurgePrimitivesCommand;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -58,6 +59,9 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
+import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter.Listener;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintVisitor;
@@ -78,12 +82,15 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @author imi
  */
-public class OsmDataLayer extends Layer {
+public class OsmDataLayer extends Layer implements Listener, SelectionChangedListener {
     static public final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
     static public final String REQUIRES_UPLOAD_TO_SERVER_PROP = OsmDataLayer.class.getName() + ".requiresUploadToServer";
 
     private boolean requiresSaveToFile = false;
     private boolean requiresUploadToServer = false;
+    private boolean isChanged = true;
+    private int highlightUpdateCount;
+    private int viewId;
 
     protected void setRequiresSaveToFile(boolean newValue) {
         boolean oldValue = requiresSaveToFile;
@@ -198,6 +205,8 @@ public class OsmDataLayer extends Layer {
         this.data = data;
         this.setAssociatedFile(associatedFile);
         conflicts = new ConflictCollection();
+        data.addDataSetListener(new DataSetListenerAdapter(this));
+        DataSet.selListeners.add(this);
     }
 
     /**
@@ -214,6 +223,10 @@ public class OsmDataLayer extends Layer {
      * Draw nodes last to overlap the ways they belong to.
      */
     @Override public void paint(final Graphics2D g, final MapView mv, Bounds box) {
+        isChanged = false;
+        highlightUpdateCount = data.getHighlightUpdateCount();
+        viewId = Main.map.mapView.getViewID();
+
         boolean active = mv.getActiveLayer() == this;
         boolean inactive = !active && Main.pref.getBoolean("draw.data.inactive_color", true);
         boolean virtual = !inactive && mv.isVirtualNodesEnabled();
@@ -710,6 +723,11 @@ public class OsmDataLayer extends Layer {
         setRequiresUploadToServer(data.isModified());
     }
 
+    @Override
+    public boolean isChanged() {
+        return isChanged || highlightUpdateCount != data.getHighlightUpdateCount() || viewId != Main.map.mapView.getViewID();
+    }
+
     /**
      * Initializes the layer after a successful save of OSM data to a file
      *
@@ -750,5 +768,13 @@ public class OsmDataLayer extends Layer {
             }
         }
 
+    }
+
+    public void processDatasetEvent(AbstractDatasetChangedEvent event) {
+        isChanged = true;
+    }
+
+    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+        isChanged = true;
     }
 }

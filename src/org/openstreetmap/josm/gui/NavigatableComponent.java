@@ -678,4 +678,15 @@ public class NavigatableComponent extends JComponent implements Helpful {
         String n = getClass().getName();
         return n.substring(n.lastIndexOf('.')+1);
     }
+
+    /**
+     * Return a ID which is unique as long as viewport dimensions are the same
+     */
+    public int getViewID() {
+        String x = center.east() + "_" + center.north() + "_" + scale + "_" +
+        getWidth() + "_" + getHeight() + "_" + getProjection().toString();
+        java.util.zip.CRC32 id = new java.util.zip.CRC32();
+        id.update(x.getBytes());
+        return (int)id.getValue();
+    }
 }
