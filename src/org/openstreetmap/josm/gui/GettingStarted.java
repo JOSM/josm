@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.io.UnsupportedEncodingException;
 
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -67,8 +68,12 @@ public class GettingStarted extends JPanel {
             // Save this to prefs in case JOSM is updated so MOTD can be refreshed
             Main.pref.putInteger("cache.motd.html.version", myVersion);
             Main.pref.put("cache.motd.html.lang", myLang);
-
-            return motd.getBytes();
+            try {
+                return motd.getBytes("utf-8");
+            } catch(UnsupportedEncodingException e){
+                e.printStackTrace();
+                return new byte[0];
+            }
         }
 
         /**
