@@ -17,6 +17,7 @@ import java.util.Iterator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -120,6 +121,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
 
     DataSet ds;
     public void visitAll(DataSet data, boolean virtual, Bounds bounds) {
+        BBox bbox = new BBox(bounds);
         this.ds = data;
         //boolean profiler = Main.pref.getBoolean("simplepaint.profiler",false);
         //long profilerStart = java.lang.System.currentTimeMillis();
@@ -140,7 +142,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
            time to iterate through list twice, OTOH does not
            require changing the colour while painting... */
         //profilerN = 0;
-        for (final OsmPrimitive osm: data.getRelations()) {
+        for (final OsmPrimitive osm: data.searchRelations(bbox)) {
             if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered()) {
                 osm.visit(this);
                 //        profilerN++;
@@ -154,7 +156,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         //}
 
         //profilerN = 0;
-        for (final OsmPrimitive osm:data.getWays()){
+        for (final OsmPrimitive osm:data.searchWays(bbox)){
             if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered() && osm.isTagged()) {
                 osm.visit(this);
                 //        profilerN++;
@@ -162,7 +164,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         }
         displaySegments();
 
-        for (final OsmPrimitive osm:data.getWays()){
+        for (final OsmPrimitive osm:data.searchWays(bbox)){
             if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered() && !osm.isTagged()) {
                 osm.visit(this);
                 //        profilerN++;
@@ -192,7 +194,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         //}
 
         //profilerN = 0;
-        for (final OsmPrimitive osm: data.getNodes()) {
+        for (final OsmPrimitive osm: data.searchNodes(bbox)) {
             if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered())
             {
                 osm.visit(this);
@@ -207,7 +209,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         //    profilerLast = java.lang.System.currentTimeMillis();
         //}
 
-        drawVirtualNodes(data.getWays());
+        drawVirtualNodes(data.searchWays(bbox));
 
         //if(profiler)
         //{
