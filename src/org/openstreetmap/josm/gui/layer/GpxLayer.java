@@ -76,7 +76,6 @@ import org.openstreetmap.josm.tools.UrlLabel;
 
 public class GpxLayer extends Layer {
     public GpxData data;
-    private final GpxLayer me;
     protected static final double PHI = Math.toRadians(15);
     private boolean computeCacheInSync;
     private int computeCacheMaxLineLengthUsed;
@@ -84,6 +83,9 @@ public class GpxLayer extends Layer {
     private colorModes computeCacheColored;
     private int computeCacheColorTracksTune;
     private boolean isLocalFile;
+
+    private final List<GpxTrack> lastTracks = new ArrayList<GpxTrack>(); // List of tracks at last paint
+    private int lastUpdateCount;
 
     private static class Markers {
         public boolean timedMarkersOmitted = false;
@@ -93,7 +95,6 @@ public class GpxLayer extends Layer {
     public GpxLayer(GpxData d) {
         super((String) d.attr.get("name"));
         data = d;
-        me = this;
         computeCacheInSync = false;
     }
 
@@ -206,7 +207,7 @@ public class GpxLayer extends Layer {
                 }
 
                 MarkerLayer ml = new MarkerLayer(namedTrackPoints, tr("Named Trackpoints from {0}", getName()),
-                        getAssociatedFile(), me);
+                        getAssociatedFile(), GpxLayer.this);
                 if (ml.data.size() > 0) {
                     Main.main.addLayer(ml);
                 }
@@ -281,7 +282,7 @@ public class GpxLayer extends Layer {
                         names = "";
                     }
                     MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", getName()) + names,
-                            getAssociatedFile(), me);
+                            getAssociatedFile(), GpxLayer.this);
                     double firstStartTime = sel[0].lastModified() / 1000.0 /* ms -> seconds */
                     - AudioUtil.getCalibratedDuration(sel[0]);
 
@@ -451,6 +452,22 @@ public class GpxLayer extends Layer {
         return other instanceof GpxLayer;
     }
 
+    private int sumUpdateCount() {
+        int updateCount = 0;
+        for (GpxTrack track: data.tracks) {
+            updateCount += track.getUpdateCount();
+        }
+        return updateCount;
+    }
+
+    @Override
+    public boolean isChanged() {
+        if (data.tracks.equals(lastTracks))
+            return sumUpdateCount() != lastUpdateCount;
+        else
+            return true;
+    }
+
     @Override
     public void mergeFrom(Layer from) {
         data.mergeFrom(((GpxLayer) from).data);
@@ -480,6 +497,9 @@ public class GpxLayer extends Layer {
 
     @Override
     public void paint(Graphics2D g, MapView mv, Bounds box) {
+        lastUpdateCount = sumUpdateCount();
+        lastTracks.clear();
+        lastTracks.addAll(data.tracks);
 
         /****************************************************************
          ********** STEP 1 - GET CONFIG VALUES **************************

@@ -34,9 +34,9 @@ public class GpxData extends WithAttributes {
     public File storageFile;
     public boolean fromServer;
 
-    public Collection<GpxTrack> tracks = new LinkedList<GpxTrack>();
-    public Collection<GpxRoute> routes = new LinkedList<GpxRoute>();
-    public Collection<WayPoint> waypoints = new LinkedList<WayPoint>();
+    public final Collection<GpxTrack> tracks = new LinkedList<GpxTrack>();
+    public final Collection<GpxRoute> routes = new LinkedList<GpxRoute>();
+    public final Collection<WayPoint> waypoints = new LinkedList<WayPoint>();
 
     @SuppressWarnings("unchecked")
     public void mergeFrom(GpxData other) {

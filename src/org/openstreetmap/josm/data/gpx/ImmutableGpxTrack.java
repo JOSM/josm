@@ -72,4 +72,8 @@ public class ImmutableGpxTrack implements GpxTrack {
     public Collection<GpxTrackSegment> getSegments() {
         return segments;
     }
+
+    public int getUpdateCount() {
+        return 0;
+    }
 }

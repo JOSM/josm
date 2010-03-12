@@ -14,5 +14,9 @@ public interface GpxTrackSegment {
     Bounds getBounds();
     Collection<WayPoint> getWayPoints();
     double length();
-
+    /**
+     *
+     * @return Number of times this track has been changed. Always 0 for read-only segments
+     */
+    int getUpdateCount();
 }

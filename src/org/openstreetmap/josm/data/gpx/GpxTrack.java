@@ -20,5 +20,10 @@ public interface GpxTrack {
     Map<String, Object> getAttributes();
     Bounds getBounds();
     double length();
+    /**
+     *
+     * @return Number of times this track has been changed. Always 0 for read-only tracks
+     */
+    int getUpdateCount();
 
 }
