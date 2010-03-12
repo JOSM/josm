@@ -33,6 +33,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
@@ -43,6 +45,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -110,9 +113,10 @@ public class OAuthAuthorizationWizard extends JDialog {
         pnlMessage = new HtmlPanel();
         pnlMessage.setText("<html><body>"
                 + tr("With OAuth you grant JOSM the right to upload map data and GPS tracks "
-                        + "on your behalf (<a href=\"urn:josm-oauth-info\">more info...</a>).")
+                        + "on your behalf (<a href=\"{0}\">more info...</a>).",  "http://oauth.net/")
                         + "</body></html>"
         );
+        pnlMessage.getEditorPane().addHyperlinkListener(new ExternalBrowserLauncher());
         pnl.add(pnlMessage, gc);
 
         // the authorisation procedure
@@ -247,7 +251,6 @@ public class OAuthAuthorizationWizard extends JDialog {
         if (pnlManualAuthorisationUI != null) {
             pnlManualAuthorisationUI.setApiUrl(apiUrl);
         }
-
     }
 
     /**
@@ -382,6 +385,15 @@ public class OAuthAuthorizationWizard extends JDialog {
         @Override
         public void windowClosing(WindowEvent arg0) {
             new CancelAction().cancel();
+        }
+    }
+
+    class ExternalBrowserLauncher implements HyperlinkListener {
+        public void hyperlinkUpdate(HyperlinkEvent e) {
+            if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+                String url = e.getDescription();
+                OpenBrowser.displayUrl(url);
+            }
         }
     }
 }
