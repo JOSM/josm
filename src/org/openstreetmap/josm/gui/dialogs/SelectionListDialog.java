@@ -17,11 +17,11 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -46,7 +46,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.data.SelectionChangedListener;
-import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -64,7 +63,6 @@ import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
-import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
@@ -80,6 +78,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * 
  */
 public class SelectionListDialog extends ToggleDialog  {
+    static private final Logger logger = Logger.getLogger(SelectionListDialog.class.getName());
 
     private JList lstPrimitives;
     private SelectionListModel model;
@@ -517,27 +516,8 @@ public class SelectionListDialog extends ToggleDialog  {
                 return;
             }
             this.selection.addAll(selection);
-            sort();
             fireContentsChanged(this, 0, getSize());
             remember(selection);
-        }
-
-        /**
-         * Sorts the primitives in the list
-         */
-        public void sort() {
-            Collections.sort(
-                    this.selection,
-                    new Comparator<OsmPrimitive>() {
-                        NameFormatter nf = DefaultNameFormatter.getInstance();
-
-                        public int compare(OsmPrimitive o1, OsmPrimitive o2) {
-                            if (o1.getType() != o2.getType())
-                                return o1.getType().compareTo(o2.getType());
-                            return o1.getDisplayName(nf).compareTo(o2.getDisplayName(nf));
-                        }
-                    }
-            );
         }
 
         /**
