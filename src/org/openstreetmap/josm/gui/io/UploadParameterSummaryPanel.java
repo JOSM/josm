@@ -50,6 +50,7 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
                     uploadComment
             ));
         }
+        msg.append(" ");
         if (closeChangesetAfterNextUpload) {
             msg.append(tr("The changeset is going to be <strong>closed</strong> after this upload"));
         } else {
