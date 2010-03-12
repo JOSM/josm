@@ -489,6 +489,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                 offscreenBuffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_3BYTE_BGR);
             }
             Graphics2D g2 = offscreenBuffer.createGraphics();
+            g2.setClip(g.getClip());
             g2.setColor(PaintColors.BACKGROUND.get());
             g2.fillRect(0, 0, getWidth(), getHeight());
 
@@ -499,6 +500,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             // Maybe there were more unchanged layers then last time - draw them to buffer
             if (nonChangedLayers.size() != nonChangedLayersCount) {
                 Graphics2D g2 = offscreenBuffer.createGraphics();
+                g2.setClip(g.getClip());
                 for (int i=nonChangedLayers.size(); i<nonChangedLayersCount; i++) {
                     visibleLayers.get(i).paint(g2, this, box);
                 }
