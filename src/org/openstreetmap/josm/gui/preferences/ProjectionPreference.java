@@ -108,7 +108,7 @@ public class ProjectionPreference implements PreferenceSetting {
 
         String projname = proj.getClass().getName();
         Collection<String> prefs = null;
-        if(projHasPrefs(proj)) {
+        if(proj instanceof ProjectionSubPrefs) {
             prefs = ((ProjectionSubPrefs) proj).getPreferences(projSubPrefPanel);
         }
 
@@ -120,22 +120,6 @@ public class ProjectionPreference implements PreferenceSetting {
             CoordinateFormat.setCoordinateFormat((CoordinateFormat)coordinatesCombo.getSelectedItem());
         }
 
-        return false;
-    }
-
-    /**
-     * Finds out if the given projection implements the ProjectionPreference
-     * interface
-     * @param proj
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    static private boolean projHasPrefs(Projection proj) {
-        Class[] ifaces = proj.getClass().getInterfaces();
-        for(int i = 0; i < ifaces.length; i++) {
-            if(ifaces[i].getSimpleName().equals("ProjectionSubPrefs"))
-                return true;
-        }
         return false;
     }
 
@@ -166,7 +150,7 @@ public class ProjectionPreference implements PreferenceSetting {
         Main.pref.putCollection("projection.sub", coll);
         String sname = name.substring(name.lastIndexOf(".")+1);
         Main.pref.putCollection("projection.sub."+sname, coll);
-        if(projHasPrefs(Main.proj)) {
+        if(Main.proj instanceof ProjectionSubPrefs) {
             ((ProjectionSubPrefs) Main.proj).setPreferences(coll);
         }
         if(b != null && (!Main.proj.getClass().getName().equals(oldProj.getClass().getName()) || Main.proj.hashCode() != oldProj.hashCode()))
@@ -199,7 +183,7 @@ public class ProjectionPreference implements PreferenceSetting {
      * @param proj
      */
     private void selectedProjectionChanged(Projection proj) {
-        if(!projHasPrefs(proj)) {
+        if(!(proj instanceof ProjectionSubPrefs)) {
             projSubPrefPanel = new JPanel();
         } else {
             ProjectionSubPrefs projPref = (ProjectionSubPrefs) proj;
@@ -228,7 +212,7 @@ public class ProjectionPreference implements PreferenceSetting {
             Projection proj = (Projection)projectionCombo.getItemAt(i);
             String name = proj.getClass().getName();
             String sname = name.substring(name.lastIndexOf(".")+1);
-            if(projHasPrefs(proj)) {
+            if(proj instanceof ProjectionSubPrefs) {
                 ((ProjectionSubPrefs) proj).setPreferences(Main.pref.getCollection("projection.sub."+sname, null));
             }
             if (name.equals(Main.pref.get("projection", Mercator.class.getName()))) {

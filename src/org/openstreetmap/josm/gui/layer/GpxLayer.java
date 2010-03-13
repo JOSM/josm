@@ -86,6 +86,7 @@ public class GpxLayer extends Layer {
 
     private final List<GpxTrack> lastTracks = new ArrayList<GpxTrack>(); // List of tracks at last paint
     private int lastUpdateCount;
+    private PaintSettings lastPaintSettings;
 
     private static class Markers {
         public boolean timedMarkersOmitted = false;
@@ -462,7 +463,7 @@ public class GpxLayer extends Layer {
 
     @Override
     public boolean isChanged() {
-        if (data.tracks.equals(lastTracks))
+        if (data.tracks.equals(lastTracks) && new PaintSettings(isLocalFile).equals(lastPaintSettings))
             return sumUpdateCount() != lastUpdateCount;
         else
             return true;
@@ -495,73 +496,160 @@ public class GpxLayer extends Layer {
         none, velocity, dilution
     }
 
+    private class PaintSettings {
+        final Color neutralColor;
+        final boolean forceLines;
+        final boolean direction;
+        final int lineWidth;
+        final int maxLineLength;
+        final boolean lines;
+        final boolean large;
+        final boolean hdopcircle;
+        final colorModes colored;
+        final boolean alternatedirection;
+        final int delta;
+        final int colorTracksTune;
+
+        public PaintSettings(boolean isLocalFile) {
+            neutralColor = getColor(getName());
+            // also draw lines between points belonging to different segments
+            forceLines = Main.pref.getBoolean("draw.rawgps.lines.force");
+            // draw direction arrows on the lines
+            direction = Main.pref.getBoolean("draw.rawgps.direction");
+            // don't draw lines if longer than x meters
+            lineWidth = Main.pref.getInteger("draw.rawgps.linewidth",0);
+
+            if (isLocalFile) {
+                maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length.local", -1);
+            } else {
+                maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length", 200);
+            }
+
+            // draw line between points, global setting
+            boolean lines = (Main.pref.getBoolean("draw.rawgps.lines", true) || (Main.pref
+                    .getBoolean("draw.rawgps.lines.localfiles") && isLocalFile));
+            String linesKey = "draw.rawgps.lines.layer " + getName();
+            // draw lines, per-layer setting
+            if (Main.pref.hasKey(linesKey)) {
+                lines = Main.pref.getBoolean(linesKey);
+            }
+            this.lines = lines;
+
+            // paint large dots for points
+            large = Main.pref.getBoolean("draw.rawgps.large");
+            hdopcircle = Main.pref.getBoolean("draw.rawgps.hdopcircle", true);
+            // color the lines
+            int colorIndex = Main.pref.getInteger("draw.rawgps.colors", 0);
+            colored = colorIndex >= 0 && colorIndex < colorModes.values().length?colorModes.values()[colorIndex]:colorModes.none;
+            // paint direction arrow with alternate math. may be faster
+            alternatedirection = Main.pref.getBoolean("draw.rawgps.alternatedirection");
+            // don't draw arrows nearer to each other than this
+            delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", 0);
+            // allows to tweak line coloring for different speed levels.
+            colorTracksTune = Main.pref.getInteger("draw.rawgps.colorTracksTune", 45);
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + getOuterType().hashCode();
+            result = prime * result + (alternatedirection ? 1231 : 1237);
+            result = prime * result + colorTracksTune;
+            result = prime * result + ((colored == null) ? 0 : colored.hashCode());
+            result = prime * result + delta;
+            result = prime * result + (direction ? 1231 : 1237);
+            result = prime * result + (forceLines ? 1231 : 1237);
+            result = prime * result + (hdopcircle ? 1231 : 1237);
+            result = prime * result + (large ? 1231 : 1237);
+            result = prime * result + lineWidth;
+            result = prime * result + (lines ? 1231 : 1237);
+            result = prime * result + maxLineLength;
+            result = prime * result + ((neutralColor == null) ? 0 : neutralColor.hashCode());
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            PaintSettings other = (PaintSettings) obj;
+            if (!getOuterType().equals(other.getOuterType()))
+                return false;
+            if (alternatedirection != other.alternatedirection)
+                return false;
+            if (colorTracksTune != other.colorTracksTune)
+                return false;
+            if (colored == null) {
+                if (other.colored != null)
+                    return false;
+            } else if (!colored.equals(other.colored))
+                return false;
+            if (delta != other.delta)
+                return false;
+            if (direction != other.direction)
+                return false;
+            if (forceLines != other.forceLines)
+                return false;
+            if (hdopcircle != other.hdopcircle)
+                return false;
+            if (large != other.large)
+                return false;
+            if (lineWidth != other.lineWidth)
+                return false;
+            if (lines != other.lines)
+                return false;
+            if (maxLineLength != other.maxLineLength)
+                return false;
+            if (neutralColor == null) {
+                if (other.neutralColor != null)
+                    return false;
+            } else if (!neutralColor.equals(other.neutralColor))
+                return false;
+            return true;
+        }
+
+        private GpxLayer getOuterType() {
+            return GpxLayer.this;
+        }
+    }
+
     @Override
     public void paint(Graphics2D g, MapView mv, Bounds box) {
         lastUpdateCount = sumUpdateCount();
         lastTracks.clear();
         lastTracks.addAll(data.tracks);
+        lastPaintSettings = new PaintSettings(isLocalFile);
+
 
         /****************************************************************
          ********** STEP 1 - GET CONFIG VALUES **************************
          ****************************************************************/
-        // Long startTime = System.currentTimeMillis();
-        Color neutralColor = getColor(getName());
-        // also draw lines between points belonging to different segments
-        boolean forceLines = Main.pref.getBoolean("draw.rawgps.lines.force");
-        // draw direction arrows on the lines
-        boolean direction = Main.pref.getBoolean("draw.rawgps.direction");
-        // don't draw lines if longer than x meters
-        int lineWidth = Main.pref.getInteger("draw.rawgps.linewidth",0);
+        PaintSettings ps =lastPaintSettings;
 
-        int maxLineLength;
-        if (this.isLocalFile) {
-            maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length.local", -1);
-        } else {
-            maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length", 200);
-        }
-        // draw line between points, global setting
-        boolean lines = (Main.pref.getBoolean("draw.rawgps.lines", true) || (Main.pref
-                .getBoolean("draw.rawgps.lines.localfiles") && this.isLocalFile));
-        String linesKey = "draw.rawgps.lines.layer " + getName();
-        // draw lines, per-layer setting
-        if (Main.pref.hasKey(linesKey)) {
-            lines = Main.pref.getBoolean(linesKey);
-        }
-        // paint large dots for points
-        boolean large = Main.pref.getBoolean("draw.rawgps.large");
-        boolean hdopcircle = Main.pref.getBoolean("draw.rawgps.hdopcircle", true);
-        // color the lines
-        colorModes colored = colorModes.none;
-        try {
-            colored = colorModes.values()[Main.pref.getInteger("draw.rawgps.colors", 0)];
-        } catch (Exception e) {
-        }
-        // paint direction arrow with alternate math. may be faster
-        boolean alternatedirection = Main.pref.getBoolean("draw.rawgps.alternatedirection");
-        // don't draw arrows nearer to each other than this
-        int delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", 0);
-        // allows to tweak line coloring for different speed levels.
-        int colorTracksTune = Main.pref.getInteger("draw.rawgps.colorTracksTune", 45);
-
-        if(lineWidth != 0)
+        if(ps.lineWidth != 0)
         {
-            g.setStroke(new BasicStroke(lineWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+            g.setStroke(new BasicStroke(ps.lineWidth,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
         }
 
         /****************************************************************
          ********** STEP 2a - CHECK CACHE VALIDITY **********************
          ****************************************************************/
-        if ((computeCacheMaxLineLengthUsed != maxLineLength) || (!neutralColor.equals(computeCacheColorUsed))
-                || (computeCacheColored != colored) || (computeCacheColorTracksTune != colorTracksTune)) {
+        if ((computeCacheMaxLineLengthUsed != ps.maxLineLength) || (!ps.neutralColor.equals(computeCacheColorUsed))
+                || (computeCacheColored != ps.colored) || (computeCacheColorTracksTune != ps.colorTracksTune)) {
             // System.out.println("(re-)computing gpx line styles, reason: CCIS=" +
             // computeCacheInSync + " CCMLLU=" + (computeCacheMaxLineLengthUsed != maxLineLength) +
             // " CCCU=" + (!neutralColor.equals(computeCacheColorUsed)) + " CCC=" +
             // (computeCacheColored != colored));
-            computeCacheMaxLineLengthUsed = maxLineLength;
+            computeCacheMaxLineLengthUsed = ps.maxLineLength;
             computeCacheInSync = false;
-            computeCacheColorUsed = neutralColor;
-            computeCacheColored = colored;
-            computeCacheColorTracksTune = colorTracksTune;
+            computeCacheColorUsed = ps.neutralColor;
+            computeCacheColored = ps.colored;
+            computeCacheColorTracksTune = ps.colorTracksTune;
         }
 
         /****************************************************************
@@ -571,7 +659,7 @@ public class GpxLayer extends Layer {
             WayPoint oldWp = null;
             for (GpxTrack trk : data.tracks) {
                 for (GpxTrackSegment segment : trk.getSegments()) {
-                    if (!forceLines) { // don't draw lines between segments, unless forced to
+                    if (!ps.forceLines) { // don't draw lines between segments, unless forced to
                         oldWp = null;
                     }
                     for (WayPoint trkPnt : segment.getWayPoints()) {
@@ -579,15 +667,15 @@ public class GpxLayer extends Layer {
                         if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
                             continue;
                         }
-                        trkPnt.customColoring = neutralColor;
+                        trkPnt.customColoring = ps.neutralColor;
                         if (oldWp != null) {
                             double dist = c.greatCircleDistance(oldWp.getCoor());
 
-                            switch (colored) {
+                            switch (ps.colored) {
                             case velocity:
                                 double dtime = trkPnt.time - oldWp.time;
                                 double vel = dist / dtime;
-                                double velColor = vel / colorTracksTune * 255;
+                                double velColor = vel / ps.colorTracksTune * 255;
                                 // Bad case first
                                 if (dtime <= 0 || vel < 0 || velColor > 255) {
                                     trkPnt.customColoring = colors[255];
@@ -611,7 +699,7 @@ public class GpxLayer extends Layer {
                                 break;
                             }
 
-                            if (maxLineLength == -1 || dist <= maxLineLength) {
+                            if (ps.maxLineLength == -1 || dist <= ps.maxLineLength) {
                                 trkPnt.drawLine = true;
                                 trkPnt.dir = (int) oldWp.getCoor().heading(trkPnt.getCoor());
                             } else {
@@ -639,7 +727,7 @@ public class GpxLayer extends Layer {
         /****************************************************************
          ********** STEP 3a - DRAW LINES ********************************
          ****************************************************************/
-        if (lines) {
+        if (ps.lines) {
             Point old = null;
             for (Collection<WayPoint> segment : visibleSegments) {
                 for (WayPoint trkPnt : segment) {
@@ -663,7 +751,7 @@ public class GpxLayer extends Layer {
         /****************************************************************
          ********** STEP 3b - DRAW NICE ARROWS **************************
          ****************************************************************/
-        if (lines && direction && !alternatedirection) {
+        if (ps.lines && ps.direction && !ps.alternatedirection) {
             Point old = null;
             Point oldA = null; // last arrow painted
             for (Collection<WayPoint> segment : visibleSegments) {
@@ -676,8 +764,8 @@ public class GpxLayer extends Layer {
                         Point screen = mv.getPoint(trkPnt.getEastNorth());
                         // skip points that are on the same screenposition
                         if (old != null
-                                && (oldA == null || screen.x < oldA.x - delta || screen.x > oldA.x + delta
-                                        || screen.y < oldA.y - delta || screen.y > oldA.y + delta)) {
+                                && (oldA == null || screen.x < oldA.x - ps.delta || screen.x > oldA.x + ps.delta
+                                        || screen.y < oldA.y - ps.delta || screen.y > oldA.y + ps.delta)) {
                             g.setColor(trkPnt.customColoring);
                             double t = Math.atan2(screen.y - old.y, screen.x - old.x) + Math.PI;
                             g.drawLine(screen.x, screen.y, (int) (screen.x + 10 * Math.cos(t - PHI)),
@@ -695,7 +783,7 @@ public class GpxLayer extends Layer {
         /****************************************************************
          ********** STEP 3c - DRAW FAST ARROWS **************************
          ****************************************************************/
-        if (lines && direction && alternatedirection) {
+        if (ps.lines && ps.direction && ps.alternatedirection) {
             Point old = null;
             Point oldA = null; // last arrow painted
             for (Collection<WayPoint> segment : visibleSegments) {
@@ -708,8 +796,8 @@ public class GpxLayer extends Layer {
                         Point screen = mv.getPoint(trkPnt.getEastNorth());
                         // skip points that are on the same screenposition
                         if (old != null
-                                && (oldA == null || screen.x < oldA.x - delta || screen.x > oldA.x + delta
-                                        || screen.y < oldA.y - delta || screen.y > oldA.y + delta)) {
+                                && (oldA == null || screen.x < oldA.x - ps.delta || screen.x > oldA.x + ps.delta
+                                        || screen.y < oldA.y - ps.delta || screen.y > oldA.y + ps.delta)) {
                             g.setColor(trkPnt.customColoring);
                             g.drawLine(screen.x, screen.y, screen.x + dir[trkPnt.dir][0], screen.y
                                     + dir[trkPnt.dir][1]);
@@ -726,8 +814,8 @@ public class GpxLayer extends Layer {
         /****************************************************************
          ********** STEP 3d - DRAW LARGE POINTS AND HDOP CIRCLE *********
          ****************************************************************/
-        if (large || hdopcircle) {
-            g.setColor(neutralColor);
+        if (ps.large || ps.hdopcircle) {
+            g.setColor(ps.neutralColor);
             for (Collection<WayPoint> segment : visibleSegments) {
                 for (WayPoint trkPnt : segment) {
                     LatLon c = trkPnt.getCoor();
@@ -736,7 +824,7 @@ public class GpxLayer extends Layer {
                     }
                     Point screen = mv.getPoint(trkPnt.getEastNorth());
                     g.setColor(trkPnt.customColoring);
-                    if (hdopcircle && trkPnt.attr.get("hdop") != null) {
+                    if (ps.hdopcircle && trkPnt.attr.get("hdop") != null) {
                         // hdop value
                         float hdop = ((Float)trkPnt.attr.get("hdop")).floatValue();
                         if (hdop < 0) {
@@ -746,7 +834,7 @@ public class GpxLayer extends Layer {
                         int hdopp = mv.getPoint(new LatLon(trkPnt.getCoor().lat(), trkPnt.getCoor().lon() + 2*6*hdop*360/40000000)).x - screen.x;
                         g.drawArc(screen.x-hdopp/2, screen.y-hdopp/2, hdopp, hdopp, 0, 360);
                     }
-                    if (large) {
+                    if (ps.large) {
                         g.fillRect(screen.x-1, screen.y-1, 3, 3);
                     }
                 } // end for trkpnt
@@ -756,8 +844,8 @@ public class GpxLayer extends Layer {
         /****************************************************************
          ********** STEP 3e - DRAW SMALL POINTS FOR LINES ***************
          ****************************************************************/
-        if (!large && lines) {
-            g.setColor(neutralColor);
+        if (!ps.large && ps.lines) {
+            g.setColor(ps.neutralColor);
             for (Collection<WayPoint> segment : visibleSegments) {
                 for (WayPoint trkPnt : segment) {
                     LatLon c = trkPnt.getCoor();
@@ -775,8 +863,8 @@ public class GpxLayer extends Layer {
         /****************************************************************
          ********** STEP 3f - DRAW SMALL POINTS INSTEAD OF LINES ********
          ****************************************************************/
-        if (!large && !lines) {
-            g.setColor(neutralColor);
+        if (!ps.large && !ps.lines) {
+            g.setColor(ps.neutralColor);
             for (Collection<WayPoint> segment : visibleSegments) {
                 for (WayPoint trkPnt : segment) {
                     LatLon c = trkPnt.getCoor();
