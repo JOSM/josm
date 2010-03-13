@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.data.osm.Storage;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
@@ -118,8 +119,20 @@ public class OsmReader {
         private OsmPrimitive currentPrimitive;
         private long currentExternalId;
         private String generator;
+        private Storage<String> internedStrings = new Storage<String>();
+
+        // Memory optimization - see #2312
+        private String intern(String s) {
+            String result = internedStrings.get(s);
+            if (result == null) {
+                internedStrings.put(s);
+                return s;
+            } else
+                return result;
+        }
 
         @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+
             if (qName.equals("osm")) {
                 if (atts == null) {
                     throwException(tr("Missing mandatory attribute ''{0}'' of XML element {1}.", "version", "osm"));
@@ -257,7 +270,8 @@ public class OsmReader {
             } else if (qName.equals("tag")) {
                 String key = atts.getValue("k");
                 String value = atts.getValue("v");
-                currentPrimitive.put(key, value);
+                currentPrimitive.put(intern(key), intern(value));
+
             } else {
                 System.out.println(tr("Undefined element ''{0}'' found in input stream. Skipping.", qName));
             }

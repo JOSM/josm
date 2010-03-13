@@ -54,6 +54,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     private static final int FLAG_HAS_DIRECTIONS = 1 << 5;
     private static final int FLAG_TAGGED = 1 << 6;
     private static final int FLAG_DIRECTION_REVERSED = 1 << 7;
+    private static final int FLAG_HIGHLIGHTED = 1 << 8;
+    private static final int FLAG_INCOMPLETE = 1 << 9;
 
     /**
      * Replies the sub-collection of {@see OsmPrimitive}s of type <code>type</code> present in
@@ -118,7 +120,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     /* mappaint data */
     public ElemStyle mappaintStyle = null;
-    public Integer mappaintDrawnCode = 0;
+    public int mappaintDrawnCode = 0;
 
     /* This should not be called from outside. Fixing the UI to add relevant
        get/set functions calling this implicitely is preferred, so we can have
@@ -167,19 +169,13 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             throw new DataIntegrityProblemException("Primitive  must be part of the dataset: " + toString());
     }
 
-    private volatile byte flags = FLAG_VISIBLE;   // visible per default
+    private volatile short flags = FLAG_VISIBLE;   // visible per default
 
     /**
      * User that last modified this primitive, as specified by the server.
      * Never changed by JOSM.
      */
     private User user = null;
-
-    /**
-     * If set to true, this object is incomplete, which means only the id
-     * and type is known (type is the objects instance class)
-     */
-    private boolean incomplete = false;
 
     /**
      * Contains the version number as returned by the API. Needed to
@@ -332,12 +328,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @see #delete(boolean)
      */
     public boolean isUsable() {
-        return !isDeleted() && !isIncomplete() && !isDisabled();
+        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_DISABLED)) == 0;
     }
 
-    public boolean isDrawable()
-    {
-        return !isDeleted() && !isIncomplete() && !isFiltered();
+    public boolean isDrawable() {
+        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_FILTERED)) == 0;
     }
 
     /**
@@ -469,12 +464,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     public boolean isTimestampEmpty() {
         return timestamp == 0;
     }
-
-    /**
-     * If set to true, this object is highlighted. Currently this is only used to
-     * show which ways/nodes will connect
-     */
-    private volatile boolean highlighted = false;
 
     private int timestamp;
 
@@ -1269,19 +1258,27 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return new SimplePrimitiveId(getUniqueId(), getType());
     }
 
+    /**
+     * If set to true, this object is incomplete, which means only the id
+     * and type is known (type is the objects instance class)
+     */
     private void setIncomplete(boolean incomplete) {
-        if (dataSet != null && incomplete != this.incomplete) {
+        if (dataSet != null && incomplete != this.isIncomplete()) {
             if (incomplete) {
                 dataSet.firePrimitivesRemoved(Collections.singletonList(this), true);
             } else {
                 dataSet.firePrimitivesAdded(Collections.singletonList(this), true);
             }
         }
-        this.incomplete = incomplete;
+        if (incomplete) {
+            flags |= FLAG_INCOMPLETE;
+        } else {
+            flags &= ~FLAG_INCOMPLETE;
+        }
     }
 
     public boolean isIncomplete() {
-        return incomplete;
+        return (flags & FLAG_INCOMPLETE) != 0;
     }
 
     public boolean isSelected() {
@@ -1289,8 +1286,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     public void setHighlighted(boolean highlighted) {
-        if (this.highlighted != highlighted) {
-            this.highlighted = highlighted;
+        if (isHighlighted() != highlighted) {
+            if (highlighted) {
+                flags |= FLAG_HIGHLIGHTED;
+            } else {
+                flags &= ~FLAG_HIGHLIGHTED;
+            }
             if (dataSet != null) {
                 dataSet.fireHighlightingChanged(this);
             }
@@ -1298,6 +1299,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     public boolean isHighlighted() {
-        return highlighted;
+        return (flags & FLAG_HIGHLIGHTED) != 0;
     }
 }
