@@ -38,6 +38,8 @@ import org.openstreetmap.josm.actions.MoveAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
@@ -64,7 +66,7 @@ import org.openstreetmap.josm.tools.AudioPlayer;
  *
  * @author imi
  */
-public class MapView extends NavigatableComponent implements PropertyChangeListener {
+public class MapView extends NavigatableComponent implements PropertyChangeListener, PreferenceChangedListener {
 
     /**
      * Interface to notify listeners of the change of the active layer.
@@ -182,8 +184,10 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     // Layers that wasn't changed since last paint
     private final List<Layer> nonChangedLayers = new ArrayList<Layer>();
     private int lastViewID;
+    private boolean paintPreferencesChanged = true;
 
     public MapView() {
+        Main.pref.addPreferenceChangeListener(this);
         addComponentListener(new ComponentAdapter(){
             @Override public void componentResized(ComponentEvent e) {
                 removeComponentListener(this);
@@ -471,7 +475,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             }
         }
 
-        boolean canUseBuffer = nonChangedLayers.size() <= nonChangedLayersCount && lastViewID == getViewID();
+        boolean canUseBuffer = !paintPreferencesChanged && nonChangedLayers.size() <= nonChangedLayersCount && lastViewID == getViewID();
         if (canUseBuffer) {
             for (int i=0; i<nonChangedLayers.size(); i++) {
                 if (visibleLayers.get(i) != nonChangedLayers.get(i)) {
@@ -512,6 +516,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             nonChangedLayers.add(visibleLayers.get(i));
         }
         lastViewID = getViewID();
+        paintPreferencesChanged = false;
 
         tempG.drawImage(offscreenBuffer, 0, 0, null);
 
@@ -796,6 +801,10 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         } else {
             JOptionPane.getFrameForComponent(Main.parent).setTitle(tr("Java OpenStreetMap Editor"));
         }
+    }
+
+    public void preferenceChanged(PreferenceChangeEvent e) {
+        paintPreferencesChanged = true;
     }
 
 }
