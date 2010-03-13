@@ -184,12 +184,14 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
         Collection<String> pluginLocations = PluginInformation.getPluginLocations();
         getProgressMonitor().setTicksCount(pluginLocations.size() + 2);
         if (canceled)return;
-        scanLocalPluginRepository(
-                getProgressMonitor().createSubTaskMonitor(1, false),
-                Main.pref.getPluginsDirectory()
-        );
-        getProgressMonitor().worked(1);
-        if (canceled)return;
+        for (String location : pluginLocations) {
+            scanLocalPluginRepository(
+                    getProgressMonitor().createSubTaskMonitor(1, false),
+                    new File(location)
+            );
+            getProgressMonitor().worked(1);
+            if (canceled)return;
+        }
         analyseInProcessPlugins();
         getProgressMonitor().worked(1);
         if (canceled)return;
