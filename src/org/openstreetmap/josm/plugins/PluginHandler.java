@@ -378,7 +378,7 @@ public class PluginHandler {
         try {
             Class<?> klass = plugin.loadClass(pluginClassLoader);
             if (klass != null) {
-                System.out.println(tr("loading plugin ''{0}'' ({1})", plugin.name, plugin.localversion));
+                System.out.println(tr("loading plugin ''{0}'' (version {1})", plugin.name, plugin.localversion));
                 pluginList.add(plugin.load(klass));
             }
         } catch(PluginException e) {
@@ -910,10 +910,10 @@ public class PluginHandler {
             text += "Plugins: " + pl + "\n";
         }
         for (final PluginProxy pp : pluginList) {
-            text += "Plugin "
-                + pp.getPluginInformation().name
-                + (pp.getPluginInformation().version != null && !pp.getPluginInformation().version.equals("") ? " Version: " + pp.getPluginInformation().version + "\n"
-                        : "\n");
+            text += "Plugin " + pp.getPluginInformation().name;
+            String version = pp.getPluginInformation().localversion;
+            text += version != null && !version.equals("") ? " (Version: " + version + ")\n"
+                        : "\n";
         }
         return text;
     }
