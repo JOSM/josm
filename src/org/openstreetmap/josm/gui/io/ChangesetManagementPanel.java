@@ -27,6 +27,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.gui.JMultilineLabel;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -45,7 +46,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *   whether the changeset should be closed after the next upload</li>
  * </ul>
  */
-public class ChangesetManagementPanel extends JPanel implements ListDataListener {
+public class ChangesetManagementPanel extends JPanel implements ListDataListener{
     public final static String SELECTED_CHANGESET_PROP = ChangesetManagementPanel.class.getName() + ".selectedChangeset";
     public final static String CLOSE_CHANGESET_AFTER_UPLOAD = ChangesetManagementPanel.class.getName() + ".closeChangesetAfterUpload";
 
@@ -57,6 +58,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
     private JButton btnClose;
     private JCheckBox cbCloseAfterUpload;
     private OpenChangesetComboBoxModel model;
+    private ChangesetCommentModel changesetCommentModel;
 
     /**
      * builds the GUI
@@ -158,7 +160,15 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         rbExisting.getModel().addItemListener(new RadioButtonHandler());
     }
 
-    public ChangesetManagementPanel() {
+    /**
+     * Creates a new panel
+     * 
+     * @param changesetCommentModel the changeset comment model. Must not be null.
+     * @throws IllegalArgumentException thrown if {@code changesetCommentModel} is null
+     */
+    public ChangesetManagementPanel(ChangesetCommentModel changesetCommentModel) {
+        CheckParameterUtil.ensureParameterNotNull(changesetCommentModel, "changesetCommentModel");
+        this.changesetCommentModel = changesetCommentModel;
         build();
         refreshGUI();
     }
@@ -173,6 +183,11 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         cbOpenChangesets.setEnabled(model.getSize() > 0 && rbExisting.isSelected());
     }
 
+    /**
+     * Sets the changeset to be used in the next upload
+     * 
+     * @param cs the changeset
+     */
     public void setSelectedChangesetForNextUpload(Changeset cs) {
         int idx  = model.getIndexOf(cs);
         if (idx >=0) {
@@ -203,16 +218,6 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         return cbCloseAfterUpload.isSelected();
     }
 
-    /**
-     * Replies the default value for "created_by"
-     *
-     * @return the default value for "created_by"
-     */
-    protected String getDefaultCreatedBy() {
-        Object ua = System.getProperties().get("http.agent");
-        return(ua == null) ? "JOSM" : ua.toString();
-    }
-
     /* ---------------------------------------------------------------------------- */
     /* Interface ListDataListener                                                   */
     /* ---------------------------------------------------------------------------- */
@@ -229,18 +234,20 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
     }
 
     /**
-     * Listens to changes in the selected changeset and accordingly fires property
+     * Listens to changes in the selected changeset and fires property
      * change events.
      *
      */
     class ChangesetListItemStateListener implements ItemListener {
         public void itemStateChanged(ItemEvent e) {
             Changeset cs = (Changeset)cbOpenChangesets.getSelectedItem();
+            if (cs == null) return;
             if (rbExisting.isSelected()) {
+                // create a clone of the selected changeset and make sure
+                // we keep the current changeset comment (see #4371)
+                cs = new Changeset(cs);
+                cs.put("comment", changesetCommentModel.getComment());
                 firePropertyChange(SELECTED_CHANGESET_PROP, null, cs);
-                if (cs == null) {
-                    rbUseNew.setSelected(true);
-                }
             }
         }
     }
@@ -282,6 +289,11 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
                     model.selectFirstChangeset();
                 }
                 Changeset cs = (Changeset)cbOpenChangesets.getSelectedItem();
+                if (cs == null) return;
+                // create a clone of the selected changeset and make sure
+                // we keep the current changeset comment (see #4371)
+                cs = new Changeset(cs);
+                cs.put("comment", changesetCommentModel.getComment());
                 firePropertyChange(SELECTED_CHANGESET_PROP, null, cs);
             }
         }

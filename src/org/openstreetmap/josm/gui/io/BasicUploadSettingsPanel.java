@@ -11,11 +11,11 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -31,14 +32,15 @@ import org.openstreetmap.josm.tools.GBC;
  * data.
  *
  */
-public class BasicUploadSettingsPanel extends JPanel implements PropertyChangeListener{
-    static public final String UPLOAD_COMMENT_PROP = BasicUploadSettingsPanel.class.getName() + ".uploadComment";
+public class BasicUploadSettingsPanel extends JPanel {
     public static final String HISTORY_KEY = "upload.comment.history";
 
     /** the history combo box for the upload comment */
     private HistoryComboBox hcbUploadComment;
     /** the panel with a summary of the upload parameters */
     private UploadParameterSummaryPanel pnlUploadParameterSummary;
+    /** the changset comment model */
+    private ChangesetCommentModel changesetCommentModel;
 
     protected JPanel buildUploadCommentPanel() {
         JPanel pnl = new JPanel();
@@ -55,7 +57,7 @@ public class BasicUploadSettingsPanel extends JPanel implements PropertyChangeLi
         hcbUploadComment.getEditor().addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        firePropertyChange(UPLOAD_COMMENT_PROP, null, hcbUploadComment.getText());
+                        changesetCommentModel.setComment(hcbUploadComment.getText());
                     }
                 }
         );
@@ -63,7 +65,7 @@ public class BasicUploadSettingsPanel extends JPanel implements PropertyChangeLi
                 new FocusAdapter() {
                     @Override
                     public void focusLost(FocusEvent e) {
-                        firePropertyChange(UPLOAD_COMMENT_PROP, null, hcbUploadComment.getText());
+                        changesetCommentModel.setComment(hcbUploadComment.getText());
                     }
                 }
         );
@@ -78,7 +80,16 @@ public class BasicUploadSettingsPanel extends JPanel implements PropertyChangeLi
         add(pnlUploadParameterSummary = new UploadParameterSummaryPanel(), BorderLayout.CENTER);
     }
 
-    public BasicUploadSettingsPanel() {
+    /**
+     * Creates the panel
+     * 
+     * @param changesetCommentModel the model for the changeset comment. Must not be null
+     * @throws IllegalArgumentException thrown if {@code changesetCommentModel} is null
+     */
+    public BasicUploadSettingsPanel(ChangesetCommentModel changesetCommentModel) {
+        CheckParameterUtil.ensureParameterNotNull(changesetCommentModel, "changesetCommentModel");
+        this.changesetCommentModel = changesetCommentModel;
+        changesetCommentModel.addObserver(new ChangesetCommentObserver());
         build();
     }
 
@@ -119,31 +130,7 @@ public class BasicUploadSettingsPanel extends JPanel implements PropertyChangeLi
         hcbUploadComment.getEditor().getEditorComponent().requestFocusInWindow();
     }
 
-    /**
-     * Replies the current upload comment
-     *
-     * @return
-     */
-    public String getUploadComment() {
-        return hcbUploadComment.getText();
-    }
-
-    /**
-     * Sets the current upload comment
-     *
-     * @return
-     */
-    public void setUploadComment(String uploadComment) {
-        if (uploadComment == null) {
-            uploadComment = "";
-        }
-        if (!uploadComment.equals(hcbUploadComment.getText())) {
-            hcbUploadComment.setText(uploadComment);
-        }
-    }
-
-    public void initEditingOfUploadComment(String comment) {
-        setUploadComment(comment);
+    public void initEditingOfUploadComment() {
         hcbUploadComment.getEditor().selectAll();
         hcbUploadComment.requestFocusInWindow();
     }
@@ -152,19 +139,17 @@ public class BasicUploadSettingsPanel extends JPanel implements PropertyChangeLi
         return pnlUploadParameterSummary;
     }
 
-    /* -------------------------------------------------------------------------- */
-    /* Interface PropertyChangeListener                                           */
-    /* -------------------------------------------------------------------------- */
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(TagSettingsPanel.UPLOAD_COMMENT_PROP)) {
-            String comment = (String)evt.getNewValue();
-            if (comment == null) {
-                comment = "";
+    /**
+     * Observes the changeset comment model and keeps the comment input field
+     * in sync with the current changeset comment
+     */
+    class ChangesetCommentObserver implements Observer {
+        public void update(Observable o, Object arg) {
+            if (!(o instanceof ChangesetCommentModel)) return;
+            String newComment = (String)arg;
+            if (!hcbUploadComment.getText().equals(newComment)) {
+                hcbUploadComment.setText(newComment);
             }
-            if (comment.equals(hcbUploadComment.getText()))
-                // nothing to change - return
-                return;
-            hcbUploadComment.setText(comment);
         }
     }
 }

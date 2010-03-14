@@ -2,9 +2,9 @@
 package org.openstreetmap.josm.gui.io;
 
 import java.awt.BorderLayout;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JPanel;
 import javax.swing.event.TableModelEvent;
@@ -14,19 +14,31 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.TagModel;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
-public class TagSettingsPanel extends JPanel implements PropertyChangeListener, TableModelListener {
-    static public final String UPLOAD_COMMENT_PROP = TagSettingsPanel.class.getName() + ".uploadComment";
+public class TagSettingsPanel extends JPanel implements TableModelListener {
 
     /** checkbox for selecting whether an atomic upload is to be used  */
     private TagEditorPanel pnlTagEditor;
+    /** the model for the changeset comment */
+    private ChangesetCommentModel changesetCommentModel;
+
 
     protected void build() {
         setLayout(new BorderLayout());
         add(pnlTagEditor = new TagEditorPanel(), BorderLayout.CENTER);
     }
 
-    public TagSettingsPanel() {
+    /**
+     * Creates a new panel
+     * 
+     * @param changesetCommentModel the changeset comment model. Must not be null.
+     * @throws IllegalArgumentException thrown if {@code changesetCommentModel} is null
+     */
+    public TagSettingsPanel(ChangesetCommentModel changesetCommentModel) throws IllegalArgumentException{
+        CheckParameterUtil.ensureParameterNotNull(changesetCommentModel, "changesetCommentModel");
+        this.changesetCommentModel = changesetCommentModel;
+        this.changesetCommentModel.addObserver(new ChangesetCommentObserver());
         build();
         pnlTagEditor.getModel().addTableModelListener(this);
     }
@@ -41,7 +53,7 @@ public class TagSettingsPanel extends JPanel implements PropertyChangeListener, 
         return(ua == null) ? "JOSM" : ua.toString();
     }
 
-    public void setUploadComment(String comment) {
+    protected void setUploadComment(String comment) {
         if (comment == null) {
             comment = "";
         }
@@ -110,23 +122,29 @@ public class TagSettingsPanel extends JPanel implements PropertyChangeListener, 
     }
 
     /* -------------------------------------------------------------------------- */
-    /* Interface PropertyChangeListener                                           */
-    /* -------------------------------------------------------------------------- */
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(ChangesetManagementPanel.SELECTED_CHANGESET_PROP)) {
-            Changeset cs = (Changeset)evt.getNewValue();
-            initFromChangeset(cs);
-        } else if (evt.getPropertyName().equals(BasicUploadSettingsPanel.UPLOAD_COMMENT_PROP)) {
-            String comment = (String)evt.getNewValue();
-            setUploadComment(comment);
-        }
-    }
-
-    /* -------------------------------------------------------------------------- */
     /* Interface TableChangeListener                                              */
     /* -------------------------------------------------------------------------- */
     public void tableChanged(TableModelEvent e) {
         String uploadComment = getUploadComment();
-        firePropertyChange(UPLOAD_COMMENT_PROP, null, uploadComment);
+        changesetCommentModel.setComment(uploadComment);
+    }
+
+    /**
+     * Observes the changeset comment model and keeps the tag editor in sync
+     * with the current changeset comment
+     *
+     */
+    class ChangesetCommentObserver implements Observer {
+        public void update(Observable o, Object arg) {
+            if (!(o instanceof ChangesetCommentModel)) return;
+            String newValue = (String)arg;
+            String oldValue = getUploadComment();
+            if (oldValue == null) {
+                oldValue = "";
+            }
+            if (!oldValue.equals(newValue)) {
+                setUploadComment((String)arg);
+            }
+        }
     }
 }

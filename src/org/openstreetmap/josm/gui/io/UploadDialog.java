@@ -79,8 +79,10 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
     private JTabbedPane tpConfigPanels;
     /** the upload button */
     private JButton btnUpload;
-
     private boolean canceled = false;
+
+    /** the changeset comment model keeping the state of the changeset comment */
+    private ChangesetCommentModel changesetCommentModel;
 
     /**
      * builds the content panel for the upload dialog
@@ -112,15 +114,17 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         tpConfigPanels.add(new JPanel());
         tpConfigPanels.add(new JPanel());
 
-        tpConfigPanels.setComponentAt(0, pnlBasicUploadSettings = new BasicUploadSettingsPanel());
+        changesetCommentModel = new ChangesetCommentModel();
+
+        tpConfigPanels.setComponentAt(0, pnlBasicUploadSettings = new BasicUploadSettingsPanel(changesetCommentModel));
         tpConfigPanels.setTitleAt(0, tr("Settings"));
         tpConfigPanels.setToolTipTextAt(0, tr("Decide how to upload the data and which changeset to use"));
 
-        tpConfigPanels.setComponentAt(1,pnlTagSettings = new TagSettingsPanel());
+        tpConfigPanels.setComponentAt(1,pnlTagSettings = new TagSettingsPanel(changesetCommentModel));
         tpConfigPanels.setTitleAt(1, tr("Tags of new changeset"));
         tpConfigPanels.setToolTipTextAt(1, tr("Apply tags to the changeset data is uploaded to"));
 
-        tpConfigPanels.setComponentAt(2,pnlChangesetManagement = new ChangesetManagementPanel());
+        tpConfigPanels.setComponentAt(2,pnlChangesetManagement = new ChangesetManagementPanel(changesetCommentModel));
         tpConfigPanels.setTitleAt(2, tr("Changesets"));
         tpConfigPanels.setToolTipTextAt(2, tr("Manage open changesets and select a changeset to upload to"));
 
@@ -174,12 +178,6 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
 
         addWindowListener(new WindowEventHandler());
 
-        // synchronized input of upload comments
-        //
-        //UploadCommentSynchronizer synchronizer = new UploadCommentSynchronizer();
-        //pnlTagSettings.getModeaddTableModelListener(synchronizer);
-        pnlTagSettings.addPropertyChangeListener(pnlBasicUploadSettings);
-        pnlBasicUploadSettings.addPropertyChangeListener(pnlTagSettings);
 
         // make sure the the configuration panels listen to each other
         // changes
@@ -187,7 +185,6 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         pnlChangesetManagement.addPropertyChangeListener(
                 pnlBasicUploadSettings.getUploadParameterSummaryPanel()
         );
-        pnlChangesetManagement.addPropertyChangeListener(pnlTagSettings);
         pnlChangesetManagement.addPropertyChangeListener(this);
         pnlUploadedObjects.addPropertyChangeListener(
                 pnlBasicUploadSettings.getUploadParameterSummaryPanel()
@@ -196,6 +193,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         pnlUploadStrategySelectionPanel.addPropertyChangeListener(
                 pnlBasicUploadSettings.getUploadParameterSummaryPanel()
         );
+
 
         // users can click on either of two links in the upload parameter
         // summary handler. This installs the handler for these two events.
@@ -267,7 +265,6 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         tpConfigPanels.setSelectedIndex(0);
         pnlBasicUploadSettings.startUserInput();
         pnlTagSettings.startUserInput();
-        pnlTagSettings.setUploadComment(getUploadComment());
         pnlTagSettings.initFromChangeset(pnlChangesetManagement.getSelectedChangeset());
         pnlUploadStrategySelectionPanel.initFromPreferences();
         UploadParameterSummaryPanel pnl = pnlBasicUploadSettings.getUploadParameterSummaryPanel();
@@ -311,7 +308,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
      * @return the current value for the upload comment
      */
     protected String getUploadComment() {
-        return pnlBasicUploadSettings.getUploadComment();
+        return changesetCommentModel.getComment();
     }
 
     /**
@@ -384,7 +381,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
             if (getUploadComment().trim().length() < 3) {
                 warnIllegalUploadComment();
                 tpConfigPanels.setSelectedIndex(0);
-                pnlBasicUploadSettings.initEditingOfUploadComment(getUploadComment());
+                pnlBasicUploadSettings.initEditingOfUploadComment();
                 return;
             }
             UploadStrategySpecification strategy = getUploadStrategySpecification();
@@ -436,7 +433,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         @Override
         public void windowActivated(WindowEvent arg0) {
             if (tpConfigPanels.getSelectedIndex() == 0) {
-                pnlBasicUploadSettings.initEditingOfUploadComment(getUploadComment());
+                pnlBasicUploadSettings.initEditingOfUploadComment();
             }
         }
     }
