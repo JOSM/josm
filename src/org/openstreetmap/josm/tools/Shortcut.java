@@ -459,4 +459,43 @@ public class Shortcut {
                         JOptionPane.ERROR_MESSAGE
         );
     }
+
+    /**
+     * Replies the platform specific key stroke for the 'Copy' command, i.e.
+     * 'Ctrl-C' on windows or 'Meta-C' on a Mac. null, if the platform specific
+     * copy command isn't known.
+     * 
+     * @return the platform specific key stroke for the  'Copy' command
+     */
+    static public KeyStroke getCopyKeyStroke() {
+        Shortcut sc = shortcuts.get("system:copy");
+        if (sc == null) return null;
+        return sc.getKeyStroke();
+    }
+
+    /**
+     * Replies the platform specific key stroke for the 'Paste' command, i.e.
+     * 'Ctrl-V' on windows or 'Meta-V' on a Mac. null, if the platform specific
+     * paste command isn't known.
+     * 
+     * @return the platform specific key stroke for the 'Paste' command
+     */
+    static public KeyStroke getPasteKeyStroke() {
+        Shortcut sc = shortcuts.get("system:paste");
+        if (sc == null) return null;
+        return sc.getKeyStroke();
+    }
+
+    /**
+     * Replies the platform specific key stroke for the 'Cut' command, i.e.
+     * 'Ctrl-X' on windows or 'Meta-X' on a Mac. null, if the platform specific
+     * 'Cut' command isn't known.
+     * 
+     * @return the platform specific key stroke for the 'Cut' command
+     */
+    static public KeyStroke getCutKeyStroke() {
+        Shortcut sc = shortcuts.get("system:cut");
+        if (sc == null) return null;
+        return sc.getKeyStroke();
+    }
 }
