@@ -123,10 +123,10 @@ public class BasicChangesetQueryPanel extends JPanel {
 
     protected JPanel buildInfoPanel() {
         pnlInfos = new HtmlPanel();
-        pnlInfos.setText("<html>Please select one the following <strong>standard queries</strong>."
+        pnlInfos.setText(tr("<html>Please select one the following <strong>standard queries</strong>."
                 + "Select <strong>Download my changesets only</strong>"
                 + " if you only want to download changesets created by yourself.<br>"
-                + "Note that JOSM will download max. 100 changesets.</html>"
+                + "Note that JOSM will download max. 100 changesets.</html>")
         );
         return pnlInfos;
     }
@@ -144,17 +144,17 @@ public class BasicChangesetQueryPanel extends JPanel {
 
     public void init() {
         JMultilineLabel lbl = lblQueries.get(BasicQuery.MOST_RECENT_CHANGESETS);
-        lbl.setText("<html>Download the latest changesets</html>");
+        lbl.setText(tr("<html>Download the latest changesets</html>"));
 
         // query for open changesets only possible if we have a current user which is at least
         // partially identified
         lbl = lblQueries.get(BasicQuery.MY_OPEN_CHANGESETS);
         if (JosmUserIdentityManager.getInstance().isAnonymous()) {
             rbQueries.get(BasicQuery.MY_OPEN_CHANGESETS).setEnabled(false);
-            lbl.setText("<html>Download my open changesets<br><em>Disabled. Please enter your OSM user name in the preferences first.</em></html>");
+            lbl.setText(tr("<html>Download my open changesets<br><em>Disabled. Please enter your OSM user name in the preferences first.</em></html>"));
         } else {
             rbQueries.get(BasicQuery.MY_OPEN_CHANGESETS).setEnabled(true);
-            lbl.setText("<html>Download my open changesets</html>");
+            lbl.setText(tr("<html>Download my open changesets</html>"));
         }
 
         // query for changesets in the current map view only if there *is* a current
@@ -162,10 +162,10 @@ public class BasicChangesetQueryPanel extends JPanel {
         lbl = lblQueries.get(BasicQuery.CHANGESETS_IN_MAP_VIEW);
         if (Main.map == null || Main.map.mapView == null) {
             rbQueries.get(BasicQuery.CHANGESETS_IN_MAP_VIEW).setEnabled(false);
-            lbl.setText("<html>Download changesets in the current map view.<br><em>Disabled. There is currently no map view active.</em></html>");
+            lbl.setText(tr("<html>Download changesets in the current map view.<br><em>Disabled. There is currently no map view active.</em></html>"));
         } else {
             rbQueries.get(BasicQuery.CHANGESETS_IN_MAP_VIEW).setEnabled(true);
-            lbl.setText("<html>Download changesets in the current map view</html>");
+            lbl.setText(tr("<html>Download changesets in the current map view</html>"));
         }
 
         restoreFromPreferences();
