@@ -1,4 +1,4 @@
-//License: GPL. Copyright 2007 by Immanuel Scholz and others
+//License: GPL. Copyright 2007 by Immanuel Scholz and others. See LICENSE file for details.
 package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.conflict.tags.TagConflictResolutionUtil.combineTigerTags;
@@ -40,6 +40,12 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * Merges a collection of nodes into one node.
  *
+ * The "surviving" node will be the one with the lowest positive id.
+ * (I.e. it was uploaded to the server and is the oldest one.)
+ * 
+ * However we use the location of the node that was selected *last*.
+ * The "surviving" node will be moved to that location if it is
+ * different from the last selected node.
  */
 public class MergeNodesAction extends JosmAction {
 
@@ -65,7 +71,8 @@ public class MergeNodesAction extends JosmAction {
         }
 
         Node targetNode = selectTargetNode(selectedNodes);
-        Command cmd = mergeNodes(Main.main.getEditLayer(), selectedNodes, targetNode);
+        Node targetLocationNode = selectTargetLocationNode(selectedNodes);
+        Command cmd = mergeNodes(Main.main.getEditLayer(), selectedNodes, targetNode, targetLocationNode);
         if (cmd != null) {
             Main.main.undoRedo.add(cmd);
             Main.main.getEditLayer().data.setSelected(targetNode);
@@ -73,20 +80,44 @@ public class MergeNodesAction extends JosmAction {
     }
 
     /**
-     * Find which node to merge into (i.e. which one will be left)
-     * The last selected node will become the target node the remaining
-     * nodes are merged to.
+     * Select the location of the target node after merge.
      *
      * @param candidates the collection of candidate nodes
-     * @return the selected target node
+     * @return the coordinates of this node are later used for the target node
      */
-    public static Node selectTargetNode(LinkedHashSet<Node> candidates) {
+    public static Node selectTargetLocationNode(LinkedHashSet<Node> candidates) {
         Node targetNode = null;
         for (Node n : candidates) { // pick last one
             targetNode = n;
         }
         return targetNode;
     }
+    
+    /**
+     * Find which node to merge into (i.e. which one will be left)
+     *
+     * @param candidates the collection of candidate nodes
+     * @return the selected target node
+     */
+    public static Node selectTargetNode(LinkedHashSet<Node> candidates) {
+        Node targetNode = null;
+        Node lastNode = null;
+        for (Node n : candidates) {
+            if (!n.isNew()) {
+                if (targetNode == null) {
+                    targetNode = n;
+                } else if (n.getId() < targetNode.getId()) {
+                    targetNode = n;
+                }
+            }
+            lastNode = n;
+        }
+        if (targetNode == null) {
+            targetNode = lastNode;
+        }
+        return targetNode;
+    }
+    
 
     /**
      * Fixes the parent ways referring to one of the nodes.
@@ -159,6 +190,10 @@ public class MergeNodesAction extends JosmAction {
         return cmds;
     }
 
+    public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetNode) {
+        return mergeNodes(layer, nodes, targetNode, targetNode);
+    }
+    
     /**
      * Merges the nodes in <code>nodes</code> onto one of the nodes. Uses the dataset
      * managed by <code>layer</code> as reference.
@@ -166,9 +201,10 @@ public class MergeNodesAction extends JosmAction {
      * @param layer layer the reference data layer. Must not be null.
      * @param nodes the collection of nodes. Ignored if null.
      * @param targetNode the target node the collection of nodes is merged to. Must not be null.
+     * @param targetLocationNode this node's location will be used for the targetNode.
      * @throw IllegalArgumentException thrown if layer is null
      */
-    public static Command mergeNodes(OsmDataLayer layer,Collection<Node> nodes, Node targetNode) {
+    public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetNode, Node targetLocationNode) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         CheckParameterUtil.ensureParameterNotNull(targetNode, "targetNode");
         if (nodes == null)
@@ -219,6 +255,11 @@ public class MergeNodesAction extends JosmAction {
 
         // build the commands
         //
+        if (targetNode != targetLocationNode) {
+            Node newTargetNode = new Node(targetNode);
+            newTargetNode.setCoor(targetLocationNode.getCoor());
+            cmds.add(new ChangeCommand(targetNode, newTargetNode));
+        }
         if (!nodesToDelete.isEmpty()) {
             cmds.add(new DeleteCommand(nodesToDelete));
         }
