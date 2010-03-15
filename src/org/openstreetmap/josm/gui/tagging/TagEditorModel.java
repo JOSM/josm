@@ -302,7 +302,7 @@ public class TagEditorModel extends AbstractTableModel {
      * @param primitive the OSM primitive
      */
     public void initFromPrimitive(Tagged primitive) {
-        clear();
+        this.tags.clear();
         for (String key : primitive.keySet()) {
             String value = primitive.get(key);
             add(key,value);
@@ -319,7 +319,7 @@ public class TagEditorModel extends AbstractTableModel {
      * @param primitive the OSM primitive
      */
     public void initFromTags(Map<String,String> tags) {
-        clear();
+        this.tags.clear();
         for (String key : tags.keySet()) {
             String value = tags.get(key);
             add(key,value);
@@ -337,7 +337,7 @@ public class TagEditorModel extends AbstractTableModel {
      * @param tags the tags
      */
     public void initFromTags(TagCollection tags) {
-        clear();
+        this.tags.clear();
         if (tags == null){
             setDirty(false);
             return;
