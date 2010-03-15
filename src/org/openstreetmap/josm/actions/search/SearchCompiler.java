@@ -126,7 +126,7 @@ public class SearchCompiler {
             this.id = id;
         }
         @Override public boolean match(OsmPrimitive osm) {
-            return osm.getUniqueId() == id;
+            return id == 0?osm.isNew():osm.getUniqueId() == id;
         }
         @Override public String toString() {return "id="+id;}
     }
