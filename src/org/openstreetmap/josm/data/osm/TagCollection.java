@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -50,6 +51,24 @@ public class TagCollection implements Iterable<Tag> {
             tags.add(new Tag(key, primitive.get(key)));
         }
         return tags;
+    }
+
+    /**
+     * Creates a tag collection from a map of key/value-pairs. Replies
+     * an empty tag collection if {@code tags} is null.
+     * 
+     * @param tags  the key/value-pairs
+     * @return the tag collection
+     */
+    public static TagCollection from(Map<String,String> tags) {
+        TagCollection ret = new TagCollection();
+        if (tags == null) return ret;
+        for (Entry<String,String> entry: tags.entrySet()) {
+            String key = entry.getKey() == null? "" : entry.getKey();
+            String value = entry.getValue() == null ? "" : entry.getValue();
+            ret.add(new Tag(key,value));
+        }
+        return ret;
     }
 
     /**

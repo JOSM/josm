@@ -21,6 +21,7 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Tagged;
 
 /**
@@ -330,6 +331,29 @@ public class TagEditorModel extends AbstractTableModel {
     }
 
     /**
+     * Initializes the model with the tags in a tag collection. Removes
+     * all tags if {@code tags} is null.
+     *
+     * @param tags the tags
+     */
+    public void initFromTags(TagCollection tags) {
+        clear();
+        if (tags == null){
+            setDirty(false);
+            return;
+        }
+        for (String key : tags.getKeys()) {
+            String value = tags.getJoinedValues(key);
+            add(key,value);
+        }
+        sort();
+        // add an empty row
+        TagModel tag = new TagModel();
+        this.tags.add(tag);
+        setDirty(false);
+    }
+
+    /**
      * applies the current state of the tag editor model to a primitive
      *
      * @param primitive the primitive
@@ -369,6 +393,15 @@ public class TagEditorModel extends AbstractTableModel {
         Map<String,String> tags = new HashMap<String, String>();
         applyToTags(tags);
         return tags;
+    }
+
+    /**
+     * Replies the the tags in this tag editor model as {@see TagCollection}.
+     * 
+     * @return the the tags in this tag editor model as {@see TagCollection}
+     */
+    public TagCollection getTagCollection() {
+        return TagCollection.from(getTags());
     }
 
     /**
