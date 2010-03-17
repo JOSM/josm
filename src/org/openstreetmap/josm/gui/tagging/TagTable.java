@@ -38,7 +38,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.gui.dialogs.relation.RunnableAction;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
@@ -355,13 +354,12 @@ public class TagTable extends JTable  {
     }
 
     /**
-     * constructor
+     * Creates a new tag table
      *
-     * @param model
-     * @param columnModel
+     * @param model the tag editor model
      */
-    public TagTable(TableModel model, DefaultListSelectionModel rowSelectionModel, DefaultListSelectionModel colSelectionModel) {
-        super(model, new TagTableColumnModel(colSelectionModel), rowSelectionModel);
+    public TagTable(TagEditorModel model) {
+        super(model, new TagTableColumnModel(model.getColumnSelectionModel()), model.getRowSelectionModel());
         init();
     }
 

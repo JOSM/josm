@@ -8,7 +8,6 @@ import java.awt.Insets;
 import java.util.logging.Logger;
 
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -16,6 +15,7 @@ import javax.swing.JScrollPane;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * TagEditorPanel is a {@see JPanel} which can be embedded as UI component in
@@ -41,14 +41,8 @@ public class TagEditorPanel extends JPanel {
      * @return the panel
      */
     protected JPanel buildTagTableEditorPanel() {
-
         JPanel pnl = new JPanel();
-        DefaultListSelectionModel rowSelectionModel = new DefaultListSelectionModel();
-        DefaultListSelectionModel colSelectionModel = new DefaultListSelectionModel();
-
-        model = new TagEditorModel(rowSelectionModel, colSelectionModel);
-        tagTable = new TagTable(model, rowSelectionModel, colSelectionModel);
-
+        tagTable = new TagTable(model);
         pnl.setLayout(new BorderLayout());
         pnl.add(new JScrollPane(tagTable), BorderLayout.CENTER);
         return pnl;
@@ -106,9 +100,24 @@ public class TagEditorPanel extends JPanel {
     }
 
     /**
-     * constructor
+     * Creates a new tag editor panel. The editor model is created
+     * internally and can be retrieved with {@see #getModel()}.
      */
     public TagEditorPanel() {
+        this(null);
+    }
+
+    /**
+     * Creates a new tag editor panel with a supplied model. If
+     * {@code model} is null, a new model is created.
+     * 
+     * @param model the tag editor model
+     */
+    public TagEditorPanel(TagEditorModel model) {
+        this.model = model;
+        if (this.model == null) {
+            this.model = new TagEditorModel();
+        }
         build();
     }
 
@@ -121,7 +130,16 @@ public class TagEditorPanel extends JPanel {
         return model;
     }
 
-    public void initAutoCompletion(OsmDataLayer layer) {
+    /**
+     * Initializes the auto completion infrastructure used in this
+     * tag editor panel. {@code layer} is the data layer from whose data set
+     * tag values are proposed as auto completion items.
+     * 
+     * @param layer the data layer. Must not be null.
+     * @throws IllegalArgumentException thrown if {@code layer} is null
+     */
+    public void initAutoCompletion(OsmDataLayer layer) throws IllegalArgumentException{
+        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         // initialize the autocompletion infrastructure
         //
         acCache = AutoCompletionCache.getCacheForLayer(layer);

@@ -23,6 +23,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Tagged;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * TagEditorModel is a table model.
@@ -36,26 +37,67 @@ public class TagEditorModel extends AbstractTableModel {
     static public final String PROP_DIRTY = TagEditorModel.class.getName() + ".dirty";
 
     /** the list holding the tags */
-    protected ArrayList<TagModel> tags = null;
+    protected final ArrayList<TagModel> tags =new ArrayList<TagModel>();
 
     /** indicates whether the model is dirty */
     private boolean dirty =  false;
-    private PropertyChangeSupport propChangeSupport = null;
+    private final PropertyChangeSupport propChangeSupport = new PropertyChangeSupport(this);
+
     private DefaultListSelectionModel rowSelectionModel;
     private DefaultListSelectionModel colSelectionModel;
 
     /**
-     * constructor
+     * Creates a new tag editor model. Internally allocates two selection models
+     * for row selection and column selection.
+     * 
+     * To create a {@see JTable} with this model:
+     * <pre>
+     *    TagEditorModel model = new TagEditorModel();
+     *    TagTable tbl  = new TagTabel(model);
+     * </pre>
+     * 
+     * @see #getRowSelectionModel()
+     * @see #getColumnSelectionModel()
      */
-    public TagEditorModel(DefaultListSelectionModel rowSelectionModel, DefaultListSelectionModel colSelectionModel){
-        tags = new ArrayList<TagModel>();
-        propChangeSupport = new PropertyChangeSupport(this);
+    public TagEditorModel() {
+        this.rowSelectionModel = new DefaultListSelectionModel();
+        this.colSelectionModel  = new DefaultListSelectionModel();
+    }
+    /**
+     * Creates a new tag editor model.
+     * 
+     * @param rowSelectionModel the row selection model. Must not be null.
+     * @param colSelectionModel the column selection model. Must not be null.
+     * @throws IllegalArgumentException thrown if {@code rowSelectionModel} is null
+     * @throws IllegalArgumentException thrown if {@code colSelectionModel} is null
+     */
+    public TagEditorModel(DefaultListSelectionModel rowSelectionModel, DefaultListSelectionModel colSelectionModel) throws IllegalArgumentException{
+        CheckParameterUtil.ensureParameterNotNull(rowSelectionModel, "rowSelectionModel");
+        CheckParameterUtil.ensureParameterNotNull(colSelectionModel, "colSelectionModel");
         this.rowSelectionModel = rowSelectionModel;
         this.colSelectionModel  = colSelectionModel;
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         propChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    /**
+     * Replies the row selection model used by this tag editor model
+     * 
+     * @return the row selection model used by this tag editor model
+     */
+    public DefaultListSelectionModel getRowSelectionModel() {
+        return rowSelectionModel;
+    }
+
+    /**
+     * Replies the column selection model used by this tag editor model
+     * 
+     * @return the column selection model used by this tag editor model
+     */
+    public DefaultListSelectionModel getColumnSelectionModel() {
+        return colSelectionModel;
     }
 
     public void removeProperyChangeListener(PropertyChangeListener listener) {
@@ -166,11 +208,12 @@ public class TagEditorModel extends AbstractTableModel {
         TagModel tag = get(name);
         if (tag == null) {
             tag = new TagModel(name, value);
-            add(tag);
+            tags.add(tag);
         } else {
             tag.addValue(value);
         }
         setDirty(true);
+        fireTableDataChanged();
     }
 
     /**
@@ -305,7 +348,7 @@ public class TagEditorModel extends AbstractTableModel {
         this.tags.clear();
         for (String key : primitive.keySet()) {
             String value = primitive.get(key);
-            add(key,value);
+            this.tags.add(new TagModel(key,value));
         }
         TagModel tag = new TagModel();
         sort();
@@ -322,10 +365,10 @@ public class TagEditorModel extends AbstractTableModel {
         this.tags.clear();
         for (String key : tags.keySet()) {
             String value = tags.get(key);
-            add(key,value);
+            this.tags.add(new TagModel(key,value));
         }
-        TagModel tag = new TagModel();
         sort();
+        TagModel tag = new TagModel();
         this.tags.add(tag);
         setDirty(false);
     }
@@ -344,7 +387,7 @@ public class TagEditorModel extends AbstractTableModel {
         }
         for (String key : tags.getKeys()) {
             String value = tags.getJoinedValues(key);
-            add(key,value);
+            this.tags.add(new TagModel(key,value));
         }
         sort();
         // add an empty row
