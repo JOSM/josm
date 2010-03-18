@@ -186,6 +186,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     private final List<Layer> nonChangedLayers = new ArrayList<Layer>();
     private int lastViewID;
     private boolean paintPreferencesChanged = true;
+    private Rectangle lastClipBounds = new Rectangle();
 
     public MapView() {
         Main.pref.addPreferenceChangeListener(this);
@@ -476,7 +477,8 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             }
         }
 
-        boolean canUseBuffer = !paintPreferencesChanged && nonChangedLayers.size() <= nonChangedLayersCount && lastViewID == getViewID();
+        boolean canUseBuffer = !paintPreferencesChanged && nonChangedLayers.size() <= nonChangedLayersCount &&
+        lastViewID == getViewID() && lastClipBounds.contains(g.getClipBounds());
         if (canUseBuffer) {
             for (int i=0; i<nonChangedLayers.size(); i++) {
                 if (visibleLayers.get(i) != nonChangedLayers.get(i)) {
@@ -523,6 +525,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         }
         lastViewID = getViewID();
         paintPreferencesChanged = false;
+        lastClipBounds = g.getClipBounds();
 
         tempG.drawImage(nonChangedLayersBuffer, 0, 0, null);
 
