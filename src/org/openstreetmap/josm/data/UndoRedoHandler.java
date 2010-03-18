@@ -37,6 +37,12 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
     public void addNoRedraw(final Command c) {
         c.executeCommand();
         commands.add(c);
+        // Limit the number of commands in the undo list.
+        // Currently you have to undo the commands one by one. If
+        // this changes, a higher default value may be reasonable.
+        if (commands.size() > Main.pref.getInteger("undo.max", 1000)) {
+            commands.removeFirst();
+        }
         redoCommands.clear();
     }
 
