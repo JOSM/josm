@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -129,7 +130,7 @@ public class MergeNodesAction extends JosmAction {
      * @param targetNode the target node the other nodes are merged to
      * @return a list of commands; null, if the ways could not be fixed
      */
-    protected static List<Command> fixParentWays(Collection<OsmPrimitive> nodesToDelete, Node targetNode) {
+    protected static List<Command> fixParentWays(Collection<Node> nodesToDelete, Node targetNode) {
         List<Command> cmds = new ArrayList<Command>();
         Set<Way> waysToDelete = new HashSet<Way>();
 
@@ -179,9 +180,7 @@ public class MergeNodesAction extends JosmAction {
             } else if(newNodes.size() < 2 && w.getReferrers().isEmpty()) {
                 waysToDelete.add(w);
             } else {
-                Way newWay = new Way(w);
-                newWay.setNodes(newNodes);
-                cmds.add(new ChangeCommand(w, newWay));
+                cmds.add(new ChangeNodesCommand(w, newNodes));
             }
         }
         if (!waysToDelete.isEmpty()) {
@@ -239,7 +238,7 @@ public class MergeNodesAction extends JosmAction {
 
         // the nodes we will have to delete
         //
-        Collection<OsmPrimitive> nodesToDelete = new HashSet<OsmPrimitive>(nodes);
+        Collection<Node> nodesToDelete = new HashSet<Node>(nodes);
         nodesToDelete.remove(targetNode);
 
         // fix the ways referring to at least one of the merged nodes
