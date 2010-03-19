@@ -59,9 +59,10 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     public static int MAX_OBJECTS_PER_LEVEL = 16;
     class QBLevel
     {
-        int level;
-        long quad;
-        QBLevel parent;
+        final int level;
+        private final BBox bbox;
+        final long quad;
+        final QBLevel parent;
 
         public List<T> content;
         public QBLevel children[];
@@ -70,10 +71,46 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         {
             return super.toString()+ "["+level+"]: " + bbox();
         }
-        public QBLevel(QBLevel parent)
-        {
-            init(parent);
+        /**
+         * Constructor for root node
+         */
+        public QBLevel() {
+            level = 0;
+            quad = 0;
+            parent = null;
+            bbox = new BBox(-180, 90, 180, -90);
         }
+
+        public QBLevel(QBLevel parent, int parent_index) {
+            this.parent = parent;
+            this.level = parent.level + 1;
+            int shift = (QuadBuckets.NR_LEVELS - level) * 2;
+            long mult = 1;
+            // Java blows the big one.  It seems to wrap when
+            // you shift by > 31
+            if (shift >= 30) {
+                shift -= 30;
+                mult = 1<<30;
+            }
+            long this_quadpart = mult * (parent_index << shift);
+            this.quad = parent.quad | this_quadpart;
+            this.bbox = calculateBBox(); // calculateBBox reference quad
+            if (debug) {
+                out("new level["+this.level+"] bbox["+parent_index+"]: " + this.bbox()
+                        + " coor: " + this.coor()
+                        + " quadpart: " + Long.toHexString(this_quadpart)
+                        + " quad: " + Long.toHexString(this.quad));
+            }
+        }
+
+        private BBox calculateBBox() {
+            LatLon bottom_left = this.coor();
+            double lat = bottom_left.lat() + parent.height() / 2;
+            double lon = bottom_left.lon() + parent.width() / 2;
+            LatLon top_right = new LatLon(lat, lon);
+            return new BBox(bottom_left, top_right);
+        }
+
         boolean remove_content(T o)
         {
             synchronized (split_lock) {
@@ -534,16 +571,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         {
             return Long.toHexString(quad);
         }
-        public void init(QBLevel parent)
-        {
-            this.parent = parent;
-            if (parent == null) {
-                this.level = 0;
-            } else {
-                this.level = parent.level + 1;
-            }
-            this.quad = 0;
-        }
         int index_of(QBLevel find_this)
         {
             if (this.isLeaf())
@@ -555,59 +582,15 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             }
             return -1;
         }
-        public QBLevel(QBLevel parent, int parent_index)
-        {
-            this.init(parent);
-            int shift = (QuadBuckets.NR_LEVELS - level) * 2;
-            long mult = 1;
-            // Java blows the big one.  It seems to wrap when
-            // you shift by > 31
-            if (shift >= 30) {
-                shift -= 30;
-                mult = 1<<30;
-            }
-            long this_quadpart = mult * (parent_index << shift);
-            this.quad = parent.quad | this_quadpart;
-            if (debug) {
-                out("new level["+this.level+"] bbox["+parent_index+"]: " + this.bbox()
-                        + " coor: " + this.coor()
-                        + " quadpart: " + Long.toHexString(this_quadpart)
-                        + " quad: " + Long.toHexString(this.quad));
-            }
+        double width() {
+            return bbox.width();
         }
-        /*
-         * Surely we can calculate these efficiently instead of storing
-         */
-        double width = Double.NEGATIVE_INFINITY;
-        double width()
-        {
-            if (width != Double.NEGATIVE_INFINITY)
-                return this.width;
-            if (level == 0) {
-                width = this.bbox().width();
-            } else {
-                width = parent.width()/2;
-            }
-            return width;
+
+        double height() {
+            return bbox.height();
         }
-        double height()
-        {
-            return width()/2;
-        }
-        private BBox bbox = null;
-        public BBox bbox()
-        {
-            if (bbox != null)
-                return bbox;
-            if (level == 0) {
-                bbox = new BBox(-180, 90, 180, -90);
-            } else {
-                LatLon bottom_left = this.coor();
-                double lat = bottom_left.lat() + this.height();
-                double lon = bottom_left.lon() + this.width();
-                LatLon top_right = new LatLon(lat, lon);
-                bbox = new BBox(bottom_left, top_right);
-            }
+
+        public BBox bbox() {
             return bbox;
         }
         /*
@@ -674,7 +657,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     }
     public void clear()
     {
-        root = new QBLevel(null);
+        root = new QBLevel();
         search_cache = null;
         if (debug) {
             out("QuadBuckets() cleared: " + this);
@@ -716,7 +699,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     }
     public void reindex()
     {
-        QBLevel newroot = new QBLevel(null);
+        QBLevel newroot = new QBLevel();
         Iterator<T> i = this.iterator();
         while (i.hasNext()) {
             T o = i.next();

@@ -6,9 +6,7 @@ public class QuadTiling
     public static int NR_LEVELS = 24;
     public static double WORLD_PARTS = (1 << NR_LEVELS);
 
-    public static int MAX_OBJECTS_PER_LEVEL = 16;
-    // has to be a power of 2
-    public static int TILES_PER_LEVEL_SHIFT = 2;
+    public static int TILES_PER_LEVEL_SHIFT = 2; // Has to be 2. Other parts of QuadBuckets code rely on it
     public static int TILES_PER_LEVEL = 1<<TILES_PER_LEVEL_SHIFT;
     static public int X_PARTS = 360;
     static public int X_BIAS = -180;
@@ -96,14 +94,16 @@ public class QuadTiling
         int total_shift = TILES_PER_LEVEL_SHIFT*(NR_LEVELS-level-1);
         return (int)(mask & (quad >> total_shift));
     }
-    static public int index(LatLon coor, int level)
-    {
+    static public int index(LatLon coor, int level) {
         // The nodes that don't return coordinates will all get
         // stuck in a single tile.  Hopefully there are not too
         // many of them
         if (coor == null)
             return 0;
-        long quad = coorToTile(coor);
-        return index(level, quad);
+
+        long x = lon2x(coor.lon());
+        long y = lat2y(coor.lat());
+        int shift = NR_LEVELS-level-1;
+        return (int)((x >> shift & 1) * 2 + (y >> shift & 1));
     }
 }
