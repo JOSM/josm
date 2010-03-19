@@ -162,59 +162,32 @@ public class DataSet implements Cloneable {
     public Collection<DataSource> dataSources = new LinkedList<DataSource>();
 
     /**
-     * @return A collection containing all primitives of the dataset. The data is ordered after:
-     * first come nodes, then ways, then relations. Ordering in between the categories is not
-     * guaranteed.
+     * @return A collection containing all primitives of the dataset. Data are not ordered
      */
-    public List<OsmPrimitive> allPrimitives() {
-        List<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
-        o.addAll(nodes);
-        o.addAll(ways);
-        o.addAll(relations);
-        return o;
+    public Collection<OsmPrimitive> allPrimitives() {
+        return Collections.unmodifiableCollection(allPrimitives);
     }
 
     /**
      * @return A collection containing all not-deleted primitives (except keys).
      */
     public Collection<OsmPrimitive> allNonDeletedPrimitives() {
-        Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
-        for (OsmPrimitive osm : allPrimitives())
-            if (osm.isVisible() && !osm.isDeleted()) {
-                o.add(osm);
-            }
-        return o;
+        return new DatasetCollection.AllNonDeleted(allPrimitives);
     }
 
     public Collection<OsmPrimitive> allNonDeletedCompletePrimitives() {
-        Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
-        for (OsmPrimitive osm : allPrimitives())
-            if (osm.isVisible() && !osm.isDeleted() && !osm.isIncomplete()) {
-                o.add(osm);
-            }
-        return o;
+        return new DatasetCollection.AllNonDeletedComplete(allPrimitives);
     }
 
     public Collection<OsmPrimitive> allNonDeletedPhysicalPrimitives() {
-        Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
-        for (OsmPrimitive osm : allPrimitives())
-            if (osm.isVisible() && !osm.isDeleted() && !osm.isIncomplete() && !(osm instanceof Relation)) {
-                o.add(osm);
-            }
-        return o;
+        return new DatasetCollection.AllNonDeletedPhysical(allPrimitives);
     }
 
     /**
      * @return A collection containing all modified primitives
      */
     public Collection<OsmPrimitive> allModifiedPrimitives() {
-        Collection<OsmPrimitive> o = new LinkedList<OsmPrimitive>();
-        for (OsmPrimitive osm : allPrimitives()) {
-            if (osm.isVisible() && osm.isModified()) {
-                o.add(osm);
-            }
-        }
-        return o;
+        return new DatasetCollection.AllModified(allPrimitives);
     }
 
     /**
