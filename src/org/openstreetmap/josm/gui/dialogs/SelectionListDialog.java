@@ -79,7 +79,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * A small tool dialog for displaying the current selection.
- * 
+ *
  */
 public class SelectionListDialog extends ToggleDialog  {
     static private final Logger logger = Logger.getLogger(SelectionListDialog.class.getName());
@@ -95,7 +95,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
     /**
      * Builds the panel with the list of selected OSM primitives
-     * 
+     *
      * @return the panel with the list of selected OSM primitives
      */
     protected JPanel buildListPanel() {
@@ -113,7 +113,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
     /**
      * Builds the row of action buttons at the bottom of this dialog
-     * 
+     *
      * @return the panel
      */
     protected JPanel buildActionPanel() {
@@ -146,7 +146,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
     /**
      * Builds the content panel for this dialog
-     * 
+     *
      * @return the content panel
      */
     protected JPanel buildContentPanel() {
@@ -325,7 +325,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
     /**
      * The action for zooming to the primitives in the current JOSM selection
-     * 
+     *
      */
     class ZoomToJOSMSelectionAction extends AbstractAction implements ListDataListener {
 
@@ -360,7 +360,7 @@ public class SelectionListDialog extends ToggleDialog  {
     /**
      * The action for zooming to the primitives which are currently selected in
      * the list displaying the JOSM selection
-     * 
+     *
      */
     class ZoomToListSelection extends AbstractAction implements ListSelectionListener{
         public ZoomToListSelection() {
@@ -392,10 +392,10 @@ public class SelectionListDialog extends ToggleDialog  {
 
     /**
      * The list model for the list of OSM primitives in the current JOSM selection.
-     * 
+     *
      * The model also maintains a history of the last {@see SelectionListModel#SELECTION_HISTORY_SIZE}
      * JOSM selection.
-     * 
+     *
      */
     static private class SelectionListModel extends AbstractListModel implements EditLayerChangeListener, SelectionChangedListener, DataSetListener{
 
@@ -415,7 +415,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
         /**
          * Replies a summary of the current JOSM selection
-         * 
+         *
          * @return a summary of the current JOSM selection
          */
         public String getJOSMSelectionSummary() {
@@ -435,7 +435,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
         /**
          * Remembers a JOSM selection the history of JOSM selections
-         * 
+         *
          * @param selection the JOSM selection. Ignored if null or empty.
          */
         public void remember(Collection<? extends OsmPrimitive> selection) {
@@ -454,7 +454,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
         /**
          * Replies the history of JOSM selections
-         * 
+         *
          * @return
          */
         public List<Collection<? extends OsmPrimitive>> getSelectionHistory() {
@@ -472,7 +472,7 @@ public class SelectionListDialog extends ToggleDialog  {
         /**
          * Replies the collection of OSM primitives currently selected in the view
          * of this model
-         * 
+         *
          * @return
          */
         public Collection<OsmPrimitive> getSelected() {
@@ -487,7 +487,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
         /**
          * Sets the OSM primitives to be selected in the view of this model
-         * 
+         *
          * @param sel the collection of primitives to select
          */
         public void setSelected(Collection<OsmPrimitive> sel) {
@@ -510,7 +510,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
         /**
          * Sets the collection of currently selected OSM objects
-         * 
+         *
          * @param selection the collection of currently selected OSM objects
          */
         public void setJOSMSelection(Collection<? extends OsmPrimitive> selection) {
@@ -528,7 +528,7 @@ public class SelectionListDialog extends ToggleDialog  {
         /**
          * Triggers a refresh of the view for all primitives in {@code toUpdate}
          * which are currently displayed in the view
-         * 
+         *
          * @param toUpdate the collection of primitives to update
          */
         public void update(Collection<? extends OsmPrimitive> toUpdate) {
@@ -546,7 +546,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
         /**
          * Replies the list of selected relations with incomplete members
-         * 
+         *
          * @return the list of selected relations with incomplete members
          */
         public List<Relation> getSelectedRelationsWithIncompleteMembers() {
@@ -653,7 +653,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
     /**
      * The popup menu for the search history entries
-     * 
+     *
      */
     protected static class SearchPopupMenu extends JPopupMenu {
         static public void launch(Component parent) {
@@ -737,7 +737,7 @@ public class SelectionListDialog extends ToggleDialog  {
 
     /**
      * Action for downloading incomplete members of selected relations
-     * 
+     *
      */
     class DownloadSelectedIncompleteMembersAction extends AbstractAction implements ListSelectionListener{
         public DownloadSelectedIncompleteMembersAction() {
@@ -777,7 +777,7 @@ public class SelectionListDialog extends ToggleDialog  {
     }
 
     static private class OsmPrimitiveComparator implements Comparator<OsmPrimitive> {
-        final private HashMap<Object, String> cache= new HashMap<Object, String>();
+        final private HashMap<OsmPrimitive, String> cache= new HashMap<OsmPrimitive, String>();
         final private DefaultNameFormatter df  = DefaultNameFormatter.getInstance();
 
         private String cachedName(OsmPrimitive p) {

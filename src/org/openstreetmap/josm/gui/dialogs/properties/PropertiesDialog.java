@@ -266,9 +266,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             newkey = key;
             value = null; // delete the key instead
         }
-        if (key.equals(newkey) && tr("<different>").equals(value)) {
+        if (key.equals(newkey) && tr("<different>").equals(value))
             return;
-        }
         if (key.equals(newkey) || value == null) {
             Main.main.undoRedo.add(new ChangePropertyCommand(sel, newkey, value));
         } else {
@@ -762,11 +761,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         membershipData.setRowCount(0);
 
         Map<Relation, Collection<RelationMember>> roles = new HashMap<Relation, Collection<RelationMember>>();
-        if (Main.main.getCurrentDataSet() != null) {
-            for (Relation r : Main.main.getCurrentDataSet().getRelations()) {
-                if (!r.isFiltered() && !r.isIncomplete() && !r.isDeleted()) {
+        for (OsmPrimitive primitive: newSelection) {
+            for (OsmPrimitive ref: primitive.getReferrers()) {
+                if (ref instanceof Relation && !ref.isFiltered() && !ref.isIncomplete() && !ref.isDeleted()) {
+                    Relation r = (Relation) ref;
                     for (RelationMember m : r.getMembers()) {
-                        if (newSelection.contains(m.getMember())) {
+                        if (m.getMember() == primitive) {
                             Collection<RelationMember> value = roles.get(r);
                             if (value == null) {
                                 value = new HashSet<RelationMember>();
@@ -778,6 +778,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 }
             }
         }
+
         for (Entry<Relation, Collection<RelationMember>> e : roles.entrySet()) {
             membershipData.addRow(new Object[]{e.getKey(), e.getValue()});
         }
