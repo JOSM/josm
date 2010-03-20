@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.event;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class DataChangedEvent extends AbstractDatasetChangedEvent {
     }
 
     @Override
-    public List<OsmPrimitive> getPrimitives() {
+    public Collection<OsmPrimitive> getPrimitives() {
         if (dataSet == null)
             return Collections.emptyList();
         else
