@@ -700,7 +700,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      */
     public void setKeys(Map<String, String> keys) {
         Map<String, String> originalKeys = getKeys();
-        if (keys == null) {
+        if (keys == null || keys.isEmpty()) {
             this.keys = null;
             keysChangedImpl(originalKeys);
             return;
@@ -730,7 +730,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             return;
         else if (value == null) {
             remove(key);
-        } else if (keys == null || keys.length == 0){
+        } else if (keys == null){
             keys = new String[] {key, value};
             keysChangedImpl(originalKeys);
         } else {
@@ -758,7 +758,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @param key  the key to be removed. Ignored, if key is null.
      */
     public final void remove(String key) {
-        if (key == null || keys == null || keys.length == 0 ) return;
+        if (key == null || keys == null) return;
         if (!hasKey(key))
             return;
         Map<String, String> originalKeys = getKeys();
@@ -802,7 +802,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     public final String get(String key) {
         if (key == null)
             return null;
-        if (keys == null || keys.length == 0)
+        if (keys == null)
             return null;
         for (int i=0; i<keys.length;i+=2) {
             if (keys[i].equals(key)) return keys[i+1];
@@ -811,7 +811,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     public final Collection<String> keySet() {
-        if (keys == null || keys.length == 0)
+        if (keys == null)
             return Collections.emptySet();
         Set<String> result = new HashSet<String>(keys.length / 2);
         for (int i=0; i<keys.length; i+=2) {
@@ -827,7 +827,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      *   otherwise
      */
     public final boolean hasKeys() {
-        return keys != null && keys.length != 0;
+        return keys != null;
     }
 
     private void keysChangedImpl(Map<String, String> originalKeys) {
