@@ -50,11 +50,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         // cast to float to keep the output size down
         System.out.print(s + " " + (float)((i+1)*100.0/total) + "% done    \r");
     }
-    // 24 levels of buckets gives us bottom-level
-    // buckets that are about 2 meters on a side.
-    // That should do. :)
-    public static int NR_LEVELS = 24;
-    public static double WORLD_PARTS = (1 << NR_LEVELS);
 
     public static int MAX_OBJECTS_PER_LEVEL = 16;
     class QBLevel
@@ -84,7 +79,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         public QBLevel(QBLevel parent, int parent_index) {
             this.parent = parent;
             this.level = parent.level + 1;
-            int shift = (QuadBuckets.NR_LEVELS - level) * 2;
+            int shift = (QuadTiling.NR_LEVELS - level) * 2;
             long mult = 1;
             // Java blows the big one.  It seems to wrap when
             // you shift by > 31
@@ -109,6 +104,20 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             double lon = bottom_left.lon() + parent.width() / 2;
             LatLon top_right = new LatLon(lat, lon);
             return new BBox(bottom_left, top_right);
+        }
+
+        QBLevel findBucket(BBox bbox) {
+            if (isLeaf())
+                return this;
+            else {
+                int index = get_index(bbox, level);
+                if (index == -1)
+                    return this;
+                if (children[index] == null) {
+                    children[index] = new QBLevel(this, index);
+                }
+                return children[index].findBucket(bbox);
+            }
         }
 
         boolean remove_content(T o)
@@ -141,13 +150,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         // Get the correct index for the given primitive
         // at the given level.  If the primitive can not
         // fit into a single quad at this level, return -1
-        int get_index(T o, int level)
-        {
-            if (debug) {
-                out("getting index for " + o + " at level: " + level);
-            }
+        int get_index(BBox bbox, int level) {
             int index = -1;
-            for (LatLon c : o.getBBox().points()) {
+            for (LatLon c : bbox.points()) {
                 if (debug) {
                     out("getting index for point: " + c);
                 }
@@ -162,15 +167,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 if (debug) {
                     out("other point index: " + another_index);
                 }
-                if (another_index != index) {
-                    // This happens at level 0 sometimes when a way has no
-                    // nodes present.
-                    if (debug) {
-                        out("primitive ("+o.getId()+") would have gone across two quads "
-                                + another_index + "/" + index + " at level: " + level + "    ");
-                    }
+                if (another_index != index)
                     return -1;
-                }
             }
             return index;
         }
@@ -180,8 +178,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
          * attempt to null out 'children' because it thinks this
          * is a dead end.
          */
-        void __split()
-        {
+        void __split() {
             if (debug) {
                 out("splitting "+this.bbox()+" level "+level+" with "
                         + content.size() + " entries (my dimensions: "
@@ -193,31 +190,17 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             //    children[i] = new QBLevel(this, i);
             List<T> tmpcontent = content;
             content = null;
-            for (T o : tmpcontent) {
-                int new_index = get_index(o, level);
-                if (new_index == -1) {
-                    this.__add_content(o);
-                    //out("adding content to branch: " + this);
-                    continue;
-                }
-                if (children == null) {
-                    children = newChildren();
-                }
-                if (children[new_index] == null) {
-                    children[new_index] = new QBLevel(this, new_index);
-                }
-                QBLevel child = children[new_index];
-                if (debug) {
-                    out("putting "+o+"(q:"+Long.toHexString(QuadTiling.quadTile(o.getBBox().points().get(0)))+") into ["+new_index+"] " + child.bbox());
-                }
-                child.add(o);
+            children = newChildren();
+            for (T o: tmpcontent) {
+                add(o);
+            }
+            if (!hasChildren()) {
+                // All items stay at this level (get_index == 1). Create at least first child to keep the contract
+                // that at least one child always exists
+                children[0] = new QBLevel(this, 0);
             }
         }
-        void split() {
-            synchronized(split_lock) {
-                __split();
-            }
-        }
+
         boolean __add_content(T o)
         {
             boolean ret = false;
@@ -232,34 +215,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             }
             return ret;
         }
-        void __add_to_leaf(T o)
-        {
-            __add_content(o);
-            if (content.size() > MAX_OBJECTS_PER_LEVEL) {
-                if (debug) {
-                    out("["+level+"] deciding to split");
-                }
-                if (level >= NR_LEVELS-1) {
-                    if (debug) {
-                        out("can not split, but too deep: " + level + " size: " + content.size());
-                    }
-                    return;
-                }
-                int before_size = -1;
-                if (consistency_testing) {
-                    before_size = this.size();
-                }
-                this.split();
-                if (consistency_testing) {
-                    int after_size = this.size();
-                    if (before_size != after_size) {
-                        abort("["+level+"] split done before: " + before_size + " after: " + after_size);
-                    }
-                }
-                return;
-            }
-        }
-
         boolean matches(T o, BBox search_bbox)
         {
             // This can be optimized when o is a node
@@ -460,51 +415,35 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             }
             return ret;
         }
-        boolean add(T n)
-        {
+
+        void doAdd(T o) {
             if (consistency_testing) {
-                if (!matches(n, this.bbox())) {
+                if (!matches(o, this.bbox())) {
                     out("-----------------------------");
                     debug = true;
-                    get_index(n, level);
-                    get_index(n, level-1);
+                    get_index(o.getBBox(), level);
+                    get_index(o.getBBox(), level-1);
                     int nr = 0;
                     for (QBLevel sibling : parent.children) {
                         out("sibling["+ (nr++) +"]: " + sibling.bbox() + " this: " + (this==sibling));
                     }
-                    abort("\nobject " + n + " does not belong in node at level: " + level + " bbox: " + this.bbox());
+                    abort("\nobject " + o + " does not belong in node at level: " + level + " bbox: " + this.bbox());
                 }
             }
             synchronized (split_lock) {
-                if (isLeaf()) {
-                    __add_to_leaf(n);
-                } else {
-                    __add_to_branch(n);
+                __add_content(o);
+                if (isLeaf() && content.size() > MAX_OBJECTS_PER_LEVEL && level < QuadTiling.NR_LEVELS) {
+                    __split();
                 }
             }
-            return true;
         }
-        QBLevel __add_to_branch(T n)
-        {
-            int index = get_index(n, level);
-            if (index == -1) {
-                if (debug) {
-                    out("unable to get index for " + n + "at level: " + level + ", adding content to branch: " + this);
-                }
-                this.__add_content(n);
-                return this;
+
+        void add(T o) {
+            synchronized (split_lock) {
+                findBucket(o.getBBox()).doAdd(o);
             }
-            if (debug) {
-                out("[" + level + "]: " + n +
-                        " index " + index + " levelquad:" + this.quads() + " level bbox:" + this.bbox());
-                out("   put in child["+index+"]");
-            }
-            if (children[index] == null) {
-                children[index] = new QBLevel(this, index);
-            }
-            children[index].add(n);
-            return this;
         }
+
         private List<T> search(BBox search_bbox)
         {
             List<T> ret = null;
@@ -666,46 +605,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     }
     public boolean add(T n)
     {
-        if (debug) {
-            out("QuadBuckets() add: " + n + " size now: " + this.size());
-        }
-        int before_size = -1;
-        if (consistency_testing) {
-            before_size = root.size();
-        }
-        boolean ret;
-        // A way with no nodes will have an infinitely large
-        // bounding box.  Just stash it in the root node.
-        if (!n.isUsable()) {
-            synchronized (split_lock) {
-                ret = root.__add_content(n);
-            }
-        } else {
-            ret = root.add(n);
-        }
-        if (consistency_testing) {
-            int end_size = root.size();
-            if (ret) {
-                end_size--;
-            }
-            if (before_size != end_size) {
-                abort("size inconsistency before add: " + before_size + " after: " + end_size);
-            }
-        }
-        if (debug) {
-            out("QuadBuckets() add: " + n + " size after: " + this.size());
-        }
-        return ret;
-    }
-    public void reindex()
-    {
-        QBLevel newroot = new QBLevel();
-        Iterator<T> i = this.iterator();
-        while (i.hasNext()) {
-            T o = i.next();
-            newroot.add(o);
-        }
-        root = newroot;
+
+        root.add(n);
+        return true;
     }
     public void unsupported()
     {
