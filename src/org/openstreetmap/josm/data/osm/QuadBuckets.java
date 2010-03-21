@@ -4,9 +4,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -221,7 +219,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             //return search_bbox.bounds(coor));
             return o.getBBox().intersects(search_bbox);
         }
-        private List<T> search_contents(BBox search_bbox)
+        private void search_contents(BBox search_bbox, List<T> result)
         {
             if (debug) {
                 out("searching contents (size: " + content == null?"<null>":content.size() + ") for " + search_bbox);
@@ -231,23 +229,16 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
              * but never got any content populated.
              */
             if (content == null)
-                return null;
-            // We could delay allocating this.  But, the way it is currently
-            // used, we almost always have a node in the area that we're
-            // searching since we're searching around other nodes.
-            //
-            // the iterator's calls to ArrayList.size() were showing up in
-            // some profiles, so I'm trying a LinkedList instead
-            List<T> ret = new LinkedList<T>();
+                return;
+
             for (T o : content) {
                 if (matches(o, search_bbox)) {
-                    ret.add(o);
+                    result.add(o);
                 }
             }
             if (debug) {
                 out("done searching quad " + Long.toHexString(this.quad));
             }
-            return ret;
         }
         /*
          * This is stupid.  I tried to have a QBLeaf and QBBranch
@@ -444,9 +435,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             }
         }
 
-        private List<T> search(BBox search_bbox)
+        private void search(BBox search_bbox, List<T> result)
         {
-            List<T> ret = null;
             if (debug) {
                 System.out.print("[" + level + "] qb bbox: " + this.bbox() + " ");
             }
@@ -455,15 +445,14 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                     out("miss " + Long.toHexString(this.quad));
                     //QuadTiling.tile2xy(this.quad);
                 }
-                return ret;
+                return;
             }
             if (this.hasContent()) {
-                ret = this.search_contents(search_bbox);
+                search_contents(search_bbox, result);
             }
             if (this.isLeaf())
-                return ret;
-            //if (this.hasContent())
-            //    abort("branch had stuff");
+                return;
+
             if (debug) {
                 out("hit " + this.quads());
             }
@@ -482,29 +471,18 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 if (debug) {
                     System.out.print(i+": ");
                 }
-                List<T> coors = q.search(search_bbox);
-                if (coors == null) {
-                    continue;
-                }
-                if (ret == null) {
-                    ret = coors;
-                } else {
-                    ret.addAll(coors);
-                }
+                q.search(search_bbox, result);
                 if (q.bbox().bounds(search_bbox)) {
                     search_cache = q;
                     // optimization: do not continue searching
                     // other tiles if this one wholly contained
                     // what we were looking for.
-                    if (coors.size() > 0 ) {
-                        if (debug) {
-                            out("break early");
-                        }
-                        break;
+                    if (debug) {
+                        out("break early");
                     }
+                    break;
                 }
             }
-            return ret;
         }
         public String quads()
         {
@@ -851,45 +829,12 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             return true;
         return false;
     }
-    public static BBox search_to_bbox(LatLon point, double radius)
-    {
-        BBox bbox = new BBox(point.lon() - radius, point.lat() - radius,
-                point.lon() + radius, point.lat() + radius);
-        if (debug) {
-            out("search bbox before sanity: " +  bbox);
-        }
-        if (debug) {
-            out("search bbox after sanity: " +  bbox);
-        }
-        return bbox;
-    }
-    List<T> search(Way w)
-    {
-        BBox way_bbox = new BBox(w);
-        return this.search(way_bbox);
-    }
-    public List<T> search(Node n, double radius)
-    {
-        return this.search(n.getCoor(), radius);
-    }
-    public List<T> search(LatLon point, double radius)
-    {
-        if (point == null)
-            return Collections.emptyList();
-        return this.search(search_to_bbox(point, radius));
-    }
-    public List<T> search(LatLon b1, LatLon b2)
-    {
-        BBox bbox = new BBox(b1.lon(), b1.lat(), b2.lon(), b2.lat());
-        return this.search(bbox);
-    }
-    List<T> search(BBox search_bbox)
-    {
+    public List<T> search(BBox search_bbox) {
         if (debug) {
             out("qb root search at " + search_bbox);
             out("root bbox: " + root.bbox());
         }
-        List<T> ret;
+        List<T> ret = new ArrayList<T>();
         // Doing this cuts down search cost on a real-life data
         // set by about 25%
         boolean cache_searches = true;
@@ -920,18 +865,12 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         // Save parent because search_cache might change during search call
         QBLevel tmp = search_cache.parent;
 
-        ret = search_cache.search(search_bbox);
-        if (ret == null) {
-            ret = new ArrayList<T>();
-        }
+        search_cache.search(search_bbox, ret);
 
         // A way that spans this bucket may be stored in one
         // of the nodes which is a parent of the search cache
         while (tmp != null) {
-            List<T> content_result = tmp.search_contents(search_bbox);
-            if (content_result != null) {
-                ret.addAll(content_result);
-            }
+            tmp.search_contents(search_bbox, ret);
             tmp = tmp.parent;
         }
         if (debug) {
