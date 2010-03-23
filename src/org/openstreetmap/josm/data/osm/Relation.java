@@ -341,7 +341,10 @@ public final class Relation extends OsmPrimitive {
             if (bbox == null) {
                 bbox = calculateBBox(new HashSet<PrimitiveId>());
             }
-            return new BBox(bbox);
+            if (bbox == null)
+                return new BBox(0, 0, 0, 0); // No real members
+            else
+                return new BBox(bbox);
         }
     }
 
