@@ -10,6 +10,11 @@ import java.util.List;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.QuadTiling;
 
+/**
+ * Note: bbox of primitives added to QuadBuckets has to stay the same. In case of coordinate change, primitive must
+ * be removed and readded.
+ *
+ */
 public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
 {
     private static boolean debug = false;
@@ -126,6 +131,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 // another bucket set. Second thread do the same. Due to thread memory caching, it's possible that
                 // changes made by threads will show up in children array too late, leading to QBLevel with all children
                 // set to null
+                if (content == null)
+                    return false;
                 boolean ret = this.content.remove(o);
                 if (this.content.size() == 0) {
                     this.content = null;
@@ -193,7 +200,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 add(o);
             }
             if (!hasChildren()) {
-                // All items stay at this level (get_index == 1). Create at least first child to keep the contract
+                // All items stay at this level (get_index == -1). Create at least first child to keep the contract
                 // that at least one child always exists
                 children[0] = new QBLevel(this, 0);
             }
@@ -374,35 +381,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             }
             if (debug) {
                 out("["+level+"] branch size: " + ret);
-            }
-            return ret;
-        }
-        boolean contains(T n)
-        {
-            QBLevel res = find_exact(n);
-            if (res == null)
-                return false;
-            return true;
-        }
-        QBLevel find_exact(T n)
-        {
-            if (content != null && content.contains(n))
-                return this;
-            return find_exact_child(n);
-        }
-        private QBLevel find_exact_child(T n)
-        {
-            QBLevel ret = null;
-            if (children == null)
-                return ret;
-            for (QBLevel l : children) {
-                if (l == null) {
-                    continue;
-                }
-                ret = l.find_exact(n);
-                if (ret != null) {
-                    break;
-                }
             }
             return ret;
         }
@@ -614,8 +592,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     public boolean addAll(Collection<? extends T> objects)
     {
         boolean changed = false;
-        for (Object o : objects) {
-            changed = changed | this.add(convert(o));
+        for (T o : objects) {
+            changed = changed | this.add(o);
         }
         return changed;
     }
@@ -638,51 +616,16 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     {
         return this.remove(convert(o));
     }
-    private boolean remove_slow(T removeme)
-    {
-        boolean ret = false;
-        Iterator<T> i = this.iterator();
-        while (i.hasNext()) {
-            T o = i.next();
-            if (o != removeme) {
-                continue;
-            }
-            i.remove();
-            ret = true;
-            break;
-        }
-        if (debug) {
-            out("qb slow remove result: " + ret);
-        }
-        return ret;
-    }
-    public boolean remove(T o)
-    {
-        /*
-         * We first try a locational search
-         */
-        QBLevel bucket = root.find_exact(o);
-        /*
-         * That may fail because the object was
-         * moved or changed in some way, so we
-         * resort to an iterative search:
-         */
-        if (bucket == null)
-            return remove_slow(o);
-        boolean ret = bucket.remove_content(o);
-        if (debug) {
-            out("qb remove result: " + ret);
-        }
+    public boolean remove(T o) {
         search_cache = null; // Search cache might point to one of removed buckets
-        return ret;
+        QBLevel bucket = root.findBucket(o.getBBox());
+        return bucket.remove_content(o);
     }
-    public boolean contains(Object o)
-    {
-        QBLevel bucket = root.find_exact(convert(o));
-        if (bucket == null)
-            return false;
-        return true;
+    public boolean contains(Object o) {
+        QBLevel bucket = root.findBucket(convert(o).getBBox());
+        return bucket != null && bucket.content != null && bucket.content.contains(o);
     }
+
     public ArrayList<T> toArrayList()
     {
         ArrayList<T> a = new ArrayList<T>();
