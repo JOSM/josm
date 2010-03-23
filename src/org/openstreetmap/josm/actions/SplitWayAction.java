@@ -31,9 +31,9 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
-import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -45,16 +45,18 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class SplitWayAction extends JosmAction {
 
-    private Way selectedWay;
-    private List<Node> selectedNodes;
 
     public static class SplitWayResult {
         private final Command command;
         private final List<? extends PrimitiveId> newSelection;
+        private Way originalWay;
+        private List<Way> newWays;
 
-        public SplitWayResult(Command command, List<? extends PrimitiveId> newSelection) {
+        public SplitWayResult(Command command, List<? extends PrimitiveId> newSelection, Way originalWay, List<Way> newWays) {
             this.command = command;
             this.newSelection = newSelection;
+            this.originalWay = originalWay;
+            this.newWays = newWays;
         }
 
         public Command getCommand() {
@@ -63,6 +65,14 @@ public class SplitWayAction extends JosmAction {
 
         public List<? extends PrimitiveId> getNewSelection() {
             return newSelection;
+        }
+
+        public Way getOriginalWay() {
+            return originalWay;
+        }
+
+        public List<Way> getNewWays() {
+            return newWays;
         }
     }
 
@@ -85,6 +95,9 @@ public class SplitWayAction extends JosmAction {
 
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
 
+        List<Node> selectedNodes = OsmPrimitive.getFilteredList(selection, Node.class);
+        List<Way> selectedWays = OsmPrimitive.getFilteredList(selection, Way.class);
+
         if (!checkSelection(selection)) {
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -95,31 +108,15 @@ public class SplitWayAction extends JosmAction {
             return;
         }
 
-        selectedWay = null;
-        selectedNodes = null;
 
-        Visitor splitVisitor = new AbstractVisitor() {
-            public void visit(Node n) {
-                if (selectedNodes == null) {
-                    selectedNodes = new LinkedList<Node>();
-                }
-                selectedNodes.add(n);
-            }
-            public void visit(Way w) {
-                selectedWay = w;
-            }
-            public void visit(Relation e) {
-                // enties are not considered
-            }
-        };
-
-        for (OsmPrimitive p : selection) {
-            p.visit(splitVisitor);
+        Way selectedWay = null;
+        if (!selectedWays.isEmpty()){
+            selectedWay = selectedWays.get(0);
         }
 
         // If only nodes are selected, try to guess which way to split. This works if there
         // is exactly one way that all nodes are part of.
-        if (selectedWay == null && selectedNodes != null) {
+        if (selectedWay == null && !selectedNodes.isEmpty()) {
             Map<Way, Integer> wayOccurenceCounter = new HashMap<Way, Integer>();
             for (Node n : selectedNodes) {
                 for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
@@ -176,12 +173,10 @@ public class SplitWayAction extends JosmAction {
             }
 
             // If a way and nodes are selected, verify that the nodes are part of the way.
-        } else if (selectedWay != null && selectedNodes != null) {
+        } else if (selectedWay != null && !selectedNodes.isEmpty()) {
 
             HashSet<Node> nds = new HashSet<Node>(selectedNodes);
-            for (Node n : selectedWay.getNodes()) {
-                nds.remove(n);
-            }
+            nds.removeAll(selectedWay.getNodes());
             if (!nds.isEmpty()) {
                 JOptionPane.showMessageDialog(Main.parent,
                         trn("The selected way does not contain the selected node.",
@@ -193,8 +188,10 @@ public class SplitWayAction extends JosmAction {
             }
         }
 
-        // and then do the work.
-        splitWay();
+        List<List<Node>> wayChunks = buildSplitChunks(selectedWay, selectedNodes);
+        SplitWayResult result = splitWay(getEditLayer(),selectedWay, wayChunks);
+        Main.main.undoRedo.add(result.getCommand());
+        getCurrentDataSet().setSelected(result.getNewSelection());
     }
 
     /**
@@ -219,19 +216,28 @@ public class SplitWayAction extends JosmAction {
     }
 
     /**
-     * Split a way into two or more parts, starting at a selected node.
+     * Splits the nodes of {@code wayToSplit} into a list of node sequences
+     * which are separated at the nodes in {@code splitPoints}.
+     * 
+     * This method displays warning messages if {@code wayToSplit} and/or
+     * {@code splitPoints} aren't consistent.
+     * 
+     * Returns null, if building the split chunks fails.
+     * 
+     * @param wayToSplit the way to split. Must not be null.
+     * @param splitPoints the nodes where the way is split. Must not be null.
+     * @return the list of chunks
      */
-    private void splitWay() {
-        // We take our way's list of nodes and copy them to a way chunk (a
-        // list of nodes).  Whenever we stumble upon a selected node, we start
-        // a new way chunk.
+    static public List<List<Node>> buildSplitChunks(Way wayToSplit, List<Node> splitPoints){
+        CheckParameterUtil.ensureParameterNotNull(wayToSplit, "wayToSplit");
+        CheckParameterUtil.ensureParameterNotNull(splitPoints, "splitPoints");
 
-        Set<Node> nodeSet = new HashSet<Node>(selectedNodes);
+        Set<Node> nodeSet = new HashSet<Node>(splitPoints);
         List<List<Node>> wayChunks = new LinkedList<List<Node>>();
         List<Node> currentWayChunk = new ArrayList<Node>();
         wayChunks.add(currentWayChunk);
 
-        Iterator<Node> it = selectedWay.getNodes().iterator();
+        Iterator<Node> it = wayToSplit.getNodes().iterator();
         while (it.hasNext()) {
             Node currentNode = it.next();
             boolean atEndOfWay = currentWayChunk.isEmpty() || !it.hasNext();
@@ -258,7 +264,7 @@ public class SplitWayAction extends JosmAction {
                         tr("You must select two or more nodes to split a circular way."),
                         tr("Warning"),
                         JOptionPane.WARNING_MESSAGE);
-                return;
+                return null;
             }
             lastWayChunk.remove(lastWayChunk.size() - 1);
             lastWayChunk.addAll(wayChunks.get(0));
@@ -280,17 +286,19 @@ public class SplitWayAction extends JosmAction {
                         tr("Warning"),
                         JOptionPane.WARNING_MESSAGE);
             }
-            return;
+            return null;
         }
-        //Main.debug("wayChunks.size(): " + wayChunks.size());
-        //Main.debug("way id: " + selectedWay.id);
-
-        SplitWayResult result = splitWay(selectedWay, wayChunks);
-        Main.main.undoRedo.add(result.getCommand());
-        getCurrentDataSet().setSelected(result.getNewSelection());
+        return wayChunks;
     }
 
-    public static SplitWayResult splitWay(Way way, List<List<Node>> wayChunks) {
+    /**
+     * Splits a way
+     * @param layer
+     * @param way
+     * @param wayChunks
+     * @return
+     */
+    public static SplitWayResult splitWay(OsmDataLayer layer, Way way, List<List<Node>> wayChunks) {
         // build a list of commands, and also a new selection list
         Collection<Command> commandList = new ArrayList<Command>(wayChunks.size());
         List<Way> newSelection = new ArrayList<Way>(wayChunks.size());
@@ -303,20 +311,20 @@ public class SplitWayAction extends JosmAction {
         commandList.add(new ChangeCommand(way, changedWay));
         newSelection.add(way);
 
-        Collection<Way> newWays = new ArrayList<Way>();
+        List<Way> newWays = new ArrayList<Way>();
         // Second, create new ways
         while (chunkIt.hasNext()) {
             Way wayToAdd = new Way();
             wayToAdd.setKeys(way.getKeys());
             newWays.add(wayToAdd);
             wayToAdd.setNodes(chunkIt.next());
-            commandList.add(new AddCommand(wayToAdd));
+            commandList.add(new AddCommand(layer,wayToAdd));
             //Main.debug("wayToAdd: " + wayToAdd);
             newSelection.add(wayToAdd);
 
         }
-        Boolean warnmerole = false;
-        Boolean warnme = false;
+        boolean warnmerole = false;
+        boolean warnme = false;
         // now copy all relations to new way also
 
         for (Relation r : OsmPrimitive.getFilteredList(way.getReferrers(), Relation.class)) {
@@ -441,7 +449,7 @@ public class SplitWayAction extends JosmAction {
             }
 
             if (c != null) {
-                commandList.add(new ChangeCommand(r, c));
+                commandList.add(new ChangeCommand(layer,r, c));
             }
         }
         if (warnmerole) {
@@ -458,10 +466,36 @@ public class SplitWayAction extends JosmAction {
                     JOptionPane.WARNING_MESSAGE);
         }
 
-        return new SplitWayResult(new SequenceCommand(tr("Split way {0} into {1} parts",
-                way.getDisplayName(DefaultNameFormatter.getInstance()),
-                wayChunks.size()),
-                commandList), newSelection);
+        return new SplitWayResult(
+                new SequenceCommand(
+                        tr("Split way {0} into {1} parts", way.getDisplayName(DefaultNameFormatter.getInstance()),wayChunks.size()),
+                        commandList
+                ),
+                newSelection,
+                way,
+                newWays
+        );
+    }
+
+    /**
+     * Splits the way {@code way} at the nodes in {@code atNodes} and replies
+     * the result of this process in an instance of {@see SplitWayResult}.
+     * 
+     * Note that changes are not applied to the data yet. You have to
+     * submit the command in {@see SplitWayResult#getCommand()} first,
+     * i.e. {@code Main.main.undoredo.add(result.getCommand())}.
+     * 
+     * Replies null if the way couldn't be split at the given nodes.
+     * 
+     * @param layer the layer which the way belongs to. Must not be null.
+     * @param way the way to split. Must not be null.
+     * @param atNodes the list of nodes where the way is split. Must not be null.
+     * @return the result from the split operation
+     */
+    static public SplitWayResult split(OsmDataLayer layer, Way way, List<Node> atNodes){
+        List<List<Node>> chunks = buildSplitChunks(way, atNodes);
+        if (chunks == null) return null;
+        return splitWay(layer,way, chunks);
     }
 
     @Override

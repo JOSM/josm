@@ -13,6 +13,7 @@ import javax.swing.tree.MutableTreeNode;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -26,8 +27,15 @@ public class ChangeCommand extends Command {
     private final OsmPrimitive osm;
     private final OsmPrimitive newOsm;
 
+
     public ChangeCommand(OsmPrimitive osm, OsmPrimitive newOsm) {
         super();
+        this.osm = osm;
+        this.newOsm = newOsm;
+    }
+
+    public ChangeCommand(OsmDataLayer layer, OsmPrimitive osm, OsmPrimitive newOsm) {
+        super(layer);
         this.osm = osm;
         this.newOsm = newOsm;
     }
@@ -46,9 +54,9 @@ public class ChangeCommand extends Command {
     @Override public MutableTreeNode description() {
         String msg = "";
         switch(OsmPrimitiveType.from(osm)) {
-            case NODE: msg = marktr("Change node {0}"); break;
-            case WAY: msg = marktr("Change way {0}"); break;
-            case RELATION: msg = marktr("Change relation {0}"); break;
+        case NODE: msg = marktr("Change node {0}"); break;
+        case WAY: msg = marktr("Change way {0}"); break;
+        case RELATION: msg = marktr("Change relation {0}"); break;
         }
         return new DefaultMutableTreeNode(
                 new JLabel(tr(msg,

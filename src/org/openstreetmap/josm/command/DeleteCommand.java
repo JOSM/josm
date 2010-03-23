@@ -406,7 +406,7 @@ public class DeleteCommand extends Command {
             List<List<Node>> chunks = new ArrayList<List<Node>>(2);
             chunks.add(n1);
             chunks.add(n2);
-            return SplitWayAction.splitWay(ws.way, chunks).getCommand();
+            return SplitWayAction.splitWay(layer,ws.way, chunks).getCommand();
         }
     }
 
