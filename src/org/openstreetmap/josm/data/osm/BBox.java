@@ -23,6 +23,13 @@ public class BBox {
         add(b);
     }
 
+    public BBox(BBox copy) {
+        this.xmin = copy.xmin;
+        this.xmax = copy.xmax;
+        this.ymin = copy.ymin;
+        this.ymax = copy.ymax;
+    }
+
     public BBox(double a_x, double a_y, double b_x, double b_y)  {
         xmin = Math.min(a_x, b_x);
         xmax = Math.max(a_x, b_x);

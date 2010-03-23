@@ -333,16 +333,15 @@ public final class Relation extends OsmPrimitive {
 
     @Override
     public BBox getBBox() {
+        if (members.isEmpty())
+            return new BBox(0, 0, 0, 0);
         if (getDataSet() == null)
             return calculateBBox(new HashSet<PrimitiveId>());
         else {
             if (bbox == null) {
                 bbox = calculateBBox(new HashSet<PrimitiveId>());
-                if (bbox == null) {
-                    bbox = new BBox(0, 0, 0, 0); // No members
-                }
             }
-            return  bbox;
+            return new BBox(bbox);
         }
     }
 

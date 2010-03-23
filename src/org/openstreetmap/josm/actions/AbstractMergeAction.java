@@ -30,11 +30,6 @@ public abstract class AbstractMergeAction extends JosmAction {
      */
     static public class LayerListCellRenderer extends DefaultListCellRenderer {
 
-        protected boolean isActiveLayer(Layer layer) {
-            if (Main.isDisplayingMapView()) return false;
-            return Main.map.mapView.getActiveLayer() == layer;
-        }
-
         @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {

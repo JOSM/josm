@@ -400,7 +400,7 @@ public final class Way extends OsmPrimitive {
         if (bbox == null) {
             bbox = new BBox(this);
         }
-        return bbox;
+        return new BBox(bbox);
     }
 
     @Override
