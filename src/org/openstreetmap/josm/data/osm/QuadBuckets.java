@@ -348,42 +348,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 return next;
             return next.nextContentNode();
         }
-        int size()
-        {
-            if (isLeaf())
-                return size_leaf();
-            return size_branch();
-        }
-        private int size_leaf()
-        {
-            if (content == null) {
-                if (debug) {
-                    out("["+level+"] leaf size: null content, children? " + Arrays.toString(children));
-                }
-                return 0;
-            }
-            if (debug) {
-                out("["+level+"] leaf size: " + content.size());
-            }
-            return content.size();
-        }
-        private int size_branch()
-        {
-            int ret = 0;
-            for (QBLevel l : children) {
-                if (l == null) {
-                    continue;
-                }
-                ret += l.size();
-            }
-            if (content != null) {
-                ret += content.size();
-            }
-            if (debug) {
-                out("["+level+"] branch size: " + ret);
-            }
-            return ret;
-        }
 
         void doAdd(T o) {
             if (consistency_testing) {
@@ -546,24 +510,29 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
 
     private QBLevel root;
     private QBLevel search_cache;
+    private int size;
+
     public QuadBuckets()
     {
         clear();
     }
-    public void clear()
-    {
-        root = new QBLevel();
-        search_cache = null;
-        if (debug) {
-            out("QuadBuckets() cleared: " + this);
-            out("root: " + root + " level: " + root.level + " bbox: " + root.bbox());
+    public void clear()  {
+        synchronized (split_lock) {
+            root = new QBLevel();
+            search_cache = null;
+            size = 0;
+            if (debug) {
+                out("QuadBuckets() cleared: " + this);
+                out("root: " + root + " level: " + root.level + " bbox: " + root.bbox());
+            }
         }
     }
-    public boolean add(T n)
-    {
-
-        root.add(n);
-        return true;
+    public boolean add(T n) {
+        synchronized (split_lock) {
+            root.add(n);
+            size++;
+            return true;
+        }
     }
     public void unsupported()
     {
@@ -612,14 +581,19 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     {
         return (T)raw;
     }
-    public boolean remove(Object o)
-    {
+    public boolean remove(Object o) {
         return this.remove(convert(o));
     }
     public boolean remove(T o) {
-        search_cache = null; // Search cache might point to one of removed buckets
-        QBLevel bucket = root.findBucket(o.getBBox());
-        return bucket.remove_content(o);
+        synchronized (split_lock) {
+            search_cache = null; // Search cache might point to one of removed buckets
+            QBLevel bucket = root.findBucket(o.getBBox());
+            if (bucket.remove_content(o)) {
+                size--;
+                return true;
+            } else
+                return false;
+        }
     }
     public boolean contains(Object o) {
         QBLevel bucket = root.findBucket(convert(o).getBBox());
@@ -747,25 +721,12 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     {
         return new QuadBucketIterator(this);
     }
-    public int size()
-    {
-        // This can certainly by optimized
-        int ret = root.size();
-        if (debug) {
-            out(this + " QuadBuckets size: " + ret);
+    public int size() {
+        synchronized (split_lock) {
+            return size;
         }
-        return ret;
     }
-    public int size_iter()
-    {
-        int count = 0;
-        Iterator<T> i = this.iterator();
-        while (i.hasNext()) {
-            i.next();
-            count++;
-        }
-        return count;
-    }
+
     public boolean isEmpty()
     {
         if (this.size() == 0)
