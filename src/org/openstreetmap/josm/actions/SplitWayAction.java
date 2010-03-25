@@ -189,9 +189,11 @@ public class SplitWayAction extends JosmAction {
         }
 
         List<List<Node>> wayChunks = buildSplitChunks(selectedWay, selectedNodes);
-        SplitWayResult result = splitWay(getEditLayer(),selectedWay, wayChunks);
-        Main.main.undoRedo.add(result.getCommand());
-        getCurrentDataSet().setSelected(result.getNewSelection());
+        if (wayChunks != null) {
+            SplitWayResult result = splitWay(getEditLayer(),selectedWay, wayChunks);
+            Main.main.undoRedo.add(result.getCommand());
+            getCurrentDataSet().setSelected(result.getNewSelection());
+        }
     }
 
     /**
@@ -218,12 +220,12 @@ public class SplitWayAction extends JosmAction {
     /**
      * Splits the nodes of {@code wayToSplit} into a list of node sequences
      * which are separated at the nodes in {@code splitPoints}.
-     * 
+     *
      * This method displays warning messages if {@code wayToSplit} and/or
      * {@code splitPoints} aren't consistent.
-     * 
+     *
      * Returns null, if building the split chunks fails.
-     * 
+     *
      * @param wayToSplit the way to split. Must not be null.
      * @param splitPoints the nodes where the way is split. Must not be null.
      * @return the list of chunks
@@ -480,13 +482,13 @@ public class SplitWayAction extends JosmAction {
     /**
      * Splits the way {@code way} at the nodes in {@code atNodes} and replies
      * the result of this process in an instance of {@see SplitWayResult}.
-     * 
+     *
      * Note that changes are not applied to the data yet. You have to
      * submit the command in {@see SplitWayResult#getCommand()} first,
      * i.e. {@code Main.main.undoredo.add(result.getCommand())}.
-     * 
+     *
      * Replies null if the way couldn't be split at the given nodes.
-     * 
+     *
      * @param layer the layer which the way belongs to. Must not be null.
      * @param way the way to split. Must not be null.
      * @param atNodes the list of nodes where the way is split. Must not be null.
