@@ -21,11 +21,11 @@ public class MapPaintSettings implements PreferenceChangedListener {
     private int useStrokesDistance;
     private int showIconsDistance;
     private int selectedNodeSize;
-    private int taggedNodeSize;
+    private int junctionNodeSize;
     private int unselectedNodeSize;
     private boolean fillSelectedNode;
     private boolean fillUnselectedNode;
-
+    private boolean fillTaggedNode;
     private Color selectedColor;
     private Color highlightColor;
     private Color inactiveColor;
@@ -56,9 +56,10 @@ public class MapPaintSettings implements PreferenceChangedListener {
 
         selectedNodeSize = Main.pref.getInteger("mappaint.node.selected-size", 5);
         unselectedNodeSize = Main.pref.getInteger("mappaint.node.unselected-size", 3);
-        taggedNodeSize = Main.pref.getInteger("mappaint.node.tagged-size", 5);
+        junctionNodeSize = Main.pref.getInteger("mappaint.node.junction-size", 5);
         fillSelectedNode = Main.pref.getBoolean("mappaint.node.fill-selected", true);
         fillUnselectedNode = Main.pref.getBoolean("mappaint.node.fill-unselected", false);
+        fillTaggedNode = Main.pref.getBoolean("mappaint.node.fill-tagged", true);
     }
 
     public void preferenceChanged(PreferenceChangeEvent e) {
@@ -125,8 +126,8 @@ public class MapPaintSettings implements PreferenceChangedListener {
         return selectedNodeSize;
     }
 
-    public int getTaggedNodeSize() {
-        return taggedNodeSize;
+    public int getJunctionNodeSize() {
+        return junctionNodeSize;
     }
 
     public int getUnselectedNodeSize() {
@@ -139,5 +140,9 @@ public class MapPaintSettings implements PreferenceChangedListener {
 
     public boolean isFillUnselectedNode() {
         return fillUnselectedNode;
+    }
+
+    public boolean isFillTaggedNode() {
+        return fillTaggedNode;
     }
 }

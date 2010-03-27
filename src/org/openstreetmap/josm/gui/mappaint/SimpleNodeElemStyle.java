@@ -24,12 +24,13 @@ public class SimpleNodeElemStyle extends ElemStyle {
             painter.drawNode(n, settings.getHighlightColor(), settings.getSelectedNodeSize(), settings.isFillSelectedNode(), name);
         } else if (selected) {
             painter.drawNode(n, settings.getSelectedColor(), settings.getSelectedNodeSize(), settings.isFillSelectedNode(), name);
-        } else if (n.isTagged()) {
-            painter.drawNode(n, settings.getNodeColor(), settings.getTaggedNodeSize(), settings.isFillUnselectedNode(), name);
-        } else if (painter.isInactive() || n.isDisabled()) {
-            painter.drawNode(n, settings.getInactiveColor(), settings.getUnselectedNodeSize(), settings.isFillUnselectedNode(), name);
         } else {
-            painter.drawNode(n, settings.getNodeColor(), settings.getUnselectedNodeSize(), settings.isFillUnselectedNode(), name);
+            painter.drawNode(
+                n,
+                (painter.isInactive() || n.isDisabled()) ? settings.getInactiveColor() : settings.getNodeColor(),
+                n.isJunctionNode() ? settings.getJunctionNodeSize() : settings.getUnselectedNodeSize(),
+                n.isTagged() ? settings.isFillTaggedNode() : settings.isFillUnselectedNode(),
+                name);
         }
     }
 
