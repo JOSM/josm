@@ -68,7 +68,7 @@ public class QuadTiling
     static long lon2x(double lon)
     {
         //return Math.round((lon + 180.0) * QuadBuckets.WORLD_PARTS / 360.0)-1;
-        long ret = (long)Math.floor((lon + 180.0) * WORLD_PARTS / 360.0);
+        long ret = (long)((lon + 180.0) * WORLD_PARTS / 360.0);
         if (ret == WORLD_PARTS) {
             ret--;
         }
@@ -77,7 +77,7 @@ public class QuadTiling
     static long lat2y(double lat)
     {
         //return Math.round((lat + 90.0) * QuadBuckets.WORLD_PARTS / 180.0)-1;
-        long ret = (long)Math.floor((lat + 90.0) * WORLD_PARTS / 180.0);
+        long ret = (long)((lat + 90.0) * WORLD_PARTS / 180.0);
         if (ret == WORLD_PARTS) {
             ret--;
         }

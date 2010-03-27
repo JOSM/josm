@@ -81,7 +81,7 @@ import java.util.Set;
  * things.put(new Thing(3));
  * assert things.get(new Thing(3)) == fk.get(3);
  * </pre></li>
-*
+ *
  *
  * @author nenik
  */
@@ -113,10 +113,12 @@ public class Storage<T> extends AbstractSet<T> {
     }
 
     // --------------- Collection implementation ------------------------
+    @Override
     public int size() {
         return size;
     }
 
+    @Override
     public Iterator<T> iterator() {
         return new Iter();
     }
@@ -128,7 +130,7 @@ public class Storage<T> extends AbstractSet<T> {
 
     public @Override boolean add(T t) {
         T orig = putUnique(t);
-        return orig != t;
+        return orig == t;
     }
 
     public @Override boolean remove(Object o) {
@@ -139,12 +141,16 @@ public class Storage<T> extends AbstractSet<T> {
     public @Override void clear() {
         modCount++;
         size = 0;
-        for (int i = 0; i<data.length; i++) data[i] = null;
+        for (int i = 0; i<data.length; i++) {
+            data[i] = null;
+        }
     }
 
     public @Override int hashCode() {
         int h = 0;
-        for (T t : this) h += hash.getHashCode(t);
+        for (T t : this) {
+            h += hash.getHashCode(t);
+        }
         return h;
     }
 
@@ -219,9 +225,8 @@ public class Storage<T> extends AbstractSet<T> {
         int hcode = rehash(ha.getHashCode(key));
         int bucket = hcode & mask;
         while ((entry = (T)data[bucket]) != null) {
-            if (ha.equals(key, entry)) {
+            if (ha.equals(key, entry))
                 return bucket;
-            }
             bucket = (bucket+1) & mask;
         }
         return ~bucket;
@@ -264,9 +269,13 @@ public class Storage<T> extends AbstractSet<T> {
             int nMask = big.length - 1;
 
             for (Object o : data) {
-                if (o == null) continue;
+                if (o == null) {
+                    continue;
+                }
                 int bucket = rehash(hash.getHashCode((T)o)) & nMask;
-                while (big[bucket] != null) bucket = (bucket+1) & nMask;
+                while (big[bucket] != null) {
+                    bucket = (bucket+1) & nMask;
+                }
                 big[bucket] = o;
             }
 
@@ -291,7 +300,7 @@ public class Storage<T> extends AbstractSet<T> {
             }
         };
     }
-/*
+    /*
     public static <O> Hash<O,O> identityHash() {
         return new Hash<O,O>() {
             public int getHashCode(O t) {
@@ -302,7 +311,7 @@ public class Storage<T> extends AbstractSet<T> {
             }
         };
     }
-*/
+     */
 
     private class FMap<K> implements Map<K,T> {
         Hash<K,? super T> fHash;
@@ -349,8 +358,9 @@ public class Storage<T> extends AbstractSet<T> {
             if (m instanceof Storage.FMap) {
                 Storage.this.addAll(((Storage.FMap)m).values());
             } else {
-                for (Map.Entry<? extends K, ? extends T> e : m.entrySet())
+                for (Map.Entry<? extends K, ? extends T> e : m.entrySet()) {
                     put(e.getKey(), e.getValue());
+                }
             }
         }
 
@@ -401,7 +411,9 @@ public class Storage<T> extends AbstractSet<T> {
 
         private void align() {
             if (mods != modCount) throw new ConcurrentModificationException();
-            while (slot < data.length && data[slot] == null) slot++;
+            while (slot < data.length && data[slot] == null) {
+                slot++;
+            }
         }
     }
 
