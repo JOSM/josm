@@ -1,5 +1,4 @@
-<!--
-** build.xml - main ant file for JOSM
+<!-- ** build.xml - main ant file for JOSM
 **
 ** To build run
 **    ant clean
@@ -9,7 +8,7 @@
 **
 **
 -->
-<project name="josm" default="dist" basedir=".">
+<project name="josm" default="dist" basedir="." xmlns:as="antlib:org.codehaus.mojo.animal_sniffer">
 	<property name="test.dir" value="test" />
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build"/>
@@ -214,5 +213,66 @@ Build-Date: ${build.tstamp}
 	 	}
 		</proguard>
 	</target>
+
+	<target name="check-plugins" depends="dist-optimized">
+		<echo message="Check of plugins binary compatibility (needs ant 1.8)"/>
+
+		<local name="dir"/>
+		<local name="plugins"/>
+
+		<property name="dir" value="plugin-check"/>
+
+		<typedef uri="antlib:org.codehaus.mojo.animal_sniffer">
+			<classpath path="tools/animal-sniffer-ant-tasks-1.5.jar" />
+		</typedef>
+
+		<delete dir="${dir}"/>
+
+		<mkdir dir="${dir}"/>
+
+		<as:build-signatures destfile="${dir}/api.sig">
+			<path>
+				<fileset file="dist/josm-custom-optimized.jar" />
+				<fileset file="${java.home}/lib/rt.jar" />
+			</path>
+		</as:build-signatures>
+
+		<!-- Download plugins -->
+		<loadresource property="plugins">
+			<url url="http://josm.openstreetmap.de/plugin"/>
+			<filterchain>
+				<linecontainsregexp negate="true">
+					<regexp pattern="^\t.*"/>
+				</linecontainsregexp>
+				<linecontainsregexp negate="true">
+					<!-- List from PluginHandler.DEPRECATED_PLUGINS -->
+					<regexp pattern="mappaint|unglueplugin|ewmsplugin|ywms|tways-0.2|geotagged|landsat|namefinder|waypoints|slippy_map_chooser|tcx-support|usertools|AgPifoJ|utilsplugin"/>
+				</linecontainsregexp>
+				<tokenfilter>
+					<replaceregex pattern="^.*;" replace="" flags="gi"/>
+				</tokenfilter>
+			</filterchain>
+		</loadresource>
+
+		<copy todir="${dir}" flatten="true">
+			<resourcelist>
+				<string value="${plugins}"/>
+			</resourcelist>
+		</copy>
+
+		<!-- Check plugins -->
+		<as:check-signature signature="${dir}/api.sig">
+			<ignore classname="org.jgraph.*"/>
+			<ignore classname="com.touchgraph.*"/>
+			<ignore classname="com.sun.xml.fastinfoset.*"/>
+			<ignore classname="javax.jms.*"/>
+			<ignore classname="org.jvnet.staxex.*"/>
+			<ignore classname="javax.mail.*"/>
+			<ignore classname="com.sun.jdmk.*"/>
+			<path path="${dir}"/>
+		</as:check-signature>
+
+	</target>
+
 
 </project>
