@@ -64,7 +64,7 @@ public class LanguageInfo {
         if (full.equals("iw_IL"))
             return "he";
         /* list of non-single codes supported by josm */
-        else if (full.equals("en_GB"))
+        else if (full.equals("en_GB") || full.equals("en_AU"))
             return full;
 
         return locale.getLanguage();
