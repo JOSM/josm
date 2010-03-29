@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 
 /**
@@ -65,16 +66,17 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
     protected boolean showOrderNumber;
     protected boolean fillSelectedNode;
     protected boolean fillUnselectedNode;
-    protected int selectedNodeRadius;
-    protected int unselectedNodeRadius;
+    protected boolean fillTaggedNode;
     protected int selectedNodeSize;
+    protected int selectedNodeRadius;
     protected int unselectedNodeSize;
+    protected int unselectedNodeRadius;
+    protected int junctionNodeSize;
+    protected int junctionNodeRadius;
     protected int defaultSegmentWidth;
     protected int virtualNodeSize;
     protected int virtualNodeSpace;
     protected int segmentNumberSpace;
-    protected int taggedNodeRadius;
-    protected int taggedNodeSize;
 
     /**
      * Draw subsequent segments of same color as one Path
@@ -96,19 +98,21 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
     }
 
     protected void getSettings(boolean virtual) {
-        showDirectionArrow = Main.pref.getBoolean("draw.segment.direction", true);
-        showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only", true);
-        showHeadArrowOnly = Main.pref.getBoolean("draw.segment.head_only", false);
-        showOrderNumber = Main.pref.getBoolean("draw.segment.order_number", false);
-        selectedNodeSize = Main.pref.getInteger("mappaint.node.selected-size", 5);
+        MapPaintSettings settings = MapPaintSettings.INSTANCE;
+        showDirectionArrow = settings.isShowDirectionArrow();
+        showRelevantDirectionsOnly = settings.isShowRelevantDirectionsOnly();
+        showHeadArrowOnly = settings.isShowHeadArrowOnly();
+        showOrderNumber = settings.isShowOrderNumber();
+        selectedNodeSize = settings.getSelectedNodeSize();
         selectedNodeRadius = selectedNodeSize / 2;
-        unselectedNodeSize = Main.pref.getInteger("mappaint.node.unselected-size", 3);
+        unselectedNodeSize = settings.getUnselectedNodeSize();
         unselectedNodeRadius = unselectedNodeSize / 2;
-        taggedNodeSize = Main.pref.getInteger("mappaint.node.tagged-size", 5);
-        taggedNodeRadius = taggedNodeSize / 2;
-        defaultSegmentWidth = Main.pref.getInteger("mappaint.segment.default-width", 2);
-        fillSelectedNode = Main.pref.getBoolean("mappaint.node.fill-selected", true);
-        fillUnselectedNode = Main.pref.getBoolean("mappaint.node.fill-unselected", false);
+        junctionNodeSize = settings.getJunctionNodeSize();
+        junctionNodeRadius = junctionNodeSize / 2;
+        defaultSegmentWidth = settings.getDefaultSegmentWidth();
+        fillSelectedNode = settings.isFillSelectedNode();
+        fillUnselectedNode = settings.isFillUnselectedNode();
+        fillTaggedNode = settings.isFillTaggedNode();
         virtualNodeSize = virtual ? Main.pref.getInteger("mappaint.node.virtual-size", 8) / 2 : 0;
         virtualNodeSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
         segmentNumberSpace = Main.pref.getInteger("mappaint.segmentnumber.space", 40);
@@ -226,16 +230,18 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
     public void visit(Node n) {
         if (n.isIncomplete()) return;
 
-        if (inactive || n.isDisabled()) {
-            drawNode(n, inactiveColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
-        } else if (n.isHighlighted()) {
-            drawNode(n, highlightColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
+        if (n.isHighlighted()) {
+            drawNode(n, highlightColor, selectedNodeSize, unselectedNodeRadius, fillSelectedNode);
         } else if (ds.isSelected(n)) {
             drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
-        } else if(n.isTagged()) {
-            drawNode(n, nodeColor, taggedNodeSize, taggedNodeRadius, fillUnselectedNode);
         } else {
-            drawNode(n, nodeColor, unselectedNodeSize, unselectedNodeRadius, fillUnselectedNode);
+            boolean junction = n.isJunctionNode();
+            drawNode(
+                n,
+                (inactive || n.isDisabled()) ? inactiveColor : nodeColor,
+                junction ? junctionNodeSize : unselectedNodeSize,
+                junction ? junctionNodeRadius : unselectedNodeRadius,
+                n.isTagged() ? fillTaggedNode : fillUnselectedNode);
         }
     }
 
