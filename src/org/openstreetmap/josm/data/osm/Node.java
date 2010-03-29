@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
 public final class Node extends OsmPrimitive {
 
     private CachedLatLon coor;
+    private BBox bbox;
 
     public final void setCoor(LatLon coor) {
         if(coor != null){
@@ -185,15 +186,18 @@ public final class Node extends OsmPrimitive {
 
     @Override
     public BBox getBBox() {
-        if (coor == null)
-            return new BBox(0, 0, 0, 0);
-        else
-            return new BBox(coor, coor);
+        if (getDataSet() == null)
+            return new BBox(this);
+        if (bbox == null) {
+            bbox = new BBox(this);
+        }
+        return new BBox(bbox);
     }
 
     @Override
     public void updatePosition() {
-        // Do nothing for now, but in future replace CachedLatLon with simple doubles and update precalculated EastNorth value here
+        bbox = new BBox(this);
+        // TODO: replace CachedLatLon with simple doubles and update precalculated EastNorth value here
     }
 
     public boolean isJunctionNode() {

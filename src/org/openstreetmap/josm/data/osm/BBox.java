@@ -48,6 +48,16 @@ public class BBox {
         }
     }
 
+    public BBox(Node n) {
+        LatLon coor = n.getCoor();
+        if (coor == null) {
+            xmin = xmax = ymin = ymax = 0;
+        } else {
+            xmin = xmax = coor.lon();
+            ymin = ymax = coor.lat();
+        }
+    }
+
     private void sanity()  {
         if (xmin < -180.0) {
             xmin = -180.0;
