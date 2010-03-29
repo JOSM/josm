@@ -60,6 +60,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
     protected Color incompleteColor;
     protected Color backgroundColor;
     protected Color highlightColor;
+    protected Color taggedColor;
     protected boolean showDirectionArrow;
     protected boolean showRelevantDirectionsOnly;
     protected boolean showHeadArrowOnly;
@@ -95,6 +96,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         incompleteColor = PaintColors.INCOMPLETE_WAY.get();
         backgroundColor = PaintColors.BACKGROUND.get();
         highlightColor = PaintColors.HIGHLIGHT.get();
+        taggedColor = PaintColors.TAGGED.get();
     }
 
     protected void getSettings(boolean virtual) {
@@ -238,7 +240,8 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
             boolean junction = n.isJunctionNode();
             drawNode(
                 n,
-                (inactive || n.isDisabled()) ? inactiveColor : nodeColor,
+                (inactive || n.isDisabled()) ? inactiveColor : 
+                    (n.isTagged() ? taggedColor : nodeColor),
                 junction ? junctionNodeSize : unselectedNodeSize,
                 junction ? junctionNodeRadius : unselectedNodeRadius,
                 n.isTagged() ? fillTaggedNode : fillUnselectedNode);

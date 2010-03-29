@@ -30,6 +30,7 @@ public class MapPaintSettings implements PreferenceChangedListener {
     private Color highlightColor;
     private Color inactiveColor;
     private Color nodeColor;
+    private Color taggedColor;
 
     private MapPaintSettings() {
         load();
@@ -46,6 +47,7 @@ public class MapPaintSettings implements PreferenceChangedListener {
         highlightColor = PaintColors.HIGHLIGHT.get();
         inactiveColor = PaintColors.INACTIVE.get();
         nodeColor = PaintColors.NODE.get();
+        taggedColor = PaintColors.TAGGED.get();
 
         showOrderNumber = Main.pref.getBoolean("draw.segment.order_number", false);
         showHeadArrowOnly = Main.pref.getBoolean("draw.segment.head_only", false);
@@ -94,6 +96,14 @@ public class MapPaintSettings implements PreferenceChangedListener {
         return inactiveColor;
     }
 
+    public Color getNodeColor() {
+        return nodeColor;
+    }
+
+    public Color getTaggedColor() {
+        return taggedColor;
+    }
+
     public boolean isShowOrderNumber() {
         return showOrderNumber;
     }
@@ -112,10 +122,6 @@ public class MapPaintSettings implements PreferenceChangedListener {
 
     public int getUseStrokesDistance() {
         return useStrokesDistance;
-    }
-
-    public Color getNodeColor() {
-        return nodeColor;
     }
 
     public int getShowIconsDistance() {
