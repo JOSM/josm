@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.ChangesetIdChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
@@ -200,6 +201,7 @@ public class DataSet implements Cloneable {
             throw new DataIntegrityProblemException(
                     tr("Unable to add primitive {0} to the dataset because it is already included", primitive.toString()));
 
+        primitive.updatePosition(); // Set cached bbox for way and relation (required for reindexWay and reinexRelation to work properly)
         if (primitive instanceof Node) {
             nodes.add((Node) primitive);
         } else if (primitive instanceof Way) {
@@ -208,7 +210,7 @@ public class DataSet implements Cloneable {
             relations.add((Relation) primitive);
         }
         allPrimitives.add(primitive);
-        primitive.setDataset(this);
+        primitive.setDataset(this);        
         firePrimitivesAdded(Collections.singletonList(primitive), false);
     }
 
@@ -764,9 +766,9 @@ public class DataSet implements Cloneable {
         return false;
     }
 
-    private void reindexNode(Node node) {
+    private void reindexNode(Node node, LatLon newCoor) {
         nodes.remove(node);
-        node.updatePosition();
+        node.setCoorInternal(newCoor);
         nodes.add(node);
         for (OsmPrimitive primitive: node.getReferrers()) {
             if (primitive instanceof Way) {
@@ -867,8 +869,8 @@ public class DataSet implements Cloneable {
         fireEvent(new RelationMembersChangedEvent(this, r));
     }
 
-    void fireNodeMoved(Node node) {
-        reindexNode(node);
+    void fireNodeMoved(Node node, LatLon newCoor) {
+        reindexNode(node, newCoor);
         fireEvent(new NodeMovedEvent(this, node));
     }
 

@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -14,17 +15,13 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
 public final class Node extends OsmPrimitive {
 
     private CachedLatLon coor;
-    private BBox bbox;
 
     public final void setCoor(LatLon coor) {
         if(coor != null){
-            if(this.coor == null) {
-                this.coor = new CachedLatLon(coor);
-            } else {
-                this.coor.setCoor(coor);
-            }
             if (getDataSet() != null) {
-                getDataSet().fireNodeMoved(this);
+                getDataSet().fireNodeMoved(this, coor);
+            } else {
+                setCoorInternal(coor);
             }
         }
     }
@@ -34,21 +31,24 @@ public final class Node extends OsmPrimitive {
     }
 
     public final void setEastNorth(EastNorth eastNorth) {
-        if(eastNorth != null)
-        {
-            if(coor != null) {
-                coor.setEastNorth(eastNorth);
-            } else {
-                coor = new CachedLatLon(eastNorth);
-            }
-            if (getDataSet() != null) {
-                getDataSet().fireNodeMoved(this);
-            }
+        if(eastNorth != null) {
+            setCoor(Main.proj.eastNorth2latlon(eastNorth));
         }
     }
 
     public final EastNorth getEastNorth() {
         return coor != null ? coor.getEastNorth() : null;
+    }
+
+    /**
+     * To be used only by Dataset.reindexNode
+     */
+    protected void setCoorInternal(LatLon coor) {
+        if(this.coor == null) {
+            this.coor = new CachedLatLon(coor);
+        } else {
+            this.coor.setCoor(coor);
+        }
     }
 
     protected Node(long id, boolean allowNegative) {
@@ -186,17 +186,11 @@ public final class Node extends OsmPrimitive {
 
     @Override
     public BBox getBBox() {
-        if (getDataSet() == null)
-            return new BBox(this);
-        if (bbox == null) {
-            bbox = new BBox(this);
-        }
-        return new BBox(bbox);
+        return new BBox(this);
     }
 
     @Override
     public void updatePosition() {
-        bbox = new BBox(this);
         // TODO: replace CachedLatLon with simple doubles and update precalculated EastNorth value here
     }
 

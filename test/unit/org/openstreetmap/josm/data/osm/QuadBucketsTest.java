@@ -8,16 +8,14 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmReader;
 
 public class QuadBucketsTest {
 
-    @Test
-    public void testRemove() throws Exception {
-        Main.proj = new Mercator();
-        DataSet ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/restriction.osm"), NullProgressMonitor.INSTANCE);
+    private void removeAllTest(DataSet ds) {
         List<Node> allNodes = new ArrayList<Node>(ds.getNodes());
         List<Way> allWays = new ArrayList<Way>(ds.getWays());
         List<Relation> allRelations = new ArrayList<Relation>(ds.getRelations());
@@ -34,6 +32,25 @@ public class QuadBucketsTest {
         Assert.assertTrue(ds.getNodes().isEmpty());
         Assert.assertTrue(ds.getWays().isEmpty());
         Assert.assertTrue(ds.getRelations().isEmpty());
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        Main.proj = new Mercator();
+        DataSet ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/restriction.osm"), NullProgressMonitor.INSTANCE);
+        removeAllTest(ds);
+    }
+
+    @Test
+    public void testMove() throws Exception {
+        Main.proj = new Mercator();
+        DataSet ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/restriction.osm"), NullProgressMonitor.INSTANCE);
+
+        for (Node n: ds.getNodes()) {
+            n.setCoor(new LatLon(10, 10));
+        }
+
+        removeAllTest(ds);
     }
 
 }
