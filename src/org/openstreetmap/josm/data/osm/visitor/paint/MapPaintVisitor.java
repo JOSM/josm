@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -644,6 +643,7 @@ public class MapPaintVisitor implements PaintVisitor {
     public void visitAll(DataSet data, boolean virtual, Bounds bounds) {
         BBox bbox = new BBox(bounds);
         this.data = data;
+        ++paintid;
 
         useStyleCache = Main.pref.getBoolean("mappaint.cache", true);
         int fillAreas = Main.pref.getInteger("mappaint.fillareas", 10000000);
@@ -652,7 +652,7 @@ public class MapPaintVisitor implements PaintVisitor {
         dist = ll1.greatCircleDistance(ll2);
 
         zoomLevelDisplay = Main.pref.getBoolean("mappaint.zoomLevelDisplay", false);
-        circum = Main.map.mapView.getDist100Pixel();
+        circum = nc.getDist100Pixel();
         styles = MapPaintStyles.getStyles().getStyleSet();
         drawMultipolygon = Main.pref.getBoolean("mappaint.multipolygon", true);
         drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
@@ -669,12 +669,10 @@ public class MapPaintVisitor implements PaintVisitor {
 
         data.clearErrors();
 
-        ++paintid;
 
         if (fillAreas > dist && styles != null && styles.hasAreas()) {
             Collection<Way> noAreaWays = new LinkedList<Way>();
 
-            List<Relation> relations = data.searchRelations(bbox);
             /*** RELATIONS ***/
             for (final Relation osm: data.searchRelations(bbox)) {
                 if (osm.isDrawable()) {
@@ -708,7 +706,7 @@ public class MapPaintVisitor implements PaintVisitor {
             }
 
             /*** WAYS (filling disabled)  ***/
-            for (final Way way: data.getWays()) {
+            for (final Way way: data.searchWays(bbox)) {
                 if (way.isDrawable() && !data.isSelected(way)) {
                     drawWay(way, 0);
                 }

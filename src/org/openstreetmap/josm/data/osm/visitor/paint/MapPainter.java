@@ -184,7 +184,7 @@ public class MapPainter {
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
 
         int w = icon.getIconWidth(), h=icon.getIconHeight();
-        icon.paintIcon ( Main.map.mapView, g, p.x-w/2, p.y-h/2 );
+        icon.paintIcon ( nc, g, p.x-w/2, p.y-h/2 );
         if(name != null) {
             if (inactive || n.isDisabled()) {
                 g.setColor(inactiveColor);
