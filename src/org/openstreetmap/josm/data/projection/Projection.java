@@ -23,8 +23,7 @@ public interface Projection {
         new Puwg(),
         new SwissGrid(),
         new UTM(),
-        new UTM_20N_France_DOM(),
-        new GaussLaborde_Reunion(),
+        new UTM_France_DOM(),
         new LambertCC9Zones()    // Still needs proper default zoom
     };
 
