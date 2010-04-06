@@ -213,9 +213,9 @@ public class CombineWayAction extends JosmAction {
         LinkedList<Way> deletedWays = new LinkedList<Way>(ways);
         deletedWays.remove(targetWay);
 
-        cmds.add(new DeleteCommand(deletedWays));
         cmds.add(new ChangeCommand(targetWay, modifiedTargetWay));
         cmds.addAll(dialog.buildResolutionCommands());
+        cmds.add(new DeleteCommand(deletedWays));
         final SequenceCommand sequenceCommand = new SequenceCommand(tr("Combine {0} ways", ways.size()), cmds);
 
         // update gui
