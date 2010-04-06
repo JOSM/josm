@@ -6,11 +6,15 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.io.UnsupportedEncodingException;
 
+import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -98,6 +102,9 @@ public class GettingStarted extends JPanel {
         super(new BorderLayout());
         final LinkGeneral lg = new LinkGeneral("<html>" + styles + "<h1>" + "JOSM - " + tr("Java OpenStreetMap Editor")
                 + "</h1><h2 align=\"center\">" + tr("Downloading \"Message of the day\"") + "</h2>");
+        // clear the build-in command ctrl+shift+O, because it is used as shortcut in JOSM
+        lg.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK), "none");
+            
         JScrollPane scroller = new JScrollPane(lg);
         scroller.setViewportBorder(new EmptyBorder(10, 100, 10, 100));
         add(scroller, BorderLayout.CENTER);
