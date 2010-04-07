@@ -101,7 +101,7 @@ public class I18n {
         {
             i = pluralEval(num);
             String[] trans = pstrings.get(ctx == null ? text : "_:"+ctx+"\n"+text);
-            if(trans != null && trans.length >= i)
+            if(trans != null && trans.length > i)
                 return trans[i];
         }
 
