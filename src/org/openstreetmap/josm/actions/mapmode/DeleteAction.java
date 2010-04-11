@@ -18,6 +18,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -285,9 +286,9 @@ public class DeleteAction extends MapMode implements AWTEventListener {
 
         DeleteParameters result = new DeleteParameters();
 
-        result.nearestNode = Main.map.mapView.getNearestNode(e.getPoint());
+        result.nearestNode = Main.map.mapView.getNearestNode(e.getPoint(), OsmPrimitive.isSelectablePredicate);
         if (result.nearestNode == null) {
-            result.nearestSegment = Main.map.mapView.getNearestWaySegment(e.getPoint());
+            result.nearestSegment = Main.map.mapView.getNearestWaySegment(e.getPoint(), OsmPrimitive.isSelectablePredicate);
             if (result.nearestSegment != null) {
                 if (shift) {
                     result.mode = DeleteMode.segment;

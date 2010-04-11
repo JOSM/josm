@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.ChangesetIdChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
@@ -173,22 +174,19 @@ public class DataSet implements Cloneable {
      * @return A collection containing all not-deleted primitives (except keys).
      */
     public Collection<OsmPrimitive> allNonDeletedPrimitives() {
-        return new DatasetCollection.AllNonDeleted(allPrimitives);
+        return new DatasetCollection(allPrimitives, OsmPrimitive.nonDeletedPredicate);
     }
 
     public Collection<OsmPrimitive> allNonDeletedCompletePrimitives() {
-        return new DatasetCollection.AllNonDeletedComplete(allPrimitives);
+        return new DatasetCollection(allPrimitives, OsmPrimitive.nonDeletedCompletePredicate);
     }
 
     public Collection<OsmPrimitive> allNonDeletedPhysicalPrimitives() {
-        return new DatasetCollection.AllNonDeletedPhysical(allPrimitives);
+        return new DatasetCollection(allPrimitives, OsmPrimitive.nonDeletedPhysicalPredicate);
     }
 
-    /**
-     * @return A collection containing all modified primitives
-     */
     public Collection<OsmPrimitive> allModifiedPrimitives() {
-        return new DatasetCollection.AllModified(allPrimitives);
+        return new DatasetCollection(allPrimitives, OsmPrimitive.modifiedPredicate);
     }
 
     /**

@@ -163,7 +163,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // This happens when nothing is selected, but we still want to highlight the "target node"
         if (mouseOnExistingNode == null && getCurrentDataSet().getSelected().size() == 0
                 && mousePos != null) {
-            mouseOnExistingNode = Main.map.mapView.getNearestNode(mousePos);
+            mouseOnExistingNode = Main.map.mapView.getNearestNode(mousePos, OsmPrimitive.isSelectablePredicate);
         }
 
         if (mouseOnExistingNode != null) {
@@ -331,7 +331,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Node n = null;
 
         if (!ctrl) {
-            n = Main.map.mapView.getNearestNode(mousePos);
+            n = Main.map.mapView.getNearestNode(mousePos, OsmPrimitive.isSelectablePredicate);
         }
 
         if (n != null) {
@@ -365,7 +365,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
             if (!ctrl) {
                 // Insert the node into all the nearby way segments
-                List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(e.getPoint());
+                List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(e.getPoint(), OsmPrimitive.isSelectablePredicate);
                 Map<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
                 for (WaySegment ws : wss) {
                     List<Integer> is;
@@ -680,13 +680,13 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.statusLine.setDist(-1);
 
         if (!ctrl && mousePos != null) {
-            currentMouseNode = mv.getNearestNode(mousePos);
+            currentMouseNode = mv.getNearestNode(mousePos, OsmPrimitive.isSelectablePredicate);
         }
 
         // We need this for highlighting and we'll only do so if we actually want to re-use
         // *and* there is no node nearby (because nodes beat ways when re-using)
         if(!ctrl && currentMouseNode == null) {
-            List<WaySegment> wss = mv.getNearestWaySegments(mousePos);
+            List<WaySegment> wss = mv.getNearestWaySegments(mousePos, OsmPrimitive.isSelectablePredicate);
             for(WaySegment ws : wss) {
                 mouseOnExistingWays.add(ws.way);
             }

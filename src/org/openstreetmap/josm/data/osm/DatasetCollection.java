@@ -5,7 +5,9 @@ import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
 
-abstract class DatasetCollection extends AbstractCollection<OsmPrimitive> {
+import org.openstreetmap.josm.tools.Predicate;
+
+class DatasetCollection extends AbstractCollection<OsmPrimitive> {
 
     private class FilterIterator implements Iterator<OsmPrimitive> {
 
@@ -20,7 +22,7 @@ abstract class DatasetCollection extends AbstractCollection<OsmPrimitive> {
             if (current == null) {
                 while (iterator.hasNext()) {
                     current = iterator.next();
-                    if (filter(current))
+                    if (predicate.evaluate(current))
                         return;
                 }
                 current = null;
@@ -45,12 +47,12 @@ abstract class DatasetCollection extends AbstractCollection<OsmPrimitive> {
     }
 
     private final Collection<OsmPrimitive> primitives;
+    private final Predicate<OsmPrimitive> predicate;
 
-    public DatasetCollection(Collection<OsmPrimitive> primitives) {
+    public DatasetCollection(Collection<OsmPrimitive> primitives, Predicate<OsmPrimitive> predicate) {
         this.primitives = primitives;
+        this.predicate = predicate;
     }
-
-    protected abstract boolean filter(OsmPrimitive primitive);
 
     @Override
     public Iterator<OsmPrimitive> iterator() {
@@ -72,57 +74,4 @@ abstract class DatasetCollection extends AbstractCollection<OsmPrimitive> {
     public boolean isEmpty() {
         return !iterator().hasNext();
     }
-
-    public static class AllNonDeleted extends DatasetCollection {
-
-        public AllNonDeleted(Collection<OsmPrimitive> primitives) {
-            super(primitives);
-        }
-
-        @Override
-        protected boolean filter(OsmPrimitive primitive) {
-            return primitive.isVisible() && !primitive.isDeleted();
-        }
-
-    }
-
-    public static class AllNonDeletedComplete extends DatasetCollection {
-
-        public AllNonDeletedComplete(Collection<OsmPrimitive> primitives) {
-            super(primitives);
-        }
-
-        @Override
-        protected boolean filter(OsmPrimitive primitive) {
-            return primitive.isVisible() && !primitive.isDeleted() && !primitive.isIncomplete();
-        }
-
-    }
-
-    public static class AllNonDeletedPhysical extends DatasetCollection {
-
-        public AllNonDeletedPhysical(Collection<OsmPrimitive> primitives) {
-            super(primitives);
-        }
-
-        @Override
-        protected boolean filter(OsmPrimitive primitive) {
-            return primitive.isVisible() && !primitive.isDeleted() && !primitive.isIncomplete() && !(primitive instanceof Relation);
-        }
-
-    }
-
-    public static class AllModified extends DatasetCollection {
-
-        public AllModified(Collection<OsmPrimitive> primitives) {
-            super(primitives);
-        }
-
-        @Override
-        protected boolean filter(OsmPrimitive primitive) {
-            return primitive.isVisible() && primitive.isModified();
-        }
-
-    }
-
 }

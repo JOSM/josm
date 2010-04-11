@@ -307,7 +307,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         // boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
         // boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
 
-        selectedSegment = Main.map.mapView.getNearestWaySegment(e.getPoint());
+        selectedSegment = Main.map.mapView.getNearestWaySegment(e.getPoint(), OsmPrimitive.isSelectablePredicate);
 
         if (selectedSegment == null) {
             // If nothing gets caught, stay in select mode

@@ -192,7 +192,7 @@ public class MapStatus extends JPanel implements Helpful {
                         // keep them until the mouse is moved
                         if (middleMouseDown || isAtOldPosition)
                         {
-                            Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos);
+                            Collection<OsmPrimitive> osms = mv.getAllNearest(ms.mousePos, OsmPrimitive.isUsablePredicate);
 
                             if (osms == null) {
                                 continue;
@@ -291,7 +291,7 @@ public class MapStatus extends JPanel implements Helpful {
          * @param ms
          */
         private final void statusBarElementUpdate(MouseState ms) {
-            final OsmPrimitive osmNearest = mv.getNearest(ms.mousePos);
+            final OsmPrimitive osmNearest = mv.getNearest(ms.mousePos, OsmPrimitive.isUsablePredicate);
             if (osmNearest != null) {
                 nameText.setText(osmNearest.getDisplayName(DefaultNameFormatter.getInstance()));
             } else {

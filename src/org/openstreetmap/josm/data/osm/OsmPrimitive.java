@@ -27,6 +27,7 @@ import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Predicate;
 
 /**
  * An OSM primitive can be associated with a key/value pair. It can be created, deleted
@@ -46,15 +47,74 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return idCounter.decrementAndGet();
     }
 
+    /**
+     * This flag shows, that the properties have been changed by the user
+     * and on upload the object will be send to the server
+     */
     private static final int FLAG_MODIFIED = 1 << 0;
+
+    /**
+     * The visible flag indicates, that an object is marked
+     * as deleted on the server.
+     */
     private static final int FLAG_VISIBLE  = 1 << 1;
+
+    /**
+     * An object can be disabled by the filter mechanism.
+     * Then it will show in a shade of grey on the map.
+     * Disabled objects usually cannot be selected or modified
+     * while the filter is active.
+     */
     private static final int FLAG_DISABLED = 1 << 2;
+
+    /**
+     * An object that was deleted by the user.
+     * Deleted objects are usually hidden on the map and a request
+     * for deletion will be send to the server on upload.
+     * An object usually cannot be deleted if it has non-deleted
+     * objects still referring to it.
+     */
     private static final int FLAG_DELETED  = 1 << 3;
+
+    /**
+     * An object can be filtered by the filter mechanism.
+     * Then it will be hidden on the map and usually
+     * cannot be selected or modified while the filter is active.
+     */
     private static final int FLAG_FILTERED = 1 << 4;
+
+    /**
+     * This flag is set if the primitive is a way and
+     * according to the tags, the direction of the way is important.
+     * (e.g. one way street.)
+     */
     private static final int FLAG_HAS_DIRECTIONS = 1 << 5;
+
+    /**
+     * If the primitive is tagged.
+     * Some trivial tags like source=* are ignored here.
+     */
     private static final int FLAG_TAGGED = 1 << 6;
+
+    /**
+     * This flag is only relevant if FLAG_HAS_DIRECTIONS is set.
+     * It shows, that direction of the arrows should be reversed.
+     * (E.g. oneway=-1.)
+     */
     private static final int FLAG_DIRECTION_REVERSED = 1 << 7;
+
+    /**
+     * When hovering over ways and nodes in add mode, the
+     * "target" objects are visually highlighted. This flag indicates
+     * that the primitive is currently highlighted.
+     */
     private static final int FLAG_HIGHLIGHTED = 1 << 8;
+
+    /**
+     * A primitive is incomplete if we know its id and type, but nothing more.
+     * Typically some members of a relation are incomplete until they are
+     * fetched from the server.
+     */
     private static final int FLAG_INCOMPLETE = 1 << 9;
 
     /**
@@ -328,12 +388,55 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @see #delete(boolean)
      */
     public boolean isUsable() {
-        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_DISABLED)) == 0;
+        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE)) == 0;
+    }
+
+    public boolean isSelectable() {
+        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_DISABLED + FLAG_FILTERED)) == 0;
     }
 
     public boolean isDrawable() {
         return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_FILTERED)) == 0;
     }
+
+    /**
+     * Some predicates, that describe conditions on primitives.
+     */
+    public static Predicate<OsmPrimitive> isUsablePredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return primitive.isUsable();
+        }
+    };
+
+    public static Predicate<OsmPrimitive> isSelectablePredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return primitive.isSelectable();
+        }
+    };
+
+    public static Predicate<OsmPrimitive> nonDeletedPredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return primitive.isVisible() && !primitive.isDeleted();
+        }
+    };
+
+    public static Predicate<OsmPrimitive> nonDeletedCompletePredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return primitive.isVisible() && !primitive.isDeleted() && !primitive.isIncomplete();
+        }
+    };
+
+    public static Predicate<OsmPrimitive> nonDeletedPhysicalPredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return primitive.isVisible() && !primitive.isDeleted() && !primitive.isIncomplete() && !(primitive instanceof Relation);
+        }
+    };
+
+    public static Predicate<OsmPrimitive> modifiedPredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return primitive.isVisible() && primitive.isModified();
+        }
+    };
 
     /**
      * Replies true if this primitive is either unknown to the server (i.e. its id

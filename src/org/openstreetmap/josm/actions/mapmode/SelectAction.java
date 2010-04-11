@@ -284,7 +284,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
         MapView c = Main.map.mapView;
         int snapDistance = Main.pref.getInteger("mappaint.node.virtual-snap-distance", 8);
         snapDistance *= snapDistance;
-        OsmPrimitive osm = c.getNearestNode(p);
+        OsmPrimitive osm = c.getNearestNode(p, OsmPrimitive.isSelectablePredicate);
         virtualWays.clear();
         virtualNode = null;
         Node virtualWayNode = null;
@@ -292,8 +292,8 @@ public class SelectAction extends MapMode implements SelectionEnded {
         if (osm == null)
         {
             Collection<WaySegment> nearestWaySegs = allSegements
-            ? c.getNearestWaySegments(p)
-                    : Collections.singleton(c.getNearestWaySegment(p));
+            ? c.getNearestWaySegments(p, OsmPrimitive.isSelectablePredicate)
+                    : Collections.singleton(c.getNearestWaySegment(p, OsmPrimitive.isSelectablePredicate));
 
             for(WaySegment nearestWS : nearestWaySegs) {
                 if (nearestWS == null) {
@@ -434,7 +434,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
             boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
             if (!didMove) {
                 selectPrims(
-                        Main.map.mapView.getNearestCollection(e.getPoint()),
+                        Main.map.mapView.getNearestCollection(e.getPoint(), OsmPrimitive.isSelectablePredicate),
                         shift, ctrl, true, false);
 
                 // If the user double-clicked a node, change to draw mode
@@ -484,7 +484,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                 }
                 if (ctrl) {
                     Collection<Node> affectedNodes = OsmPrimitive.getFilteredSet(selection, Node.class);
-                    Collection<Node> nn = Main.map.mapView.getNearestNodes(e.getPoint(), affectedNodes);
+                    Collection<Node> nn = Main.map.mapView.getNearestNodes(e.getPoint(), affectedNodes, OsmPrimitive.isSelectablePredicate);
                     if (nn != null) {
                         Node targetNode = nn.iterator().next();
                         Set<Node> nodesToMerge = new HashSet<Node>(affectedNodes);

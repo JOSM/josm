@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.help.Helpful;
+import org.openstreetmap.josm.tools.Predicate;
 
 /**
  * An component that can be navigated by a mapmover. Used as map view and for the
@@ -425,11 +426,20 @@ public class NavigatableComponent extends JComponent implements Helpful {
                 getLatLon(p.x + snapDistance, p.y + snapDistance));
     }
 
-    /**
-     * Return the nearest point to the screen point given.
-     * If a node within snapDistance pixel is found, the nearest node is returned.
-     */
+    @Deprecated
     public final Node getNearestNode(Point p) {
+        return getNearestNode(p, OsmPrimitive.isUsablePredicate);
+    }
+
+    /**
+     * Return the nearest node to the screen point given.
+     * If more then one node within snapDistance pixel is found,
+     * the nearest node is returned.
+     * @param p the screen point
+     * @param predicate this parameter imposes a condition on the returned object, e.g.
+     *        give the nearest node that is tagged.
+     */
+    public final Node getNearestNode(Point p, Predicate<OsmPrimitive> predicate) {
         DataSet ds = getCurrentDataSet();
         if (ds == null)
             return null;
@@ -437,9 +447,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
         double minDistanceSq = snapDistanceSq;
         Node minPrimitive = null;
         for (Node n : ds.searchNodes(getSnapDistanceBBox(p))) {
-            if (!n.isUsable()) {
+            if (! predicate.evaluate(n))
                 continue;
-            }
             Point sp = getPoint(n);
             double dist = p.distanceSq(sp);
             if (dist < minDistanceSq) {
@@ -461,22 +470,22 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * perpendicular distance.
      *
      * @param p the point for which to search the nearest segment.
+     * @param predicate the returned objects have to fulfill certain properties.
      */
-    public final List<WaySegment> getNearestWaySegments(Point p) {
+    public final List<WaySegment> getNearestWaySegments(Point p, Predicate<OsmPrimitive> predicate) {
         TreeMap<Double, List<WaySegment>> nearest = new TreeMap<Double, List<WaySegment>>();
         DataSet ds = getCurrentDataSet();
         if (ds == null)
             return null;
 
         for (Way w : ds.searchWays(getSnapDistanceBBox(p))) {
-            if (!w.isUsable()) {
+            if (!predicate.evaluate(w))
                 continue;
-            }
             Node lastN = null;
             int i = -2;
             for (Node n : w.getNodes()) {
                 i++;
-                if (n.isDeleted() || n.isIncomplete()) {
+                if (n.isDeleted() || n.isIncomplete()) {//FIXME: This shouldn't happen, raise exception?
                     continue;
                 }
                 if (lastN == null) {
@@ -520,10 +529,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
      *
      * @param p the point for which to search the nearest segment.
      * @param ignore a collection of segments which are not to be returned.
+     * @param predicate the returned object has to fulfill certain properties.
      * May be null.
      */
-    public final WaySegment getNearestWaySegment(Point p, Collection<WaySegment> ignore) {
-        List<WaySegment> nearest = getNearestWaySegments(p);
+    public final WaySegment getNearestWaySegment
+                                    (Point p, Collection<WaySegment> ignore, Predicate<OsmPrimitive> predicate) {
+        List<WaySegment> nearest = getNearestWaySegments(p, predicate);
         if(nearest == null)
             return null;
         if (ignore != null) {
@@ -535,15 +546,20 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * @return the nearest way segment to the screen point given.
      */
-    public final WaySegment getNearestWaySegment(Point p) {
-        return getNearestWaySegment(p, null);
+    public final WaySegment getNearestWaySegment(Point p, Predicate<OsmPrimitive> predicate) {
+        return getNearestWaySegment(p, null, predicate);
+    }
+
+    @Deprecated
+    public final Way getNearestWay(Point p) {
+        return getNearestWay(p, OsmPrimitive.isUsablePredicate);
     }
 
     /**
      * @return the nearest way to the screen point given.
      */
-    public final Way getNearestWay(Point p) {
-        WaySegment nearestWaySeg = getNearestWaySegment(p);
+    public final Way getNearestWay(Point p, Predicate<OsmPrimitive> predicate) {
+        WaySegment nearestWaySeg = getNearestWaySegment(p, predicate);
         return nearestWaySeg == null ? null : nearestWaySeg.way;
     }
 
@@ -558,13 +574,14 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * If nothing is found, return <code>null</code>.
      *
      * @param p The point on screen.
+     * @param predicate the returned object has to fulfill certain properties.
      * @return  The primitive that is nearest to the point p.
      */
-    public OsmPrimitive getNearest(Point p) {
-        OsmPrimitive osm = getNearestNode(p);
+    public OsmPrimitive getNearest(Point p, Predicate<OsmPrimitive> predicate) {
+        OsmPrimitive osm = getNearestNode(p, predicate);
         if (osm == null)
         {
-            osm = getNearestWay(p);
+            osm = getNearestWay(p, predicate);
         }
         return osm;
     }
@@ -572,8 +589,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * Returns a singleton of the nearest object, or else an empty collection.
      */
-    public Collection<OsmPrimitive> getNearestCollection(Point p) {
-        OsmPrimitive osm = getNearest(p);
+    public Collection<OsmPrimitive> getNearestCollection(Point p, Predicate<OsmPrimitive> predicate) {
+        OsmPrimitive osm = getNearest(p, predicate);
         if (osm == null)
             return Collections.emptySet();
         return Collections.singleton(osm);
@@ -587,20 +604,18 @@ public class NavigatableComponent extends JComponent implements Helpful {
      *      if no item under or near the point. The returned
      *      list is never empty.
      */
-    public Collection<OsmPrimitive> getAllNearest(Point p) {
+    public Collection<OsmPrimitive> getAllNearest(Point p, Predicate<OsmPrimitive> predicate) {
         Collection<OsmPrimitive> nearest = new HashSet<OsmPrimitive>();
         DataSet ds = getCurrentDataSet();
         if (ds == null)
             return null;
         for (Way w : ds.searchWays(getSnapDistanceBBox(p))) {
-            if (!w.isUsable()) {
+            if (!predicate.evaluate(w))
                 continue;
-            }
             Node lastN = null;
             for (Node n : w.getNodes()) {
-                if (!n.isUsable()) {
+                if (!predicate.evaluate(n))
                     continue;
-                }
                 if (lastN == null) {
                     lastN = n;
                     continue;
@@ -635,15 +650,16 @@ public class NavigatableComponent extends JComponent implements Helpful {
      *      if no node under or near the point. The returned
      *      list is never empty.
      */
-    public Collection<Node> getNearestNodes(Point p) {
+    public Collection<Node> getNearestNodes(Point p, Predicate<OsmPrimitive> predicate) {
         Collection<Node> nearest = new HashSet<Node>();
         DataSet ds = getCurrentDataSet();
         if (ds == null)
             return null;
 
         for (Node n : ds.searchNodes(getSnapDistanceBBox(p))) {
-            if (n.isUsable()
-                    && getPoint(n).distanceSq(p) < snapDistanceSq) {
+            if (!predicate.evaluate(n))
+                continue;
+            if (getPoint(n).distanceSq(p) < snapDistanceSq) {
                 nearest.add(n);
             }
         }
@@ -656,10 +672,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
      *
      * @param p the point for which to search the nearest segment.
      * @param ignore a collection of nodes which are not to be returned.
+     * @param predicate the returned objects have to fulfill certain properties.
      * May be null.
      */
-    public final Collection<Node> getNearestNodes(Point p, Collection<Node> ignore) {
-        Collection<Node> nearest = getNearestNodes(p);
+    public final Collection<Node> getNearestNodes(Point p, Collection<Node> ignore, Predicate<OsmPrimitive> predicate) {
+        Collection<Node> nearest = getNearestNodes(p, predicate);
         if (nearest == null) return null;
         if (ignore != null) {
             nearest.removeAll(ignore);
