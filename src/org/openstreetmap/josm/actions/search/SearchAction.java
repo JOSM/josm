@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
@@ -24,7 +25,10 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.ActionParameter;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.actions.ParameterizedAction;
+import org.openstreetmap.josm.actions.ActionParameter.SearchSettingsActionParameter;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -33,12 +37,32 @@ import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public class SearchAction extends JosmAction{
+public class SearchAction extends JosmAction implements ParameterizedAction {
 
     public static final int DEFAULT_SEARCH_HISTORY_SIZE = 10;
 
+    private static final String SEARCH_EXPRESSION = "searchExpression";
+
     public static enum SearchMode {
-        replace, add, remove, in_selection
+        replace('R'), add('A'), remove('D'), in_selection('S');
+
+        private final char code;
+
+        SearchMode(char code) {
+            this.code = code;
+        }
+
+        public char getCode() {
+            return code;
+        }
+
+        public static SearchMode fromCode(char code) {
+            for (SearchMode mode: values()) {
+                if (mode.getCode() == code)
+                    return mode;
+            }
+            return null;
+        }
     }
 
     public static final LinkedList<SearchSetting> searchHistory = new LinkedList<SearchSetting>();
@@ -55,6 +79,14 @@ public class SearchAction extends JosmAction{
         if (!isEnabled())
             return;
         search();
+    }
+
+    public void actionPerformed(ActionEvent e, Map<String, Object> parameters) {
+        if (parameters.get(SEARCH_EXPRESSION) == null) {
+            actionPerformed(e);
+        } else {
+            searchWithoutHistory((SearchSetting) parameters.get(SEARCH_EXPRESSION));
+        }
     }
 
     public static List<String> getSearchExpressionHistory() {
@@ -348,6 +380,60 @@ public class SearchAction extends JosmAction{
         public int hashCode() {
             return text.hashCode();
         }
+
+        public static SearchSetting readFromString(String s) {
+            if (s.length() == 0)
+                return null;
+
+            SearchSetting result = new SearchSetting();
+
+            int index = 1;
+
+            result.mode = SearchMode.fromCode(s.charAt(0));
+            if (result.mode == null) {
+                result.mode = SearchMode.replace;
+                index = 0;
+            }
+
+            while (index < s.length()) {
+                if (s.charAt(index) == 'C') {
+                    result.caseSensitive = true;
+                } else if (s.charAt(index) == 'R') {
+                    result.regexSearch = true;
+                } else if (s.charAt(index) == ' ') {
+                    break;
+                } else {
+                    System.out.println("Uknown char in SearchSettings: " + s);
+                    break;
+                }
+                index++;
+            }
+
+            if (index < s.length() && s.charAt(index) == ' ') {
+                index++;
+            }
+
+            result.text = s.substring(index);
+
+            return result;
+        }
+
+        public String writeToString() {
+            if (text == null || text.length() == 0)
+                return "";
+
+            StringBuilder result = new StringBuilder();
+            result.append(mode.getCode());
+            if (caseSensitive) {
+                result.append('C');
+            }
+            if (regexSearch) {
+                result.append('R');
+            }
+            result.append(' ');
+            result.append(text);
+            return result.toString();
+        }
     }
 
     /**
@@ -357,5 +443,9 @@ public class SearchAction extends JosmAction{
     @Override
     protected void updateEnabledState() {
         setEnabled(getEditLayer() != null);
+    }
+
+    public List<ActionParameter<?>> getActionParameters() {
+        return Collections.<ActionParameter<?>>singletonList(new SearchSettingsActionParameter(SEARCH_EXPRESSION));
     }
 }
