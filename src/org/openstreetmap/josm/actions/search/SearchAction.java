@@ -65,7 +65,49 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
     }
 
-    public static final LinkedList<SearchSetting> searchHistory = new LinkedList<SearchSetting>();
+    private static LinkedList<SearchSetting> searchHistory = null;
+
+    public static Collection<SearchSetting> getSearchHistory() {
+        if (searchHistory == null) {
+            searchHistory = new LinkedList<SearchSetting>();
+            for (String s: Main.pref.getCollection("search.history", Collections.<String>emptyList())) {
+                SearchSetting ss = SearchSetting.readFromString(s);
+                if (ss != null) {
+                    searchHistory.add(ss);
+                }
+            }
+        }
+
+        return searchHistory;
+    }
+
+    public static void saveToHistory(SearchSetting s) {
+        if(searchHistory.isEmpty() || !s.equals(searchHistory.getFirst())) {
+            searchHistory.addFirst(new SearchSetting(s));
+        }
+        int maxsize = Main.pref.getInteger("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE);
+        while (searchHistory.size() > maxsize) {
+            searchHistory.removeLast();
+        }
+        List<String> savedHistory = new ArrayList<String>();
+        for (SearchSetting item: searchHistory) {
+            savedHistory.add(item.writeToString());
+        }
+        Main.pref.putCollection("search.history", savedHistory);
+    }
+
+    public static List<String> getSearchExpressionHistory() {
+        ArrayList<String> ret = new ArrayList<String>(getSearchHistory().size());
+        for (SearchSetting ss: getSearchHistory()) {
+            ret.add(ss.text);
+        }
+        return ret;
+    }
+
+
+
+
+
 
     private static SearchSetting lastSearch = null;
 
@@ -87,14 +129,6 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         } else {
             searchWithoutHistory((SearchSetting) parameters.get(SEARCH_EXPRESSION));
         }
-    }
-
-    public static List<String> getSearchExpressionHistory() {
-        ArrayList<String> ret = new ArrayList<String>(searchHistory.size());
-        for (SearchSetting ss: searchHistory) {
-            ret.add(ss.text);
-        }
-        return ret;
     }
 
     public static SearchSetting showSearchDialog(SearchSetting initialValues) {
@@ -221,13 +255,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      * @param s
      */
     public static void searchWithHistory(SearchSetting s) {
-        if(searchHistory.isEmpty() || !s.equals(searchHistory.getFirst())) {
-            searchHistory.addFirst(new SearchSetting(s));
-        }
-        int maxsize = Main.pref.getInteger("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE);
-        while (searchHistory.size() > maxsize) {
-            searchHistory.removeLast();
-        }
+        saveToHistory(s);
         lastSearch = new SearchSetting(s);
         search(s);
     }

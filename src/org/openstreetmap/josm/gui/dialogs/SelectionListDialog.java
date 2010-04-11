@@ -82,6 +82,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  */
 public class SelectionListDialog extends ToggleDialog  {
+    @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(SelectionListDialog.class.getName());
 
     private JList lstPrimitives;
@@ -638,7 +639,7 @@ public class SelectionListDialog extends ToggleDialog  {
      * @author Jan Peter Stotz
      */
     protected static class SearchMenuItem extends JMenuItem implements ActionListener {
-        protected SearchSetting s;
+        final protected SearchSetting s;
 
         public SearchMenuItem(SearchSetting s) {
             super(s.toString());
@@ -657,7 +658,7 @@ public class SelectionListDialog extends ToggleDialog  {
      */
     protected static class SearchPopupMenu extends JPopupMenu {
         static public void launch(Component parent) {
-            if (org.openstreetmap.josm.actions.search.SearchAction.searchHistory.isEmpty())
+            if (org.openstreetmap.josm.actions.search.SearchAction.getSearchHistory().isEmpty())
                 return;
             JPopupMenu menu = new SearchPopupMenu();
             Rectangle r = parent.getBounds();
@@ -665,7 +666,7 @@ public class SelectionListDialog extends ToggleDialog  {
         }
 
         public SearchPopupMenu() {
-            for (SearchSetting ss: org.openstreetmap.josm.actions.search.SearchAction.searchHistory) {
+            for (SearchSetting ss: org.openstreetmap.josm.actions.search.SearchAction.getSearchHistory()) {
                 add(new SearchMenuItem(ss));
             }
         }
