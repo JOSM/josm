@@ -584,6 +584,10 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         border.intersect(viewport);
         tempG.draw(border);
 
+        if (Main.map.filterDialog != null) {
+            Main.map.filterDialog.drawOSDText(tempG);
+        }
+
         if (playHeadMarker != null) {
             playHeadMarker.paint(tempG, this);
         }

@@ -1,12 +1,20 @@
 package org.openstreetmap.josm.data.osm;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.table.AbstractTableModel;
 
 import org.openstreetmap.josm.Main;
@@ -26,7 +34,8 @@ public class Filters extends AbstractTableModel{
     }
 
     private List<Filter> filters = new LinkedList<Filter>();
-    public void filter(){
+
+    public void executeFilters(){
         Collection<OsmPrimitive> seld = new LinkedList<OsmPrimitive> ();
         Collection<OsmPrimitive> self = new LinkedList<OsmPrimitive> ();
         if(Main.main.getCurrentDataSet() == null)return;
@@ -55,7 +64,19 @@ public class Filters extends AbstractTableModel{
         Main.map.mapView.repaint();
     }
 
-    private void loadPrefs(){
+    public void clearFilterFlags() {
+        DataSet ds = Main.main.getCurrentDataSet();
+        if (ds != null) {
+            ds.setFiltered();
+            ds.setDisabled();
+        }
+        disabledCount = 0;
+        hiddenCount = 0;
+        Main.map.mapView.repaint();
+    }
+
+
+    private void loadPrefs() {
         Map<String,String> prefs = Main.pref.getAllPrefix("filters.filter");
         for (String value : prefs.values()) {
             filters.add(new Filter(value));
@@ -87,7 +108,7 @@ public class Filters extends AbstractTableModel{
     public void addFilter(Filter f){
         filters.add(f);
         savePref(filters.size()-1);
-        filter();
+        executeFilters();
         fireTableRowsInserted(filters.size()-1, filters.size()-1);
     }
 
@@ -96,7 +117,7 @@ public class Filters extends AbstractTableModel{
         filters.add(i+1, filters.remove(i));
         savePref(i);
         savePref(i+1);
-        filter();
+        executeFilters();
         fireTableRowsUpdated(i, i+1);
     }
 
@@ -105,21 +126,21 @@ public class Filters extends AbstractTableModel{
         filters.add(i-1, filters.remove(i));
         savePref(i);
         savePref(i-1);
-        filter();
+        executeFilters();
         fireTableRowsUpdated(i-1, i);
     }
 
     public void removeFilter(int i){
         filters.remove(i);
         savePrefs();
-        filter();
+        executeFilters();
         fireTableRowsDeleted(i, i);
     }
 
     public void setFilter(int i, Filter f){
         filters.set(i, f);
         savePref(i);
-        filter();
+        executeFilters();
         fireTableRowsUpdated(i, i);
     }
 
@@ -170,26 +191,31 @@ public class Filters extends AbstractTableModel{
     public void setValueAt(Object aValue, int row, int column){
         Filter f = filters.get(row);
         switch(column){
-        case 0: f.enable = (Boolean)aValue;
-        savePref(row);
-        filter();
-        fireTableRowsUpdated(row, row);
-        break;
-        case 1: f.hide = (Boolean)aValue;
-        savePref(row);
-        filter();
-        break;
-        case 2: f.text = (String)aValue;
-        savePref(row);
-        break;
-        case 3: f.applyForChildren = (Boolean)aValue;
-        savePref(row);
-        filter();
-        break;
-        case 4: f.inverted = (Boolean)aValue;
-        savePref(row);
-        filter();
-        break;
+        case 0:
+            f.enable = (Boolean)aValue;
+            savePref(row);
+            executeFilters();
+            fireTableRowsUpdated(row, row);
+            break;
+        case 1:
+            f.hide = (Boolean)aValue;
+            savePref(row);
+            executeFilters();
+            break;
+        case 2:
+            f.text = (String)aValue;
+            savePref(row);
+            break;
+        case 3:
+            f.applyForChildren = (Boolean)aValue;
+            savePref(row);
+            executeFilters();
+            break;
+        case 4:
+            f.inverted = (Boolean)aValue;
+            savePref(row);
+            executeFilters();
+            break;
         }
         if(column!=0) {
             fireTableCellUpdated(row, column);
@@ -213,5 +239,55 @@ public class Filters extends AbstractTableModel{
             }
         }
         return null;
+    }
+
+    private static class OSDLabel extends JLabel {
+        public OSDLabel(String text) {
+            super(text);
+            setOpaque(true);
+            setForeground(Color.black);
+            setBackground(new Color(0,0,0,0));
+            setFont(getFont().deriveFont(Font.PLAIN));
+            setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        }
+
+        @Override
+        public void paintComponent(Graphics g) {
+            g.setColor(new Color(255, 255, 255, 140));
+            g.fillRoundRect(getX(), getY(), getWidth(), getHeight(), 10, 10);
+            super.paintComponent(g);
+        }
+    }
+
+    private OSDLabel lblOSD = new OSDLabel("");
+
+    public void drawOSDText(Graphics2D g) {
+        String message = "<html>"+tr("<h2>Filter active</h2>");
+
+        if (disabledCount == 0 && hiddenCount == 0)
+            return;
+
+        if (hiddenCount != 0) {
+            message += tr("<p><b>{0}</b> objects hidden", hiddenCount);
+        }
+
+        if (hiddenCount != 0 && disabledCount != 0) {
+            message += "<br>";
+        }
+
+        if (disabledCount != 0) {
+            message += tr("<b>{0}</b> objects disabled", disabledCount);
+        }
+
+        message += tr("</p><p>Close the filter dialog to see all objects.<p></html>");
+
+        lblOSD.setText(message);
+        lblOSD.setSize(lblOSD.getPreferredSize());
+
+        int dx = Main.map.mapView.getWidth() - lblOSD.getPreferredSize().width - 15;
+        int dy = 15;
+        g.translate(dx, dy);
+        lblOSD.paintComponent(g);
+        g.translate(-dx, -dy);
     }
 }

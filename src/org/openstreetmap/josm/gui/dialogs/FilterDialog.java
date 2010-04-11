@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -59,11 +60,13 @@ public class FilterDialog extends ToggleDialog implements Listener , TableModelL
     @Override
     public void showNotify() {
         DatasetEventManager.getInstance().addDatasetListener(listenerAdapter, FireMode.IN_EDT_CONSOLIDATED);
+        filters.executeFilters();
     }
 
     @Override
     public void hideNotify() {
         DatasetEventManager.getInstance().removeDatasetListener(listenerAdapter);
+        filters.clearFilterFlags();
     }
 
     protected JPanel buildButtonRow() {
@@ -75,7 +78,7 @@ public class FilterDialog extends ToggleDialog implements Listener , TableModelL
                 Filter filter = (Filter)SearchAction.showSearchDialog(new Filter());
                 if(filter != null){
                     filters.addFilter(filter);
-                    filters.filter();
+                    filters.executeFilters();
                 }
             }
         });
@@ -90,7 +93,7 @@ public class FilterDialog extends ToggleDialog implements Listener , TableModelL
                 Filter filter = (Filter)SearchAction.showSearchDialog(f);
                 if(filter != null){
                     filters.setFilter(index, filter);
-                    filters.filter();
+                    filters.executeFilters();
                 }
             }
         });
@@ -187,7 +190,8 @@ public class FilterDialog extends ToggleDialog implements Listener , TableModelL
     }
 
     public void processDatasetEvent(AbstractDatasetChangedEvent event) {
-        filters.filter();
+        System.err.print("FilterDialog/processDatasetEvent");
+        filters.executeFilters();
     }
 
     static class StringRenderer extends DefaultTableCellRenderer {
@@ -212,5 +216,9 @@ public class FilterDialog extends ToggleDialog implements Listener , TableModelL
 
     public void tableChanged(TableModelEvent e){
         setTitle("Filter Hidden:" + filters.hiddenCount + " Disabled:" + filters.disabledCount);
+    }
+
+    public void drawOSDText(Graphics2D g) {
+        filters.drawOSDText(g);
     }
 }

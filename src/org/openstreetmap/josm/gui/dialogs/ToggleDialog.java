@@ -107,7 +107,7 @@ public class ToggleDialog extends JPanel implements Helpful {
         /** Override any minimum sizes of child elements so the user can resize freely */
         setMinimumSize(new Dimension(0,0));
         this.preferredHeight = preferredHeight;
-        toggleAction = new ToggleDialogAction(this, name, "dialogs/"+iconName, tooltip, shortcut, iconName);
+        toggleAction = new ToggleDialogAction(name, "dialogs/"+iconName, tooltip, shortcut, iconName);
         String helpId = "Dialog/"+getClass().getName().substring(getClass().getName().lastIndexOf('.')+1);
         toggleAction.putValue("help", helpId.substring(0, helpId.length()-6));
 
@@ -135,37 +135,33 @@ public class ToggleDialog extends JPanel implements Helpful {
      * </ul>
      *
      */
-    public final static class ToggleDialogAction extends JosmAction {
+    public final class ToggleDialogAction extends JosmAction {
 
-        private ToggleDialog dialog;
-
-        private ToggleDialogAction(ToggleDialog dialog, String name, String iconName, String tooltip, Shortcut shortcut, String prefname) {
+        private ToggleDialogAction(String name, String iconName, String tooltip, Shortcut shortcut, String prefname) {
             super(name, iconName, tooltip, shortcut, false);
-            if (dialog == null)
-                throw new IllegalArgumentException("The ToggleDialog supplied for " + name + " cannot be null.");
-            this.dialog = dialog;
         }
 
         public void actionPerformed(ActionEvent e) {
-            dialog.toggleButtonHook();
-            if (dialog.isShowing) {
-                dialog.hideDialog();
-                dialog.dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
+            toggleButtonHook();
+            if (isShowing) {
+                hideDialog();
+                dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
+                hideNotify();
             } else {
-                dialog.showDialog();
-                if (dialog.isDocked && dialog.isCollapsed) {
-                    dialog.expand();
+                showDialog();
+                if (isDocked && isCollapsed) {
+                    expand();
                 }
-                if (dialog.isDocked) {
-                    dialog.dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, dialog);
+                if (isDocked) {
+                    dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, ToggleDialog.this);
                 }
+                showNotify();
             }
         }
 
         @Override
         public void destroy() {
             super.destroy();
-            dialog = null;
         }
     }
 
@@ -184,7 +180,6 @@ public class ToggleDialog extends JPanel implements Helpful {
         setIsShowing(true);
         toggleAction.putValue("selected", false);
         toggleAction.putValue("selected", true);
-        showNotify();
     }
 
     /**
@@ -217,7 +212,6 @@ public class ToggleDialog extends JPanel implements Helpful {
         this.setVisible(false);
         setIsShowing(false);
         toggleAction.putValue("selected", false);
-        hideNotify();
     }
 
     /**
@@ -258,7 +252,6 @@ public class ToggleDialog extends JPanel implements Helpful {
             setMaximumSize(new Dimension(Integer.MAX_VALUE,20));
             setMinimumSize(new Dimension(Integer.MAX_VALUE,20));
             lblMinimized.setIcon(ImageProvider.get("misc", "minimized"));
-            hideNotify();
         }
         else throw new IllegalStateException();
     }
@@ -274,7 +267,6 @@ public class ToggleDialog extends JPanel implements Helpful {
             setPreferredSize(new Dimension(0,preferredHeight));
             setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
             lblMinimized.setIcon(ImageProvider.get("misc", "normal"));
-            showNotify();
         }
         else throw new IllegalStateException();
     }
@@ -401,6 +393,7 @@ public class ToggleDialog extends JPanel implements Helpful {
                         public void actionPerformed(ActionEvent e) {
                             hideDialog();
                             dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
+                            hideNotify();
                         }
                     }
             );
@@ -440,6 +433,7 @@ public class ToggleDialog extends JPanel implements Helpful {
                         dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, ToggleDialog.this);
                     } else {
                         hideDialog();
+                        hideNotify();
                     }
                 }
             });

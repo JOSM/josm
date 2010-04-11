@@ -71,6 +71,7 @@ public class MapFrame extends JPanel implements Destroyable {
     public MapStatus statusLine;
 
     public ConflictDialog conflictDialog;
+    public FilterDialog filterDialog;
     /**
      * The dialog that shows all relations and lets the user edit them.
      */
@@ -155,7 +156,7 @@ public class MapFrame extends JPanel implements Destroyable {
         addToggleDialog(new HistoryDialog());
         addToggleDialog(conflictDialog = new ConflictDialog());
         if(Main.pref.getBoolean("displayfilter", false)) {
-            addToggleDialog(new FilterDialog());
+            addToggleDialog(filterDialog = new FilterDialog());
         }
         addToggleDialog(new ChangesetDialog(this));
 
