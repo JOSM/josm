@@ -225,21 +225,6 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
     }
 
     /**
-     * Positions an {@see RelationEditor} centered on the screen
-     *
-     * @param editor the editor
-     */
-    protected void centerOnScreen(RelationEditor editor) {
-        Point p = new Point(0,0);
-        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-        p.x = (d.width - editor.getSize().width)/2;
-        p.y = (d.height - editor.getSize().height)/2;
-        p.x = Math.max(p.x,0);
-        p.y = Math.max(p.y,0);
-        editor.setLocation(p);
-    }
-
-    /**
      * Replies true, if there is another open {@see RelationEditor} whose
      * upper left corner is close to <code>p</code>.
      *
@@ -258,26 +243,6 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
     }
 
     /**
-     * Positions a {@see RelationEditor} close to the center of the screen, in such
-     * a way, that it doesn't entirely cover another {@see RelationEditor}
-     *
-     * @param editor
-     */
-    protected void positionCloseToScreenCenter(RelationEditor editor) {
-        Point p = new Point(0,0);
-        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-        p.x = (d.width - editor.getSize().width)/2;
-        p.y = (d.height - editor.getSize().height)/2;
-        p.x = Math.max(p.x,0);
-        p.y = Math.max(p.y,0);
-        while(hasEditorWithCloseUpperLeftCorner(p)) {
-            p.x += 20;
-            p.y += 20;
-        }
-        editor.setLocation(p);
-    }
-
-    /**
      * Positions a {@see RelationEditor} on the screen. Tries to center it on the
      * screen. If it hide another instance of an editor at the same position this
      * method tries to reposition <code>editor</code> by moving it slightly down and
@@ -287,10 +252,14 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
      */
     public void positionOnScreen(RelationEditor editor) {
         if (editor == null) return;
-        if (openDialogs.isEmpty()) {
-            centerOnScreen(editor);
-        } else {
-            positionCloseToScreenCenter(editor);
+        if (!openDialogs.isEmpty()) {
+            Point corner = editor.getLocation();
+            while(hasEditorWithCloseUpperLeftCorner(corner)) {
+                // shift a little, so that the dialogs are not exactly on top of each other
+                corner.x += 20;
+                corner.y += 20;
+            }
+            editor.setLocation(corner);
         }
     }
 

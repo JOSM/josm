@@ -547,7 +547,9 @@ public class GenericRelationEditor extends RelationEditor  {
             tagEditorPanel.initAutoCompletion(getLayer());
         }
         super.setVisible(visible);
-        if (!visible) {
+        if (visible) {
+            RelationDialogManager.getRelationDialogManager().positionOnScreen(this);
+        } else {
             // make sure all registered listeners are unregistered
             //
             selectionTableModel.unregister();
