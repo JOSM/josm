@@ -61,6 +61,8 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
     protected Color backgroundColor;
     protected Color highlightColor;
     protected Color taggedColor;
+    protected Color connectionColor;
+    protected Color taggedConnectionColor;
     protected boolean showDirectionArrow;
     protected boolean showRelevantDirectionsOnly;
     protected boolean showHeadArrowOnly;
@@ -68,12 +70,11 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
     protected boolean fillSelectedNode;
     protected boolean fillUnselectedNode;
     protected boolean fillTaggedNode;
+    protected boolean fillConnectionNode;
     protected int selectedNodeSize;
-    protected int selectedNodeRadius;
     protected int unselectedNodeSize;
-    protected int unselectedNodeRadius;
-    protected int junctionNodeSize;
-    protected int junctionNodeRadius;
+    protected int connectionNodeSize;
+    protected int taggedNodeSize;
     protected int defaultSegmentWidth;
     protected int virtualNodeSize;
     protected int virtualNodeSpace;
@@ -97,6 +98,13 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         backgroundColor = PaintColors.BACKGROUND.get();
         highlightColor = PaintColors.HIGHLIGHT.get();
         taggedColor = PaintColors.TAGGED.get();
+        connectionColor = PaintColors.CONNECTION.get();
+
+        if (taggedColor != nodeColor) {
+            taggedConnectionColor = taggedColor;
+        } else {
+            taggedConnectionColor = connectionColor;
+        }
     }
 
     protected void getSettings(boolean virtual) {
@@ -106,14 +114,13 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         showHeadArrowOnly = settings.isShowHeadArrowOnly();
         showOrderNumber = settings.isShowOrderNumber();
         selectedNodeSize = settings.getSelectedNodeSize();
-        selectedNodeRadius = selectedNodeSize / 2;
         unselectedNodeSize = settings.getUnselectedNodeSize();
-        unselectedNodeRadius = unselectedNodeSize / 2;
-        junctionNodeSize = settings.getJunctionNodeSize();
-        junctionNodeRadius = junctionNodeSize / 2;
+        connectionNodeSize = settings.getConnectionNodeSize();
+        taggedNodeSize = settings.getTaggedNodeSize();
         defaultSegmentWidth = settings.getDefaultSegmentWidth();
         fillSelectedNode = settings.isFillSelectedNode();
         fillUnselectedNode = settings.isFillUnselectedNode();
+        fillConnectionNode = settings.isFillConnectionNode();
         fillTaggedNode = settings.isFillTaggedNode();
         virtualNodeSize = virtual ? Main.pref.getInteger("mappaint.node.virtual-size", 8) / 2 : 0;
         virtualNodeSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
@@ -223,6 +230,10 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         //}
     }
 
+    private static final int max(int a, int b, int c, int d) {
+        return Math.max(Math.max(a, b), Math.max(c, d));
+    }
+
     /**
      * Draw a small rectangle.
      * White if selected (as always) or red otherwise.
@@ -233,18 +244,39 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         if (n.isIncomplete()) return;
 
         if (n.isHighlighted()) {
-            drawNode(n, highlightColor, selectedNodeSize, unselectedNodeRadius, fillSelectedNode);
-        } else if (ds.isSelected(n)) {
-            drawNode(n, selectedColor, selectedNodeSize, selectedNodeRadius, fillSelectedNode);
+            drawNode(n, highlightColor, selectedNodeSize, fillSelectedNode);
         } else {
-            boolean junction = n.isJunctionNode();
-            drawNode(
-                n,
-                (inactive || n.isDisabled()) ? inactiveColor : 
-                    (n.isTagged() ? taggedColor : nodeColor),
-                junction ? junctionNodeSize : unselectedNodeSize,
-                junction ? junctionNodeRadius : unselectedNodeRadius,
-                n.isTagged() ? fillTaggedNode : fillUnselectedNode);
+            Color color;
+
+            if (inactive || n.isDisabled()) {
+                color = inactiveColor;
+            } else if (ds.isSelected(n)) {
+                color = selectedColor;
+            } else if (n.isConnectionNode()) {
+                if (n.isTagged()) {
+                    color = taggedConnectionColor;
+                } else {
+                    color = connectionColor;
+                }
+            } else {
+                if (n.isTagged()) {
+                    color = taggedColor;
+                } else {
+                    color = nodeColor;
+                }
+            }
+
+            final int size = max((ds.isSelected(n) ? selectedNodeSize : 0),
+                                    (n.isTagged() ? taggedNodeSize : 0),
+                                    (n.isConnectionNode() ? connectionNodeSize : 0),
+                                    unselectedNodeSize);
+
+            final boolean fill = (ds.isSelected(n) && fillSelectedNode) ||
+                                    (n.isTagged() && fillTaggedNode) ||
+                                    (n.isConnectionNode() && fillConnectionNode) ||
+                                    fillUnselectedNode;
+
+            drawNode(n, color, size, fill);
         }
     }
 
@@ -420,8 +452,9 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
      * @param n     The node to draw.
      * @param color The color of the node.
      */
-    public void drawNode(Node n, Color color, int size, int radius, boolean fill) {
+    public void drawNode(Node n, Color color, int size, boolean fill) {
         if (size > 1) {
+            int radius = size / 2;
             Point p = nc.getPoint(n);
             if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth())
                     || (p.y > nc.getHeight()))

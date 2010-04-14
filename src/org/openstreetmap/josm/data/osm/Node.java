@@ -194,7 +194,7 @@ public final class Node extends OsmPrimitive {
         // TODO: replace CachedLatLon with simple doubles and update precalculated EastNorth value here
     }
 
-    public boolean isJunctionNode() {
+    public boolean isConnectionNode() {
         return (OsmPrimitive.getFilteredList(getReferrers(), Way.class)).size() > 1;
     }
 }

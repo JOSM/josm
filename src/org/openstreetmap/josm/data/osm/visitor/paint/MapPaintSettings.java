@@ -21,16 +21,20 @@ public class MapPaintSettings implements PreferenceChangedListener {
     private int useStrokesDistance;
     private int showIconsDistance;
     private int selectedNodeSize;
-    private int junctionNodeSize;
+    private int connectionNodeSize;
     private int unselectedNodeSize;
+    private int taggedNodeSize;
     private boolean fillSelectedNode;
     private boolean fillUnselectedNode;
     private boolean fillTaggedNode;
+    private boolean fillConnectionNode;
     private Color selectedColor;
     private Color highlightColor;
     private Color inactiveColor;
     private Color nodeColor;
     private Color taggedColor;
+    private Color connectionColor;
+    private Color taggedConnectionColor;
 
     private MapPaintSettings() {
         load();
@@ -48,6 +52,13 @@ public class MapPaintSettings implements PreferenceChangedListener {
         inactiveColor = PaintColors.INACTIVE.get();
         nodeColor = PaintColors.NODE.get();
         taggedColor = PaintColors.TAGGED.get();
+        connectionColor = PaintColors.CONNECTION.get();
+        if (taggedColor != nodeColor) {
+            taggedConnectionColor = taggedColor;
+        } else {
+            taggedConnectionColor = connectionColor;
+        }
+
 
         showOrderNumber = Main.pref.getBoolean("draw.segment.order_number", false);
         showHeadArrowOnly = Main.pref.getBoolean("draw.segment.head_only", false);
@@ -58,10 +69,12 @@ public class MapPaintSettings implements PreferenceChangedListener {
 
         selectedNodeSize = Main.pref.getInteger("mappaint.node.selected-size", 5);
         unselectedNodeSize = Main.pref.getInteger("mappaint.node.unselected-size", 3);
-        junctionNodeSize = Main.pref.getInteger("mappaint.node.junction-size", 5);
+        connectionNodeSize = Main.pref.getInteger("mappaint.node.onnection-size", 5);
+        taggedNodeSize = Main.pref.getInteger("mappaint.node.tagged-size", 3);
         fillSelectedNode = Main.pref.getBoolean("mappaint.node.fill-selected", true);
         fillUnselectedNode = Main.pref.getBoolean("mappaint.node.fill-unselected", false);
         fillTaggedNode = Main.pref.getBoolean("mappaint.node.fill-tagged", true);
+        fillConnectionNode = Main.pref.getBoolean("mappaint.node.fill-onnection", false);
     }
 
     public void preferenceChanged(PreferenceChangeEvent e) {
@@ -104,6 +117,14 @@ public class MapPaintSettings implements PreferenceChangedListener {
         return taggedColor;
     }
 
+    public Color getConnectionColor() {
+        return connectionColor;
+    }
+
+    public Color getTaggedConnectionColor() {
+        return taggedConnectionColor;
+    }
+
     public boolean isShowOrderNumber() {
         return showOrderNumber;
     }
@@ -132,12 +153,16 @@ public class MapPaintSettings implements PreferenceChangedListener {
         return selectedNodeSize;
     }
 
-    public int getJunctionNodeSize() {
-        return junctionNodeSize;
+    public int getConnectionNodeSize() {
+        return connectionNodeSize;
     }
 
     public int getUnselectedNodeSize() {
         return unselectedNodeSize;
+    }
+
+    public int getTaggedNodeSize() {
+        return taggedNodeSize;
     }
 
     public boolean isFillSelectedNode() {
@@ -146,6 +171,10 @@ public class MapPaintSettings implements PreferenceChangedListener {
 
     public boolean isFillUnselectedNode() {
         return fillUnselectedNode;
+    }
+
+    public boolean isFillConnectionNode() {
+        return fillConnectionNode;
     }
 
     public boolean isFillTaggedNode() {
