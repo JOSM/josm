@@ -91,10 +91,7 @@ public class SplashScreen extends JFrame {
         pack();
 
         // Center the splash screen
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension labelSize = contentPane.getPreferredSize();
-        setLocation(screenSize.width / 2 - (labelSize.width / 2),
-                screenSize.height / 2 - (labelSize.height / 2));
+        setLocationRelativeTo(null);
 
         // Add ability to hide splash screen by clicking it
         addMouseListener(new MouseAdapter() {
