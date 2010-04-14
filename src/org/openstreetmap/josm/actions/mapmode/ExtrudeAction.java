@@ -80,20 +80,6 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      */
     private EastNorth lastTranslatedN1en;
     /**
-     * Normal unit vector of the selected segment.
-     */
-    private EastNorth normalUnitVector;
-    /**
-     * Vector of node2 from node1.
-     */
-    private EastNorth segmentVector;
-    /**
-     * Transforms the mouse point (in EastNorth space) to the normal-shifted position
-     * of point 1 of the selectedSegment.
-     */
-    private AffineTransform normalTransform;
-
-    /**
      * Create a new SelectAction
      * @param mapFrame The MapFrame this action belongs to.
      */
@@ -155,13 +141,31 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         if (mode == Mode.select) {
             // Just sit tight and wait for mouse to be released.
         } else {
-            // This may be ugly, but I can't see any other way of getting a mapview from here.
-            EastNorth mouseen = Main.map.mapView.getEastNorth(e.getPoint().x, e.getPoint().y);
+            Node nd1 = selectedSegment.way.getNode(selectedSegment.lowerIndex);
+            Node nd2 = selectedSegment.way.getNode(selectedSegment.lowerIndex + 1);
 
-            Point2D newN1point = normalTransform.transform(mouseen, null);
+            EastNorth en1 = nd1.getEastNorth();
+            EastNorth en2 = nd2.getEastNorth();
+            EastNorth en3 = Main.map.mapView.getEastNorth(e.getPoint().x, e.getPoint().y);
 
-            newN1en = new EastNorth(newN1point.getX(), newN1point.getY());
-            newN2en = newN1en.add(segmentVector.getX(), segmentVector.getY());
+            double u = ((en3.east() - en1.east()) * (en2.east() - en1.east()) +
+                    (en3.north() - en1.north()) * (en2.north() - en1.north())) /
+                    en2.distanceSq(en1);
+            // the point on the segment from which the distance to mouse pos is shortest
+            EastNorth base = new EastNorth(en1.east() + u * (en2.east() - en1.east()),
+                    en1.north() + u * (en2.north() - en1.north()));
+
+            // find out the distance, in metres, between the base point and the mouse cursor
+            double distance = Main.proj.eastNorth2latlon(base).greatCircleDistance(Main.proj.eastNorth2latlon(en3));
+            Main.map.statusLine.setDist(distance);
+            updateStatusLine();
+
+            // compute vertical and horizontal components.
+            double xoff = en3.east() - base.east();
+            double yoff = en3.north() - base.north();
+            
+            newN1en = new EastNorth(en1.getX() + xoff, en1.getY() + yoff);
+            newN2en = new EastNorth(en2.getX() + xoff, en2.getY() + yoff);
 
             // find out the distance, in metres, between the initial position of N1 and the new one.
             Main.map.statusLine.setDist(Main.proj.eastNorth2latlon(initialN1en).greatCircleDistance(Main.proj.eastNorth2latlon(newN1en)));
@@ -259,6 +263,12 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     Line2D oldline = new Line2D.Double(p1, p2);
                     g2.draw(oldline);
 
+                    EastNorth segmentVector = new EastNorth(initialN2en.getX()-initialN1en.getX(), initialN2en.getY()-initialN1en.getY());
+
+                    double fac = 1.0 / Math.hypot(segmentVector.getX(), segmentVector.getY());
+                    // swap coords to get normal, mult by factor to get unit vector.
+                    EastNorth normalUnitVector = new EastNorth(segmentVector.getY() * fac, segmentVector.getX() * fac);
+
                     // Draw a guideline along the normal.
                     Line2D normline;
                     Point2D centerpoint = new Point2D.Double((p1.getX()+p2.getX())*0.5, (p1.getY()+p2.getY())*0.5);
@@ -334,26 +344,6 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
             // Make note of mouse position
             initialMousePos = e.getPoint();
-
-            segmentVector = new EastNorth(initialN2en.getX()-initialN1en.getX(), initialN2en.getY()-initialN1en.getY());
-            double factor = 1.0 / Math.hypot(segmentVector.getX(), segmentVector.getY());
-            // swap coords to get normal, mult by factor to get unit vector.
-            normalUnitVector = new EastNorth(segmentVector.getY() * factor, segmentVector.getX() * factor);
-
-            // The calculation of points along the normal of the segment from mouse
-            // points is actually a purely affine mapping. So the majority of the maths
-            // can be done once, on mousePress, by building an AffineTransform which
-            // we can use in the other functions.
-            double r = 1.0 / ( (normalUnitVector.getX()*normalUnitVector.getX()) + (normalUnitVector.getY()*normalUnitVector.getY()) );
-            double s = (normalUnitVector.getX()*initialN1en.getX()) - (normalUnitVector.getY()*initialN1en.getY());
-            double compcoordcoeff = -r*normalUnitVector.getX()*normalUnitVector.getY();
-
-            // Build the matrix. Takes a mouse position in EastNorth-space and returns the new position of node1
-            // based on that.
-            normalTransform = new AffineTransform(
-                    r*normalUnitVector.getX()*normalUnitVector.getX(), compcoordcoeff,
-                    compcoordcoeff, r*normalUnitVector.getY()*normalUnitVector.getY(),
-                    initialN1en.getX()-(s*r*normalUnitVector.getX()), initialN1en.getY()+(s*r*normalUnitVector.getY()));
 
             // Switch mode.
             if ( (e.getModifiers() & ActionEvent.CTRL_MASK) != 0 ) {
