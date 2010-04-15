@@ -69,12 +69,12 @@ public class MapPaintSettings implements PreferenceChangedListener {
 
         selectedNodeSize = Main.pref.getInteger("mappaint.node.selected-size", 5);
         unselectedNodeSize = Main.pref.getInteger("mappaint.node.unselected-size", 3);
-        connectionNodeSize = Main.pref.getInteger("mappaint.node.onnection-size", 5);
+        connectionNodeSize = Main.pref.getInteger("mappaint.node.connection-size", 5);
         taggedNodeSize = Main.pref.getInteger("mappaint.node.tagged-size", 3);
         fillSelectedNode = Main.pref.getBoolean("mappaint.node.fill-selected", true);
         fillUnselectedNode = Main.pref.getBoolean("mappaint.node.fill-unselected", false);
         fillTaggedNode = Main.pref.getBoolean("mappaint.node.fill-tagged", true);
-        fillConnectionNode = Main.pref.getBoolean("mappaint.node.fill-onnection", false);
+        fillConnectionNode = Main.pref.getBoolean("mappaint.node.fill-connection", false);
     }
 
     public void preferenceChanged(PreferenceChangeEvent e) {
