@@ -90,7 +90,6 @@ public class MoveCommand extends Command {
 
     @Override public boolean executeCommand() {
         for (Node n : nodes) {
-            System.err.println("MoveCommand "+ Thread.currentThread().getName());
             // in case #3892 happens again
             if (n == null)
                 throw new AssertionError("null detected in node list");

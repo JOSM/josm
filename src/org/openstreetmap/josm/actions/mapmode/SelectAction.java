@@ -211,7 +211,6 @@ public class SelectAction extends MapMode implements SelectionEnded {
             String text = trn("Add and move a virtual new node to way",
                     "Add and move a virtual new node to {0} ways", virtualWays.size(),
                     virtualWays.size());
-            System.err.println("Select Action/mouseDragged "+ Thread.currentThread().getName());
             Main.main.undoRedo.add(new SequenceCommand(text, virtualCmds));
             selectPrims(Collections.singleton((OsmPrimitive)virtualNode), false, false, false, false);
             virtualWays.clear();
@@ -324,7 +323,6 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
                             virtualWays.add(nearestWS);
                             if(virtualNode == null) {
-                                System.err.println("Select Action/getNearestCollectionVirtual "+ Thread.currentThread().getName());
                                 virtualNode = new Node(Main.map.mapView.getLatLon(pc.x, pc.y));
                             }
                         }
