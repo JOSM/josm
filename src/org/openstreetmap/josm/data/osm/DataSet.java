@@ -767,6 +767,7 @@ public class DataSet implements Cloneable {
     private void reindexNode(Node node, LatLon newCoor) {
         nodes.remove(node);
         node.setCoorInternal(newCoor);
+//        System.err.println("DataSet/reindexNode "+ Thread.currentThread().getName());
         nodes.add(node);
         for (OsmPrimitive primitive: node.getReferrers()) {
             if (primitive instanceof Way) {

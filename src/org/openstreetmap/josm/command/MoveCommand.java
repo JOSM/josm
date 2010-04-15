@@ -90,11 +90,12 @@ public class MoveCommand extends Command {
 
     @Override public boolean executeCommand() {
         for (Node n : nodes) {
+            System.err.println("MoveCommand "+ Thread.currentThread().getName());
             // in case #3892 happens again
             if (n == null)
                 throw new AssertionError("null detected in node list");
             if (n.getEastNorth() == null)
-                throw new AssertionError("unexpected null value for n.getEastNorth(). id of n is" + n.getUniqueId());
+                throw new AssertionError("unexpected null value for n.getEastNorth(). id of n is " + n.getUniqueId());
 
             n.setEastNorth(n.getEastNorth().add(x, y));
             n.setModified(true);
