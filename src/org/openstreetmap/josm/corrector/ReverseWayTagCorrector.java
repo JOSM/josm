@@ -65,11 +65,12 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         new PrefixSuffixSwitcher[] {
         new PrefixSuffixSwitcher("left", "right"),
         new PrefixSuffixSwitcher("forward", "backward"),
-        new PrefixSuffixSwitcher("forwards", "backwards")
+        new PrefixSuffixSwitcher("forwards", "backwards"),
+        new PrefixSuffixSwitcher("up", "down"),
     };
 
     private static ArrayList<String> reversibleTags = new ArrayList<String>(
-            Arrays.asList(new String[] {"oneway", "incline"}));
+            Arrays.asList(new String[] {"oneway", "incline", "direction"}));
 
     public static boolean isReversible(Way way) {
         for (String key : way.keySet()) {
@@ -119,7 +120,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 } else if (OsmUtils.isTrue(value)) {
                     newValue = OsmUtils.reverseval;
                 }
-            } else if (key.equals("incline")) {
+            } else if (key.equals("incline") || key.equals("direction")) {
                 PrefixSuffixSwitcher switcher = new PrefixSuffixSwitcher("up", "down");
                 newValue = switcher.apply(value);
                 if (newValue.equals(value)) {
@@ -129,6 +130,10 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 for (PrefixSuffixSwitcher prefixSuffixSwitcher : prefixSuffixSwitchers) {
                     newKey = prefixSuffixSwitcher.apply(key);
                     if (!key.equals(newKey)) {
+                        break;
+                    }
+                    newValue = prefixSuffixSwitcher.apply(value);
+                    if (!value.equals(newValue)) {
                         break;
                     }
                 }
