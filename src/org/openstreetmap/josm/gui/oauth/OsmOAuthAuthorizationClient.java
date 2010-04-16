@@ -25,6 +25,7 @@ import oauth.signpost.basic.DefaultOAuthProvider;
 import oauth.signpost.exception.OAuthCommunicationException;
 import oauth.signpost.exception.OAuthException;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
@@ -248,10 +249,7 @@ public class OsmOAuthAuthorizationClient {
     public String buildOsmLoginUrl() throws OsmOAuthAuthorizationException{
         try {
             URL autUrl = new URL(oauthProviderParameters.getAuthoriseUrl());
-            // FIXME: as soon as the OSM website provides HTTPS protected access to the login
-            // page we can replace the protocol with https
-            //
-            URL url = new URL("http", autUrl.getHost(), autUrl.getPort(), "/login");
+            URL url = new URL(Main.pref.get("oauth.protocol", "https"), autUrl.getHost(), autUrl.getPort(), "/login");
             return url.toString();
         } catch(MalformedURLException e) {
             throw new OsmOAuthAuthorizationException(e);
