@@ -155,7 +155,7 @@ public class MapFrame extends JPanel implements Destroyable {
         addToggleDialog(new UserListDialog());
         addToggleDialog(new HistoryDialog());
         addToggleDialog(conflictDialog = new ConflictDialog());
-        if(Main.pref.getBoolean("displayfilter", false)) {
+        if(Main.pref.getBoolean("displayfilter", true)) {
             addToggleDialog(filterDialog = new FilterDialog());
         }
         addToggleDialog(new ChangesetDialog(this));
