@@ -148,7 +148,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
         boolean reversedDirection = w.reversedDirection();
         /* head only takes over control if the option is true,
         the direction should be shown at all and not only because it's selected */
-        boolean showOnlyHeadArrowOnly = showDirection && selected && paintSettings.isShowHeadArrowOnly();
+        boolean showOnlyHeadArrowOnly = showDirection && !selected && paintSettings.isShowHeadArrowOnly();
         Node lastN;
 
         Color myColor = color;
