@@ -326,7 +326,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <separator/>
         <item name="Road (Unknown Type)" icon="presets/way_unclassified.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=road"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=road" />
@@ -342,6 +341,26 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
+                <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
+                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+            </optional>
+        </item>
+        <item name="Construction" icon="presets/construction.png" type="way">
+            <label text="Edit Highway Under Construction" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=construction"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=construction" />
+            <space />
+            <key key="highway" value="construction" />
+            <optional>
+                <text key="name" text="Name" default="" delete_if_empty="true" />
+                <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
+                <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
+                <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
+                <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
+                <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
+                <combo key="junction" text="Junction" values="roundabout" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
@@ -425,26 +444,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
     </group> <!-- Streets -->
     <group name="Ways" icon="presets/way_unclassified.png">
-        <item name="Construction" icon="presets/construction.png" type="way">
-            <label text="Edit Highway Under Construction" />
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=construction"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=construction" />
-            <space />
-            <key key="highway" value="construction" />
-            <optional>
-                <text key="name" text="Name" default="" delete_if_empty="true" />
-                <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
-                <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
-                <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
-                <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
-                <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
-                <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
-                <combo key="junction" text="Junction" values="roundabout" default="" delete_if_empty="true" />
-                <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
-                <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
-            </optional>
-        </item>
         <item name="Track" icon="presets/track1.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=track"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=track" />
@@ -453,15 +452,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="highway" value="track" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
+                <combo key="tracktype" text="Tracktype" values="grade1,grade2,grade3,grade4,grade5" default="" delete_if_empty="true" />
+                <combo key="surface" text="Surface" values="paved,concrete,cobblestone,gravel,ground,grass,sand" default="" delete_if_empty="true" />
+                <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" default="" delete_if_empty="true" />
                 <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
-                <combo key="surface" text="Surface" values="paved,concrete,cobblestone,gravel,ground,grass,sand" default="" delete_if_empty="true" />
-                <combo key="tracktype" text="Tracktype" values="grade1,grade2,grade3,grade4,grade5" default="" delete_if_empty="true" />
-                <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" default="" delete_if_empty="true" />
-                <!-- <combo key="sac_scale" text="SAC Scale" values="hiking,mountain_hiking,demanding_mountain_hiking,alpine_hiking,demanding_alpine_hiking,difficult_alpine_hiking" default="" delete_if_empty="true" /> -->
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="access" text="Access" values="yes,private,designated,official,destination,permissive,agricultural,forestry,delivery,unknown,no" default="" delete_if_empty="true" />
                 <combo key="motorcycle" text="Motorcycle" values="yes,private,designated,official,destination,permissive,agricultural,forestry,delivery,unknown,no" default="" delete_if_empty="true" />
@@ -477,15 +475,15 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="highway" value="path" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
+                <combo key="sac_scale" text="SAC Scale" values="hiking,mountain_hiking,demanding_mountain_hiking,alpine_hiking,demanding_alpine_hiking,difficult_alpine_hiking" default="" delete_if_empty="true" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
+                <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" default="" delete_if_empty="true" />
+                <combo key="trail_visibility" text="Visibility" values="excellent,good,intermediate,bad,horrible,no" default="" delete_if_empty="true" />
                 <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
-                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
-                <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" default="" delete_if_empty="true" />
-                <combo key="sac_scale" text="SAC Scale" values="hiking,mountain_hiking,demanding_mountain_hiking,alpine_hiking,demanding_alpine_hiking,difficult_alpine_hiking" default="" delete_if_empty="true" />
-                <combo key="trail_visibility" text="Visibility" values="excellent,good,intermediate,bad,horrible,no" default="" delete_if_empty="true" />
                 <combo key="foot" text="Foot" values="yes,designated,official,no" default="" delete_if_empty="true" />
                 <combo key="bicycle" text="Bicycle" values="yes,designated,official,no" default="" delete_if_empty="true" />
                 <combo key="horse" text="Horse" values="yes,designated,official,no" default="" delete_if_empty="true" />
