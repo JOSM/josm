@@ -1155,7 +1155,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <key key="railway" value="rail" />
             <optional>
-                <combo key="gauge" text="Gauge (mm)" values="standard,1435,1495,1520,1524,1600,1668,1676" default="" delete_if_empty="true" />
+                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" default="" delete_if_empty="true" />
                 <combo key="service" text="Types" values="yard,siding,spur" default="" delete_if_empty="true" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" default="" delete_if_empty="true" />
                 <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" default="" delete_if_empty="true" />
@@ -1167,7 +1167,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <key key="railway" value="narrow_gauge" />
             <optional>
-                <combo key="gauge" text="Gauge (mm)" values="381,400,457,500,610,760,891,950,1000,1067" default="" delete_if_empty="true" />
+                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" default="" delete_if_empty="true" />
                 <combo key="service" text="Types" values="yard,siding,spur" default="" delete_if_empty="true" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" default="" delete_if_empty="true" />
                 <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" default="" delete_if_empty="true" />
@@ -1191,7 +1191,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <key key="railway" value="preserved" />
             <optional>
-                <combo key="gauge" text="Gauge (mm)" values="381,400,457,500,610,760,891,950,1000,1067,1435,1495,1520,1524,1600,1668,1676" default="" delete_if_empty="true" />
+                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" default="" delete_if_empty="true" />
                 <combo key="service" text="Types" values="yard,siding,spur" default="" delete_if_empty="true" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" default="" delete_if_empty="true" />
                 <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" default="" delete_if_empty="true" />
@@ -1203,7 +1203,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <key key="railway" value="light_rail" />
             <optional>
-                <combo key="gauge" text="Gauge (mm)" values="381,400,457,500,610,760,891,950,1000,1067,1435,1495,1520,1524,1600,1668,1676" default="" delete_if_empty="true" />
+                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" default="" delete_if_empty="true" />
                 <combo key="service" text="Types" values="yard,siding,spur" default="" delete_if_empty="true" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" default="" delete_if_empty="true" />
                 <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" default="" delete_if_empty="true" />
@@ -1215,7 +1215,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <key key="railway" value="subway" />
             <optional>
-                <combo key="gauge" text="Gauge (mm)" values="381,400,457,500,610,760,891,950,1000,1067,1435,1495,1520,1524,1600,1668,1676" default="" delete_if_empty="true" />
+                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" default="" delete_if_empty="true" />
                 <combo key="service" text="Types" values="yard,siding,spur" default="" delete_if_empty="true" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" default="" delete_if_empty="true" />
                 <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" default="" delete_if_empty="true" />
@@ -1227,7 +1227,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <key key="railway" value="tram" />
             <optional>
-                <combo key="gauge" text="Gauge (mm)" values="381,400,457,500,610,760,891,950,1000,1067,1435,1495,1520,1524,1600,1668,1676" default="" delete_if_empty="true" />
+                <combo key="gauge" text="Gauge (mm)" values="1668,1676,1674,1600,1524,1520,1495,1435,1067,1000,914,762,760,750" default="" delete_if_empty="true" />
                 <combo key="service" text="Types" values="yard,siding,spur" default="" delete_if_empty="true" />
                 <combo key="electrified" text="Electrified" values="contact_line,no,yes,rail" default="" delete_if_empty="true" />
                 <combo key="voltage" text="Voltage" values="600,650,750,1500,3000,15000,25000" default="" delete_if_empty="true" />
