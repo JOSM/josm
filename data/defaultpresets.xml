@@ -504,13 +504,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="highway" value="bridleway" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
                 <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
@@ -524,6 +524,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="highway" value="cycleway" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
                 <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
@@ -531,7 +532,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
                 <combo key="foot" text="Pedestrians" values="unknown,yes,no" default="" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
@@ -547,13 +547,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="segregated" value="yes" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
                 <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
@@ -569,6 +569,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="segregated" value="no" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
                 <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
@@ -576,7 +577,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
                 <check key="passing_places" text="Passing Places" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
@@ -588,17 +588,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="highway" value="footway" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
-                <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
                 <check key="passing_places" text="Passing Places" default="off" delete_if_empty="true" />
-                <combo key="surface" text="Surface" values="paved,concrete,cobblestone" default="" delete_if_empty="true" />
-                <combo key="bicycle" text="Bikes" values="unknown,yes,no" default="" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
-                <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
@@ -611,14 +607,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="highway" value="steps" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
                 <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
-                <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
