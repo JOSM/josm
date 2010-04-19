@@ -2578,21 +2578,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Vending machine" icon="presets/vending_machine.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=vending_machine" />
-            <label text="Edit Vending machine" />
-            <key key="amenity" value="vending_machine" />
-            <combo key="vending" text="Vending products" values="public_transport_tickets,public_transport_plans,parking_tickets,food,drinks,sweets,cigarettes,photos,animal_food,news_papers,toys,stamps,SIM-cards,telephone_vouchers,vouchers,condoms,tampons,excrement_bags" default="" delete_if_empty="true" />
-            <text key="operator" text="Operator" default="" delete_if_empty="true" />
-            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
-            <text key="note" text="Note" default="" delete_if_empty="true" />
-            <check key="payment:coins" text="Coins" default="off" delete_if_empty="true" />
-            <check key="payment:notes" text="Notes" default="off" delete_if_empty="true" />
-            <check key="payment:electronic_purses" text="Electronic purses and Charge cards" default="off" delete_if_empty="true" />
-            <check key="payment:debit_cards" text="Debit cards" default="off" delete_if_empty="true" />
-            <check key="payment:credit_cards" text="Credit cards" default="off" delete_if_empty="true" />
-            <check key="payment:account_cards" text="Account or loyalty cards" default="off" delete_if_empty="true" />
-        </item>
         <item name="Butcher" icon="presets/cow.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=butcher" />
             <label text="Edit Butcher" />
@@ -2740,8 +2725,23 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="shop" value="optician" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
-        </item>    
-
+        </item>
+        <separator/>
+        <item name="Vending machine" icon="presets/vending_machine.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=vending_machine" />
+            <label text="Edit Vending machine" />
+            <key key="amenity" value="vending_machine" />
+            <combo key="vending" text="Vending products" values="public_transport_tickets,public_transport_plans,parking_tickets,food,drinks,sweets,cigarettes,photos,animal_food,news_papers,toys,stamps,SIM-cards,telephone_vouchers,vouchers,bicycle_tube,condoms,tampons,excrement_bags" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <text key="note" text="Note" default="" delete_if_empty="true" />
+            <check key="payment:coins" text="Coins" default="off" delete_if_empty="true" />
+            <check key="payment:notes" text="Notes" default="off" delete_if_empty="true" />
+            <check key="payment:electronic_purses" text="Electronic purses and Charge cards" default="off" delete_if_empty="true" />
+            <check key="payment:debit_cards" text="Debit cards" default="off" delete_if_empty="true" />
+            <check key="payment:credit_cards" text="Credit cards" default="off" delete_if_empty="true" />
+            <check key="payment:account_cards" text="Account or loyalty cards" default="off" delete_if_empty="true" />
+        </item>
     </group> <!-- Shops -->
     <group name="Cash" icon="presets/dollar.png">
         <item name="Bank" icon="presets/bank.png" type="node,closedway">
@@ -2749,7 +2749,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Bank" />
             <key key="amenity" value="bank" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-	    <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
             <check key="atm" text="Automated Teller Machine" default="on" delete_if_empty="true" />
         </item>
