@@ -607,7 +607,7 @@ public class Preferences {
 
     synchronized public Color getDefaultColor(String colName) {
         String colStr = defaults.get("color."+colName);
-        return colStr.equals("") ? null : ColorHelper.html2color(colStr);
+        return colStr == null || "".equals(colStr) ? null : ColorHelper.html2color(colStr);
     }
 
     synchronized public boolean putColor(String colName, Color val) {
@@ -755,7 +755,7 @@ public class Preferences {
 
     /**
      * Replies the collection of plugin site URLs from where plugin lists can be downloaded
-     * 
+     *
      * @return
      */
     public Collection<String> getPluginSites() {
@@ -764,7 +764,7 @@ public class Preferences {
 
     /**
      * Sets the collection of plugin site URLs.
-     * 
+     *
      * @param sites the site URLs
      */
     public void setPluginSites(Collection<String> sites) {
