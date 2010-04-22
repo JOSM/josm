@@ -189,7 +189,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         mousePos = null;
 
         boolean shift = (e.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0;
-        boolean alt = (e.getModifiersEx() & MouseEvent.ALT_DOWN_MASK) != 0;
+        boolean alt = (e.getModifiersEx() & (MouseEvent.ALT_DOWN_MASK | MouseEvent.ALT_GRAPH_DOWN_MASK)) != 0;
         boolean ctrl = (e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) != 0;
         if ((e.getModifiersEx() & MouseEvent.BUTTON3_DOWN_MASK) == 0) {
             selectionEndedListener.selectionEnded(r, alt, shift, ctrl);
@@ -283,14 +283,14 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         } else {
             // nodes
             for (Node n : nc.getCurrentDataSet().getNodes()) {
-                if (n.isUsable() && r.contains(nc.getPoint(n))) {
+                if (n.isSelectable() && r.contains(nc.getPoint(n))) {
                     selection.add(n);
                 }
             }
 
             // ways
             for (Way w : nc.getCurrentDataSet().getWays()) {
-                if (!w.isUsable() || w.getNodesCount() == 0) {
+                if (!w.isSelectable() || w.getNodesCount() == 0) {
                     continue;
                 }
                 if (alt) {

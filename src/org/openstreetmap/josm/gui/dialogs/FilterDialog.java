@@ -190,7 +190,6 @@ public class FilterDialog extends ToggleDialog implements Listener , TableModelL
     }
 
     public void processDatasetEvent(AbstractDatasetChangedEvent event) {
-        System.err.print("FilterDialog/processDatasetEvent");
         filters.executeFilters();
     }
 
