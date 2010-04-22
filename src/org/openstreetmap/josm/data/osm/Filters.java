@@ -38,9 +38,10 @@ public class Filters extends AbstractTableModel{
     public void executeFilters(){
         Collection<OsmPrimitive> seld = new LinkedList<OsmPrimitive> ();
         Collection<OsmPrimitive> self = new LinkedList<OsmPrimitive> ();
-        if(Main.main.getCurrentDataSet() == null)return;
-        Main.main.getCurrentDataSet().setFiltered();
-        Main.main.getCurrentDataSet().setDisabled();
+        DataSet ds = Main.main.getCurrentDataSet();
+        if(ds == null)return;
+        ds.setFiltered();
+        ds.setDisabled();
         for (Filter flt : filters){
             if(flt.enable){
                 SearchAction.getSelection(flt, seld, new Function(){
@@ -59,8 +60,11 @@ public class Filters extends AbstractTableModel{
         }
         disabledCount = seld.size() - self.size();
         hiddenCount = self.size();
-        Main.main.getCurrentDataSet().setFiltered(self);
-        Main.main.getCurrentDataSet().setDisabled(seld);
+        ds.setFiltered(self);
+        ds.setDisabled(seld);
+
+        ds.clearSelection(seld);
+
         Main.map.mapView.repaint();
     }
 
