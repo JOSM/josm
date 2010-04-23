@@ -232,8 +232,10 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
      * @return true, if there is another open {@see RelationEditor} whose
      * upper left corner is close to <code>p</code>.
      */
-    protected boolean hasEditorWithCloseUpperLeftCorner(Point p) {
+    protected boolean hasEditorWithCloseUpperLeftCorner(Point p, RelationEditor thisEditor) {
         for (RelationEditor editor: openDialogs.values()) {
+            if (editor == thisEditor)
+                continue;
             Point corner = editor.getLocation();
             if (p.x >= corner.x -5 && corner.x + 5 >= p.x
                     && p.y >= corner.y -5 && corner.y + 5 >= p.y)
@@ -254,7 +256,7 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
         if (editor == null) return;
         if (!openDialogs.isEmpty()) {
             Point corner = editor.getLocation();
-            while(hasEditorWithCloseUpperLeftCorner(corner)) {
+            while(hasEditorWithCloseUpperLeftCorner(corner, editor)) {
                 // shift a little, so that the dialogs are not exactly on top of each other
                 corner.x += 20;
                 corner.y += 20;

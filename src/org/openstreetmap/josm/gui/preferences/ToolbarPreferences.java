@@ -684,7 +684,11 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     private static final String[] deftoolbar = {"open", "save", "download", "upload", "|", "undo", "redo", "|", "dialogs/search", "preference", "|", "splitway", "combineway", "wayflip", "|", "tagginggroup_Highways/Streets", "tagginggroup_Highways/Ways", "tagginggroup_Highways/Waypoints", "tagginggroup_Highways/Barriers", "|", "tagginggroup_Transport/Car", "tagginggroup_Transport/Public Transport", "|", "tagginggroup_Travel/Tourism", "tagginggroup_Travel/Food+Drinks", "|", "tagginggroup_Travel/Historic Places", "|", "tagginggroup_Man-Made/Man Made"};
 
     private static Collection<String> getToolString() {
-        return Main.pref.getCollection("toolbar", Arrays.asList(deftoolbar));
+        Collection<String> toolStr = Main.pref.getCollection("toolbar", Arrays.asList(deftoolbar));
+        if (toolStr == null || toolStr.size() == 0) {
+            toolStr = Arrays.asList(deftoolbar);
+        }
+        return toolStr;
     }
 
     private Collection<ActionDefinition> getDefinedActions() {
