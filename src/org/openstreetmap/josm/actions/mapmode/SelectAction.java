@@ -489,7 +489,8 @@ public class SelectAction extends MapMode implements SelectionEnded {
                         nodesToMerge.add(targetNode);
                         if (!nodesToMerge.isEmpty()) {
                             Command cmd = MergeNodesAction.mergeNodes(Main.main.getEditLayer(),nodesToMerge, targetNode);
-                            Main.main.undoRedo.add(cmd);
+                            if(cmd != null)
+                                Main.main.undoRedo.add(cmd);
                         }
                     }
                 }
