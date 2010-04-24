@@ -38,7 +38,7 @@ public class Mercator implements Projection {
     }
 
     public String toCode() {
-        return "EPSG:3785";
+        return "EPSG:3857"; /* initially they used 3785 but that has been superseded, see http://www.epsg-registry.org/ */
     }
 
     @Override
