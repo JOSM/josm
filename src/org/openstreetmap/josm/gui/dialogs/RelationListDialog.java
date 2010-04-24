@@ -88,7 +88,8 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
      */
     public RelationListDialog() {
         super(tr("Relations"), "relationlist", tr("Open a list of all relations."),
-                Shortcut.registerShortcut("subwindow:relations", tr("Toggle: {0}", tr("Relations")), KeyEvent.VK_R, Shortcut.GROUP_LAYER), 150);
+                Shortcut.registerShortcut("subwindow:relations", tr("Toggle: {0}", tr("Relations")), KeyEvent.VK_R,
+                    Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
 
         // create the list of relations
         //

@@ -410,7 +410,11 @@ public class Storage<T> extends AbstractSet<T> {
         }
 
         private void align() {
-            if (mods != modCount) throw new ConcurrentModificationException();
+            if (mods != modCount) {
+                System.err.println("Warning: ConcurrentModification");
+                Thread.dumpStack();
+                //throw new ConcurrentModificationException();
+            }
             while (slot < data.length && data[slot] == null) {
                 slot++;
             }
