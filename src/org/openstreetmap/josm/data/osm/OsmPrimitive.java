@@ -438,6 +438,31 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         }
     };
 
+    public static Predicate<OsmPrimitive> nodePredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return primitive.getClass() == Node.class;
+        }
+    };
+
+    public static Predicate<OsmPrimitive> wayPredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return primitive.getClass() == Way.class;
+        }
+    };
+
+    public static Predicate<OsmPrimitive> relationPredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return primitive.getClass() == Relation.class;
+        }
+    };
+
+    public static Predicate<OsmPrimitive> allPredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return true;
+        }
+    };
+
+
     /**
      * Replies true if this primitive is either unknown to the server (i.e. its id
      * is 0) or it is known to the server and it hasn't be deleted on the server.

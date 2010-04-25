@@ -22,6 +22,7 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.AbstractSet;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -91,53 +92,71 @@ public class Storage<T> extends AbstractSet<T> {
     private int size;
     private transient volatile int modCount = 0;
     private float loadFactor = 0.6f;
+    private final boolean safeIterator;
+    private boolean arrayCopyNecessary;
 
     public Storage() {
         this(Storage.<T>defaultHash());
     }
 
     public Storage(int capacity) {
-        this(Storage.<T>defaultHash(), capacity);
+        this(Storage.<T>defaultHash(), capacity, false);
     }
 
     public Storage(Hash<? super T,? super T> ha) {
-        this(ha, 16);
+        this(ha, 16, false);
     }
 
-    public Storage(Hash<? super T, ? super T> ha, int capacity) {
+    public Storage(Hash<? super T, ? super T> ha, int capacity, boolean safeIterator) {
         this.hash = ha;
         int cap = 1 << (int)(Math.ceil(Math.log(capacity/loadFactor) / Math.log(2)));
         data = new Object[cap];
         mask = data.length - 1;
+        this.safeIterator = safeIterator;
+    }
+
+    private void copyArray() {
+        if (arrayCopyNecessary) {
+            Object[] newData = new Object[data.length];
+            System.arraycopy(data, 0, newData, 0, data.length);
+            data = newData;
+            arrayCopyNecessary = false;
+        }
     }
 
     // --------------- Collection implementation ------------------------
     @Override
-    public int size() {
+    public synchronized int size() {
         return size;
     }
 
     @Override
-    public Iterator<T> iterator() {
-        return new Iter();
+    public synchronized Iterator<T> iterator() {
+        if (safeIterator) {
+            arrayCopyNecessary = true;
+            return new SafeReadonlyIter(data);
+        } else
+            return new Iter();
+
     }
 
-    public @Override boolean contains(Object o) {
+    public synchronized @Override boolean contains(Object o) {
         int bucket = getBucket(hash, (T)o);
         return bucket >= 0;
     }
 
-    public @Override boolean add(T t) {
+    public synchronized @Override boolean add(T t) {
         T orig = putUnique(t);
         return orig == t;
     }
 
-    public @Override boolean remove(Object o) {
+    public synchronized @Override boolean remove(Object o) {
         T orig = removeElem((T)o);
         return orig != null;
     }
 
-    public @Override void clear() {
+    public synchronized @Override void clear() {
+        copyArray();
         modCount++;
         size = 0;
         for (int i = 0; i<data.length; i++) {
@@ -145,7 +164,7 @@ public class Storage<T> extends AbstractSet<T> {
         }
     }
 
-    public @Override int hashCode() {
+    public synchronized @Override int hashCode() {
         int h = 0;
         for (T t : this) {
             h += hash.getHashCode(t);
@@ -155,7 +174,8 @@ public class Storage<T> extends AbstractSet<T> {
 
     // ----------------- Extended API ----------------------------
 
-    public T put(T t) {
+    public synchronized T put(T t) {
+        copyArray();
         modCount++;
         ensureSpace();
 
@@ -172,12 +192,13 @@ public class Storage<T> extends AbstractSet<T> {
         return old;
     }
 
-    public T get(T t) {
+    public synchronized T get(T t) {
         int bucket = getBucket(hash, t);
         return bucket < 0 ? null : (T)data[bucket];
     }
 
-    public T putUnique(T t) {
+    public synchronized T putUnique(T t) {
+        copyArray();
         modCount++;
         ensureSpace();
 
@@ -192,7 +213,8 @@ public class Storage<T> extends AbstractSet<T> {
         return (T)data[bucket];
     }
 
-    public T removeElem(T t) {
+    public synchronized T removeElem(T t) {
+        copyArray();
         modCount++;
         int bucket = getBucket(hash, t);
         return bucket < 0 ? null : doRemove(bucket);
@@ -380,6 +402,36 @@ public class Storage<T> extends AbstractSet<T> {
         }
     }
 
+    private final class SafeReadonlyIter implements Iterator<T> {
+        final Object[] data;
+        int slot = 0;
+
+        SafeReadonlyIter(Object[] data) {
+            this.data = data;
+        }
+
+        public boolean hasNext() {
+            align();
+            return slot < data.length;
+        }
+
+        public T next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            return (T)data[slot++];
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        private void align() {
+            while (slot < data.length && data[slot] == null) {
+                slot++;
+            }
+        }
+    }
+
+
     private final class Iter implements Iterator<T> {
         private final int mods;
         int slot = 0;
@@ -409,11 +461,8 @@ public class Storage<T> extends AbstractSet<T> {
         }
 
         private void align() {
-            if (mods != modCount) {
-                System.err.println("Warning: ConcurrentModification");
-                Thread.dumpStack();
-                //throw new ConcurrentModificationException();
-            }
+            if (mods != modCount)
+                throw new ConcurrentModificationException();
             while (slot < data.length && data[slot] == null) {
                 slot++;
             }

@@ -269,8 +269,8 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     }
 
     @Override public String getToolTipText() {
-        int nodes = new DatasetCollection(data.getNodes(), OsmPrimitive.nonDeletedPredicate).size();
-        int ways = new DatasetCollection(data.getWays(), OsmPrimitive.nonDeletedPredicate).size();
+        int nodes = new DatasetCollection<OsmPrimitive>(data.getNodes(), OsmPrimitive.nonDeletedPredicate).size();
+        int ways = new DatasetCollection<OsmPrimitive>(data.getWays(), OsmPrimitive.nonDeletedPredicate).size();
 
         String tool = trn("{0} node", "{0} nodes", nodes, nodes)+", ";
         tool += trn("{0} way", "{0} ways", ways, ways);

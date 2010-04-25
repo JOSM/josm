@@ -7,9 +7,9 @@ import java.util.Iterator;
 
 import org.openstreetmap.josm.tools.Predicate;
 
-public class DatasetCollection extends AbstractCollection<OsmPrimitive> {
+public class DatasetCollection<T extends OsmPrimitive> extends AbstractCollection<T> {
 
-    private class FilterIterator implements Iterator<OsmPrimitive> {
+    private class FilterIterator implements Iterator<T> {
 
         private final Iterator<? extends OsmPrimitive> iterator;
         private OsmPrimitive current;
@@ -34,11 +34,12 @@ public class DatasetCollection extends AbstractCollection<OsmPrimitive> {
             return current != null;
         }
 
-        public OsmPrimitive next() {
+        @SuppressWarnings("unchecked")
+        public T next() {
             findNext();
             OsmPrimitive old = current;
             current = null;
-            return old;
+            return (T)old;
         }
 
         public void remove() {
@@ -55,14 +56,14 @@ public class DatasetCollection extends AbstractCollection<OsmPrimitive> {
     }
 
     @Override
-    public Iterator<OsmPrimitive> iterator() {
+    public Iterator<T> iterator() {
         return new FilterIterator(primitives.iterator());
     }
 
     @Override
     public int size() {
         int size = 0;
-        Iterator<OsmPrimitive> it = iterator();
+        Iterator<T> it = iterator();
         while (it.hasNext()) {
             size++;
             it.next();
