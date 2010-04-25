@@ -75,6 +75,10 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UrlLabel;
 
 public class GpxLayer extends Layer {
+
+    private static final String PREF_DOWNLOAD_ALONG_TRACK_DISTANCE = "gpxLayer.downloadAlongTrack.distance";
+    private static final String PREF_DOWNLOAD_ALONG_TRACK_AREA = "gpxLayer.downloadAlongTrack.distance";
+
     public GpxData data;
     protected static final double PHI = Math.toRadians(15);
     private boolean computeCacheInSync;
@@ -870,6 +874,7 @@ public class GpxLayer extends Layer {
                 s[i] = tr("{0} meters", dist[i]);
             }
             JList buffer = new JList(s);
+            buffer.setSelectedIndex(Main.pref.getInteger(PREF_DOWNLOAD_ALONG_TRACK_DISTANCE, 0));
             msg.add(buffer, GBC.eol());
             msg.add(new JLabel(tr("Maximum area per request:")), GBC.eol());
             s = new String[area.length];
@@ -877,6 +882,7 @@ public class GpxLayer extends Layer {
                 s[i] = tr("{0} sq km", area[i]);
             }
             JList maxRect = new JList(s);
+            maxRect.setSelectedIndex(Main.pref.getInteger(PREF_DOWNLOAD_ALONG_TRACK_AREA, 0));
             msg.add(maxRect, GBC.eol());
 
             int ret = JOptionPane.showConfirmDialog(
@@ -893,6 +899,9 @@ public class GpxLayer extends Layer {
             default:
                 // continue
             }
+
+            Main.pref.putInteger(PREF_DOWNLOAD_ALONG_TRACK_DISTANCE, buffer.getSelectedIndex());
+            Main.pref.putInteger(PREF_DOWNLOAD_ALONG_TRACK_AREA, maxRect.getSelectedIndex());
 
             /*
              * Find the average latitude for the data we're contemplating, so we can know how many
