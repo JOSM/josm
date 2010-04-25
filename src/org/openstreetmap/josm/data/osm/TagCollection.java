@@ -56,7 +56,7 @@ public class TagCollection implements Iterable<Tag> {
     /**
      * Creates a tag collection from a map of key/value-pairs. Replies
      * an empty tag collection if {@code tags} is null.
-     * 
+     *
      * @param tags  the key/value-pairs
      * @return the tag collection
      */
@@ -129,9 +129,7 @@ public class TagCollection implements Iterable<Tag> {
     public static TagCollection unionOfAllPrimitives(DataSet ds) {
         TagCollection tags = new TagCollection();
         if (ds == null) return tags;
-        tags.add(TagCollection.unionOfAllPrimitives(ds.getNodes()));
-        tags.add(TagCollection.unionOfAllPrimitives(ds.getWays()));
-        tags.add(TagCollection.unionOfAllPrimitives(ds.getRelations()));
+        tags.add(TagCollection.unionOfAllPrimitives(ds.allPrimitives()));
         return tags;
     }
 

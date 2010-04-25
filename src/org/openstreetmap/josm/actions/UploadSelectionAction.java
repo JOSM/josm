@@ -66,17 +66,7 @@ public class UploadSelectionAction extends JosmAction{
 
     protected Set<OsmPrimitive> getDeletedPrimitives(DataSet ds) {
         HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
-        for (OsmPrimitive p : ds.getNodes()) {
-            if (p.isDeleted() && !p.isNew() && p.isVisible() && p.isModified()) {
-                ret.add(p);
-            }
-        }
-        for (OsmPrimitive p : ds.getWays()) {
-            if (p.isDeleted() && !p.isNew() && p.isVisible() && p.isModified()) {
-                ret.add(p);
-            }
-        }
-        for (OsmPrimitive p : ds.getRelations()) {
+        for (OsmPrimitive p: ds.allPrimitives()) {
             if (p.isDeleted() && !p.isNew() && p.isVisible() && p.isModified()) {
                 ret.add(p);
             }
@@ -135,7 +125,7 @@ public class UploadSelectionAction extends JosmAction{
     /**
      * Replies true if there is at least one non-new, deleted primitive in
      * <code>primitives</code>
-     * 
+     *
      * @param primitives the primitives to scan
      * @return true if there is at least one non-new, deleted primitive in
      * <code>primitives</code>

@@ -7,14 +7,14 @@ import java.util.Iterator;
 
 import org.openstreetmap.josm.tools.Predicate;
 
-class DatasetCollection extends AbstractCollection<OsmPrimitive> {
+public class DatasetCollection extends AbstractCollection<OsmPrimitive> {
 
     private class FilterIterator implements Iterator<OsmPrimitive> {
 
-        private final Iterator<OsmPrimitive> iterator;
+        private final Iterator<? extends OsmPrimitive> iterator;
         private OsmPrimitive current;
 
-        public FilterIterator(Iterator<OsmPrimitive> iterator) {
+        public FilterIterator(Iterator<? extends OsmPrimitive> iterator) {
             this.iterator = iterator;
         }
 
@@ -46,10 +46,10 @@ class DatasetCollection extends AbstractCollection<OsmPrimitive> {
         }
     }
 
-    private final Collection<OsmPrimitive> primitives;
+    private final Collection<? extends OsmPrimitive> primitives;
     private final Predicate<OsmPrimitive> predicate;
 
-    public DatasetCollection(Collection<OsmPrimitive> primitives, Predicate<OsmPrimitive> predicate) {
+    public DatasetCollection(Collection<? extends OsmPrimitive> primitives, Predicate<OsmPrimitive> predicate) {
         this.primitives = primitives;
         this.predicate = predicate;
     }
@@ -74,4 +74,5 @@ class DatasetCollection extends AbstractCollection<OsmPrimitive> {
     public boolean isEmpty() {
         return !iterator().hasNext();
     }
+
 }

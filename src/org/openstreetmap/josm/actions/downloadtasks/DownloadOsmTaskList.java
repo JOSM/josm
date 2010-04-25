@@ -105,17 +105,7 @@ public class DownloadOsmTaskList {
      */
     protected Set<OsmPrimitive> getCompletePrimitives(DataSet ds) {
         HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
-        for (OsmPrimitive primitive : ds.getNodes()) {
-            if (!primitive.isIncomplete() && !primitive.isNew()) {
-                ret.add(primitive);
-            }
-        }
-        for (OsmPrimitive primitive : ds.getWays()) {
-            if (!primitive.isIncomplete() && !primitive.isNew()) {
-                ret.add(primitive);
-            }
-        }
-        for (OsmPrimitive primitive : ds.getRelations()) {
+        for (OsmPrimitive primitive : ds.allPrimitives()) {
             if (!primitive.isIncomplete() && !primitive.isNew()) {
                 ret.add(primitive);
             }
@@ -204,9 +194,7 @@ public class DownloadOsmTaskList {
             if (task instanceof DownloadOsmTask) {
                 DataSet ds = ((DownloadOsmTask) task).getDownloadedData();
                 if (ds != null) {
-                    ret.addAll(ds.getNodes());
-                    ret.addAll(ds.getWays());
-                    ret.addAll(ds.getRelations());
+                    ret.addAll(ds.allPrimitives());
                 }
             }
         }
@@ -271,9 +259,7 @@ public class DownloadOsmTaskList {
                     if (task instanceof DownloadOsmTask) {
                         DataSet ds = ((DownloadOsmTask) task).getDownloadedData();
                         if (ds != null) {
-                            myPrimitives.removeAll(ds.getNodes());
-                            myPrimitives.removeAll(ds.getWays());
-                            myPrimitives.removeAll(ds.getRelations());
+                            myPrimitives.removeAll(ds.allPrimitives());
                         }
                     }
                 }

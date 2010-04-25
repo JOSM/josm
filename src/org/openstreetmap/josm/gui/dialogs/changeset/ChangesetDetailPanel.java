@@ -379,17 +379,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             if (Main.main == null || Main.main.getEditLayer() == null) return;
             OsmDataLayer layer = Main.main.getEditLayer();
             Set<OsmPrimitive> target = new HashSet<OsmPrimitive>();
-            for (OsmPrimitive p: layer.data.getNodes()) {
-                if (p.isUsable() && p.getChangesetId() == current.getId()) {
-                    target.add(p);
-                }
-            }
-            for (OsmPrimitive p: layer.data.getWays()) {
-                if (p.isUsable() && p.getChangesetId() == current.getId()) {
-                    target.add(p);
-                }
-            }
-            for (OsmPrimitive p: layer.data.getRelations()) {
+            for (OsmPrimitive p: layer.data.allPrimitives()) {
                 if (p.isUsable() && p.getChangesetId() == current.getId()) {
                     target.add(p);
                 }
@@ -448,17 +438,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
             if (Main.main == null || Main.main.getEditLayer() == null) return;
             OsmDataLayer layer = Main.main.getEditLayer();
             Set<OsmPrimitive> target = new HashSet<OsmPrimitive>();
-            for (OsmPrimitive p: layer.data.getNodes()) {
-                if (p.isUsable() && p.getChangesetId() == current.getId()) {
-                    target.add(p);
-                }
-            }
-            for (OsmPrimitive p: layer.data.getWays()) {
-                if (p.isUsable() && p.getChangesetId() == current.getId()) {
-                    target.add(p);
-                }
-            }
-            for (OsmPrimitive p: layer.data.getRelations()) {
+            for (OsmPrimitive p: layer.data.allPrimitives()) {
                 if (p.isUsable() && p.getChangesetId() == current.getId()) {
                     target.add(p);
                 }

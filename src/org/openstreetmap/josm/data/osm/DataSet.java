@@ -9,17 +9,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.ChangesetIdChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
@@ -208,7 +205,7 @@ public class DataSet implements Cloneable {
             relations.add((Relation) primitive);
         }
         allPrimitives.add(primitive);
-        primitive.setDataset(this);        
+        primitive.setDataset(this);
         firePrimitivesAdded(Collections.singletonList(primitive), false);
     }
 
@@ -641,20 +638,6 @@ public class DataSet implements Cloneable {
         return result;
     }
 
-    public Set<Long> getPrimitiveIds() {
-        HashSet<Long> ret = new HashSet<Long>();
-        for (OsmPrimitive primitive : nodes) {
-            ret.add(primitive.getId());
-        }
-        for (OsmPrimitive primitive : ways) {
-            ret.add(primitive.getId());
-        }
-        for (OsmPrimitive primitive : relations) {
-            ret.add(primitive.getId());
-        }
-        return ret;
-    }
-
     protected void deleteWay(Way way) {
         way.setNodes(null);
         way.setDeleted(true);
@@ -716,32 +699,6 @@ public class DataSet implements Cloneable {
         } else {
             unlinkPrimitiveFromRelations(referencedPrimitive);
         }
-    }
-
-    /**
-     * Replies a list of parent relations which refer to the relation
-     * <code>child</code>. Replies an empty list if child is null.
-     *
-     * @param child the child relation
-     * @return a list of parent relations which refer to the relation
-     * <code>child</code>
-     */
-    public List<Relation> getParentRelations(Relation child) {
-        ArrayList<Relation> parents = new ArrayList<Relation>();
-        if (child == null)
-            return parents;
-        for (Relation parent : relations) {
-            if (parent == child) {
-                continue;
-            }
-            for (RelationMember member: parent.getMembers()) {
-                if (member.refersTo(child)) {
-                    parents.add(parent);
-                    break;
-                }
-            }
-        }
-        return parents;
     }
 
     /**

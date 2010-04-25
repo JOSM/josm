@@ -136,19 +136,7 @@ public class ChangesetListModel extends DefaultListModel  implements ChangesetCa
             return;
         }
         Set<Changeset> changesets = new HashSet<Changeset>();
-        for (OsmPrimitive p: ds.getNodes()) {
-            if (p.getChangesetId() <=0 ) {
-                continue;
-            }
-            changesets.add(new Changeset(p.getChangesetId()));
-        }
-        for (OsmPrimitive p: ds.getWays()) {
-            if (p.getChangesetId() <=0 ) {
-                continue;
-            }
-            changesets.add(new Changeset(p.getChangesetId()));
-        }
-        for (OsmPrimitive p: ds.getRelations()) {
+        for (OsmPrimitive p: ds.allPrimitives()) {
             if (p.getChangesetId() <=0 ) {
                 continue;
             }

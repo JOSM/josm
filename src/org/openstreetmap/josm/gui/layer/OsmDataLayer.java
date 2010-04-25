@@ -24,10 +24,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
@@ -54,6 +52,7 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.DataSource;
+import org.openstreetmap.josm.data.osm.DatasetCollection;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -270,8 +269,8 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     }
 
     @Override public String getToolTipText() {
-        int nodes = undeletedSize(data.getNodes());
-        int ways = undeletedSize(data.getWays());
+        int nodes = new DatasetCollection(data.getNodes(), OsmPrimitive.nonDeletedPredicate).size();
+        int ways = new DatasetCollection(data.getWays(), OsmPrimitive.nonDeletedPredicate).size();
 
         String tool = trn("{0} node", "{0} nodes", nodes, nodes)+", ";
         tool += trn("{0} way", "{0} ways", ways, ways);
@@ -476,45 +475,14 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         Main.main.undoRedo.clean(this);
 
         // if uploaded, clean the modified flags as well
-        final Set<OsmPrimitive> processedSet = new HashSet<OsmPrimitive>(processed);
         data.clenupDeletedPrimitives();
-        for (final Iterator<Node> it = data.getNodes().iterator(); it.hasNext();) {
-            cleanIterator(it, processedSet);
-        }
-        for (final Iterator<Way> it = data.getWays().iterator(); it.hasNext();) {
-            cleanIterator(it, processedSet);
-        }
-        for (final Iterator<Relation> it = data.getRelations().iterator(); it.hasNext();) {
-            cleanIterator(it, processedSet);
-        }
-    }
-
-    /**
-     * Clean the modified flag for the given iterator over a collection if it is in the
-     * list of processed entries.
-     *
-     * @param it The iterator to change the modified and remove the items if deleted.
-     * @param processed A list of all objects that have been successfully progressed.
-     *         If the object in the iterator is not in the list, nothing will be changed on it.
-     */
-    private void cleanIterator(final Iterator<? extends OsmPrimitive> it, final Collection<OsmPrimitive> processed) {
-        final OsmPrimitive osm = it.next();
-        if (!processed.remove(osm))
-            return;
-        osm.setModified(false);
-    }
-
-    /**
-     * @return The number of not-deleted and visible primitives in the list.
-     */
-    private int undeletedSize(final Collection<? extends OsmPrimitive> list) {
-        int size = 0;
-        for (final OsmPrimitive osm : list)
-            if (!osm.isDeleted() && osm.isVisible()) {
-                size++;
+        for (OsmPrimitive p: data.allPrimitives()) {
+            if (processed.contains(p)) {
+                p.setModified(false);
             }
-        return size;
+        }
     }
+
 
     @Override public Object getInfoComponent() {
         final DataCountVisitor counter = new DataCountVisitor();

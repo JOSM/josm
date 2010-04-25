@@ -306,17 +306,7 @@ public class ChangesetDialog extends ToggleDialog{
             if (ds == null || ids == null)
                 return;
             Set<OsmPrimitive> sel = new HashSet<OsmPrimitive>();
-            for (OsmPrimitive p: ds.getNodes()) {
-                if (ids.contains(p.getChangesetId())) {
-                    sel.add(p);
-                }
-            }
-            for (OsmPrimitive p: ds.getWays()) {
-                if (ids.contains(p.getChangesetId())) {
-                    sel.add(p);
-                }
-            }
-            for (OsmPrimitive p: ds.getRelations()) {
+            for (OsmPrimitive p: ds.allPrimitives()) {
                 if (ids.contains(p.getChangesetId())) {
                     sel.add(p);
                 }
