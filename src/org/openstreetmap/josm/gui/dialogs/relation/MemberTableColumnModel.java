@@ -6,9 +6,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
+import org.openstreetmap.josm.data.osm.DataSet;
+
 public class MemberTableColumnModel extends DefaultTableColumnModel {
 
-    public MemberTableColumnModel() {
+    public MemberTableColumnModel(DataSet ds) {
         TableColumn col = null;
 
         // column 0 - the member role
@@ -17,7 +19,7 @@ public class MemberTableColumnModel extends DefaultTableColumnModel {
         col.setResizable(true);
         col.setPreferredWidth(100);
         col.setCellRenderer(new MemberTableRoleCellRenderer());
-        col.setCellEditor(new MemberRoleCellEditor());
+        col.setCellEditor(new MemberRoleCellEditor(ds));
         addColumn(col);
 
         // column 1 - the member

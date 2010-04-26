@@ -5,7 +5,9 @@ import java.util.List;
 
 import javax.swing.text.JTextComponent;
 
-public class HistoryComboBox extends AutoCompleteComboBox {
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
+
+public class HistoryComboBox extends AutoCompletingComboBox {
     private ComboBoxHistory model;
 
     public HistoryComboBox() {

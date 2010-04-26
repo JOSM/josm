@@ -1,6 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.corrector;
 
+/**
+ * TagCorrection reprepresents a change of a single
+ * tag. Both key and value can be subject of this change.
+ */
 public class TagCorrection implements Correction {
 
     public final String oldKey;

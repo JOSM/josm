@@ -7,7 +7,7 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
-import org.openstreetmap.josm.gui.tagging.AutoCompletingTextField;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 
 public class RelationMemberConflictResolverColumnModel extends DefaultTableColumnModel{
 

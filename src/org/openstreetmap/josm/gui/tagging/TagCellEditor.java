@@ -8,8 +8,9 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 
 /**
  * This is the table cell editor for the tag editor dialog.
@@ -25,7 +26,7 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
     protected TagModel currentTag = null;
 
     /** the cache of auto completion items derived from the current JOSM data set */
-    protected AutoCompletionCache acCache = null;
+    protected AutoCompletionManager autocomplete = null;
 
     /** user input is matched against this list of auto completion items */
     protected AutoCompletionList autoCompletionList = null;
@@ -35,7 +36,6 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
      */
     public TagCellEditor() {
         editor = new AutoCompletingTextField();
-        acCache = new AutoCompletionCache();
     }
 
     /**
@@ -57,7 +57,7 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
 
         // add the list of keys in the current data set
         //
-        acCache.populateWithKeys(autoCompletionList, true);
+        autocomplete.populateWithKeys(autoCompletionList);
 
         // remove the keys already present in the current tag model
         //
@@ -82,7 +82,8 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
             logger.warning("autoCompletionList is null. Make sure an instance of AutoCompletionList is injected into TableCellEditor.");
             return;
         }
-        acCache.populateWithTagValues(autoCompletionList, forKey, false);
+        autoCompletionList.clear();
+        autocomplete.populateWithTagValues(autoCompletionList, forKey);
     }
 
     /**
@@ -136,8 +137,8 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
         editor.setAutoCompletionList(autoCompletionList);
     }
 
-    public void setAutoCompletionCache(AutoCompletionCache acCache) {
-        this.acCache = acCache;
+    public void setAutoCompletionManager(AutoCompletionManager autocomplete) {
+        this.autocomplete = autocomplete;
     }
 
     public void autoCompletionItemSelected(String item) {

@@ -9,8 +9,9 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.tagging.AutoCompletingTextField;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 
 public class MemberRoleCellEditor extends AbstractCellEditor implements TableCellEditor {
@@ -18,6 +19,7 @@ public class MemberRoleCellEditor extends AbstractCellEditor implements TableCel
     static private Logger logger = Logger.getLogger(MemberRoleCellEditor.class.getName());
 
     private AutoCompletingTextField editor = null;
+    private DataSet ds;
 
     /** user input is matched against this list of auto completion items */
     private AutoCompletionList autoCompletionList = null;
@@ -25,7 +27,8 @@ public class MemberRoleCellEditor extends AbstractCellEditor implements TableCel
     /**
      * constructor
      */
-    public MemberRoleCellEditor() {
+    public MemberRoleCellEditor(DataSet ds) {
+        this.ds = ds;
         editor = new AutoCompletingTextField();
         autoCompletionList = new AutoCompletionList();
         editor.setAutoCompletionList(autoCompletionList);
@@ -39,7 +42,7 @@ public class MemberRoleCellEditor extends AbstractCellEditor implements TableCel
 
         String role = (String)value;
         editor.setText(role);
-        AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).populateWithMemberRoles(autoCompletionList);
+        ds.getAutoCompletionManager().populateWithMemberRoles(autoCompletionList);
         return editor;
     }
 

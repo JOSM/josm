@@ -22,6 +22,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -78,7 +79,8 @@ import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
-import org.openstreetmap.josm.gui.widgets.AutoCompleteComboBox;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -144,15 +146,15 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     }
 
     private final Map<String, Map<String, Integer>> valueCount = new TreeMap<String, Map<String, Integer>>();
-    private final ListOfUsedTags listOfUsedTags = new ListOfUsedTags();
+
+    Comparator<String> defaultKeyComparator = String.CASE_INSENSITIVE_ORDER;
+    Comparator<String> defaultValueComparator = String.CASE_INSENSITIVE_ORDER;
 
     private DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
 
     @Override
     public void showNotify() {
-        DatasetEventManager.getInstance().addDatasetListener(listOfUsedTags, FireMode.IMMEDIATELY);
         DatasetEventManager.getInstance().addDatasetListener(dataChangedAdapter, FireMode.IN_EDT_CONSOLIDATED);
-        listOfUsedTags.rebuildNecessary();
         SelectionEventManager.getInstance().addSelectionListener(this, FireMode.IN_EDT_CONSOLIDATED);
         MapView.addEditLayerChangeListener(this);
         updateSelection();
@@ -160,7 +162,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
     @Override
     public void hideNotify() {
-        DatasetEventManager.getInstance().removeDatasetListener(listOfUsedTags);
         DatasetEventManager.getInstance().removeDatasetListener(dataChangedAdapter);
         SelectionEventManager.getInstance().removeSelectionListener(this);
         MapView.removeEditLayerChangeListener(this);
@@ -188,8 +189,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         JPanel p = new JPanel(new GridBagLayout());
         panel.add(p, BorderLayout.CENTER);
 
-        final AutoCompleteComboBox keys = new AutoCompleteComboBox();
-        keys.setPossibleItems(listOfUsedTags.getUsedKeys());
+        AutoCompletionManager autocomplete = Main.main.getEditLayer().data.getAutoCompletionManager();
+
+        final AutoCompletingComboBox keys = new AutoCompletingComboBox();
+        keys.setPossibleItems(autocomplete.getKeys(defaultKeyComparator));
         keys.setEditable(true);
         keys.setSelectedItem(key);
 
@@ -197,7 +200,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         p.add(Box.createHorizontalStrut(10), GBC.std());
         p.add(keys, GBC.eol().fill(GBC.HORIZONTAL));
 
-        final AutoCompleteComboBox values = new AutoCompleteComboBox();
+        final AutoCompletingComboBox values = new AutoCompletingComboBox();
         values.setRenderer(new DefaultListCellRenderer() {
             @Override public Component getListCellRendererComponent(JList list,
                     Object value, int index, boolean isSelected,  boolean cellHasFocus){
@@ -219,7 +222,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         });
         values.setEditable(true);
-        values.setPossibleItems(listOfUsedTags.getUsedValues(key));
+        values.setPossibleItems(autocomplete.getValues(key, defaultValueComparator));
         Map<String, Integer> m=(Map<String, Integer>)propertyData.getValueAt(row, 1);
         final String selection= m.size()!=1?tr("<different>"):m.entrySet().iterator().next().getKey();
         values.setSelectedItem(selection);
@@ -227,7 +230,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         p.add(new JLabel(tr("Value")), GBC.std());
         p.add(Box.createHorizontalStrut(10), GBC.std());
         p.add(values, GBC.eol().fill(GBC.HORIZONTAL));
-        addFocusAdapter(row, keys, values);
+        addFocusAdapter(row, keys, values, autocomplete);
 
         final JOptionPane optionPane = new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
             @Override public void selectInitialValue() {
@@ -338,8 +341,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         p.add(new JLabel("<html>"+trn("This will change up to {0} object.",
                 "This will change up to {0} objects.", sel.size(),sel.size())
                 +"<br><br>"+tr("Please select a key")), BorderLayout.NORTH);
-        final AutoCompleteComboBox keys = new AutoCompleteComboBox();
-        List<String> usedKeys = new ArrayList<String>(listOfUsedTags.getUsedKeys());
+        final AutoCompletingComboBox keys = new AutoCompletingComboBox();
+        AutoCompletionManager autocomplete = Main.main.getEditLayer().data.getAutoCompletionManager();
+        List<String> usedKeys =
+                new ArrayList<String>(autocomplete.getKeys(defaultKeyComparator));
         for (int i = 0; i < propertyData.getRowCount(); ++i) {
             usedKeys.remove(propertyData.getValueAt(i, 0));
         }
@@ -351,11 +356,14 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         JPanel p2 = new JPanel(new BorderLayout());
         p.add(p2, BorderLayout.SOUTH);
         p2.add(new JLabel(tr("Please select a value")), BorderLayout.NORTH);
-        final AutoCompleteComboBox values = new AutoCompleteComboBox();
+        final AutoCompletingComboBox values = new AutoCompletingComboBox();
         values.setEditable(true);
         p2.add(values, BorderLayout.CENTER);
 
-        addFocusAdapter(-1, keys, values);
+        FocusAdapter focus = addFocusAdapter(-1, keys, values, autocomplete);
+        // fire focus event in advance or otherwise the popup list will be too small at first
+        focus.focusGained(null);
+
         JOptionPane pane = new JOptionPane(p, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_CANCEL_OPTION){
             @Override public void selectInitialValue() {
                 keys.requestFocusInWindow();
@@ -380,18 +388,20 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      * @param keys
      * @param values
      */
-    private void addFocusAdapter(final int row, final AutoCompleteComboBox keys, final AutoCompleteComboBox values) {
+    private FocusAdapter addFocusAdapter(final int row, final AutoCompletingComboBox keys, final AutoCompletingComboBox values, final AutoCompletionManager autocomplete) {
         // get the combo box' editor component
         JTextComponent editor = (JTextComponent)values.getEditor()
         .getEditorComponent();
         // Refresh the values model when focus is gained
-        editor.addFocusListener(new FocusAdapter() {
+        FocusAdapter focus = new FocusAdapter() {
             @Override public void focusGained(FocusEvent e) {
                 String key = keys.getEditor().getItem().toString();
-                values.setPossibleItems(listOfUsedTags.getUsedValues(key));
+                values.setPossibleItems(autocomplete.getValues(key, defaultValueComparator));
                 objKey=key;
             }
-        });
+        };
+        editor.addFocusListener(focus);
+        return focus;
     }
     private String objKey;
 

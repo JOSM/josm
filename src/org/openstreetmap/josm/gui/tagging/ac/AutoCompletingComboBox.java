@@ -1,5 +1,5 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
-package org.openstreetmap.josm.gui.widgets;
+package org.openstreetmap.josm.gui.tagging.ac;
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -16,7 +16,7 @@ import javax.swing.text.PlainDocument;
 /**
  * @author guilhem.bonnefille@gmail.com
  */
-public class AutoCompleteComboBox extends JComboBox {
+public class AutoCompletingComboBox extends JComboBox {
 
     private boolean autocompleteEnabled = true;
 
@@ -25,11 +25,11 @@ public class AutoCompleteComboBox extends JComboBox {
      *
      * Inspired by http://www.orbital-computer.de/JComboBox/
      */
-    class AutoCompleteComboBoxDocument extends PlainDocument {
+    class AutoCompletingComboBoxDocument extends PlainDocument {
         private JComboBox comboBox;
         private boolean selecting = false;
 
-        public AutoCompleteComboBoxDocument(final JComboBox comboBox) {
+        public AutoCompletingComboBoxDocument(final JComboBox comboBox) {
             this.comboBox = comboBox;
         }
 
@@ -97,9 +97,9 @@ public class AutoCompleteComboBox extends JComboBox {
         }
     }
 
-    public AutoCompleteComboBox() {
+    public AutoCompletingComboBox() {
         final JTextComponent editor = (JTextComponent) this.getEditor().getEditorComponent();
-        editor.setDocument(new AutoCompleteComboBoxDocument(this));
+        editor.setDocument(new AutoCompletingComboBoxDocument(this));
         editor.addFocusListener(
                 new FocusListener() {
                     public void focusLost(FocusEvent e) {

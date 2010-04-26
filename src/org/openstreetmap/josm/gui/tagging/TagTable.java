@@ -40,7 +40,7 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
 import org.openstreetmap.josm.gui.dialogs.relation.RunnableAction;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -405,13 +405,13 @@ public class TagTable extends JTable  {
         }
     }
 
-    public void setAutoCompletionCache(AutoCompletionCache acCache) {
-        if (acCache == null) {
-            logger.warning("argument acCache should not be null. Aborting.");
+    public void setAutoCompletionManager(AutoCompletionManager autocomplete) {
+        if (autocomplete == null) {
+            logger.warning("argument autocomplete should not be null. Aborting.");
             return;
         }
         if (editor != null) {
-            editor.setAutoCompletionCache(acCache);
+            editor.setAutoCompletionManager(autocomplete);
         }
     }
 

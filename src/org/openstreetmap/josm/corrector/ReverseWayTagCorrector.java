@@ -19,6 +19,15 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 
+/**
+ * A ReverseWayTagCorrector handles necessary corrections of tags
+ * when a way is reversed. E.g. oneway=yes needs to be changed
+ * to oneway=-1 and vice versa.
+ *
+ * The Corrector offers the automatic resolution in an dialog
+ * for the user to confirm.
+ */
+
 public class ReverseWayTagCorrector extends TagCorrector<Way> {
 
     private static class PrefixSuffixSwitcher {

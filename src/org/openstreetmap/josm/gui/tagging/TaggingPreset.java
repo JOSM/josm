@@ -50,9 +50,10 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.QuadStateCheckBox;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPritority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -81,7 +82,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             OsmDataLayer layer = Main.main.getEditLayer();
             if (layer == null) return;
             AutoCompletionList list  = new AutoCompletionList();
-            AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).populateWithTagValues(list, key, false);
+            Main.main.getEditLayer().data.getAutoCompletionManager().populateWithTagValues(list, key);
             field.setAutoCompletionList(list);
         }
 
@@ -695,9 +696,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         if (data == null)
             return null;
         OsmDataLayer layer = Main.main.getEditLayer();
-        if (layer != null) {
-            AutoCompletionCache.getCacheForLayer(layer).initFromDataSet();
-        }
         PresetPanel p = new PresetPanel();
         LinkedList<Item> l = new LinkedList<Item>();
         if(types != null){

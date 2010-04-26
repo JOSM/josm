@@ -32,9 +32,9 @@ import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.JMultilineLabel;
-import org.openstreetmap.josm.gui.tagging.AutoCompletingTextField;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class RelationMemberConflictResolver extends JPanel {
@@ -182,16 +182,15 @@ public class RelationMemberConflictResolver extends JPanel {
     }
 
     public void prepareForEditing() {
-        AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).initFromDataSet();
         AutoCompletionList acList = new AutoCompletionList();
-        AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).populateWithMemberRoles(acList);
+        Main.main.getEditLayer().data.getAutoCompletionManager().populateWithMemberRoles(acList);
         tfRole.setAutoCompletionList(acList);
         AutoCompletingTextField editor = (AutoCompletingTextField) tblResolver.getColumnModel().getColumn(2).getCellEditor();
         if (editor != null) {
             editor.setAutoCompletionList(acList);
         }
         AutoCompletionList acList2 = new AutoCompletionList();
-        AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).populateWithKeys(acList2, false /* don'tappend */);
+        Main.main.getEditLayer().data.getAutoCompletionManager().populateWithKeys(acList2);
         tfKey.setAutoCompletionList(acList2);
     }
 }

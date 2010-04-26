@@ -1,17 +1,32 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.ac;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Comparator;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSetListener;
+import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
+import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
+import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
+import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -19,10 +34,10 @@ import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.tools.MultiMap;
 
 /**
- * AutoCompletionCache temporarily holds a cache of keys with a list of
+ * AutoCompletionManager holds a cache of keys with a list of
  * possible auto completion values for each key.
  *
- * The cache can initialize itself from the current JOSM data set such that
+ * Each DataSet is assigned one AutoCompletionManager instance such that
  * <ol>
  *   <li>any key used in a tag in the data set is part of the key list in the cache</li>
  *   <li>any value used in a tag for a specific key is part of the autocompletion list of
@@ -34,62 +49,71 @@ import org.openstreetmap.josm.tools.MultiMap;
  * data set in order to build up the auto completion list for a specific input
  * field is not efficient enough, hence this cache.
  *
+ * TODO: respect the relation type for member role autocompletion
  */
-public class AutoCompletionCache {
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(AutoCompletionCache.class.getName());
+public class AutoCompletionManager implements DataSetListener {
 
-    private static HashMap<OsmDataLayer, AutoCompletionCache> caches;
-
-    static {
-        caches = new HashMap<OsmDataLayer, AutoCompletionCache>();
-        MapView.addLayerChangeListener(new MapView.LayerChangeListener() {
-            public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-                // do nothing
-            }
-
-            public void layerAdded(Layer newLayer) {
-                // do noting
-            }
-
-            public void layerRemoved(Layer oldLayer) {
-                if (oldLayer instanceof OsmDataLayer) {
-                    caches.remove(oldLayer);
-                }
-            }
-        }
-        );
-    }
-
-    static public AutoCompletionCache getCacheForLayer(OsmDataLayer layer) {
-        AutoCompletionCache cache = caches.get(layer);
-        if (cache == null) {
-            cache = new AutoCompletionCache(layer);
-            caches.put(layer, cache);
-        }
-        return cache;
-    }
-
-    /** the cached tags given by a tag key and a list of values for this tag */
-    private MultiMap<String, String> tagCache;
-    /**  the layer this cache is built for */
-    private OsmDataLayer layer;
-    /** the same as tagCache but for the preset keys and values */
-    private static MultiMap<String, String> presetTagCache = new MultiMap<String, String>();
-    /** the cached list of member roles */
-    private  Set<String> roleCache;
+    /** If the dirty flag is set true, a rebuild is necessary. */
+    protected boolean dirty;
+    /** The data set that is managed */
+    protected DataSet ds;
 
     /**
-     * constructor
+     * the cached tags given by a tag key and a list of values for this tag
+     * only accessed by getTagCache(), rebuild() and cachePrimitiveTags()
+     * use getTagCache() accessor
      */
-    public AutoCompletionCache(OsmDataLayer layer) {
-        tagCache = new MultiMap<String, String>();
-        roleCache = new HashSet<String>();
-        this.layer = layer;
+    protected MultiMap<String, String> tagCache;
+    /**
+     * the same as tagCache but for the preset keys and values
+     * can be accessed directly
+     */
+    protected static MultiMap<String, String> presetTagCache = new MultiMap<String, String>();
+    /** 
+     * the cached list of member roles 
+     * only accessed by getRoleCache(), rebuild() and cacheRelationMemberRoles()
+     * use getRoleCache() accessor
+     */
+    protected  Set<String> roleCache;
+
+    public AutoCompletionManager(DataSet ds) {
+        this.ds = ds;
+        dirty = true;
     }
 
-    public AutoCompletionCache() {
-        this(null);
+    protected MultiMap<String, String> getTagCache() {
+        if (dirty) {
+            rebuild();
+            dirty = false;
+        }
+        return tagCache;
+    }
+
+    protected Set<String> getRoleCache() {
+        if (dirty) {
+            rebuild();
+            dirty = false;
+        }
+        return roleCache;
+    }
+
+    /**
+     * initializes the cache from the primitives in the dataset
+     *
+     */
+    protected void rebuild() {
+        tagCache = new MultiMap<String, String>();
+        roleCache = new HashSet<String>();
+        cachePrimitives(ds.allNonDeletedCompletePrimitives());
+    }
+
+    protected void cachePrimitives(Collection<? extends OsmPrimitive> primitives) {
+        for (OsmPrimitive primitive : primitives) {
+            cachePrimitiveTags(primitive);
+            if (primitive instanceof Relation) {
+                cacheRelationMemberRoles((Relation) primitive);
+            }
+        }
     }
 
     /**
@@ -98,7 +122,7 @@ public class AutoCompletionCache {
      *
      * @param primitive an OSM primitive
      */
-    protected void cachePrimitive(OsmPrimitive primitive) {
+    protected void cachePrimitiveTags(OsmPrimitive primitive) {
         for (String key: primitive.keySet()) {
             String value = primitive.get(key);
             tagCache.put(key, value);
@@ -112,30 +136,9 @@ public class AutoCompletionCache {
      */
     protected void cacheRelationMemberRoles(Relation relation){
         for (RelationMember m: relation.getMembers()) {
-            if (m.hasRole() && !roleCache.contains(m.getRole())) {
+            if (m.hasRole()) {
                 roleCache.add(m.getRole());
             }
-        }
-    }
-
-    /**
-     * initializes the cache from the primitives in the dataset of
-     * {@see #layer}
-     *
-     */
-    public void initFromDataSet() {
-        tagCache = new MultiMap<String, String>();
-        if (layer == null)
-            return;
-        Collection<OsmPrimitive> ds = layer.data.allNonDeletedPrimitives();
-        for (OsmPrimitive primitive : ds) {
-            cachePrimitive(primitive);
-        }
-        for (Relation relation : layer.data.getRelations()) {
-            if (relation.isIncomplete() || relation.isDeleted()) {
-                continue;
-            }
-            cacheRelationMemberRoles(relation);
         }
     }
 
@@ -186,11 +189,18 @@ public class AutoCompletionCache {
      * @return the list of keys held by the cache
      */
     protected List<String> getDataKeys() {
-        return new ArrayList<String>(tagCache.keySet());
+        return new ArrayList<String>(getTagCache().keySet());
     }
 
     protected List<String> getPresetKeys() {
         return new ArrayList<String>(presetTagCache.keySet());
+    }
+
+    public TreeSet<String> getKeys(Comparator<String> c) {
+        TreeSet<String> ret = new TreeSet<String>(c);
+        ret.addAll(getDataKeys());
+        ret.addAll(getPresetKeys());
+        return ret;
     }
 
     /**
@@ -201,11 +211,18 @@ public class AutoCompletionCache {
      * @return the list of auto completion values
      */
     protected List<String> getDataValues(String key) {
-        return new ArrayList<String>(tagCache.getValues(key));
+        return new ArrayList<String>(getTagCache().getValues(key));
     }
 
     protected static List<String> getPresetValues(String key) {
         return new ArrayList<String>(presetTagCache.getValues(key));
+    }
+
+    public TreeSet<String> getValues(String key, Comparator<String> c) {
+        TreeSet<String> ret = new TreeSet<String>(c);
+        ret.addAll(getDataValues(key));
+        ret.addAll(getPresetValues(key));
+        return ret;
     }
 
     /**
@@ -214,7 +231,7 @@ public class AutoCompletionCache {
      * @return the list of member roles
      */
     public List<String> getMemberRoles() {
-        return new ArrayList<String>(roleCache);
+        return new ArrayList<String>(getRoleCache());
     }
 
     /**
@@ -225,7 +242,7 @@ public class AutoCompletionCache {
      */
     public void populateWithMemberRoles(AutoCompletionList list) {
         list.clear();
-        list.add(roleCache, AutoCompletionItemPritority.IS_IN_DATASET);
+        list.add(getRoleCache(), AutoCompletionItemPritority.IS_IN_DATASET);
     }
 
     /**
@@ -237,10 +254,7 @@ public class AutoCompletionCache {
      * @param append true to add the values to the list; false, to replace the values
      * in the list by the tag values
      */
-    public void populateWithTagValues(AutoCompletionList list, String key, boolean append) {
-        if (!append) {
-            list.clear();
-        }
+    public void populateWithTagValues(AutoCompletionList list, String key) {
         list.add(getDataValues(key), AutoCompletionItemPritority.IS_IN_DATASET);
         list.add(getPresetValues(key), AutoCompletionItemPritority.IS_IN_STANDARD);
     }
@@ -253,11 +267,54 @@ public class AutoCompletionCache {
      * @param append true to add the keys to the list; false, to replace the keys
      * in the list by the keys in the cache
      */
-    public void populateWithKeys(AutoCompletionList list, boolean append) {
-        if (!append) {
-            list.clear();
-        }
+    public void populateWithKeys(AutoCompletionList list) {
         list.add(getDataKeys(), AutoCompletionItemPritority.IS_IN_DATASET);
         list.add(getPresetKeys(), AutoCompletionItemPritority.IS_IN_STANDARD);
+    }
+
+    /*********************************************************
+     * Implementation of the DataSetListener interface
+     *
+     **/
+
+    public void primtivesAdded(PrimitivesAddedEvent event) {
+        cachePrimitives(event.getPrimitives());
+    }
+
+    public void primtivesRemoved(PrimitivesRemovedEvent event) {
+        dirty = true;
+    }
+
+    public void tagsChanged(TagsChangedEvent event) {
+        Map<String, String> newKeys = event.getPrimitive().getKeys();
+        Map<String, String> oldKeys = event.getOriginalKeys();
+
+        if (!newKeys.keySet().containsAll(oldKeys.keySet())) {
+            // Some keys removed, might be the last instance of key, rebuild necessary
+            dirty = true;
+        } else {
+            for (Entry<String, String> oldEntry: oldKeys.entrySet()) {
+                if (!oldEntry.getValue().equals(newKeys.get(oldEntry.getKey()))) {
+                    // Value changed, might be last instance of value, rebuild necessary
+                    dirty = true;
+                    return;
+                }
+            }
+            cachePrimitives(Collections.singleton(event.getPrimitive()));
+        }
+    }
+
+    public void nodeMoved(NodeMovedEvent event) {/* ignored */}
+
+    public void wayNodesChanged(WayNodesChangedEvent event) {/* ignored */}
+
+    public void relationMembersChanged(RelationMembersChangedEvent event) {
+        dirty = true; // TODO: not necessary to rebuid if a member is added
+    }
+
+    public void otherDatasetChange(AbstractDatasetChangedEvent event) {/* ignored */}
+
+    public void dataChanged(DataChangedEvent event) {
+        dirty = true;
     }
 }

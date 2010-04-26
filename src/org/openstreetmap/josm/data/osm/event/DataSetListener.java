@@ -1,3 +1,4 @@
+package org.openstreetmap.josm.data.osm.event;
 /*
  *  JOSMng - a Java Open Street Map editor, the next generation.
 
@@ -18,8 +19,6 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
-
-package org.openstreetmap.josm.data.osm.event;
 
 /**
  * A listener listening for all DataSet changes.

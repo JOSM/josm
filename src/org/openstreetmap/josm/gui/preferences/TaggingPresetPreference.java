@@ -20,7 +20,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetMenu;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSeparator;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.GBC;
 
 public class TaggingPresetPreference implements PreferenceSetting {
@@ -87,7 +87,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
         }
         else
         {
-            AutoCompletionCache.cachePresets(taggingPresets);
+            AutoCompletionManager.cachePresets(taggingPresets);
             HashMap<TaggingPresetMenu,JMenu> submenus = new HashMap<TaggingPresetMenu,JMenu>();
             for (final TaggingPreset p : taggingPresets)
             {

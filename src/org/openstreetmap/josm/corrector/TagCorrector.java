@@ -33,6 +33,14 @@ import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * Abstract base class for automatic tag corrections.
+ *
+ * Subclasses call applyCorrections() with maps of the requested
+ * corrections and a dialog is pesented to the user to
+ * confirm these changes.
+ */
+ 
 public abstract class TagCorrector<P extends OsmPrimitive> {
 
     public abstract Collection<Command> execute(P primitive, P oldprimitive)

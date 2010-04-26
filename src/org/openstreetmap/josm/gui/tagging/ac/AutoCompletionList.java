@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.tagging.ac;
 
 import java.util.ArrayList;
@@ -296,7 +297,7 @@ public class AutoCompletionList extends AbstractTableModel {
     public void dump() {
         System.out.println("---------------------------------");
         for (AutoCompletionListItem item: list) {
-            System.out.println(item.getValue());
+            System.out.println(item);
         }
         System.out.println("---------------------------------");
     }

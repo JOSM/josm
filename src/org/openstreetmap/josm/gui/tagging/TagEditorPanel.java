@@ -13,8 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -32,7 +32,7 @@ public class TagEditorPanel extends JPanel {
     /** the tag table */
     private TagTable tagTable;
 
-    private AutoCompletionCache acCache;
+    private AutoCompletionManager autocomplete;
     private AutoCompletionList acList;
 
     /**
@@ -140,17 +140,15 @@ public class TagEditorPanel extends JPanel {
      */
     public void initAutoCompletion(OsmDataLayer layer) throws IllegalArgumentException{
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
-        // initialize the autocompletion infrastructure
-        //
-        acCache = AutoCompletionCache.getCacheForLayer(layer);
-        acCache.initFromDataSet();
+
+        autocomplete = layer.data.getAutoCompletionManager();
         acList = new AutoCompletionList();
 
         TagCellEditor editor = ((TagCellEditor) tagTable.getColumnModel().getColumn(0).getCellEditor());
-        editor.setAutoCompletionCache(acCache);
+        editor.setAutoCompletionManager(autocomplete);
         editor.setAutoCompletionList(acList);
         editor = ((TagCellEditor) tagTable.getColumnModel().getColumn(1).getCellEditor());
-        editor.setAutoCompletionCache(acCache);
+        editor.setAutoCompletionManager(autocomplete);
         editor.setAutoCompletionList(acList);
     }
 

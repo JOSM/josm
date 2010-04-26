@@ -65,10 +65,10 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.tagging.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionCache;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -110,10 +110,6 @@ public class GenericRelationEditor extends RelationEditor  {
 
         setRememberWindowGeometry(getClass().getName() + ".geometry",
                 WindowGeometry.centerInWindow(Main.parent, new Dimension(700, 650)));
-
-        // initialize the autocompletion infrastructure
-        //
-        AutoCompletionCache.getCacheForLayer(getLayer()).initFromDataSet();
 
         // init the various models
         //
@@ -309,7 +305,7 @@ public class GenericRelationEditor extends RelationEditor  {
                     @Override
                     public void focusGained(FocusEvent e) {
                         AutoCompletionList list = tfRole.getAutoCompletionList();
-                        AutoCompletionCache.getCacheForLayer(Main.main.getEditLayer()).populateWithMemberRoles(list);
+                        getLayer().data.getAutoCompletionManager().populateWithMemberRoles(list);
                     }
                 }
         );

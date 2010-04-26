@@ -47,7 +47,7 @@ public class MemberTable extends JTable implements IMemberModelListener {
      * @param columnModel
      */
     public MemberTable(OsmDataLayer layer, MemberTableModel model) {
-        super(model, new MemberTableColumnModel(), model.getSelectionModel());
+        super(model, new MemberTableColumnModel(layer.data), model.getSelectionModel());
         this.layer = layer;
         model.addMemberModelListener(this);
         init();

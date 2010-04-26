@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.Predicate;
 
 /**
@@ -67,6 +68,19 @@ public class DataSet implements Cloneable {
      */
     public int getHighlightUpdateCount() {
         return highlightUpdateCount;
+    }
+
+    /**
+     * Maintain a list of used tags for autocompletion
+     */
+    private AutoCompletionManager autocomplete;
+
+    public AutoCompletionManager getAutoCompletionManager() {
+        if (autocomplete == null) {
+            autocomplete = new AutoCompletionManager(this);
+            addDataSetListener(autocomplete);
+        }
+        return autocomplete;
     }
 
     /**
