@@ -77,6 +77,9 @@ public class BBox {
         add(c.lon(), c.lat());
     }
 
+    /**
+     * Extends this bbox to include the point (x, y)
+     */
     public void add(double x, double y) {
         xmin = Math.min(xmin, x);
         xmax = Math.max(xmax, x);
@@ -104,6 +107,10 @@ public class BBox {
         return xmax-xmin;
     }
 
+    /**
+     * Tests, weather the bbox b lies completely inside
+     * this bbox.
+     */
     public boolean bounds(BBox b) {
         if (!(xmin <= b.xmin) ||
                 !(xmax >= b.xmax) ||
@@ -113,6 +120,9 @@ public class BBox {
         return true;
     }
 
+    /**
+     * Tests, weather the Point c lies within the bbox.
+     */
     public boolean bounds(LatLon c) {
         if ((xmin <= c.lon()) &&
                 (xmax >= c.lon()) &&
@@ -122,7 +132,11 @@ public class BBox {
         return false;
     }
 
-    public boolean inside(BBox b) {
+    /**
+     * Tests, weather two BBoxes intersect as an area.
+     * I.e. weather there exists a point that lies in both of them.
+     */
+    public boolean intersects(BBox b) {
         if (xmin > b.xmax)
             return false;
         if (xmax < b.xmin)
@@ -134,10 +148,9 @@ public class BBox {
         return true;
     }
 
-    public boolean intersects(BBox b) {
-        return this.inside(b) || b.inside(this);
-    }
-
+    /**
+     * Returns a list of all 4 corners of the bbox rectangle.
+     */
     public List<LatLon> points()  {
         LatLon p1 = new LatLon(ymin, xmin);
         LatLon p2 = new LatLon(ymin, xmax);
