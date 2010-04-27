@@ -121,7 +121,7 @@ public class OsmApi extends OsmConnection {
         }
 
         @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
-            for (int i=0; i< qName.length(); i++) {
+            for (int i=0; i< atts.getLength(); i++) {
                 capabilities.put(qName, atts.getQName(i), atts.getValue(i));
             }
         }
