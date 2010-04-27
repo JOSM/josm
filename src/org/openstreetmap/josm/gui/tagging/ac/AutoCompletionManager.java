@@ -108,6 +108,13 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     protected void cachePrimitives(Collection<? extends OsmPrimitive> primitives) {
+        if (tagCache == null) {
+            // We are coming from a DataSetListener event and
+            // rebuild has not been called yet, so do it now and 
+            // ignore the method parameter.
+            rebuild();
+            return;
+        }
         for (OsmPrimitive primitive : primitives) {
             cachePrimitiveTags(primitive);
             if (primitive instanceof Relation) {
