@@ -81,6 +81,7 @@ public class DialogsPanel extends JPanel {
             if (doReconstruct) {
                 reconstruct(Action.INVISIBLE_TO_DEFAULT, dlg);
             }
+            dlg.showNotify();
         } else {
             dlg.hideDialog();
         }

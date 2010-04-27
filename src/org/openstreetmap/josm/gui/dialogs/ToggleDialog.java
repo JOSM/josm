@@ -145,6 +145,7 @@ public class ToggleDialog extends JPanel implements Helpful {
             if (isShowing) {
                 hideDialog();
                 dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
+                hideNotify();
             } else {
                 showDialog();
                 if (isDocked && isCollapsed) {
@@ -153,6 +154,7 @@ public class ToggleDialog extends JPanel implements Helpful {
                 if (isDocked) {
                     dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, ToggleDialog.this);
                 }
+                showNotify();
             }
         }
 
@@ -177,7 +179,6 @@ public class ToggleDialog extends JPanel implements Helpful {
         setIsShowing(true);
         toggleAction.putValue("selected", false);
         toggleAction.putValue("selected", true);
-        showNotify();
     }
 
     /**
@@ -199,6 +200,7 @@ public class ToggleDialog extends JPanel implements Helpful {
             if (isDocked) {
                 dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, this);
             }
+            showNotify();
         }
     }
 
@@ -210,7 +212,6 @@ public class ToggleDialog extends JPanel implements Helpful {
         this.setVisible(false);
         setIsShowing(false);
         toggleAction.putValue("selected", false);
-        hideNotify();
     }
 
     /**
@@ -392,6 +393,7 @@ public class ToggleDialog extends JPanel implements Helpful {
                         public void actionPerformed(ActionEvent e) {
                             hideDialog();
                             dialogsPanel.reconstruct(Action.ELEMENT_SHRINKS, null);
+                            hideNotify();
                         }
                     }
             );
@@ -431,6 +433,7 @@ public class ToggleDialog extends JPanel implements Helpful {
                         dialogsPanel.reconstruct(Action.INVISIBLE_TO_DEFAULT, ToggleDialog.this);
                     } else {
                         hideDialog();
+                        hideNotify();
                     }
                 }
             });
