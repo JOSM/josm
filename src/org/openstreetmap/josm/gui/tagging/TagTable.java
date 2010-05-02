@@ -408,6 +408,7 @@ public class TagTable extends JTable  {
     public void setAutoCompletionManager(AutoCompletionManager autocomplete) {
         if (autocomplete == null) {
             logger.warning("argument autocomplete should not be null. Aborting.");
+            Thread.dumpStack();
             return;
         }
         if (editor != null) {

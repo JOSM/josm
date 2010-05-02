@@ -108,13 +108,6 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     protected void cachePrimitives(Collection<? extends OsmPrimitive> primitives) {
-        if (tagCache == null) {
-            // We are coming from a DataSetListener event and
-            // rebuild has not been called yet, so do it now and 
-            // ignore the method parameter.
-            rebuild();
-            return;
-        }
         for (OsmPrimitive primitive : primitives) {
             cachePrimitiveTags(primitive);
             if (primitive instanceof Relation) {
@@ -203,13 +196,6 @@ public class AutoCompletionManager implements DataSetListener {
         return new ArrayList<String>(presetTagCache.keySet());
     }
 
-    public TreeSet<String> getKeys(Comparator<String> c) {
-        TreeSet<String> ret = new TreeSet<String>(c);
-        ret.addAll(getDataKeys());
-        ret.addAll(getPresetKeys());
-        return ret;
-    }
-
     /**
      * replies the auto completion values allowed for a specific key. Replies
      * an empty list if key is null or if key is not in {@link #getKeys()}.
@@ -223,13 +209,6 @@ public class AutoCompletionManager implements DataSetListener {
 
     protected static List<String> getPresetValues(String key) {
         return new ArrayList<String>(presetTagCache.getValues(key));
-    }
-
-    public TreeSet<String> getValues(String key, Comparator<String> c) {
-        TreeSet<String> ret = new TreeSet<String>(c);
-        ret.addAll(getDataValues(key));
-        ret.addAll(getPresetValues(key));
-        return ret;
     }
 
     /**
@@ -248,8 +227,20 @@ public class AutoCompletionManager implements DataSetListener {
      * @param list the list to populate
      */
     public void populateWithMemberRoles(AutoCompletionList list) {
-        list.clear();
         list.add(getRoleCache(), AutoCompletionItemPritority.IS_IN_DATASET);
+    }
+
+    /**
+     * Populates the an {@see AutoCompletionList} with the currently cached
+     * tag keys
+     *
+     * @param list the list to populate
+     * @param append true to add the keys to the list; false, to replace the keys
+     * in the list by the keys in the cache
+     */
+    public void populateWithKeys(AutoCompletionList list) {
+        list.add(getPresetKeys(), AutoCompletionItemPritority.IS_IN_STANDARD);
+        list.add(getDataKeys(), AutoCompletionItemPritority.IS_IN_DATASET);
     }
 
     /**
@@ -262,21 +253,20 @@ public class AutoCompletionManager implements DataSetListener {
      * in the list by the tag values
      */
     public void populateWithTagValues(AutoCompletionList list, String key) {
-        list.add(getDataValues(key), AutoCompletionItemPritority.IS_IN_DATASET);
         list.add(getPresetValues(key), AutoCompletionItemPritority.IS_IN_STANDARD);
+        list.add(getDataValues(key), AutoCompletionItemPritority.IS_IN_DATASET);
     }
 
-    /**
-     * Populates the an {@see AutoCompletionList} with the currently cached
-     * tag keys
-     *
-     * @param list the list to populate
-     * @param append true to add the keys to the list; false, to replace the keys
-     * in the list by the keys in the cache
-     */
-    public void populateWithKeys(AutoCompletionList list) {
-        list.add(getDataKeys(), AutoCompletionItemPritority.IS_IN_DATASET);
-        list.add(getPresetKeys(), AutoCompletionItemPritority.IS_IN_STANDARD);
+    public List<AutoCompletionListItem> getKeys() {
+        AutoCompletionList list = new AutoCompletionList();
+        populateWithKeys(list);
+        return new ArrayList<AutoCompletionListItem>(list.getList());
+    }
+
+    public List<AutoCompletionListItem> getValues(String key) {
+        AutoCompletionList list = new AutoCompletionList();
+        populateWithTagValues(list, key);
+        return new ArrayList<AutoCompletionListItem>(list.getList());
     }
 
     /*********************************************************
@@ -285,6 +275,8 @@ public class AutoCompletionManager implements DataSetListener {
      **/
 
     public void primtivesAdded(PrimitivesAddedEvent event) {
+        if (dirty)
+            return;
         cachePrimitives(event.getPrimitives());
     }
 
@@ -293,6 +285,8 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     public void tagsChanged(TagsChangedEvent event) {
+        if (dirty)
+            return;
         Map<String, String> newKeys = event.getPrimitive().getKeys();
         Map<String, String> oldKeys = event.getOriginalKeys();
 

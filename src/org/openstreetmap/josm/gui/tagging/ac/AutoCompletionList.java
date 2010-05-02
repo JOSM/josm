@@ -148,28 +148,14 @@ public class AutoCompletionList extends AbstractTableModel {
         filter();
     }
 
-    protected void appendOrUpdatePriority(AutoCompletionListItem toadd) {
-        AutoCompletionListItem item = valutToItemMap.get(toadd.getValue());
+    protected void appendOrUpdatePriority(AutoCompletionListItem toAdd) {
+        AutoCompletionListItem item = valutToItemMap.get(toAdd.getValue());
         if (item == null) {
             // new item does not exist yet. Add it to the list
-            //
-            list.add(toadd);
-            valutToItemMap.put(toadd.getValue(), toadd);
+            list.add(toAdd);
+            valutToItemMap.put(toAdd.getValue(), toAdd);
         } else {
-            // new item already exists. Update priority if necessary
-
-            // If it is both in the dataset and in the presets, update the priority.
-            final AutoCompletionItemPritority IS_IN_DATASET = AutoCompletionItemPritority.IS_IN_DATASET;
-            final AutoCompletionItemPritority IS_IN_STANDARD = AutoCompletionItemPritority.IS_IN_STANDARD;
-            if ((toadd.getPriority() == IS_IN_STANDARD && item.getPriority() == IS_IN_DATASET) ||
-                (toadd.getPriority() == IS_IN_DATASET && item.getPriority() == IS_IN_STANDARD)) {
-
-                item.setPriority(AutoCompletionItemPritority.IS_IN_STANDARD_AND_IN_DATASET);
-            } else {
-                if (toadd.getPriority().compareTo(item.getPriority()) < 0) {
-                    item.setPriority(toadd.getPriority());
-                }
-            }
+            item.setPriority(item.getPriority().mergeWith(toAdd.getPriority()));
         }
     }
 
@@ -269,6 +255,10 @@ public class AutoCompletionList extends AbstractTableModel {
         if (idx < 0 || idx >= getFilteredSize())
             throw new IndexOutOfBoundsException("idx out of bounds. idx=" + idx);
         return filtered.get(idx);
+    }
+
+    List<AutoCompletionListItem> getList() {
+        return Collections.unmodifiableList(list);
     }
 
     /**

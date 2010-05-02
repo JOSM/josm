@@ -42,6 +42,7 @@ public class MemberRoleCellEditor extends AbstractCellEditor implements TableCel
 
         String role = (String)value;
         editor.setText(role);
+        autoCompletionList.clear();
         ds.getAutoCompletionManager().populateWithMemberRoles(autoCompletionList);
         return editor;
     }

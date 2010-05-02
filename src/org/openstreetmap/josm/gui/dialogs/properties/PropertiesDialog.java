@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -80,6 +81,8 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
@@ -147,8 +150,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
     private final Map<String, Map<String, Integer>> valueCount = new TreeMap<String, Map<String, Integer>>();
 
-    Comparator<String> defaultKeyComparator = String.CASE_INSENSITIVE_ORDER;
-    Comparator<String> defaultValueComparator = String.CASE_INSENSITIVE_ORDER;
+    Comparator<AutoCompletionListItem> defaultACItemComparator = new Comparator<AutoCompletionListItem>() {
+        public int compare(AutoCompletionListItem o1, AutoCompletionListItem o2) {
+            return String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue());
+        }
+    };
 
     private DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
 
@@ -190,9 +196,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         panel.add(p, BorderLayout.CENTER);
 
         AutoCompletionManager autocomplete = Main.main.getEditLayer().data.getAutoCompletionManager();
-
+        List<AutoCompletionListItem> keyList = autocomplete.getKeys();
+        Collections.sort(keyList, defaultACItemComparator);
+        
         final AutoCompletingComboBox keys = new AutoCompletingComboBox();
-        keys.setPossibleItems(autocomplete.getKeys(defaultKeyComparator));
+        keys.setPossibleACItems(keyList);
         keys.setEditable(true);
         keys.setSelectedItem(key);
 
@@ -208,7 +216,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                         index, isSelected, cellHasFocus);
                 if (c instanceof JLabel) {
                     String str = null;
-                    str=(String) value;
+                    str=((AutoCompletionListItem) value).getValue();
                     if (valueCount.containsKey(objKey)){
                         Map<String, Integer> m=valueCount.get(objKey);
                         if (m.containsKey(str)) {
@@ -222,7 +230,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         });
         values.setEditable(true);
-        values.setPossibleItems(autocomplete.getValues(key, defaultValueComparator));
+        
+        List<AutoCompletionListItem> valueList = autocomplete.getValues(key);
+        Collections.sort(valueList, defaultACItemComparator);
+        
+        values.setPossibleACItems(valueList);
         Map<String, Integer> m=(Map<String, Integer>)propertyData.getValueAt(row, 1);
         final String selection= m.size()!=1?tr("<different>"):m.entrySet().iterator().next().getKey();
         values.setSelectedItem(selection);
@@ -343,12 +355,22 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 +"<br><br>"+tr("Please select a key")), BorderLayout.NORTH);
         final AutoCompletingComboBox keys = new AutoCompletingComboBox();
         AutoCompletionManager autocomplete = Main.main.getEditLayer().data.getAutoCompletionManager();
-        List<String> usedKeys =
-                new ArrayList<String>(autocomplete.getKeys(defaultKeyComparator));
-        for (int i = 0; i < propertyData.getRowCount(); ++i) {
-            usedKeys.remove(propertyData.getValueAt(i, 0));
+        List<AutoCompletionListItem> keyList = autocomplete.getKeys();
+
+        // remove the object's tag keys from the list
+        Iterator<AutoCompletionListItem> iter = keyList.iterator();
+        while (iter.hasNext()) {
+            AutoCompletionListItem item = iter.next();
+            for (int i = 0; i < propertyData.getRowCount(); ++i) {
+                if (item.getValue().equals(propertyData.getValueAt(i, 0))) {
+                    iter.remove();
+                    break;
+                }
+            }
         }
-        keys.setPossibleItems(usedKeys);
+
+        Collections.sort(keyList, defaultACItemComparator);
+        keys.setPossibleACItems(keyList);
         keys.setEditable(true);
 
         p.add(keys, BorderLayout.CENTER);
@@ -396,7 +418,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         FocusAdapter focus = new FocusAdapter() {
             @Override public void focusGained(FocusEvent e) {
                 String key = keys.getEditor().getItem().toString();
-                values.setPossibleItems(autocomplete.getValues(key, defaultValueComparator));
+                
+                List<AutoCompletionListItem> valueList = autocomplete.getValues(key);
+                Collections.sort(valueList, defaultACItemComparator);
+
+                values.setPossibleACItems(valueList);
                 objKey=key;
             }
         };
