@@ -214,7 +214,7 @@ public class FilterDialog extends ToggleDialog implements Listener , TableModelL
     }
 
     public void tableChanged(TableModelEvent e){
-        setTitle(tr("Filter Hidden: {0} Disabled: {0}", filters.hiddenCount, filters.disabledCount));
+        setTitle(tr("Filter Hidden:{0} Disabled:{1}", filters.hiddenCount, filters.disabledCount));
     }
 
     public void drawOSDText(Graphics2D g) {
