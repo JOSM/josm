@@ -18,6 +18,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
+import javax.swing.text.StyleConstants;
 
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.util.TableCellEditorSupport;
@@ -47,6 +48,12 @@ public class AutoCompletingTextField extends JTextField implements ComboBoxEdito
         @Override
         public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
             if (autoCompletionList == null) {
+                super.insertString(offs, str, a);
+                return;
+            }
+
+            // input method for non-latin characters (e.g. scim)
+            if (a != null && a.isDefined(StyleConstants.ComposedTextAttribute)) {
                 super.insertString(offs, str, a);
                 return;
             }

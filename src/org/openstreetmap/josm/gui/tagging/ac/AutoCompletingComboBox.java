@@ -17,6 +17,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
+import javax.swing.text.StyleConstants;
 
 /**
  * @author guilhem.bonnefille@gmail.com
@@ -56,6 +57,9 @@ public class AutoCompletingComboBox extends JComboBox {
             if (selecting)
                 return;
             if (!autocompleteEnabled)
+                return;
+            // input method for non-latin characters (e.g. scim)
+            if (a != null && a.isDefined(StyleConstants.ComposedTextAttribute))
                 return;
 
             int size = getLength();

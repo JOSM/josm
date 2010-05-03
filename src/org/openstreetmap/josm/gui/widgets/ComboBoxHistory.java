@@ -34,7 +34,9 @@ import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 
-public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<String> {
+import org.openstreetmap.josm.gui.tagging.ac.*;
+
+public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<AutoCompletionListItem> {
 
     private int maxSize = 10;
 
@@ -49,12 +51,16 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<St
      */
     @Override
     public void addElement(Object o) {
-        String newEntry = (String)o;
+        if (o instanceof String) {
+            o = new AutoCompletionListItem((String) o);
+        }
+
+        String newEntry = ((AutoCompletionListItem)o).getValue();
 
         // if history contains this object already, delete it,
         // so that it looks like a move to the top
         for (int i = 0; i < getSize(); i++) {
-            String oldEntry = (String) getElementAt(i);
+            String oldEntry = ((AutoCompletionListItem) getElementAt(i)).getValue();
             if(oldEntry.equals(newEntry)) {
                 removeElementAt(i);
             }
@@ -74,8 +80,8 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<St
         fireHistoryChanged();
     }
 
-    public Iterator<String> iterator() {
-        return new Iterator<String>() {
+    public Iterator<AutoCompletionListItem> iterator() {
+        return new Iterator<AutoCompletionListItem>() {
 
             private int position = -1;
 
@@ -89,27 +95,25 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<St
                 return false;
             }
 
-            public String next() {
+            public AutoCompletionListItem next() {
                 position++;
-                return getElementAt(position).toString();
+                return (AutoCompletionListItem)getElementAt(position);
             }
 
         };
     }
 
-    public void setItems(List<String> items) {
+    public void setItemsAsString(List<String> items) {
         removeAllElements();
-        Collections.reverse(items);
-        for (String item : items) {
-            addElement(item);
+        for (int i = items.size()-1; i>=0; i--) {
+            addElement(new AutoCompletionListItem(items.get(i)));
         }
-        Collections.reverse(items);
     }
 
-    public List<String> asList() {
+    public List<String> asStringList() {
         List<String> list = new ArrayList<String>(maxSize);
-        for (String item : this) {
-            list.add(item);
+        for (AutoCompletionListItem item : this) {
+            list.add(item.getValue());
         }
         return list;
     }
@@ -124,7 +128,7 @@ public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<St
 
     private void fireHistoryChanged() {
         for (HistoryChangedListener l : listeners) {
-            l.historyChanged(asList());
+            l.historyChanged(asStringList());
         }
     }
 }

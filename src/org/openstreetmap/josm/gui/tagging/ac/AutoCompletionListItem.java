@@ -24,15 +24,21 @@ public class AutoCompletionListItem implements Comparable<AutoCompletionListItem
     /**
      * constructor
      */
+    public AutoCompletionListItem(String value, AutoCompletionItemPritority priority) {
+        this.value = value;
+        this.priority = priority;
+    }
+
+    public AutoCompletionListItem(String value) {
+        this.value = value;
+        priority = AutoCompletionItemPritority.UNKNOWN;
+    }
+
     public AutoCompletionListItem() {
         value = "";
         priority = AutoCompletionItemPritority.UNKNOWN;
     }
 
-    public AutoCompletionListItem(String value, AutoCompletionItemPritority priority) {
-        this.value = value;
-        this.priority = priority;
-    }
 
     /**
      *

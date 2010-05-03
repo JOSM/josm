@@ -31,10 +31,10 @@ public class HistoryComboBox extends AutoCompletingComboBox {
     }
 
     public void setHistory(List<String> history) {
-        model.setItems(history);
+        model.setItemsAsString(history);
     }
 
     public List<String> getHistory() {
-        return model.asList();
+        return model.asStringList();
     }
 }
