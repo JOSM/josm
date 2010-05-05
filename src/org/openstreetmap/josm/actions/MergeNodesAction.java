@@ -259,13 +259,13 @@ public class MergeNodesAction extends JosmAction {
             newTargetNode.setCoor(targetLocationNode.getCoor());
             cmds.add(new ChangeCommand(targetNode, newTargetNode));
         }
+        cmds.addAll(dialog.buildResolutionCommands());
         if (!nodesToDelete.isEmpty()) {
             cmds.add(new DeleteCommand(nodesToDelete));
         }
         if (!waysToDelete.isEmpty()) {
             cmds.add(new DeleteCommand(waysToDelete));
         }
-        cmds.addAll(dialog.buildResolutionCommands());
         Command cmd = new SequenceCommand(tr("Merge {0} nodes", nodes.size()), cmds);
         return cmd;
     }

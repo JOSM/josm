@@ -270,6 +270,9 @@ public class OsmReader {
             } else if (qName.equals("tag")) {
                 String key = atts.getValue("k");
                 String value = atts.getValue("v");
+                if (key == null || value == null) {
+                    throwException(tr("Missing key or value attribute in tag."));
+                }
                 currentPrimitive.put(intern(key), intern(value));
 
             } else {
