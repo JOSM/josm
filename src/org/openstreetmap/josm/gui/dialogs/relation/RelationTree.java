@@ -29,7 +29,7 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
 
 /**
- * This is a {@se JTree} rendering the hierarchical structure of {@see Relation}s.
+ * This is a {@see JTree} rendering the hierarchical structure of {@see Relation}s.
  *
  * @see RelationTreeModel
  */

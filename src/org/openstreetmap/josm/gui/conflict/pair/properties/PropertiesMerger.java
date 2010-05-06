@@ -640,7 +640,7 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
                             + "has to reset the id of primitive {0} to 0.<br>"
                             + "On the next upload the server will assign<br>"
                             + "it a new id.<br>"
-                            + "Do yo agree?</html>",
+                            + "Do you agree?</html>",
                             model.getMyPrimitive().getId()
                     ),
                     tr("Reset id to 0"),
