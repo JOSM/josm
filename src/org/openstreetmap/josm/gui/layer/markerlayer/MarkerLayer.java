@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -281,7 +282,9 @@ public class MarkerLayer extends Layer {
 
         Collection<Component> components = new ArrayList<Component>();
         components.add(new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)));
-        components.add(new JMenuItem(new ShowHideMarkerText(this)));
+        JCheckBoxMenuItem showMarkerTextItem = new JCheckBoxMenuItem(new ShowHideMarkerText(this));
+        showMarkerTextItem.setState(isTextShown());
+        components.add(showMarkerTextItem);
         components.add(new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)));
         components.add(new JSeparator());
         components.add(color);
@@ -448,19 +451,24 @@ public class MarkerLayer extends Layer {
         }
     }
 
-    public static final class ShowHideMarkerText extends AbstractAction {
-        private final Layer layer;
+    private boolean isTextShown() {
+        String current = Main.pref.get("marker.show "+getName(),"show");
+        return current.equalsIgnoreCase("show");
+    }
 
-        public ShowHideMarkerText(Layer layer) {
-            super(tr("Show/Hide Text/Icons"), ImageProvider.get("dialogs", "showhide"));
+    public static final class ShowHideMarkerText extends AbstractAction {
+        private final MarkerLayer layer;
+
+        public ShowHideMarkerText(MarkerLayer layer) {
+            super(tr("Show Text/Icons"), ImageProvider.get("dialogs", "showhide"));
             putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the marker text and icons."));
             putValue("help", "Action/ShowHideTextIcons");
             this.layer = layer;
         }
 
+
         public void actionPerformed(ActionEvent e) {
-            String current = Main.pref.get("marker.show "+layer.getName(),"show");
-            Main.pref.put("marker.show "+layer.getName(), current.equalsIgnoreCase("show") ? "hide" : "show");
+            Main.pref.put("marker.show "+layer.getName(), layer.isTextShown() ? "hide" : "show");
             Main.map.mapView.repaint();
         }
     }
