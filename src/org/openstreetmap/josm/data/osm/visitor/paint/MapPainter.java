@@ -179,7 +179,7 @@ public class MapPainter {
         return true;
     }
 
-    public void drawNodeIcon(Node n, ImageIcon icon, boolean annotate, boolean selected, String name) {
+    public void drawNodeIcon(Node n, ImageIcon icon, boolean selected, String name) {
         Point p = nc.getPoint(n);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
 

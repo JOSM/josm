@@ -41,9 +41,8 @@ public class IconElemStyle extends ElemStyle
     public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings settings, MapPainter painter, boolean selected) {
         if (painter.isShowIcons()) {
             Node n = (Node) primitive;
-            String name = painter.isShowNames()?painter.getNodeName(n):null;
-            painter.drawNodeIcon(n, (painter.isInactive() || n.isDisabled())?getDisabledIcon():icon,
-                    annotate, selected, name);
+            String name = painter.isShowNames() && annotate?painter.getNodeName(n):null;
+            painter.drawNodeIcon(n, (painter.isInactive() || n.isDisabled())?getDisabledIcon():icon, selected, name);
         } else {
             SimpleNodeElemStyle.INSTANCE.paintPrimitive(primitive, settings, painter, selected);
         }
