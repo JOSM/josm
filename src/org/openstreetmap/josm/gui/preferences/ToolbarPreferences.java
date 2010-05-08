@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,6 +46,8 @@ import javax.swing.MenuElement;
 import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -60,6 +63,9 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class ToolbarPreferences implements PreferenceSettingFactory {
+
+
+    private static final String EMPTY_TOOLBAR_MARKER = "<!-empty-!>";
 
     public static class ActionDefinition {
 
@@ -282,6 +288,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                             selected.add(leadItem++, ActionDefinition.SEPARATOR);
                         } else if (node.getUserObject() instanceof Action) {
                             selected.add(leadItem++, new ActionDefinition((Action)node.getUserObject()));
+
                         }
                     }
                 } else if (e.getActionCommand().equals(">") && selectedList.getSelectedIndex() != -1) {
@@ -345,6 +352,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         private JButton upButton;
         private JButton downButton;
+        private JButton removeButton;
+        private JButton addButton;
 
         private String movingComponent;
 
@@ -365,6 +374,14 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             b.addActionListener(moveAction);
             b.setActionCommand(name);
             return b;
+        }
+
+        private void updateEnabledState() {
+            int index = selectedList.getSelectedIndex();
+            upButton.setEnabled(index > 0);
+            downButton.setEnabled(index < selectedList.getModel().getSize() - 1);
+            removeButton.setEnabled(index != -1);
+            addButton.setEnabled(actionsTree.getSelectionCount() > 0);
         }
 
         public void addGui(PreferenceTabbedPane gui) {
@@ -415,8 +432,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                         actionParametersModel.setCurrentAction(action);
                         actionParametersPanel.setVisible(actionParametersModel.getRowCount() > 0);
                     }
-                    upButton.setEnabled(sel);
-                    downButton.setEnabled(sel);
+                    updateEnabledState();
                 }
             });
 
@@ -460,10 +476,12 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                         Object leadItem = dropIndex >= 0 ? selected.elementAt(dropIndex) : null;
                         int dataLength = draggedData.size();
 
+
                         if (leadItem != null) {
                             for (Object o: draggedData) {
                                 if (leadItem.equals(o))
                                     return false;
+
                             }
                         }
 
@@ -552,6 +570,11 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 }
             });
             actionsTree.setDragEnabled(true);
+            actionsTree.getSelectionModel().addTreeSelectionListener(new TreeSelectionListener() {
+                public void valueChanged(TreeSelectionEvent e) {
+                    updateEnabledState();
+                }
+            });
 
             final JPanel left = new JPanel(new GridBagLayout());
             left.add(new JLabel(tr("Toolbar")), GBC.eol());
@@ -563,11 +586,10 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
             final JPanel buttons = new JPanel(new GridLayout(6,1));
             buttons.add(upButton = createButton("up"));
-            buttons.add(createButton("<"));
-            buttons.add(createButton(">"));
+            buttons.add(addButton = createButton("<"));
+            buttons.add(removeButton = createButton(">"));
             buttons.add(downButton = createButton("down"));
-            upButton.setEnabled(false);
-            downButton.setEnabled(false);
+            updateEnabledState();
 
             final JPanel p = new JPanel();
             p.setLayout(new LayoutManager(){
@@ -620,10 +642,15 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             ActionParser parser = new ActionParser(null);
             for (int i = 0; i < selected.size(); ++i) {
                 if (selected.get(i) == ActionDefinition.SEPARATOR) {
+
                     t.add("|");
+
                 } else {
                     t.add(parser.saveAction((ActionDefinition)(selected.get(i))));
                 }
+            }
+            if (t.isEmpty()) {
+                t = Collections.singletonList(EMPTY_TOOLBAR_MARKER);
             }
             Main.pref.putCollection("toolbar", t);
             Main.toolbar.refreshToolbarControl();
@@ -684,6 +711,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     private static final String[] deftoolbar = {"open", "save", "download", "upload", "|", "undo", "redo", "|", "dialogs/search", "preference", "|", "splitway", "combineway", "wayflip", "|", "tagginggroup_Highways/Streets", "tagginggroup_Highways/Ways", "tagginggroup_Highways/Waypoints", "tagginggroup_Highways/Barriers", "|", "tagginggroup_Transport/Car", "tagginggroup_Transport/Public Transport", "|", "tagginggroup_Travel/Tourism", "tagginggroup_Travel/Food+Drinks", "|", "tagginggroup_Travel/Historic Places", "|", "tagginggroup_Man-Made/Man Made"};
 
     private static Collection<String> getToolString() {
+
         Collection<String> toolStr = Main.pref.getCollection("toolbar", Arrays.asList(deftoolbar));
         if (toolStr == null || toolStr.size() == 0) {
             toolStr = Arrays.asList(deftoolbar);
@@ -734,6 +762,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         for (ActionDefinition action : getDefinedActions()) {
             if (action == ActionDefinition.SEPARATOR) {
                 control.addSeparator();
+
             } else {
                 Action a = action.getParametrizedAction();
                 JButton b = control.add(a);
