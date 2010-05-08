@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +80,6 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
@@ -198,7 +196,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         AutoCompletionManager autocomplete = Main.main.getEditLayer().data.getAutoCompletionManager();
         List<AutoCompletionListItem> keyList = autocomplete.getKeys();
         Collections.sort(keyList, defaultACItemComparator);
-        
+
         final AutoCompletingComboBox keys = new AutoCompletingComboBox();
         keys.setPossibleACItems(keyList);
         keys.setEditable(true);
@@ -230,10 +228,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         });
         values.setEditable(true);
-        
+
         List<AutoCompletionListItem> valueList = autocomplete.getValues(key);
         Collections.sort(valueList, defaultACItemComparator);
-        
+
         values.setPossibleACItems(valueList);
         Map<String, Integer> m=(Map<String, Integer>)propertyData.getValueAt(row, 1);
         final String selection= m.size()!=1?tr("<different>"):m.entrySet().iterator().next().getKey();
@@ -418,7 +416,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         FocusAdapter focus = new FocusAdapter() {
             @Override public void focusGained(FocusEvent e) {
                 String key = keys.getEditor().getItem().toString();
-                
+
                 List<AutoCompletionListItem> valueList = autocomplete.getValues(key);
                 Collections.sort(valueList, defaultACItemComparator);
 
@@ -534,7 +532,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
                 if (c instanceof JLabel) {
-                    ((JLabel)c).setText(((Relation)value).getDisplayName(DefaultNameFormatter.getInstance()));
+                    JLabel label = (JLabel)c;
+                    Relation r = (Relation)value;
+                    label.setText(r.getDisplayName(DefaultNameFormatter.getInstance()));
+                    if (r.isFiltered()) {
+                        label.setFont(label.getFont().deriveFont(Font.ITALIC));
+                    }
                 }
                 return c;
             }
@@ -545,7 +548,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
+                boolean isFiltered = (((Relation)table.getValueAt(row, 0))).isFiltered();
                 if (c instanceof JLabel) {
+                    JLabel label = (JLabel)c;
                     Collection<RelationMember> col = (Collection<RelationMember>) value;
 
                     String text = null;
@@ -559,7 +564,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                         }
                     }
 
-                    ((JLabel)c).setText(text);
+                    label.setText(text);
+                    if (isFiltered) {
+                        label.setFont(label.getFont().deriveFont(Font.ITALIC));
+                    }
                 }
                 return c;
             }
@@ -799,24 +807,32 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         Map<Relation, Collection<RelationMember>> roles = new HashMap<Relation, Collection<RelationMember>>();
         for (OsmPrimitive primitive: newSelection) {
             for (OsmPrimitive ref: primitive.getReferrers()) {
-                if (ref instanceof Relation && !ref.isFiltered() && !ref.isIncomplete() && !ref.isDeleted()) {
+                if (ref instanceof Relation && !ref.isIncomplete() && !ref.isDeleted()) {
                     Relation r = (Relation) ref;
+                    Collection<RelationMember> members = new ArrayList<RelationMember>();
+                    roles.put(r, members);
                     for (RelationMember m : r.getMembers()) {
                         if (m.getMember() == primitive) {
-                            Collection<RelationMember> value = roles.get(r);
-                            if (value == null) {
-                                value = new HashSet<RelationMember>();
-                                roles.put(r, value);
-                            }
-                            value.add(m);
+                            members.add(m);
                         }
                     }
                 }
             }
         }
 
-        for (Entry<Relation, Collection<RelationMember>> e : roles.entrySet()) {
-            membershipData.addRow(new Object[]{e.getKey(), e.getValue()});
+        List<Relation> sortedRelations = new ArrayList<Relation>(roles.keySet());
+        Collections.sort(sortedRelations, new Comparator<Relation>() {
+            public int compare(Relation o1, Relation o2) {
+                int comp = Boolean.valueOf(o1.isFiltered()).compareTo(o2.isFiltered());
+                if (comp == 0) {
+                    comp = o1.getDisplayName(DefaultNameFormatter.getInstance()).compareTo(o2.getDisplayName(DefaultNameFormatter.getInstance()));
+                }
+                return comp;
+            }}
+        );
+
+        for (Relation r: sortedRelations) {
+            membershipData.addRow(new Object[]{r, roles.get(r)});
         }
 
         checkPresets(nodes, ways, relations, closedways);
