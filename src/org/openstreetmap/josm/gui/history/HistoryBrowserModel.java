@@ -870,13 +870,21 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
     static class HistoryPrimitiveBuilder extends AbstractVisitor {
         private HistoryOsmPrimitive clone;
 
+        private String getUserName(OsmPrimitive primitive) {
+            return primitive.getUser() == null?null:primitive.getUser().getName();
+        }
+
+        private long getUserId(OsmPrimitive primitive) {
+            return primitive.getUser() == null?0:primitive.getUser().getId();
+        }
+
         public void visit(Node n) {
-            clone = new HistoryNode(n.getId(), n.getVersion(), n.isVisible(),n.getUser().getName(), n.getUser().getId(), 0, n.getTimestamp(), n.getCoor());
+            clone = new HistoryNode(n.getId(), n.getVersion(), n.isVisible(), getUserName(n), getUserId(n), 0, n.getTimestamp(), n.getCoor());
             clone.setTags(n.getKeys());
         }
 
         public void visit(Relation r) {
-            clone = new HistoryRelation(r.getId(), r.getVersion(), r.isVisible(),r.getUser().getName(), r.getUser().getId(), 0, r.getTimestamp());
+            clone = new HistoryRelation(r.getId(), r.getVersion(), r.isVisible(), getUserName(r), getUserId(r), 0, r.getTimestamp());
             clone.setTags(r.getKeys());
             HistoryRelation hr = (HistoryRelation)clone;
             for (RelationMember rm : r.getMembers()) {
@@ -885,7 +893,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
 
         public void visit(Way w) {
-            clone = new HistoryWay(w.getId(), w.getVersion(), w.isVisible(),w.getUser().getName(), w.getUser().getId(), 0, w.getTimestamp());
+            clone = new HistoryWay(w.getId(), w.getVersion(), w.isVisible(), getUserName(w), getUserId(w), 0, w.getTimestamp());
             clone.setTags(w.getKeys());
             for (Node n: w.getNodes()) {
                 ((HistoryWay)clone).addNode(n.getUniqueId());
