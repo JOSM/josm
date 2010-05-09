@@ -43,6 +43,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -133,150 +134,154 @@ public class OsmReader {
 
         @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 
-            if (qName.equals("osm")) {
-                if (atts == null) {
-                    throwException(tr("Missing mandatory attribute ''{0}'' of XML element {1}.", "version", "osm"));
-                }
-                String v = atts.getValue("version");
-                if (v == null) {
-                    throwException(tr("Missing mandatory attribute ''{0}''.", "version"));
-                }
-                if (!(v.equals("0.5") || v.equals("0.6"))) {
-                    throwException(tr("Unsupported version: {0}", v));
-                }
-                // save generator attribute for later use when creating DataSource objects
-                generator = atts.getValue("generator");
-                ds.setVersion(v);
-
-            } else if (qName.equals("bounds")) {
-                // new style bounds.
-                String minlon = atts.getValue("minlon");
-                String minlat = atts.getValue("minlat");
-                String maxlon = atts.getValue("maxlon");
-                String maxlat = atts.getValue("maxlat");
-                String origin = atts.getValue("origin");
-                if (minlon != null && maxlon != null && minlat != null && maxlat != null) {
-                    if (origin == null) {
-                        origin = generator;
+            try {
+                if (qName.equals("osm")) {
+                    if (atts == null) {
+                        throwException(tr("Missing mandatory attribute ''{0}'' of XML element {1}.", "version", "osm"));
                     }
-                    Bounds bounds = new Bounds(
-                            new LatLon(Double.parseDouble(minlat), Double.parseDouble(minlon)),
-                            new LatLon(Double.parseDouble(maxlat), Double.parseDouble(maxlon)));
-                    DataSource src = new DataSource(bounds, origin);
-                    ds.dataSources.add(src);
+                    String v = atts.getValue("version");
+                    if (v == null) {
+                        throwException(tr("Missing mandatory attribute ''{0}''.", "version"));
+                    }
+                    if (!(v.equals("0.5") || v.equals("0.6"))) {
+                        throwException(tr("Unsupported version: {0}", v));
+                    }
+                    // save generator attribute for later use when creating DataSource objects
+                    generator = atts.getValue("generator");
+                    ds.setVersion(v);
+
+                } else if (qName.equals("bounds")) {
+                    // new style bounds.
+                    String minlon = atts.getValue("minlon");
+                    String minlat = atts.getValue("minlat");
+                    String maxlon = atts.getValue("maxlon");
+                    String maxlat = atts.getValue("maxlat");
+                    String origin = atts.getValue("origin");
+                    if (minlon != null && maxlon != null && minlat != null && maxlat != null) {
+                        if (origin == null) {
+                            origin = generator;
+                        }
+                        Bounds bounds = new Bounds(
+                                new LatLon(Double.parseDouble(minlat), Double.parseDouble(minlon)),
+                                new LatLon(Double.parseDouble(maxlat), Double.parseDouble(maxlon)));
+                        DataSource src = new DataSource(bounds, origin);
+                        ds.dataSources.add(src);
+                    } else {
+                        throwException(tr(
+                                "Missing manadatory attributes on element ''bounds''. Got minlon=''{0}'',minlat=''{1}'',maxlon=''{3}'',maxlat=''{4}'', origin=''{5}''.",
+                                minlon, minlat, maxlon, maxlat, origin
+                        ));
+                    }
+
+                    // ---- PARSING NODES AND WAYS ----
+
+                } else if (qName.equals("node")) {
+                    NodeData nd = new NodeData();
+                    nd.setCoor(new LatLon(getDouble(atts, "lat"), getDouble(atts, "lon")));
+                    readCommon(atts, nd);
+                    Node n = new Node(nd.getId(), nd.getVersion());
+                    n.load(nd);
+                    externalIdMap.put(nd.getPrimitiveId(), n);
+                    currentPrimitive = n;
+                    currentExternalId = nd.getUniqueId();
+                } else if (qName.equals("way")) {
+                    WayData wd = new WayData();
+                    readCommon(atts, wd);
+                    Way w = new Way(wd.getId(), wd.getVersion());
+                    w.load(wd);
+                    externalIdMap.put(wd.getPrimitiveId(), w);
+                    ways.put(wd.getUniqueId(), new ArrayList<Long>());
+                    currentPrimitive = w;
+                    currentExternalId = wd.getUniqueId();
+                } else if (qName.equals("nd")) {
+                    Collection<Long> list = ways.get(currentExternalId);
+                    if (list == null) {
+                        throwException(
+                                tr("Found XML element <nd> not as direct child of element <way>.")
+                        );
+                    }
+                    if (atts.getValue("ref") == null) {
+                        throwException(
+                                tr("Missing mandatory attribute ''{0}'' on <nd> of way {1}.", "ref", currentPrimitive.getUniqueId())
+                        );
+                    }
+                    long id = getLong(atts, "ref");
+                    if (id == 0) {
+                        throwException(
+                                tr("Illegal value of attribute ''ref'' of element <nd>. Got {0}.", id)
+                        );
+                    }
+                    if (currentPrimitive.isDeleted()) {
+                        logger.info(tr("Deleted way {0} contains nodes", currentPrimitive.getUniqueId()));
+                    } else {
+                        list.add(id);
+                    }
+
+                    // ---- PARSING RELATIONS ----
+
+                } else if (qName.equals("relation")) {
+                    RelationData rd = new RelationData();
+                    readCommon(atts, rd);
+                    Relation r = new Relation(rd.getId(), rd.getVersion());
+                    r.load(rd);
+                    externalIdMap.put(rd.getPrimitiveId(), r);
+                    relations.put(rd.getUniqueId(), new LinkedList<RelationMemberData>());
+                    currentPrimitive = r;
+                    currentExternalId = rd.getUniqueId();
+                } else if (qName.equals("member")) {
+                    Collection<RelationMemberData> list = relations.get(currentExternalId);
+                    if (list == null) {
+                        throwException(
+                                tr("Found XML element <member> not as direct child of element <relation>.")
+                        );
+                    }
+                    RelationMemberData emd = new RelationMemberData();
+                    String value = atts.getValue("ref");
+                    if (value == null) {
+                        throwException(tr("Missing attribute ''ref'' on member in relation {0}.",currentPrimitive.getUniqueId()));
+                    }
+                    try {
+                        emd.id = Long.parseLong(value);
+                    } catch(NumberFormatException e) {
+                        throwException(tr("Illegal value for attribute ''ref'' on member in relation {0}. Got {1}", Long.toString(currentPrimitive.getUniqueId()),value));
+                    }
+                    value = atts.getValue("type");
+                    if (value == null) {
+                        throwException(tr("Missing attribute ''type'' on member {0} in relation {1}.", Long.toString(emd.id), Long.toString(currentPrimitive.getUniqueId())));
+                    }
+                    try {
+                        emd.type = OsmPrimitiveType.fromApiTypeName(value);
+                    } catch(IllegalArgumentException e) {
+                        throwException(tr("Illegal value for attribute ''type'' on member {0} in relation {1}. Got {2}.", Long.toString(emd.id), Long.toString(currentPrimitive.getUniqueId()), value));
+                    }
+                    value = atts.getValue("role");
+                    emd.role = value;
+
+                    if (emd.id == 0) {
+                        throwException(tr("Incomplete <member> specification with ref=0"));
+                    }
+
+                    if (currentPrimitive.isDeleted()) {
+                        logger.info(tr("Deleted relation {0} contains members", currentPrimitive.getUniqueId()));
+                    } else {
+                        list.add(emd);
+                    }
+
+                    // ---- PARSING TAGS (applicable to all objects) ----
+
+                } else if (qName.equals("tag")) {
+                    String key = atts.getValue("k");
+                    String value = atts.getValue("v");
+                    if (key == null || value == null) {
+                        throwException(tr("Missing key or value attribute in tag."));
+                    }
+                    currentPrimitive.put(intern(key), intern(value));
+
                 } else {
-                    throwException(tr(
-                            "Missing manadatory attributes on element ''bounds''. Got minlon=''{0}'',minlat=''{1}'',maxlon=''{3}'',maxlat=''{4}'', origin=''{5}''.",
-                            minlon, minlat, maxlon, maxlat, origin
-                    ));
+                    System.out.println(tr("Undefined element ''{0}'' found in input stream. Skipping.", qName));
                 }
-
-                // ---- PARSING NODES AND WAYS ----
-
-            } else if (qName.equals("node")) {
-                NodeData nd = new NodeData();
-                nd.setCoor(new LatLon(getDouble(atts, "lat"), getDouble(atts, "lon")));
-                readCommon(atts, nd);
-                Node n = new Node(nd.getId(), nd.getVersion());
-                n.load(nd);
-                externalIdMap.put(nd.getPrimitiveId(), n);
-                currentPrimitive = n;
-                currentExternalId = nd.getUniqueId();
-            } else if (qName.equals("way")) {
-                WayData wd = new WayData();
-                readCommon(atts, wd);
-                Way w = new Way(wd.getId(), wd.getVersion());
-                w.load(wd);
-                externalIdMap.put(wd.getPrimitiveId(), w);
-                ways.put(wd.getUniqueId(), new ArrayList<Long>());
-                currentPrimitive = w;
-                currentExternalId = wd.getUniqueId();
-            } else if (qName.equals("nd")) {
-                Collection<Long> list = ways.get(currentExternalId);
-                if (list == null) {
-                    throwException(
-                            tr("Found XML element <nd> not as direct child of element <way>.")
-                    );
-                }
-                if (atts.getValue("ref") == null) {
-                    throwException(
-                            tr("Missing mandatory attribute ''{0}'' on <nd> of way {1}.", "ref", currentPrimitive.getUniqueId())
-                    );
-                }
-                long id = getLong(atts, "ref");
-                if (id == 0) {
-                    throwException(
-                            tr("Illegal value of attribute ''ref'' of element <nd>. Got {0}.", id)
-                    );
-                }
-                if (currentPrimitive.isDeleted()) {
-                    logger.info(tr("Deleted way {0} contains nodes", currentPrimitive.getUniqueId()));
-                } else {
-                    list.add(id);
-                }
-
-                // ---- PARSING RELATIONS ----
-
-            } else if (qName.equals("relation")) {
-                RelationData rd = new RelationData();
-                readCommon(atts, rd);
-                Relation r = new Relation(rd.getId(), rd.getVersion());
-                r.load(rd);
-                externalIdMap.put(rd.getPrimitiveId(), r);
-                relations.put(rd.getUniqueId(), new LinkedList<RelationMemberData>());
-                currentPrimitive = r;
-                currentExternalId = rd.getUniqueId();
-            } else if (qName.equals("member")) {
-                Collection<RelationMemberData> list = relations.get(currentExternalId);
-                if (list == null) {
-                    throwException(
-                            tr("Found XML element <member> not as direct child of element <relation>.")
-                    );
-                }
-                RelationMemberData emd = new RelationMemberData();
-                String value = atts.getValue("ref");
-                if (value == null) {
-                    throwException(tr("Missing attribute ''ref'' on member in relation {0}.",currentPrimitive.getUniqueId()));
-                }
-                try {
-                    emd.id = Long.parseLong(value);
-                } catch(NumberFormatException e) {
-                    throwException(tr("Illegal value for attribute ''ref'' on member in relation {0}. Got {1}", Long.toString(currentPrimitive.getUniqueId()),value));
-                }
-                value = atts.getValue("type");
-                if (value == null) {
-                    throwException(tr("Missing attribute ''type'' on member {0} in relation {1}.", Long.toString(emd.id), Long.toString(currentPrimitive.getUniqueId())));
-                }
-                try {
-                    emd.type = OsmPrimitiveType.fromApiTypeName(value);
-                } catch(IllegalArgumentException e) {
-                    throwException(tr("Illegal value for attribute ''type'' on member {0} in relation {1}. Got {2}.", Long.toString(emd.id), Long.toString(currentPrimitive.getUniqueId()), value));
-                }
-                value = atts.getValue("role");
-                emd.role = value;
-
-                if (emd.id == 0) {
-                    throwException(tr("Incomplete <member> specification with ref=0"));
-                }
-
-                if (currentPrimitive.isDeleted()) {
-                    logger.info(tr("Deleted relation {0} contains members", currentPrimitive.getUniqueId()));
-                } else {
-                    list.add(emd);
-                }
-
-                // ---- PARSING TAGS (applicable to all objects) ----
-
-            } else if (qName.equals("tag")) {
-                String key = atts.getValue("k");
-                String value = atts.getValue("v");
-                if (key == null || value == null) {
-                    throwException(tr("Missing key or value attribute in tag."));
-                }
-                currentPrimitive.put(intern(key), intern(value));
-
-            } else {
-                System.out.println(tr("Undefined element ''{0}'' found in input stream. Skipping.", qName));
+            } catch (Exception e) {
+                throw new SAXParseException(e.getMessage(), locator, e);
             }
         }
 
@@ -583,6 +588,8 @@ public class OsmReader {
             throw e;
         } catch(ParserConfigurationException e) {
             throw new IllegalDataException(e.getMessage(), e);
+        } catch (SAXParseException e) {
+            throw new IllegalDataException(tr("Line {0} column {1}: ", e.getLineNumber(), e.getColumnNumber()) + e.getMessage(), e);
         } catch(SAXException e) {
             throw new IllegalDataException(e.getMessage(), e);
         } catch(Exception e) {
