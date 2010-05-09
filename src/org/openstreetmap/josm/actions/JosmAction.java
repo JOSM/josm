@@ -71,8 +71,8 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         setHelpId();
         sc = shortcut;
         if (sc != null) {
-            Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), name);
-            Main.contentPane.getActionMap().put(name, this);
+            Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), this);
+            Main.contentPane.getActionMap().put(this, this);
         }
         putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
         putValue("toolbar", iconName);
