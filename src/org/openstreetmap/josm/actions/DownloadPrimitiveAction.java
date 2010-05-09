@@ -54,7 +54,7 @@ public class DownloadPrimitiveAction extends JosmAction {
         gc.weightx = 0;
         all.add(new JLabel(tr("Object type:")), gc);
         OsmPrimitiveTypesComboBox cbType = new OsmPrimitiveTypesComboBox();
-        cbType.setToolTipText("Choose the OSM object type");
+        cbType.setToolTipText(tr("Choose the OSM object type"));
         gc.weightx = 1;
         all.add(cbType, gc);
         gc.gridy = 1;
