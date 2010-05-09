@@ -68,7 +68,6 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -1073,7 +1072,6 @@ public class GenericRelationEditor extends RelationEditor  {
             memberTableModel.applyToRelation(editedRelation);
             Main.main.undoRedo.add(new ChangeCommand(getRelation(), editedRelation));
             getLayer().data.fireSelectionChanged();
-            getLayer().fireDataChange();
             // this will refresh the snapshot and update the dialog title
             //
             setRelation(getRelation());

@@ -173,7 +173,6 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable{
                 SwingUtilities.invokeLater(
                         new Runnable() {
                             public void run() {
-                                getLayer().fireDataChange();
                                 getLayer().onPostDownloadFromServer();
                             }
                         }

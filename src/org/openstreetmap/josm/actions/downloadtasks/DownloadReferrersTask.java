@@ -163,7 +163,6 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
         SwingUtilities.invokeLater(
                 new Runnable() {
                     public void run() {
-                        targetLayer.fireDataChange();
                         targetLayer.onPostDownloadFromServer();
                         Main.map.mapView.repaint();
                     }

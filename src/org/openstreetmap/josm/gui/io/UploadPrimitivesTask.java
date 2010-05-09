@@ -211,7 +211,6 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
         Runnable r  = new Runnable() {
             public void run() {
                 layer.cleanupAfterUpload(processedPrimitives);
-                layer.fireDataChange();
                 layer.onPostUploadToServer();
                 ChangesetCache.getInstance().update(changeset);
             }

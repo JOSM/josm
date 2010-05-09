@@ -11,7 +11,6 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 
 public class UndoRedoHandler implements MapView.LayerChangeListener {
@@ -47,10 +46,6 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
     }
 
     public void afterAdd() {
-        if (Main.map != null && Main.map.mapView.getActiveLayer() instanceof OsmDataLayer) {
-            OsmDataLayer data = (OsmDataLayer)Main.map.mapView.getActiveLayer();
-            data.fireDataChange();
-        }
         fireCommandsChanged();
 
         // the command may have changed the selection so tell the listeners about the current situation
@@ -75,10 +70,6 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
         final Command c = commands.removeLast();
         c.undoCommand();
         redoCommands.push(c);
-        if (Main.map != null && Main.map.mapView.getActiveLayer() instanceof OsmDataLayer) {
-            OsmDataLayer data = (OsmDataLayer)Main.map.mapView.getActiveLayer();
-            data.fireDataChange();
-        }
         fireCommandsChanged();
         Collection<? extends OsmPrimitive> newSelection = Main.main.getCurrentDataSet().getSelected();
         if (!oldSelection.equals(newSelection)) {
@@ -97,10 +88,6 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
         final Command c = redoCommands.pop();
         c.executeCommand();
         commands.add(c);
-        if (Main.map != null && Main.map.mapView.getActiveLayer() instanceof OsmDataLayer) {
-            OsmDataLayer data = (OsmDataLayer)Main.map.mapView.getActiveLayer();
-            data.fireDataChange();
-        }
         fireCommandsChanged();
         Collection<? extends OsmPrimitive> newSelection = Main.main.getCurrentDataSet().getSelected();
         if (!oldSelection.equals(newSelection)) {

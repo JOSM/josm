@@ -22,7 +22,6 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
@@ -329,8 +328,8 @@ public class ChildRelationBrowser extends JPanel {
                         trn("There was {0} conflict during import.",
                                 "There were {0} conflicts during import.",
                                 conflictsCount, conflictsCount),
-                        trn("Conflict in data", "Conflicts in data", conflictsCount),
-                        JOptionPane.WARNING_MESSAGE
+                                trn("Conflict in data", "Conflicts in data", conflictsCount),
+                                JOptionPane.WARNING_MESSAGE
                 );
             }
         }
@@ -383,15 +382,6 @@ public class ChildRelationBrowser extends JPanel {
             if (ds != null) {
                 final DataSetMerger visitor = new DataSetMerger(getLayer().data, ds);
                 visitor.merge();
-                // FIXME: this is necessary because there are dialogs listening
-                // for DataChangeEvents which manipulate Swing components on this
-                // thread.
-                //
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        getLayer().fireDataChange();
-                    }
-                });
                 if (!visitor.getConflicts().isEmpty()) {
                     getLayer().getConflicts().add(visitor.getConflicts());
                     conflictsCount +=  visitor.getConflicts().size();
@@ -484,8 +474,8 @@ public class ChildRelationBrowser extends JPanel {
                         trn("There was {0} conflict during import.",
                                 "There were {0} conflicts during import.",
                                 conflictsCount, conflictsCount),
-                        trn("Conflict in data", "Conflicts in data", conflictsCount),
-                        JOptionPane.WARNING_MESSAGE
+                                trn("Conflict in data", "Conflicts in data", conflictsCount),
+                                JOptionPane.WARNING_MESSAGE
                 );
             }
         }
@@ -494,15 +484,6 @@ public class ChildRelationBrowser extends JPanel {
             if (dataSet != null) {
                 final DataSetMerger visitor = new DataSetMerger(getLayer().data, dataSet);
                 visitor.merge();
-                // FIXME: this is necessary because there are dialogs listening
-                // for DataChangeEvents which manipulate Swing components on this
-                // thread.
-                //
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        getLayer().fireDataChange();
-                    }
-                });
                 if (!visitor.getConflicts().isEmpty()) {
                     getLayer().getConflicts().add(visitor.getConflicts());
                     conflictsCount +=  visitor.getConflicts().size();

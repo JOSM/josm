@@ -82,8 +82,8 @@ public class MapPaintPreference implements PreferenceSetting {
     }
 
     public boolean ok() {
-        Boolean restart = Main.pref.put("mappaint.style.enable-defaults", enableDefault.getSelectedObjects() != null);
-        if(Main.pref.put("mappaint.icon.enable-defaults", enableIconDefault.getSelectedObjects() != null)) {
+        Boolean restart = Main.pref.put("mappaint.style.enable-defaults", enableDefault.isSelected());
+        if(Main.pref.put("mappaint.icon.enable-defaults", enableIconDefault.isSelected())) {
             restart = true;
         }
         if(sources.finish()) {

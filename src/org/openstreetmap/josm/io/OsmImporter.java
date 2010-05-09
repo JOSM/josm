@@ -46,7 +46,6 @@ public class OsmImporter extends FileImporter {
         Runnable uiStuff = new Runnable() {
             public void run() {
                 Main.main.addLayer(layer);
-                layer.fireDataChange();
                 layer.onPostLoadFromFile();
             }
         };

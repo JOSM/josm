@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -162,13 +161,6 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
      * the collection of conflicts detected in this layer
      */
     private ConflictCollection conflicts;
-
-    /**
-     * @deprecated Use {@link DataSet#addDataSetListener(org.openstreetmap.josm.data.osm.event.DataSetListener)} instead
-     * @see DataSetListener, DatasetEventManager
-     */
-    @Deprecated
-    public final LinkedList<DataChangeListener> listenerDataChanged = new LinkedList<DataChangeListener>();
 
     /**
      * a paint texture for non-downloaded area
@@ -329,7 +321,6 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         if (cmd != null) {
             Main.main.undoRedo.add(cmd);
         }
-        fireDataChange();
         // repaint to make sure new data is displayed properly.
         Main.map.mapView.repaint();
         warnNumNewConflicts(
@@ -545,14 +536,6 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
                 new JMenuItem(new LayerListPopup.InfoAction(this))};
     }
 
-    public void fireDataChange() {
-        setRequiresSaveToFile(true);
-        setRequiresUploadToServer(true);
-        for (DataChangeListener dcl : listenerDataChanged) {
-            dcl.dataChanged(this);
-        }
-    }
-
     public static GpxData toGpxData(DataSet data, File file) {
         GpxData gpxData = new GpxData();
         gpxData.storageFile = file;
@@ -738,6 +721,8 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
 
     public void processDatasetEvent(AbstractDatasetChangedEvent event) {
         isChanged = true;
+        setRequiresSaveToFile(true);
+        setRequiresUploadToServer(true);
     }
 
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
