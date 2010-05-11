@@ -171,17 +171,25 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         createHatchTexture();
     }
 
+    public static Color getBackgroundColor() {
+        return Main.pref.getColor(marktr("background"), Color.BLACK);
+    }
+
+    public static Color getOutsideColor() {
+        return Main.pref.getColor(marktr("outside downloaded area"), Color.YELLOW);
+    }
+
     /**
      * Initialize the hatch pattern used to paint the non-downloaded area
      */
     public static void createHatchTexture() {
         BufferedImage bi = new BufferedImage(15, 15, BufferedImage.TYPE_INT_ARGB);
         Graphics2D big = bi.createGraphics();
-        big.setColor(Main.pref.getColor(marktr("background"), Color.BLACK));
+        big.setColor(getBackgroundColor());
         Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
         big.setComposite(comp);
         big.fillRect(0,0,15,15);
-        big.setColor(Main.pref.getColor(marktr("outside downloaded area"), Color.YELLOW));
+        big.setColor(getOutsideColor());
         big.drawLine(0,15,15,0);
         Rectangle r = new Rectangle(0, 0, 15,15);
         hatched = new TexturePaint(bi, r);

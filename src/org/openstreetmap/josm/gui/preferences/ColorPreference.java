@@ -36,7 +36,9 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.MapScaler;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -255,6 +257,9 @@ public class ColorPreference implements PreferenceSetting {
     private void fixColorPrefixes() {
         PaintColors.getColors();
         MarkerLayer.getColor(null);
+        GpxLayer.getColor(null);
+        OsmDataLayer.getBackgroundColor();
+        OsmDataLayer.getOutsideColor();
         MapScaler.getColor();
         ConflictDialog.getColor();
     }

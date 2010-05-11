@@ -236,7 +236,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
         JMenuItem color = new JMenuItem(tr("Customize Color"), ImageProvider.get("colorchooser"));
         color.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                JColorChooser c = new JColorChooser(Main.pref.getColor(marktr("GPS point"), "layer "+getName(), Color.gray));
+                JColorChooser c = new JColorChooser(Main.pref.getColor(marktr("gps point"), "layer "+getName(), Color.gray));
                 Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
                 int answer = JOptionPane.showOptionDialog(
                         Main.parent,
