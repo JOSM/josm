@@ -275,7 +275,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                 return;
             }
         }
-        layers.add(layer);
+        layers.add(0, layer);
     }
 
     /**
