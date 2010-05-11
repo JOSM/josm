@@ -62,7 +62,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * PluginHandler is basically a collection of static utility functions used to bootstrap
  * and manage the loaded plugins.
- * 
+ *
  */
 public class PluginHandler {
 
@@ -83,9 +83,9 @@ public class PluginHandler {
     /**
      * Removes deprecated plugins from a collection of plugins. Modifies the
      * collection <code>plugins</code>.
-     * 
+     *
      * Also notifies the user about removed deprecated plugins
-     * 
+     *
      * @param plugins the collection of plugins
      */
     private static void filterDeprecatedPlugins(Window parent, Collection<String> plugins) {
@@ -127,9 +127,9 @@ public class PluginHandler {
      * Removes unmaintained plugins from a collection of plugins. Modifies the
      * collection <code>plugins</code>. Also removes the plugin from the list
      * of plugins in the preferences, if necessary.
-     * 
+     *
      * Asks the user for every unmaintained plugin whether it should be removed.
-     * 
+     *
      * @param plugins the collection of plugins
      */
     private static void filterUnmaintainedPlugins(Window parent, Collection<String> plugins) {
@@ -152,7 +152,7 @@ public class PluginHandler {
      * asks the user if running an update is OK. An update is advised if
      * JOSM was updated to a new version since the last plugin updates or
      * if the plugins were last updated a long time ago.
-     * 
+     *
      * @param parent the parent window relative to which the confirmation dialog
      * is to be displayed
      * @return true if a plugin update should be run; false, otherwise
@@ -260,7 +260,7 @@ public class PluginHandler {
 
     /**
      * Alerts the user if a plugin required by another plugin is missing
-     * 
+     *
      * @param plugin the the plugin
      * @param missingRequiredPlugin the missing required plugin
      */
@@ -303,7 +303,7 @@ public class PluginHandler {
      * Checks whether all preconditions for loading the plugin <code>plugin</code> are met. The
      * current JOSM version must be compatible with the plugin and no other plugins this plugin
      * depends on should be missing.
-     * 
+     *
      * @param plugins the collection of all loaded plugins
      * @param plugin the plugin for which preconditions are checked
      * @return true, if the preconditions are met; false otherwise
@@ -341,7 +341,7 @@ public class PluginHandler {
 
     /**
      * Creates a class loader for loading plugin code.
-     * 
+     *
      * @param plugins the collection of plugins which are going to be loaded with this
      * class loader
      * @return the class loader
@@ -370,7 +370,7 @@ public class PluginHandler {
     /**
      * Loads and instantiates the plugin described by <code>plugin</code> using
      * the class loader <code>pluginClassLoader</code>.
-     * 
+     *
      * @param plugin the plugin
      * @param pluginClassLoader the plugin class loader
      */
@@ -382,8 +382,8 @@ public class PluginHandler {
                 pluginList.add(plugin.load(klass));
             }
         } catch(PluginException e) {
+            e.printStackTrace();
             if (e.getCause() instanceof ClassNotFoundException) {
-                e.printStackTrace();
                 String msg = tr("<html>Could not load plugin {0} because the plugin<br>main class ''{1}'' was not found.<br>"
                         + "Delete from preferences?", plugin.name, plugin.className);
                 if (confirmDisablePlugin(parent, msg, plugin.name)) {
@@ -402,7 +402,7 @@ public class PluginHandler {
     /**
      * Loads the plugin in <code>plugins</code> from locally available jar files into
      * memory.
-     * 
+     *
      * @param plugins the list of plugins
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
      */
@@ -451,7 +451,7 @@ public class PluginHandler {
     /**
      * Loads plugins from <code>plugins</code> which have the flag {@see PluginInformation#early}
      * set to true.
-     * 
+     *
      * @param plugins the collection of plugins
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
      */
@@ -468,7 +468,7 @@ public class PluginHandler {
     /**
      * Loads plugins from <code>plugins</code> which have the flag {@see PluginInformation#early}
      * set to false.
-     * 
+     *
      * @param plugins the collection of plugins
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
      */
@@ -488,7 +488,7 @@ public class PluginHandler {
      *
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
      * @return the list of locally available plugin information
-     * 
+     *
      */
     private static Map<String, PluginInformation> loadLocallyAvailablePluginInformation(ProgressMonitor monitor) {
         if (monitor == null) {
@@ -613,7 +613,7 @@ public class PluginHandler {
 
     /**
      * Updates the plugins in <code>plugins</code>.
-     * 
+     *
      * @param parent the parent window for message boxes
      * @param plugins the collection of plugins to update. Must not be null.
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
@@ -695,7 +695,7 @@ public class PluginHandler {
 
     /**
      * Ask the user for confirmation that a plugin shall be disabled.
-     * 
+     *
      * @param reason the reason for disabling the plugin
      * @param name the plugin name
      * @return true, if the plugin shall be disabled; false, otherwise
@@ -730,7 +730,7 @@ public class PluginHandler {
 
     /**
      * Notified loaded plugins about a new map frame
-     * 
+     *
      * @param old the old map frame
      * @param map the new map frame
      */
@@ -762,11 +762,11 @@ public class PluginHandler {
     /**
      * Installs downloaded plugins. Moves files with the suffix ".jar.new" to the corresponding
      * ".jar" files.
-     * 
+     *
      * If {@code dowarn} is true, this methods emits warning messages on the console if a downloaded
      * but not yet installed plugin .jar can't be be installed. If {@code dowarn} is false, the
      * installation of the respective plugin is sillently skipped.
-     * 
+     *
      * @param dowarn if true, warning messages are displayed; false otherwise
      */
     public static void installDownloadedPlugins(boolean dowarn) {
@@ -842,7 +842,7 @@ public class PluginHandler {
 
     /**
      * Replies the plugin which most likely threw the exception <code>ex</code>.
-     * 
+     *
      * @param ex the exception
      * @return the plugin; null, if the exception proably wasn't thrown from a plugin
      */
@@ -863,7 +863,7 @@ public class PluginHandler {
     /**
      * Checks whether the exception <code>e</code> was thrown by a plugin. If so,
      * conditionally deactivates the plugin, but asks the user first.
-     * 
+     *
      * @param e the exception
      */
     public static void disablePluginAfterException(Throwable e) {
@@ -913,7 +913,7 @@ public class PluginHandler {
             text += "Plugin " + pp.getPluginInformation().name;
             String version = pp.getPluginInformation().localversion;
             text += version != null && !version.equals("") ? " (Version: " + version + ")\n"
-                        : "\n";
+                    : "\n";
         }
         return text;
     }

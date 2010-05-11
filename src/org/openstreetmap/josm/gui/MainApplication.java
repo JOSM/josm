@@ -10,6 +10,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.Authenticator;
 import java.net.ProxySelector;
+import java.security.AllPermission;
+import java.security.CodeSource;
+import java.security.PermissionCollection;
+import java.security.Permissions;
+import java.security.Policy;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -128,6 +133,24 @@ public class MainApplication extends Main {
      */
     public static void main(final String[] argArray) {
         I18n.init();
+
+        Policy.setPolicy(new Policy() {
+            // Permissions for plug-ins loaded when josm is started via webstart
+            private PermissionCollection pc;
+
+            {
+                pc = new Permissions();
+                pc.add(new AllPermission());
+            }
+
+            @Override
+            public void refresh() { }
+
+            @Override
+            public PermissionCollection getPermissions(CodeSource codesource) {
+                return pc;
+            }
+        });
 
         Thread.setDefaultUncaughtExceptionHandler(new BugReportExceptionHandler());
         // http://stuffthathappens.com/blog/2007/10/15/one-more-note-on-uncaught-exception-handlers/
