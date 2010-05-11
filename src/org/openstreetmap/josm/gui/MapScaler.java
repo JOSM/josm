@@ -29,7 +29,7 @@ public class MapScaler extends JComponent implements Helpful {
         g.drawLine(0, 5, 99, 5);
         g.drawLine(0, 0, 0, 10);
         g.drawLine(99, 0, 99, 10);
-        g.drawLine(49, 0, 49, 10);
+        g.drawLine(49, 3, 49, 7);
         g.drawLine(24, 3, 24, 7);
         g.drawLine(74, 3, 74, 7);
         g.drawString(text, (int)(100-bound.getWidth()), 23);
