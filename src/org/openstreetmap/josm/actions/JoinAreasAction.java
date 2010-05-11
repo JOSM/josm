@@ -183,9 +183,14 @@ public class JoinAreasAction extends JosmAction {
         boolean same = a.equals(b);
         boolean hadChanges = false;
         if(!same) {
+            int i = 0;
             if(checkForTagConflicts(a, b)) return true; // User aborted, so don't warn again
-            hadChanges = joinAreas(a, a);
-            hadChanges = joinAreas(b, b) || hadChanges;
+            if(joinAreas(a, a))
+                ++i;
+            if(joinAreas(b, b))
+                ++i;
+            hadChanges = i > 0;
+            cmdsCount = i;
         }
 
         ArrayList<OsmPrimitive> nodes = addIntersections(a, b);
@@ -211,7 +216,7 @@ public class JoinAreasAction extends JosmAction {
         Way outerWay = joinOuterWays(allWays, innerWays);
 
         // Fix Multipolygons if there are any
-        Collection<Way> newInnerWays = fixMultigons(innerWays, outerWay);
+        Collection<Way> newInnerWays = fixMultipolygons(innerWays, outerWay, same);
 
         // Delete the remaining inner ways
         if(innerWays != null && innerWays.size() > 0) {
@@ -250,6 +255,7 @@ public class JoinAreasAction extends JosmAction {
         ways.add(b);
 
         // FIXME: This is mostly copied and pasted from CombineWayAction.java and one day should be moved into tools
+        // We have TagCollection handling for that now - use it here as well
         Map<String, Set<String>> props = new TreeMap<String, Set<String>>();
         for (Way w : ways) {
             for (String key: w.keySet()) {
@@ -273,8 +279,8 @@ public class JoinAreasAction extends JosmAction {
             } else if (e.getValue().size() > 1) {
                 if("created_by".equals(e.getKey()))
                 {
-                    ax.put("created_by", "JOSM");
-                    bx.put("created_by", "JOSM");
+                    ax.remove("created_by");
+                    bx.remove("created_by");
                 } else {
                     JComboBox c = new JComboBox(e.getValue().toArray());
                     c.setEditable(true);
@@ -408,6 +414,8 @@ public class JoinAreasAction extends JosmAction {
      * @param Collection<NodeToSegs> The list of nodes with positions to insert
      */
     private void addNodesToWay(Way a, ArrayList<NodeToSegs> nodes) {
+        if(nodes.size() == 0)
+            return;
         Way ax=new Way(a);
         Collections.sort(nodes);
 
@@ -639,13 +647,9 @@ public class JoinAreasAction extends JosmAction {
             }
             a = b;
         }
-        Main.main.getCurrentDataSet().setSelected(ways);
-        // TODO: It might be possible that a confirmation dialog is presented even after reversing (for
-        // "strange" ways). If the user cancels this, makeCommitsOneAction will wrongly consume a previous
-        // action. Make CombineWayAction either silent or expose its combining capabilities.
-        new CombineWayAction().actionPerformed(null);
-        cmdsCount++;
-        return (Way)(Main.main.getCurrentDataSet().getSelectedWays().toArray())[0];
+        if((a = new CombineWayAction().combineWays(ways)) != null)
+            cmdsCount++;
+        return a;
     }
 
     /**
@@ -655,7 +659,7 @@ public class JoinAreasAction extends JosmAction {
      * @param Way The newly created outer way
      * @return ArrayList<Way> The List of newly created inner ways
      */
-    private ArrayList<Way> fixMultigons(Collection<Way> uninterestingWays, Way outerWay) {
+    private ArrayList<Way> fixMultipolygons(Collection<Way> uninterestingWays, Way outerWay, boolean selfintersect) {
         Collection<Node> innerNodes = getNodesFromWays(uninterestingWays);
         Collection<Node> outerNodes = outerWay.getNodes();
 
@@ -671,9 +675,10 @@ public class JoinAreasAction extends JosmAction {
             boolean hasInnerNodes = false;
             for(Node n : w.getNodes()) {
                 if(outerNodes.contains(n)) {
-                    continue wayIterator;
+                    if(!selfintersect) // allow outer point for self intersection
+                        continue wayIterator;
                 }
-                if(!hasInnerNodes && innerNodes.contains(n)) {
+                else if(!hasInnerNodes && innerNodes.contains(n)) {
                     hasInnerNodes = true;
                 }
             }
@@ -685,42 +690,72 @@ public class JoinAreasAction extends JosmAction {
 
         // This removes unnecessary ways that might have been added.
         removeAlmostAlikeWays(possibleWays);
-        removePartlyUnconnectedWays(possibleWays);
 
-        // Join all ways that have one start/ending node in common
-        Way joined = null;
-        outerIterator: do {
-            joined = null;
-            for(Way w1 : possibleWays) {
-                if(w1.isClosed()) {
-                    if(!wayIsCollapsed(w1)) {
-                        uninterestingWays.remove(w1);
-                        newInnerWays.add(w1);
+        // loop twice
+        // in k == 0 prefer ways which allow no Y-joining (i.e. which have only 1 solution)
+        for(int k = 0; k < 2; ++k)
+        {
+            // Join all ways that have one start/ending node in common
+            Way joined = null;
+            outerIterator: do {
+                removePartlyUnconnectedWays(possibleWays);
+                joined = null;
+                for(Way w1 : possibleWays) {
+                    if(w1.isClosed()) {
+                        if(!wayIsCollapsed(w1)) {
+                            uninterestingWays.remove(w1);
+                            newInnerWays.add(w1);
+                        }
+                        joined = w1;
+                        possibleWays.remove(w1);
+                        continue outerIterator;
                     }
-                    joined = w1;
-                    possibleWays.remove(w1);
-                    continue outerIterator;
-                }
-                for(Way w2 : possibleWays) {
-                    // w2 cannot be closed, otherwise it would have been removed above
-                    if(!waysCanBeCombined(w1, w2)) {
-                        continue;
+                    ArrayList<Way> secondary = new ArrayList<Way>();
+                    for(Way w2 : possibleWays) {
+                        int i = 0;
+                        // w2 cannot be closed, otherwise it would have been removed above
+                        if(w1.equals(w2))
+                            continue;
+                        if(w2.isFirstLastNode(w1.firstNode()))
+                            ++i;
+                        if(w2.isFirstLastNode(w1.lastNode()))
+                            ++i;
+                        if(i == 2) // this way closes w1 - take it!
+                        {
+                            if(secondary.size() > 0)
+                                secondary.clear();
+                            secondary.add(w2);
+                            break;
+                        }
+                        else if(i > 0)
+                            secondary.add(w2);
                     }
+                    if(k == 0 ? secondary.size() == 1 : secondary.size() > 0)
+                    {
+                        ArrayList<Way> joinThem = new ArrayList<Way>();
+                        joinThem.add(w1);
+                        joinThem.add(secondary.get(0));
+                        // Although we joined the ways, we cannot simply assume that they are closed
+                        if((joined = joinWays(joinThem)) != null)
+                        {
+                            uninterestingWays.removeAll(joinThem);
+                            possibleWays.removeAll(joinThem);
 
-                    ArrayList<Way> joinThem = new ArrayList<Way>();
-                    joinThem.add(w1);
-                    joinThem.add(w2);
-                    uninterestingWays.removeAll(joinThem);
-                    possibleWays.removeAll(joinThem);
-
-                    // Although we joined the ways, we cannot simply assume that they are closed
-                    joined = joinWays(joinThem);
-                    uninterestingWays.add(joined);
-                    possibleWays.add(joined);
-                    continue outerIterator;
+                            List<Node> nodes = joined.getNodes();
+                            // check if we added too much
+                            /*for(int i = 1; i < nodes.size()-2; ++i)
+                            {
+                                if(nodes.get(i) == nodes.get(nodes.size()-1))
+                                    System.out.println("Joining of ways produced unexpecteded result\n");
+                            }*/
+                            uninterestingWays.add(joined);
+                            possibleWays.add(joined);
+                            continue outerIterator;
+                        }
+                    }
                 }
-            }
-        } while(joined != null);
+            } while(joined != null);
+        }
         return newInnerWays;
     }
 
@@ -794,24 +829,6 @@ public class JoinAreasAction extends JosmAction {
             }
             if(count == 2) return true;
         }
-        return false;
-    }
-
-    /**
-     * Checks if two ways share one starting/ending node
-     * @param Way first way
-     * @param Way second way
-     * @return boolean Wheter the ways share a starting/ending node or not
-     */
-    private boolean waysCanBeCombined(Way w1, Way w2) {
-        if(w1.equals(w2)) return false;
-
-        if(w1.getNode(0).equals(w2.getNode(0))) return true;
-        if(w1.getNode(0).equals(w2.getNode(w2.getNodesCount()-1))) return true;
-
-        if(w1.getNode(w1.getNodesCount()-1).equals(w2.getNode(0))) return true;
-        if(w1.getNode(w1.getNodesCount()-1).equals(w2.getNode(w2.getNodesCount()-1))) return true;
-
         return false;
     }
 

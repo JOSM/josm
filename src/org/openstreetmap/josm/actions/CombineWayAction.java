@@ -102,12 +102,12 @@ public class CombineWayAction extends JosmAction {
         return ret;
     }
 
-    public void combineWays(Collection<Way> ways) {
+    public Way combineWays(Collection<Way> ways) {
 
         // prepare and clean the list of ways to combine
         //
         if (ways == null || ways.isEmpty())
-            return;
+            return null;
         ways.remove(null); // just in case -  remove all null ways from the collection
         ways = new HashSet<Way>(ways); // remove duplicates
 
@@ -118,7 +118,7 @@ public class CombineWayAction extends JosmAction {
         List<Node> path = graph.buildSpanningPath();
         if (path == null) {
             warnCombiningImpossible();
-            return;
+            return null;
         }
         // check whether any ways have been reversed in the process
         // and build the collection of tags used by the ways to combine
@@ -141,7 +141,7 @@ public class CombineWayAction extends JosmAction {
             reversedWays = null;
         }
         if ((reversedWays != null) && !reversedWays.isEmpty()) {
-            if (!confirmChangeDirectionOfWays()) return;
+            if (!confirmChangeDirectionOfWays()) return null;
             // filter out ways that have no direction-dependent tags
             unreversedWays = ReverseWayTagCorrector.irreversibleWays(unreversedWays);
             reversedWays = ReverseWayTagCorrector.irreversibleWays(reversedWays);
@@ -166,7 +166,7 @@ public class CombineWayAction extends JosmAction {
                         changePropertyCommands = reverseWayTagCorrector.execute(w, wnew);
                     }
                     catch(UserCancelException ex) {
-                        return;
+                        return null;
                     }
                 }
                 if ((changePropertyCommands != null) && !changePropertyCommands.isEmpty()) {
@@ -206,7 +206,7 @@ public class CombineWayAction extends JosmAction {
         if (!completeWayTags.isApplicableToPrimitive() || !parentRelations.isEmpty()) {
             dialog.setVisible(true);
             if (dialog.isCancelled())
-                return;
+                return null;
         }
 
         LinkedList<Command> cmds = new LinkedList<Command>();
@@ -217,20 +217,9 @@ public class CombineWayAction extends JosmAction {
         cmds.addAll(dialog.buildResolutionCommands());
         cmds.add(new DeleteCommand(deletedWays));
         final SequenceCommand sequenceCommand = new SequenceCommand(tr("Combine {0} ways", ways.size()), cmds);
+        Main.main.undoRedo.add(sequenceCommand);
 
-        // update gui
-        final Way selectedWay = targetWay;
-        Runnable guiTask = new Runnable() {
-            public void run() {
-                Main.main.undoRedo.add(sequenceCommand);
-                getCurrentDataSet().setSelected(selectedWay);
-            }
-        };
-        if (SwingUtilities.isEventDispatchThread()) {
-            guiTask.run();
-        } else {
-            SwingUtilities.invokeLater(guiTask);
-        }
+        return targetWay;
     }
 
     public void actionPerformed(ActionEvent event) {
@@ -247,7 +236,21 @@ public class CombineWayAction extends JosmAction {
             );
             return;
         }
-        combineWays(selectedWays);
+        // combine and update gui
+        final Way selectedWay = combineWays(selectedWays);
+        if(selectedWay != null)
+        {
+            Runnable guiTask = new Runnable() {
+                public void run() {
+                    getCurrentDataSet().setSelected(selectedWay);
+                }
+            };
+            if (SwingUtilities.isEventDispatchThread()) {
+                guiTask.run();
+            } else {
+                SwingUtilities.invokeLater(guiTask);
+            }
+        }
     }
 
     @Override
