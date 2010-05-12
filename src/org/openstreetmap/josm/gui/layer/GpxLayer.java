@@ -426,7 +426,7 @@ public class GpxLayer extends Layer {
                     }
 
                     int diff = (int) (latest.time - earliest.time);
-                    info.append(" (" + (diff / 3600) + ":" + ((diff % 3600) / 60) + ")");
+                    info.append(String.format(" (%d:%02d)", diff / 3600, (diff % 3600) / 60));
                 }
 
                 info.append("</td><td>");
