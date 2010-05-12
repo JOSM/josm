@@ -162,7 +162,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
 
     /**
      * Loads the relevant preference values from the JOSM preferences
-     * 
+     *
      */
     public void initFromPreferences() {
         String pref = Main.pref.get("pluginmanager.version-based-update.policy", "ask");
@@ -195,7 +195,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
             }
         }
         if (days == 0) {
-            days =Main.pref.getInteger("preference pluginmanager.time-based-update.interval", 60);
+            days =Main.pref.getInteger("pluginmanager.time-based-update.interval", 60);
         }
         tfUpdateInterval.setText(Integer.toString(days));
     }
