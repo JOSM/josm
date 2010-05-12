@@ -154,7 +154,7 @@ public class MarkerLayer extends Layer {
     }
 
     @Override public void paint(Graphics2D g, MapView mv, Bounds box) {
-        String mkrTextShow = Main.pref.get("marker.show "+getName(), "show");
+        boolean showTextOrIcon = isTextOrIconShown();
         g.setColor(getColor(getName()));
 
         if (mousePressed) {
@@ -162,13 +162,13 @@ public class MarkerLayer extends Layer {
             Point mousePos = mv.getMousePosition(); // Get mouse position only when necessary (it's the slowest part of marker layer painting)
             for (Marker mkr : data) {
                 if (mousePos != null && mkr.containsPoint(mousePos)) {
-                    mkr.paint(g, mv, mousePressedTmp, mkrTextShow);
+                    mkr.paint(g, mv, mousePressedTmp, showTextOrIcon);
                     mousePressedTmp = false;
                 }
             }
         } else {
             for (Marker mkr : data) {
-                mkr.paint(g, mv, false, mkrTextShow);
+                mkr.paint(g, mv, false, showTextOrIcon);
             }
         }
     }
@@ -283,7 +283,7 @@ public class MarkerLayer extends Layer {
         Collection<Component> components = new ArrayList<Component>();
         components.add(new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)));
         JCheckBoxMenuItem showMarkerTextItem = new JCheckBoxMenuItem(new ShowHideMarkerText(this));
-        showMarkerTextItem.setState(isTextShown());
+        showMarkerTextItem.setState(isTextOrIconShown());
         components.add(showMarkerTextItem);
         components.add(new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)));
         components.add(new JSeparator());
@@ -451,9 +451,9 @@ public class MarkerLayer extends Layer {
         }
     }
 
-    private boolean isTextShown() {
+    private boolean isTextOrIconShown() {
         String current = Main.pref.get("marker.show "+getName(),"show");
-        return current.equalsIgnoreCase("show");
+        return "show".equalsIgnoreCase(current);
     }
 
     public static final class ShowHideMarkerText extends AbstractAction {
@@ -468,7 +468,7 @@ public class MarkerLayer extends Layer {
 
 
         public void actionPerformed(ActionEvent e) {
-            Main.pref.put("marker.show "+layer.getName(), layer.isTextShown() ? "hide" : "show");
+            Main.pref.put("marker.show "+layer.getName(), layer.isTextOrIconShown() ? "hide" : "show");
             Main.map.mapView.repaint();
         }
     }

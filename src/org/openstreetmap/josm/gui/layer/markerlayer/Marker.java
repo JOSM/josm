@@ -177,16 +177,16 @@ public class Marker implements ActionListener {
      * @param mv map view
      * @param mousePressed true if the left mouse button is pressed
      */
-    public void paint(Graphics g, MapView mv, boolean mousePressed, String show) {
+    public void paint(Graphics g, MapView mv, boolean mousePressed, boolean showTextOrIcon) {
         Point screen = mv.getPoint(getEastNorth());
-        if (symbol != null && show.equalsIgnoreCase("show")) {
+        if (symbol != null && showTextOrIcon) {
             symbol.paintIcon(mv, g, screen.x-symbol.getIconWidth()/2, screen.y-symbol.getIconHeight()/2);
         } else {
             g.drawLine(screen.x-2, screen.y-2, screen.x+2, screen.y+2);
             g.drawLine(screen.x+2, screen.y-2, screen.x-2, screen.y+2);
         }
 
-        if ((text != null) && (show.equalsIgnoreCase("show"))) {
+        if ((text != null) && showTextOrIcon) {
             g.drawString(text, screen.x+4, screen.y+2);
         }
     }

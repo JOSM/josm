@@ -40,9 +40,9 @@ public class ButtonMarker extends Marker {
         return buttonRectangle.contains(p);
     }
 
-    @Override public void paint(Graphics g, MapView mv, boolean mousePressed, String show) {
-        if (! show.equalsIgnoreCase("show")) {
-            super.paint(g, mv, mousePressed, show);
+    @Override public void paint(Graphics g, MapView mv, boolean mousePressed, boolean showTextOrIcon) {
+        if (!showTextOrIcon) {
+            super.paint(g, mv, mousePressed, showTextOrIcon);
             return;
         }
         Point screen = mv.getPoint(getEastNorth());
@@ -61,7 +61,8 @@ public class ButtonMarker extends Marker {
         Rectangle r = new Rectangle(buttonRectangle);
         r.grow((inset.top+inset.bottom)/2, (inset.left+inset.right)/2);
         b.paintBorder(mv, g, r.x, r.y, r.width, r.height);
-        if ((text != null) && (show.equalsIgnoreCase("show")) && Main.pref.getBoolean("marker.buttonlabels", true))
+        if ((text != null) && showTextOrIcon && Main.pref.getBoolean("marker.buttonlabels", true)) {
             g.drawString(text, screen.x+4, screen.y+2);
+        }
     }
 }

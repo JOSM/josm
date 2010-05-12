@@ -587,8 +587,6 @@ public class LayerListDialog extends ToggleDialog {
                 if (!layerList.getCellBounds(index, index).contains(e.getPoint()))
                     return;
                 Layer layer = model.getLayer(index);
-                String current = Main.pref.get("marker.show "+layer.getName(),"show");
-                Main.pref.put("marker.show "+layer.getName(), current.equalsIgnoreCase("show") ? "hide" : "show");
                 layer.toggleVisible();
             }
         }
