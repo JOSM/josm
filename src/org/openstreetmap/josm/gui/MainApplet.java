@@ -32,6 +32,8 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class MainApplet extends JApplet {
 
+    final static JFrame frame = new JFrame("Java OpenStreetMap Editor");
+
     public static final class UploadPreferencesAction extends JosmAction {
         public UploadPreferencesAction() {
             super(tr("Upload Preferences"), "upload-preferences", tr("Upload the current preferences to the server"),
@@ -95,17 +97,19 @@ public class MainApplet extends JApplet {
             args.put("password", Arrays.asList(new String[]{password}));
         }
 
-        Main.applet = true;
-        Main.pref = new ServerSidePreferences(getCodeBase());
-        ((ServerSidePreferences)Main.pref).download(username, password);
-        Main.preConstructorInit(args);
-        Main.parent = this;
-        Main.addListener();
-
         // initialize the plaform hook, and
         Main.determinePlatformHook();
         // call the really early hook before we anything else
         Main.platform.preStartupHook();
+
+        Main.preConstructorInit(args);
+
+        Main.applet = true;
+        Main.pref = new ServerSidePreferences(getCodeBase());
+        ((ServerSidePreferences)Main.pref).download(username, password);
+        Main.preConstructorInit(args);
+        Main.parent = frame;
+        Main.addListener();
 
         new MainCaller().postConstructorProcessCmdLine(args);
 
@@ -133,7 +137,6 @@ public class MainApplet extends JApplet {
     }
 
     public static void main(String[] args) {
-        final JFrame frame = new JFrame("Java OpenStreetMap Editor");
         MainApplet applet = new MainApplet();
         applet.setStub(new AppletStub() {
             public void appletResize(int w, int h) {
