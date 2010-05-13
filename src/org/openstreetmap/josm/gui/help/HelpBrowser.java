@@ -13,8 +13,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
@@ -27,7 +27,6 @@ import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
@@ -101,7 +100,6 @@ public class HelpBrowser extends JFrame {
 
     /** the help browser */
     private JEditorPane help;
-    private JScrollPane spHelp;
 
     /** the help browser history */
     private HelpBrowserHistory history;
@@ -165,7 +163,7 @@ public class HelpBrowser extends JFrame {
         JPanel p = new JPanel(new BorderLayout());
         setContentPane(p);
 
-        p.add(spHelp = new JScrollPane(help), BorderLayout.CENTER);
+        p.add(new JScrollPane(help), BorderLayout.CENTER);
 
         addWindowListener(new WindowAdapter(){
             @Override public void windowClosing(WindowEvent e) {
@@ -206,6 +204,16 @@ public class HelpBrowser extends JFrame {
         build();
     }
 
+    protected void loadTopic(String content) {
+        Document document = help.getEditorKit().createDefaultDocument();
+        try {
+            help.getEditorKit().read(new StringReader(content), document, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        help.setDocument(document);
+    }
+
     /**
      * Replies the current URL
      *
@@ -234,7 +242,7 @@ public class HelpBrowser extends JFrame {
                 getHelpTopicEditUrl(buildAbsoluteHelpTopic(relativeHelpTopic)),
                 getHelpTopicEditUrl(buildAbsoluteHelpTopic(relativeHelpTopic, Locale.ENGLISH))
         );
-        help.setText(message);
+        loadTopic(message);
     }
 
     /**
@@ -252,12 +260,7 @@ public class HelpBrowser extends JFrame {
                 relativeHelpTopic,
                 e.toString()
         );
-        help.setText(message);
-    }
-
-    protected void scrollToTop() {
-        JScrollBar sb = spHelp.getVerticalScrollBar();
-        sb.setValue(sb.getMinimum());
+        loadTopic(message);
     }
 
     /**
@@ -292,10 +295,9 @@ public class HelpBrowser extends JFrame {
             handleHelpContentReaderException(relativeHelpTopic, e);
             return;
         }
-        help.setText(content);
+        loadTopic(content);
         history.setCurrentUrl(url);
         this.url = url;
-        scrollToTop();
     }
 
     /**
@@ -318,10 +320,9 @@ public class HelpBrowser extends JFrame {
             handleHelpContentReaderException(absoluteHelpTopic, e);
             return;
         }
-        help.setText(content);
+        loadTopic(content);
         history.setCurrentUrl(url);
         this.url = url;
-        scrollToTop();
     }
 
     /**
@@ -344,10 +345,9 @@ public class HelpBrowser extends JFrame {
             try {
                 this.url = url;
                 String content = reader.fetchHelpTopicContent(url, false);
-                help.setText(content);
+                loadTopic(content);
                 history.setCurrentUrl(url);
                 this.url = url;
-                scrollToTop();
             } catch(Exception e) {
                 HelpAwareOptionPane.showOptionDialog(
                         Main.parent,
