@@ -279,18 +279,22 @@ public class UnGlueAction extends JosmAction {
     /**
      * dupe the given node of the given way
      *
+     * assume that OrginalNode is in the way
+     *
      * -> the new node will be put into the parameter newNodes.
      * -> the add-node command will be put into the parameter cmds.
      * -> the changed way will be returned and must be put into cmds by the caller!
      */
     private Way modifyWay(Node originalNode, Way w, List<Command> cmds, List<Node> newNodes) {
+        // clone the node for the way
+        Node newNode = new Node(originalNode, true /* clear OSM ID */);
+        newNodes.add(newNode);
+        cmds.add(new AddCommand(newNode));
+
         ArrayList<Node> nn = new ArrayList<Node>();
         for (Node pushNode : w.getNodes()) {
             if (originalNode == pushNode) {
-                // clone the node for all other ways
-                pushNode = new Node(pushNode, true /* clear OSM ID */);
-                newNodes.add(pushNode);
-                cmds.add(new AddCommand(pushNode));
+                pushNode = newNode;
             }
             nn.add(pushNode);
         }
