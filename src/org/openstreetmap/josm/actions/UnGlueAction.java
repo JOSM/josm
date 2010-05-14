@@ -322,7 +322,6 @@ public class UnGlueAction extends JosmAction {
                     if (rm.getMember() == originalNode) {
                         if (newRel == null) {
                             newRel = new Relation(r);
-                            newRel.setMembers(null);
                             rolesToReAdd = new HashSet<String>();
                         }
                         rolesToReAdd.add(rm.getRole());
@@ -330,9 +329,6 @@ public class UnGlueAction extends JosmAction {
                 }
             }
             if (newRel != null) {
-                for (RelationMember rm : r.getMembers()) {
-                    newRel.addMember(rm);
-                }
                 for (Node n : newNodes) {
                     for (String role : rolesToReAdd) {
                         newRel.addMember(new RelationMember(role, n));
