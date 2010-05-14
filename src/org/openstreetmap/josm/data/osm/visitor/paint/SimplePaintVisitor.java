@@ -46,8 +46,6 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
 
     public boolean inactive;
 
-    protected static final double PHI = Math.toRadians(20);
-
     /**
      * Preferences
      */
@@ -469,15 +467,38 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         }
     }
 
+    private static final double PHI = Math.toRadians(20);
+    private static final double cosPHI = Math.cos(PHI);
+    private static final double sinPHI = Math.sin(PHI);
+
     protected void drawSegment(GeneralPath path, Point p1, Point p2, boolean showDirection) {
-        if (isSegmentVisible(p1, p2)) {
+        boolean drawIt = false;
+        if (Main.isOpenjdk) {
+            /**
+             * Work around openjdk bug. It leads to drawing artefacts when zooming in a lot. (#4289, #4424)
+             * (It looks like int overflow when clipping.) We do custom clipping.
+             */
+            Rectangle bounds = g.getClipBounds();
+            bounds.grow(100, 100);                  // avoid arrow heads at the border
+            LineClip clip = new LineClip();
+            drawIt = clip.cohenSutherland(p1.x, p1.y, p2.x, p2.y, bounds.x, bounds.y, bounds.x+bounds.width, bounds.y+bounds.height);
+            p1 = clip.getP1();
+            p2 = clip.getP2();
+        } else {
+            drawIt = isSegmentVisible(p1, p2);
+        }
+        if (drawIt) {
             path.moveTo(p1.x, p1.y);
             path.lineTo(p2.x, p2.y);
 
             if (showDirection) {
-                double t = Math.atan2(p2.y-p1.y, p2.x-p1.x) + Math.PI;
-                path.lineTo((int)(p2.x + 10*Math.cos(t-PHI)), (int)(p2.y + 10*Math.sin(t-PHI)));
-                path.moveTo((int)(p2.x + 10*Math.cos(t+PHI)), (int)(p2.y + 10*Math.sin(t+PHI)));
+                final double l =  10. / p1.distance(p2);
+
+                final double sx = l * (p1.x - p2.x);
+                final double sy = l * (p1.y - p2.y);
+
+                path.lineTo (p2.x + (int) Math.round(cosPHI * sx - sinPHI * sy), p2.y + (int) Math.round(sinPHI * sx + cosPHI * sy));
+                path.moveTo (p2.x + (int) Math.round(cosPHI * sx + sinPHI * sy), p2.y + (int) Math.round(- sinPHI * sx + cosPHI * sy));
                 path.lineTo(p2.x, p2.y);
             }
         }
