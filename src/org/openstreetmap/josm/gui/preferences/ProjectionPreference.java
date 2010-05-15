@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
@@ -18,6 +19,9 @@ import javax.swing.JScrollPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
+import org.openstreetmap.josm.data.preferences.CollectionProperty;
+import org.openstreetmap.josm.data.preferences.ParametrizedCollectionProperty;
+import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionSubPrefs;
@@ -30,6 +34,40 @@ public class ProjectionPreference implements PreferenceSetting {
             return new ProjectionPreference();
         }
     }
+
+    public interface ProjectionChangedListener {
+        void projectionChanged();
+    }
+
+    private static final StringProperty PROP_PROJECTION = new StringProperty("projection", Mercator.class.getName());
+    private static final StringProperty PROP_COORDINATES = new StringProperty("coordinates", null);
+    private static final CollectionProperty PROP_SUB_PROJECTION = new CollectionProperty("projection.sub", null);
+    private static final ParametrizedCollectionProperty PROP_PROJECTION_SUBPROJECTION = new ParametrizedCollectionProperty(null) {
+        @Override
+        protected String getKey(String... params) {
+            String name = params[0];
+            String sname = name.substring(name.lastIndexOf(".")+1);
+            return "projection.sub."+sname;
+        }
+    };
+
+    //TODO This is not nice place for a listener code but probably only Dataset will want to listen for projection changes so it's acceptable
+    private static CopyOnWriteArrayList<ProjectionChangedListener> listeners = new CopyOnWriteArrayList<ProjectionChangedListener>();
+
+    public static void addProjectionChangedListener(ProjectionChangedListener listener) {
+        listeners.addIfAbsent(listener);
+    }
+
+    public static void removeProjectionChangedListener(ProjectionChangedListener listener) {
+        listeners.remove(listener);
+    }
+
+    private static void fireProjectionChanged() {
+        for (ProjectionChangedListener listener: listeners) {
+            listener.projectionChanged();
+        }
+    }
+
 
     /**
      * Combobox with all projections available
@@ -67,7 +105,7 @@ public class ProjectionPreference implements PreferenceSetting {
         setupProjectionCombo();
 
         for (int i = 0; i < coordinatesCombo.getItemCount(); ++i) {
-            if (((CoordinateFormat)coordinatesCombo.getItemAt(i)).name().equals(Main.pref.get("coordinates"))) {
+            if (((CoordinateFormat)coordinatesCombo.getItemAt(i)).name().equals(PROP_COORDINATES.get())) {
                 coordinatesCombo.setSelectedIndex(i);
                 break;
             }
@@ -112,11 +150,10 @@ public class ProjectionPreference implements PreferenceSetting {
             prefs = ((ProjectionSubPrefs) proj).getPreferences(projSubPrefPanel);
         }
 
-        Main.pref.put("projection", projname);
+        PROP_PROJECTION.put(projname);
         setProjection(projname, prefs);
 
-        if(Main.pref.put("coordinates",
-                ((CoordinateFormat)coordinatesCombo.getSelectedItem()).name())) {
+        if(PROP_COORDINATES.put(((CoordinateFormat)coordinatesCombo.getSelectedItem()).name())) {
             CoordinateFormat.setCoordinateFormat((CoordinateFormat)coordinatesCombo.getSelectedItem());
         }
 
@@ -125,8 +162,7 @@ public class ProjectionPreference implements PreferenceSetting {
 
     static public void setProjection()
     {
-        setProjection(Main.pref.get("projection", Mercator.class.getName()),
-                Main.pref.getCollection("projection.sub", null));
+        setProjection(PROP_PROJECTION.get(), PROP_SUB_PROJECTION.get());
     }
 
     static public void setProjection(String name, Collection<String> coll)
@@ -147,12 +183,12 @@ public class ProjectionPreference implements PreferenceSetting {
             Main.proj = new Mercator();
             name = Main.proj.getClass().getName();
         }
-        Main.pref.putCollection("projection.sub", coll);
-        String sname = name.substring(name.lastIndexOf(".")+1);
-        Main.pref.putCollection("projection.sub."+sname, coll);
+        PROP_SUB_PROJECTION.put(coll);
+        PROP_PROJECTION_SUBPROJECTION.put(coll, name);
         if(Main.proj instanceof ProjectionSubPrefs) {
             ((ProjectionSubPrefs) Main.proj).setPreferences(coll);
         }
+        fireProjectionChanged(); // This should be probably called from the if bellow, but hashCode condition doesn't look sure enough
         if(b != null && (!Main.proj.getClass().getName().equals(oldProj.getClass().getName()) || Main.proj.hashCode() != oldProj.hashCode()))
         {
             Main.map.mapView.zoomTo(b);
@@ -211,11 +247,10 @@ public class ProjectionPreference implements PreferenceSetting {
         for (int i = 0; i < projectionCombo.getItemCount(); ++i) {
             Projection proj = (Projection)projectionCombo.getItemAt(i);
             String name = proj.getClass().getName();
-            String sname = name.substring(name.lastIndexOf(".")+1);
             if(proj instanceof ProjectionSubPrefs) {
-                ((ProjectionSubPrefs) proj).setPreferences(Main.pref.getCollection("projection.sub."+sname, null));
+                ((ProjectionSubPrefs) proj).setPreferences(PROP_PROJECTION_SUBPROJECTION.get(name));
             }
-            if (name.equals(Main.pref.get("projection", Mercator.class.getName()))) {
+            if (name.equals(PROP_PROJECTION.get())) {
                 projectionCombo.setSelectedIndex(i);
                 selectedProjectionChanged(proj);
                 break;
