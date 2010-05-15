@@ -635,15 +635,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return all;
     }
 
-    public static Collection<TaggingPreset> readFromPreferences() {
+    public static Collection<TaggingPreset> readAll(Collection<String> sources) {
         LinkedList<TaggingPreset> allPresets = new LinkedList<TaggingPreset>();
-        LinkedList<String> sources = new LinkedList<String>();
-
-        if(Main.pref.getBoolean("taggingpreset.enable-defaults", true)) {
-            sources.add("resource://data/defaultpresets.xml");
-        }
-        sources.addAll(Main.pref.getCollection("taggingpreset.sources", new LinkedList<String>()));
-
         for(String source : sources)
         {
             try {
@@ -682,6 +675,20 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             zipIcons = null;
         }
         return allPresets;
+    }
+
+    public static LinkedList<String> getPresetSources() {
+        LinkedList<String> sources = new LinkedList<String>();
+
+        if(Main.pref.getBoolean("taggingpreset.enable-defaults", true)) {
+            sources.add("resource://data/defaultpresets.xml");
+        }
+        sources.addAll(Main.pref.getCollection("taggingpreset.sources", new LinkedList<String>()));
+        return sources;
+    }
+
+    public static Collection<TaggingPreset> readFromPreferences() {
+        return readAll(getPresetSources());
     }
 
     private static class PresetPanel extends JPanel {
