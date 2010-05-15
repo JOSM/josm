@@ -727,6 +727,11 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
 
     }
 
+    @Override
+    public void destroy() {
+        DataSet.selListeners.remove(this);
+    }
+
     public void processDatasetEvent(AbstractDatasetChangedEvent event) {
         isChanged = true;
         setRequiresSaveToFile(true);
