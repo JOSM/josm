@@ -56,6 +56,10 @@ public class AutoScaleAction extends JosmAction {
             );
             return;
         }
+        zoomTo(sel);
+    }
+
+    public static void zoomTo(Collection<OsmPrimitive> sel) {
         BoundingXYVisitor bboxCalculator = new BoundingXYVisitor();
         bboxCalculator.computeBoundingBox(sel);
         // increase bbox by 0.001 degrees on each side. this is required

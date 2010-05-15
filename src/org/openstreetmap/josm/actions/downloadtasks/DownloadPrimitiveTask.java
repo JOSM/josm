@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.SwingUtilities;
 
+import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
@@ -68,6 +69,7 @@ public class DownloadPrimitiveTask extends PleaseWaitRunnable {
             public void run() {
                 layer.mergeFrom(ds);
                 layer.onPostDownloadFromServer();
+                AutoScaleAction.zoomTo(ds.allPrimitives());
             }
         };
 
