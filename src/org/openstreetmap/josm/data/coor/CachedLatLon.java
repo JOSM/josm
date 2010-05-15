@@ -46,4 +46,9 @@ public class CachedLatLon extends LatLon {
     @Override public String toString() {
         return "CachedLatLon[lat="+lat()+",lon="+lon()+"]";
     }
+
+    // Only for Node.get3892DebugInfo()
+    public Projection getProjection() {
+        return proj;
+    }
 }

@@ -94,7 +94,7 @@ public class MoveCommand extends Command {
             if (n == null)
                 throw new AssertionError("null detected in node list");
             if (n.getEastNorth() == null)
-                throw new AssertionError("unexpected null value for n.getEastNorth(). id of n is " + n.getUniqueId());
+                throw new AssertionError(n.get3892DebugInfo());
 
             n.setEastNorth(n.getEastNorth().add(x, y));
             n.setModified(true);

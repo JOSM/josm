@@ -197,4 +197,20 @@ public final class Node extends OsmPrimitive {
     public boolean isConnectionNode() {
         return (OsmPrimitive.getFilteredList(getReferrers(), Way.class)).size() > 1;
     }
+
+    public String get3892DebugInfo() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Unexpected error. Please report it to http://josm.openstreetmap.de/ticket/3892\n");
+        builder.append(toString());
+        builder.append("\n");
+        if (coor == null) {
+            builder.append("Coor is null\n");
+        } else {
+            builder.append(String.format("EastNorth: %s\n", coor.getEastNorth()));
+            builder.append(coor.getProjection());
+            builder.append("\n");
+        }
+
+        return builder.toString();
+    }
 }
