@@ -104,7 +104,6 @@ public class MainApplet extends JApplet {
 
         Main.preConstructorInit(args);
 
-        Main.applet = true;
         Main.pref = new ServerSidePreferences(getCodeBase());
         ((ServerSidePreferences)Main.pref).download(username, password);
         Main.preConstructorInit(args);
@@ -137,6 +136,7 @@ public class MainApplet extends JApplet {
     }
 
     public static void main(String[] args) {
+        Main.applet = true;
         MainApplet applet = new MainApplet();
         applet.setStub(new AppletStub() {
             public void appletResize(int w, int h) {
