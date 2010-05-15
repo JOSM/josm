@@ -339,7 +339,7 @@ public class ExceptionDialogUtil {
     public static void explainNestedUnkonwnHostException(OsmTransferException e) {
         HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
-                ExceptionUtil.explainNestedUnkonwnHostException(e),
+                ExceptionUtil.explainNestedUnknownHostException(e),
                 tr("Unknown host"),
                 JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#UnknownHost")

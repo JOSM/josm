@@ -352,9 +352,11 @@ public class PlaceSelection implements DownloadSelection {
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
+            String urlString = useserver.url+java.net.URLEncoder.encode(searchExpression, "UTF-8");
+
             try {
                 getProgressMonitor().indeterminateSubTask(tr("Querying name server ..."));
-                URL url = new URL(useserver.url+java.net.URLEncoder.encode(searchExpression, "UTF-8"));
+                URL url = new URL(urlString);
                 synchronized(this) {
                     connection = (HttpURLConnection)url.openConnection();
                 }
@@ -368,7 +370,9 @@ public class PlaceSelection implements DownloadSelection {
                 if (canceled)
                     // ignore exception
                     return;
-                lastException = e;
+                OsmTransferException ex = new OsmTransferException(e);
+                ex.setUrl(urlString);
+                lastException = ex;
             }
         }
     }

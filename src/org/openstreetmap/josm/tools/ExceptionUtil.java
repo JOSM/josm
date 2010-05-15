@@ -143,7 +143,7 @@ public class ExceptionUtil {
 
     /**
      * Explains an OSM API exception because of a client timeout (HTTP 408).
-     * 
+     *
      * @param e the exception
      * @return the message
      */
@@ -158,7 +158,7 @@ public class ExceptionUtil {
 
     /**
      * Replies a generic error message for an OSM API exception
-     * 
+     *
      * @param e the exception
      * @return the message
      */
@@ -277,7 +277,7 @@ public class ExceptionUtil {
      */
 
     public static String explainSecurityException(OsmTransferException e) {
-        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
+        String apiUrl = e.getUrl();
         String host = tr("unknown");
         try {
             host = new URL(apiUrl).getHost();
@@ -300,7 +300,7 @@ public class ExceptionUtil {
      */
 
     public static String explainNestedSocketException(OsmTransferException e) {
-        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
+        String apiUrl = e.getUrl();
         String message = tr("<html>Failed to open a connection to the remote server<br>" + "''{0}''.<br>"
                 + "Please check your internet connection.</html>", apiUrl);
         e.printStackTrace();
@@ -317,7 +317,7 @@ public class ExceptionUtil {
 
     public static String explainNestedIOException(OsmTransferException e) {
         IOException ioe = getNestedException(e, IOException.class);
-        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
+        String apiUrl = e.getUrl();
         String message = tr("<html>Failed to upload data to or download data from<br>" + "''{0}''<br>"
                 + "due to a problem with transferring data.<br>" + "Details(untranslated): {1}</html>", apiUrl, ioe
                 .getMessage());
@@ -348,7 +348,7 @@ public class ExceptionUtil {
      */
 
     public static String explainInternalServerError(OsmTransferException e) {
-        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
+        String apiUrl = e.getUrl();
         String message = tr("<html>The OSM server<br>" + "''{0}''<br>" + "reported an internal server error.<br>"
                 + "This is most likely a temporary problem. Please try again later.</html>", apiUrl);
         e.printStackTrace();
@@ -403,8 +403,8 @@ public class ExceptionUtil {
      * @param e the exception
      */
 
-    public static String explainNestedUnkonwnHostException(OsmTransferException e) {
-        String apiUrl = OsmApi.getOsmApi().getBaseUrl();
+    public static String explainNestedUnknownHostException(OsmTransferException e) {
+        String apiUrl = e.getUrl();
         String host = tr("unknown");
         try {
             host = new URL(apiUrl).getHost();
@@ -452,7 +452,7 @@ public class ExceptionUtil {
         if (getNestedException(e, SocketException.class) != null)
             return explainNestedSocketException(e);
         if (getNestedException(e, UnknownHostException.class) != null)
-            return explainNestedUnkonwnHostException(e);
+            return explainNestedUnknownHostException(e);
         if (getNestedException(e, IOException.class) != null)
             return explainNestedIOException(e);
         if (e instanceof OsmApiInitializationException)
