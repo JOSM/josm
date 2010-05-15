@@ -229,7 +229,10 @@ public class PlaceSelection implements DownloadSelection {
                     currentResult = new PlaceSelection.SearchResult();
                     currentResult.name = atts.getValue("display_name");
                     currentResult.description = currentResult.name;
-                    currentResult.info = tr(atts.getValue("class"));
+                    currentResult.info = atts.getValue("class");
+                    if (currentResult.info != null) {
+                        currentResult.info = tr(currentResult.info);
+                    }
                     currentResult.nearestPlace = tr(atts.getValue("type"));
                     currentResult.lat = Double.parseDouble(atts.getValue("lat"));
                     currentResult.lon = Double.parseDouble(atts.getValue("lon"));
