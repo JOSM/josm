@@ -370,11 +370,13 @@ public final class Way extends OsmPrimitive {
             for (Node n: nodes) {
                 if (n.getDataSet() != dataSet)
                     throw new DataIntegrityProblemException("Nodes in way must be in the same dataset");
+                if (n.isDeleted())
+                    throw new DataIntegrityProblemException("Deleted node referenced: " + toString());
             }
-            if (Main.pref.getBoolean("debug.checkDeleteReferenced", true)) {
+            if (Main.pref.getBoolean("debug.checkNullCoor", true)) {
                 for (Node n: nodes) {
-                    if (n.isDeleted())
-                        throw new DataIntegrityProblemException("Deleted node referenced: " + toString());
+                    if (!n.isIncomplete() && (n.getCoor() == null || n.getEastNorth() == null))
+                        throw new DataIntegrityProblemException("Complete node with null coordinates: " + toString() + n.get3892DebugInfo());
                 }
             }
         }
