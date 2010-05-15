@@ -26,10 +26,13 @@ import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.Action;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.actions.OpenFileAction;
@@ -197,19 +200,17 @@ abstract public class Main {
         main = this;
         isOpenjdk = System.getProperty("java.vm.name").toUpperCase().indexOf("OPENJDK") != -1;
         platform.startupHook();
-        contentPane.add(panel, BorderLayout.CENTER);
+        contentPanePrivate.add(panel, BorderLayout.CENTER);
         panel.add(gettingStarted, BorderLayout.CENTER);
         menu = new MainMenu();
 
         undoRedo.listenerCommands.add(redoUndoListener);
 
         // creating toolbar
-        contentPane.add(toolbar.control, BorderLayout.NORTH);
+        contentPanePrivate.add(toolbar.control, BorderLayout.NORTH);
 
-        contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-        .put(Shortcut.registerShortcut("system:help", tr("Help"),
-                KeyEvent.VK_F1, Shortcut.GROUP_DIRECT).getKeyStroke(), "Help");
-        contentPane.getActionMap().put("Help", menu.help);
+        registerActionShortcut(menu.help, Shortcut.registerShortcut("system:help", tr("Help"),
+                KeyEvent.VK_F1, Shortcut.GROUP_DIRECT));
 
         TaggingPresetPreference.initialize();
         MapPaintPreference.initialize();
@@ -217,7 +218,7 @@ abstract public class Main {
         toolbar.refreshToolbarControl();
 
         toolbar.control.updateUI();
-        contentPane.updateUI();
+        contentPanePrivate.updateUI();
     }
 
     /**
@@ -225,7 +226,7 @@ abstract public class Main {
      */
     public final void addLayer(final Layer layer) {
         if (map == null) {
-            final MapFrame mapFrame = new MapFrame();
+            final MapFrame mapFrame = new MapFrame(contentPanePrivate);
             setMapFrame(mapFrame);
             mapFrame.selectMapMode((MapMode)mapFrame.getDefaultButtonAction());
             mapFrame.setVisible(true);
@@ -280,10 +281,35 @@ abstract public class Main {
         return map.mapView.getActiveLayer();
     }
 
+    protected static JPanel contentPanePrivate = new JPanel(new BorderLayout());
+
     /**
-     * Use this to register shortcuts to
+     * @deprecated If you just need to register shortcut for action, use registerActionShortcut instead of accessing InputMap directly
      */
-    public static final JPanel contentPane = new JPanel(new BorderLayout());
+    @Deprecated
+    public static final JPanel contentPane = contentPanePrivate;
+
+    public static void registerActionShortcut(Action action, Shortcut shortcut) {
+        registerActionShortcut(action, shortcut.getKeyStroke());
+    }
+
+    public static void registerActionShortcut(Action action, KeyStroke keyStroke) {
+        if (keyStroke == null)
+            return;
+
+        InputMap inputMap = contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        Object existing = inputMap.get(keyStroke);
+        if (existing != null && !existing.equals(action)) {
+            System.out.println(String.format("Keystroke is already assigned to %s, will be overridden by %s", existing, action));
+        }
+        inputMap.put(keyStroke, action);
+
+        contentPanePrivate.getActionMap().put(action, action);
+    }
+
+    public static void unregisterActionShortcut(Shortcut shortcut) {
+        contentPanePrivate.getInputMap().remove(shortcut.getKeyStroke());
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     //  Implementation part
@@ -323,7 +349,7 @@ abstract public class Main {
                 Main.pref.put("laf", defaultlaf);
             }
             toolbar = new ToolbarPreferences();
-            contentPane.updateUI();
+            contentPanePrivate.updateUI();
             panel.updateUI();
         } catch (final Exception e) {
             e.printStackTrace();

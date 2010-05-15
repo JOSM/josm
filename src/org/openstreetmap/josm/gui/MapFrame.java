@@ -90,11 +90,11 @@ public class MapFrame extends JPanel implements Destroyable {
      */
     public final int DEF_TOGGLE_DLG_WIDTH = 330;
 
-    public MapFrame() {
+    public MapFrame(JPanel contentPane) {
         setSize(400,400);
         setLayout(new BorderLayout());
 
-        mapView = new MapView();
+        mapView = new MapView(contentPane);
 
         new FileDrop(mapView);
 

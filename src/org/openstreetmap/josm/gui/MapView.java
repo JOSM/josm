@@ -28,12 +28,11 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractButton;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
-import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.MoveAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.Bounds;
@@ -188,7 +187,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     private boolean paintPreferencesChanged = true;
     private Rectangle lastClipBounds = new Rectangle();
 
-    public MapView() {
+    public MapView(final JPanel contentPane) {
         Main.pref.addPreferenceChangeListener(this);
         addComponentListener(new ComponentAdapter(){
             @Override public void componentResized(ComponentEvent e) {
@@ -212,28 +211,11 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                     new AutoScaleAction("layer").actionPerformed(null);
                 }
 
-                new MapMover(MapView.this, Main.contentPane);
-                JosmAction mv;
-                mv = new MoveAction(MoveAction.Direction.UP);
-                if (mv.getShortcut() != null) {
-                    Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(mv.getShortcut().getKeyStroke(), "UP");
-                    Main.contentPane.getActionMap().put("UP", mv);
-                }
-                mv = new MoveAction(MoveAction.Direction.DOWN);
-                if (mv.getShortcut() != null) {
-                    Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(mv.getShortcut().getKeyStroke(), "DOWN");
-                    Main.contentPane.getActionMap().put("DOWN", mv);
-                }
-                mv = new MoveAction(MoveAction.Direction.LEFT);
-                if (mv.getShortcut() != null) {
-                    Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(mv.getShortcut().getKeyStroke(), "LEFT");
-                    Main.contentPane.getActionMap().put("LEFT", mv);
-                }
-                mv = new MoveAction(MoveAction.Direction.RIGHT);
-                if (mv.getShortcut() != null) {
-                    Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(mv.getShortcut().getKeyStroke(), "RIGHT");
-                    Main.contentPane.getActionMap().put("RIGHT", mv);
-                }
+                new MapMover(MapView.this, contentPane);
+                new MoveAction(MoveAction.Direction.UP);
+                new MoveAction(MoveAction.Direction.DOWN);
+                new MoveAction(MoveAction.Direction.LEFT);
+                new MoveAction(MoveAction.Direction.RIGHT);
             }
         });
 

@@ -609,10 +609,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         btnAdd.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "onEnter");
         btnAdd.getActionMap().put("onEnter", addAction);
 
-        Shortcut sc = Shortcut.registerShortcut("properties:add", tr("Add Properties"), KeyEvent.VK_B,
-                Shortcut.GROUP_MNEMONIC);
-        Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), "properties:add");
-        Main.contentPane.getActionMap().put("properties:add", addAction);
+        Main.registerActionShortcut(addAction, Shortcut.registerShortcut("properties:add", tr("Add Properties"), KeyEvent.VK_B,
+                Shortcut.GROUP_MNEMONIC));
 
         // -- edit action
         //

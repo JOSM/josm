@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
@@ -20,7 +19,7 @@ public final class ZoomOutAction extends JosmAction {
                 Shortcut.registerShortcut("view:zoomout", tr("View: {0}", tr("Zoom Out")), KeyEvent.VK_MINUS, Shortcut.GROUP_DIRECT), true);
         putValue("help", ht("/Action/ZoomOut"));
         // make numpad - behave like -
-        Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT,0), tr("Zoom Out"));
+        Main.registerActionShortcut(this, KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT,0));
     }
 
     public void actionPerformed(ActionEvent e) {

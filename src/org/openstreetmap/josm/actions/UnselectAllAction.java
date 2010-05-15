@@ -1,13 +1,11 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-
-import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -21,10 +19,10 @@ public class UnselectAllAction extends JosmAction {
         // the correct group in
 
         // Add extra shortcut C-S-a
-        Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                Shortcut.registerShortcut("edit:unselectallfocus", tr("Edit: {0}", tr("Unselect All (Focus)")),
-                        KeyEvent.VK_A, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT).getKeyStroke(),
-                        tr("Unselect All"));
+        Main.registerActionShortcut(this, Shortcut.registerShortcut("edit:unselectallfocus", tr("Edit: {0}", tr("Unselect All (Focus)")),
+                KeyEvent.VK_A, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT));
+
+
 
         // Add extra shortcut ESCAPE
         /*
@@ -32,10 +30,8 @@ public class UnselectAllAction extends JosmAction {
          * would be able to capture keyboard events and react accordingly. But
          * for now this is a reasonable approximation.
          */
-        Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                Shortcut.registerShortcut("edit:unselectallescape", tr("Edit: {0}", tr("Unselect All (Escape)")),
-                        KeyEvent.VK_ESCAPE, Shortcut.GROUP_DIRECT).getKeyStroke(),
-                        tr("Unselect All"));
+        Main.registerActionShortcut(this, Shortcut.registerShortcut("edit:unselectallescape", tr("Edit: {0}", tr("Unselect All (Escape)")),
+                KeyEvent.VK_ESCAPE, Shortcut.GROUP_DIRECT));
 
         putValue("help", ht("/Action/UnselectAll"));
     }

@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
@@ -94,8 +93,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 mapFrame, getCursor());
 
         // Add extra shortcut N
-        Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                Shortcut.registerShortcut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, Shortcut.GROUP_EDIT).getKeyStroke(), tr("Draw"));
+        Main.registerActionShortcut(this, Shortcut.registerShortcut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, Shortcut.GROUP_EDIT));
 
         cursorCrosshair = getCursor();
         cursorJoinNode = ImageProvider.getCursor("crosshair", "joinnode");

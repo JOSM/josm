@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
@@ -24,14 +23,11 @@ public final class ZoomInAction extends JosmAction {
                 true
         );
         putValue("help", ht("/Action/ZoomIn"));
-        // make numpad + behave like + (action is already registred)
-        Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD,0), tr("Zoom In"));
+        // make numpad + behave like +
+        Main.registerActionShortcut(this, KeyStroke.getKeyStroke(KeyEvent.VK_ADD, 0));
     }
 
     public void actionPerformed(ActionEvent e) {
-        Object name = Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).get(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0));
-        Main.contentPane.getActionMap().put(name, this);
-
         if (!Main.isDisplayingMapView()) return;
         Main.map.mapView.zoomToFactor(0.9);
     }

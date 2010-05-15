@@ -52,7 +52,7 @@ public class MainApplication extends Main {
      */
     public MainApplication(JFrame mainFrame) {
         super();
-        mainFrame.setContentPane(contentPane);
+        mainFrame.setContentPane(contentPanePrivate);
         mainFrame.setJMenuBar(menu);
         mainFrame.setBounds(bounds);
         mainFrame.setIconImage(ImageProvider.get("logo.png").getImage());

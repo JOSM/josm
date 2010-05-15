@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 
 import javax.swing.AbstractAction;
-import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
@@ -71,8 +70,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         setHelpId();
         sc = shortcut;
         if (sc != null) {
-            Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(sc.getKeyStroke(), name);
-            Main.contentPane.getActionMap().put(name, this);
+            Main.registerActionShortcut(this, sc);
         }
         putValue(SHORT_DESCRIPTION, Main.platform.makeTooltip(tooltip, sc));
         putValue("toolbar", iconName);
@@ -89,8 +87,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
 
     public void destroy() {
         if (sc != null) {
-            Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(sc.getKeyStroke());
-            Main.contentPane.getActionMap().remove(sc.getKeyStroke());
+            Main.unregisterActionShortcut(sc);
         }
         MapView.removeLayerChangeListener(layerChangeAdapter);
         DataSet.selListeners.remove(selectionChangeAdapter);

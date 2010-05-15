@@ -16,8 +16,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 
-import javax.swing.Box;
 import javax.swing.AbstractAction;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -53,9 +53,8 @@ public class ImageViewerDialog extends ToggleDialog {
     }
 
     public static ImageViewerDialog getInstance() {
-        if (dialog == null) {
+        if (dialog == null)
             throw new AssertionError(); // a new instance needs to be created first
-        }
         return dialog;
     }
 
@@ -82,10 +81,9 @@ public class ImageViewerDialog extends ToggleDialog {
         btnPrevious = new JButton(prevAction);
         btnPrevious.setPreferredSize(buttonDim);
         Shortcut scPrev = Shortcut.registerShortcut(
-            "geoimage:previous", tr("Geoimage: {0}", tr("Show previous Image")), KeyEvent.VK_PAGE_UP, Shortcut.GROUP_DIRECT);
+                "geoimage:previous", tr("Geoimage: {0}", tr("Show previous Image")), KeyEvent.VK_PAGE_UP, Shortcut.GROUP_DIRECT);
         final String APREVIOUS = "Previous Image";
-        Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scPrev.getKeyStroke(), APREVIOUS);
-        Main.contentPane.getActionMap().put(APREVIOUS, prevAction);
+        Main.registerActionShortcut(prevAction, scPrev);
         btnPrevious.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scPrev.getKeyStroke(), APREVIOUS);
         btnPrevious.getActionMap().put(APREVIOUS, prevAction);
 
@@ -94,9 +92,8 @@ public class ImageViewerDialog extends ToggleDialog {
         JButton btnDelete = new JButton(delAction);
         btnDelete.setPreferredSize(buttonDim);
         Shortcut scDelete = Shortcut.registerShortcut(
-            "geoimage:deleteimagefromlayer", tr("Geoimage: {0}", DELETE_TEXT), KeyEvent.VK_DELETE, Shortcut.GROUP_DIRECT, Shortcut.SHIFT_DEFAULT);
-        Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scDelete.getKeyStroke(), DELETE_TEXT);
-        Main.contentPane.getActionMap().put(DELETE_TEXT, delAction);
+                "geoimage:deleteimagefromlayer", tr("Geoimage: {0}", DELETE_TEXT), KeyEvent.VK_DELETE, Shortcut.GROUP_DIRECT, Shortcut.SHIFT_DEFAULT);
+        Main.registerActionShortcut(delAction, scDelete);
         btnDelete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scDelete.getKeyStroke(), DELETE_TEXT);
         btnDelete.getActionMap().put(DELETE_TEXT, delAction);
 
@@ -104,10 +101,9 @@ public class ImageViewerDialog extends ToggleDialog {
         JButton btnDeleteFromDisk = new JButton(delFromDiskAction);
         btnDeleteFromDisk.setPreferredSize(buttonDim);
         Shortcut scDeleteFromDisk = Shortcut.registerShortcut(
-            "geoimage:deletefilefromdisk", tr("Geoimage: {0}", tr("Delete File from disk")), KeyEvent.VK_DELETE, Shortcut.GROUP_DIRECT, Shortcut.GROUP_MENU + Shortcut.SHIFT_DEFAULT);
+                "geoimage:deletefilefromdisk", tr("Geoimage: {0}", tr("Delete File from disk")), KeyEvent.VK_DELETE, Shortcut.GROUP_DIRECT, Shortcut.GROUP_MENU + Shortcut.SHIFT_DEFAULT);
         final String ADELFROMDISK = "Delete image file from disk";
-        Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scDeleteFromDisk.getKeyStroke(), ADELFROMDISK);
-        Main.contentPane.getActionMap().put(ADELFROMDISK, delFromDiskAction);
+        Main.registerActionShortcut(delFromDiskAction, scDeleteFromDisk);
         btnDeleteFromDisk.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scDeleteFromDisk.getKeyStroke(), ADELFROMDISK);
         btnDeleteFromDisk.getActionMap().put(ADELFROMDISK, delFromDiskAction);
 
@@ -115,10 +111,9 @@ public class ImageViewerDialog extends ToggleDialog {
         btnNext = new JButton(nextAction);
         btnNext.setPreferredSize(buttonDim);
         Shortcut scNext = Shortcut.registerShortcut(
-            "geoimage:next", tr("Geoimage: {0}", tr("Show next Image")), KeyEvent.VK_PAGE_DOWN, Shortcut.GROUP_DIRECT);
+                "geoimage:next", tr("Geoimage: {0}", tr("Show next Image")), KeyEvent.VK_PAGE_DOWN, Shortcut.GROUP_DIRECT);
         final String ANEXT = "Next Image";
-        Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scNext.getKeyStroke(), ANEXT);
-        Main.contentPane.getActionMap().put(ANEXT, nextAction);
+        Main.registerActionShortcut(nextAction, scNext);
         btnNext.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(scNext.getKeyStroke(), ANEXT);
         btnNext.getActionMap().put(ANEXT, nextAction);
 
@@ -191,7 +186,7 @@ public class ImageViewerDialog extends ToggleDialog {
 
             } else if (COMMAND_REMOVE.equals(action)) {
                 if (currentLayer != null) {
-                   currentLayer.removeCurrentPhoto();
+                    currentLayer.removeCurrentPhoto();
                 }
             } else if (COMMAND_REMOVE_FROM_DISK.equals(action)) {
                 if (currentLayer != null) {
@@ -220,10 +215,10 @@ public class ImageViewerDialog extends ToggleDialog {
 
     public void displayImage(GeoImageLayer layer, ImageEntry entry) {
         synchronized(this) {
-//            if (currentLayer == layer && currentEntry == entry) {
-//                repaint();
-//                return;
-//            }                     TODO: pop up image dialog but don't load image again
+            //            if (currentLayer == layer && currentEntry == entry) {
+            //                repaint();
+            //                return;
+            //            }                     TODO: pop up image dialog but don't load image again
 
             if (centerView && Main.map != null && entry != null && entry.getPos() != null) {
                 Main.map.mapView.zoomTo(entry.getPos());
