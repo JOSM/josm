@@ -3,7 +3,7 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Collection;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.table.AbstractTableModel;
@@ -35,14 +35,14 @@ public class ShortcutPreference implements PreferenceSetting {
     }
 
     public boolean ok() {
-        return false;
+        return Shortcut.savePrefs();
     }
 
     // Maybe move this to prefPanel? There's no need for it to be here.
     private static class scListModel extends AbstractTableModel {
-//      private String[] columnNames = new String[]{tr("Action"), tr("Shortcut"), tr("Group"), tr("ID")};
         private String[] columnNames = new String[]{tr("Action"), tr("Shortcut")};
-        private Collection<Shortcut> data;
+        private List<Shortcut> data;
+
         public scListModel() {
             data = Shortcut.listAll();
         }
@@ -52,44 +52,23 @@ public class ShortcutPreference implements PreferenceSetting {
         public int getRowCount() {
             return data.size();
         }
+        @Override
         public String getColumnName(int col) {
             return columnNames[col];
         }
         public Object getValueAt(int row, int col) {
-            Shortcut sc = (Shortcut)data.toArray()[row];
-            if (col == 0) {
+            Shortcut sc = data.get(row);
+            if (col == 0)
                 return sc.getLongText();
-            } else if (col == 1) {
+            else if (col == 1)
                 return sc.getKeyText();
-            } /*else if (col == 2) {
-                if (sc.getRequestedGroup() == Shortcut.GROUP_NONE) {
-                    return tr("None");
-                } else if (sc.getRequestedGroup() == Shortcut.GROUP_HOTKEY) {
-                    return tr("Hotkey");
-                } else if (sc.getRequestedGroup() == Shortcut.GROUP_MENU) {
-                    return tr("Menu");
-                } else if (sc.getRequestedGroup() == Shortcut.GROUP_EDIT) {
-                    return tr("Edit");
-                } else if (sc.getRequestedGroup() == Shortcut.GROUP_LAYER) {
-                    return tr("Subwindow");
-                } else if (sc.getRequestedGroup() == Shortcut.GROUP_DIRECT) {
-                    return tr("Direct");
-                } else if (sc.getRequestedGroup() == Shortcut.GROUP_MNEMONIC) {
-                    return tr("Mnemonic");
-                } else if (sc.getRequestedGroup() == Shortcut.GROUP_RESERVED) {
-                    return tr("System");
-                } else {
-                    return tr("Unknown");
-                }
-            } else if (col == 3) {
-                return sc.getShortText();
-            } */else {
+            else
                 // This is a kind of hack that allows the actions on the editing controls
                 // to access the underlying shortcut object without introducing another
                 // method. I opted to stay within the interface.
                 return sc;
-            }
         }
+        @Override
         public boolean isCellEditable(int row, int col) {
             return false;
         }

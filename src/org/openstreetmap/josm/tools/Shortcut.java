@@ -4,9 +4,10 @@ package org.openstreetmap.josm.tools;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.AbstractButton;
@@ -230,8 +231,8 @@ public class Shortcut {
     /**
      * FOR PREF PANE ONLY
      */
-    public static Collection<Shortcut> listAll() {
-        return shortcuts.values();
+    public static List<Shortcut> listAll() {
+        return new ArrayList<Shortcut>(shortcuts.values());
     }
 
     // try to find an unused shortcut
@@ -312,20 +313,22 @@ public class Shortcut {
     }
 
     // shutdown handling
-    public static void savePrefs() {
+    public static boolean savePrefs() {
         //      we save this directly from the preferences pane, so don't overwrite these values here
         //      for (int i = GROUP_NONE; i < GROUP__MAX+GROUPS_ALT2; i++) {
         //      Main.pref.put("shortcut.groups."+i, Groups.get(i).toString());
         //      }
+        boolean changed = false;
         int i = 0;
         for (Shortcut sc : shortcuts.values()) {
             //          TODO: Remove sc.getAssignedUser() when we fixed all internal conflicts
             if (!sc.getAutomatic() && !sc.getReset() && sc.getAssignedUser()) {
-                Main.pref.put("shortcut.shortcut."+i, sc.asPrefString());
+                changed = changed | Main.pref.put("shortcut.shortcut."+i, sc.asPrefString());
                 i++;
             }
         }
-        Main.pref.put("shortcut.shortcut."+i, "");
+        changed = changed | Main.pref.put("shortcut.shortcut."+i, "");
+        return changed;
     }
 
     // this is used to register a shortcut that was read from the preferences
@@ -464,7 +467,7 @@ public class Shortcut {
      * Replies the platform specific key stroke for the 'Copy' command, i.e.
      * 'Ctrl-C' on windows or 'Meta-C' on a Mac. null, if the platform specific
      * copy command isn't known.
-     * 
+     *
      * @return the platform specific key stroke for the  'Copy' command
      */
     static public KeyStroke getCopyKeyStroke() {
@@ -477,7 +480,7 @@ public class Shortcut {
      * Replies the platform specific key stroke for the 'Paste' command, i.e.
      * 'Ctrl-V' on windows or 'Meta-V' on a Mac. null, if the platform specific
      * paste command isn't known.
-     * 
+     *
      * @return the platform specific key stroke for the 'Paste' command
      */
     static public KeyStroke getPasteKeyStroke() {
@@ -490,7 +493,7 @@ public class Shortcut {
      * Replies the platform specific key stroke for the 'Cut' command, i.e.
      * 'Ctrl-X' on windows or 'Meta-X' on a Mac. null, if the platform specific
      * 'Cut' command isn't known.
-     * 
+     *
      * @return the platform specific key stroke for the 'Cut' command
      */
     static public KeyStroke getCutKeyStroke() {

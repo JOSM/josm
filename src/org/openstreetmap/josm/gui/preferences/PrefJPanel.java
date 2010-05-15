@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -369,7 +370,7 @@ public class PrefJPanel extends javax.swing.JPanel {
     // are playing ping-pong (politically correct: table tennis, I know) and
     // even have some duplicated code. Feel free to refactor, If you have
     // more expirience with GUI coding than I have.
-    private class cbAction extends javax.swing.AbstractAction implements ListSelectionListener {
+    private class cbAction extends AbstractAction implements ListSelectionListener {
         private PrefJPanel panel;
         public cbAction (PrefJPanel panel) {
             this.panel = panel;
