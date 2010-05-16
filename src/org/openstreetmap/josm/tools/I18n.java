@@ -167,6 +167,7 @@ public class I18n {
         languages.put("sl", PluralMode.MODE_SL);
         languages.put("sv", PluralMode.MODE_NOTONE);
         languages.put("tr", PluralMode.MODE_NONE);
+        languages.put("uk", PluralMode.MODE_RU);
         languages.put("zh_TW", PluralMode.MODE_NONE);
 
         /* try initial language settings, may be changed later again */
