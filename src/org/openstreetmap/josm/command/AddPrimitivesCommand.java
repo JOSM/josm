@@ -11,6 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 
@@ -30,9 +31,20 @@ public class AddPrimitivesCommand extends Command {
             createdPrimitives.add(getLayer().data.getPrimitiveById(pd, true));
         }
 
+        // Load nodes first to prevent ways with null coordinates
         for (int i=0; i<createdPrimitives.size(); i++) {
-            createdPrimitives.get(i).load(data.get(i));
+            if (createdPrimitives.get(i) instanceof Node) {
+                createdPrimitives.get(i).load(data.get(i));
+            }
         }
+
+        // Now load ways and relations
+        for (int i=0; i<createdPrimitives.size(); i++) {
+            if (!(createdPrimitives.get(i) instanceof Node)) {
+                createdPrimitives.get(i).load(data.get(i));
+            }
+        }
+
         getLayer().data.setSelected(createdPrimitives);
         return true;
     }
