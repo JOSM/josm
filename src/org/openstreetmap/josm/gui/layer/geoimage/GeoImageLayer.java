@@ -467,9 +467,35 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                     g.setColor(new Color(128, 0, 0, 122));
                     g.fillRect(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
                 } else {
+                    if (e.getExifImgDir() != null) {
+                        double arrowlength = 25;
+                        double arrowwidth = 18;
+
+                        double dir = e.getExifImgDir();
+                        // Rotate 90° CCW 
+                        double headdir = ( dir < 90 ) ? dir + 270 : dir - 90;
+                        double leftdir = ( headdir < 90 ) ? headdir + 270 : headdir - 90;
+                        double rightdir = ( headdir > 270 ) ? headdir - 270 : headdir + 90;
+
+                        double ptx = p.x + Math.cos(Math.toRadians(headdir)) * arrowlength;
+                        double pty = p.y + Math.sin(Math.toRadians(headdir)) * arrowlength;
+
+                        double ltx = p.x + Math.cos(Math.toRadians(leftdir)) * arrowwidth/2;
+                        double lty = p.y + Math.sin(Math.toRadians(leftdir)) * arrowwidth/2;
+
+                        double rtx = p.x + Math.cos(Math.toRadians(rightdir)) * arrowwidth/2;
+                        double rty = p.y + Math.sin(Math.toRadians(rightdir)) * arrowwidth/2;
+
+                        g.setColor(Color.white);
+                        int[] xar = {(int) ltx, (int) ptx, (int) rtx, (int) ltx};
+                        int[] yar = {(int) lty, (int) pty, (int) rty, (int) lty};
+                        g.fillPolygon(xar, yar, 4);
+                    }
+
                     selectedIcon.paintIcon(mv, g,
                             p.x - selectedIcon.getIconWidth() / 2,
                             p.y - selectedIcon.getIconHeight() / 2);
+
                 }
             }
         }
@@ -527,10 +553,24 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 lat = -lat;
             }
 
+
+            // compass direction value
+
+            Rational direction = null;
+            
+            try {
+                direction = dir.getRational(GpsDirectory.TAG_GPS_IMG_DIRECTION);
+            } catch (CompoundException p) {
+                direction = null;
+            }
+
             // Store values
 
             e.setExifCoor(new LatLon(lat, lon));
             e.setPos(e.getExifCoor());
+            if (direction != null) {
+                e.setExifImgDir(direction.doubleValue());
+            }
 
         } catch (CompoundException p) {
             e.setExifCoor(null);

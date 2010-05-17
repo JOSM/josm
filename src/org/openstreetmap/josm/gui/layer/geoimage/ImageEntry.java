@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     private File file;
     private LatLon exifCoor;
+    private Double exifImgDir;
     private Date exifTime;
     Image thumbnail;
 
@@ -77,6 +78,10 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     LatLon getExifCoor() {
         return exifCoor;
     }
+    public Double getExifImgDir() {
+        return exifImgDir;
+    }
+
     /**
      * setter methods
      */
@@ -104,6 +109,9 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     void setExifCoor(LatLon exifCoor) {
         this.exifCoor = exifCoor;
     }
+    void setExifImgDir(double exifDir) {
+        this.exifImgDir = exifDir;
+    } 
 
     @Override
     public ImageEntry clone() {

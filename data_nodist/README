@@ -1,0 +1,18 @@
+exif-direction-example.jpg
+--------------------------
+
+Image that contains direction information in EXIF:
+
+...
+Exif.GPSInfo.GPSImgDirectionRef              Ascii       2  Magnetic direction
+Exif.GPSInfo.GPSImgDirection                 Rational    1  4650/100
+...
+exif-direction-example.jpg
+--------------------------
+
+Image that contains direction information in EXIF:
+
+...
+Exif.GPSInfo.GPSImgDirectionRef              Ascii       2  Magnetic direction
+Exif.GPSInfo.GPSImgDirection                 Rational    1  4650/100
+...
