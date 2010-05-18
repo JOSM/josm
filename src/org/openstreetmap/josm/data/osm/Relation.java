@@ -52,40 +52,22 @@ public final class Relation extends OsmPrimitive {
     }
 
     /**
-     *
-     * @since 1926
+     * @return number of members
      */
     public int getMembersCount() {
         return members.size();
     }
 
-    /**
-     *
-     * @param index
-     * @return
-     * @since 1926
-     */
     public RelationMember getMember(int index) {
         return members.get(index);
     }
 
-    /**
-     *
-     * @param member
-     * @since 1951
-     */
     public void addMember(RelationMember member) {
         members.add(member);
         member.getMember().addReferrer(this);
         fireMembersChanged();
     }
 
-    /**
-     *
-     * @param index
-     * @param member
-     * @since 1951
-     */
     public void addMember(int index, RelationMember member) {
         members.add(index, member);
         member.getMember().addReferrer(this);
@@ -97,7 +79,6 @@ public final class Relation extends OsmPrimitive {
      * @param index
      * @param member
      * @return Member that was at the position
-     * @since 1951
      */
     public RelationMember setMember(int index, RelationMember member) {
         RelationMember result = members.set(index, member);
@@ -113,7 +94,6 @@ public final class Relation extends OsmPrimitive {
      * Removes member at specified position.
      * @param index
      * @return Member that was at the position
-     * @since 1951
      */
     public RelationMember removeMember(int index) {
         RelationMember result = members.remove(index);

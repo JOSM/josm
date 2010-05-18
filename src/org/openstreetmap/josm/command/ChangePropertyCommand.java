@@ -4,13 +4,13 @@ package org.openstreetmap.josm.command;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JLabel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -91,7 +91,7 @@ public class ChangePropertyCommand extends Command {
         modified.addAll(objects);
     }
 
-    @Override public MutableTreeNode description() {
+    @Override public JLabel getDescription() {
         String text;
         if (objects.size() == 1) {
             OsmPrimitive primitive = objects.iterator().next();
@@ -116,18 +116,28 @@ public class ChangePropertyCommand extends Command {
             ? tr("Remove \"{0}\" for {1} objects", key, objects.size())
                     : tr("Set {0}={1} for {2} objects", key, value, objects.size());
         }
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode(new JLabel(text, ImageProvider.get("data", "key"), JLabel.HORIZONTAL));
+        return new JLabel(text, ImageProvider.get("data", "key"), JLabel.HORIZONTAL);
+    }
+
+    @Override public Collection<PseudoCommand> getChildren() {
         if (objects.size() == 1)
-            return root;
-        for (OsmPrimitive osm : objects) {
-            root.add(new DefaultMutableTreeNode(
-                    new JLabel(
-                            osm.getDisplayName(DefaultNameFormatter.getInstance()),
-                            ImageProvider.get(OsmPrimitiveType.from(osm)),
-                            JLabel.HORIZONTAL)
-            )
-            );
+            return null;
+        List<PseudoCommand> children = new ArrayList<PseudoCommand>();
+        for (final OsmPrimitive osm : objects) {
+            children.add(new PseudoCommand() {
+                @Override public JLabel getDescription() {
+                    return new JLabel(
+                                osm.getDisplayName(DefaultNameFormatter.getInstance()),
+                                ImageProvider.get(OsmPrimitiveType.from(osm)),
+                                JLabel.HORIZONTAL);
+
+                }
+                @Override public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
+                    return Collections.singleton(osm);
+                }
+
+            });
         }
-        return root;
+        return children;
     }
 }

@@ -189,4 +189,17 @@ public class User {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() {
+        StringBuffer s = new StringBuffer();
+        s.append("id:"+uid);
+        if (names.size() == 1) {
+            s.append(" name:"+getName());
+        }
+        else if (names.size() > 1) {
+            s.append(String.format(" %d names:%s", names.size(), getName()));
+        }
+        return s.toString();
+    }
 }

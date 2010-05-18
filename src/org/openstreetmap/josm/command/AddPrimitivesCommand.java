@@ -5,11 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.JLabel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -55,12 +54,9 @@ public class AddPrimitivesCommand extends Command {
         }
     }
 
-    @Override
-    public MutableTreeNode description() {
-        return new DefaultMutableTreeNode(
-                new JLabel(trn("Added {0} object", "Added {0} objects", data.size(), data.size()), null,
-                        JLabel.HORIZONTAL
-                )
+    @Override public JLabel getDescription() {
+        return new JLabel(trn("Added {0} object", "Added {0} objects", data.size(), data.size()), null,
+                            JLabel.HORIZONTAL
         );
     }
 
@@ -70,4 +66,15 @@ public class AddPrimitivesCommand extends Command {
         // Does nothing because we don't want to create OsmPrimitives.
     }
 
+    @Override
+    public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
+        Collection<OsmPrimitive> prims = new HashSet<OsmPrimitive>();
+        for (PrimitiveData d : data) {
+            OsmPrimitive osm = getLayer().data.getPrimitiveById(d);
+            if (osm == null)
+                throw new RuntimeException();
+            prims.add(osm);
+        }
+        return prims;
+    }
 }

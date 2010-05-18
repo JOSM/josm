@@ -5,12 +5,14 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
+import javax.swing.JLabel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * A command consisting of a sequence of other commands. Executes the other commands
@@ -87,11 +89,21 @@ public class SequenceCommand extends Command {
         }
     }
 
-    @Override public MutableTreeNode description() {
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode(tr("Sequence")+": "+name);
+    @Override public JLabel getDescription() {
+        return new JLabel(tr("Sequence")+": "+name, ImageProvider.get("data", "sequence"), JLabel.HORIZONTAL);
+    }
+
+    @Override
+    public Collection<PseudoCommand> getChildren() {
+        return (List) Arrays.asList(sequence);
+    }
+
+    @Override
+    public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
+        Collection<OsmPrimitive> prims = new HashSet<OsmPrimitive>();
         for (Command c : sequence) {
-            root.add(c.description());
+            prims.addAll(c.getParticipatingPrimitives());
         }
-        return root;
+        return prims;
     }
 }

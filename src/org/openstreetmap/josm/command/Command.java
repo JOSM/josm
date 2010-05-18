@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.Main;
@@ -29,7 +30,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  * @author imi
  */
-abstract public class Command {
+abstract public class Command extends PseudoCommand {
 
     private static final class CloneVisitor extends AbstractVisitor {
         public final Map<OsmPrimitive, PrimitiveData> orig = new LinkedHashMap<OsmPrimitive, PrimitiveData>();
@@ -131,7 +132,6 @@ abstract public class Command {
     /**
      * Replies the layer this command is (or was) applied to.
      *
-     * @return
      */
     protected  OsmDataLayer getLayer() {
         return layer;
@@ -149,6 +149,28 @@ abstract public class Command {
             Collection<OsmPrimitive> deleted,
             Collection<OsmPrimitive> added);
 
-    abstract public MutableTreeNode description();
+    /**
+     * Return the primitives that take part in this command.
+     */
+    @Override public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
+        return cloneMap.keySet();
+    }
+
+    /**
+     * Provide a description that can be presented in a list or tree view.
+     * This override will be removed when
+     * <code>description()</code> is removed.
+     */
+    @Override public Object getDescription() {
+        return ((DefaultMutableTreeNode) description()).getUserObject();
+    }
+
+    /**
+     * @deprecated use getDescription() and getChildren() instead
+     */
+    @Deprecated
+    public MutableTreeNode description() {
+        return null;
+    }
 
 }

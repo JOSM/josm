@@ -4,15 +4,15 @@ package org.openstreetmap.josm.command;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.swing.JLabel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
@@ -95,33 +95,40 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
         return purgedPrimitives;
     }
 
-    protected MutableTreeNode getDescription(OsmPrimitive primitive) {
-        return new DefaultMutableTreeNode(
-                new JLabel(
-                        tr("Purged object ''{0}''", primitive.getDisplayName(DefaultNameFormatter.getInstance())),
+    @Override public JLabel getDescription() {
+        if (purgedPrimitives.size() == 1) {
+            return new JLabel(
+                tr("Purged object ''{0}''",
+                        purgedPrimitives.iterator().next().getDisplayName(DefaultNameFormatter.getInstance())),
+                ImageProvider.get("data", "object"),
+                JLabel.HORIZONTAL
+            );
+        } else {
+            return new JLabel(trn("Purged {0} object", "Purged {0} objects", purgedPrimitives.size(), purgedPrimitives.size()));
+        }
+    }
+
+    @Override public Collection<PseudoCommand> getChildren() {
+        if (purgedPrimitives.size() == 1)
+            return null;
+        List<PseudoCommand> children = new ArrayList<PseudoCommand>();
+        for (final OsmPrimitive osm : purgedPrimitives) {
+            children.add(new PseudoCommand() {
+                @Override public JLabel getDescription() {
+                    return new JLabel(
+                        tr("Purged object ''{0}''",
+                                osm.getDisplayName(DefaultNameFormatter.getInstance())),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
-                )
-        );
-    }
+                    );
+                }
+                @Override public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
+                    return Collections.singleton(osm);
+                }
 
-    protected MutableTreeNode getDescription(Collection<OsmPrimitive> primitives) {
-
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode(
-                trn("Purged {0} object", "Purged {0} objects", primitives.size(), primitives.size())
-        );
-        for (OsmPrimitive p : primitives) {
-            root.add(getDescription(p));
+            });
         }
-        return root;
-    }
-
-    @Override
-    public MutableTreeNode description() {
-        if (purgedPrimitives.size() == 1)
-            return getDescription(purgedPrimitives.iterator().next());
-        else
-            return getDescription(purgedPrimitives);
+        return children;
     }
 
     /**

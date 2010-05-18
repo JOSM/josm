@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.JLabel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -60,20 +58,17 @@ public class TagConflictResolveCommand extends ConflictResolveCommand {
         this.mergeItems = mergeItems;
     }
 
-    @Override
-    public MutableTreeNode description() {
+    @Override public JLabel getDescription() {
         String msg = "";
         switch(OsmPrimitiveType.from(conflict.getMy())) {
         case NODE: msg = marktr("Resolve {0} tag conflicts in node {1}"); break;
         case WAY: msg = marktr("Resolve {0} tag conflicts in way {1}"); break;
         case RELATION: msg = marktr("Resolve {0} tag conflicts in relation {1}"); break;
         }
-        return new DefaultMutableTreeNode(
-                new JLabel(
+        return new JLabel(
                         tr(msg,getNumDecidedConflicts(), conflict.getMy().getId()),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
-                )
         );
     }
 

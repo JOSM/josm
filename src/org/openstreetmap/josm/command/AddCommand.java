@@ -5,10 +5,9 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.swing.JLabel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -60,7 +59,7 @@ public class AddCommand extends Command {
         added.add(osm);
     }
 
-    @Override public MutableTreeNode description() {
+    @Override public JLabel getDescription() {
         String msg;
         switch(OsmPrimitiveType.from(osm)) {
         case NODE: msg = marktr("Add node {0}"); break;
@@ -69,14 +68,14 @@ public class AddCommand extends Command {
         default: /* should not happen */msg = ""; break;
         }
 
-        return new DefaultMutableTreeNode(
-                new JLabel(
-                        tr(msg,
-                                osm.getDisplayName(DefaultNameFormatter.getInstance())
-                        ),
-                        ImageProvider.get(OsmPrimitiveType.from(osm)),
-                        JLabel.HORIZONTAL
-                )
-        );
+        return new JLabel(
+                tr(msg, osm.getDisplayName(DefaultNameFormatter.getInstance())),
+                ImageProvider.get(OsmPrimitiveType.from(osm)),
+                JLabel.HORIZONTAL);
+    }
+
+    @Override
+    public Collection<OsmPrimitive> getParticipatingPrimitives() {
+        return Collections.singleton(osm);
     }
 }

@@ -189,9 +189,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
                 // Better way of testing list equality non-order-sensitively?
                 if (c instanceof MoveCommand
-                        && ((MoveCommand)c).getMovedNodes().contains(n1)
-                        && ((MoveCommand)c).getMovedNodes().contains(n2)
-                        && ((MoveCommand)c).getMovedNodes().size() == 2) {
+                        && ((MoveCommand)c).getParticipatingPrimitives().contains(n1)
+                        && ((MoveCommand)c).getParticipatingPrimitives().contains(n2)
+                        && ((MoveCommand)c).getParticipatingPrimitives().size() == 2) {
                     // MoveCommand doesn't let us know how much it has already moved the selection
                     // so we have to do some ugly record-keeping.
                     ((MoveCommand)c).moveAgain(difference.getX(), difference.getY());

@@ -10,8 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JLabel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
@@ -117,11 +115,20 @@ public class MoveCommand extends Command {
         }
     }
 
-    @Override public MutableTreeNode description() {
-        return new DefaultMutableTreeNode(new JLabel(trn("Move {0} node", "Move {0} nodes", nodes.size(), nodes.size()), ImageProvider.get("data", "node"), JLabel.HORIZONTAL));
+    @Override public JLabel getDescription() {
+        return new JLabel(trn("Move {0} node", "Move {0} nodes", nodes.size(), nodes.size()), ImageProvider.get("data", "node"), JLabel.HORIZONTAL);
     }
 
+    /**
+     * @Deprecated use getParticipatingPrimitives() instead
+     */
+    @Deprecated
     public Collection<Node> getMovedNodes() {
+        return nodes;
+    }
+
+    @Override
+    public Collection<Node> getParticipatingPrimitives() {
         return nodes;
     }
 }

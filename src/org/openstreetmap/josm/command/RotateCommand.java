@@ -8,8 +8,6 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import javax.swing.JLabel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -137,8 +135,8 @@ public class RotateCommand extends Command {
         }
     }
 
-    @Override public MutableTreeNode description() {
-        return new DefaultMutableTreeNode(new JLabel(trn("Rotate {0} node", "Rotate {0} nodes", nodes.size(), nodes.size()), ImageProvider.get("data", "node"), JLabel.HORIZONTAL));
+    @Override public JLabel getDescription() {
+        return new JLabel(trn("Rotate {0} node", "Rotate {0} nodes", nodes.size(), nodes.size()), ImageProvider.get("data", "node"), JLabel.HORIZONTAL);
     }
 
     public Collection<Node> getRotatedNodes() {

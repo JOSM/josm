@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.JLabel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -50,14 +48,11 @@ public class RelationMemberConflictResolverCommand extends Command {
         this.mergedMembers = mergedMembers;
     }
 
-    @Override
-    public MutableTreeNode description() {
-        return new DefaultMutableTreeNode(
-                new JLabel(
+    @Override public JLabel getDescription() {
+        return new JLabel(
                         tr("Resolve conflicts in member list of relation {0}", my.getId()),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
-                )
         );
     }
 

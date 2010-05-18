@@ -7,8 +7,6 @@ import java.util.Collection;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.Conflict;
@@ -64,15 +62,13 @@ public class ConflictAddCommand extends Command {
         // nothing to fill
     }
 
-    @Override public MutableTreeNode description() {
-        return new DefaultMutableTreeNode(
-                new JLabel(
+    @Override public JLabel getDescription() {
+        return new JLabel(
                         tr("Add conflict for ''{0}''",
                                 conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance())
                         ),
                         ImageProvider.get(OsmPrimitiveType.from(conflict.getMy())),
                         JLabel.HORIZONTAL
-                )
         );
     }
 }

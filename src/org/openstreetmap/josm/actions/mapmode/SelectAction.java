@@ -232,7 +232,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
             }
 
             if (mode == Mode.move) {
-                if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand)c).getMovedNodes())) {
+                if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand)c).getParticipatingPrimitives())) {
                     ((MoveCommand)c).moveAgain(dx,dy);
                 } else {
                     Main.main.undoRedo.add(

@@ -6,8 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 
 import javax.swing.JLabel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -39,14 +37,11 @@ public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
         this.decision = decision;
     }
 
-    @Override
-    public MutableTreeNode description() {
-        return new DefaultMutableTreeNode(
-                new JLabel(
+    @Override public JLabel getDescription() {
+        return new JLabel(
                         tr("Resolve conflicts in deleted state in {0}",conflict.getMy().getId()),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
-                )
         );
     }
 

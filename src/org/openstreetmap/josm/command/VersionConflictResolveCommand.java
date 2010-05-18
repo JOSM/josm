@@ -7,8 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 
 import javax.swing.JLabel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -34,20 +32,17 @@ public class VersionConflictResolveCommand extends ConflictResolveCommand {
         this.conflict = conflict;
     }
 
-    @Override
-    public MutableTreeNode description() {
+    @Override public JLabel getDescription() {
         String msg = "";
         switch(OsmPrimitiveType.from(conflict.getMy())) {
         case NODE: msg = marktr("Resolve version conflict for node {0}"); break;
         case WAY: msg = marktr("Resolve version conflict for way {0}"); break;
         case RELATION: msg = marktr("Resolve version conflict for relation {0}"); break;
         }
-        return new DefaultMutableTreeNode(
-                new JLabel(
+        return new JLabel(
                         tr(msg,conflict.getMy().getId()),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
-                )
         );
     }
 

@@ -93,7 +93,7 @@ public class MoveAction extends JosmAction {
         Command c = !Main.main.undoRedo.commands.isEmpty()
         ? Main.main.undoRedo.commands.getLast() : null;
 
-        if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand)c).getMovedNodes())) {
+        if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand)c).getParticipatingPrimitives())) {
             ((MoveCommand)c).moveAgain(distx, disty);
         } else {
             Main.main.undoRedo.add(

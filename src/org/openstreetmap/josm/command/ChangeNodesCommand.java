@@ -7,8 +7,6 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.swing.JLabel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
@@ -47,11 +45,10 @@ public class ChangeNodesCommand extends Command {
         modified.add(way);
     }
 
-    @Override public MutableTreeNode description() {
+    @Override public JLabel getDescription() {
         String msg = tr("Changed nodes of {0}", way.getDisplayName(DefaultNameFormatter.getInstance()));
-        return new DefaultMutableTreeNode(
-                new JLabel(msg,
+        return new JLabel(msg,
                         ImageProvider.get(OsmPrimitiveType.WAY),
-                        JLabel.HORIZONTAL));
+                        JLabel.HORIZONTAL);
     }
 }

@@ -382,9 +382,10 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     /**
-     * Replies <code>true</code>, if the object is usable.
+     * Replies <code>true</code>, if the object is usable (i.e. complete
+     * and not deleted).
      *
-     * @return <code>true</code>, if the object is unusable.
+     * @return <code>true</code>, if the object is usable.
      * @see #delete(boolean)
      */
     public boolean isUsable() {

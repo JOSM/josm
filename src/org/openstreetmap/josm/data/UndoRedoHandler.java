@@ -22,7 +22,7 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
     /**
      * The stack for redoing commands
      */
-    private final Stack<Command> redoCommands = new Stack<Command>();
+    public final LinkedList<Command> redoCommands = new LinkedList<Command>();
 
     public final LinkedList<CommandQueueListener> listenerCommands = new LinkedList<CommandQueueListener>();
 
@@ -63,13 +63,24 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
     /**
      * Undoes the last added command.
      */
-    synchronized public void undo() {
+    public void undo() {
+        undo(1);
+    }
+
+    /**
+     * Undoes multiple commands.
+     */
+    synchronized public void undo(int num) {
         if (commands.isEmpty())
             return;
         Collection<? extends OsmPrimitive> oldSelection = Main.main.getCurrentDataSet().getSelected();
-        final Command c = commands.removeLast();
-        c.undoCommand();
-        redoCommands.push(c);
+        for (int i=1; i<=num; ++i) {
+            final Command c = commands.removeLast();
+            c.undoCommand();
+            redoCommands.addFirst(c);
+            if (commands.isEmpty())
+                break;
+        }
         fireCommandsChanged();
         Collection<? extends OsmPrimitive> newSelection = Main.main.getCurrentDataSet().getSelected();
         if (!oldSelection.equals(newSelection)) {
@@ -79,15 +90,25 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
 
     /**
      * Redoes the last undoed command.
-     * TODO: This has to be moved to a central place in order to support multiple layers.
      */
     public void redo() {
+        redo(1);
+    }
+
+    /**
+     * Redoes multiple commands.
+     */
+    public void redo(int num) {
         if (redoCommands.isEmpty())
             return;
         Collection<? extends OsmPrimitive> oldSelection = Main.main.getCurrentDataSet().getSelected();
-        final Command c = redoCommands.pop();
-        c.executeCommand();
-        commands.add(c);
+        for (int i=0; i<num; ++i) {
+            final Command c = redoCommands.pop();
+            c.executeCommand();
+            commands.add(c);
+            if (redoCommands.isEmpty())
+                break;
+        }
         fireCommandsChanged();
         Collection<? extends OsmPrimitive> newSelection = Main.main.getCurrentDataSet().getSelected();
         if (!oldSelection.equals(newSelection)) {

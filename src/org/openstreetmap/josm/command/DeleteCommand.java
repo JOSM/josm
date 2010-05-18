@@ -147,11 +147,9 @@ public class DeleteCommand extends Command {
     @Override
     public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted,
             Collection<OsmPrimitive> added) {
-        deleted.addAll(toDelete);
     }
 
-    @Override
-    public MutableTreeNode description() {
+    @Override public JLabel getDescription() {
         if (toDelete.size() == 1) {
             OsmPrimitive primitive = toDelete.iterator().next();
             String msg = "";
@@ -161,36 +159,56 @@ public class DeleteCommand extends Command {
             case RELATION:msg = marktr("Delete relation {0}"); break;
             }
 
-            return new DefaultMutableTreeNode(new JLabel(tr(msg, primitive.getDisplayName(DefaultNameFormatter.getInstance())),
-                    ImageProvider.get(OsmPrimitiveType.from(primitive)), JLabel.HORIZONTAL));
-        }
-
-        Set<OsmPrimitiveType> typesToDelete = new HashSet<OsmPrimitiveType>();
-        for (OsmPrimitive osm : toDelete) {
-            typesToDelete.add(OsmPrimitiveType.from(osm));
-        }
-        String msg = "";
-        String apiname = "object";
-        if (typesToDelete.size() > 1) {
-            msg = trn("Delete {0} object", "Delete {0} objects", toDelete.size(), toDelete.size());
+            return new JLabel(tr(msg, primitive.getDisplayName(DefaultNameFormatter.getInstance())),
+                    ImageProvider.get(OsmPrimitiveType.from(primitive)), JLabel.HORIZONTAL);
         } else {
-            OsmPrimitiveType t = typesToDelete.iterator().next();
-            apiname = t.getAPIName();
-            switch(t) {
-            case NODE: msg = trn("Delete {0} node", "Delete {0} nodes", toDelete.size(), toDelete.size()); break;
-            case WAY: msg = trn("Delete {0} way", "Delete {0} ways", toDelete.size(), toDelete.size()); break;
-            case RELATION: msg = trn("Delete {0} relation", "Delete {0} relations", toDelete.size(), toDelete.size()); break;
+            Set<OsmPrimitiveType> typesToDelete = new HashSet<OsmPrimitiveType>();
+            for (OsmPrimitive osm : toDelete) {
+                typesToDelete.add(OsmPrimitiveType.from(osm));
             }
+            String msg = "";
+            String apiname = "object";
+            if (typesToDelete.size() > 1) {
+                msg = trn("Delete {0} object", "Delete {0} objects", toDelete.size(), toDelete.size());
+            } else {
+                OsmPrimitiveType t = typesToDelete.iterator().next();
+                apiname = t.getAPIName();
+                switch(t) {
+                case NODE: msg = trn("Delete {0} node", "Delete {0} nodes", toDelete.size(), toDelete.size()); break;
+                case WAY: msg = trn("Delete {0} way", "Delete {0} ways", toDelete.size(), toDelete.size()); break;
+                case RELATION: msg = trn("Delete {0} relation", "Delete {0} relations", toDelete.size(), toDelete.size()); break;
+                }
+            }
+            return  new JLabel(msg, ImageProvider.get("data", apiname), JLabel.HORIZONTAL);
         }
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode(
-                new JLabel(msg, ImageProvider.get("data", apiname), JLabel.HORIZONTAL)
-        );
-        for (OsmPrimitive osm : toDelete) {
-            root.add(new DefaultMutableTreeNode(new JLabel(
-                    osm.getDisplayName(DefaultNameFormatter.getInstance()),
-                    ImageProvider.get(OsmPrimitiveType.from(osm)), JLabel.HORIZONTAL)));
+    }
+
+    @Override public Collection<PseudoCommand> getChildren() {
+        if (toDelete.size() == 1) {
+            return null;
+        } else {
+            List<PseudoCommand> children = new ArrayList<PseudoCommand>();
+            for (final OsmPrimitive osm : toDelete) {
+                children.add(new PseudoCommand() {
+                    @Override public JLabel getDescription() {
+                        return new JLabel(
+                            tr("Deleted ''{0}''",
+                                osm.getDisplayName(DefaultNameFormatter.getInstance())),
+                            ImageProvider.get(OsmPrimitiveType.from(osm)), JLabel.HORIZONTAL);
+                        }
+                    @Override public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
+                        return Collections.singleton(osm);
+                    }
+
+                });
+            }
+            return children;
+
         }
-        return root;
+    }
+
+    @Override public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
+        return toDelete;
     }
 
     /**

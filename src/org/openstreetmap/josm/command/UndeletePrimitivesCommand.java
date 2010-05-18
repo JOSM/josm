@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.ListIterator;
 
 import javax.swing.JLabel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -61,14 +59,11 @@ public class UndeletePrimitivesCommand extends ConflictResolveCommand {
         this.toUndelete.addAll(toUndelete);
     }
 
-    @Override
-    public MutableTreeNode description() {
-        return new DefaultMutableTreeNode(
-                new JLabel(
+    @Override public JLabel getDescription() {
+        return new JLabel(
                         trn("Undelete {0} primitive", "Undelete {0} primitives", toUndelete.size(), toUndelete.size()),
                         ImageProvider.get("data", "object"),
                         JLabel.HORIZONTAL
-                )
         );
     }
 

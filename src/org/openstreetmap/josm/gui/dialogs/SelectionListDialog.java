@@ -93,6 +93,7 @@ public class SelectionListDialog extends ToggleDialog  {
     private ZoomToJOSMSelectionAction actZoomToJOSMSelection;
     private ZoomToListSelection actZoomToListSelection;
     private DownloadSelectedIncompleteMembersAction actDownloadSelectedIncompleteMembers;
+    private InspectAction actInspect;
 
     /**
      * Builds the panel with the list of selected OSM primitives
@@ -175,6 +176,9 @@ public class SelectionListDialog extends ToggleDialog  {
         actDownloadSelectedIncompleteMembers = new DownloadSelectedIncompleteMembersAction();
         lstPrimitives.getSelectionModel().addListSelectionListener(actDownloadSelectedIncompleteMembers);
 
+        actInspect = new InspectAction();
+        lstPrimitives.getSelectionModel().addListSelectionListener(actInspect);
+
         lstPrimitives.addMouseListener(new SelectionPopupMenuLauncher());
         lstPrimitives.addMouseListener(new DblClickHandler());
     }
@@ -247,6 +251,8 @@ public class SelectionListDialog extends ToggleDialog  {
             add(actZoomToListSelection);
             addSeparator();
             add(actDownloadSelectedIncompleteMembers);
+            addSeparator();
+            add(actInspect);
         }
     }
 
@@ -740,7 +746,7 @@ public class SelectionListDialog extends ToggleDialog  {
      * Action for downloading incomplete members of selected relations
      *
      */
-    class DownloadSelectedIncompleteMembersAction extends AbstractAction implements ListSelectionListener{
+    class DownloadSelectedIncompleteMembersAction extends AbstractAction implements ListSelectionListener {
         public DownloadSelectedIncompleteMembersAction() {
             putValue(SHORT_DESCRIPTION, tr("Download incomplete members of selected relations"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));
@@ -770,6 +776,29 @@ public class SelectionListDialog extends ToggleDialog  {
 
         protected void updateEnabledState() {
             setEnabled(!model.getSelectedRelationsWithIncompleteMembers().isEmpty());
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+    }
+
+    class InspectAction extends AbstractAction implements ListSelectionListener {
+        public InspectAction() {
+            putValue(SHORT_DESCRIPTION, tr("Get detailed information on the internal state of the objects."));
+            putValue(NAME, tr("Inspect"));
+            updateEnabledState();
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            Collection<OsmPrimitive> sel = model.getSelected();
+            if (sel.isEmpty()) return;
+            InspectPrimitiveDialog inspectDialog = new InspectPrimitiveDialog(sel);
+            inspectDialog.showDialog();
+        }
+
+        public void updateEnabledState() {
+            setEnabled(!model.getSelected().isEmpty());
         }
 
         public void valueChanged(ListSelectionEvent e) {
