@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -163,10 +164,20 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
         for (PrimitiveData primitive: mappedPrimitives.values()) {
             hull.getPrimitiveById(primitive, true);
         }
-        // Then fill them with data
+        // Then fill nodes with data
         for (PrimitiveData primitive : mappedPrimitives.values()) {
-            if (!primitive.isIncomplete()) {
-                hull.getPrimitiveById(primitive).load(primitive);
+            if (primitive instanceof NodeData) {
+                if (!primitive.isIncomplete()) {
+                    hull.getPrimitiveById(primitive).load(primitive);
+                }
+            }
+        }
+        // Then ways and relations
+        for (PrimitiveData primitive : mappedPrimitives.values()) {
+            if (!(primitive instanceof NodeData)) {
+                if (!primitive.isIncomplete()) {
+                    hull.getPrimitiveById(primitive).load(primitive);
+                }
             }
         }
     }
