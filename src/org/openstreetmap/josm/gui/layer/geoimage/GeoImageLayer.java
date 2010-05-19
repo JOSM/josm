@@ -472,7 +472,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                         double arrowwidth = 18;
 
                         double dir = e.getExifImgDir();
-                        // Rotate 90° CCW 
+                        // Rotate 90 degrees CCW 
                         double headdir = ( dir < 90 ) ? dir + 270 : dir - 90;
                         double leftdir = ( headdir < 90 ) ? headdir + 270 : headdir - 90;
                         double rightdir = ( headdir > 270 ) ? headdir - 270 : headdir + 90;

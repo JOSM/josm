@@ -239,7 +239,7 @@ public class ImageViewerDialog extends ToggleDialog {
                 osd.append(tr("\n{0} km/h", Math.round(entry.getSpeed())));
             }
             if (entry.getExifImgDir() != null) {
-                osd.append(tr("\nDirection {0}°", Math.round(entry.getExifImgDir())));
+                osd.append(tr("\nDirection {0}\u00b0", Math.round(entry.getExifImgDir())));
             }
             //if (entry.getPos()  != null) {
             //    osd.append(tr("\nlat: {0}, lon: {1}", Double.toString(entry.getPos().lat()), Double.toString(entry.getPos().lon())));
