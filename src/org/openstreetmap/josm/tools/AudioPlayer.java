@@ -338,8 +338,13 @@ public class AudioPlayer extends Thread {
     }
 
     public static void audioMalfunction(Exception ex) {
+        String msg = ex.getMessage();
+        if(msg == null)
+            msg = tr("unspecified reason");
+        else
+            msg = tr(msg);
         JOptionPane.showMessageDialog(Main.parent,
-                "<html><p>" + tr(ex.getMessage()) + "</p></html>",
+                "<html><p>" + msg + "</p></html>",
                 tr("Error playing sound"), JOptionPane.ERROR_MESSAGE);
     }
 }
