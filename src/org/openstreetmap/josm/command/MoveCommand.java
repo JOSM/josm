@@ -11,6 +11,8 @@ import java.util.List;
 
 import javax.swing.JLabel;
 
+import org.openstreetmap.josm.data.coor.CachedLatLon;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -54,6 +56,15 @@ public class MoveCommand extends Command {
     public MoveCommand(OsmPrimitive osm, double x, double y) {
         this(Collections.singleton(osm), x, y);
     }
+
+    public MoveCommand(Node node, LatLon position) {
+        this(Collections.singleton((OsmPrimitive) node), node.getEastNorth().sub(new CachedLatLon(position).getEastNorth()));
+    }
+
+    public MoveCommand(Collection<OsmPrimitive> objects, EastNorth offset) {
+        this(objects, offset.getX(), offset.getY());
+    }
+
     /**
      * Create a MoveCommand and assign the initial object set and movement vector.
      */

@@ -44,6 +44,7 @@ import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.actions.MergeSelectionAction;
 import org.openstreetmap.josm.actions.MirrorAction;
+import org.openstreetmap.josm.actions.MoveNodeAction;
 import org.openstreetmap.josm.actions.NewAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.actions.OpenLocationAction;
@@ -140,6 +141,7 @@ public class MainMenu extends JMenuBar {
     public final JosmAction orthoUndo = new Undo();  // action is not shown in the menu. Only triggered by shortcut
     public final JosmAction mirror = new MirrorAction();
     public final AddNodeAction addnode = new AddNodeAction();
+    public final MoveNodeAction movenode = new MoveNodeAction();
     public final JosmAction createCircle = new CreateCircleAction();
     public final JosmAction mergeNodes = new MergeNodesAction();
     public final JosmAction joinNodeWay = new JoinNodeWayAction();
@@ -290,6 +292,7 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, mirror);
         toolsMenu.addSeparator();
         add(toolsMenu, addnode);
+        add(toolsMenu, movenode);
         add(toolsMenu, createCircle);
         toolsMenu.addSeparator();
         add(toolsMenu, mergeNodes);
