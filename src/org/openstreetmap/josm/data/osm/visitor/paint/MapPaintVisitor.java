@@ -183,7 +183,7 @@ public class MapPaintVisitor implements PaintVisitor {
             /* way with area style */
             if (fillAreas > dist)
             {
-                painter.drawArea(getPolygon(w), (data.isSelected(w) ? paintSettings.getSelectedColor() : areaStyle.color), painter.getWayName(w));
+                painter.drawArea(getPolygon(w), (data.isSelected(w) ? paintSettings.getSelectedColor() : areaStyle.color), painter.getAreaName(w));
                 if(!w.isClosed()) {
                     putError(w, tr("Area style way is not closed."), true);
                 }
@@ -202,7 +202,7 @@ public class MapPaintVisitor implements PaintVisitor {
                 AreaElemStyle areaStyle = (AreaElemStyle)style;
                 areaStyle.getLineStyle().paintPrimitive(way, paintSettings, painter, true);
                 if(area) {
-                    painter.drawArea(getPolygon(way), (areaselected ? paintSettings.getSelectedColor() : areaStyle.color), painter.getWayName(way));
+                    painter.drawArea(getPolygon(way), (areaselected ? paintSettings.getSelectedColor() : areaStyle.color), painter.getAreaName(way));
                 }
             } else {
                 style.paintPrimitive(osm, paintSettings, painter, true);
@@ -496,7 +496,7 @@ public class MapPaintVisitor implements PaintVisitor {
                     }
 
                     boolean selected = pd.selected || data.isSelected(r);
-                    painter.drawArea(p, selected ? paintSettings.getSelectedColor() : areaStyle.color, null);
+                    painter.drawArea(p, selected ? paintSettings.getSelectedColor() : areaStyle.color, painter.getAreaName(r));
                     visible = true;
                 }
             }

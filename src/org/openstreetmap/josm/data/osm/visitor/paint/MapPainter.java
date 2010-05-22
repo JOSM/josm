@@ -20,6 +20,7 @@ import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -395,7 +396,7 @@ public class MapPainter {
     }
 
     //TODO Not a good place for this method
-    public String getWayName(Way w) {
+    public String getAreaName(OsmPrimitive w) {
         String name = null;
         if (w.hasKeys()) {
             for (String rn : regionalNameOrder) {
