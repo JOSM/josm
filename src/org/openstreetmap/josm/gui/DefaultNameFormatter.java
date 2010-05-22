@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -47,7 +48,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     }
 
     /** the default list of tags which are used as naming tags in relations */
-    static public final String[] DEFAULT_NAMING_TAGS_FOR_RELATIONS = {"name", "ref", "restriction", "public_transport", ":LocationCode", "note"};
+    static public final String[] DEFAULT_NAMING_TAGS_FOR_RELATIONS = {"name", "ref", "restriction", "landuse", "natural",
+    "public_transport", ":LocationCode", "note"};
 
     /** the current list of tags used as naming tags in relations */
     static private List<String> namingTagsForRelations =  null;
@@ -165,6 +167,13 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             name = relation.get("type");
             if (name == null) {
                 name = (relation.get("public_transport") != null) ? tr("public transport") : "";
+            }
+            if (name == null) {
+                String building  = relation.get("building");
+                if(OsmUtils.isTrue(building))
+                    name = tr("building");
+                else if(building != null)
+                    name = tr(building); // translate tag!
             }
             if (name == null) {
                 name = tr("relation");
