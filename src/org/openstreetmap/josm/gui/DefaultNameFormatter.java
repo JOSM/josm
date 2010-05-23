@@ -200,7 +200,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                         }
                     }
                 } else {
-                    nameTag = relation.get(n);
+                    String str = relation.get(n);
+                    if(str != null)
+                        nameTag = tr(str);
                 }
                 if (nameTag != null) {
                     break;
