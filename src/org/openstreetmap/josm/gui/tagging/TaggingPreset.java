@@ -629,9 +629,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 all.add(tp);
                 Main.toolbar.register(tp);
             } else {
-                TaggingPreset last = all.getLast();
-                if(last != null)
-                    last.data.add((Item)o);
+                if(all.size() != 0)
+                    all.getLast().data.add((Item)o);
                 else
                     throw new SAXException(tr("Preset sub element without parent"));
             }
