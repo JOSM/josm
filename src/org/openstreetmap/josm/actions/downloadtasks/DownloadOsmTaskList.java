@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions.downloadtasks;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.EventQueue;
 import java.awt.geom.Area;
@@ -157,20 +158,24 @@ public class DownloadOsmTaskList {
                 ),
         };
 
-        String message = tr("<html>" + "There are {0} primitives in your local dataset which<br>"
-                + "might be deleted on the server. If you later try to delete or<br>"
-                + "update them the server is likely to report a<br>" + "conflict.<br>" + "<br>"
-                + "Click <strong>{1}</strong> to check the state of these primitives<br>" + "on the server.<br>"
-                + "Click <strong>{2}</strong> to ignore.<br>" + "</html>",
-                potentiallyDeleted.size(),
-                options[0].text,
-                options[1].text
-        );
+        String message = "<html>"
+            + trn("There is {0} object in your local dataset which "
+                    + "might be deleted on the server. If you later try to delete or "
+                    + "update this the server is likely to report a conflict.",
+                    "There are {0} objects in your local dataset which "
+                    + "might be deleted on the server. If you later try to delete or "
+                    + "update them the server is likely to report a conflict.", potentiallyDeleted.size(), potentiallyDeleted.size())
+                    + "<br>"
+                    + trn("Click <strong>{0}</strong> to check the state of this object on the server.",
+                            "Click <strong>{0}</strong> to check the state of these objects on the server.",
+                            potentiallyDeleted.size(),
+                            options[0].text) + "<br>"
+                            + tr("Click <strong>{0}</strong> to ignore." + "</html>", options[1].text);
 
         int ret = HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
                 message,
-                tr("Deleted or moved primitives"),
+                tr("Deleted or moved objects"),
                 JOptionPane.WARNING_MESSAGE,
                 null,
                 options,
