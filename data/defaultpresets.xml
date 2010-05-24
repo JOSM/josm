@@ -44,6 +44,8 @@ check: checkbox
   text: fixed label to display
   default: ticked on/off
   delete_if_empty: true/false
+  value_on: the value to set when checked (default is "yes")
+  value_off: the value to set when unchecked (default is 'no')
 
 For external files the <annotations> should have following elements:
 - author           the author of the preset
@@ -1329,23 +1331,24 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="amenity" value="fuel" />
             <combo key="operator" text="Operator" values="Agip,Aral,Avia,BP,Esso,OMV,Q8,Repsol,Shell,Statoil,Tamoil,Texaco,Total,Indipend." default="" delete_if_empty="true" />
             <optional>
-				<text key="name" text="Name" default="" delete_if_empty="true" />
-				<combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
-				<label text="Fuel types:" />
-				<check key="fuel:diesel" text="Diesel" default="off" delete_if_empty="true" />
-				<check key="fuel:biodiesel" text="Bio Diesel" default="off" delete_if_empty="true" />
-				<check key="fuel:GTL_diesel" text="Diesel (Gas To Liquid - ultimate diesel)" default="off" delete_if_empty="true" />
-				<check key="fuel:HGV_diesel" text="Diesel for Heavy Good Vehicles" default="off" delete_if_empty="true" />
-				<check key="fuel:octane_91" text="Octane 91" default="off" delete_if_empty="true" />
-				<check key="fuel:octane_95" text="Octane 95" default="off" delete_if_empty="true" />
-				<check key="fuel:octane_98" text="Octane 98" default="off" delete_if_empty="true" />
-				<check key="fuel:octane_100" text="Octane 100" default="off" delete_if_empty="true" />
-				<check key="fuel:e10" text="E10 (10% Ethanol mix)" default="off" delete_if_empty="true" />
-				<check key="fuel:e85" text="E85 (85% Ethanol mix)" default="off" delete_if_empty="true" />
-				<check key="fuel:lpg" text="LPG (Liquefied petroleum gas)" default="off" delete_if_empty="true" />
-				<check key="fuel:cng" text="CNG (Compressed Natural Gas)" default="off" delete_if_empty="true" />
-				<check key="fuel:1_25" text="1/25 mix (mofa/moped)" default="off" delete_if_empty="true" />
-				<check key="fuel:1_50" text="1/50 mix (mofa/moped)" default="off" delete_if_empty="true" />
+                <text key="name" text="Name" default="" delete_if_empty="true" />
+                <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+                <label text="Fuel types:" />
+                <check key="fuel:diesel" text="Diesel" default="off" delete_if_empty="true" />
+                <check key="fuel:biodiesel" text="Bio Diesel" default="off" delete_if_empty="true" />
+                <check key="fuel:GTL_diesel" text="Diesel (Gas To Liquid - ultimate diesel)" default="off" delete_if_empty="true" />
+                <check key="fuel:HGV_diesel" text="Diesel for Heavy Good Vehicles" default="off" delete_if_empty="true" />
+                <check key="fuel:octane_91" text="Octane 91" default="off" delete_if_empty="true" />
+                <check key="fuel:octane_95" text="Octane 95" default="off" delete_if_empty="true" />
+                <check key="fuel:octane_98" text="Octane 98" default="off" delete_if_empty="true" />
+                <check key="fuel:octane_100" text="Octane 100" default="off" delete_if_empty="true" />
+                <check key="fuel:e10" text="E10 (10% Ethanol mix)" default="off" delete_if_empty="true" />
+                <check key="fuel:e85" text="E85 (85% Ethanol mix)" default="off" delete_if_empty="true" />
+                <check key="fuel:lpg" text="LPG (Liquefied petroleum gas)" default="off" delete_if_empty="true" />
+                <check key="fuel:cng" text="CNG (Compressed Natural Gas)" default="off" delete_if_empty="true" />
+                <check key="fuel:1_25" text="1/25 mix (mofa/moped)" default="off" delete_if_empty="true" />
+                <check key="fuel:1_50" text="1/50 mix (mofa/moped)" default="off" delete_if_empty="true" />
+                <check key="shop" text="With kiosk" value_on="kiosk" value_off="" default="off" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Parking" icon="presets/parking.png" type="node,closedway">
@@ -2212,7 +2215,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Post Office" />
             <key key="amenity" value="post_office" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-	    <text key="operator" text="Operator" default="" delete_if_empty="true" />
+        <text key="operator" text="Operator" default="" delete_if_empty="true" />
         </item>
         <separator/>
         <item name="Kindergarten" icon="presets/kindergarten.png" type="node,closedway,relation">
@@ -2424,7 +2427,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="power" text="Line type" values="line,minor_line" default="line" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <text key="ref" text="Line reference" default="" delete_if_empty="true" />
-			<!-- TODO: voltage values used are a mixture of power lines and railways - needs cleanup -->
+            <!-- TODO: voltage values used are a mixture of power lines and railways - needs cleanup -->
             <combo key="voltage" text="Voltage" values="3000,10000,15000,20000,25000,110000,220000,380000" default="" delete_if_empty="true" />
             <text key="cables" text="Amount of Cables" default="" delete_if_empty="true" />
             <combo key="wires" text="Number of wires (better: conductors) per power cable" values="single,double,triple,quad" default="" delete_if_empty="true" />

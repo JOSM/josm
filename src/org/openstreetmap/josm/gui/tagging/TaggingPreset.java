@@ -223,6 +223,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String text;
         public String text_context;
         public String locale_text;
+        public String value_on = OsmUtils.trueval;
+        public String value_off = OsmUtils.falseval;
         public boolean default_ = false; // only used for tagless objects
         public boolean use_last_as_default = false;
 
@@ -248,7 +250,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             for (String s : usage.values) {
                 oneValue = s;
             }
-            if (usage.values.size() < 2 && (oneValue == null || OsmUtils.trueval.equals(oneValue) || OsmUtils.falseval.equals(oneValue))) {
+            if (usage.values.size() < 2 && (oneValue == null || value_on.equals(oneValue) || value_off.equals(oneValue))) {
                 if(def)
                 {
                     for (OsmPrimitive s : sel)
@@ -259,9 +261,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
                 // all selected objects share the same value which is either true or false or unset,
                 // we can display a standard check box.
-                initialState = OsmUtils.trueval.equals(oneValue) ?
+                initialState = value_on.equals(oneValue) ?
                         QuadStateCheckBox.State.SELECTED :
-                            OsmUtils.falseval.equals(oneValue) ?
+                            value_off.equals(oneValue) ?
                                     QuadStateCheckBox.State.NOT_SELECTED :
                                         def ? QuadStateCheckBox.State.SELECTED
                                                 : QuadStateCheckBox.State.UNSET;
@@ -293,8 +295,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
             // otherwise change things according to the selected value.
             cmds.add(new ChangePropertyCommand(sel, key,
-                    check.getState() == QuadStateCheckBox.State.SELECTED ? OsmUtils.trueval :
-                        check.getState() == QuadStateCheckBox.State.NOT_SELECTED ? OsmUtils.falseval :
+                    check.getState() == QuadStateCheckBox.State.SELECTED ? value_on :
+                        check.getState() == QuadStateCheckBox.State.NOT_SELECTED ? value_off :
                             null));
         }
         @Override boolean requestFocusInWindow() {return check.requestFocusInWindow();}
