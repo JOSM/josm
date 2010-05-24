@@ -134,7 +134,6 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             this.source = source;
         }
 
-        @Override
         public void valueChanged(TreeSelectionEvent e) {
             if (source == undoTree) {
                 redoTree.getSelectionModel().removeTreeSelectionListener(redoSelectionListener);
@@ -182,29 +181,24 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         addShowNotifyListener(updater);
 
         tree.addTreeSelectionListener(new TreeSelectionListener() {
-            @Override
             public void valueChanged(TreeSelectionEvent e) {
                 updater.updateEnabledState();
             }
         });
 
         tree.getModel().addTreeModelListener(new TreeModelListener() {
-            @Override
             public void treeNodesChanged(TreeModelEvent e) {
                 updater.updateEnabledState();
             }
 
-            @Override
             public void treeNodesInserted(TreeModelEvent e) {
                 updater.updateEnabledState();
             }
 
-            @Override
             public void treeNodesRemoved(TreeModelEvent e) {
                 updater.updateEnabledState();
             }
 
-            @Override
             public void treeStructureChanged(TreeModelEvent e) {
                 updater.updateEnabledState();
             }
@@ -306,7 +300,6 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         return node;
     }
 
-    @Override
     public void commandChanged(int queueSize, int redoSize) {
         if (!isVisible())
             return;
@@ -323,7 +316,6 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
 
         }
 
-        @Override
         public void actionPerformed(ActionEvent e) {
             TreePath path;
             undoTree.getSelectionPath();
@@ -342,7 +334,6 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             DatasetCollection<OsmPrimitive> prims = new DatasetCollection<OsmPrimitive>(
                     c.getParticipatingPrimitives(),
                     new Predicate<OsmPrimitive>(){
-                        @Override
                         public boolean evaluate(OsmPrimitive o) {
                             OsmPrimitive p = currentLayer.data.getPrimitiveById(o);
                             return p != null && p.isUsable();
@@ -352,7 +343,6 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             Main.map.mapView.getEditLayer().data.setSelected(prims);
         }
 
-        @Override
         public void updateEnabledState() {
             setEnabled(!undoTree.isSelectionEmpty() || !redoTree.isSelectionEmpty());
         }
@@ -394,7 +384,6 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             }
         }
 
-        @Override
         public void actionPerformed(ActionEvent e) {
             lastOperation = type;
             TreePath path = tree.getSelectionPath();
@@ -419,7 +408,6 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             Main.map.repaint();
         }
 
-        @Override
         public void updateEnabledState() {
             // do not allow execution if nothing is selected or a sub command was selected
             setEnabled(!tree.isSelectionEmpty() && tree.getSelectionPath().getPathCount()==2);

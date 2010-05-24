@@ -94,6 +94,7 @@ public class SequenceCommand extends Command {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Collection<PseudoCommand> getChildren() {
         return (List) Arrays.asList(sequence);
     }

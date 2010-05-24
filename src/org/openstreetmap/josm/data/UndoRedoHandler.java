@@ -103,7 +103,7 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
             return;
         Collection<? extends OsmPrimitive> oldSelection = Main.main.getCurrentDataSet().getSelected();
         for (int i=0; i<num; ++i) {
-            final Command c = redoCommands.pop();
+            final Command c = redoCommands.removeFirst();
             c.executeCommand();
             commands.add(c);
             if (redoCommands.isEmpty())
