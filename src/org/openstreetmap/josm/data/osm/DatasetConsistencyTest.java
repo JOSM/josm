@@ -33,10 +33,11 @@ public class DatasetConsistencyTest {
     }
 
     public void checkReferrers() {
+        // It's also error when referred primitive's dataset is null but it's already covered by referredPrimitiveNotInDataset check
         for (Way way:dataSet.getWays()) {
             if (!way.isDeleted()) {
                 for (Node n:way.getNodes()) {
-                    if (!n.getReferrers().contains(way)) {
+                    if (n.getDataSet() != null && !n.getReferrers().contains(way)) {
                         printError("WAY NOT IN REFERRERS", "%s is part of %s but is not in referrers", n, way);
                     }
                 }
@@ -46,7 +47,7 @@ public class DatasetConsistencyTest {
         for (Relation relation:dataSet.getRelations()) {
             if (!relation.isDeleted()) {
                 for (RelationMember m:relation.getMembers()) {
-                    if (!m.getMember().getReferrers().contains(relation)) {
+                    if (m.getMember().getDataSet() != null && !m.getMember().getReferrers().contains(relation)) {
                         printError("RELATION NOT IN REFERRERS", "%s is part of %s but is not in referrers", m.getMember(), relation);
                     }
                 }
@@ -95,12 +96,14 @@ public class DatasetConsistencyTest {
     }
 
     private void checkReferredPrimitive(OsmPrimitive primitive, OsmPrimitive parent) {
-        if (dataSet.getPrimitiveById(primitive) == null) {
+        if (primitive.getDataSet() == null) {
+            printError("NO DATASET", "%s is referenced by %s but not found in dataset", primitive, parent);
+        } else if (dataSet.getPrimitiveById(primitive) == null) {
             printError("REFERENCED BUT NOT IN DATA", "%s is referenced by %s but not found in dataset", primitive, parent);
-        }
-        if (dataSet.getPrimitiveById(primitive) != primitive) {
+        } else  if (dataSet.getPrimitiveById(primitive) != primitive) {
             printError("DIFFERENT INSTANCE", "%s is different instance that referred by %s", primitive, parent);
         }
+
         if (primitive.isDeleted()) {
             printError("DELETED REFERENCED", "%s refers to deleted primitive %s", parent, primitive);
         }
@@ -133,12 +136,12 @@ public class DatasetConsistencyTest {
 
     public void runTest() {
         try {
+            referredPrimitiveNotInDataset();
             checkReferrers();
             checkCompleteWaysWithIncompleteNodes();
             checkCompleteNodesWithoutCoordinates();
             searchNodes();
             searchWays();
-            referredPrimitiveNotInDataset();
             checkZeroNodesWays();
             if (errorCount > MAX_ERRORS) {
                 writer.println((errorCount - MAX_ERRORS) + " more...");
