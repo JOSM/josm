@@ -121,7 +121,7 @@ public class HelpContentReader {
                     //
                     // Also make sure image URLs are absolute
                     //
-                    line = line.replaceAll("<img src=\"/", "<img border=\"0\" src=\"" + baseUrl + "/").replaceAll("href=\"/",
+                    line = line.replaceAll("<img ([^>]*)src=\"/", "<img border=\"0\" \\1src=\"" + baseUrl + "/").replaceAll("href=\"/",
                             "href=\"" + baseUrl + "/").replaceAll(" />", ">");
                     sb.append(line);
                     sb.append("\n");
