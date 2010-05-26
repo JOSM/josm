@@ -77,7 +77,8 @@ import org.openstreetmap.josm.tools.UrlLabel;
 public class GpxLayer extends Layer {
 
     private static final String PREF_DOWNLOAD_ALONG_TRACK_DISTANCE = "gpxLayer.downloadAlongTrack.distance";
-    private static final String PREF_DOWNLOAD_ALONG_TRACK_AREA = "gpxLayer.downloadAlongTrack.distance";
+    private static final String PREF_DOWNLOAD_ALONG_TRACK_AREA = "gpxLayer.downloadAlongTrack.area";
+    private static final String PREF_DOWNLOAD_ALONG_TRACK_NEAR = "gpxLayer.downloadAlongTrack.near";
 
     public GpxData data;
     protected static final double PHI = Math.toRadians(15);
@@ -876,6 +877,7 @@ public class GpxLayer extends Layer {
             JList buffer = new JList(s);
             buffer.setSelectedIndex(Main.pref.getInteger(PREF_DOWNLOAD_ALONG_TRACK_DISTANCE, 0));
             msg.add(buffer, GBC.eol());
+
             msg.add(new JLabel(tr("Maximum area per request:")), GBC.eol());
             s = new String[area.length];
             for (int i = 0; i < area.length; ++i) {
@@ -884,6 +886,15 @@ public class GpxLayer extends Layer {
             JList maxRect = new JList(s);
             maxRect.setSelectedIndex(Main.pref.getInteger(PREF_DOWNLOAD_ALONG_TRACK_AREA, 0));
             msg.add(maxRect, GBC.eol());
+
+            msg.add(new JLabel(tr("Download near:")), GBC.eol());
+            JList downloadNear = new JList(new String[] { tr("track only"), tr("waypoints only"), tr("track and waypoints") });
+            int NEAR_TRACK=0;
+            int NEAR_WAYPOINTS=1;
+            int NEAR_BOTH=2;
+
+            downloadNear.setSelectedIndex(Main.pref.getInteger(PREF_DOWNLOAD_ALONG_TRACK_NEAR, 0));
+            msg.add(downloadNear, GBC.eol());
 
             int ret = JOptionPane.showConfirmDialog(
                     Main.parent,
@@ -902,6 +913,8 @@ public class GpxLayer extends Layer {
 
             Main.pref.putInteger(PREF_DOWNLOAD_ALONG_TRACK_DISTANCE, buffer.getSelectedIndex());
             Main.pref.putInteger(PREF_DOWNLOAD_ALONG_TRACK_AREA, maxRect.getSelectedIndex());
+            int near = downloadNear.getSelectedIndex();
+            Main.pref.putInteger(PREF_DOWNLOAD_ALONG_TRACK_NEAR, near);
 
             /*
              * Find the average latitude for the data we're contemplating, so we can know how many
@@ -910,12 +923,21 @@ public class GpxLayer extends Layer {
             double latsum = 0;
             int latcnt = 0;
 
-            for (GpxTrack trk : data.tracks) {
-                for (GpxTrackSegment segment : trk.getSegments()) {
-                    for (WayPoint p : segment.getWayPoints()) {
-                        latsum += p.getCoor().lat();
-                        latcnt++;
+            if (near == NEAR_TRACK || near == NEAR_BOTH) {
+                for (GpxTrack trk : data.tracks) {
+                    for (GpxTrackSegment segment : trk.getSegments()) {
+                        for (WayPoint p : segment.getWayPoints()) {
+                            latsum += p.getCoor().lat();
+                            latcnt++;
+                        }
                     }
+                }
+            }
+
+            if (near == NEAR_WAYPOINTS || near == NEAR_BOTH) {
+                for (WayPoint p : data.waypoints) {
+                    latsum += p.getCoor().lat();
+                    latcnt++;
                 }
             }
 
@@ -943,16 +965,29 @@ public class GpxLayer extends Layer {
              * otherwise this operation takes ages.
              */
             LatLon previous = null;
-            for (GpxTrack trk : data.tracks) {
-                for (GpxTrackSegment segment : trk.getSegments()) {
-                    for (WayPoint p : segment.getWayPoints()) {
-                        LatLon c = p.getCoor();
-                        if (previous == null || c.greatCircleDistance(previous) > buffer_dist) {
-                            // we add a buffer around the point.
-                            r.setRect(c.lon() - buffer_x, c.lat() - buffer_y, 2 * buffer_x, 2 * buffer_y);
-                            a.add(new Area(r));
-                            previous = c;
+            if (near == NEAR_TRACK || near == NEAR_BOTH) {
+                for (GpxTrack trk : data.tracks) {
+                    for (GpxTrackSegment segment : trk.getSegments()) {
+                        for (WayPoint p : segment.getWayPoints()) {
+                            LatLon c = p.getCoor();
+                            if (previous == null || c.greatCircleDistance(previous) > buffer_dist) {
+                                // we add a buffer around the point.
+                                r.setRect(c.lon() - buffer_x, c.lat() - buffer_y, 2 * buffer_x, 2 * buffer_y);
+                                a.add(new Area(r));
+                                previous = c;
+                            }
                         }
+                    }
+                }
+            }
+            if (near == NEAR_WAYPOINTS || near == NEAR_BOTH) {
+                for (WayPoint p : data.waypoints) {
+                    LatLon c = p.getCoor();
+                    if (previous == null || c.greatCircleDistance(previous) > buffer_dist) {
+                        // we add a buffer around the point.
+                        r.setRect(c.lon() - buffer_x, c.lat() - buffer_y, 2 * buffer_x, 2 * buffer_y);
+                        a.add(new Area(r));
+                        previous = c;
                     }
                 }
             }
