@@ -844,8 +844,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         btnAdd.setEnabled(hasSelection);
         btnEdit.setEnabled(hasTags || hasMemberships);
         btnDel.setEnabled(hasTags || hasMemberships);
-        propertyTable.setVisible(hasSelection);
-        propertyTable.getTableHeader().setVisible(hasSelection);
+        propertyTable.setVisible(hasTags);
+        propertyTable.getTableHeader().setVisible(hasTags);
         selectSth.setVisible(!hasSelection);
 
         int selectedIndex;
