@@ -15,7 +15,9 @@ import java.util.GregorianCalendar;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.Mercator;
 
 public class DataSetMergerTest {
     /*private static Logger logger = Logger.getLogger(DataSetMergerTest.class.getName());
@@ -66,6 +68,7 @@ public class DataSetMergerTest {
         my.setVersion("0.6");
         their = new DataSet();
         their.setVersion("0.6");
+        Main.proj = new Mercator();
     }
 
     private void runConsistencyTests(DataSet ds) throws Exception {
@@ -291,7 +294,7 @@ public class DataSetMergerTest {
 
     /**
      * My and their node are new but semantically equal. My node is deleted.
-     * 
+     *
      * => Ignore my node, no conflict
      */
     @Test
@@ -922,7 +925,7 @@ public class DataSetMergerTest {
 
     /**
      * Merge an incomplete way with two incomplete nodes into an empty dataset.
-     * 
+     *
      * Use case: a way loaded with a multiget, i.e. GET /api/0.6/ways?ids=123456
      */
     @Test
@@ -965,7 +968,7 @@ public class DataSetMergerTest {
 
     /**
      * Merge an incomplete way with two incomplete nodes into a dataset where the way already exists as complete way.
-     * 
+     *
      * Use case: a way loaded with a multiget, i.e. GET /api/0.6/ways?ids=123456 after a "Update selection " of this way
      */
     @Test

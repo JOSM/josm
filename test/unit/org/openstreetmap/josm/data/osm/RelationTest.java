@@ -4,10 +4,18 @@ package org.openstreetmap.josm.data.osm;
 import static org.junit.Assert.assertFalse;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.Mercator;
 
 public class RelationTest {
+
+    @BeforeClass
+    public static void setUp() {
+        Main.proj = new Mercator();
+    }
 
     @Test(expected=NullPointerException.class)
     public void createNewRelation() {

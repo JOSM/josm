@@ -5,8 +5,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.Mercator;
 
 public class OsmPrimitiveTest {
 
@@ -16,6 +19,11 @@ public class OsmPrimitiveTest {
     }
 
     private DataSet dataSet = new DataSet();
+
+    @BeforeClass
+    public static void setUp() {
+        Main.proj = new Mercator();
+    }
 
     @Test
     public void simpleReferrersTest() {
