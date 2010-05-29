@@ -8,7 +8,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -17,6 +19,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.projection.Mercator;
 
 public class MergeSourceBuildingVisitorTest {
 
@@ -28,6 +31,11 @@ public class MergeSourceBuildingVisitorTest {
                 return primitive;
         }
         return null;
+    }
+
+    @BeforeClass
+    public static void setUp() {
+        Main.proj = new Mercator();
     }
 
     @Test
