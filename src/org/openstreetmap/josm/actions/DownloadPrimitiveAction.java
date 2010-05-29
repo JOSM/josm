@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
@@ -85,11 +86,22 @@ public class DownloadPrimitiveAction extends JosmAction {
         });
         dialog.setDefaultButton(1);
         dialog.configureContextsensitiveHelp("/Action/DownloadObject", true /* show help button */);
+        cbType.setSelectedIndex(Main.pref.getInteger("downloadprimitive.lasttype", 0));
         dialog.showDialog();
         if (dialog.getValue() != 1) return;
+        Main.pref.putInteger("downloadprimitive.lasttype", cbType.getSelectedIndex());
         Main.pref.put("downloadprimitive.referrers", referrers.isSelected());
         Main.pref.put("download.newlayer", layer.isSelected());
-        download(layer.isSelected(), cbType.getType(), tfId.getOsmId(), referrers.isSelected());
+        int id = tfId.getOsmId();
+        if(id <= 0)
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("Invalid ID specified. Cannot download object."),
+                    tr("Information"),
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        else
+            download(layer.isSelected(), cbType.getType(), id, referrers.isSelected());
     }
 
     /**
