@@ -6,6 +6,7 @@ import java.util.HashSet;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openstreetmap.josm.data.coor.LatLon;
 
 public class OsmPrimitiveTest {
 
@@ -18,7 +19,7 @@ public class OsmPrimitiveTest {
 
     @Test
     public void simpleReferrersTest() {
-        Node n1 = new Node();
+        Node n1 = new Node(new LatLon(0.0, 0.0));
         Way w1 = new Way();
         w1.addNode(n1);
         dataSet.addPrimitive(n1);
@@ -28,8 +29,8 @@ public class OsmPrimitiveTest {
 
     @Test
     public void addAndRemoveReferrer() {
-        Node n1 = new Node();
-        Node n2 = new Node();
+        Node n1 = new Node(new LatLon(0.0, 0.0));
+        Node n2 = new Node(new LatLon(0.0, 0.0));
         Way w1 = new Way();
         w1.addNode(n1);
         w1.addNode(n2);
@@ -44,7 +45,7 @@ public class OsmPrimitiveTest {
 
     @Test
     public void multipleReferrers() {
-        Node n1 = new Node();
+        Node n1 = new Node(new LatLon(0.0, 0.0));
         Way w1 = new Way();
         Way w2 = new Way();
         Relation r1 = new Relation();
@@ -89,7 +90,7 @@ public class OsmPrimitiveTest {
 
     @Test
     public void removePrimitiveReferrerTest() {
-        Node n1 = new Node();
+        Node n1 = new Node(new LatLon(0.0, 0.0));
         Way w1 = new Way();
         w1.addNode(n1);
         w1.setDeleted(true);
@@ -112,7 +113,7 @@ public class OsmPrimitiveTest {
     @Test
     public void nodeFromMultipleDatasets() {
         // n has two referrers - w1 and w2. But only w1 is returned because it is in the same dataset as n
-        Node n = new Node();
+        Node n = new Node(new LatLon(0.0, 0.0));
 
         Way w1 = new Way();
         w1.addNode(n);
