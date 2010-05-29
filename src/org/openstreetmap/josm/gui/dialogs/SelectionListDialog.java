@@ -454,6 +454,12 @@ public class SelectionListDialog extends ToggleDialog  {
             }
             if (history.getFirst().equals(selection)) return;
             history.addFirst(selection);
+            for(int i = 1; i < history.size(); ++i) {
+                if(history.get(i).equals(selection)) {
+                    history.remove(i);
+                    break;
+                }
+            }
             while (history.size() > SELECTION_HISTORY_SIZE) {
                 history.removeLast();
             }
@@ -684,6 +690,7 @@ public class SelectionListDialog extends ToggleDialog  {
      * @author Jan Peter Stotz
      */
     protected static class SelectionMenuItem extends JMenuItem implements ActionListener {
+        final private DefaultNameFormatter df = DefaultNameFormatter.getInstance();
         protected Collection<? extends OsmPrimitive> sel;
 
         public SelectionMenuItem(Collection<? extends OsmPrimitive> sel) {
@@ -714,7 +721,15 @@ public class SelectionListDialog extends ToggleDialog  {
                 text.append(text.length() > 0 ? ", " : "")
                 .append(trn("{0} relation", "{0} relations", relations, relations));
             }
-            setText(tr("Selection: {0}", text));
+            if(ways + nodes + relations == 1)
+            {
+                text.append(": ");
+                for(OsmPrimitive o : sel)
+                   text.append(o.getDisplayName(df));
+                setText(text.toString());
+            }
+            else
+                setText(tr("Selection: {0}", text));
             addActionListener(this);
         }
 

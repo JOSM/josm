@@ -146,6 +146,10 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             if (nodesNo > 1 && way.isClosed()) {
                 nodesNo--;
             }
+            if(name.length() == 0 )
+                name = String.valueOf(way.getId());
+            /* note: length == 0 should no longer happen, but leave the bracket code
+               nevertheless, who knows what future brings */
             String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
             name += (name.length() > 0) ? " ("+nodes+")" : nodes;
         }
@@ -356,6 +360,10 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
         int nodesNo = way.isClosed() ? way.getNumNodes() -1 : way.getNumNodes();
         String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
+        if(sb.length() == 0 )
+            sb.append(way.getId());
+        /* note: length == 0 should no longer happen, but leave the bracket code
+           nevertheless, who knows what future brings */
         sb.append((sb.length() > 0) ? " ("+nodes+")" : nodes);
         decorateNameWithId(sb, way);
         return sb.toString();
