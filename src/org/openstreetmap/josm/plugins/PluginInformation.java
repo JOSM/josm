@@ -350,6 +350,7 @@ public class PluginInformation {
      * @return true, if the plugin needs to be updated; false, otherweise
      */
     public boolean isUpdateRequired(String referenceVersion) {
+        if (this.downloadlink == null) return false;
         if (this.version == null && referenceVersion!= null)
             return true;
         if (this.version != null && !this.version.equals(referenceVersion))
@@ -365,6 +366,7 @@ public class PluginInformation {
      * @return true if the plugin should be updated
      */
     public boolean isUpdateRequired() {
+        if (this.downloadlink == null) return false;
         if (this.localversion == null) return true;
         return isUpdateRequired(this.localversion);
     }

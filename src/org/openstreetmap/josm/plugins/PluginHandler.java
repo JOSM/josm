@@ -619,7 +619,9 @@ public class PluginHandler {
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null.
      * @throws IllegalArgumentException thrown if plugins is null
      */
-    public static void updatePlugins(Window parent, Collection<PluginInformation> plugins, ProgressMonitor monitor) throws IllegalArgumentException{
+    public static List<PluginInformation>  updatePlugins(Window parent,
+    List<PluginInformation> plugins, ProgressMonitor monitor)
+    throws IllegalArgumentException{
         CheckParameterUtil.ensureParameterNotNull(plugins, "plugins");
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
@@ -637,6 +639,7 @@ public class PluginHandler {
             Future<?> future = service.submit(task1);
             try {
                 future.get();
+                plugins = buildListOfPluginsToLoad(parent,monitor.createSubTaskMonitor(1, false));
             } catch(ExecutionException e) {
                 System.out.println(tr("Warning: failed to download plugin information list"));
                 e.printStackTrace();
@@ -671,17 +674,17 @@ public class PluginHandler {
                 } catch(ExecutionException e) {
                     e.printStackTrace();
                     alertFailedPluginUpdate(parent, pluginsToUpdate);
-                    return;
+                    return plugins;
                 } catch(InterruptedException e) {
                     e.printStackTrace();
                     alertFailedPluginUpdate(parent, pluginsToUpdate);
-                    return;
+                    return plugins;
                 }
                 // notify user if downloading a locally installed plugin failed
                 //
                 if (! task2.getFailedPlugins().isEmpty()) {
                     alertFailedPluginUpdate(parent, task2.getFailedPlugins());
-                    return;
+                    return plugins;
                 }
             }
         } finally {
@@ -691,6 +694,7 @@ public class PluginHandler {
         //
         Main.pref.putInteger("pluginmanager.version", Version.getInstance().getVersion());
         Main.pref.put("pluginmanager.lastupdate", Long.toString(System.currentTimeMillis()));
+        return plugins;
     }
 
     /**

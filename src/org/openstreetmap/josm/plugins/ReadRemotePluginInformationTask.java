@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,14 +43,14 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
     private Collection<String> sites;
     private boolean canceled;
     private HttpURLConnection connection;
-    private List<PluginInformation> availabePlugins;
+    private List<PluginInformation> availablePlugins;
 
     protected void init(Collection<String> sites){
         this.sites = sites;
         if (sites == null) {
             this.sites = Collections.emptySet();
         }
-        availabePlugins = new LinkedList<PluginInformation>();
+        availablePlugins = new LinkedList<PluginInformation>();
 
     }
     /**
@@ -93,7 +94,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
      * @param site the name of the site
      * @return the file name for the cache file
      */
-    protected String createSiteCacheFileName(String site) {
+    protected File createSiteCacheFile(File pluginDir, String site) {
+        String name;
         try {
             URL url = new URL(site);
             StringBuilder sb = new StringBuilder();
@@ -112,10 +114,11 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
                 }
             }
             sb.append(".txt");
-            return sb.toString();
+            name = sb.toString();
         } catch(MalformedURLException e) {
-            return "site-unknown.txt";
+            name = "site-unknown.txt";
         }
+        return new File(pluginDir, name);
     }
 
     /**
@@ -185,7 +188,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
                     System.err.println(tr("Warning: failed to create plugin directory ''{0}''. Cannot cache plugin list from plugin site ''{1}''.", pluginDir.toString(), site));
                 }
             }
-            File cacheFile = new File(pluginDir, createSiteCacheFileName(site));
+            File cacheFile = createSiteCacheFile(pluginDir, site);
             getProgressMonitor().subTask(tr("Writing plugin list to local cache ''{0}''", cacheFile.toString()));
             writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(cacheFile), "utf-8"));
             writer.write(list);
@@ -230,7 +233,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
             getProgressMonitor().subTask(tr("Parsing plugin list from site ''{0}''", site));
             InputStream in = new ByteArrayInputStream(doc.getBytes("UTF-8"));
             List<PluginInformation> pis = new PluginListParser().parse(in);
-            availabePlugins.addAll(filterDeprecatedPlugins(pis));
+            availablePlugins.addAll(filterDeprecatedPlugins(pis));
         } catch(UnsupportedEncodingException e) {
             System.err.println(tr("Failed to parse plugin list document from site ''{0}''. Skipping site. Exception was: {1}", site, e.toString()));
             e.printStackTrace();
@@ -244,17 +247,40 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         if (sites == null) return;
         getProgressMonitor().setTicksCount(sites.size() * 3);
+        File pluginDir = Main.pref.getPluginsDirectory();
+        List<File> siteCacheFiles = new LinkedList<File>();
+        for (String location : PluginInformation.getPluginLocations()) {
+            File [] f = new File(location).listFiles(
+                new FilenameFilter() {
+                    public boolean accept(File dir, String name) {
+                        return name.matches("^([0-9]+-)?site.*\\.txt$");
+                    }
+                }
+            );
+            if(f != null && f.length > 0)
+                siteCacheFiles.addAll(Arrays.asList(f));
+        }
+
         for (String site: sites) {
             getProgressMonitor().subTask(tr("Processing plugin list from site ''{0}''", site));
             String list = downloadPluginList(site, getProgressMonitor().createSubTaskMonitor(0, false));
-            if (canceled || list == null) return;
-            getProgressMonitor().worked(1);
-            cachePluginList(site, list);
             if (canceled) return;
-            getProgressMonitor().worked(1);
-            parsePluginListDocument(site, list);
-            if (canceled) return;
-            getProgressMonitor().worked(1);
+            if(list != null)
+            {
+                siteCacheFiles.remove(createSiteCacheFile(pluginDir, site));
+                getProgressMonitor().worked(1);
+                cachePluginList(site, list);
+                if (canceled) return;
+                getProgressMonitor().worked(1);
+                parsePluginListDocument(site, list);
+                if (canceled) return;
+                getProgressMonitor().worked(1);
+                if (canceled) return;
+            }
+        }
+        for (File file: siteCacheFiles) /* remove old stuff or whole update process is broken */
+        {
+            file.delete();
         }
     }
 
@@ -272,6 +298,6 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
      * @return  the list of plugins
      */
     public List<PluginInformation> getAvailabePlugins() {
-        return availabePlugins;
+        return availablePlugins;
     }
 }

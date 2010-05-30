@@ -61,6 +61,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
                 pluginName
         );
         if (!availablePlugins.containsKey(info.getName())) {
+            info.localversion = info.version;
             availablePlugins.put(info.getName(), info);
         } else {
             availablePlugins.get(info.getName()).localversion = info.version;
@@ -183,7 +184,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         Collection<String> pluginLocations = PluginInformation.getPluginLocations();
         getProgressMonitor().setTicksCount(pluginLocations.size() + 2);
-        if (canceled)return;
+        if (canceled) return;
         for (String location : pluginLocations) {
             scanLocalPluginRepository(
                     getProgressMonitor().createSubTaskMonitor(1, false),
