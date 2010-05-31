@@ -1180,7 +1180,7 @@ public class CorrelateGpxWithImages implements ActionListener {
             double distance = prevWp.getCoor().greatCircleDistance(curWp.getCoor());
             // This is in km/h, 3.6 * m/s
             if (curWpTime > prevWpTime) {
-                speed = 3.6 * distance / (curWpTime - prevWpTime);
+                speed = 3600 * distance / (curWpTime - prevWpTime);
             }
             try {
                 prevElevation = new Double((String) prevWp.attr.get("ele"));
