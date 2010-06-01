@@ -47,7 +47,7 @@ public class AreaElemStyle extends ElemStyle
     }
 
     @Override
-    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, MapPainter painter, boolean selected) {
+    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, MapPainter painter, boolean selected, boolean member) {
         // TODO
         /*Way way = (Way)primitive;
         String name = painter.isShowNames() ? painter.getWayName(way) : null;

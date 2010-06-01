@@ -22,7 +22,7 @@ public class SimpleNodeElemStyle extends ElemStyle {
 
     @Override
     public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings settings, MapPainter painter,
-            boolean selected) {
+            boolean selected, boolean member) {
         Node n = (Node)primitive;
         String name = painter.isShowNames()?painter.getNodeName(n):null;
 
@@ -36,7 +36,7 @@ public class SimpleNodeElemStyle extends ElemStyle {
             if (painter.isInactive() || n.isDisabled()) {
                 color = settings.getInactiveColor();
             } else if (selected) {
-                color = settings.getSelectedColor();
+                color = member ? settings.getRelationSelectedColor() : settings.getSelectedColor();
             } else if (n.isConnectionNode()) {
                 if (n.isTagged()) {
                     color = settings.getTaggedConnectionColor();

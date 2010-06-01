@@ -38,13 +38,13 @@ public class IconElemStyle extends ElemStyle
         return disabledIcon = new ImageIcon(GrayFilter.createDisabledImage(icon.getImage()));
     }
     @Override
-    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings settings, MapPainter painter, boolean selected) {
+    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings settings, MapPainter painter, boolean selected, boolean member) {
         if (painter.isShowIcons()) {
             Node n = (Node) primitive;
             String name = painter.isShowNames() && annotate?painter.getNodeName(n):null;
-            painter.drawNodeIcon(n, (painter.isInactive() || n.isDisabled())?getDisabledIcon():icon, selected, name);
+            painter.drawNodeIcon(n, (painter.isInactive() || n.isDisabled())?getDisabledIcon():icon, selected, member, name);
         } else {
-            SimpleNodeElemStyle.INSTANCE.paintPrimitive(primitive, settings, painter, selected);
+            SimpleNodeElemStyle.INSTANCE.paintPrimitive(primitive, settings, painter, selected, member);
         }
 
     }

@@ -29,6 +29,7 @@ public class MapPaintSettings implements PreferenceChangedListener {
     private boolean fillTaggedNode;
     private boolean fillConnectionNode;
     private Color selectedColor;
+    private Color relationSelectedColor;
     private Color highlightColor;
     private Color inactiveColor;
     private Color nodeColor;
@@ -48,6 +49,7 @@ public class MapPaintSettings implements PreferenceChangedListener {
         defaultSegmentWidth = Main.pref.getInteger("mappaint.segment.default-width", 2);
 
         selectedColor = PaintColors.SELECTED.get();
+        relationSelectedColor = PaintColors.RELATIONSELECTED.get();
         highlightColor = PaintColors.HIGHLIGHT.get();
         inactiveColor = PaintColors.INACTIVE.get();
         nodeColor = PaintColors.NODE.get();
@@ -99,6 +101,10 @@ public class MapPaintSettings implements PreferenceChangedListener {
 
     public Color getSelectedColor() {
         return selectedColor;
+    }
+
+    public Color getRelationSelectedColor() {
+        return relationSelectedColor;
     }
 
     public Color getHighlightColor() {

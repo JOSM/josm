@@ -138,7 +138,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
     }
 
     @Override
-    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, MapPainter painter, boolean selected) {
+    public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, MapPainter painter, boolean selected, boolean member) {
         Way w = (Way)primitive;
         /* show direction arrows, if draw.segment.relevant_directions_only is not set,
         the way is tagged with a direction key
@@ -179,7 +179,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
         if(w.isHighlighted()) {
             myColor = paintSettings.getHighlightColor();
         } else if (selected) {
-            myColor = paintSettings.getSelectedColor();
+            myColor = member ? paintSettings.getRelationSelectedColor() : paintSettings.getSelectedColor();
         } else if(w.isDisabled()) {
             myColor = paintSettings.getInactiveColor();
         }
@@ -188,7 +188,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
         if(overlays != null) {
             for(LineElemStyle s : overlays) {
                 if(!s.over) {
-                    painter.drawWay(w, s.color != null && selected ? myColor: s.color, s.getWidth(myWidth),
+                    painter.drawWay(w, (s.color == null || selected) ? myColor: s.color, s.getWidth(myWidth),
                             s.getDashed(), s.dashedColor, false, false, false);
                 }
             }
@@ -201,7 +201,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
         if(overlays != null)  {
             for(LineElemStyle s : overlays) {
                 if(s.over) {
-                    painter.drawWay(w, s.color != null && selected ? myColor : s.color, s.getWidth(myWidth),
+                    painter.drawWay(w, (s.color == null || selected) ? myColor : s.color, s.getWidth(myWidth),
                             s.getDashed(), s.dashedColor, false, false, false);
                 }
             }

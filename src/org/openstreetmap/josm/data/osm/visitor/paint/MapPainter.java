@@ -38,6 +38,7 @@ public class MapPainter {
     private final Color inactiveColor;
     private final Color textColor;
     private final Color selectedColor;
+    private final Color relationSelectedColor;
     private final Color areaTextColor;
     private final Color nodeColor;
     private final Color backgroundColor;
@@ -63,6 +64,7 @@ public class MapPainter {
         this.inactiveColor = PaintColors.INACTIVE.get();
         this.textColor = PaintColors.TEXT.get();
         this.selectedColor = PaintColors.SELECTED.get();
+        this.relationSelectedColor = PaintColors.RELATIONSELECTED.get();
         this.areaTextColor = PaintColors.AREA_TEXT.get();
         this.nodeColor = PaintColors.NODE.get();
         this.backgroundColor = PaintColors.BACKGROUND.get();
@@ -180,7 +182,7 @@ public class MapPainter {
         return true;
     }
 
-    public void drawNodeIcon(Node n, ImageIcon icon, boolean selected, String name) {
+    public void drawNodeIcon(Node n, ImageIcon icon, boolean selected, boolean member, String name) {
         Point p = nc.getPoint(n);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
 
@@ -199,7 +201,7 @@ public class MapPainter {
         }
         if (selected)
         {
-            g.setColor (  selectedColor );
+            g.setColor (  member ? relationSelectedColor : selectedColor );
             g.drawRect (p.x-w/2-2, p.y-h/2-2, w+4, h+4);
         }
     }
@@ -297,7 +299,7 @@ public class MapPainter {
         smallIcon.paintIcon (nc, g, (int)(pVia.x+vx+vx2)-w/2, (int)(pVia.y+vy+vy2)-h/2 );
 
         if (selected) {
-            g.setColor(selectedColor);
+            g.setColor(relationSelectedColor);
             g.drawRect((int)(pVia.x+vx+vx2)-w/2-2,(int)(pVia.y+vy+vy2)-h/2-2, w+4, h+4);
         }
     }

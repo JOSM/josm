@@ -12,6 +12,7 @@ public enum PaintColors implements ColorKey {
 
     INACTIVE(marktr("inactive"), Color.darkGray),
     SELECTED(marktr("selected"), Color.red),
+    RELATIONSELECTED(marktr("Relation: selected"), Color.magenta),
     NODE(marktr("Node: standard"), Color.yellow),
     CONNECTION(marktr("Node: connection"), Color.yellow),
     TAGGED(marktr("Node: tagged"), new Color(204, 255, 255)), // light cyan

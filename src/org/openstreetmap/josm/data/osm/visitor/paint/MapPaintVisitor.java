@@ -128,7 +128,8 @@ public class MapPaintVisitor implements PaintVisitor {
         ElemStyle nodeStyle = getPrimitiveStyle(n);
 
         if (isZoomOk(nodeStyle)) {
-            nodeStyle.paintPrimitive(n, paintSettings, painter, n.isSelected());
+            nodeStyle.paintPrimitive(n, paintSettings, painter, n.isSelected(),
+            false);
         }
     }
 
@@ -177,7 +178,7 @@ public class MapPaintVisitor implements PaintVisitor {
         }
 
         if(wayStyle instanceof LineElemStyle) {
-            wayStyle.paintPrimitive(w, paintSettings, painter, data.isSelected(w));
+            wayStyle.paintPrimitive(w, paintSettings, painter, data.isSelected(w), false);
         } else if (wayStyle instanceof AreaElemStyle) {
             AreaElemStyle areaStyle = (AreaElemStyle) wayStyle;
             /* way with area style */
@@ -188,7 +189,7 @@ public class MapPaintVisitor implements PaintVisitor {
                     putError(w, tr("Area style way is not closed."), true);
                 }
             }
-            areaStyle.getLineStyle().paintPrimitive(w, paintSettings, painter, data.isSelected(w));
+            areaStyle.getLineStyle().paintPrimitive(w, paintSettings, painter, data.isSelected(w), false);
         }
     }
 
@@ -200,18 +201,18 @@ public class MapPaintVisitor implements PaintVisitor {
             if(style instanceof AreaElemStyle) {
                 Way way = (Way)osm;
                 AreaElemStyle areaStyle = (AreaElemStyle)style;
-                areaStyle.getLineStyle().paintPrimitive(way, paintSettings, painter, true);
+                areaStyle.getLineStyle().paintPrimitive(way, paintSettings, painter, true, true);
                 if(area) {
-                    painter.drawArea(getPolygon(way), (areaselected ? paintSettings.getSelectedColor() : areaStyle.color), painter.getAreaName(way));
+                    painter.drawArea(getPolygon(way), (areaselected ? paintSettings.getRelationSelectedColor() : areaStyle.color), painter.getAreaName(way));
                 }
             } else {
-                style.paintPrimitive(osm, paintSettings, painter, true);
+                style.paintPrimitive(osm, paintSettings, painter, true, true);
             }
         }
         else if(osm instanceof Node)
         {
             if(isZoomOk(style)) {
-                style.paintPrimitive(osm, paintSettings, painter, true);
+                style.paintPrimitive(osm, paintSettings, painter, true, true);
             }
         }
         osm.mappaintDrawnCode = paintid;
@@ -496,7 +497,8 @@ public class MapPaintVisitor implements PaintVisitor {
                     }
 
                     boolean selected = pd.selected || data.isSelected(r);
-                    painter.drawArea(p, selected ? paintSettings.getSelectedColor() : areaStyle.color, painter.getAreaName(r));
+                    painter.drawArea(p, selected ? paintSettings.getRelationSelectedColor()
+                    : areaStyle.color, painter.getAreaName(r));
                     visible = true;
                 }
             }
@@ -513,7 +515,7 @@ public class MapPaintVisitor implements PaintVisitor {
                     }
                     if(zoomok && (wInner.mappaintDrawnCode != paintid || multipolygon.getOuterWays().isEmpty())) {
                         ((AreaElemStyle)wayStyle).getLineStyle().paintPrimitive(wInner, paintSettings, painter, (data.isSelected(wInner)
-                                || data.isSelected(r)));
+                                || data.isSelected(r)), r.isSelected());
                     }
                     wInner.mappaintDrawnCode = paintid;
                 }
@@ -545,7 +547,7 @@ public class MapPaintVisitor implements PaintVisitor {
                     }
                     if(zoomok)
                     {
-                        ((AreaElemStyle)wayStyle).getLineStyle().paintPrimitive(wOuter, paintSettings, painter, (data.isSelected(wOuter) || data.isSelected(r)));
+                        ((AreaElemStyle)wayStyle).getLineStyle().paintPrimitive(wOuter, paintSettings, painter, (data.isSelected(wOuter) || data.isSelected(r)), r.isSelected());
                     }
                     wOuter.mappaintDrawnCode = paintid;
                 }

@@ -168,7 +168,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         if (relation.isIncomplete()) {
             name = tr("incomplete");
         } else {
-            name = relation.get("type");
+            name = tr(relation.get("type"));
             if (name == null) {
                 name = (relation.get("public_transport") != null) ? tr("public transport") : "";
             }
