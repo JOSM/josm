@@ -485,6 +485,92 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
     }
 
+    public static class Role {
+        public List<String> types;
+        public String key;
+        public String text;
+        public String text_context;
+        public String locale_text;
+
+        public boolean required=false;
+        public long count = 0;
+
+        public void setType(String types) throws SAXException {
+            this.types = TaggingPreset.getType(types);
+        }
+
+        public void setRequisite(String str) throws SAXException {
+            if("required".equals(str))
+                required = true;
+            else if(!"optional".equals(str))
+                throw new SAXException(tr("Unknown requisite: {0}", str));
+        }
+
+        /* return either argument, the highest possible value or the lowest
+           allowed value */
+        public long getValidCount(long c)
+        {
+            if(count > 0 && !required)
+                return c != 0 ? count : 0;
+            else if(count > 0)
+                return count;
+            else if(!required)
+                return c != 0  ? c : 0;
+            else
+                return c != 0  ? c : 1;
+        }
+        public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+            String cstring;
+            if(count > 0 && !required)
+                cstring = "0,"+String.valueOf(count);
+            else if(count > 0)
+                cstring = String.valueOf(count);
+            else if(!required)
+                cstring = "0-...";
+            else
+                cstring = "1-...";
+            if(locale_text == null) {
+                if (text != null) {
+                    if(text_context != null) {
+                        locale_text = trc(text_context, text);
+                    } else {
+                        locale_text = tr(text);
+                    }
+                }
+            }
+            p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
+            p.add(new JLabel(key), GBC.std().insets(0,0,10,0));
+            p.add(new JLabel(cstring), types == null ? GBC.eol() : GBC.std().insets(0,0,10,0));
+            if(types != null){
+                JPanel pp = new JPanel();
+                for(String t : types)
+                    pp.add(new JLabel(ImageProvider.get("Mf_" + t)));
+                p.add(pp, GBC.eol());
+            }
+            return true;
+        }
+    }
+
+    public static class Roles extends Item {
+        public List<Role> roles = new LinkedList<Role>();
+        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+            p.add(new JLabel(" "), GBC.eol()); // space
+            if(roles.size() > 0)
+            {
+                JPanel proles = new JPanel(new GridBagLayout());
+                proles.add(new JLabel(tr("Available roles")), GBC.std().insets(0,0,10,0));
+                proles.add(new JLabel(tr("role")), GBC.std().insets(0,0,10,0));
+                proles.add(new JLabel(tr("count")), GBC.std().insets(0,0,10,0));
+                proles.add(new JLabel(tr("elements")), GBC.eol());
+                for (Role i : roles)
+                    i.addToPanel(proles, sel);
+                p.add(proles, GBC.eol());
+            }
+            return false;
+        }
+        @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
+    }
+
     public static class Optional extends Item {
         // TODO: Draw a box around optional stuff
         @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
@@ -580,13 +666,19 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      * Called from the XML parser to set the types this preset affects
      */
     private static Collection<String> allowedtypes = Arrays.asList(new String[]
-                                                                              {marktr("way"), marktr("node"), marktr("relation"), marktr("closedway")});
-    public void setType(String types) throws SAXException {
-        this.types = Arrays.asList(types.split(","));
-        for (String type : this.types) {
+    {marktr("way"), marktr("node"), marktr("relation"), marktr("closedway")});
+
+    static public List<String> getType(String types) throws SAXException {
+        List<String> t = Arrays.asList(types.split(","));
+        for (String type : t) {
             if(!allowedtypes.contains(type))
                 throw new SAXException(tr("Unknown type: {0}", type));
         }
+        return t;
+    }
+
+    public void setType(String types) throws SAXException {
+        this.types = getType(types);
     }
 
     public static List<TaggingPreset> readAll(Reader in) throws SAXException {
@@ -597,6 +689,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         parser.map("text", Text.class);
         parser.map("link", Link.class);
         parser.mapOnStart("optional", Optional.class);
+        parser.mapOnStart("roles", Roles.class);
+        parser.map("role", Role.class);
         parser.map("check", Check.class);
         parser.map("combo", Combo.class);
         parser.map("label", Label.class);
@@ -604,6 +698,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         parser.map("key", Key.class);
         LinkedList<TaggingPreset> all = new LinkedList<TaggingPreset>();
         TaggingPresetMenu lastmenu = null;
+        Roles lastrole = null;
         parser.start(in);
         while(parser.hasNext()) {
             Object o = parser.next();
@@ -620,19 +715,35 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     Main.toolbar.register(tp);
 
                 }
+                lastrole = null;
             } else if (o instanceof TaggingPresetSeparator) {
                 TaggingPresetSeparator tp = (TaggingPresetSeparator) o;
                 tp.group = lastmenu;
                 all.add(tp);
+                lastrole = null;
             } else if (o instanceof TaggingPreset) {
                 TaggingPreset tp = (TaggingPreset) o;
                 tp.group = lastmenu;
                 tp.setDisplayName();
                 all.add(tp);
                 Main.toolbar.register(tp);
+                lastrole = null;
             } else {
-                if(all.size() != 0)
-                    all.getLast().data.add((Item)o);
+                if(all.size() != 0) {
+                    if(o instanceof Roles) {
+                        all.getLast().data.add((Item)o);
+                        lastrole = (Roles) o;
+                    }
+                    else if(o instanceof Role) {
+                        if(lastrole == null)
+                            throw new SAXException(tr("Preset role element without parent"));
+                        lastrole.roles.add((Role) o);
+                    }
+                    else {
+                        all.getLast().data.add((Item)o);
+                        lastrole = null;
+                    }
+                }
                 else
                     throw new SAXException(tr("Preset sub element without parent"));
             }

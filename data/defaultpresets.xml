@@ -47,6 +47,13 @@ check: checkbox
   value_on: the value to set when checked (default is "yes")
   value_off: the value to set when unchecked (default is 'no')
 
+role: type to specify possible roles in relations
+  key: the role name used in relation
+  text: fixed label to display
+  requisite: "optional" or "required" (default is optional)
+  count: how often can the role occur (if not given unlimited number is assumed)
+  type: the data types - way,node,relation,closedway (separated by comma)
+
 For external files the <annotations> should have following elements:
 - author           the author of the preset
 - version          a version number of some sort (e.g. creation date)
@@ -3178,7 +3185,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
     </group> <!-- Landuse -->
   </group>
-<!-- FIXME: element role not yet supported! -->
     <group name="Relations" icon="presets/relations.png">
         <item name="Multipolygon" icon="presets/empty.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:multipolygon"
@@ -3192,6 +3198,25 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <roles>
                 <role key="outer" text="outer segment" requisite="required" type="way" />
                 <role key="inner" text="inner segment" requisite="optional" type="way" />
+            </roles>
+        </item>
+        <item name="Boundary" icon="presets/empty.png" type="relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Relation:boundary"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:boundary"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Relation:boundary"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Relation:boundary" />
+            <label text="Edit Boundary" />
+            <key key="type" value="boundary" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <optional>
+                <combo key="boundary" text="Boundary type" values="administrative,national,civil,political" default="" delete_if_empty="true" />
+                <combo key="admin_level" text="Administrative level" values="1,2,3,4,5,6,7,8,9,10" default="" delete_if_empty="true" />
+            </optional>
+            <roles>
+                <role key="outer" text="outer segment" requisite="required" type="way" />
+                <role key="inner" text="inner segment" requisite="optional" type="way" />
+                <role key="subarea" text="Sub area" requisite="optional" type="relation" />
+                <role key="admin_centre" text="Administration centre" requisite="optional" type="node" />
             </roles>
         </item>
         <item name="Turn restriction" icon="presets/empty.png" type="relation">

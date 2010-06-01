@@ -74,7 +74,12 @@ public class AutoCompletionManager implements DataSetListener {
      * only accessed by getRoleCache(), rebuild() and cacheRelationMemberRoles()
      * use getRoleCache() accessor
      */
-    protected  Set<String> roleCache;
+    protected Set<String> roleCache;
+    /**
+     * the same as roleCache but for the preset roles
+     * can be accessed directly
+     */
+    protected static Set<String> presetRoleCache = new HashSet<String>();
 
     public AutoCompletionManager(DataSet ds) {
         this.ds = ds;
@@ -178,6 +183,12 @@ public class AutoCompletionManager implements DataSetListener {
                     if (tt.default_ != null && !tt.default_.equals("")) {
                         presetTagCache.put(tt.key, tt.default_);
                     }
+                } else if (item instanceof TaggingPreset.Roles) {
+                    TaggingPreset.Roles r = (TaggingPreset.Roles) item;
+                    for (TaggingPreset.Role i : r.roles) {
+                        if (i.key != null)
+                            presetRoleCache.add(i.key);
+                    }
                 }
             }
         }
@@ -227,6 +238,7 @@ public class AutoCompletionManager implements DataSetListener {
      * @param list the list to populate
      */
     public void populateWithMemberRoles(AutoCompletionList list) {
+        list.add(presetRoleCache, AutoCompletionItemPritority.IS_IN_STANDARD);
         list.add(getRoleCache(), AutoCompletionItemPritority.IS_IN_DATASET);
     }
 

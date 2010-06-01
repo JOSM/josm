@@ -309,6 +309,7 @@ public class GenericRelationEditor extends RelationEditor  {
                     }
                 }
         );
+        tfRole.setText(Main.pref.get("relation.editor.generic.lastrole", ""));
         p3.add(tfRole);
         SetRoleAction setRoleAction = new SetRoleAction();
         memberTableModel.getSelectionModel().addListSelectionListener(setRoleAction);
@@ -1166,6 +1167,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         public void run() {
+            Main.pref.put("relation.editor.generic.lastrole", tfRole.getText());
             if (getRelation() == null) {
                 applyNewRelation();
             } else if (!memberTableModel.hasSameMembersAs(getRelationSnapshot())
