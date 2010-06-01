@@ -100,7 +100,7 @@ public class LanguagePreference implements PreferenceSetting {
                 boolean cellHasFocus) {
             Locale l = (Locale) value;
             return dispatch.getListCellRendererComponent(list,
-                    l == null ? tr("Default (Auto determined)") : l.getDisplayName(),
+                    l == null ? tr("Default (Auto determined)") : l.getDisplayName(l),
                             index, isSelected, cellHasFocus);
         }
     }
