@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Vector;
 
+import javax.swing.JFileChooser;
+import javax.swing.UIManager;
+
 import org.openstreetmap.josm.Main;
 
 /**
@@ -22,6 +25,31 @@ public class I18n {
     private enum PluralMode { MODE_NOTONE, MODE_NONE, MODE_GREATERONE,
         MODE_CS, MODE_AR, MODE_PL, MODE_RO, MODE_RU, MODE_SK, MODE_SL}
     private static PluralMode pluralMode = PluralMode.MODE_NOTONE; /* english default */
+    private static String[] fileChooserDialogStringKeys = new String[] {
+        "FileChooser.detailsViewActionLabelText",
+        "FileChooser.detailsViewButtonAccessibleName",
+        "FileChooser.detailsViewButtonToolTipText",
+        "FileChooser.fileAttrHeaderText",
+        "FileChooser.fileDateHeaderText",
+        "FileChooser.fileNameHeaderText",
+        "FileChooser.fileNameLabelText",
+        "FileChooser.fileSizeHeaderText",
+        "FileChooser.fileTypeHeaderText",
+        "FileChooser.filesOfTypeLabelText",
+        "FileChooser.homeFolderAccessibleName",
+        "FileChooser.homeFolderToolTipText",
+        "FileChooser.listViewActionLabelText",
+        "FileChooser.listViewButtonAccessibleName",
+        "FileChooser.listViewButtonToolTipText",
+        "FileChooser.lookInLabelText",
+        "FileChooser.newFolderAccessibleName",
+        "FileChooser.newFolderActionLabelText",
+        "FileChooser.newFolderToolTipText",
+        "FileChooser.refreshActionLabelText",
+        "FileChooser.saveInLabelText",
+        "FileChooser.upFolderAccessibleName",
+        "FileChooser.upFolderToolTipText",
+        "FileChooser.viewMenuLabelText"};
     private static HashMap<String, String> strings = null;
     private static HashMap<String, String[]> pstrings = null;
     private static HashMap<String, PluralMode> languages = new HashMap<String, PluralMode>();
@@ -348,8 +376,19 @@ public class I18n {
             } else {
                 l = new Locale(localeName);
             }
-            if(load(localeName)) {
+            if (load(localeName)) {
                 Locale.setDefault(l);
+                
+                // localization for file chooser dialog
+                JFileChooser.setDefaultLocale(l);
+                for (String key : fileChooserDialogStringKeys) {
+                    String us = UIManager.getString(key, Locale.US);
+                    String loc = UIManager.getString(key, l);
+                    // only provide custom translation if it is not already localized by Java
+                    if (us.equals(loc)) {
+                        UIManager.put(key, tr(us));
+                    }
+                }
             } else {
                 if (!l.getLanguage().equals("en")) {
                     System.out.println(tr("Unable to find translation for the locale {0}. Reverting to {1}.",
