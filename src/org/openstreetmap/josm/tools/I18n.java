@@ -63,6 +63,8 @@ public class I18n {
     }
 
     public static final String tr(String text) {
+        if (text == null)
+            return null;
         return MessageFormat.format(gettext(text, null), (Object)null);
     }
 
