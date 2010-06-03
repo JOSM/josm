@@ -50,6 +50,8 @@ public final class ShowStatusReportAction extends JosmAction {
         StringBuilder text = new StringBuilder();
         text.append(Version.getInstance().getReleaseAttributes());
         text.append("\n");
+        text.append("Identification: " + Version.getInstance().getAgentString());
+        text.append("\n");
         text.append("Memory Usage: ");
         text.append(Runtime.getRuntime().totalMemory()/1024/1024);
         text.append(" MB / ");
@@ -61,17 +63,15 @@ public final class ShowStatusReportAction extends JosmAction {
         text.append("Java version: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor") + ", " + System.getProperty("java.vm.name"));
         text.append("\n");
         text.append("Operating system: "+ System.getProperty("os.name"));
-        text.append("\n\n");
+        text.append("\n");
         DataSet dataset = Main.main.getCurrentDataSet();
         if (dataset != null) {
-            text.append("Dataset consistency test:\n");
             String result = DatasetConsistencyTest.runTests(dataset);
             if (result.length() == 0) {
-                text.append("No problems found\n");
+                text.append("Dataset consistency test: No problems found\n");
             } else {
-                text.append(result);
+                text.append("\nDataset consistency test:\n"+result+"\n");
             }
-            text.append("\n");
         }
         text.append("\n");
         text.append(PluginHandler.getBugReportText());

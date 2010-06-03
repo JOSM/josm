@@ -677,7 +677,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Traffic Calming" />
             <combo key="traffic_calming" text="Type" values="yes,bump,chicane,choker,cushion,hump,table" default="" delete_if_empty="true" />
         </item>
-        <item name="Passing Place" type="node">
+        <item name="Passing Place" icon="presets/passingplace.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=passing_place"/>
             <label text="Edit Passing Place" />
             <key key="highway" value="passing_place" />
