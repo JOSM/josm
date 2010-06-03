@@ -32,7 +32,6 @@ public class DrawingPreference implements PreferenceSetting {
         }
     }
 
-    private ButtonGroup gpsLinesGroup;
     private JRadioButton drawRawGpsLinesAll = new JRadioButton(tr("All"));
     private JRadioButton drawRawGpsLinesLocal = new JRadioButton(tr("Local files"));
     private JRadioButton drawRawGpsLinesNone = new JRadioButton(tr("None"));
@@ -58,17 +57,24 @@ public class DrawingPreference implements PreferenceSetting {
     private JCheckBox virtualNodes = new JCheckBox(tr("Draw virtual nodes in select mode"));
     private JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
     private JCheckBox useAntialiasing = new JCheckBox(tr("Smooth map graphics (antialiasing)"));
+    private JCheckBox makeAutoMarkers = new JCheckBox(tr("Create markers when reading GPX."));
 
     public void addGui(PreferenceTabbedPane gui) {
         gui.display.setPreferredSize(new Dimension(400,600));
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
+        // makeAutoMarkers
+        makeAutoMarkers.setSelected(Main.pref.getBoolean("marker.makeautomarkers", true));
+        makeAutoMarkers.setToolTipText(tr("Automatically make a marker layer from any waypoints when opening a GPX layer."));
+        panel.add(makeAutoMarkers, GBC.eol().insets(20,0,0,5));
+
         // drawRawGpsLines
-        gpsLinesGroup = new ButtonGroup();
+        ButtonGroup gpsLinesGroup = new ButtonGroup();
         gpsLinesGroup.add(drawRawGpsLinesNone);
         gpsLinesGroup.add(drawRawGpsLinesLocal);
         gpsLinesGroup.add(drawRawGpsLinesAll);
+
 
         /* ensure that default is in data base */
         Boolean lf = Main.pref.getBoolean("draw.rawgps.lines.localfiles", false);
@@ -266,6 +272,7 @@ public class DrawingPreference implements PreferenceSetting {
     }
 
     public boolean ok() {
+        Main.pref.put("marker.makeautomarkers", makeAutoMarkers.isSelected());
         Main.pref.put("draw.rawgps.lines", drawRawGpsLinesAll.isSelected());
         Main.pref.put("draw.rawgps.lines.localfiles", drawRawGpsLinesLocal.isSelected());
         Main.pref.put("draw.rawgps.max-line-length", drawRawGpsMaxLineLength.getText());

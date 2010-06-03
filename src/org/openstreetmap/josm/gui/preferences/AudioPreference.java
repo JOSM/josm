@@ -33,7 +33,6 @@ public class AudioPreference implements PreferenceSetting {
     private JCheckBox audioMenuVisible = new JCheckBox(tr("Display the Audio menu."));
     private JCheckBox markerButtonLabels = new JCheckBox(tr("Label audio (and image and web) markers."));
     private JCheckBox markerAudioTraceVisible = new JCheckBox(tr("Display live audio trace."));
-    private JCheckBox makeAutoMarkers = new JCheckBox(tr("Create non-audio markers when reading GPX."));
 
     // various methods of making markers on import audio
     private JCheckBox audioMarkersFromExplicitWaypoints = new JCheckBox(tr("Explicit waypoints with valid timestamps."));
@@ -62,11 +61,6 @@ public class AudioPreference implements PreferenceSetting {
         markerButtonLabels.setSelected(Main.pref.getBoolean("marker.buttonlabels"));
         markerButtonLabels.setToolTipText(tr("Put text labels against audio (and image and web) markers as well as their button icons."));
         gui.audio.add(markerButtonLabels, GBC.eol().insets(0,0,0,0));
-
-        // makeAutoMarkers
-        makeAutoMarkers.setSelected(Main.pref.getBoolean("marker.makeautomarkers", true));
-        makeAutoMarkers.setToolTipText(tr("Automatically make a marker layer from any waypoints when opening a GPX layer."));
-        gui.audio.add(makeAutoMarkers, GBC.eol().insets(0,0,0,0));
 
         gui.audio.add(new JLabel(tr("When importing audio, make markers from...")), GBC.eol());
 
@@ -122,7 +116,6 @@ public class AudioPreference implements PreferenceSetting {
         Main.pref.put("audio.menuinvisible", ! audioMenuVisible.isSelected());
         Main.pref.put("marker.traceaudio", markerAudioTraceVisible.isSelected());
         Main.pref.put("marker.buttonlabels", markerButtonLabels.isSelected());
-        Main.pref.put("marker.makeautomarkers", makeAutoMarkers.isSelected());
         Main.pref.put("marker.audiofromexplicitwaypoints", audioMarkersFromExplicitWaypoints.isSelected());
         Main.pref.put("marker.audiofromuntimedwaypoints", audioMarkersFromUntimedWaypoints.isSelected());
         Main.pref.put("marker.audiofromnamedtrackpoints", audioMarkersFromNamedTrackpoints.isSelected());
