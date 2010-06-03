@@ -51,6 +51,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableColumnModel;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
@@ -336,7 +337,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         RelationEditor.getEditor(
                 Main.map.mapView.getEditLayer(),
                 relation,
-                (Collection<RelationMember>) membershipData.getValueAt(row, 1) ).setVisible(true);
+                ((MemberInfo) membershipData.getValueAt(row, 1)).role).setVisible(true);
     }
 
     /**
@@ -472,6 +473,16 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final JLabel selectSth = new JLabel("<html><p>"
             + tr("Please select the objects you want to change properties for.") + "</p></html>");
 
+    class MemberInfo {
+        List<RelationMember> role = new ArrayList<RelationMember>();
+        List<Integer> position = new ArrayList<Integer>();
+        void add(RelationMember r, Integer p)
+        {
+          role.add(r);
+          position.add(p);
+        }
+    }
+
     /**
      * Create a new PropertiesDialog
      */
@@ -510,7 +521,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         // setting up the membership table
 
-        membershipData.setColumnIdentifiers(new String[]{tr("Member Of"),tr("Role")});
+        membershipData.setColumnIdentifiers(new String[]{tr("Member Of"),tr("Role"),tr("Position")});
         membershipTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         membershipTable.addMouseListener(new PopupMenuLauncher() {
             @Override
@@ -527,7 +538,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         });
 
-        membershipTable.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
+        TableColumnModel mod = membershipTable.getColumnModel();
+        mod.getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
@@ -543,7 +555,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         });
 
-        membershipTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+        mod.getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
             @SuppressWarnings("unchecked")
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
@@ -551,10 +563,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 boolean isFiltered = (((Relation)table.getValueAt(row, 0))).isFiltered();
                 if (c instanceof JLabel) {
                     JLabel label = (JLabel)c;
-                    Collection<RelationMember> col = (Collection<RelationMember>) value;
+                    MemberInfo col = (MemberInfo) value;
 
                     String text = null;
-                    for (RelationMember r : col) {
+                    for (RelationMember r : col.role) {
                         if (text == null) {
                             text = r.getRole();
                         }
@@ -572,6 +584,35 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 return c;
             }
         });
+
+        mod.getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
+            @SuppressWarnings("unchecked")
+            @Override public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
+                boolean isFiltered = (((Relation)table.getValueAt(row, 0))).isFiltered();
+                if (c instanceof JLabel) {
+                    JLabel label = (JLabel)c;
+                    MemberInfo col = (MemberInfo) table.getValueAt(row, 1);
+
+                    String text = "";
+                    for (Integer p : col.position) {
+                        if (text.length() != 0)
+                            text += ",";
+                        text += String.valueOf(p);
+                    }
+
+                    label.setText(text);
+                    if (isFiltered) {
+                        label.setFont(label.getFont().deriveFont(Font.ITALIC));
+                    }
+                }
+                return c;
+            }
+        });
+        mod.getColumn(2).setPreferredWidth(20);
+        mod.getColumn(1).setPreferredWidth(40);
+        mod.getColumn(0).setPreferredWidth(200);
 
         // combine both tables and wrap them in a scrollPane
         JPanel bothTables = new JPanel();
@@ -802,17 +843,19 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         membershipData.setRowCount(0);
 
-        Map<Relation, Collection<RelationMember>> roles = new HashMap<Relation, Collection<RelationMember>>();
+        Map<Relation, MemberInfo> roles = new HashMap<Relation, MemberInfo>();
         for (OsmPrimitive primitive: newSelection) {
             for (OsmPrimitive ref: primitive.getReferrers()) {
                 if (ref instanceof Relation && !ref.isIncomplete() && !ref.isDeleted()) {
                     Relation r = (Relation) ref;
-                    Collection<RelationMember> members = new ArrayList<RelationMember>();
-                    roles.put(r, members);
+                    MemberInfo mi = mi = new MemberInfo();
+                    roles.put(r, mi);
+                    int i = 1;
                     for (RelationMember m : r.getMembers()) {
                         if (m.getMember() == primitive) {
-                            members.add(m);
+                            mi.add(m, i);
                         }
+                        ++i;
                     }
                 }
             }
