@@ -375,28 +375,25 @@ public class PluginHandler {
      * @param pluginClassLoader the plugin class loader
      */
     public static void loadPlugin(Window parent, PluginInformation plugin, ClassLoader pluginClassLoader) {
+        String msg = tr("Could not load plugin {0}. Delete from preferences?", plugin.name);
         try {
             Class<?> klass = plugin.loadClass(pluginClassLoader);
             if (klass != null) {
                 System.out.println(tr("loading plugin ''{0}'' (version {1})", plugin.name, plugin.localversion));
                 pluginList.add(plugin.load(klass));
             }
+            msg = null;
         } catch(PluginException e) {
             e.printStackTrace();
             if (e.getCause() instanceof ClassNotFoundException) {
-                String msg = tr("<html>Could not load plugin {0} because the plugin<br>main class ''{1}'' was not found.<br>"
+                msg = tr("<html>Could not load plugin {0} because the plugin<br>main class ''{1}'' was not found.<br>"
                         + "Delete from preferences?", plugin.name, plugin.className);
-                if (confirmDisablePlugin(parent, msg, plugin.name)) {
-                    Main.pref.removeFromCollection("plugins", plugin.name);
-                }
             }
         }  catch (Throwable e) {
             e.printStackTrace();
-            String msg = tr("Could not load plugin {0}. Delete from preferences?", plugin.name);
-            if (confirmDisablePlugin(parent, msg, plugin.name)) {
-                Main.pref.removeFromCollection("plugins", plugin.name);
-            }
         }
+        if(msg != null && confirmDisablePlugin(parent, msg, plugin.name))
+            Main.pref.removeFromCollection("plugins", plugin.name);
     }
 
     /**
@@ -909,16 +906,16 @@ public class PluginHandler {
 
     public static String getBugReportText() {
         String text = "";
-        String pl = Main.pref.getCollectionAsString("plugins");
-        if (pl != null && pl.length() != 0) {
-            text += "Plugins: " + pl + "\n";
-        }
+        LinkedList <String> pl = new LinkedList<String>(Main.pref.getCollection("plugins", new LinkedList<String>()));
         for (final PluginProxy pp : pluginList) {
-            text += "Plugin " + pp.getPluginInformation().name;
-            String version = pp.getPluginInformation().localversion;
-            text += version != null && !version.equals("") ? " (Version: " + version + ")\n"
-                    : "\n";
+            PluginInformation pi = pp.getPluginInformation();
+            pl.remove(pi.name);
+            pl.add(pi.name + " (" + (pi.localversion != null && !pi.localversion.equals("")
+            ? pi.localversion : "unknown") + ")");
         }
+        Collections.sort(pl);
+        for (String s : pl)
+            text += "Plugin: " + s + "\n";
         return text;
     }
 
