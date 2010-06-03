@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Property;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class SearchAction extends JosmAction implements ParameterizedAction {
@@ -103,11 +104,6 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
         return ret;
     }
-
-
-
-
-
 
     private static SearchSetting lastSearch = null;
 
@@ -273,11 +269,6 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         int foundMatches = 0;
         try {
             String searchText = s.text;
-            if(s instanceof Filter){
-                searchText = "(" + s.text + ")" + (((Filter)s).applyForChildren ? ("| child (" + s.text + ")"): "");
-                searchText = (((Filter)s).inverted ? "-" : "") + "(" +  searchText + ")";
-            }
-            /*System.out.println(searchText);*/
             SearchCompiler.Match matcher = SearchCompiler.compile(searchText, s.caseSensitive, s.regexSearch);
 
             if (s.mode == SearchMode.replace) {
@@ -311,6 +302,48 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             );
         }
         return foundMatches;
+    }
+
+    /**
+     * Version of getSelection that is customized for filter, but should
+     * also work in other context.
+     *
+     * @param s the search settings
+     * @param all the collection of all the primitives that should be considered
+     * @param p the property that should be set/unset if something is found
+     */
+    public static void getSelection(SearchSetting s, Collection<OsmPrimitive> all, Property<OsmPrimitive, Boolean> p) {
+        try {
+            String searchText = s.text;
+            if (s instanceof Filter && ((Filter)s).inverted) {
+                searchText = String.format("-(%s)", searchText);
+            }
+            SearchCompiler.Match matcher = SearchCompiler.compile(searchText, s.caseSensitive, s.regexSearch);
+
+            for (OsmPrimitive osm : all) {
+                if (s.mode == SearchMode.replace) {
+                    if (matcher.match(osm)) {
+                        p.set(osm, true);
+                    } else {
+                        p.set(osm, false);
+                    }
+                } else if (s.mode == SearchMode.add && !p.get(osm) && matcher.match(osm)) {
+                    p.set(osm, true);
+                } else if (s.mode == SearchMode.remove && p.get(osm) && matcher.match(osm)) {
+                    p.set(osm, false);
+                } else if (s.mode == SearchMode.in_selection && p.get(osm) && !matcher.match(osm)) {
+                    p.set(osm, false);
+                }
+            }
+        } catch (SearchCompiler.ParseError e) {
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    e.getMessage(),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+
+            );
+        }
     }
 
     public static void search(String search, SearchMode mode, boolean caseSensitive, boolean regexSearch) {

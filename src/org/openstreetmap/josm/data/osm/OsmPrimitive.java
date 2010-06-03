@@ -61,7 +61,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     /**
      * An object can be disabled by the filter mechanism.
-     * Then it will show in a shade of grey on the map.
+     * Then it will show in a shade of gray on the map or it is completely
+     * hidden from the view.
      * Disabled objects usually cannot be selected or modified
      * while the filter is active.
      */
@@ -77,11 +78,15 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     private static final int FLAG_DELETED  = 1 << 3;
 
     /**
-     * An object can be filtered by the filter mechanism.
-     * Then it will be hidden on the map and usually
-     * cannot be selected or modified while the filter is active.
+     * This flag is only relevant if an object is disabled by the
+     * filter mechanism (i.e. FLAG_DISABLED is set).
+     * Then it indicates, whether it is completely hidden or
+     * just shown in gray color.
+     *
+     * When the primitive is not disabled, this flag should be
+     * unset as well (for efficient access).
      */
-    private static final int FLAG_FILTERED = 1 << 4;
+    private static final int FLAG_HIDE_IF_DISABLED = 1 << 4;
 
     /**
      * This flag is set if the primitive is a way and
@@ -301,47 +306,51 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     /* ------------------------------------------------------------------------------------ */
     /* accessors                                                                            */
     /* ------------------------------------------------------------------------------------ */
-    /**
-     * Sets whether this primitive is disabled or not.
-     *
-     * @param disabled true, if this primitive is disabled; false, otherwise
-     */
-    public void setDisabled(boolean disabled) {
-        if (disabled) {
-            flags |= FLAG_DISABLED;
-        } else {
-            flags &= ~FLAG_DISABLED;
-        }
 
+    /**
+     * Make the primitive disabled (e.g. if a filter applies).
+     * To enable the primitive again, use unsetDisabledState.
+     * @param hide if the primitive should be completely hidden from view or
+     *             just shown in gray color.
+     */
+    public void setDisabledState(boolean hide) {
+        flags |= FLAG_DISABLED;
+        if (hide) {
+            flags |= FLAG_HIDE_IF_DISABLED;
+        } else {
+            flags &= ~FLAG_HIDE_IF_DISABLED;
+        }
     }
 
     /**
-     * Replies true, if this primitive is disabled.
-     *
-     * @return true, if this primitive is disabled
+     * Remove the disabled flag from the primitive.
+     * Afterwards, the primitive is displayed normally and can be selected
+     * again.
+     */
+    public void unsetDisabledState() {
+        flags &= ~FLAG_DISABLED;
+        flags &= ~FLAG_HIDE_IF_DISABLED;
+    }
+
+    /**
+     * Replies true, if this primitive is disabled. (E.g. a filter
+     * applies)
      */
     public boolean isDisabled() {
         return (flags & FLAG_DISABLED) != 0;
     }
+
     /**
-     * Sets whether this primitive is filtered out or not.
-     *
-     * @param filtered true, if this primitive is filtered out; false, otherwise
+     * Replies true, if this primitive is disabled and marked as
+     * completely hidden on the map.
      */
-    public void setFiltered(boolean filtered) {
-        if (filtered) {
-            flags |= FLAG_FILTERED;
-        } else {
-            flags &= ~FLAG_FILTERED;
-        }
+    public boolean isDisabledAndHidden() {
+        return (((flags & FLAG_DISABLED) != 0) && ((flags & FLAG_HIDE_IF_DISABLED) != 0));
     }
-    /**
-     * Replies true, if this primitive is filtered out.
-     *
-     * @return true, if this primitive is filtered out
-     */
+
+    @Deprecated
     public boolean isFiltered() {
-        return (flags & FLAG_FILTERED) != 0;
+        return isDisabledAndHidden();
     }
 
     /**
@@ -393,11 +402,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     public boolean isSelectable() {
-        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_DISABLED + FLAG_FILTERED)) == 0;
+        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_DISABLED + FLAG_HIDE_IF_DISABLED)) == 0;
     }
 
     public boolean isDrawable() {
-        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_FILTERED)) == 0;
+        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_HIDE_IF_DISABLED)) == 0;
     }
 
     /**

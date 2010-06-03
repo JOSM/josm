@@ -484,72 +484,80 @@ public class DataSet implements Cloneable {
      * FILTERED / DISABLED HANDLING
      *-----------------------------------------------------*/
 
-    public void setDisabled(OsmPrimitive... osm) {
-        if (osm.length == 1 && osm[0] == null) {
-            setDisabled();
-            return;
-        }
-        clearDisabled(allPrimitives());
-        for (OsmPrimitive o : osm)
-            if (o != null) {
-                o.setDisabled(true);
-            }
-    }
-
-    public void setDisabled(Collection<? extends OsmPrimitive> selection) {
-        clearDisabled(nodes);
-        clearDisabled(ways);
-        clearDisabled(relations);
-        for (OsmPrimitive osm : selection) {
-            osm.setDisabled(true);
-        }
-    }
-
     /**
-     * Remove the disabled parameter from every value in the collection.
-     * @param list The collection to remove the disabled parameter from.
+     * TODO: can be removed if no longer needed
+     *
+     * Currently, the filter flags are updated directly for the primitives.
+     * On the long run there might be listeners for filter changes,
+     * so the control needs to be moved to this place again.
      */
-    private void clearDisabled(Collection<? extends OsmPrimitive> list) {
-        for (OsmPrimitive osm : list) {
-            osm.setDisabled(false);
-        }
-    }
 
-
-    public void setFiltered(Collection<? extends OsmPrimitive> selection) {
-        clearFiltered(nodes);
-        clearFiltered(ways);
-        clearFiltered(relations);
-        for (OsmPrimitive osm : selection) {
-            osm.setFiltered(true);
-        }
-    }
-
-    public void setFiltered(OsmPrimitive... osm) {
-        if (osm.length == 1 && osm[0] == null) {
-            setFiltered();
-            return;
-        }
-        clearFiltered(nodes);
-        clearFiltered(ways);
-        clearFiltered(relations);
-        for (OsmPrimitive o : osm)
-            if (o != null) {
-                o.setFiltered(true);
-            }
-    }
-
-    /**
-     * Remove the filtered parameter from every value in the collection.
-     * @param list The collection to remove the filtered parameter from.
-     */
-    private void clearFiltered(Collection<? extends OsmPrimitive> list) {
-        if (list == null)
-            return;
-        for (OsmPrimitive osm : list) {
-            osm.setFiltered(false);
-        }
-    }
+//    public void setDisabled(OsmPrimitive... osm) {
+//        if (osm.length == 1 && osm[0] == null) {
+//            setDisabled();
+//            return;
+//        }
+//        clearDisabled(allPrimitives());
+//        for (OsmPrimitive o : osm)
+//            if (o != null) {
+//                o.setDisabled(true);
+//            }
+//    }
+//
+//    public void setDisabled(Collection<? extends OsmPrimitive> selection) {
+//        clearDisabled(nodes);
+//        clearDisabled(ways);
+//        clearDisabled(relations);
+//        for (OsmPrimitive osm : selection) {
+//            osm.setDisabled(true);
+//        }
+//    }
+//
+//    /**
+//     * Remove the disabled parameter from every value in the collection.
+//     * @param list The collection to remove the disabled parameter from.
+//     */
+//    private void clearDisabled(Collection<? extends OsmPrimitive> list) {
+//        for (OsmPrimitive osm : list) {
+//            osm.setDisabled(false);
+//        }
+//    }
+//
+//
+//    public void setFiltered(Collection<? extends OsmPrimitive> selection) {
+//        clearFiltered(nodes);
+//        clearFiltered(ways);
+//        clearFiltered(relations);
+//        for (OsmPrimitive osm : selection) {
+//            osm.setFiltered(true);
+//        }
+//    }
+//
+//    public void setFiltered(OsmPrimitive... osm) {
+//        if (osm.length == 1 && osm[0] == null) {
+//            setFiltered();
+//            return;
+//        }
+//        clearFiltered(nodes);
+//        clearFiltered(ways);
+//        clearFiltered(relations);
+//        for (OsmPrimitive o : osm)
+//            if (o != null) {
+//                o.setFiltered(true);
+//            }
+//    }
+//
+//    /**
+//     * Remove the filtered parameter from every value in the collection.
+//     * @param list The collection to remove the filtered parameter from.
+//     */
+//    private void clearFiltered(Collection<? extends OsmPrimitive> list) {
+//        if (list == null)
+//            return;
+//        for (OsmPrimitive osm : list) {
+//            osm.setFiltered(false);
+//        }
+//    }
 
     @Override public DataSet clone() {
         DataSet ds = new DataSet();

@@ -11,9 +11,8 @@ public class Filter extends SearchSetting {
     private static final String version = "1";
 
     public Boolean enable = true;
-    public Boolean hide = false;
+    public Boolean hiding = false;
     public Boolean inverted = false;
-    public Boolean applyForChildren = true;
     public Filter() {
         super("", SearchMode.add, false, false);
     }
@@ -42,16 +41,15 @@ public class Filter extends SearchSetting {
         caseSensitive = Boolean.parseBoolean(prfs[3]);
         regexSearch = Boolean.parseBoolean(prfs[4]);
         enable = Boolean.parseBoolean(prfs[6]);
-        hide = Boolean.parseBoolean(prfs[7]);
+        hiding = Boolean.parseBoolean(prfs[7]);
         inverted = Boolean.parseBoolean(prfs[8]);
-        applyForChildren = Boolean.parseBoolean(prfs[9]);
-
     }
 
     public String getPrefString(){
         return version + ";" +
-        text + ";" + mode + ";" + caseSensitive + ";" + regexSearch + ";" +
-        "legacy" + ";" + enable + ";" + hide + ";" +
-        inverted + ";" + applyForChildren;
+            text + ";" + mode + ";" + caseSensitive + ";" + regexSearch + ";" +
+            "legacy" + ";" + enable + ";" + hiding + ";" +
+            inverted + ";" +
+            "false"; // last parameter is not used any more (was: applyForChildren)
     }
 }

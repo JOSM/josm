@@ -23,6 +23,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.Filters;
@@ -39,7 +40,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author Petr_Dlouhý
  */
-public class FilterDialog extends ToggleDialog implements Listener , TableModelListener {
+public class FilterDialog extends ToggleDialog implements Listener, TableModelListener {
 
     private JTable userTable;
     private Filters filters = new Filters();
@@ -67,6 +68,7 @@ public class FilterDialog extends ToggleDialog implements Listener , TableModelL
     public void hideNotify() {
         DatasetEventManager.getInstance().removeDatasetListener(listenerAdapter);
         filters.clearFilterFlags();
+        Main.map.mapView.repaint();
     }
 
     protected JPanel buildButtonRow() {
@@ -137,7 +139,6 @@ public class FilterDialog extends ToggleDialog implements Listener , TableModelL
             tr("Enable filter"),
             tr("Hide elements"),
             null,
-            tr("Apply also for children"),
             tr("Inverse filter"),
             tr("Filter mode")
     };
@@ -168,13 +169,11 @@ public class FilterDialog extends ToggleDialog implements Listener , TableModelL
         userTable.getColumnModel().getColumn(1).setMaxWidth(1);
         userTable.getColumnModel().getColumn(3).setMaxWidth(1);
         userTable.getColumnModel().getColumn(4).setMaxWidth(1);
-        userTable.getColumnModel().getColumn(5).setMaxWidth(1);
 
         userTable.getColumnModel().getColumn(0).setResizable(false);
         userTable.getColumnModel().getColumn(1).setResizable(false);
         userTable.getColumnModel().getColumn(3).setResizable(false);
         userTable.getColumnModel().getColumn(4).setResizable(false);
-        userTable.getColumnModel().getColumn(5).setResizable(false);
 
         userTable.setDefaultRenderer(Boolean.class, new BooleanRenderer());
         userTable.setDefaultRenderer(String.class, new StringRenderer());
@@ -214,7 +213,7 @@ public class FilterDialog extends ToggleDialog implements Listener , TableModelL
     }
 
     public void tableChanged(TableModelEvent e){
-        setTitle(tr("Filter Hidden:{0} Disabled:{1}", filters.hiddenCount, filters.disabledCount));
+        setTitle(tr("Filter Hidden:{0} Disabled:{1}", filters.disabledAndHiddenCount, filters.disabledCount));
     }
 
     public void drawOSDText(Graphics2D g) {
