@@ -152,6 +152,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
         Node lastN;
 
         Color myColor = color;
+        Color myDashedColor = dashedColor;
         int myWidth = getWidth();
 
         if (realWidth > 0 && paintSettings.isUseRealWidth() && !showDirection) {
@@ -182,6 +183,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
             myColor = member ? paintSettings.getRelationSelectedColor() : paintSettings.getSelectedColor();
         } else if(w.isDisabled()) {
             myColor = paintSettings.getInactiveColor();
+            myDashedColor = paintSettings.getInactiveColor();
         }
 
         /* draw overlays under the way */
@@ -189,13 +191,15 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
             for(LineElemStyle s : overlays) {
                 if(!s.over) {
                     painter.drawWay(w, (s.color == null || selected) ? myColor: s.color, s.getWidth(myWidth),
-                            s.getDashed(), s.dashedColor, false, false, false);
+                            s.getDashed(),
+                            w.isDisabled() ? paintSettings.getInactiveColor() : s.dashedColor,
+                            false, false, false);
                 }
             }
         }
 
         /* draw the way */
-        painter.drawWay(w, myColor, myWidth, dashed, dashedColor, showDirection, selected ? false : reversedDirection, showOnlyHeadArrowOnly);
+        painter.drawWay(w, myColor, myWidth, dashed, myDashedColor, showDirection, selected ? false : reversedDirection, showOnlyHeadArrowOnly);
 
         /* draw overlays above the way */
         if(overlays != null)  {
