@@ -476,10 +476,42 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     class MemberInfo {
         List<RelationMember> role = new ArrayList<RelationMember>();
         List<Integer> position = new ArrayList<Integer>();
+        private String positionString = null;
         void add(RelationMember r, Integer p)
         {
           role.add(r);
           position.add(p);
+        }
+        String getPositionString()
+        {
+            if(positionString == null)
+            {
+                Collections.sort(position);
+                positionString = String.valueOf(position.get(0));
+                int cnt = 0;
+                int last = position.get(0);
+                for(int i = 1; i < position.size(); ++i) {
+                    int cur = position.get(i);
+                    if(cur == last+1) {
+                        ++cnt;
+                    } else {
+                        if(cnt == 1)
+                            positionString += ","+String.valueOf(last);
+                        else if(cnt > 1)
+                            positionString += "-"+String.valueOf(last);
+                        positionString += "-"+String.valueOf(cur);
+                        cnt = 0;
+                    }
+                    last = cur;
+                }
+                if(cnt == 1)
+                    positionString += ","+String.valueOf(last);
+                else if(cnt > 1)
+                    positionString += "-"+String.valueOf(last);
+            }
+            if(positionString.length() > 20)
+              positionString = positionString.substring(0,17)+"...";
+            return positionString;
         }
     }
 
@@ -547,7 +579,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     JLabel label = (JLabel)c;
                     Relation r = (Relation)value;
                     label.setText(r.getDisplayName(DefaultNameFormatter.getInstance()));
-                    if (r.isFiltered()) {
+                    if (r.isDisabledAndHidden()) {
                         label.setFont(label.getFont().deriveFont(Font.ITALIC));
                     }
                 }
@@ -560,7 +592,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
-                boolean isFiltered = (((Relation)table.getValueAt(row, 0))).isFiltered();
+                boolean isDisabledAndHidden = (((Relation)table.getValueAt(row, 0))).isDisabledAndHidden();
                 if (c instanceof JLabel) {
                     JLabel label = (JLabel)c;
                     MemberInfo col = (MemberInfo) value;
@@ -577,7 +609,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     }
 
                     label.setText(text);
-                    if (isFiltered) {
+                    if (isDisabledAndHidden) {
                         label.setFont(label.getFont().deriveFont(Font.ITALIC));
                     }
                 }
@@ -590,20 +622,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
-                boolean isFiltered = (((Relation)table.getValueAt(row, 0))).isFiltered();
+                boolean isDisabledAndHidden = (((Relation)table.getValueAt(row, 0))).isDisabledAndHidden();
                 if (c instanceof JLabel) {
                     JLabel label = (JLabel)c;
-                    MemberInfo col = (MemberInfo) table.getValueAt(row, 1);
-
-                    String text = "";
-                    for (Integer p : col.position) {
-                        if (text.length() != 0)
-                            text += ",";
-                        text += String.valueOf(p);
-                    }
-
-                    label.setText(text);
-                    if (isFiltered) {
+                    label.setText(((MemberInfo) table.getValueAt(row, 1)).getPositionString());
+                    if (isDisabledAndHidden) {
                         label.setFont(label.getFont().deriveFont(Font.ITALIC));
                     }
                 }
@@ -848,7 +871,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             for (OsmPrimitive ref: primitive.getReferrers()) {
                 if (ref instanceof Relation && !ref.isIncomplete() && !ref.isDeleted()) {
                     Relation r = (Relation) ref;
-                    MemberInfo mi = mi = new MemberInfo();
+                    MemberInfo mi = roles.get(r);
+                    if(mi == null)
+                        mi = new MemberInfo();
                     roles.put(r, mi);
                     int i = 1;
                     for (RelationMember m : r.getMembers()) {
@@ -864,7 +889,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         List<Relation> sortedRelations = new ArrayList<Relation>(roles.keySet());
         Collections.sort(sortedRelations, new Comparator<Relation>() {
             public int compare(Relation o1, Relation o2) {
-                int comp = Boolean.valueOf(o1.isFiltered()).compareTo(o2.isFiltered());
+                int comp = Boolean.valueOf(o1.isDisabledAndHidden()).compareTo(o2.isDisabledAndHidden());
                 if (comp == 0) {
                     comp = o1.getDisplayName(DefaultNameFormatter.getInstance()).compareTo(o2.getDisplayName(DefaultNameFormatter.getInstance()));
                 }
