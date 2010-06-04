@@ -71,7 +71,7 @@ public class AutoCompletingTextField extends JTextField implements ComboBoxEdito
 
             String currentText = getText(0, getLength());
             // if the text starts with a number we don't autocomplete
-            if (Main.pref.getBoolean("autocomplete.dont_complete_numbers", false)) {
+            if (!Main.pref.getBoolean("autocomplete.dont_complete_numbers", false)) {
                 try {
                     Long.parseLong(str);
                     if (currentText.length() == 0) {

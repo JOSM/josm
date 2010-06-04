@@ -70,7 +70,7 @@ public class AutoCompletingComboBox extends JComboBox {
             String curText = getText(0, size);
             
             // if the text starts with a number we don't autocomplete
-            if (Main.pref.getBoolean("autocomplete.dont_complete_numbers", false)) {
+            if (!Main.pref.getBoolean("autocomplete.dont_complete_numbers", false)) {
                 try {
                     Long.parseLong(str);
                     if (curText.length() == 0) {
