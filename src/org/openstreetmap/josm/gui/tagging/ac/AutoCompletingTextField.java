@@ -20,6 +20,7 @@ import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.StyleConstants;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.util.TableCellEditorSupport;
 
@@ -70,20 +71,21 @@ public class AutoCompletingTextField extends JTextField implements ComboBoxEdito
 
             String currentText = getText(0, getLength());
             // if the text starts with a number we don't autocomplete
-            //
-            try {
-                Long.parseLong(str);
-                if (currentText.length() == 0) {
-                    // we don't autocomplete on numbers
+            if (Main.pref.getBoolean("autocomplete.dont_complete_numbers", false)) {
+                try {
+                    Long.parseLong(str);
+                    if (currentText.length() == 0) {
+                        // we don't autocomplete on numbers
+                        super.insertString(offs, str, a);
+                        return;
+                    }
+                    Long.parseLong(currentText);
                     super.insertString(offs, str, a);
                     return;
+                } catch(NumberFormatException e) {
+                    // either the new text or the current text isn't a number. We continue with
+                    // autocompletion
                 }
-                Long.parseLong(currentText);
-                super.insertString(offs, str, a);
-                return;
-            } catch(NumberFormatException e) {
-                // either the new text or the current text isn't a number. We continue with
-                // autocompletion
             }
             String prefix = currentText.substring(0, offs);
             autoCompletionList.applyFilter(prefix+str);

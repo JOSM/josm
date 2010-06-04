@@ -237,8 +237,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 // now. Can add mouse listener
                 Main.map.mapView.addPropertyChangeListener(layer);
                 if (Main.map.getToggleDialog(ImageViewerDialog.class) == null) {
-                    System.err.println("JO");
-                    ImageViewerDialog.newInstance();// = new ImageViewerDialog();
+                    ImageViewerDialog.newInstance();
                     Main.map.addToggleDialog(ImageViewerDialog.getInstance());
                 }
 

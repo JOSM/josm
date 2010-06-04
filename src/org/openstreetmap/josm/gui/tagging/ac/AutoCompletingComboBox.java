@@ -19,6 +19,8 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.StyleConstants;
 
+import org.openstreetmap.josm.Main;
+
 /**
  * @author guilhem.bonnefille@gmail.com
  */
@@ -68,18 +70,19 @@ public class AutoCompletingComboBox extends JComboBox {
             String curText = getText(0, size);
             
             // if the text starts with a number we don't autocomplete
-            //
-            try {
-                Long.parseLong(str);
-                if (curText.length() == 0) {
-                    // we don't autocomplete on numbers
+            if (Main.pref.getBoolean("autocomplete.dont_complete_numbers", false)) {
+                try {
+                    Long.parseLong(str);
+                    if (curText.length() == 0) {
+                        // we don't autocomplete on numbers
+                        return;
+                    }
+                    Long.parseLong(curText);
                     return;
+                } catch (NumberFormatException e) {
+                    // either the new text or the current text isn't a number. We continue with
+                    // autocompletion
                 }
-                Long.parseLong(curText);
-                return;
-            } catch (NumberFormatException e) {
-                // either the new text or the current text isn't a number. We continue with
-                // autocompletion
             }
             
             // lookup and select a matching item

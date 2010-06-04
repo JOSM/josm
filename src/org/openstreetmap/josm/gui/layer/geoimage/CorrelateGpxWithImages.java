@@ -512,6 +512,7 @@ public class CorrelateGpxWithImages implements ActionListener {
         buttonViewGpsPhoto.addActionListener(new SetOffsetActionListener());
 
         JButton buttonAutoGuess = new JButton(tr("Auto-Guess"));
+        buttonAutoGuess.setToolTipText(tr("Matches first photo with first gpx point"));
         buttonAutoGuess.addActionListener(new AutoGuessActionListener());
 
         JButton buttonAdjust = new JButton(tr("Manual adjust"));
