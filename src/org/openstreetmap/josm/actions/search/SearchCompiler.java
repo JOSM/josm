@@ -47,6 +47,7 @@ public class SearchCompiler {
     private boolean caseSensitive = false;
     private boolean regexSearch = false;
     private static String  rxErrorMsg = marktr("The regex \"{0}\" had a parse error at offset {1}, full error:\n\n{2}");
+    private static String  rxErrorMsgNoPos = marktr("The regex \"{0}\" had a parse error, full error:\n\n{1}");
     private PushbackTokenizer tokenizer;
 
     public SearchCompiler(boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) {
@@ -166,14 +167,14 @@ public class SearchCompiler {
                 } catch (PatternSyntaxException e) {
                     throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
                 } catch (Exception e) {
-                    throw new ParseError(tr(rxErrorMsg, key, tr("<unknown>"), e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsgNoPos, key, e.getMessage()));
                 }
                 try {
                     this.valuePattern = Pattern.compile(value, searchFlags);
                 } catch (PatternSyntaxException e) {
                     throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
                 } catch (Exception e) {
-                    throw new ParseError(tr(rxErrorMsg, value, tr("<unknown>"), e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsgNoPos, value, e.getMessage()));
                 }
                 this.key = key;
                 this.value = value;
@@ -298,7 +299,7 @@ public class SearchCompiler {
                 } catch (PatternSyntaxException e) {
                     throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
                 } catch (Exception e) {
-                    throw new ParseError(tr(rxErrorMsg, key, tr("<unknown>"), e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsgNoPos, key, e.getMessage()));
                 }
             } else {
                 keyPattern = null;
@@ -309,7 +310,7 @@ public class SearchCompiler {
                 } catch (PatternSyntaxException e) {
                     throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
                 } catch (Exception e) {
-                    throw new ParseError(tr(rxErrorMsg, value, tr("<unknown>"), e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsgNoPos, value, e.getMessage()));
                 }
             } else {
                 valuePattern = null;
@@ -385,7 +386,7 @@ public class SearchCompiler {
                 } catch (PatternSyntaxException e) {
                     throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()));
                 } catch (Exception e) {
-                    throw new ParseError(tr(rxErrorMsg, s, tr("<unknown>"), e.getMessage()));
+                    throw new ParseError(tr(rxErrorMsgNoPos, s, e.getMessage()));
                 }
                 this.search = s;
             } else if (caseSensitive) {
@@ -486,6 +487,36 @@ public class SearchCompiler {
 
         @Override public String toString() {
             return "user=" + user == null ? "" : user;
+        }
+    }
+
+    private static class RoleMatch extends Match {
+        private String role;
+        public RoleMatch(String role) {
+            if (role == null) {
+                this.role = "";
+            } else {
+                this.role = role;
+            }
+        }
+
+        @Override public boolean match(OsmPrimitive osm) {
+            for (OsmPrimitive ref: osm.getReferrers()) {
+                if (ref instanceof Relation && !ref.isIncomplete() && !ref.isDeleted()) {
+                    for (RelationMember m : ((Relation) ref).getMembers()) {
+                        if (m.getMember() == osm) {
+                            String testRole = m.getRole();
+                            if(role.equals(testRole == null ? "" : testRole))
+                                return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        @Override public String toString() {
+            return "role=" + role;
         }
     }
 
@@ -717,6 +748,8 @@ public class SearchCompiler {
             return new ExactType(value);
         else if (key.equals("user"))
             return new UserMatch(value);
+        else if (key.equals("role"))
+            return new RoleMatch(value);
         else
             return new KeyValue(key, value, regexSearch, caseSensitive);
     }

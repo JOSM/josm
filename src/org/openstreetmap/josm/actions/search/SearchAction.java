@@ -189,6 +189,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     + "<li>"+tr("<b>changeset:</b>... - object with given changeset id (0 objects without assigned changeset)")+"</li>"
                     + "<li>"+tr("<b>nodes:</b>... - object with given number of nodes (nodes:count or nodes:min-max)")+"</li>"
                     + "<li>"+tr("<b>tags:</b>... - object with given number of tags (tags:count or tags:min-max)")+"</li>"
+                    + "<li>"+tr("<b>role:</b>... - object with given role in a relation")+"</li>"
                     + "<li>"+tr("<b>timestamp:</b>... -  objects with this timestamp (<b>2009-11-12T14:51:09Z</b>, <b>2009-11-12</b> or <b>T14:51</b> ...)")+"</li>"
                     + "<li>"+tr("<b>modified</b> - all changed objects")+"</li>"
                     + "<li>"+tr("<b>selected</b> - all selected objects")+"</li>"
