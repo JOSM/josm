@@ -92,7 +92,7 @@ public class StyleSourceEditor extends JPanel {
         tblActiveStyles.setSelectionModel(selectionModel);
         tblActiveStyles.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         tblActiveStyles.setTableHeader(null);
-        tblActiveStyles.getColumnModel().getColumn(0).setCellEditor(new FileOrUrlCellEditor());
+        tblActiveStyles.getColumnModel().getColumn(0).setCellEditor(new FileOrUrlCellEditor(true));
         tblActiveStyles.setRowHeight(20);
         activeStylesModel.setActiveStyles(Main.pref.getCollection(stylesPreferencesKey, null));
 
@@ -116,7 +116,7 @@ public class StyleSourceEditor extends JPanel {
             tblIconPaths.setSelectionModel(selectionModel);
             tblIconPaths.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
             tblIconPaths.setTableHeader(null);
-            tblIconPaths.getColumnModel().getColumn(0).setCellEditor(new FileOrUrlCellEditor());
+            tblIconPaths.getColumnModel().getColumn(0).setCellEditor(new FileOrUrlCellEditor(false));
             tblIconPaths.setRowHeight(20);
             iconPathsModel.setIconPaths(Main.pref.getCollection(iconsPreferenceKey, null));
 
@@ -815,10 +815,13 @@ public class StyleSourceEditor extends JPanel {
         private CopyOnWriteArrayList<CellEditorListener> listeners;
         private String value;
         private JFileChooser fileChooser;
+        private boolean isFile;
 
         protected JFileChooser getFileChooser() {
             if (fileChooser == null) {
                 this.fileChooser = new JFileChooser();
+                if(!isFile)
+                    fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             }
             return fileChooser;
         }
@@ -853,7 +856,8 @@ public class StyleSourceEditor extends JPanel {
             );
         }
 
-        public FileOrUrlCellEditor() {
+        public FileOrUrlCellEditor(boolean isFile) {
+            this.isFile = isFile;
             listeners = new CopyOnWriteArrayList<CellEditorListener>();
             build();
         }
