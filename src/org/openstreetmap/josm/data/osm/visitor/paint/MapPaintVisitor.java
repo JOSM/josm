@@ -54,7 +54,6 @@ public class MapPaintVisitor implements PaintVisitor {
     private ElemStyles.StyleSet styles;
     private double circum;
     private double dist;
-    private boolean useStyleCache;
     private static int paintid = 0;
     private EastNorth minEN;
     private EastNorth maxEN;
@@ -73,43 +72,35 @@ public class MapPaintVisitor implements PaintVisitor {
         return !(circum >= e.maxScale || circum < e.minScale);
     }
 
-    public ElemStyle getPrimitiveStyle(OsmPrimitive osm) {
-        if(!useStyleCache)
-            return ((styles != null) ? styles.get(osm) : null);
-
-        if(osm.mappaintStyle == null && styles != null) {
-            osm.mappaintStyle = styles.get(osm);
-            if(osm instanceof Way) {
-                ((Way)osm).isMappaintArea = styles.isArea(osm);
+    public ElemStyle getPrimitiveStyle(OsmPrimitive osm, boolean nodefault) {
+        if(osm.mappaintStyle == null)
+        {
+            if(styles != null) {
+                osm.mappaintStyle = styles.get(osm);
+                if(osm instanceof Way) {
+                    ((Way)osm).isMappaintArea = styles.isArea(osm);
+                }
+            }
+            if (osm.mappaintStyle == null) {
+                if(osm instanceof Node)
+                    osm.mappaintStyle = SimpleNodeElemStyle.INSTANCE;
+                else if (osm instanceof Way)
+                    osm.mappaintStyle = LineElemStyle.UNTAGGED_WAY;
             }
         }
-
-        if (osm.mappaintStyle == null && osm instanceof Node) {
-            osm.mappaintStyle = SimpleNodeElemStyle.INSTANCE;
-        }
-
-        if (osm.mappaintStyle == null && osm instanceof Way) {
-            osm.mappaintStyle = LineElemStyle.UNTAGGED_WAY;
-        }
-
+        if(nodefault && osm.mappaintStyle == LineElemStyle.UNTAGGED_WAY)
+            return null;
         return osm.mappaintStyle;
     }
 
     public IconElemStyle getPrimitiveNodeStyle(OsmPrimitive osm) {
-        if(!useStyleCache)
-            return (styles != null) ? styles.getIcon(osm) : null;
+        if(osm.mappaintStyle == null && styles != null)
+            osm.mappaintStyle = styles.getIcon(osm);
 
-            if(osm.mappaintStyle == null && styles != null) {
-                osm.mappaintStyle = styles.getIcon(osm);
-            }
-
-            return (IconElemStyle)osm.mappaintStyle;
+        return (IconElemStyle)osm.mappaintStyle;
     }
 
     public boolean isPrimitiveArea(Way osm) {
-        if(!useStyleCache)
-            return styles.isArea(osm);
-
         if(osm.mappaintStyle == null && styles != null) {
             osm.mappaintStyle = styles.get(osm);
             osm.isMappaintArea = styles.isArea(osm);
@@ -125,7 +116,7 @@ public class MapPaintVisitor implements PaintVisitor {
                 (n.getEastNorth().north() < minEN.north()))
             return;
 
-        ElemStyle nodeStyle = getPrimitiveStyle(n);
+        ElemStyle nodeStyle = getPrimitiveStyle(n, false);
 
         if (isZoomOk(nodeStyle)) {
             nodeStyle.paintPrimitive(n, paintSettings, painter, n.isSelected(),
@@ -168,7 +159,7 @@ public class MapPaintVisitor implements PaintVisitor {
                 (maxy < minEN.north()))
             return;
 
-        ElemStyle wayStyle = getPrimitiveStyle(w);
+        ElemStyle wayStyle = getPrimitiveStyle(w, false);
 
         if(!isZoomOk(wayStyle))
             return;
@@ -236,7 +227,7 @@ public class MapPaintVisitor implements PaintVisitor {
             {
                 if (m.isWay() && m.getMember().isDrawable())
                 {
-                    drawSelectedMember(m.getMember(), styles != null ? getPrimitiveStyle(m.getMember())
+                    drawSelectedMember(m.getMember(), styles != null ? getPrimitiveStyle(m.getMember(), false)
                             : null, true, true);
                 }
             }
@@ -469,7 +460,7 @@ public class MapPaintVisitor implements PaintVisitor {
         Multipolygon multipolygon = new Multipolygon(nc);
         multipolygon.load(r);
 
-        ElemStyle wayStyle = getPrimitiveStyle(r);
+        ElemStyle wayStyle = getPrimitiveStyle(r, false);
 
         // If area style was not found for relation then use style of ways
         if(styles != null && !(wayStyle instanceof AreaElemStyle)) {
@@ -507,7 +498,7 @@ public class MapPaintVisitor implements PaintVisitor {
                 return drawn;
             for (Way wInner : multipolygon.getInnerWays())
             {
-                ElemStyle innerStyle = getPrimitiveStyle(wInner);
+                ElemStyle innerStyle = getPrimitiveStyle(wInner, true);
                 if(innerStyle == null)
                 {
                     if (data.isSelected(wInner)) {
@@ -538,7 +529,7 @@ public class MapPaintVisitor implements PaintVisitor {
             }
             for (Way wOuter : multipolygon.getOuterWays())
             {
-                ElemStyle outerStyle = getPrimitiveStyle(wOuter);
+                ElemStyle outerStyle = getPrimitiveStyle(wOuter, true);
                 if(outerStyle == null)
                 {
                     // Selected ways are drawn at the very end
@@ -647,7 +638,6 @@ public class MapPaintVisitor implements PaintVisitor {
         this.data = data;
         ++paintid;
 
-        useStyleCache = Main.pref.getBoolean("mappaint.cache", true);
         int fillAreas = Main.pref.getInteger("mappaint.fillareas", 10000000);
         LatLon ll1 = nc.getLatLon(0, 0);
         LatLon ll2 = nc.getLatLon(100, 0);
@@ -733,7 +723,7 @@ public class MapPaintVisitor implements PaintVisitor {
                         // way in selected relation is hidden by another way)
                         for (RelationMember m : r.getMembers()) {
                             if (m.isNode() && m.getMember().isDrawable()) {
-                                drawSelectedMember(m.getMember(), styles != null ? getPrimitiveStyle(m.getMember()) : null, true, true);
+                                drawSelectedMember(m.getMember(), styles != null ? getPrimitiveStyle(m.getMember(), false) : null, true, true);
                             }
                         }
                     }
