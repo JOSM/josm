@@ -88,7 +88,7 @@ public class PostDownloadHandler implements Runnable {
             JOptionPane.showMessageDialog(
                     Main.parent,
                     error.toString(),
-                    tr("Error during Download"),
+                    tr("Error during download"),
                     JOptionPane.ERROR_MESSAGE);
             return;
 

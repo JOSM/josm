@@ -242,7 +242,7 @@ public class DownloadOsmTaskList {
 
                 JOptionPane.showMessageDialog(Main.parent, "<html>"
                         + tr("The following errors occurred during mass download: {0}", sb.toString()) + "</html>",
-                        tr("Errors during Download"), JOptionPane.ERROR_MESSAGE);
+                        tr("Errors during download"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
