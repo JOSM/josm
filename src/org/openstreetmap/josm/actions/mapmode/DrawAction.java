@@ -239,7 +239,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // when exiting we let everybody know about the currently selected
         // primitives
         //
-        getCurrentDataSet().fireSelectionChanged();
+        DataSet ds = getCurrentDataSet();
+        if(ds != null)
+            ds.fireSelectionChanged();
     }
 
     /**
