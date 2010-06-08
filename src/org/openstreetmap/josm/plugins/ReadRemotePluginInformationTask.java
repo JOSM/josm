@@ -265,9 +265,9 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
             getProgressMonitor().subTask(tr("Processing plugin list from site ''{0}''", site));
             String list = downloadPluginList(site, getProgressMonitor().createSubTaskMonitor(0, false));
             if (canceled) return;
+            siteCacheFiles.remove(createSiteCacheFile(pluginDir, site));
             if(list != null)
             {
-                siteCacheFiles.remove(createSiteCacheFile(pluginDir, site));
                 getProgressMonitor().worked(1);
                 cachePluginList(site, list);
                 if (canceled) return;
