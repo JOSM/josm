@@ -17,7 +17,6 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
 
     static {
         UNTAGGED_WAY = new LineElemStyle();
-        UNTAGGED_WAY.color = PaintColors.UNTAGGED.get();
     }
 
     private int width;
@@ -77,7 +76,7 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
         dashed = new float[0];
         dashedColor = null;
         priority = 0;
-        color = null;
+        color = PaintColors.UNTAGGED.get();
         over = true; // only used for line modifications
         widthMode = WidthMode.ABSOLUTE;
         overlays = null;
