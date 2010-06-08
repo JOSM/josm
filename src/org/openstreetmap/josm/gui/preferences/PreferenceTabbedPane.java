@@ -42,6 +42,19 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
     @SuppressWarnings("unused")
     static private final Logger logger = Logger.getLogger(PreferenceTabbedPane.class.getName());
 
+    /**
+     * Allows PreferenceSettings to do validation of entered values when ok was pressed. If data are invalid then event can
+     * return false to cancel closing of preferences dialog
+     *
+     */
+    public interface ValidationListener {
+        /**
+         *
+         * @return True if preferences can be saved
+         */
+        boolean validatePreferences();
+    }
+
     private final static Collection<PreferenceSettingFactory> settingsFactory = new LinkedList<PreferenceSettingFactory>();
     private final List<PreferenceSetting> settings = new ArrayList<PreferenceSetting>();
 
@@ -54,6 +67,17 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
 
     public final javax.swing.JTabbedPane displaycontent = new javax.swing.JTabbedPane();
     public final javax.swing.JTabbedPane mapcontent = new javax.swing.JTabbedPane();
+
+    List<ValidationListener> validationListeners = new ArrayList<ValidationListener>();
+
+    /**
+     * Add validation listener to currently open preferences dialog. Calling to removeValidationListener is not necessary, all listeners will
+     * be automatically removed when dialog is closed
+     * @param validationListener
+     */
+    public void addValidationListener(ValidationListener validationListener) {
+        validationListeners.add(validationListener);
+    }
 
     /**
      * Construct a JPanel for the preference settings. Layout is GridBagLayout
@@ -243,8 +267,9 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
         settingsFactory.add(new ProjectionPreference.Factory());
         settingsFactory.add(new MapPaintPreference.Factory());
         settingsFactory.add(new TaggingPresetPreference.Factory());
-        if(!Main.applet)
+        if(!Main.applet) {
             settingsFactory.add(new PluginPreference.Factory());
+        }
         settingsFactory.add(Main.toolbar);
         settingsFactory.add(new AudioPreference.Factory());
         settingsFactory.add(new ShortcutPreference.Factory());

@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.DateUtils;
  */
 public class OsmWriter extends XmlWriter implements Visitor {
 
-    public final String DEFAULT_API_VERSION = "0.6";
+    public static final String DEFAULT_API_VERSION = "0.6";
 
     private boolean osmConform;
     private boolean withBody = true;

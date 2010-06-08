@@ -24,6 +24,7 @@ import javax.swing.KeyStroke;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -95,6 +96,7 @@ public class PreferenceDialog extends JDialog {
         public void cancel() {
             setCanceled(true);
             setVisible(false);
+            tpPreferences.validationListeners.clear();
         }
 
         public void actionPerformed(ActionEvent evt) {
@@ -110,7 +112,13 @@ public class PreferenceDialog extends JDialog {
         }
 
         public void actionPerformed(ActionEvent evt) {
+            for (ValidationListener listener: tpPreferences.validationListeners) {
+                if (!listener.validatePreferences())
+                    return;
+            }
+
             tpPreferences.savePreferences();
+            tpPreferences.validationListeners.clear();
             setCanceled(false);
             setVisible(false);
         }

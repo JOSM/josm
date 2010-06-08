@@ -180,6 +180,18 @@ public class StyleSourceEditor extends JPanel {
         }
     }
 
+    public boolean hasActiveStylesChanged() {
+        return !activeStylesModel.getStyles().equals(Main.pref.getCollection(pref, Collections.<String>emptyList()));
+    }
+
+    public Collection<String> getActiveStyles() {
+        return activeStylesModel.getStyles();
+    }
+
+    public void removeSource(String source) {
+        activeStylesModel.remove(source);
+    }
+
     public boolean finish() {
         boolean changed = false;
         List<String> activeStyles = activeStylesModel.getStyles();
@@ -342,6 +354,11 @@ public class StyleSourceEditor extends JPanel {
                 }
                 i++;
             }
+            fireTableDataChanged();
+        }
+
+        public void remove(String source) {
+            data.remove(source);
             fireTableDataChanged();
         }
 
@@ -803,7 +820,9 @@ public class StyleSourceEditor extends JPanel {
                 if (canceled)
                     // ignore the exception and return
                     return;
-                warn(e);
+                OsmTransferException ex = new OsmTransferException(e);
+                ex.setUrl(url);
+                warn(ex);
                 return;
             }
             availableStylesModel.setStyleSources(styles);
@@ -820,8 +839,9 @@ public class StyleSourceEditor extends JPanel {
         protected JFileChooser getFileChooser() {
             if (fileChooser == null) {
                 this.fileChooser = new JFileChooser();
-                if(!isFile)
+                if(!isFile) {
                     fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                }
             }
             return fileChooser;
         }

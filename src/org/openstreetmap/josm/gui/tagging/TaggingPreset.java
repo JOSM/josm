@@ -35,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.xml.transform.stream.StreamSource;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -53,7 +54,6 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPritority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -500,9 +500,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         }
 
         public void setRequisite(String str) throws SAXException {
-            if("required".equals(str))
+            if("required".equals(str)) {
                 required = true;
-            else if(!"optional".equals(str))
+            } else if(!"optional".equals(str))
                 throw new SAXException(tr("Unknown requisite: {0}", str));
         }
 
@@ -521,14 +521,15 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         }
         public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             String cstring;
-            if(count > 0 && !required)
+            if(count > 0 && !required) {
                 cstring = "0,"+String.valueOf(count);
-            else if(count > 0)
+            } else if(count > 0) {
                 cstring = String.valueOf(count);
-            else if(!required)
+            } else if(!required) {
                 cstring = "0-...";
-            else
+            } else {
                 cstring = "1-...";
+            }
             if(locale_text == null) {
                 if (text != null) {
                     if(text_context != null) {
@@ -543,8 +544,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             p.add(new JLabel(cstring), types == null ? GBC.eol() : GBC.std().insets(0,0,10,0));
             if(types != null){
                 JPanel pp = new JPanel();
-                for(String t : types)
+                for(String t : types) {
                     pp.add(new JLabel(ImageProvider.get("Mf_" + t)));
+                }
                 p.add(pp, GBC.eol());
             }
             return true;
@@ -562,8 +564,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 proles.add(new JLabel(tr("role")), GBC.std().insets(0,0,10,0));
                 proles.add(new JLabel(tr("count")), GBC.std().insets(0,0,10,0));
                 proles.add(new JLabel(tr("elements")), GBC.eol());
-                for (Role i : roles)
+                for (Role i : roles) {
                     i.addToPanel(proles, sel);
+                }
                 p.add(proles, GBC.eol());
             }
             return false;
@@ -666,7 +669,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      * Called from the XML parser to set the types this preset affects
      */
     private static Collection<String> allowedtypes = Arrays.asList(new String[]
-    {marktr("way"), marktr("node"), marktr("relation"), marktr("closedway")});
+                                                                              {marktr("way"), marktr("node"), marktr("relation"), marktr("closedway")});
 
     static public List<String> getType(String types) throws SAXException {
         List<String> t = Arrays.asList(types.split(","));
@@ -681,7 +684,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         this.types = getType(types);
     }
 
-    public static List<TaggingPreset> readAll(Reader in) throws SAXException {
+    public static List<TaggingPreset> readAll(Reader in, boolean validate) throws SAXException {
         XmlObjectParser parser = new XmlObjectParser();
         parser.mapOnStart("item", TaggingPreset.class);
         parser.mapOnStart("separator", TaggingPresetSeparator.class);
@@ -699,7 +702,12 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         LinkedList<TaggingPreset> all = new LinkedList<TaggingPreset>();
         TaggingPresetMenu lastmenu = null;
         Roles lastrole = null;
-        parser.start(in);
+
+        if (validate) {
+            parser.startWithValidation(in, "http://josm.openstreetmap.de/tagging-preset-1.0", new StreamSource(TaggingPreset.class.getResourceAsStream("tagging-preset.xsd")));
+        } else {
+            parser.start(in);
+        }
         while(parser.hasNext()) {
             Object o = parser.next();
             if (o instanceof TaggingPresetMenu) {
@@ -712,7 +720,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     tp.setDisplayName();
                     lastmenu = tp;
                     all.add(tp);
-                    Main.toolbar.register(tp);
 
                 }
                 lastrole = null;
@@ -726,7 +733,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 tp.group = lastmenu;
                 tp.setDisplayName();
                 all.add(tp);
-                Main.toolbar.register(tp);
                 lastrole = null;
             } else {
                 if(all.size() != 0) {
@@ -743,34 +749,36 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                         all.getLast().data.add((Item)o);
                         lastrole = null;
                     }
-                }
-                else
+                } else
                     throw new SAXException(tr("Preset sub element without parent"));
             }
         }
         return all;
     }
 
-    public static Collection<TaggingPreset> readAll(Collection<String> sources) {
-        LinkedList<TaggingPreset> allPresets = new LinkedList<TaggingPreset>();
-        for(String source : sources)
+    public static Collection<TaggingPreset> readAll(String source, boolean validate) throws SAXException, IOException {
+        MirroredInputStream s = new MirroredInputStream(source);
+        InputStream zip = s.getZipEntry("xml","preset");
+        if(zip != null) {
+            zipIcons = s.getFile();
+        }
+        InputStreamReader r;
+        try
         {
+            r = new InputStreamReader(zip == null ? s : zip, "UTF-8");
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            r = new InputStreamReader(zip == null ? s: zip);
+        }
+        return TaggingPreset.readAll(new BufferedReader(r), validate);
+    }
+
+    public static Collection<TaggingPreset> readAll(Collection<String> sources, boolean validate) {
+        LinkedList<TaggingPreset> allPresets = new LinkedList<TaggingPreset>();
+        for(String source : sources)  {
             try {
-                MirroredInputStream s = new MirroredInputStream(source);
-                InputStream zip = s.getZipEntry("xml","preset");
-                if(zip != null) {
-                    zipIcons = s.getFile();
-                }
-                InputStreamReader r;
-                try
-                {
-                    r = new InputStreamReader(zip == null ? s : zip, "UTF-8");
-                }
-                catch (UnsupportedEncodingException e)
-                {
-                    r = new InputStreamReader(zip == null ? s: zip);
-                }
-                allPresets.addAll(TaggingPreset.readAll(new BufferedReader(r)));
+                allPresets.addAll(TaggingPreset.readAll(source, validate));
             } catch (IOException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(
@@ -780,6 +788,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                         JOptionPane.ERROR_MESSAGE
                 );
             } catch (SAXException e) {
+                System.err.println(e.getMessage());
+                System.err.println(source);
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(
                         Main.parent,
@@ -803,8 +813,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return sources;
     }
 
-    public static Collection<TaggingPreset> readFromPreferences() {
-        return readAll(getPresetSources());
+    public static Collection<TaggingPreset> readFromPreferences(boolean validate) {
+        return readAll(getPresetSources(), validate);
     }
 
     private static class PresetPanel extends JPanel {

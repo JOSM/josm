@@ -4,24 +4,33 @@ package org.openstreetmap.josm.gui.preferences;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetMenu;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSeparator;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.GBC;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 public class TaggingPresetPreference implements PreferenceSetting {
 
@@ -35,6 +44,90 @@ public class TaggingPresetPreference implements PreferenceSetting {
     private StyleSourceEditor sources;
     private JCheckBox sortMenu;
     private JCheckBox enableDefault;
+
+
+    private ValidationListener validationListener = new ValidationListener() {
+        @Override
+        public boolean validatePreferences() {
+            if (sources.hasActiveStylesChanged()) {
+                List<String> sourcesToRemove = new ArrayList<String>();
+                SOURCES:
+                    for (String source: sources.getActiveStyles()) {
+                        boolean canLoad = false;
+                        try {
+                            TaggingPreset.readAll(source, false);
+                            canLoad = true;
+                        } catch (IOException e) {
+                            ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Error"),
+                                    new String[] {tr("Yes"), tr("No"), tr("Cancel")});
+                            ed.setContent(tr("Could not read tagging preset source: {0}\nDo you want to keep it?", source));
+                            switch (ed.showDialog().getValue()) {
+                            case 1:
+                                continue SOURCES;
+                            case 2:
+                                sourcesToRemove.add(source);
+                                continue SOURCES;
+                            default:
+                                return false;
+                            }
+                        } catch (SAXException e) {
+                            // We will handle this in step with validation
+                        }
+
+                        String errorMessage = null;
+
+                        try {
+                            TaggingPreset.readAll(source, true);
+                        } catch (IOException e) {
+                            // Should not happen, but at least show message
+                            JOptionPane.showMessageDialog(Main.parent, tr("Could not read tagging preset source {0}", source));
+                            return false;
+                        } catch (SAXParseException e) {
+                            if (canLoad) {
+                                errorMessage = tr("<html>Tagging preset source {0} can be loaded but it contains errors. " +
+                                        "Do you really want to use it?<br><br><table width=600>Error is: [{1}:{2}] {3}</table></html>",
+                                        source, e.getLineNumber(), e.getColumnNumber(), e.getMessage(), e.getMessage());
+                            } else {
+                                errorMessage = tr("<html>Unable to parse tagging preset source: {0}. " +
+                                        "Do you really want to use it?<br><br><table width=400>Error is: [{1}:{2}] {3}</table></html>",
+                                        source, e.getLineNumber(), e.getColumnNumber(), e.getMessage(), e.getMessage());
+                            }
+                        } catch (SAXException e) {
+                            if (canLoad) {
+                                errorMessage = tr("<html>Tagging preset source {0} can be loaded but it contains errors. " +
+                                        "Do you really want to use it?<br><br><table width=600>Error is: {1}</table></html>",
+                                        source,  e.getMessage(), e.getMessage());
+                            } else {
+                                errorMessage = tr("<html>Unable to parse tagging preset source: {0}. " +
+                                        "Do you really want to use it?<br><br><table width=600>Error is: {3}</table></html>",
+                                        source, e.getMessage(), e.getMessage());
+                            }
+
+                        }
+
+                        if (errorMessage != null) {
+                            int result = JOptionPane.showConfirmDialog(Main.parent, new JLabel(errorMessage), tr("Error"),
+                                    JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
+
+                            switch (result) {
+                            case JOptionPane.YES_OPTION:
+                                continue SOURCES;
+                            case JOptionPane.NO_OPTION:
+                                sourcesToRemove.add(source);
+                                continue SOURCES;
+                            default:
+                                return false;
+                            }
+                        }
+                    }
+                for (String toRemove:sourcesToRemove) {
+                    sources.removeSource(toRemove);
+                }
+                return true;
+            }  else
+                return true;
+        }
+    };
 
     public void addGui(final PreferenceTabbedPane gui) {
         sortMenu = new JCheckBox(tr("Sort presets menu"),
@@ -63,6 +156,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
                     }
                 }
         );
+        gui.addValidationListener(validationListener);
     }
 
     public boolean ok() {
@@ -81,7 +175,12 @@ public class TaggingPresetPreference implements PreferenceSetting {
      * Initialize the tagging presets (load and may display error)
      */
     public static void initialize() {
-        taggingPresets = TaggingPreset.readFromPreferences();
+        taggingPresets = TaggingPreset.readFromPreferences(false);
+        for (TaggingPreset tp: taggingPresets) {
+            if (!(tp instanceof TaggingPresetSeparator)) {
+                Main.toolbar.register(tp);
+            }
+        }
         if (taggingPresets.isEmpty()) {
             Main.main.menu.presetsMenu.setVisible(false);
         }

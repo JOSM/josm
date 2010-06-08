@@ -15,14 +15,22 @@ import java.util.Stack;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
+import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Source;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.ValidatorHandler;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.XMLFilterImpl;
 
 /**
  * An helper class that reads from a XML stream into specific objects.
@@ -98,6 +106,26 @@ public class XmlObjectParser implements Iterable<Object> {
                 public void remove() {iterator.remove();}
             };
         }
+    }
+
+    private class AddNamespaceFilter extends XMLFilterImpl {
+
+        private final String namespace;
+
+        public AddNamespaceFilter(String namespace) {
+            this.namespace = namespace;
+        }
+
+        @Override
+        public void startElement (String uri, String localName, String qName, Attributes atts) throws SAXException {
+            if ("".equals(uri)) {
+                super.startElement(namespace, localName, qName, atts);
+            } else {
+                super.startElement(uri, localName, qName, atts);
+            }
+
+        }
+
     }
 
     private class Parser extends DefaultHandler {
@@ -270,18 +298,22 @@ public class XmlObjectParser implements Iterable<Object> {
         parser = new Parser();
     }
 
-    public Iterable<Object> start(final Reader in) {
+    private Iterable<Object> start(final Reader in, final ContentHandler contentHandler) {
         new Thread("XML Reader"){
             @Override public void run() {
                 try {
-                    SAXParserFactory.newInstance().newSAXParser().parse(new InputSource(in), parser);
+                    SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+                    parserFactory.setNamespaceAware(true);
+                    SAXParser parser = parserFactory.newSAXParser();
+                    XMLReader reader = parser.getXMLReader();
+                    reader.setContentHandler(contentHandler);
+                    reader.parse(new InputSource(in));
                 } catch (Exception e) {
                     try {
                         queue.put(e);
                     } catch (InterruptedException e1) {
                     }
                 }
-                parser = null;
                 try {
                     queue.put(EOS);
                 } catch (InterruptedException e) {
@@ -289,6 +321,23 @@ public class XmlObjectParser implements Iterable<Object> {
             }
         }.start();
         return this;
+    }
+
+    public Iterable<Object> start(final Reader in) {
+        return start(in, parser);
+    }
+
+    public Iterable<Object> startWithValidation(final Reader in, String namespace, Source schemaSource) throws SAXException {
+        SchemaFactory factory =  SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+        Schema schema = factory.newSchema(schemaSource);
+        ValidatorHandler validator = schema.newValidatorHandler();
+        validator.setContentHandler(parser);
+        validator.setErrorHandler(parser);
+
+        AddNamespaceFilter filter = new AddNamespaceFilter(namespace);
+        filter.setContentHandler(validator);
+
+        return start(in, filter);
     }
 
     public void map(String tagName, Class<?> klass) {

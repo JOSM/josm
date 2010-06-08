@@ -71,7 +71,7 @@ public class MirroredInputStream extends InputStream {
      * level directory of the ZIP file which has an extension <code>extension</code>. If more
      * than one files have this extension, the last file whose name includes <code>namepart</code>
      * is opened.
-     * 
+     *
      * @param extension  the extension of the file we're looking for
      * @param namepart the name part
      * @return an input stream. Null if this mirrored input stream doesn't represent a zip file or if
@@ -103,7 +103,7 @@ public class MirroredInputStream extends InputStream {
         } catch (Exception e) {
             if(file.getName().endsWith(".zip")) {
                 System.err.println(tr("Warning: failed to open file with extension ''{2}'' and namepart ''{3}'' in zip file ''{0}''. Exception was: {1}",
-                file.getName(), e.toString(), extension, namepart));
+                        file.getName(), e.toString(), extension, namepart));
             }
         }
         return res;
@@ -139,7 +139,7 @@ public class MirroredInputStream extends InputStream {
         } catch (java.net.MalformedURLException e) {}
     }
 
-    private File checkLocal(URL url, String destDir, long maxTime) {
+    private File checkLocal(URL url, String destDir, long maxTime) throws IOException {
         String localPath = Main.pref.get("mirror." + url);
         File file = null;
         if (localPath != null && localPath.length() > 0) {
@@ -170,6 +170,7 @@ public class MirroredInputStream extends InputStream {
         try {
             URLConnection conn = url.openConnection();
             conn.setConnectTimeout(5000);
+            conn.setReadTimeout(5000);
             bis = new BufferedInputStream(conn.getInputStream());
             bos = new BufferedOutputStream( new FileOutputStream(destDirFile));
             byte[] buffer = new byte[4096];
@@ -177,10 +178,6 @@ public class MirroredInputStream extends InputStream {
             while ((length = bis.read(buffer)) > -1) {
                 bos.write(buffer, 0, length);
             }
-        } catch(IOException ioe) {
-            if (file != null)
-                return file;
-            return null;
         } finally {
             if (bis != null) {
                 try {

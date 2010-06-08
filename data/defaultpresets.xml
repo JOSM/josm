@@ -73,7 +73,7 @@ In JOSM internally all "name", "text" and "display_values" are translated when
 no specific translation has been given in XML file. When no "display_values"
 are supplied, then "values" will be treated as "display_values" and translated instead.
 -->
-<annotations>
+<annotations xmlns="http://josm.openstreetmap.de/tagging-preset-1.0">
   <group name="Highways" icon="presets/way_secondary.png">
     <group name="Streets" icon="presets/way_secondary.png">
         <item name="Motorway" icon="presets/motorway.png" type="way">
@@ -133,7 +133,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             </optional>
         </item>
         <item name="Trunk Link" icon="presets/trunk.png" type="way">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=trunk_link" 
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=trunk_link"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=trunk_link"/>
             <label text="Edit Trunk Link" />
             <space />
@@ -153,7 +153,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
         <separator/>
         <item name="Primary" icon="presets/way_primary.png" type="way">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=primary" 
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=primary"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=primary" />
             <label text="Edit Primary Road" />
             <space />
@@ -266,7 +266,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             </optional>
         </item>
         <item name="Living Street" icon="presets/living_street.png" type="way">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=living_street" 
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=living_street"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=living_street" />
             <label text="Edit Living Street" />
             <space />
@@ -742,7 +742,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
     </group> <!-- Waypoints -->
     <group name="Barriers" icon="presets/barrier.png">
 
-        <!-- *** node barriers *** -->    
+        <!-- *** node barriers *** -->
         <item name="Bollard" icon="presets/bollard.png" type="node,way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=bollard" />
             <label text="Edit Bollard" />
@@ -756,7 +756,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
         </item> <!-- bollard -->
         <item name="Cycle Barrier" icon="presets/empty.png" type="node">
-            <link de.href="http://de.wikipedia.org/wiki/Umlaufgitter" />
+            <link href="http://de.wikipedia.org/wiki/Umlaufgitter" />
             <key key="barrier" value="cycle_barrier" />
         </item> <!-- cycle_barrier -->
         <item name="Block" icon="presets/empty.png" type="node,way,closedway">
@@ -812,8 +812,8 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
         </item> <!-- border_control -->
         <separator/>
-        
-        <!-- *** linear barriers *** -->    
+
+        <!-- *** linear barriers *** -->
         <item name="Hedge" icon="presets/empty.png" type="way,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=hedge" />
             <key key="barrier" value="hedge" />
@@ -834,8 +834,8 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="barrier" value="retaining_wall" />
         </item> <!-- retaining_wall -->
         <separator/>
-        
-        <!-- *** access *** -->    
+
+        <!-- *** access *** -->
         <item name="Entrance" icon="presets/empty.png" type="node">
             <label text="Edit Entrance" />
             <space />
@@ -937,7 +937,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
             <check key="motorcar" text="Motorcar" default="off" delete_if_empty="true" />
         </item> <!-- sally_port -->
-        
+
     </group> <!-- Barriers -->
   </group>
   <group name="Water" icon="presets/waterway.png">
@@ -1368,7 +1368,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="parking" text="Type" values="multi-storey,surface,underground" default="surface" delete_if_empty="true" />
             <combo key="park_ride" text="Park and Ride" values="yes,no" default="" delete_if_empty="true" />
             <combo key="fee" text="Fee" values="yes,no" default="" delete_if_empty="true" />
-            <space /> 
+            <space />
             <text key="capacity" text="Capacity (overall)" default="" delete_if_empty="true" />
             <combo key="capacity:disabled" text="Spaces for Disabled" values="yes,no,unknown,1,2,3" default="" delete_if_empty="true" />
             <combo key="capacity:women" text="Spaces for Women" values="yes,no,unknown,1,2,3" default="" delete_if_empty="true" />
@@ -2718,7 +2718,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="shop" value="outdoor" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
-        </item>    
+        </item>
         <item name="Sports" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Sports Shop" />
             <key key="shop" value="sports" />

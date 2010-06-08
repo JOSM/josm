@@ -11,18 +11,22 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.PrimaryDateParser;
 
-public class WayPoint extends WithAttributes implements Comparable<WayPoint>
-{
-    public double time;
-    public Color customColoring;
-    public boolean drawLine;
-    public int dir;
+public class WayPoint extends WithAttributes implements Comparable<WayPoint> {
 
     private static ThreadLocal<PrimaryDateParser> dateParser = new ThreadLocal<PrimaryDateParser>() {
         @Override protected PrimaryDateParser initialValue() {
             return new PrimaryDateParser();
         }
     };
+
+    public double time;
+    public Color customColoring;
+    public boolean drawLine;
+    public int dir;
+
+    public WayPoint(LatLon ll) {
+        coor = new CachedLatLon(ll);
+    }
 
     private final CachedLatLon coor;
 
@@ -32,10 +36,6 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>
 
     public final EastNorth getEastNorth() {
         return coor.getEastNorth();
-    }
-
-    public WayPoint(LatLon ll) {
-        coor = new CachedLatLon(ll);
     }
 
     @Override
