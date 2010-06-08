@@ -14,14 +14,15 @@ public class Filter extends SearchSetting {
     public Boolean hiding = false;
     public Boolean inverted = false;
     public Filter() {
-        super("", SearchMode.add, false, false);
+        super("", SearchMode.add, false, false, false);
     }
-    public Filter(String text, SearchMode mode, boolean caseSensitive, boolean regexSearch) {
-        super(text, mode, caseSensitive, regexSearch);
+    public Filter(String text, SearchMode mode, boolean caseSensitive,
+    boolean regexSearch, boolean allElements) {
+        super(text, mode, caseSensitive, regexSearch, allElements);
     }
 
     public Filter(String prefText){
-        super("", SearchMode.add, false, false);
+        super("", SearchMode.add, false, false, false);
         String[] prfs = prefText.split(";");
         if(prfs.length != 10 && !prfs[0].equals(version))
             throw new Error("Incompatible filter preferences");

@@ -157,6 +157,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         bg.add(in_selection);
 
         JCheckBox caseSensitive = new JCheckBox(tr("case sensitive"), initialValues.caseSensitive);
+        JCheckBox allElements = new JCheckBox(tr("all objects"), initialValues.allElements);
+        allElements.setToolTipText(tr("Also include incomplete and deleted objects in search."));
         JCheckBox regexSearch   = new JCheckBox(tr("regular expression"), initialValues.regexSearch);
 
         JPanel left = new JPanel(new GridBagLayout());
@@ -167,6 +169,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         left.add(remove, GBC.eol());
         left.add(in_selection, GBC.eop());
         left.add(caseSensitive, GBC.eol());
+        left.add(allElements, GBC.eol());
         left.add(regexSearch, GBC.eol());
 
         JPanel right = new JPanel();
@@ -230,6 +233,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         initialValues.text = hcbSearchString.getText();
         initialValues.mode = mode;
         initialValues.caseSensitive = caseSensitive.isSelected();
+        initialValues.allElements = allElements.isSelected();
         initialValues.regexSearch = regexSearch.isSelected();
         return initialValues;
     }
@@ -276,7 +280,12 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 sel.clear();
             }
 
-            for (OsmPrimitive osm : Main.main.getCurrentDataSet().allNonDeletedCompletePrimitives()) {
+            Collection<OsmPrimitive> all;
+            if(s.allElements)
+                all = Main.main.getCurrentDataSet().allPrimitives();
+            else
+                all = Main.main.getCurrentDataSet().allNonDeletedCompletePrimitives();
+            for (OsmPrimitive osm : all) {
                 if (s.mode == SearchMode.replace) {
                     if (matcher.match(osm)) {
                         sel.add(osm);
@@ -347,8 +356,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
     }
 
-    public static void search(String search, SearchMode mode, boolean caseSensitive, boolean regexSearch) {
-        search(new SearchSetting(search, mode, caseSensitive, regexSearch));
+    public static void search(String search, SearchMode mode) {
+        search(new SearchSetting(search, mode, false, false, false));
     }
 
     public static void search(SearchSetting s) {
@@ -401,30 +410,37 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         public SearchMode mode;
         public boolean caseSensitive;
         public boolean regexSearch;
+        public boolean allElements;
 
         public SearchSetting() {
-            this("", SearchMode.replace, false /* case insensitive */, false /* no regexp */);
+            this("", SearchMode.replace, false /* case insensitive */,
+            false /* no regexp */, false /* only useful primitives */);
         }
 
-        public SearchSetting(String text, SearchMode mode, boolean caseSensitive, boolean regexSearch) {
+        public SearchSetting(String text, SearchMode mode, boolean caseSensitive,
+        boolean regexSearch, boolean allElements) {
             this.caseSensitive = caseSensitive;
             this.regexSearch = regexSearch;
+            this.allElements = allElements;
             this.mode = mode;
             this.text = text;
         }
 
         public SearchSetting(SearchSetting original) {
-            this(original.text, original.mode, original.caseSensitive, original.regexSearch);
+            this(original.text, original.mode, original.caseSensitive,
+            original.regexSearch, original.allElements);
         }
 
         @Override
         public String toString() {
             String cs = caseSensitive ?
                     /*case sensitive*/  trc("search", "CS") :
-                        /*case insensitive*/  trc("search", "CI");
-                    /*regex search*/
-                    String rx = regexSearch ? (", " + trc("search", "RX")) : "";
-                    return "\"" + text + "\" (" + cs + rx + ", " + mode + ")";
+                    /*case insensitive*/  trc("search", "CI");
+            String rx = regexSearch ? (", " +
+                    /*regex search*/ trc("search", "RX")) : "";
+            String all = allElements ? (", " +
+                    /*all elements*/ trc("search", "A")) : "";
+            return "\"" + text + "\" (" + cs + rx + all + ", " + mode + ")";
         }
 
         @Override
@@ -434,6 +450,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             SearchSetting o = (SearchSetting) other;
             return (o.caseSensitive == this.caseSensitive
                     && o.regexSearch == this.regexSearch
+                    && o.allElements == this.allElements
                     && o.mode.equals(this.mode)
                     && o.text.equals(this.text));
         }
@@ -462,6 +479,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     result.caseSensitive = true;
                 } else if (s.charAt(index) == 'R') {
                     result.regexSearch = true;
+                } else if (s.charAt(index) == 'A') {
+                    result.allElements = true;
                 } else if (s.charAt(index) == ' ') {
                     break;
                 } else {
@@ -491,6 +510,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             }
             if (regexSearch) {
                 result.append('R');
+            }
+            if (allElements) {
+                result.append('A');
             }
             result.append(' ');
             result.append(text);

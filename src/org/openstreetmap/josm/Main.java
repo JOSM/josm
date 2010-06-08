@@ -476,7 +476,7 @@ abstract public class Main {
         }
         if (args.containsKey("selection")) {
             for (String s : args.get("selection")) {
-                SearchAction.search(s, SearchAction.SearchMode.add, false, false);
+                SearchAction.search(s, SearchAction.SearchMode.add);
             }
         }
     }

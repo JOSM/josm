@@ -582,7 +582,7 @@ public class SearchCompiler {
 
     private static class Untagged extends Match {
         @Override public boolean match(OsmPrimitive osm) {
-            return !osm.isTagged();
+            return !osm.isTagged() && !osm.isIncomplete();
         }
         @Override public String toString() {return "untagged";}
     }

@@ -76,6 +76,8 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         new PrefixSuffixSwitcher("forward", "backward"),
         new PrefixSuffixSwitcher("forwards", "backwards"),
         new PrefixSuffixSwitcher("up", "down"),
+        new PrefixSuffixSwitcher("east", "west"),
+        new PrefixSuffixSwitcher("north", "south"),
     };
 
     private static ArrayList<String> reversibleTags = new ArrayList<String>(

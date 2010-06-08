@@ -438,32 +438,68 @@ public class DeleteCommand extends Command {
      */
     private static boolean checkAndConfirmOutlyingDeletes(OsmDataLayer layer, Collection<OsmPrimitive> primitivesToDelete) {
         Area a = layer.data.getDataSourceArea();
+        boolean outside = false;
+        boolean incomplete = false;
         if (a != null) {
             for (OsmPrimitive osm : primitivesToDelete) {
-                if (osm instanceof Node && !osm.isNew()) {
-                    Node n = (Node) osm;
-                    if (!a.contains(n.getCoor())) {
-                        JPanel msg = new JPanel(new GridBagLayout());
-                        msg.add(new JLabel(
-                                "<html>" +
-                                // leave message in one tr() as there is a grammatical
-                                // connection.
-                                tr("You are about to delete nodes outside of the area you have downloaded."
-                                        + "<br>"
-                                        + "This can cause problems because other objects (that you do not see) might use them."
-                                        + "<br>" + "Do you really want to delete?") + "</html>"));
-                        return ConditionalOptionPaneUtil.showConfirmationDialog(
-                                "delete_outside_nodes",
-                                Main.parent,
-                                msg,
-                                tr("Delete confirmation"),
-                                JOptionPane.YES_NO_OPTION,
-                                JOptionPane.QUESTION_MESSAGE,
-                                JOptionPane.YES_OPTION
-                        );
-                    }
-                }
+                if (osm.isIncomplete())
+                    incomplete = true;
+                else if (osm instanceof Node && !osm.isNew()
+                && !a.contains(((Node) osm).getCoor()))
+                    outside = true;
             }
+        }
+        else
+        {
+            for (OsmPrimitive osm : primitivesToDelete)
+                if (osm.isIncomplete())
+                    incomplete = true;
+        }
+        if(outside)
+        {
+            JPanel msg = new JPanel(new GridBagLayout());
+            msg.add(new JLabel(
+                    "<html>" +
+                    // leave message in one tr() as there is a grammatical
+                    // connection.
+                    tr("You are about to delete nodes outside of the area you have downloaded."
+                            + "<br>"
+                            + "This can cause problems because other objects (that you do not see) might use them."
+                            + "<br>" + "Do you really want to delete?") + "</html>"));
+            boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
+                    "delete_outside_nodes",
+                    Main.parent,
+                    msg,
+                    tr("Delete confirmation"),
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    JOptionPane.YES_OPTION
+            );
+            if(!answer)
+                return false;
+        }
+        if(incomplete)
+        {
+            JPanel msg = new JPanel(new GridBagLayout());
+            msg.add(new JLabel(
+                    "<html>" +
+                    // leave message in one tr() as there is a grammatical
+                    // connection.
+                    tr("You are about to delete incomplete objects."
+                            + "<br>"
+                            + "This will cause problems because you don't see the real object."
+                            + "<br>" + "Do you really want to delete?") + "</html>"));
+            boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
+                    "delete_incomplete",
+                    Main.parent,
+                    msg,
+                    tr("Delete confirmation"),
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    JOptionPane.YES_OPTION
+            );
+            if(!answer)
+                return false;
         }
         return true;
     }
