@@ -38,6 +38,7 @@ public class AreaElemStyle extends ElemStyle
 
     public void init()
     {
+        closed = false;
         color = null;
         priority = 0;
     }
