@@ -267,7 +267,6 @@ public class DataSet implements Cloneable {
         selectedPrimitives.remove(primitive);
         allPrimitives.remove(primitive);
         primitive.setDataset(null);
-        errors.remove(primitive);
         firePrimitivesRemoved(Collections.singletonList(primitive), false);
     }
 
@@ -904,38 +903,5 @@ public class DataSet implements Cloneable {
         ways.clear();
         relations.clear();
         allPrimitives.clear();
-    }
-
-    // TODO Should be completely part of validator
-    private Map<OsmPrimitive, List<String>> errors = new HashMap<OsmPrimitive, List<String>>();
-
-    public void addError(OsmPrimitive primitive, String error) {
-        List<String> perrors = errors.get(primitive);
-        if (perrors == null) {
-            perrors = new ArrayList<String>();
-        }
-        perrors.add(error);
-        errors.put(primitive, perrors);
-    }
-
-    /**
-     * Replies the list of errors registered for this primitive.
-     *
-     * @param primitive the primitive for which errors are queried
-     * @return the list of errors. Never null.
-     * @deprecated should be moved to the validator plugin
-     */
-    @Deprecated
-    public List<String> getErrors(OsmPrimitive primitive) {
-        List<String> ret = errors.get(primitive);
-        if (ret == null) {
-            ret = Collections.emptyList();
-        }
-        return ret;
-    }
-
-    public void clearErrors()
-    {
-        errors.clear();
     }
 }

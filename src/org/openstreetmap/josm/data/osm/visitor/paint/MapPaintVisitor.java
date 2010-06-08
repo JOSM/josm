@@ -176,9 +176,6 @@ public class MapPaintVisitor implements PaintVisitor {
             if (fillAreas > dist)
             {
                 painter.drawArea(getPolygon(w), (data.isSelected(w) ? paintSettings.getSelectedColor() : areaStyle.color), painter.getAreaName(w));
-                if(!w.isClosed()) {
-                    putError(w, tr("Area style way is not closed."), true);
-                }
             }
             areaStyle.getLineStyle().paintPrimitive(w, paintSettings, painter, data.isSelected(w), false);
         }
@@ -255,69 +252,34 @@ public class MapPaintVisitor implements PaintVisitor {
                     }
 
                     if("from".equals(m.getRole())) {
-                        if(fromWay != null) {
-                            putError(r, tr("More than one \"from\" way found."), true);
-                        } else {
+                        if(fromWay == null)
                             fromWay = w;
-                        }
                     } else if("to".equals(m.getRole())) {
-                        if(toWay != null) {
-                            putError(r, tr("More than one \"to\" way found."), true);
-                        } else {
+                        if(toWay == null)
                             toWay = w;
-                        }
                     } else if("via".equals(m.getRole())) {
-                        if(via != null) {
-                            putError(r, tr("More than one \"via\" found."), true);
-                        } else {
+                        if(via == null)
                             via = w;
-                        }
-                    } else {
-                        putError(r, tr("Unknown role ''{0}''.", m.getRole()), true);
                     }
                 }
                 else if(m.isNode())
                 {
                     Node n = m.getNode();
-                    if("via".equals(m.getRole()))
-                    {
-                        if(via != null) {
-                            putError(r, tr("More than one \"via\" found."), true);
-                        } else {
-                            via = n;
-                        }
-                    } else {
-                        putError(r, tr("Unknown role ''{0}''.", m.getRole()), true);
-                    }
-                } else {
-                    putError(r, tr("Unknown member type for ''{0}''.", m.getMember().getDisplayName(DefaultNameFormatter.getInstance())), true);
+                    if("via".equals(m.getRole()) && via == null)
+                        via = n;
                 }
             }
         }
 
-        if (fromWay == null) {
-            putError(r, tr("No \"from\" way found."), true);
+        if (fromWay == null || toWay == null || via == null)
             return;
-        }
-        if (toWay == null) {
-            putError(r, tr("No \"to\" way found."), true);
-            return;
-        }
-        if (via == null) {
-            putError(r, tr("No \"via\" node or way found."), true);
-            return;
-        }
 
         Node viaNode;
         if(via instanceof Node)
         {
             viaNode = (Node) via;
             if(!fromWay.isFirstLastNode(viaNode)) {
-                putError(r, tr("The \"from\" way does not start or end at a \"via\" node."), true);
                 return;
-            }
-            if(!toWay.isFirstLastNode(viaNode)) {
-                putError(r, tr("The \"to\" way does not start or end at a \"via\" node."), true);
             }
         }
         else
@@ -348,11 +310,7 @@ public class MapPaintVisitor implements PaintVisitor {
             } else if (!onewayvia && fromWay.isFirstLastNode(lastNode)) {
                 viaNode = lastNode;
             } else {
-                putError(r, tr("The \"from\" way does not start or end at the \"via\" way."), true);
                 return;
-            }
-            if(!toWay.isFirstLastNode(viaNode == firstNode ? lastNode : firstNode)) {
-                putError(r, tr("The \"to\" way does not start or end at the \"via\" way."), true);
             }
         }
 
@@ -446,7 +404,6 @@ public class MapPaintVisitor implements PaintVisitor {
         IconElemStyle nodeStyle = getPrimitiveNodeStyle(r);
 
         if (nodeStyle == null) {
-            putError(r, tr("Style for restriction {0} not found.", r.get("restriction")), true);
             return;
         }
 
@@ -519,8 +476,6 @@ public class MapPaintVisitor implements PaintVisitor {
                     }
                     if(wayStyle.equals(innerStyle))
                     {
-                        putError(r, tr("Style for inner way ''{0}'' equals multipolygon.",
-                                wInner.getDisplayName(DefaultNameFormatter.getInstance())), false);
                         if(!data.isSelected(r)) {
                             wInner.mappaintDrawnAreaCode = paintid;
                         }
@@ -544,12 +499,6 @@ public class MapPaintVisitor implements PaintVisitor {
                 }
                 else
                 {
-                    if(outerStyle instanceof AreaElemStyle
-                            && !wayStyle.equals(outerStyle))
-                    {
-                        putError(r, tr("Style for outer way ''{0}'' mismatches.",
-                                wOuter.getDisplayName(DefaultNameFormatter.getInstance())), true);
-                    }
                     if(data.isSelected(r))
                     {
                         drawSelectedMember(wOuter, outerStyle, false, false);
@@ -659,9 +608,6 @@ public class MapPaintVisitor implements PaintVisitor {
         this.paintSettings = MapPaintSettings.INSTANCE;
         this.painter = new MapPainter(paintSettings, g, inactive, nc, virtual, dist, circum);
 
-        data.clearErrors();
-
-
         if (fillAreas > dist && styles != null && styles.hasAreas()) {
             Collection<Way> noAreaWays = new LinkedList<Way>();
 
@@ -740,11 +686,6 @@ public class MapPaintVisitor implements PaintVisitor {
         }
 
         painter.drawVirtualNodes(data.searchWays(bbox));
-    }
-
-    public void putError(OsmPrimitive p, String text, boolean isError)
-    {
-        data.addError(p, isError ? tr("Error: {0}", text) : tr("Warning: {0}", text));
     }
 
     public void setGraphics(Graphics2D g) {
