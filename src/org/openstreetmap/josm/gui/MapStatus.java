@@ -16,7 +16,6 @@ import java.awt.Point;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
-import java.awt.event.ComponentEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -38,7 +37,6 @@ import javax.swing.Popup;
 import javax.swing.PopupFactory;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.JumpToAction;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -503,8 +501,8 @@ public class MapStatus extends JPanel implements Helpful {
 
     private AWTEventListener awtListener = new AWTEventListener() {
         public void eventDispatched(AWTEvent event) {
-            if (event instanceof ComponentEvent &&
-                    ((ComponentEvent)event).getComponent() == mv) {
+            if (event instanceof InputEvent &&
+                    ((InputEvent)event).getComponent() == mv) {
                 synchronized (collector) {
                     mouseState.modifiers = ((InputEvent)event).getModifiersEx();
                     if (event instanceof MouseEvent) {
@@ -574,9 +572,8 @@ public class MapStatus extends JPanel implements Helpful {
         this.mv = mapFrame.mapView;
         this.collector = new Collector(mapFrame);
 
-        JumpToAction JumpToAct = new JumpToAction();
-        lonText.addMouseListener(JumpToAct);
-        latText.addMouseListener(JumpToAct);
+        lonText.addMouseListener(Main.main.menu.jumpToAct);
+        latText.addMouseListener(Main.main.menu.jumpToAct);
 
         // Listen for mouse movements and set the position text field
         mv.addMouseMotionListener(new MouseMotionListener(){

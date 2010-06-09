@@ -33,7 +33,6 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
-import org.openstreetmap.josm.actions.MoveAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
@@ -189,6 +188,12 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
     public MapView(final JPanel contentPane) {
         Main.pref.addPreferenceChangeListener(this);
+
+        //        new MoveAction(MoveAction.Direction.UP);
+        //        new MoveAction(MoveAction.Direction.DOWN);
+        //        new MoveAction(MoveAction.Direction.LEFT);
+        //        new MoveAction(MoveAction.Direction.RIGHT);
+
         addComponentListener(new ComponentAdapter(){
             @Override public void componentResized(ComponentEvent e) {
                 removeComponentListener(this);
@@ -205,17 +210,13 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                 if (layer != null) {
                     if (!zoomToDataSetBoundingBox(layer.data)) {
                         // no bounding box defined
-                        new AutoScaleAction("data").actionPerformed(null);
+                        AutoScaleAction.autoScale("data");
                     }
                 } else {
-                    new AutoScaleAction("layer").actionPerformed(null);
+                    AutoScaleAction.autoScale("layer");
                 }
 
                 new MapMover(MapView.this, contentPane);
-                new MoveAction(MoveAction.Direction.UP);
-                new MoveAction(MoveAction.Direction.DOWN);
-                new MoveAction(MoveAction.Direction.LEFT);
-                new MoveAction(MoveAction.Direction.RIGHT);
             }
         });
 

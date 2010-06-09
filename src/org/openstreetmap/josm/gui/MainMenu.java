@@ -40,10 +40,12 @@ import org.openstreetmap.josm.actions.InfoAction;
 import org.openstreetmap.josm.actions.JoinAreasAction;
 import org.openstreetmap.josm.actions.JoinNodeWayAction;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.actions.JumpToAction;
 import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.actions.MergeSelectionAction;
 import org.openstreetmap.josm.actions.MirrorAction;
+import org.openstreetmap.josm.actions.MoveAction;
 import org.openstreetmap.josm.actions.MoveNodeAction;
 import org.openstreetmap.josm.actions.NewAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
@@ -173,6 +175,13 @@ public class MainMenu extends JMenuBar {
     public JMenu audioMenu = null;
     public final JMenu helpMenu = addMenu(marktr("Help"), KeyEvent.VK_H, 5, ht("/Menu/Help"));
     public final int defaultMenuPos = 5;
+
+    public final JosmAction moveUpAction = new MoveAction(MoveAction.Direction.UP);
+    public final JosmAction moveDownAction = new MoveAction(MoveAction.Direction.DOWN);
+    public final JosmAction moveLeftAction = new MoveAction(MoveAction.Direction.LEFT);
+    public final JosmAction moveRightAction = new MoveAction(MoveAction.Direction.RIGHT);
+    public final JumpToAction jumpToAct = new JumpToAction();
+
 
     /**
      * Add a JosmAction to a menu.

@@ -1,8 +1,8 @@
 //License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -27,6 +27,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class MoveAction extends JosmAction {
 
     public enum Direction { UP, LEFT, RIGHT, DOWN }
+
     private Direction myDirection;
 
     // any better idea?
@@ -62,6 +63,9 @@ public class MoveAction extends JosmAction {
 
     public void actionPerformed(ActionEvent event) {
 
+        if (!Main.isDisplayingMapView())
+            return;
+
         // find out how many "real" units the objects have to be moved in order to
         // achive an 1-pixel movement
 
@@ -72,19 +76,19 @@ public class MoveAction extends JosmAction {
         double disty = en2.north() - en1.north();
 
         switch (myDirection) {
-            case UP:
-                distx = 0;
-                disty = -disty;
-                break;
-            case DOWN:
-                distx = 0;
-                break;
-            case LEFT:
-                disty = 0;
-                distx = -distx;
-                break;
-            default:
-                disty = 0;
+        case UP:
+            distx = 0;
+            disty = -disty;
+            break;
+        case DOWN:
+            distx = 0;
+            break;
+        case LEFT:
+            disty = 0;
+            distx = -distx;
+            break;
+        default:
+            disty = 0;
         }
 
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();

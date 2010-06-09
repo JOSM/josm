@@ -81,8 +81,14 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
     }
 
     public JosmAction() {
+        this(true);
+    }
+
+    public JosmAction(boolean installAdapters) {
         setHelpId();
-        installAdapters();
+        if (installAdapters) {
+            installAdapters();
+        }
     }
 
     public void destroy() {

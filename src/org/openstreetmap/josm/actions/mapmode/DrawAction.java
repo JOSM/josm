@@ -87,13 +87,16 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private Node currentBaseNode;
     private EastNorth currentMouseEastNorth;
 
+    private Shortcut extraShortcut;
+
     public DrawAction(MapFrame mapFrame) {
         super(tr("Draw"), "node/autonode", tr("Draw nodes"),
                 Shortcut.registerShortcut("mapmode:draw", tr("Mode: {0}", tr("Draw")), KeyEvent.VK_A, Shortcut.GROUP_EDIT),
                 mapFrame, getCursor());
 
         // Add extra shortcut N
-        Main.registerActionShortcut(this, Shortcut.registerShortcut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, Shortcut.GROUP_EDIT));
+        extraShortcut = Shortcut.registerShortcut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, Shortcut.GROUP_EDIT);
+        Main.registerActionShortcut(this, extraShortcut);
 
         cursorCrosshair = getCursor();
         cursorJoinNode = ImageProvider.getCursor("crosshair", "joinnode");
@@ -240,8 +243,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // primitives
         //
         DataSet ds = getCurrentDataSet();
-        if(ds != null)
+        if(ds != null) {
             ds.fireSelectionChanged();
+        }
     }
 
     /**
@@ -992,5 +996,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     @Override
     protected void updateEnabledState() {
         setEnabled(getEditLayer() != null);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        Main.unregisterActionShortcut(extraShortcut);
     }
 }

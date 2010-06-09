@@ -71,6 +71,10 @@ public class AutoScaleAction extends JosmAction {
         }
     }
 
+    public static void autoScale(String mode) {
+        new AutoScaleAction(mode, false).autoScale();
+    }
+
     private final String mode;
 
     private static int getModeShortcut(String mode) {
@@ -100,6 +104,17 @@ public class AutoScaleAction extends JosmAction {
 
         return shortcut;
     }
+
+    /**
+     *
+     * @param mode
+     * @param marker Used only to differentiate from default constructor
+     */
+    private AutoScaleAction(String mode, boolean marker) {
+        super(false);
+        this.mode = mode;
+    }
+
 
     public AutoScaleAction(String mode) {
         super(tr("Zoom to {0}", tr(mode)), "dialogs/autoscale/" + mode, tr("Zoom the view to {0}.", tr(mode)),

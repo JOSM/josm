@@ -828,7 +828,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public PresetPanel createPanel(Collection<OsmPrimitive> selected) {
         if (data == null)
             return null;
-        OsmDataLayer layer = Main.main.getEditLayer();
         PresetPanel p = new PresetPanel();
         LinkedList<Item> l = new LinkedList<Item>();
         if(types != null){

@@ -202,7 +202,7 @@ public class NodeListViewer extends JPanel {
             OsmPrimitive p = getPrimitiveToZoom();
             if (p!= null) {
                 getEditLayer().data.setSelected(p.getPrimitiveId());
-                new AutoScaleAction("selection").autoScale();
+                AutoScaleAction.autoScale("selection");
             }
         }
 

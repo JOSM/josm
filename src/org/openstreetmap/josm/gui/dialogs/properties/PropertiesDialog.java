@@ -50,8 +50,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
@@ -156,6 +156,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     };
 
     private DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
+    private AddAction addAction = new AddAction();
+    private Shortcut addActionShortcut = Shortcut.registerShortcut("properties:add", tr("Add Properties"), KeyEvent.VK_B,
+            Shortcut.GROUP_MNEMONIC);
 
     @Override
     public void showNotify() {
@@ -163,6 +166,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         SelectionEventManager.getInstance().addSelectionListener(this, FireMode.IN_EDT_CONSOLIDATED);
         MapView.addEditLayerChangeListener(this);
         updateSelection();
+        Main.registerActionShortcut(addAction, addActionShortcut);
     }
 
     @Override
@@ -170,6 +174,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         DatasetEventManager.getInstance().removeDatasetListener(dataChangedAdapter);
         SelectionEventManager.getInstance().removeSelectionListener(this);
         MapView.removeEditLayerChangeListener(this);
+        Main.unregisterActionShortcut(addActionShortcut);
     }
 
     /**
@@ -330,7 +335,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
      *
      * @param row
      */
-    @SuppressWarnings("unchecked")
     void membershipEdit(int row) {
         Relation relation = (Relation)membershipData.getValueAt(row, 0);
         Main.map.relationListDialog.selectRelation(relation);
@@ -473,14 +477,14 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final JLabel selectSth = new JLabel("<html><p>"
             + tr("Please select the objects you want to change properties for.") + "</p></html>");
 
-    class MemberInfo {
+    static class MemberInfo {
         List<RelationMember> role = new ArrayList<RelationMember>();
         List<Integer> position = new ArrayList<Integer>();
         private String positionString = null;
         void add(RelationMember r, Integer p)
         {
-          role.add(r);
-          position.add(p);
+            role.add(r);
+            position.add(p);
         }
         String getPositionString()
         {
@@ -495,22 +499,25 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     if(cur == last+1) {
                         ++cnt;
                     } else {
-                        if(cnt == 1)
+                        if(cnt == 1) {
                             positionString += ","+String.valueOf(last);
-                        else if(cnt > 1)
+                        } else if(cnt > 1) {
                             positionString += "-"+String.valueOf(last);
+                        }
                         positionString += "-"+String.valueOf(cur);
                         cnt = 0;
                     }
                     last = cur;
                 }
-                if(cnt == 1)
+                if(cnt == 1) {
                     positionString += ","+String.valueOf(last);
-                else if(cnt > 1)
+                } else if(cnt > 1) {
                     positionString += "-"+String.valueOf(last);
+                }
             }
-            if(positionString.length() > 20)
-              positionString = positionString.substring(0,17)+"...";
+            if(positionString.length() > 20) {
+                positionString = positionString.substring(0,17)+"...";
+            }
             return positionString;
         }
     }
@@ -588,7 +595,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         });
 
         mod.getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
-            @SuppressWarnings("unchecked")
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
@@ -618,7 +624,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         });
 
         mod.getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
-            @SuppressWarnings("unchecked")
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
@@ -666,15 +671,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         JPanel buttonPanel = getButtonPanel(3);
 
         // -- add action and shortcut
-        AddAction addAction = new AddAction();
         this.btnAdd = new SideButton(addAction);
         btnAdd.setFocusable(true);
         buttonPanel.add(this.btnAdd);
         btnAdd.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "onEnter");
         btnAdd.getActionMap().put("onEnter", addAction);
-
-        Main.registerActionShortcut(addAction, Shortcut.registerShortcut("properties:add", tr("Add Properties"), KeyEvent.VK_B,
-                Shortcut.GROUP_MNEMONIC));
 
         // -- edit action
         //
@@ -872,8 +873,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 if (ref instanceof Relation && !ref.isIncomplete() && !ref.isDeleted()) {
                     Relation r = (Relation) ref;
                     MemberInfo mi = roles.get(r);
-                    if(mi == null)
+                    if(mi == null) {
                         mi = new MemberInfo();
+                    }
                     roles.put(r, mi);
                     int i = 1;
                     for (RelationMember m : r.getMembers()) {

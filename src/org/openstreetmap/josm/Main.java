@@ -300,7 +300,7 @@ abstract public class Main {
         InputMap inputMap = contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         Object existing = inputMap.get(keyStroke);
         if (existing != null && !existing.equals(action)) {
-            System.out.println(String.format("Keystroke is already assigned to %s, will be overridden by %s", existing, action));
+            System.out.println(String.format("Keystroke %s is already assigned to %s, will be overridden by %s", keyStroke, existing, action));
         }
         inputMap.put(keyStroke, action);
 
@@ -308,7 +308,7 @@ abstract public class Main {
     }
 
     public static void unregisterActionShortcut(Shortcut shortcut) {
-        contentPanePrivate.getInputMap().remove(shortcut.getKeyStroke());
+        contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(shortcut.getKeyStroke());
     }
 
     ///////////////////////////////////////////////////////////////////////////

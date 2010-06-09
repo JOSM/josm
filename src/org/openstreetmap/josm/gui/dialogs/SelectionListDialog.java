@@ -293,7 +293,7 @@ public class SelectionListDialog extends ToggleDialog  {
     /**
      * Launches the search dialog
      */
-    class SearchAction extends AbstractAction implements EditLayerChangeListener {
+    static class SearchAction extends AbstractAction implements EditLayerChangeListener {
         public SearchAction() {
             putValue(NAME, tr("Search"));
             putValue(SHORT_DESCRIPTION,   tr("Search for objects"));
@@ -357,7 +357,7 @@ public class SelectionListDialog extends ToggleDialog  {
         }
 
         public void actionPerformed(ActionEvent e) {
-            new AutoScaleAction("selection").autoScale();
+            AutoScaleAction.autoScale("selection");
         }
 
         public void updateEnabledState() {
@@ -422,17 +422,19 @@ public class SelectionListDialog extends ToggleDialog  {
             updateEnabledState();
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             Relation relation = (Relation)model.getSelected().toArray()[0];
             Collection<RelationMember> members = new HashSet<RelationMember>();
             Collection<OsmPrimitive> selection = model.getAllElements();
             for (RelationMember member: relation.getMembers()) {
-                if (selection.contains(member.getMember()))
+                if (selection.contains(member.getMember())) {
                     members.add(member);
+                }
             }
             Main.map.relationListDialog.selectRelation(relation);
             RelationEditor.getEditor(Main.map.mapView.getEditLayer(), relation,
-                members).setVisible(true);
+                    members).setVisible(true);
         }
     }
 
@@ -800,12 +802,13 @@ public class SelectionListDialog extends ToggleDialog  {
             if(ways + nodes + relations == 1)
             {
                 text.append(": ");
-                for(OsmPrimitive o : sel)
-                   text.append(o.getDisplayName(df));
+                for(OsmPrimitive o : sel) {
+                    text.append(o.getDisplayName(df));
+                }
                 setText(text.toString());
-            }
-            else
+            } else {
                 setText(tr("Selection: {0}", text));
+            }
             addActionListener(this);
         }
 

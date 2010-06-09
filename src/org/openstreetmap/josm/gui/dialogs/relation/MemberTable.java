@@ -202,8 +202,7 @@ public class MemberTable extends JTable implements IMemberModelListener {
             int row = rows[0];
             OsmPrimitive primitive = getMemberTableModel().getReferredPrimitive(row);
             layer.data.setSelected(primitive);
-            AutoScaleAction action = new AutoScaleAction("selection");
-            action.autoScale();
+            AutoScaleAction.autoScale("selection");
         }
 
         protected void updateEnabledState() {
