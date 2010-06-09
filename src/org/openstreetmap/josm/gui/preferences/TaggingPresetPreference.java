@@ -86,21 +86,21 @@ public class TaggingPresetPreference implements PreferenceSetting {
                             if (canLoad) {
                                 errorMessage = tr("<html>Tagging preset source {0} can be loaded but it contains errors. " +
                                         "Do you really want to use it?<br><br><table width=600>Error is: [{1}:{2}] {3}</table></html>",
-                                        source, e.getLineNumber(), e.getColumnNumber(), e.getMessage(), e.getMessage());
+                                        source, e.getLineNumber(), e.getColumnNumber(), e.getMessage());
                             } else {
                                 errorMessage = tr("<html>Unable to parse tagging preset source: {0}. " +
                                         "Do you really want to use it?<br><br><table width=400>Error is: [{1}:{2}] {3}</table></html>",
-                                        source, e.getLineNumber(), e.getColumnNumber(), e.getMessage(), e.getMessage());
+                                        source, e.getLineNumber(), e.getColumnNumber(), e.getMessage());
                             }
                         } catch (SAXException e) {
                             if (canLoad) {
                                 errorMessage = tr("<html>Tagging preset source {0} can be loaded but it contains errors. " +
                                         "Do you really want to use it?<br><br><table width=600>Error is: {1}</table></html>",
-                                        source,  e.getMessage(), e.getMessage());
+                                        source,  e.getMessage());
                             } else {
                                 errorMessage = tr("<html>Unable to parse tagging preset source: {0}. " +
-                                        "Do you really want to use it?<br><br><table width=600>Error is: {3}</table></html>",
-                                        source, e.getMessage(), e.getMessage());
+                                        "Do you really want to use it?<br><br><table width=600>Error is: {1}</table></html>",
+                                        source, e.getMessage());
                             }
 
                         }
