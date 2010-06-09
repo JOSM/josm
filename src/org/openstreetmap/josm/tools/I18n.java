@@ -26,6 +26,7 @@ public class I18n {
         MODE_CS, MODE_AR, MODE_PL, MODE_RO, MODE_RU, MODE_SK, MODE_SL}
     private static PluralMode pluralMode = PluralMode.MODE_NOTONE; /* english default */
     private static String[] fileChooserDialogStringKeys = new String[] {
+        /* windows laf */
         "FileChooser.detailsViewActionLabelText",
         "FileChooser.detailsViewButtonAccessibleName",
         "FileChooser.detailsViewButtonToolTipText",
@@ -49,7 +50,49 @@ public class I18n {
         "FileChooser.saveInLabelText",
         "FileChooser.upFolderAccessibleName",
         "FileChooser.upFolderToolTipText",
-        "FileChooser.viewMenuLabelText"};
+        "FileChooser.viewMenuLabelText",
+        
+        /* gtk laf */
+        "FileChooser.acceptAllFileFilterText",
+        "FileChooser.cancelButtonText",
+        "FileChooser.cancelButtonToolTipText",
+        "FileChooser.deleteFileButtonText",
+        "FileChooser.filesLabelText",
+        "FileChooser.filterLabelText",
+        "FileChooser.foldersLabelText",
+        "FileChooser.newFolderButtonText",
+        "FileChooser.newFolderDialogText",
+        "FileChooser.openButtonText",
+        "FileChooser.openButtonToolTipText",
+        "FileChooser.openDialogTitleText",
+        "FileChooser.pathLabelText",
+        "FileChooser.renameFileButtonText",
+        "FileChooser.renameFileDialogText",
+        "FileChooser.renameFileErrorText",
+        "FileChooser.renameFileErrorTitle",
+        "FileChooser.saveButtonText",
+        "FileChooser.saveButtonToolTipText",
+        "FileChooser.saveDialogTitleText",
+        
+        /* motif laf */
+        "FileChooser.cancelButtonText",
+        "FileChooser.cancelButtonToolTipText",
+        "FileChooser.enterFileNameLabelText",
+        "FileChooser.filesLabelText",
+        "FileChooser.filterLabelText",
+        "FileChooser.foldersLabelText",
+        "FileChooser.helpButtonText",
+        "FileChooser.helpButtonToolTipText",
+        "FileChooser.openButtonText",
+        "FileChooser.openButtonToolTipText",
+        "FileChooser.openDialogTitleText",
+        "FileChooser.pathLabelText",
+        "FileChooser.saveButtonText",
+        "FileChooser.saveButtonToolTipText",
+        "FileChooser.saveDialogTitleText",
+        "FileChooser.updateButtonText",
+        "FileChooser.updateButtonToolTipText"
+        };
     private static HashMap<String, String> strings = null;
     private static HashMap<String, String[]> pstrings = null;
     private static HashMap<String, PluralMode> languages = new HashMap<String, PluralMode>();
@@ -387,7 +430,7 @@ public class I18n {
                     String us = UIManager.getString(key, Locale.US);
                     String loc = UIManager.getString(key, l);
                     // only provide custom translation if it is not already localized by Java
-                    if (us.equals(loc)) {
+                    if (us != null && us.equals(loc)) {
                         UIManager.put(key, tr(us));
                     }
                 }
