@@ -51,7 +51,7 @@ public class I18n {
         "FileChooser.upFolderAccessibleName",
         "FileChooser.upFolderToolTipText",
         "FileChooser.viewMenuLabelText",
-        
+
         /* gtk laf */
         "FileChooser.acceptAllFileFilterText",
         "FileChooser.cancelButtonText",
@@ -73,23 +73,23 @@ public class I18n {
         "FileChooser.saveButtonText",
         "FileChooser.saveButtonToolTipText",
         "FileChooser.saveDialogTitleText",
-        
+
         /* motif laf */
-        "FileChooser.cancelButtonText",
-        "FileChooser.cancelButtonToolTipText",
+        //"FileChooser.cancelButtonText",
+        //"FileChooser.cancelButtonToolTipText",
         "FileChooser.enterFileNameLabelText",
-        "FileChooser.filesLabelText",
-        "FileChooser.filterLabelText",
-        "FileChooser.foldersLabelText",
+        //"FileChooser.filesLabelText",
+        //"FileChooser.filterLabelText",
+        //"FileChooser.foldersLabelText",
         "FileChooser.helpButtonText",
         "FileChooser.helpButtonToolTipText",
-        "FileChooser.openButtonText",
-        "FileChooser.openButtonToolTipText",
-        "FileChooser.openDialogTitleText",
-        "FileChooser.pathLabelText",
-        "FileChooser.saveButtonText",
-        "FileChooser.saveButtonToolTipText",
-        "FileChooser.saveDialogTitleText",
+        //"FileChooser.openButtonText",
+        //"FileChooser.openButtonToolTipText",
+        //"FileChooser.openDialogTitleText",
+        //"FileChooser.pathLabelText",
+        //"FileChooser.saveButtonText",
+        //"FileChooser.saveButtonToolTipText",
+        //"FileChooser.saveDialogTitleText",
         "FileChooser.updateButtonText",
         "FileChooser.updateButtonToolTipText"
         };
