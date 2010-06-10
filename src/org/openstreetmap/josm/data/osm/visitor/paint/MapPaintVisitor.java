@@ -372,15 +372,16 @@ public class MapPaintVisitor implements PaintVisitor {
 
         ElemStyle wayStyle = getPrimitiveStyle(r, false);
 
+        boolean disabled = r.isDisabled();
         // If area style was not found for relation then use style of ways
         if(styles != null && !(wayStyle instanceof AreaElemStyle)) {
             for (Way w : multipolygon.getOuterWays()) {
                 wayStyle = styles.getArea(w);
+                disabled = disabled || w.isDisabled();
                 if(wayStyle != null) {
                     break;
                 }
             }
-            r.mappaintStyle = wayStyle;
         }
 
         if (wayStyle instanceof AreaElemStyle) {
@@ -389,7 +390,7 @@ public class MapPaintVisitor implements PaintVisitor {
 
             drawn = true;
 
-            if(zoomok && !multipolygon.getOuterWays().isEmpty()) {
+            if(zoomok && !disabled && !multipolygon.getOuterWays().isEmpty()) {
                 AreaElemStyle areaStyle = (AreaElemStyle)wayStyle;
                 for (PolyData pd : multipolygon.getCombinedPolygons()) {
                     Polygon p = pd.get();
@@ -409,7 +410,7 @@ public class MapPaintVisitor implements PaintVisitor {
             for (Way wInner : multipolygon.getInnerWays()) {
                 ElemStyle innerStyle = getPrimitiveStyle(wInner, true);
                 if(innerStyle == null) {
-                    if (data.isSelected(wInner))
+                    if (data.isSelected(wInner) || disabled)
                         continue;
                     if(zoomok && (wInner.mappaintDrawnCode != paintid || multipolygon.getOuterWays().isEmpty())) {
                         ((AreaElemStyle)wayStyle).getLineStyle().paintPrimitive(wInner, paintSettings,
