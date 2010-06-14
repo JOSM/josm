@@ -13,10 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.SAXException;
 
 /**
@@ -65,6 +65,9 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
             availablePlugins.put(info.getName(), info);
         } else {
             availablePlugins.get(info.getName()).localversion = info.version;
+            if (info.icon != null) {
+                availablePlugins.get(info.getName()).icon = info.icon;
+            }
         }
     }
 
@@ -88,6 +91,31 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
             } catch(PluginListParseException e) {
                 System.err.println(tr("Warning: Failed to scan file ''{0}'' for plugin information. Skipping.", fname));
                 e.printStackTrace();
+            }
+            monitor.worked(1);
+        }
+    }
+
+    protected void scanIconCacheFiles(ProgressMonitor monitor, File pluginsDirectory) {
+        System.err.println("scanIconCacheFiles");
+        File[] siteCacheFiles = pluginsDirectory.listFiles(
+                new FilenameFilter() {
+                    public boolean accept(File dir, String name) {
+                        return name.matches("^([0-9]+-)?site.*plugin-icons\\.zip$");
+                    }
+                }
+        );
+        if (siteCacheFiles == null || siteCacheFiles.length == 0)
+            return;
+        monitor.subTask(tr("Processing plugin site cache icon files..."));
+        monitor.setTicksCount(siteCacheFiles.length);
+        for (File f: siteCacheFiles) {
+            String fname = f.getName();
+            monitor.setCustomText(tr("Processing file ''{0}''", fname));
+            for (PluginInformation pi : availablePlugins.values()) {
+                if (pi.icon == null && pi.iconPath != null) {
+                    pi.icon = ImageProvider.getIfAvailable(null, null, null, pi.name+".jar/"+pi.iconPath, f);
+                }
             }
             monitor.worked(1);
         }
@@ -129,6 +157,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
         try {
             monitor.beginTask("");
             scanSiteCacheFiles(monitor, pluginsDirectory);
+            scanIconCacheFiles(monitor, pluginsDirectory);
             scanPluginFiles(monitor, pluginsDirectory);
         } finally {
             monitor.setCustomText("");

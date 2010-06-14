@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.HyperlinkEvent.EventType;
@@ -104,9 +106,7 @@ public class PluginListPanel extends VerticallyScrollablePanel{
             String remoteversion = formatPluginRemoteVersion(pi);
             String localversion = formatPluginLocalVersion(model.getPluginInformation(pi.getName()));
 
-            final JCheckBox cbPlugin = new JCheckBox(
-                    tr("{0}: Version {1} (local: {2})", pi.getName(), remoteversion, localversion)
-            );
+            final JCheckBox cbPlugin = new JCheckBox();
             cbPlugin.setSelected(selected);
             cbPlugin.setToolTipText(formatCheckboxTooltipText(pi));
             cbPlugin.addActionListener(new ActionListener(){
@@ -114,10 +114,21 @@ public class PluginListPanel extends VerticallyScrollablePanel{
                     model.setPluginSelected(pi.getName(), cbPlugin.isSelected());
                 }
             });
+            JLabel lblPlugin = new JLabel(
+                    tr("{0}: Version {1} (local: {2})", pi.getName(), remoteversion, localversion),
+                    pi.getScaledIcon(),
+                    SwingConstants.LEFT);
+
+            gbc.gridx = 0;
             gbc.gridy = ++row;
             gbc.insets = new Insets(5,5,0,5);
             gbc.weighty = 0.0;
+            gbc.weightx = 0.0;
             add(cbPlugin, gbc);
+
+            gbc.gridx = 1;
+            gbc.weightx = 1.0;
+            add(lblPlugin, gbc);
 
             HtmlPanel description = new HtmlPanel();
             description.setText(pi.getDescriptionAsHtml());
@@ -129,6 +140,7 @@ public class PluginListPanel extends VerticallyScrollablePanel{
                 }
             });
 
+            gbc.gridx = 1;
             gbc.gridy = ++row;
             gbc.insets = new Insets(3,25,5,5);
             gbc.weighty = 1.0;

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.plugins;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,9 +21,11 @@ import java.util.TreeMap;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
@@ -46,6 +49,8 @@ public class PluginInformation {
     public String version = null;
     public String localversion = null;
     public String downloadlink = null;
+    public String iconPath;
+    public ImageIcon icon;
     public List<URL> libraries = new LinkedList<URL>();
     public final Map<String, String> attr = new TreeMap<String, String>();
 
@@ -134,6 +139,8 @@ public class PluginInformation {
         this.stage = other.stage;
         this.version = other.version;
         this.downloadlink = other.downloadlink;
+        this.icon = other.icon;
+        this.iconPath = other.iconPath;
         this.libraries = other.libraries;
         this.attr.clear();
         this.attr.putAll(other.attr);
@@ -165,6 +172,11 @@ public class PluginInformation {
         try { mainversion = Integer.parseInt(attr.getValue("Plugin-Mainversion")); }
         catch(NumberFormatException e) {}
         author = attr.getValue("Author");
+        iconPath = attr.getValue("Plugin-Icon");
+        if (iconPath != null) {
+            // extract icon from the plugin jar file
+            icon = ImageProvider.getIfAvailable(null, null, null, iconPath, file);
+        }
         if(oldcheck && mainversion > Version.getInstance().getVersion())
         {
             int myv = Version.getInstance().getVersion();
@@ -412,4 +424,9 @@ public class PluginInformation {
         this.name = name;
     }
 
+    public ImageIcon getScaledIcon() {
+        if (icon == null)
+            return null;
+        return new ImageIcon(icon.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH));
+    }
 }

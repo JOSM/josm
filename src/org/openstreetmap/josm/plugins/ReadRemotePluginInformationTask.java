@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -31,6 +32,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.SAXException;
 
 /**
@@ -44,6 +46,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
     private boolean canceled;
     private HttpURLConnection connection;
     private List<PluginInformation> availablePlugins;
+
+    protected enum CacheType {PLUGIN_LIST, ICON_LIST};
 
     protected void init(Collection<String> sites){
         this.sites = sites;
@@ -89,12 +93,14 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
     protected void finish() {}
 
     /**
-     * Creates the file name for the cached plugin list.
+     * Creates the file name for the cached plugin list and the icon cache
+     * file.
      * 
      * @param site the name of the site
+     * @param type icon cache or plugin list cache
      * @return the file name for the cache file
      */
-    protected File createSiteCacheFile(File pluginDir, String site) {
+    protected File createSiteCacheFile(File pluginDir, String site, CacheType type) {
         String name;
         try {
             URL url = new URL(site);
@@ -113,7 +119,14 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
                     sb.append("_");
                 }
             }
-            sb.append(".txt");
+            switch (type) {
+                case PLUGIN_LIST:
+                    sb.append(".txt");
+                    break;
+                case ICON_LIST:
+                    sb.append("-icons.zip");
+                    break;
+            }
             name = sb.toString();
         } catch(MalformedURLException e) {
             name = "site-unknown.txt";
@@ -174,6 +187,64 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
     }
 
     /**
+     * Downloads the icon archive from a remote location
+     *
+     * @param site the site URL
+     * @param monitor a progress monitor
+     */
+    protected void downloadPluginIcons(String site, File destFile, ProgressMonitor monitor) {
+        InputStream in = null;
+        OutputStream out = null;
+        System.err.println("icons site: "+site);
+        try {
+            monitor.beginTask("");
+            monitor.indeterminateSubTask(tr("Downloading plugin list from ''{0}''", site));
+
+            URL url = new URL(site);
+            synchronized(this) {
+                connection = (HttpURLConnection)url.openConnection();
+                connection.setRequestProperty("Cache-Control", "no-cache");
+                connection.setRequestProperty("User-Agent",Version.getInstance().getAgentString());
+                connection.setRequestProperty("Host", url.getHost());
+            }
+            in = connection.getInputStream();
+            out = new FileOutputStream(destFile);
+            byte[] buffer = new byte[8192];
+            for (int read = in.read(buffer); read != -1; read = in.read(buffer)) {
+                out.write(buffer, 0, read);
+            }
+            out.close();
+            in.close();
+        } catch(MalformedURLException e) {
+            if (canceled) return;
+            e.printStackTrace();
+            return;
+        } catch(IOException e) {
+            if (canceled) return;
+            e.printStackTrace();
+            return;
+        } finally {
+            synchronized(this) {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                connection = null;
+            }
+            if (in != null) {
+                try {
+                    in.close();
+                } catch(IOException e){/* ignore */}
+            }
+            monitor.finishTask();
+        }
+        for (PluginInformation pi : availablePlugins) {
+            if (pi.icon == null && pi.iconPath != null) {
+                pi.icon = ImageProvider.getIfAvailable(null, null, null, pi.name+".jar/"+pi.iconPath, destFile);
+            }
+        }
+    }
+
+    /**
      * Writes the list of plugins to a cache file
      * 
      * @param site the site from where the list was downloaded
@@ -188,7 +259,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
                     System.err.println(tr("Warning: failed to create plugin directory ''{0}''. Cannot cache plugin list from plugin site ''{1}''.", pluginDir.toString(), site));
                 }
             }
-            File cacheFile = createSiteCacheFile(pluginDir, site);
+            File cacheFile = createSiteCacheFile(pluginDir, site, CacheType.PLUGIN_LIST);
             getProgressMonitor().subTask(tr("Writing plugin list to local cache ''{0}''", cacheFile.toString()));
             writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(cacheFile), "utf-8"));
             writer.write(list);
@@ -248,12 +319,15 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
         if (sites == null) return;
         getProgressMonitor().setTicksCount(sites.size() * 3);
         File pluginDir = Main.pref.getPluginsDirectory();
+
+        // collect old cache files and remove if no longer in use
         List<File> siteCacheFiles = new LinkedList<File>();
         for (String location : PluginInformation.getPluginLocations()) {
             File [] f = new File(location).listFiles(
                 new FilenameFilter() {
                     public boolean accept(File dir, String name) {
-                        return name.matches("^([0-9]+-)?site.*\\.txt$");
+                        return name.matches("^([0-9]+-)?site.*\\.txt$") ||
+                               name.matches("^([0-9]+-)?site.*-icons\\.zip$");
                     }
                 }
             );
@@ -265,7 +339,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
             getProgressMonitor().subTask(tr("Processing plugin list from site ''{0}''", site));
             String list = downloadPluginList(site, getProgressMonitor().createSubTaskMonitor(0, false));
             if (canceled) return;
-            siteCacheFiles.remove(createSiteCacheFile(pluginDir, site));
+            siteCacheFiles.remove(createSiteCacheFile(pluginDir, site, CacheType.PLUGIN_LIST));
+            siteCacheFiles.remove(createSiteCacheFile(pluginDir, site, CacheType.ICON_LIST));
             if(list != null)
             {
                 getProgressMonitor().worked(1);
@@ -277,6 +352,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
                 getProgressMonitor().worked(1);
                 if (canceled) return;
             }
+            downloadPluginIcons(site+"-icons.zip", createSiteCacheFile(pluginDir, site, CacheType.ICON_LIST), getProgressMonitor().createSubTaskMonitor(0, false));
         }
         for (File file: siteCacheFiles) /* remove old stuff or whole update process is broken */
         {
