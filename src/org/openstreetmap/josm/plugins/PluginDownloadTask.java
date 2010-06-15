@@ -109,7 +109,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
             dialog.showDialog();
             int answer = dialog.getValue();
             if (answer != 1)
-                return;
+                throw new PluginDownloadException(tr("Download skipped"));
         }
         OutputStream out = null;
         InputStream in = null;
