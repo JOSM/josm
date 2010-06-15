@@ -173,7 +173,7 @@ public class PluginInformation {
         catch(NumberFormatException e) {}
         author = attr.getValue("Author");
         iconPath = attr.getValue("Plugin-Icon");
-        if (iconPath != null) {
+        if (iconPath != null && file != null) {
             // extract icon from the plugin jar file
             icon = ImageProvider.getIfAvailable(null, null, null, iconPath, file);
         }

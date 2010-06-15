@@ -97,7 +97,6 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     }
 
     protected void scanIconCacheFiles(ProgressMonitor monitor, File pluginsDirectory) {
-        System.err.println("scanIconCacheFiles");
         File[] siteCacheFiles = pluginsDirectory.listFiles(
                 new FilenameFilter() {
                     public boolean accept(File dir, String name) {
