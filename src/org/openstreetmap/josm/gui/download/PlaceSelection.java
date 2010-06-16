@@ -225,7 +225,7 @@ public class PlaceSelection implements DownloadSelection {
                     if ("city".equals(info) || "town".equals(info) || "village".equals(info)) {
                         currentResult.nearestPlace = atts.getValue("name");
                     }
-                } else if (qName.equals("place")) {
+                } else if (qName.equals("place") && atts.getValue("lat") != null) {
                     currentResult = new PlaceSelection.SearchResult();
                     currentResult.name = atts.getValue("display_name");
                     currentResult.description = currentResult.name;
