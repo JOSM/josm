@@ -138,7 +138,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
      */
     private boolean isDataSetEmpty(OsmDataLayer layer) {
         for (OsmPrimitive osm : layer.data.allNonDeletedPrimitives())
-            if (!osm.isDeleted() || !osm.isNew())
+            if (!osm.isDeleted() || !osm.isNewOrUndeleted())
                 return false;
         return true;
     }

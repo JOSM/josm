@@ -444,7 +444,7 @@ public class DeleteCommand extends Command {
             for (OsmPrimitive osm : primitivesToDelete) {
                 if (osm.isIncomplete())
                     incomplete = true;
-                else if (osm instanceof Node && !osm.isNew()
+                else if (osm instanceof Node && !osm.isNewOrUndeleted()
                 && !a.contains(((Node) osm).getCoor()))
                     outside = true;
             }

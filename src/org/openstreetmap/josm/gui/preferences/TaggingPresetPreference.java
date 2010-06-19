@@ -47,7 +47,6 @@ public class TaggingPresetPreference implements PreferenceSetting {
 
 
     private ValidationListener validationListener = new ValidationListener() {
-        @Override
         public boolean validatePreferences() {
             if (sources.hasActiveStylesChanged()) {
                 List<String> sourcesToRemove = new ArrayList<String>();

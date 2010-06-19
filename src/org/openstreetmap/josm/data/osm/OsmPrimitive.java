@@ -391,6 +391,14 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     /**
+     * Replies <code>true</code> if the object has been deleted on the server and was undeleted by the user.
+     * @return <code>true</code> if the object has been undeleted
+     */
+    public boolean isUndeleted() {
+        return (flags & (FLAG_VISIBLE + FLAG_DELETED)) == 0;
+    }
+
+    /**
      * Replies <code>true</code>, if the object is usable (i.e. complete
      * and not deleted).
      *
@@ -426,25 +434,25 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     public static Predicate<OsmPrimitive> nonDeletedPredicate = new Predicate<OsmPrimitive>() {
         public boolean evaluate(OsmPrimitive primitive) {
-            return primitive.isVisible() && !primitive.isDeleted();
+            return !primitive.isDeleted();
         }
     };
 
     public static Predicate<OsmPrimitive> nonDeletedCompletePredicate = new Predicate<OsmPrimitive>() {
         public boolean evaluate(OsmPrimitive primitive) {
-            return primitive.isVisible() && !primitive.isDeleted() && !primitive.isIncomplete();
+            return !primitive.isDeleted() && !primitive.isIncomplete();
         }
     };
 
     public static Predicate<OsmPrimitive> nonDeletedPhysicalPredicate = new Predicate<OsmPrimitive>() {
         public boolean evaluate(OsmPrimitive primitive) {
-            return primitive.isVisible() && !primitive.isDeleted() && !primitive.isIncomplete() && !(primitive instanceof Relation);
+            return !primitive.isDeleted() && !primitive.isIncomplete() && !(primitive instanceof Relation);
         }
     };
 
     public static Predicate<OsmPrimitive> modifiedPredicate = new Predicate<OsmPrimitive>() {
         public boolean evaluate(OsmPrimitive primitive) {
-            return primitive.isVisible() && primitive.isModified();
+            return primitive.isModified();
         }
     };
 
@@ -536,6 +544,16 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      */
     public boolean isNew() {
         return id <= 0;
+    }
+
+    /**
+     *
+     * @return True if primitive is new or undeleted
+     * @see #isNew()
+     * @see #isUndeleted()
+     */
+    public boolean isNewOrUndeleted() {
+        return (id <= 0) || ((flags & (FLAG_VISIBLE + FLAG_DELETED)) == 0);
     }
 
     /**
@@ -721,7 +739,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         } else {
             flags &= ~FLAG_DELETED;
         }
-        setModified(deleted);
+        setModified(deleted ^ !isVisible());
         if (dataSet != null) {
             if (deleted) {
                 dataSet.firePrimitivesRemoved(Collections.singleton(this), false);

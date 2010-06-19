@@ -97,7 +97,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
     }
 
     private boolean shouldWrite(OsmPrimitive osm) {
-        return !osm.isNew() || !osm.isDeleted();
+        return !osm.isNewOrUndeleted() || !osm.isDeleted();
     }
 
     public void writeDataSources(DataSet ds) {

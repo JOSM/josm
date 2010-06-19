@@ -60,11 +60,11 @@ public class APIDataSet {
             if (osm.get("josm/ignore") != null) {
                 continue;
             }
-            if (osm.isNew() && !osm.isDeleted()) {
+            if (osm.isNewOrUndeleted() && !osm.isDeleted()) {
                 toAdd.add(osm);
             } else if (osm.isModified() && !osm.isDeleted()) {
                 toUpdate.add(osm);
-            } else if (osm.isDeleted() && !osm.isNew() && osm.isModified()) {
+            } else if (osm.isDeleted() && !osm.isNew() && osm.isModified() && osm.isVisible()) {
                 toDelete.add(osm);
             }
         }
@@ -197,11 +197,11 @@ public class APIDataSet {
         toUpdate.clear();
         toDelete.clear();
         for (OsmPrimitive osm: primitives) {
-            if (osm.isNew() && !osm.isDeleted()) {
+            if (osm.isNewOrUndeleted() && !osm.isDeleted()) {
                 toAdd.addLast(osm);
             } else if (osm.isModified() && !osm.isDeleted()) {
                 toUpdate.addLast(osm);
-            } else if (osm.isDeleted() && !osm.isNew() && osm.isModified()) {
+            } else if (osm.isDeleted() && !osm.isNew() && osm.isModified() && osm.isVisible()) {
                 toDelete.addFirst(osm);
             }
         }
@@ -311,7 +311,7 @@ public class APIDataSet {
         for (Relation relation: relations) {
             boolean refersToNewRelation = false;
             for (RelationMember m : relation.getMembers()) {
-                if (m.isRelation() && m.getMember().isNew()) {
+                if (m.isRelation() && m.getMember().isNewOrUndeleted()) {
                     refersToNewRelation = true;
                     break;
                 }
@@ -349,12 +349,12 @@ public class APIDataSet {
         public void build(Collection<Relation> relations) {
             this.relations = new HashSet<Relation>();
             for(Relation relation: relations) {
-                if (!relation.isNew() ) {
+                if (!relation.isNewOrUndeleted() ) {
                     continue;
                 }
                 this.relations.add(relation);
                 for (RelationMember m: relation.getMembers()) {
-                    if (m.isRelation() && m.getMember().isNew()) {
+                    if (m.isRelation() && m.getMember().isNewOrUndeleted()) {
                         addDependency(relation, (Relation)m.getMember());
                     }
                 }

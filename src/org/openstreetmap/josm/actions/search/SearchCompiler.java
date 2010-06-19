@@ -561,7 +561,7 @@ public class SearchCompiler {
 
     private static class Modified extends Match {
         @Override public boolean match(OsmPrimitive osm) {
-            return osm.isModified() || osm.isNew();
+            return osm.isModified() || osm.isNewOrUndeleted();
         }
         @Override public String toString() {return "modified";}
     }

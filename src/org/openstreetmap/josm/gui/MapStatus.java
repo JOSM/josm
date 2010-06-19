@@ -419,7 +419,7 @@ public class MapStatus extends JPanel implements Helpful {
         private final JLabel popupBuildPrimitiveLabels(final OsmPrimitive osm) {
             final StringBuilder text = new StringBuilder();
             String name = osm.getDisplayName(DefaultNameFormatter.getInstance());
-            if (osm.isNew() || osm.isModified()) {
+            if (osm.isNewOrUndeleted() || osm.isModified()) {
                 name = "<i><b>"+ name + "*</b></i>";
             }
             text.append(name);

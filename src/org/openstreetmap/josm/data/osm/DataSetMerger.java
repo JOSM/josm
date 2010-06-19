@@ -188,14 +188,10 @@ public class DataSetMerger {
         for (Node sourceNode : source.getNodes()) {
             Node targetNode = (Node)getMergeTarget(sourceNode);
             if (targetNode != null) {
-                if (targetNode.isVisible()) {
-                    newNodes.add(targetNode);
-                    if (targetNode.isDeleted() && !conflicts.hasConflictForMy(targetNode)) {
-                        conflicts.add(new Conflict<OsmPrimitive>(targetNode, sourceNode, true));
-                        targetNode.setDeleted(false);
-                    }
-                } else {
-                    target.setModified(true);
+                newNodes.add(targetNode);
+                if (targetNode.isDeleted() && !conflicts.hasConflictForMy(targetNode)) {
+                    conflicts.add(new Conflict<OsmPrimitive>(targetNode, sourceNode, true));
+                    targetNode.setDeleted(false);
                 }
             } else
                 throw new IllegalStateException(tr("Missing merge target for node with id {0}", sourceNode.getUniqueId()));
@@ -219,15 +215,11 @@ public class DataSetMerger {
             OsmPrimitive targetMember = getMergeTarget(sourceMember.getMember());
             if (targetMember == null)
                 throw new IllegalStateException(tr("Missing merge target of type {0} with id {1}", sourceMember.getType(), sourceMember.getUniqueId()));
-            if (targetMember.isVisible()) {
-                RelationMember newMember = new RelationMember(sourceMember.getRole(), targetMember);
-                newMembers.add(newMember);
-                if (targetMember.isDeleted() && !conflicts.hasConflictForMy(targetMember)) {
-                    conflicts.add(new Conflict<OsmPrimitive>(targetMember, sourceMember.getMember(), true));
-                    targetMember.setDeleted(false);
-                }
-            } else {
-                target.setModified(true);
+            RelationMember newMember = new RelationMember(sourceMember.getRole(), targetMember);
+            newMembers.add(newMember);
+            if (targetMember.isDeleted() && !conflicts.hasConflictForMy(targetMember)) {
+                conflicts.add(new Conflict<OsmPrimitive>(targetMember, sourceMember.getMember(), true));
+                targetMember.setDeleted(false);
             }
         }
         target.setMembers(newMembers);
@@ -251,15 +243,9 @@ public class DataSetMerger {
         if (target.getVersion() > source.getVersion())
             // target.version > source.version => keep target version
             return true;
-        if (! target.isVisible() && source.isVisible()) {
+        if (! target.isVisible() && source.isVisible() && target.getVersion() == source.getVersion()) {
             // should not happen
-            // FIXME: this message does not make sense, source version can not be lower than
-            //        target version at this point
-            logger.warning(tr("Target object with id {0} and version {1} is visible although "
-                    + "source object with lower version {2} is not visible. "
-                    + "Cannot deal with this inconsistency. Keeping target object. ",
-                    Long.toString(target.getId()),Long.toString(target.getVersion()), Long.toString(source.getVersion())
-            ));
+            conflicts.add(target,source);
         } else if (target.isVisible() && ! source.isVisible()) {
             // this is always a conflict because the user has to decide whether
             // he wants to create a clone of its target primitive or whether he

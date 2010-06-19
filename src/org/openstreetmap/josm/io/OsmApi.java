@@ -274,6 +274,7 @@ public class OsmApi extends OsmConnection {
             ret = sendRequest("PUT", OsmPrimitiveType.from(osm).getAPIName()+"/" + osm.getId(), toXml(osm, true), monitor);
             osm.setOsmId(osm.getId(), Integer.parseInt(ret.trim()));
             osm.setChangesetId(getChangeset().getId());
+            osm.setVisible(true);
         } catch(NumberFormatException e) {
             throw new OsmTransferException(tr("Unexpected format of new version of modified primitive ''{0}''. Got ''{1}''.", osm.getId(), ret));
         }
