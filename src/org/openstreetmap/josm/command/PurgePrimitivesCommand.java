@@ -7,9 +7,12 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import javax.swing.JLabel;
@@ -18,6 +21,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
@@ -47,12 +51,12 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
      */
     private Set<OsmPrimitive> purgedPrimitives;
 
-    private Set<OsmPrimitive> origVersionsOfTouchedPrimitives;
+    private Map<OsmPrimitive,PrimitiveData> origVersionsOfTouchedPrimitives;
 
     protected void init(Collection<OsmPrimitive> toPurge) {
         this.toPurge = toPurge;
         this.purgedPrimitives = new HashSet<OsmPrimitive>();
-        this.origVersionsOfTouchedPrimitives = new HashSet<OsmPrimitive>();
+        this.origVersionsOfTouchedPrimitives = new HashMap<OsmPrimitive,PrimitiveData>();
     }
 
     /**
@@ -148,8 +152,8 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
                 return;
             if (parent instanceof Way) {
                 Way w = (Way)parent;
-                if (!origVersionsOfTouchedPrimitives.contains(w)) {
-                    origVersionsOfTouchedPrimitives.add(w);
+                if (!origVersionsOfTouchedPrimitives.containsKey(w)) {
+                    origVersionsOfTouchedPrimitives.put(w,w.save());
                 }
                 w.removeNode((Node)child);
                 // if a way ends up with less than two nodes we
@@ -162,8 +166,8 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
                 }
             } else if (parent instanceof Relation) {
                 Relation r = (Relation)parent;
-                if (!origVersionsOfTouchedPrimitives.contains(r)) {
-                    origVersionsOfTouchedPrimitives.add(r);
+                if (!origVersionsOfTouchedPrimitives.containsKey(r)) {
+                    origVersionsOfTouchedPrimitives.put(r,r.save());
                 }
                 System.out.println(tr("Removing reference from relation {0}",r.getId()));
                 r.removeMembersFor(child);
@@ -199,7 +203,6 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
     @Override
     public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted,
             Collection<OsmPrimitive> added) {
-        modified.addAll(origVersionsOfTouchedPrimitives);
     }
 
     @Override
@@ -218,6 +221,11 @@ public class PurgePrimitivesCommand extends ConflictResolveCommand{
         for (OsmPrimitive purged : purgedPrimitives) {
             getLayer().data.addPrimitive(purged);
         }
+
+        for (Entry<OsmPrimitive, PrimitiveData> entry: origVersionsOfTouchedPrimitives.entrySet()) {
+            entry.getKey().load(entry.getValue());
+        }
+
         reconstituteConflicts();
 
         // will restore the primitives referring to one
