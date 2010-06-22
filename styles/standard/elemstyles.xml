@@ -708,10 +708,18 @@ For external files the <rules> should have following elements:
 		<scale_max>10000</scale_max>
 	</rule>
 
-    <!-- display path with bicycle/foot=designated as if it was cycleway/footway -->
+    <!-- display path with bicycle/foot=designated/official as if it was cycleway/footway -->
 	<rule>
 		<condition k="highway" v="path"/>
 		<condition k="bicycle" v="designated"/>
+		<line width="1" realwidth="2" colour="bicycle#b100ff" priority="100"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="highway" v="path"/>
+		<condition k="bicycle" v="official"/>
 		<line width="1" realwidth="2" colour="bicycle#b100ff" priority="100"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -727,6 +735,14 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="highway" v="path"/>
+		<condition k="foot" v="official"/>
+		<line width="1" realwidth="1" colour="foot#00ff00" priority="100"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="highway" v="path"/>
 		<condition k="bicycle" v="designated"/>
 		<condition k="foot" v="designated"/>
 		<line width="1" realwidth="2" colour="bicycle#b100ff" dashedcolour="foot#00ff00" dashed="14,14" priority="200"/>
@@ -734,6 +750,15 @@ For external files the <rules> should have following elements:
 		<scale_max>50000</scale_max>
 	</rule>
 	
+	<rule>
+		<condition k="highway" v="path"/>
+		<condition k="bicycle" v="official"/>
+		<condition k="foot" v="official"/>
+		<line width="1" realwidth="2" colour="bicycle#b100ff" dashedcolour="foot#00ff00" dashed="14,14" priority="200"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
 	<rule>
 		<condition k="highway" v="pedestrian"/>
 		<line width="3" realwidth="5" colour="foot#00ff00"/>
@@ -2509,6 +2534,14 @@ For external files the <rules> should have following elements:
 		<condition k="amenity" v="bbq"/>
 		<area colour="amenity_light#f7efb7"/>
 		<icon annotate="true" src="leisure/bbq.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="amenity" v="fire_hydrant"/>
+		<area colour="amenity_light#f7efb7"/>
+		<icon annotate="true" src="service/fire_hydrant.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
