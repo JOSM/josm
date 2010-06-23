@@ -101,7 +101,7 @@ public class GBC extends GridBagConstraints {
      * @param weighty   Weight in vertical direction
      * @return This constraint for chaining.
      */
-    public GBC weight(int weightx, int weighty) {
+    public GBC weight(double weightx, double weighty) {
         this.weightx = weightx;
         this.weighty = weighty;
         return this;

@@ -147,6 +147,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
     }
 
+    // hook for roadsigns plugin to display a small
+    // button in the upper right corner of this dialog
+    public static JPanel pluginHook = new JPanel();
+    
     private final Map<String, Map<String, Integer>> valueCount = new TreeMap<String, Map<String, Integer>>();
 
     Comparator<AutoCompletionListItem> defaultACItemComparator = new Comparator<AutoCompletionListItem>() {
@@ -321,7 +325,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         if(!key.equals(newkey)) {
             for(int i=0; i < propertyTable.getRowCount(); i++)
-                if(propertyData.getValueAt(i, 0).toString() == newkey) {
+                if(propertyData.getValueAt(i, 0).toString().equals(newkey)) {
                     row=i;
                     break;
                 }
@@ -647,7 +651,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         boolean top = Main.pref.getBoolean("properties.presets.top", true);
         bothTables.setLayout(new GridBagLayout());
         if(top) {
-            bothTables.add(presets, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2));
+            bothTables.add(presets, GBC.std().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2).anchor(GBC.NORTHWEST));
+            double epsilon = Double.MIN_VALUE; // need to set a weight or else anchor value is ignored
+            bothTables.add(pluginHook, GBC.eol().insets(0,1,1,1).anchor(GBC.NORTHEAST).weight(epsilon, epsilon));
         }
         bothTables.add(selectSth, GBC.eol().fill().insets(10, 10, 10, 10));
         bothTables.add(propertyTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
@@ -917,6 +923,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         propertyTable.setVisible(hasTags);
         propertyTable.getTableHeader().setVisible(hasTags);
         selectSth.setVisible(!hasSelection);
+        pluginHook.setVisible(hasSelection);
 
         int selectedIndex;
         if (selectedTag != null && (selectedIndex = findRow(propertyData, selectedTag)) != -1) {
