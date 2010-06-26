@@ -62,9 +62,9 @@ For external files the <rules> should have following elements:
 - version          a version number of some sort (e.g. creation date)
 - description      what is your style meant to be
 - shortdescription very short description
-- link             a link to a helpful website (optional)
+- link       a link to a helpful website (optional)
 - The fields description, shortdescription and link may also be localized (e.g. de.link)
-- name             is the name of the style
+- name       is the name of the style
                    - when the style replaces the whole rendering choose a new name
                    - when the style is additional choose "standard" or don't use name tag
 -->
@@ -662,7 +662,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="highway" v="living_street"/>
-		<line width="2" realwidth="3" colour="street#c0c0c0" dashed="9" dashedcolour="livingdashed#00ff00" />
+		<line width="2" realwidth="3" colour="street#c0c0c0" dashed="9" dashedcolour="livingdashed#00ff00"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
@@ -4357,40 +4357,47 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="addr:interpolation" v="even"/>
-                <line width="1" realwidth="1" dashed="true" colour="address#1C86EE"/>
+		<line width="1" realwidth="1" dashed="true" colour="address#1C86EE"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="addr:interpolation" v="all"/>
-                <line width="1" realwidth="1" dashed="true" colour="address#1C86EE"/>
+		<line width="1" realwidth="1" dashed="true" colour="address#1C86EE"/>
 		<scale_min>1</scale_min>
 		<scale_max>40000</scale_max>
 	</rule>
 
-        <rule>
-                <condition k="addr:interpolation" v="alphabetic"/>
-                <line width="1" realwidth="1" dashed="true" colour="address#1C86EE"/>
-                <scale_min>1</scale_min>
-                <scale_max>40000</scale_max>
-        </rule>
+	<rule>
+		<condition k="addr:interpolation" v="alphabetic"/>
+		<line width="1" realwidth="1" dashed="true" colour="address#1C86EE"/>
+		<scale_min>1</scale_min>
+		<scale_max>40000</scale_max>
+	</rule>
+
+	<rule> 
+		<condition k="fixme"/> 
+		<icon annotate="true" src="fixme.png"/>
+		<scale_min>1</scale_min> 
+		<scale_max>50000</scale_max> 
+	</rule> 
 
 <!--public_transport tags --> 
-    <rule> 
-        <condition k="public_transport" v="stop_position"/> 
-        <icon annotate="true" src="misc/no_icon.png"/>
-        <scale_min>1</scale_min> 
-        <scale_max>50000</scale_max> 
-    </rule> 
+	<rule> 
+		<condition k="public_transport" v="stop_position"/> 
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min> 
+		<scale_max>50000</scale_max> 
+	</rule> 
 
-    <rule> 
-        <condition k="public_transport" v="platform"/> 
-        <icon annotate="true" src="misc/no_icon.png"/>
-        <line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00" /> 
-        <scale_min>1</scale_min> 
-        <scale_max>50000</scale_max> 
-    </rule> 
+	<rule> 
+		<condition k="public_transport" v="platform"/> 
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/> 
+		<scale_min>1</scale_min> 
+		<scale_max>50000</scale_max> 
+	</rule> 
 
 <!--"deprecated" tags -->
 
