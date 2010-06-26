@@ -63,15 +63,17 @@ public enum UploadStrategy {
      * @return the upload strategy currently configured in the preferences.
      */
     public static UploadStrategy getFromPreferences() {
-        String v = Main.pref.get("osm-server.upload-strategy");
+        String v = Main.pref.get("osm-server.upload-strategy", null);
         if (v == null) {
             // legacy support. Until 12/2009 we had osm-server.atomic-upload only.
             // If we still find "osm-server.atomic-upload" we use it and remove it.
             // When the preferences are saved the next time, "osm-server.upload-strategy"
             // will be inserted.
-            v = Main.pref.get("osm-server.atomic-upload");
+            v = Main.pref.get("osm-server.atomic-upload", null);
             if (v != null) {
                 Main.pref.removeFromCollection("osm-server.atomic-upload", v);
+            } else {
+                v = "";
             }
             v = v.trim().toLowerCase();
             if (v.equals("true"))

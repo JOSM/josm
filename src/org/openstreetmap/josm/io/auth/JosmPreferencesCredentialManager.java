@@ -3,6 +3,8 @@ package org.openstreetmap.josm.io.auth;
 
 import java.net.PasswordAuthentication;
 import java.net.Authenticator.RequestorType;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
@@ -16,6 +18,7 @@ import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
  */
 public class JosmPreferencesCredentialManager implements CredentialsManager {
 
+    Map<RequestorType, PasswordAuthentication> memoryCredentialsCache = new HashMap<RequestorType, PasswordAuthentication>();
     /**
      * @see CredentialsManager#lookup(RequestorType)
      */
@@ -79,7 +82,23 @@ public class JosmPreferencesCredentialManager implements CredentialsManager {
 
         CredentialsManagerResponse response = new CredentialsManagerResponse();
 
-        if (noSuccessWithLastResponse|| username.equals("") || password.equals("")) {
+        /*
+         * Last request was successful and there was no credentials stored
+         * in file. -> Try to recall credentials that have been entered
+         * manually in this session.
+         */
+        if (!noSuccessWithLastResponse && credentials == null && memoryCredentialsCache.containsKey(requestorType)) {
+            PasswordAuthentication pa = memoryCredentialsCache.get(requestorType);
+            response.setUsername(pa.getUserName());
+            response.setPassword(pa.getPassword());
+            response.setCanceled(false);
+        /*
+         * Prompt the user for credentials. This happens the first time each
+         * josm start if the user does not save the credentials to preference
+         * file (username=="") and each time after authentication failed
+         * (noSuccessWithLastResponse == true).
+         */
+        } else if (noSuccessWithLastResponse || username.equals("") || password.equals("")) {
             CredentialDialog dialog = null;
             switch(requestorType) {
             case SERVER: dialog = CredentialDialog.getOsmApiCredentialDialog(username, password); break;
@@ -96,7 +115,17 @@ public class JosmPreferencesCredentialManager implements CredentialsManager {
                         response.getUsername(),
                         response.getPassword()
                 ));
+            /*
+             * User decides not to save credentials to file. Keep it
+             * in memory so we don't have to ask over and over again.
+             */
+            } else {
+                PasswordAuthentication pa = new PasswordAuthentication(dialog.getUsername(), dialog.getPassword());
+                memoryCredentialsCache.put(requestorType, pa);
             }
+        /*
+         * We got it from file.
+         */
         } else {
             response.setUsername(username);
             response.setPassword(password.toCharArray());

@@ -718,7 +718,7 @@ public class Preferences {
         return def;
     }
     synchronized public void removeFromCollection(String key, String value) {
-        List<String> a = new ArrayList<String>(getCollection(key, null));
+        List<String> a = new ArrayList<String>(getCollection(key, Collections.<String>emptyList()));
         a.remove(value);
         putCollection(key, a);
     }

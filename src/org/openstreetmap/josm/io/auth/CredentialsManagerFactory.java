@@ -16,8 +16,9 @@ public class CredentialsManagerFactory {
      * @return the single credential manager used in JOSM
      */
     static public CredentialsManager getCredentialManager() {
-        if (instance == null)
-            return new JosmPreferencesCredentialManager();
+        if (instance == null) {
+            instance =  new JosmPreferencesCredentialManager();
+        }
         return instance;
     }
 }

@@ -72,7 +72,7 @@ public class OsmConnection {
      * Adds an authentication header for basic authentication
      *
      * @param con the connection
-     * @throws OsmTransferException thrown is something went wrong. Check for nested exceptions
+     * @throws OsmTransferException thrown if something went wrong. Check for nested exceptions
      */
     protected void addBasicAuthorizationHeader(HttpURLConnection con) throws OsmTransferException {
         CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
