@@ -26,19 +26,22 @@ public class UTM_France_DOM implements Projection, ProjectionSubPrefs {
     private static String SainteAnneName = tr("Guadeloupe Ste-Anne 1948");
     private static String MartiniqueName = tr("Martinique Fort Desaix 1952");
     private static String Reunion92Name = tr("Reunion RGR92");
-    public static String[] utmGeodesicsNames = { FortMarigotName, SainteAnneName, MartiniqueName, Reunion92Name};
+    private static String Guyane92Name = tr("Guyane RGFG95");
+    public static String[] utmGeodesicsNames = { FortMarigotName, SainteAnneName, MartiniqueName, Reunion92Name, Guyane92Name};
 
     private Bounds FortMarigotBounds = new Bounds( new LatLon(17.6,-63.25), new LatLon(18.5,-62.5));
     private Bounds SainteAnneBounds = new Bounds( new LatLon(15.8,-61.9), new LatLon(16.6,-60.9));
     private Bounds MartiniqueBounds = new Bounds( new LatLon(14.25,-61.25), new LatLon(15.025,-60.725));
     private Bounds ReunionBounds = new Bounds( new LatLon(-25.92,37.58), new LatLon(-10.6, 58.27));
-    private Bounds[] utmBounds = { FortMarigotBounds, SainteAnneBounds, MartiniqueBounds, ReunionBounds};
+    private Bounds GuyaneBounds = new Bounds( new LatLon(2.16 , -54.0), new LatLon(9.06 , -49.62));
+    private Bounds[] utmBounds = { FortMarigotBounds, SainteAnneBounds, MartiniqueBounds, ReunionBounds, GuyaneBounds};
 
     private String FortMarigotEPSG = "EPSG::2969";
     private String SainteAnneEPSG = "EPSG::2970";
     private String MartiniqueEPSG = "EPSG::2973";
     private String ReunionEPSG = "EPSG::2975";
-    private String[] utmEPSGs = { FortMarigotEPSG, SainteAnneEPSG, MartiniqueEPSG, ReunionEPSG};
+    private String GuyaneEPSG = "EPSG::2972";
+    private String[] utmEPSGs = { FortMarigotEPSG, SainteAnneEPSG, MartiniqueEPSG, ReunionEPSG, GuyaneEPSG};
 
     /**
      * false east in meters (constant)
@@ -102,6 +105,11 @@ public class UTM_France_DOM implements Projection, ProjectionSubPrefs {
                     new double[]{0.6006, 76.7946,  -10.5788},
                     -32.3241E-6
                     , false, 40);
+        } else if (currentGeodesic == 4) { // UTM_22N_Guyane_RGFG95 (translation only required for re-projections from CSG67)
+            set7ParametersTranslation(new double[]{-193.066 , 236.993, 105.447},
+                    new double[]{0.4814, -0.8074,  0.1276},
+                    1.5649E-6
+                    , true, 22);
         }
     }
 
@@ -119,12 +127,12 @@ public class UTM_France_DOM implements Projection, ProjectionSubPrefs {
     }
 
     public EastNorth latlon2eastNorth(LatLon p) {
-        if (currentGeodesic != 3) {
+        if (currentGeodesic < 3 ) {
             // translate ellipsoid GRS80 (WGS83) => reference ellipsoid geographic
             LatLon geo = GRS802Hayford(p);
             // reference ellipsoid geographic => UTM projection
             return MTProjection(geo, Ellipsoid.hayford.a, Ellipsoid.hayford.e);
-        } else { // UTM_40S_Reunion_RGR92
+        } else { // UTM_40S_Reunion_RGR92 or UTM_22N_Guyane_RGFG95
             LatLon geo = new LatLon(Math.toRadians(p.lat()), Math.toRadians(p.lon()));
             return MTProjection(geo, Ellipsoid.GRS80.a, Ellipsoid.GRS80.e);
         }
@@ -232,7 +240,7 @@ public class UTM_France_DOM implements Projection, ProjectionSubPrefs {
     }
 
     public LatLon eastNorth2latlon(EastNorth p) {
-        if (currentGeodesic != 3) {
+        if (currentGeodesic < 3) {
             MTProjection(p.east(), p.north(), zone, isNorth);
             LatLon geo = Geographic(p, Ellipsoid.hayford.a, Ellipsoid.hayford.e, 0.0 /* z */);
 
@@ -247,7 +255,7 @@ public class UTM_France_DOM implements Projection, ProjectionSubPrefs {
             LatLon wgs = cart2LatLon(coord[0], coord[1], coord[2], Ellipsoid.GRS80);
             return new LatLon(Math.toDegrees(wgs.lat()), Math.toDegrees(wgs.lon()));
         } else {
-            // UTM_40S_Reunion_RGR92
+            // UTM_40S_Reunion_RGR92 or UTM_22N_Guyane_RGFG95
             LatLon geo = Geographic(p, Ellipsoid.GRS80.a, Ellipsoid.GRS80.e, 0.0 /* z */);
             double N = Ellipsoid.GRS80.a / (Math.sqrt(1.0 - Ellipsoid.GRS80.e2 * Math.sin(geo.lat()) * Math.sin(geo.lat())));
             double X = (N /*+ h*/) * Math.cos(geo.lat()) * Math.cos(geo.lon());
@@ -407,7 +415,7 @@ public class UTM_France_DOM implements Projection, ProjectionSubPrefs {
     }
 
     @Override public String toString() {
-        return (tr("UTM 20N (France)"));
+        return (tr("UTM France (DOM)"));
     }
 
     public int getCurrentGeodesic() {
@@ -419,7 +427,7 @@ public class UTM_France_DOM implements Projection, ProjectionSubPrefs {
 
         prefcb.setSelectedIndex(currentGeodesic);
         p.setLayout(new GridBagLayout());
-        p.add(new JLabel(tr("UTM20 North Geodesic system")), GBC.std().insets(5,5,0,5));
+        p.add(new JLabel(tr("UTM Geodesic system")), GBC.std().insets(5,5,0,5));
         p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
         p.add(prefcb, GBC.eop().fill(GBC.HORIZONTAL));
         p.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
@@ -448,7 +456,7 @@ public class UTM_France_DOM implements Projection, ProjectionSubPrefs {
                 for(String s : args)
                 {
                     currentGeodesic = Integer.parseInt(s)-1;
-                    if(currentGeodesic < 0 || currentGeodesic > 3) {
+                    if(currentGeodesic < 0 || currentGeodesic > 4) {
                         currentGeodesic = DEFAULT_GEODESIC;
                     }
                     break;
