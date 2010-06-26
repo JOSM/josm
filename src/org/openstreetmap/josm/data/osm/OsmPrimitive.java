@@ -183,77 +183,68 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return ret;
     }
 
-    /* mappaint data */
-    public ElemStyle mappaintStyle = null;
-    public int mappaintDrawnCode = 0;
-
-    /* This should not be called from outside. Fixing the UI to add relevant
-       get/set functions calling this implicitely is preferred, so we can have
-       transparent cache handling in the future. */
-    protected void clearCached()
-    {
-        mappaintDrawnCode = 0;
-        mappaintStyle = null;
-    }
-    /* end of mappaint data */
-
     /**
-     * Unique identifier in OSM. This is used to identify objects on the server.
-     * An id of 0 means an unknown id. The object has not been uploaded yet to
-     * know what id it will get.
-     *
+     * Some predicates, that describe conditions on primitives.
      */
-    private long id = 0;
+    public static final Predicate<OsmPrimitive> isUsablePredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return primitive.isUsable();
+        }
+    };
 
-    /** the parent dataset */
-    private DataSet dataSet;
+    public static final Predicate<OsmPrimitive> isSelectablePredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return primitive.isSelectable();
+        }
+    };
 
-    /**
-     * This method should never ever by called from somewhere else than Dataset.addPrimitive or removePrimitive methods
-     * @param dataSet
-     */
-    void setDataset(DataSet dataSet) {
-        if (this.dataSet != null && dataSet != null && this.dataSet != dataSet)
-            throw new DataIntegrityProblemException("Primitive cannot be included in more than one Dataset");
-        this.dataSet = dataSet;
-    }
+    public static final Predicate<OsmPrimitive> nonDeletedPredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return !primitive.isDeleted();
+        }
+    };
 
-    /**
-     *
-     * @return DataSet this primitive is part of.
-     */
-    public DataSet getDataSet() {
-        return dataSet;
-    }
+    public static final Predicate<OsmPrimitive> nonDeletedCompletePredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return !primitive.isDeleted() && !primitive.isIncomplete();
+        }
+    };
 
-    /**
-     * Throws exception if primitive is not part of the dataset
-     */
-    public void checkDataset() {
-        if (dataSet == null)
-            throw new DataIntegrityProblemException("Primitive  must be part of the dataset: " + toString());
-    }
+    public static final Predicate<OsmPrimitive> nonDeletedPhysicalPredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return !primitive.isDeleted() && !primitive.isIncomplete() && !(primitive instanceof Relation);
+        }
+    };
 
-    private volatile short flags = FLAG_VISIBLE;   // visible per default
+    public static final Predicate<OsmPrimitive> modifiedPredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return primitive.isModified();
+        }
+    };
 
-    /**
-     * User that last modified this primitive, as specified by the server.
-     * Never changed by JOSM.
-     */
-    private User user = null;
+    public static final Predicate<OsmPrimitive> nodePredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return primitive.getClass() == Node.class;
+        }
+    };
 
-    /**
-     * Contains the version number as returned by the API. Needed to
-     * ensure update consistency
-     */
-    private int version = 0;
+    public static final Predicate<OsmPrimitive> wayPredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return primitive.getClass() == Way.class;
+        }
+    };
 
-    /**
-     * The id of the changeset this primitive was last uploaded to.
-     * 0 if it wasn't uploaded to a changeset yet of if the changeset
-     * id isn't known.
-     */
-    private int changesetId;
+    public static final Predicate<OsmPrimitive> relationPredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return primitive.getClass() == Relation.class;
+        }
+    };
+
+    public static final Predicate<OsmPrimitive> allPredicate = new Predicate<OsmPrimitive>() {
+        public boolean evaluate(OsmPrimitive primitive) {
+            return true;
+        }
+    };
 
     /**
      * Creates a new primitive for the given id.
@@ -303,213 +294,86 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         setIncomplete(id > 0 && version == 0);
     }
 
-    /* ------------------------------------------------------------------------------------ */
-    /* accessors                                                                            */
-    /* ------------------------------------------------------------------------------------ */
+
+    /*----------
+     * MAPPAINT
+     *--------*/
+    public ElemStyle mappaintStyle = null;
+    public int mappaintDrawnCode = 0;
+
+    /* This should not be called from outside. Fixing the UI to add relevant
+       get/set functions calling this implicitely is preferred, so we can have
+       transparent cache handling in the future. */
+    protected void clearCached()
+    {
+        mappaintDrawnCode = 0;
+        mappaintStyle = null;
+    }
+    /* end of mappaint data */
+
+    /*---------
+     * DATASET
+     *---------*/
+
+    /** the parent dataset */
+    private DataSet dataSet;
 
     /**
-     * Make the primitive disabled (e.g. if a filter applies).
-     * To enable the primitive again, use unsetDisabledState.
-     * @param hide if the primitive should be completely hidden from view or
-     *             just shown in gray color.
+     * This method should never ever by called from somewhere else than Dataset.addPrimitive or removePrimitive methods
+     * @param dataSet
      */
-    public void setDisabledState(boolean hide) {
-        flags |= FLAG_DISABLED;
-        if (hide) {
-            flags |= FLAG_HIDE_IF_DISABLED;
-        } else {
-            flags &= ~FLAG_HIDE_IF_DISABLED;
-        }
+    void setDataset(DataSet dataSet) {
+        if (this.dataSet != null && dataSet != null && this.dataSet != dataSet)
+            throw new DataIntegrityProblemException("Primitive cannot be included in more than one Dataset");
+        this.dataSet = dataSet;
     }
 
     /**
-     * Remove the disabled flag from the primitive.
-     * Afterwards, the primitive is displayed normally and can be selected
-     * again.
-     */
-    public void unsetDisabledState() {
-        flags &= ~FLAG_DISABLED;
-        flags &= ~FLAG_HIDE_IF_DISABLED;
-    }
-
-    /**
-     * Replies true, if this primitive is disabled. (E.g. a filter
-     * applies)
-     */
-    public boolean isDisabled() {
-        return (flags & FLAG_DISABLED) != 0;
-    }
-
-    /**
-     * Replies true, if this primitive is disabled and marked as
-     * completely hidden on the map.
-     */
-    public boolean isDisabledAndHidden() {
-        return (((flags & FLAG_DISABLED) != 0) && ((flags & FLAG_HIDE_IF_DISABLED) != 0));
-    }
-
-    @Deprecated
-    public boolean isFiltered() {
-        return isDisabledAndHidden();
-    }
-
-    /**
-     * Marks this primitive as being modified.
      *
-     * @param modified true, if this primitive is to be modified
+     * @return DataSet this primitive is part of.
      */
-    public void setModified(boolean modified) {
-        if (modified) {
-            flags |= FLAG_MODIFIED;
-        } else {
-            flags &= ~FLAG_MODIFIED;
-        }
+    public DataSet getDataSet() {
+        return dataSet;
     }
 
     /**
-     * Replies <code>true</code> if the object has been modified since it was loaded from
-     * the server. In this case, on next upload, this object will be updated.
+     * Throws exception if primitive is not part of the dataset
+     */
+    public void checkDataset() {
+        if (dataSet == null)
+            throw new DataIntegrityProblemException("Primitive  must be part of the dataset: " + toString());
+    }
+
+    /*-------------------
+     * OTHER PROPERTIES
+     *-------------------/
+
+    /**
+     * Unique identifier in OSM. This is used to identify objects on the server.
+     * An id of 0 means an unknown id. The object has not been uploaded yet to
+     * know what id it will get.
      *
-     * Deleted objects are deleted from the server. If the objects are added (id=0),
-     * the modified is ignored and the object is added to the server.
-     *
-     * @return <code>true</code> if the object has been modified since it was loaded from
-     * the server
      */
-    public boolean isModified() {
-        return (flags & FLAG_MODIFIED) != 0;
-    }
+    private long id = 0;
 
     /**
-     * Replies <code>true</code>, if the object has been deleted.
-     *
-     * @return <code>true</code>, if the object has been deleted.
-     * @see #setDeleted(boolean)
+     * User that last modified this primitive, as specified by the server.
+     * Never changed by JOSM.
      */
-    public boolean isDeleted() {
-        return (flags & FLAG_DELETED) != 0;
-    }
+    private User user = null;
 
     /**
-     * Replies <code>true</code> if the object has been deleted on the server and was undeleted by the user.
-     * @return <code>true</code> if the object has been undeleted
+     * Contains the version number as returned by the API. Needed to
+     * ensure update consistency
      */
-    public boolean isUndeleted() {
-        return (flags & (FLAG_VISIBLE + FLAG_DELETED)) == 0;
-    }
+    private int version = 0;
 
     /**
-     * Replies <code>true</code>, if the object is usable (i.e. complete
-     * and not deleted).
-     *
-     * @return <code>true</code>, if the object is usable.
-     * @see #delete(boolean)
+     * The id of the changeset this primitive was last uploaded to.
+     * 0 if it wasn't uploaded to a changeset yet of if the changeset
+     * id isn't known.
      */
-    public boolean isUsable() {
-        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE)) == 0;
-    }
-
-    public boolean isSelectable() {
-        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_DISABLED + FLAG_HIDE_IF_DISABLED)) == 0;
-    }
-
-    public boolean isDrawable() {
-        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_HIDE_IF_DISABLED)) == 0;
-    }
-
-    /**
-     * Some predicates, that describe conditions on primitives.
-     */
-    public static Predicate<OsmPrimitive> isUsablePredicate = new Predicate<OsmPrimitive>() {
-        public boolean evaluate(OsmPrimitive primitive) {
-            return primitive.isUsable();
-        }
-    };
-
-    public static Predicate<OsmPrimitive> isSelectablePredicate = new Predicate<OsmPrimitive>() {
-        public boolean evaluate(OsmPrimitive primitive) {
-            return primitive.isSelectable();
-        }
-    };
-
-    public static Predicate<OsmPrimitive> nonDeletedPredicate = new Predicate<OsmPrimitive>() {
-        public boolean evaluate(OsmPrimitive primitive) {
-            return !primitive.isDeleted();
-        }
-    };
-
-    public static Predicate<OsmPrimitive> nonDeletedCompletePredicate = new Predicate<OsmPrimitive>() {
-        public boolean evaluate(OsmPrimitive primitive) {
-            return !primitive.isDeleted() && !primitive.isIncomplete();
-        }
-    };
-
-    public static Predicate<OsmPrimitive> nonDeletedPhysicalPredicate = new Predicate<OsmPrimitive>() {
-        public boolean evaluate(OsmPrimitive primitive) {
-            return !primitive.isDeleted() && !primitive.isIncomplete() && !(primitive instanceof Relation);
-        }
-    };
-
-    public static Predicate<OsmPrimitive> modifiedPredicate = new Predicate<OsmPrimitive>() {
-        public boolean evaluate(OsmPrimitive primitive) {
-            return primitive.isModified();
-        }
-    };
-
-    public static Predicate<OsmPrimitive> nodePredicate = new Predicate<OsmPrimitive>() {
-        public boolean evaluate(OsmPrimitive primitive) {
-            return primitive.getClass() == Node.class;
-        }
-    };
-
-    public static Predicate<OsmPrimitive> wayPredicate = new Predicate<OsmPrimitive>() {
-        public boolean evaluate(OsmPrimitive primitive) {
-            return primitive.getClass() == Way.class;
-        }
-    };
-
-    public static Predicate<OsmPrimitive> relationPredicate = new Predicate<OsmPrimitive>() {
-        public boolean evaluate(OsmPrimitive primitive) {
-            return primitive.getClass() == Relation.class;
-        }
-    };
-
-    public static Predicate<OsmPrimitive> allPredicate = new Predicate<OsmPrimitive>() {
-        public boolean evaluate(OsmPrimitive primitive) {
-            return true;
-        }
-    };
-
-
-    /**
-     * Replies true if this primitive is either unknown to the server (i.e. its id
-     * is 0) or it is known to the server and it hasn't be deleted on the server.
-     * Replies false, if this primitive is known on the server and has been deleted
-     * on the server.
-     *
-     * @see #setVisible(boolean)
-     */
-    public boolean isVisible() {
-        return (flags & FLAG_VISIBLE) != 0;
-    }
-
-    /**
-     * Sets whether this primitive is visible, i.e. whether it is known on the server
-     * and not deleted on the server.
-     *
-     * @see #isVisible()
-     * @throws IllegalStateException thrown if visible is set to false on an primitive with
-     * id==0
-     */
-    public void setVisible(boolean visible) throws IllegalStateException{
-        if (isNew() && visible == false)
-            throw new IllegalStateException(tr("A primitive with ID = 0 cannot be invisible."));
-        if (visible) {
-            flags |= FLAG_VISIBLE;
-        } else {
-            flags &= ~FLAG_VISIBLE;
-        }
-    }
+    private int changesetId;
 
     /**
      * Replies the version number as returned by the API. The version is 0 if the id is 0 or
@@ -603,6 +467,66 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         this.setIncomplete(false);
     }
 
+    /**
+     * Replies the user who has last touched this object. May be null.
+     *
+     * @return the user who has last touched this object. May be null.
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * Sets the user who has last touched this object.
+     *
+     * @param user the user
+     */
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    /**
+     * Replies the id of the changeset this primitive was last uploaded to.
+     * 0 if this primitive wasn't uploaded to a changeset yet or if the
+     * changeset isn't known.
+     *
+     * @return the id of the changeset this primitive was last uploaded to.
+     */
+    public int getChangesetId() {
+        return changesetId;
+    }
+
+    /**
+     * Sets the changeset id of this primitive. Can't be set on a new
+     * primitive.
+     *
+     * @param changesetId the id. >= 0 required.
+     * @throws IllegalStateException thrown if this primitive is new.
+     * @throws IllegalArgumentException thrown if id < 0
+     */
+    public void setChangesetId(int changesetId) throws IllegalStateException, IllegalArgumentException {
+        if (this.changesetId == changesetId)
+            return;
+        if (changesetId < 0)
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' >= 0 expected, got {1}", "changesetId", changesetId));
+        if (isNew() && changesetId > 0)
+            throw new IllegalStateException(tr("Cannot assign a changesetId > 0 to a new primitive. Value of changesetId is {0}", changesetId));
+        int old = this.changesetId;
+        this.changesetId = changesetId;
+        if (dataSet != null) {
+            dataSet.fireChangesetIdChanged(this, old, changesetId);
+        }
+    }
+
+    /**
+     * Replies the unique primitive id for this primitive
+     *
+     * @return the unique primitive id for this primitive
+     */
+    public PrimitiveId getPrimitiveId() {
+        return new SimplePrimitiveId(getUniqueId(), getType());
+    }
+
     public void setTimestamp(Date timestamp) {
         this.timestamp = (int)(timestamp.getTime() / 1000);
     }
@@ -623,6 +547,212 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     private int timestamp;
 
+    /* -------
+    /* FLAGS
+    /* ------*/
+
+    private volatile short flags = FLAG_VISIBLE;   // visible per default
+
+    private void updateFlags(int flag, boolean value) {
+        if (value) {
+            flags |= flag;
+        } else {
+            flags &= ~flag;
+        }
+    }
+
+    /**
+     * Make the primitive disabled (e.g. if a filter applies).
+     * To enable the primitive again, use unsetDisabledState.
+     * @param hide if the primitive should be completely hidden from view or
+     *             just shown in gray color.
+     */
+    public void setDisabledState(boolean hide) {
+        flags |= FLAG_DISABLED;
+        if (hide) {
+            flags |= FLAG_HIDE_IF_DISABLED;
+        } else {
+            flags &= ~FLAG_HIDE_IF_DISABLED;
+        }
+    }
+
+    /**
+     * Remove the disabled flag from the primitive.
+     * Afterwards, the primitive is displayed normally and can be selected
+     * again.
+     */
+    public void unsetDisabledState() {
+        updateFlags(FLAG_DISABLED + FLAG_HIDE_IF_DISABLED, false);
+    }
+
+    /**
+     * Replies true, if this primitive is disabled. (E.g. a filter
+     * applies)
+     */
+    public boolean isDisabled() {
+        return (flags & FLAG_DISABLED) != 0;
+    }
+
+    /**
+     * Replies true, if this primitive is disabled and marked as
+     * completely hidden on the map.
+     */
+    public boolean isDisabledAndHidden() {
+        return (((flags & FLAG_DISABLED) != 0) && ((flags & FLAG_HIDE_IF_DISABLED) != 0));
+    }
+
+    @Deprecated
+    public boolean isFiltered() {
+        return isDisabledAndHidden();
+    }
+
+    /**
+     * Marks this primitive as being modified.
+     *
+     * @param modified true, if this primitive is to be modified
+     */
+    public void setModified(boolean modified) {
+        updateFlags(FLAG_MODIFIED, modified);
+    }
+
+    /**
+     * Replies <code>true</code> if the object has been modified since it was loaded from
+     * the server. In this case, on next upload, this object will be updated.
+     *
+     * Deleted objects are deleted from the server. If the objects are added (id=0),
+     * the modified is ignored and the object is added to the server.
+     *
+     * @return <code>true</code> if the object has been modified since it was loaded from
+     * the server
+     */
+    public boolean isModified() {
+        return (flags & FLAG_MODIFIED) != 0;
+    }
+
+    /**
+     * Replies <code>true</code>, if the object has been deleted.
+     *
+     * @return <code>true</code>, if the object has been deleted.
+     * @see #setDeleted(boolean)
+     */
+    public boolean isDeleted() {
+        return (flags & FLAG_DELETED) != 0;
+    }
+
+    /**
+     * Replies <code>true</code> if the object has been deleted on the server and was undeleted by the user.
+     * @return <code>true</code> if the object has been undeleted
+     */
+    public boolean isUndeleted() {
+        return (flags & (FLAG_VISIBLE + FLAG_DELETED)) == 0;
+    }
+
+    /**
+     * Replies <code>true</code>, if the object is usable (i.e. complete
+     * and not deleted).
+     *
+     * @return <code>true</code>, if the object is usable.
+     * @see #delete(boolean)
+     */
+    public boolean isUsable() {
+        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE)) == 0;
+    }
+
+    public boolean isSelectable() {
+        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_DISABLED + FLAG_HIDE_IF_DISABLED)) == 0;
+    }
+
+    public boolean isDrawable() {
+        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_HIDE_IF_DISABLED)) == 0;
+    }
+
+    /**
+     * Replies true if this primitive is either unknown to the server (i.e. its id
+     * is 0) or it is known to the server and it hasn't be deleted on the server.
+     * Replies false, if this primitive is known on the server and has been deleted
+     * on the server.
+     *
+     * @see #setVisible(boolean)
+     */
+    public boolean isVisible() {
+        return (flags & FLAG_VISIBLE) != 0;
+    }
+
+    /**
+     * Sets whether this primitive is visible, i.e. whether it is known on the server
+     * and not deleted on the server.
+     *
+     * @see #isVisible()
+     * @throws IllegalStateException thrown if visible is set to false on an primitive with
+     * id==0
+     */
+    public void setVisible(boolean visible) throws IllegalStateException{
+        if (isNew() && visible == false)
+            throw new IllegalStateException(tr("A primitive with ID = 0 cannot be invisible."));
+        updateFlags(FLAG_VISIBLE, visible);
+    }
+
+    /**
+     * Sets whether this primitive is deleted or not.
+     *
+     * Also marks this primitive as modified if deleted is true.
+     *
+     * @param deleted  true, if this primitive is deleted; false, otherwise
+     */
+    public void setDeleted(boolean deleted) {
+        updateFlags(FLAG_DELETED, deleted);
+        setModified(deleted ^ !isVisible());
+        if (dataSet != null) {
+            if (deleted) {
+                dataSet.firePrimitivesRemoved(Collections.singleton(this), false);
+            } else {
+                dataSet.firePrimitivesAdded(Collections.singleton(this), false);
+            }
+        }
+    }
+
+
+    /**
+     * If set to true, this object is incomplete, which means only the id
+     * and type is known (type is the objects instance class)
+     */
+    private void setIncomplete(boolean incomplete) {
+        if (dataSet != null && incomplete != this.isIncomplete()) {
+            if (incomplete) {
+                dataSet.firePrimitivesRemoved(Collections.singletonList(this), true);
+            } else {
+                dataSet.firePrimitivesAdded(Collections.singletonList(this), true);
+            }
+        }
+        updateFlags(FLAG_INCOMPLETE, incomplete);
+    }
+
+    public boolean isIncomplete() {
+        return (flags & FLAG_INCOMPLETE) != 0;
+    }
+
+    public boolean isSelected() {
+        return dataSet != null && dataSet.isSelected(this);
+    }
+
+    public void setHighlighted(boolean highlighted) {
+        if (isHighlighted() != highlighted) {
+            updateFlags(FLAG_HIGHLIGHTED, highlighted);
+            if (dataSet != null) {
+                dataSet.fireHighlightingChanged(this);
+            }
+        }
+    }
+
+    public boolean isHighlighted() {
+        return (flags & FLAG_HIGHLIGHTED) != 0;
+    }
+
+    /*----------------------------------
+     * UNINTERESTING AND DIRECTION KEYS
+     *----------------------------------*/
+
+
     private static volatile Collection<String> uninteresting = null;
     /**
      * Contains a list of "uninteresting" keys that do not make an object
@@ -635,7 +765,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             uninteresting = Main.pref.getCollection("tags.uninteresting",
                     Arrays.asList(new String[]{"source", "source_ref", "source:", "note", "comment",
                             "converted_by", "created_by", "watch", "watch:", "fixme", "FIXME",
-                            "description"}));
+                    "description"}));
         }
         return uninteresting;
     }
@@ -707,118 +837,52 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         }
     }
 
-    /**
-     * Replies a list of direction-dependent keys that make an object
-     * direction dependent.
-     *
-     * @return  a list of direction-dependent keys that make an object
-     * direction dependent.
-     */
-    @Deprecated
-    public static Collection<String> getDirectionKeys() {
-        return Main.pref.getCollection("tags.direction",
-                Arrays.asList("oneway","incline","incline_steep","aerialway"));
-    }
-
-    /**
-     * Implementation of the visitor scheme. Subclasses have to call the correct
-     * visitor function.
-     * @param visitor The visitor from which the visit() function must be called.
-     */
-    abstract public void visit(Visitor visitor);
-
-    /**
-     * Sets whether this primitive is deleted or not.
-     *
-     * Also marks this primitive as modified if deleted is true.
-     *
-     * @param deleted  true, if this primitive is deleted; false, otherwise
-     */
-    public void setDeleted(boolean deleted) {
-        if (deleted) {
-            flags |= FLAG_DELETED;
-        } else {
-            flags &= ~FLAG_DELETED;
-        }
-        setModified(deleted ^ !isVisible());
-        if (dataSet != null) {
-            if (deleted) {
-                dataSet.firePrimitivesRemoved(Collections.singleton(this), false);
-            } else {
-                dataSet.firePrimitivesAdded(Collections.singleton(this), false);
+    private void updateTagged() {
+        if (keys != null) {
+            for (String key: keySet()) {
+                if (!isUninterestingKey(key)) {
+                    updateFlags(FLAG_TAGGED, true);
+                    return;
+                }
             }
         }
+        updateFlags(FLAG_TAGGED, false);
     }
 
     /**
-     * Replies the user who has last touched this object. May be null.
-     *
-     * @return the user who has last touched this object. May be null.
+     * true if this object is considered "tagged". To be "tagged", an object
+     * must have one or more "interesting" tags. "created_by" and "source"
+     * are typically considered "uninteresting" and do not make an object
+     * "tagged".
      */
-    public User getUser() {
-        return user;
+    public boolean isTagged() {
+        return (flags & FLAG_TAGGED) != 0;
     }
 
-    /**
-     * Sets the user who has last touched this object.
-     *
-     * @param user the user
-     */
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    /**
-     * Replies the id of the changeset this primitive was last uploaded to.
-     * 0 if this primitive wasn't uploaded to a changeset yet or if the
-     * changeset isn't known.
-     *
-     * @return the id of the changeset this primitive was last uploaded to.
-     */
-    public int getChangesetId() {
-        return changesetId;
-    }
-
-    /**
-     * Sets the changeset id of this primitive. Can't be set on a new
-     * primitive.
-     *
-     * @param changesetId the id. >= 0 required.
-     * @throws IllegalStateException thrown if this primitive is new.
-     * @throws IllegalArgumentException thrown if id < 0
-     */
-    public void setChangesetId(int changesetId) throws IllegalStateException, IllegalArgumentException {
-        if (this.changesetId == changesetId)
-            return;
-        if (changesetId < 0)
-            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' >= 0 expected, got {1}", "changesetId", changesetId));
-        if (isNew() && changesetId > 0)
-            throw new IllegalStateException(tr("Cannot assign a changesetId > 0 to a new primitive. Value of changesetId is {0}", changesetId));
-        int old = this.changesetId;
-        this.changesetId = changesetId;
-        if (dataSet != null) {
-            dataSet.fireChangesetIdChanged(this, old, changesetId);
+    private void updateDirectionFlags() {
+        boolean hasDirections = false;
+        boolean directionReversed = false;
+        if (reversedDirectionKeys.match(this)) {
+            hasDirections = true;
+            directionReversed = true;
         }
+        if (directionKeys.match(this)) {
+            hasDirections = true;
+        }
+
+        updateFlags(FLAG_DIRECTION_REVERSED, directionReversed);
+        updateFlags(FLAG_HAS_DIRECTIONS, hasDirections);
     }
 
     /**
-     * Equal, if the id (and class) is equal.
-     *
-     * An primitive is equal to its incomplete counter part.
+     * true if this object has direction dependent tags (e.g. oneway)
      */
-    @Override public boolean equals(Object obj) {
-        if (obj instanceof OsmPrimitive)
-            return ((OsmPrimitive)obj).id == id && obj.getClass() == getClass();
-        return false;
+    public boolean hasDirectionKeys() {
+        return (flags & FLAG_HAS_DIRECTIONS) != 0;
     }
 
-    /**
-     * Return the id plus the class type encoded as hashcode or super's hashcode if id is 0.
-     *
-     * An primitive has the same hashcode as its incomplete counterpart.
-     */
-    @Override public final int hashCode() {
-        return (int)id;
+    public boolean reversedDirection() {
+        return (flags & FLAG_DIRECTION_REVERSED) != 0;
     }
 
     /*------------
@@ -1120,6 +1184,18 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return result;
     }
 
+    /*-----------------
+     * OTHER METHODS
+     *----------------/
+
+    /**
+     * Implementation of the visitor scheme. Subclasses have to call the correct
+     * visitor function.
+     * @param visitor The visitor from which the visit() function must be called.
+     */
+    abstract public void visit(Visitor visitor);
+
+
     /**
      * Get and write all attributes from the parameter. Does not fire any listener, so
      * use this only in the data initializing phase
@@ -1229,61 +1305,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         && changesetId == other.changesetId;
     }
 
-    private void updateTagged() {
-        if (keys != null) {
-            for (String key: keySet()) {
-                if (!isUninterestingKey(key)) {
-                    flags |= FLAG_TAGGED;
-                    return;
-                }
-            }
-        }
-        flags &= ~FLAG_TAGGED;
-    }
-
-    /**
-     * true if this object is considered "tagged". To be "tagged", an object
-     * must have one or more "interesting" tags. "created_by" and "source"
-     * are typically considered "uninteresting" and do not make an object
-     * "tagged".
-     */
-    public boolean isTagged() {
-        return (flags & FLAG_TAGGED) != 0;
-    }
-
-    private void updateDirectionFlags() {
-        boolean hasDirections = false;
-        boolean directionReversed = false;
-        if (reversedDirectionKeys.match(this)) {
-            hasDirections = true;
-            directionReversed = true;
-        }
-        if (directionKeys.match(this)) {
-            hasDirections = true;
-        }
-
-        if (directionReversed) {
-            flags |= FLAG_DIRECTION_REVERSED;
-        } else {
-            flags &= ~FLAG_DIRECTION_REVERSED;
-        }
-        if (hasDirections) {
-            flags |= FLAG_HAS_DIRECTIONS;
-        } else {
-            flags &= ~FLAG_HAS_DIRECTIONS;
-        }
-    }
-
-    /**
-     * true if this object has direction dependent tags (e.g. oneway)
-     */
-    public boolean hasDirectionKeys() {
-        return (flags & FLAG_HAS_DIRECTIONS) != 0;
-    }
-
-    public boolean reversedDirection() {
-        return (flags & FLAG_DIRECTION_REVERSED) != 0;
-    }
     /**
      * Replies the name of this primitive. The default implementation replies the value
      * of the tag <tt>name</tt> or null, if this tag is not present.
@@ -1365,6 +1386,18 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         data.setVersion(version);
     }
 
+
+    public abstract BBox getBBox();
+
+    /**
+     * Called by Dataset to update cached position information of primitive (bbox, cached EarthNorth, ...)
+     */
+    public abstract void updatePosition();
+
+    /*----------------
+     * OBJECT METHODS
+     *---------------*/
+
     protected String getFlagsAsString() {
         StringBuilder builder = new StringBuilder();
 
@@ -1399,63 +1432,24 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return builder.toString();
     }
 
-    public abstract BBox getBBox();
-
     /**
-     * Called by Dataset to update cached position information of primitive (bbox, cached EarthNorth, ...)
-     */
-    public abstract void updatePosition();
-
-    /**
-     * Replies the unique primitive id for this primitive
+     * Equal, if the id (and class) is equal.
      *
-     * @return the unique primitive id for this primitive
+     * An primitive is equal to its incomplete counter part.
      */
-    public PrimitiveId getPrimitiveId() {
-        return new SimplePrimitiveId(getUniqueId(), getType());
+    @Override public boolean equals(Object obj) {
+        if (obj instanceof OsmPrimitive)
+            return ((OsmPrimitive)obj).id == id && obj.getClass() == getClass();
+        return false;
     }
 
     /**
-     * If set to true, this object is incomplete, which means only the id
-     * and type is known (type is the objects instance class)
+     * Return the id plus the class type encoded as hashcode or super's hashcode if id is 0.
+     *
+     * An primitive has the same hashcode as its incomplete counterpart.
      */
-    private void setIncomplete(boolean incomplete) {
-        if (dataSet != null && incomplete != this.isIncomplete()) {
-            if (incomplete) {
-                dataSet.firePrimitivesRemoved(Collections.singletonList(this), true);
-            } else {
-                dataSet.firePrimitivesAdded(Collections.singletonList(this), true);
-            }
-        }
-        if (incomplete) {
-            flags |= FLAG_INCOMPLETE;
-        } else {
-            flags &= ~FLAG_INCOMPLETE;
-        }
+    @Override public final int hashCode() {
+        return (int)id;
     }
 
-    public boolean isIncomplete() {
-        return (flags & FLAG_INCOMPLETE) != 0;
-    }
-
-    public boolean isSelected() {
-        return dataSet != null && dataSet.isSelected(this);
-    }
-
-    public void setHighlighted(boolean highlighted) {
-        if (isHighlighted() != highlighted) {
-            if (highlighted) {
-                flags |= FLAG_HIGHLIGHTED;
-            } else {
-                flags &= ~FLAG_HIGHLIGHTED;
-            }
-            if (dataSet != null) {
-                dataSet.fireHighlightingChanged(this);
-            }
-        }
-    }
-
-    public boolean isHighlighted() {
-        return (flags & FLAG_HIGHLIGHTED) != 0;
-    }
 }
