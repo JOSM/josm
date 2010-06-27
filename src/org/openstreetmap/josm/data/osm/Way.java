@@ -46,21 +46,26 @@ public final class Way extends OsmPrimitive {
      * @since 1862
      */
     public void setNodes(List<Node> nodes) {
-        for (Node node:this.nodes) {
-            node.removeReferrer(this);
-        }
+        boolean locked = writeLock();
+        try {
+            for (Node node:this.nodes) {
+                node.removeReferrer(this);
+            }
 
-        if (nodes == null) {
-            this.nodes = new Node[0];
-        } else {
-            this.nodes = nodes.toArray(new Node[nodes.size()]);
-        }
-        for (Node node:this.nodes) {
-            node.addReferrer(this);
-        }
+            if (nodes == null) {
+                this.nodes = new Node[0];
+            } else {
+                this.nodes = nodes.toArray(new Node[nodes.size()]);
+            }
+            for (Node node:this.nodes) {
+                node.addReferrer(this);
+            }
 
-        clearCached();
-        fireNodesChanged();
+            clearCached();
+            fireNodesChanged();
+        } finally {
+            writeUnlock(locked);
+        }
     }
 
     /**
@@ -97,6 +102,8 @@ public final class Way extends OsmPrimitive {
      */
     public boolean containsNode(Node node) {
         if (node == null) return false;
+
+        Node[] nodes = this.nodes;
         for (int i=0; i<nodes.length; i++) {
             if (nodes[i].equals(node))
                 return true;
@@ -114,11 +121,12 @@ public final class Way extends OsmPrimitive {
         mappaintDrawnAreaCode = 0;
     }
 
-    public ArrayList<Pair<Node,Node>> getNodePairs(boolean sort) {
-        ArrayList<Pair<Node,Node>> chunkSet = new ArrayList<Pair<Node,Node>>();
+    public List<Pair<Node,Node>> getNodePairs(boolean sort) {
+        List<Pair<Node,Node>> chunkSet = new ArrayList<Pair<Node,Node>>();
         if (isIncomplete()) return chunkSet;
         Node lastN = null;
-        for (Node n : this.nodes) {
+        Node[] nodes = this.nodes;
+        for (Node n : nodes) {
             if (lastN == null) {
                 lastN = n;
                 continue;
@@ -197,19 +205,24 @@ public final class Way extends OsmPrimitive {
      */
     @Override
     public void load(PrimitiveData data) {
-        super.load(data);
+        boolean locked = writeLock();
+        try {
+            super.load(data);
 
-        WayData wayData = (WayData) data;
+            WayData wayData = (WayData) data;
 
-        List<Node> newNodes = new ArrayList<Node>(wayData.getNodes().size());
-        for (Long nodeId : wayData.getNodes()) {
-            Node node = (Node)getDataSet().getPrimitiveById(nodeId, OsmPrimitiveType.NODE);
-            if (node != null) {
-                newNodes.add(node);
-            } else
-                throw new AssertionError("Data consistency problem - way with missing node detected");
+            List<Node> newNodes = new ArrayList<Node>(wayData.getNodes().size());
+            for (Long nodeId : wayData.getNodes()) {
+                Node node = (Node)getDataSet().getPrimitiveById(nodeId, OsmPrimitiveType.NODE);
+                if (node != null) {
+                    newNodes.add(node);
+                } else
+                    throw new AssertionError("Data consistency problem - way with missing node detected");
+            }
+            setNodes(newNodes);
+        } finally {
+            writeUnlock(locked);
         }
-        setNodes(newNodes);
     }
 
     @Override public WayData save() {
@@ -222,9 +235,14 @@ public final class Way extends OsmPrimitive {
     }
 
     @Override public void cloneFrom(OsmPrimitive osm) {
-        super.cloneFrom(osm);
-        Way otherWay = (Way)osm;
-        setNodes(otherWay.getNodes());
+        boolean locked = writeLock();
+        try {
+            super.cloneFrom(osm);
+            Way otherWay = (Way)osm;
+            setNodes(otherWay.getNodes());
+        } finally {
+            writeUnlock(locked);
+        }
     }
 
     @Override public String toString() {
@@ -255,27 +273,37 @@ public final class Way extends OsmPrimitive {
 
     public void removeNode(Node n) {
         if (isIncomplete()) return;
-        boolean closed = (lastNode() == n && firstNode() == n);
-        int i;
-        List<Node> copy = getNodes();
-        while ((i = copy.indexOf(n)) >= 0) {
-            copy.remove(i);
+        boolean locked = writeLock();
+        try {
+            boolean closed = (lastNode() == n && firstNode() == n);
+            int i;
+            List<Node> copy = getNodes();
+            while ((i = copy.indexOf(n)) >= 0) {
+                copy.remove(i);
+            }
+            i = copy.size();
+            if (closed && i > 2) {
+                copy.add(copy.get(0));
+            } else if (i >= 2 && i <= 3 && copy.get(0) == copy.get(i-1)) {
+                copy.remove(i-1);
+            }
+            setNodes(copy);
+        } finally {
+            writeUnlock(locked);
         }
-        i = copy.size();
-        if (closed && i > 2) {
-            copy.add(copy.get(0));
-        } else if (i >= 2 && i <= 3 && copy.get(0) == copy.get(i-1)) {
-            copy.remove(i-1);
-        }
-        setNodes(copy);
     }
 
     public void removeNodes(Collection<? extends OsmPrimitive> selection) {
         if (isIncomplete()) return;
-        for(OsmPrimitive p : selection) {
-            if (p instanceof Node) {
-                removeNode((Node)p);
+        boolean locked = writeLock();
+        try {
+            for(OsmPrimitive p : selection) {
+                if (p instanceof Node) {
+                    removeNode((Node)p);
+                }
             }
+        } finally {
+            writeUnlock(locked);
         }
     }
 
@@ -288,15 +316,21 @@ public final class Way extends OsmPrimitive {
      */
     public void addNode(Node n) throws IllegalStateException {
         if (n==null) return;
-        if (isIncomplete())
-            throw new IllegalStateException(tr("Cannot add node {0} to incomplete way {1}.", n.getId(), getId()));
-        clearCached();
-        n.addReferrer(this);
-        Node[] newNodes = new Node[nodes.length + 1];
-        System.arraycopy(nodes, 0, newNodes, 0, nodes.length);
-        newNodes[nodes.length] = n;
-        nodes = newNodes;
-        fireNodesChanged();
+
+        boolean locked = writeLock();
+        try {
+            if (isIncomplete())
+                throw new IllegalStateException(tr("Cannot add node {0} to incomplete way {1}.", n.getId(), getId()));
+            clearCached();
+            n.addReferrer(this);
+            Node[] newNodes = new Node[nodes.length + 1];
+            System.arraycopy(nodes, 0, newNodes, 0, nodes.length);
+            newNodes[nodes.length] = n;
+            nodes = newNodes;
+            fireNodesChanged();
+        } finally {
+            writeUnlock(locked);
+        }
     }
 
     /**
@@ -310,49 +344,66 @@ public final class Way extends OsmPrimitive {
      */
     public void addNode(int offs, Node n) throws IllegalStateException, IndexOutOfBoundsException {
         if (n==null) return;
-        if (isIncomplete())
-            throw new IllegalStateException(tr("Cannot add node {0} to incomplete way {1}.", n.getId(), getId()));
-        clearCached();
-        n.addReferrer(this);
-        Node[] newNodes = new Node[nodes.length + 1];
-        System.arraycopy(nodes, 0, newNodes, 0, offs);
-        System.arraycopy(nodes, offs, newNodes, offs + 1, nodes.length - offs);
-        newNodes[offs] = n;
-        nodes = newNodes;
-        fireNodesChanged();
+
+        boolean locked = writeLock();
+        try {
+            if (isIncomplete())
+                throw new IllegalStateException(tr("Cannot add node {0} to incomplete way {1}.", n.getId(), getId()));
+
+            clearCached();
+            n.addReferrer(this);
+            Node[] newNodes = new Node[nodes.length + 1];
+            System.arraycopy(nodes, 0, newNodes, 0, offs);
+            System.arraycopy(nodes, offs, newNodes, offs + 1, nodes.length - offs);
+            newNodes[offs] = n;
+            nodes = newNodes;
+            fireNodesChanged();
+        } finally {
+            writeUnlock(locked);
+        }
     }
 
     @Override
     public void setDeleted(boolean deleted) {
-        for (Node n:nodes) {
-            if (deleted) {
-                n.removeReferrer(this);
-            } else {
-                n.addReferrer(this);
+        boolean locked = writeLock();
+        try {
+            for (Node n:nodes) {
+                if (deleted) {
+                    n.removeReferrer(this);
+                } else {
+                    n.addReferrer(this);
+                }
             }
+            fireNodesChanged();
+            super.setDeleted(deleted);
+        } finally {
+            writeUnlock(locked);
         }
-        fireNodesChanged();
-        super.setDeleted(deleted);
     }
 
     public boolean isClosed() {
         if (isIncomplete()) return false;
-        return nodes.length >= 3 && lastNode() == firstNode();
+
+        Node[] nodes = this.nodes;
+        return nodes.length >= 3 && nodes[nodes.length-1] == nodes[0];
     }
 
     public Node lastNode() {
+        Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length == 0) return null;
         return nodes[nodes.length-1];
     }
 
     public Node firstNode() {
+        Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length == 0) return null;
         return nodes[0];
     }
 
     public boolean isFirstLastNode(Node n) {
+        Node[] nodes = this.nodes;
         if (isIncomplete() || nodes.length == 0) return false;
-        return n == firstNode() || n == lastNode();
+        return n == nodes[0] || n == nodes[nodes.length -1];
     }
 
     @Override
@@ -367,6 +418,7 @@ public final class Way extends OsmPrimitive {
     private void checkNodes() {
         DataSet dataSet = getDataSet();
         if (dataSet != null) {
+            Node[] nodes = this.nodes;
             for (Node n: nodes) {
                 if (n.getDataSet() != dataSet)
                     throw new DataIntegrityProblemException("Nodes in way must be in the same dataset");
@@ -411,6 +463,7 @@ public final class Way extends OsmPrimitive {
     }
 
     public boolean hasIncompleteNodes() {
+        Node[] nodes = this.nodes;
         for (Node node:nodes) {
             if (node.isIncomplete())
                 return true;

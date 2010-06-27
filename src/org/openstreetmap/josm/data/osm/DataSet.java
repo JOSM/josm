@@ -14,6 +14,9 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -41,6 +44,16 @@ import org.openstreetmap.josm.tools.Predicate;
  */
 public class DataSet implements Cloneable {
 
+    /**
+     * Maximum number of events that can be fired between beginUpdate/endUpdate to be send as single events (ie without DatasetChangedEvent)
+     */
+    private static final int MAX_SINGLE_EVENTS = 30;
+
+    /**
+     * Maximum number of events to kept between beginUpdate/endUpdate. When more events are created, that simple DatasetChangedEvent is sent)
+     */
+    private static final int MAX_EVENTS = 1000;
+
     private static class IdHash implements Hash<PrimitiveId,OsmPrimitive> {
 
         public int getHashCode(PrimitiveId k) {
@@ -56,10 +69,19 @@ public class DataSet implements Cloneable {
     private Storage<OsmPrimitive> allPrimitives = new Storage<OsmPrimitive>(new IdHash(), 16, true);
     private Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives.foreignKey(new IdHash());
     private List<DataSetListener> listeners = new ArrayList<DataSetListener>();
+
     // Number of open calls to beginUpdate
     private int updateCount;
+    // Events that occurred while dataset was locked but should be fired after write lock is released
+    private final List<AbstractDatasetChangedEvent> cachedEvents = new ArrayList<AbstractDatasetChangedEvent>();
 
     private int highlightUpdateCount;
+
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
+
+    public Lock getReadLock() {
+        return lock.readLock();
+    }
 
     /**
      * This method can be used to detect changes in highlight state of primitives. If highlighting was changed
@@ -211,37 +233,47 @@ public class DataSet implements Cloneable {
      * @param primitive the primitive.
      */
     public void addPrimitive(OsmPrimitive primitive) {
-        if (getPrimitiveById(primitive) != null)
-            throw new DataIntegrityProblemException(
-                    tr("Unable to add primitive {0} to the dataset because it is already included", primitive.toString()));
+        beginUpdate();
+        try {
+            if (getPrimitiveById(primitive) != null)
+                throw new DataIntegrityProblemException(
+                        tr("Unable to add primitive {0} to the dataset because it is already included", primitive.toString()));
 
-        primitive.updatePosition(); // Set cached bbox for way and relation (required for reindexWay and reinexRelation to work properly)
-        if (primitive instanceof Node) {
-            nodes.add((Node) primitive);
-        } else if (primitive instanceof Way) {
-            ways.add((Way) primitive);
-        } else if (primitive instanceof Relation) {
-            relations.add((Relation) primitive);
+            primitive.updatePosition(); // Set cached bbox for way and relation (required for reindexWay and reinexRelation to work properly)
+            if (primitive instanceof Node) {
+                nodes.add((Node) primitive);
+            } else if (primitive instanceof Way) {
+                ways.add((Way) primitive);
+            } else if (primitive instanceof Relation) {
+                relations.add((Relation) primitive);
+            }
+            allPrimitives.add(primitive);
+            primitive.setDataset(this);
+            firePrimitivesAdded(Collections.singletonList(primitive), false);
+        } finally {
+            endUpdate();
         }
-        allPrimitives.add(primitive);
-        primitive.setDataset(this);
-        firePrimitivesAdded(Collections.singletonList(primitive), false);
     }
 
     public OsmPrimitive addPrimitive(PrimitiveData data) {
-        OsmPrimitive result;
-        if (data instanceof NodeData) {
-            result = new Node();
-        } else if (data instanceof WayData) {
-            result = new Way();
-        } else if (data instanceof RelationData) {
-            result = new Relation();
-        } else
-            throw new AssertionError();
-        result.setDataset(this);
-        result.load(data);
-        addPrimitive(result);
-        return result;
+        beginUpdate();
+        try {
+            OsmPrimitive result;
+            if (data instanceof NodeData) {
+                result = new Node();
+            } else if (data instanceof WayData) {
+                result = new Way();
+            } else if (data instanceof RelationData) {
+                result = new Relation();
+            } else
+                throw new AssertionError();
+            result.setDataset(this);
+            result.load(data);
+            addPrimitive(result);
+            return result;
+        } finally {
+            endUpdate();
+        }
     }
 
     /**
@@ -254,20 +286,25 @@ public class DataSet implements Cloneable {
      * @param primitive the primitive
      */
     public void removePrimitive(PrimitiveId primitiveId) {
-        OsmPrimitive primitive = getPrimitiveByIdChecked(primitiveId);
-        if (primitive == null)
-            return;
-        if (primitive instanceof Node) {
-            nodes.remove(primitive);
-        } else if (primitive instanceof Way) {
-            ways.remove(primitive);
-        } else if (primitive instanceof Relation) {
-            relations.remove(primitive);
+        beginUpdate();
+        try {
+            OsmPrimitive primitive = getPrimitiveByIdChecked(primitiveId);
+            if (primitive == null)
+                return;
+            if (primitive instanceof Node) {
+                nodes.remove(primitive);
+            } else if (primitive instanceof Way) {
+                ways.remove(primitive);
+            } else if (primitive instanceof Relation) {
+                relations.remove(primitive);
+            }
+            selectedPrimitives.remove(primitive);
+            allPrimitives.remove(primitive);
+            primitive.setDataset(null);
+            firePrimitivesRemoved(Collections.singletonList(primitive), false);
+        } finally {
+            endUpdate();
         }
-        selectedPrimitives.remove(primitive);
-        allPrimitives.remove(primitive);
-        primitive.setDataset(null);
-        firePrimitivesRemoved(Collections.singletonList(primitive), false);
     }
 
     /*---------------------------------------------------
@@ -491,112 +528,117 @@ public class DataSet implements Cloneable {
      * so the control needs to be moved to this place again.
      */
 
-//    public void setDisabled(OsmPrimitive... osm) {
-//        if (osm.length == 1 && osm[0] == null) {
-//            setDisabled();
-//            return;
-//        }
-//        clearDisabled(allPrimitives());
-//        for (OsmPrimitive o : osm)
-//            if (o != null) {
-//                o.setDisabled(true);
-//            }
-//    }
-//
-//    public void setDisabled(Collection<? extends OsmPrimitive> selection) {
-//        clearDisabled(nodes);
-//        clearDisabled(ways);
-//        clearDisabled(relations);
-//        for (OsmPrimitive osm : selection) {
-//            osm.setDisabled(true);
-//        }
-//    }
-//
-//    /**
-//     * Remove the disabled parameter from every value in the collection.
-//     * @param list The collection to remove the disabled parameter from.
-//     */
-//    private void clearDisabled(Collection<? extends OsmPrimitive> list) {
-//        for (OsmPrimitive osm : list) {
-//            osm.setDisabled(false);
-//        }
-//    }
-//
-//
-//    public void setFiltered(Collection<? extends OsmPrimitive> selection) {
-//        clearFiltered(nodes);
-//        clearFiltered(ways);
-//        clearFiltered(relations);
-//        for (OsmPrimitive osm : selection) {
-//            osm.setFiltered(true);
-//        }
-//    }
-//
-//    public void setFiltered(OsmPrimitive... osm) {
-//        if (osm.length == 1 && osm[0] == null) {
-//            setFiltered();
-//            return;
-//        }
-//        clearFiltered(nodes);
-//        clearFiltered(ways);
-//        clearFiltered(relations);
-//        for (OsmPrimitive o : osm)
-//            if (o != null) {
-//                o.setFiltered(true);
-//            }
-//    }
-//
-//    /**
-//     * Remove the filtered parameter from every value in the collection.
-//     * @param list The collection to remove the filtered parameter from.
-//     */
-//    private void clearFiltered(Collection<? extends OsmPrimitive> list) {
-//        if (list == null)
-//            return;
-//        for (OsmPrimitive osm : list) {
-//            osm.setFiltered(false);
-//        }
-//    }
+    //    public void setDisabled(OsmPrimitive... osm) {
+    //        if (osm.length == 1 && osm[0] == null) {
+    //            setDisabled();
+    //            return;
+    //        }
+    //        clearDisabled(allPrimitives());
+    //        for (OsmPrimitive o : osm)
+    //            if (o != null) {
+    //                o.setDisabled(true);
+    //            }
+    //    }
+    //
+    //    public void setDisabled(Collection<? extends OsmPrimitive> selection) {
+    //        clearDisabled(nodes);
+    //        clearDisabled(ways);
+    //        clearDisabled(relations);
+    //        for (OsmPrimitive osm : selection) {
+    //            osm.setDisabled(true);
+    //        }
+    //    }
+    //
+    //    /**
+    //     * Remove the disabled parameter from every value in the collection.
+    //     * @param list The collection to remove the disabled parameter from.
+    //     */
+    //    private void clearDisabled(Collection<? extends OsmPrimitive> list) {
+    //        for (OsmPrimitive osm : list) {
+    //            osm.setDisabled(false);
+    //        }
+    //    }
+    //
+    //
+    //    public void setFiltered(Collection<? extends OsmPrimitive> selection) {
+    //        clearFiltered(nodes);
+    //        clearFiltered(ways);
+    //        clearFiltered(relations);
+    //        for (OsmPrimitive osm : selection) {
+    //            osm.setFiltered(true);
+    //        }
+    //    }
+    //
+    //    public void setFiltered(OsmPrimitive... osm) {
+    //        if (osm.length == 1 && osm[0] == null) {
+    //            setFiltered();
+    //            return;
+    //        }
+    //        clearFiltered(nodes);
+    //        clearFiltered(ways);
+    //        clearFiltered(relations);
+    //        for (OsmPrimitive o : osm)
+    //            if (o != null) {
+    //                o.setFiltered(true);
+    //            }
+    //    }
+    //
+    //    /**
+    //     * Remove the filtered parameter from every value in the collection.
+    //     * @param list The collection to remove the filtered parameter from.
+    //     */
+    //    private void clearFiltered(Collection<? extends OsmPrimitive> list) {
+    //        if (list == null)
+    //            return;
+    //        for (OsmPrimitive osm : list) {
+    //            osm.setFiltered(false);
+    //        }
+    //    }
 
     @Override public DataSet clone() {
-        DataSet ds = new DataSet();
-        HashMap<OsmPrimitive, OsmPrimitive> primitivesMap = new HashMap<OsmPrimitive, OsmPrimitive>();
-        for (Node n : nodes) {
-            Node newNode = new Node(n);
-            primitivesMap.put(n, newNode);
-            ds.addPrimitive(newNode);
-        }
-        for (Way w : ways) {
-            Way newWay = new Way(w);
-            primitivesMap.put(w, newWay);
-            List<Node> newNodes = new ArrayList<Node>();
-            for (Node n: w.getNodes()) {
-                newNodes.add((Node)primitivesMap.get(n));
+        getReadLock().lock();
+        try {
+            DataSet ds = new DataSet();
+            HashMap<OsmPrimitive, OsmPrimitive> primitivesMap = new HashMap<OsmPrimitive, OsmPrimitive>();
+            for (Node n : nodes) {
+                Node newNode = new Node(n);
+                primitivesMap.put(n, newNode);
+                ds.addPrimitive(newNode);
             }
-            newWay.setNodes(newNodes);
-            ds.addPrimitive(newWay);
-        }
-        // Because relations can have other relations as members we first clone all relations
-        // and then get the cloned members
-        for (Relation r : relations) {
-            Relation newRelation = new Relation(r, r.isNew());
-            newRelation.setMembers(null);
-            primitivesMap.put(r, newRelation);
-            ds.addPrimitive(newRelation);
-        }
-        for (Relation r : relations) {
-            Relation newRelation = (Relation)primitivesMap.get(r);
-            List<RelationMember> newMembers = new ArrayList<RelationMember>();
-            for (RelationMember rm: r.getMembers()) {
-                newMembers.add(new RelationMember(rm.getRole(), primitivesMap.get(rm.getMember())));
+            for (Way w : ways) {
+                Way newWay = new Way(w);
+                primitivesMap.put(w, newWay);
+                List<Node> newNodes = new ArrayList<Node>();
+                for (Node n: w.getNodes()) {
+                    newNodes.add((Node)primitivesMap.get(n));
+                }
+                newWay.setNodes(newNodes);
+                ds.addPrimitive(newWay);
             }
-            newRelation.setMembers(newMembers);
+            // Because relations can have other relations as members we first clone all relations
+            // and then get the cloned members
+            for (Relation r : relations) {
+                Relation newRelation = new Relation(r, r.isNew());
+                newRelation.setMembers(null);
+                primitivesMap.put(r, newRelation);
+                ds.addPrimitive(newRelation);
+            }
+            for (Relation r : relations) {
+                Relation newRelation = (Relation)primitivesMap.get(r);
+                List<RelationMember> newMembers = new ArrayList<RelationMember>();
+                for (RelationMember rm: r.getMembers()) {
+                    newMembers.add(new RelationMember(rm.getRole(), primitivesMap.get(rm.getMember())));
+                }
+                newRelation.setMembers(newMembers);
+            }
+            for (DataSource source : dataSources) {
+                ds.dataSources.add(new DataSource(source.bounds, source.origin));
+            }
+            ds.version = version;
+            return ds;
+        } finally {
+            getReadLock().unlock();
         }
-        for (DataSource source : dataSources) {
-            ds.dataSources.add(new DataSource(source.bounds, source.origin));
-        }
-        ds.version = version;
-        return ds;
     }
 
     /**
@@ -662,7 +704,7 @@ public class DataSet implements Cloneable {
         return result;
     }
 
-    protected void deleteWay(Way way) {
+    private void deleteWay(Way way) {
         way.setNodes(null);
         way.setDeleted(true);
     }
@@ -673,15 +715,20 @@ public class DataSet implements Cloneable {
      * @param node the node
      */
     public void unlinkNodeFromWays(Node node) {
-        for (Way way: ways) {
-            List<Node> nodes = way.getNodes();
-            if (nodes.remove(node)) {
-                if (nodes.size() < 2) {
-                    deleteWay(way);
-                } else {
-                    way.setNodes(nodes);
+        beginUpdate();
+        try {
+            for (Way way: ways) {
+                List<Node> nodes = way.getNodes();
+                if (nodes.remove(node)) {
+                    if (nodes.size() < 2) {
+                        deleteWay(way);
+                    } else {
+                        way.setNodes(nodes);
+                    }
                 }
             }
+        } finally {
+            endUpdate();
         }
     }
 
@@ -691,22 +738,27 @@ public class DataSet implements Cloneable {
      * @param primitive the primitive
      */
     public void unlinkPrimitiveFromRelations(OsmPrimitive primitive) {
-        for (Relation relation : relations) {
-            List<RelationMember> members = relation.getMembers();
+        beginUpdate();
+        try {
+            for (Relation relation : relations) {
+                List<RelationMember> members = relation.getMembers();
 
-            Iterator<RelationMember> it = members.iterator();
-            boolean removed = false;
-            while(it.hasNext()) {
-                RelationMember member = it.next();
-                if (member.getMember().equals(primitive)) {
-                    it.remove();
-                    removed = true;
+                Iterator<RelationMember> it = members.iterator();
+                boolean removed = false;
+                while(it.hasNext()) {
+                    RelationMember member = it.next();
+                    if (member.getMember().equals(primitive)) {
+                        it.remove();
+                        removed = true;
+                    }
+                }
+
+                if (removed) {
+                    relation.setMembers(members);
                 }
             }
-
-            if (removed) {
-                relation.setMembers(members);
-            }
+        } finally {
+            endUpdate();
         }
     }
 
@@ -717,11 +769,16 @@ public class DataSet implements Cloneable {
      * @param referencedPrimitive the referenced primitive
      */
     public void unlinkReferencesToPrimitive(OsmPrimitive referencedPrimitive) {
-        if (referencedPrimitive instanceof Node) {
-            unlinkNodeFromWays((Node)referencedPrimitive);
-            unlinkPrimitiveFromRelations(referencedPrimitive);
-        } else {
-            unlinkPrimitiveFromRelations(referencedPrimitive);
+        beginUpdate();
+        try {
+            if (referencedPrimitive instanceof Node) {
+                unlinkNodeFromWays((Node)referencedPrimitive);
+                unlinkPrimitiveFromRelations(referencedPrimitive);
+            } else {
+                unlinkPrimitiveFromRelations(referencedPrimitive);
+            }
+        } finally {
+            endUpdate();
         }
     }
 
@@ -803,6 +860,7 @@ public class DataSet implements Cloneable {
      * </pre>
      */
     public void beginUpdate() {
+        lock.writeLock().lock();
         updateCount++;
     }
 
@@ -813,22 +871,46 @@ public class DataSet implements Cloneable {
         if (updateCount > 0) {
             updateCount--;
             if (updateCount == 0) {
-                fireDataChanged();
+                List<AbstractDatasetChangedEvent> eventsCopy = new ArrayList<AbstractDatasetChangedEvent>(cachedEvents);
+                cachedEvents.clear();
+                lock.writeLock().unlock();
+
+                if (!eventsCopy.isEmpty()) {
+                    lock.readLock().lock();
+                    try {
+                        if (eventsCopy.size() < MAX_SINGLE_EVENTS) {
+                            for (AbstractDatasetChangedEvent event: eventsCopy) {
+                                fireEventToListeners(event);
+                            }
+                        } else if (eventsCopy.size() == MAX_EVENTS) {
+                            fireEventToListeners(new DataChangedEvent(this));
+                        } else {
+                            fireEventToListeners(new DataChangedEvent(this, eventsCopy));
+                        }
+                    } finally {
+                        lock.readLock().unlock();
+                    }
+                }
+            } else {
+                lock.writeLock().unlock();
             }
+
         } else
             throw new AssertionError("endUpdate called without beginUpdate");
     }
 
-    private void fireEvent(AbstractDatasetChangedEvent event) {
-        if (updateCount == 0) {
-            for (DataSetListener dsl : listeners) {
-                event.fire(dsl);
-            }
+    private void fireEventToListeners(AbstractDatasetChangedEvent event) {
+        for (DataSetListener listener: listeners) {
+            event.fire(listener);
         }
     }
 
-    private void fireDataChanged() {
-        fireEvent(new DataChangedEvent(this));
+    private void fireEvent(AbstractDatasetChangedEvent event) {
+        if (updateCount == 0)
+            throw new AssertionError("dataset events can be fired only when dataset is locked");
+        if (cachedEvents.size() < MAX_EVENTS) {
+            cachedEvents.add(event);
+        }
     }
 
     void firePrimitivesAdded(Collection<? extends OsmPrimitive> added, boolean wasIncomplete) {
@@ -867,10 +949,15 @@ public class DataSet implements Cloneable {
     }
 
     public void clenupDeletedPrimitives() {
-        if (cleanupDeleted(nodes.iterator())
-                | cleanupDeleted(ways.iterator())
-                | cleanupDeleted(relations.iterator())) {
-            fireSelectionChanged();
+        beginUpdate();
+        try {
+            if (cleanupDeleted(nodes.iterator())
+                    | cleanupDeleted(ways.iterator())
+                    | cleanupDeleted(relations.iterator())) {
+                fireSelectionChanged();
+            }
+        } finally {
+            endUpdate();
         }
     }
 
@@ -895,13 +982,18 @@ public class DataSet implements Cloneable {
      *
      */
     public void clear() {
-        clearSelection();
-        for (OsmPrimitive primitive:allPrimitives) {
-            primitive.setDataset(null);
+        beginUpdate();
+        try {
+            clearSelection();
+            for (OsmPrimitive primitive:allPrimitives) {
+                primitive.setDataset(null);
+            }
+            nodes.clear();
+            ways.clear();
+            relations.clear();
+            allPrimitives.clear();
+        } finally {
+            endUpdate();
         }
-        nodes.clear();
-        ways.clear();
-        relations.clear();
-        allPrimitives.clear();
     }
 }

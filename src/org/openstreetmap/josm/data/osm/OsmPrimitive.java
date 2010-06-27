@@ -344,9 +344,25 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             throw new DataIntegrityProblemException("Primitive  must be part of the dataset: " + toString());
     }
 
+    protected boolean writeLock() {
+        if (dataSet != null) {
+            dataSet.beginUpdate();
+            return true;
+        } else
+            return false;
+    }
+
+    protected void writeUnlock(boolean locked) {
+        if (locked) {
+            // It shouldn't be possible for dataset to become null because method calling setDataset would need write lock which is owned by this thread
+            dataSet.endUpdate();
+        }
+    }
+
+
     /*-------------------
      * OTHER PROPERTIES
-     *-------------------/
+     *-------------------*/
 
     /**
      * Unique identifier in OSM. This is used to identify objects on the server.
@@ -391,6 +407,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @return the id of this primitive.
      */
     public long getId() {
+        long id = this.id;
         return id >= 0?id:0;
     }
 
@@ -433,20 +450,25 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @throws DataIntegrityProblemException If id is changed and primitive was already added to the dataset
      */
     public void setOsmId(long id, int version) {
-        if (id <= 0)
-            throw new IllegalArgumentException(tr("ID > 0 expected. Got {0}.", id));
-        if (version <= 0)
-            throw new IllegalArgumentException(tr("Version > 0 expected. Got {0}.", version));
-        if (dataSet != null && id != this.id) {
-            DataSet datasetCopy = dataSet;
-            // Reindex primitive
-            datasetCopy.removePrimitive(this);
+        boolean locked = writeLock();
+        try {
+            if (id <= 0)
+                throw new IllegalArgumentException(tr("ID > 0 expected. Got {0}.", id));
+            if (version <= 0)
+                throw new IllegalArgumentException(tr("Version > 0 expected. Got {0}.", version));
+            if (dataSet != null && id != this.id) {
+                DataSet datasetCopy = dataSet;
+                // Reindex primitive
+                datasetCopy.removePrimitive(this);
+                this.id = id;
+                datasetCopy.addPrimitive(this);
+            }
             this.id = id;
-            datasetCopy.addPrimitive(this);
+            this.version = version;
+            this.setIncomplete(false);
+        } finally {
+            writeUnlock(locked);
         }
-        this.id = id;
-        this.version = version;
-        this.setIncomplete(false);
     }
 
     /**
@@ -461,6 +483,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     public void clearOsmId() {
         if (dataSet != null)
             throw new DataIntegrityProblemException("Method cannot be called after primitive was added to the dataset");
+
+        // Not part of dataset - no lock necessary
         this.id = generateUniqueId();
         this.version = 0;
         this.changesetId = 0; // reset changeset id on a new object
@@ -482,7 +506,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @param user the user
      */
     public void setUser(User user) {
-        this.user = user;
+        boolean locked = writeLock();
+        try {
+            this.user = user;
+        } finally {
+            writeUnlock(locked);
+        }
     }
 
     /**
@@ -505,16 +534,22 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @throws IllegalArgumentException thrown if id < 0
      */
     public void setChangesetId(int changesetId) throws IllegalStateException, IllegalArgumentException {
-        if (this.changesetId == changesetId)
-            return;
-        if (changesetId < 0)
-            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' >= 0 expected, got {1}", "changesetId", changesetId));
-        if (isNew() && changesetId > 0)
-            throw new IllegalStateException(tr("Cannot assign a changesetId > 0 to a new primitive. Value of changesetId is {0}", changesetId));
-        int old = this.changesetId;
-        this.changesetId = changesetId;
-        if (dataSet != null) {
-            dataSet.fireChangesetIdChanged(this, old, changesetId);
+        boolean locked = writeLock();
+        try {
+            if (this.changesetId == changesetId)
+                return;
+            if (changesetId < 0)
+                throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' >= 0 expected, got {1}", "changesetId", changesetId));
+            if (isNew() && changesetId > 0)
+                throw new IllegalStateException(tr("Cannot assign a changesetId > 0 to a new primitive. Value of changesetId is {0}", changesetId));
+
+            int old = this.changesetId;
+            this.changesetId = changesetId;
+            if (dataSet != null) {
+                dataSet.fireChangesetIdChanged(this, old, changesetId);
+            }
+        } finally {
+            writeUnlock(locked);
         }
     }
 
@@ -528,7 +563,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     public void setTimestamp(Date timestamp) {
-        this.timestamp = (int)(timestamp.getTime() / 1000);
+        boolean locked = writeLock();
+        try {
+            this.timestamp = (int)(timestamp.getTime() / 1000);
+        } finally {
+            writeUnlock(locked);
+        }
     }
 
     /**
@@ -553,11 +593,20 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     private volatile short flags = FLAG_VISIBLE;   // visible per default
 
-    private void updateFlags(int flag, boolean value) {
+    private void updateFlagsNoLock(int flag, boolean value) {
         if (value) {
             flags |= flag;
         } else {
             flags &= ~flag;
+        }
+    }
+
+    private void updateFlags(int flag, boolean value) {
+        boolean locked = writeLock();
+        try {
+            updateFlagsNoLock(flag, value);
+        } finally {
+            writeUnlock(locked);
         }
     }
 
@@ -568,11 +617,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      *             just shown in gray color.
      */
     public void setDisabledState(boolean hide) {
-        flags |= FLAG_DISABLED;
-        if (hide) {
-            flags |= FLAG_HIDE_IF_DISABLED;
-        } else {
-            flags &= ~FLAG_HIDE_IF_DISABLED;
+        boolean locked = writeLock();
+        try {
+            updateFlagsNoLock(FLAG_DISABLED, true);
+            updateFlagsNoLock(FLAG_HIDE_IF_DISABLED, hide);
+        } finally {
+            writeUnlock(locked);
         }
     }
 
@@ -687,9 +737,14 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * id==0
      */
     public void setVisible(boolean visible) throws IllegalStateException{
-        if (isNew() && visible == false)
-            throw new IllegalStateException(tr("A primitive with ID = 0 cannot be invisible."));
-        updateFlags(FLAG_VISIBLE, visible);
+        boolean locked = writeLock();
+        try {
+            if (isNew() && visible == false)
+                throw new IllegalStateException(tr("A primitive with ID = 0 cannot be invisible."));
+            updateFlagsNoLock(FLAG_VISIBLE, visible);
+        } finally {
+            writeUnlock(locked);
+        }
     }
 
     /**
@@ -700,14 +755,19 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @param deleted  true, if this primitive is deleted; false, otherwise
      */
     public void setDeleted(boolean deleted) {
-        updateFlags(FLAG_DELETED, deleted);
-        setModified(deleted ^ !isVisible());
-        if (dataSet != null) {
-            if (deleted) {
-                dataSet.firePrimitivesRemoved(Collections.singleton(this), false);
-            } else {
-                dataSet.firePrimitivesAdded(Collections.singleton(this), false);
+        boolean locked = writeLock();
+        try {
+            updateFlagsNoLock(FLAG_DELETED, deleted);
+            setModified(deleted ^ !isVisible());
+            if (dataSet != null) {
+                if (deleted) {
+                    dataSet.firePrimitivesRemoved(Collections.singleton(this), false);
+                } else {
+                    dataSet.firePrimitivesAdded(Collections.singleton(this), false);
+                }
             }
+        } finally {
+            writeUnlock(locked);
         }
     }
 
@@ -717,14 +777,19 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * and type is known (type is the objects instance class)
      */
     private void setIncomplete(boolean incomplete) {
-        if (dataSet != null && incomplete != this.isIncomplete()) {
-            if (incomplete) {
-                dataSet.firePrimitivesRemoved(Collections.singletonList(this), true);
-            } else {
-                dataSet.firePrimitivesAdded(Collections.singletonList(this), true);
+        boolean locked = writeLock();
+        try {
+            if (dataSet != null && incomplete != this.isIncomplete()) {
+                if (incomplete) {
+                    dataSet.firePrimitivesRemoved(Collections.singletonList(this), true);
+                } else {
+                    dataSet.firePrimitivesAdded(Collections.singletonList(this), true);
+                }
             }
+            updateFlagsNoLock(FLAG_INCOMPLETE, incomplete);
+        }  finally {
+            writeUnlock(locked);
         }
-        updateFlags(FLAG_INCOMPLETE, incomplete);
     }
 
     public boolean isIncomplete() {
@@ -841,12 +906,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         if (keys != null) {
             for (String key: keySet()) {
                 if (!isUninterestingKey(key)) {
-                    updateFlags(FLAG_TAGGED, true);
+                    updateFlagsNoLock(FLAG_TAGGED, true);
                     return;
                 }
             }
         }
-        updateFlags(FLAG_TAGGED, false);
+        updateFlagsNoLock(FLAG_TAGGED, false);
     }
 
     /**
@@ -870,8 +935,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             hasDirections = true;
         }
 
-        updateFlags(FLAG_DIRECTION_REVERSED, directionReversed);
-        updateFlags(FLAG_HAS_DIRECTIONS, hasDirections);
+        updateFlagsNoLock(FLAG_DIRECTION_REVERSED, directionReversed);
+        updateFlagsNoLock(FLAG_HAS_DIRECTIONS, hasDirections);
     }
 
     /**
@@ -889,6 +954,10 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * Keys handling
      ------------*/
 
+    // Note that all methods that read keys first make local copy of keys array reference. This is to ensure thread safety - reading
+    // doesn't have to be locked so it's possible that keys array will be modified. But all write methods make copy of keys array so
+    // the array itself will be never modified - only reference will be changed
+
     /**
      * The key/value list for this primitive.
      *
@@ -900,10 +969,10 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      *
      * @return tags of this primitive. Changes made in returned map are not mapped
      * back to the primitive, use setKeys() to modify the keys
-     * @since 1924
      */
     public Map<String, String> getKeys() {
         Map<String, String> result = new HashMap<String, String>();
+        String[] keys = this.keys;
         if (keys != null) {
             for (int i=0; i<keys.length ; i+=2) {
                 result.put(keys[i], keys[i + 1]);
@@ -917,23 +986,27 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * If <code>keys</code> is null removes all existing key/value pairs.
      *
      * @param keys the key/value pairs to set. If null, removes all existing key/value pairs.
-     * @since 1924
      */
     public void setKeys(Map<String, String> keys) {
-        Map<String, String> originalKeys = getKeys();
-        if (keys == null || keys.isEmpty()) {
-            this.keys = null;
+        boolean locked = writeLock();
+        try {
+            Map<String, String> originalKeys = getKeys();
+            if (keys == null || keys.isEmpty()) {
+                this.keys = null;
+                keysChangedImpl(originalKeys);
+                return;
+            }
+            String[] newKeys = new String[keys.size() * 2];
+            int index = 0;
+            for (Entry<String, String> entry:keys.entrySet()) {
+                newKeys[index++] = entry.getKey();
+                newKeys[index++] = entry.getValue();
+            }
+            this.keys = newKeys;
             keysChangedImpl(originalKeys);
-            return;
+        } finally {
+            writeUnlock(locked);
         }
-        String[] newKeys = new String[keys.size() * 2];
-        int index = 0;
-        for (Entry<String, String> entry:keys.entrySet()) {
-            newKeys[index++] = entry.getKey();
-            newKeys[index++] = entry.getValue();
-        }
-        this.keys = newKeys;
-        keysChangedImpl(originalKeys);
     }
 
     /**
@@ -946,31 +1019,36 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @see #remove(String)
      */
     public final void put(String key, String value) {
-        Map<String, String> originalKeys = getKeys();
-        if (key == null)
-            return;
-        else if (value == null) {
-            remove(key);
-        } else if (keys == null){
-            keys = new String[] {key, value};
-            keysChangedImpl(originalKeys);
-        } else {
-            for (int i=0; i<keys.length;i+=2) {
-                if (keys[i].equals(key)) {
-                    keys[i+1] = value;
-                    keysChangedImpl(originalKeys);
-                    return;
+        boolean locked = writeLock();
+        try {
+            Map<String, String> originalKeys = getKeys();
+            if (key == null)
+                return;
+            else if (value == null) {
+                remove(key);
+            } else if (keys == null){
+                keys = new String[] {key, value};
+                keysChangedImpl(originalKeys);
+            } else {
+                for (int i=0; i<keys.length;i+=2) {
+                    if (keys[i].equals(key)) {
+                        keys[i+1] = value;  // This modifies the keys array but it doesn't make it invalidate for any time so its ok (see note no top)
+                        keysChangedImpl(originalKeys);
+                        return;
+                    }
                 }
+                String[] newKeys = new String[keys.length + 2];
+                for (int i=0; i< keys.length;i+=2) {
+                    newKeys[i] = keys[i];
+                    newKeys[i+1] = keys[i+1];
+                }
+                newKeys[keys.length] = key;
+                newKeys[keys.length + 1] = value;
+                keys = newKeys;
+                keysChangedImpl(originalKeys);
             }
-            String[] newKeys = new String[keys.length + 2];
-            for (int i=0; i< keys.length;i+=2) {
-                newKeys[i] = keys[i];
-                newKeys[i+1] = keys[i+1];
-            }
-            newKeys[keys.length] = key;
-            newKeys[keys.length + 1] = value;
-            keys = newKeys;
-            keysChangedImpl(originalKeys);
+        } finally {
+            writeUnlock(locked);
         }
     }
     /**
@@ -979,25 +1057,30 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @param key  the key to be removed. Ignored, if key is null.
      */
     public final void remove(String key) {
-        if (key == null || keys == null) return;
-        if (!hasKey(key))
-            return;
-        Map<String, String> originalKeys = getKeys();
-        if (keys.length == 2) {
-            keys = null;
-            keysChangedImpl(originalKeys);
-            return;
-        }
-        String[] newKeys = new String[keys.length - 2];
-        int j=0;
-        for (int i=0; i < keys.length; i+=2) {
-            if (!keys[i].equals(key)) {
-                newKeys[j++] = keys[i];
-                newKeys[j++] = keys[i+1];
+        boolean locked = writeLock();
+        try {
+            if (key == null || keys == null) return;
+            if (!hasKey(key))
+                return;
+            Map<String, String> originalKeys = getKeys();
+            if (keys.length == 2) {
+                keys = null;
+                keysChangedImpl(originalKeys);
+                return;
             }
+            String[] newKeys = new String[keys.length - 2];
+            int j=0;
+            for (int i=0; i < keys.length; i+=2) {
+                if (!keys[i].equals(key)) {
+                    newKeys[j++] = keys[i];
+                    newKeys[j++] = keys[i+1];
+                }
+            }
+            keys = newKeys;
+            keysChangedImpl(originalKeys);
+        } finally {
+            writeUnlock(locked);
         }
-        keys = newKeys;
-        keysChangedImpl(originalKeys);
     }
 
     /**
@@ -1006,10 +1089,15 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @since 1843
      */
     public final void removeAll() {
-        if (keys != null) {
-            Map<String, String> originalKeys = getKeys();
-            keys = null;
-            keysChangedImpl(originalKeys);
+        boolean locked = writeLock();
+        try {
+            if (keys != null) {
+                Map<String, String> originalKeys = getKeys();
+                keys = null;
+                keysChangedImpl(originalKeys);
+            }
+        } finally {
+            writeUnlock(locked);
         }
     }
 
@@ -1021,6 +1109,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @return the value for key <code>key</code>.
      */
     public final String get(String key) {
+        String[] keys = this.keys;
         if (key == null)
             return null;
         if (keys == null)
@@ -1032,6 +1121,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     public final Collection<String> keySet() {
+        String[] keys = this.keys;
         if (keys == null)
             return Collections.emptySet();
         Set<String> result = new HashSet<String>(keys.length / 2);
@@ -1067,6 +1157,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @return true, if his primitive has a tag with key <code>key</code>
      */
     public boolean hasKey(String key) {
+        String[] keys = this.keys;
         if (key == null) return false;
         if (keys == null) return false;
         for (int i=0; i< keys.length;i+=2) {
@@ -1165,6 +1256,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         // Returns only referrers that are members of the same dataset (primitive can have some fake references, for example
         // when way is cloned
         checkDataset();
+        Object referrers = this.referrers;
         List<OsmPrimitive> result = new ArrayList<OsmPrimitive>();
         if (referrers != null) {
             if (referrers instanceof OsmPrimitive) {
@@ -1201,6 +1293,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * use this only in the data initializing phase
      */
     public void cloneFrom(OsmPrimitive other) {
+        // write lock is provided by subclasses
         if (id != other.id && dataSet != null)
             throw new DataIntegrityProblemException("Osm id cannot be changed after primitive was added to the dataset");
         setKeys(other.getKeys());
@@ -1239,19 +1332,24 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @throws DataIntegrityProblemException thrown if other isn't new and other.getId() != this.getId()
      */
     public void mergeFrom(OsmPrimitive other) {
-        CheckParameterUtil.ensureParameterNotNull(other, "other");
-        if (other.isNew() ^ isNew())
-            throw new DataIntegrityProblemException(tr("Cannot merge because either of the participating primitives is new and the other is not"));
-        if (! other.isNew() && other.getId() != id)
-            throw new DataIntegrityProblemException(tr("Cannot merge primitives with different ids. This id is {0}, the other is {1}", id, other.getId()));
+        boolean locked = writeLock();
+        try {
+            CheckParameterUtil.ensureParameterNotNull(other, "other");
+            if (other.isNew() ^ isNew())
+                throw new DataIntegrityProblemException(tr("Cannot merge because either of the participating primitives is new and the other is not"));
+            if (! other.isNew() && other.getId() != id)
+                throw new DataIntegrityProblemException(tr("Cannot merge primitives with different ids. This id is {0}, the other is {1}", id, other.getId()));
 
-        setKeys(other.getKeys());
-        timestamp = other.timestamp;
-        version = other.version;
-        setIncomplete(other.isIncomplete());
-        flags = other.flags;
-        user= other.user;
-        changesetId = other.changesetId;
+            setKeys(other.getKeys());
+            timestamp = other.timestamp;
+            version = other.version;
+            setIncomplete(other.isIncomplete());
+            flags = other.flags;
+            user= other.user;
+            changesetId = other.changesetId;
+        } finally {
+            writeUnlock(locked);
+        }
     }
 
     /**
@@ -1312,9 +1410,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @return the name of this primitive
      */
     public String getName() {
-        if (get("name") != null)
-            return get("name");
-        return null;
+        return get("name");
     }
 
     /**
@@ -1355,6 +1451,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * @param data
      */
     public void load(PrimitiveData data) {
+        // Write lock is provided by subclasses
         setKeys(data.getKeys());
         setTimestamp(data.getTimestamp());
         user = data.getUser();

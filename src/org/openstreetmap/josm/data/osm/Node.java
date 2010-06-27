@@ -19,7 +19,12 @@ public final class Node extends OsmPrimitive {
     public final void setCoor(LatLon coor) {
         if(coor != null){
             if (getDataSet() != null) {
-                getDataSet().fireNodeMoved(this, coor);
+                boolean locked = writeLock();
+                try {
+                    getDataSet().fireNodeMoved(this, coor);
+                } finally {
+                    writeUnlock(locked);
+                }
             } else {
                 setCoorInternal(coor);
             }
@@ -114,8 +119,13 @@ public final class Node extends OsmPrimitive {
     }
 
     @Override public void cloneFrom(OsmPrimitive osm) {
-        super.cloneFrom(osm);
-        setCoor(((Node)osm).coor);
+        boolean locked = writeLock();
+        try {
+            super.cloneFrom(osm);
+            setCoor(((Node)osm).coor);
+        } finally {
+            writeUnlock(locked);
+        }
     }
 
     /**
@@ -131,15 +141,25 @@ public final class Node extends OsmPrimitive {
      */
     @Override
     public void mergeFrom(OsmPrimitive other) {
-        super.mergeFrom(other);
-        if (!other.isIncomplete()) {
-            setCoor(new LatLon(((Node)other).coor));
+        boolean locked = writeLock();
+        try {
+            super.mergeFrom(other);
+            if (!other.isIncomplete()) {
+                setCoor(new LatLon(((Node)other).coor));
+            }
+        } finally {
+            writeUnlock(locked);
         }
     }
 
     @Override public void load(PrimitiveData data) {
-        super.load(data);
-        setCoor(((NodeData)data).getCoor());
+        boolean locked = writeLock();
+        try {
+            super.load(data);
+            setCoor(((NodeData)data).getCoor());
+        } finally {
+            writeUnlock(locked);
+        }
     }
 
     @Override public NodeData save() {

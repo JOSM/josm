@@ -3,10 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileInputStream;
-
-import javax.imageio.ImageIO;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -62,7 +59,6 @@ public class MapPaintVisitorPeformanceTest {
         for (int i=0; i<iterations; i++) {
             visitor.visitAll(ds, true, bounds);
         }
-        ImageIO.write(img, "png", new File("/home/jirka/a.png"));
     }
 
     @Test
