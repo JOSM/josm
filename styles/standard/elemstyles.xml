@@ -4378,7 +4378,14 @@ For external files the <rules> should have following elements:
 
 	<rule> 
 		<condition k="fixme"/> 
-		<icon annotate="true" src="fixme.png"/>
+		<icon annotate="true" src="fixme.png" priority="-10000"/>
+		<scale_min>1</scale_min> 
+		<scale_max>50000</scale_max> 
+	</rule> 
+
+	<rule> 
+		<condition k="FIXME"/> 
+		<icon annotate="true" src="fixme.png" priority="-10000"/>
 		<scale_min>1</scale_min> 
 		<scale_max>50000</scale_max> 
 	</rule> 
