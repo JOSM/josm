@@ -63,7 +63,7 @@ public class Filters extends AbstractTableModel {
      * So first the Filter is applied for ways and relations. Then to nodes
      * (but hides them only if they are not used by any unfiltered way).
      */
-    public void executeFilters(){
+    public void executeFilters() {
         DataSet ds = Main.main.getCurrentDataSet();
         if (ds == null)
             return;
@@ -247,6 +247,7 @@ public class Filters extends AbstractTableModel {
         }
 
         Main.map.mapView.repaint();
+        Main.map.filterDialog.updateDialogHeader();
     }
 
     public void clearFilterFlags() {

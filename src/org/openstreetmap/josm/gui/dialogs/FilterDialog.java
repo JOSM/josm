@@ -17,8 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -40,7 +39,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author Petr_Dlouhý
  */
-public class FilterDialog extends ToggleDialog implements Listener, TableModelListener {
+public class FilterDialog extends ToggleDialog implements Listener {
 
     private JTable userTable;
     private Filters filters = new Filters();
@@ -161,8 +160,6 @@ public class FilterDialog extends ToggleDialog implements Listener, TableModelLi
             }
         };
 
-        filters.addTableModelListener(this);
-
         userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         userTable.getColumnModel().getColumn(0).setMaxWidth(1);
@@ -177,8 +174,6 @@ public class FilterDialog extends ToggleDialog implements Listener, TableModelLi
 
         userTable.setDefaultRenderer(Boolean.class, new BooleanRenderer());
         userTable.setDefaultRenderer(String.class, new StringRenderer());
-
-        tableChanged(null);
 
         pnl.add(new JScrollPane(userTable), BorderLayout.CENTER);
 
@@ -212,8 +207,12 @@ public class FilterDialog extends ToggleDialog implements Listener, TableModelLi
         }
     }
 
-    public void tableChanged(TableModelEvent e){
-        setTitle(tr("Filter Hidden:{0} Disabled:{1}", filters.disabledAndHiddenCount, filters.disabledCount));
+    public void updateDialogHeader() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                setTitle(tr("Filter Hidden:{0} Disabled:{1}", filters.disabledAndHiddenCount, filters.disabledCount));
+            }
+        });
     }
 
     public void drawOSDText(Graphics2D g) {
