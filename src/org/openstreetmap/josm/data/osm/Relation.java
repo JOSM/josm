@@ -1,6 +1,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -17,7 +18,7 @@ import org.openstreetmap.josm.tools.CopyList;
  */
 public final class Relation extends OsmPrimitive {
 
-    private final List<RelationMember> members = new ArrayList<RelationMember>();
+    private RelationMember[] members = new RelationMember[0];
 
     private BBox bbox;
 
@@ -27,7 +28,7 @@ public final class Relation extends OsmPrimitive {
      * @since 1925
      */
     public List<RelationMember> getMembers() {
-        return new CopyList<RelationMember>(members.toArray(new RelationMember[members.size()]));
+        return new CopyList<RelationMember>(members);
     }
 
     /**
@@ -40,9 +41,8 @@ public final class Relation extends OsmPrimitive {
             rm.getMember().removeReferrer(this);
         }
 
-        this.members.clear();
         if (members != null) {
-            this.members.addAll(members);
+            this.members = members.toArray(new RelationMember[members.size()]);
         }
         for (RelationMember rm:this.members) {
             rm.getMember().addReferrer(this);
@@ -55,21 +55,28 @@ public final class Relation extends OsmPrimitive {
      * @return number of members
      */
     public int getMembersCount() {
-        return members.size();
+        return members.length;
     }
 
     public RelationMember getMember(int index) {
-        return members.get(index);
+        return members[index];
     }
 
     public void addMember(RelationMember member) {
-        members.add(member);
+        RelationMember[] newMembers = new RelationMember[members.length + 1];
+        System.arraycopy(members, 0, newMembers, 0, members.length);
+        newMembers[members.length] = member;
+        members = newMembers;
         member.getMember().addReferrer(this);
         fireMembersChanged();
     }
 
     public void addMember(int index, RelationMember member) {
-        members.add(index, member);
+        RelationMember[] newMembers = new RelationMember[members.length + 1];
+        System.arraycopy(members, 0, newMembers, 0, index);
+        System.arraycopy(members, index, newMembers, index + 1, members.length - index);
+        newMembers[index] = member;
+        members = newMembers;
         member.getMember().addReferrer(this);
         fireMembersChanged();
     }
@@ -81,13 +88,14 @@ public final class Relation extends OsmPrimitive {
      * @return Member that was at the position
      */
     public RelationMember setMember(int index, RelationMember member) {
-        RelationMember result = members.set(index, member);
-        if (result.getMember() != member.getMember()) {
+        RelationMember originalMember = members[index];
+        members[index] = member;
+        if (originalMember.getMember() != member.getMember()) {
             member.getMember().addReferrer(this);
-            result.getMember().removeReferrer(this);
+            originalMember.getMember().removeReferrer(this);
             fireMembersChanged();
         }
-        return result;
+        return originalMember;
     }
 
     /**
@@ -96,14 +104,9 @@ public final class Relation extends OsmPrimitive {
      * @return Member that was at the position
      */
     public RelationMember removeMember(int index) {
+        List<RelationMember> members = getMembers();
         RelationMember result = members.remove(index);
-        for (RelationMember rm:members) {
-            // Do not remove referrer if this primitive is used in relation twice
-            if (rm.getMember() == result.getMember())
-                return result;
-        }
-        result.getMember().removeReferrer(this);
-        fireMembersChanged();
+        setMembers(members);
         return result;
     }
 
@@ -215,7 +218,7 @@ public final class Relation extends OsmPrimitive {
         if (! super.hasEqualSemanticAttributes(other))
             return false;
         Relation r = (Relation)other;
-        return members.equals(r.members);
+        return Arrays.equals(members, r.members);
     }
 
     public int compareTo(OsmPrimitive o) {
@@ -224,11 +227,11 @@ public final class Relation extends OsmPrimitive {
 
     public RelationMember firstMember() {
         if (isIncomplete()) return null;
-        return (members.size() == 0) ? null : members.get(0);
+        return (members.length == 0) ? null : members[0];
     }
     public RelationMember lastMember() {
         if (isIncomplete()) return null;
-        return (members.size() == 0) ? null : members.get(members.size() -1);
+        return (members.length == 0) ? null : members[members.length - 1];
     }
 
     /**
@@ -240,15 +243,15 @@ public final class Relation extends OsmPrimitive {
         if (primitive == null)
             return;
 
-        ArrayList<RelationMember> todelete = new ArrayList<RelationMember>();
+        List<RelationMember> todelete = new ArrayList<RelationMember>();
         for (RelationMember member: members) {
             if (member.getMember() == primitive) {
                 todelete.add(member);
             }
         }
-        primitive.removeReferrer(this);
+        List<RelationMember> members = getMembers();
         members.removeAll(todelete);
-        fireMembersChanged();
+        setMembers(members);
     }
 
     @Override
@@ -278,11 +281,9 @@ public final class Relation extends OsmPrimitive {
                 todelete.add(member);
             }
         }
+        List<RelationMember> members = getMembers();
         members.removeAll(todelete);
-        for (OsmPrimitive primitive:primitives) {
-            primitive.removeReferrer(this);
-        }
-        fireMembersChanged();
+        setMembers(members);
     }
 
     @Override
@@ -313,7 +314,7 @@ public final class Relation extends OsmPrimitive {
 
     @Override
     public BBox getBBox() {
-        if (members.isEmpty())
+        if (members.length == 0)
             return new BBox(0, 0, 0, 0);
         if (getDataSet() == null)
             return calculateBBox(new HashSet<PrimitiveId>());
@@ -332,7 +333,7 @@ public final class Relation extends OsmPrimitive {
         if (visitedRelations.contains(this))
             return null;
         visitedRelations.add(this);
-        if (members.isEmpty())
+        if (members.length == 0)
             return null;
         else {
             BBox result = null;
