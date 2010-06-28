@@ -67,121 +67,87 @@ public class Filters extends AbstractTableModel {
         if (ds == null)
             return;
 
-        ds.beginUpdate(); // Modifies disabled/hidden state covered by write lock so read lock is not enough
-        try {
-            final Collection<OsmPrimitive> all = ds.allNonDeletedCompletePrimitives();
-            // temporary set to collect the primitives returned by the search engine
-            final Collection<OsmPrimitive> collect = new HashSet<OsmPrimitive>();
+        final Collection<OsmPrimitive> all = ds.allNonDeletedCompletePrimitives();
+        // temporary set to collect the primitives returned by the search engine
+        final Collection<OsmPrimitive> collect = new HashSet<OsmPrimitive>();
 
-            // an auxiliary property to collect the results of the search engine
-            class CollectProperty implements Property<OsmPrimitive,Boolean> {
-                boolean collectValue;
-                boolean hidden;
+        // an auxiliary property to collect the results of the search engine
+        class CollectProperty implements Property<OsmPrimitive,Boolean> {
+            boolean collectValue;
+            boolean hidden;
 
-                /**
-                 * Depending on the parameters, there are 4 different instances
-                 * of this class.
-                 *
-                 * @param collectValue
-                 *          If true: collect only those primitives that are added
-                 *              by the search engine.
-                 *          If false: Collect only those primitives that are removed
-                 *              by the search engine.
-                 * @param hidden Whether the property refers to primitives that
-                 *          are disabled and hidden or to primitives
-                 *          that are disabled only.
-                 */
-                public CollectProperty(boolean collectValue, boolean hidden) {
-                    this.collectValue = collectValue;
-                    this.hidden = hidden;
-                }
-
-                public Boolean get(OsmPrimitive osm) {
-                    if (hidden)
-                        return osm.isDisabledAndHidden();
-                    else
-                        return osm.isDisabled();
-                }
-
-                public void set(OsmPrimitive osm, Boolean value) {
-                    if (collectValue == value.booleanValue()) {
-                        collect.add(osm);
-                    }
-                }
+            /**
+             * Depending on the parameters, there are 4 different instances
+             * of this class.
+             *
+             * @param collectValue
+             *          If true: collect only those primitives that are added
+             *              by the search engine.
+             *          If false: Collect only those primitives that are removed
+             *              by the search engine.
+             * @param hidden Whether the property refers to primitives that
+             *          are disabled and hidden or to primitives
+             *          that are disabled only.
+             */
+            public CollectProperty(boolean collectValue, boolean hidden) {
+                this.collectValue = collectValue;
+                this.hidden = hidden;
             }
 
-            clearFilterFlags();
+            public Boolean get(OsmPrimitive osm) {
+                if (hidden)
+                    return osm.isDisabledAndHidden();
+                else
+                    return osm.isDisabled();
+            }
 
-            for (Filter flt : filters){
-                if (flt.enable) {
-                    collect.clear();
-                    // Decide, whether primitives are collected that are added to the current
-                    // selection or those that are removed from the current selection
-                    boolean collectValue = flt.mode == SearchAction.SearchMode.replace || flt.mode == SearchAction.SearchMode.add;
-                    Property<OsmPrimitive,Boolean> collectProp = new CollectProperty(collectValue, flt.hiding);
+            public void set(OsmPrimitive osm, Boolean value) {
+                if (collectValue == value.booleanValue()) {
+                    collect.add(osm);
+                }
+            }
+        }
 
-                    SearchAction.getSelection(flt, all, collectProp);
+        clearFilterFlags();
 
-                    switch (flt.mode) {
-                    case replace:
-                        for (OsmPrimitive osm : all) {
-                            osm.unsetDisabledState();
+        for (Filter flt : filters){
+            if (flt.enable) {
+                collect.clear();
+                // Decide, whether primitives are collected that are added to the current
+                // selection or those that are removed from the current selection
+                boolean collectValue = flt.mode == SearchAction.SearchMode.replace || flt.mode == SearchAction.SearchMode.add;
+                Property<OsmPrimitive,Boolean> collectProp = new CollectProperty(collectValue, flt.hiding);
+
+                SearchAction.getSelection(flt, all, collectProp);
+
+                switch (flt.mode) {
+                case replace:
+                    for (OsmPrimitive osm : all) {
+                        osm.unsetDisabledState();
+                    }
+                case add:
+                    if (!flt.inverted) {
+                        for (OsmPrimitive osm : collect) {
+                            osm.setDisabledState(flt.hiding);
                         }
-                    case add:
-                        if (!flt.inverted) {
-                            for (OsmPrimitive osm : collect) {
-                                osm.setDisabledState(flt.hiding);
-                            }
 
-                            // Find child nodes of hidden ways and add them to the hidden nodes
-                            for (OsmPrimitive osm : collect) {
-                                if (osm instanceof Way) {
-                                    nodes:
-                                        for (Node n : ((Way)osm).getNodes()) {
-                                            // if node is already disabled, there is nothing to do
-                                            if (n.isDisabledAndHidden() || (!flt.hiding && n.isDisabled())) {
-                                                continue;
-                                            }
-
-                                            // if the node is tagged, don't disable it
-                                            if (n.isTagged()) {
-                                                continue;
-                                            }
-
-                                            // if the node has undisabled parent ways, don't disable it
-                                            for (OsmPrimitive ref : n.getReferrers()) {
-                                                if (ref instanceof Way) {
-                                                    if (!ref.isDisabled()) {
-                                                        continue nodes;
-                                                    }
-                                                    if (flt.hiding && !ref.isDisabledAndHidden()) {
-                                                        continue nodes;
-                                                    }
-                                                }
-                                            }
-                                            n.setDisabledState(flt.hiding);
-                                        }
-                                }
-                            }
-                        } else { // inverted filter in add mode
-                            // update flags, except for nodes
-                            for (OsmPrimitive osm : collect) {
-                                if (!(osm instanceof Node)) {
-                                    osm.setDisabledState(flt.hiding);
-                                }
-                            }
-
-                            // update flags for nodes
-                            nodes:
-                                for (OsmPrimitive osm : collect) {
-                                    if (osm instanceof Node) {
+                        // Find child nodes of hidden ways and add them to the hidden nodes
+                        for (OsmPrimitive osm : collect) {
+                            if (osm instanceof Way) {
+                                nodes:
+                                    for (Node n : ((Way)osm).getNodes()) {
                                         // if node is already disabled, there is nothing to do
-                                        if (osm.isDisabledAndHidden() || (!flt.hiding && osm.isDisabled())) {
+                                        if (n.isDisabledAndHidden() || (!flt.hiding && n.isDisabled())) {
+                                            continue;
+                                        }
+
+                                        // if the node is tagged, don't disable it
+                                        if (n.isTagged()) {
                                             continue;
                                         }
 
                                         // if the node has undisabled parent ways, don't disable it
-                                        for (OsmPrimitive ref : osm.getReferrers()) {
+                                        for (OsmPrimitive ref : n.getReferrers()) {
                                             if (ref instanceof Way) {
                                                 if (!ref.isDisabled()) {
                                                     continue nodes;
@@ -191,74 +157,103 @@ public class Filters extends AbstractTableModel {
                                                 }
                                             }
                                         }
-                                        osm.setDisabledState(flt.hiding);
+                                        n.setDisabledState(flt.hiding);
                                     }
-                                }
-                        }
-                        break;
-                    case remove:
-                    case in_selection:
-                        if (!flt.inverted) {
-                            // make the described primitive undisabled again
-                            for (OsmPrimitive osm : collect) {
-                                osm.unsetDisabledState();
-                            }
-
-                            // Undisable the child nodes of undisabled ways
-                            for (OsmPrimitive osm : collect) {
-                                if (osm instanceof Way) {
-                                    for (Node n : ((Way) osm).getNodes()) {
-                                        n.unsetDisabledState();
-                                    }
-                                }
-                            }
-                        } else { // inverted filter in remove mode
-                            // make the described primitive undisabled again
-                            for (OsmPrimitive osm : collect) {
-                                osm.unsetDisabledState();
-                            }
-
-                            // Undisable the child nodes of undisabled ways
-                            for (OsmPrimitive osm : collect) {
-                                if (osm instanceof Way) {
-                                    for (Node n : ((Way) osm).getNodes()) {
-                                        n.unsetDisabledState();
-                                    }
-                                }
                             }
                         }
-                        break;
-                    default:
-                        throw new IllegalStateException();
+                    } else { // inverted filter in add mode
+                        // update flags, except for nodes
+                        for (OsmPrimitive osm : collect) {
+                            if (!(osm instanceof Node)) {
+                                osm.setDisabledState(flt.hiding);
+                            }
+                        }
+
+                        // update flags for nodes
+                        nodes:
+                            for (OsmPrimitive osm : collect) {
+                                if (osm instanceof Node) {
+                                    // if node is already disabled, there is nothing to do
+                                    if (osm.isDisabledAndHidden() || (!flt.hiding && osm.isDisabled())) {
+                                        continue;
+                                    }
+
+                                    // if the node has undisabled parent ways, don't disable it
+                                    for (OsmPrimitive ref : osm.getReferrers()) {
+                                        if (ref instanceof Way) {
+                                            if (!ref.isDisabled()) {
+                                                continue nodes;
+                                            }
+                                            if (flt.hiding && !ref.isDisabledAndHidden()) {
+                                                continue nodes;
+                                            }
+                                        }
+                                    }
+                                    osm.setDisabledState(flt.hiding);
+                                }
+                            }
                     }
+                    break;
+                case remove:
+                case in_selection:
+                    if (!flt.inverted) {
+                        // make the described primitive undisabled again
+                        for (OsmPrimitive osm : collect) {
+                            osm.unsetDisabledState();
+                        }
+
+                        // Undisable the child nodes of undisabled ways
+                        for (OsmPrimitive osm : collect) {
+                            if (osm instanceof Way) {
+                                for (Node n : ((Way) osm).getNodes()) {
+                                    n.unsetDisabledState();
+                                }
+                            }
+                        }
+                    } else { // inverted filter in remove mode
+                        // make the described primitive undisabled again
+                        for (OsmPrimitive osm : collect) {
+                            osm.unsetDisabledState();
+                        }
+
+                        // Undisable the child nodes of undisabled ways
+                        for (OsmPrimitive osm : collect) {
+                            if (osm instanceof Way) {
+                                for (Node n : ((Way) osm).getNodes()) {
+                                    n.unsetDisabledState();
+                                }
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    throw new IllegalStateException();
                 }
             }
-
-            disabledCount = 0;
-            disabledAndHiddenCount = 0;
-            // collect disabled and selected the primitives
-            final Collection<OsmPrimitive> deselect = new HashSet<OsmPrimitive>();
-            for (OsmPrimitive osm : all) {
-                if (osm.isDisabled()) {
-                    disabledCount++;
-                    if (osm.isSelected()) {
-                        deselect.add(osm);
-                    }
-                    if (osm.isDisabledAndHidden()) {
-                        disabledAndHiddenCount++;
-                    }
-                }
-            }
-            disabledCount -= disabledAndHiddenCount;
-            if (!deselect.isEmpty()) {
-                ds.clearSelection(deselect);
-            }
-
-            Main.map.mapView.repaint();
-            Main.map.filterDialog.updateDialogHeader();
-        } finally {
-            ds.endUpdate();
         }
+
+        disabledCount = 0;
+        disabledAndHiddenCount = 0;
+        // collect disabled and selected the primitives
+        final Collection<OsmPrimitive> deselect = new HashSet<OsmPrimitive>();
+        for (OsmPrimitive osm : all) {
+            if (osm.isDisabled()) {
+                disabledCount++;
+                if (osm.isSelected()) {
+                    deselect.add(osm);
+                }
+                if (osm.isDisabledAndHidden()) {
+                    disabledAndHiddenCount++;
+                }
+            }
+        }
+        disabledCount -= disabledAndHiddenCount;
+        if (!deselect.isEmpty()) {
+            ds.clearSelection(deselect);
+        }
+
+        Main.map.mapView.repaint();
+        Main.map.filterDialog.updateDialogHeader();
     }
 
     public void clearFilterFlags() {
