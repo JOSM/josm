@@ -118,6 +118,7 @@ public abstract class RelationEditor extends ExtendedDialog {
         super(Main.parent,
                 "",
                 new String[] { tr("Apply Changes"), tr("Cancel")},
+                false,
                 false
         );
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");

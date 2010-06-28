@@ -29,6 +29,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class ExtendedDialog extends JDialog {
+    private final boolean disposeOnClose;
     private int result = 0;
     public static final int DialogClosedOtherwise = 0;
     private boolean toggleable = false;
@@ -84,9 +85,7 @@ public class ExtendedDialog extends JDialog {
      * @param buttonTexts  String Array of the text that will appear on the buttons. The first button is the default one.
      */
     public ExtendedDialog(Component parent, String title, String[] buttonTexts) {
-        super(JOptionPane.getFrameForComponent(parent), title, true);
-        this.parent = parent;
-        bTexts = buttonTexts;
+        this(parent, title, buttonTexts, true, true);
     }
 
     /**
@@ -94,9 +93,18 @@ public class ExtendedDialog extends JDialog {
      */
     public ExtendedDialog(Component parent, String title, String[] buttonTexts,
             boolean modal) {
+        this(parent, title, buttonTexts, modal, true);
+    }
+
+    public ExtendedDialog(Component parent, String title, String[] buttonTexts,
+            boolean modal, boolean disposeOnClose) {
         super(JOptionPane.getFrameForComponent(parent), title, modal);
         this.parent = parent;
         bTexts = buttonTexts;
+        if (disposeOnClose) {
+            setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        }
+        this.disposeOnClose = disposeOnClose;
     }
 
     /**
@@ -341,6 +349,10 @@ public class ExtendedDialog extends JDialog {
             }
         }
         super.setVisible(visible);
+
+        if (!visible && disposeOnClose) {
+            dispose();
+        }
     }
 
     /**

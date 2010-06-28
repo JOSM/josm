@@ -28,13 +28,12 @@
 package org.openstreetmap.josm.gui.widgets;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 
-import org.openstreetmap.josm.gui.tagging.ac.*;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 
 public class ComboBoxHistory extends DefaultComboBoxModel implements Iterable<AutoCompletionListItem> {
 
