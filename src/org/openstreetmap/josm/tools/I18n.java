@@ -236,6 +236,7 @@ public class I18n {
         languages.put("en_GB", PluralMode.MODE_NOTONE);
         languages.put("es", PluralMode.MODE_NOTONE);
         languages.put("et", PluralMode.MODE_NOTONE);
+        languages.put("eu", PluralMode.MODE_NOTONE);
         languages.put("fi", PluralMode.MODE_NOTONE);
         languages.put("fr", PluralMode.MODE_GREATERONE);
         languages.put("gl", PluralMode.MODE_NOTONE);
@@ -472,7 +473,7 @@ public class I18n {
     {
         switch(pluralMode)
         {
-        case MODE_NOTONE: /* bg, da, de, el, en, en_GB, es, et, fi, gl, is, it, iw_IL, nb, nl, sv */
+        case MODE_NOTONE: /* bg, da, de, el, en, en_GB, es, et, eu, fi, gl, is, it, iw_IL, nb, nl, sv */
             return ((n != 1) ? 1 : 0);
         case MODE_NONE: /* ja, tr, zh_TW */
             return 0;
