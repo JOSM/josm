@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <node id='-1782' action='modify' visible='true' lat='51.29770551640994' lon='11.433165989186241'>
+    <tag k='highway' v='bus_stop' />
+    <tag k='source:RESULT2' v='v' />
+    <tag k='source:RESULT3' v='h' />
+  </node>
+  <node id='3738203' action='modify' timestamp='2009-07-01T02:47:18Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.298034488388204' lon='11.433050190818848'>
+    <tag k='operator' v='enviaM' />
+    <tag k='power' v='cable_distribution_cabinet' />
+    <tag k='ref' v='35' />
+    <tag k='source:RESULT1' v='h' />
+    <tag k='source:RESULT2' v='d' />
+    <tag k='source:RESULT3' v='v' />
+  </node>
+  <node id='3738204' action='modify' timestamp='2009-07-03T02:19:19Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.297681393255424' lon='11.431771777709612'>
+    <tag k='source:RESULT1' v='v' />
+    <tag k='source:RESULT2' v='v' />
+    <tag k='source:RESULT3' v='h' />
+  </node>
+  <node id='3738205' action='modify' timestamp='2009-07-01T02:47:19Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.29777160009883' lon='11.433037897753023'>
+    <tag k='source:RESULT1' v='h' />
+    <tag k='source:RESULT2' v='d' />
+    <tag k='source:RESULT3' v='v' />
+  </node>
+  <node id='3738206' action='modify' timestamp='2009-07-01T02:47:19Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.297852759255456' lon='11.433075645388865'>
+    <tag k='source:RESULT1' v='v' />
+    <tag k='source:RESULT2' v='v' />
+    <tag k='source:RESULT3' v='v' />
+  </node>
+  <node id='3738207' action='modify' timestamp='2009-12-29T21:13:35Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.29788162453165' lon='11.432579272876024'>
+    <tag k='natural' v='tree' />
+    <tag k='source:RESULT1' v='v' />
+    <tag k='source:RESULT2' v='d' />
+    <tag k='source:RESULT3' v='h' />
+  </node>
+  <node id='3738208' action='modify' timestamp='2008-12-05T19:31:02Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.29800309852317' lon='11.433896841792528'>
+    <tag k='source:RESULT1' v='v' />
+    <tag k='source:RESULT2' v='v' />
+    <tag k='source:RESULT3' v='h' />
+  </node>
+  <node id='3738209' action='modify' timestamp='2009-07-01T02:47:20Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.297687546215265' lon='11.433031050752408'>
+    <tag k='highway' v='turning_circle' />
+    <tag k='source:RESULT1' v='h' />
+    <tag k='source:RESULT2' v='v' />
+    <tag k='source:RESULT3' v='d' />
+  </node>
+  <node id='3738210' action='modify' timestamp='2009-12-29T21:13:35Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.29779804076176' lon='11.432409758274341'>
+    <tag k='natural' v='tree' />
+    <tag k='source:RESULT1' v='v' />
+    <tag k='source:RESULT2' v='v' />
+    <tag k='source:RESULT3' v='h' />
+  </node>
+  <node id='3738211' action='modify' timestamp='2009-07-03T02:19:19Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.29801439844809' lon='11.433988341792528'>
+    <tag k='source:RESULT1' v='v' />
+    <tag k='source:RESULT2' v='v' />
+    <tag k='source:RESULT3' v='h' />
+  </node>
+  <node id='3738212' action='modify' timestamp='2010-06-29T13:42:17Z' visible='true' version='1' changeset='4886' lat='51.29794829265898' lon='11.433062264158298'>
+    <tag k='natural' v='tree' />
+    <tag k='source:RESULT1' v='v' />
+    <tag k='source:RESULT2' v='d' />
+    <tag k='source:RESULT3' v='v' />
+  </node>
+  <way id='101639' action='modify' timestamp='2009-12-03T01:32:37Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886'>
+    <nd ref='3738204' />
+    <nd ref='3738210' />
+    <nd ref='3738206' />
+    <nd ref='3738208' />
+    <nd ref='3738211' />
+    <tag k='footway' v='both' />
+    <tag k='highway' v='residential' />
+    <tag k='lit' v='yes' />
+    <tag k='name' v='Karl-Marx-Straße' />
+    <tag k='postal_code' v='06571' />
+    <tag k='source:RESULT1' v='v' />
+    <tag k='source:RESULT2' v='v' />
+    <tag k='source:RESULT3' v='h' />
+    <tag k='surface' v='asphalt' />
+    <tag k='width' v='6' />
+  </way>
+  <way id='101640' action='modify' timestamp='2009-07-01T02:47:55Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886'>
+    <nd ref='3738203' />
+    <nd ref='3738212' />
+    <nd ref='3738206' />
+    <nd ref='3738205' />
+    <nd ref='3738209' />
+    <tag k='cables' v='4' />
+    <tag k='location' v='underground' />
+    <tag k='operator' v='enviaM' />
+    <tag k='power' v='cable' />
+    <tag k='source:RESULT1' v='h' />
+    <tag k='source:RESULT2' v='d' />
+    <tag k='source:RESULT3' v='v' />
+  </way>
+</osm>

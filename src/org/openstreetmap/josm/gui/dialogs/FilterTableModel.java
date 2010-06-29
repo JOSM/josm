@@ -1,4 +1,4 @@
-package org.openstreetmap.josm.data.osm;
+package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
@@ -20,19 +20,24 @@ import javax.swing.table.AbstractTableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.Filter;
+import org.openstreetmap.josm.data.osm.FilterMatcher;
+import org.openstreetmap.josm.data.osm.FilterWorker;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 /**
  *
  * @author Petr_Dlouhý
  */
-public class Filters extends AbstractTableModel {
+public class FilterTableModel extends AbstractTableModel {
 
     // number of primitives that are disabled but not hidden
     public int disabledCount;
     // number of primitives that are disabled and hidden
     public int disabledAndHiddenCount;
 
-    public Filters() {
+    public FilterTableModel() {
         loadPrefs();
     }
 
@@ -53,30 +58,7 @@ public class Filters extends AbstractTableModel {
     }
 
 
-    /**
-     * Apply the filters to the primitives of the data set.
-     *
-     * There are certain rules to ensure that a way is not displayed "naked"
-     * without its nodes (1) and on the other hand to avoid hiding a way but
-     * leaving its nodes visible as a cloud of points (2).
-     *
-     * In normal (non-inverted) mode only problem (2) is relevant.
-     * Untagged child nodes of filtered ways that are not used by other
-     * unfiltered ways are filtered as well.
-     *
-     * If a filter applies explicitly to a node, (2) is ignored and it
-     * is filtered in any case.
-     *
-     * In inverted mode usually only problem (1) is relevant.
-     * If the inverted filter applies explicitly to a node, this no longer
-     * means it is filtered in any case:
-     * E.g. the filter [searchtext="highway=footway", inverted=true] displays
-     * the footways only. But that does not mean, the nodes of the footway
-     * (which do not have the highway tag) should be filtered as well.
-     *
-     * So first the Filter is applied for ways and relations. Then to nodes
-     * (but hides them only if they are not used by any unfiltered way).
-     */
+    
     public void executeFilters() {
         DataSet ds = Main.main.getCurrentDataSet();
         if (ds == null)
@@ -84,40 +66,7 @@ public class Filters extends AbstractTableModel {
 
         final Collection<OsmPrimitive> all = ds.allNonDeletedCompletePrimitives();
 
-        for (OsmPrimitive primitive: all) {
-            if (filterMatcher.isHidden(primitive)) {
-                primitive.setDisabledState(true);
-            } else if (filterMatcher.isDisabled(primitive)) {
-                primitive.setDisabledState(false);
-            } else {
-                primitive.unsetDisabledState();
-            }
-        }
-
-        for (OsmPrimitive primitive: all) {
-            if (primitive instanceof Way && primitive.isDisabled()) {
-                Way w = (Way)primitive;
-                for (Node n: w.getNodes()) {
-
-                    if (n.isTagged()) {
-                        continue;
-                    }
-
-                    boolean disabled = w.isDisabled();
-                    boolean hidden = w.isDisabledAndHidden();
-                    for (OsmPrimitive ref: n.getReferrers()) {
-                        if (ref instanceof Way) {
-                            disabled = disabled && ref.isDisabled();
-                            hidden = hidden && ref.isDisabledAndHidden();
-                        }
-                    }
-
-                    if (disabled) {
-                        n.setDisabledState(hidden);
-                    }
-                }
-            }
-        }
+        FilterWorker.executeFilters(all, filterMatcher);
 
         disabledCount = 0;
         disabledAndHiddenCount = 0;
@@ -146,9 +95,7 @@ public class Filters extends AbstractTableModel {
     public void clearFilterFlags() {
         DataSet ds = Main.main.getCurrentDataSet();
         if (ds != null) {
-            for (OsmPrimitive osm : ds.allPrimitives()) {
-                osm.unsetDisabledState();
-            }
+            FilterWorker.clearFilterFlags(ds.allPrimitives());
         }
         disabledCount = 0;
         disabledAndHiddenCount = 0;
