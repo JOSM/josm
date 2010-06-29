@@ -17,6 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -61,7 +62,7 @@ public class FilterTest {
 
     @Test
     public void filter_test() throws ParseError, IllegalDataException, FileNotFoundException {
-        for (int i = 1; i<=3; ++i) {
+        for (int i : new int [] {1,2,3, 11,12,13,14}) {
             DataSet ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/filterTests.osm"), NullProgressMonitor.INSTANCE);
 
             List<Filter> filters = new LinkedList<Filter>();
@@ -88,6 +89,56 @@ public class FilterTest {
                     Filter f2 = new Filter();
                     f2.text = "highway";
                     filters.addAll(Arrays.asList(new Filter[] {f1, f2}));
+                    break;
+                }
+                case 11: {
+                    Filter f1 = new Filter();
+                    f1.text = "highway";
+                    f1.inverted = true;
+                    f1.hiding = true;
+                    filters.add(f1);
+                    break;
+                }
+                case 12: {
+                    Filter f1 = new Filter();
+                    f1.text = "highway";
+                    f1.inverted = true;
+                    f1.hiding = true;
+                    Filter f2 = new Filter();
+                    f2.text = "water";
+                    f2.mode = SearchMode.remove;
+                    filters.addAll(Arrays.asList(new Filter[] {f1, f2}));
+                    break;
+                }
+                case 13: {
+                    Filter f1 = new Filter();
+                    f1.text = "highway";
+                    f1.inverted = true;
+                    f1.hiding = true;
+                    Filter f2 = new Filter();
+                    f2.text = "water";
+                    f2.mode = SearchMode.remove;
+                    Filter f3 = new Filter();
+                    f3.text = "natural";
+                    filters.addAll(Arrays.asList(new Filter[] {f1, f2, f3}));
+                    break;
+                }
+                case 14: {
+                    /* show all highways and all water features, but not lakes
+                     * except those that have a name */
+                    Filter f1 = new Filter();
+                    f1.text = "highway";
+                    f1.inverted = true;
+                    f1.hiding = true;
+                    Filter f2 = new Filter();
+                    f2.text = "water";
+                    f2.mode = SearchMode.remove;
+                    Filter f3 = new Filter();
+                    f3.text = "natural";
+                    Filter f4 = new Filter();
+                    f4.text = "name";
+                    f4.mode = SearchMode.remove;
+                    filters.addAll(Arrays.asList(new Filter[] {f1, f2, f3, f4}));
                     break;
                 }
             }

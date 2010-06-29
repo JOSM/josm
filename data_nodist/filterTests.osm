@@ -1,11 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <osm version='0.6' generator='JOSM'>
-  <node id='-1782' action='modify' visible='true' lat='51.29770551640994' lon='11.433165989186241'>
-    <tag k='highway' v='bus_stop' />
-    <tag k='source:RESULT2' v='v' />
-    <tag k='source:RESULT3' v='h' />
-  </node>
-  <node id='3738203' action='modify' timestamp='2009-07-01T02:47:18Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.298034488388204' lon='11.433050190818848'>
+  <node id='3738203' timestamp='2009-07-01T02:47:18Z' uid='60345' user='Mirko Küster' visible='true' version='2' changeset='4888' lat='51.298034488388204' lon='11.433050190818848'>
     <tag k='operator' v='enviaM' />
     <tag k='power' v='cable_distribution_cabinet' />
     <tag k='ref' v='35' />
@@ -13,56 +8,197 @@
     <tag k='source:RESULT2' v='d' />
     <tag k='source:RESULT3' v='v' />
   </node>
-  <node id='3738204' action='modify' timestamp='2009-07-03T02:19:19Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.297681393255424' lon='11.431771777709612'>
+  <node id='3738204' timestamp='2009-07-03T02:19:19Z' uid='60345' user='Mirko Küster' visible='true' version='2' changeset='4888' lat='51.297681393255424' lon='11.431771777709612'>
     <tag k='source:RESULT1' v='v' />
     <tag k='source:RESULT2' v='v' />
     <tag k='source:RESULT3' v='h' />
   </node>
-  <node id='3738205' action='modify' timestamp='2009-07-01T02:47:19Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.29777160009883' lon='11.433037897753023'>
+  <node id='3738205' timestamp='2009-07-01T02:47:19Z' uid='60345' user='Mirko Küster' visible='true' version='2' changeset='4888' lat='51.29777160009883' lon='11.433037897753023'>
     <tag k='source:RESULT1' v='h' />
     <tag k='source:RESULT2' v='d' />
     <tag k='source:RESULT3' v='v' />
   </node>
-  <node id='3738206' action='modify' timestamp='2009-07-01T02:47:19Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.297852759255456' lon='11.433075645388865'>
+  <node id='3738206' timestamp='2009-07-01T02:47:19Z' uid='60345' user='Mirko Küster' visible='true' version='2' changeset='4888' lat='51.297852759255456' lon='11.433075645388865'>
     <tag k='source:RESULT1' v='v' />
     <tag k='source:RESULT2' v='v' />
     <tag k='source:RESULT3' v='v' />
   </node>
-  <node id='3738207' action='modify' timestamp='2009-12-29T21:13:35Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.29788162453165' lon='11.432579272876024'>
+  <node id='3738207' timestamp='2009-12-29T21:13:35Z' uid='60345' user='Mirko Küster' visible='true' version='2' changeset='4888' lat='51.29788162453165' lon='11.432579272876024'>
     <tag k='natural' v='tree' />
     <tag k='source:RESULT1' v='v' />
     <tag k='source:RESULT2' v='d' />
     <tag k='source:RESULT3' v='h' />
   </node>
-  <node id='3738208' action='modify' timestamp='2008-12-05T19:31:02Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.29800309852317' lon='11.433896841792528'>
+  <node id='3738208' timestamp='2008-12-05T19:31:02Z' uid='60345' user='Mirko Küster' visible='true' version='2' changeset='4888' lat='51.29800309852317' lon='11.433896841792528'>
     <tag k='source:RESULT1' v='v' />
     <tag k='source:RESULT2' v='v' />
     <tag k='source:RESULT3' v='h' />
   </node>
-  <node id='3738209' action='modify' timestamp='2009-07-01T02:47:20Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.297687546215265' lon='11.433031050752408'>
+  <node id='3738209' timestamp='2009-07-01T02:47:20Z' uid='60345' user='Mirko Küster' visible='true' version='2' changeset='4888' lat='51.297687546215265' lon='11.433031050752408'>
     <tag k='highway' v='turning_circle' />
     <tag k='source:RESULT1' v='h' />
     <tag k='source:RESULT2' v='v' />
     <tag k='source:RESULT3' v='d' />
   </node>
-  <node id='3738210' action='modify' timestamp='2009-12-29T21:13:35Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.29779804076176' lon='11.432409758274341'>
+  <node id='3738210' timestamp='2009-12-29T21:13:35Z' uid='60345' user='Mirko Küster' visible='true' version='2' changeset='4888' lat='51.29779804076176' lon='11.432409758274341'>
     <tag k='natural' v='tree' />
     <tag k='source:RESULT1' v='v' />
     <tag k='source:RESULT2' v='v' />
     <tag k='source:RESULT3' v='h' />
   </node>
-  <node id='3738211' action='modify' timestamp='2009-07-03T02:19:19Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886' lat='51.29801439844809' lon='11.433988341792528'>
+  <node id='3738211' timestamp='2009-07-03T02:19:19Z' uid='60345' user='Mirko Küster' visible='true' version='2' changeset='4888' lat='51.29801439844809' lon='11.433988341792528'>
     <tag k='source:RESULT1' v='v' />
     <tag k='source:RESULT2' v='v' />
     <tag k='source:RESULT3' v='h' />
   </node>
-  <node id='3738212' action='modify' timestamp='2010-06-29T13:42:17Z' visible='true' version='1' changeset='4886' lat='51.29794829265898' lon='11.433062264158298'>
+  <node id='3738212' timestamp='2010-06-29T13:42:17Z' visible='true' version='2' changeset='4888' lat='51.29794829265898' lon='11.433062264158298'>
     <tag k='natural' v='tree' />
     <tag k='source:RESULT1' v='v' />
     <tag k='source:RESULT2' v='d' />
     <tag k='source:RESULT3' v='v' />
   </node>
-  <way id='101639' action='modify' timestamp='2009-12-03T01:32:37Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886'>
+  <node id='3738213' visible='true' version='2' changeset='4889' lat='51.296979868329316' lon='11.43367415544202'>
+    <tag k='name' v='Great Lake' />
+    <tag k='natural' v='water' />
+    <tag k='source:RESULT11' v='h' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='d' />
+    <tag k='source:RESULT14' v='v' />
+  </node>
+  <node id='3738214' visible='true' version='2' changeset='4889' lat='51.29733323879322' lon='11.433716158964817'>
+    <tag k='source:RESULT11' v='h' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='v' />
+    <tag k='source:RESULT14' v='v' />
+  </node>
+  <node id='3738215' visible='true' version='2' changeset='4889' lat='51.297197143733946' lon='11.43362833341716'>
+    <tag k='highway' v='turning_circle' />
+    <tag k='source:RESULT11' v='v' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='v' />
+    <tag k='source:RESULT14' v='v' />
+  </node>
+  <node id='3738216' visible='true' version='2' changeset='4889' lat='51.29713028987274' lon='11.4320245625468'>
+    <tag k='natural' v='water' />
+    <tag k='source:RESULT11' v='v' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='d' />
+    <tag k='source:RESULT14' v='d' />
+  </node>
+  <node id='3738217' visible='true' version='2' changeset='4889' lat='51.29696793009042' lon='11.432039836555083'>
+    <tag k='source:RESULT11' v='h' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='v' />
+    <tag k='source:RESULT14' v='v' />
+  </node>
+  <node id='3738218' visible='true' version='2' changeset='4889' lat='51.297180430277756' lon='11.432158210119328'>
+    <tag k='highway' v='turning_circle' />
+    <tag k='source:RESULT11' v='v' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='v' />
+    <tag k='source:RESULT14' v='v' />
+  </node>
+  <node id='3738219' visible='true' version='2' changeset='4889' lat='51.29715177862449' lon='11.431730537887237'>
+    <tag k='source:RESULT11' v='v' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='v' />
+    <tag k='source:RESULT14' v='v' />
+  </node>
+  <node id='3738220' visible='true' version='2' changeset='4889' lat='51.297299811973936' lon='11.432941003044146'>
+    <tag k='natural' v='water' />
+    <tag k='source:RESULT11' v='h' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='d' />
+    <tag k='source:RESULT14' v='d' />
+  </node>
+  <node id='3738221' timestamp='2010-06-29T18:09:35Z' visible='true' version='1' changeset='4888' lat='51.29770551640994' lon='11.433165989186241'>
+    <tag k='highway' v='bus_stop' />
+    <tag k='source:RESULT2' v='v' />
+    <tag k='source:RESULT3' v='h' />
+  </node>
+  <node id='3738222' visible='true' version='2' changeset='4889' lat='51.2973881542292' lon='11.431974922019855'>
+    <tag k='source:RESULT11' v='h' />
+    <tag k='source:RESULT12' v='h' />
+    <tag k='source:RESULT13' v='h' />
+    <tag k='source:RESULT14' v='h' />
+  </node>
+  <node id='3738223' visible='true' version='2' changeset='4889' lat='51.297180430277706' lon='11.432318587206364'>
+    <tag k='source:RESULT11' v='v' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='v' />
+    <tag k='source:RESULT14' v='v' />
+  </node>
+  <node id='3738224' visible='true' version='2' changeset='4889' lat='51.29708731233921' lon='11.43379634750834'>
+    <tag k='highway' v='turning_circle' />
+    <tag k='source:RESULT11' v='v' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='v' />
+    <tag k='source:RESULT14' v='v' />
+  </node>
+  <node id='3738225' visible='true' version='2' changeset='4889' lat='51.29725444696593' lon='11.43226512817735'>
+    <tag k='source:RESULT11' v='h' />
+    <tag k='source:RESULT12' v='h' />
+    <tag k='source:RESULT13' v='h' />
+    <tag k='source:RESULT14' v='h' />
+  </node>
+  <node id='3738226' visible='true' version='2' changeset='4889' lat='51.297285486186695' lon='11.433284668230646'>
+    <tag k='highway' v='turning_circle' />
+    <tag k='source:RESULT11' v='v' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='v' />
+    <tag k='source:RESULT14' v='v' />
+  </node>
+  <node id='3738227' visible='true' version='2' changeset='4889' lat='51.29677214253027' lon='11.433555781877784'>
+    <tag k='source:RESULT11' v='v' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='v' />
+    <tag k='source:RESULT14' v='v' />
+  </node>
+  <node id='3738228' visible='true' version='2' changeset='4889' lat='51.29709686290569' lon='11.433433589811468'>
+    <tag k='natural' v='water' />
+    <tag k='source:RESULT11' v='h' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='d' />
+    <tag k='source:RESULT14' v='d' />
+  </node>
+  <node id='3738229' visible='true' version='2' changeset='4889' lat='51.297263997497694' lon='11.433868899047706'>
+    <tag k='source:RESULT11' v='h' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='v' />
+    <tag k='source:RESULT14' v='v' />
+  </node>
+  <node id='3738230' visible='true' version='2' changeset='4889' lat='51.29747410869284' lon='11.433781073500048'>
+    <tag k='source:RESULT11' v='h' />
+    <tag k='source:RESULT12' v='h' />
+    <tag k='source:RESULT13' v='h' />
+    <tag k='source:RESULT14' v='h' />
+  </node>
+  <node id='3738231' visible='true' version='2' changeset='4889' lat='51.297001357151395' lon='11.433212116691283'>
+    <tag k='source:RESULT11' v='v' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='v' />
+    <tag k='source:RESULT14' v='v' />
+  </node>
+  <node id='3738232' visible='true' version='2' changeset='4889' lat='51.29720430664181' lon='11.432501875305828'>
+    <tag k='source:RESULT11' v='h' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='v' />
+    <tag k='source:RESULT14' v='v' />
+  </node>
+  <node id='3738233' visible='true' version='1' changeset='4889' lat='51.2979658606353' lon='11.431133018682964'>
+    <tag k='name' v='Test 1-3' />
+  </node>
+  <node id='3738234' visible='true' version='1' changeset='4889' lat='51.29723286275695' lon='11.431190296214046'>
+    <tag k='name' v='Test 11-14' />
+  </node>
+  <node id='3738235' visible='true' version='1' changeset='4889' lat='51.29686516560205' lon='11.433363023893177'>
+    <tag k='source:RESULT11' v='v' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='v' />
+    <tag k='source:RESULT14' v='v' />
+    <tag k='tourism' v='viewpoint' />
+  </node>
+  <way id='101639' timestamp='2009-12-03T01:32:37Z' uid='60345' user='Mirko Küster' visible='true' version='2' changeset='4888'>
     <nd ref='3738204' />
     <nd ref='3738210' />
     <nd ref='3738206' />
@@ -79,7 +215,7 @@
     <tag k='surface' v='asphalt' />
     <tag k='width' v='6' />
   </way>
-  <way id='101640' action='modify' timestamp='2009-07-01T02:47:55Z' uid='60345' user='Mirko Küster' visible='true' version='1' changeset='4886'>
+  <way id='101640' timestamp='2009-07-01T02:47:55Z' uid='60345' user='Mirko Küster' visible='true' version='2' changeset='4888'>
     <nd ref='3738203' />
     <nd ref='3738212' />
     <nd ref='3738206' />
@@ -92,5 +228,49 @@
     <tag k='source:RESULT1' v='h' />
     <tag k='source:RESULT2' v='d' />
     <tag k='source:RESULT3' v='v' />
+  </way>
+  <way id='101641' visible='true' version='3' changeset='4889'>
+    <nd ref='3738219' />
+    <nd ref='3738216' />
+    <nd ref='3738218' />
+    <nd ref='3738223' />
+    <nd ref='3738231' />
+    <nd ref='3738235' />
+    <nd ref='3738227' />
+    <tag k='highway' v='residential' />
+    <tag k='source:RESULT11' v='v' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='v' />
+    <tag k='source:RESULT14' v='v' />
+  </way>
+  <way id='101642' visible='true' version='2' changeset='4889'>
+    <nd ref='3738222' />
+    <nd ref='3738225' />
+    <nd ref='3738223' />
+    <nd ref='3738231' />
+    <nd ref='3738228' />
+    <nd ref='3738215' />
+    <nd ref='3738214' />
+    <nd ref='3738230' />
+    <tag k='landuse' v='meadow' />
+    <tag k='source:RESULT11' v='h' />
+    <tag k='source:RESULT12' v='h' />
+    <tag k='source:RESULT13' v='h' />
+    <tag k='source:RESULT14' v='h' />
+  </way>
+  <way id='101643' visible='true' version='2' changeset='4889'>
+    <nd ref='3738217' />
+    <nd ref='3738223' />
+    <nd ref='3738232' />
+    <nd ref='3738220' />
+    <nd ref='3738226' />
+    <nd ref='3738214' />
+    <nd ref='3738229' />
+    <tag k='name' v='Great Canal' />
+    <tag k='source:RESULT11' v='h' />
+    <tag k='source:RESULT12' v='v' />
+    <tag k='source:RESULT13' v='v' />
+    <tag k='source:RESULT14' v='v' />
+    <tag k='waterway' v='canal' />
   </way>
 </osm>
