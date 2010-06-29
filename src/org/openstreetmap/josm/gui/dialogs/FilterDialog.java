@@ -79,7 +79,6 @@ public class FilterDialog extends ToggleDialog implements Listener {
                 Filter filter = (Filter)SearchAction.showSearchDialog(new Filter());
                 if(filter != null){
                     filters.addFilter(filter);
-                    filters.executeFilters();
                 }
             }
         });
@@ -94,7 +93,6 @@ public class FilterDialog extends ToggleDialog implements Listener {
                 Filter filter = (Filter)SearchAction.showSearchDialog(f);
                 if(filter != null){
                     filters.setFilter(index, filter);
-                    filters.executeFilters();
                 }
             }
         });

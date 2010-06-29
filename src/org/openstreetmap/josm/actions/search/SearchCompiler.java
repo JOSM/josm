@@ -74,7 +74,7 @@ public class SearchCompiler {
         }
     }
 
-    private static class Not extends Match {
+    public static class Not extends Match {
         private final Match match;
         public Not(Match match) {this.match = match;}
         @Override public boolean match(OsmPrimitive osm) {

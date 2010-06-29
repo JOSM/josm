@@ -10,18 +10,19 @@ import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 public class Filter extends SearchSetting {
     private static final String version = "1";
 
-    public Boolean enable = true;
-    public Boolean hiding = false;
-    public Boolean inverted = false;
+    public boolean enable = true;
+    public boolean hiding = false;
+    public boolean inverted = false;
+
     public Filter() {
         super("", SearchMode.add, false, false, false);
     }
     public Filter(String text, SearchMode mode, boolean caseSensitive,
-    boolean regexSearch, boolean allElements) {
+            boolean regexSearch, boolean allElements) {
         super(text, mode, caseSensitive, regexSearch, allElements);
     }
 
-    public Filter(String prefText){
+    public Filter(String prefText) {
         super("", SearchMode.add, false, false, false);
         String[] prfs = prefText.split(";");
         if(prfs.length != 10 && !prfs[0].equals(version))
@@ -48,9 +49,9 @@ public class Filter extends SearchSetting {
 
     public String getPrefString(){
         return version + ";" +
-            text + ";" + mode + ";" + caseSensitive + ";" + regexSearch + ";" +
-            "legacy" + ";" + enable + ";" + hiding + ";" +
-            inverted + ";" +
-            "false"; // last parameter is not used any more (was: applyForChildren)
+        text + ";" + mode + ";" + caseSensitive + ";" + regexSearch + ";" +
+        "legacy" + ";" + enable + ";" + hiding + ";" +
+        inverted + ";" +
+        "false"; // last parameter is not used any more (was: applyForChildren)
     }
 }
