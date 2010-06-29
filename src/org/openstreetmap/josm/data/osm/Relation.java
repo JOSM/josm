@@ -45,6 +45,8 @@ public final class Relation extends OsmPrimitive {
 
             if (members != null) {
                 this.members = members.toArray(new RelationMember[members.size()]);
+            } else {
+                this.members = new RelationMember[0];
             }
             for (RelationMember rm:this.members) {
                 rm.getMember().addReferrer(this);
