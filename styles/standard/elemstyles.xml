@@ -1456,7 +1456,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="piste:difficulty" v="easy"/>
 		<line width="6" colour="piste_easy#0000ff"/>
-		<area colour="piste_easy#0000ff"/>
+		<area colour="piste_easy#0000ff" closed="true"/>
 		<icon src="sport/skiing.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>30000</scale_max>
@@ -1465,7 +1465,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="piste:difficulty" v="intermediate"/>
 		<line width="6" colour="piste_intermediate#ff0000"/>
-		<area colour="piste_intermediate#ff0000"/>
+		<area colour="piste_intermediate#ff0000" closed="true"/>
 		<icon src="sport/skiing.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>30000</scale_max>
@@ -1474,7 +1474,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="piste:difficulty" v="advanced"/>
 		<line width="6" colour="piste_advanced#606060"/>
-		<area colour="piste_advanced#606060"/>
+		<area colour="piste_advanced#606060" closed="true"/>
 		<icon src="sport/skiing.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>30000</scale_max>
@@ -1483,7 +1483,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="piste:difficulty" v="expert"/>
 		<line width="6" colour="piste_expert#606060"/>
-		<area colour="piste_expert#606060"/>
+		<area colour="piste_expert#606060" closed="true"/>
 		<icon src="sport/skiing.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>30000</scale_max>
@@ -1492,7 +1492,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="piste:difficulty" v="freeride"/>
 		<line width="6" colour="piste_freeride#ffff00"/>
-		<area colour="piste_freeride#ffff00"/>
+		<area colour="piste_freeride#ffff00" closed="true"/>
 		<icon src="sport/skiing.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>30000</scale_max>
@@ -1501,7 +1501,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="piste:difficulty" v="novice"/>
 		<line width="6" colour="piste_novice#00ff00"/>
-		<area colour="piste_novice#00ff00"/>
+		<area colour="piste_novice#00ff00" closed="true"/>
 		<icon src="sport/skiing.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>300000</scale_max>
