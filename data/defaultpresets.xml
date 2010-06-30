@@ -1910,7 +1910,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <label text="select sport:" />
             <space />
-            <combo key="sport" text="sport" values="multi,archery,athletics,australian_football,baseball,basketball,boules,bowls,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" default="" delete_if_empty="true" />
+            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" default="" delete_if_empty="true" />
         </item>
         <item name="Sports Centre" icon="presets/sports_centre.png" type="node,closedway">
             <label text="Edit Sports Centre" />
@@ -1919,7 +1919,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <label text="select sport:" />
             <space />
-            <combo key="sport" text="sport" values="multi,archery,athletics,australian_football,baseball,basketball,boules,bowls,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" default="" delete_if_empty="true" />
+            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" default="" delete_if_empty="true" />
         </item>
         <item name="Pitch" icon="presets/pitch.png" type="node,closedway">
             <label text="Edit Pitch" />
@@ -1928,7 +1928,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <label text="select sport:" />
             <space />
-            <combo key="sport" text="sport" values="multi,archery,athletics,australian_football,baseball,basketball,boules,bowls,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" default="" delete_if_empty="true" />
+            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" default="" delete_if_empty="true" />
         </item>
         <item name="Racetrack" icon="presets/stadium.png" type="node,way,closedway,relation">
             <label text="Edit Racetrack" />
@@ -1937,7 +1937,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <label text="select sport:" />
             <space />
-            <combo key="sport" text="sport" values="multi,archery,athletics,australian_football,baseball,basketball,boules,bowls,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" default="" delete_if_empty="true" />
+            <combo key="sport" text="sport" values="multi,archery,athletics,american_football,australian_football,baseball,basketball,boules,bowls,canadian_football,canoe,climbing,cricket,cricket_nets,croquet,cycling,dog_racing,equestrian,gaelic_football,golf,gymnastics,hockey,horse_racing,motor,pelota,racquet,rugby_league,rugby_union,shooting,skateboard,skating,skiing,soccer,swimming,table_tennis,tennis" default="" delete_if_empty="true" />
         </item>
         <item name="Golf Course" icon="presets/golf.png" type="node,closedway">
             <label text="Edit Golf Course" />
@@ -2067,15 +2067,39 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Football" icon="presets/football.png" type="node,closedway">
-            <label text="Edit Football" />
-            <key key="sport" value="football" />
+        <item name="Australian Football" icon="presets/soccer.png" type="node,closedway">
+            <label text="Edit Australian Football" />
+            <key key="sport" value="australian_football" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Australian Football" icon="presets/football.png" type="node,closedway">
-            <label text="Edit Australian Football" />
-            <key key="sport" value="australian_football" />
+        <item name="American Football" icon="presets/soccer.png" type="node,closedway">
+            <label text="Edit American Football" />
+            <key key="sport" value="american_football" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+        </item>
+        <item name="Canadian Football" icon="presets/soccer.png" type="node,closedway">
+            <label text="Edit Canadian Football" />
+            <key key="sport" value="canadian_football" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+        </item>
+        <item name="Gaelic Football" icon="presets/soccer.png" type="node,closedway">
+            <label text="Edit Gaelic Football" />
+            <key key="sport" value="gaelic_football" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+        </item>
+        <item name="Rugby League" icon="presets/football.png" type="node,closedway">
+            <label text="Edit Rugby League" />
+            <key key="sport" value="rugby_league" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+        </item>
+        <item name="Rugby Union" icon="presets/football.png" type="node,closedway">
+            <label text="Edit Rugby Union" />
+            <key key="sport" value="rugby_union" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
@@ -2142,12 +2166,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
         <item name="Racquet" icon="presets/racquetball.png" type="node,closedway">
             <label text="Edit Racquet" />
             <key key="sport" value="racquet" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
-        </item>
-        <item name="Rugby" icon="presets/football.png" type="node,closedway">
-            <label text="Edit Rugby" />
-            <key key="sport" value="rugby" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>

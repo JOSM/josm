@@ -3758,7 +3758,55 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="sport" v="soccer"/>
+		<area colour="sport#bde3cb"/>
+		<icon src="sport/soccer.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="sport" v="australian_football"/>
+		<area colour="sport#bde3cb"/>
+		<icon src="sport/soccer.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="sport" v="american_football"/>
+		<area colour="sport#bde3cb"/>
+		<icon src="sport/soccer.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="sport" v="canadian_football"/>
+		<area colour="sport#bde3cb"/>
+		<icon src="sport/soccer.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="sport" v="gaelic_football"/>
+		<area colour="sport#bde3cb"/>
+		<icon src="sport/soccer.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="sport" v="rugby_league"/>
+		<area colour="sport#bde3cb"/>
+		<icon src="sport/football.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="sport" v="rugby_union"/>
 		<area colour="sport#bde3cb"/>
 		<icon src="sport/football.png"/>
 		<scale_min>1</scale_min>
@@ -3870,14 +3918,6 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="sport" v="football"/>
-		<area colour="sport#bde3cb"/>
-		<icon src="sport/football.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
 		<condition k="sport" v="golf"/>
 		<area colour="sport#bde3cb"/>
 		<icon src="sport/golf.png"/>
@@ -3942,14 +3982,6 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="sport" v="rugby"/>
-		<area colour="sport#bde3cb"/>
-		<icon src="sport/football.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
 		<condition k="sport" v="skating"/>
 		<area colour="sport#bde3cb"/>
 		<icon src="misc/no_icon.png"/>
@@ -3961,14 +3993,6 @@ For external files the <rules> should have following elements:
 		<condition k="sport" v="skateboard"/>
 		<area colour="sport#bde3cb"/>
 		<icon src="sport/skateboard.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="sport" v="soccer"/>
-		<area colour="sport#bde3cb"/>
-		<icon src="sport/soccer.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
