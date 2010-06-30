@@ -528,7 +528,8 @@ public class SelectionListDialog extends ToggleDialog  {
                     break;
                 }
             }
-            while (history.size() > SELECTION_HISTORY_SIZE) {
+            int maxsize = Main.pref.getInteger("select.history-size", SELECTION_HISTORY_SIZE);
+            while (history.size() > maxsize) {
                 history.removeLast();
             }
         }
