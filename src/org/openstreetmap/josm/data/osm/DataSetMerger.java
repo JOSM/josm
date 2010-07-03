@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
@@ -22,7 +21,6 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  */
 public class DataSetMerger {
-    private static Logger logger = Logger.getLogger(DataSetMerger.class.getName());
 
     /** the collection of conflicts created during merging */
     private final ConflictCollection conflicts;
@@ -243,17 +241,8 @@ public class DataSetMerger {
         if (target.getVersion() > source.getVersion())
             // target.version > source.version => keep target version
             return true;
-        if (! target.isVisible() && source.isVisible() && target.getVersion() == source.getVersion()) {
-            // should not happen
-            conflicts.add(target,source);
-        } else if (target.isVisible() && ! source.isVisible()) {
-            // this is always a conflict because the user has to decide whether
-            // he wants to create a clone of its target primitive or whether he
-            // wants to purge the target from the local dataset. He can't keep it unchanged
-            // because it was deleted on the server.
-            //
-            conflicts.add(target,source);
-        } else if (target.isIncomplete() && !source.isIncomplete()) {
+
+        if (target.isIncomplete() && !source.isIncomplete()) {
             // target is incomplete, source completes it
             // => merge source into target
             //

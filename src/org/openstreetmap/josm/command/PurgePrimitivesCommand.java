@@ -39,6 +39,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * which would result in an non resolvable conflict.
  *
  */
+@Deprecated
 public class PurgePrimitivesCommand extends ConflictResolveCommand{
 
     static private final Logger logger = Logger.getLogger(PurgePrimitivesCommand.class.getName());

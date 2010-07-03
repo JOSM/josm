@@ -455,6 +455,9 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
             fetchPrimitives(nodes,OsmPrimitiveType.NODE, progressMonitor);
             if (isCanceled())return null;
             fetchPrimitives(relations,OsmPrimitiveType.RELATION, progressMonitor);
+            if (outputDataSet != null) {
+                outputDataSet.deleteInvisible();
+            }
             return outputDataSet;
         } finally {
             progressMonitor.finishTask();

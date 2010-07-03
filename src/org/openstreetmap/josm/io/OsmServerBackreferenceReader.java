@@ -273,6 +273,9 @@ public class OsmServerBackreferenceReader extends OsmServerReader {
             visitor.merge();
             ret = visitor.getTargetDataSet();
             readIncompletePrimitives(ret, progressMonitor.createSubTaskMonitor(1, false));
+            if (ret != null) {
+                ret.deleteInvisible();
+            }
             return ret;
         } finally {
             progressMonitor.finishTask();

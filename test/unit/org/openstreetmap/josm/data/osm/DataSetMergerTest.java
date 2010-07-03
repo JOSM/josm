@@ -233,38 +233,6 @@ public class DataSetMergerTest {
     }
 
     /**
-     * My node is visible, their version has a higher version and is not visible
-     * => create a conflict
-     *
-     */
-    @Test
-    public void nodeSimple_VisibleConflict() {
-        Node n = new Node(new LatLon(0,0));
-        n.setOsmId(1,1);
-        n.setModified(false);
-        n.setVisible(true);
-        my.addPrimitive(n);
-
-        Node n1 = new Node(new LatLon(0,0));
-        n1.setOsmId(1,2);
-
-        n1.setModified(false);
-        n1.setVisible(false);
-        their.addPrimitive(n1);
-
-
-        DataSetMerger visitor = new DataSetMerger(my,their);
-        visitor.merge();
-
-        Node n2 = (Node)my.getPrimitiveById(1,OsmPrimitiveType.NODE);
-        assertEquals(1,visitor.getConflicts().size());
-        assertEquals(true, n2.isVisible());
-        assertTrue(n == n2);
-        assertTrue(n1 != n2);
-        assertTrue(n1.getDataSet() == their);
-    }
-
-    /**
      * My node is deleted, their node has the same id and version and is not deleted.
      * => mine has precedence
      *
@@ -339,34 +307,6 @@ public class DataSetMergerTest {
         Node n2 = (Node)my.getNodes().toArray()[0];
         assertTrue(n2 == n);
         assertTrue(n2.isDeleted());
-    }
-
-    /**
-     * their node is not visible and doesn't exist in my data set
-     * => we can't ignore it because we'd run into troubles in case of multi fetch
-     * which can return invisible objects
-     *
-     */
-    @Test
-    public void nodeSimple_InvisibleNodeInTheirDataset() {
-        Node n = new Node(new LatLon(0,0));
-        n.setOsmId(1,1);
-        n.setDeleted(true);
-        my.addPrimitive(n);
-
-        Node n1 = new Node(new LatLon(0,0));
-        n1.setOsmId(2,1);
-        n1.setVisible(false);
-        their.addPrimitive(n1);
-
-
-        DataSetMerger visitor = new DataSetMerger(my,their);
-        visitor.merge();
-
-        Node n2 = (Node)my.getPrimitiveById(1,OsmPrimitiveType.NODE);
-        assertEquals(0,visitor.getConflicts().size());
-        assertEquals(2, my.getNodes().size());
-        assertEquals(n,n2);
     }
 
     /**
@@ -687,6 +627,10 @@ public class DataSetMergerTest {
         Way theirWay = new Way();
         theirWay.setOsmId(3,2);
         theirWay.setVisible(false);
+        /* Invisible objects fetched from the server should be marked as "deleted".
+         * Otherwise it's an error.
+         */
+        theirWay.setDeleted(true);
         their.addPrimitive(theirWay);
 
         DataSetMerger visitor = new DataSetMerger(my,their);

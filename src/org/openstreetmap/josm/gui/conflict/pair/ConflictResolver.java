@@ -25,7 +25,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.pair.nodes.NodeListMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.nodes.NodeListMerger;
-import org.openstreetmap.josm.gui.conflict.pair.properties.OperationCancelledException;
 import org.openstreetmap.josm.gui.conflict.pair.properties.PropertiesMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.properties.PropertiesMerger;
 import org.openstreetmap.josm.gui.conflict.pair.relation.RelationMemberListMergeModel;
@@ -234,12 +233,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
         setTheir(conflict.getTheir());
         this.conflict = conflict;
         propertiesMerger.populate(conflict);
-        if (propertiesMerger.getModel().hasVisibleStateConflict()) {
-            tabbedPane.setEnabledAt(1, false);
-            tabbedPane.setEnabledAt(2, false);
-            tabbedPane.setEnabledAt(3, false);
-            return;
-        }
+
         tabbedPane.setEnabledAt(0, true);
         tagMerger.populate(conflict);
         tabbedPane.setEnabledAt(1, true);
@@ -269,28 +263,23 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener  
      *
      * @return the resolution command
      */
-    public Command buildResolveCommand() throws OperationCancelledException {
+    public Command buildResolveCommand() {
         ArrayList<Command> commands = new ArrayList<Command>();
-        if (propertiesMerger.getModel().hasVisibleStateConflict()) {
-            if (propertiesMerger.getModel().isDecidedVisibleState()) {
-                commands.addAll(propertiesMerger.getModel().buildResolveCommand(conflict));
-            }
-        } else {
-            if (tagMerger.getModel().getNumResolvedConflicts() > 0) {
-                commands.add(tagMerger.getModel().buildResolveCommand(conflict));
-            }
-            commands.addAll(propertiesMerger.getModel().buildResolveCommand(conflict));
-            if (my instanceof Way && nodeListMerger.getModel().isFrozen()) {
-                NodeListMergeModel model  =(NodeListMergeModel)nodeListMerger.getModel();
-                commands.add(model.buildResolveCommand(conflict));
-            } else if (my instanceof Relation && relationMemberMerger.getModel().isFrozen()) {
-                RelationMemberListMergeModel model  =(RelationMemberListMergeModel)relationMemberMerger.getModel();
-                commands.add(model.buildResolveCommand((Relation)my, (Relation)their));
-            }
-            if (isResolvedCompletely()) {
-                commands.add(new VersionConflictResolveCommand(conflict));
-                commands.add(new ModifiedConflictResolveCommand(conflict));
-            }
+
+        if (tagMerger.getModel().getNumResolvedConflicts() > 0) {
+            commands.add(tagMerger.getModel().buildResolveCommand(conflict));
+        }
+        commands.addAll(propertiesMerger.getModel().buildResolveCommand(conflict));
+        if (my instanceof Way && nodeListMerger.getModel().isFrozen()) {
+            NodeListMergeModel model = (NodeListMergeModel) nodeListMerger.getModel();
+            commands.add(model.buildResolveCommand(conflict));
+        } else if (my instanceof Relation && relationMemberMerger.getModel().isFrozen()) {
+            RelationMemberListMergeModel model = (RelationMemberListMergeModel) relationMemberMerger.getModel();
+            commands.add(model.buildResolveCommand((Relation) my, (Relation) their));
+        }
+        if (isResolvedCompletely()) {
+            commands.add(new VersionConflictResolveCommand(conflict));
+            commands.add(new ModifiedConflictResolveCommand(conflict));
         }
         return new SequenceCommand(tr("Conflict Resolution"), commands);
     }

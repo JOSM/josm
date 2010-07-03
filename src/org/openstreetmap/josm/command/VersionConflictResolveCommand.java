@@ -50,10 +50,16 @@ public class VersionConflictResolveCommand extends ConflictResolveCommand {
     public boolean executeCommand() {
         super.executeCommand();
         if (!conflict.getMy().isNew()) {
+            long myVersion = conflict.getMy().getVersion();
+            long theirVersion = conflict.getTheir().getVersion();
             conflict.getMy().setOsmId(
                     conflict.getMy().getId(),
-                    (int)Math.max(conflict.getMy().getVersion(), conflict.getTheir().getVersion())
+                    (int)Math.max(myVersion, theirVersion)
             );
+            // update visiblity state
+            if (theirVersion >= myVersion) {
+                conflict.getMy().setVisible(conflict.getTheir().isVisible());
+            }
         }
         getLayer().getConflicts().remove(conflict);
         rememberConflict(conflict);

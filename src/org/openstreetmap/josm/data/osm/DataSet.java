@@ -996,4 +996,17 @@ public class DataSet implements Cloneable {
             endUpdate();
         }
     }
+
+    /**
+     * Marks all "invisible" objects as deleted. These objects should be always marked as
+     * deleted when downloaded from the server. They can be undeleted later if necessary.
+     * 
+     */
+    public void deleteInvisible() {
+        for (OsmPrimitive primitive:allPrimitives) {
+            if (!primitive.isVisible()) {
+                primitive.setDeleted(true);
+            }
+        }
+    }
 }

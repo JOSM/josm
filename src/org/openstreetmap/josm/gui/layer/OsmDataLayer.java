@@ -38,7 +38,6 @@ import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
-import org.openstreetmap.josm.command.PurgePrimitivesCommand;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.conflict.Conflict;
@@ -325,26 +324,18 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
                 conflicts.add(c);
             }
         }
-        PurgePrimitivesCommand cmd = buildPurgeCommand();
-        if (cmd != null) {
-            Main.main.undoRedo.add(cmd);
-        }
         // repaint to make sure new data is displayed properly.
         Main.map.mapView.repaint();
-        warnNumNewConflicts(
-                numNewConflicts,
-                cmd == null ? 0 : cmd.getPurgedPrimitives().size()
-        );
+        warnNumNewConflicts(numNewConflicts);
     }
 
     /**
      * Warns the user about the number of detected conflicts
      *
      * @param numNewConflicts the number of detected conflicts
-     * @param numPurgedPrimitives the number of automatically purged objects
      */
-    protected void warnNumNewConflicts(int numNewConflicts, int numPurgedPrimitives) {
-        if (numNewConflicts == 0 && numPurgedPrimitives == 0) return;
+    protected void warnNumNewConflicts(int numNewConflicts) {
+        if (numNewConflicts == 0) return;
 
         String msg1 = trn(
                 "There was {0} conflict detected.",
@@ -352,32 +343,9 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
                 numNewConflicts,
                 numNewConflicts
         );
-        String msg2 = trn(
-                "{0} conflict has been <strong>resolved automatically</strong> by purging {0} object<br>from the local dataset because it is deleted on the server.",
-                "{0} conflicts have been <strong>resolved automatically</strong> by purging {0} objects<br> from the local dataset because they are deleted on the server.",
-                numPurgedPrimitives,
-                numPurgedPrimitives
-        );
-        int numRemainingConflicts = numNewConflicts - numPurgedPrimitives;
-        String msg3 = "";
-        if (numRemainingConflicts >0) {
-            msg3 = trn(
-                    "{0} conflict remains to be resolved.<br><br>Please open the Conflict List Dialog and manually resolve it.",
-                    "{0} conflicts remain to be resolved.<br><br>Please open the Conflict List Dialog and manually resolve them.",
-                    numRemainingConflicts,
-                    numRemainingConflicts
-            );
-        }
 
         StringBuffer sb = new StringBuffer();
-        sb.append("<html>").append(msg1);
-        if (numPurgedPrimitives > 0) {
-            sb.append("<br>").append(msg2);
-        }
-        if (numRemainingConflicts > 0) {
-            sb.append("<br>").append(msg3);
-        }
-        sb.append("</html>");
+        sb.append("<html>").append(msg1).append("</html>");
         if (numNewConflicts > 0) {
             ButtonSpec[] options = new ButtonSpec[] {
                     new ButtonSpec(
@@ -402,49 +370,6 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         }
     }
 
-    /**
-     * Builds the purge command for primitives which can be purged automatically
-     * from the local dataset because they've been deleted on the
-     * server.
-     *
-     * @return the purge command. <code>null</code> if no primitives have to
-     * be purged
-     */
-    protected PurgePrimitivesCommand buildPurgeCommand() {
-        ArrayList<OsmPrimitive> toPurge = new ArrayList<OsmPrimitive>();
-        conflictLoop:
-            for (Conflict<?> c: conflicts) {
-                if (c.getMy().isDeleted() && !c.getTheir().isVisible()) {
-                    // Local and server version of the primitive are deleted. We
-                    // can purge it from the local dataset.
-                    //
-                    toPurge.add(c.getMy());
-                } else if (!c.getMy().isModified() && ! c.getTheir().isVisible()) {
-                    // We purge deleted *ways* and *relations* automatically if they are
-                    // deleted on the server and if they aren't modified in the local
-                    // dataset.
-                    //
-                    if (c.getMy() instanceof Way || c.getMy() instanceof Relation) {
-                        toPurge.add(c.getMy());
-                        continue conflictLoop;
-                    }
-                    // We only purge nodes if they aren't part of a modified way.
-                    // Otherwise the number of nodes of a modified way could drop
-                    // below 2 and we would lose the modified data when the way
-                    // gets purged.
-                    //
-                    for (OsmPrimitive parent: c.getMy().getReferrers()) {
-                        if (parent.isModified() && parent instanceof Way) {
-                            continue conflictLoop;
-                        }
-                    }
-                    toPurge.add(c.getMy());
-                }
-            }
-        if (toPurge.isEmpty()) return null;
-        PurgePrimitivesCommand cmd = new PurgePrimitivesCommand(this, toPurge);
-        return cmd;
-    }
 
     @Override public boolean isMergable(final Layer other) {
         return other instanceof OsmDataLayer;

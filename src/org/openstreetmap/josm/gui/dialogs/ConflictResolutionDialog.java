@@ -27,7 +27,6 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.pair.ConflictResolver;
-import org.openstreetmap.josm.gui.conflict.pair.properties.OperationCancelledException;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -261,13 +260,9 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
                     return;
                 }
             }
-            try {
-                Command cmd = resolver.buildResolveCommand();
-                Main.main.undoRedo.add(cmd);
-                closeDialog();
-            } catch(OperationCancelledException e) {
-                // do nothing. Exception already reported
-            }
+            Command cmd = resolver.buildResolveCommand();
+            Main.main.undoRedo.add(cmd);
+            closeDialog();
         }
 
         public void propertyChange(PropertyChangeEvent evt) {

@@ -120,6 +120,7 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
                     .createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             if (dataSet == null)
                 return;
+            dataSet.deleteInvisible();
             synchronized (this) {
                 if (cancelled) return;
                 objectReader = null;
