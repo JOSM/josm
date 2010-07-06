@@ -47,6 +47,7 @@ public class LatLonDialog extends JDialog {
 
     private JTextField tfLat;
     private JTextField tfLon;
+    private String help;
     private boolean canceled = false;
     private LatLon coordinates;
     private OKAction actOK;
@@ -90,7 +91,7 @@ public class LatLonDialog extends JDialog {
         makeButtonRespondToEnter(btn);
         pnl.add(btn = new SideButton(actCancel = new CancelAction()));
         makeButtonRespondToEnter(btn);
-        pnl.add(new SideButton(new ContextSensitiveHelpAction(ht("/Action/AddNode"))));
+        pnl.add(new SideButton(new ContextSensitiveHelpAction(help)));
         return pnl;
     }
 
@@ -113,12 +114,13 @@ public class LatLonDialog extends JDialog {
 
         // make dialog respond to F1
         //
-        HelpUtil.setHelpContext(getRootPane(), ht("/Action/AddNode"));
+        HelpUtil.setHelpContext(getRootPane(), help);
     }
 
-    public LatLonDialog(Component parent) {
+    public LatLonDialog(Component parent, String title, String help) {
         super(JOptionPane.getFrameForComponent(parent), true /* modal */);
-        setTitle(tr("Add Node..."));
+        this.help = help;
+        setTitle(title);
         build();
         addWindowListener(new WindowEventHandler());
         setCoordinates(null);

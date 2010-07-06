@@ -31,7 +31,7 @@ public final class MoveNodeAction extends JosmAction {
         if (!isEnabled() || (getCurrentDataSet().getSelectedNodes().size() != 1))
             return;
 
-        LatLonDialog dialog = new LatLonDialog(Main.parent);
+        LatLonDialog dialog = new LatLonDialog(Main.parent, tr("Move Node..."), ht("/Action/MoveNode"));
         Node n = (Node) getCurrentDataSet().getSelectedNodes().toArray()[0];
         dialog.setCoordinates(n.getCoor());
         dialog.setVisible(true);

@@ -32,7 +32,7 @@ public final class AddNodeAction extends JosmAction {
         if (!isEnabled())
             return;
 
-        LatLonDialog dialog = new LatLonDialog(Main.parent);
+        LatLonDialog dialog = new LatLonDialog(Main.parent, tr("Add Node..."), ht("/Action/AddNode"));
         dialog.setVisible(true);
         if (dialog.isCanceled())
             return;
