@@ -129,8 +129,6 @@ public class OsmChangeBuilder {
     }
 
     public String getDocument() {
-        String s = swriter.toString();
-        System.err.println("OsmChangeBuilder/getDocument:\n"+s+"_|");
-        return s;
+        return swriter.toString();
     }
 }
