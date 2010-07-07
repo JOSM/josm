@@ -516,14 +516,22 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
     private static void extractExif(ImageEntry e) {
 
+        int deg;
+        double min, sec;
+        double lon, lat;
+        Metadata metadata = null;
+        Directory dir = null;
+        
         try {
-            int deg;
-            double min, sec;
-            double lon, lat;
-
-            Metadata metadata = JpegMetadataReader.readMetadata(e.getFile());
-            Directory dir = metadata.getDirectory(GpsDirectory.class);
-
+            metadata = JpegMetadataReader.readMetadata(e.getFile());
+            dir = metadata.getDirectory(GpsDirectory.class);
+        } catch (CompoundException p) {
+            e.setExifCoor(null);
+            e.setPos(null);
+            return;
+        }
+        
+        try {
             // longitude
 
             Rational[] components = dir.getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
@@ -552,29 +560,42 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 lat = -lat;
             }
 
-
-            // compass direction value
-
-            Rational direction = null;
-            
-            try {
-                direction = dir.getRational(GpsDirectory.TAG_GPS_IMG_DIRECTION);
-            } catch (CompoundException p) {
-                direction = null;
-            }
-
             // Store values
 
             e.setExifCoor(new LatLon(lat, lon));
             e.setPos(e.getExifCoor());
-            if (direction != null) {
-                e.setExifImgDir(direction.doubleValue());
-            }
 
         } catch (CompoundException p) {
-            e.setExifCoor(null);
-            e.setPos(null);
+            // Try to read lon/lat as double value (Nonstandard, created by some cameras -> #5220)
+            try {
+                Double longitude = dir.getDouble(GpsDirectory.TAG_GPS_LONGITUDE);
+                Double latitude = dir.getDouble(GpsDirectory.TAG_GPS_LATITUDE);
+                if (longitude == null || latitude == null)
+                    throw new CompoundException("");
+
+                // Store values
+
+                e.setExifCoor(new LatLon(latitude, longitude));
+                e.setPos(e.getExifCoor());
+            } catch (CompoundException ex) {
+                e.setExifCoor(null);
+                e.setPos(null);
+            }
         }
+
+        // compass direction value
+
+        Rational direction = null;
+        
+        try {
+            direction = dir.getRational(GpsDirectory.TAG_GPS_IMG_DIRECTION);
+        } catch (CompoundException p) {
+            direction = null;
+        }
+        if (direction != null) {
+            e.setExifImgDir(direction.doubleValue());
+        }
+
     }
 
     public void showNextPhoto() {
@@ -604,7 +625,6 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
     }
 
     public void checkPreviousNextButtons() {
-        //        System.err.println("showing image " + currentPhoto);
         ImageViewerDialog.setNextEnabled(currentPhoto < data.size() - 1);
         ImageViewerDialog.setPreviousEnabled(currentPhoto > 0);
     }

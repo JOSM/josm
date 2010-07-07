@@ -87,12 +87,23 @@ public class ImageProvider {
 
     /**
      * Like {@link #get(String)}, but does not throw and return <code>null</code> in case of nothing
-     * is found. Use this, if the image to retrieve is optional.
+     * is found. Use this, if the image to retrieve is optional. Nevertheless a warning will
+     * be printed on the console if the image could not be found.
      */
     public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name) {
         return getIfAvailable(dirs, id, subdir, name, null);
     }
 
+    /**
+     * The full path of the image is either a url (starting with http://)
+     * or something like
+     *   dirs.get(i)+"/"+subdir+"/"+name+".png".
+     * @param dirs      Directories to look.
+     * @param id        An id used for caching. Id is not used for cache if name starts with http://. (URL is unique anyway.)
+     * @param subdir    Subdirectory the image lies in.
+     * @param name      The name of the image. If it contains no '.', a png extension is added.
+     * @param archive   A zip file where the image is located.
+     */
     public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive) {
         if (name == null)
             return null;

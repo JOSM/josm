@@ -203,7 +203,9 @@ public class OsmApi extends OsmConnection {
         o.visit(osmWriter);
         osmWriter.footer();
         osmWriter.out.flush();
-        return swriter.toString();
+        String s = swriter.toString();
+        System.err.println("OsmApi/toXml:\n"+s+"_|");
+        return s;
     }
 
     /**
