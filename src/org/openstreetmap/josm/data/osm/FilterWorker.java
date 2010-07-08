@@ -32,37 +32,29 @@ public class FilterWorker {
      * (but hides them only if they are not used by any unfiltered way).
      */
     public static void executeFilters(Collection<OsmPrimitive> all, FilterMatcher filterMatcher) {
+
+        // First relation and ways
         for (OsmPrimitive primitive: all) {
-            if (filterMatcher.isHidden(primitive)) {
-                primitive.setDisabledState(true);
-            } else if (filterMatcher.isDisabled(primitive)) {
-                primitive.setDisabledState(false);
-            } else {
-                primitive.unsetDisabledState();
+            if (!(primitive instanceof Node)) {
+                if (filterMatcher.isHidden(primitive)) {
+                    primitive.setDisabledState(true);
+                } else if (filterMatcher.isDisabled(primitive)) {
+                    primitive.setDisabledState(false);
+                } else {
+                    primitive.unsetDisabledState();
+                }
             }
         }
 
+        // Then nodes (because they state may depend on parent ways)
         for (OsmPrimitive primitive: all) {
-            if (primitive instanceof Way && primitive.isDisabled()) {
-                Way w = (Way)primitive;
-                for (Node n: w.getNodes()) {
-
-                    if (n.isTagged()) {
-                        continue;
-                    }
-
-                    boolean disabled = w.isDisabled();
-                    boolean hidden = w.isDisabledAndHidden();
-                    for (OsmPrimitive ref: n.getReferrers()) {
-                        if (ref instanceof Way) {
-                            disabled = disabled && ref.isDisabled();
-                            hidden = hidden && ref.isDisabledAndHidden();
-                        }
-                    }
-
-                    if (disabled) {
-                        n.setDisabledState(hidden);
-                    }
+            if (primitive instanceof Node) {
+                if (filterMatcher.isHidden(primitive)) {
+                    primitive.setDisabledState(true);
+                } else if (filterMatcher.isDisabled(primitive)) {
+                    primitive.setDisabledState(false);
+                } else {
+                    primitive.unsetDisabledState();
                 }
             }
         }

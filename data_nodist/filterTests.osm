@@ -36,7 +36,7 @@
   </node>
   <node id='3738209' timestamp='2009-07-01T02:47:20Z' uid='60345' user='Mirko Küster' visible='true' version='2' changeset='4888' lat='51.297687546215265' lon='11.433031050752408'>
     <tag k='highway' v='turning_circle' />
-    <tag k='source:RESULT1' v='h' />
+    <tag k='source:RESULT1' v='v' />
     <tag k='source:RESULT2' v='v' />
     <tag k='source:RESULT3' v='d' />
   </node>
@@ -242,6 +242,7 @@
     <tag k='source:RESULT12' v='v' />
     <tag k='source:RESULT13' v='v' />
     <tag k='source:RESULT14' v='v' />
+    <tag k='source:RESULT15' v='v' />
   </way>
   <way id='101642' visible='true' version='2' changeset='4889'>
     <nd ref='3738222' />
@@ -257,6 +258,7 @@
     <tag k='source:RESULT12' v='h' />
     <tag k='source:RESULT13' v='h' />
     <tag k='source:RESULT14' v='h' />
+    <tag k='source:RESULT15' v='h' />
   </way>
   <way id='101643' visible='true' version='2' changeset='4889'>
     <nd ref='3738217' />
@@ -271,6 +273,7 @@
     <tag k='source:RESULT12' v='v' />
     <tag k='source:RESULT13' v='v' />
     <tag k='source:RESULT14' v='v' />
+    <tag k='source:RESULT15' v='d' />
     <tag k='waterway' v='canal' />
   </way>
 </osm>

@@ -16,6 +16,7 @@ public class FilterMatcher {
     private static class FilterInfo {
         final Match match;
         final boolean isDelete;
+        final boolean isInverted;
 
         FilterInfo(Filter filter) throws ParseError {
             if (filter.mode == SearchMode.remove || filter.mode == SearchMode.in_selection) {
@@ -26,6 +27,7 @@ public class FilterMatcher {
 
             Match compiled = SearchCompiler.compile(filter.text, filter.caseSensitive, filter.regexSearch);
             this.match = filter.inverted?new Not(compiled):compiled;
+            this.isInverted = filter.inverted;
         }
     }
 
@@ -42,35 +44,89 @@ public class FilterMatcher {
                 continue;
             }
 
-            List<FilterInfo> list = filter.hiding?hiddenFilters:disabledFilters;
+            FilterInfo fi = new FilterInfo(filter);
+            if (fi.isDelete) {
+                if (filter.hiding) {
+                    // Remove only hide flag
+                    hiddenFilters.add(fi);
+                } else {
+                    // Remove both flags
+                    disabledFilters.add(fi);
+                    hiddenFilters.add(fi);
+                }
+            } else {
+                if (filter.mode == SearchMode.replace) {
+                    if (filter.hiding) {
+                        hiddenFilters.clear();
+                        disabledFilters.clear();
+                    }
+                }
 
-            if (filter.mode == SearchMode.replace) {
-                // No point in evalutaing filter when value will get replaced anyway (and yes, there is no point in using replace mode with filters)
-                list.clear();
+                disabledFilters.add(fi);
+                if (filter.hiding) {
+                    hiddenFilters.add(fi);
+                }
             }
-
-            list.add(new FilterInfo(filter));
         }
     }
 
-    private boolean test(List<FilterInfo> filters, OsmPrimitive primitive) {
+    private boolean getState(OsmPrimitive primitive, boolean hidden) {
+        return hidden?primitive.isDisabledAndHidden():primitive.isDisabled();
+    }
+
+    private boolean allParentWaysFiltered(OsmPrimitive primitive, boolean hidden) {
+        List<OsmPrimitive> refs = primitive.getReferrers();
+        if (refs.isEmpty())
+            return false;
+
+        for (OsmPrimitive p: refs) {
+            if (p instanceof Way && !getState(p, hidden))
+                return false;
+        }
+
+        return true;
+    }
+
+    private boolean oneParentWayNotFiltered(OsmPrimitive primitive, boolean hidden) {
+        List<OsmPrimitive> refs = primitive.getReferrers();
+        for (OsmPrimitive p: refs) {
+            if (p instanceof Way && !getState(p, hidden))
+                return true;
+        }
+
+        return false;
+    }
+
+    private boolean test(List<FilterInfo> filters, OsmPrimitive primitive, boolean hidden) {
         boolean selected = false;
+        boolean onlyInvertedFilters = true;
+
         for (FilterInfo fi: filters) {
             if (fi.isDelete && selected && fi.match.match(primitive)) {
                 selected = false;
-            } else if (!fi.isDelete && !selected && fi.match.match(primitive)) {
+            } else if (!fi.isDelete && (!selected || (onlyInvertedFilters && !fi.isInverted)) && fi.match.match(primitive)) {
                 selected = true;
+                onlyInvertedFilters = onlyInvertedFilters && fi.isInverted;
             }
         }
-        return selected;
+
+        if (primitive instanceof Node) {
+            if (!selected)
+                return !primitive.isTagged() && allParentWaysFiltered(primitive, hidden);
+            if (onlyInvertedFilters)
+                return selected && !oneParentWayNotFiltered(primitive, hidden);
+            return true;
+        } else
+            return selected;
+
     }
 
     public boolean isHidden(OsmPrimitive primitive) {
-        return test(hiddenFilters, primitive);
+        return test(hiddenFilters, primitive, true);
     }
 
     public boolean isDisabled(OsmPrimitive primitive) {
-        return test(disabledFilters, primitive);
+        return test(disabledFilters, primitive, false);
     }
 
 }
