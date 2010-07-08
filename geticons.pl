@@ -29,8 +29,8 @@ for my $arg (@ARGV ? @ARGV : @default)
     {
       if($l =~ /src\s*=\s*["'](.*?)["']/)
       {
-        my $a = "styles/standard/$1";
-        $a = "styles/$1" if((!-f "images/$a") && -f "images/styles/$1");
+        my $img = "styles/standard/$1";
+        $img = "styles/$1" if((!-f "images/$a") && -f "images/styles/$1");
         ++$icons{$a};
       }
       elsif($l =~ /icon\s*=\s*["'](.*?)["']/)
