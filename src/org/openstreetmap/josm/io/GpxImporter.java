@@ -36,16 +36,6 @@ public class GpxImporter extends FileImporter {
             } else {
                 is = new FileInputStream(file);
             }
-            // Workaround for SAX BOM bug
-            // http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6206835
-            if (!((is.read() == 0xef) && (is.read() == 0xbb) && (is.read() == 0xbf))) {
-                is.close();
-                if (file.getName().endsWith(".gpx.gz")) {
-                    is = new GZIPInputStream(new FileInputStream(file));
-                } else {
-                    is = new FileInputStream(file);
-                }
-            }
             final GpxReader r = new GpxReader(is);
             final boolean parsedProperly = r.parse(true);
             r.data.storageFile = file;

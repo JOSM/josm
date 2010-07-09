@@ -1,9 +1,9 @@
+// License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -569,7 +569,8 @@ public class OsmReader {
         try {
             progressMonitor.beginTask(tr("Prepare OSM data...", 2));
             progressMonitor.indeterminateSubTask(tr("Parsing OSM data..."));
-            InputSource inputSource = new InputSource(new InputStreamReader(source, "UTF-8"));
+
+            InputSource inputSource = new InputSource(UTFInputStreamReader.create(source, "UTF-8"));
             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, reader.new Parser());
             progressMonitor.worked(1);
 

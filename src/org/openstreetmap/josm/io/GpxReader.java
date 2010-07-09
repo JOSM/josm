@@ -354,7 +354,7 @@ public class GpxReader {
      *
      */
     public GpxReader(InputStream source) throws IOException {
-        this.inputSource = new InputSource(new InputStreamReader(source, "UTF-8"));
+        this.inputSource = new InputSource(UTFInputStreamReader.create(source, "UTF-8"));
     }
 
     /**
