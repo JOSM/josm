@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -24,6 +25,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.FilterMatcher;
 import org.openstreetmap.josm.data.osm.FilterWorker;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 /**
@@ -58,38 +60,100 @@ public class FilterTableModel extends AbstractTableModel {
     }
 
 
-    
+
     public void executeFilters() {
         DataSet ds = Main.main.getCurrentDataSet();
         if (ds == null)
             return;
 
-        final Collection<OsmPrimitive> all = ds.allNonDeletedCompletePrimitives();
-
-        FilterWorker.executeFilters(all, filterMatcher);
-
-        disabledCount = 0;
-        disabledAndHiddenCount = 0;
-        // collect disabled and selected the primitives
         final Collection<OsmPrimitive> deselect = new HashSet<OsmPrimitive>();
-        for (OsmPrimitive osm : all) {
-            if (osm.isDisabled()) {
-                disabledCount++;
-                if (osm.isSelected()) {
-                    deselect.add(osm);
-                }
-                if (osm.isDisabledAndHidden()) {
-                    disabledAndHiddenCount++;
+
+        ds.beginUpdate();
+        try {
+
+            final Collection<OsmPrimitive> all = ds.allNonDeletedCompletePrimitives();
+
+            FilterWorker.executeFilters(all, filterMatcher);
+
+            disabledCount = 0;
+            disabledAndHiddenCount = 0;
+            // collect disabled and selected the primitives
+            for (OsmPrimitive osm : all) {
+                if (osm.isDisabled()) {
+                    disabledCount++;
+                    if (osm.isSelected()) {
+                        deselect.add(osm);
+                    }
+                    if (osm.isDisabledAndHidden()) {
+                        disabledAndHiddenCount++;
+                    }
                 }
             }
+            disabledCount -= disabledAndHiddenCount;
+        } finally {
+            ds.endUpdate();
         }
-        disabledCount -= disabledAndHiddenCount;
+
         if (!deselect.isEmpty()) {
             ds.clearSelection(deselect);
         }
 
         Main.map.mapView.repaint();
         Main.map.filterDialog.updateDialogHeader();
+    }
+
+
+    public void executeFilters(Collection<? extends OsmPrimitive> primitives) {
+        DataSet ds = Main.main.getCurrentDataSet();
+        if (ds == null)
+            return;
+
+        boolean changed = false;
+        List<OsmPrimitive> deselect = new ArrayList<OsmPrimitive>();
+
+        ds.beginUpdate();
+        try {
+            for (int i=0; i<2; i++) {
+                for (OsmPrimitive primitive: primitives) {
+
+                    if (i == 0 && primitive instanceof Node) {
+                        continue;
+                    }
+
+                    if (i == 1 && !(primitive instanceof Node)) {
+                        continue;
+                    }
+
+                    if (primitive.isDisabled()) {
+                        disabledCount--;
+                    }
+                    if (primitive.isDisabledAndHidden()) {
+                        disabledAndHiddenCount--;
+                    }
+                    changed = changed | FilterWorker.executeFilters(primitive, filterMatcher);
+                    if (primitive.isDisabled()) {
+                        disabledCount++;
+                    }
+                    if (primitive.isDisabledAndHidden()) {
+                        disabledAndHiddenCount++;
+                    }
+
+                    if (primitive.isSelected() && primitive.isDisabled()) {
+                        deselect.add(primitive);
+                    }
+
+                }
+            }
+        } finally {
+            ds.endUpdate();
+        }
+
+        if (changed) {
+            Main.map.mapView.repaint();
+            Main.map.filterDialog.updateDialogHeader();
+            ds.clearSelection(deselect);
+        }
+
     }
 
     public void clearFilterFlags() {

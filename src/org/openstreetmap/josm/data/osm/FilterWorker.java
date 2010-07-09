@@ -60,6 +60,19 @@ public class FilterWorker {
         }
     }
 
+    public static boolean executeFilters(OsmPrimitive primitive, FilterMatcher filterMatcher) {
+        boolean hidden = primitive.isDisabledAndHidden();
+        boolean disabled = primitive.isDisabled();
+        if (filterMatcher.isHidden(primitive)) {
+            primitive.setDisabledState(true);
+        } else if (filterMatcher.isDisabled(primitive)) {
+            primitive.setDisabledState(false);
+        } else {
+            primitive.unsetDisabledState();
+        }
+        return hidden != primitive.isDisabledAndHidden() || disabled != primitive.isDisabled();
+    }
+
     public static void clearFilterFlags(Collection<OsmPrimitive> prims) {
         for (OsmPrimitive osm : prims) {
             osm.unsetDisabledState();

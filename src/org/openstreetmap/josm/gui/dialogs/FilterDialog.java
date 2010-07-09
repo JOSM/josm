@@ -11,6 +11,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Stack;
 
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -25,11 +29,20 @@ import javax.swing.table.TableCellRenderer;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.osm.Filter;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
-import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
-import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter.Listener;
+import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
+import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
+import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
+import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -38,7 +51,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author Petr_Dlouhý
  */
-public class FilterDialog extends ToggleDialog implements Listener {
+public class FilterDialog extends ToggleDialog implements DataSetListener {
 
     private JTable userTable;
     private FilterTableModel filterModel = new FilterTableModel();
@@ -48,7 +61,6 @@ public class FilterDialog extends ToggleDialog implements Listener {
     private SideButton upButton;
     private SideButton downButton;
 
-    private final DataSetListener listenerAdapter = new DataSetListenerAdapter(this);
 
     public FilterDialog(){
         super(tr("Filter"), "filter", tr("Filter objects and hide/disable them."),
@@ -58,13 +70,13 @@ public class FilterDialog extends ToggleDialog implements Listener {
 
     @Override
     public void showNotify() {
-        DatasetEventManager.getInstance().addDatasetListener(listenerAdapter, FireMode.IN_EDT_CONSOLIDATED);
+        DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT_CONSOLIDATED);
         filterModel.executeFilters();
     }
 
     @Override
     public void hideNotify() {
-        DatasetEventManager.getInstance().removeDatasetListener(listenerAdapter);
+        DatasetEventManager.getInstance().removeDatasetListener(this);
         filterModel.clearFilterFlags();
         Main.map.mapView.repaint();
     }
@@ -180,10 +192,6 @@ public class FilterDialog extends ToggleDialog implements Listener {
         add(pnl, BorderLayout.CENTER);
     }
 
-    public void processDatasetEvent(AbstractDatasetChangedEvent event) {
-        filterModel.executeFilters();
-    }
-
     static class StringRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
@@ -214,5 +222,84 @@ public class FilterDialog extends ToggleDialog implements Listener {
 
     public void drawOSDText(Graphics2D g) {
         filterModel.drawOSDText(g);
+    }
+
+    /**
+     *
+     * @param primitive
+     * @return List of primitives whose filtering can be affected by change in primitive
+     */
+    private Collection<OsmPrimitive> getAffectedPrimitives(Collection<? extends OsmPrimitive> primitives) {
+        // Filters can use nested parent/child expression so complete tree is necessary
+        Set<OsmPrimitive> result = new HashSet<OsmPrimitive>();
+        Stack<OsmPrimitive> stack = new Stack<OsmPrimitive>();
+        stack.addAll(primitives);
+
+        while (!stack.isEmpty()) {
+            OsmPrimitive p = stack.pop();
+
+            if (result.contains(p)) {
+                continue;
+            }
+
+            result.add(p);
+
+            if (p instanceof Way) {
+                for (OsmPrimitive n: ((Way)p).getNodes()) {
+                    stack.push(n);
+                }
+            } else if (p instanceof Relation) {
+                for (RelationMember rm: ((Relation)p).getMembers()) {
+                    stack.push(rm.getMember());
+                }
+            }
+
+            for (OsmPrimitive ref: p.getReferrers()) {
+                stack.push(ref);
+            }
+        }
+
+        return result;
+    }
+
+
+    @Override
+    public void dataChanged(DataChangedEvent event) {
+        filterModel.executeFilters();
+    }
+
+    @Override
+    public void nodeMoved(NodeMovedEvent event) {
+        // Do nothing
+    }
+
+    @Override
+    public void otherDatasetChange(AbstractDatasetChangedEvent event) {
+        filterModel.executeFilters();
+    }
+
+    @Override
+    public void primtivesAdded(PrimitivesAddedEvent event) {
+        filterModel.executeFilters(event.getPrimitives());
+    }
+
+    @Override
+    public void primtivesRemoved(PrimitivesRemovedEvent event) {
+        filterModel.executeFilters();
+    }
+
+    @Override
+    public void relationMembersChanged(RelationMembersChangedEvent event) {
+        filterModel.executeFilters(getAffectedPrimitives(event.getPrimitives()));
+    }
+
+    @Override
+    public void tagsChanged(TagsChangedEvent event) {
+        filterModel.executeFilters(getAffectedPrimitives(event.getPrimitives()));
+    }
+
+    @Override
+    public void wayNodesChanged(WayNodesChangedEvent event) {
+        filterModel.executeFilters(getAffectedPrimitives(event.getPrimitives()));
     }
 }
