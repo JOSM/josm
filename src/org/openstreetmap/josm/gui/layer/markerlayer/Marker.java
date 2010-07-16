@@ -121,8 +121,13 @@ public class Marker implements ActionListener {
                     name_desc = wpt.getString("desc");
                 }
 
-                if (uri == null)
-                    return new Marker(wpt.getCoor(), name_desc, wpt.getString("symbol"), parentLayer, time, offset);
+                if (uri == null) {
+                    String symbolName = wpt.getString("symbol");
+                    if (symbolName == null) {
+                        symbolName = wpt.getString("sym");
+                    }
+                    return new Marker(wpt.getCoor(), name_desc, symbolName, parentLayer, time, offset);
+                }
                 else if (uri.endsWith(".wav"))
                     return AudioMarker.create(wpt.getCoor(), name_desc, uri, parentLayer, time, offset);
                 else if (uri.endsWith(".png") || uri.endsWith(".jpg") || uri.endsWith(".jpeg") || uri.endsWith(".gif"))
