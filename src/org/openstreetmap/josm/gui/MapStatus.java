@@ -97,7 +97,7 @@ public class MapStatus extends JPanel implements Helpful {
     ImageLabel lonText = new ImageLabel("lon", tr("The geographic longitude at the mouse pointer."), 11);
     ImageLabel nameText = new ImageLabel("name", tr("The name of the object at the mouse pointer."), 20);
     JTextField helpText = new JTextField();
-    ImageLabel latText = new ImageLabel("lat", tr("The geographic latitude at the mouse pointer."), 10);
+    ImageLabel latText = new ImageLabel("lat", tr("The geographic latitude at the mouse pointer."), 11);
     ImageLabel angleText = new ImageLabel("angle", tr("The angle between the previous and the current way segment."), 6);
     ImageLabel headingText = new ImageLabel("heading", tr("The (compass) heading of the line segment being drawn."), 6);
     ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 8);
