@@ -262,43 +262,34 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         return result;
     }
 
-
-    @Override
     public void dataChanged(DataChangedEvent event) {
         filterModel.executeFilters();
     }
 
-    @Override
     public void nodeMoved(NodeMovedEvent event) {
         // Do nothing
     }
 
-    @Override
     public void otherDatasetChange(AbstractDatasetChangedEvent event) {
         filterModel.executeFilters();
     }
 
-    @Override
     public void primtivesAdded(PrimitivesAddedEvent event) {
         filterModel.executeFilters(event.getPrimitives());
     }
 
-    @Override
     public void primtivesRemoved(PrimitivesRemovedEvent event) {
         filterModel.executeFilters();
     }
 
-    @Override
     public void relationMembersChanged(RelationMembersChangedEvent event) {
         filterModel.executeFilters(getAffectedPrimitives(event.getPrimitives()));
     }
 
-    @Override
     public void tagsChanged(TagsChangedEvent event) {
         filterModel.executeFilters(getAffectedPrimitives(event.getPrimitives()));
     }
 
-    @Override
     public void wayNodesChanged(WayNodesChangedEvent event) {
         filterModel.executeFilters(getAffectedPrimitives(event.getPrimitives()));
     }
