@@ -308,12 +308,11 @@ public class DataSetMerger {
             // =>  create a conflict
             conflicts.add(target,source);
         } else {
-            // clone from other, but keep the modified flag. mergeFrom will mainly copy
+            // clone from other. mergeFrom will mainly copy
             // technical attributes like timestamp or user information. Semantic
             // attributes should already be equal if we get here.
             //
             target.mergeFrom(source);
-            target.setModified(true);
             objectsWithChildrenToMerge.add(source.getPrimitiveId());
         }
         return true;
