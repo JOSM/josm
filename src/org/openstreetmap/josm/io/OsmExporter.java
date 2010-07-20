@@ -67,11 +67,16 @@ public class OsmExporter extends FileExporter {
             Writer writer = new OutputStreamWriter(out, "UTF-8");
 
             OsmWriter w = new OsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
-            w.header();
-            w.writeDataSources(layer.data);
-            w.writeContent(layer.data);
-            w.footer();
-            w.close();
+            layer.data.getReadLock().lock();
+            try {
+                w.header();
+                w.writeDataSources(layer.data);
+                w.writeContent(layer.data);
+                w.footer();
+                w.close();
+            } finally {
+                layer.data.getReadLock().unlock();
+            }
             // FIXME - how to close?
             if (!Main.pref.getBoolean("save.keepbackup") && (tmpFile != null)) {
                 tmpFile.delete();

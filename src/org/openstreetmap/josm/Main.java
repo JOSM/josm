@@ -361,7 +361,7 @@ abstract public class Main {
         UIManager.put("OptionPane.noIcon", UIManager.get("OptionPane.cancelIcon"));
 
         I18n.fixJFileChooser();
-        
+
         // init default coordinate format
         //
         try {
@@ -505,6 +505,25 @@ abstract public class Main {
         }
 
         return true;
+    }
+
+    public static boolean exitJosm(boolean exit) {
+        if (Main.saveUnsavedModifications()) {
+            Main.saveGuiGeometry();
+            // Remove all layers because somebody may rely on layerRemoved events (like AutosaveTask)
+            if (Main.isDisplayingMapView()) {
+                Collection<Layer> layers = new ArrayList<Layer>(Main.map.mapView.getAllLayers());
+                for (Layer l: layers) {
+                    Main.map.mapView.removeLayer(l);
+                }
+            }
+            if (exit) {
+                System.exit(0);
+                return true;
+            } else
+                return true;
+        } else
+            return false;
     }
 
     /**

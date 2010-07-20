@@ -14,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -68,7 +69,7 @@ public class DataSet implements Cloneable {
 
     private Storage<OsmPrimitive> allPrimitives = new Storage<OsmPrimitive>(new IdHash(), 16, true);
     private Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives.foreignKey(new IdHash());
-    private List<DataSetListener> listeners = new ArrayList<DataSetListener>();
+    private CopyOnWriteArrayList<DataSetListener> listeners = new CopyOnWriteArrayList<DataSetListener>();
 
     // Number of open calls to beginUpdate
     private int updateCount;
@@ -838,7 +839,7 @@ public class DataSet implements Cloneable {
     }
 
     public void addDataSetListener(DataSetListener dsl) {
-        listeners.add(dsl);
+        listeners.addIfAbsent(dsl);
     }
 
     public void removeDataSetListener(DataSetListener dsl) {
@@ -1000,7 +1001,7 @@ public class DataSet implements Cloneable {
     /**
      * Marks all "invisible" objects as deleted. These objects should be always marked as
      * deleted when downloaded from the server. They can be undeleted later if necessary.
-     * 
+     *
      */
     public void deleteInvisible() {
         for (OsmPrimitive primitive:allPrimitives) {

@@ -24,6 +24,8 @@ import java.util.Map;
 import javax.swing.JFrame;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.AutosaveTask;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.DefaultProxySelector;
@@ -58,10 +60,7 @@ public class MainApplication extends Main {
         mainFrame.setIconImage(ImageProvider.get("logo.png").getImage());
         mainFrame.addWindowListener(new WindowAdapter(){
             @Override public void windowClosing(final WindowEvent arg0) {
-                if (!Main.saveUnsavedModifications())
-                    return;
-                Main.saveGuiGeometry();
-                System.exit(0);
+                Main.exitJosm(true);
             }
         });
         mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -238,6 +237,29 @@ public class MainApplication extends Main {
         } else {
             // Main.debug("Main window not maximized");
         }
+
+        AutosaveTask autosaveTask = new AutosaveTask();
+        List<OsmDataLayer> unsavedLayers = autosaveTask.getUnsavedLayers();
+        if (!unsavedLayers.isEmpty()) {
+            ExtendedDialog dialog = new ExtendedDialog(
+                    Main.parent,
+                    tr("Unsaved osm data"),
+                    new String[] {tr("Restore"), tr("Cancel")}
+            );
+            dialog.setContent(tr("JOSM found {0} unsaved osm data layers. It looks like JOSM crashed last time. Do you want to restore data?",
+                    unsavedLayers.size()));
+            dialog.setButtonIcons(new String[] {"ok.png", "cancel.png"});
+            dialog.showDialog();
+            if (dialog.getValue() == 1) {
+                for (OsmDataLayer layer: unsavedLayers) {
+                    Main.main.addLayer(layer);
+                }
+            }
+
+
+        }
+        autosaveTask.schedule();
+
 
         EventQueue.invokeLater(new Runnable() {
             public void run() {

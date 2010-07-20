@@ -47,7 +47,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
         Boolean handled = Boolean.TRUE;
         //System.out.println("Going to handle method "+method+" (short: "+method.getName()+") with event "+args[0]);
         if (method.getName().equals("handleQuit")) {
-            handled = Main.saveUnsavedModifications();
+            handled = Main.exitJosm(false);
         } else if (method.getName().equals("handleAbout")) {
             Main.main.menu.about.actionPerformed(null);
         } else if (method.getName().equals("handlePreferences")) {
