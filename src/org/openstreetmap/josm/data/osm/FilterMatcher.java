@@ -76,15 +76,17 @@ public class FilterMatcher {
 
     private boolean allParentWaysFiltered(OsmPrimitive primitive, boolean hidden) {
         List<OsmPrimitive> refs = primitive.getReferrers();
-        if (refs.isEmpty())
-            return false;
+        boolean foundWay = false;
 
         for (OsmPrimitive p: refs) {
-            if (p instanceof Way && !getState(p, hidden))
-                return false;
+            if (p instanceof Way) {
+                foundWay = true;
+                if (!getState(p, hidden))
+                    return false;
+            }
         }
 
-        return true;
+        return foundWay;
     }
 
     private boolean oneParentWayNotFiltered(OsmPrimitive primitive, boolean hidden) {
