@@ -103,6 +103,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
     protected File createSiteCacheFile(File pluginDir, String site, CacheType type) {
         String name;
         try {
+            site = site.replaceAll("%<(.*)>", "");
             URL url = new URL(site);
             StringBuilder sb = new StringBuilder();
             sb.append("site-");
@@ -145,8 +146,16 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
         BufferedReader in = null;
         StringBuilder sb = new StringBuilder();
         try {
+            /* replace %<x> with empty string or x=plugins (separated with comma) */
+            String pl = Main.pref.getCollectionAsString("plugins");
+            String printsite = site.replaceAll("%<(.*)>", "");
+            if(pl != null && pl.length() != 0)
+                site = site.replaceAll("%<(.*)>", "$1"+pl);
+            else
+                site = printsite;
+
             monitor.beginTask("");
-            monitor.indeterminateSubTask(tr("Downloading plugin list from ''{0}''", site));
+            monitor.indeterminateSubTask(tr("Downloading plugin list from ''{0}''", printsite));
 
             URL url = new URL(site);
             synchronized(this) {
@@ -195,8 +204,9 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
     protected void downloadPluginIcons(String site, File destFile, ProgressMonitor monitor) {
         InputStream in = null;
         OutputStream out = null;
-        System.err.println("icons site: "+site);
         try {
+            site = site.replaceAll("%<(.*)>", "");
+
             monitor.beginTask("");
             monitor.indeterminateSubTask(tr("Downloading plugin list from ''{0}''", site));
 
@@ -336,7 +346,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
         }
 
         for (String site: sites) {
-            getProgressMonitor().subTask(tr("Processing plugin list from site ''{0}''", site));
+            String printsite = site.replaceAll("%<(.*)>", "");
+            getProgressMonitor().subTask(tr("Processing plugin list from site ''{0}''", printsite));
             String list = downloadPluginList(site, getProgressMonitor().createSubTaskMonitor(0, false));
             if (canceled) return;
             siteCacheFiles.remove(createSiteCacheFile(pluginDir, site, CacheType.PLUGIN_LIST));

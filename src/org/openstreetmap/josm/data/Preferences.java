@@ -751,7 +751,7 @@ public class Preferences {
     /**
      * The default plugin site
      */
-    private final static String[] DEFAULT_PLUGIN_SITE = {"http://josm.openstreetmap.de/plugin"};
+    private final static String[] DEFAULT_PLUGIN_SITE = {"http://josm.openstreetmap.de/plugin%<?plugins=>"};
 
     /**
      * Replies the collection of plugin site URLs from where plugin lists can be downloaded
