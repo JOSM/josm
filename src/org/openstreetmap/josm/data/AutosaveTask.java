@@ -110,7 +110,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
             String filename = getFileName(layer.layer.getName(), index);
             boolean foundTheSame = false;
             for (AutosaveLayerInfo info: layersInfo) {
-                if (info != layer && info.layerFileName.equals(filename)) {
+                if (info != layer && filename.equals(info.layerFileName)) {
                     foundTheSame = true;
                     break;
                 }
