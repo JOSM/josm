@@ -1,7 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -18,27 +17,31 @@ public final class Node extends OsmPrimitive {
 
     public final void setCoor(LatLon coor) {
         if(coor != null){
-            if (getDataSet() != null) {
-                boolean locked = writeLock();
-                try {
-                    getDataSet().fireNodeMoved(this, coor);
-                } finally {
-                    writeUnlock(locked);
-                }
-            } else {
-                setCoorInternal(coor);
+            updateCoor(coor, null);
+        }
+    }
+
+    public final void setEastNorth(EastNorth eastNorth) {
+        if(eastNorth != null) {
+            updateCoor(null, eastNorth);
+        }
+    }
+
+    private void updateCoor(LatLon coor, EastNorth eastNorth) {
+        if (getDataSet() != null) {
+            boolean locked = writeLock();
+            try {
+                getDataSet().fireNodeMoved(this, coor, eastNorth);
+            } finally {
+                writeUnlock(locked);
             }
+        } else {
+            setCoorInternal(coor, eastNorth);
         }
     }
 
     public final LatLon getCoor() {
         return coor;
-    }
-
-    public final void setEastNorth(EastNorth eastNorth) {
-        if(eastNorth != null) {
-            setCoor(Main.proj.eastNorth2latlon(eastNorth));
-        }
     }
 
     public final EastNorth getEastNorth() {
@@ -48,11 +51,19 @@ public final class Node extends OsmPrimitive {
     /**
      * To be used only by Dataset.reindexNode
      */
-    protected void setCoorInternal(LatLon coor) {
+    protected void setCoorInternal(LatLon coor, EastNorth eastNorth) {
         if(this.coor == null) {
-            this.coor = new CachedLatLon(coor);
+            if (eastNorth == null) {
+                this.coor = new CachedLatLon(coor);
+            } else {
+                this.coor = new CachedLatLon(eastNorth);
+            }
         } else {
-            this.coor.setCoor(coor);
+            if (eastNorth == null) {
+                this.coor.setCoor(coor);
+            } else {
+                this.coor.setEastNorth(eastNorth);
+            }
         }
     }
 

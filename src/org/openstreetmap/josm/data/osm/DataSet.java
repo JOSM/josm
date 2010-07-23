@@ -20,6 +20,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.ChangesetIdChangedEvent;
@@ -803,9 +804,9 @@ public class DataSet implements Cloneable {
         return false;
     }
 
-    private void reindexNode(Node node, LatLon newCoor) {
+    private void reindexNode(Node node, LatLon newCoor, EastNorth eastNorth) {
         nodes.remove(node);
-        node.setCoorInternal(newCoor);
+        node.setCoorInternal(newCoor, eastNorth);
         nodes.add(node);
         for (OsmPrimitive primitive: node.getReferrers()) {
             if (primitive instanceof Way) {
@@ -931,8 +932,8 @@ public class DataSet implements Cloneable {
         fireEvent(new RelationMembersChangedEvent(this, r));
     }
 
-    void fireNodeMoved(Node node, LatLon newCoor) {
-        reindexNode(node, newCoor);
+    void fireNodeMoved(Node node, LatLon newCoor, EastNorth eastNorth) {
+        reindexNode(node, newCoor, eastNorth);
         fireEvent(new NodeMovedEvent(this, node));
     }
 
