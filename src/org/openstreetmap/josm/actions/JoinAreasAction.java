@@ -185,10 +185,12 @@ public class JoinAreasAction extends JosmAction {
         if(!same) {
             int i = 0;
             if(checkForTagConflicts(a, b)) return true; // User aborted, so don't warn again
-            if(joinAreas(a, a))
+            if(joinAreas(a, a)) {
                 ++i;
-            if(joinAreas(b, b))
+            }
+            if(joinAreas(b, b)) {
                 ++i;
+            }
             hadChanges = i > 0;
             cmdsCount = i;
         }
@@ -214,6 +216,8 @@ public class JoinAreasAction extends JosmAction {
 
         // Join outer ways
         Way outerWay = joinOuterWays(allWays, innerWays);
+        if (outerWay == null)
+            return true;
 
         // Fix Multipolygons if there are any
         Collection<Way> newInnerWays = fixMultipolygons(innerWays, outerWay, same);
@@ -604,7 +608,11 @@ public class JoinAreasAction extends JosmAction {
         }
 
         commitCommands(marktr("Join Areas: Remove Short Ways"));
-        return closeWay(joinWays(join));
+        Way joinedWay = joinWays(join);
+        if (joinedWay != null)
+            return closeWay(joinedWay);
+        else
+            return null;
     }
 
     /**
@@ -647,8 +655,9 @@ public class JoinAreasAction extends JosmAction {
             }
             a = b;
         }
-        if((a = new CombineWayAction().combineWays(ways)) != null)
+        if((a = new CombineWayAction().combineWays(ways)) != null) {
             cmdsCount++;
+        }
         return a;
     }
 
@@ -675,8 +684,9 @@ public class JoinAreasAction extends JosmAction {
             boolean hasInnerNodes = false;
             for(Node n : w.getNodes()) {
                 if(outerNodes.contains(n)) {
-                    if(!selfintersect) // allow outer point for self intersection
+                    if(!selfintersect) { // allow outer point for self intersection
                         continue wayIterator;
+                    }
                 }
                 else if(!hasInnerNodes && innerNodes.contains(n)) {
                     hasInnerNodes = true;
@@ -714,21 +724,26 @@ public class JoinAreasAction extends JosmAction {
                     for(Way w2 : possibleWays) {
                         int i = 0;
                         // w2 cannot be closed, otherwise it would have been removed above
-                        if(w1.equals(w2))
+                        if(w1.equals(w2)) {
                             continue;
-                        if(w2.isFirstLastNode(w1.firstNode()))
+                        }
+                        if(w2.isFirstLastNode(w1.firstNode())) {
                             ++i;
-                        if(w2.isFirstLastNode(w1.lastNode()))
+                        }
+                        if(w2.isFirstLastNode(w1.lastNode())) {
                             ++i;
+                        }
                         if(i == 2) // this way closes w1 - take it!
                         {
-                            if(secondary.size() > 0)
+                            if(secondary.size() > 0) {
                                 secondary.clear();
+                            }
                             secondary.add(w2);
                             break;
                         }
-                        else if(i > 0)
+                        else if(i > 0) {
                             secondary.add(w2);
+                        }
                     }
                     if(k == 0 ? secondary.size() == 1 : secondary.size() > 0)
                     {
@@ -741,7 +756,7 @@ public class JoinAreasAction extends JosmAction {
                             uninterestingWays.removeAll(joinThem);
                             possibleWays.removeAll(joinThem);
 
-                            List<Node> nodes = joined.getNodes();
+                            //List<Node> nodes = joined.getNodes();
                             // check if we added too much
                             /*for(int i = 1; i < nodes.size()-2; ++i)
                             {
