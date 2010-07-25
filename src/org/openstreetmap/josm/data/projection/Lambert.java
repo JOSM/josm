@@ -84,7 +84,7 @@ public class Lambert implements Projection, ProjectionSubPrefs {
 
     public static final int DEFAULT_ZONE = 0;
 
-    private static int layoutZone = DEFAULT_ZONE;
+    private int layoutZone = DEFAULT_ZONE;
 
     private static NTV2GridShiftFile ntf_rgf93Grid = null;
 

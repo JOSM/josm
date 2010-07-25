@@ -51,7 +51,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 /**
  * This wizard walks the user to the necessary steps to retrieve an OAuth Access Token which
  * allows JOSM to access the OSM API on the users behalf.
- * 
+ *
  */
 public class OAuthAuthorizationWizard extends JDialog {
     @SuppressWarnings("unused")
@@ -69,7 +69,7 @@ public class OAuthAuthorizationWizard extends JDialog {
 
     /**
      * Builds the row with the action buttons
-     * 
+     *
      * @return
      */
     protected JPanel buildButtonRow(){
@@ -89,7 +89,7 @@ public class OAuthAuthorizationWizard extends JDialog {
 
     /**
      * Builds the panel with general information in the header
-     * 
+     *
      * @return
      */
     protected JPanel buildHeaderInfoPanel() {
@@ -206,7 +206,7 @@ public class OAuthAuthorizationWizard extends JDialog {
 
     /**
      * Creates the wizard.
-     * 
+     *
      * @param apiUrl the API URL. Must not be null.
      * @throws IllegalArgumentException thrown if apiUrl is null
      */
@@ -219,7 +219,7 @@ public class OAuthAuthorizationWizard extends JDialog {
 
     /**
      * Creates the wizard.
-     * 
+     *
      * @param parent the component relative to which the dialog is displayed
      * @param apiUrl the API URL. Must not be null.
      * @throws IllegalArgumentException thrown if apiUrl is null
@@ -234,7 +234,7 @@ public class OAuthAuthorizationWizard extends JDialog {
     /**
      * Sets the API URL for the API for which this wizard is generating
      * an Access Token.
-     * 
+     *
      * @param apiUrl the API URL. Must not be null.
      * @throws IllegalArgumentException thrown if apiUrl is null
      */
@@ -255,7 +255,7 @@ public class OAuthAuthorizationWizard extends JDialog {
 
     /**
      * Replies true if the dialog was cancelled
-     * 
+     *
      * @return true if the dialog was cancelled
      */
     public boolean isCanceled() {
@@ -273,7 +273,7 @@ public class OAuthAuthorizationWizard extends JDialog {
 
     /**
      * Replies the Access Token entered using the wizard
-     * 
+     *
      * @return the access token. May be null if the wizard was canceled.
      */
     public OAuthToken getAccessToken() {
@@ -282,7 +282,7 @@ public class OAuthAuthorizationWizard extends JDialog {
 
     /**
      * Replies the current OAuth parameters.
-     * 
+     *
      * @return the current OAuth parameters.
      */
     public OAuthParameters getOAuthParameters() {
@@ -292,7 +292,7 @@ public class OAuthAuthorizationWizard extends JDialog {
     /**
      * Replies true if the currently selected Access Token shall be saved to
      * the preferences.
-     * 
+     *
      * @return true if the currently selected Access Token shall be saved to
      * the preferences
      */
@@ -302,7 +302,7 @@ public class OAuthAuthorizationWizard extends JDialog {
 
     /**
      * Initializes the dialog with values from the preferences
-     * 
+     *
      */
     public void initFromPreferences() {
         pnlFullyAutomaticAuthorisationUI.initFromPreferences(Main.pref);
@@ -388,7 +388,7 @@ public class OAuthAuthorizationWizard extends JDialog {
         }
     }
 
-    class ExternalBrowserLauncher implements HyperlinkListener {
+    static class ExternalBrowserLauncher implements HyperlinkListener {
         public void hyperlinkUpdate(HyperlinkEvent e) {
             if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
                 String url = e.getDescription();

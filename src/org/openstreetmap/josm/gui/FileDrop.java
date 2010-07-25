@@ -322,7 +322,7 @@ public class FileDrop
                     List<?> fileList = (List<?>)tr.getTransferData(java.awt.datatransfer.DataFlavor.javaFileListFlavor);
 
                     // Convert list to array
-                    final File[] files = (File[]) fileList.toArray();
+                    final File[] files = fileList.toArray(new File[fileList.size()]);
 
                     // Alert listener to drop.
                     if( listener != null ) {

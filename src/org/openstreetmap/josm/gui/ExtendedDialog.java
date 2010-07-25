@@ -291,7 +291,6 @@ public class ExtendedDialog extends JDialog {
      * @param evt the button event
      */
     protected void buttonAction(int buttonIndex, ActionEvent evt) {
-        String a = evt.getActionCommand();
         result = buttonIndex+1;
         setVisible(false);
     }

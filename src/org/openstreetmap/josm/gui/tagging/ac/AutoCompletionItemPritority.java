@@ -27,7 +27,7 @@ public class AutoCompletionItemPritority implements Comparable<AutoCompletionIte
      * or a standard value for a given tag name (from the presets).
      */
     public static AutoCompletionItemPritority IS_IN_STANDARD = new AutoCompletionItemPritority(false, true, false);
-    
+
     /**
      * Indicates that this is a value from a selected object.
      */
@@ -63,13 +63,13 @@ public class AutoCompletionItemPritority implements Comparable<AutoCompletionIte
      * Currently, being in the current DataSet is worth more than being in the Presets.
      */
     public int compareTo(AutoCompletionItemPritority other) {
-        int sel = new Boolean(selected).compareTo(other.selected);
+        int sel = Boolean.valueOf(selected).compareTo(other.selected);
         if (sel != 0) return sel;
 
-        int ds = new Boolean(inDataSet).compareTo(other.inDataSet);
+        int ds = Boolean.valueOf(inDataSet).compareTo(other.inDataSet);
         if (ds != 0) return ds;
 
-        int std = new Boolean(inStandard).compareTo(other.inStandard);
+        int std = Boolean.valueOf(inStandard).compareTo(other.inStandard);
         if (std != 0) return std;
 
         return 0;
@@ -81,9 +81,9 @@ public class AutoCompletionItemPritority implements Comparable<AutoCompletionIte
      */
     public AutoCompletionItemPritority mergeWith(AutoCompletionItemPritority other) {
         return new AutoCompletionItemPritority(
-                        inDataSet || other.inDataSet,
-                        inStandard || other.inStandard,
-                        selected || other.selected);
+                inDataSet || other.inDataSet,
+                inStandard || other.inStandard,
+                selected || other.selected);
     }
 
     @Override public String toString() {

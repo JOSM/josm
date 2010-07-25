@@ -174,12 +174,8 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         statisticsModel.reset();
         StatisticsInfo info = new StatisticsInfo();
         info.numTags = tagsForAllPrimitives.getKeys().size();
-        for (OsmPrimitiveType type: sourceStatistics.keySet()) {
-            info.sourceInfo.put(type, sourceStatistics.get(type));
-        }
-        for (OsmPrimitiveType type: targetStatistics.keySet()) {
-            info.targetInfo.put(type, targetStatistics.get(type));
-        }
+        info.sourceInfo.putAll(sourceStatistics);
+        info.targetInfo.putAll(targetStatistics);
         statisticsModel.append(info);
         validate();
     }

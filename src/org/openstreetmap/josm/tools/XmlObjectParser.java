@@ -108,7 +108,7 @@ public class XmlObjectParser implements Iterable<Object> {
         }
     }
 
-    private class AddNamespaceFilter extends XMLFilterImpl {
+    private static class AddNamespaceFilter extends XMLFilterImpl {
 
         private final String namespace;
 

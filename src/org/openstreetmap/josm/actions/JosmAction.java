@@ -98,13 +98,6 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         DataSet.selListeners.remove(selectionChangeAdapter);
     }
 
-    /**
-     * needs to be overridden to be useful
-     */
-    public void addListener(JosmAction a) {
-        return;
-    }
-
     private void setHelpId() {
         String helpId = "Action/"+getClass().getName().substring(getClass().getName().lastIndexOf('.')+1);
         if (helpId.endsWith("Action")) {

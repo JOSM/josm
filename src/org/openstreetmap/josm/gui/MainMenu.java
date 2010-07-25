@@ -118,7 +118,7 @@ public class MainMenu extends JMenuBar {
     public final RedoAction redo = new RedoAction();
     public final JosmAction copy = new CopyAction();
     public final JosmAction paste = new PasteAction();
-    public final JosmAction pasteTags = new PasteTagsAction(copy);
+    public final JosmAction pasteTags = new PasteTagsAction();
     public final JosmAction duplicate = new DuplicateAction();
     public final JosmAction delete = new DeleteAction();
     public final JosmAction merge = new MergeLayerAction();

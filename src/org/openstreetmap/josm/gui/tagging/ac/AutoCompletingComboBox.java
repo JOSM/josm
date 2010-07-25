@@ -68,15 +68,14 @@ public class AutoCompletingComboBox extends JComboBox {
             int start = offs+str.length();
             int end = start;
             String curText = getText(0, size);
-            
+
             // if the text starts with a number we don't autocomplete
             if (Main.pref.getBoolean("autocomplete.dont_complete_numbers", true)) {
                 try {
                     Long.parseLong(str);
-                    if (curText.length() == 0) {
+                    if (curText.length() == 0)
                         // we don't autocomplete on numbers
                         return;
-                    }
                     Long.parseLong(curText);
                     return;
                 } catch (NumberFormatException e) {
@@ -84,7 +83,7 @@ public class AutoCompletingComboBox extends JComboBox {
                     // autocompletion
                 }
             }
-            
+
             // lookup and select a matching item
             Object item = lookupItem(curText);
             setSelectedItem(item);
@@ -225,7 +224,7 @@ public class AutoCompletingComboBox extends JComboBox {
      * ListCellRenderer for AutoCompletingComboBox
      * renders an AutoCompletionListItem by showing only the string value part
      */
-    public class AutoCompleteListCellRenderer extends JLabel implements ListCellRenderer {
+    public static class AutoCompleteListCellRenderer extends JLabel implements ListCellRenderer {
 
         public AutoCompleteListCellRenderer() {
             setOpaque(true);

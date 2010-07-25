@@ -13,7 +13,7 @@ import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 
 public class PushbackTokenizer {
 
-    public class Range {
+    public static class Range {
         private final long start;
         private final long end;
 

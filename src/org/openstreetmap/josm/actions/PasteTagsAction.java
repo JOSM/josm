@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public final class PasteTagsAction extends JosmAction implements PasteBufferChangedListener {
 
-    public PasteTagsAction(JosmAction copyAction) {
+    public PasteTagsAction() {
         super(tr("Paste Tags"), "pastetags",
                 tr("Apply tags of contents of paste buffer to all selected items."),
                 Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")), KeyEvent.VK_V, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT), true);

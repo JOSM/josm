@@ -49,9 +49,7 @@ public class ThumbsLoader implements Runnable {
                 Main.map.mapView.repaint();
             }
         }
-        try {
-            layer.updateOffscreenBuffer = true;
-        } catch (Exception e) {}
+        layer.updateOffscreenBuffer = true;
         Main.map.mapView.repaint();
         (new Thread() {             // clean up the garbage - shouldn't hurt
             @Override

@@ -40,7 +40,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * corrections and a dialog is pesented to the user to
  * confirm these changes.
  */
- 
+
 public abstract class TagCorrector<P extends OsmPrimitive> {
 
     public abstract Collection<Command> execute(P primitive, P oldprimitive)
@@ -75,9 +75,9 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
             label2.setMaxWidth(600);
             p.add(label2, GBC.eop().anchor(GBC.CENTER));
 
-            for (OsmPrimitive primitive : tagCorrectionsMap.keySet()) {
-                final List<TagCorrection> tagCorrections = tagCorrectionsMap
-                .get(primitive);
+            for (Entry<OsmPrimitive, List<TagCorrection>> entry : tagCorrectionsMap.entrySet()) {
+                final OsmPrimitive primitive = entry.getKey();
+                final List<TagCorrection> tagCorrections = entry.getValue();
 
                 if (tagCorrections.isEmpty()) {
                     continue;
@@ -101,9 +101,10 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                 tagTableMap.put(primitive, table);
             }
 
-            for (OsmPrimitive primitive : roleCorrectionMap.keySet()) {
-                final List<RoleCorrection> roleCorrections = roleCorrectionMap
-                .get(primitive);
+            for (Entry<OsmPrimitive, List<RoleCorrection>> entry : roleCorrectionMap.entrySet()) {
+                final OsmPrimitive primitive = entry.getKey();
+                final List<RoleCorrection> roleCorrections = entry.getValue();
+
                 if (roleCorrections.isEmpty()) {
                     continue;
                 }
