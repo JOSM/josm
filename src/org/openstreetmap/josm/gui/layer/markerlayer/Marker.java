@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -94,6 +95,8 @@ public class Marker implements ActionListener {
      */
     public static LinkedList<MarkerProducers> markerProducers = new LinkedList<MarkerProducers>();
 
+    private static final StringProperty PROP_NAME_DESC = new StringProperty( "draw.gpx.layer.wpt", "nameordesc" );
+
     // Add one Maker specifying the default behaviour.
     static {
         Marker.markerProducers.add(new MarkerProducers() {
@@ -115,10 +118,33 @@ public class Marker implements ActionListener {
                 }
 
                 String name_desc = "";
-                if (wpt.attr.containsKey("name")) {
-                    name_desc = wpt.getString("name");
-                } else if (wpt.attr.containsKey("desc")) {
-                    name_desc = wpt.getString("desc");
+                if (PROP_NAME_DESC.get() == null || "nameordesc".equals(PROP_NAME_DESC.get()))
+                {
+                    if (wpt.attr.containsKey("name")) {
+                        name_desc = wpt.getString("name");
+                    } else if (wpt.attr.containsKey("desc")) {
+                        name_desc = wpt.getString("desc");
+                    }
+                } else if ("name".equals(PROP_NAME_DESC.get())) {
+                    if (wpt.attr.containsKey("name")) {
+                        name_desc = wpt.getString("name");
+                    }
+                }
+                else if ("desc".equals(PROP_NAME_DESC.get())) {
+                    if (wpt.attr.containsKey("desc")) {
+                        name_desc = wpt.getString("desc");
+                    }
+                }
+                else if ("both".equals(PROP_NAME_DESC.get()) ) {
+                    if (wpt.attr.containsKey("name")) {
+                        name_desc = wpt.getString("name");
+
+                        if (wpt.attr.containsKey("desc")) {
+                            name_desc += " (" + wpt.getString("desc") + ")" ;
+                        }
+                    } else if (wpt.attr.containsKey("desc")) {
+                        name_desc = wpt.getString("desc");
+                    }
                 }
 
                 if (uri == null) {
