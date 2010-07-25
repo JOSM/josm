@@ -11,7 +11,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -97,13 +96,6 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         }
         MapView.removeLayerChangeListener(layerChangeAdapter);
         DataSet.selListeners.remove(selectionChangeAdapter);
-    }
-
-    /**
-     * needs to be overridden to be useful
-     */
-    public void pasteBufferChanged(PrimitiveDeepCopy newPasteBuffer) {
-        return;
     }
 
     /**

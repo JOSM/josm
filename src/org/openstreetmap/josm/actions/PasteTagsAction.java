@@ -2,8 +2,8 @@
 // Author: David Earl
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.event.ActionEvent;
@@ -23,16 +23,17 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
 import org.openstreetmap.josm.data.osm.TagCollection;
+import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy.PasteBufferChangedListener;
 import org.openstreetmap.josm.gui.conflict.tags.PasteTagsConflictResolverDialog;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public final class PasteTagsAction extends JosmAction {
+public final class PasteTagsAction extends JosmAction implements PasteBufferChangedListener {
 
     public PasteTagsAction(JosmAction copyAction) {
         super(tr("Paste Tags"), "pastetags",
                 tr("Apply tags of contents of paste buffer to all selected items."),
                 Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")), KeyEvent.VK_V, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT), true);
-        copyAction.addListener(this);
+        Main.pasteBuffer.addPasteBufferChangedListener(this);
         putValue("help", ht("/Action/PasteTags"));
     }
 

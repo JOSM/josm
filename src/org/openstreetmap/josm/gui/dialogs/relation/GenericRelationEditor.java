@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
@@ -49,12 +50,14 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.CopyAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ConflictAddCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
@@ -90,6 +93,7 @@ public class GenericRelationEditor extends RelationEditor  {
     private MemberTableModel memberTableModel;
 
     /** the model for the selection table */
+    private SelectionTable selectionTable;
     private SelectionTableModel selectionTableModel;
 
     private AutoCompletingTextField tfRole;
@@ -382,6 +386,10 @@ public class GenericRelationEditor extends RelationEditor  {
         JPanel pnl3 = new JPanel();
         pnl3.setLayout(new BorderLayout());
         pnl3.add(splitPane, BorderLayout.CENTER);
+
+        new PasteMembersAction();
+        new CopyMembersAction();
+
         return pnl3;
     }
 
@@ -393,9 +401,9 @@ public class GenericRelationEditor extends RelationEditor  {
     protected JPanel buildSelectionTablePanel() {
         JPanel pnl = new JPanel();
         pnl.setLayout(new BorderLayout());
-        SelectionTable tbl = new SelectionTable(selectionTableModel, new SelectionTableColumnModel(memberTableModel));
-        tbl.setMemberTableModel(memberTableModel);
-        JScrollPane pane = new JScrollPane(tbl);
+        selectionTable = new SelectionTable(selectionTableModel, new SelectionTableColumnModel(memberTableModel));
+        selectionTable.setMemberTableModel(memberTableModel);
+        JScrollPane pane = new JScrollPane(selectionTable);
         pnl.add(pane, BorderLayout.CENTER);
         return pnl;
     }
@@ -588,6 +596,18 @@ public class GenericRelationEditor extends RelationEditor  {
                 break;
             }
         }
+    }
+
+    private void registerCopyPasteAction(AbstractAction action, Object actionName, KeyStroke shortcut) {
+        getRootPane().getActionMap().put(actionName, action);
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(shortcut, actionName);
+        // Assign also to JTables because they have their own Copy&Paste implementation (which is disabled in this case but eats key shortcuts anyway)
+        memberTable.getInputMap(JComponent.WHEN_FOCUSED).put(shortcut, actionName);
+        memberTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(shortcut, actionName);
+        memberTable.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(shortcut, actionName);
+        selectionTable.getInputMap(JComponent.WHEN_FOCUSED).put(shortcut, actionName);
+        selectionTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(shortcut, actionName);
+        selectionTable.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(shortcut, actionName);
     }
 
     static class AddAbortException extends Exception  {
@@ -1439,6 +1459,68 @@ public class GenericRelationEditor extends RelationEditor  {
         public void valueChanged(ListSelectionEvent e) {
             refreshEnabled();
         }
+    }
+
+    class PasteMembersAction extends AddFromSelectionAction {
+
+        public PasteMembersAction() {
+            registerCopyPasteAction(this, "PASTE_MEMBERS", Shortcut.getPasteKeyStroke());
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                List<PrimitiveData> primitives = Main.pasteBuffer.getDirectlyAdded();
+                DataSet ds = getLayer().data;
+                List<OsmPrimitive> toAdd = new ArrayList<OsmPrimitive>();
+                boolean hasNewInOtherLayer = false;
+
+                for (PrimitiveData primitive: primitives) {
+                    OsmPrimitive primitiveInDs = ds.getPrimitiveById(primitive);
+                    if (primitiveInDs != null) {
+                        toAdd.add(primitiveInDs);
+                    } else if (!primitive.isNew()) {
+                        toAdd.add(ds.getPrimitiveById(primitive, true));
+                    } else {
+                        hasNewInOtherLayer = true;
+                        break;
+                    }
+                }
+
+                if (hasNewInOtherLayer) {
+                    JOptionPane.showMessageDialog(Main.parent, tr("Members from paste buffer cannot be added because they are not included in current layer"));
+                    return;
+                }
+
+                toAdd = filterConfirmedPrimitives(toAdd);
+                memberTableModel.addMembersAfterIdx(toAdd, memberTableModel
+                        .getSelectionModel().getMaxSelectionIndex());
+
+                tfRole.requestFocusInWindow();
+
+            } catch (AddAbortException ex) {
+                // Do nothing
+            }
+        }
+    }
+
+    class CopyMembersAction extends AbstractAction {
+
+        public CopyMembersAction() {
+            registerCopyPasteAction(this, "COPY_MEMBERS", Shortcut.getCopyKeyStroke());
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Set<OsmPrimitive> primitives = new HashSet<OsmPrimitive>();
+            for (RelationMember rm: memberTableModel.getSelectedMembers()) {
+                primitives.add(rm.getMember());
+            }
+            if (!primitives.isEmpty()) {
+                CopyAction.copy(getLayer(), primitives);
+            }
+        }
+
     }
 
     class MemberTableDblClickAdapter extends MouseAdapter {

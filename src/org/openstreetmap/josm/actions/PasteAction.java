@@ -22,16 +22,18 @@ import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
 import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.WayData;
+import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy.PasteBufferChangedListener;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
 
-public final class PasteAction extends JosmAction {
+public final class PasteAction extends JosmAction implements PasteBufferChangedListener {
 
     public PasteAction() {
         super(tr("Paste"), "paste", tr("Paste contents of paste buffer."),
                 Shortcut.registerShortcut("system:paste", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_V, Shortcut.GROUP_MENU), true);
         putValue("help", ht("/Action/Paste"));
+        Main.pasteBuffer.addPasteBufferChangedListener(this);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -165,5 +167,10 @@ public final class PasteAction extends JosmAction {
             return;
         }
         setEnabled(!Main.pasteBuffer.isEmpty());
+    }
+
+    @Override
+    public void pasteBufferChanged(PrimitiveDeepCopy pasteBuffer) {
+        updateEnabledState();
     }
 }

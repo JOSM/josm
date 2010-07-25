@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 
@@ -16,8 +17,13 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
  */
 public class PrimitiveDeepCopy {
 
+    public interface PasteBufferChangedListener {
+        void pasteBufferChanged(PrimitiveDeepCopy pasteBuffer);
+    }
+
     private final List<PrimitiveData> directlyAdded = new ArrayList<PrimitiveData>();
     private final List<PrimitiveData> referenced = new ArrayList<PrimitiveData>();
+    private final CopyOnWriteArrayList<PasteBufferChangedListener> listeners = new CopyOnWriteArrayList<PasteBufferChangedListener>();
 
     public PrimitiveDeepCopy() {
 
@@ -73,6 +79,8 @@ public class PrimitiveDeepCopy {
                 }
             }
         }.visitAll();
+
+        firePasteBufferChanged();
     }
 
     public List<PrimitiveData> getDirectlyAdded() {
@@ -92,6 +100,20 @@ public class PrimitiveDeepCopy {
 
     public boolean isEmpty() {
         return directlyAdded.isEmpty() && referenced.isEmpty();
+    }
+
+    private void firePasteBufferChanged() {
+        for (PasteBufferChangedListener listener: listeners) {
+            listener.pasteBufferChanged(this);
+        }
+    }
+
+    public void addPasteBufferChangedListener(PasteBufferChangedListener listener) {
+        listeners.addIfAbsent(listener);
+    }
+
+    public void removePasteBufferChangedListener(PasteBufferChangedListener listener) {
+        listeners.remove(listener);
     }
 
 }
