@@ -581,6 +581,10 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                 e.setExifCoor(null);
                 e.setPos(null);
             }
+        } catch (Exception ex) { // (other exceptions, e.g. #5271)
+            System.err.println("Error when reading EXIF from file: "+ex);
+            e.setExifCoor(null);
+            e.setPos(null);
         }
 
         // compass direction value
@@ -591,7 +595,10 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             direction = dir.getRational(GpsDirectory.TAG_GPS_IMG_DIRECTION);
         } catch (CompoundException p) {
             direction = null;
+        } catch (Exception ex) {
+            direction = null;
         }
+
         if (direction != null) {
             e.setExifImgDir(direction.doubleValue());
         }
