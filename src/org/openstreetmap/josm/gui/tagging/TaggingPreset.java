@@ -1,7 +1,6 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.tagging;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
@@ -20,6 +19,7 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -69,6 +69,25 @@ import org.xml.sax.SAXException;
  * It is also able to construct dialogs out of preset definitions.
  */
 public class TaggingPreset extends AbstractAction implements MapView.LayerChangeListener {
+
+    public enum PresetType {
+        NODE("Mf_node"), WAY("Mf_way"), RELATION("Mf_relation"), CLOSEDWAY("Mf_closedway");
+
+        private final String iconName;
+
+        PresetType(String iconName) {
+            this.iconName = iconName;
+        }
+
+        public String getIconName() {
+            return iconName;
+        }
+
+        public String getName() {
+            return name().toLowerCase();
+        }
+
+    }
 
     public TaggingPresetMenu group = null;
     public String name;
@@ -486,7 +505,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     }
 
     public static class Role {
-        public List<String> types;
+        public EnumSet<PresetType> types;
         public String key;
         public String text;
         public String text_context;
@@ -544,8 +563,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             p.add(new JLabel(cstring), types == null ? GBC.eol() : GBC.std().insets(0,0,10,0));
             if(types != null){
                 JPanel pp = new JPanel();
-                for(String t : types) {
-                    pp.add(new JLabel(ImageProvider.get("Mf_" + t)));
+                for(PresetType t : types) {
+                    pp.add(new JLabel(ImageProvider.get(t.getIconName())));
                 }
                 p.add(pp, GBC.eol());
             }
@@ -606,7 +625,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     /**
      * The types as preparsed collection.
      */
-    public List<String> types;
+    public EnumSet<PresetType> types;
     public List<Item> data = new LinkedList<Item>();
     private static HashMap<String,String> lastValue = new HashMap<String,String>();
 
@@ -668,16 +687,18 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     /**
      * Called from the XML parser to set the types this preset affects
      */
-    private static Collection<String> allowedtypes = Arrays.asList(new String[]
-                                                                              {marktr("way"), marktr("node"), marktr("relation"), marktr("closedway")});
 
-    static public List<String> getType(String types) throws SAXException {
-        List<String> t = Arrays.asList(types.split(","));
-        for (String type : t) {
-            if(!allowedtypes.contains(type))
+    static public EnumSet<PresetType> getType(String types) throws SAXException {
+        EnumSet<PresetType> result = EnumSet.noneOf(PresetType.class);
+        for (String type : Arrays.asList(types.split(","))) {
+            try {
+                PresetType presetType = PresetType.valueOf(type.toUpperCase());
+                result.add(presetType);
+            } catch (IllegalArgumentException e) {
                 throw new SAXException(tr("Unknown type: {0}", type));
+            }
         }
-        return t;
+        return result;
     }
 
     public void setType(String types) throws SAXException {
@@ -832,9 +853,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         LinkedList<Item> l = new LinkedList<Item>();
         if(types != null){
             JPanel pp = new JPanel();
-            for(String t : types){
-                JLabel la = new JLabel(ImageProvider.get("Mf_" + t));
-                la.setToolTipText(tr("Elements of type {0} are supported.", tr(t)));
+            for(PresetType t : types){
+                JLabel la = new JLabel(ImageProvider.get(t.getIconName()));
+                la.setToolTipText(tr("Elements of type {0} are supported.", tr(t.getName())));
                 pp.add(la);
             }
             p.add(pp, GBC.eol());
@@ -952,20 +973,20 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             {
                 if(osm instanceof Relation)
                 {
-                    if(!types.contains("relation")) {
+                    if(!types.contains(PresetType.RELATION)) {
                         continue;
                     }
                 }
                 else if(osm instanceof Node)
                 {
-                    if(!types.contains("node")) {
+                    if(!types.contains(PresetType.NODE)) {
                         continue;
                     }
                 }
                 else if(osm instanceof Way)
                 {
-                    if(!types.contains("way") &&
-                            !(types.contains("closedway") && ((Way)osm).isClosed())) {
+                    if(!types.contains(PresetType.WAY) &&
+                            !(types.contains(PresetType.CLOSEDWAY) && ((Way)osm).isClosed())) {
                         continue;
                     }
                 }
