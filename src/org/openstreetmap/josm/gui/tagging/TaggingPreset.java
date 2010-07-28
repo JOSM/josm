@@ -369,7 +369,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             for (int i=0; i<value_array.length; i++) {
                 lhm.put(value_array[i], (locale_display_values == null)
                         ? (values_context == null ? tr(display_array[i])
-                                : tr(values_context, display_array[i])) : display_array[i]);
+                                : trc(values_context, display_array[i])) : display_array[i]);
             }
             if(!usage.unused()){
                 for (String s : usage.values) {

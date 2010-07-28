@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.ArrayList;
@@ -168,7 +169,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         if (relation.isIncomplete()) {
             name = tr("incomplete");
         } else {
-            name = tr(relation.get("type"));
+            name = trc("Relation type", relation.get("type"));
             if (name == null) {
                 name = (relation.get("public_transport") != null) ? tr("public transport") : "";
             }

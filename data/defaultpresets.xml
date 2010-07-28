@@ -2449,7 +2449,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=line"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=line" />
             <label text="Edit Power Line" />
-            <combo key="power" text="Line type" values="line,minor_line" default="line" delete_if_empty="true" />
+            <combo key="power" text="Line type" values_context="Power Line" values="line,minor_line" default="line" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <text key="ref" text="Line reference" default="" delete_if_empty="true" />
             <!-- TODO: voltage values used are a mixture of power lines and railways - needs cleanup -->

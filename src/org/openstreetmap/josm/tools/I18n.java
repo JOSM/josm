@@ -125,6 +125,10 @@ public class I18n {
     }
 
     public static final String trc(String ctx, String text) {
+        if (ctx == null)
+            return tr(text);
+        if (text == null)
+            return null;
         return MessageFormat.format(gettext(text, ctx), (Object)null);
     }
 
