@@ -1777,6 +1777,10 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="horse" text="Riding" default="off" delete_if_empty="true" />
             <label text="... other transportation modes possible" />
         </item>
+        <item name="Flagpole" icon="presets/flag.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/flagpole" />
+            <key key="man_made" value="flagpole" />
+        </item>
         <item name="Information Terminal" icon="presets/information.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Key:information" />
             <key key="tourism" value="information" />

@@ -1639,6 +1639,14 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="man_made" v="flagpost"/>
+		<area colour="manmade#d8d8d8"/>
+		<icon annotate="true" src="presets/flag.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="man_made" v="gasometer"/>
 		<icon annotate="true" src="misc/landmark/gasometer.png"/>
 		<area colour="manmade#d8d8d8"/>
