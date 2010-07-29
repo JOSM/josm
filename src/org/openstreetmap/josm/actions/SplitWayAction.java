@@ -9,14 +9,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import javax.swing.JOptionPane;
 
@@ -97,124 +94,113 @@ public class SplitWayAction extends JosmAction {
 
         List<Node> selectedNodes = OsmPrimitive.getFilteredList(selection, Node.class);
         List<Way> selectedWays = OsmPrimitive.getFilteredList(selection, Way.class);
+        List<Relation> selectedRelations = OsmPrimitive.getFilteredList(selection, Relation.class);
+        List<Way> applicableWays = getApplicableWays(selectedWays, selectedNodes);
 
-        if (!checkSelection(selection)) {
+        if (applicableWays == null) {
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("The current selection cannot be used for splitting."),
+                    tr("The current selection cannot be used for splitting - no node is selected."),
                     tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-            );
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        } else if (applicableWays.isEmpty()) {
+            JOptionPane.showMessageDialog(Main.parent,
+                    tr("The selected nodes do not share the same way."),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-
-        Way selectedWay = null;
-        if (!selectedWays.isEmpty()){
-            selectedWay = selectedWays.get(0);
-        }
-
-        // If only nodes are selected, try to guess which way to split. This works if there
-        // is exactly one way that all nodes are part of.
-        if (selectedWay == null && !selectedNodes.isEmpty()) {
-            Map<Way, Integer> wayOccurenceCounter = new HashMap<Way, Integer>();
-            for (Node n : selectedNodes) {
-                for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
-                    if (!w.isUsable()) {
-                        continue;
-                    }
+        { // Remove ways that doesn't have selected node in the middle
+            Iterator<Way> it = applicableWays.iterator();
+            WAY_LOOP:
+                while (it.hasNext()) {
+                    Way w = it.next();
+                    assert w.isUsable(); // Way is referrer of selected node(s) so it must be usable
                     int last = w.getNodesCount() - 1;
-                    if (last <= 0) {
-                        continue; // zero or one node ways
-                    }
                     boolean circular = w.isClosed();
-                    int i = 0;
-                    for (Node wn : w.getNodes()) {
-                        if ((circular || (i > 0 && i < last)) && n.equals(wn)) {
-                            Integer old = wayOccurenceCounter.get(w);
-                            wayOccurenceCounter.put(w, (old == null) ? 1 : old + 1);
-                            break;
+
+                    for (Node n : selectedNodes) {
+                        int i = w.getNodes().indexOf(n);
+                        if (!(circular || (i > 0 && i < last))) {
+                            it.remove();
+                            continue WAY_LOOP;
                         }
-                        i++;
                     }
                 }
-            }
-            if (wayOccurenceCounter.isEmpty()) {
-                JOptionPane.showMessageDialog(Main.parent,
-                        trn("The selected node is not in the middle of any way.",
-                                "The selected nodes are not in the middle of any way.",
-                                selectedNodes.size()),
-                                tr("Warning"),
-                                JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            for (Entry<Way, Integer> entry : wayOccurenceCounter.entrySet()) {
-                if (entry.getValue().equals(selectedNodes.size())) {
-                    if (selectedWay != null) {
-                        JOptionPane.showMessageDialog(Main.parent,
-                                trn("There is more than one way using the node you selected. Please select the way also.",
-                                        "There is more than one way using the nodes you selected. Please select the way also.",
-                                        selectedNodes.size()),
-                                        tr("Warning"),
-                                        JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-                    selectedWay = entry.getKey();
-                }
-            }
-
-            if (selectedWay == null) {
-                JOptionPane.showMessageDialog(Main.parent,
-                        tr("The selected nodes do not share the same way."),
-                        tr("Warning"),
-                        JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            // If a way and nodes are selected, verify that the nodes are part of the way.
-        } else if (selectedWay != null && !selectedNodes.isEmpty()) {
-
-            HashSet<Node> nds = new HashSet<Node>(selectedNodes);
-            nds.removeAll(selectedWay.getNodes());
-            if (!nds.isEmpty()) {
-                JOptionPane.showMessageDialog(Main.parent,
-                        trn("The selected way does not contain the selected node.",
-                                "The selected way does not contain all the selected nodes.",
-                                selectedNodes.size()),
-                                tr("Warning"),
-                                JOptionPane.WARNING_MESSAGE);
-                return;
-            }
         }
+
+        if (applicableWays.isEmpty()) {
+            JOptionPane.showMessageDialog(Main.parent,
+                    trn("The selected node is not in the middle of any way.",
+                            "The selected nodes are not in the middle of any way.",
+                            selectedNodes.size()),
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE);
+            return;
+        } else if (applicableWays.size() > 1) {
+            JOptionPane.showMessageDialog(Main.parent,
+                    trn("There is more than one way using the node you selected. Please select the way also.",
+                            "There is more than one way using the nodes you selected. Please select the way also.",
+                            selectedNodes.size()),
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Finally, applicableWays contains only one perfect way
+        Way selectedWay = applicableWays.get(0);
 
         List<List<Node>> wayChunks = buildSplitChunks(selectedWay, selectedNodes);
         if (wayChunks != null) {
-            SplitWayResult result = splitWay(getEditLayer(),selectedWay, wayChunks);
+            List<OsmPrimitive> sel = new ArrayList<OsmPrimitive>(selectedWays.size() + selectedRelations.size());
+            sel.addAll(selectedWays);
+            sel.addAll(selectedRelations);
+            SplitWayResult result = splitWay(getEditLayer(),selectedWay, wayChunks, sel);
             Main.main.undoRedo.add(result.getCommand());
             getCurrentDataSet().setSelected(result.getNewSelection());
         }
     }
 
-    /**
-     * Checks if the selection consists of something we can work with.
-     * Checks only if the number and type of items selected looks good;
-     * does not check whether the selected items are really a valid
-     * input for splitting (this would be too expensive to be carried
-     * out from the selectionChanged listener).
-     */
-    private boolean checkSelection(Collection<? extends OsmPrimitive> selection) {
-        boolean way = false;
-        boolean node = false;
-        for (OsmPrimitive p : selection) {
-            if (p instanceof Way && !way) {
-                way = true;
-            } else if (p instanceof Node) {
-                node = true;
-            } else
-                return false;
+    private List<Way> getApplicableWays(List<Way> selectedWays, List<Node> selectedNodes) {
+        if (selectedNodes.isEmpty())
+            return null;
+
+        // List of ways shared by all nodes
+        List<Way> result = new ArrayList<Way>(OsmPrimitive.getFilteredList(selectedNodes.get(0).getReferrers(), Way.class));
+        for (int i=1; i<selectedNodes.size(); i++) {
+            Iterator<Way> it = result.iterator();
+            List<OsmPrimitive> ref = selectedNodes.get(i).getReferrers();
+            while (it.hasNext()) {
+                if (!ref.contains(it.next())) {
+                    it.remove();
+                }
+            }
         }
-        return node;
+
+        { // Remove broken ways
+            Iterator<Way> it = result.iterator();
+            while (it.hasNext()) {
+                if (it.next().getNodesCount() <= 2) {
+                    it.remove();
+                }
+            }
+        }
+
+        if (selectedWays.isEmpty())
+            return result;
+        else {
+            // Return only selected ways
+            Iterator<Way> it = result.iterator();
+            while (it.hasNext()) {
+                if (!selectedWays.contains(it.next())) {
+                    it.remove();
+                }
+            }
+            return result;
+        }
+
     }
 
     /**
@@ -300,10 +286,11 @@ public class SplitWayAction extends JosmAction {
      * @param wayChunks
      * @return
      */
-    public static SplitWayResult splitWay(OsmDataLayer layer, Way way, List<List<Node>> wayChunks) {
+    public static SplitWayResult splitWay(OsmDataLayer layer, Way way, List<List<Node>> wayChunks, Collection<? extends OsmPrimitive> selection) {
         // build a list of commands, and also a new selection list
         Collection<Command> commandList = new ArrayList<Command>(wayChunks.size());
-        List<Way> newSelection = new ArrayList<Way>(wayChunks.size());
+        List<OsmPrimitive> newSelection = new ArrayList<OsmPrimitive>(selection.size() + wayChunks.size());
+        newSelection.addAll(selection);
 
         Iterator<List<Node>> chunkIt = wayChunks.iterator();
 
@@ -311,7 +298,9 @@ public class SplitWayAction extends JosmAction {
         Way changedWay = new Way(way);
         changedWay.setNodes(chunkIt.next());
         commandList.add(new ChangeCommand(way, changedWay));
-        newSelection.add(way);
+        if (!newSelection.contains(way)) {
+            newSelection.add(way);
+        }
 
         List<Way> newWays = new ArrayList<Way>();
         // Second, create new ways
@@ -494,10 +483,10 @@ public class SplitWayAction extends JosmAction {
      * @param atNodes the list of nodes where the way is split. Must not be null.
      * @return the result from the split operation
      */
-    static public SplitWayResult split(OsmDataLayer layer, Way way, List<Node> atNodes){
+    static public SplitWayResult split(OsmDataLayer layer, Way way, List<Node> atNodes, Collection<? extends OsmPrimitive> selection){
         List<List<Node>> chunks = buildSplitChunks(way, atNodes);
         if (chunks == null) return null;
-        return splitWay(layer,way, chunks);
+        return splitWay(layer,way, chunks, selection);
     }
 
     @Override
@@ -515,6 +504,12 @@ public class SplitWayAction extends JosmAction {
             setEnabled(false);
             return;
         }
-        setEnabled(checkSelection(selection));
+        for (OsmPrimitive primitive: selection) {
+            if (primitive instanceof Node) {
+                setEnabled(true); // Selection still can be wrong, but let SplitWayAction process and tell user what's wrong
+                return;
+            }
+        }
+        setEnabled(false);
     }
 }

@@ -22,8 +22,6 @@ import java.util.Map.Entry;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SplitWayAction;
@@ -184,18 +182,18 @@ public class DeleteCommand extends Command {
     }
 
     @Override public Collection<PseudoCommand> getChildren() {
-        if (toDelete.size() == 1) {
+        if (toDelete.size() == 1)
             return null;
-        } else {
+        else {
             List<PseudoCommand> children = new ArrayList<PseudoCommand>();
             for (final OsmPrimitive osm : toDelete) {
                 children.add(new PseudoCommand() {
                     @Override public JLabel getDescription() {
                         return new JLabel(
-                            tr("Deleted ''{0}''",
-                                osm.getDisplayName(DefaultNameFormatter.getInstance())),
-                            ImageProvider.get(OsmPrimitiveType.from(osm)), JLabel.HORIZONTAL);
-                        }
+                                tr("Deleted ''{0}''",
+                                        osm.getDisplayName(DefaultNameFormatter.getInstance())),
+                                        ImageProvider.get(OsmPrimitiveType.from(osm)), JLabel.HORIZONTAL);
+                    }
                     @Override public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
                         return Collections.singleton(osm);
                     }
@@ -424,7 +422,7 @@ public class DeleteCommand extends Command {
             List<List<Node>> chunks = new ArrayList<List<Node>>(2);
             chunks.add(n1);
             chunks.add(n2);
-            return SplitWayAction.splitWay(layer,ws.way, chunks).getCommand();
+            return SplitWayAction.splitWay(layer,ws.way, chunks, Collections.<OsmPrimitive>emptyList()).getCommand();
         }
     }
 
@@ -442,18 +440,20 @@ public class DeleteCommand extends Command {
         boolean incomplete = false;
         if (a != null) {
             for (OsmPrimitive osm : primitivesToDelete) {
-                if (osm.isIncomplete())
+                if (osm.isIncomplete()) {
                     incomplete = true;
-                else if (osm instanceof Node && !osm.isNewOrUndeleted()
-                && !a.contains(((Node) osm).getCoor()))
+                } else if (osm instanceof Node && !osm.isNewOrUndeleted()
+                        && !a.contains(((Node) osm).getCoor())) {
                     outside = true;
+                }
             }
         }
         else
         {
             for (OsmPrimitive osm : primitivesToDelete)
-                if (osm.isIncomplete())
+                if (osm.isIncomplete()) {
                     incomplete = true;
+                }
         }
         if(outside)
         {
