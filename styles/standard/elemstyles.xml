@@ -1641,7 +1641,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="man_made" v="flagpole"/>
 		<area colour="manmade#d8d8d8"/>
-		<icon annotate="true" src="presets/flag.png"/>
+		<icon annotate="true" src="misc/flag.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
