@@ -63,43 +63,47 @@ public class FilterTableModel extends AbstractTableModel {
 
     public void executeFilters() {
         DataSet ds = Main.main.getCurrentDataSet();
-        if (ds == null)
-            return;
-
-        final Collection<OsmPrimitive> deselect = new HashSet<OsmPrimitive>();
-
-        ds.beginUpdate();
-        try {
-
-            final Collection<OsmPrimitive> all = ds.allNonDeletedCompletePrimitives();
-
-            FilterWorker.executeFilters(all, filterMatcher);
-
-            disabledCount = 0;
+        if (ds == null) {
             disabledAndHiddenCount = 0;
-            // collect disabled and selected the primitives
-            for (OsmPrimitive osm : all) {
-                if (osm.isDisabled()) {
-                    disabledCount++;
-                    if (osm.isSelected()) {
-                        deselect.add(osm);
-                    }
-                    if (osm.isDisabledAndHidden()) {
-                        disabledAndHiddenCount++;
+            disabledCount = 0;
+        } else {
+            final Collection<OsmPrimitive> deselect = new HashSet<OsmPrimitive>();
+
+            ds.beginUpdate();
+            try {
+
+                final Collection<OsmPrimitive> all = ds.allNonDeletedCompletePrimitives();
+
+                FilterWorker.executeFilters(all, filterMatcher);
+
+                disabledCount = 0;
+                disabledAndHiddenCount = 0;
+                // collect disabled and selected the primitives
+                for (OsmPrimitive osm : all) {
+                    if (osm.isDisabled()) {
+                        disabledCount++;
+                        if (osm.isSelected()) {
+                            deselect.add(osm);
+                        }
+                        if (osm.isDisabledAndHidden()) {
+                            disabledAndHiddenCount++;
+                        }
                     }
                 }
+                disabledCount -= disabledAndHiddenCount;
+            } finally {
+                ds.endUpdate();
             }
-            disabledCount -= disabledAndHiddenCount;
-        } finally {
-            ds.endUpdate();
+
+            if (!deselect.isEmpty()) {
+                ds.clearSelection(deselect);
+            }
         }
 
-        if (!deselect.isEmpty()) {
-            ds.clearSelection(deselect);
+        if (Main.isDisplayingMapView()) {
+            Main.map.mapView.repaint();
+            Main.map.filterDialog.updateDialogHeader();
         }
-
-        Main.map.mapView.repaint();
-        Main.map.filterDialog.updateDialogHeader();
     }
 
 
