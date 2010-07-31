@@ -2553,7 +2553,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
     </group> <!-- Amenities -->
     <group name="Shops" icon="presets/shopping.png">
-        <item name="Car Dealer" icon="presets/car_repair.png" type="node,closedway">
+        <item name="Car Dealer" icon="presets/car.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=car" />
             <label text="Edit Car Shop" />
             <key key="shop" value="car" />
