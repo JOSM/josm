@@ -309,7 +309,7 @@ public class MapPainter {
         if (virtualNodeSize != 0) {
             GeneralPath path = new GeneralPath();
             for (Way osm: ways){
-                if (osm.isUsable() && !osm.isFiltered() && !osm.isDisabled()) {
+                if (osm.isUsable() && !osm.isDisabled()) {
                     visitVirtual(path, osm);
                 }
             }

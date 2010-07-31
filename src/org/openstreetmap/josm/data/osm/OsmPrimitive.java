@@ -1510,11 +1510,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         if (isDeleted()) {
             builder.append("D");
         }
-        if (isFiltered()) {
-            builder.append("f");
-        }
         if (isDisabled()) {
-            builder.append("d");
+            if (isDisabledAndHidden()) {
+                builder.append("h");
+            } else {
+                builder.append("d");
+            }
         }
         if (isTagged()) {
             builder.append("T");

@@ -154,7 +154,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
            require changing the colour while painting... */
         //profilerN = 0;
         for (final OsmPrimitive osm: data.searchRelations(bbox)) {
-            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered()) {
+            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isDisabledAndHidden()) {
                 osm.visit(this);
                 //        profilerN++;
             }
@@ -168,7 +168,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
 
         //profilerN = 0;
         for (final OsmPrimitive osm:data.searchWays(bbox)){
-            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered() && osm.isTagged()) {
+            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isDisabledAndHidden() && osm.isTagged()) {
                 osm.visit(this);
                 //        profilerN++;
             }
@@ -176,7 +176,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         displaySegments();
 
         for (final OsmPrimitive osm:data.searchWays(bbox)){
-            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered() && !osm.isTagged()) {
+            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isDisabledAndHidden() && !osm.isTagged()) {
                 osm.visit(this);
                 //        profilerN++;
             }
@@ -206,7 +206,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
 
         //profilerN = 0;
         for (final OsmPrimitive osm: data.searchNodes(bbox)) {
-            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isFiltered())
+            if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isDisabledAndHidden())
             {
                 osm.visit(this);
                 //        profilerN++;
@@ -294,7 +294,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         if (virtualNodeSize != 0) {
             GeneralPath path = new GeneralPath();
             for (Way osm: ways){
-                if (osm.isUsable() && !osm.isFiltered() && !osm.isDisabled()) {
+                if (osm.isUsable() && !osm.isDisabledAndHidden() && !osm.isDisabled()) {
                     visitVirtual(path, osm);
                 }
             }

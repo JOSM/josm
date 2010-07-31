@@ -148,7 +148,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         if (o.isModified()) {
             s.append("; modified");
         }
-        if (o.isFiltered()) {
+        if (o.isDisabledAndHidden()) {
             s.append("; filtered/hidden");
         }
         if (o.isDisabled()) {

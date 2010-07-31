@@ -87,7 +87,7 @@ import java.util.Set;
  */
 public class Storage<T> extends AbstractSet<T> {
     private final Hash<? super T,? super T> hash;
-    private Object[] data;
+    private T[] data;
     private int mask;
     private int size;
     private transient volatile int modCount = 0;
@@ -110,14 +110,14 @@ public class Storage<T> extends AbstractSet<T> {
     public Storage(Hash<? super T, ? super T> ha, int capacity, boolean safeIterator) {
         this.hash = ha;
         int cap = 1 << (int)(Math.ceil(Math.log(capacity/loadFactor) / Math.log(2)));
-        data = new Object[cap];
+        data = (T[]) new Object[cap];
         mask = data.length - 1;
         this.safeIterator = safeIterator;
     }
 
     private void copyArray() {
         if (arrayCopyNecessary) {
-            Object[] newData = new Object[data.length];
+            T[] newData = (T[]) new Object[data.length];
             System.arraycopy(data, 0, newData, 0, data.length);
             data = newData;
             arrayCopyNecessary = false;
@@ -140,22 +140,26 @@ public class Storage<T> extends AbstractSet<T> {
 
     }
 
-    public synchronized @Override boolean contains(Object o) {
+    @Override
+    public synchronized boolean contains(Object o) {
         int bucket = getBucket(hash, (T)o);
         return bucket >= 0;
     }
 
-    public synchronized @Override boolean add(T t) {
+    @Override 
+    public synchronized boolean add(T t) {
         T orig = putUnique(t);
         return orig == t;
     }
 
-    public synchronized @Override boolean remove(Object o) {
+    @Override
+    public synchronized boolean remove(Object o) {
         T orig = removeElem((T)o);
         return orig != null;
     }
-
-    public synchronized @Override void clear() {
+    
+    @Override
+    public synchronized void clear() {
         copyArray();
         modCount++;
         size = 0;
@@ -164,7 +168,8 @@ public class Storage<T> extends AbstractSet<T> {
         }
     }
 
-    public synchronized @Override int hashCode() {
+    @Override
+    public synchronized int hashCode() {
         int h = 0;
         for (T t : this) {
             h += hash.getHashCode(t);
@@ -186,7 +191,7 @@ public class Storage<T> extends AbstractSet<T> {
             assert data[bucket] == null;
         }
 
-        T old = (T)data[bucket];
+        T old = data[bucket];
         data[bucket] = t;
 
         return old;
@@ -194,7 +199,7 @@ public class Storage<T> extends AbstractSet<T> {
 
     public synchronized T get(T t) {
         int bucket = getBucket(hash, t);
-        return bucket < 0 ? null : (T)data[bucket];
+        return bucket < 0 ? null : data[bucket];
     }
 
     public synchronized T putUnique(T t) {
@@ -210,7 +215,7 @@ public class Storage<T> extends AbstractSet<T> {
             return t;
         }
 
-        return (T)data[bucket];
+        return data[bucket];
     }
 
     public synchronized T removeElem(T t) {
@@ -221,7 +226,7 @@ public class Storage<T> extends AbstractSet<T> {
     }
 
     public <K> Map<K,T> foreignKey(Hash<K,? super T> h) {
-        return new FMap(h);
+        return new FMap<K>(h);
     }
 
     // ---------------- Implementation
@@ -245,7 +250,7 @@ public class Storage<T> extends AbstractSet<T> {
         T entry;
         int hcode = rehash(ha.getHashCode(key));
         int bucket = hcode & mask;
-        while ((entry = (T)data[bucket]) != null) {
+        while ((entry = data[bucket]) != null) {
             if (ha.equals(key, entry))
                 return bucket;
             bucket = (bucket+1) & mask;
@@ -254,7 +259,7 @@ public class Storage<T> extends AbstractSet<T> {
     }
 
     private T doRemove(int slot) {
-        T t = (T)data[slot];
+        T t = data[slot];
         assert t != null;
 
         fillTheHole(slot); // fill the hole (or null it)
@@ -266,7 +271,7 @@ public class Storage<T> extends AbstractSet<T> {
         int bucket = (hole+1) & mask;
         T entry;
 
-        while ((entry = (T)data[bucket]) != null) {
+        while ((entry = data[bucket]) != null) {
             int right = rehash(hash.getHashCode(entry)) & mask;
             // if the entry should be in <hole+1,bucket-1> (circular-wise)
             // we can't move it. The move can be proved safe otherwise,
@@ -286,14 +291,14 @@ public class Storage<T> extends AbstractSet<T> {
 
     private void ensureSpace() {
         if (size > data.length*loadFactor) { // rehash
-            Object[] big = new Object[data.length * 2];
+            T[] big = (T[]) new Object[data.length * 2];
             int nMask = big.length - 1;
 
-            for (Object o : data) {
+            for (T o : data) {
                 if (o == null) {
                     continue;
                 }
-                int bucket = rehash(hash.getHashCode((T)o)) & nMask;
+                int bucket = rehash(hash.getHashCode(o)) & nMask;
                 while (big[bucket] != null) {
                     bucket = (bucket+1) & nMask;
                 }
@@ -360,7 +365,7 @@ public class Storage<T> extends AbstractSet<T> {
 
         public T get(Object key) {
             int bucket = getBucket(fHash, (K)key);
-            return bucket < 0 ? null : (T)data[bucket];
+            return bucket < 0 ? null : data[bucket];
         }
 
         public T put(K key, T value) {
@@ -403,10 +408,10 @@ public class Storage<T> extends AbstractSet<T> {
     }
 
     private final class SafeReadonlyIter implements Iterator<T> {
-        final Object[] data;
+        final T[] data;
         int slot = 0;
 
-        SafeReadonlyIter(Object[] data) {
+        SafeReadonlyIter(T[] data) {
             this.data = data;
         }
 
@@ -417,7 +422,7 @@ public class Storage<T> extends AbstractSet<T> {
 
         public T next() {
             if (!hasNext()) throw new NoSuchElementException();
-            return (T)data[slot++];
+            return data[slot++];
         }
 
         public void remove() {
@@ -449,7 +454,7 @@ public class Storage<T> extends AbstractSet<T> {
         public T next() {
             if (!hasNext()) throw new NoSuchElementException();
             removeSlot = slot;
-            return (T)data[slot++];
+            return data[slot++];
         }
 
         public void remove() {
