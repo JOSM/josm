@@ -9,7 +9,9 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import javax.swing.Icon;
 
@@ -19,7 +21,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.data.preferences.StringProperty;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -60,6 +62,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class Marker implements ActionListener {
     public final String text;
+    public final Map<String,String> textMap = new HashMap<String,String>();
     public final Icon symbol;
     public final MarkerLayer parentLayer;
     public double time; /* absolute time of marker since epoch */
@@ -95,7 +98,8 @@ public class Marker implements ActionListener {
      */
     public static LinkedList<MarkerProducers> markerProducers = new LinkedList<MarkerProducers>();
 
-    private static final StringProperty PROP_NAME_DESC = new StringProperty( "draw.gpx.layer.wpt", "nameordesc" );
+    private static final IntegerProperty PROP_LABEL = new IntegerProperty("draw.rawgps.layer.wpt", 0 );
+    private static final String[] labelAttributes = new String[] {"name", "desc"};
 
     // Add one Maker specifying the default behaviour.
     static {
@@ -117,33 +121,10 @@ public class Marker implements ActionListener {
                     uri = new File(relativePath.getParentFile(), uri).toURI().toString();
                 }
 
-                String name_desc = "";
-                if (PROP_NAME_DESC.get() == null || "nameordesc".equals(PROP_NAME_DESC.get()))
-                {
-                    if (wpt.attr.containsKey("name")) {
-                        name_desc = wpt.getString("name");
-                    } else if (wpt.attr.containsKey("desc")) {
-                        name_desc = wpt.getString("desc");
-                    }
-                } else if ("name".equals(PROP_NAME_DESC.get())) {
-                    if (wpt.attr.containsKey("name")) {
-                        name_desc = wpt.getString("name");
-                    }
-                }
-                else if ("desc".equals(PROP_NAME_DESC.get())) {
-                    if (wpt.attr.containsKey("desc")) {
-                        name_desc = wpt.getString("desc");
-                    }
-                }
-                else if ("both".equals(PROP_NAME_DESC.get()) ) {
-                    if (wpt.attr.containsKey("name")) {
-                        name_desc = wpt.getString("name");
-
-                        if (wpt.attr.containsKey("desc")) {
-                            name_desc += " (" + wpt.getString("desc") + ")" ;
-                        }
-                    } else if (wpt.attr.containsKey("desc")) {
-                        name_desc = wpt.getString("desc");
+                Map<String,String> nameDesc = new HashMap<String,String>();
+                for(String attribute : labelAttributes) {
+                    if (wpt.attr.containsKey(attribute)) {
+                        nameDesc.put(attribute, wpt.getString(attribute));
                     }
                 }
 
@@ -152,10 +133,10 @@ public class Marker implements ActionListener {
                     if (symbolName == null) {
                         symbolName = wpt.getString("sym");
                     }
-                    return new Marker(wpt.getCoor(), name_desc, symbolName, parentLayer, time, offset);
+                    return new Marker(wpt.getCoor(), nameDesc, symbolName, parentLayer, time, offset);
                 }
                 else if (uri.endsWith(".wav"))
-                    return AudioMarker.create(wpt.getCoor(), name_desc, uri, parentLayer, time, offset);
+                    return AudioMarker.create(wpt.getCoor(), getText(nameDesc), uri, parentLayer, time, offset);
                 else if (uri.endsWith(".png") || uri.endsWith(".jpg") || uri.endsWith(".jpeg") || uri.endsWith(".gif"))
                     return ImageMarker.create(wpt.getCoor(), uri, parentLayer, time, offset);
                 else
@@ -175,7 +156,26 @@ public class Marker implements ActionListener {
 
     public Marker(LatLon ll, String text, String iconName, MarkerLayer parentLayer, double time, double offset) {
         setCoor(ll);
-        this.text = text;
+        if (text == null || text.length() == 0) {
+            this.text = null;
+        }
+        else {
+            this.text = text;
+        }
+        this.offset = offset;
+        this.time = time;
+        this.symbol = ImageProvider.getIfAvailable("markers",iconName);
+        this.parentLayer = parentLayer;
+    }
+
+    public Marker(LatLon ll, Map<String,String> textMap, String iconName, MarkerLayer parentLayer, double time, double offset) {
+        setCoor(ll);
+        if (textMap != null) {
+            this.textMap.clear();
+            this.textMap.putAll(textMap);
+        }
+        
+        this.text = null;
         this.offset = offset;
         this.time = time;
         this.symbol = ImageProvider.getIfAvailable("markers",iconName);
@@ -217,8 +217,9 @@ public class Marker implements ActionListener {
             g.drawLine(screen.x+2, screen.y-2, screen.x-2, screen.y+2);
         }
 
-        if ((text != null) && showTextOrIcon) {
-            g.drawString(text, screen.x+4, screen.y+2);
+        String labelText = getText();
+        if ((labelText != null) && showTextOrIcon) {
+            g.drawString(labelText, screen.x+4, screen.y+2);
         }
     }
 
@@ -253,7 +254,84 @@ public class Marker implements ActionListener {
      */
 
     public AudioMarker audioMarkerFromMarker(String uri) {
-        AudioMarker audioMarker = AudioMarker.create(getCoor(), this.text, uri, this.parentLayer, this.time, this.offset);
+        AudioMarker audioMarker = AudioMarker.create(getCoor(), this.getText(), uri, this.parentLayer, this.time, this.offset);
         return audioMarker;
+    }
+
+    /**
+     * Returns the Text which should be displayed, depending on chosen preference
+     * @return Text
+     */
+    public String getText() {
+        if (this.text != null ) {
+            return this.text;
+        }
+        else {
+            return getText(this.textMap);
+        }
+    }
+
+    /**
+     * Returns the Text which should be displayed, depending on chosen preference.
+     * The possible attributes are read from textMap.
+     *
+     * @param textMap A map with available texts/attributes
+     * @return Text
+     */
+    private static String getText(Map<String,String> textMap) {
+        String text = "";
+
+        if (textMap != null && !textMap.isEmpty()) {
+            switch(PROP_LABEL.get())
+            {
+                // name
+                case 1:
+                {
+                    if (textMap.containsKey("name")) {
+                        text = textMap.get("name");
+                    }
+                    break;
+                }
+
+                // desc
+                case 2:
+                {
+                    if (textMap.containsKey("desc")) {
+                        text = textMap.get("desc");
+                    }
+                    break;
+                }
+
+                // auto
+                case 0:
+                // both
+                case 3:
+                {
+                    if (textMap.containsKey("name")) {
+                        text = textMap.get("name");
+
+                        if (textMap.containsKey("desc")) {
+                            if (PROP_LABEL.get() != 0 || !text.equals(textMap.get("desc"))) {
+                                text += " - " + textMap.get("desc");
+                            }
+                        }
+                    }
+                    else if (textMap.containsKey("desc")) {
+                        text = textMap.get("desc");
+                    }
+                    break;
+                }
+
+                // none
+                case 4:
+                default:
+                {
+                    text = "";
+                    break;
+                }
+            }
+        }
+
+        return text;
     }
 }

@@ -58,6 +58,7 @@ public class DrawingPreference implements PreferenceSetting {
     private JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
     private JCheckBox useAntialiasing = new JCheckBox(tr("Smooth map graphics (antialiasing)"));
     private JCheckBox makeAutoMarkers = new JCheckBox(tr("Create markers when reading GPX."));
+    private JComboBox waypointLabel = new JComboBox(new String[] {tr("Auto"), tr("Name"), tr("Desc"), tr("Both"), tr("None")});
 
     public void addGui(PreferenceTabbedPane gui) {
         gui.display.setPreferredSize(new Dimension(400,600));
@@ -203,6 +204,14 @@ public class DrawingPreference implements PreferenceSetting {
         panel.add(colorTypeVelocityTune, GBC.eop().insets(5,0,0,5));
         panel.add(colorTypeDilution, GBC.eol().insets(40,0,0,0));
 
+        // waypointLabel
+        panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
+
+        waypointLabel.setSelectedIndex(Main.pref.getInteger("draw.rawgps.layer.wpt", 0 ));
+        colorTypeDilution.setToolTipText(tr("Allows to change the labelling of track waypoints."));
+        panel.add(new JLabel(tr("Waypoint labelling")), GBC.std().insets(20,0,0,0));
+        panel.add(waypointLabel, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
+
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
         JScrollPane scrollpane = new JScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
@@ -300,11 +309,16 @@ public class DrawingPreference implements PreferenceSetting {
         Main.pref.put("draw.data.inactive_color", inactive.isSelected());
         Main.pref.put("mappaint.use-antialiasing", useAntialiasing.isSelected());
         int vn = Main.pref.getInteger("mappaint.node.virtual-size", 8);
-        if(virtualNodes.isSelected()) { if (vn < 1) {
-            vn = 8;
-        } }
-        else { vn = 0; }
+        if (virtualNodes.isSelected()) {
+            if (vn < 1) {
+                vn = 8;
+            }
+        }
+        else {
+            vn = 0;
+        }
         Main.pref.putInteger("mappaint.node.virtual-size", vn);
+        Main.pref.putInteger("draw.rawgps.layer.wpt", waypointLabel.getSelectedIndex());
         return false;
     }
 }

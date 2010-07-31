@@ -25,7 +25,7 @@ public class ButtonMarker extends Marker {
     private Rectangle buttonRectangle;
 
     public ButtonMarker(LatLon ll, String buttonImage, MarkerLayer parentLayer, double time, double offset) {
-        super(ll, null, buttonImage, parentLayer, time, offset);
+        super(ll, "", buttonImage, parentLayer, time, offset);
         buttonRectangle = new Rectangle(0, 0, symbol.getIconWidth(), symbol.getIconHeight());
     }
 
@@ -61,8 +61,10 @@ public class ButtonMarker extends Marker {
         Rectangle r = new Rectangle(buttonRectangle);
         r.grow((inset.top+inset.bottom)/2, (inset.left+inset.right)/2);
         b.paintBorder(mv, g, r.x, r.y, r.width, r.height);
-        if ((text != null) && showTextOrIcon && Main.pref.getBoolean("marker.buttonlabels", true)) {
-            g.drawString(text, screen.x+4, screen.y+2);
+
+        String labelText = getText();
+        if ((labelText != null) && showTextOrIcon && Main.pref.getBoolean("marker.buttonlabels", true)) {
+            g.drawString(labelText, screen.x+4, screen.y+2);
         }
     }
 }
