@@ -37,6 +37,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -303,7 +304,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
     }
 
     /**
-     * Replies the current value for the upload comment
+     * Returns the current value for the upload comment
      *
      * @return the current value for the upload comment
      */
@@ -312,9 +313,9 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
     }
 
     /**
-     * Replies true, if the dialog was canceled
+     * Returns true if the dialog was canceled
      *
-     * @return true, if the dialog was canceled
+     * @return true if the dialog was canceled
      */
     public boolean isCanceled() {
         return canceled;
@@ -323,7 +324,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
     /**
      * Sets whether the dialog was canceled
      *
-     * @param canceled true, if the dialog is canceled
+     * @param canceled true if the dialog is canceled
      */
     protected void setCanceled(boolean canceled) {
         this.canceled = canceled;
@@ -357,13 +358,43 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
             putValue(SHORT_DESCRIPTION, tr("Upload the changed primitives"));
         }
 
-        protected void warnIllegalUploadComment() {
-            HelpAwareOptionPane.showOptionDialog(
+        /**
+         * returns true if the user wants to revisit, false if they
+         * want to continue 
+         */
+        protected boolean warnUploadComment() {
+
+            ButtonSpec[] options = new ButtonSpec[] {
+                    new ButtonSpec(
+                            tr("Yes, revise"),
+                            ImageProvider.get("ok"),
+                            tr("Go back to the changeset comment and enter a better description"),
+                            null
+                    ),
+                    new ButtonSpec(
+                            tr("No, continue as is"),
+                            ImageProvider.get("cancel"),
+                            tr("Continue without improving the changeset comment"),
+                            null
+                    )
+            };
+
+            return 0 == HelpAwareOptionPane.showOptionDialog(
                     UploadDialog.this,
-                    tr("Please enter a comment for this upload changeset (min. 3 characters)"),
-                    tr("Illegal upload comment"),
-                    JOptionPane.ERROR_MESSAGE,
-                    ht("/Dialog/UploadDialog#IllegalUploadComment")
+                    "<html>" + 
+                    tr("Your upload comment is empty, or very short.<br /><br />" + 
+                       "This is technically allowed, but please consider that many users who are<br />" +
+                       "watching changes in their area depend on meaningful changeset comments<br />" +
+                       "to understand what is going on!<br /><br />" +
+                       "If you spend a minute now to explain your change, you will make life<br />" +
+                       "easier for many other mappers.") + 
+                    "</html>",
+                    tr("Please revise upload comment"),
+                    JOptionPane.WARNING_MESSAGE,
+                    null,
+                    options,
+                    options[0],
+                    ht("/Dialog/UploadDialog#ReviseUploadComment")
             );
         }
 
@@ -378,11 +409,13 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         }
 
         public void actionPerformed(ActionEvent e) {
-            if (getUploadComment().trim().length() < 3) {
-                warnIllegalUploadComment();
-                tpConfigPanels.setSelectedIndex(0);
-                pnlBasicUploadSettings.initEditingOfUploadComment();
-                return;
+            if (getUploadComment().trim().length() < 10) {
+                if (warnUploadComment())
+                {
+                    tpConfigPanels.setSelectedIndex(0);
+                    pnlBasicUploadSettings.initEditingOfUploadComment();
+                    return;
+                }
             }
             UploadStrategySpecification strategy = getUploadStrategySpecification();
             if (strategy.getStrategy().equals(UploadStrategy.CHUNKED_DATASET_STRATEGY)) {

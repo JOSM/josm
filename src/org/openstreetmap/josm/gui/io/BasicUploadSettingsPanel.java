@@ -34,6 +34,7 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class BasicUploadSettingsPanel extends JPanel {
     public static final String HISTORY_KEY = "upload.comment.history";
+    public static final String HISTORY_LAST_USED_KEY = "upload.comment.last-used";
 
     /** the history combo box for the upload comment */
     private HistoryComboBox hcbUploadComment;
@@ -47,7 +48,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         pnl.setLayout(new GridBagLayout());
         pnl.add(new JLabel(tr("Provide a brief comment for the changes you are uploading:")), GBC.eol().insets(0, 5, 10, 3));
         hcbUploadComment = new HistoryComboBox();
-        hcbUploadComment.setToolTipText(tr("Enter an upload comment (min. 3 characters)"));
+        hcbUploadComment.setToolTipText(tr("Enter an upload comment"));
         List<String> cmtHistory = new LinkedList<String>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
         // we have to reverse the history, because ComboBoxHistory will reverse it again
         // in addElement()
@@ -116,6 +117,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         // store the history of comments
         hcbUploadComment.addCurrentItemToHistory();
         Main.pref.putCollection(HISTORY_KEY, hcbUploadComment.getHistory());
+        Main.pref.putInteger(HISTORY_LAST_USED_KEY, (int) (System.currentTimeMillis() / 1000));
     }
 
     /**
@@ -123,7 +125,9 @@ public class BasicUploadSettingsPanel extends JPanel {
      */
     public void startUserInput() {
         List<String> history = hcbUploadComment.getHistory();
-        if (history != null && !history.isEmpty()) {
+        int age = (int) (System.currentTimeMillis()/1000 - Main.pref.getInteger(HISTORY_LAST_USED_KEY, 0));
+        // only pre-select latest entry if used less than 4 hours ago.
+        if (age < 4 * 3600 * 1000 && history != null && !history.isEmpty()) {
             hcbUploadComment.setText(history.get(0));
         }
         hcbUploadComment.requestFocusInWindow();
