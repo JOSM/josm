@@ -1644,6 +1644,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebab,turkish,asian,thai,mexican,japanese,french,sandwich,sushi" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+            <check key="microbrewery" text="Microbrewery" default="off" delete_if_empty="true" />
         </item>
         <item name="Fast Food" icon="presets/fastfood.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=fast_food" />
@@ -1666,6 +1667,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="amenity" value="pub" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+            <check key="microbrewery" text="Microbrewery" default="off" delete_if_empty="true" />
         </item>
         <item name="Biergarten" icon="presets/biergarten.png" type="node,closedway">
             <label text="Edit Biergarten" />
