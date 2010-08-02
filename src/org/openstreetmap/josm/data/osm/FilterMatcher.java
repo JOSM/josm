@@ -100,6 +100,10 @@ public class FilterMatcher {
     }
 
     private boolean test(List<FilterInfo> filters, OsmPrimitive primitive, boolean hidden) {
+
+        if (primitive.isIncomplete())
+            return false;
+
         boolean selected = false;
         boolean onlyInvertedFilters = true;
 
