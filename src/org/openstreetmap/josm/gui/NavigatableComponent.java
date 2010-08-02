@@ -1,6 +1,7 @@
 // License: GPL. See LICENSE file for details.
-
 package org.openstreetmap.josm.gui;
+
+import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -9,8 +10,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Stack;
 import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -110,11 +114,17 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return Main.proj.latlon2eastNorth(new LatLon(lat, lon));
     }
 
+    public static String getDistText(double dist) {
+        SystemOfMeasurement som = SYSTEMS_OF_MEASUREMENT.get(Main.pref.get("system_of_measurement", "Metric"));
+        if (som == null) {
+            som = METRIC_SOM;
+        }
+        return som.getDistText(dist);
+    }
+
     public String getDist100PixelText()
     {
-        double dist = getDist100Pixel();
-        return dist >= 2000 ? Math.round(dist/100)/10 +" km" : (dist >= 1
-                ? Math.round(dist*10)/10 +" m" : "< 1 m");
+        return getDistText(getDist100Pixel());
     }
 
     public double getDist100Pixel()
@@ -705,5 +715,48 @@ public class NavigatableComponent extends JComponent implements Helpful {
         java.util.zip.CRC32 id = new java.util.zip.CRC32();
         id.update(x.getBytes());
         return (int)id.getValue();
+    }
+
+    public static class SystemOfMeasurement {
+        public final double aValue;
+        public final double bValue;
+        public final String aName;
+        public final String bName;
+
+        /**
+         * System of measurement. Currently covers only length units.
+         *
+         * If a quantity x is given in m (x_m) and in unit a (x_a) then it translates as
+         * x_a == x_m / aValue
+         */
+        public SystemOfMeasurement(double aValue, String aName, double bValue, String bName) {
+            this.aValue = aValue;
+            this.aName = aName;
+            this.bValue = bValue;
+            this.bName = bName;
+        }
+
+        public String getDistText(double dist) {
+            double a = dist / aValue;
+            if (a > bValue / aValue) {
+                double b = dist / bValue;
+                return String.format(Locale.US, "%." + (b<10 ? 2 : 1) + "f %s", b, bName);
+            } else if (a < 0.01)
+                return "< 0.01 " + aName;
+            else
+                return String.format(Locale.US, "%." + (a<10 ? 2 : 1) + "f %s", a, aName);
+        }
+    }
+
+    public static final SystemOfMeasurement METRIC_SOM = new SystemOfMeasurement(1, "m", 1000, "km");
+    public static final SystemOfMeasurement CHINESE_SOM = new SystemOfMeasurement(1.0/3.0, "\u5e02\u5c3a" /* chi */, 500, "\u5e02\u91cc" /* li */);
+    public static final SystemOfMeasurement IMPERIAL_SOM = new SystemOfMeasurement(0.9144, "yd.", 1609.344, "mi.");
+
+    public static Map<String, SystemOfMeasurement> SYSTEMS_OF_MEASUREMENT;
+    static {
+        SYSTEMS_OF_MEASUREMENT = new LinkedHashMap<String, SystemOfMeasurement>();
+        SYSTEMS_OF_MEASUREMENT.put(marktr("Metric"), METRIC_SOM);
+        SYSTEMS_OF_MEASUREMENT.put(marktr("Chinese"), CHINESE_SOM);
+        SYSTEMS_OF_MEASUREMENT.put(marktr("Imperial"), IMPERIAL_SOM);
     }
 }

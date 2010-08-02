@@ -16,9 +16,12 @@ import org.openstreetmap.josm.gui.help.Helpful;
 public class MapScaler extends JComponent implements Helpful {
 
     private final NavigatableComponent mv;
+    
+    private static int PADDING_RIGHT = 100;
+    
     public MapScaler(NavigatableComponent mv) {
         this.mv = mv;
-        setSize(100,30);
+        setSize(100+PADDING_RIGHT,30);
         setOpaque(false);
     }
 
@@ -32,7 +35,7 @@ public class MapScaler extends JComponent implements Helpful {
         g.drawLine(49, 3, 49, 7);
         g.drawLine(24, 3, 24, 7);
         g.drawLine(74, 3, 74, 7);
-        g.drawString(text, (int)(100-bound.getWidth()), 23);
+        g.drawString(text, (int)(100-bound.getWidth()/2), 23);
         g.drawString("0", 0, 23);
     }
 

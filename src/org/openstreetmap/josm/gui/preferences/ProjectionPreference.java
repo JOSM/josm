@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -15,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -25,6 +27,7 @@ import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionSubPrefs;
+import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.tools.GBC;
 
 public class ProjectionPreference implements PreferenceSetting {
@@ -50,6 +53,14 @@ public class ProjectionPreference implements PreferenceSetting {
             return "projection.sub."+sname;
         }
     };
+    private static final StringProperty PROP_SYSTEM_OF_MEASUREMENT = new StringProperty("system_of_measurement", "Metric");
+    private static final String[] unitsValues = (new ArrayList<String>(NavigatableComponent.SYSTEMS_OF_MEASUREMENT.keySet())).toArray(new String[0]);
+    private static final String[] unitsValuesTr = new String[unitsValues.length];
+    static {
+        for (int i=0; i<unitsValues.length; ++i) {
+            unitsValuesTr[i] = tr(unitsValues[i]);
+        }
+    }
 
     //TODO This is not nice place for a listener code but probably only Dataset will want to listen for projection changes so it's acceptable
     private static CopyOnWriteArrayList<ProjectionChangedListener> listeners = new CopyOnWriteArrayList<ProjectionChangedListener>();
@@ -79,12 +90,15 @@ public class ProjectionPreference implements PreferenceSetting {
      */
     private JComboBox coordinatesCombo = new JComboBox(CoordinateFormat.values());
 
+    private JComboBox unitsCombo = new JComboBox(unitsValuesTr);
+
     /**
      * This variable holds the JPanel with the projection's preferences. If the
      * selected projection does not implement this, it will be set to an empty
      * Panel.
      */
     private JPanel projSubPrefPanel;
+    private JPanel projSubPrefPanelWrapper = new JPanel(new GridBagLayout());
 
     private JLabel projectionCode = new JLabel();
     private JLabel bounds = new JLabel();
@@ -99,7 +113,7 @@ public class ProjectionPreference implements PreferenceSetting {
      * This is required twice in the code, creating it here keeps both occurrences
      * in sync
      */
-    static private GBC projSubPrefPanelGBC = GBC.eol().fill(GBC.BOTH).insets(20,5,5,5);
+    static private GBC projSubPrefPanelGBC = GBC.std().fill(GBC.BOTH).weight(1.0, 1.0);
 
     public void addGui(PreferenceTabbedPane gui) {
         setupProjectionCombo();
@@ -111,11 +125,15 @@ public class ProjectionPreference implements PreferenceSetting {
             }
         }
 
+        for (int i = 0; i < unitsValues.length; ++i) {
+            if (unitsValues[i].equals(PROP_SYSTEM_OF_MEASUREMENT.get())) {
+                unitsCombo.setSelectedIndex(i);
+                break;
+            }
+        }
+
         projPanel.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
         projPanel.setLayout(new GridBagLayout());
-        projPanel.add(new JLabel(tr("Display coordinates as")), GBC.std().insets(5,5,0,5));
-        projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
-        projPanel.add(coordinatesCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
         projPanel.add(new JLabel(tr("Projection method")), GBC.std().insets(5,5,0,5));
         projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
         projPanel.add(projectionCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
@@ -125,7 +143,17 @@ public class ProjectionPreference implements PreferenceSetting {
         projPanel.add(new JLabel(tr("Bounds")), GBC.std().insets(25,5,0,5));
         projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
         projPanel.add(bounds, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
-        projPanel.add(projSubPrefPanel, projSubPrefPanelGBC);
+        projSubPrefPanelWrapper.add(projSubPrefPanel, projSubPrefPanelGBC);
+        projPanel.add(projSubPrefPanelWrapper, GBC.eol().fill(GBC.HORIZONTAL).insets(20,5,5,5));
+
+        projPanel.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0,5,0,10));
+        projPanel.add(new JLabel(tr("Display coordinates as")), GBC.std().insets(5,5,0,5));
+        projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
+        projPanel.add(coordinatesCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
+        projPanel.add(new JLabel(tr("System of measurement")), GBC.std().insets(5,5,0,5));
+        projPanel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
+        projPanel.add(unitsCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0,5,5,5));
+        projPanel.add(GBC.glue(1,1), GBC.std().fill(GBC.HORIZONTAL).weight(1.0, 1.0));
 
         JScrollPane scrollpane = new JScrollPane(projPanel);
         gui.mapcontent.addTab(tr("Map Projection"), scrollpane);
@@ -156,6 +184,9 @@ public class ProjectionPreference implements PreferenceSetting {
         if(PROP_COORDINATES.put(((CoordinateFormat)coordinatesCombo.getSelectedItem()).name())) {
             CoordinateFormat.setCoordinateFormat((CoordinateFormat)coordinatesCombo.getSelectedItem());
         }
+
+        int i = unitsCombo.getSelectedIndex();
+        PROP_SYSTEM_OF_MEASUREMENT.put(unitsValues[i]);
 
         return false;
     }
@@ -233,8 +264,8 @@ public class ProjectionPreference implements PreferenceSetting {
             return;
 
         // Replace old panel with new one
-        projPanel.remove(size - 1);
-        projPanel.add(projSubPrefPanel, projSubPrefPanelGBC);
+        projSubPrefPanelWrapper.removeAll();
+        projSubPrefPanelWrapper.add(projSubPrefPanel, projSubPrefPanelGBC);
         projPanel.revalidate();
         projSubPrefPanel.repaint();
         updateMeta(proj);

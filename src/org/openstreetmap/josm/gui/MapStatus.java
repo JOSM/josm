@@ -1,5 +1,4 @@
 // License: GPL. See LICENSE file for details.
-
 package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -100,7 +99,7 @@ public class MapStatus extends JPanel implements Helpful {
     ImageLabel latText = new ImageLabel("lat", tr("The geographic latitude at the mouse pointer."), 11);
     ImageLabel angleText = new ImageLabel("angle", tr("The angle between the previous and the current way segment."), 6);
     ImageLabel headingText = new ImageLabel("heading", tr("The (compass) heading of the line segment being drawn."), 6);
-    ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 8);
+    ImageLabel distText = new ImageLabel("dist", tr("The length of the new way segment being drawn."), 10);
 
     /**
      * This is the thread that runs in the background and collects the information displayed.
@@ -634,7 +633,6 @@ public class MapStatus extends JPanel implements Helpful {
         headingText.setText(h < 0 ? "--" : Math.round(h*10)/10.0 + " °");
     }
     public void setDist(double dist) {
-        String text = dist > 1000 ? (Math.round(dist/100)/10.0)+" km" : Math.round(dist*10)/10.0 +" m";
-        distText.setText(dist < 0 ? "--" : text);
+        distText.setText(dist < 0 ? "--" : NavigatableComponent.getDistText(dist));
     }
 }
