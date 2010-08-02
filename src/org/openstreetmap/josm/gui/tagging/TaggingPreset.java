@@ -9,6 +9,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -933,7 +934,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                             title,
                             new String[] { tr("Apply Preset"), tr("Cancel") },
                             true);
-                    contentConstraints = GBC.eol().fill().insets(5,10,5,0);
+                    contentInsets = new Insets(10,5,0,5);
                     setButtonIcons(new String[] {"ok.png", "cancel.png" });
                     setContent(content);
                     setupDialog();

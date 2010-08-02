@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -18,6 +19,8 @@ import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -33,11 +36,11 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -363,39 +366,33 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
          * want to continue 
          */
         protected boolean warnUploadComment() {
-
-            ButtonSpec[] options = new ButtonSpec[] {
-                    new ButtonSpec(
-                            tr("Yes, revise"),
-                            ImageProvider.get("ok"),
-                            tr("Go back to the changeset comment and enter a better description"),
-                            null
-                    ),
-                    new ButtonSpec(
-                            tr("No, continue as is"),
-                            ImageProvider.get("cancel"),
-                            tr("Continue without improving the changeset comment"),
-                            null
-                    )
-            };
-
-            return 0 == HelpAwareOptionPane.showOptionDialog(
-                    UploadDialog.this,
-                    "<html>" + 
-                    tr("Your upload comment is empty, or very short.<br /><br />" + 
+            ExtendedDialog dlg = new ExtendedDialog(UploadDialog.this,
+                tr("Please revise upload comment"),
+                new String[] {tr("Revise"), tr("Cancel"), tr("Continue as is")});
+            dlg.setContent("<html>" + 
+                    tr("Your upload comment is <i>empty</i>, or <i>very short</i>.<br /><br />" + 
                        "This is technically allowed, but please consider that many users who are<br />" +
                        "watching changes in their area depend on meaningful changeset comments<br />" +
                        "to understand what is going on!<br /><br />" +
                        "If you spend a minute now to explain your change, you will make life<br />" +
                        "easier for many other mappers.") + 
-                    "</html>",
-                    tr("Please revise upload comment"),
-                    JOptionPane.WARNING_MESSAGE,
-                    null,
-                    options,
-                    options[0],
-                    ht("/Dialog/UploadDialog#ReviseUploadComment")
-            );
+                    "</html>");
+            dlg.setButtonIcons(new Icon[] {
+                ImageProvider.get("ok"),
+                ImageProvider.get("cancel"),
+                ImageProvider.overlay(
+                    ImageProvider.get("upload"), 
+                    new ImageIcon(ImageProvider.get("warning-small").getImage().getScaledInstance(10 , 10, Image.SCALE_SMOOTH)),
+                    ImageProvider.OverlayPosition.SOUTHEAST)});
+            dlg.setToolTipTexts(new String[] {
+                tr("Return to the previous dialog to enter a more descriptive comment"),
+                tr("Cancel and return to the previous dialog"),
+                tr("Ignore this hint and upload anyway")});
+            dlg.setIcon(JOptionPane.WARNING_MESSAGE);
+            dlg.toggleEnable("upload_comment_is_empty_or_very_short");
+            dlg.setToggleCheckboxText(tr("Do not show this message again"));
+            dlg.setCancelButton(1, 2);
+            return dlg.showDialog().getValue() != 3;
         }
 
         protected void warnIllegalChunkSize() {

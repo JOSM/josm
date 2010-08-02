@@ -4,22 +4,31 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
@@ -28,6 +37,21 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+/**
+ * General configurable dialog window.
+ *
+ * If dialog is modal, you can use getValue() to retrieve the
+ * button index. Note that the user can close the dialog
+ * by other means. This is usually equivalent to cancel action.
+ *
+ * For non-modal dialogs, buttonAction(int) can be overridden.
+ *
+ * There are various options, see below.
+ *
+ * Note: The button indices are counted from 1 and upwards.
+ * So for getValue(), setDefaultButton(int) and setCancelButton(int) the
+ * first button has index 1.
+ */
 public class ExtendedDialog extends JDialog {
     private final boolean disposeOnClose;
     private int result = 0;
@@ -43,10 +67,12 @@ public class ExtendedDialog extends JDialog {
     private Component content;
     private final String[] bTexts;
     private String[] bToolTipTexts;
-    private String[] bIcons;
-    private int cancelButtonIdx = -1;
-    private int defaultButtonIdx = -1;
+    private Icon[] bIcons;
+    private List<Integer> cancelButtonIdx = Collections.emptyList();
+    private int defaultButtonIdx = 1;
     private JButton defaultButton = null;
+    private Icon icon;
+    private boolean modal;
 
     /** true, if the dialog should include a help button */
     private boolean showHelpButton;
@@ -60,7 +86,7 @@ public class ExtendedDialog extends JDialog {
     private boolean placeContentInScrollPane;
 
     // For easy access when inherited
-    protected Object contentConstraints = GBC.eol().anchor(GBC.CENTER).fill(GBC.BOTH).insets(5,10,5,0);
+    protected Insets contentInsets = new Insets(10,5,0,5);
     protected ArrayList<JButton> buttons = new ArrayList<JButton>();
 
     /**
@@ -100,6 +126,7 @@ public class ExtendedDialog extends JDialog {
             boolean modal, boolean disposeOnClose) {
         super(JOptionPane.getFrameForComponent(parent), title, modal);
         this.parent = parent;
+        this.modal = modal;
         bTexts = buttonTexts;
         if (disposeOnClose) {
             setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -108,12 +135,22 @@ public class ExtendedDialog extends JDialog {
     }
 
     /**
-     * Allows decorating the buttons with icons. Expects an String[] with paths
-     * to images relative to JOSM/images.
+     * Allows decorating the buttons with icons.
      * @param buttonIcons
      */
-    public ExtendedDialog setButtonIcons(String[] buttonIcons) {
+    public ExtendedDialog setButtonIcons(Icon[] buttonIcons) {
         this.bIcons = buttonIcons;
+        return this;
+    }
+
+    /**
+     * Convenience method to provide image names instead of images.
+     */
+    public ExtendedDialog setButtonIcons(String[] buttonIcons) {
+        bIcons = new Icon[buttonIcons.length];
+        for (int i=0; i<buttonIcons.length; ++i) {
+            bIcons[i] = ImageProvider.get(buttonIcons[i]);
+        }
         return this;
     }
 
@@ -170,12 +207,41 @@ public class ExtendedDialog extends JDialog {
     }
 
     /**
+     * Decorate the dialog with an icon that is shown on the left part of
+     * the window area. (Similar to how it is done in JOptionPane)
+     */
+    public ExtendedDialog setIcon(Icon icon) {
+        this.icon = icon;
+        return this;
+    }
+
+    /**
+     * Convenience method to allow values that would be accepted by JOptionPane as messageType.
+     */
+    public ExtendedDialog setIcon(int messageType) {
+        switch (messageType) {
+            case JOptionPane.ERROR_MESSAGE:
+                return setIcon(UIManager.getIcon("OptionPane.errorIcon"));
+            case JOptionPane.INFORMATION_MESSAGE:
+                return setIcon(UIManager.getIcon("OptionPane.informationIcon"));
+            case JOptionPane.WARNING_MESSAGE:
+                return setIcon(UIManager.getIcon("OptionPane.warningIcon"));
+            case JOptionPane.QUESTION_MESSAGE:
+                return setIcon(UIManager.getIcon("OptionPane.questionIcon"));
+            case JOptionPane.PLAIN_MESSAGE:
+                return setIcon(null);
+            default:
+                throw new IllegalArgumentException("Unknown message type!");
+        }
+    }
+
+    /**
      * Show the dialog to the user. Call this after you have set all options
      * for the dialog. You can retrieve the result using <code>getValue</code>
      */
     public ExtendedDialog showDialog() {
         // Check if the user has set the dialog to not be shown again
-        if(toggleCheckState(togglePref)) {
+        if (toggleCheckState(togglePref)) {
             result = toggleValue;
             return this;
         }
@@ -184,6 +250,7 @@ public class ExtendedDialog extends JDialog {
         if (defaultButton != null) {
             getRootPane().setDefaultButton(defaultButton);
         }
+        fixFocus();
         setVisible(true);
         toggleSaveState();
         return this;
@@ -226,15 +293,12 @@ public class ExtendedDialog extends JDialog {
                 defaultButton = button;
             }
             if(bIcons != null && bIcons[i] != null) {
-                button.setIcon(ImageProvider.get(bIcons[i]));
+                button.setIcon(bIcons[i]);
             }
             if (bToolTipTexts != null && i < bToolTipTexts.length && bToolTipTexts[i] != null) {
                 button.setToolTipText(bToolTipTexts[i]);
             }
 
-            if(i == 0) {
-                rootPane.setDefaultButton(button);
-            }
             buttonsPanel.add(button, GBC.std().insets(2,2,2,2));
             buttons.add(button);
         }
@@ -244,16 +308,45 @@ public class ExtendedDialog extends JDialog {
         }
 
         JPanel cp = new JPanel(new GridBagLayout());
-        cp.add(content, contentConstraints);
 
-        if(toggleable) {
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.gridx = 0;
+        int y = 0;
+        gc.gridy = y++;
+        gc.weightx = 0.0;
+        gc.weighty = 0.0;
+
+        if (icon != null) {
+            JLabel iconLbl = new JLabel(icon);
+            gc.insets = new Insets(10,10,10,10);
+            gc.anchor = GridBagConstraints.NORTH;
+            cp.add(iconLbl, gc);
+            gc.anchor = GridBagConstraints.CENTER;
+            gc.gridx = 1;
+        }
+
+        gc.fill = GridBagConstraints.BOTH;
+        gc.insets = contentInsets;
+        cp.add(content, gc);
+
+        gc.fill = GridBagConstraints.NONE;
+        gc.gridwidth = GridBagConstraints.REMAINDER;
+
+        if (toggleable) {
             toggleCheckbox = new JCheckBox(toggleCheckboxText);
             boolean showDialog = Main.pref.getBoolean("message."+ togglePref, true);
             toggleCheckbox.setSelected(!showDialog);
-            cp.add(toggleCheckbox, GBC.eol().anchor(GBC.LINE_START).insets(5,5,5,5));
+            gc.gridx = icon != null ? 1 : 0;
+            gc.gridy = y++;
+            gc.anchor = GridBagConstraints.LINE_START;
+            gc.insets = new Insets(5,contentInsets.left,5,contentInsets.right);
+            cp.add(toggleCheckbox, gc);
         }
 
-        cp.add(buttonsPanel, GBC.eol().anchor(GBC.CENTER).insets(5,5,5,5));
+        gc.gridy = y++;
+        gc.anchor = GridBagConstraints.CENTER;
+            gc.insets = new Insets(5,5,5,5);
+        cp.add(buttonsPanel, gc);
         if (placeContentInScrollPane) {
             JScrollPane pane = new JScrollPane(cp);
             pane.setBorder(null);
@@ -325,7 +418,7 @@ public class ExtendedDialog extends JDialog {
         };
 
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-        .put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE");
+            .put(KeyStroke.getKeyStroke("ESCAPE"), "ESCAPE");
         getRootPane().getActionMap().put("ESCAPE", actionListener);
     }
 
@@ -378,9 +471,13 @@ public class ExtendedDialog extends JDialog {
      * Calling this will offer the user a "Do not show again" checkbox for the
      * dialog. Default is to not offer the choice; the dialog will be shown
      * every time.
+     * Currently, this is not supported for non-modal dialogs.
      * @param togglePref  The preference to save the checkbox state to
      */
     public ExtendedDialog toggleEnable(String togglePref) {
+        if (!modal) {
+            throw new IllegalArgumentException();
+        }
         this.toggleable = true;
         this.togglePref = togglePref;
         return this;
@@ -417,11 +514,25 @@ public class ExtendedDialog extends JDialog {
     /**
      * Used in combination with toggle:
      * If the user presses 'cancel' the toggle settings are ignored and not saved to the pref
-     * @param cancelButton index of the button that stands for cancel
+     * @param cancelButton index of the button that stands for cancel, accepts
+     *                     multiple values
      */
-    public ExtendedDialog setCancelButton(int cancelButtonIdx) {
-        this.cancelButtonIdx = cancelButtonIdx;
+    public ExtendedDialog setCancelButton(Integer... cancelButtonIdx) {
+        this.cancelButtonIdx = Arrays.<Integer>asList(cancelButtonIdx);
         return this;
+    }
+
+    /**
+     * Don't focus the "do not show this again" check box, but the default button.
+     */
+    protected void fixFocus() {
+        if (toggleable && defaultButton != null) {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    defaultButton.requestFocusInWindow();
+                }
+            });
+        }
     }
 
     /**
@@ -445,7 +556,10 @@ public class ExtendedDialog extends JDialog {
      * writes the corresponding pref
      */
     private void toggleSaveState() {
-        if(!toggleable || toggleCheckbox == null || result == cancelButtonIdx || result == ExtendedDialog.DialogClosedOtherwise)
+        if (!toggleable ||
+                toggleCheckbox == null ||
+                cancelButtonIdx.contains(result) ||
+                result == ExtendedDialog.DialogClosedOtherwise)
             return;
         Main.pref.put("message."+ togglePref, !toggleCheckbox.isSelected());
         Main.pref.putInteger("message."+togglePref+".value", result);

@@ -272,11 +272,14 @@ public class ImageProvider {
      * on the first relative to the given position.
      */
     public static ImageIcon overlay(Icon ground, String overlayImage, OverlayPosition pos) {
+        return overlay(ground, ImageProvider.get(overlayImage), pos);
+    }
+
+    public static ImageIcon overlay(Icon ground, Icon overlay, OverlayPosition pos) {
         GraphicsConfiguration conf = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
         .getDefaultConfiguration();
         int w = ground.getIconWidth();
         int h = ground.getIconHeight();
-        ImageIcon overlay = ImageProvider.get(overlayImage);
         int wo = overlay.getIconWidth();
         int ho = overlay.getIconHeight();
         BufferedImage img = conf.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
