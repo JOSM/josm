@@ -320,6 +320,7 @@ public class ExtendedDialog extends JDialog {
             JLabel iconLbl = new JLabel(icon);
             gc.insets = new Insets(10,10,10,10);
             gc.anchor = GridBagConstraints.NORTH;
+            gc.weighty = 1.0;
             cp.add(iconLbl, gc);
             gc.anchor = GridBagConstraints.CENTER;
             gc.gridx = 1;
@@ -327,10 +328,14 @@ public class ExtendedDialog extends JDialog {
 
         gc.fill = GridBagConstraints.BOTH;
         gc.insets = contentInsets;
+        gc.weightx = 1.0;
+        gc.weighty = 1.0;
         cp.add(content, gc);
 
         gc.fill = GridBagConstraints.NONE;
         gc.gridwidth = GridBagConstraints.REMAINDER;
+        gc.weightx = 0.0;
+        gc.weighty = 0.0;
 
         if (toggleable) {
             toggleCheckbox = new JCheckBox(toggleCheckboxText);
