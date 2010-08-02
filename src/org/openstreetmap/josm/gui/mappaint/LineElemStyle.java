@@ -150,7 +150,6 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
         boolean showOnlyHeadArrowOnly = showDirection && !selected && paintSettings.isShowHeadArrowOnly();
         Node lastN;
 
-        Color myColor = color;
         Color myDashedColor = dashedColor;
         int myWidth = getWidth();
 
@@ -176,12 +175,13 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
             }
         }
 
+        Color markColor = null;
         if(w.isHighlighted()) {
-            myColor = paintSettings.getHighlightColor();
+            markColor = paintSettings.getHighlightColor();
         } else if (selected) {
-            myColor = member ? paintSettings.getRelationSelectedColor() : paintSettings.getSelectedColor();
+            markColor = member ? paintSettings.getRelationSelectedColor() : paintSettings.getSelectedColor();
         } else if(w.isDisabled()) {
-            myColor = paintSettings.getInactiveColor();
+            markColor = paintSettings.getInactiveColor();
             myDashedColor = paintSettings.getInactiveColor();
         }
 
@@ -189,23 +189,34 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
         if(overlays != null) {
             for(LineElemStyle s : overlays) {
                 if(!s.over) {
-                    painter.drawWay(w, (s.color == null || selected) ? myColor: s.color, s.getWidth(myWidth),
-                            s.getDashed(),
-                            w.isDisabled() ? paintSettings.getInactiveColor() : s.dashedColor,
-                            false, false, false);
+                    painter.drawWay(w,
+                        markColor != null ?
+                            (s.color != null ? new Color(markColor.getRed(), markColor.getGreen(), markColor.getBlue(), s.color.getAlpha()) : markColor) :
+                            s.color,
+                        s.getWidth(myWidth),
+                        s.getDashed(),
+                        w.isDisabled() ? paintSettings.getInactiveColor() : s.dashedColor,
+                        false, false, false);
                 }
             }
         }
 
         /* draw the way */
-        painter.drawWay(w, myColor, myWidth, dashed, myDashedColor, showDirection, selected ? false : reversedDirection, showOnlyHeadArrowOnly);
+        painter.drawWay(w, markColor != null ? markColor : color, myWidth, dashed, myDashedColor, showDirection,
+                    selected ? false : reversedDirection, showOnlyHeadArrowOnly);
 
         /* draw overlays above the way */
         if(overlays != null)  {
             for(LineElemStyle s : overlays) {
                 if(s.over) {
-                    painter.drawWay(w, (s.color == null || selected) ? myColor : s.color, s.getWidth(myWidth),
-                            s.getDashed(), s.dashedColor, false, false, false);
+                    painter.drawWay(w,
+                        markColor != null ?
+                            (s.color != null ? new Color(markColor.getRed(), markColor.getGreen(), markColor.getBlue(), s.color.getAlpha()) : markColor) :
+                            s.color,
+                        s.getWidth(myWidth),
+                        s.getDashed(),
+                        s.dashedColor,
+                        false, false, false);
                 }
             }
         }
