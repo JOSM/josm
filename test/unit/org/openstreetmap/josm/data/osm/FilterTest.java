@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
@@ -32,14 +31,12 @@ public class FilterTest {
     @Test
     public void basic_test() throws ParseError {
         DataSet ds = new DataSet();
-        Node n1 = new Node(1);
+        Node n1 = new Node();
         n1.put("amenity", "parking");
-        Node n2 = new Node(2);
+        Node n2 = new Node();
         n2.put("fixme", "continue");
         ds.addPrimitive(n1);
         ds.addPrimitive(n2);
-        OsmPrimitive p = ds.getPrimitiveById(1,OsmPrimitiveType.NODE);
-        assertNotNull(p);
 
         Collection<OsmPrimitive> all = new HashSet<OsmPrimitive>();
         all.addAll(Arrays.asList(new OsmPrimitive[] {n1, n2}));
