@@ -76,7 +76,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                 addRelationReferrer(s, n);
                 continue;
             }
-            s.append(String.format(" lat=%f; lon=%f; ", n.getCoor().lat(), n.getCoor().lon()));
+            s.append(String.format(" lat=%s; lon=%s; ", Double.toString(n.getCoor().lat()), Double.toString(n.getCoor().lon())));
             addCommon(s, n);
             addAttributes(s, n);
             addWayReferrer(s, n);

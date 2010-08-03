@@ -34,12 +34,12 @@ public class LatLon extends Coordinate {
 
     private static DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
     private static DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
-    private static DecimalFormat cDdFormatter;
+    public static DecimalFormat cDdFormatter;
     static {
         // Don't use the localized decimal separator. This way we can present
         // a comma separated list of coordinates.
         cDdFormatter = (DecimalFormat) NumberFormat.getInstance(Locale.UK);
-        cDdFormatter.applyPattern("###0.00000");
+        cDdFormatter.applyPattern("###0.0000000");
     }
 
     /**

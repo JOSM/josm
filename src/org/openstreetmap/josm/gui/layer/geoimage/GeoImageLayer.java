@@ -585,11 +585,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             if (direction != null) {
                 e.setExifImgDir(direction.doubleValue());
             }
-        } catch (CompoundException p) {
+        } catch (Exception ex) { // (CompoundException and other exceptions, e.g. #5271)
             // Do nothing
         }
-
-
     }
 
     public void showNextPhoto() {

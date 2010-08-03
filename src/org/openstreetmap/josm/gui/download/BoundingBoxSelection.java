@@ -178,10 +178,10 @@ public class BoundingBoxSelection implements DownloadSelection {
 
     private void updateBboxFields(Bounds area) {
         if (area == null) return;
-        latlon[0].setText(Double.toString(area.getMin().lat()));
-        latlon[1].setText(Double.toString(area.getMin().lon()));
-        latlon[2].setText(Double.toString(area.getMax().lat()));
-        latlon[3].setText(Double.toString(area.getMax().lon()));
+        latlon[0].setText(LatLon.cDdFormatter.format(area.getMin().lat()));
+        latlon[1].setText(LatLon.cDdFormatter.format(area.getMin().lon()));
+        latlon[2].setText(LatLon.cDdFormatter.format(area.getMax().lat()));
+        latlon[3].setText(LatLon.cDdFormatter.format(area.getMax().lon()));
         for (JTextField tf: latlon) {
             resetErrorMessage(tf);
         }
