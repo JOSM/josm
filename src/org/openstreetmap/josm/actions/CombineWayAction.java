@@ -34,6 +34,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.tools.Pair;
@@ -44,6 +45,8 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  */
 public class CombineWayAction extends JosmAction {
+
+    private static final BooleanProperty PROP_REVERSE_WAY = new BooleanProperty("tag-correction.reverse-way", true);
 
     public CombineWayAction() {
         super(tr("Combine Way"), "combineway", tr("Combine several ways into one."),
@@ -153,7 +156,7 @@ public class CombineWayAction extends JosmAction {
                 reversedWays = tempWays;
             }
             // if there are still reversed ways with direction-dependent tags, reverse their tags
-            if (!reversedWays.isEmpty() && Main.pref.getBoolean("tag-correction.reverse-way", true)) {
+            if (!reversedWays.isEmpty() && PROP_REVERSE_WAY.get()) {
                 List<Way> unreversedTagWays = new ArrayList<Way>(ways);
                 unreversedTagWays.removeAll(reversedWays);
                 ReverseWayTagCorrector reverseWayTagCorrector = new ReverseWayTagCorrector();
