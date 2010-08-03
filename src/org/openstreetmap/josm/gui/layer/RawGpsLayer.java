@@ -7,28 +7,25 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import static org.openstreetmap.josm.tools.I18n.trnc;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JColorChooser;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
@@ -195,93 +192,32 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
         return "<html>"+trn("{0} consists of {1} track", "{0} consists of {1} tracks", data.size(), getName(), data.size())+" ("+trn("{0} point", "{0} points", points, points)+")<br>"+b.toString();
     }
 
-    @Override public Component[] getMenuEntries() {
-        JMenuItem line = new JMenuItem(tr("Customize line drawing"), ImageProvider.get("mapmode/addsegment"));
-        line.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                JRadioButton[] r = new JRadioButton[3];
-                r[0] = new JRadioButton(tr("Use global settings."));
-                r[1] = new JRadioButton(tr("Draw lines between points for this layer."));
-                r[2] = new JRadioButton(tr("Do not draw lines between points for this layer."));
-                ButtonGroup group = new ButtonGroup();
-                Box panel = Box.createVerticalBox();
-                for (JRadioButton b : r) {
-                    group.add(b);
-                    panel.add(b);
-                }
-                String propName = "draw.rawgps.lines.layer "+getName();
-                if (Main.pref.hasKey(propName)) {
-                    group.setSelected(r[Main.pref.getBoolean(propName) ? 1:2].getModel(), true);
-                } else {
-                    group.setSelected(r[0].getModel(), true);
-                }
-                int answer = JOptionPane.showConfirmDialog(
-                        Main.parent,
-                        panel,
-                        tr("Select line drawing options"),
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE
-                );
-                if (answer == JOptionPane.CANCEL_OPTION)
-                    return;
-                if (group.getSelection() == r[0].getModel()) {
-                    Main.pref.put(propName, null);
-                } else {
-                    Main.pref.put(propName, group.getSelection() == r[1].getModel());
-                }
-                Main.map.repaint();
-            }
-        });
-
-        JMenuItem color = new JMenuItem(tr("Customize Color"), ImageProvider.get("colorchooser"));
-        color.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                JColorChooser c = new JColorChooser(Main.pref.getColor(marktr("gps point"), "layer "+getName(), Color.gray));
-                Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
-                int answer = JOptionPane.showOptionDialog(
-                        Main.parent,
-                        c,
-                        tr("Choose a color"),
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE, null,options, options[0]);
-                switch (answer) {
-                case 0:
-                    Main.pref.putColor("layer "+getName(), c.getColor());
-                    break;
-                case 1:
-                    return;
-                case 2:
-                    Main.pref.putColor("layer "+getName(), null);
-                    break;
-                }
-                Main.map.repaint();
-            }
-        });
-
+    @Override public Action[] getMenuEntries() {
         if (Main.applet)
-            return new Component[]{
-                new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)),
-                new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)),
-                new JSeparator(),
-                color,
-                line,
-                new JMenuItem(new ConvertToDataLayerAction()),
-                new JSeparator(),
-                new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)),
-                new JSeparator(),
-                new JMenuItem(new LayerListPopup.InfoAction(this))};
-        return new Component[]{
-                new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)),
-                new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)),
-                new JSeparator(),
-                new JMenuItem(new LayerGpxExportAction(this)),
-                color,
-                line,
-                new JMenuItem(new ConvertToDataLayerAction()),
-                new JSeparator(),
-                new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)),
-                new JSeparator(),
-                new JMenuItem(new LayerListPopup.InfoAction(this))};
+            return new Action[]{
+                LayerListDialog.getInstance().createShowHideLayerAction(),
+                LayerListDialog.getInstance().createDeleteLayerAction(),
+                SeparatorLayerAction.INSTANCE,
+                new CustomizeColor(),
+                new CustomizeLineDrawing(),
+                new ConvertToDataLayerAction(),
+                SeparatorLayerAction.INSTANCE,
+                new RenameLayerAction(getAssociatedFile(), this),
+                SeparatorLayerAction.INSTANCE,
+                new LayerListPopup.InfoAction(this)};
+        else
+            return new Action[]{
+                LayerListDialog.getInstance().createShowHideLayerAction(),
+                LayerListDialog.getInstance().createDeleteLayerAction(),
+                SeparatorLayerAction.INSTANCE,
+                new LayerGpxExportAction(this),
+                new CustomizeColor(),
+                new CustomizeLineDrawing(),
+                new ConvertToDataLayerAction(),
+                SeparatorLayerAction.INSTANCE,
+                new RenameLayerAction(getAssociatedFile(), this),
+                SeparatorLayerAction.INSTANCE,
+                new LayerListPopup.InfoAction(this)};
     }
 
     public void preferenceChanged(PreferenceChangeEvent e) {
@@ -292,5 +228,77 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
 
     @Override public void destroy() {
         Main.pref.removePreferenceChangeListener(this);
+    }
+
+    private class CustomizeLineDrawing extends AbstractAction {
+
+        public CustomizeLineDrawing() {
+            super(tr("Customize line drawing"), ImageProvider.get("mapmode/addsegment"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JRadioButton[] r = new JRadioButton[3];
+            r[0] = new JRadioButton(tr("Use global settings."));
+            r[1] = new JRadioButton(tr("Draw lines between points for this layer."));
+            r[2] = new JRadioButton(tr("Do not draw lines between points for this layer."));
+            ButtonGroup group = new ButtonGroup();
+            Box panel = Box.createVerticalBox();
+            for (JRadioButton b : r) {
+                group.add(b);
+                panel.add(b);
+            }
+            String propName = "draw.rawgps.lines.layer "+getName();
+            if (Main.pref.hasKey(propName)) {
+                group.setSelected(r[Main.pref.getBoolean(propName) ? 1:2].getModel(), true);
+            } else {
+                group.setSelected(r[0].getModel(), true);
+            }
+            int answer = JOptionPane.showConfirmDialog(
+                    Main.parent,
+                    panel,
+                    tr("Select line drawing options"),
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE
+            );
+            if (answer == JOptionPane.CANCEL_OPTION)
+                return;
+            if (group.getSelection() == r[0].getModel()) {
+                Main.pref.put(propName, null);
+            } else {
+                Main.pref.put(propName, group.getSelection() == r[1].getModel());
+            }
+            Main.map.repaint();
+        }
+    }
+
+    private class CustomizeColor extends AbstractAction {
+
+        public CustomizeColor() {
+            super(tr("Customize Color"), ImageProvider.get("colorchooser"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JColorChooser c = new JColorChooser(Main.pref.getColor(marktr("gps point"), "layer "+getName(), Color.gray));
+            Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
+            int answer = JOptionPane.showOptionDialog(
+                    Main.parent,
+                    c,
+                    tr("Choose a color"),
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE, null,options, options[0]);
+            switch (answer) {
+            case 0:
+                Main.pref.putColor("layer "+getName(), c.getColor());
+                break;
+            case 1:
+                return;
+            case 2:
+                Main.pref.putColor("layer "+getName(), null);
+                break;
+            }
+            Main.map.repaint();
+        }
     }
 }

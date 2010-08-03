@@ -9,7 +9,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
@@ -27,13 +26,12 @@ import java.util.HashSet;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
@@ -439,34 +437,34 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         return p;
     }
 
-    @Override public Component[] getMenuEntries() {
+    @Override public Action[] getMenuEntries() {
         if (Main.applet)
-            return new Component[]{
-                new JMenuItem(LayerListDialog.getInstance().createActivateLayerAction(this)),
-                new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)),
-                new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)),
-                new JSeparator(),
-                new JMenuItem(LayerListDialog.getInstance().createMergeLayerAction(this)),
-                new JSeparator(),
-                new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)),
-                new JMenuItem(new ConsistencyTestAction()),
-                new JSeparator(),
-                new JMenuItem(new LayerListPopup.InfoAction(this))};
-        return new Component[]{
-                new JMenuItem(LayerListDialog.getInstance().createActivateLayerAction(this)),
-                new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)),
-                new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)),
-                new JSeparator(),
-                new JMenuItem(LayerListDialog.getInstance().createMergeLayerAction(this)),
-                new JMenuItem(new LayerSaveAction(this)),
-                new JMenuItem(new LayerSaveAsAction(this)),
-                new JMenuItem(new LayerGpxExportAction(this)),
-                new JMenuItem(new ConvertToGpxLayerAction()),
-                new JSeparator(),
-                new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)),
-                new JMenuItem(new ConsistencyTestAction()),
-                new JSeparator(),
-                new JMenuItem(new LayerListPopup.InfoAction(this))};
+            return new Action[]{
+                LayerListDialog.getInstance().createActivateLayerAction(this),
+                LayerListDialog.getInstance().createShowHideLayerAction(),
+                LayerListDialog.getInstance().createDeleteLayerAction(),
+                SeparatorLayerAction.INSTANCE,
+                LayerListDialog.getInstance().createMergeLayerAction(this),
+                SeparatorLayerAction.INSTANCE,
+                new RenameLayerAction(getAssociatedFile(), this),
+                new ConsistencyTestAction(),
+                SeparatorLayerAction.INSTANCE,
+                new LayerListPopup.InfoAction(this)};
+        return new Action[]{
+                LayerListDialog.getInstance().createActivateLayerAction(this),
+                LayerListDialog.getInstance().createShowHideLayerAction(),
+                LayerListDialog.getInstance().createDeleteLayerAction(),
+                SeparatorLayerAction.INSTANCE,
+                LayerListDialog.getInstance().createMergeLayerAction(this),
+                new LayerSaveAction(this),
+                new LayerSaveAsAction(this),
+                new LayerGpxExportAction(this),
+                new ConvertToGpxLayerAction(),
+                SeparatorLayerAction.INSTANCE,
+                new RenameLayerAction(getAssociatedFile(), this),
+                new ConsistencyTestAction(),
+                SeparatorLayerAction.INSTANCE,
+                new LayerListPopup.InfoAction(this)};
     }
 
     public static GpxData toGpxData(DataSet data, File file) {

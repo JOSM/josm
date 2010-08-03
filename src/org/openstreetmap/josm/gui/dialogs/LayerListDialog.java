@@ -25,6 +25,7 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
@@ -46,6 +47,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -264,7 +266,7 @@ public class LayerListDialog extends ToggleDialog {
     /**
      * The action to delete the currently selected layer
      */
-    public final  class DeleteLayerAction extends AbstractAction implements IEnabledStateUpdating {
+    public final class DeleteLayerAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
         /**
          * Creates a {@see DeleteLayerAction} which will delete the currently
          * selected layers in the layer dialog.
@@ -317,9 +319,29 @@ public class LayerListDialog extends ToggleDialog {
         public void updateEnabledState() {
             setEnabled(! getModel().getSelectedLayers().isEmpty());
         }
+
+        @Override
+        public Component createMenuComponent() {
+            return new JMenuItem(this);
+        }
+
+        @Override
+        public boolean supportLayers(List<Layer> layers) {
+            return true;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof DeleteLayerAction;
+        }
+
+        @Override
+        public int hashCode() {
+            return getClass().hashCode();
+        }
     }
 
-    public final class ShowHideLayerAction extends AbstractAction implements IEnabledStateUpdating {
+    public final class ShowHideLayerAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
         private  Layer layer;
 
         /**
@@ -333,7 +355,6 @@ public class LayerListDialog extends ToggleDialog {
             this();
             CheckParameterUtil.ensureParameterNotNull(layer, "layer");
             this.layer = layer;
-            putValue(NAME, tr("Show/Hide"));
             updateEnabledState();
         }
 
@@ -346,6 +367,7 @@ public class LayerListDialog extends ToggleDialog {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "showhide"));
             putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the selected layer."));
             putValue("help", HelpUtil.ht("/Dialog/LayerDialog#ShowHideLayer"));
+            putValue(NAME, tr("Show/Hide"));
             updateEnabledState();
         }
 
@@ -365,6 +387,26 @@ public class LayerListDialog extends ToggleDialog {
             } else {
                 setEnabled(true);
             }
+        }
+
+        @Override
+        public Component createMenuComponent() {
+            return new JMenuItem(this);
+        }
+
+        @Override
+        public boolean supportLayers(List<Layer> layers) {
+            return true;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof ShowHideLayerAction;
+        }
+
+        @Override
+        public int hashCode() {
+            return getClass().hashCode();
         }
     }
 
@@ -575,7 +617,7 @@ public class LayerListDialog extends ToggleDialog {
                 layerList.setSelectedIndex(index);
             }
             Layer layer = model.getLayer(index);
-            LayerListPopup menu = new LayerListPopup(layerList, layer);
+            LayerListPopup menu = new LayerListPopup(getModel().getSelectedLayers(), layer);
             menu.show(LayerListDialog.this, p.x, p.y-3);
         }
     }
@@ -1063,8 +1105,8 @@ public class LayerListDialog extends ToggleDialog {
      * @param layer the layer
      * @return the action
      */
-    public ShowHideLayerAction createShowHideLayerAction(Layer layer) {
-        return new ShowHideLayerAction(layer);
+    public ShowHideLayerAction createShowHideLayerAction() {
+        return new ShowHideLayerAction();
     }
 
     /**
@@ -1074,7 +1116,7 @@ public class LayerListDialog extends ToggleDialog {
      * @param layer the layer
      * @return the action
      */
-    public DeleteLayerAction createDeleteLayerAction(Layer layer) {
+    public DeleteLayerAction createDeleteLayerAction() {
         // the delete layer action doesn't depend on the current layer
         return new DeleteLayerAction();
     }

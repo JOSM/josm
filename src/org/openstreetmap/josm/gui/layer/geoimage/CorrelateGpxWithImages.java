@@ -39,6 +39,7 @@ import java.util.TimeZone;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
+import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -82,7 +83,7 @@ import org.xml.sax.SAXException;
 /** This class displays the window to select the GPX file and the offset (timezone + delta).
  * Then it correlates the images of the layer with that GPX file.
  */
-public class CorrelateGpxWithImages implements ActionListener {
+public class CorrelateGpxWithImages extends AbstractAction {
 
     private static List<GpxData> loadedGpxData = new ArrayList<GpxData>();
 
@@ -91,6 +92,7 @@ public class CorrelateGpxWithImages implements ActionListener {
     long delta;
 
     public CorrelateGpxWithImages(GeoImageLayer layer) {
+        super(tr("Correlate to GPX"), ImageProvider.get("dialogs/geoimage/gpx2img"));
         this.yLayer = layer;
     }
 
@@ -216,7 +218,7 @@ public class CorrelateGpxWithImages implements ActionListener {
         }
     }
 
-    /** 
+    /**
      * This action listener is called when the user has a photo of the time of his GPS receiver. It
      * displays the list of photos of the layer, and upon selection displays the selected photo.
      * From that photo, the user can key in the time of the GPS.
@@ -629,7 +631,7 @@ public class CorrelateGpxWithImages implements ActionListener {
 
         tfTimezone.addFocusListener(repaintTheMap);
         tfOffset.addFocusListener(repaintTheMap);
-        
+
         tfTimezone.getDocument().addDocumentListener(statusBarUpdater);
         tfOffset.getDocument().addDocumentListener(statusBarUpdater);
         cbExifImg.addItemListener(statusBarUpdaterWithRepaint);
@@ -759,14 +761,14 @@ public class CorrelateGpxWithImages implements ActionListener {
 
     StatusBarUpdater statusBarUpdater = new StatusBarUpdater(false);
     StatusBarUpdater statusBarUpdaterWithRepaint = new StatusBarUpdater(true);
-    
+
     private class StatusBarUpdater implements  DocumentListener, ItemListener, ActionListener {
         private boolean doRepaint;
 
         public StatusBarUpdater(boolean doRepaint) {
             this.doRepaint = doRepaint;
         }
-        
+
         public void insertUpdate(DocumentEvent ev) {
             updateStatusBar();
         }
@@ -788,7 +790,7 @@ public class CorrelateGpxWithImages implements ActionListener {
                 yLayer.updateBufferAndRepaint();
             }
         }
-        
+
         private String statusText() {
             try {
                 timezone = parseTimezone(tfTimezone.getText().trim());
@@ -802,7 +804,7 @@ public class CorrelateGpxWithImages implements ActionListener {
             for (ImageEntry ie: yLayer.data) {
                 ie.tmp = null;
             }
-            
+
             // Construct a list of images that have a date, and sort them on the date.
             ArrayList<ImageEntry> dateImgLst = getSortedImgList();
             // Create a temporary copy for each image
@@ -827,7 +829,7 @@ public class CorrelateGpxWithImages implements ActionListener {
     private class RepaintTheMapListener implements FocusListener {
         public void focusGained(FocusEvent e) { // do nothing
         }
-        
+
         public void focusLost(FocusEvent e) {
             yLayer.updateBufferAndRepaint();
         }
@@ -1196,12 +1198,14 @@ public class CorrelateGpxWithImages implements ActionListener {
         // before the first point will be geotagged with the starting point
         if(prevWpTime == 0 || curWpTime <= prevWpTime) {
             while (true) {
-                if (i < 0)
+                if (i < 0) {
                     break;
+                }
                 final ImageEntry curImg = images.get(i);
                 if (curImg.getExifTime().getTime() > curWpTime
-                    || curImg.getExifTime().getTime() < curWpTime - interval)
-                        break;
+                        || curImg.getExifTime().getTime() < curWpTime - interval) {
+                    break;
+                }
                 if(curImg.tmp.getPos() == null) {
                     curImg.tmp.setPos(curWp.getCoor());
                     curImg.tmp.setSpeed(speed);
@@ -1217,12 +1221,14 @@ public class CorrelateGpxWithImages implements ActionListener {
         // This code gives a simple linear interpolation of the coordinates between current and
         // previous track point assuming a constant speed in between
         while (true) {
-            if (i < 0)
+            if (i < 0) {
                 break;
+            }
             ImageEntry curImg = images.get(i);
             long imgTime = curImg.getExifTime().getTime();
-            if (imgTime < prevWpTime)
+            if (imgTime < prevWpTime) {
                 break;
+            }
 
             if(curImg.tmp.getPos() == null) {
                 // The values of timeDiff are between 0 and 1, it is not seconds but a dimensionless

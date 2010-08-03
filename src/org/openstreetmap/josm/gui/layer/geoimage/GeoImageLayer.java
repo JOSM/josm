@@ -10,7 +10,6 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -34,11 +33,10 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
 import org.openstreetmap.josm.Main;
@@ -279,37 +277,28 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         return ImageProvider.get("dialogs/geoimage");
     }
 
-    public static interface LayerMenuAddition {
-        public Component getComponent(Layer layer);
-    }
-
-    private static List<LayerMenuAddition> menuAdditions = new LinkedList<LayerMenuAddition>();
-    public static void registerMenuAddition(LayerMenuAddition addition) {
+    private static List<Action> menuAdditions = new LinkedList<Action>();
+    public static void registerMenuAddition(Action addition) {
         menuAdditions.add(addition);
     }
 
     @Override
-    public Component[] getMenuEntries() {
+    public Action[] getMenuEntries() {
 
-        JMenuItem correlateItem = new JMenuItem(tr("Correlate to GPX"), ImageProvider.get("dialogs/geoimage/gpx2img"));
-        correlateItem.addActionListener(new CorrelateGpxWithImages(this));
-
-        List<Component> entries = new ArrayList<Component>();
-        entries.add(new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)));
-        entries.add(new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)));
-        entries.add(new JMenuItem(new RenameLayerAction(null, this)));
-        entries.add(new JSeparator());
-        entries.add(correlateItem);
+        List<Action> entries = new ArrayList<Action>();
+        entries.add(LayerListDialog.getInstance().createShowHideLayerAction());
+        entries.add(LayerListDialog.getInstance().createDeleteLayerAction());
+        entries.add(new RenameLayerAction(null, this));
+        entries.add(SeparatorLayerAction.INSTANCE);
+        entries.add(new CorrelateGpxWithImages(this));
         if (!menuAdditions.isEmpty()) {
-            entries.add(new JSeparator());
+            entries.add(SeparatorLayerAction.INSTANCE);
+            entries.addAll(menuAdditions);
         }
-        for (LayerMenuAddition addition : menuAdditions) {
-            entries.add(addition.getComponent(this));
-        }
-        entries.add(new JSeparator());
-        entries.add(new JMenuItem(new LayerListPopup.InfoAction(this)));
+        entries.add(SeparatorLayerAction.INSTANCE);
+        entries.add(new LayerListPopup.InfoAction(this));
 
-        return entries.toArray(new Component[0]);
+        return entries.toArray(new Action[0]);
 
     }
 
@@ -471,7 +460,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
                         double arrowwidth = 18;
 
                         double dir = e.getExifImgDir();
-                        // Rotate 90 degrees CCW 
+                        // Rotate 90 degrees CCW
                         double headdir = ( dir < 90 ) ? dir + 270 : dir - 90;
                         double leftdir = ( headdir < 90 ) ? headdir + 270 : headdir - 90;
                         double rightdir = ( headdir > 270 ) ? headdir - 270 : headdir + 90;
@@ -521,7 +510,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         double lon, lat;
         Metadata metadata = null;
         Directory dir = null;
-        
+
         try {
             metadata = JpegMetadataReader.readMetadata(e.getFile());
             dir = metadata.getDirectory(GpsDirectory.class);
@@ -530,7 +519,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             e.setPos(null);
             return;
         }
-        
+
         try {
             // longitude
 
@@ -590,18 +579,16 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         // compass direction value
 
         Rational direction = null;
-        
+
         try {
             direction = dir.getRational(GpsDirectory.TAG_GPS_IMG_DIRECTION);
+            if (direction != null) {
+                e.setExifImgDir(direction.doubleValue());
+            }
         } catch (CompoundException p) {
-            direction = null;
-        } catch (Exception ex) {
-            direction = null;
+            // Do nothing
         }
 
-        if (direction != null) {
-            e.setExifImgDir(direction.doubleValue());
-        }
 
     }
 

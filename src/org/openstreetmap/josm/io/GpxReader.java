@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

@@ -9,12 +9,10 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
@@ -30,6 +28,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -37,11 +36,9 @@ import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JSeparator;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
@@ -129,248 +126,36 @@ public class GpxLayer extends Layer {
     }
 
     @Override
-    public Component[] getMenuEntries() {
-        JMenuItem line = new JMenuItem(tr("Customize line drawing"), ImageProvider.get("mapmode/addsegment"));
-        line.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JRadioButton[] r = new JRadioButton[3];
-                r[0] = new JRadioButton(tr("Use global settings."));
-                r[1] = new JRadioButton(tr("Draw lines between points for this layer."));
-                r[2] = new JRadioButton(tr("Do not draw lines between points for this layer."));
-                ButtonGroup group = new ButtonGroup();
-                Box panel = Box.createVerticalBox();
-                for (JRadioButton b : r) {
-                    group.add(b);
-                    panel.add(b);
-                }
-                String propName = "draw.rawgps.lines.layer " + getName();
-                if (Main.pref.hasKey(propName)) {
-                    group.setSelected(r[Main.pref.getBoolean(propName) ? 1 : 2].getModel(), true);
-                } else {
-                    group.setSelected(r[0].getModel(), true);
-                }
-                int answer = JOptionPane.showConfirmDialog(Main.parent, panel,
-                        tr("Select line drawing options"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-                switch (answer) {
-                case JOptionPane.CANCEL_OPTION:
-                case JOptionPane.CLOSED_OPTION:
-                    return;
-                default:
-                    // continue
-                }
-                if (group.getSelection() == r[0].getModel()) {
-                    Main.pref.put(propName, null);
-                } else {
-                    Main.pref.put(propName, group.getSelection() == r[1].getModel());
-                }
-                Main.map.repaint();
-            }
-        });
-
-        JMenuItem color = new JMenuItem(tr("Customize Color"), ImageProvider.get("colorchooser"));
-        color.putClientProperty("help", "Action/LayerCustomizeColor");
-        color.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JColorChooser c = new JColorChooser(getColor(getName()));
-                Object[] options = new Object[] { tr("OK"), tr("Cancel"), tr("Default") };
-                int answer = JOptionPane.showOptionDialog(
-                        Main.parent,
-                        c,
-                        tr("Choose a color"),
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE,
-                        null,
-                        options, options[0]
-                );
-                switch (answer) {
-                case 0:
-                    Main.pref.putColor("layer " + getName(), c.getColor());
-                    break;
-                case 1:
-                    return;
-                case 2:
-                    Main.pref.putColor("layer " + getName(), null);
-                    break;
-                }
-                Main.map.repaint();
-            }
-        });
-
-        JMenuItem markersFromNamedTrackpoints = new JMenuItem(tr("Markers From Named Points"), ImageProvider
-                .get("addmarkers"));
-        markersFromNamedTrackpoints.putClientProperty("help", "Action/MarkersFromNamedPoints");
-        markersFromNamedTrackpoints.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                GpxData namedTrackPoints = new GpxData();
-                for (GpxTrack track : data.tracks) {
-                    for (GpxTrackSegment seg : track.getSegments()) {
-                        for (WayPoint point : seg.getWayPoints())
-                            if (point.attr.containsKey("name") || point.attr.containsKey("desc")) {
-                                namedTrackPoints.waypoints.add(point);
-                            }
-                    }
-                }
-
-                MarkerLayer ml = new MarkerLayer(namedTrackPoints, tr("Named Trackpoints from {0}", getName()),
-                        getAssociatedFile(), GpxLayer.this);
-                if (ml.data.size() > 0) {
-                    Main.main.addLayer(ml);
-                }
-            }
-        });
-
-        JMenuItem importAudio = new JMenuItem(tr("Import Audio"), ImageProvider.get("importaudio"));
-        importAudio.putClientProperty("help", "ImportAudio");
-        importAudio.addActionListener(new ActionListener() {
-            private void warnCantImportIntoServerLayer(GpxLayer layer) {
-                String msg = tr("<html>The data in the GPX layer ''{0}'' has been downloaded from the server.<br>"
-                        + "Because its way points do not include a timestamp we cannot correlate them with audio data.</html>",
-                        layer.getName()
-                );
-                HelpAwareOptionPane.showOptionDialog(
-                        Main.parent,
-                        msg,
-                        tr("Import not possible"),
-                        JOptionPane.WARNING_MESSAGE,
-                        ht("/Action/ImportImages#CantImportIntoGpxLayerFromServer")
-                );
-            }
-            public void actionPerformed(ActionEvent e) {
-                if (GpxLayer.this.data.fromServer) {
-                    warnCantImportIntoServerLayer(GpxLayer.this);
-                    return;
-                }
-                String dir = Main.pref.get("markers.lastaudiodirectory");
-                JFileChooser fc = new JFileChooser(dir);
-                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                fc.setAcceptAllFileFilterUsed(false);
-                fc.setFileFilter(new FileFilter() {
-                    @Override
-                    public boolean accept(File f) {
-                        return f.isDirectory() || f.getName().toLowerCase().endsWith(".wav");
-                    }
-
-                    @Override
-                    public String getDescription() {
-                        return tr("Wave Audio files (*.wav)");
-                    }
-                });
-                fc.setMultiSelectionEnabled(true);
-                if (fc.showOpenDialog(Main.parent) == JFileChooser.APPROVE_OPTION) {
-                    if (!fc.getCurrentDirectory().getAbsolutePath().equals(dir)) {
-                        Main.pref.put("markers.lastaudiodirectory", fc.getCurrentDirectory().getAbsolutePath());
-                    }
-
-                    File sel[] = fc.getSelectedFiles();
-                    // sort files in increasing order of timestamp (this is the end time, but so
-                    // long as they don't overlap, that's fine)
-                    if (sel.length > 1) {
-                        Arrays.sort(sel, new Comparator<File>() {
-                            public int compare(File a, File b) {
-                                return a.lastModified() <= b.lastModified() ? -1 : 1;
-                            }
-                        });
-                    }
-
-                    String names = null;
-                    for (int i = 0; i < sel.length; i++) {
-                        if (names == null) {
-                            names = " (";
-                        } else {
-                            names += ", ";
-                        }
-                        names += sel[i].getName();
-                    }
-                    if (names != null) {
-                        names += ")";
-                    } else {
-                        names = "";
-                    }
-                    MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", getName()) + names,
-                            getAssociatedFile(), GpxLayer.this);
-                    double firstStartTime = sel[0].lastModified() / 1000.0 /* ms -> seconds */
-                    - AudioUtil.getCalibratedDuration(sel[0]);
-
-                    Markers m = new Markers();
-                    for (int i = 0; i < sel.length; i++) {
-                        importAudio(sel[i], ml, firstStartTime, m);
-                    }
-                    Main.main.addLayer(ml);
-                    Main.map.repaint();
-                }
-            }
-        });
-
-        JMenuItem tagimage = new JMenuItem(tr("Import images"), ImageProvider.get("dialogs/geoimage"));
-        tagimage.putClientProperty("help", ht("/Action/ImportImages"));
-        tagimage.addActionListener(new ActionListener() {
-
-            private void warnCantImportIntoServerLayer(GpxLayer layer) {
-                String msg = tr("<html>The data in the GPX layer ''{0}'' has been downloaded from the server.<br>"
-                        + "Because its way points do not include a timestamp we cannot correlate them with images.</html>",
-                        layer.getName()
-                );
-                HelpAwareOptionPane.showOptionDialog(
-                        Main.parent,
-                        msg,
-                        tr("Import not possible"),
-                        JOptionPane.WARNING_MESSAGE,
-                        ht("/Action/ImportImages#CantImportIntoGpxLayerFromServer")
-                );
-            }
-
-            public void actionPerformed(ActionEvent e) {
-                if (GpxLayer.this.data.fromServer) {
-                    warnCantImportIntoServerLayer(GpxLayer.this);
-                    return;
-                }
-                String curDir = Main.pref.get("geoimage.lastdirectory", Main.pref.get("lastDirectory"));
-                if (curDir.equals("")) {
-                    curDir = ".";
-                }
-                JFileChooser fc = new JFileChooser(new File(curDir));
-
-                fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-                fc.setMultiSelectionEnabled(true);
-                fc.setAcceptAllFileFilterUsed(false);
-                JpgImporter importer = new JpgImporter(GpxLayer.this);
-                fc.setFileFilter(importer.filter);
-                fc.showOpenDialog(Main.parent);
-                LinkedList<File> files = new LinkedList<File>();
-                File[] sel = fc.getSelectedFiles();
-                if (sel == null || sel.length == 0)
-                    return;
-                if (!fc.getCurrentDirectory().getAbsolutePath().equals(curDir)) {
-                    Main.pref.put("geoimage.lastdirectory", fc.getCurrentDirectory().getAbsolutePath());
-                }
-                addRecursiveFiles(files, sel);
-                importer.importDataHandleExceptions(files, NullProgressMonitor.INSTANCE);
-            }
-
-            private void addRecursiveFiles(LinkedList<File> files, File[] sel) {
-                for (File f : sel) {
-                    if (f.isDirectory()) {
-                        addRecursiveFiles(files, f.listFiles());
-                    } else if (f.getName().toLowerCase().endsWith(".jpg")) {
-                        files.add(f);
-                    }
-                }
-            }
-        });
-
+    public Action[] getMenuEntries() {
         if (Main.applet)
-            return new Component[] { new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)),
-                new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)), new JSeparator(), color, line,
-                new JMenuItem(new ConvertToDataLayerAction()), new JSeparator(),
-                new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)), new JSeparator(),
-                new JMenuItem(new LayerListPopup.InfoAction(this)) };
-        return new Component[] { new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)),
-                new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)), new JSeparator(),
-                new JMenuItem(new LayerSaveAction(this)), new JMenuItem(new LayerSaveAsAction(this)), color, line,
-                tagimage, importAudio, markersFromNamedTrackpoints, new JMenuItem(new ConvertToDataLayerAction()),
-                new JMenuItem(new DownloadAlongTrackAction()), new JSeparator(),
-                new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)), new JSeparator(),
-                new JMenuItem(new LayerListPopup.InfoAction(this)) };
+            return new Action[] {
+                LayerListDialog.getInstance().createShowHideLayerAction(),
+                LayerListDialog.getInstance().createDeleteLayerAction(),
+                SeparatorLayerAction.INSTANCE,
+                new CustomizeColor(),
+                new CustomizeLineDrawing(),
+                new ConvertToDataLayerAction(),
+                SeparatorLayerAction.INSTANCE,
+                new RenameLayerAction(getAssociatedFile(), this),
+                SeparatorLayerAction.INSTANCE,
+                new LayerListPopup.InfoAction(this) };
+        return new Action[] {
+                LayerListDialog.getInstance().createShowHideLayerAction(),
+                LayerListDialog.getInstance().createDeleteLayerAction(),
+                SeparatorLayerAction.INSTANCE,
+                new LayerSaveAction(this),
+                new LayerSaveAsAction(this),
+                new CustomizeColor(),
+                new CustomizeLineDrawing(),
+                new ImportImages(),
+                new ImportAudio(),
+                new MarkersFromNamedPoins(),
+                new ConvertToDataLayerAction(),
+                new DownloadAlongTrackAction(),
+                SeparatorLayerAction.INSTANCE,
+                new RenameLayerAction(getAssociatedFile(), this),
+                SeparatorLayerAction.INSTANCE,
+                new LayerListPopup.InfoAction(this) };
     }
 
     @Override
@@ -1415,5 +1200,262 @@ public class GpxLayer extends Layer {
         WayPoint best = new WayPoint(Main.proj.eastNorth2latlon(bestEN));
         best.time = bestTime;
         return best;
+    }
+
+    private class CustomizeLineDrawing extends AbstractAction {
+
+        CustomizeLineDrawing() {
+            super(tr("Customize line drawing"), ImageProvider.get("mapmode/addsegment"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JRadioButton[] r = new JRadioButton[3];
+            r[0] = new JRadioButton(tr("Use global settings."));
+            r[1] = new JRadioButton(tr("Draw lines between points for this layer."));
+            r[2] = new JRadioButton(tr("Do not draw lines between points for this layer."));
+            ButtonGroup group = new ButtonGroup();
+            Box panel = Box.createVerticalBox();
+            for (JRadioButton b : r) {
+                group.add(b);
+                panel.add(b);
+            }
+            String propName = "draw.rawgps.lines.layer " + getName();
+            if (Main.pref.hasKey(propName)) {
+                group.setSelected(r[Main.pref.getBoolean(propName) ? 1 : 2].getModel(), true);
+            } else {
+                group.setSelected(r[0].getModel(), true);
+            }
+            int answer = JOptionPane.showConfirmDialog(Main.parent, panel,
+                    tr("Select line drawing options"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            switch (answer) {
+            case JOptionPane.CANCEL_OPTION:
+            case JOptionPane.CLOSED_OPTION:
+                return;
+            default:
+                // continue
+            }
+            if (group.getSelection() == r[0].getModel()) {
+                Main.pref.put(propName, null);
+            } else {
+                Main.pref.put(propName, group.getSelection() == r[1].getModel());
+            }
+            Main.map.repaint();
+        }
+    }
+
+    private class CustomizeColor extends AbstractAction {
+
+        public CustomizeColor() {
+            super(tr("Customize Color"), ImageProvider.get("colorchooser"));
+            putValue("help", "Action/LayerCustomizeColor");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JColorChooser c = new JColorChooser(getColor(getName()));
+            Object[] options = new Object[] { tr("OK"), tr("Cancel"), tr("Default") };
+            int answer = JOptionPane.showOptionDialog(
+                    Main.parent,
+                    c,
+                    tr("Choose a color"),
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    options, options[0]
+            );
+            switch (answer) {
+            case 0:
+                Main.pref.putColor("layer " + getName(), c.getColor());
+                break;
+            case 1:
+                return;
+            case 2:
+                Main.pref.putColor("layer " + getName(), null);
+                break;
+            }
+            Main.map.repaint();
+        }
+
+    }
+
+    private class MarkersFromNamedPoins extends AbstractAction {
+
+        public MarkersFromNamedPoins() {
+            super(tr("Markers From Named Points"), ImageProvider.get("addmarkers"));
+            putValue("help", "Action/MarkersFromNamedPoints");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            GpxData namedTrackPoints = new GpxData();
+            for (GpxTrack track : data.tracks) {
+                for (GpxTrackSegment seg : track.getSegments()) {
+                    for (WayPoint point : seg.getWayPoints())
+                        if (point.attr.containsKey("name") || point.attr.containsKey("desc")) {
+                            namedTrackPoints.waypoints.add(point);
+                        }
+                }
+            }
+
+            MarkerLayer ml = new MarkerLayer(namedTrackPoints, tr("Named Trackpoints from {0}", getName()),
+                    getAssociatedFile(), GpxLayer.this);
+            if (ml.data.size() > 0) {
+                Main.main.addLayer(ml);
+            }
+
+        }
+    }
+
+    private class ImportAudio extends AbstractAction {
+
+        public ImportAudio() {
+            super(tr("Import Audio"), ImageProvider.get("importaudio"));
+            putValue("help", "ImportAudio");
+        }
+
+        private void warnCantImportIntoServerLayer(GpxLayer layer) {
+            String msg = tr("<html>The data in the GPX layer ''{0}'' has been downloaded from the server.<br>"
+                    + "Because its way points do not include a timestamp we cannot correlate them with audio data.</html>",
+                    layer.getName()
+            );
+            HelpAwareOptionPane.showOptionDialog(
+                    Main.parent,
+                    msg,
+                    tr("Import not possible"),
+                    JOptionPane.WARNING_MESSAGE,
+                    ht("/Action/ImportImages#CantImportIntoGpxLayerFromServer")
+            );
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (GpxLayer.this.data.fromServer) {
+                warnCantImportIntoServerLayer(GpxLayer.this);
+                return;
+            }
+            String dir = Main.pref.get("markers.lastaudiodirectory");
+            JFileChooser fc = new JFileChooser(dir);
+            fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            fc.setAcceptAllFileFilterUsed(false);
+            fc.setFileFilter(new FileFilter() {
+                @Override
+                public boolean accept(File f) {
+                    return f.isDirectory() || f.getName().toLowerCase().endsWith(".wav");
+                }
+
+                @Override
+                public String getDescription() {
+                    return tr("Wave Audio files (*.wav)");
+                }
+            });
+            fc.setMultiSelectionEnabled(true);
+            if (fc.showOpenDialog(Main.parent) == JFileChooser.APPROVE_OPTION) {
+                if (!fc.getCurrentDirectory().getAbsolutePath().equals(dir)) {
+                    Main.pref.put("markers.lastaudiodirectory", fc.getCurrentDirectory().getAbsolutePath());
+                }
+
+                File sel[] = fc.getSelectedFiles();
+                // sort files in increasing order of timestamp (this is the end time, but so
+                // long as they don't overlap, that's fine)
+                if (sel.length > 1) {
+                    Arrays.sort(sel, new Comparator<File>() {
+                        public int compare(File a, File b) {
+                            return a.lastModified() <= b.lastModified() ? -1 : 1;
+                        }
+                    });
+                }
+
+                String names = null;
+                for (int i = 0; i < sel.length; i++) {
+                    if (names == null) {
+                        names = " (";
+                    } else {
+                        names += ", ";
+                    }
+                    names += sel[i].getName();
+                }
+                if (names != null) {
+                    names += ")";
+                } else {
+                    names = "";
+                }
+                MarkerLayer ml = new MarkerLayer(new GpxData(), tr("Audio markers from {0}", getName()) + names,
+                        getAssociatedFile(), GpxLayer.this);
+                double firstStartTime = sel[0].lastModified() / 1000.0 /* ms -> seconds */
+                - AudioUtil.getCalibratedDuration(sel[0]);
+
+                Markers m = new Markers();
+                for (int i = 0; i < sel.length; i++) {
+                    importAudio(sel[i], ml, firstStartTime, m);
+                }
+                Main.main.addLayer(ml);
+                Main.map.repaint();
+            }
+
+        }
+    }
+
+    private class ImportImages extends AbstractAction {
+
+        public ImportImages() {
+            super(tr("Import images"), ImageProvider.get("dialogs/geoimage"));
+            putValue("help", ht("/Action/ImportImages"));
+        }
+
+        private void warnCantImportIntoServerLayer(GpxLayer layer) {
+            String msg = tr("<html>The data in the GPX layer ''{0}'' has been downloaded from the server.<br>"
+                    + "Because its way points do not include a timestamp we cannot correlate them with images.</html>",
+                    layer.getName()
+            );
+            HelpAwareOptionPane.showOptionDialog(
+                    Main.parent,
+                    msg,
+                    tr("Import not possible"),
+                    JOptionPane.WARNING_MESSAGE,
+                    ht("/Action/ImportImages#CantImportIntoGpxLayerFromServer")
+            );
+        }
+
+        private void addRecursiveFiles(LinkedList<File> files, File[] sel) {
+            for (File f : sel) {
+                if (f.isDirectory()) {
+                    addRecursiveFiles(files, f.listFiles());
+                } else if (f.getName().toLowerCase().endsWith(".jpg")) {
+                    files.add(f);
+                }
+            }
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+            if (GpxLayer.this.data.fromServer) {
+                warnCantImportIntoServerLayer(GpxLayer.this);
+                return;
+            }
+            String curDir = Main.pref.get("geoimage.lastdirectory", Main.pref.get("lastDirectory"));
+            if (curDir.equals("")) {
+                curDir = ".";
+            }
+            JFileChooser fc = new JFileChooser(new File(curDir));
+
+            fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            fc.setMultiSelectionEnabled(true);
+            fc.setAcceptAllFileFilterUsed(false);
+            JpgImporter importer = new JpgImporter(GpxLayer.this);
+            fc.setFileFilter(importer.filter);
+            fc.showOpenDialog(Main.parent);
+            LinkedList<File> files = new LinkedList<File>();
+            File[] sel = fc.getSelectedFiles();
+            if (sel == null || sel.length == 0)
+                return;
+            if (!fc.getCurrentDirectory().getAbsolutePath().equals(curDir)) {
+                Main.pref.put("geoimage.lastdirectory", fc.getCurrentDirectory().getAbsolutePath());
+            }
+            addRecursiveFiles(files, sel);
+            importer.importDataHandleExceptions(files, NullProgressMonitor.INSTANCE);
+        }
+
     }
 }

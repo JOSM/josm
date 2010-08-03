@@ -6,22 +6,18 @@ public class HelpContentReaderException extends Exception {
 
     public HelpContentReaderException() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     public HelpContentReaderException(String message, Throwable cause) {
         super(message, cause);
-        // TODO Auto-generated constructor stub
     }
 
     public HelpContentReaderException(String message) {
         super(message);
-        // TODO Auto-generated constructor stub
     }
 
     public HelpContentReaderException(Throwable cause) {
         super(cause);
-        // TODO Auto-generated constructor stub
     }
 
     /**

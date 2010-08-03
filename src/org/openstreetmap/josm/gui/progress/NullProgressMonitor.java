@@ -77,7 +77,6 @@ public class NullProgressMonitor implements ProgressMonitor {
     }
 
     public int getTicksCount() {
-        // TODO Auto-generated method stub
         return 0;
     }
 }

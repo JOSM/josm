@@ -10,21 +10,20 @@ import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JColorChooser;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
@@ -196,107 +195,22 @@ public class MarkerLayer extends Layer {
         return "<html>"+trn("{0} consists of {1} marker", "{0} consists of {1} markers", data.size(), getName(), data.size()) + "</html>";
     }
 
-    @Override public Component[] getMenuEntries() {
-        JMenuItem color = new JMenuItem(tr("Customize Color"), ImageProvider.get("colorchooser"));
-        color.putClientProperty("help", "Action/LayerCustomizeColor");
-        color.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                JColorChooser c = new JColorChooser(getColor(getName()));
-                Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
-                int answer = JOptionPane.showOptionDialog(
-                        Main.parent,
-                        c,
-                        tr("Choose a color"),
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE,
-                        null,
-                        options,
-                        options[0]
-                );
-                switch (answer) {
-                case 0:
-                    Main.pref.putColor("layer "+getName(), c.getColor());
-                    break;
-                case 1:
-                    return;
-                case 2:
-                    Main.pref.putColor("layer "+getName(), null);
-                    break;
-                }
-                Main.map.repaint();
-            }
-        });
-
-        JMenuItem syncaudio = new JMenuItem(tr("Synchronize Audio"), ImageProvider.get("audio-sync"));
-        syncaudio.putClientProperty("help", "Action/SynchronizeAudio");
-        syncaudio.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                if (! AudioPlayer.paused()) {
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            tr("You need to pause audio at the moment when you hear your synchronization cue."),
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE
-                    );
-                    return;
-                }
-                AudioMarker recent = AudioMarker.recentlyPlayedMarker();
-                if (synchronizeAudioMarkers(recent)) {
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            tr("Audio synchronized at point {0}.", recent.text),
-                            tr("Information"),
-                            JOptionPane.INFORMATION_MESSAGE
-                    );
-                } else {
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            tr("Unable to synchronize in layer being played."),
-                            tr("Error"),
-                            JOptionPane.ERROR_MESSAGE
-                    );
-                }
-            }
-        });
-
-        JMenuItem moveaudio = new JMenuItem(tr("Make Audio Marker at Play Head"), ImageProvider.get("addmarkers"));
-        moveaudio.putClientProperty("help", "Action/MakeAudioMarkerAtPlayHead");
-        moveaudio.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                if (! AudioPlayer.paused()) {
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            tr("You need to have paused audio at the point on the track where you want the marker."),
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE
-                    );
-                    return;
-                }
-                PlayHeadMarker playHeadMarker = Main.map.mapView.playHeadMarker;
-                if (playHeadMarker == null)
-                    return;
-                addAudioMarker(playHeadMarker.time, playHeadMarker.getCoor());
-                Main.map.mapView.repaint();
-            }
-        });
-
-        Collection<Component> components = new ArrayList<Component>();
-        components.add(new JMenuItem(LayerListDialog.getInstance().createShowHideLayerAction(this)));
-        JCheckBoxMenuItem showMarkerTextItem = new JCheckBoxMenuItem(new ShowHideMarkerText(this));
-        showMarkerTextItem.setState(isTextOrIconShown());
-        components.add(showMarkerTextItem);
-        components.add(new JMenuItem(LayerListDialog.getInstance().createDeleteLayerAction(this)));
-        components.add(new JSeparator());
-        components.add(color);
-        components.add(new JSeparator());
-        components.add(syncaudio);
+    @Override public Action[] getMenuEntries() {
+        Collection<Action> components = new ArrayList<Action>();
+        components.add(LayerListDialog.getInstance().createShowHideLayerAction());
+        components.add(new ShowHideMarkerText(this));
+        components.add(LayerListDialog.getInstance().createDeleteLayerAction());
+        components.add(SeparatorLayerAction.INSTANCE);
+        components.add(new CustomizeColor());
+        components.add(SeparatorLayerAction.INSTANCE);
+        components.add(new SynchronizeAudio());
         if (Main.pref.getBoolean("marker.traceaudio", true)) {
-            components.add (moveaudio);
+            components.add (new MoveAudio());
         }
-        components.add(new JMenuItem(new RenameLayerAction(getAssociatedFile(), this)));
-        components.add(new JSeparator());
-        components.add(new JMenuItem(new LayerListPopup.InfoAction(this)));
-        return components.toArray(new Component[0]);
+        components.add(new RenameLayerAction(getAssociatedFile(), this));
+        components.add(SeparatorLayerAction.INSTANCE);
+        components.add(new LayerListPopup.InfoAction(this));
+        return components.toArray(new Action[0]);
     }
 
     public boolean synchronizeAudioMarkers(AudioMarker startMarker) {
@@ -456,7 +370,7 @@ public class MarkerLayer extends Layer {
         return "show".equalsIgnoreCase(current);
     }
 
-    public static final class ShowHideMarkerText extends AbstractAction {
+    public static final class ShowHideMarkerText extends AbstractAction implements LayerAction {
         private final MarkerLayer layer;
 
         public ShowHideMarkerText(MarkerLayer layer) {
@@ -469,6 +383,118 @@ public class MarkerLayer extends Layer {
 
         public void actionPerformed(ActionEvent e) {
             Main.pref.put("marker.show "+layer.getName(), layer.isTextOrIconShown() ? "hide" : "show");
+            Main.map.mapView.repaint();
+        }
+
+
+        @Override
+        public Component createMenuComponent() {
+            JCheckBoxMenuItem showMarkerTextItem = new JCheckBoxMenuItem(this);
+            showMarkerTextItem.setState(layer.isTextOrIconShown());
+            return showMarkerTextItem;
+        }
+
+
+        @Override
+        public boolean supportLayers(List<Layer> layers) {
+            return layers.size() == 1 && layers.get(0) instanceof MarkerLayer;
+        }
+    }
+
+    private class CustomizeColor extends AbstractAction {
+
+        public CustomizeColor() {
+            super(tr("Customize Color"), ImageProvider.get("colorchooser"));
+            putValue("help", "Action/LayerCustomizeColor");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JColorChooser c = new JColorChooser(getColor(getName()));
+            Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
+            int answer = JOptionPane.showOptionDialog(
+                    Main.parent,
+                    c,
+                    tr("Choose a color"),
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    options,
+                    options[0]
+            );
+            switch (answer) {
+            case 0:
+                Main.pref.putColor("layer "+getName(), c.getColor());
+                break;
+            case 1:
+                return;
+            case 2:
+                Main.pref.putColor("layer "+getName(), null);
+                break;
+            }
+            Main.map.repaint();
+        }
+    }
+
+    private class SynchronizeAudio extends AbstractAction {
+
+        public SynchronizeAudio() {
+            super(tr("Synchronize Audio"), ImageProvider.get("audio-sync"));
+            putValue("help", "Action/SynchronizeAudio");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (! AudioPlayer.paused()) {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("You need to pause audio at the moment when you hear your synchronization cue."),
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
+            AudioMarker recent = AudioMarker.recentlyPlayedMarker();
+            if (synchronizeAudioMarkers(recent)) {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("Audio synchronized at point {0}.", recent.text),
+                        tr("Information"),
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            } else {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("Unable to synchronize in layer being played."),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+        }
+    }
+
+    private class MoveAudio extends AbstractAction {
+
+        public MoveAudio() {
+            super(tr("Make Audio Marker at Play Head"), ImageProvider.get("addmarkers"));
+            putValue("help", "Action/MakeAudioMarkerAtPlayHead");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (! AudioPlayer.paused()) {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("You need to have paused audio at the point on the track where you want the marker."),
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
+            }
+            PlayHeadMarker playHeadMarker = Main.map.mapView.playHeadMarker;
+            if (playHeadMarker == null)
+                return;
+            addAudioMarker(playHeadMarker.time, playHeadMarker.getCoor());
             Main.map.mapView.repaint();
         }
     }

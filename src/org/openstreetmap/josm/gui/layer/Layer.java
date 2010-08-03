@@ -10,9 +10,12 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
+import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.SaveAction;
@@ -39,8 +42,35 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 abstract public class Layer implements Destroyable, MapViewPaintable {
+
+    public interface LayerAction {
+        boolean supportLayers(List<Layer> layers);
+        Component createMenuComponent();
+    }
+
+    /**
+     * Special class that can be returned by getMenuEntries when JSeparator needs to be created
+     *
+     */
+    public static class SeparatorLayerAction extends AbstractAction implements LayerAction {
+        public static final SeparatorLayerAction INSTANCE = new SeparatorLayerAction();
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException();
+        }
+        @Override
+        public Component createMenuComponent() {
+            return new JSeparator();
+        }
+        @Override
+        public boolean supportLayers(List<Layer> layers) {
+            return false;
+        }
+    }
+
     static public final String VISIBLE_PROP = Layer.class.getName() + ".visible";
     static public final String NAME_PROP = Layer.class.getName() + ".name";
+
 
     /** keeps track of property change listeners */
     protected PropertyChangeSupport propertyChangeSupport;
@@ -111,7 +141,15 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
 
     abstract public Object getInfoComponent();
 
-    abstract public Component[] getMenuEntries();
+    /**
+     * Returns list of actions. Action can implement LayerAction interface when it needs to be represented by other
+     * menu component than JMenuItem or when it supports multiple layers. Actions that support multiple layers should also
+     * have correct equals implementation.
+     *
+     * Use SeparatorLayerAction.INSTANCE instead of new JSeparator
+     *
+     */
+    abstract public Action[] getMenuEntries();
 
     /**
      * Called, when the layer is removed from the mapview and is going to be
