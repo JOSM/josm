@@ -15,10 +15,15 @@ public enum CoordinateFormat {
     DECIMAL_DEGREES (tr("Decimal Degrees")),
 
     /**
-     * the minutes/seconds format 99" 99'
+     * the degrees/minutes/seconds format 9° 99" 99'
      */
-    DEGREES_MINUTES_SECONDS (tr("Degrees Minutes Seconds")),
-
+    DEGREES_MINUTES_SECONDS (tr("deg\u00B0 min'' sec\"")),
+    
+    /**
+     * the nautical format 
+     */
+    NAUTICAL (tr("deg\u00B0 min'' (Nautical)")),
+    
     /**
      * coordinates East/North
      */

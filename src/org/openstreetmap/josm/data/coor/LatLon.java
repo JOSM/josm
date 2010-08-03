@@ -34,6 +34,7 @@ public class LatLon extends Coordinate {
 
     private static DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
     private static DecimalFormat cDmsSecondFormatter = new DecimalFormat("00.0");
+    private static DecimalFormat cDmMinuteFormatter = new DecimalFormat("00.000");
     public static DecimalFormat cDdFormatter;
     static {
         // Don't use the localized decimal separator. This way we can present
@@ -77,6 +78,14 @@ public class LatLon extends Coordinate {
         + cDmsSecondFormatter.format(tSeconds) + "\"";
     }
 
+    public static String dm(double pCoordinate) {
+
+        double tAbsCoord = Math.abs(pCoordinate);
+        int tDegree = (int) tAbsCoord;
+        double tMinutes = (tAbsCoord - tDegree) * 60;
+        return tDegree + "\u00B0" + cDmMinuteFormatter.format(tMinutes) + "\'";
+    }
+
     public LatLon(double lat, double lon) {
         super(lon, lat);
     }
@@ -89,12 +98,13 @@ public class LatLon extends Coordinate {
         return y;
     }
 
+    private final static String SOUTH = trc("compass", "S");
+    private final static String NORTH = trc("compass", "N");
     public String latToString(CoordinateFormat d) {
         switch(d) {
         case DECIMAL_DEGREES: return cDdFormatter.format(y);
-        case DEGREES_MINUTES_SECONDS: return dms(y) + ((y < 0) ?
-                /* short symbol for South */ trc("compass", "S") :
-                    /* short symbol for North */ trc("compass", "N"));
+        case DEGREES_MINUTES_SECONDS: return dms(y) + ((y < 0) ? SOUTH : NORTH);
+        case NAUTICAL: return dm(y) + ((y < 0) ? SOUTH : NORTH);
         case EAST_NORTH: return cDdFormatter.format(Main.proj.latlon2eastNorth(this).north());
         default: return "ERR";
         }
@@ -104,12 +114,13 @@ public class LatLon extends Coordinate {
         return x;
     }
 
+    private final static String WEST = trc("compass", "W");
+    private final static String EAST = trc("compass", "E");
     public String lonToString(CoordinateFormat d) {
         switch(d) {
         case DECIMAL_DEGREES: return cDdFormatter.format(x);
-        case DEGREES_MINUTES_SECONDS: return dms(x) + ((x < 0) ?
-                /* short symbol for West */ trc("compass", "W") :
-                    /* short symbol for East */ trc("compass", "E"));
+        case DEGREES_MINUTES_SECONDS: return dms(x) + ((x < 0) ? WEST : EAST);
+        case NAUTICAL: return dm(x) + ((x < 0) ? WEST : EAST);
         case EAST_NORTH: return cDdFormatter.format(Main.proj.latlon2eastNorth(this).east());
         default: return "ERR";
         }
