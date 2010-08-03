@@ -150,7 +150,15 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 }
             }
 
-            if (!key.equals(newKey) || !value.equals(newValue)) {
+            boolean needsCorrection = !key.equals(newKey);
+            if (way.get(newKey) != null && way.get(newKey).equals(newValue)) {
+                needsCorrection = false;
+            }
+            if (!value.equals(newValue)) {
+                needsCorrection = true;
+            }
+
+            if (needsCorrection) {
                 tagCorrections.add(new TagCorrection(key, value, newKey, newValue));
             }
         }
