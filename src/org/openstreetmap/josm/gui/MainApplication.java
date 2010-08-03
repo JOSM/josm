@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.swing.JFrame;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.data.AutosaveTask;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
@@ -254,6 +255,7 @@ public class MainApplication extends Main {
                 for (OsmDataLayer layer: unsavedLayers) {
                     Main.main.addLayer(layer);
                 }
+                AutoScaleAction.autoScale("data");
             }
 
 
