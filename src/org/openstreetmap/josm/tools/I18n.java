@@ -259,6 +259,7 @@ public class I18n {
         languages.put("sv", PluralMode.MODE_NOTONE);
         languages.put("tr", PluralMode.MODE_NONE);
         languages.put("uk", PluralMode.MODE_RU);
+        languages.put("zh_CN", PluralMode.MODE_NONE);
         languages.put("zh_TW", PluralMode.MODE_NONE);
 
         /* try initial language settings, may be changed later again */
@@ -455,8 +456,8 @@ public class I18n {
 
     /**
      * Localizations for file chooser dialog.
-     * For some locals (e.g. de, fr) translations are provided
-     * by Java, but for others (e.g. ru, uk) it is not.
+     * For some locales (e.g. de, fr) translations are provided
+     * by Java, but not for others (e.g. ru, uk).
      */
     public static void fixJFileChooser() {
         Locale l = Locale.getDefault();
@@ -479,7 +480,7 @@ public class I18n {
         {
         case MODE_NOTONE: /* bg, da, de, el, en, en_GB, es, et, eu, fi, gl, is, it, iw_IL, nb, nl, sv */
             return ((n != 1) ? 1 : 0);
-        case MODE_NONE: /* ja, tr, zh_TW */
+        case MODE_NONE: /* ja, tr, zh_CN, zh_TW */
             return 0;
         case MODE_GREATERONE: /* fr, pt_BR */
             return ((n > 1) ? 1 : 0);
