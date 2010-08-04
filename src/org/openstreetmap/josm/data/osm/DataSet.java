@@ -80,6 +80,7 @@ public class DataSet implements Cloneable {
     private int highlightUpdateCount;
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private final Object selectionLock = new Object();
 
     public Lock getReadLock() {
         return lock.readLock();
@@ -300,7 +301,10 @@ public class DataSet implements Cloneable {
             } else if (primitive instanceof Relation) {
                 relations.remove(primitive);
             }
-            selectedPrimitives.remove(primitive);
+            synchronized (selectionLock) {
+                selectedPrimitives.remove(primitive);
+                selectionSnapshot = null;
+            }
             allPrimitives.remove(primitive);
             primitive.setDataset(null);
             firePrimitivesRemoved(Collections.singletonList(primitive), false);
@@ -328,24 +332,23 @@ public class DataSet implements Cloneable {
      */
     public void fireSelectionChanged(){
         synchronized (selListeners) {
-            List<? extends OsmPrimitive> currentSelection = Collections.unmodifiableList(new ArrayList<OsmPrimitive>(selectedPrimitives));
+            Collection<? extends OsmPrimitive> currentSelection = getSelected();
             for (SelectionChangedListener l : selListeners) {
                 l.selectionChanged(currentSelection);
             }
         }
     }
 
-    LinkedHashSet<OsmPrimitive> selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
+    private LinkedHashSet<OsmPrimitive> selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
+    private Collection<OsmPrimitive> selectionSnapshot;
 
     public Collection<OsmPrimitive> getSelectedNodesAndWays() {
-        Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
-        for (OsmPrimitive osm : selectedPrimitives) {
-            if (osm instanceof Way ||
-                    osm instanceof Node) {
-                sel.add(osm);
+        return new DatasetCollection<OsmPrimitive>(getSelected(), new Predicate<OsmPrimitive>() {
+            @Override
+            public boolean evaluate(OsmPrimitive primitive) {
+                return primitive instanceof Node || primitive instanceof Way;
             }
-        }
-        return sel;
+        });
     }
 
     /**
@@ -355,46 +358,35 @@ public class DataSet implements Cloneable {
      * @return unmodifiable collection of primitives
      */
     public Collection<OsmPrimitive> getSelected() {
-        return Collections.unmodifiableSet(selectedPrimitives);
+        Collection<OsmPrimitive> currentList;
+        synchronized (selectionLock) {
+            if (selectionSnapshot == null) {
+                selectionSnapshot = Collections.unmodifiableList(new ArrayList<OsmPrimitive>(selectedPrimitives));
+            }
+            currentList = selectionSnapshot;
+        }
+        return currentList;
     }
 
     /**
      * Return selected nodes.
      */
     public Collection<Node> getSelectedNodes() {
-        List<Node> result = new ArrayList<Node>(selectedPrimitives.size());
-        for (OsmPrimitive primitive:selectedPrimitives) {
-            if (primitive instanceof Node) {
-                result.add((Node)primitive);
-            }
-        }
-        return result;
+        return new DatasetCollection<Node>(getSelected(), OsmPrimitive.nodePredicate);
     }
 
     /**
      * Return selected ways.
      */
     public Collection<Way> getSelectedWays() {
-        List<Way> result = new ArrayList<Way>(selectedPrimitives.size());
-        for (OsmPrimitive primitive:selectedPrimitives) {
-            if (primitive instanceof Way) {
-                result.add((Way)primitive);
-            }
-        }
-        return result;
+        return new DatasetCollection<Way>(getSelected(), OsmPrimitive.wayPredicate);
     }
 
     /**
      * Return selected relations.
      */
     public Collection<Relation> getSelectedRelations() {
-        List<Relation> result = new ArrayList<Relation>(selectedPrimitives.size() / 10);
-        for (OsmPrimitive primitive:selectedPrimitives) {
-            if (primitive instanceof Relation) {
-                result.add((Relation)primitive);
-            }
-        }
-        return result;
+        return new DatasetCollection<Relation>(getSelected(), OsmPrimitive.relationPredicate);
     }
 
     public boolean isSelected(OsmPrimitive osm) {
@@ -403,8 +395,13 @@ public class DataSet implements Cloneable {
 
     public void toggleSelected(Collection<? extends PrimitiveId> osm) {
         boolean changed = false;
-        for (PrimitiveId o : osm) {
-            changed = changed | this.__toggleSelected(o);
+        synchronized (selectionLock) {
+            for (PrimitiveId o : osm) {
+                changed = changed | this.__toggleSelected(o);
+            }
+            if (changed) {
+                selectionSnapshot = null;
+            }
         }
         if (changed) {
             fireSelectionChanged();
@@ -420,6 +417,7 @@ public class DataSet implements Cloneable {
         if (!selectedPrimitives.remove(primitive)) {
             selectedPrimitives.add(primitive);
         }
+        selectionSnapshot = null;
         return true;
     }
 
@@ -431,10 +429,18 @@ public class DataSet implements Cloneable {
      * @param fireSelectionChangeEvent true, if the selection change listeners are to be notified; false, otherwise
      */
     public void setSelected(Collection<? extends PrimitiveId> selection, boolean fireSelectionChangeEvent) {
-        boolean wasEmpty = selectedPrimitives.isEmpty();
-        selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
-        addSelected(selection, fireSelectionChangeEvent);
+        boolean wasEmpty;
+        synchronized (selectionLock) {
+            wasEmpty = selectedPrimitives.isEmpty();
+            selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
+            addSelected(selection, fireSelectionChangeEvent);
+            if (!wasEmpty && selectedPrimitives.isEmpty()) {
+                selectionSnapshot = null;
+            }
+        }
+
         if (!wasEmpty && selectedPrimitives.isEmpty() && fireSelectionChangeEvent) {
+            // If selection is not empty then event was already fired in addSelecteds
             fireSelectionChanged();
         }
     }
@@ -481,10 +487,15 @@ public class DataSet implements Cloneable {
      */
     public void addSelected(Collection<? extends PrimitiveId> selection, boolean fireSelectionChangeEvent) {
         boolean changed = false;
-        for (PrimitiveId id: selection) {
-            OsmPrimitive primitive = getPrimitiveByIdChecked(id);
-            if (primitive != null) {
-                changed = changed | selectedPrimitives.add(primitive);
+        synchronized (selectionLock) {
+            for (PrimitiveId id: selection) {
+                OsmPrimitive primitive = getPrimitiveByIdChecked(id);
+                if (primitive != null) {
+                    changed = changed | selectedPrimitives.add(primitive);
+                }
+            }
+            if (changed) {
+                selectionSnapshot = null;
             }
         }
         if (fireSelectionChangeEvent && changed) {
@@ -501,10 +512,15 @@ public class DataSet implements Cloneable {
     }
     public void clearSelection(Collection<? extends PrimitiveId> list) {
         boolean changed = false;
-        for (PrimitiveId id:list) {
-            OsmPrimitive primitive = getPrimitiveById(id);
-            if (primitive != null) {
-                changed = changed | selectedPrimitives.remove(primitive);
+        synchronized (selectionLock) {
+            for (PrimitiveId id:list) {
+                OsmPrimitive primitive = getPrimitiveById(id);
+                if (primitive != null) {
+                    changed = changed | selectedPrimitives.remove(primitive);
+                }
+            }
+            if (changed) {
+                selectionSnapshot = null;
             }
         }
         if (changed) {
@@ -513,7 +529,10 @@ public class DataSet implements Cloneable {
     }
     public void clearSelection() {
         if (!selectedPrimitives.isEmpty()) {
-            selectedPrimitives.clear();
+            synchronized (selectionLock) {
+                selectedPrimitives.clear();
+                selectionSnapshot = null;
+            }
             fireSelectionChanged();
         }
     }
@@ -886,14 +905,20 @@ public class DataSet implements Cloneable {
 
     private boolean cleanupDeleted(Iterator<? extends OsmPrimitive> it) {
         boolean changed = false;
-        while (it.hasNext()) {
-            OsmPrimitive primitive = it.next();
-            if (primitive.isDeleted()) {
-                selectedPrimitives.remove(primitive);
-                allPrimitives.remove(primitive);
-                primitive.setDataset(null);
-                changed = true;
-                it.remove();
+        synchronized (selectionLock) {
+            while (it.hasNext()) {
+                OsmPrimitive primitive = it.next();
+                if (primitive.isDeleted()) {
+                    selectedPrimitives.remove(primitive);
+                    selectionSnapshot = null;
+                    allPrimitives.remove(primitive);
+                    primitive.setDataset(null);
+                    changed = true;
+                    it.remove();
+                }
+            }
+            if (changed) {
+                selectionSnapshot = null;
             }
         }
         return changed;
