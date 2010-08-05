@@ -35,12 +35,12 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
     }
 
     public void register() {
-        DataSet.selListeners.add(this);
+        DataSet.addSelectionListener(this);
         MapView.addLayerChangeListener(this);
     }
 
     public void unregister() {
-        DataSet.selListeners.remove(this);
+        DataSet.removeSelectionListener(this);
         MapView.removeLayerChangeListener(this);
     }
 

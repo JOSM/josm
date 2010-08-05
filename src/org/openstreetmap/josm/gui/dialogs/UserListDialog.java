@@ -70,14 +70,14 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
     @Override
     public void showNotify() {
-        DataSet.selListeners.add(this);
+        DataSet.addSelectionListener(this);
         MapView.addLayerChangeListener(this);
     }
 
     @Override
     public void hideNotify() {
         MapView.removeLayerChangeListener(this);
-        DataSet.selListeners.remove(this);
+        DataSet.removeSelectionListener(this);
     }
 
     protected JPanel buildButtonRow() {

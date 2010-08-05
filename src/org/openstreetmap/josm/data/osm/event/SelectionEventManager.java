@@ -48,7 +48,7 @@ public class SelectionEventManager implements SelectionChangedListener {
     private final CopyOnWriteArrayList<ListenerInfo> normalListeners = new CopyOnWriteArrayList<ListenerInfo>();
 
     public SelectionEventManager() {
-        DataSet.selListeners.add(this);
+        DataSet.addSelectionListener(this);
     }
 
     public void addSelectionListener(SelectionChangedListener listener, FireMode fireMode) {

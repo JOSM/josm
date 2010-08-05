@@ -201,7 +201,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         this.setAssociatedFile(associatedFile);
         conflicts = new ConflictCollection();
         data.addDataSetListener(new DataSetListenerAdapter(this));
-        DataSet.selListeners.add(this);
+        DataSet.addSelectionListener(this);
     }
 
     /**
@@ -652,7 +652,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
 
     @Override
     public void destroy() {
-        DataSet.selListeners.remove(this);
+        DataSet.removeSelectionListener(this);
     }
 
     public void processDatasetEvent(AbstractDatasetChangedEvent event) {

@@ -49,6 +49,7 @@ public class DatasetCollection<T extends OsmPrimitive> extends AbstractCollectio
 
     private final Collection<? extends OsmPrimitive> primitives;
     private final Predicate<OsmPrimitive> predicate;
+    int size = -1;
 
     public DatasetCollection(Collection<? extends OsmPrimitive> primitives, Predicate<OsmPrimitive> predicate) {
         this.primitives = primitives;
@@ -62,11 +63,13 @@ public class DatasetCollection<T extends OsmPrimitive> extends AbstractCollectio
 
     @Override
     public int size() {
-        int size = 0;
-        Iterator<T> it = iterator();
-        while (it.hasNext()) {
-            size++;
-            it.next();
+        if (size == -1) {
+            size = 0;
+            Iterator<T> it = iterator();
+            while (it.hasNext()) {
+                size++;
+                it.next();
+            }
         }
         return size;
     }

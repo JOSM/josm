@@ -95,7 +95,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
             Main.unregisterActionShortcut(sc);
         }
         MapView.removeLayerChangeListener(layerChangeAdapter);
-        DataSet.selListeners.remove(selectionChangeAdapter);
+        DataSet.removeSelectionListener(selectionChangeAdapter);
     }
 
     private void setHelpId() {
@@ -130,7 +130,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
         layerChangeAdapter = new LayerChangeAdapter();
         selectionChangeAdapter = new SelectionChangeAdapter();
         MapView.addLayerChangeListener(layerChangeAdapter);
-        DataSet.selListeners.add(selectionChangeAdapter);
+        DataSet.addSelectionListener(selectionChangeAdapter);
         initEnabledState();
     }
 

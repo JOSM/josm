@@ -72,12 +72,12 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     }
 
     public void register() {
-        DataSet.selListeners.add(this);
+        DataSet.addSelectionListener(this);
         getLayer().data.addDataSetListener(this);
     }
 
     public void unregister() {
-        DataSet.selListeners.remove(this);
+        DataSet.removeSelectionListener(this);
         getLayer().data.removeDataSetListener(this);
     }
 

@@ -114,7 +114,7 @@ public class ChangesetDialog extends ToggleDialog{
         // events
         ChangesetCache.getInstance().addChangesetCacheListener(inSelectionModel);
         MapView.addEditLayerChangeListener(inSelectionModel);
-        DataSet.selListeners.add(inSelectionModel);
+        DataSet.addSelectionListener(inSelectionModel);
 
         // let the model for changesets in the current layer listen to various
         // events and bootstrap it's content
@@ -140,7 +140,7 @@ public class ChangesetDialog extends ToggleDialog{
         // listener
         //
         MapView.removeEditLayerChangeListener(inSelectionModel);
-        DataSet.selListeners.remove(inSelectionModel);
+        DataSet.removeSelectionListener(inSelectionModel);
     }
 
     @Override

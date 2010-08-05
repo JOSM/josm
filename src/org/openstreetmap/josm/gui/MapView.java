@@ -221,7 +221,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         });
 
         // listend to selection changes to redraw the map
-        DataSet.selListeners.add(new SelectionChangedListener(){
+        DataSet.addSelectionListener(new SelectionChangedListener(){
             public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
                 repaint();
             }

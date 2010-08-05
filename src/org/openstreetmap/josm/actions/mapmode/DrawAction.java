@@ -217,7 +217,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.mapView.addMouseListener(this);
         Main.map.mapView.addMouseMotionListener(this);
         Main.map.mapView.addTemporaryLayer(this);
-        DataSet.selListeners.add(this);
+        DataSet.addSelectionListener(this);
 
         try {
             Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
@@ -232,7 +232,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.mapView.removeMouseListener(this);
         Main.map.mapView.removeMouseMotionListener(this);
         Main.map.mapView.removeTemporaryLayer(this);
-        DataSet.selListeners.remove(this);
+        DataSet.removeSelectionListener(this);
         removeHighlighting();
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);

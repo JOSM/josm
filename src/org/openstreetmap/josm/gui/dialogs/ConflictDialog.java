@@ -120,7 +120,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
     @Override
     public void showNotify() {
-        DataSet.selListeners.add(this);
+        DataSet.addSelectionListener(this);
         MapView.addEditLayerChangeListener(this, true);
         refreshView();
     }
@@ -128,7 +128,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
     @Override
     public void hideNotify() {
         MapView.removeEditLayerChangeListener(this);
-        DataSet.selListeners.remove(this);
+        DataSet.removeSelectionListener(this);
     }
 
     /**
