@@ -18,6 +18,8 @@ public class LanguageInfo {
         String code = getJOSMLocaleCode(locale);
         if (code.length() == 2) {
             if (code.equals("en")) return "";
+        } else if (code.equals("zh_TW") || code.equals("zh_CN")) {
+            /* do nothing */
         } else if (code.matches("[^_]+_[^_]+")) {
             code = code.substring(0,2);
         } else {
@@ -49,7 +51,7 @@ public class LanguageInfo {
     }
 
     /**
-     * Replies the local code used by JOSM for a given locale.
+     * Replies the locale code used by JOSM for a given locale.
      *
      * In most cases JOSM uses the 2-character ISO 639 language code ({@see Locale#getLanguage()}
      * to identify the locale of a localized resource, but in some cases it may use the
@@ -64,7 +66,7 @@ public class LanguageInfo {
         if (full.equals("iw_IL"))
             return "he";
         /* list of non-single codes supported by josm */
-        else if (full.equals("en_GB") || full.equals("en_AU"))
+        else if (full.equals("en_GB") || full.equals("pt_BR") || full.equals("en_AU") || full.equals("zh_TW") || full.equals("zh_CN"))
             return full;
 
         return locale.getLanguage();
