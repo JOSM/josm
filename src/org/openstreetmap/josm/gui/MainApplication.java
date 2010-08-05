@@ -1,10 +1,11 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
-//Licence: GPL
 package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -22,6 +23,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
@@ -133,6 +138,7 @@ public class MainApplication extends Main {
      */
     public static void main(final String[] argArray) {
         I18n.init();
+        checkJava6();
 
         Policy.setPolicy(new Policy() {
             // Permissions for plug-ins loaded when josm is started via webstart
@@ -276,6 +282,7 @@ public class MainApplication extends Main {
      * see something with an expiry date in the past, remove it from the list.
      */
     public static void removeObsoletePreferences() {
+
         String[] obsolete = {
                 "proxy.anonymous", // 01/2010 - not needed anymore. Can be removed mid 2010
                 "proxy.enable"     // 01/2010 - not needed anymore. Can be removed mid 2010
@@ -286,5 +293,39 @@ public class MainApplication extends Main {
                 System.out.println(tr("Preference setting {0} has been removed since it is no longer used.", key));
             }
         }
+    }
+
+    private static void checkJava6() {
+        String version = System.getProperty("java.version");
+        if (version != null) {
+            if (version.startsWith("1.6") || version.startsWith("6"))
+                return;
+            if (version.startsWith("1.5") || version.startsWith("5")) {
+                JLabel ho = new JLabel("<html>"+
+                    tr("<h2>JOSM requires Java version 6.</h2>"+
+                        "Detected Java version: {0}.<br>"+
+                        "You can <ul><li>update your Java (JRE) or</li>"+
+                        "<li>use an earlier (Java 5 compatible) version of JOSM.</li></ul>"+
+                        "More Info:", version)+"</html>");
+                JTextArea link = new JTextArea("http://josm.openstreetmap.de/wiki/Help/SystemRequirements");
+                link.setEditable(false);
+                link.setBackground(panel.getBackground());
+                JPanel panel = new JPanel(new GridBagLayout());
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.gridwidth = GridBagConstraints.REMAINDER;
+                gbc.anchor = GridBagConstraints.WEST;
+                gbc.weightx = 1.0;
+                panel.add(ho, gbc);
+                panel.add(link, gbc);
+                final String EXIT = tr("Exit JOSM");
+                final String CONTINUE = tr("Continue, try anyway");
+                int ret = JOptionPane.showOptionDialog(null, panel, tr("Error"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, new String[] {EXIT, CONTINUE}, EXIT);
+                if (ret == 0) {
+                    System.exit(0);
+                }
+                return;
+            }
+        }
+        System.err.println("Error: Could not recognize Java Version: "+version);
     }
 }
