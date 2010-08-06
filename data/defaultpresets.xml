@@ -1593,47 +1593,137 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Hotel" />
             <key key="tourism" value="hotel" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" default="" delete_if_empty="true" />
+            <space />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" default="" delete_if_empty="true" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,3/h,8/d,no" default="" delete_if_empty="true" />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" default="" delete_if_empty="true" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+            <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
         <item name="Motel" icon="presets/bed.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=motel" />
             <label text="Edit Motel" />
             <key key="tourism" value="motel" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" default="" delete_if_empty="true" />
+            <space />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" default="" delete_if_empty="true" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,3/h,8/d,no" default="" delete_if_empty="true" />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" default="" delete_if_empty="true" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+            <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
         <item name="Guest House" icon="presets/bed.png" type="node,closedway">
             <label text="Edit Guest House" />
             <key key="tourism" value="guest_house" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" default="" delete_if_empty="true" />
+            <space />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" default="" delete_if_empty="true" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,3/h,8/d,no" default="" delete_if_empty="true" />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" default="" delete_if_empty="true" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+            <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
         <item name="Chalet" icon="presets/empty.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=chalet" />
             <label text="Edit Chalet" />
             <key key="tourism" value="chalet" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" default="" delete_if_empty="true" />
+            <space />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" default="" delete_if_empty="true" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,3/h,8/d,no" default="" delete_if_empty="true" />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" default="" delete_if_empty="true" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+            <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
         <item name="Hostel" icon="presets/hostel.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=hostel" />
             <label text="Edit Hostel" />
             <key key="tourism" value="hostel" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" default="" delete_if_empty="true" />
+            <space />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" default="" delete_if_empty="true" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,3/h,8/d,no" default="" delete_if_empty="true" />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" default="" delete_if_empty="true" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+            <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
         <item name="Alpine Hut" icon="presets/hostel.png" type="node,closedway">
             <label text="Edit Alpine Hut" />
             <key key="tourism" value="alpine_hut" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <text key="ele" text="Elevation" default="" delete_if_empty="true" />
+            <space />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" default="" delete_if_empty="true" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,3/h,8/d,no" default="" delete_if_empty="true" />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" default="" delete_if_empty="true" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+            <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
         <item name="Caravan Site" icon="presets/caravan2.png" type="node,closedway">
             <label text="Edit Caravan Site" />
             <key key="tourism" value="caravan_site" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" default="" delete_if_empty="true" />
+            <space />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" default="" delete_if_empty="true" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,3/h,8/d,no" default="" delete_if_empty="true" />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" default="" delete_if_empty="true" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+            <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
         <item name="Camping Site" icon="presets/tent.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=camp_site" />
             <label text="Edit Camping Site" />
             <key key="tourism" value="camp_site" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" default="" delete_if_empty="true" />
+            <space />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" default="" delete_if_empty="true" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,3/h,8/d,no" default="" delete_if_empty="true" />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" default="" delete_if_empty="true" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+            <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Accomodation -->
     <group name="Food+Drinks" icon="presets/restaurant.png">
@@ -1642,38 +1732,110 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Restaurant" />
             <key key="amenity" value="restaurant" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebab,turkish,asian,thai,mexican,japanese,french,sandwich,sushi" default="" delete_if_empty="true" />
-            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
             <check key="microbrewery" text="Microbrewery" default="off" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+            <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" default="" delete_if_empty="true" />
+            <space />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" default="" delete_if_empty="true" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,3/h,8/d,no" default="" delete_if_empty="true" />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" default="" delete_if_empty="true" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+            <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
         <item name="Fast Food" icon="presets/fastfood.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=fast_food" />
             <label text="Edit Fast Food Restaurant" />
             <key key="amenity" value="fast_food" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebab,turkish,asian,thai,mexican,japanese,french,sandwich,sushi,fish_and_chips,chicken" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+            <space />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" default="" delete_if_empty="true" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,3/h,8/d,no" default="" delete_if_empty="true" />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" default="" delete_if_empty="true" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+            <text key="email" text="Email Address" default="" delete_if_empty="true" />
+        </item>
+        <item name="Food Court" icon="presets/fastfood.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=food_court" />
+            <label text="Edit Food Court" />
+            <key key="amenity" value="food_court" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+            <space />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" default="" delete_if_empty="true" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,3/h,8/d,no" default="" delete_if_empty="true" />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" default="" delete_if_empty="true" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+            <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
         <item name="Cafe" icon="presets/cafe.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=cafe" />
             <label text="Edit Cafe" />
             <key key="amenity" value="cafe" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+            <space />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" default="" delete_if_empty="true" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,3/h,8/d,no" default="" delete_if_empty="true" />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" default="" delete_if_empty="true" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+            <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
         <item name="Pub" icon="presets/pub.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=pub" />
             <label text="Edit Pub" />
             <key key="amenity" value="pub" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <check key="microbrewery" text="Microbrewery" default="off" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+            <space />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" default="" delete_if_empty="true" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,3/h,8/d,no" default="" delete_if_empty="true" />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" default="" delete_if_empty="true" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+            <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
         <item name="Biergarten" icon="presets/biergarten.png" type="node,closedway">
             <label text="Edit Biergarten" />
             <key key="amenity" value="biergarten" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+            <space />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" default="" delete_if_empty="true" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,3/h,8/d,no" default="" delete_if_empty="true" />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" default="" delete_if_empty="true" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+            <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
         <item name="Bar" icon="presets/bar.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bar" />
@@ -1681,6 +1843,16 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="amenity" value="bar" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+            <space />
+            <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" default="" delete_if_empty="true" />
+            <combo key="internet_access:fee" text="Internet access fee" values="yes,3/h,8/d,no" default="" delete_if_empty="true" />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" default="" delete_if_empty="true" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+            <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
         <item name="Nightclub" icon="presets/bar.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=nightclub" />
@@ -1688,6 +1860,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="amenity" value="nightclub" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+            <space />
+            <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" default="" delete_if_empty="true" />
+            <combo key="wheelchair" text="Wheelchairs" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+            <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Food+Drinks -->
     <group name="Tourism" icon="presets/State_Public.png">
