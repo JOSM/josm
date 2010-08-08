@@ -378,7 +378,7 @@ public class OsmReader {
                 // do nothing
             } else if (action.equals("delete")) {
                 current.setDeleted(true);
-                current.setModified(true);
+                current.setModified(current.isVisible());
             } else if (action.equals("modify")) {
                 current.setModified(true);
             }
