@@ -899,7 +899,7 @@ public class DataSet implements Cloneable {
         highlightUpdateCount++;
     }
 
-    public void clenupDeletedPrimitives() {
+    public void cleanupDeletedPrimitives() {
         beginUpdate();
         try {
             if (cleanupDeleted(nodes.iterator())

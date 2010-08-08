@@ -92,8 +92,8 @@ public class UploadSelectionAction extends JosmAction{
         UploadHullBuilder builder = new UploadHullBuilder();
         UploadSelectionDialog dialog = new UploadSelectionDialog();
         Collection<OsmPrimitive> modifiedCandidates = getModifiedPrimitives(getEditLayer().data.getSelected());
-        Collection<OsmPrimitive> deletedCandiates = getDeletedPrimitives(getEditLayer().data);
-        if (modifiedCandidates.isEmpty() && deletedCandiates.isEmpty()) {
+        Collection<OsmPrimitive> deletedCandidates = getDeletedPrimitives(getEditLayer().data);
+        if (modifiedCandidates.isEmpty() && deletedCandidates.isEmpty()) {
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("No changes to upload."),
@@ -104,7 +104,7 @@ public class UploadSelectionAction extends JosmAction{
         }
         dialog.populate(
                 modifiedCandidates,
-                deletedCandiates
+                deletedCandidates
         );
         dialog.setVisible(true);
         if (dialog.isCanceled())

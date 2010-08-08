@@ -397,7 +397,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
         Main.main.undoRedo.clean(this);
 
         // if uploaded, clean the modified flags as well
-        data.clenupDeletedPrimitives();
+        data.cleanupDeletedPrimitives();
         for (OsmPrimitive p: data.allPrimitives()) {
             if (processed.contains(p)) {
                 p.setModified(false);

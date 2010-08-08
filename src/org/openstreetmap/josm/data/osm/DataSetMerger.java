@@ -93,9 +93,9 @@ public class DataSetMerger {
             // yet but which is equal in its semantic attributes
             //
             Collection<? extends OsmPrimitive> candidates = null;
-            switch(source.getType()) {
+            switch (source.getType()) {
             case NODE: candidates = targetDataSet.getNodes(); break;
-            case WAY: candidates  =targetDataSet.getWays(); break;
+            case WAY: candidates  = targetDataSet.getWays(); break;
             case RELATION: candidates = targetDataSet.getRelations(); break;
             default: throw new AssertionError();
             }
@@ -133,7 +133,7 @@ public class DataSetMerger {
         objectsWithChildrenToMerge.add(source.getPrimitiveId());
     }
 
-    protected OsmPrimitive getMergeTarget(OsmPrimitive mergeSource) throws IllegalStateException{
+    protected OsmPrimitive getMergeTarget(OsmPrimitive mergeSource) throws IllegalStateException {
         PrimitiveId targetId = mergedMap.get(mergeSource.getPrimitiveId());
         if (targetId == null)
             return null;
