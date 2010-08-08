@@ -5,7 +5,7 @@ import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthProvider;
-import oauth.signpost.signature.SignatureMethod;
+import oauth.signpost.signature.HmacSha1MessageSigner;
 
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -133,7 +133,8 @@ public class OAuthParameters {
      * @return the consumer
      */
     public OAuthConsumer buildConsumer() {
-        return new DefaultOAuthConsumer(consumerKey, consumerSecret, SignatureMethod.HMAC_SHA1);
+        OAuthConsumer consumer = new DefaultOAuthConsumer(consumerKey, consumerSecret);
+        return consumer;
     }
 
     /**
@@ -146,7 +147,6 @@ public class OAuthParameters {
     public OAuthProvider buildProvider(OAuthConsumer consumer) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(consumer, "consumer");
         return new DefaultOAuthProvider(
-                consumer,
                 requestTokenUrl,
                 accessTokenUrl,
                 authoriseUrl

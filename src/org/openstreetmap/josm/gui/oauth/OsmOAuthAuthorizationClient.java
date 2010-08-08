@@ -129,7 +129,7 @@ public class OsmOAuthAuthorizationClient {
         try {
             monitor.beginTask("");
             monitor.indeterminateSubTask(tr("Retrieving OAuth Request Token from ''{0}''", oauthProviderParameters.getRequestTokenUrl()));
-            provider.retrieveRequestToken(null);
+            provider.retrieveRequestToken(consumer, null);
             return OAuthToken.createToken(consumer);
         } catch(OAuthCommunicationException e){
             if (canceled)
@@ -162,7 +162,7 @@ public class OsmOAuthAuthorizationClient {
         try {
             monitor.beginTask("");
             monitor.indeterminateSubTask(tr("Retrieving OAuth Access Token from ''{0}''", oauthProviderParameters.getAccessTokenUrl()));
-            provider.retrieveAccessToken(null);
+            provider.retrieveAccessToken(consumer, null);
             return OAuthToken.createToken(consumer);
         } catch(OAuthCommunicationException e){
             if (canceled)
