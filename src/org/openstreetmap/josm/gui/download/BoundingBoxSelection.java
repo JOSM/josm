@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -110,7 +111,16 @@ public class BoundingBoxSelection implements DownloadSelection {
         dlg.add(new JLabel(tr("max lon")), GBC.std().insets(10,0,5,0));
         dlg.add(latlon[3], GBC.eol());
 
-        dlg.add(new JLabel(tr("URL from www.openstreetmap.org (you can paste an URL here to download the area)")), GBC.eol().insets(10,20,5,0));
+        final JButton btnClear = new JButton(tr("Clear textarea"));
+        btnClear.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent arg0) {
+                tfOsmUrl.setText("");
+            }
+        });
+        dlg.add(btnClear, GBC.eol().insets(10,20,0,0));
+
+        dlg.add(new JLabel(tr("URL from www.openstreetmap.org (you can paste an URL here to download the area)")), GBC.eol().insets(10,5,5,0));
         dlg.add(tfOsmUrl, GBC.eop().insets(10,0,5,0).fill());
         tfOsmUrl.addMouseListener(
                 new MouseAdapter() {
