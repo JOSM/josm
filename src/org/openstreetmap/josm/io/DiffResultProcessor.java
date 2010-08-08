@@ -125,6 +125,8 @@ public class DiffResultProcessor  {
                 if (!p.isDeleted()) {
                     p.setOsmId(entry.new_id, entry.new_version);
                     p.setVisible(true);
+                } else {
+                    p.setVisible(false);
                 }
                 if (cs != null && !cs.isNew()) {
                     p.setChangesetId(cs.getId());

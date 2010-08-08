@@ -234,7 +234,6 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                         writer = new OsmServerWriter();
                     }
                     writer.uploadOsm(strategy, toUpload.getPrimitives(), changeset, getProgressMonitor().createSubTaskMonitor(1, false));
-                    processedPrimitives.addAll(writer.getProcessedPrimitives());
 
                     // if we get here we've successfully uploaded the data. Exit the loop.
                     //
@@ -242,7 +241,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                 } catch(OsmTransferCancelledException e) {
                     e.printStackTrace();
                     uploadCancelled = true;
-                    return;
+                    break uploadloop;
                 } catch(OsmApiPrimitiveGoneException e) {
                     // try to recover from  410 Gone
                     //
@@ -272,6 +271,9 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                         break uploadloop;
                     }
                 } finally {
+                    if (writer != null) {
+                        processedPrimitives.addAll(writer.getProcessedPrimitives());
+                    }
                     synchronized(this) {
                         writer = null;
                     }
@@ -285,11 +287,11 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
         } catch (Exception e) {
             if (uploadCancelled) {
                 System.out.println(tr("Ignoring caught exception because upload is canceled. Exception is: {0}", e.toString()));
-                return;
+            } else {
+                lastException = e;
             }
-            lastException = e;
         }
-        if (uploadCancelled) return;
+        if (uploadCancelled && processedPrimitives.isEmpty()) return;
         cleanupAfterUpload();
     }
 
