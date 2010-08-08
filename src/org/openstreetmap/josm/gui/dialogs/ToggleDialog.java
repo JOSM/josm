@@ -461,7 +461,9 @@ public class ToggleDialog extends JPanel implements Helpful {
         }
 
         protected void rememberGeometry() {
-            Main.pref.put(preferencePrefix+".bounds", detachedDialog.getX()+","+detachedDialog.getY()+","+detachedDialog.getWidth()+","+detachedDialog.getHeight());
+            if (detachedDialog != null) {
+                Main.pref.put(preferencePrefix+".bounds", detachedDialog.getX()+","+detachedDialog.getY()+","+detachedDialog.getWidth()+","+detachedDialog.getHeight());
+            }
         }
     }
 
