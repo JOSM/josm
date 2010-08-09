@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -58,7 +59,8 @@ public class DrawingPreference implements PreferenceSetting {
     private JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
     private JCheckBox useAntialiasing = new JCheckBox(tr("Smooth map graphics (antialiasing)"));
     private JCheckBox makeAutoMarkers = new JCheckBox(tr("Create markers when reading GPX."));
-    private JComboBox waypointLabel = new JComboBox(new String[] {tr("Auto"), tr("Name"), tr("Desc"), tr("Both"), tr("None")});
+    private JComboBox waypointLabel = new JComboBox(new String[] {tr("Auto"), /* gpx data field name */ trc("gpx_field", "Name"),
+                                      /* gpx data field name */ trc("gpx_field", "Desc(ription)"), tr("Both"), tr("None")});
 
     public void addGui(PreferenceTabbedPane gui) {
         gui.display.setPreferredSize(new Dimension(400,600));
