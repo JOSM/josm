@@ -1340,6 +1340,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
                 <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+                <check key="shop" text="With kiosk" value_on="kiosk" value_off="" default="off" delete_if_empty="true" />
                 <label text="Fuel types:" />
                 <check key="fuel:diesel" text="Diesel" default="off" delete_if_empty="true" />
                 <check key="fuel:biodiesel" text="Bio Diesel" default="off" delete_if_empty="true" />
@@ -1355,7 +1356,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="fuel:cng" text="CNG (Compressed Natural Gas)" default="off" delete_if_empty="true" />
                 <check key="fuel:1_25" text="1/25 mix (mofa/moped)" default="off" delete_if_empty="true" />
                 <check key="fuel:1_50" text="1/50 mix (mofa/moped)" default="off" delete_if_empty="true" />
-                <check key="shop" text="With kiosk" value_on="kiosk" value_off="" default="off" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Parking" icon="presets/parking.png" type="node,closedway">
