@@ -243,37 +243,19 @@ public class DataSet implements Cloneable {
                         tr("Unable to add primitive {0} to the dataset because it is already included", primitive.toString()));
 
             primitive.updatePosition(); // Set cached bbox for way and relation (required for reindexWay and reinexRelation to work properly)
+            boolean success = false;
             if (primitive instanceof Node) {
-                nodes.add((Node) primitive);
+                success = nodes.add((Node) primitive);
             } else if (primitive instanceof Way) {
-                ways.add((Way) primitive);
+                success = ways.add((Way) primitive);
             } else if (primitive instanceof Relation) {
-                relations.add((Relation) primitive);
+                success = relations.add((Relation) primitive);
             }
+            if (!success)
+                throw new RuntimeException("failed to add primitive: "+primitive);
             allPrimitives.add(primitive);
             primitive.setDataset(this);
             firePrimitivesAdded(Collections.singletonList(primitive), false);
-        } finally {
-            endUpdate();
-        }
-    }
-
-    public OsmPrimitive addPrimitive(PrimitiveData data) {
-        beginUpdate();
-        try {
-            OsmPrimitive result;
-            if (data instanceof NodeData) {
-                result = new Node();
-            } else if (data instanceof WayData) {
-                result = new Way();
-            } else if (data instanceof RelationData) {
-                result = new Relation();
-            } else
-                throw new AssertionError();
-            result.setDataset(this);
-            result.load(data);
-            addPrimitive(result);
-            return result;
         } finally {
             endUpdate();
         }
@@ -294,13 +276,16 @@ public class DataSet implements Cloneable {
             OsmPrimitive primitive = getPrimitiveByIdChecked(primitiveId);
             if (primitive == null)
                 return;
+            boolean success = false;
             if (primitive instanceof Node) {
-                nodes.remove(primitive);
+                success = nodes.remove((Node) primitive);
             } else if (primitive instanceof Way) {
-                ways.remove(primitive);
+                success = ways.remove((Way) primitive);
             } else if (primitive instanceof Relation) {
-                relations.remove(primitive);
+                success = relations.remove((Relation) primitive);
             }
+            if (!success)
+                throw new RuntimeException("failed to remove primitive: "+primitive);
             synchronized (selectionLock) {
                 selectedPrimitives.remove(primitive);
                 selectionSnapshot = null;
@@ -721,7 +706,7 @@ public class DataSet implements Cloneable {
     }
 
     /**
-     * removes all references from from other primitives  to the
+     * removes all references from other primitives to the
      * referenced primitive
      *
      * @param referencedPrimitive the referenced primitive
@@ -761,9 +746,11 @@ public class DataSet implements Cloneable {
     }
 
     private void reindexNode(Node node, LatLon newCoor, EastNorth eastNorth) {
-        nodes.remove(node);
+        if (!nodes.remove(node))
+            throw new RuntimeException("Reindexing node failed to remove");
         node.setCoorInternal(newCoor, eastNorth);
-        nodes.add(node);
+        if (!nodes.add(node))
+            throw new RuntimeException("Reindexing node failed to add");
         for (OsmPrimitive primitive: node.getReferrers()) {
             if (primitive instanceof Way) {
                 reindexWay((Way)primitive);
@@ -775,9 +762,11 @@ public class DataSet implements Cloneable {
 
     private void reindexWay(Way way) {
         BBox before = way.getBBox();
-        ways.remove(way);
+        if (!ways.remove(way))
+            throw new RuntimeException("Reindexing way failed to remove");
         way.updatePosition();
-        ways.add(way);
+        if (!ways.add(way))
+            throw new RuntimeException("Reindexing way failed to add");
         if (!way.getBBox().equals(before)) {
             for (OsmPrimitive primitive: way.getReferrers()) {
                 reindexRelation((Relation)primitive);
