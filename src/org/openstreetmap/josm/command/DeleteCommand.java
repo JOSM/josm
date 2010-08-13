@@ -487,7 +487,7 @@ public class DeleteCommand extends Command {
                     // connection.
                     tr("You are about to delete incomplete objects."
                             + "<br>"
-                            + "This will cause problems because you don't see the real object."
+                            + "This will cause problems because you don''t see the real object."
                             + "<br>" + "Do you really want to delete?") + "</html>"));
             boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
                     "delete_incomplete",

@@ -398,6 +398,13 @@ public class DataSet implements Cloneable {
         return new DatasetCollection<Relation>(getSelected(), OsmPrimitive.relationPredicate);
     }
 
+    /**
+     * @return whether the selection is empty or not
+     */
+    public boolean selectionEmpty() {
+        return selectedPrimitives.isEmpty();
+    }
+
     public boolean isSelected(OsmPrimitive osm) {
         return selectedPrimitives.contains(osm);
     }

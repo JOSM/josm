@@ -54,6 +54,7 @@ import org.openstreetmap.josm.actions.OrthogonalizeAction;
 import org.openstreetmap.josm.actions.PasteAction;
 import org.openstreetmap.josm.actions.PasteTagsAction;
 import org.openstreetmap.josm.actions.PreferencesAction;
+import org.openstreetmap.josm.actions.PurgeAction;
 import org.openstreetmap.josm.actions.RedoAction;
 import org.openstreetmap.josm.actions.ReverseWayAction;
 import org.openstreetmap.josm.actions.SaveAction;
@@ -122,6 +123,7 @@ public class MainMenu extends JMenuBar {
     public final JosmAction pasteTags = new PasteTagsAction();
     public final JosmAction duplicate = new DuplicateAction();
     public final JosmAction delete = new DeleteAction();
+    public final JosmAction purge = new PurgeAction();
     public final JosmAction merge = new MergeLayerAction();
     public final JosmAction mergeSelected = new MergeSelectionAction();
     public final JosmAction selectAll = new SelectAllAction();
@@ -246,6 +248,7 @@ public class MainMenu extends JMenuBar {
         add(editMenu, pasteTags);
         add(editMenu, duplicate);
         add(editMenu, delete);
+        add(editMenu, purge);
         editMenu.addSeparator();
         add(editMenu,merge);
         add(editMenu,mergeSelected);

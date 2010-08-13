@@ -1100,9 +1100,11 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             if(select) {
                 putValue(NAME, tr("Select relation"));
                 putValue(SHORT_DESCRIPTION, tr("Select relation in main selection."));
+                putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
             } else {
                 putValue(NAME, tr("Select in relation list"));
                 putValue(SHORT_DESCRIPTION, tr("Select relation in relation list."));
+                putValue(SMALL_ICON, ImageProvider.get("dialogs", "relationlist"));
             }
         }
 

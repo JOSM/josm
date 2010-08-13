@@ -255,6 +255,7 @@ public class MainApplication extends Main {
             );
             dialog.setContent(tr("JOSM found {0} unsaved osm data layers. It looks like JOSM crashed last time. Do you want to restore data?",
                     unsavedLayers.size()));
+            dialog.setIcon(JOptionPane.INFORMATION_MESSAGE);
             dialog.setButtonIcons(new String[] {"ok.png", "cancel.png"});
             dialog.showDialog();
             if (dialog.getValue() == 1) {
@@ -298,7 +299,8 @@ public class MainApplication extends Main {
     private static void checkJava6() {
         String version = System.getProperty("java.version");
         if (version != null) {
-            if (version.startsWith("1.6") || version.startsWith("6"))
+            if (version.startsWith("1.6") || version.startsWith("6") ||
+                    version.startsWith("1.7") || version.startsWith("7"))
                 return;
             if (version.startsWith("1.5") || version.startsWith("5")) {
                 JLabel ho = new JLabel("<html>"+
