@@ -28,8 +28,8 @@ public class I18n {
     private static PluralMode pluralMode = PluralMode.MODE_NOTONE; /* english default */
 
     /* Localization keys for file chooser (and color chooser). */
-    private static final String[] jFileChooserLocalizationKeys = new String[] {
-        /* windows laf */
+    private static final String[] javaInternalMessageKeys = new String[] {
+        /* JFileChooser windows laf */
         "FileChooser.detailsViewActionLabelText",
         "FileChooser.detailsViewButtonAccessibleName",
         "FileChooser.detailsViewButtonToolTipText",
@@ -55,7 +55,7 @@ public class I18n {
         "FileChooser.upFolderToolTipText",
         "FileChooser.viewMenuLabelText",
 
-        /* gtk laf */
+        /* JFileChooser gtk laf */
         "FileChooser.acceptAllFileFilterText",
         "FileChooser.cancelButtonText",
         "FileChooser.cancelButtonToolTipText",
@@ -77,7 +77,7 @@ public class I18n {
         "FileChooser.saveButtonToolTipText",
         "FileChooser.saveDialogTitleText",
 
-        /* motif laf */
+        /* JFileChooser motif laf */
         //"FileChooser.cancelButtonText",
         //"FileChooser.cancelButtonToolTipText",
         "FileChooser.enterFileNameLabelText",
@@ -96,7 +96,7 @@ public class I18n {
         "FileChooser.updateButtonText",
         "FileChooser.updateButtonToolTipText",
 
-        /* color chooser */
+        /* gtk color chooser */
         "GTKColorChooserPanel.blueText",
         "GTKColorChooserPanel.colorNameText",
         "GTKColorChooserPanel.greenText",
@@ -104,7 +104,13 @@ public class I18n {
         "GTKColorChooserPanel.nameText",
         "GTKColorChooserPanel.redText",
         "GTKColorChooserPanel.saturationText",
-        "GTKColorChooserPanel.valueText"
+        "GTKColorChooserPanel.valueText",
+        
+        /* JOptionPane */
+        "OptionPane.okButtonText",
+        "OptionPane.yesButtonText",
+        "OptionPane.noButtonText",
+        "OptionPane.cancelButtonText"
     };
     private static HashMap<String, String> strings = null;
     private static HashMap<String, String[]> pstrings = null;
@@ -459,12 +465,12 @@ public class I18n {
      * For some locales (e.g. de, fr) translations are provided
      * by Java, but not for others (e.g. ru, uk).
      */
-    public static void fixJFileChooser() {
+    public static void translateJavaInternalMessages() {
         Locale l = Locale.getDefault();
 
         JFileChooser.setDefaultLocale(l);
         JColorChooser.setDefaultLocale(l);
-        for (String key : jFileChooserLocalizationKeys) {
+        for (String key : javaInternalMessageKeys) {
             String us = UIManager.getString(key, Locale.US);
             String loc = UIManager.getString(key, l);
             // only provide custom translation if it is not already localized by Java

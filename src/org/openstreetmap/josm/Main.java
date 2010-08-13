@@ -360,7 +360,7 @@ abstract public class Main {
         UIManager.put("OptionPane.cancelIcon", ImageProvider.get("cancel"));
         UIManager.put("OptionPane.noIcon", UIManager.get("OptionPane.cancelIcon"));
 
-        I18n.fixJFileChooser();
+        I18n.translateJavaInternalMessages();
 
         // init default coordinate format
         //
