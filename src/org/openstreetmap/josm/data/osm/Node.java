@@ -125,6 +125,13 @@ public final class Node extends OsmPrimitive {
         setEastNorth(eastNorth);
     }
 
+    @Override
+    void setDataset(DataSet dataSet) {
+        super.setDataset(dataSet);
+        if (!isIncomplete() && (getCoor() == null || getEastNorth() == null))
+            throw new DataIntegrityProblemException("Complete node with null coordinates: " + toString() + get3892DebugInfo());
+    }
+
     @Override public void visit(Visitor visitor) {
         visitor.visit(this);
     }
