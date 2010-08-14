@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.net.Authenticator;
 import java.net.ProxySelector;
 import java.security.AllPermission;
@@ -246,20 +247,19 @@ public class MainApplication extends Main {
         }
 
         AutosaveTask autosaveTask = new AutosaveTask();
-        List<OsmDataLayer> unsavedLayers = autosaveTask.getUnsavedLayers();
-        if (!unsavedLayers.isEmpty()) {
+        List<File> unsavedLayerFiles = autosaveTask.getUnsavedLayersFiles();
+        if (!unsavedLayerFiles.isEmpty()) {
             ExtendedDialog dialog = new ExtendedDialog(
                     Main.parent,
                     tr("Unsaved osm data"),
                     new String[] {tr("Restore"), tr("Cancel")}
             );
             dialog.setContent(tr("JOSM found {0} unsaved osm data layers. It looks like JOSM crashed last time. Do you want to restore data?",
-                    unsavedLayers.size()));
-            dialog.setIcon(JOptionPane.INFORMATION_MESSAGE);
+                    unsavedLayerFiles.size()));
             dialog.setButtonIcons(new String[] {"ok.png", "cancel.png"});
             dialog.showDialog();
             if (dialog.getValue() == 1) {
-                for (OsmDataLayer layer: unsavedLayers) {
+                for (OsmDataLayer layer: autosaveTask.getUnsavedLayers()) {
                     Main.main.addLayer(layer);
                 }
                 AutoScaleAction.autoScale("data");
@@ -304,11 +304,11 @@ public class MainApplication extends Main {
                 return;
             if (version.startsWith("1.5") || version.startsWith("5")) {
                 JLabel ho = new JLabel("<html>"+
-                    tr("<h2>JOSM requires Java version 6.</h2>"+
-                        "Detected Java version: {0}.<br>"+
-                        "You can <ul><li>update your Java (JRE) or</li>"+
-                        "<li>use an earlier (Java 5 compatible) version of JOSM.</li></ul>"+
-                        "More Info:", version)+"</html>");
+                        tr("<h2>JOSM requires Java version 6.</h2>"+
+                                "Detected Java version: {0}.<br>"+
+                                "You can <ul><li>update your Java (JRE) or</li>"+
+                                "<li>use an earlier (Java 5 compatible) version of JOSM.</li></ul>"+
+                                "More Info:", version)+"</html>");
                 JTextArea link = new JTextArea("http://josm.openstreetmap.de/wiki/Help/SystemRequirements");
                 link.setEditable(false);
                 link.setBackground(panel.getBackground());

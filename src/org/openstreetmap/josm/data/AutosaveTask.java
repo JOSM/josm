@@ -243,16 +243,23 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         changedDatasets.add(event.getDataset());
     }
 
-    public List<OsmDataLayer> getUnsavedLayers() {
-        List<OsmDataLayer> result = new ArrayList<OsmDataLayer>();
-
+    public List<File> getUnsavedLayersFiles() {
+        List<File> result = new ArrayList<File>();
         File[] files = autosaveDir.listFiles();
         if (files == null)
             return result;
-        for (File f: autosaveDir.listFiles()) {
-            if (f.isDirectory()) {
-                continue;
+        for (File file: files) {
+            if (file.isFile()) {
+                result.add(file);
             }
+        }
+        return result;
+    }
+
+    public List<OsmDataLayer> getUnsavedLayers() {
+        List<OsmDataLayer> result = new ArrayList<OsmDataLayer>();
+
+        for (File f: getUnsavedLayersFiles()) {
             try {
                 DataSet ds = OsmReader.parseDataSet(new FileInputStream(f), NullProgressMonitor.INSTANCE);
                 String layerName = f.getName();
