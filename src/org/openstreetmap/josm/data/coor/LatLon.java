@@ -202,7 +202,7 @@ public class LatLon extends Coordinate {
     /**
      * Returns this lat/lon pair in human-readable format.
      *
-     * @return String in the format "lat=1.23456°, lon=2.34567°"
+     * @return String in the format "lat=1.23456 deg, lon=2.34567 deg"
      */
     public String toDisplayString() {
         NumberFormat nf = NumberFormat.getInstance();

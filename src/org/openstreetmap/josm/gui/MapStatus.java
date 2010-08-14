@@ -627,10 +627,10 @@ public class MapStatus extends JPanel implements Helpful {
         helpText.setToolTipText(t);
     }
     public void setAngle(double a) {
-        angleText.setText(a < 0 ? "--" : Math.round(a*10)/10.0 + " °");
+        angleText.setText(a < 0 ? "--" : Math.round(a*10)/10.0 + " \u00B0");
     }
     public void setHeading(double h) {
-        headingText.setText(h < 0 ? "--" : Math.round(h*10)/10.0 + " °");
+        headingText.setText(h < 0 ? "--" : Math.round(h*10)/10.0 + " \u00B0");
     }
     public void setDist(double dist) {
         distText.setText(dist < 0 ? "--" : NavigatableComponent.getDistText(dist));

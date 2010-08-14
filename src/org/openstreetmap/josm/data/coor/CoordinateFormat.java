@@ -15,7 +15,7 @@ public enum CoordinateFormat {
     DECIMAL_DEGREES (tr("Decimal Degrees")),
 
     /**
-     * the degrees/minutes/seconds format 9° 99" 99'
+     * the degrees/minutes/seconds format 9 deg 99 min 99 sec
      */
     DEGREES_MINUTES_SECONDS (tr("deg\u00B0 min'' sec\"")),
     

@@ -677,7 +677,7 @@ public class Preferences {
     public boolean isCollection(String key, boolean def) {
         String s = get(key);
         if (s != null && s.length() != 0)
-            return s.indexOf("\u001e") >= 0 || s.indexOf("§§§") >= 0;
+            return s.indexOf("\u001e") >= 0;
             else
                 return def;
     }
@@ -699,20 +699,6 @@ public class Preferences {
         }
         if(s != null && s.length() != 0)
         {
-            if(s.indexOf("\u001e") < 0) /* FIXME: legacy code, remove later */
-            {
-                String r =s;
-                if(r.indexOf("§§§") > 0) {
-                    r = r.replaceAll("§§§","\u001e");
-                } else {
-                    r = r.replace(';','\u001e');
-                }
-                if(!r.equals(s)) /* save the converted string */
-                {
-                    put(key,r);
-                    s = r;
-                }
-            }
             return Arrays.asList(s.split("\u001e"));
         }
         return def;
