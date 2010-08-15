@@ -194,6 +194,8 @@ Build-Date: ${build.tstamp}
 
 	 	-dontoptimize
 	 	-dontobfuscate
+	 	
+	 	-dontskipnonpubliclibraryclasses
 
 	 	-keepclasseswithmembers public class org.openstreetmap.josm.gui.MainApplication {
 	 	    public static void main(java.lang.String[]);
