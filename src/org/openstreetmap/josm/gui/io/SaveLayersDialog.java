@@ -29,6 +29,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.WindowConstants;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.UploadAction;
@@ -80,6 +81,7 @@ public class SaveLayersDialog extends JDialog {
         table.getTableHeader().setPreferredSize(new Dimension(table.getTableHeader().getWidth(), 40));
 
         addWindowListener(new WindowClosingAdapter());
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -273,6 +275,11 @@ public class SaveLayersDialog extends JDialog {
         this.action = action;
     }
 
+    public void closeDialog() {
+        setVisible(false);
+        dispose();
+    }
+
     class WindowClosingAdapter extends WindowAdapter {
         @Override
         public void windowClosing(WindowEvent e) {
@@ -289,7 +296,7 @@ public class SaveLayersDialog extends JDialog {
 
         protected void cancelWhenInEditingModel() {
             setUserAction(UserAction.CANCEL);
-            setVisible(false);
+            closeDialog();
         }
 
         protected void cancelWhenInSaveAndUploadingMode() {
@@ -327,7 +334,7 @@ public class SaveLayersDialog extends JDialog {
 
         public void actionPerformed(ActionEvent e) {
             setUserAction(UserAction.PROCEED);
-            setVisible(false);
+            closeDialog();
         }
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getPropertyName().equals(SaveLayersModel.MODE_PROP)) {
@@ -518,11 +525,11 @@ public class SaveLayersDialog extends JDialog {
                 model.setMode(Mode.EDITING_DATA);
                 if (cancelled) {
                     setUserAction(UserAction.CANCEL);
-                    setVisible(false);
+                    closeDialog();
                 }
             } else {
                 setUserAction(UserAction.PROCEED);
-                setVisible(false);
+                closeDialog();
             }
         }
 
