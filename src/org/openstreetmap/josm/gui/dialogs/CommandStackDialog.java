@@ -11,7 +11,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -73,8 +72,6 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     public CommandStackDialog(final MapFrame mapFrame) {
         super(tr("Command Stack"), "commandstack", tr("Open a list of all commands (undo buffer)."),
                 Shortcut.registerShortcut("subwindow:commandstack", tr("Toggle: {0}", tr("Command Stack")), KeyEvent.VK_O, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 100, true);
-        Main.main.undoRedo.listenerCommands.add(this);
-
         undoTree.addMouseListener(new PopupMenuHandler());
         undoTree.setRootVisible(false);
         undoTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -211,6 +208,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         for (IEnabledStateUpdating listener : showNotifyListener) {
             listener.updateEnabledState();
         }
+        Main.main.undoRedo.listenerCommands.add(this);
     }
 
     /**
@@ -226,6 +224,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     public void hideNotify() {
         undoTreeModel.setRoot(new DefaultMutableTreeNode());
         redoTreeModel.setRoot(new DefaultMutableTreeNode());
+        Main.main.undoRedo.listenerCommands.remove(this);
     }
 
     /**
@@ -262,26 +261,26 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
 
         // if one tree is empty, move selection to the other
         switch (lastOperation) {
-            case UNDO:
-                if (undoCommands.isEmpty()) {
-                    lastOperation = UndoRedoType.REDO;
-                }
-                break;
-            case REDO:
-                if (redoCommands.isEmpty()) {
-                    lastOperation = UndoRedoType.UNDO;
-                }
-                break;
+        case UNDO:
+            if (undoCommands.isEmpty()) {
+                lastOperation = UndoRedoType.REDO;
+            }
+            break;
+        case REDO:
+            if (redoCommands.isEmpty()) {
+                lastOperation = UndoRedoType.UNDO;
+            }
+            break;
         }
 
         // select the next command to undo/redo
         switch (lastOperation) {
-            case UNDO:
-                undoTree.setSelectionRow(undoTree.getRowCount()-1);
-                break;
-            case REDO:
-                redoTree.setSelectionRow(0);
-                break;
+        case UNDO:
+            undoTree.setSelectionRow(undoTree.getRowCount()-1);
+            break;
+        case REDO:
+            redoTree.setSelectionRow(0);
+            break;
         }
     }
 
@@ -369,18 +368,18 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             super();
             this.type = type;
             switch (type) {
-                case UNDO:
-                    tree = undoTree;
-                    putValue(NAME,tr("Undo"));
-                    putValue(SHORT_DESCRIPTION, tr("Undo the selected and all later commands"));
-                    putValue(SMALL_ICON, ImageProvider.get("undo"));
-                    break;
-                case REDO:
-                    tree = redoTree;
-                    putValue(NAME,tr("Redo"));
-                    putValue(SHORT_DESCRIPTION, tr("Redo the selected and all earlier commands"));
-                    putValue(SMALL_ICON, ImageProvider.get("redo"));
-                    break;
+            case UNDO:
+                tree = undoTree;
+                putValue(NAME,tr("Undo"));
+                putValue(SHORT_DESCRIPTION, tr("Undo the selected and all later commands"));
+                putValue(SMALL_ICON, ImageProvider.get("undo"));
+                break;
+            case REDO:
+                tree = redoTree;
+                putValue(NAME,tr("Redo"));
+                putValue(SHORT_DESCRIPTION, tr("Redo the selected and all earlier commands"));
+                putValue(SMALL_ICON, ImageProvider.get("redo"));
+                break;
             }
         }
 
@@ -396,14 +395,14 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
 
             // calculate the number of commands to undo/redo; then do it
             switch (type) {
-                case UNDO:
-                    int numUndo = ((DefaultMutableTreeNode) undoTreeModel.getRoot()).getChildCount() - idx;
-                    Main.main.undoRedo.undo(numUndo);
-                    break;
-                case REDO:
-                    int numRedo = idx+1;
-                    Main.main.undoRedo.redo(numRedo);
-                    break;
+            case UNDO:
+                int numUndo = ((DefaultMutableTreeNode) undoTreeModel.getRoot()).getChildCount() - idx;
+                Main.main.undoRedo.undo(numUndo);
+                break;
+            case REDO:
+                int numRedo = idx+1;
+                Main.main.undoRedo.redo(numRedo);
+                break;
             }
             Main.map.repaint();
         }

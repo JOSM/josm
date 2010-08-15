@@ -23,8 +23,8 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public abstract class AbstractInfoAction extends JosmAction {
 
-    public AbstractInfoAction() {
-        super();
+    public AbstractInfoAction(boolean installAdapters) {
+        super(installAdapters);
     }
 
     public AbstractInfoAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register) {

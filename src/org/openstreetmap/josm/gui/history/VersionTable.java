@@ -116,6 +116,7 @@ public class VersionTable extends JTable implements Observer{
         private HistoryOsmPrimitive primitive;
 
         public ChangesetInfoAction() {
+            super(true);
             putValue(NAME, tr("Changeset info"));
             putValue(SHORT_DESCRIPTION, tr("Launch browser with information about the changeset"));
             putValue(SMALL_ICON, ImageProvider.get("about"));

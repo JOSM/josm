@@ -213,6 +213,7 @@ public class MapFrame extends JPanel implements Destroyable {
                 e.printStackTrace();
             }
         }
+        mapView.destroy();
     }
 
     public Action getDefaultButtonAction() {

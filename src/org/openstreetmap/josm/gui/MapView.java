@@ -221,11 +221,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         });
 
         // listend to selection changes to redraw the map
-        DataSet.addSelectionListener(new SelectionChangedListener(){
-            public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-                repaint();
-            }
-        });
+        DataSet.addSelectionListener(repaintSelectionChangedListener);
 
         //store the last mouse action
         this.addMouseMotionListener(new MouseMotionListener() {
@@ -802,6 +798,17 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
     public void preferenceChanged(PreferenceChangeEvent e) {
         paintPreferencesChanged = true;
+    }
+
+    private SelectionChangedListener repaintSelectionChangedListener = new SelectionChangedListener(){
+        public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+            repaint();
+        }
+    };
+
+    public void destroy() {
+        Main.pref.removePreferenceChangeListener(this);
+        DataSet.removeSelectionListener(repaintSelectionChangedListener);
     }
 
 }
