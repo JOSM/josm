@@ -7,35 +7,21 @@ Install Notes
 To run JOSM, you need:
 
 * The jar file (e.g. josm.jar)
-* The latest Java Runtime Environment 1.5. 
+* The latest Java Runtime Environment 1.6. 
 
 
 How to get Java
 ---------------
 
-You need at least Version 1.5 (called Java5 or "Tiger"). 
+You need at least Version 1.6 (called Java6). 
 
 Microsoft Windows people should just visit java.sun.com and
-download the latest Java5 executable. 
+download the latest Java6 executable. 
 
-To get Java under linux, I recommend downloading the environment 
-directly from Sun at http://java.sun.com. There is a linux 
-binary installer which you have to execute from a console.
-
-However, if you run Debian or Ubuntu or any other dpkg-based
-distribution, you may use unofficial precompiled packages.
-You have to add the following line to your /etc/apt/sources.list
-(replace "stable" with your installation)
-
-deb http://ftp.debian-unofficial.org/debian/ stable non-free
-
-The package is called sun-j2se5.0-jre-binary.
-
-For MacOS user: There is an installer for Mac OS X 10.4:
-http://www.apple.com/support/downloads/java2se50release1.html
-
-Sorry, there is no Version of Java5 for Mac OS X 10.3 available :-(
-
+To get Java under linux, either download the environment 
+directly from Sun at http://java.sun.com (there is a linux 
+binary installer which you have to execute from a console) or
+use the mechanisms of your distributions packaging system.
 
 How to launch
 -------------
@@ -49,8 +35,7 @@ you don't used the latest version.)
 Under Linux open a shell, go to the file directory and type
 "java -jar josm-latest.jar" to launch. If this don't help, try to set
 you JAVA_HOME variable to the java location (the root location, not
-the bin. "/usr/lib/sun-j2se5.0-jdk" if you used the prebuild 
-package).
+the bin)
 
 MacOS people just click on the jar-file.
 
@@ -63,6 +48,3 @@ https://josm.openstreetmap.de/svn/trunk. To use the command line
 subverion client, type
 
 svn co https://josm.openstreetmap.de/svn/trunk
-
-
-Ciao, Imi.
