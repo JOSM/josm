@@ -282,7 +282,7 @@ public class DataSet implements Cloneable {
             } else if (primitive instanceof Way) {
                 success = ways.remove((Way) primitive);
             } else if (primitive instanceof Relation) {
-                success = relations.remove((Relation) primitive);
+                success = relations.remove(primitive);
             }
             if (!success)
                 throw new RuntimeException("failed to remove primitive: "+primitive);
@@ -608,13 +608,22 @@ public class DataSet implements Cloneable {
      * @exception NullPointerException thrown, if type is null
      */
     public OsmPrimitive getPrimitiveById(long id, OsmPrimitiveType type) {
-        return getPrimitiveById(new SimplePrimitiveId(id, type), false);
+        return getPrimitiveById(new SimplePrimitiveId(id, type));
     }
 
     public OsmPrimitive getPrimitiveById(PrimitiveId primitiveId) {
-        return getPrimitiveById(primitiveId, false);
+        return primitivesMap.get(primitiveId);
     }
 
+    /**
+     *
+     * @param primitiveId
+     * @param createNew
+     * @return
+     * @deprecated This method can created inconsistent dataset when called for node with id < 0 and createNew=true. That will add
+     * complete node without coordinates to dataset which is not allowed.
+     */
+    @Deprecated
     public OsmPrimitive getPrimitiveById(PrimitiveId primitiveId, boolean createNew) {
         OsmPrimitive result = primitivesMap.get(primitiveId);
 
@@ -733,14 +742,9 @@ public class DataSet implements Cloneable {
      * {@see OsmPrimitive#isModified()} == <code>true</code>.
      */
     public boolean isModified() {
-        for (Node n: nodes) {
-            if (n.isModified()) return true;
-        }
-        for (Way w: ways) {
-            if (w.isModified()) return true;
-        }
-        for (Relation r: relations) {
-            if (r.isModified()) return true;
+        for (OsmPrimitive p: allPrimitives) {
+            if (p.isModified())
+                return true;
         }
         return false;
     }

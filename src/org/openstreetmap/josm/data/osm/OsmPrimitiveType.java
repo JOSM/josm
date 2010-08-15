@@ -71,6 +71,19 @@ public enum OsmPrimitiveType {
         return null;
     }
 
+    public OsmPrimitive newInstance(long uniqueId, boolean allowNegative) {
+        switch (this) {
+        case NODE:
+            return new Node(uniqueId, allowNegative);
+        case WAY:
+            return new Way(uniqueId, allowNegative);
+        case RELATION:
+            return new Relation(uniqueId, allowNegative);
+        default:
+            throw new AssertionError();
+        }
+    }
+
     @Override
     public String toString() {
         return tr(getAPIName());

@@ -1480,7 +1480,9 @@ public class GenericRelationEditor extends RelationEditor  {
                     if (primitiveInDs != null) {
                         toAdd.add(primitiveInDs);
                     } else if (!primitive.isNew()) {
-                        toAdd.add(ds.getPrimitiveById(primitive, true));
+                        OsmPrimitive p = primitive.getType().newInstance(primitive.getUniqueId(), true);
+                        ds.addPrimitive(p);
+                        toAdd.add(p);
                     } else {
                         hasNewInOtherLayer = true;
                         break;

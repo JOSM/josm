@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.JLabel;
 
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 
@@ -22,22 +23,27 @@ public class AddPrimitivesCommand extends Command {
         this.data.addAll(data);
     }
 
+    @SuppressWarnings("null")
     @Override public boolean executeCommand() {
 
         List<OsmPrimitive> createdPrimitives = new ArrayList<OsmPrimitive>(data.size());
 
         for (PrimitiveData pd:data) {
-            createdPrimitives.add(getLayer().data.getPrimitiveById(pd, true));
-        }
-
-        // Load nodes first to prevent ways with null coordinates
-        for (int i=0; i<createdPrimitives.size(); i++) {
-            if (createdPrimitives.get(i) instanceof Node) {
-                createdPrimitives.get(i).load(data.get(i));
+            OsmPrimitive primitive = getLayer().data.getPrimitiveById(pd);
+            boolean created = primitive == null;
+            if (created) {
+                primitive = pd.getType().newInstance(pd.getUniqueId(), true);
             }
+            if (pd instanceof NodeData) { // Load nodes immediately because they can't be added to dataset without coordinates
+                primitive.load(pd);
+            }
+            if (created) {
+                getLayer().data.addPrimitive(primitive);
+            }
+            createdPrimitives.add(primitive);
         }
 
-        // Now load ways and relations
+        //Then load ways and relations
         for (int i=0; i<createdPrimitives.size(); i++) {
             if (!(createdPrimitives.get(i) instanceof Node)) {
                 createdPrimitives.get(i).load(data.get(i));
@@ -56,7 +62,7 @@ public class AddPrimitivesCommand extends Command {
 
     @Override public JLabel getDescription() {
         return new JLabel(trn("Added {0} object", "Added {0} objects", data.size(), data.size()), null,
-                            JLabel.HORIZONTAL
+                JLabel.HORIZONTAL
         );
     }
 

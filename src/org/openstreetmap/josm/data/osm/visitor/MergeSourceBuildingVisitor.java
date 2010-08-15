@@ -162,22 +162,22 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
     protected void buildHull() {
         // Create all primitives first
         for (PrimitiveData primitive: mappedPrimitives.values()) {
-            hull.getPrimitiveById(primitive, true);
-        }
-        // Then fill nodes with data
-        for (PrimitiveData primitive : mappedPrimitives.values()) {
-            if (primitive instanceof NodeData) {
-                if (!primitive.isIncomplete()) {
-                    hull.getPrimitiveById(primitive).load(primitive);
-                }
+            OsmPrimitive newPrimitive = hull.getPrimitiveById(primitive);
+            boolean created = newPrimitive == null;
+            if (created) {
+                newPrimitive = primitive.getType().newInstance(primitive.getUniqueId(), true);
+            }
+            if (newPrimitive instanceof Node && !primitive.isIncomplete()) {
+                newPrimitive.load(primitive);
+            }
+            if (created) {
+                hull.addPrimitive(newPrimitive);
             }
         }
         // Then ways and relations
         for (PrimitiveData primitive : mappedPrimitives.values()) {
-            if (!(primitive instanceof NodeData)) {
-                if (!primitive.isIncomplete()) {
-                    hull.getPrimitiveById(primitive).load(primitive);
-                }
+            if (!(primitive instanceof NodeData) && !primitive.isIncomplete()) {
+                hull.getPrimitiveById(primitive).load(primitive);
             }
         }
     }
