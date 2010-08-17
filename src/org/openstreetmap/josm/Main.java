@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
@@ -311,6 +312,16 @@ abstract public class Main {
     public static void unregisterActionShortcut(Shortcut shortcut) {
         contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(shortcut.getKeyStroke());
     }
+
+    public static void unregisterActionShortcut(JosmAction action) {
+        unregisterActionShortcut(action, action.getShortcut());
+    }
+
+    public static void unregisterActionShortcut(Action action, Shortcut shortcut) {
+        contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(shortcut.getKeyStroke());
+        contentPanePrivate.getActionMap().remove(action);
+    }
+
 
     ///////////////////////////////////////////////////////////////////////////
     //  Implementation part

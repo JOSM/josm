@@ -107,7 +107,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
 
     public void destroy() {
         if (sc != null) {
-            Main.unregisterActionShortcut(sc);
+            Main.unregisterActionShortcut(this);
         }
         MapView.removeLayerChangeListener(layerChangeAdapter);
         DataSet.removeSelectionListener(selectionChangeAdapter);

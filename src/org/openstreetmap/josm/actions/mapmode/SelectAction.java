@@ -62,16 +62,6 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class SelectAction extends MapMode implements SelectionEnded {
     //static private final Logger logger = Logger.getLogger(SelectAction.class.getName());
 
-    /**
-     * Replies true if we are currently running on OSX
-     *
-     * @return true if we are currently running on OSX
-     */
-    public static boolean isPlatformOsx() {
-        return Main.platform != null
-        && Main.platform instanceof PlatformHookOsx;
-    }
-
     enum Mode { move, rotate, select }
     private Mode mode = null;
     private long mouseDownTime = 0;
@@ -273,7 +263,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
     @Override public void mouseMoved(MouseEvent e) {
         // Mac OSX simulates with  ctrl + mouse 1  the second mouse button hence no dragging events get fired.
         //
-        if (isPlatformOsx() && mode == Mode.rotate) {
+        if ((Main.platform instanceof PlatformHookOsx) && mode == Mode.rotate) {
             mouseDragged(e);
         }
     }
@@ -489,8 +479,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
                         nodesToMerge.add(targetNode);
                         if (!nodesToMerge.isEmpty()) {
                             Command cmd = MergeNodesAction.mergeNodes(Main.main.getEditLayer(),nodesToMerge, targetNode);
-                            if(cmd != null)
+                            if(cmd != null) {
                                 Main.main.undoRedo.add(cmd);
+                            }
                         }
                     }
                 }

@@ -150,7 +150,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     // hook for roadsigns plugin to display a small
     // button in the upper right corner of this dialog
     public static JPanel pluginHook = new JPanel();
-    
+
     private final Map<String, Map<String, Integer>> valueCount = new TreeMap<String, Map<String, Integer>>();
 
     Comparator<AutoCompletionListItem> defaultACItemComparator = new Comparator<AutoCompletionListItem>() {
@@ -178,7 +178,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         DatasetEventManager.getInstance().removeDatasetListener(dataChangedAdapter);
         SelectionEventManager.getInstance().removeSelectionListener(this);
         MapView.removeEditLayerChangeListener(this);
-        Main.unregisterActionShortcut(addActionShortcut);
+        Main.unregisterActionShortcut(addAction, addActionShortcut);
     }
 
     /**

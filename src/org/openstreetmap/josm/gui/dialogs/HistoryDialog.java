@@ -70,8 +70,6 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
                 Shortcut.registerShortcut("subwindow:history", tr("Toggle: {0}", tr("History")), KeyEvent.VK_H,
                         Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
         build();
-        DataSet.addSelectionListener(model);
-
         HelpUtil.setHelpContext(this, HelpUtil.ht("/Dialog/HistoryDialog"));
     }
 
@@ -141,11 +139,13 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
     @Override
     public void showNotify() {
         HistoryDataSet.getInstance().addHistoryDataSetListener(this);
+        DataSet.addSelectionListener(model);
     }
 
     @Override
     public void hideNotify() {
         HistoryDataSet.getInstance().removeHistoryDataSetListener(this);
+        DataSet.removeSelectionListener(model);
     }
 
     /* ----------------------------------------------------------------------------- */
@@ -277,6 +277,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
      *
      */
     class ReloadAction extends AbstractAction implements ListSelectionListener {
+
         public ReloadAction() {
             putValue(Action.SMALL_ICON, ImageProvider.get("dialogs","refresh"));
             putValue(Action.NAME, tr("Reload"));
