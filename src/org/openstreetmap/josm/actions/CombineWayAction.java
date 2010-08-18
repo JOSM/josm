@@ -14,6 +14,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -112,7 +114,9 @@ public class CombineWayAction extends JosmAction {
         if (ways == null || ways.isEmpty())
             return null;
         ways.remove(null); // just in case -  remove all null ways from the collection
-        ways = new HashSet<Way>(ways); // remove duplicates
+
+        // remove duplicates, preserving order
+        ways = new LinkedHashSet<Way>(ways);
 
         // try to build a new way which includes all the combined
         // ways
@@ -473,9 +477,9 @@ public class CombineWayAction extends JosmAction {
         }
 
         protected void prepare() {
-            Set<NodePair> undirectedEdges = new HashSet<NodePair>();
-            successors = new HashMap<Node, List<NodePair>>();
-            predecessors = new HashMap<Node, List<NodePair>>();
+            Set<NodePair> undirectedEdges = new LinkedHashSet<NodePair>();
+            successors = new LinkedHashMap<Node, List<NodePair>>();
+            predecessors = new LinkedHashMap<Node, List<NodePair>>();
 
             for (NodePair pair: edges) {
                 if (!undirectedEdges.contains(pair) && ! undirectedEdges.contains(pair.swap())) {
@@ -488,7 +492,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         public NodeGraph() {
-            edges = new HashSet<NodePair>();
+            edges = new LinkedHashSet<NodePair>();
         }
 
         public void add(NodePair pair) {
@@ -513,7 +517,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         protected Set<Node> getTerminalNodes() {
-            Set<Node> ret = new HashSet<Node>();
+            Set<Node> ret = new LinkedHashSet<Node>();
             for (Node n: getNodes()) {
                 if (isTerminalNode(n)) {
                     ret.add(n);
@@ -523,7 +527,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         protected Set<Node> getNodes(Stack<NodePair> pairs) {
-            HashSet<Node> nodes = new HashSet<Node>();
+            HashSet<Node> nodes = new LinkedHashSet<Node>();
             for (NodePair pair: pairs) {
                 nodes.add(pair.getA());
                 nodes.add(pair.getB());
@@ -543,7 +547,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         protected Set<Node> getNodes() {
-            Set<Node> nodes = new HashSet<Node>();
+            Set<Node> nodes = new LinkedHashSet<Node>();
             for (NodePair pair: edges) {
                 nodes.add(pair.getA());
                 nodes.add(pair.getB());

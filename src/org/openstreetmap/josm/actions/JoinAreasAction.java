@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.GridBagLayout;
-import java.awt.Polygon;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Area;
@@ -15,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.SplitWayAction.SplitWayResult;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -53,6 +54,21 @@ public class JoinAreasAction extends JosmAction {
     // This will be used to commit commands and unite them into one large command sequence at the end
     private LinkedList<Command> cmds = new LinkedList<Command>();
     private int cmdsCount = 0;
+
+    /**
+     * This helper class describes join ares action result.
+     * @author viesturs
+     *
+     */
+    public static class JoinAreasResult {
+
+        public Way outerWay;
+        public List<Way> innerWays;
+
+        public boolean mergeSuccessful;
+        public boolean hasChanges;
+        public boolean hasRelationProblems;
+    }
 
     // HelperClass
     // Saves a node and two positions where to insert the node into the ways
@@ -106,6 +122,35 @@ public class JoinAreasAction extends JosmAction {
             if (!(other instanceof RelationRole)) return false;
             RelationRole otherMember = (RelationRole) other;
             return otherMember.role.equals(role) && otherMember.rel.equals(rel);
+        }
+    }
+
+    /**
+     * HelperClass
+     * saves a way and the "inside" side
+     * insideToTheLeft: if true left side is "in", false -right side is "in".
+     * Left and right are determined along the orientation of way.
+     */
+    private static class WayInPath {
+        public final Way way;
+        public boolean insideToTheLeft;
+
+        public WayInPath(Way way, boolean insideLeft) {
+            this.way = way;
+            this.insideToTheLeft = insideLeft;
+        }
+
+        @Override
+        public int hashCode() {
+            return way.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (!(other instanceof WayInPath))
+                return false;
+            WayInPath otherMember = (WayInPath) other;
+            return otherMember.way.equals(this.way) && otherMember.insideToTheLeft == this.insideToTheLeft;
         }
     }
 
@@ -163,7 +208,13 @@ public class JoinAreasAction extends JosmAction {
             }
         }
 
-        if(joinAreas(ways.getFirst(), ways.getLast())) {
+        if (checkForTagConflicts(ways.getFirst(), ways.getLast())) {
+            //do nothing. //FIXME: abort?
+        }
+
+        JoinAreasResult result = joinAreas(ways.getFirst(), ways.getLast());
+
+        if (result.hasChanges) {
             Main.map.mapView.repaint();
             DataSet ds = Main.main.getCurrentDataSet();
             ds.fireSelectionChanged();
@@ -176,27 +227,38 @@ public class JoinAreasAction extends JosmAction {
      * Will join two overlapping areas
      * @param Way First way/area
      * @param Way Second way/area
-     * @return boolean Whether to display the "no operation" message
      */
-    private boolean joinAreas(Way a, Way b) {
+    private JoinAreasResult joinAreas(Way a, Way b) {
+
+        JoinAreasResult result = new JoinAreasResult();
+        result.hasChanges = false;
+
         // Fix self-overlapping first or other errors
         boolean same = a.equals(b);
-        boolean hadChanges = false;
         if(!same) {
             int i = 0;
-            if(checkForTagConflicts(a, b)) return true; // User aborted, so don't warn again
-            if(joinAreas(a, a)) {
+
+            //join each area with itself, fixing self-crossings.
+            JoinAreasResult resultA = joinAreas(a, a);
+            JoinAreasResult resultB = joinAreas(b, b);
+
+            if (resultA.mergeSuccessful) {
+                a = resultA.outerWay;
                 ++i;
             }
-            if(joinAreas(b, b)) {
+            if(resultB.mergeSuccessful) {
+                b = resultB.outerWay;
                 ++i;
             }
-            hadChanges = i > 0;
+
+            result.hasChanges = i > 0;
             cmdsCount = i;
         }
 
-        ArrayList<OsmPrimitive> nodes = addIntersections(a, b);
-        if(nodes.size() == 0) return hadChanges;
+        ArrayList<Node> nodes = addIntersections(a, b);
+
+        //no intersections, return.
+        if(nodes.size() == 0) return result;
         commitCommands(marktr("Added node on all intersections"));
 
         // Remove ways from all relations so ways can be combined/split quietly
@@ -208,19 +270,17 @@ public class JoinAreasAction extends JosmAction {
         // Don't warn now, because it will really look corrupted
         boolean warnAboutRelations = relations.size() > 0;
 
-        Collection<Way> allWays = splitWaysOnNodes(a, b, nodes);
+        ArrayList<Way> allWays = splitWaysOnNodes(a, b, nodes);
 
-        // Find all nodes and inner ways save them to a list
-        Collection<Node> allNodes = getNodesFromWays(allWays);
-        Collection<Way> innerWays = findInnerWays(allWays, allNodes);
+        // Find inner ways save them to a list
+        ArrayList<WayInPath> outerWays = findOuterWays(allWays);
+        ArrayList<Way> innerWays = findInnerWays(allWays, outerWays);
 
         // Join outer ways
-        Way outerWay = joinOuterWays(allWays, innerWays);
-        if (outerWay == null)
-            return true;
+        Way outerWay = joinOuterWays(outerWays);
 
         // Fix Multipolygons if there are any
-        Collection<Way> newInnerWays = fixMultipolygons(innerWays, outerWay, same);
+        List<Way> newInnerWays = fixMultipolygons(innerWays, outerWay, same);
 
         // Delete the remaining inner ways
         if(innerWays != null && innerWays.size() > 0) {
@@ -234,6 +294,7 @@ public class JoinAreasAction extends JosmAction {
         commitCommands(marktr("Fix relations"));
 
         stripTags(newInnerWays);
+
         makeCommitsOneAction(
                 same
                 ? marktr("Joined self-overlapping area")
@@ -244,7 +305,11 @@ public class JoinAreasAction extends JosmAction {
             JOptionPane.showMessageDialog(Main.parent, tr("Some of the ways were part of relations that have been modified. Please verify no errors have been introduced."));
         }
 
-        return true;
+        result.mergeSuccessful = true;
+        result.outerWay = outerWay;
+        result.innerWays = newInnerWays;
+
+        return result;
     }
 
     /**
@@ -330,14 +395,12 @@ public class JoinAreasAction extends JosmAction {
      * @param Way Second way
      * @return ArrayList<OsmPrimitive> List of new nodes
      */
-    private ArrayList<OsmPrimitive> addIntersections(Way a, Way b) {
+    private ArrayList<Node> addIntersections(Way a, Way b) {
         boolean same = a.equals(b);
         int nodesSizeA = a.getNodesCount();
         int nodesSizeB = b.getNodesCount();
 
-        // We use OsmPrimitive here instead of Node because we later need to split a way at these nodes.
-        // With OsmPrimitve we can simply add the way and don't have to loop over the nodes
-        ArrayList<OsmPrimitive> nodes = new ArrayList<OsmPrimitive>();
+        ArrayList<Node> nodes = new ArrayList<Node>();
         ArrayList<NodeToSegs> nodesA = new ArrayList<NodeToSegs>();
         ArrayList<NodeToSegs> nodesB = new ArrayList<NodeToSegs>();
 
@@ -488,40 +551,57 @@ public class JoinAreasAction extends JosmAction {
     }
 
     /**
-     * This is a hacky implementation to make use of the splitWayAction code and
-     * should be improved. SplitWayAction needs to expose its splitWay function though.
+     * This method splits ways into smaller parts, using the prepared nodes list as split points.
+     * Uses SplitWayAction.splitWay for the heavy lifting.
+     * @return list of split ways (or original ways if no splitting is done).
      */
-    private Collection<Way> splitWaysOnNodes(Way a, Way b, Collection<OsmPrimitive> nodes) {
-        ArrayList<Way> ways = new ArrayList<Way>();
+    private ArrayList<Way> splitWaysOnNodes(Way a, Way b, Collection<Node> nodes) {
+
+        ArrayList<Way> result = new ArrayList<Way>();
+        List<Way> ways = new ArrayList<Way>();
         ways.add(a);
-        if(!a.equals(b)) {
-            ways.add(b);
+        ways.add(b);
+
+        for (Way way: ways) {
+            List<List<Node>> chunks = buildNodeChunks(way, nodes);
+            SplitWayResult split = SplitWayAction.splitWay(Main.map.mapView.getEditLayer(), way, chunks, Collections.<OsmPrimitive>emptyList());
+
+            //execute the command, we need the results
+            Main.main.undoRedo.add(split.getCommand());
+            cmdsCount ++;
+
+            result.add(split.getOriginalWay());
+            result.addAll(split.getNewWays());
         }
 
-        List<OsmPrimitive> affected = new ArrayList<OsmPrimitive>();
-        for (Way way : ways) {
-            nodes.add(way);
-            Main.main.getCurrentDataSet().setSelected(nodes);
-            nodes.remove(way);
-            new SplitWayAction().actionPerformed(null);
-            cmdsCount++;
-            affected.addAll(Main.main.getCurrentDataSet().getSelectedWays());
-        }
-        return osmprim2way(affected);
+        return result;
     }
 
     /**
-     * Converts a list of OsmPrimitives to a list of Ways
-     * @param Collection<OsmPrimitive> The OsmPrimitives list that's needed as a list of Ways
-     * @return Collection<Way> The list as list of Ways
+     * Simple chunking version. Does not care about circular ways and result being proper, we will glue it all back together later on.
+     * @param way the way to chunk
+     * @param splitNodes the places where to cut.
+     * @return list of node segments to produce.
      */
-    static private Collection<Way> osmprim2way(Collection<OsmPrimitive> ways) {
-        Collection<Way> result = new ArrayList<Way>();
-        for(OsmPrimitive w: ways) {
-            if(w instanceof Way) {
-                result.add((Way) w);
+    private List<List<Node>> buildNodeChunks(Way way, Collection<Node> splitNodes)
+    {
+        List<List<Node>> result = new ArrayList<List<Node>>();
+        List<Node> curList = new ArrayList<Node>();
+
+        for(Node node: way.getNodes()){
+            curList.add(node);
+            if (curList.size() > 1 && splitNodes.contains(node)){
+                result.add(curList);
+                curList = new ArrayList<Node>();
+                curList.add(node);
             }
         }
+
+        if (curList.size() > 1)
+        {
+            result.add(curList);
+        }
+
         return result;
     }
 
@@ -539,76 +619,251 @@ public class JoinAreasAction extends JosmAction {
     }
 
     /**
-     * Finds all inner ways for a given list of Ways and Nodes from a multigon by constructing a polygon
-     * for each way, looking for inner nodes that are not part of this way. If a node is found, all ways
-     * containing this node are added to the list
-     * @param Collection<Way> A list of (splitted) ways that form a multigon
-     * @param Collection<Node> A list of nodes that belong to the multigon
-     * @return Collection<Way> A list of ways that are positioned inside the outer borders of the multigon
+     * Gets all inner ways given all ways and outer ways.
+     * @param multigonWays
+     * @param outerWays
+     * @return list of inner ways.
      */
-    private Collection<Way> findInnerWays(Collection<Way> multigonWays, Collection<Node> multigonNodes) {
-        Collection<Way> innerWays = new ArrayList<Way>();
-        for(Way w: multigonWays) {
-            Polygon poly = new Polygon();
-            for(Node n: (w).getNodes()) {
-                poly.addPoint(latlonToXY(n.getCoor().lat()), latlonToXY(n.getCoor().lon()));
-            }
+    private ArrayList<Way> findInnerWays(Collection<Way> multigonWays, Collection<WayInPath> outerWays) {
+        ArrayList<Way> innerWays = new ArrayList<Way>();
+        Set<Way> outerSet = new HashSet<Way>();
 
-            for(Node n: multigonNodes) {
-                if(!(w).containsNode(n) && poly.contains(latlonToXY(n.getCoor().lat()), latlonToXY(n.getCoor().lon()))) {
-                    getWaysByNode(innerWays, multigonWays, n);
-                }
+        for(WayInPath w: outerWays) {
+            outerSet.add(w.way);
+        }
+
+        for(Way way: multigonWays) {
+            if (!outerSet.contains(way)) {
+                innerWays.add(way);
             }
         }
 
         return innerWays;
     }
 
-    // Polygon only supports int coordinates, so convert them
-    private int latlonToXY(double val) {
-        return (int)Math.round(val*1000000);
-    }
 
     /**
-     * Finds all ways that contain the given node.
-     * @param Collection<Way> A list to which matching ways will be added
-     * @param Collection<Way> A list of ways to check
-     * @param Node The node the ways should be checked against
+     * Finds all ways for a given list of Ways that form the outer hull.
+     * This works by starting with one node and traversing the multigon clockwise, always picking the leftmost path.
+     * Prerequisites - the ways must not intersect and have common end nodes where they meet.
+     * @param Collection<Way> A list of (splitted) ways that form a multigon
+     * @return Collection<Way> A list of ways that form the outer boundary of the multigon.
      */
-    private void getWaysByNode(Collection<Way> innerWays, Collection<Way> w, Node n) {
-        for(Way way : w) {
-            if(!(way).containsNode(n)) {
-                continue;
-            }
-            if(!innerWays.contains(way)) {
-                innerWays.add(way); // Will need this later for multigons
+    private static ArrayList<WayInPath> findOuterWays(Collection<Way> multigonWays) {
+
+        //find the node with minimum lat - it's guaranteed to be outer. (What about the south pole?)
+        Way bestWay = null;
+        Node topNode = null;
+        int topIndex = 0;
+        double minLat = Double.POSITIVE_INFINITY;
+
+        for(Way way: multigonWays) {
+            for (int pos = 0; pos < way.getNodesCount(); pos ++) {
+                Node node = way.getNode(pos);
+
+                if (node.getCoor().lat() < minLat) {
+                    minLat = node.getCoor().lat();
+                    bestWay = way;
+                    topNode = node;
+                    topIndex = pos;
+                }
             }
         }
+
+        //get two final nodes from best way to mark as starting point and orientation.
+        Node headNode = null;
+        Node prevNode = null;
+
+        if (topNode.equals(bestWay.firstNode()) || topNode.equals(bestWay.lastNode())) {
+            //node is in split point
+            headNode = topNode;
+            //make a fake node that is downwards from head node (smaller latitude). It will be a division point between paths.
+            prevNode = new Node(new LatLon(headNode.getCoor().lat() - 1000, headNode.getCoor().lon()));
+        } else {
+            //node is inside way - pick the clockwise going end.
+            Node prev = bestWay.getNode(topIndex - 1);
+            Node next = bestWay.getNode(topIndex + 1);
+
+            if (angleIsClockwise(prev, topNode, next)) {
+                headNode = bestWay.lastNode();
+                prevNode = bestWay.getNode(bestWay.getNodesCount() - 2);
+            }
+            else {
+                headNode = bestWay.firstNode();
+                prevNode = bestWay.getNode(1);
+            }
+        }
+
+        Set<Way> outerWays = new HashSet<Way>();
+        ArrayList<WayInPath> result = new ArrayList<WayInPath>();
+
+        //iterate till full circle is reached
+        while (true) {
+
+            bestWay = null;
+            Node bestWayNextNode = null;
+            boolean bestWayReverse = false;
+
+            for (Way way: multigonWays) {
+                boolean wayReverse;
+                Node nextNode;
+
+                if (way.firstNode().equals(headNode)) {
+                    //start adjacent to headNode
+                    nextNode = way.getNode(1);
+                    wayReverse = false;
+
+                    if (nextNode.equals(prevNode)) {
+                        //this is the path we came from - ignore it.
+                    } else if (bestWay == null || !isToTheRightSideOfLine(prevNode, headNode, bestWayNextNode, nextNode)) {
+                        //the new way is better
+                        bestWay = way;
+                        bestWayReverse = wayReverse;
+                        bestWayNextNode = nextNode;
+                    }
+                }
+
+                if (way.lastNode().equals(headNode)) {
+                    //end adjacent to headNode
+                    nextNode = way.getNode(way.getNodesCount() - 2);
+                    wayReverse = true;
+
+                    if (nextNode.equals(prevNode)) {
+                        //this is the path we came from - ignore it.
+                    } else if (bestWay == null || !isToTheRightSideOfLine(prevNode, headNode, bestWayNextNode, nextNode)) {
+                        //the new way is better
+                        bestWay = way;
+                        bestWayReverse = wayReverse;
+                        bestWayNextNode = nextNode;
+                    }
+                }
+            }
+
+            if (bestWay == null)
+                throw new RuntimeException();
+            else if (outerWays.contains(bestWay))
+                break; //full circle reached, terminate.
+            else {
+                //add to outer ways, repeat.
+                outerWays.add(bestWay);
+                result.add(new WayInPath(bestWay, bestWayReverse));
+                headNode = bestWayReverse ? bestWay.firstNode() : bestWay.lastNode();
+                prevNode = bestWayReverse ? bestWay.getNode(1) : bestWay.getNode(bestWay.getNodesCount() - 2);
+            }
+        }
+
+        return result;
     }
 
     /**
-     * Joins the two outer ways and deletes all short ways that can't be part of a multipolygon anyway
-     * @param Collection<OsmPrimitive> The list of all ways that belong to that multigon
-     * @param Collection<Way> The list of inner ways that belong to that multigon
-     * @return Way The newly created outer way
+     * Tests if given point is to the right side of path consisting of 3 points.
+     * @param lineP1 first point in path
+     * @param lineP2 second point in path
+     * @param lineP3 third point in path
+     * @param testPoint
+     * @return true if to the right side, false otherwise
      */
-    private Way joinOuterWays(Collection<Way> multigonWays, Collection<Way> innerWays) {
-        ArrayList<Way> join = new ArrayList<Way>();
-        for(Way w: multigonWays) {
-            // Skip inner ways
-            if(innerWays.contains(w)) {
+    public static boolean isToTheRightSideOfLine(Node lineP1, Node lineP2, Node lineP3, Node testPoint)
+    {
+        boolean pathBendToRight = angleIsClockwise(lineP1, lineP2, lineP3);
+        boolean rightOfSeg1 = angleIsClockwise(lineP1, lineP2, testPoint);
+        boolean rightOfSeg2 = angleIsClockwise(lineP2, lineP3, testPoint);
+
+        if (pathBendToRight)
+            return rightOfSeg1 && rightOfSeg2;
+        else
+            return !(!rightOfSeg1 && !rightOfSeg2);
+    }
+
+    /**
+     * This method tests if secondNode is clockwise to first node.
+     * @param commonNode starting point for both vectors
+     * @param firstNode first vector end node
+     * @param secondNode second vector end node
+     * @return true if first vector is clockwise before second vector.
+     */
+    public static boolean angleIsClockwise(Node commonNode, Node firstNode, Node secondNode)
+    {
+        double dla1 = (firstNode.getCoor().lat() - commonNode.getCoor().lat());
+        double dla2 = (secondNode.getCoor().lat() - commonNode.getCoor().lat());
+        double dlo1 = (firstNode.getCoor().lon() - commonNode.getCoor().lon());
+        double dlo2 = (secondNode.getCoor().lon() - commonNode.getCoor().lon());
+
+        return dla1 * dlo2 - dlo1 * dla2 > 0;
+    }
+
+    /**
+     * Tests if point is inside a polygon. The polygon can be self-intersecting. In such case the contains function works in xor-like manner.
+     * @param polygonNodes list of nodes from polygon path.
+     * @param point the point to test
+     * @return true if the point is inside polygon.
+     * FIXME: this should probably be moved to tools..
+     */
+    public static boolean nodeInsidePolygon(ArrayList<Node> polygonNodes, Node point)
+    {
+        if (polygonNodes.size() < 3)
+            return false;
+
+        boolean inside = false;
+        Node p1, p2;
+
+        //iterate each side of the polygon, start with the last segment
+        Node oldPoint = polygonNodes.get(polygonNodes.size() - 1);
+
+        for(Node newPoint: polygonNodes)
+        {
+            //skip duplicate points
+            if (newPoint.equals(oldPoint)) {
                 continue;
             }
 
-            if(w.getNodesCount() <= 2) {
-                cmds.add(new DeleteCommand(w));
-            } else {
-                join.add(w);
+            //order points so p1.lat <= p2.lat;
+            if (newPoint.getCoor().lat() > oldPoint.getCoor().lat())
+            {
+                p1 = oldPoint;
+                p2 = newPoint;
+            }
+            else
+            {
+                p1 = newPoint;
+                p2 = oldPoint;
+            }
+
+            //test if the line is crossed and if so invert the inside flag.
+            if ((newPoint.getCoor().lat() < point.getCoor().lat()) == (point.getCoor().lat() <= oldPoint.getCoor().lat())
+                    && (point.getCoor().lon() - p1.getCoor().lon()) * (p2.getCoor().lat() - p1.getCoor().lat())
+                    < (p2.getCoor().lon() - p1.getCoor().lon()) * (point.getCoor().lat() - p1.getCoor().lat()))
+            {
+                inside = !inside;
+            }
+
+            oldPoint = newPoint;
+        }
+
+        return inside;
+    }
+
+    /**
+     * Joins the outer ways and deletes all short ways that can't be part of a multipolygon anyway.
+     * @param Collection<Way> The list of outer ways that belong to that multigon.
+     * @return Way The newly created outer way
+     */
+    private Way joinOuterWays(ArrayList<WayInPath> outerWays) {
+
+        //leave original orientation, if all paths are reverse.
+        boolean allReverse = true;
+        for(WayInPath way: outerWays) {
+            allReverse &= way.insideToTheLeft;
+        }
+
+        if (allReverse) {
+            for(WayInPath way: outerWays){
+                way.insideToTheLeft = !way.insideToTheLeft;
             }
         }
 
         commitCommands(marktr("Join Areas: Remove Short Ways"));
-        Way joinedWay = joinWays(join);
+        Way joinedWay = joinOrientedWays(outerWays);
         if (joinedWay != null)
             return closeWay(joinedWay);
         else
@@ -632,17 +887,50 @@ public class JoinAreasAction extends JosmAction {
     }
 
     /**
+     * Joins a list of ways (using CombineWayAction and ReverseWayAction as specified in WayInPath)
+     * @param ArrayList<Way> The list of ways to join and reverse
+     * @return Way The newly created way
+     */
+    private Way joinOrientedWays(ArrayList<WayInPath> ways) {
+        if(ways.size() < 2)
+            return ways.get(0).way;
+
+        // This will turn ways so all of them point in the same direction and CombineAction won't bug
+        // the user about this.
+
+        List<Way> actionWays = new ArrayList<Way>(ways.size());
+
+        for(WayInPath way : ways) {
+            actionWays.add(way.way);
+
+            if (way.insideToTheLeft) {
+                Main.main.getCurrentDataSet().setSelected(way.way);
+                new ReverseWayAction().actionPerformed(null);
+                cmdsCount++;
+            }
+        }
+
+        Way result = new CombineWayAction().combineWays(actionWays);
+
+        if(result != null) {
+            cmdsCount++;
+        }
+        return result;
+    }
+
+    /**
      * Joins a list of ways (using CombineWayAction and ReverseWayAction if necessary to quiet the former)
      * @param ArrayList<Way> The list of ways to join
      * @return Way The newly created way
      */
     private Way joinWays(ArrayList<Way> ways) {
-        if(ways.size() < 2) return ways.get(0);
+        if(ways.size() < 2)
+            return ways.get(0);
 
         // This will turn ways so all of them point in the same direction and CombineAction won't bug
         // the user about this.
         Way a = null;
-        for(Way b : ways) {
+        for (Way b : ways) {
             if(a == null) {
                 a = b;
                 continue;
@@ -655,7 +943,7 @@ public class JoinAreasAction extends JosmAction {
             }
             a = b;
         }
-        if((a = new CombineWayAction().combineWays(ways)) != null) {
+        if ((a = new CombineWayAction().combineWays(ways)) != null) {
             cmdsCount++;
         }
         return a;
