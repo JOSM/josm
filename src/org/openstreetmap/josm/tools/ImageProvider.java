@@ -72,7 +72,9 @@ public class ImageProvider {
         ImageIcon icon = getIfAvailable(subdir, name);
         if (icon == null) {
             String ext = name.indexOf('.') != -1 ? "" : ".png";
-            throw new NullPointerException("/images/" + subdir + "/" + name + ext + " not found");
+            throw new NullPointerException(tr(
+            "Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.",
+            imageName+ext));
         }
         return icon;
     }
@@ -243,10 +245,6 @@ public class ImageProvider {
             if (u != null)
                 return u;
         }
-        System.out
-        .println(tr(
-                "Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.",
-                imageName));
         return null;
     }
 
