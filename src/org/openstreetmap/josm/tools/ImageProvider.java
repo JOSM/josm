@@ -74,7 +74,7 @@ public class ImageProvider {
             String ext = name.indexOf('.') != -1 ? "" : ".png";
             throw new NullPointerException(tr(
             "Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.",
-            imageName+ext));
+            name+ext));
         }
         return icon;
     }
