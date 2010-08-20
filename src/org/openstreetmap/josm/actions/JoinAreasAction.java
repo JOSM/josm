@@ -18,10 +18,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import javax.swing.Box;
 import javax.swing.JComboBox;
@@ -208,9 +208,10 @@ public class JoinAreasAction extends JosmAction {
             }
         }
 
-        if (checkForTagConflicts(ways.getFirst(), ways.getLast())) {
-            //do nothing. //FIXME: abort?
-        }
+        if (checkForTagConflicts(ways.getFirst(), ways.getLast()))
+            //there was conflicts and user canceled abort the action.
+            return;
+
 
         JoinAreasResult result = joinAreas(ways.getFirst(), ways.getLast());
 
@@ -305,6 +306,7 @@ public class JoinAreasAction extends JosmAction {
             JOptionPane.showMessageDialog(Main.parent, tr("Some of the ways were part of relations that have been modified. Please verify no errors have been introduced."));
         }
 
+        result.hasChanges = true;
         result.mergeSuccessful = true;
         result.outerWay = outerWay;
         result.innerWays = newInnerWays;
@@ -741,9 +743,9 @@ public class JoinAreasAction extends JosmAction {
 
             if (bestWay == null)
                 throw new RuntimeException();
-            else if (outerWays.contains(bestWay))
+            else if (outerWays.contains(bestWay)) {
                 break; //full circle reached, terminate.
-            else {
+            } else {
                 //add to outer ways, repeat.
                 outerWays.add(bestWay);
                 result.add(new WayInPath(bestWay, bestWayReverse));
