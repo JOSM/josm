@@ -1132,7 +1132,7 @@ For external files the <rules> should have following elements:
 		<condition k="waterway" v="dam"/>
 		<icon annotate="true" src="misc/no_icon.png"/>
 		<line width="2" colour="manmade#d8d8d8"/>
-		<area colour="manmade#d8d8d8"/>
+		<area colour="manmade#d8d8d8" closed="true"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
