@@ -14,11 +14,19 @@ public class StringProperty {
     }
 
     public String get() {
-        return Main.pref.get(key, defaultValue);
+        return Main.pref.get(getKey(), getDefaultValue());
     }
 
     public boolean put(String value) {
-        return Main.pref.put(key, value);
+        return Main.pref.put(getKey(), value);
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
     }
 
 }

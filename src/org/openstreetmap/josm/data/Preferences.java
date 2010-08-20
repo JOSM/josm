@@ -323,28 +323,37 @@ public class Preferences {
         return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : def;
     }
 
-    synchronized public boolean put(final String key, String value) {
-        String oldvalue = properties.get(key);
-        if(value != null && value.length() == 0) {
-            value = null;
-        }
-        if(!((oldvalue == null && (value == null || value.equals(defaults.get(key))))
-                || (value != null && oldvalue != null && oldvalue.equals(value))))
-        {
-            if (value == null) {
-                properties.remove(key);
-            } else {
-                properties.put(key, value);
+    public boolean put(final String key, String value) {
+
+        boolean changed = false;
+        String oldValue = null;
+
+        synchronized (this) {
+            oldValue = properties.get(key);
+            if(value != null && value.length() == 0) {
+                value = null;
             }
-            try {
-                save();
-            } catch(IOException e){
-                System.out.println(tr("Warning: failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
+            if(!((oldValue == null && (value == null || value.equals(defaults.get(key))))
+                    || (value != null && oldValue != null && oldValue.equals(value))))
+            {
+                if (value == null) {
+                    properties.remove(key);
+                } else {
+                    properties.put(key, value);
+                }
+                try {
+                    save();
+                } catch(IOException e){
+                    System.out.println(tr("Warning: failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
+                }
+                changed = true;
             }
-            firePrefrenceChanged(key, oldvalue, value);
-            return true;
         }
-        return false;
+        if (changed) {
+            // Call outside of synchronized section in case some listener wait for other thread that wait for preference lock
+            firePrefrenceChanged(key, oldValue, value);
+        }
+        return changed;
     }
 
     synchronized public boolean put(final String key, final boolean value) {
@@ -698,9 +707,7 @@ public class Preferences {
             putDefault(key, d);
         }
         if(s != null && s.length() != 0)
-        {
             return Arrays.asList(s.split("\u001e"));
-        }
         return def;
     }
     synchronized public void removeFromCollection(String key, String value) {

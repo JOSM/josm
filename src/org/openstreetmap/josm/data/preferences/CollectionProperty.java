@@ -15,11 +15,19 @@ public class CollectionProperty {
     }
 
     public Collection<String> get() {
-        return Main.pref.getCollection(key, defaultValue);
+        return Main.pref.getCollection(getKey(), getDefaultValue());
     }
 
     public boolean put(Collection<String> value) {
-        return Main.pref.putCollection(key, value);
+        return Main.pref.putCollection(getKey(), value);
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public Collection<String> getDefaultValue() {
+        return defaultValue;
     }
 
 }

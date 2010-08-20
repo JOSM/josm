@@ -14,11 +14,19 @@ public class IntegerProperty {
     }
 
     public int get() {
-        return Main.pref.getInteger(key, defaultValue);
+        return Main.pref.getInteger(getKey(), getDefaultValue());
     }
 
     public boolean put(int value) {
-        return Main.pref.putInteger(key, value);
+        return Main.pref.putInteger(getKey(), value);
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public int getDefaultValue() {
+        return defaultValue;
     }
 
 }

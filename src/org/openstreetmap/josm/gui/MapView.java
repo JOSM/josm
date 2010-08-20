@@ -174,7 +174,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     /**
      * The last event performed by mouse.
      */
-    public MouseEvent lastMEvent;
+    public MouseEvent lastMEvent = new MouseEvent(this, 0, 0, 0, 0, 0, 0, false); // In case somebody reads it before first mouse move
 
     private LinkedList<MapViewPaintable> temporaryLayers = new LinkedList<MapViewPaintable>();
 

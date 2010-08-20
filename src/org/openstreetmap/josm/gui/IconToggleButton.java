@@ -56,5 +56,6 @@ public class IconToggleButton extends JToggleButton implements PropertyChangeLis
         if (action instanceof Destroyable) {
             ((Destroyable) action).destroy();
         }
+        action.removePropertyChangeListener(this);
     }
 }

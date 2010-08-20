@@ -14,11 +14,19 @@ public class BooleanProperty {
     }
 
     public boolean get() {
-        return Main.pref.getBoolean(key, defaultValue);
+        return Main.pref.getBoolean(getKey(), isDefaultValue());
     }
 
     public boolean put(boolean value) {
-        return Main.pref.put(key, value);
+        return Main.pref.put(getKey(), value);
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public boolean isDefaultValue() {
+        return defaultValue;
     }
 
 }
