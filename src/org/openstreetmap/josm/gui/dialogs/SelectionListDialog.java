@@ -220,6 +220,10 @@ public class SelectionListDialog extends ToggleDialog  {
         return arrowButton;
     }
 
+    public void clearSelectionHistory() {
+        model.clearSelectionHistory();
+    }
+
     /**
      * Responds to double clicks on the list of selected objects
      */
@@ -541,6 +545,10 @@ public class SelectionListDialog extends ToggleDialog  {
          */
         public List<Collection<? extends OsmPrimitive>> getSelectionHistory() {
             return history;
+        }
+
+        public void clearSelectionHistory() {
+            history.clear();
         }
 
         public Object getElementAt(int index) {

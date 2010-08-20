@@ -173,6 +173,7 @@ public class PurgeAction extends JosmAction {
 
         if (cbClearUndoRedo.isSelected()) {
             Main.main.undoRedo.clean();
+            Main.map.selectionListDialog.clearSelectionHistory();
         }
     }
 
