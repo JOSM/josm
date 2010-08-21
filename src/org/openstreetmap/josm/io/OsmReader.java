@@ -120,17 +120,6 @@ public class OsmReader {
         private OsmPrimitive currentPrimitive;
         private long currentExternalId;
         private String generator;
-        private Storage<String> internedStrings = new Storage<String>();
-
-        // Memory optimization - see #2312
-        private String intern(String s) {
-            String result = internedStrings.get(s);
-            if (result == null) {
-                internedStrings.put(s);
-                return s;
-            } else
-                return result;
-        }
 
         @Override public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
 
@@ -275,7 +264,7 @@ public class OsmReader {
                     if (key == null || value == null) {
                         throwException(tr("Missing key or value attribute in tag."));
                     }
-                    currentPrimitive.put(intern(key), intern(value));
+                    currentPrimitive.put(key.intern(), value.intern());
 
                 } else {
                     System.out.println(tr("Undefined element ''{0}'' found in input stream. Skipping.", qName));
