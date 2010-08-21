@@ -574,21 +574,12 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
         return true;
     }
-    // If anyone has suggestions for how to fix
-    // this properly, I'm listening :)
-    @SuppressWarnings("unchecked")
-    private T convert(Object raw)
-    {
-        return (T)raw;
-    }
     public boolean remove(Object o) {
-        return this.remove(convert(o));
-    }
-    public boolean remove(T o) {
+        @SuppressWarnings("unchecked") T t = (T) o;
         synchronized (split_lock) {
             search_cache = null; // Search cache might point to one of removed buckets
-            QBLevel bucket = root.findBucket(o.getBBox());
-            if (bucket.remove_content(o)) {
+            QBLevel bucket = root.findBucket(t.getBBox());
+            if (bucket.remove_content(t)) {
                 size--;
                 return true;
             } else
@@ -596,8 +587,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
     }
     public boolean contains(Object o) {
-        QBLevel bucket = root.findBucket(convert(o).getBBox());
-        return bucket != null && bucket.content != null && bucket.content.contains(o);
+        @SuppressWarnings("unchecked") T t = (T) o;
+        QBLevel bucket = root.findBucket(t.getBBox());
+        return bucket != null && bucket.content != null && bucket.content.contains(t);
     }
 
     public ArrayList<T> toArrayList()
