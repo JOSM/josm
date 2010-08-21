@@ -9,7 +9,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractButton;
@@ -32,6 +34,7 @@ import org.openstreetmap.josm.actions.mapmode.ExtrudeAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.actions.mapmode.ZoomAction;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.ChangesetDialog;
 import org.openstreetmap.josm.gui.dialogs.CommandStackDialog;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
@@ -44,6 +47,7 @@ import org.openstreetmap.josm.gui.dialogs.SelectionListDialog;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.UserListDialog;
 import org.openstreetmap.josm.gui.dialogs.properties.PropertiesDialog;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Destroyable;
 
 /**
@@ -52,12 +56,14 @@ import org.openstreetmap.josm.tools.Destroyable;
  *
  * @author imi
  */
-public class MapFrame extends JPanel implements Destroyable {
+public class MapFrame extends JPanel implements Destroyable, LayerChangeListener {
 
     /**
      * The current mode, this frame operates.
      */
     public MapMode mapMode;
+
+    private final List<MapMode> mapModes = new ArrayList<MapMode>();
     /**
      * The view control displayed.
      */
@@ -89,7 +95,9 @@ public class MapFrame extends JPanel implements Destroyable {
     /**
      * Default width of the toggle dialog area.
      */
-    public final int DEF_TOGGLE_DLG_WIDTH = 330;
+    public static final int DEF_TOGGLE_DLG_WIDTH = 330;
+
+    private final Map<Layer, MapMode> lastMapMode = new HashMap<Layer, MapMode>();
 
     public MapFrame(JPanel contentPane) {
         setSize(400,400);
@@ -167,6 +175,7 @@ public class MapFrame extends JPanel implements Destroyable {
 
         // status line below the map
         statusLine = new MapStatus(this);
+        MapView.addLayerChangeListener(this);
     }
 
     public void selectSelectTool(boolean onlyIfModeless) {
@@ -189,6 +198,7 @@ public class MapFrame extends JPanel implements Destroyable {
      * Delegates the call to all Destroyables within this component (e.g. MapModes)
      */
     public void destroy() {
+        MapView.removeLayerChangeListener(this);
         dialogsPanel.destroy();
         for (int i = 0; i < toolBarActions.getComponentCount(); ++i)
             if (toolBarActions.getComponent(i) instanceof Destroyable) {
@@ -242,6 +252,10 @@ public class MapFrame extends JPanel implements Destroyable {
     public void addMapMode(IconToggleButton b) {
         toolBarActions.add(b);
         toolGroup.add(b);
+        if (b.getAction() instanceof MapMode) {
+            mapModes.add((MapMode) b.getAction());
+        } else
+            throw new IllegalArgumentException("MapMode action must be subclass of MapMode");
     }
 
     /**
@@ -260,16 +274,18 @@ public class MapFrame extends JPanel implements Destroyable {
      * old MapMode and register on the new one.
      * @param mapMode   The new mode to set.
      */
-    public void selectMapMode(MapMode newMapMode) {
+    public boolean selectMapMode(MapMode newMapMode) {
         MapMode oldMapMode = this.mapMode;
         if (newMapMode == oldMapMode)
-            return;
+            return false;
         if (oldMapMode != null) {
             oldMapMode.exitMode();
         }
         this.mapMode = newMapMode;
         newMapMode.enterMode();
+        lastMapMode.put(mapView.getActiveLayer(), newMapMode);
         fireMapModeChanged(oldMapMode, newMapMode);
+        return true;
     }
 
     /**
@@ -359,5 +375,29 @@ public class MapFrame extends JPanel implements Destroyable {
         for (MapModeChangeListener l : mapModeChangeListeners) {
             l.mapModeChange(oldMapMode, newMapMode);
         }
+    }
+
+    @Override
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        boolean modeChanged = false;
+        if (mapMode == null || !mapMode.layerIsSupported(newLayer)) {
+            MapMode newMapMode = lastMapMode.get(newLayer);
+            if (newMapMode != null) {
+                modeChanged = selectMapMode(newMapMode);
+            } // it would be nice to select first supported mode when layer is first selected, but it don't work well with for example editgpx layer
+        }
+        if (!modeChanged && mapMode != null) {
+            // Let mapmodes know about new active layer
+            mapMode.exitMode();
+            mapMode.enterMode();
+        }
+    }
+
+    @Override
+    public void layerAdded(Layer newLayer) { }
+
+    @Override
+    public void layerRemoved(Layer oldLayer) {
+        lastMapMode.remove(oldLayer);
     }
 }
