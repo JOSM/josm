@@ -274,10 +274,10 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
      * old MapMode and register on the new one.
      * @param mapMode   The new mode to set.
      */
-    public boolean selectMapMode(MapMode newMapMode) {
+    public void selectMapMode(MapMode newMapMode) {
         MapMode oldMapMode = this.mapMode;
         if (newMapMode == oldMapMode)
-            return false;
+            return;
         if (oldMapMode != null) {
             oldMapMode.exitMode();
         }
@@ -285,7 +285,6 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         newMapMode.enterMode();
         lastMapMode.put(mapView.getActiveLayer(), newMapMode);
         fireMapModeChanged(oldMapMode, newMapMode);
-        return true;
     }
 
     /**
@@ -382,8 +381,9 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         boolean modeChanged = false;
         if (mapMode == null || !mapMode.layerIsSupported(newLayer)) {
             MapMode newMapMode = lastMapMode.get(newLayer);
+            modeChanged = newMapMode != mapMode;
             if (newMapMode != null) {
-                modeChanged = selectMapMode(newMapMode);
+                selectMapMode(newMapMode);
             } // it would be nice to select first supported mode when layer is first selected, but it don't work well with for example editgpx layer
         }
         if (!modeChanged && mapMode != null) {
