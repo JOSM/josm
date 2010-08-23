@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
@@ -31,9 +32,9 @@ public class FilterTest {
     @Test
     public void basic_test() throws ParseError {
         DataSet ds = new DataSet();
-        Node n1 = new Node();
+        Node n1 = new Node(new LatLon(0, 0));
         n1.put("amenity", "parking");
-        Node n2 = new Node();
+        Node n2 = new Node(new LatLon(0, 0));
         n2.put("fixme", "continue");
         ds.addPrimitive(n1);
         ds.addPrimitive(n2);

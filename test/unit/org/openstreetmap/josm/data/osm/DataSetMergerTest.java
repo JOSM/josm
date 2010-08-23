@@ -606,7 +606,7 @@ public class DataSetMergerTest {
      *
      */
     @Test
-    public void waySimple_TheirVersionNotVisible() {
+    public void waySimple_TheirVersionNotVisibleMyIsModified() {
 
 
         Node mn1 = new Node(new LatLon(0,0));
@@ -621,6 +621,7 @@ public class DataSetMergerTest {
         myWay.setOsmId(3,1);
         myWay.addNode(mn1);
         myWay.addNode(mn2);
+        myWay.setModified(true);
         my.addPrimitive(myWay);
 
 

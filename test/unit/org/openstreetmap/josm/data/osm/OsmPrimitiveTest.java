@@ -69,7 +69,7 @@ public class OsmPrimitiveTest {
 
     @Test
     public void removeMemberFromRelationReferrerTest() {
-        Node n1 = new Node();
+        Node n1 = new Node(new LatLon(0, 0));
         Relation r1 = new Relation();
         r1.addMember(new RelationMember("", n1));
         r1.addMember(new RelationMember("", n1));
@@ -81,8 +81,8 @@ public class OsmPrimitiveTest {
 
     @Test
     public void setRelationMemberReferrerTest() {
-        Node n1 = new Node();
-        Node n2 = new Node();
+        Node n1 = new Node(new LatLon(0, 0));
+        Node n2 = new Node(new LatLon(0, 0));
         Relation r1 = new Relation();
         Relation r2 = new Relation();
         r1.addMember(new RelationMember("", n1));
