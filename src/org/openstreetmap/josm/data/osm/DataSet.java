@@ -282,7 +282,7 @@ public class DataSet implements Cloneable {
             } else if (primitive instanceof Way) {
                 success = ways.remove((Way) primitive);
             } else if (primitive instanceof Relation) {
-                success = relations.remove(primitive);
+                success = relations.remove((Relation) primitive);
             }
             if (!success)
                 throw new RuntimeException("failed to remove primitive: "+primitive);
@@ -542,18 +542,18 @@ public class DataSet implements Cloneable {
         getReadLock().lock();
         try {
             DataSet ds = new DataSet();
-            HashMap<OsmPrimitive, OsmPrimitive> primitivesMap = new HashMap<OsmPrimitive, OsmPrimitive>();
+            HashMap<OsmPrimitive, OsmPrimitive> primMap = new HashMap<OsmPrimitive, OsmPrimitive>();
             for (Node n : nodes) {
                 Node newNode = new Node(n);
-                primitivesMap.put(n, newNode);
+                primMap.put(n, newNode);
                 ds.addPrimitive(newNode);
             }
             for (Way w : ways) {
                 Way newWay = new Way(w);
-                primitivesMap.put(w, newWay);
+                primMap.put(w, newWay);
                 List<Node> newNodes = new ArrayList<Node>();
                 for (Node n: w.getNodes()) {
-                    newNodes.add((Node)primitivesMap.get(n));
+                    newNodes.add((Node)primMap.get(n));
                 }
                 newWay.setNodes(newNodes);
                 ds.addPrimitive(newWay);
@@ -563,14 +563,14 @@ public class DataSet implements Cloneable {
             for (Relation r : relations) {
                 Relation newRelation = new Relation(r, r.isNew());
                 newRelation.setMembers(null);
-                primitivesMap.put(r, newRelation);
+                primMap.put(r, newRelation);
                 ds.addPrimitive(newRelation);
             }
             for (Relation r : relations) {
-                Relation newRelation = (Relation)primitivesMap.get(r);
+                Relation newRelation = (Relation)primMap.get(r);
                 List<RelationMember> newMembers = new ArrayList<RelationMember>();
                 for (RelationMember rm: r.getMembers()) {
-                    newMembers.add(new RelationMember(rm.getRole(), primitivesMap.get(rm.getMember())));
+                    newMembers.add(new RelationMember(rm.getRole(), primMap.get(rm.getMember())));
                 }
                 newRelation.setMembers(newMembers);
             }
@@ -670,12 +670,12 @@ public class DataSet implements Cloneable {
         beginUpdate();
         try {
             for (Way way: ways) {
-                List<Node> nodes = way.getNodes();
-                if (nodes.remove(node)) {
-                    if (nodes.size() < 2) {
+                List<Node> wayNodes = way.getNodes();
+                if (wayNodes.remove(node)) {
+                    if (wayNodes.size() < 2) {
                         deleteWay(way);
                     } else {
-                        way.setNodes(nodes);
+                        way.setNodes(wayNodes);
                     }
                 }
             }
