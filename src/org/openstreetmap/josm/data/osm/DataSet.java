@@ -430,17 +430,18 @@ public class DataSet implements Cloneable {
      * @param fireSelectionChangeEvent true, if the selection change listeners are to be notified; false, otherwise
      */
     public void setSelected(Collection<? extends PrimitiveId> selection, boolean fireSelectionChangeEvent) {
-        boolean wasEmpty;
+        boolean changed;
         synchronized (selectionLock) {
-            wasEmpty = selectedPrimitives.isEmpty();
+            boolean wasEmpty = selectedPrimitives.isEmpty();
             selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
-            addSelected(selection, fireSelectionChangeEvent);
-            if (!wasEmpty && selectedPrimitives.isEmpty()) {
+            changed = addSelected(selection, false)
+                            || (!wasEmpty && selectedPrimitives.isEmpty());
+            if (changed) {
                 selectionSnapshot = null;
             }
         }
 
-        if (!wasEmpty && selectedPrimitives.isEmpty() && fireSelectionChangeEvent) {
+        if (changed && fireSelectionChangeEvent) {
             // If selection is not empty then event was already fired in addSelecteds
             fireSelectionChanged();
         }
@@ -485,8 +486,9 @@ public class DataSet implements Cloneable {
      *
      * @param selection the selection
      * @param fireSelectionChangeEvent true, if the selection change listeners are to be notified; false, otherwise
+     * @return if the selection was changed in the process
      */
-    public void addSelected(Collection<? extends PrimitiveId> selection, boolean fireSelectionChangeEvent) {
+    private boolean addSelected(Collection<? extends PrimitiveId> selection, boolean fireSelectionChangeEvent) {
         boolean changed = false;
         synchronized (selectionLock) {
             for (PrimitiveId id: selection) {
@@ -502,6 +504,7 @@ public class DataSet implements Cloneable {
         if (fireSelectionChangeEvent && changed) {
             fireSelectionChanged();
         }
+        return changed;
     }
 
     /**
