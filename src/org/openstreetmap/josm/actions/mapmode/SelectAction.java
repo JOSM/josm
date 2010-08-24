@@ -460,6 +460,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                         ed.setContent(tr("You moved more than {0} elements. "
                                 + "Moving a large number of elements is often an error.\n"
                                 + "Really move them?", max));
+                        ed.setCancelButton(2);
                         ed.toggleEnable("movedManyElements");
                         ed.showDialog();
 
