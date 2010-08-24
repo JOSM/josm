@@ -3123,7 +3123,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
     </group> <!-- Health -->
   </group>
-  <group name="Geography" icon="presets/places.png">
+  <group name="Geography" icon="presets/peak.png">
     <group name="Boundaries" icon="presets/boundaries.png">
         <item name="National" icon="presets/boundaries.png" type="closedway,relation">
             <label text="Edit National Boundary" />
