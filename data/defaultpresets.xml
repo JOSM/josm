@@ -644,7 +644,20 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
                 <text key="operator" text="Operator" default="" delete_if_empty="true" />
+                <check key="toilets" default="off" delete_if_empty="true" />
             </optional>
+        </item>
+        <item name="Rest Area" icon="presets/parking.png" type="node,closedway">
+            <label text="Edit Rest Area" />
+            <space />
+            <key key="highway" value="rest_area" />
+            <optional>
+                <text key="name" text="Name" default="" delete_if_empty="true" />
+                <check key="toilets" default="off" delete_if_empty="true" />
+            </optional>
+        </item>
+        <item name="Emergency Phone" icon="presets/telephone.png" type="node">
+            <key key="amenity" value="emergency_phone" />
         </item>
         <separator/>
         <item name="Traffic Signal" icon="presets/traffic-light.png" type="node">
@@ -661,6 +674,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
         <item name="Stop" icon="presets/Stop.png" type="node">
             <key key="highway" value="stop" />
         </item>
+        <item name="Mini-roundabout" icon="presets/roundabout_left.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=mini_roundabout"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=mini_roundabout"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=mini_roundabout" />
+            <key key="highway" value="mini_roundabout" />
+            <combo key="direction" text="Direction" values="clockwise" default="" delete_if_empty="true" />
+        </item>
         <item name="Pedestrian Crossing" icon="presets/zebracrossing.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Key:crossing"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=crossing" />
@@ -672,7 +692,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="supervised" text="Crossing attendant" default="off" delete_if_empty="true" />
             <combo key="crossing_ref" text="Type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" default="" delete_if_empty="true" />
         </item>
-        <item name="Traffic Calming" type="node">
+        <item name="Traffic Calming" icon="presets/empty.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_calming"/>
             <label text="Edit Traffic Calming" />
             <combo key="traffic_calming" text="Type" values="yes,bump,chicane,choker,cushion,hump,table" default="" delete_if_empty="true" />
@@ -681,13 +701,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=passing_place"/>
             <label text="Edit Passing Place" />
             <key key="highway" value="passing_place" />
-        </item>
-        <item name="Mini-roundabout" icon="presets/roundabout_left.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=mini_roundabout"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=mini_roundabout"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=mini_roundabout" />
-            <key key="highway" value="mini_roundabout" />
-            <combo key="direction" text="Direction" values="clockwise" default="" delete_if_empty="true" />
         </item>
         <item name="Turning Circle" icon="presets/turning_circle.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=turning_circle"
@@ -707,16 +720,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway%3Dspeed_camera" />
             <key key="highway" value="speed_camera" />
         </item>
-        <item name="Emergency Phone" icon="presets/telephone.png" type="node">
-            <key key="amenity" value="emergency_phone" />
-        </item>
+        <separator/>
         <item name="Incline" icon="presets/incline.png" type="node,way">
             <key key="highway" value="incline" />
         </item>
         <item name="Incline Steep" icon="presets/incline_steep.png" type="node,way">
             <key key="highway" value="incline_steep" />
         </item>
-        <item name="Grit Bin" type="node">
+        <item name="Grit Bin" icon="styles/standard/misc/grit_bin.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dgrit_bin" />
             <key key="amenity" value="grit_bin" />
         </item>
@@ -755,7 +766,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="horse" text="Horse" default="off" delete_if_empty="true" />
             <check key="motorcycle" text="Motorcycle" default="off" delete_if_empty="true" />
         </item> <!-- bollard -->
-        <item name="Cycle Barrier" icon="presets/empty.png" type="node">
+        <item name="Cycle Barrier" icon="styles/standard/vehicle/cycle_barrier.png" type="node">
             <link href="http://de.wikipedia.org/wiki/Umlaufgitter" />
             <key key="barrier" value="cycle_barrier" />
         </item> <!-- cycle_barrier -->
@@ -836,7 +847,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
         <separator/>
 
         <!-- *** access *** -->
-        <item name="Entrance" icon="presets/empty.png" type="node">
+        <item name="Entrance" icon="styles/standard/vehicle/entrance.png" type="node">
             <label text="Edit Entrance" />
             <space />
             <key key="barrier" value="entrance" />
@@ -916,7 +927,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="foot" text="Foot" default="on" delete_if_empty="true" />
             <check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
         </item> <!-- stile -->
-        <item name="Turnstile" icon="presets/empty.png" type="node">
+        <item name="Turnstile" icon="styles/standard/vehicle/turnstile.png" type="node">
             <label text="Edit Turnstile" />
             <space />
             <key key="barrier" value="turnstile" />
@@ -942,12 +953,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
   </group>
   <group name="Water" icon="presets/waterway.png">
     <group name="Water" icon="presets/waterway.png">
-        <item name="Spring" icon="presets/spring.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=spring" />
-            <label text="Edit Spring" />
-            <key key="natural" value="spring" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
         <separator/>
         <item name="Drain" icon="presets/waterway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=drain" />
@@ -992,15 +997,30 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
         </item>
         <separator/>
-        <item name="Water" icon="presets/water.png" type="node,closedway,relation">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=water" />
-            <label text="Edit Water" />
-            <key key="natural" value="water" />
+        <item name="Spring" icon="presets/spring.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=spring" />
+            <label text="Edit Spring" />
+            <key key="natural" value="spring" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Land" icon="presets/landuse.png" type="node,closedway,relation">
-            <label text="Edit Land" />
-            <key key="natural" value="land" />
+        <item name="Waterfall" icon="presets/waterfall.png" type="node,way">
+            <label text="Edit Waterfall" />
+            <space />
+            <key key="waterway" value="waterfall" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Weir" icon="presets/weir.png" type="node,way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=weir" />
+            <label text="Edit Weir" />
+            <space />
+            <key key="waterway" value="weir" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Dam" icon="presets/empty.png" type="node,way,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=dam" />
+            <label text="Edit Dam" />
+            <space />
+            <key key="waterway" value="dam" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <separator/>
@@ -1023,6 +1043,23 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <separator/>
+        <item name="Water" icon="presets/water.png" type="node,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=water" />
+            <label text="Edit Water" />
+            <key key="natural" value="water" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Land" icon="presets/landuse.png" type="node,closedway,relation">
+            <label text="Edit Land" />
+            <key key="natural" value="land" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Coastline" icon="presets/empty.png" type="node,way,closedway,relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=coastline" />
+            <label text="Edit Coastline" />
+            <key key="natural" value="coastline" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
         <item name="Riverbank" icon="presets/waterway.png" type="closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=riverbank"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=riverbank" />
@@ -1030,6 +1067,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="waterway" value="riverbank" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <separator/>
         <item name="Wetland" icon="presets/empty.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wetland"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=wetland"
@@ -1062,13 +1100,15 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="natural" value="cliff" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Coastline" icon="presets/empty.png" type="node,way,closedway,relation">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=coastline" />
-            <label text="Edit Coastline" />
-            <key key="natural" value="coastline" />
+      </group> <!-- Water -->
+    <group name="Shipping" icon="presets/ferry.png">
+        <item name="Ferry Terminal" icon="presets/ferry.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=ferry_terminal" />
+            <label text="Edit Ferry Terminal" />
+            <key key="amenity" value="ferry_terminal" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="cargo" text="Cargo" values="passengers,vehicle,bicycle,hgv,passengers;vehicle" default="" delete_if_empty="true" />
         </item>
-        <separator/>
         <item name="Ferry Route" icon="presets/ferry.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:route=ferry" />
             <label text="Edit Ferry" />
@@ -1079,51 +1119,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
             </optional>
         </item>
         <separator/>
-        <item name="Boatyard" icon="presets/boatyard.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=boatyard" />
-            <label text="Edit Boatyard" />
-            <space />
-            <key key="waterway" value="boatyard" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Dock" icon="presets/waterway.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=dock" />
-            <label text="Edit Dock" />
-            <space />
-            <key key="waterway" value="dock" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <separator/>
-        <item name="Dam" icon="presets/empty.png" type="node,way,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=dam" />
-            <label text="Edit Dam" />
-            <space />
-            <key key="waterway" value="dam" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-      </group> <!-- Water -->
-    <group name="Waterway Point" icon="presets/waterwaypoint.png">
-        <item name="Lock Gate" icon="presets/lock_gate.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=lock_gate" />
-            <key key="waterway" value="lock_gate" />
-        </item>
-        <item name="Weir" icon="presets/weir.png" type="node,way">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=weir" />
-            <label text="Edit Weir" />
-            <space />
-            <key key="waterway" value="weir" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Waterfall" icon="presets/waterfall.png" type="node,way">
-            <label text="Edit Waterfall" />
-            <space />
-            <key key="waterway" value="waterfall" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Turning Point" icon="presets/turning.png" type="node">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=turning_point" />
-            <key key="waterway" value="turning_point" />
-        </item>
         <item name="Marina" icon="presets/marina.png" type="node,closedway">
             <label text="Edit Marina" />
             <key key="leisure" value="marina" />
@@ -1135,12 +1130,15 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="man_made" value="pier" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Ferry Terminal" icon="presets/empty.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=ferry_terminal" />
-            <label text="Edit Ferry Terminal" />
-            <key key="amenity" value="ferry_terminal" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
+        <item name="Lock Gate" icon="presets/lock_gate.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=lock_gate" />
+            <key key="waterway" value="lock_gate" />
         </item>
+        <item name="Turning Point" icon="presets/turning.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=turning_point" />
+            <key key="waterway" value="turning_point" />
+        </item>
+        <separator/>
         <item name="Slipway" icon="presets/slipway.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=slipway"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=slipway"
@@ -1149,7 +1147,21 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="leisure" value="slipway" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-    </group> <!-- Waterway -->
+        <item name="Boatyard" icon="presets/boatyard.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=boatyard" />
+            <label text="Edit Boatyard" />
+            <space />
+            <key key="waterway" value="boatyard" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Dock" icon="presets/empty.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=dock" />
+            <label text="Edit Dock" />
+            <space />
+            <key key="waterway" value="dock" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+    </group> <!-- Shipping -->
   </group>
   <group name="Transport" icon="presets/railway.png">
     <group name="Railway" icon="presets/railway.png">
@@ -1285,7 +1297,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=turntable" />
             <key key="railway" value="turntable" />
         </item>
-        <item name="Buffer Stop" type="node">
+        <item name="Buffer Stop" icon="styles/standard/transport/buffer_stop.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway%3Dbuffer_stop" />
             <key key="railway" value="buffer_stop" />
         </item>
@@ -1315,13 +1327,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="aerialway" value="gondola" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <separator/>
         <item name="Station" name_context="aerialway" icon="presets/aerialway_station.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#aerialway" />
             <label text="Edit Station" text_context="aerialway" />
             <key key="aerialway" value="station" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Pylon" name_context="aerialway" type="node">
+        <item name="Pylon" name_context="aerialway" icon="presets/power_tower.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#aerialway" />
             <label text="Edit Pylon" text_context="aerialway" />
             <key key="aerialway" value="pylon" />
@@ -1336,11 +1349,12 @@ are supplied, then "values" will be treated as "display_values" and translated i
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=fuel" />
             <label text="Edit Fuel" />
             <key key="amenity" value="fuel" />
-            <combo key="operator" text="Operator" values="Agip,Aral,Avia,BP,Esso,OMV,Q8,Repsol,Shell,Statoil,Tamoil,Texaco,Total,Indipend." default="" delete_if_empty="true" />
+            <combo key="brand" text="Brand" values="Agip,Aral,Avia,BP,Esso,OMV,Q8,Repsol,Shell,Statoil,Tamoil,Texaco,Total,Independent" default="" delete_if_empty="true" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
+                <text key="operator" text="Operator" default="" delete_if_empty="true" />
                 <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
-                <check key="shop" text="With kiosk" value_on="kiosk" value_off="" default="off" delete_if_empty="true" />
+                <combo key="shop" text="With shop" values="yes,convenience,kiosk,no" default="" delete_if_empty="true" />
                 <label text="Fuel types:" />
                 <check key="fuel:diesel" text="Diesel" default="off" delete_if_empty="true" />
                 <check key="fuel:biodiesel" text="Bio Diesel" default="off" delete_if_empty="true" />
@@ -1379,30 +1393,88 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Car Wash" />
             <key key="amenity" value="car_wash" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="brand" text="Brand" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <item name="Car Dealer" icon="presets/car.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=car" />
+            <label text="Edit Car Shop" />
+            <key key="shop" value="car" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
         </item>
         <item name="Repair" icon="presets/car_repair.png" type="node,closedway">
             <label text="Edit Car Repair" />
             <key key="shop" value="car_repair" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="brand" text="Brand" default="" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
+        <item name="Tyres" icon="presets/empty.png" type="node,closedway">
+            <label text="Edit Tyres" />
+            <key key="shop" value="tyres" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="brand" text="Brand" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+            <label text="Contact:" />
+                <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+                <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+                <text key="website" text="Website" default="" delete_if_empty="true" />
+                <text key="email" text="Email Address" default="" delete_if_empty="true" />
+         </item>
         <item name="Rental" icon="presets/car_rental.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=car_rental"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=car_rental"  />
             <label text="Edit Car Rental" />
             <key key="amenity" value="car_rental" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="brand" text="Brand" default="" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Sharing" icon="presets/car_sharing.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=car_sharing" />
             <label text="Edit Car Sharing" />
             <key key="amenity" value="car_sharing" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="brand" text="Brand" default="" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Car -->
+    <group name="Motorcycle" icon="presets/motorbike.png">
+        <item name="Parking" icon="presets/bike_parking.png" type="node,closedway">
+            <label text="Edit Motorcycle Parking" />
+            <key key="amenity" value="motorcycle_parking" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="capacity" text="Capacity" default="" delete_if_empty="true" />
+            <combo key="parking" text="Type" values="multi-storey,surface,underground" default="surface" delete_if_empty="true" />
+            <combo key="fee" text="Fee" values="yes,no" default="" delete_if_empty="true" />
+        </item>
+        <item name="Motorcycle Dealer" icon="presets/motorbike.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=motorcycle"/>
+            <label text="Edit Shop Motorcycle" />
+            <key key="shop" value="motorcycle" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="brand" text="Brand" values="Independent" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+            <label text="Services:" />
+                <combo key="sale" text="Sale" values="yes,no" default="off" delete_if_empty="true" />
+                <combo key="rental" text="Rental" values="yes,no" default="off" delete_if_empty="true" />
+                <combo key="repair" text="Repair" values="yes,brand,no" default="off" delete_if_empty="true" />
+                <combo key="parts" text="Parts" values="yes,brand,no" default="off" delete_if_empty="true" />
+                <combo key="clothes" text="Clothes" values="yes,no" default="off" delete_if_empty="true" />
+            <label text="Contact:" />
+                <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+                <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+                <text key="website" text="Website" default="" delete_if_empty="true" />
+                <text key="email" text="Email Address" default="" delete_if_empty="true" />
+        </item>
+    </group> <!-- Motorcycle -->
     <group name="Bicycle" icon="presets/bike.png">
         <item name="Parking" icon="presets/bike_parking.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bicycle_parking" />
@@ -1410,6 +1482,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="amenity" value="bicycle_parking" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="capacity" text="Capacity" default="" delete_if_empty="true" />
+        </item>
+        <item name="Bike Dealer" icon="presets/bike.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=bicycle"
+                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:shop=bicycle" />
+            <label text="Edit Bicycle Shop" />
+            <key key="shop" value="bicycle" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Rental" icon="presets/bicycle_rental.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bicycle_rental"
@@ -1526,7 +1605,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             </optional>
         </item>
         <separator/>
-        <item name="Runway" type="way">
+        <item name="Runway" icon="presets/empty.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=runway" />
             <label text="Edit Runway" />
             <key key="aeroway" value="runway" />
@@ -1534,7 +1613,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <text key="ref" text="Reference" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Taxiway" type="way">
+        <item name="Taxiway" icon="presets/empty.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=taxiway" />
             <label text="Edit Taxiway" />
             <key key="aeroway" value="taxiway" />
@@ -1542,7 +1621,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <text key="ref" text="Reference" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Helipad" type="node,closedway">
+        <item name="Helipad" icon="styles/standard/transport/airport/helipad.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=helipad" />
             <label text="Edit Helipad" />
             <key key="aeroway" value="helipad" />
@@ -1550,34 +1629,34 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <text key="ref" text="Reference" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Apron" type="closedway">
+        <item name="Apron" icon="presets/empty.png" type="closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=apron" />
             <label text="Apron" />
             <key key="aeroway" value="apron" />
         </item>
-        <item name="Hangar" type="closedway">
+        <item name="Hangar" icon="presets/empty.png" type="closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=hangar" />
             <label text="Hangar" />
             <key key="building" value="hangar" />
         </item>
-        <item name="Beacon" type="node">
+        <item name="Beacon" icon="presets/empty.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dbeacon" />
             <label text="Beacon" />
             <key key="man_made" value="beacon" />
         </item>
-        <item name="Windsock" type="node">
+        <item name="Windsock" icon="styles/standard/transport/airport/windsock.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=windsock" />
             <label text="Windsock" />
             <key key="aeroway" value="windsock" />
         </item>
         <separator/>
-        <item name="Terminal" type="node,closedway">
+        <item name="Terminal" icon="styles/standard/transport/airport/terminal.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=terminal" />
             <label text="Edit Terminal" />
             <key key="aeroway" value="terminal" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Gate" type="node">
+        <item name="Gate" icon="presets/empty.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=gate" />
             <label text="Edit Terminal Gate" />
             <key key="aeroway" value="gate" />
@@ -1606,7 +1685,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="website" text="Website" default="" delete_if_empty="true" />
             <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
-        <item name="Motel" icon="presets/bed.png" type="node,closedway">
+        <item name="Motel" icon="styles/standard/accommodation/motel.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=motel" />
             <label text="Edit Motel" />
             <key key="tourism" value="motel" />
@@ -1624,7 +1703,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="website" text="Website" default="" delete_if_empty="true" />
             <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
-        <item name="Guest House" icon="presets/bed.png" type="node,closedway">
+        <item name="Guest House" icon="styles/standard/accommodation/guest_house.png" type="node,closedway">
             <label text="Edit Guest House" />
             <key key="tourism" value="guest_house" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1640,7 +1719,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="website" text="Website" default="" delete_if_empty="true" />
             <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
-        <item name="Chalet" icon="presets/empty.png" type="node,closedway">
+        <item name="Chalet" icon="styles/standard/accommodation/chalet.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=chalet" />
             <label text="Edit Chalet" />
             <key key="tourism" value="chalet" />
@@ -1675,7 +1754,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="website" text="Website" default="" delete_if_empty="true" />
             <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
-        <item name="Alpine Hut" icon="presets/hostel.png" type="node,closedway">
+        <item name="Alpine Hut" icon="styles/standard/accommodation/alpine_hut.png" type="node,closedway">
             <label text="Edit Alpine Hut" />
             <key key="tourism" value="alpine_hut" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -1692,6 +1771,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="website" text="Website" default="" delete_if_empty="true" />
             <text key="email" text="Email Address" default="" delete_if_empty="true" />
         </item>
+        <separator/>
         <item name="Caravan Site" icon="presets/caravan2.png" type="node,closedway">
             <label text="Edit Caravan Site" />
             <key key="tourism" value="caravan_site" />
@@ -1790,6 +1870,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="amenity" value="cafe" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="cuisine" text="Cuisine" values="ice_cream" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
             <space />
             <combo key="internet_access" text="Internet access" values="yes,wlan,wired,terminal,no" default="" delete_if_empty="true" />
@@ -1892,13 +1973,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Viewpoint" icon="presets/viewpoint.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=viewpoint" />
-            <label text="Edit Viewpoint" />
-            <key key="tourism" value="viewpoint" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-<!--<check key="man_made" value="tower" text="Look-Out Tower" default="off" delete_if_empty="true" />-->
-        </item>
         <item name="Theme Park" icon="presets/theme_park.png" type="node,closedway">
             <label text="Edit Theme Park" />
             <key key="tourism" value="theme_park" />
@@ -1910,6 +1984,26 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Artwork" />
             <key key="tourism" value="artwork" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <separator/>
+        <item name="Viewpoint" icon="presets/viewpoint.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=viewpoint" />
+            <label text="Edit Viewpoint" />
+            <key key="tourism" value="viewpoint" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+<!--<check key="man_made" value="tower" text="Look-Out Tower" default="off" delete_if_empty="true" />-->
+        </item>
+        <item name="Shelter" icon="presets/shelter.png" type="node,closedway">
+            <label text="Edit Shelter" />
+            <key key="amenity" value="shelter" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <check key="fireplace" text="Fireplace" default="off" delete_if_empty="true" />
+        </item>
+        <item name="Picnic Site" icon="presets/picnic.png" type="node,closedway">
+            <label text="Edit Picnic Site" />
+            <key key="tourism" value="picnic_site" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <check key="fireplace" text="Fireplace" default="off" delete_if_empty="true" />
         </item>
         <separator/>
         <item name="Information Office" icon="presets/informationoffice.png" type="node,closedway">
@@ -1991,19 +2085,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="tourism" value="information" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="description" text="Closer Description" default="" delete_if_empty="true" />
-        </item>
-        <separator/>
-        <item name="Shelter" icon="presets/shelter.png" type="node,closedway">
-            <label text="Edit Shelter" />
-            <key key="amenity" value="shelter" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <check key="fireplace" text="Fireplace" default="off" delete_if_empty="true" />
-        </item>
-        <item name="Picnic Site" icon="presets/picnic.png" type="node,closedway">
-            <label text="Edit Picnic Site" />
-            <key key="tourism" value="picnic_site" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <check key="fireplace" text="Fireplace" default="off" delete_if_empty="true" />
         </item>
     </group> <!-- Tourism -->
     <group name="Historic Places" icon="presets/State_Tourist.png">
@@ -2139,13 +2220,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
     </group>
     <group name="Sport" icon="presets/rowing.png">
-        <item name="Multi" icon="presets/empty.png" type="node,closedway">
+        <item name="Multi" icon="styles/standard/sport/multi.png" type="node,closedway">
             <label text="Edit Multi" />
             <key key="sport" value="multi" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="10pin" icon="presets/empty.png" type="node,closedway">
+        <item name="10pin" icon="styles/standard/sport/10pin.png" type="node,closedway">
             <label text="Edit 10pin" />
             <key key="sport" value="10pin" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2157,13 +2238,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Archery" icon="presets/empty.png" type="node,closedway">
+        <item name="Archery" icon="styles/standard/sport/archery.png" type="node,closedway">
             <label text="Edit Archery" />
             <key key="sport" value="archery" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Climbing" icon="presets/empty.png" type="node,closedway">
+        <item name="Climbing" icon="styles/standard/sport/climbing.png" type="node,closedway">
             <label text="Edit Climbing" />
             <key key="sport" value="climbing" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2181,7 +2262,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Dog Racing" icon="presets/empty.png" type="node,closedway">
+        <item name="Dog Racing" icon="styles/standard/leisure/dog.png" type="node,closedway">
             <label text="Edit Dog Racing" />
             <key key="sport" value="dog_racing" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2205,19 +2286,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Motor Sports" icon="presets/motorbike.png" type="node,closedway">
-            <label text="Edit Motor Sports" />
-            <key key="sport" value="motor" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
-        </item>
         <item name="Skating" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Skating" />
             <key key="sport" value="skating" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Skateboard" icon="presets/empty.png" type="node,closedway">
+        <item name="Skateboard" icon="styles/standard/sport/skateboard.png" type="node,closedway">
             <label text="Edit Skateboard" />
             <key key="sport" value="skateboard" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2325,13 +2400,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Cricket Nets" icon="presets/empty.png" type="node,closedway">
+        <item name="Cricket Nets" icon="presets/cricket.png" type="node,closedway">
             <label text="Edit Cricket Nets" />
             <key key="sport" value="cricket_nets" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Croquet" icon="presets/empty.png" type="node,closedway">
+        <item name="Croquet" icon="styles/standard/sport/croquet.png" type="node,closedway">
             <label text="Edit Croquet" />
             <key key="sport" value="croquet" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2368,13 +2443,52 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
     </group>
+    <group name="Motorsport" icon="presets/motorbike.png">
+        <item name="Motorsport" icon="presets/empty.png" type="node,closedway">
+            <label text="Edit Motorsport" />
+            <key key="sport" value="motor" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
+        </item>
+        <item name="Karting" icon="presets/empty.png" type="node,closedway">
+            <label text="Edit Karting" />
+            <key key="sport" value="karting" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,track" default="" delete_if_empty="true" />
+        </item>
+        <item name="Motocross" icon="presets/empty.png" type="node,closedway">
+            <label text="Edit Motocross" />
+            <key key="sport" value="motocross" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,track" default="" delete_if_empty="true" />
+        </item>
+        <item name="Safety Training" icon="presets/empty.png" type="node,closedway">
+            <label text="Edit Safety Training" />
+            <key key="sport" value="safety_training" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,track" default="" delete_if_empty="true" />
+        </item>
+        <separator/>
+        <item name="Model Aerodrome" icon="presets/plane.png" type="node,closedway">
+            <label text="Edit Model Aerodrome" />
+            <key key="sport" value="model_aerodrome" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,track" default="" delete_if_empty="true" />
+        </item>
+        <item name="Model Car" icon="presets/car.png" type="node,closedway">
+            <label text="Edit Model Car" />
+            <key key="sport" value="model_car" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="leisure" text="type" values="pitch,sports_centre,track" default="" delete_if_empty="true" />
+        </item>
+    </group>
   </group>
   <group name="Man-Made" icon="presets/works.png">
     <group name="Buildings" icon="presets/townhall.png">
         <item name="Building" icon="presets/empty.png" type="closedway,relation">
             <key key="building" value="yes" />
         </item>
-        <item name="Public Building" icon="presets/empty.png" type="node,closedway,relation">
+        <item name="Public Building" icon="styles/standard/service.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=public_building" />
             <label text="Edit Public Building" />
             <key key="amenity" value="public_building" />
@@ -2440,13 +2554,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="amenity" value="school" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="University" icon="presets/empty.png" type="node,closedway,relation">
+        <item name="University" icon="styles/standard/education/university.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=university" />
             <label text="Edit University" />
             <key key="amenity" value="university" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="College" icon="presets/empty.png" type="node,closedway,relation">
+        <item name="College" icon="styles/standard/education/college.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=college" />
             <label text="Edit College" />
             <key key="amenity" value="college" />
@@ -2491,28 +2605,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarian,zoroastrian" default="" delete_if_empty="true" />
             <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
-        </item>
-        <separator/>
-        <item name="Addresses" icon="presets/addresses.png" type="node,way,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/House_numbers/Karlsruhe_Schema"
-                  de.href="http://wiki.openstreetmap.org/wiki/Proposed_features/De:Hausnummern" />
-            <label text="Edit Address Information" />
-            <space />
-            <text key="addr:housenumber" text="House number" default="" delete_if_empty="true" />
-            <optional>
-                <text key="addr:housename" text="House name" default="" delete_if_empty="true" />
-                <text key="addr:street" text="Street name" use_last_as_default="true" delete_if_empty="true" />
-                <text key="addr:city" text="City name" use_last_as_default="true" delete_if_empty="true" />
-                <text key="addr:postcode" text="Post code" use_last_as_default="true" delete_if_empty="true" />
-                <text key="addr:country" text="Country code" use_last_as_default="true" delete_if_empty="true" />
-            </optional>
-        </item>
-        <item name="Address Interpolation" icon="presets/addresses.png" type="way">
-           <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/House_numbers/Karlsruhe_Schema"
-                 de.href="http://wiki.openstreetmap.org/wiki/Proposed_features/De:Hausnummern" />
-            <label text="Edit Address Interpolation" />
-            <space />
-            <combo key="addr:interpolation" text="Numbering scheme" values="odd,even,all,alphabetic" default="odd" />
         </item>
     </group> <!-- Buildings -->
     <group name="Man Made" icon="presets/works.png">
@@ -2685,7 +2777,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="recycling:paper" text="Paper" default="off" delete_if_empty="true" />
             <check key="recycling:scrap_metal" text="Scrap Metal" default="off" delete_if_empty="true" />
         </item>
-        <item name="Waste Basket" type="node">
+        <item name="Waste Basket" icon="styles/standard/service/recycling/trash-bin.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dwaste_basket" />
             <label text="Edit Waste Basket" />
             <key key="amenity" value="waste_basket" />
@@ -2726,38 +2818,11 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Fire Hydrant" />
             <key key="amenity" value="fire_hydrant" />
         </item>
-        <item name="Baby Hatch" icon="presets/empty.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=baby_hatch" />
-            <label text="Edit Baby Hatch" />
-            <key key="amenity" value="baby_hatch" />
-            <text key="operator" text="Operator" default="" delete_if_empty="true" />
-            <text key="opening_hours" text="Opening Hours" default="" delete_if_empty="true" />
-        </item>
     </group> <!-- Amenities -->
-    <group name="Shops" icon="presets/shopping.png">
-        <item name="Car Dealer" icon="presets/car.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=car" />
-            <label text="Edit Car Shop" />
-            <key key="shop" value="car" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <text key="operator" text="Operator" default="" delete_if_empty="true" />
-        </item>
-        <item name="Bike Dealer" icon="presets/bike.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=bicycle"
-                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:shop=bicycle" />
-            <label text="Edit Bicycle Shop" />
-            <key key="shop" value="bicycle" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
+    <group name="Food" icon="presets/shopping.png">
         <item name="Supermarket" icon="presets/shopping.png" type="node,closedway">
             <label text="Edit Supermarket" />
             <key key="shop" value="supermarket" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
-        </item>
-        <item name="Chemist" icon="presets/empty.png" type="node,closedway">
-            <label text="Edit Chemist" />
-            <key key="shop" value="chemist" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
@@ -2775,18 +2840,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Book Store" icon="presets/book.png" type="node,closedway">
-            <label text="Edit Book Store" />
-            <key key="shop" value="books" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
-        </item>
-        <item name="Travel Agency" icon="presets/travel.png" type="node,closedway">
-            <label text="Edit Travel Agency" />
-            <key key="shop" value="travel_agency" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
-        </item>
         <item name="Butcher" icon="presets/cow.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=butcher" />
             <label text="Edit Butcher" />
@@ -2798,13 +2851,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=bakery" />
             <label text="Edit Baker" />
             <key key="shop" value="bakery" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
-        </item>
-        <item name="Florist" icon="presets/empty.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=florist" />
-            <label text="Edit Florist" />
-            <key key="shop" value="florist" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
@@ -2821,37 +2867,112 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Beverages" icon="presets/empty.png" type="node,closedway">
+        <item name="Beverages" icon="styles/standard/shop/beverages.png" type="node,closedway">
             <label text="Edit Beverages Shop" />
             <key key="shop" value="beverages" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Computer" icon="presets/empty.png" type="node,closedway">
+    </group> <!-- Food -->
+    <group name="Shops" icon="styles/standard/shop/mall.png">
+        <item name="Chemist" icon="styles/standard/shop/chemist.png" type="node,closedway">
+            <label text="Edit Chemist" />
+            <key key="shop" value="chemist" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <item name="Hairdresser" icon="styles/standard/shop/hairdresser.png" type="node,closedway">
+            <label text="Edit Hairdresser" />
+            <key key="shop" value="hairdresser" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <item name="Optician" icon="styles/standard/shop/optician.png" type="node,closedway">
+            <label text="Edit Optician" />
+            <key key="shop" value="optician" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <separator/>
+        <item name="Clothes" icon="styles/standard/shop/clothes.png" type="node,closedway">
+            <label text="Edit Clothes Shop" />
+            <key key="shop" value="clothes" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <item name="Shoes" icon="styles/standard/shop/shoes.png" type="node,closedway">
+            <label text="Edit Shoe Shop" />
+            <key key="shop" value="shoes" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <item name="Outdoor" icon="presets/tent.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=outdoor" />
+            <label text="Edit Outdoor Shop" />
+            <key key="shop" value="outdoor" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <item name="Sports" icon="presets/rowing.png" type="node,closedway">
+            <label text="Edit Sports Shop" />
+            <key key="shop" value="sports" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <item name="Dry Cleaning" icon="presets/laundry.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=dry_cleaning" />
+            <label text="Edit Dry Cleaning" />
+            <key key="shop" value="dry_cleaning" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <item name="Laundry" icon="presets/laundry.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Laundry" />
+            <label text="Edit Laundry" />
+            <key key="shop" value="laundry" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <item name="Tailor" icon="styles/standard/shop/tailor.png" type="node,closedway">
+            <label text="Edit Tailor" />
+            <key key="shop" value="tailor" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <separator/>
+        <item name="Computer" icon="styles/standard/shop/computer.png" type="node,closedway">
             <label text="Edit Computer Shop" />
             <key key="shop" value="computer" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Electronics" icon="presets/empty.png" type="node,closedway">
+        <item name="Electronics" icon="styles/standard/shop/electronics.png" type="node,closedway">
             <label text="Edit Electronics Shop" />
             <key key="shop" value="electronics" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Hifi" icon="presets/empty.png" type="node,closedway">
+        <item name="Hifi" icon="styles/standard/shop/hifi.png" type="node,closedway">
             <label text="Edit Hifi Shop" />
             <key key="shop" value="hifi" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Furniture" icon="presets/empty.png" type="node,closedway">
-            <label text="Edit Furniture Shop" />
-            <key key="shop" value="furniture" />
+        <item name="Video" icon="styles/standard/shop/video.png" type="node,closedway">
+            <label text="Edit Video Shop" />
+            <key key="shop" value="video" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Garden Centre" icon="presets/empty.png" type="node,closedway">
+        <separator/>
+        <item name="Florist" icon="styles/standard/shop/florist.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=florist" />
+            <label text="Edit Florist" />
+            <key key="shop" value="florist" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <item name="Garden Centre" icon="styles/standard/shop/garden_centre.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=garden_centre" />
             <label text="Edit Garden Centre" />
             <key key="shop" value="garden_centre" />
@@ -2872,66 +2993,33 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
+        <item name="Furniture" icon="styles/standard/shop/furniture.png" type="node,closedway">
+            <label text="Edit Furniture Shop" />
+            <key key="shop" value="furniture" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
         <item name="Stationery" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Stationery Shop" />
             <key key="shop" value="stationery" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Hairdresser" icon="presets/empty.png" type="node,closedway">
-            <label text="Edit Hairdresser" />
-            <key key="shop" value="hairdresser" />
+        <item name="Book Store" icon="presets/book.png" type="node,closedway">
+            <label text="Edit Book Store" />
+            <key key="shop" value="books" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Shoes" icon="presets/empty.png" type="node,closedway">
-            <label text="Edit Shoe Shop" />
-            <key key="shop" value="shoes" />
+        <item name="Travel Agency" icon="presets/travel.png" type="node,closedway">
+            <label text="Edit Travel Agency" />
+            <key key="shop" value="travel_agency" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Toys" icon="presets/empty.png" type="node,closedway">
+        <item name="Toys" icon="styles/standard/shop/toys.png" type="node,closedway">
             <label text="Edit Toy Shop" />
             <key key="shop" value="toys" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
-        </item>
-        <item name="Video" icon="presets/empty.png" type="node,closedway">
-            <label text="Edit Video Shop" />
-            <key key="shop" value="video" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
-        </item>
-        <item name="Dry Cleaning" icon="presets/laundry.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=dry_cleaning" />
-            <label text="Edit Dry Cleaning" />
-            <key key="shop" value="dry_cleaning" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
-        </item>
-        <item name="Laundry" icon="presets/laundry.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Laundry" />
-            <label text="Edit Laundry" />
-            <key key="shop" value="laundry" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
-        </item>
-        <item name="Outdoor" icon="presets/tent.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=outdoor" />
-            <label text="Edit Outdoor Shop" />
-            <key key="shop" value="outdoor" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
-        </item>
-        <item name="Sports" icon="presets/empty.png" type="node,closedway">
-            <label text="Edit Sports Shop" />
-            <key key="shop" value="sports" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
-        </item>
-        <item name="Optician" icon="presets/empty.png" type="node,closedway">
-            <label text="Edit Optician" />
-            <key key="shop" value="optician" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
@@ -2977,14 +3065,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
     </group> <!-- Cash -->
     <group name="Health" icon="presets/pharmacy.png">
-        <item name="Doctors" icon="presets/empty.png" type="node,closedway">
+        <item name="Doctors" icon="styles/standard/health/doctor.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=doctors" />
             <label text="Edit Doctors" />
             <key key="amenity" value="doctors" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Dentist" icon="presets/empty.png" type="node,closedway">
+        <item name="Dentist" icon="styles/standard/health/dentist.png" type="node,closedway">
             <label text="Edit Dentist" />
             <key key="amenity" value="dentist" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -3003,6 +3091,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Hospital" />
             <key key="amenity" value="hospital" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Baby Hatch" icon="presets/empty.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=baby_hatch" />
+            <label text="Edit Baby Hatch" />
+            <key key="amenity" value="baby_hatch" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <text key="opening_hours" text="Opening Hours" default="" delete_if_empty="true" />
         </item>
         <item name="Emergency Access Point" icon="presets/emergency_access_point.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=emergency_access_point"
@@ -3028,6 +3123,38 @@ are supplied, then "values" will be treated as "display_values" and translated i
     </group> <!-- Health -->
   </group>
   <group name="Geography" icon="presets/places.png">
+    <group name="Boundaries" icon="presets/boundaries.png">
+        <item name="National" icon="presets/boundaries.png" type="closedway,relation">
+            <label text="Edit National Boundary" />
+            <space />
+            <key key="boundary" value="national" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Administrative" icon="presets/boundaries.png" type="closedway,relation">
+            <label text="Edit Administrative Boundary" />
+            <space />
+            <key key="boundary" value="administrative" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Civil" icon="presets/boundaries.png" type="closedway,relation">
+            <label text="Edit Civil Boundary" />
+            <space />
+            <key key="boundary" value="civil" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Political" icon="presets/boundaries.png" type="closedway,relation">
+            <label text="Edit Political Boundary" />
+            <space />
+            <key key="boundary" value="political" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="National park" icon="presets/boundaries.png" type="closedway,relation">
+            <label text="Edit National Park Boundary" />
+            <space />
+            <key key="boundary" value="national_park" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+    </group> <!-- Boundaries -->
     <group name="Places" icon="presets/places.png">
         <item name="Continent" icon="presets/places.png" type="node,closedway">
             <label text="Edit Continent" />
@@ -3100,27 +3227,8 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="place" value="locality" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Island" icon="presets/island.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:place=island" />
-            <label text="Edit Island" />
-            <space />
-            <key key="place" value="island" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="Islet" icon="presets/islet.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:place=islet" />
-            <label text="Edit Islet" />
-            <space />
-            <key key="place" value="islet" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <separator/>
-        <item name="Cave Entrance" icon="presets/empty.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cave_entrance" />
-            <label text="Edit Cave Entrance" />
-            <key key="natural" value="cave_entrance" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
+    </group> <!-- Places -->
+    <group name="Geography" icon="presets/peak.png">
         <item name="Peak" icon="presets/peak.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=peak" />
             <label text="Edit Peak" />
@@ -3142,40 +3250,29 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="ele" text="Elevation" default="" delete_if_empty="true" />
         </item>
-    </group> <!-- Places -->
-    <group name="Boundaries" icon="presets/boundaries.png">
-        <item name="National" icon="presets/boundaries.png" type="closedway,relation">
-            <label text="Edit National Boundary" />
-            <space />
-            <key key="boundary" value="national" />
+        <item name="Cave Entrance" icon="presets/empty.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cave_entrance" />
+            <label text="Edit Cave Entrance" />
+            <key key="natural" value="cave_entrance" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Administrative" icon="presets/boundaries.png" type="closedway,relation">
-            <label text="Edit Administrative Boundary" />
+        <separator/>
+        <item name="Island" icon="presets/island.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:place=island" />
+            <label text="Edit Island" />
             <space />
-            <key key="boundary" value="administrative" />
+            <key key="place" value="island" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Civil" icon="presets/boundaries.png" type="closedway,relation">
-            <label text="Edit Civil Boundary" />
+        <item name="Islet" icon="presets/islet.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:place=islet" />
+            <label text="Edit Islet" />
             <space />
-            <key key="boundary" value="civil" />
+            <key key="place" value="islet" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Political" icon="presets/boundaries.png" type="closedway,relation">
-            <label text="Edit Political Boundary" />
-            <space />
-            <key key="boundary" value="political" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-        <item name="National park" icon="presets/boundaries.png" type="closedway,relation">
-            <label text="Edit National Park Boundary" />
-            <space />
-            <key key="boundary" value="national_park" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
-    </group> <!-- Boundaries -->
-    <group name="Land use" icon="presets/landuse.png">
+    </group> <!-- Geography -->
+    <group name="Nature" icon="presets/tree.png">
         <item name="Tree" icon="presets/tree.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=tree"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:natural=tree"  />
@@ -3214,15 +3311,15 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="natural" value="scree" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Scrub" icon="presets/empty.png" type="node,closedway,relation">
-            <label text="Edit Scrub" />
-            <key key="natural" value="scrub" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
         <item name="Fell" icon="presets/empty.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=fell" />
             <label text="Edit Fell" />
             <key key="natural" value="fell" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Scrub" icon="presets/empty.png" type="node,closedway,relation">
+            <label text="Edit Scrub" />
+            <key key="natural" value="scrub" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Heath" icon="presets/empty.png" type="node,closedway,relation">
@@ -3231,7 +3328,8 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="natural" value="heath" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <separator/>
+    </group> <!-- Nature -->
+    <group name="Land use" icon="presets/landuse.png">
         <item name="Farmyard" icon="presets/landuse.png" type="closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=farmyard"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=farmyard" />
@@ -3302,7 +3400,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <separator/>
-        <item name="Residential area" icon="presets/landuse.png" type="closedway,relation">
+        <item name="Residential area" icon="presets/empty.png" type="closedway,relation">
             <label text="Edit Residential Landuse" />
             <space />
             <key key="landuse" value="residential" />
@@ -3325,13 +3423,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarian,zoroastrian" default="" delete_if_empty="true" />
             <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" default="" delete_if_empty="true" />
         </item>
-        <item name="Retail" icon="presets/landuse.png" type="node,closedway,relation">
+        <item name="Retail" icon="presets/shopping.png" type="node,closedway,relation">
             <label text="Edit Retail Landuse" />
             <space />
             <key key="landuse" value="retail" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Commercial" icon="presets/landuse.png" type="node,closedway,relation">
+        <item name="Commercial" icon="presets/empty.png" type="node,closedway,relation">
             <label text="Edit Commercial Landuse" />
             <space />
             <key key="landuse" value="commercial" />
@@ -3389,6 +3487,41 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
     </group> <!-- Landuse -->
   </group>
+    <group name="Annotation" icon="presets/addresses.png">
+        <item name="Addresses" icon="presets/addresses.png" type="node,way,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/House_numbers/Karlsruhe_Schema"
+                  de.href="http://wiki.openstreetmap.org/wiki/Proposed_features/De:Hausnummern" />
+            <label text="Edit Address Information" />
+            <space />
+            <text key="addr:housenumber" text="House number" default="" delete_if_empty="true" />
+            <optional>
+                <text key="addr:housename" text="House name" default="" delete_if_empty="true" />
+                <text key="addr:street" text="Street name" use_last_as_default="true" delete_if_empty="true" />
+                <text key="addr:city" text="City name" use_last_as_default="true" delete_if_empty="true" />
+                <text key="addr:postcode" text="Post code" use_last_as_default="true" delete_if_empty="true" />
+                <combo key="addr:country" text="Country code" values="AT,CH,DE,FR,GB,IT,US" use_last_as_default="true" delete_if_empty="true" />
+            </optional>
+        </item>
+        <item name="Address Interpolation" icon="presets/addresses.png" type="way">
+           <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/House_numbers/Karlsruhe_Schema"
+                 de.href="http://wiki.openstreetmap.org/wiki/Proposed_features/De:Hausnummern" />
+            <label text="Edit Address Interpolation" />
+            <space />
+            <combo key="addr:interpolation" text="Numbering scheme" values="odd,even,all,alphabetic" default="odd" />
+        </item>
+        <item name="Contact" icon="presets/empty.png" type="node,way,closedway,relation">
+            <label text="Edit Contact information" />
+            <space />
+            <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
+            <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
+            <space />
+            <text key="website" text="Website" default="" delete_if_empty="true" />
+            <text key="email" text="Email Address" default="" delete_if_empty="true" />
+            <space />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
+            <text key="image" text="Image" default="" delete_if_empty="true" />
+        </item>
+    </group> <!-- Annotation -->
     <group name="Relations" icon="presets/relations.png">
         <item name="Multipolygon" icon="presets/empty.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:multipolygon"
@@ -3404,7 +3537,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <role key="inner" text="inner segment" requisite="optional" type="way" />
             </roles>
         </item>
-        <item name="Boundary" icon="presets/empty.png" type="relation">
+        <item name="Boundary" icon="presets/boundaries.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:boundary"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:boundary"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Relation:boundary"
@@ -3423,7 +3556,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <role key="admin_centre" text="Administration centre" requisite="optional" type="node" />
             </roles>
         </item>
-        <item name="Turn restriction" icon="presets/empty.png" type="relation">
+        <item name="Turn restriction" icon="styles/standard/vehicle/restriction/turn_restrictions/no_u_turn.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:restriction"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:restriction"/>
             <label text="Edit Turn Restriction" />
@@ -3438,7 +3571,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <role key="to" text="to way" requisite="required" count="1" type="way" />
             </roles>
         </item>
-        <item name="Route" icon="presets/empty.png" type="relation">
+        <item name="Route" icon="presets/path.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:route"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:route"/>
             <label text="Edit Route" />
