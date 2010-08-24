@@ -14,7 +14,6 @@ import javax.swing.JTabbedPane;
 
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.server.AuthenticationPreferencesPanel;
-import org.openstreetmap.josm.gui.preferences.server.BackupPreferencesPanel;
 import org.openstreetmap.josm.gui.preferences.server.OsmApiUrlInputPanel;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
