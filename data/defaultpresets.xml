@@ -624,6 +624,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
+                <text key="step_count" text="Amount of Steps" default="" delete_if_empty="true" />
             </optional>
         </item>
     </group> <!-- Ways -->
