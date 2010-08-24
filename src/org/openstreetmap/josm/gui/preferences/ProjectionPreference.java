@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionSubPrefs;
 import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.GBC;
 
 public class ProjectionPreference implements PreferenceSetting {
@@ -106,7 +107,7 @@ public class ProjectionPreference implements PreferenceSetting {
     /**
      * This is the panel holding all projection preferences
      */
-    private JPanel projPanel = new JPanel();
+    private JPanel projPanel = new VerticallyScrollablePanel();
 
     /**
      * The GridBagConstraints for the Panel containing the ProjectionSubPrefs.

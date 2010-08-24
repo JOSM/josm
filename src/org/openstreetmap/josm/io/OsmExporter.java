@@ -78,7 +78,7 @@ public class OsmExporter extends FileExporter {
                 layer.data.getReadLock().unlock();
             }
             // FIXME - how to close?
-            if (!Main.pref.getBoolean("save.keepbackup") && (tmpFile != null)) {
+            if (!Main.pref.getBoolean("save.keepbackup", false) && (tmpFile != null)) {
                 tmpFile.delete();
             }
             layer.onPostSaveToFile();

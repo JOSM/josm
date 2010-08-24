@@ -267,6 +267,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
         settingsFactory.add(new ProjectionPreference.Factory());
         settingsFactory.add(new MapPaintPreference.Factory());
         settingsFactory.add(new TaggingPresetPreference.Factory());
+        settingsFactory.add(new BackupPreference.Factory());
         if(!Main.applet) {
             settingsFactory.add(new PluginPreference.Factory());
         }

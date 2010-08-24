@@ -21,6 +21,22 @@ public class IntegerProperty {
         return Main.pref.putInteger(getKey(), value);
     }
 
+    /**
+     * parses and saves an integer value
+     * @param value the value to be parsed
+     * @return true - preference value has changed
+     *         false - parsing failed or preference value has not changed
+     */
+    public boolean parseAndPut(String value) {
+        Integer intVal;
+        try {
+            intVal = Integer.parseInt(value);
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+        return put(intVal);
+    }
+
     public String getKey() {
         return key;
     }

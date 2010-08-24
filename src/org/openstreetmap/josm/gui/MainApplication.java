@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
@@ -246,28 +247,32 @@ public class MainApplication extends Main {
             // Main.debug("Main window not maximized");
         }
 
-        AutosaveTask autosaveTask = new AutosaveTask();
-        List<File> unsavedLayerFiles = autosaveTask.getUnsavedLayersFiles();
-        if (!unsavedLayerFiles.isEmpty()) {
-            ExtendedDialog dialog = new ExtendedDialog(
-                    Main.parent,
-                    tr("Unsaved osm data"),
-                    new String[] {tr("Restore"), tr("Cancel")}
-            );
-            dialog.setContent(tr("JOSM found {0} unsaved osm data layers. It looks like JOSM crashed last time. Do you want to restore data?",
-                    unsavedLayerFiles.size()));
-            dialog.setButtonIcons(new String[] {"ok.png", "cancel.png"});
-            dialog.showDialog();
-            if (dialog.getValue() == 1) {
-                for (OsmDataLayer layer: autosaveTask.getUnsavedLayers()) {
-                    Main.main.addLayer(layer);
+        if (AutosaveTask.PROP_AUTOSAVE_ENABLED.get()) {
+            AutosaveTask autosaveTask = new AutosaveTask();
+            List<File> unsavedLayerFiles = autosaveTask.getUnsavedLayersFiles();
+            if (!unsavedLayerFiles.isEmpty()) {
+                ExtendedDialog dialog = new ExtendedDialog(
+                        Main.parent,
+                        tr("Unsaved osm data"),
+                        new String[] {tr("Restore"), tr("Cancel"), tr("Discard")}
+                );
+                dialog.setContent(
+                        trn("JOSM found {0} unsaved osm data layer. ",
+                        "JOSM found {0} unsaved osm data layers. ", unsavedLayerFiles.size(), unsavedLayerFiles.size()) +
+                        tr("It looks like JOSM crashed last time. Do you like to restore the data?"));
+                dialog.setButtonIcons(new String[] {"ok", "cancel", "dialogs/remove"});
+                int selection = dialog.showDialog().getValue();
+                if (selection == 1) {
+                    for (OsmDataLayer layer: autosaveTask.getUnsavedLayers()) {
+                        Main.main.addLayer(layer);
+                    }
+                    AutoScaleAction.autoScale("data");
+                } else if (selection == 3) {
+                    autosaveTask.dicardUnsavedLayers();
                 }
-                AutoScaleAction.autoScale("data");
             }
-
-
+            autosaveTask.schedule();
         }
-        autosaveTask.schedule();
 
 
         EventQueue.invokeLater(new Runnable() {

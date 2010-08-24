@@ -117,8 +117,19 @@ public class I18n {
     private static HashMap<String, PluralMode> languages = new HashMap<String, PluralMode>();
 
     /**
-     * Set by MainApplication. Changes here later will probably mess up everything, because
-     * many strings are already loaded.
+     * Translates some text for the current locale.
+     * These strings are collected by a script that runs on the source code files.
+     * After translation, the localizations are distributed with the main program.
+     *
+     * @param text the text to translate.
+     * Must be a string literal. (No constants or local vars.)
+     * Can be broken over multiple lines.
+     * An apostrophe ' must be quoted by another apostrophe.
+     * @param objects Parameters for the string.
+     * Mark occurrences in <code>text</code> with {0}, {1}, ...
+     * @return the translated string
+     *
+     * Example: tr("JOSM''s default value is ''{0}''.", val);
      */
     public static final String tr(String text, Object... objects) {
         return MessageFormat.format(gettext(text, null), objects);
@@ -130,15 +141,32 @@ public class I18n {
         return MessageFormat.format(gettext(text, null), (Object)null);
     }
 
-    public static final String trc(String ctx, String text) {
-        if (ctx == null)
+    /**
+     * Provide translation in a context.
+     * There can be different translations for the same text (but 
+     * different context).
+     *
+     * @param context string that helps translators to find an appropriate
+     * translation for <code>text</code>
+     * @param text the text to translate
+     * @return the translated string
+     */
+    public static final String trc(String context, String text) {
+        if (context == null)
             return tr(text);
         if (text == null)
             return null;
-        return MessageFormat.format(gettext(text, ctx), (Object)null);
+        return MessageFormat.format(gettext(text, context), (Object)null);
     }
 
-    /* NOTE: marktr does NOT support context strings - use marktrc instead */
+    /**
+     * Marks a string for translation (such that a script can harvest
+     * the translatable strings from the source files).
+     *
+     * Example:
+     * String[] options = new String[] {marktr("up"), marktr("down")};
+     * lbl.setText(tr(options[0]));
+     */
     public static final String marktr(String text) {
         return text;
     }
@@ -147,10 +175,16 @@ public class I18n {
         return text;
     }
 
+    /**
+     * Example: trn("Found {0} error!", "Found {0} errors!", i, Integer.toString(i));
+     */
     public static final String trn(String text, String pluralText, long n, Object... objects) {
         return MessageFormat.format(gettextn(text, pluralText, null, n), objects);
     }
 
+    /**
+     * Example: trn("There was an error!", "There were errors!", i);
+     */
     public static final String trn(String text, String pluralText, long n) {
         return MessageFormat.format(gettextn(text, pluralText, null, n), (Object)null);
     }

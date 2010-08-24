@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter.Listener;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
@@ -40,10 +41,11 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     private static final String AUTOSAVE_DIR = "autosave";
     private static final String DELETED_LAYERS_DIR = "autosave/deleted_layers";
 
-
+    public static final BooleanProperty PROP_AUTOSAVE_ENABLED = new BooleanProperty("autosave.enabled", true);
     public static final IntegerProperty PROP_FILES_PER_LAYER = new IntegerProperty("autosave.filesPerLayer", 1);
     public static final IntegerProperty PROP_DELETED_LAYERS = new IntegerProperty("autosave.deletedLayersBackupCount", 5);
     public static final IntegerProperty PROP_INTERVAL = new IntegerProperty("autosave.interval", 5 * 60);
+    public static final IntegerProperty PROP_INDEX_LIMIT = new IntegerProperty("autosave.index-limit", 1000);
 
     private static class AutosaveLayerInfo {
         OsmDataLayer layer;
@@ -58,7 +60,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     private Set<DataSet> changedDatasets = new HashSet<DataSet>();
     private final List<AutosaveLayerInfo> layersInfo = new ArrayList<AutosaveLayerInfo>();
     private Timer timer;
-    private Object layersLock = new Object();
+    private final Object layersLock = new Object();
     private final Deque<File> deletedLayers = new LinkedList<File>();
 
     private final File autosaveDir = new File(Main.pref.getPreferencesDir() + AUTOSAVE_DIR);
@@ -135,6 +137,8 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                     return result;
                 else {
                     System.out.println(tr("Unable to create file {0}, other filename will be used", result.getAbsolutePath()));
+                    if (index > PROP_INDEX_LIMIT.get())
+                        throw new IOException("index limit exceeded");
                 }
             } catch (IOException e) {
                 System.err.println(tr("IOError while creating file, autosave will be skipped: {0}", e.getMessage()));
@@ -277,5 +281,10 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         return result;
     }
 
+    public void dicardUnsavedLayers() {
+        for (File f: getUnsavedLayersFiles()) {
+            f.renameTo(new File(deletedLayersDir, f.getName()));
+        }
+    }
 
 }

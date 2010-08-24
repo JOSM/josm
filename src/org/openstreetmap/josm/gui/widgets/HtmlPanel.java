@@ -12,7 +12,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
 /**
- * This panel can be used to display larger larger sections of formatted text in
+ * This panel can be used to display larger sections of formatted text in
  * HTML.
  *
  * It displays HTML text in the same font as {@see JLabel}. Hyperlinks are rendered in
@@ -58,6 +58,11 @@ public class HtmlPanel extends JPanel {
 
     public HtmlPanel() {
         build();
+    }
+
+    public HtmlPanel(String text) {
+        this();
+        setText(text);
     }
 
     /**
