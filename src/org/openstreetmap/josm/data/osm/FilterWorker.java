@@ -31,17 +31,19 @@ public class FilterWorker {
      * So first the Filter is applied for ways and relations. Then to nodes
      * (but hides them only if they are not used by any unfiltered way).
      */
-    public static void executeFilters(Collection<OsmPrimitive> all, FilterMatcher filterMatcher) {
+    public static boolean executeFilters(Collection<OsmPrimitive> all, FilterMatcher filterMatcher) {
+
+        boolean changed = false;
 
         // First relation and ways
         for (OsmPrimitive primitive: all) {
             if (!(primitive instanceof Node)) {
                 if (filterMatcher.isHidden(primitive)) {
-                    primitive.setDisabledState(true);
+                    changed = changed | primitive.setDisabledState(true);
                 } else if (filterMatcher.isDisabled(primitive)) {
-                    primitive.setDisabledState(false);
+                    changed = changed | primitive.setDisabledState(false);
                 } else {
-                    primitive.unsetDisabledState();
+                    changed = changed | primitive.unsetDisabledState();
                 }
             }
         }
@@ -50,27 +52,28 @@ public class FilterWorker {
         for (OsmPrimitive primitive: all) {
             if (primitive instanceof Node) {
                 if (filterMatcher.isHidden(primitive)) {
-                    primitive.setDisabledState(true);
+                    changed = changed | primitive.setDisabledState(true);
                 } else if (filterMatcher.isDisabled(primitive)) {
-                    primitive.setDisabledState(false);
+                    changed = changed | primitive.setDisabledState(false);
                 } else {
-                    primitive.unsetDisabledState();
+                    changed = changed | primitive.unsetDisabledState();
                 }
             }
         }
+
+        return changed;
     }
 
     public static boolean executeFilters(OsmPrimitive primitive, FilterMatcher filterMatcher) {
-        boolean hidden = primitive.isDisabledAndHidden();
-        boolean disabled = primitive.isDisabled();
+        boolean changed = false;
         if (filterMatcher.isHidden(primitive)) {
-            primitive.setDisabledState(true);
+            changed = changed | primitive.setDisabledState(true);
         } else if (filterMatcher.isDisabled(primitive)) {
-            primitive.setDisabledState(false);
+            changed = changed | primitive.setDisabledState(false);
         } else {
-            primitive.unsetDisabledState();
+            changed = changed | primitive.unsetDisabledState();
         }
-        return hidden != primitive.isDisabledAndHidden() || disabled != primitive.isDisabled();
+        return changed;
     }
 
     public static void clearFilterFlags(Collection<OsmPrimitive> prims) {

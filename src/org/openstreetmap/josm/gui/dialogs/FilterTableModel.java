@@ -63,9 +63,11 @@ public class FilterTableModel extends AbstractTableModel {
 
     public void executeFilters() {
         DataSet ds = Main.main.getCurrentDataSet();
+        boolean changed = false;
         if (ds == null) {
             disabledAndHiddenCount = 0;
             disabledCount = 0;
+            changed = true;
         } else {
             final Collection<OsmPrimitive> deselect = new HashSet<OsmPrimitive>();
 
@@ -74,7 +76,7 @@ public class FilterTableModel extends AbstractTableModel {
 
                 final Collection<OsmPrimitive> all = ds.allNonDeletedCompletePrimitives();
 
-                FilterWorker.executeFilters(all, filterMatcher);
+                changed = FilterWorker.executeFilters(all, filterMatcher);
 
                 disabledCount = 0;
                 disabledAndHiddenCount = 0;
@@ -100,7 +102,7 @@ public class FilterTableModel extends AbstractTableModel {
             }
         }
 
-        if (Main.isDisplayingMapView()) {
+        if (Main.isDisplayingMapView() && changed) {
             Main.map.mapView.repaint();
             Main.map.filterDialog.updateDialogHeader();
         }

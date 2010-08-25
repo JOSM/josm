@@ -278,11 +278,11 @@ public class DataSet implements Cloneable {
                 return;
             boolean success = false;
             if (primitive instanceof Node) {
-                success = nodes.remove((Node) primitive);
+                success = nodes.remove(primitive);
             } else if (primitive instanceof Way) {
-                success = ways.remove((Way) primitive);
+                success = ways.remove(primitive);
             } else if (primitive instanceof Relation) {
-                success = relations.remove((Relation) primitive);
+                success = relations.remove(primitive);
             }
             if (!success)
                 throw new RuntimeException("failed to remove primitive: "+primitive);
@@ -435,7 +435,7 @@ public class DataSet implements Cloneable {
             boolean wasEmpty = selectedPrimitives.isEmpty();
             selectedPrimitives = new LinkedHashSet<OsmPrimitive>();
             changed = addSelected(selection, false)
-                            || (!wasEmpty && selectedPrimitives.isEmpty());
+            || (!wasEmpty && selectedPrimitives.isEmpty());
             if (changed) {
                 selectionSnapshot = null;
             }
