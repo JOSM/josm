@@ -17,6 +17,7 @@ import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -90,11 +91,15 @@ public class MapPaintPreference implements PreferenceSetting {
         if(sources.finish()) {
             restart = true;
         }
-        if(Main.pref.put("mappaint.style", styleCombo.getEditor().getItem().toString()))
+        if(Main.pref.put("mappaint.style", styleCombo.getEditor().getItem().toString())
+        && Main.isDisplayingMapView())
         {
-          for(OsmPrimitive osm : Main.main.getCurrentDataSet().allPrimitives())
+          for(OsmDataLayer l : Main.map.mapView.getLayersOfType(OsmDataLayer.class))
           {
-            osm.clearCached();
+            for(OsmPrimitive osm : l.data.allPrimitives())
+            {
+              osm.clearCached();
+            }
           }
         }
         return restart;
