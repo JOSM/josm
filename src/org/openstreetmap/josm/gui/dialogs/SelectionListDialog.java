@@ -202,6 +202,7 @@ public class SelectionListDialog extends ToggleDialog  {
         if (Main.map.mapView.getEditLayer() != null) {
             model.setJOSMSelection(Main.map.mapView.getEditLayer().data.getSelected());
         }
+        actSearch.updateEnabledState();
     }
 
     @Override
