@@ -115,7 +115,7 @@ public final class Way extends OsmPrimitive {
     public boolean isMappaintArea = false;
     public Integer mappaintDrawnAreaCode = 0;
     /* end of mappaint data */
-    @Override protected void clearCached() {
+    @Override public void clearCached() {
         super.clearCached();
         isMappaintArea = false;
         mappaintDrawnAreaCode = 0;
