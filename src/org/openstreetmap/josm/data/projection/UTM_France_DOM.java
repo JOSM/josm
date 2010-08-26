@@ -347,22 +347,9 @@ public class UTM_France_DOM implements Projection, ProjectionSubPrefs {
      * @param ell reference ellipsoid
      */
     private LatLon cart2LatLon(double X, double Y, double Z, Ellipsoid ell) {
-        double norm = Math.sqrt(X * X + Y * Y);
-        double lg = 2.0 * Math.atan(Y / (X + norm));
-        double lt = Math.atan(Z / (norm * (1.0 - (ell.a * ell.e2 / Math.sqrt(X * X + Y * Y + Z * Z)))));
-        double delta = 1.0;
-        while (delta > epsilon) {
-            double s2 = Math.sin(lt);
-            s2 *= s2;
-            double l = Math.atan((Z / norm)
-                    / (1.0 - (ell.a * ell.e2 * Math.cos(lt) / (norm * Math.sqrt(1.0 - ell.e2 * s2)))));
-            delta = Math.abs(l - lt);
-            lt = l;
-        }
-        double s2 = Math.sin(lt);
-        s2 *= s2;
-        // h = norm / Math.cos(lt) - ell.a / Math.sqrt(1.0 - ell.e2 * s2);
-        return new LatLon(lt, lg);
+        double[] XYZ = {X, Y, Z};
+        LatLon coord = ell.cart2LatLon(XYZ, epsilon);
+        return new LatLon(Math.toRadians(coord.lat()), Math.toRadians(coord.lon()));
     }
 
     /**
