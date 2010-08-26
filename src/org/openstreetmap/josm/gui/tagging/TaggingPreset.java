@@ -940,6 +940,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     setupDialog();
                     buttons.get(0).setEnabled(!disableApply);
                     buttons.get(0).setToolTipText(title);
+                    getRootPane().setDefaultButton(buttons.get(0));
                     setVisible(true);
                 }
             }
