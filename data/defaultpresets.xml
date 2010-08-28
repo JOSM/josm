@@ -2476,9 +2476,9 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Model Car" icon="presets/car.png" type="node,closedway">
-            <label text="Edit Model Car" />
-            <key key="sport" value="model_car" />
+        <item name="RC Car" icon="presets/car.png" type="node,closedway">
+            <label text="Edit RC Car" />
+            <key key="sport" value="rc_car" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,track" default="" delete_if_empty="true" />
         </item>
@@ -3500,7 +3500,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <text key="addr:street" text="Street name" use_last_as_default="true" delete_if_empty="true" />
                 <text key="addr:city" text="City name" use_last_as_default="true" delete_if_empty="true" />
                 <text key="addr:postcode" text="Post code" use_last_as_default="true" delete_if_empty="true" />
-                <combo key="addr:country" text="Country code" values="AT,CH,DE,FR,GB,IT,US" use_last_as_default="true" delete_if_empty="true" />
+                <text key="addr:country" text="Country code" use_last_as_default="true" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Address Interpolation" icon="presets/addresses.png" type="way">
