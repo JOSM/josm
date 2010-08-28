@@ -761,6 +761,10 @@ public class StyleSourceEditor extends JPanel {
             LinkedList<StyleSourceInfo> styles = new LinkedList<StyleSourceInfo>();
             String lang = LanguageInfo.getLanguageCodeXML();
             try {
+                StyleSourceInfo i = new StyleSourceInfo("elemstyles.xml", "resource://data/elemstyles.xml");
+                i.shortdescription = tr("Internal style");
+                i.description = tr("Internal style to be used as base for runtime switchable overlay styles");
+                styles.add(i);
                 MirroredInputStream stream = new MirroredInputStream(url);
                 InputStreamReader r;
                 try {
