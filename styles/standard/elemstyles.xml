@@ -2043,6 +2043,14 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="amenity" v="motorcycle_parking"/>
+		<icon annotate="true" src="vehicle/parking/motorbike.png"/>
+		<area colour="amenity_traffic#f7efb7"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="amenity" v="bicycle_parking"/>
 		<icon annotate="true" src="vehicle/parking/bicycle.png"/>
 		<area colour="amenity_traffic#f7efb7"/>
@@ -2460,7 +2468,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="amenity" v="ferry_terminal"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="nautical/ferry.png"/>
 		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2725,7 +2733,15 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="shop" v="car_repair"/>
-		<icon annotate="true" src="transport/car.png"/>
+		<icon annotate="true" src="vehicle/repair_shop.png"/>
+		<area colour="shop#00005f"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="shop" v="tyres"/>
+		<icon annotate="true" src="vehicle/tyres.png"/>
 		<area colour="shop#00005f"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3577,7 +3593,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="natural" v="cave_entrance"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="vehicle/tunnel.png"/>
 		<area colour="natural#002f00"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
