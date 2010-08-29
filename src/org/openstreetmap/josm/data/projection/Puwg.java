@@ -28,7 +28,7 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
     public static final int DEFAULT_ZONE = 0;
     private int zone = DEFAULT_ZONE;
 
-    private static PuwgData[] Zones = new PuwgData[]{
+    static PuwgData[] Zones = new PuwgData[]{
         new Epsg2180(),
         new Epsg2176(),
         new Epsg2177(),

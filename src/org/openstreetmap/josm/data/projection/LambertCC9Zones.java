@@ -165,8 +165,8 @@ public class LambertCC9Zones implements Projection, ProjectionSubPrefs {
     {
         double medLatZone = cMinLatZonesDegree + (layoutZone+1);
         return new Bounds(
-                new LatLon(medLatZone - 1.0 - cMaxOverlappingZones, -4.9),
-                new LatLon(medLatZone + 1.0 + cMaxOverlappingZones, 10.2));
+                new LatLon(Math.max(medLatZone - 1.0 - cMaxOverlappingZones, cMinLatZonesDegree), -4.9),
+                new LatLon(Math.min(medLatZone + 1.0 + cMaxOverlappingZones, Math.toDegrees(cMaxLatZonesRadian)), 10.2));
     }
 
     public int getLayoutZone() {

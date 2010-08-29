@@ -229,8 +229,8 @@ public class Lambert implements Projection, ProjectionSubPrefs {
     public Bounds getWorldBoundsLatLon()
     {
         Bounds b= new Bounds(
-                new LatLon(zoneLimitsDegree[layoutZone][1] - cMaxOverlappingZonesDegree, -4.9074074074074059),
-                new LatLon(zoneLimitsDegree[layoutZone][0] + cMaxOverlappingZonesDegree, 10.2));
+                new LatLon(Math.max(zoneLimitsDegree[layoutZone][1] - cMaxOverlappingZonesDegree, Math.toDegrees(cMinLatZone1Radian)), Math.toDegrees(cMinLonZonesRadian)),
+                new LatLon(Math.min(zoneLimitsDegree[layoutZone][0] + cMaxOverlappingZonesDegree, Math.toDegrees(cMaxLatZone1Radian)), Math.toDegrees(cMaxLonZonesRadian)));
         return b;
     }
 
