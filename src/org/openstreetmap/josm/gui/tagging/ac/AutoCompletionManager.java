@@ -3,21 +3,18 @@ package org.openstreetmap.josm.gui.tagging.ac;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.logging.Logger;
+import java.util.Map.Entry;
 
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
@@ -27,9 +24,6 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.tools.MultiMap;
 
@@ -69,8 +63,8 @@ public class AutoCompletionManager implements DataSetListener {
      * can be accessed directly
      */
     protected static MultiMap<String, String> presetTagCache = new MultiMap<String, String>();
-    /** 
-     * the cached list of member roles 
+    /**
+     * the cached list of member roles
      * only accessed by getRoleCache(), rebuild() and cacheRelationMemberRoles()
      * use getRoleCache() accessor
      */
@@ -186,8 +180,9 @@ public class AutoCompletionManager implements DataSetListener {
                 } else if (item instanceof TaggingPreset.Roles) {
                     TaggingPreset.Roles r = (TaggingPreset.Roles) item;
                     for (TaggingPreset.Role i : r.roles) {
-                        if (i.key != null)
+                        if (i.key != null) {
                             presetRoleCache.add(i.key);
+                        }
                     }
                 }
             }

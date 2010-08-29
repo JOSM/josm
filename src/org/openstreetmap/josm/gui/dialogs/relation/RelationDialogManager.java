@@ -1,9 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
-import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
@@ -234,8 +232,9 @@ public class RelationDialogManager extends WindowAdapter implements MapView.Laye
      */
     protected boolean hasEditorWithCloseUpperLeftCorner(Point p, RelationEditor thisEditor) {
         for (RelationEditor editor: openDialogs.values()) {
-            if (editor == thisEditor)
+            if (editor == thisEditor) {
                 continue;
+            }
             Point corner = editor.getLocation();
             if (p.x >= corner.x -5 && corner.x + 5 >= p.x
                     && p.y >= corner.y -5 && corner.y + 5 >= p.y)

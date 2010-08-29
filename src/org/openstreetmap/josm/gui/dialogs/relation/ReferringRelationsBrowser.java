@@ -41,7 +41,6 @@ public class ReferringRelationsBrowser extends JPanel {
     private OsmDataLayer layer;
     private JCheckBox cbReadFull;
     private EditAction editAction;
-    private final GenericRelationEditor relationEditor;
 
     /**
      * build the GUI
@@ -69,7 +68,6 @@ public class ReferringRelationsBrowser extends JPanel {
     }
 
     public ReferringRelationsBrowser(OsmDataLayer layer, ReferringRelationsBrowserModel model, GenericRelationEditor relationEditor) {
-        this.relationEditor = relationEditor;
         this.model = model;
         this.layer = layer;
         build();

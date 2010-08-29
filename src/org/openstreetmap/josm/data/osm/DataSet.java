@@ -325,11 +325,9 @@ public class DataSet implements Cloneable {
      *
      */
     public void fireSelectionChanged(){
-        synchronized (selListeners) {
-            Collection<? extends OsmPrimitive> currentSelection = getSelected();
-            for (SelectionChangedListener l : selListeners) {
-                l.selectionChanged(currentSelection);
-            }
+        Collection<? extends OsmPrimitive> currentSelection = getSelected();
+        for (SelectionChangedListener l : selListeners) {
+            l.selectionChanged(currentSelection);
         }
     }
 

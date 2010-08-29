@@ -160,6 +160,7 @@
 		<attribute name="text" type="string"/>
 		<attribute name="requisite" type="string"/>
 		<attribute name="type" type="string"/>
+		<attribute name="count" type="integer"/>
 	</complexType>
 
 	<simpleType name="role_requisite">

@@ -2,14 +2,8 @@
 package org.openstreetmap.josm.command;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.PrimitiveData;
 
 /**
  * PseudoCommand is a reduced form of a command. It can be presented in a tree view

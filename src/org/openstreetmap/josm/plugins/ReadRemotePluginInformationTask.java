@@ -6,8 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -47,7 +47,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
     private HttpURLConnection connection;
     private List<PluginInformation> availablePlugins;
 
-    protected enum CacheType {PLUGIN_LIST, ICON_LIST};
+    protected enum CacheType {PLUGIN_LIST, ICON_LIST}
 
     protected void init(Collection<String> sites){
         this.sites = sites;
@@ -59,7 +59,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
     }
     /**
      * Creates the task
-     * 
+     *
      * @param sites the collection of download sites. Defaults to the empty collection if null.
      */
     public ReadRemotePluginInformationTask(Collection<String> sites) {
@@ -69,7 +69,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
 
     /**
      * Creates the task
-     * 
+     *
      * @param monitor the progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null
      * @param sites the collection of download sites. Defaults to the empty collection if null.
      */
@@ -95,7 +95,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
     /**
      * Creates the file name for the cached plugin list and the icon cache
      * file.
-     * 
+     *
      * @param site the name of the site
      * @param type icon cache or plugin list cache
      * @return the file name for the cache file
@@ -121,12 +121,12 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
                 }
             }
             switch (type) {
-                case PLUGIN_LIST:
-                    sb.append(".txt");
-                    break;
-                case ICON_LIST:
-                    sb.append("-icons.zip");
-                    break;
+            case PLUGIN_LIST:
+                sb.append(".txt");
+                break;
+            case ICON_LIST:
+                sb.append("-icons.zip");
+                break;
             }
             name = sb.toString();
         } catch(MalformedURLException e) {
@@ -137,7 +137,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
 
     /**
      * Downloads the list from a remote location
-     * 
+     *
      * @param site the site URL
      * @param monitor a progress monitor
      * @return the downloaded list
@@ -149,10 +149,11 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
             /* replace %<x> with empty string or x=plugins (separated with comma) */
             String pl = Main.pref.getCollectionAsString("plugins");
             String printsite = site.replaceAll("%<(.*)>", "");
-            if(pl != null && pl.length() != 0)
+            if(pl != null && pl.length() != 0) {
                 site = site.replaceAll("%<(.*)>", "$1"+pl);
-            else
+            } else {
                 site = printsite;
+            }
 
             monitor.beginTask("");
             monitor.indeterminateSubTask(tr("Downloading plugin list from ''{0}''", printsite));
@@ -256,7 +257,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
 
     /**
      * Writes the list of plugins to a cache file
-     * 
+     *
      * @param site the site from where the list was downloaded
      * @param list the downloaded list
      */
@@ -287,7 +288,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
     /**
      * Filter information about deprecated plugins from the list of downloaded
      * plugins
-     * 
+     *
      * @param plugins the plugin informations
      * @return the plugin informations, without deprecated plugins
      */
@@ -305,7 +306,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
 
     /**
      * Parses the plugin list
-     * 
+     *
      * @param site the site from where the list was downloaded
      * @param doc the document with the plugin list
      */
@@ -334,15 +335,16 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
         List<File> siteCacheFiles = new LinkedList<File>();
         for (String location : PluginInformation.getPluginLocations()) {
             File [] f = new File(location).listFiles(
-                new FilenameFilter() {
-                    public boolean accept(File dir, String name) {
-                        return name.matches("^([0-9]+-)?site.*\\.txt$") ||
-                               name.matches("^([0-9]+-)?site.*-icons\\.zip$");
+                    new FilenameFilter() {
+                        public boolean accept(File dir, String name) {
+                            return name.matches("^([0-9]+-)?site.*\\.txt$") ||
+                            name.matches("^([0-9]+-)?site.*-icons\\.zip$");
+                        }
                     }
-                }
             );
-            if(f != null && f.length > 0)
+            if(f != null && f.length > 0) {
                 siteCacheFiles.addAll(Arrays.asList(f));
+            }
         }
 
         for (String site: sites) {
@@ -381,7 +383,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
 
     /**
      * Replies the list of plugins described in the downloaded plugin lists
-     * 
+     *
      * @return  the list of plugins
      */
     public List<PluginInformation> getAvailabePlugins() {

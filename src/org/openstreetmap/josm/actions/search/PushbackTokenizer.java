@@ -71,15 +71,6 @@ public class PushbackTokenizer {
         }
     }
 
-    private long getNumber() {
-        long result = 0;
-        while (Character.isDigit(c)) {
-            result = result * 10 + (c - '0');
-            getChar();
-        }
-        return result;
-    }
-
     private static final List<Character> specialChars = Arrays.asList(new Character[] {'"', ':', '(', ')', '|', '=', '?'});
     private static final List<Character> specialCharsQuoted = Arrays.asList(new Character[] {'"'});
 

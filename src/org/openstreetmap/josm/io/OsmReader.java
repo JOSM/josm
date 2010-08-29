@@ -31,7 +31,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
-import org.openstreetmap.josm.data.osm.Storage;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;

@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.dialogs;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.PseudoCommand;
 
 /**

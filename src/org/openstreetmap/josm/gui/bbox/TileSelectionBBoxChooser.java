@@ -23,7 +23,6 @@ import java.beans.PropertyChangeListener;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,7 +53,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * TileSelectionBBoxChooser allows to select a bounding box (i.e. for downloading) based
  * on OSM tile numbers.
- * 
+ *
  * TileSelectionBBoxChooser can be embedded as component in a Swing container. Example:
  * <pre>
  *    JFrame f = new JFrame(....);
@@ -69,16 +68,14 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *            }
  *        }
  *    });
- * 
+ *
  *    // init the chooser with a bounding box
  *    chooser.setBoundingBox(....);
- * 
+ *
  *    f.setVisible(true);
  * </pre>
  */
 public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
-
-    static private final Logger logger = Logger.getLogger(TileSelectionBBoxChooser.class.getName());
 
     /** the current bounding box */
     private Bounds bbox;
@@ -128,7 +125,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
     /**
      * Replies the current bounding box. null, if no valid bounding box is currently selected.
-     * 
+     *
      */
     public Bounds getBoundingBox() {
         return bbox;
@@ -136,7 +133,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
     /**
      * Sets the current bounding box.
-     * 
+     *
      * @param bbox the bounding box. null, if this widget isn't initialized with a bounding box
      */
     public void setBoundingBox(Bounds bbox) {
@@ -161,7 +158,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
     /**
      * Computes the bounding box given a tile grid.
-     * 
+     *
      * @param tb the description of the tile grid
      * @return the bounding box
      */
@@ -176,7 +173,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
     /**
      * Replies lat/lon of the north/west-corner of a tile at a specific zoom level
-     * 
+     *
      * @param tile  the tile address (x,y)
      * @param zoom the zoom level
      * @return lat/lon of the north/west-corner of a tile at a specific zoom level
@@ -204,7 +201,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
     /**
      * A panel for describing a rectangular area of OSM tiles at a given zoom level.
-     * 
+     *
      * The panel emits PropertyChangeEvents for the property {@see TileGridInputPanel#TILE_BOUNDS_PROP}
      * when the user successfully enters a valid tile grid specification.
      *
@@ -571,7 +568,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
 
     /**
      * Validates the x- or y-coordinate of a tile at a given zoom level.
-     * 
+     *
      */
     static private class TileCoordinateValidator extends AbstractTextComponentValidator {
         private int zoomLevel;
@@ -652,7 +649,6 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
      * The map view used in this bounding box chooser
      */
     static private class TileBoundsMapView extends JMapViewer {
-        private Bounds bbox;
         private Point min;
         private Point max;
 
@@ -661,7 +657,6 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser{
         }
 
         public void setBoundingBox(Bounds bbox){
-            this.bbox = bbox;
             if (bbox == null) {
                 min = null;
                 max = null;

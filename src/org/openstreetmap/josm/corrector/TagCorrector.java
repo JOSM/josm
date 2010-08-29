@@ -152,7 +152,8 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                         clone = new Node((Node)primitive);
                     } else if (primitive instanceof Relation) {
                         clone = new Relation((Relation)primitive);
-                    }
+                    } else
+                        throw new AssertionError();
 
                     // use this structure to remember keys that have been set already so that
                     // they're not dropped by a later step

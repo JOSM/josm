@@ -772,7 +772,7 @@ public class StyleSourceEditor extends JPanel {
                 } catch (UnsupportedEncodingException e) {
                     r = new InputStreamReader(stream);
                 }
-                BufferedReader reader = new BufferedReader(r);
+                reader = new BufferedReader(r);
 
                 String line;
                 StyleSourceInfo last = null;

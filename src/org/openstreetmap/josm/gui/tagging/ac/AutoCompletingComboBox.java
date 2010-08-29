@@ -117,7 +117,7 @@ public class AutoCompletingComboBox extends JComboBox {
             ComboBoxModel model = comboBox.getModel();
             AutoCompletionListItem bestItem = null;
             for (int i = 0, n = model.getSize(); i < n; i++) {
-                AutoCompletionListItem currentItem = (AutoCompletionListItem) model.getElementAt(i);;
+                AutoCompletionListItem currentItem = (AutoCompletionListItem) model.getElementAt(i);
                 if (currentItem.getValue().startsWith(pattern)) {
                     if (bestItem == null || currentItem.getPriority().compareTo(bestItem.getPriority()) > 0) {
                         bestItem = currentItem;

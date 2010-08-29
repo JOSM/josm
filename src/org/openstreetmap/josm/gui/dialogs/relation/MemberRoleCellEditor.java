@@ -8,10 +8,8 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 
 public class MemberRoleCellEditor extends AbstractCellEditor implements TableCellEditor {

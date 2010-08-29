@@ -438,7 +438,6 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
         private JMultilineLabel lblMessage;
         private Changeset current;
-        private DownloadAction actDownload;
 
         protected void build() {
             setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -446,7 +445,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                     tr("The content of this changeset is not downloaded yet.")
             );
             add(lblMessage);
-            add(new JButton(actDownload = new DownloadAction()));
+            add(new JButton(new DownloadAction()));
 
         }
 

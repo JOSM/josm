@@ -33,16 +33,13 @@ public class ImageDisplay extends JComponent {
 
     /** The image currently displayed */
     private Image image = null;
-    private Image image_c = null;
 
     /** The image currently displayed */
     private boolean errorLoading = false;
-    private boolean errorLoading_c = false;
 
     /** The rectangle (in image coordinates) of the image that is visible. This rectangle is calculated
      * each time the zoom is modified */
     private Rectangle visibleRect = null;
-    private Rectangle visibleRect_c = null;
 
     /** When a selection is done, the rectangle of the selection (in image coordinates) */
     private Rectangle selectedRect = null;

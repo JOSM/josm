@@ -653,7 +653,7 @@ abstract public class Main {
 
             if (map  != null) {
                 newToggleDlgWidth = Integer.toString(map.getToggleDlgWidth());
-                if (newToggleDlgWidth.equals(Integer.toString(map.DEF_TOGGLE_DLG_WIDTH))) {
+                if (newToggleDlgWidth.equals(Integer.toString(MapFrame.DEF_TOGGLE_DLG_WIDTH))) {
                     newToggleDlgWidth = "";
                 }
             }

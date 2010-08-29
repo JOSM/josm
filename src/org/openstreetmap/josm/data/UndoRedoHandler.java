@@ -4,7 +4,6 @@ package org.openstreetmap.josm.data;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Stack;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
@@ -78,8 +77,9 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
             final Command c = commands.removeLast();
             c.undoCommand();
             redoCommands.addFirst(c);
-            if (commands.isEmpty())
+            if (commands.isEmpty()) {
                 break;
+            }
         }
         fireCommandsChanged();
         Collection<? extends OsmPrimitive> newSelection = Main.main.getCurrentDataSet().getSelected();
@@ -106,8 +106,9 @@ public class UndoRedoHandler implements MapView.LayerChangeListener {
             final Command c = redoCommands.removeFirst();
             c.executeCommand();
             commands.add(c);
-            if (redoCommands.isEmpty())
+            if (redoCommands.isEmpty()) {
                 break;
+            }
         }
         fireCommandsChanged();
         Collection<? extends OsmPrimitive> newSelection = Main.main.getCurrentDataSet().getSelected();

@@ -58,8 +58,8 @@ public class PurgeAction extends JosmAction {
     public PurgeAction() {
         /* translator note: other expressions for "purge" might be "forget", "clean", "obliterate", "prune" */
         super(tr("Purge..."), "purge",  tr("Forget objects but do not delete them on server when uploading."),
-        Shortcut.registerShortcut("system:purge", tr("Edit: {0}", tr("Purge")), KeyEvent.VK_P, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT)
-             , true);
+                Shortcut.registerShortcut("system:purge", tr("Edit: {0}", tr("Purge")), KeyEvent.VK_P, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT)
+                , true);
         putValue("help", HelpUtil.ht("/Action/Purge"));
     }
 
@@ -80,7 +80,7 @@ public class PurgeAction extends JosmAction {
      * Subset of toPurgeChecked. Those that have not been in the selection.
      */
     protected List<OsmPrimitive> toPurgeAdditionally;
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
@@ -98,8 +98,9 @@ public class PurgeAction extends JosmAction {
         while (!toPurge.isEmpty()) {
             OsmPrimitive osm = toPurge.iterator().next();
             for (OsmPrimitive parent: osm.getReferrers()) {
-                if (toPurge.contains(parent) || toPurgeChecked.contains(parent))
+                if (toPurge.contains(parent) || toPurgeChecked.contains(parent)) {
                     continue;
+                }
                 if (parent instanceof Way || (parent instanceof Relation && osm.isNew())) {
                     toPurgeAdditionally.add(parent);
                     toPurge.add(parent);
@@ -117,16 +118,17 @@ public class PurgeAction extends JosmAction {
         // all parents of not-new to-be-purged primitives are either
         // to-be-purged or of type relation.
         TOP:
-        for (OsmPrimitive child : toPurgeChecked) {
-            if (child.isNew())
-                continue;
-            for (OsmPrimitive parent : child.getReferrers()) {
-                if (parent instanceof Relation && !toPurgeChecked.contains(parent)) {
-                    makeIncomplete.add(child);
-                    continue TOP;
+            for (OsmPrimitive child : toPurgeChecked) {
+                if (child.isNew()) {
+                    continue;
+                }
+                for (OsmPrimitive parent : child.getReferrers()) {
+                    if (parent instanceof Relation && !toPurgeChecked.contains(parent)) {
+                        makeIncomplete.add(child);
+                        continue TOP;
+                    }
                 }
             }
-        }
 
         // Add untagged way nodes. Do not add nodes that have other
         // referrers not yet to-be-purged.
@@ -136,15 +138,17 @@ public class PurgeAction extends JosmAction {
                 if (osm instanceof Way) {
                     Way w = (Way) osm;
                     NODE:
-                    for (Node n : w.getNodes()) {
-                        if (n.isTagged() || toPurgeChecked.contains(n))
-                            continue;
-                        for (OsmPrimitive ref : n.getReferrers()) {
-                            if (ref != w && !toPurgeChecked.contains(ref))
-                                continue NODE;
+                        for (Node n : w.getNodes()) {
+                            if (n.isTagged() || toPurgeChecked.contains(n)) {
+                                continue;
+                            }
+                            for (OsmPrimitive ref : n.getReferrers()) {
+                                if (ref != w && !toPurgeChecked.contains(ref)) {
+                                    continue NODE;
+                                }
+                            }
+                            wayNodes.add(n);
                         }
-                        wayNodes.add(n);
-                    }
                 }
             }
             toPurgeChecked.addAll(wayNodes);
@@ -185,23 +189,23 @@ public class PurgeAction extends JosmAction {
         pnl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         pnl.add(new JLabel("<html>"+
                 tr("This operation makes JOSM forget the selected objects.<br> " +
-                "They will be removed from the layer, but <i>not</i> deleted<br> " +
+                        "They will be removed from the layer, but <i>not</i> deleted<br> " +
                 "on the server when uploading.")+"</html>",
                 ImageProvider.get("purge"), JLabel.LEFT), GBC.eol().fill(GBC.HORIZONTAL));
 
         if (!toPurgeAdditionally.isEmpty()) {
             pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0,5,0,5));
             pnl.add(new JLabel("<html>"+
-                tr("The following dependent objects will be purged<br> " +
-                "in addition to the selected objects:")+"</html>",
-                ImageProvider.get("warning-small"), JLabel.LEFT), GBC.eol().fill(GBC.HORIZONTAL));
+                    tr("The following dependent objects will be purged<br> " +
+                    "in addition to the selected objects:")+"</html>",
+                    ImageProvider.get("warning-small"), JLabel.LEFT), GBC.eol().fill(GBC.HORIZONTAL));
 
             Collections.sort(toPurgeAdditionally, new Comparator<OsmPrimitive>() {
                 public int compare(OsmPrimitive o1, OsmPrimitive o2) {
                     int type = o1.getType().compareTo(o2.getType());
                     if (type != 0)
                         return -type;
-                    return (new Long(o1.getUniqueId())).compareTo(o2.getUniqueId());
+                    return (Long.valueOf(o1.getUniqueId())).compareTo(o2.getUniqueId());
                 }
             });
             JList list = new JList(toPurgeAdditionally.toArray(new OsmPrimitive[0]));
@@ -209,10 +213,10 @@ public class PurgeAction extends JosmAction {
             list.setCellRenderer(new OsmPrimitivRenderer() {
                 @Override
                 public Component getListCellRendererComponent(JList list,
-                                              Object value,
-                                              int index,
-                                              boolean isSelected,
-                                              boolean cellHasFocus) {
+                        Object value,
+                        int index,
+                        boolean isSelected,
+                        boolean cellHasFocus) {
                     return super.getListCellRendererComponent(list, value, index, true, false);
                 }
             });
@@ -239,7 +243,7 @@ public class PurgeAction extends JosmAction {
             pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0,5,0,5));
             pnl.add(new JLabel("<html>"+tr("Some of the objects are modified.<br> " +
                     "Proceed, if these changes should be discarded."+"</html>"),
-                        ImageProvider.get("warning-small"), JLabel.LEFT),
+                    ImageProvider.get("warning-small"), JLabel.LEFT),
                     GBC.eol().fill(GBC.HORIZONTAL));
         }
 

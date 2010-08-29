@@ -67,11 +67,6 @@ public class Tag {
         return value;
     }
 
-    @Override
-    public Tag clone() {
-        return new Tag(this);
-    }
-
     /**
      * Replies true if the key of this tag is equal to <code>key</code>.
      * If <code>key</code> is null, assumes the empty key.
