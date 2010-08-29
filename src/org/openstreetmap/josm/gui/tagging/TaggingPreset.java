@@ -144,7 +144,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             } else {
                 returnValue.hadEmpty = true;
             }
-            returnValue.hadKeys = ! returnValue.values.isEmpty() | returnValue.hadEmpty;
+            if(s.hasKeys()) {
+                returnValue.hadKeys = true;
+            }
         }
         return returnValue;
     }
@@ -346,6 +348,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
             // find out if our key is already used in the selection.
             usage = determineTextUsage(sel, key);
+            String def = default_;
 
             String[] value_array = values.split(",");
             String[] display_array;
@@ -356,6 +359,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 display_array = display_values.split(",");
             } else {
                 display_array = value_array;
+            }
+
+            if(use_last_as_default && def == null && lastValue.containsKey(key))
+            {
+                def = lastValue.get(key);
             }
 
             if (display_array.length != value_array.length) {
@@ -379,8 +387,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     }
                 }
             }
-            if (default_ != null && !lhm.containsKey(default_)) {
-                lhm.put(default_, default_);
+            if (def != null && !lhm.containsKey(def)) {
+                lhm.put(def, def);
             }
             if(!lhm.containsKey("")) {
                 lhm.put("", "");
@@ -399,8 +407,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 combo.setSelectedItem(lhm.get(originalValue));
             }
             // use default only in case it is a totally new entry
-            else if(default_ != null && !usage.hadKeys()) {
-                combo.setSelectedItem(default_);
+            else if(def != null && !usage.hadKeys()) {
+                combo.setSelectedItem(def);
                 originalValue=DIFFERENT;
             }
             else if(usage.unused()){
@@ -451,6 +459,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
             if (delete_if_empty && value.length() == 0) {
                 value = null;
+            }
+            if (use_last_as_default) {
+                lastValue.put(key, value);
             }
             cmds.add(new ChangePropertyCommand(sel, key, value));
         }
