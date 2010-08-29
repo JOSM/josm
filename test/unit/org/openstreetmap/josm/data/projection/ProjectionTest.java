@@ -82,14 +82,14 @@ public class ProjectionTest {
         Bounds b = p.getWorldBoundsLatLon();
 
         text += String.format("*** %s %s\n", p.toString(), p.toCode());
-        for (int num=0; num < 1; ++num) {
+        for (int num=0; num < 1000; ++num) {
 
             double lat = rand.nextDouble() * (b.getMax().lat() - b.getMin().lat()) + b.getMin().lat();
             double lon = rand.nextDouble() * (b.getMax().lon() - b.getMin().lon()) + b.getMin().lon();
 
             LatLon ll = new LatLon(lat, lon);
 
-            for (int i=0; i<1; ++i) {
+            for (int i=0; i<10; ++i) {
                 EastNorth en = p.latlon2eastNorth(ll);
                 ll = p.eastNorth2latlon(en);
             }
