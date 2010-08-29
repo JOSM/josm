@@ -2336,13 +2336,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="American Football" icon="presets/soccer.png" type="node,closedway">
+        <item name="American Football" icon="presets/football.png" type="node,closedway">
             <label text="Edit American Football" />
             <key key="sport" value="american_football" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Canadian Football" icon="presets/soccer.png" type="node,closedway">
+        <item name="Canadian Football" icon="presets/football.png" type="node,closedway">
             <label text="Edit Canadian Football" />
             <key key="sport" value="canadian_football" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
