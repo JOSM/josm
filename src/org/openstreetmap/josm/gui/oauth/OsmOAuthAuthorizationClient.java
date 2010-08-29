@@ -129,7 +129,7 @@ public class OsmOAuthAuthorizationClient {
         try {
             monitor.beginTask("");
             monitor.indeterminateSubTask(tr("Retrieving OAuth Request Token from ''{0}''", oauthProviderParameters.getRequestTokenUrl()));
-            provider.retrieveRequestToken(consumer, null);
+            provider.retrieveRequestToken(consumer, "");
             return OAuthToken.createToken(consumer);
         } catch(OAuthCommunicationException e){
             if (canceled)
