@@ -232,7 +232,13 @@ public class Shortcut {
      * FOR PREF PANE ONLY
      */
     public static List<Shortcut> listAll() {
-        return new ArrayList<Shortcut>(shortcuts.values());
+        List<Shortcut> l = new ArrayList<Shortcut>();
+        for(Shortcut c : shortcuts.values())
+        {
+            if(!c.shortText.equals("core:none"))
+                l.add(c);
+        }
+        return l;
     }
 
     // try to find an unused shortcut
