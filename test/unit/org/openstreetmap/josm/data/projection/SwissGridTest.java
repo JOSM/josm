@@ -42,7 +42,7 @@ public class SwissGridTest {
         }
     }
 
-    final double EPSILON = "yes".equals(System.getProperty("supressPermanentFailure")) ? 2.0 : 0.05;
+    final double EPSILON = "yes".equals(System.getProperty("suppressPermanentFailure")) ? 2.0 : 0.05;
 
     @Test
     public void projReferenceTest() {

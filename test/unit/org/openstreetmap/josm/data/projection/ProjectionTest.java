@@ -26,7 +26,7 @@ public class ProjectionTest {
 
         testProj(new Epsg4326());
         testProj(new Mercator());
-        if (!"yes".equals(System.getProperty("supressPermanentFailure"))) {
+        if (!"yes".equals(System.getProperty("suppressPermanentFailure"))) {
             testProj(new LambertEST());
         }
 
