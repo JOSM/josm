@@ -51,6 +51,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 import org.openstreetmap.josm.tools.AudioPlayer;
+import org.openstreetmap.josm.tools.BugReportExceptionHandler;
 
 /**
  * This is a component used in the MapFrame for browsing the map. It use is to
@@ -442,6 +443,9 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * Draw the component.
      */
     @Override public void paint(Graphics g) {
+        if (BugReportExceptionHandler.exceptionHandlingInProgress())
+            return;
+
         if (center == null)
             return; // no data loaded yet.
 
