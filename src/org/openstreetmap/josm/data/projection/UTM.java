@@ -4,12 +4,15 @@ package org.openstreetmap.josm.data.projection;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -24,10 +27,16 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class UTM implements Projection, ProjectionSubPrefs {
 
-    public static final int DEFAULT_ZONE = 30;
+    private static final int DEFAULT_ZONE = 30;
     private int zone = DEFAULT_ZONE;
 
-    final private static double UTMScaleFactor = 0.9996;
+    public enum Hemisphere {North, South}
+    private static final Hemisphere DEFAULT_HEMISPHERE = Hemisphere.North;
+    private Hemisphere hemisphere = DEFAULT_HEMISPHERE;
+
+    private boolean offset = false;
+
+    private final static double UTMScaleFactor = 0.9996;
 
     /* Ellipsoid model constants (WGS84) - TODO Use Elliposid class here too */
     //final private double sm_EccSquared = 6.69437999013e-03;
@@ -338,11 +347,11 @@ public class UTM implements Projection, ProjectionSubPrefs {
 
     public EastNorth latlon2eastNorth(LatLon p) {
         EastNorth a = mapLatLonToXY(Math.toRadians(p.lat()), Math.toRadians(p.lon()), UTMCentralMeridian(getzone()));
-        return new EastNorth(a.east() * UTMScaleFactor + 3500000.0, a.north() * UTMScaleFactor);
+        return new EastNorth(a.east() * UTMScaleFactor + getEastOffset(), a.north() * UTMScaleFactor + getNorthOffset());
     }
 
     public LatLon eastNorth2latlon(EastNorth p) {
-        return mapXYToLatLon((p.east()-3500000.0)/UTMScaleFactor, p.north()/UTMScaleFactor, UTMCentralMeridian(getzone()));
+        return mapXYToLatLon((p.east()-getEastOffset())/UTMScaleFactor, (p.north()-getNorthOffset())/UTMScaleFactor, UTMCentralMeridian(getzone()));
     }
 
     @Override public String toString() {
@@ -354,24 +363,44 @@ public class UTM implements Projection, ProjectionSubPrefs {
         return zone;
     }
 
+    private double getEastOffset() {
+        return 500000 + (offset?3000000:0);
+    }
+
+    private double getNorthOffset() {
+        if (hemisphere == Hemisphere.North)
+            return 0;
+        else
+            return 10000000;
+    }
+
+    private int epsgCode() {
+        return ((offset?325800:32600) + getzone() + (hemisphere == Hemisphere.South?100:0));
+    }
+
     public String toCode() {
-        return "EPSG:"+ (325800 + getzone());
+        return "EPSG:"+ epsgCode();
     }
 
     @Override
     public int hashCode() {
-        return getClass().getName().hashCode()+zone; // our only real variable
+        return toCode().hashCode();
     }
 
     public String getCacheDirectoryName() {
-        return "epsg"+ (325800 + getzone());
+        return "epsg"+ epsgCode();
     }
 
     public Bounds getWorldBoundsLatLon()
     {
-        return new Bounds(
-                new LatLon(-85.0, UTMCentralMeridianDeg(getzone())-5.0),
-                new LatLon(85.0, UTMCentralMeridianDeg(getzone())+5.0));
+        if (hemisphere == Hemisphere.North)
+            return new Bounds(
+                    new LatLon(-5.0, UTMCentralMeridianDeg(getzone())-5.0),
+                    new LatLon(85.0, UTMCentralMeridianDeg(getzone())+5.0));
+        else
+            return new Bounds(
+                    new LatLon(-85.0, UTMCentralMeridianDeg(getzone())-5.0),
+                    new LatLon(5.0, UTMCentralMeridianDeg(getzone())+5.0));
     }
 
     public double getDefaultZoomInPPD() {
@@ -380,55 +409,128 @@ public class UTM implements Projection, ProjectionSubPrefs {
     }
 
     public void setupPreferencePanel(JPanel p) {
-        JComboBox prefcb = new JComboBox();
+        //Zone
+        JComboBox zonecb = new JComboBox();
         for(int i = 1; i <= 60; i++) {
-            prefcb.addItem(i);
+            zonecb.addItem(i);
         }
 
-        prefcb.setSelectedIndex(zone - 1);
+        zonecb.setSelectedIndex(zone - 1);
         p.setLayout(new GridBagLayout());
         p.add(new JLabel(tr("UTM Zone")), GBC.std().insets(5,5,0,5));
         p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
         /* Note: we use component position 2 below to find this again */
-        p.add(prefcb, GBC.eop().fill(GBC.HORIZONTAL));
+        p.add(zonecb, GBC.eop().fill(GBC.HORIZONTAL));
+        p.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
+
+        //Hemisphere
+        JRadioButton north = new JRadioButton();
+        north.setSelected(hemisphere == Hemisphere.North);
+        JRadioButton south = new JRadioButton();
+        south.setSelected(hemisphere == Hemisphere.South);
+
+        ButtonGroup group = new ButtonGroup();
+        group.add(north);
+        group.add(south);
+
+        JPanel bPanel = new JPanel();
+        bPanel.setLayout(new GridBagLayout());
+
+        bPanel.add(new JLabel(tr("North")), GBC.std().insets(5, 5, 0, 5));
+        bPanel.add(north, GBC.std().fill(GBC.HORIZONTAL));
+        bPanel.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
+        bPanel.add(new JLabel(tr("South")), GBC.std().insets(5, 5, 0, 5));
+        bPanel.add(south, GBC.std().fill(GBC.HORIZONTAL));
+        bPanel.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
+
+        p.add(new JLabel(tr("Hemisphere")), GBC.std().insets(5,5,0,5));
+        p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
+        p.add(bPanel, GBC.eop().fill(GBC.HORIZONTAL));
+        p.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
+
+        //Offset
+        JCheckBox offsetBox = new JCheckBox();
+        offsetBox.setSelected(offset);
+
+        p.add(new JLabel(tr("Offset 3.000.000m east")), GBC.std().insets(5,5,0,5));
+        p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
+        /* Note: we use component position 2 below to find this again */
+        p.add(offsetBox, GBC.eop().fill(GBC.HORIZONTAL));
         p.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
     }
 
     public Collection<String> getPreferences(JPanel p) {
-        Object prefcb = p.getComponent(2);
-        if(!(prefcb instanceof JComboBox))
-            return null;
-        int zone = ((JComboBox)prefcb).getSelectedIndex() + 1;
-        return Collections.singleton(Integer.toString(zone));
+        int zone = DEFAULT_ZONE;
+        Hemisphere hemisphere = DEFAULT_HEMISPHERE;
+        boolean offset = false;
+
+        Object zonecb = p.getComponent(2);
+        if (zonecb instanceof JComboBox) {
+            zone = ((JComboBox)zonecb).getSelectedIndex() + 1;
+        }
+
+        Object bPanel = p.getComponent(6);
+        if (bPanel instanceof JPanel) {
+            Object south = ((JPanel)bPanel).getComponent(4);
+            if (south instanceof JRadioButton) {
+                hemisphere = ((JRadioButton)south).isSelected()?Hemisphere.South:Hemisphere.North;
+            }
+        }
+
+        Object offsetBox = p.getComponent(10);
+        if (offsetBox instanceof JCheckBox) {
+            offset = ((JCheckBox) offsetBox).isSelected();
+        }
+
+        return Arrays.asList(Integer.toString(zone), hemisphere.toString(), (offset?"offset":"standard"));
     }
 
     public void setPreferences(Collection<String> args)
     {
         zone = DEFAULT_ZONE;
+        hemisphere = DEFAULT_HEMISPHERE;
+        offset = true; //Default in previous versions
+
         if(args != null)
         {
+            String[] array = args.toArray(new String[0]);
             try {
-                for(String s : args)
-                {
-                    zone = Integer.parseInt(s);
-                    if(zone <= 0 || zone > 60) {
-                        zone = DEFAULT_ZONE;
-                    }
-                    break;
+                zone = Integer.parseInt(array[0]);
+                if(zone <= 0 || zone > 60) {
+                    zone = DEFAULT_ZONE;
                 }
             } catch(NumberFormatException e) {}
+
+            if (array.length > 1) {
+                hemisphere = Hemisphere.valueOf(array[1]);
+            }
+
+            if (array.length > 2) {
+                offset = array[2].equals("offset");
+            }
         }
     }
 
     public Collection<String> getPreferencesFromCode(String code)
     {
-        if(code.startsWith("EPSG:3258"))
+        boolean offset = code.startsWith("EPSG:3258") || code.startsWith("EPSG:3259");
+
+        if(code.startsWith("EPSG:326") || code.startsWith("EPSG:327") || offset)
         {
             try {
-                String zonestring = code.substring(9);
+                Hemisphere hemisphere;
+                String zonestring;
+                if (offset) {
+                    hemisphere = code.charAt(8)=='8'?Hemisphere.North:Hemisphere.South;
+                    zonestring = code.substring(9);
+                } else {
+                    hemisphere = code.charAt(7)=='6'?Hemisphere.North:Hemisphere.South;
+                    zonestring = code.substring(8);
+                }
+
                 int zoneval = Integer.parseInt(zonestring);
                 if(zoneval > 0 && zoneval <= 60)
-                    return Collections.singleton(zonestring);
+                    return Arrays.asList(zonestring, hemisphere.toString(), (offset?"offset":"standard"));
             } catch(NumberFormatException e) {}
         }
         return null;
