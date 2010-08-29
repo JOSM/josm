@@ -70,7 +70,7 @@ public class PluginHandler {
         "lang-de", "lang-en_GB", "lang-fr", "lang-it", "lang-pl", "lang-ro",
         "lang-ru", "ewmsplugin", "ywms", "tways-0.2", "geotagged", "landsat",
         "namefinder", "waypoints", "slippy_map_chooser", "tcx-support", "usertools",
-        "AgPifoJ", "utilsplugin"};
+        "AgPifoJ", "utilsplugin", "ghost"};
 
     final public static String [] UNMAINTAINED_PLUGINS = new String[] {"gpsbabelgui", "Intersect_way"};
 
