@@ -235,8 +235,9 @@ public class Shortcut {
         List<Shortcut> l = new ArrayList<Shortcut>();
         for(Shortcut c : shortcuts.values())
         {
-            if(!c.shortText.equals("core:none"))
+            if(!c.shortText.equals("core:none")) {
                 l.add(c);
+            }
         }
         return l;
     }

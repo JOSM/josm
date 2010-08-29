@@ -9,6 +9,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Point;
@@ -17,7 +18,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,6 +39,8 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
@@ -58,12 +60,14 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
+import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.JpgImporter;
 import org.openstreetmap.josm.tools.AudioUtil;
 import org.openstreetmap.josm.tools.DateUtils;
@@ -118,49 +122,7 @@ public class GpxLayer extends Layer {
 
     @Override
     public Object getInfoComponent() {
-        return getToolTipText();
-    }
-
-    static public Color getColor(String name) {
-        return Main.pref.getColor(marktr("gps point"), name != null ? "layer " + name : null, Color.gray);
-    }
-
-    @Override
-    public Action[] getMenuEntries() {
-        if (Main.applet)
-            return new Action[] {
-                LayerListDialog.getInstance().createShowHideLayerAction(),
-                LayerListDialog.getInstance().createDeleteLayerAction(),
-                SeparatorLayerAction.INSTANCE,
-                new CustomizeColor(),
-                new CustomizeLineDrawing(),
-                new ConvertToDataLayerAction(),
-                SeparatorLayerAction.INSTANCE,
-                new RenameLayerAction(getAssociatedFile(), this),
-                SeparatorLayerAction.INSTANCE,
-                new LayerListPopup.InfoAction(this) };
-        return new Action[] {
-                LayerListDialog.getInstance().createShowHideLayerAction(),
-                LayerListDialog.getInstance().createDeleteLayerAction(),
-                SeparatorLayerAction.INSTANCE,
-                new LayerSaveAction(this),
-                new LayerSaveAsAction(this),
-                new CustomizeColor(),
-                new CustomizeLineDrawing(),
-                new ImportImages(),
-                new ImportAudio(),
-                new MarkersFromNamedPoins(),
-                new ConvertToDataLayerAction(),
-                new DownloadAlongTrackAction(),
-                SeparatorLayerAction.INSTANCE,
-                new RenameLayerAction(getAssociatedFile(), this),
-                SeparatorLayerAction.INSTANCE,
-                new LayerListPopup.InfoAction(this) };
-    }
-
-    @Override
-    public String getToolTipText() {
-        StringBuilder info = new StringBuilder().append("<html>");
+        StringBuilder info = new StringBuilder();
 
         if (data.attr.containsKey("name")) {
             info.append(tr("Name: {0}", data.attr.get(GpxData.META_NAME))).append("<br>");
@@ -224,7 +186,7 @@ public class GpxLayer extends Layer {
                 }
 
                 info.append("</td><td>");
-                info.append(new DecimalFormat("#0.00").format(trk.length() / 1000) + "km");
+                info.append(NavigatableComponent.getSystemOfMeasurement().getDistText(trk.length()));
                 info.append("</td><td>");
                 if (trk.getAttributes().containsKey("url")) {
                     info.append(trk.getAttributes().get("url"));
@@ -236,11 +198,77 @@ public class GpxLayer extends Layer {
 
         }
 
-        info.append(tr("Length: ") + new DecimalFormat("#0.00").format(data.length() / 1000) + "km");
-        info.append("<br>");
+        info.append(tr("Length: {0}", NavigatableComponent.getSystemOfMeasurement().getDistText(data.length()))).append("<br>");
 
         info.append(trn("{0} route, ", "{0} routes, ", data.routes.size(), data.routes.size())).append(
                 trn("{0} waypoint", "{0} waypoints", data.waypoints.size(), data.waypoints.size())).append("<br>");
+
+        final JScrollPane sp = new JScrollPane(new HtmlPanel(info.toString()), JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        sp.setPreferredSize(new Dimension(sp.getPreferredSize().width, 350));
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                sp.getVerticalScrollBar().setValue(0);
+            }
+        });
+        return sp;
+    }
+
+    static public Color getColor(String name) {
+        return Main.pref.getColor(marktr("gps point"), name != null ? "layer " + name : null, Color.gray);
+    }
+
+    @Override
+    public Action[] getMenuEntries() {
+        if (Main.applet)
+            return new Action[] {
+                LayerListDialog.getInstance().createShowHideLayerAction(),
+                LayerListDialog.getInstance().createDeleteLayerAction(),
+                SeparatorLayerAction.INSTANCE,
+                new CustomizeColor(),
+                new CustomizeLineDrawing(),
+                new ConvertToDataLayerAction(),
+                SeparatorLayerAction.INSTANCE,
+                new RenameLayerAction(getAssociatedFile(), this),
+                SeparatorLayerAction.INSTANCE,
+                new LayerListPopup.InfoAction(this) };
+        return new Action[] {
+                LayerListDialog.getInstance().createShowHideLayerAction(),
+                LayerListDialog.getInstance().createDeleteLayerAction(),
+                SeparatorLayerAction.INSTANCE,
+                new LayerSaveAction(this),
+                new LayerSaveAsAction(this),
+                new CustomizeColor(),
+                new CustomizeLineDrawing(),
+                new ImportImages(),
+                new ImportAudio(),
+                new MarkersFromNamedPoins(),
+                new ConvertToDataLayerAction(),
+                new DownloadAlongTrackAction(),
+                SeparatorLayerAction.INSTANCE,
+                new RenameLayerAction(getAssociatedFile(), this),
+                SeparatorLayerAction.INSTANCE,
+                new LayerListPopup.InfoAction(this) };
+    }
+
+    @Override
+    public String getToolTipText() {
+        StringBuilder info = new StringBuilder().append("<html>");
+
+        if (data.attr.containsKey("name")) {
+            info.append(tr("Name: {0}", data.attr.get(GpxData.META_NAME))).append("<br>");
+        }
+
+        if (data.attr.containsKey("desc")) {
+            info.append(tr("Description: {0}", data.attr.get(GpxData.META_DESC))).append("<br>");
+        }
+
+        info.append(trn("{0} track, ", "{0} tracks, ", data.tracks.size(), data.tracks.size()));
+        info.append(trn("{0} route, ", "{0} routes, ", data.routes.size(), data.routes.size()));
+        info.append(trn("{0} waypoint", "{0} waypoints", data.waypoints.size(), data.waypoints.size())).append("<br>");
+
+        info.append(tr("Length: {0}", NavigatableComponent.getSystemOfMeasurement().getDistText(data.length())));
+        info.append("<br>");
 
         return info.append("</html>").toString();
     }

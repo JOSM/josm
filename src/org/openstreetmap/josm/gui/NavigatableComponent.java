@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.help.Helpful;
+import org.openstreetmap.josm.gui.preferences.ProjectionPreference;
 import org.openstreetmap.josm.tools.Predicate;
 
 /**
@@ -115,11 +116,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     public static String getDistText(double dist) {
-        SystemOfMeasurement som = SYSTEMS_OF_MEASUREMENT.get(Main.pref.get("system_of_measurement", "Metric"));
-        if (som == null) {
-            som = METRIC_SOM;
-        }
-        return som.getDistText(dist);
+        return getSystemOfMeasurement().getDistText(dist);
     }
 
     public String getDist100PixelText()
@@ -715,6 +712,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
         java.util.zip.CRC32 id = new java.util.zip.CRC32();
         id.update(x.getBytes());
         return (int)id.getValue();
+    }
+
+    public static SystemOfMeasurement getSystemOfMeasurement() {
+        SystemOfMeasurement som = SYSTEMS_OF_MEASUREMENT.get(ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get());
+        if (som == null)
+            return METRIC_SOM;
+        return som;
     }
 
     public static class SystemOfMeasurement {
