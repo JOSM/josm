@@ -38,6 +38,7 @@ combo: combo box, with multiple choices and possible to enter free form text
                   database values, order and number must be equal to values
   default: default string to display
   delete_if_empty: true/false
+  use_last_as_default: true/false
 
 check: checkbox
   key: key to set
