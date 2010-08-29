@@ -948,11 +948,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     contentInsets = new Insets(10,5,0,5);
                     setButtonIcons(new String[] {"ok.png", "cancel.png" });
                     setContent(content);
+                    setDefaultButton(1);
                     setupDialog();
                     buttons.get(0).setEnabled(!disableApply);
                     buttons.get(0).setToolTipText(title);
-                    getRootPane().setDefaultButton(buttons.get(0));
-                    setVisible(true);
+                    showDialog();
                 }
             }
 

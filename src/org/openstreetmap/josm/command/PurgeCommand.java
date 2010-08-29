@@ -190,64 +190,64 @@ public class PurgeCommand extends Command {
                 break; // no more ways left
             }
 
-            /**
-             * Rest are relations. Do topological sorting on a DAG where each
-             * arrow points from child to parent. (Because it is faster to
-             * loop over getReferrers() than getMembers().)
-             */
-            Set<Relation> inR = (Set) in;
-            Set<Relation> childlessR = new HashSet<Relation>();
-            List<Relation> outR = new ArrayList<Relation>(inR.size());
+        /**
+         * Rest are relations. Do topological sorting on a DAG where each
+         * arrow points from child to parent. (Because it is faster to
+         * loop over getReferrers() than getMembers().)
+         */
+        Set<Relation> inR = (Set) in;
+        Set<Relation> childlessR = new HashSet<Relation>();
+        List<Relation> outR = new ArrayList<Relation>(inR.size());
 
-            HashMap<Relation, Integer> numChilds = new HashMap<Relation, Integer>();
+        HashMap<Relation, Integer> numChilds = new HashMap<Relation, Integer>();
 
-            // calculate initial number of childs
-            for (Relation r : inR) {
-                numChilds.put(r, 0);
+        // calculate initial number of childs
+        for (Relation r : inR) {
+            numChilds.put(r, 0);
+        }
+        for (Relation r : inR) {
+            for (OsmPrimitive parent : r.getReferrers()) {
+                if (!(parent instanceof Relation))
+                    throw new AssertionError();
+                Integer i = numChilds.get(parent);
+                if (i != null) {
+                    numChilds.put((Relation)parent, i+1);
+                }
             }
-            for (Relation r : inR) {
-                for (OsmPrimitive parent : r.getReferrers()) {
-                    if (!(parent instanceof Relation))
-                        throw new AssertionError();
-                    Integer i = numChilds.get(parent);
-                    if (i != null) {
-                        numChilds.put((Relation)parent, i+1);
+        }
+        for (Relation r : inR) {
+            if (numChilds.get(r).equals(0)) {
+                childlessR.add(r);
+            }
+        }
+
+        while (!childlessR.isEmpty()) {
+            // Identify one childless Relation and
+            // let it virtually die. This makes other
+            // relations childless.
+            Iterator<Relation> it  = childlessR.iterator();
+            Relation next = it.next();
+            it.remove();
+            outR.add(next);
+
+            for (OsmPrimitive parentPrim : next.getReferrers()) {
+                Relation parent = (Relation) parentPrim;
+                Integer i = numChilds.get(parent);
+                if (i != null) {
+                    numChilds.put(parent, i-1);
+                    if (i-1 == 0) {
+                        childlessR.add(parent);
                     }
                 }
             }
-            for (Relation r : inR) {
-                if (numChilds.get(r).equals(0)) {
-                    childlessR.add(r);
-                }
-            }
+        }
 
-            while (!childlessR.isEmpty()) {
-                // Identify one childless Relation and
-                // let it virtually die. This makes other
-                // relations childless.
-                Iterator<Relation> it  = childlessR.iterator();
-                Relation next = it.next();
-                it.remove();
-                outR.add(next);
+        if (outR.size() != inR.size())
+            throw new AssertionError("topo sort algorithm failed");
 
-                for (OsmPrimitive parentPrim : next.getReferrers()) {
-                    Relation parent = (Relation) parentPrim;
-                    Integer i = numChilds.get(parent);
-                    if (i != null) {
-                        numChilds.put(parent, i-1);
-                        if (i-1 == 0) {
-                            childlessR.add(parent);
-                        }
-                    }
-                }
-            }
+        out.addAll(outR);
 
-            if (outR.size() != inR.size())
-                throw new AssertionError("topo sort algorithm failed");
-
-            out.addAll(outR);
-
-            return out;
+        return out;
     }
 
     @Override
