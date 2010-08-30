@@ -114,7 +114,7 @@ public class UploadSelectionDialog extends JDialog {
     }
 
     public UploadSelectionDialog() {
-        super(JOptionPane.getFrameForComponent(Main.parent), true /* modal */);
+        super(JOptionPane.getFrameForComponent(Main.parent), ModalityType.DOCUMENT_MODAL);
         build();
     }
 

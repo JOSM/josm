@@ -92,7 +92,7 @@ public class CredentialDialog extends JDialog {
     }
 
     public CredentialDialog() {
-        setModal(true);
+        setModalityType(ModalityType.DOCUMENT_MODAL);
         try {
             setAlwaysOnTop(true);
         } catch(SecurityException e) {

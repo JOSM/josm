@@ -175,7 +175,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
     }
 
     public ConflictResolutionDialog(Component parent) {
-        super(JOptionPane.getFrameForComponent(parent), true /* modal */);
+        super(JOptionPane.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
         build();
     }
 

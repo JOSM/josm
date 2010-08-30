@@ -68,7 +68,7 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
     private JPanel pnlTagResolver;
 
     public PasteTagsConflictResolverDialog(Component owner) {
-        super(JOptionPane.getFrameForComponent(owner),true);
+        super(JOptionPane.getFrameForComponent(owner), ModalityType.DOCUMENT_MODAL);
         build();
         iconResolved = ImageProvider.get("dialogs/conflict", "tagconflictresolved");
         iconUnresolved = ImageProvider.get("dialogs/conflict", "tagconflictunresolved");

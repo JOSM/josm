@@ -189,7 +189,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     }
 
     public CombinePrimitiveResolverDialog(Component owner) {
-        super(JOptionPane.getFrameForComponent(owner), true /* modal */);
+        super(JOptionPane.getFrameForComponent(owner), ModalityType.DOCUMENT_MODAL);
         build();
     }
 

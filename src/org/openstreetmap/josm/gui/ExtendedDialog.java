@@ -124,7 +124,7 @@ public class ExtendedDialog extends JDialog {
 
     public ExtendedDialog(Component parent, String title, String[] buttonTexts,
             boolean modal, boolean disposeOnClose) {
-        super(JOptionPane.getFrameForComponent(parent), title, modal);
+        super(JOptionPane.getFrameForComponent(parent), title, modal ? ModalityType.DOCUMENT_MODAL : ModalityType.MODELESS);
         this.parent = parent;
         this.modal = modal;
         bTexts = buttonTexts;

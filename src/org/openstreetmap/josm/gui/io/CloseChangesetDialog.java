@@ -110,7 +110,7 @@ public class CloseChangesetDialog extends JDialog {
     }
 
     public CloseChangesetDialog() {
-        super(JOptionPane.getFrameForComponent(Main.parent), true /* modal */);
+        super(JOptionPane.getFrameForComponent(Main.parent), ModalityType.DOCUMENT_MODAL);
         build();
     }
 

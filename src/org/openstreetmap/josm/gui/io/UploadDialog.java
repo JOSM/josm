@@ -230,7 +230,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
      * constructor
      */
     public UploadDialog() {
-        super(JOptionPane.getFrameForComponent(Main.parent), true /* modal */);
+        super(JOptionPane.getFrameForComponent(Main.parent), ModalityType.DOCUMENT_MODAL);
         build();
     }
 

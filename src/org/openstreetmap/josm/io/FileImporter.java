@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 public abstract class FileImporter implements Comparable<FileImporter> {
@@ -57,11 +58,11 @@ public abstract class FileImporter implements Comparable<FileImporter> {
             importData(f, progressMonitor);
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(
+            HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,
                     tr("<html>Could not read file ''{0}''.<br>Error is:<br>{1}</html>", f.getName(), e.getMessage()),
                     tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
+                    JOptionPane.ERROR_MESSAGE, null
             );
         }
     }
@@ -71,11 +72,11 @@ public abstract class FileImporter implements Comparable<FileImporter> {
             importData(files, progressMonitor);
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(
+            HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,
                     tr("<html>Could not read files.<br>Error is:<br>{0}</html>", e.getMessage()),
                     tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
+                    JOptionPane.ERROR_MESSAGE, null
             );
         }
     }

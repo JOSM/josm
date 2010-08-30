@@ -117,7 +117,7 @@ public class LatLonDialog extends JDialog {
     }
 
     public LatLonDialog(Component parent, String title, String help) {
-        super(JOptionPane.getFrameForComponent(parent), true /* modal */);
+        super(JOptionPane.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
         this.help = help;
         setTitle(title);
         build();

@@ -125,7 +125,7 @@ public class SaveLayersDialog extends JDialog {
     }
 
     public SaveLayersDialog(Component parent) {
-        super(JOptionPane.getFrameForComponent(parent), true /* modal */);
+        super(JOptionPane.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
         build();
     }
 

@@ -58,7 +58,7 @@ public class PreferenceDialog extends JDialog {
     }
 
     public PreferenceDialog(Component parent) {
-        super(JOptionPane.getFrameForComponent(parent), tr("Preferences"), true /* modal */);
+        super(JOptionPane.getFrameForComponent(parent), tr("Preferences"), ModalityType.DOCUMENT_MODAL);
         build();
     }
 

@@ -111,17 +111,13 @@ public class OpenFileAction extends DiskAccessAction {
             }
             msg.append("</ul>");
 
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    HelpAwareOptionPane.showOptionDialog(
-                            Main.parent,
-                            msg.toString(),
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE,
-                            HelpUtil.ht("/Action/OpenFile#ImporterCantImportFiles")
-                    );
-                }
-            });
+            HelpAwareOptionPane.showMessageDialogInEDT(
+                    Main.parent,
+                    msg.toString(),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE,
+                    HelpUtil.ht("/Action/OpenFile#ImporterCantImportFiles")
+            );
         }
 
         protected void alertFilesWithUnknownImporter(Collection<File> files) {
@@ -141,17 +137,13 @@ public class OpenFileAction extends DiskAccessAction {
             }
             msg.append("</ul>");
             
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    HelpAwareOptionPane.showOptionDialog(
-                            Main.parent,
-                            msg.toString(),
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE,
-                            HelpUtil.ht("/Action/OpenFile#MissingImporterForFiles")
-                    );
-                }
-            });
+            HelpAwareOptionPane.showMessageDialogInEDT(
+                    Main.parent,
+                    msg.toString(),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE,
+                    HelpUtil.ht("/Action/OpenFile#MissingImporterForFiles")
+            );
         }
 
         @Override
@@ -204,10 +196,6 @@ public class OpenFileAction extends DiskAccessAction {
 
                 if (!filesNotMatchingWithImporter.isEmpty()) {
                     alertFilesNotMatchingWithImporter(filesNotMatchingWithImporter, chosenImporter);
-                    // TODO when changing to Java 6: Don't cancel the 
-                    // task here but use different modality. (Currently 2 dialogs
-                    // would block each other.)
-                    return;
                 }
                 if (!filesMatchingWithImporter.isEmpty()) {
                     importData(chosenImporter, filesMatchingWithImporter);
@@ -229,10 +217,6 @@ public class OpenFileAction extends DiskAccessAction {
                 }
                 if (!filesWithUnknownImporter.isEmpty()) {
                     alertFilesWithUnknownImporter(filesWithUnknownImporter);
-                    // TODO when changing to Java 6: Don't cancel the 
-                    // task here but use different modality. (Currently 2 dialogs
-                    // would block each other.)
-                    return;
                 }
                 List<FileImporter> ims = new ArrayList<FileImporter>(map.keySet());
                 Collections.sort(ims);

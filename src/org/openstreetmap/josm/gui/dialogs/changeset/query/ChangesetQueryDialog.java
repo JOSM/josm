@@ -97,12 +97,12 @@ public class ChangesetQueryDialog extends JDialog {
 
 
     public ChangesetQueryDialog(Dialog parent) {
-        super(parent, true /* modal */);
+        super(parent, ModalityType.DOCUMENT_MODAL);
         build();
     }
 
     public ChangesetQueryDialog(Frame parent) {
-        super(parent, true /* modal */);
+        super(parent, ModalityType.DOCUMENT_MODAL);
         build();
     }
 

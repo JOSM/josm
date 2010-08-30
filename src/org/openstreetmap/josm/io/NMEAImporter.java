@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -41,21 +42,27 @@ public class NMEAImporter extends FileImporter {
     }
 
     private void showNmeaInfobox(boolean success, NmeaReader r) {
-        String msg = tr("Coordinates imported: ") + r.getNumberOfCoordinates() + "\n" + tr("Malformed sentences: ")
-        + r.getParserMalformed() + "\n" + tr("Checksum errors: ") + r.getParserChecksumErrors() + "\n";
+        final StringBuilder msg = new StringBuilder().append("<html>");
+        msg.append(tr("Coordinates imported: {0}", r.getNumberOfCoordinates()) + "<br>");
+        msg.append(tr("Malformed sentences: {0}", r.getParserMalformed()) + "<br>");
+        msg.append(tr("Checksum errors: {0}", r.getParserChecksumErrors()) + "<br>");
         if (!success) {
-            msg += tr("Unknown sentences: ") + r.getParserUnknown() + "\n";
+            msg.append(tr("Unknown sentences: {0}", r.getParserUnknown()) + "<br>");
         }
-        msg += tr("Zero coordinates: ") + r.getParserZeroCoordinates();
+        msg.append(tr("Zero coordinates: {0}", r.getParserZeroCoordinates()));
+        msg.append("</html>");
         if (success) {
-            JOptionPane.showMessageDialog(
+            HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,
-                    msg,
+                    msg.toString(),
                     tr("NMEA import success"),
-                    JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.INFORMATION_MESSAGE, null);
         } else {
-            JOptionPane.showMessageDialog(Main.parent, msg, tr("NMEA import failure!"), JOptionPane.ERROR_MESSAGE);
+            HelpAwareOptionPane.showMessageDialogInEDT(
+                    Main.parent,
+                    msg.toString(),
+                    tr("NMEA import failure!"),
+                    JOptionPane.ERROR_MESSAGE, null);
         }
     }
-
 }

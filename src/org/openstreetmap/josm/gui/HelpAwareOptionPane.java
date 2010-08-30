@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -20,6 +21,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -180,37 +182,34 @@ public class HelpAwareOptionPane {
         final JDialog dialog = new JDialog(
                 JOptionPane.getFrameForComponent(parentComponent),
                 title,
-                true
+                ModalityType.DOCUMENT_MODAL
         );
         dialog.setContentPane(pane);
-        dialog.addWindowListener(
-                new WindowAdapter() {
+        dialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                pane.setValue(JOptionPane.CLOSED_OPTION);
+                super.windowClosed(e);
+            }
 
-                    @Override
-                    public void windowClosing(WindowEvent e) {
-                        pane.setValue(JOptionPane.CLOSED_OPTION);
-                        super.windowClosed(e);
-                    }
-
-                    @Override
-                    public void windowOpened(WindowEvent e) {
-                        if (defaultOption != null && options != null && options.length > 0) {
-                            int i;
-                            for (i=0; i<options.length;i++) {
-                                if (options[i] == defaultOption) {
-                                    break;
-                                }
-                            }
-                            if (i >= options.length) {
-                                buttons.get(0).requestFocusInWindow();
-                            }
-                            buttons.get(i).requestFocusInWindow();
-                        } else {
-                            buttons.get(0).requestFocusInWindow();
+            @Override
+            public void windowOpened(WindowEvent e) {
+                if (defaultOption != null && options != null && options.length > 0) {
+                    int i;
+                    for (i=0; i<options.length;i++) {
+                        if (options[i] == defaultOption) {
+                            break;
                         }
                     }
+                    if (i >= options.length) {
+                        buttons.get(0).requestFocusInWindow();
+                    }
+                    buttons.get(i).requestFocusInWindow();
+                } else {
+                    buttons.get(0).requestFocusInWindow();
                 }
-        );
+            }
+        });
         dialog.getRootPane().getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "close");
         dialog.getRootPane().getActionMap().put("close", new AbstractAction() {
             public void actionPerformed(ActionEvent e) {
@@ -254,5 +253,20 @@ public class HelpAwareOptionPane {
      */
     static public int showOptionDialog(Component parentComponent, Object msg, String title, int messageType,final String helpTopic)  {
         return showOptionDialog(parentComponent, msg, title, messageType, null,null,null, helpTopic);
+    }
+
+    /**
+     * Run it in Event Dispatch Thread.
+     * This version does not return anything, so it is more like showMessageDialog.
+     *
+     * It can be used, when you need to show a message dialog from a worker thread,
+     * e.g. from PleaseWaitRunnable
+     */
+    static public void showMessageDialogInEDT(final Component parentComponent, final Object msg, final String title, final int messageType, final String helpTopic)  {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                showOptionDialog(parentComponent, msg, title, messageType, null, null, null, helpTopic);
+            }
+        });
     }
 }

@@ -71,7 +71,7 @@ public class PleaseWaitDialog extends JDialog {
     }
 
     public PleaseWaitDialog(Component parent) {
-        super(JOptionPane.getFrameForComponent(parent), true);
+        super(JOptionPane.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
         initDialog();
     }
 

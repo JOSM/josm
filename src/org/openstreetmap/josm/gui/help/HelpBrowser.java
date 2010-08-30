@@ -23,8 +23,8 @@ import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -50,7 +50,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
-public class HelpBrowser extends JFrame {
+public class HelpBrowser extends JDialog {
     static private final Logger logger = Logger.getLogger(HelpBrowser.class.getName());
 
     /** the unique instance */

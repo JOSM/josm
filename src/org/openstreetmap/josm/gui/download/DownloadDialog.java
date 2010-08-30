@@ -176,7 +176,7 @@ public class DownloadDialog extends JDialog  {
     }
 
     public DownloadDialog(Component parent) {
-        super(JOptionPane.getFrameForComponent(parent),tr("Download"), true /* modal */);
+        super(JOptionPane.getFrameForComponent(parent),tr("Download"), ModalityType.DOCUMENT_MODAL);
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(buildMainPanel(), BorderLayout.CENTER);
         getContentPane().add(buildButtonPanel(), BorderLayout.SOUTH);

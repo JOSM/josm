@@ -4,6 +4,7 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
@@ -63,7 +64,7 @@ public class RenameLayerAction extends AbstractAction {
             }
         };
         final JDialog dlg = optionPane.createDialog(Main.parent, tr("Rename layer"));
-        dlg.setModal(true);
+        dlg.setModalityType(ModalityType.DOCUMENT_MODAL);
         dlg.setVisible(true);
 
         Object answer = optionPane.getValue();
