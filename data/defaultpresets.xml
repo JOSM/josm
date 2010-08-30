@@ -2103,7 +2103,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Archaeological Site" icon="presets/historic.png" type="node,closedway">
+        <item name="Archaeological Site" icon="styles/standard/sightseeing/archaeological.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=archaeological_site"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:historic=archaeological_site" />
             <label text="Edit Archaeological Site" />
@@ -2145,7 +2145,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="historic" value="wayside_shrine" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Boundary Stone" icon="presets/wayside_shrine.png" type="node,closedway">
+        <item name="Boundary Stone" icon="styles/standard/historic/boundary_stone.png" type="node,closedway">
             <label text="Edit Boundary Stone" />
             <key key="historic" value="boundary_stone" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2862,7 +2862,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Alcohol" icon="presets/empty.png" type="node,closedway">
+        <item name="Alcohol" icon="styles/standard/shop/beverages.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=alcohol" />
             <label text="Edit Alcohol Shop" />
             <key key="shop" value="alcohol" />
@@ -3425,7 +3425,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="religion" text="Religion" values="bahai,buddhist,christian,hindu,jain,jewish,muslim,sikh,spiritualist,taoist,unitarian,zoroastrian" default="" delete_if_empty="true" />
             <combo key="denomination" text="Denomination" values="anglican,baptist,catholic,evangelical,jehovahs_witness,lutheran,methodist,mormon,orthodox,pentecostal,presbyterian,protestant,quaker,shia,sunni" default="" delete_if_empty="true" />
         </item>
-        <item name="Retail" icon="presets/shopping.png" type="node,closedway,relation">
+        <item name="Retail" icon="styles/standard/shop/supermarket.png" type="node,closedway,relation">
             <label text="Edit Retail Landuse" />
             <space />
             <key key="landuse" value="retail" />
@@ -3504,14 +3504,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="addr:country" text="Country code" values="AT,CH,DE,FR,GB,IT,US" use_last_as_default="true" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Address Interpolation" icon="presets/addresses.png" type="way">
+        <item name="Address Interpolation" icon="presets/interpolation.png" type="way">
            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/House_numbers/Karlsruhe_Schema"
                  de.href="http://wiki.openstreetmap.org/wiki/Proposed_features/De:Hausnummern" />
             <label text="Edit Address Interpolation" />
             <space />
             <combo key="addr:interpolation" text="Numbering scheme" values="odd,even,all,alphabetic" default="odd" />
         </item>
-        <item name="Contact" icon="presets/empty.png" type="node,way,closedway,relation">
+        <item name="Contact" icon="presets/contact.png" type="node,way,closedway,relation">
             <label text="Edit Contact information" />
             <space />
             <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
@@ -3525,7 +3525,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
     </group> <!-- Annotation -->
     <group name="Relations" icon="presets/relations.png">
-        <item name="Multipolygon" icon="presets/empty.png" type="relation">
+        <item name="Multipolygon" icon="presets/multipolygon.png" type="relation">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:multipolygon"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Relation:multipolygon"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Relation:multipolygon" />
