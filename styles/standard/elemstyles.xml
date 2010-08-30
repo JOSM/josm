@@ -1451,6 +1451,14 @@ For external files the <rules> should have following elements:
 		<scale_max>50000</scale_max>
 	</rule>
 
+	<rule>
+		<condition k="aerialway" v="goods"/>
+		<line width="1" colour="aerialway#663300" dashed="1"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
 <!-- piste tags -->
 
 	<rule>
