@@ -938,7 +938,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="foot" text="Foot" default="on" delete_if_empty="true" />
             <check key="bicycle" text="Bicycle" default="off" delete_if_empty="true" />
         </item> <!-- turnstile -->
-        <item name="Sally Port" icon="presets/empty.png" type="node">
+        <item name="Sally Port" icon="styles/standard/vehicle/sally_port.png" type="node">
             <label text="Edit Sally Port" />
             <space />
             <key key="barrier" value="sally_port" />
@@ -1085,7 +1085,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="natural" value="mud" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Beach" icon="presets/empty.png" type="node,closedway,relation">
+        <item name="Beach" icon="styles/standard/rendering/beach.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=beach" />
             <label text="Edit Beach" />
             <key key="natural" value="beach" />
@@ -1340,6 +1340,11 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#aerialway" />
             <label text="Edit Pylon" text_context="aerialway" />
             <key key="aerialway" value="pylon" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Goods" name_context="aerialway" icon="presets/empty.png" type="node">
+            <label text="Edit Goods" text_context="aerialway" />
+            <key key="aerialway" value="goods" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Aerialway -->
@@ -2670,7 +2675,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="man_made" value="crane" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Beacon" icon="presets/empty.png" type="node">
+        <item name="Beacon" icon="styles/standard/misc/landmark/beacon.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=beacon" />
             <label text="Edit Beacon" />
             <key key="man_made" value="beacon" />
@@ -3302,7 +3307,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="wood" text="Type" values="coniferous,deciduous,mixed" default="" delete_if_empty="true" />
         </item>
-        <item name="Nature Reserve" icon="presets/empty.png" type="node,closedway,relation">
+        <item name="Nature Reserve" icon="styles/standard/leisure/nature_reserve.png" type="node,closedway,relation">
             <label text="Edit Nature Reserve" />
             <key key="leisure" value="nature_reserve" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
