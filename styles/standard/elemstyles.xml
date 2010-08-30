@@ -2011,6 +2011,30 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="amenity" v="motorcycle_parking"/>
+		<icon annotate="true" src="vehicle/parking/motorbike.png" priority="20000"/>
+		<area colour="amenity_traffic#f7efb7"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="amenity" v="bicycle_parking"/>
+		<icon annotate="true" src="vehicle/parking/bicycle.png" priority="20000"/>
+		<area colour="amenity_traffic#f7efb7"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="parking" v="park_and_ride"/>
+		<icon annotate="true" src="vehicle/parking/park_ride.png" priority="20000"/>
+		<area colour="amenity_traffic#f7efb7"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="parking" v="multi-storey"/>
 		<icon annotate="true" src="vehicle/parking/multi-storey.png" priority="10000"/>
 		<area colour="amenity_traffic#f7efb7"/>
@@ -2027,14 +2051,6 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="parking" v="park_and_ride"/>
-		<icon annotate="true" src="vehicle/parking/park_ride.png" priority="10000"/>
-		<area colour="amenity_traffic#f7efb7"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
 		<condition k="parking" v="surface"/>
 		<icon annotate="true" src="vehicle/parking.png"/>
 		<area colour="amenity_traffic#f7efb7"/>
@@ -2045,22 +2061,6 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="amenity" v="parking"/>
 		<icon annotate="true" src="vehicle/parking.png"/>
-		<area colour="amenity_traffic#f7efb7"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="amenity" v="motorcycle_parking"/>
-		<icon annotate="true" src="vehicle/parking/motorbike.png"/>
-		<area colour="amenity_traffic#f7efb7"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
-		<condition k="amenity" v="bicycle_parking"/>
-		<icon annotate="true" src="vehicle/parking/bicycle.png"/>
 		<area colour="amenity_traffic#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3982,9 +3982,25 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="sport" v="karting"/>
+		<area colour="sport#bde3cb"/>
+		<icon src="sport/karting.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="sport" v="motocross"/>
+		<area colour="sport#bde3cb"/>
+		<icon src="sport/motocross.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="sport" v="motor"/>
 		<area colour="sport#bde3cb"/>
-		<icon src="vehicle/motorbike.png"/>
+		<icon src="sport/motor.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
