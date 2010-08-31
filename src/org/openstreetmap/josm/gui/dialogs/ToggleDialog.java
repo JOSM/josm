@@ -23,22 +23,20 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.ComponentInputMap;
 import javax.swing.ImageIcon;
-import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.help.Helpful;
+import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -48,57 +46,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  */
 public class ToggleDialog extends JPanel implements Helpful {
-
-    // It's not possible to simply set component input map parent to be Main.contentPane.getInputMap because
-    // there is check in setParent that InputMap is for the same component
-    // Yes, this is a hack
-    // Another possibility would be simply copy InputMap, but that would require to keep copies synchronized when some shortcut is
-    // later
-    private static class RedirectInputMap extends ComponentInputMap {
-
-        private final InputMap target;
-
-        public RedirectInputMap(JComponent component, InputMap target) {
-            super(component);
-            this.target = target;
-        }
-
-        @Override
-        public Object get(KeyStroke keyStroke) {
-            return target.get(keyStroke);
-        }
-
-        @Override
-        public KeyStroke[] keys() {
-            return target.keys();
-        }
-
-        @Override
-        public int size() {
-            return target.size();
-        }
-
-        @Override
-        public KeyStroke[] allKeys() {
-            return target.allKeys();
-        }
-
-        @Override
-        public void put(KeyStroke keyStroke, Object actionMapKey) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void remove(KeyStroke key) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void clear() {
-            throw new UnsupportedOperationException();
-        }
-
-    }
 
     /** The action to toggle this dialog */
     protected ToggleDialogAction toggleAction;
@@ -151,7 +98,6 @@ public class ToggleDialog extends JPanel implements Helpful {
      * @param preferredHeight the preferred height for the dialog
      * @param defShow if the dialog should be shown by default, if there is no preference
      */
-    @SuppressWarnings("deprecation")
     public ToggleDialog(String name, String iconName, String tooltip, Shortcut shortcut, int preferredHeight, boolean defShow) {
         super(new BorderLayout());
         this.preferencePrefix = iconName;
@@ -179,12 +125,7 @@ public class ToggleDialog extends JPanel implements Helpful {
         isDocked = Main.pref.getBoolean(preferencePrefix+".docked", true);
         isCollapsed = Main.pref.getBoolean(preferencePrefix+".minimized", false);
 
-        InputMap lastParent = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        while (lastParent.getParent() != null) {
-            lastParent = lastParent.getParent();
-        }
-        lastParent.setParent(new RedirectInputMap(this, Main.contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)));
-        getActionMap().setParent(Main.contentPane.getActionMap());
+        RedirectInputMap.redirectToMainContentPane(this);
     }
 
     /**
