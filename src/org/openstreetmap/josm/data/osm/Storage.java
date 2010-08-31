@@ -92,11 +92,12 @@ public class Storage<T> extends AbstractSet<T> {
     private int size;
     private transient volatile int modCount = 0;
     private float loadFactor = 0.6f;
+    private static final int DEFAULT_CAPACITY = 16;
     private final boolean safeIterator;
     private boolean arrayCopyNecessary;
 
     public Storage() {
-        this(Storage.<T>defaultHash());
+        this(Storage.<T>defaultHash(), DEFAULT_CAPACITY, false);
     }
 
     public Storage(int capacity) {
@@ -104,9 +105,33 @@ public class Storage<T> extends AbstractSet<T> {
     }
 
     public Storage(Hash<? super T,? super T> ha) {
-        this(ha, 16, false);
+        this(ha, DEFAULT_CAPACITY, false);
     }
 
+    public Storage(boolean safeIterator) {
+        this(Storage.<T>defaultHash(), DEFAULT_CAPACITY, safeIterator);
+    }
+
+    public Storage(int capacity, boolean safeIterator) {
+        this(Storage.<T>defaultHash(), capacity, safeIterator);
+    }
+
+    public Storage(Hash<? super T,? super T> ha, boolean safeIterator) {
+        this(ha, DEFAULT_CAPACITY, safeIterator);
+    }
+
+    public Storage(Hash<? super T, ? super T> ha, int capacity) {
+        this(ha, capacity, false);
+    }
+    /**
+     * constructor
+     * @param ha
+     * @param capacity
+     * @param safeIterator If set to false, you must not modify the Storage
+     *          while iterating over it. If set to true, you can savely
+     *          modify, but the read-only iteration will happen on a copy
+     *          of the unmodified Storage.
+     */
     public Storage(Hash<? super T, ? super T> ha, int capacity, boolean safeIterator) {
         this.hash = ha;
         int cap = 1 << (int)(Math.ceil(Math.log(capacity/loadFactor) / Math.log(2)));

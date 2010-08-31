@@ -24,7 +24,7 @@ public class ChangesetListModel extends DefaultListModel  implements ChangesetCa
     //static private final Logger logger = Logger.getLogger(ChangesetListModel.class.getName());
 
     private final List<Changeset> data = new ArrayList<Changeset>();
-    private final Storage<Changeset> shownChangesets = new Storage<Changeset>();
+    private final Storage<Changeset> shownChangesets = new Storage<Changeset>(true);
     private DefaultListSelectionModel selectionModel;
 
     public ChangesetListModel(DefaultListSelectionModel selectionModel) {

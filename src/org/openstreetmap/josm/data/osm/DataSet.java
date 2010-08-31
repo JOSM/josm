@@ -68,7 +68,7 @@ public class DataSet implements Cloneable {
         }
     }
 
-    private Storage<OsmPrimitive> allPrimitives = new Storage<OsmPrimitive>(new IdHash(), 16, true);
+    private Storage<OsmPrimitive> allPrimitives = new Storage<OsmPrimitive>(new IdHash(), true);
     private Map<PrimitiveId, OsmPrimitive> primitivesMap = allPrimitives.foreignKey(new IdHash());
     private CopyOnWriteArrayList<DataSetListener> listeners = new CopyOnWriteArrayList<DataSetListener>();
 
