@@ -35,6 +35,12 @@ public class User {
      * @param name the name
      */
     public static User createLocalUser(String name) {
+        for(long i = -1; i >= uidCounter.get(); --i)
+        {
+          User olduser = getById(i);
+          if(olduser != null && olduser.hasName(name))
+            return olduser;
+        }
         User user = new User(getNextLocalUid(), name);
         userMap.put(user.getId(), user);
         return user;
