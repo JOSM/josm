@@ -56,7 +56,7 @@ public class CombineWayAction extends JosmAction {
         putValue("help", ht("/Action/CombineWay"));
     }
 
-    protected boolean confirmChangeDirectionOfWays() {
+    protected static boolean confirmChangeDirectionOfWays() {
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
                 tr("Change directions?"),
                 new String[] {tr("Reverse and Combine"), tr("Cancel")});
@@ -67,7 +67,7 @@ public class CombineWayAction extends JosmAction {
         return ed.getValue() == 1;
     }
 
-    protected void warnCombiningImpossible() {
+    protected static void warnCombiningImpossible() {
         String msg = tr("Could not combine ways "
                 + "(They could not be merged into a single string of nodes)");
         JOptionPane.showMessageDialog(
@@ -79,7 +79,7 @@ public class CombineWayAction extends JosmAction {
         return;
     }
 
-    protected Way getTargetWay(Collection<Way> combinedWays) {
+    protected static Way getTargetWay(Collection<Way> combinedWays) {
         // init with an arbitrary way
         Way targetWay = combinedWays.iterator().next();
 
@@ -99,7 +99,7 @@ public class CombineWayAction extends JosmAction {
      *
      * @return the set of referring relations
      */
-    protected Set<Relation> getParentRelations(Collection<Way> ways) {
+    public static Set<Relation> getParentRelations(Collection<Way> ways) {
         HashSet<Relation> ret = new HashSet<Relation>();
         for (Way w: ways) {
             ret.addAll(OsmPrimitive.getFilteredList(w.getReferrers(), Relation.class));
@@ -107,7 +107,24 @@ public class CombineWayAction extends JosmAction {
         return ret;
     }
 
-    public Way combineWays(Collection<Way> ways) {
+    @Deprecated
+    public static Way combineWays(Collection<Way> ways) {
+        Pair<Way, Command> combineResult;
+        try {
+            combineResult = combineWaysWorker(ways);
+        } catch (UserCancelException ex) {
+            return null;
+        }
+        return combineResult.a;
+    }
+
+    /**
+     * @param ways
+     * @return null if ways cannot be combined. Otherwise returns the combined
+     *              ways and the commands to combine
+     * @throws UserCancelException
+     */
+    public static Pair<Way, Command> combineWaysWorker(Collection<Way> ways) throws UserCancelException {
 
         // prepare and clean the list of ways to combine
         //
@@ -169,12 +186,7 @@ public class CombineWayAction extends JosmAction {
                 for (Way w : reversedWays) {
                     Way wnew = new Way(w);
                     reversedTagWays.add(wnew);
-                    try {
-                        changePropertyCommands = reverseWayTagCorrector.execute(w, wnew);
-                    }
-                    catch(UserCancelException ex) {
-                        return null;
-                    }
+                    changePropertyCommands = reverseWayTagCorrector.execute(w, wnew);
                 }
                 if ((changePropertyCommands != null) && !changePropertyCommands.isEmpty()) {
                     for (Command c : changePropertyCommands) {
@@ -213,7 +225,7 @@ public class CombineWayAction extends JosmAction {
         if (!completeWayTags.isApplicableToPrimitive() || !parentRelations.isEmpty()) {
             dialog.setVisible(true);
             if (dialog.isCancelled())
-                return null;
+                throw new UserCancelException();
         }
 
         LinkedList<Command> cmds = new LinkedList<Command>();
@@ -224,9 +236,8 @@ public class CombineWayAction extends JosmAction {
         cmds.addAll(dialog.buildResolutionCommands());
         cmds.add(new DeleteCommand(deletedWays));
         final SequenceCommand sequenceCommand = new SequenceCommand(tr("Combine {0} ways", ways.size()), cmds);
-        Main.main.undoRedo.add(sequenceCommand);
 
-        return targetWay;
+        return new Pair<Way, Command>(targetWay, sequenceCommand);
     }
 
     public void actionPerformed(ActionEvent event) {
@@ -244,7 +255,17 @@ public class CombineWayAction extends JosmAction {
             return;
         }
         // combine and update gui
-        final Way selectedWay = combineWays(selectedWays);
+        Pair<Way, Command> combineResult;
+        try {
+            combineResult = combineWaysWorker(selectedWays);
+        } catch (UserCancelException ex) {
+            return;
+        }
+
+        if (combineResult == null)
+            return;
+        final Way selectedWay = combineResult.a;
+        Main.main.undoRedo.add(combineResult.b);
         if(selectedWay != null)
         {
             Runnable guiTask = new Runnable() {

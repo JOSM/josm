@@ -131,6 +131,7 @@ public class Storage<T> extends AbstractSet<T> {
      *          while iterating over it. If set to true, you can savely
      *          modify, but the read-only iteration will happen on a copy
      *          of the unmodified Storage.
+     *          This is similar to CopyOnWriteArrayList.
      */
     public Storage(Hash<? super T, ? super T> ha, int capacity, boolean safeIterator) {
         this.hash = ha;

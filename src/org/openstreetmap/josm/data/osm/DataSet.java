@@ -345,7 +345,7 @@ public class DataSet implements Cloneable {
 
     /**
      * Replies an unmodifiable collection of primitives currently selected
-     * in this dataset
+     * in this dataset. May be empty, but not null.
      *
      * @return unmodifiable collection of primitives
      */

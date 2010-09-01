@@ -178,10 +178,9 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
     /**
      * Override in subclasses to update the enabled state of the action if the
      * collection of selected primitives changes. This method is called with the
-     * new selection. Avoid calling getCurrentDataSet().getSelected() because this
-     * loops over the complete data set.
+     * new selection.
      *
-     * @param selection the collection of selected primitives
+     * @param selection the collection of selected primitives; may be empty, but not null
      *
      * @see #updateEnabledState()
      * @see #initEnabledState()
