@@ -381,6 +381,8 @@ public class Preferences {
         putInteger("josm.version", Version.getInstance().getVersion());
 
         updateSystemProperties();
+        if(Main.applet)
+            return;
         File prefFile = new File(getPreferencesDirFile(), "preferences");
 
         // Backup old preferences if there are old preferences
@@ -433,24 +435,28 @@ public class Preferences {
 
     public void load() throws IOException {
         properties.clear();
-        final BufferedReader in = new BufferedReader(new InputStreamReader(
-                new FileInputStream(getPreferencesDir()+"preferences"), "utf-8"));
-        int lineNumber = 0;
-        ArrayList<Integer> errLines = new ArrayList<Integer>();
-        for (String line = in.readLine(); line != null; line = in.readLine(), lineNumber++) {
-            final int i = line.indexOf('=');
-            if (i == -1 || i == 0) {
-                errLines.add(lineNumber);
-                continue;
+        if(!Main.applet) {
+            final BufferedReader in = new BufferedReader(new InputStreamReader(
+                    new FileInputStream(getPreferencesDir()+"preferences"), "utf-8"));
+            int lineNumber = 0;
+            ArrayList<Integer> errLines = new ArrayList<Integer>();
+            for (String line = in.readLine(); line != null; line = in.readLine(), lineNumber++) {
+                final int i = line.indexOf('=');
+                if (i == -1 || i == 0) {
+                    errLines.add(lineNumber);
+                    continue;
+                }
+                properties.put(line.substring(0,i), line.substring(i+1));
             }
-            properties.put(line.substring(0,i), line.substring(i+1));
+            if (!errLines.isEmpty())
+                throw new IOException(tr("Malformed config file at lines {0}", errLines));
         }
-        if (!errLines.isEmpty())
-            throw new IOException(tr("Malformed config file at lines {0}", errLines));
         updateSystemProperties();
     }
 
     public void init(boolean reset){
+        if(Main.applet)
+            return;
         // get the preferences.
         File prefDir = getPreferencesDirFile();
         if (prefDir.exists()) {
@@ -524,6 +530,7 @@ public class Preferences {
         properties.clear();
     }
 
+    /* TODO: Bookmarks should be stored in preferences */
     public File getBookmarksFile() {
         return new File(getPreferencesDir(),"bookmarks");
     }

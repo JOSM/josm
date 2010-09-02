@@ -132,7 +132,8 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
     }
 
     public void savePreferences() {
-
+        if(Main.applet)
+            return;
         // create a task for downloading plugins if the user has activated, yet not downloaded,
         // new plugins
         //
