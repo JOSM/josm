@@ -115,6 +115,7 @@ public class CombineWayAction extends JosmAction {
         } catch (UserCancelException ex) {
             return null;
         }
+        Main.main.undoRedo.add(combineResult.b);
         return combineResult.a;
     }
 
