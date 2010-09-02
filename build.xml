@@ -119,7 +119,7 @@ Build-Date: ${build.tstamp}
 
 	<target name="compile" depends="init">
 		<javac srcdir="src" classpathref="classpath" destdir="build"
-				target="1.6" source="1.6" debug="on" encoding="UTF-8">
+				target="1.5" source="1.5" debug="on" encoding="UTF-8">
 			<compilerarg value="-Xlint:deprecation"/>
 			<compilerarg value="-Xlint:unchecked"/>
 		</javac>
@@ -156,12 +156,12 @@ Build-Date: ${build.tstamp}
 
 	<target name="test-compile" depends="test-init">
 		<javac srcdir="${src.dir}:${test.dir}/unit" classpathref="test.classpath" destdir="${test.dir}/${build.dir}"
-				target="1.6" source="1.6" debug="on" encoding="UTF-8">
+				target="1.5" source="1.5" debug="on" encoding="UTF-8">
 			<compilerarg value="-Xlint:deprecation"/>
 			<compilerarg value="-Xlint:unchecked"/>
 		</javac>
 		<javac srcdir="${src.dir}:${test.dir}/functional" classpathref="test.classpath" destdir="${test.dir}/${build.dir}"
-						target="1.6" source="1.6" debug="on" encoding="UTF-8">
+						target="1.5" source="1.5" debug="on" encoding="UTF-8">
 			<compilerarg value="-Xlint:deprecation"/>
 			<compilerarg value="-Xlint:unchecked"/>
 		</javac>
