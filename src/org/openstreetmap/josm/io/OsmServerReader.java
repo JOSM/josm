@@ -4,6 +4,7 @@ package org.openstreetmap.josm.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -93,32 +94,30 @@ public abstract class OsmServerReader extends OsmConnection {
                 if (activeConnection.getResponseCode() == HttpURLConnection.HTTP_PROXY_AUTH)
                     throw new OsmTransferCancelledException();
 
+                String encoding = activeConnection.getContentEncoding();
                 if (activeConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                     String errorHeader = activeConnection.getHeaderField("Error");
-                    InputStream i = null;
-                    i = activeConnection.getErrorStream();
                     StringBuilder errorBody = new StringBuilder();
-                    if (i != null) {
-                        BufferedReader in = new BufferedReader(new InputStreamReader(i));
-                        String s;
-                        while((s = in.readLine()) != null) {
-                            errorBody.append(s);
-                            errorBody.append("\n");
+                    try
+                    {
+                        InputStream i = FixEncoding(activeConnection.getErrorStream(), encoding);
+                        if (i != null) {
+                            BufferedReader in = new BufferedReader(new InputStreamReader(i));
+                            String s;
+                            while((s = in.readLine()) != null) {
+                                errorBody.append(s);
+                                errorBody.append("\n");
+                            }
                         }
+                    }
+                    catch(Exception e) {
+                        errorBody.append(tr("Reading error text failed."));
                     }
 
                     throw new OsmApiException(activeConnection.getResponseCode(), errorHeader, errorBody.toString());
                 }
 
-                String encoding = activeConnection.getContentEncoding();
-                InputStream inputStream = new ProgressInputStream(activeConnection, progressMonitor);
-                if (encoding != null && encoding.equalsIgnoreCase("gzip")) {
-                    inputStream = new GZIPInputStream(inputStream);
-                }
-                else if (encoding != null && encoding.equalsIgnoreCase("deflate")) {
-                    inputStream = new InflaterInputStream(inputStream, new Inflater(true));
-                }
-                return inputStream;
+                return FixEncoding(new ProgressInputStream(activeConnection, progressMonitor), encoding);
             } catch(Exception e) {
                 if (e instanceof OsmTransferException)
                     throw (OsmTransferException)e;
@@ -129,6 +128,17 @@ public abstract class OsmServerReader extends OsmConnection {
         } finally {
             progressMonitor.invalidate();
         }
+    }
+
+    private InputStream FixEncoding(InputStream stream, String encoding) throws IOException
+    {
+        if (encoding != null && encoding.equalsIgnoreCase("gzip")) {
+            stream = new GZIPInputStream(stream);
+        }
+        else if (encoding != null && encoding.equalsIgnoreCase("deflate")) {
+            stream = new InflaterInputStream(stream, new Inflater(true));
+        }
+        return stream;
     }
 
     public abstract DataSet parseOsm(ProgressMonitor progressMonitor) throws OsmTransferException;
