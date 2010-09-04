@@ -84,10 +84,12 @@ public class JosmPreferencesCredentialManager implements CredentialsManager {
 
         /*
          * Last request was successful and there was no credentials stored
-         * in file. -> Try to recall credentials that have been entered
+         * in file (or only the username is stored).
+         * -> Try to recall credentials that have been entered
          * manually in this session.
          */
-        if (!noSuccessWithLastResponse && credentials == null && memoryCredentialsCache.containsKey(requestorType)) {
+        if (!noSuccessWithLastResponse && memoryCredentialsCache.containsKey(requestorType) &&
+                (credentials == null || credentials.getPassword() == null || credentials.getPassword().length == 0)) {
             PasswordAuthentication pa = memoryCredentialsCache.get(requestorType);
             response.setUsername(pa.getUserName());
             response.setPassword(pa.getPassword());
