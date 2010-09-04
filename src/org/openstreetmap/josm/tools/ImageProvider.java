@@ -142,26 +142,41 @@ public class ImageProvider {
         if (img == null) {
             if(archive != null)
             {
+                ZipFile zipFile = null;
                 try
                 {
-                    ZipFile zipFile = new ZipFile(archive);
+                    zipFile = new ZipFile(archive);
                     ZipEntry entry = zipFile.getEntry(full_name);
                     if(entry != null)
                     {
                         int size = (int)entry.getSize();
                         int offs = 0;
                         byte[] buf = new byte[size];
-                        InputStream is = zipFile.getInputStream(entry);
-                        while(size > 0)
-                        {
-                            int l = is.read(buf, offs, size);
-                            offs += l;
-                            size -= l;
+                        InputStream is = null;
+                        try {
+                            is = zipFile.getInputStream(entry);
+                            while(size > 0)
+                            {
+                                int l = is.read(buf, offs, size);
+                                offs += l;
+                                size -= l;
+                            }
+                            img = Toolkit.getDefaultToolkit().createImage(buf);
+                        } finally {
+                            if (is != null) {
+                                is.close();
+                            }
                         }
-                        img = Toolkit.getDefaultToolkit().createImage(buf);
                     }
                 } catch (Exception e) {
                     System.err.println(tr("Warning: failed to handle zip file ''{0}''. Exception was: {1}", archive.getName(), e.toString()));
+                } finally {
+                    if (zipFile != null) {
+                        try {
+                            zipFile.close();
+                        } catch (IOException ex) {
+                        }
+                    }
                 }
             }
             // getImageUrl() does a ton of "stat()" calls and gets expensive
