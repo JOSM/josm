@@ -750,6 +750,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
                 <text key="ele" text="Elevation" default="" delete_if_empty="true" />
+                <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
             </optional>
         </item>
     </group> <!-- Waypoints -->
@@ -987,6 +988,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="waterway" value="canal" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <item name="River" icon="presets/river.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=river"
@@ -997,6 +999,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="waterway" value="river" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <separator/>
         <item name="Spring" icon="presets/spring.png" type="node,closedway">
@@ -1010,6 +1013,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <key key="waterway" value="waterfall" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <item name="Weir" icon="presets/weir.png" type="node,way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=weir" />
@@ -1024,6 +1028,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <key key="waterway" value="dam" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <separator/>
         <item name="Basin" icon="presets/landuse_water.png" type="node,closedway,relation">
@@ -1609,6 +1614,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <optional>
                 <text key="iata" text="IATA" default="" delete_if_empty="true" />
                 <text key="icao" text="ICAO" default="" delete_if_empty="true" />
+                <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
             </optional>
         </item>
         <separator/>
@@ -1971,6 +1977,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="tourism" value="museum" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <item name="Zoo" icon="presets/zoo.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=zoo"
@@ -1979,6 +1986,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="tourism" value="zoo" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <item name="Theme Park" icon="presets/theme_park.png" type="node,closedway">
             <label text="Edit Theme Park" />
@@ -2101,6 +2109,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Castle" />
             <key key="historic" value="castle" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <item name="Ruins" icon="presets/ruins.png" type="node,closedway">
             <label text="Edit Ruins" />
@@ -3168,30 +3177,35 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <key key="place" value="continent" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <item name="Country" icon="presets/places.png" type="node,closedway">
             <label text="Edit Country" />
             <space />
             <key key="place" value="country" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <item name="State" icon="presets/places.png" type="node,closedway">
             <label text="Edit State" />
             <space />
             <key key="place" value="state" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <item name="Region" icon="presets/places.png" type="node,closedway">
             <label text="Edit Region" />
             <space />
             <key key="place" value="region" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <item name="County" icon="presets/places.png" type="node,closedway">
             <label text="Edit County" />
             <space />
             <key key="place" value="county" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <separator/>
         <item name="City" icon="presets/places.png" type="node,closedway">
@@ -3199,6 +3213,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <key key="place" value="city" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <item name="Town" icon="presets/places.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=town" />
@@ -3206,6 +3221,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <key key="place" value="town" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <item name="Suburb" icon="presets/places.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=suburb" />
@@ -3213,18 +3229,21 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <key key="place" value="suburb" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <item name="Village" icon="presets/places.png" type="node,closedway">
             <label text="Edit Village" />
             <space />
             <key key="place" value="village" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <item name="Hamlet" icon="presets/places.png" type="node,closedway">
             <label text="Edit Hamlet" />
             <space />
             <key key="place" value="hamlet" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <separator/>
         <item name="Locality" icon="presets/locality.png" type="node,closedway">
@@ -3233,6 +3252,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <key key="place" value="locality" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Places -->
     <group name="Geography" icon="presets/peak.png">
@@ -3242,6 +3262,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="natural" value="peak" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="ele" text="Elevation" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <item name="Glacier" icon="presets/glacier.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=glacier" />
@@ -3249,6 +3270,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="natural" value="glacier" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="ele" text="Elevation" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <item name="Volcano" icon="presets/volcano.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=volcano" />
@@ -3256,12 +3278,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="natural" value="volcano" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="ele" text="Elevation" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <item name="Cave Entrance" icon="presets/tunnel.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cave_entrance" />
             <label text="Edit Cave Entrance" />
             <key key="natural" value="cave_entrance" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <separator/>
         <item name="Island" icon="presets/island.png" type="node,closedway">
@@ -3270,6 +3294,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <key key="place" value="island" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
         <item name="Islet" icon="presets/islet.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:place=islet" />
@@ -3277,6 +3302,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <space />
             <key key="place" value="islet" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
     </group> <!-- Geography -->
     <group name="Nature" icon="presets/tree.png">
