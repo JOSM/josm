@@ -117,13 +117,8 @@ public class SplitWayAction extends JosmAction {
             WAY_LOOP:
                 while (it.hasNext()) {
                     Way w = it.next();
-                    assert w.isUsable(); // Way is referrer of selected node(s) so it must be usable
-                    int last = w.getNodesCount() - 1;
-                    boolean circular = w.isClosed();
-
                     for (Node n : selectedNodes) {
-                        int i = w.getNodes().indexOf(n);
-                        if (!(circular || (i > 0 && i < last))) {
+                        if(!w.isInnerNode(n)) {
                             it.remove();
                             continue WAY_LOOP;
                         }

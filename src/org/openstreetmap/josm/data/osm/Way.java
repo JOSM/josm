@@ -406,6 +406,18 @@ public final class Way extends OsmPrimitive {
         return n == nodes[0] || n == nodes[nodes.length -1];
     }
 
+    public boolean isInnerNode(Node n) {
+        Node[] nodes = this.nodes;
+        if (isIncomplete() || nodes.length <= 2) return false;
+        /* circular ways have only inner nodes, so return true for them! */
+        if (n == nodes[0] && n == nodes[nodes.length-1]) return true;
+        for(int i = 1; i < nodes.length - 1; ++i) {
+            if(nodes[i] == n) return true;
+        }
+        return false;
+    }
+
+
     @Override
     public String getDisplayName(NameFormatter formatter) {
         return formatter.format(this);
