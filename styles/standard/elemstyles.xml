@@ -3984,7 +3984,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="sport" v="karting"/>
 		<area colour="sport#bde3cb"/>
-		<icon src="sport/karting.png"/>
+		<icon src="misc/no_icon.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
