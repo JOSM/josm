@@ -67,7 +67,7 @@ See also http://josm.openstreetmap.de/wiki/TaggingPresets.
 
 The fields "name", "text", "display_values" may also be localized (e.g. de.name).
 When translations of equal words but different meanings may conflict, a translation
-context should be specified. Use "name_conext", "text_context" or "values_context"
+context should be specified. Use "name_context", "text_context" or "values_context"
 for this. The context should be a meaningful short description to help translators.
 
 In JOSM internally all "name", "text" and "display_values" are translated when
@@ -1669,7 +1669,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="aeroway" value="terminal" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Gate" icon="presets/empty.png" type="node">
+        <item name="Gate" name_context="airport" icon="presets/empty.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=gate" />
             <label text="Edit Terminal Gate" />
             <key key="aeroway" value="gate" />
