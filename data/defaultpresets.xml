@@ -74,7 +74,7 @@ In JOSM internally all "name", "text" and "display_values" are translated when
 no specific translation has been given in XML file. When no "display_values"
 are supplied, then "values" will be treated as "display_values" and translated instead.
 -->
-<annotations xmlns="http://josm.openstreetmap.de/tagging-preset-1.0">
+<presets xmlns="http://josm.openstreetmap.de/tagging-preset-1.0">
   <group name="Highways" icon="presets/way_secondary.png">
     <group name="Streets" icon="presets/way_secondary.png">
         <item name="Motorway" icon="presets/motorway.png" type="way">
@@ -3630,4 +3630,4 @@ are supplied, then "values" will be treated as "display_values" and translated i
             </roles>
         </item>
     </group> <!-- Relations -->
-</annotations>
+</presets>
