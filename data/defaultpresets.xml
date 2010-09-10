@@ -55,7 +55,7 @@ role: type to specify possible roles in relations
   count: how often can the role occur (if not given unlimited number is assumed)
   type: the data types - way,node,relation,closedway (separated by comma)
 
-For external files the <annotations> should have following elements:
+For external files the <presets> should have following elements:
 - author           the author of the preset
 - version          a version number of some sort (e.g. creation date)
 - description      what is your preset meant to be
