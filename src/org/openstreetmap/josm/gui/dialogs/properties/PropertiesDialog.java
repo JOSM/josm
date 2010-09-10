@@ -6,12 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dialog.ModalityType;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Point;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -19,7 +17,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -65,6 +62,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
@@ -77,9 +75,9 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
+import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel.PresetHandler;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
@@ -479,7 +477,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     private final SideButton btnAdd;
     private final SideButton btnEdit;
     private final SideButton btnDel;
-    private final JPanel presets = new JPanel(new GridBagLayout());
+    private final PresetListPanel presets = new PresetListPanel();
 
     private final JLabel selectSth = new JLabel("<html><p>"
             + tr("Please select the objects you want to change properties for.") + "</p></html>");
@@ -715,92 +713,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
     }
 
-    private void checkPresets(int nodes, int ways, int relations, int closedways)
-    {
-        /**
-         * Small helper class that manages the highlighting of the label on hover as well as opening
-         * the corresponding preset when clicked
-         */
-        class PresetLabelML implements MouseListener {
-            JLabel label;
-            Font bold;
-            Font normal;
-            TaggingPreset tag;
-            PresetLabelML(JLabel lbl, TaggingPreset t) {
-                super();
-                label = lbl;
-                lbl.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                normal = label.getFont();
-                bold = normal.deriveFont(normal.getStyle() ^ Font.BOLD);
-                tag = t;
-            }
-            public void mouseClicked(MouseEvent arg0) {
-                tag.actionPerformed(null);
-            }
-            public void mouseEntered(MouseEvent arg0) {
-                label.setFont(bold);
-            }
-            public void mouseExited(MouseEvent arg0) {
-                label.setFont(normal);
-            }
-            public void mousePressed(MouseEvent arg0) {}
-            public void mouseReleased(MouseEvent arg0) {}
-        }
-
-        presets.removeAll();
-        int total = nodes+ways+relations+closedways;
-        if(total == 0) {
-            presets.setVisible(false);
-            return;
-        }
-
-        for(TaggingPreset t : TaggingPresetPreference.taggingPresets) {
-            if((t.types == null || !((relations > 0 && !t.types.contains("relation")) &&
-                    (nodes > 0 && !t.types.contains("node")) &&
-                    (ways+closedways > 0 && !t.types.contains("way")) &&
-                    (closedways > 0 && !t.types.contains("closedway")))) && t.isShowable())
-            {
-                int found = 0;
-                for(TaggingPreset.Item i : t.data) {
-                    if(!(i instanceof TaggingPreset.Key)) {
-                        continue;
-                    }
-                    String val = ((TaggingPreset.Key)i).value;
-                    String key = ((TaggingPreset.Key)i).key;
-                    // we subtract 100 if not found and add 1 if found
-                    found -= 100;
-                    if(key == null || !valueCount.containsKey(key)) {
-                        continue;
-                    }
-
-                    Map<String, Integer> v = valueCount.get(key);
-                    if(v.size() == 1 && val != null && v.containsKey(val) && v.get(val) == total) {
-                        found += 101;
-                    }
-                }
-
-                if(found <= 0) {
-                    continue;
-                }
-
-                JLabel lbl = new JLabel(t.getName());
-                lbl.addMouseListener(new PresetLabelML(lbl, t));
-                presets.add(lbl, GBC.eol().fill(GBC.HORIZONTAL));
-            }
-        }
-
-        if(presets.getComponentCount() > 0) {
-            presets.setVisible(true);
-            // This ensures the presets are exactly as high as needed.
-            int height = presets.getComponentCount() * presets.getComponent(0).getHeight();
-            Dimension size = new Dimension(presets.getWidth(), height);
-            presets.setMaximumSize(size);
-            presets.setMinimumSize(size);
-        } else {
-            presets.setVisible(false);
-        }
-    }
-
     private int findRow(TableModel model, Object value) {
         for (int i=0; i<model.getRowCount(); i++) {
             if (model.getValueAt(i, 0).equals(value))
@@ -808,6 +720,25 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
         return -1;
     }
+
+    private PresetHandler presetHandler = new PresetHandler() {
+
+        @Override
+        public void updateTags(List<Tag> tags) {
+            Command command = TaggingPreset.createCommand(getSelection(), tags);
+            if (command != null) {
+                Main.main.undoRedo.add(command);
+            }
+        }
+
+        @Override
+        public Collection<OsmPrimitive> getSelection() {
+            if (Main.main == null) return null;
+            if (Main.main.getCurrentDataSet() == null) return null;
+
+            return Main.main.getCurrentDataSet().getSelected();
+        }
+    };
 
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         if (!isVisible())
@@ -870,10 +801,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             propertyData.addRow(new Object[]{e.getKey(), e.getValue()});
         }
 
-        // re-load membership data
-        // this is rather expensive since we have to walk through all members of all existing relationships.
-        // could use back references here for speed if necessary.
-
         membershipData.setRowCount(0);
 
         Map<Relation, MemberInfo> roles = new HashMap<Relation, MemberInfo>();
@@ -912,7 +839,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             membershipData.addRow(new Object[]{r, roles.get(r)});
         }
 
-        checkPresets(nodes, ways, relations, closedways);
+        presets.updatePresets(nodes, ways, relations, closedways, valueCount, presetHandler);
 
         membershipTable.getTableHeader().setVisible(membershipData.getRowCount() > 0);
         membershipTable.setVisible(membershipData.getRowCount() > 0);

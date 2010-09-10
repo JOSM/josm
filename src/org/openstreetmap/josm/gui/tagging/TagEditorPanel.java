@@ -5,13 +5,20 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
+import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel;
+import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel.PresetHandler;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
@@ -32,6 +39,9 @@ public class TagEditorPanel extends JPanel {
     /** the tag table */
     private TagTable tagTable;
 
+    private PresetListPanel presetListPanel;
+    private final PresetHandler presetHandler;
+
     private AutoCompletionManager autocomplete;
     private AutoCompletionList acList;
 
@@ -45,6 +55,10 @@ public class TagEditorPanel extends JPanel {
         tagTable = new TagTable(model);
         pnl.setLayout(new BorderLayout());
         pnl.add(new JScrollPane(tagTable), BorderLayout.CENTER);
+        if (presetHandler != null) {
+            presetListPanel = new PresetListPanel();
+            pnl.add(presetListPanel, BorderLayout.NORTH);
+        }
         return pnl;
     }
 
@@ -97,24 +111,34 @@ public class TagEditorPanel extends JPanel {
         gc.weighty = 1.0;
         gc.anchor = GridBagConstraints.CENTER;
         add(tablePanel,gc);
+
+        if (presetHandler != null) {
+            model.addTableModelListener(new TableModelListener() {
+                @Override
+                public void tableChanged(TableModelEvent e) {
+                    updatePresets();
+                }
+            });
+        }
     }
 
     /**
      * Creates a new tag editor panel. The editor model is created
      * internally and can be retrieved with {@see #getModel()}.
      */
-    public TagEditorPanel() {
-        this(null);
+    public TagEditorPanel(PresetHandler presetHandler) {
+        this(null, presetHandler);
     }
 
     /**
      * Creates a new tag editor panel with a supplied model. If
      * {@code model} is null, a new model is created.
-     * 
+     *
      * @param model the tag editor model
      */
-    public TagEditorPanel(TagEditorModel model) {
+    public TagEditorPanel(TagEditorModel model, PresetHandler presetHandler) {
         this.model = model;
+        this.presetHandler = presetHandler;
         if (this.model == null) {
             this.model = new TagEditorModel();
         }
@@ -134,7 +158,7 @@ public class TagEditorPanel extends JPanel {
      * Initializes the auto completion infrastructure used in this
      * tag editor panel. {@code layer} is the data layer from whose data set
      * tag values are proposed as auto completion items.
-     * 
+     *
      * @param layer the data layer. Must not be null.
      * @throws IllegalArgumentException thrown if {@code layer} is null
      */
@@ -156,5 +180,16 @@ public class TagEditorPanel extends JPanel {
     public void setEnabled(boolean enabled) {
         tagTable.setEnabled(enabled);
         super.setEnabled(enabled);
+    }
+
+    private void updatePresets() {
+        Map<String, Map<String, Integer>> valuesCount = new HashMap<String, Map<String,Integer>>();
+        for (Entry<String, String> entry: model.getTags().entrySet()) {
+            Map<String, Integer> values = new HashMap<String, Integer>();
+            values.put(entry.getValue(), 1);
+            valuesCount.put(entry.getKey(), values);
+        }
+        presetListPanel.updatePresets(0, 0, 1, 0, valuesCount, presetHandler);
+        validate();
     }
 }

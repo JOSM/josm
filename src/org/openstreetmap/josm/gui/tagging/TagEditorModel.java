@@ -49,13 +49,13 @@ public class TagEditorModel extends AbstractTableModel {
     /**
      * Creates a new tag editor model. Internally allocates two selection models
      * for row selection and column selection.
-     * 
+     *
      * To create a {@see JTable} with this model:
      * <pre>
      *    TagEditorModel model = new TagEditorModel();
      *    TagTable tbl  = new TagTabel(model);
      * </pre>
-     * 
+     *
      * @see #getRowSelectionModel()
      * @see #getColumnSelectionModel()
      */
@@ -65,7 +65,7 @@ public class TagEditorModel extends AbstractTableModel {
     }
     /**
      * Creates a new tag editor model.
-     * 
+     *
      * @param rowSelectionModel the row selection model. Must not be null.
      * @param colSelectionModel the column selection model. Must not be null.
      * @throws IllegalArgumentException thrown if {@code rowSelectionModel} is null
@@ -84,7 +84,7 @@ public class TagEditorModel extends AbstractTableModel {
 
     /**
      * Replies the row selection model used by this tag editor model
-     * 
+     *
      * @return the row selection model used by this tag editor model
      */
     public DefaultListSelectionModel getRowSelectionModel() {
@@ -93,7 +93,7 @@ public class TagEditorModel extends AbstractTableModel {
 
     /**
      * Replies the column selection model used by this tag editor model
-     * 
+     *
      * @return the column selection model used by this tag editor model
      */
     public DefaultListSelectionModel getColumnSelectionModel() {
@@ -354,6 +354,7 @@ public class TagEditorModel extends AbstractTableModel {
         sort();
         tags.add(tag);
         setDirty(false);
+        fireTableDataChanged();
     }
 
     /**
@@ -440,7 +441,7 @@ public class TagEditorModel extends AbstractTableModel {
 
     /**
      * Replies the the tags in this tag editor model as {@see TagCollection}.
-     * 
+     *
      * @return the the tags in this tag editor model as {@see TagCollection}
      */
     public TagCollection getTagCollection() {

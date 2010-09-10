@@ -18,8 +18,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -36,9 +38,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.xml.transform.stream.StreamSource;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -46,6 +50,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapView;
@@ -87,8 +92,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String getName() {
             return name().toLowerCase();
         }
-
     }
+
+    public static final int DIALOG_ANSWER_APPLY = 1;
+    public static final int DIALOG_ANSWER_NEW_RELATION = 2;
+    public static final int DIALOG_ANSWER_CANCEL = 3;
 
     public TaggingPresetMenu group = null;
     public String name;
@@ -108,7 +116,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
         public boolean focus = false;
         abstract boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel);
-        abstract void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds);
+        abstract void addCommands(List<Tag> changedTags);
         boolean requestFocusInWindow() {return false;}
     }
 
@@ -174,6 +182,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String originalValue;
         public boolean use_last_as_default = false;
         public boolean delete_if_empty = false;
+        public boolean required = false;
 
         private JComponent value;
 
@@ -219,7 +228,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             return true;
         }
 
-        @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {
+        @Override public void addCommands(List<Tag> changedTags) {
 
             // return if unchanged
             String v = (value instanceof JComboBox) ?
@@ -234,7 +243,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     if (delete_if_empty && v.length() == 0) {
                         v = null;
                     }
-                    cmds.add(new ChangePropertyCommand(sel, key, v));
+                    changedTags.add(new Tag(key, v));
         }
         @Override boolean requestFocusInWindow() {return value.requestFocusInWindow();}
     }
@@ -249,6 +258,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String value_off = OsmUtils.falseval;
         public boolean default_ = false; // only used for tagless objects
         public boolean use_last_as_default = false;
+        public boolean required = false;
 
         private QuadStateCheckBox check;
         private QuadStateCheckBox.State initialState;
@@ -311,12 +321,12 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             return true;
         }
 
-        @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {
+        @Override public void addCommands(List<Tag> changedTags) {
             // if the user hasn't changed anything, don't create a command.
             if (check.getState() == initialState && !def) return;
 
             // otherwise change things according to the selected value.
-            cmds.add(new ChangePropertyCommand(sel, key,
+            changedTags.add(new Tag(key,
                     check.getState() == QuadStateCheckBox.State.SELECTED ? value_on :
                         check.getState() == QuadStateCheckBox.State.NOT_SELECTED ? value_off :
                             null));
@@ -338,6 +348,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public boolean delete_if_empty = false;
         public boolean editable = true;
         public boolean use_last_as_default = false;
+        public boolean required = false;
 
         private JComboBox combo;
         private LinkedHashMap<String,String> lhm;
@@ -431,7 +442,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             p.add(combo, GBC.eol().fill(GBC.HORIZONTAL));
             return true;
         }
-        @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {
+        @Override public void addCommands(List<Tag> changedTags) {
             Object obj = combo.getSelectedItem();
             String display = (obj == null) ? null : obj.toString();
             String value = null;
@@ -463,7 +474,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             if (use_last_as_default) {
                 lastValue.put(key, value);
             }
-            cmds.add(new ChangePropertyCommand(sel, key, value));
+            changedTags.add(new Tag(key, value));
         }
         @Override boolean requestFocusInWindow() {return combo.requestFocusInWindow();}
     }
@@ -484,7 +495,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             p.add(new JLabel(locale_text), GBC.eol());
             return false;
         }
-        @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
+        @Override public void addCommands(List<Tag> changedTags) {}
     }
 
     public static class Link extends Item {
@@ -513,7 +524,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             }
             return false;
         }
-        @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
+        @Override public void addCommands(List<Tag> changedTags) {}
     }
 
     public static class Role {
@@ -602,7 +613,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             }
             return false;
         }
-        @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
+        @Override public void addCommands(List<Tag> changedTags) {}
     }
 
     public static class Optional extends Item {
@@ -613,7 +624,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             p.add(new JLabel(" "), GBC.eol()); // space
             return false;
         }
-        @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
+        @Override public void addCommands(List<Tag> changedTags) {}
     }
 
     public static class Space extends Item {
@@ -621,7 +632,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             p.add(new JLabel(" "), GBC.eol()); // space
             return false;
         }
-        @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {}
+        @Override public void addCommands(List<Tag> changedTags) {}
     }
 
     public static class Key extends Item {
@@ -629,8 +640,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String value;
 
         @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) { return false; }
-        @Override public void addCommands(Collection<OsmPrimitive> sel, List<Command> cmds) {
-            cmds.add(new ChangePropertyCommand(sel, key, value != null && !value.equals("") ? value : null));
+        @Override public void addCommands(List<Tag> changedTags) {
+            changedTags.add(new Tag(key, value != null && !value.equals("") ? value : null));
         }
     }
 
@@ -884,7 +895,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             }
         }
         p.add(items, GBC.eol().fill());
-        if (selected.size() == 0) {
+        if (selected.size() == 0 && !supportsRelation()) {
             setEnabledRec(items, false);
         }
 
@@ -923,10 +934,41 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public void actionPerformed(ActionEvent e) {
         if (Main.main == null) return;
         if (Main.main.getCurrentDataSet() == null) return;
-        Collection<OsmPrimitive> sel = createSelection(Main.main.getCurrentDataSet().getSelected());
+
+        Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+        int answer = showDialog(sel, supportsRelation());
+
+        if (sel.size() != 0 && answer == DIALOG_ANSWER_APPLY) {
+            Command cmd = createCommand(sel, getChangedTags());
+            if (cmd != null) {
+                Main.main.undoRedo.add(cmd);
+            }
+        } else if (answer == DIALOG_ANSWER_NEW_RELATION) {
+            List<Command> cmds = new ArrayList<Command>(2);
+            final Relation r = new Relation();
+            cmds.add(new AddCommand(r));
+            Command cmd = createCommand(Collections.<OsmPrimitive>singletonList(r), getChangedTags());
+            if (cmd != null) {
+                cmds.add(cmd);
+            }
+            Main.main.undoRedo.add(new SequenceCommand(tr("Add relation"), cmds));
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    // Relation list dialog has to be updated first for selectRelation to work
+                    Main.map.relationListDialog.selectRelation(r);
+                }
+            });
+        }
+        Main.main.getCurrentDataSet().setSelected(Main.main.getCurrentDataSet().getSelected()); // force update
+
+    }
+
+    public int showDialog(Collection<OsmPrimitive> selection, final boolean showNewRelation) {
+        Collection<OsmPrimitive> sel = createSelection(selection);
         PresetPanel p = createPanel(sel);
         if (p == null)
-            return;
+            return DIALOG_ANSWER_CANCEL;
 
         int answer = 1;
         if (p.getComponentCount() != 0 && (sel.size() == 0 || p.hasElements)) {
@@ -943,10 +985,16 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 public PresetDialog(Component content, String title, boolean disableApply) {
                     super(Main.parent,
                             title,
-                            new String[] { tr("Apply Preset"), tr("Cancel") },
-                            true);
+                            showNewRelation?
+                                    new String[] { tr("Apply Preset"), tr("New relation"), tr("Cancel") }:
+                                        new String[] { tr("Apply Preset"), tr("Cancel") },
+                                        true);
                     contentInsets = new Insets(10,5,0,5);
-                    setButtonIcons(new String[] {"ok.png", "cancel.png" });
+                    if (showNewRelation) {
+                        setButtonIcons(new String[] {"ok.png", "dialogs/addrelation.png", "cancel.png" });
+                    } else {
+                        setButtonIcons(new String[] {"ok.png", "cancel.png" });
+                    }
                     setContent(content);
                     setDefaultButton(1);
                     setupDialog();
@@ -958,13 +1006,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
             answer = new PresetDialog(p, title, (sel.size() == 0)).getValue();
         }
-        if (sel.size() != 0 && answer == 1) {
-            Command cmd = createCommand(sel);
-            if (cmd != null) {
-                Main.main.undoRedo.add(cmd);
-            }
-        }
-        Main.main.getCurrentDataSet().setSelected(Main.main.getCurrentDataSet().getSelected()); // force update
+        if (!showNewRelation && answer == 2)
+            return DIALOG_ANSWER_CANCEL;
+        else
+            return answer;
     }
 
     /**
@@ -1009,17 +1054,32 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return sel;
     }
 
-    private Command createCommand(Collection<OsmPrimitive> sel) {
-        List<Command> cmds = new LinkedList<Command>();
-        for (Item i : data) {
-            i.addCommands(sel, cmds);
+    public List<Tag> getChangedTags() {
+        List<Tag> result = new ArrayList<Tag>();
+        for (Item i: data) {
+            i.addCommands(result);
         }
+        return result;
+    }
+
+    public static Command createCommand(Collection<OsmPrimitive> sel, List<Tag> changedTags) {
+        List<Command> cmds = new ArrayList<Command>();
+        for (Tag tag: changedTags) {
+            if (!tag.getValue().isEmpty()) {
+                cmds.add(new ChangePropertyCommand(sel, tag.getKey(), tag.getValue()));
+            }
+        }
+
         if (cmds.size() == 0)
             return null;
         else if (cmds.size() == 1)
             return cmds.get(0);
         else
             return new SequenceCommand(tr("Change Properties"), cmds);
+    }
+
+    private boolean supportsRelation() {
+        return types == null || types.contains(PresetType.RELATION);
     }
 
     protected void updateEnabledState() {
@@ -1036,5 +1096,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
     public void layerRemoved(Layer oldLayer) {
         updateEnabledState();
+    }
+
+    @Override
+    public String toString() {
+        return (types == null?"":types) + " " + name;
     }
 }

@@ -26,12 +26,12 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
 
     protected void build() {
         setLayout(new BorderLayout());
-        add(pnlTagEditor = new TagEditorPanel(), BorderLayout.CENTER);
+        add(pnlTagEditor = new TagEditorPanel(null), BorderLayout.CENTER);
     }
 
     /**
      * Creates a new panel
-     * 
+     *
      * @param changesetCommentModel the changeset comment model. Must not be null.
      * @throws IllegalArgumentException thrown if {@code changesetCommentModel} is null
      */

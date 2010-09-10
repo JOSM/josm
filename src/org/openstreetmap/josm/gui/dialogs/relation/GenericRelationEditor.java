@@ -23,9 +23,11 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -60,15 +62,18 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel.PresetHandler;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
+import org.openstreetmap.josm.gui.tagging.TagModel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -122,7 +127,41 @@ public class GenericRelationEditor extends RelationEditor  {
         selectionTableModel.register();
         referrerModel = new ReferringRelationsBrowserModel(relation);
 
-        tagEditorPanel = new TagEditorPanel();
+        tagEditorPanel = new TagEditorPanel(new PresetHandler() {
+
+            @Override
+            public void updateTags(List<Tag> tags) {
+                Map<String, TagModel> modelTags = new HashMap<String, TagModel>();
+                for (int i=0; i<tagEditorPanel.getModel().getRowCount(); i++) {
+                    TagModel tagModel = tagEditorPanel.getModel().get(i);
+                    modelTags.put(tagModel.getName(), tagModel);
+                }
+                for (Tag tag: tags) {
+                    TagModel existing = modelTags.get(tag.getKey());
+
+                    if (tag.getValue().isEmpty()) {
+                        if (existing != null) {
+                            tagEditorPanel.getModel().delete(tag.getKey());
+                        }
+                    } else {
+                        if (existing != null) {
+                            tagEditorPanel.getModel().updateTagValue(existing, tag.getValue());
+                        } else {
+                            tagEditorPanel.getModel().add(tag.getKey(), tag.getValue());
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public Collection<OsmPrimitive> getSelection() {
+                Relation relation = new Relation();
+                tagEditorPanel.getModel().applyToPrimitive(relation);
+                return Collections.<OsmPrimitive>singletonList(relation);
+            }
+        });
+
         // populate the models
         //
         if (relation != null) {

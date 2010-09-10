@@ -104,6 +104,7 @@
 		<attribute name="default" type="string" />
 		<attribute name="delete_if_empty" type="boolean" />
 		<attribute name="use_last_as_default" type="boolean" />
+		<attribute name="required" type="boolean"/>
 
 		<attribute name="type" use="prohibited"/>
 		<attribute name="name" use="prohibited"/>
@@ -120,6 +121,7 @@
 		<attribute name="editable" type="boolean" />
 		<attribute name="delete_if_empty" type="boolean" />
 		<attribute name="display_values" type="string"/>
+		<attribute name="required" type="boolean"/>
 
 		<attribute name="type" use="prohibited"/>
 		<attribute name="value" use="prohibited"/>
@@ -135,6 +137,7 @@
 		<attribute name="default" type="tns:check_default" />
 		<attribute name="delete_if_empty" type="boolean" />
 		<attribute name="use_last_as_default" type="boolean" />
+		<attribute name="required" type="boolean"/>
 
 		<attribute name="name" use="prohibited"/>
 		<attribute name="type" use="prohibited"/>
