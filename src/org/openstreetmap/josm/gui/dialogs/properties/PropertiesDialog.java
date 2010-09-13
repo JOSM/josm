@@ -6,10 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dialog.ModalityType;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Point;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -17,6 +17,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.HttpURLConnection;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,8 +27,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Vector;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import javax.swing.AbstractAction;
@@ -85,6 +87,8 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -704,6 +708,14 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         getActionMap().put("delete", deleteAction);
         buttonPanel.add(this.btnDel);
         add(buttonPanel, BorderLayout.SOUTH);
+
+        // -- help action
+        //
+        HelpAction helpAction = new HelpAction();
+        propertyTable.getSelectionModel().addListSelectionListener(helpAction);
+        getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
+                KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "onHelp");
+        getActionMap().put("onHelp", helpAction);
     }
 
     @Override public void setVisible(boolean b) {
@@ -1006,6 +1018,79 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             } else if (membershipTable.getSelectedRowCount() == 1) {
                 int row = membershipTable.getSelectedRow();
                 membershipEdit(row);
+            }
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(
+                    propertyTable.getSelectedRowCount() == 1
+                    ^ membershipTable.getSelectedRowCount() == 1
+            );
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+    }
+
+    class HelpAction extends AbstractAction implements ListSelectionListener {
+        public HelpAction() {
+            putValue(NAME, tr("Help"));
+            putValue(SHORT_DESCRIPTION, tr("Launch browser with wiki help to selected object"));
+            updateEnabledState();
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (!isEnabled())
+                return;
+
+            try {
+                String base = new String(Main.pref.get("url.openstreetmap-wiki", "http://wiki.openstreetmap.org/wiki/"));
+                String l = LanguageInfo.getWikiLanguagePrefix();
+                List<URI> uris = new ArrayList<URI>();
+
+                int row;
+                if (propertyTable.getSelectedRowCount() == 1) {
+                    row = propertyTable.getSelectedRow();
+                    String key = propertyData.getValueAt(row, 0).toString();
+                    @SuppressWarnings("unchecked")
+                    String val = ((Map<String,Integer>)propertyData.getValueAt(row, 1)).entrySet().iterator().next().getKey();
+
+                    uris.add(new URI(String.format("%s%sTag:%s=%s", base, l, key, val)));
+                    uris.add(new URI(String.format("%sTag:%s=%s", base, key, val)));
+                    uris.add(new URI(String.format("%s%sKey:%s", base, l, key)));
+                    uris.add(new URI(String.format("%sKey:%s", base, key)));
+                    uris.add(new URI(String.format("%s%sMap_Features", base, l)));
+                    uris.add(new URI(String.format("%sMap_Features", base)));
+                } else if (membershipTable.getSelectedRowCount() == 1) {
+                    row = membershipTable.getSelectedRow();
+                    String type = ((Relation)membershipData.getValueAt(row, 0)).get("type");
+                    
+                    if (type != null && !type.equals("")) {
+                        uris.add(new URI(String.format("%s%sRelation:%s", base, l, type)));
+                        uris.add(new URI(String.format("%sRelation:%s", base, type)));
+                    }
+                    uris.add(new URI(String.format("%s%sRelations", base, l)));
+                    uris.add(new URI(String.format("%sRelations", base)));
+                }
+
+                // find a page that actually exists in the wiki
+                URI uri = null;
+                for (URI u : uris) {
+                    System.out.println("INFO: looking for " + u);
+                    if (((HttpURLConnection) u.toURL().openConnection()).getResponseCode() == 200) {
+                        uri = u;
+                        break;
+                    }
+                }
+                    
+                // browse the help page
+                if (uri != null) {
+                    System.out.println("INFO: browsing to url " + uri);
+                    OpenBrowser.displayUrl(uri);
+                }
+            } catch (Exception e1) {
+                e1.printStackTrace();
             }
         }
 
