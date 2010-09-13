@@ -506,11 +506,6 @@ public class SelectAction extends MapMode implements SelectionEnded {
         if ((shift && ctrl) || (ctrl && !released))
             return; // not allowed together
 
-        // plain clicks with no modifiers clear the selection
-        if (!ctrl && !shift) {
-            ds.clearSelection();
-        }
-
         if (ctrl) {
             // Ctrl on an item toggles its selection status,
             // but Ctrl on an *area* just clears those items
@@ -521,13 +516,15 @@ public class SelectAction extends MapMode implements SelectionEnded {
                 ds.toggleSelected(selectionList);
             }
         } else {
-            // This is either a plain click (which means we
-            // previously cleared the selection), or a
-            // shift-click where we are adding things to an
-            // existing selection.
-            ds.addSelected(selectionList);
+            // plain clicks with no modifiers
+            if (!shift) {
+                ds.setSelected(selectionList);
+            } else {
+                // add things to an
+                // existing selection.
+                ds.addSelected(selectionList);
+            }
         }
-        Main.map.mapView.repaint();
     }
 
     @Override public String getModeHelpText() {
