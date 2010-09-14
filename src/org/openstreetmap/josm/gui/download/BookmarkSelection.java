@@ -24,9 +24,9 @@ import javax.swing.event.ListSelectionListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.data.Preferences.Bookmark;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.gui.BookmarkList;
+import org.openstreetmap.josm.gui.BookmarkList.Bookmark;
 import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -113,7 +113,7 @@ public class BookmarkSelection implements DownloadSelection {
         bookmarks = new BookmarkList();
         bookmarks.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
-                Preferences.Bookmark b = (Preferences.Bookmark)bookmarks.getSelectedValue();
+                Bookmark b = (Bookmark)bookmarks.getSelectedValue();
                 if (b != null) {
                     gui.boundingBoxChanged(b.getArea(),BookmarkSelection.this);
                 }

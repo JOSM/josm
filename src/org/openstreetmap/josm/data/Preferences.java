@@ -83,48 +83,6 @@ public class Preferences {
         }
     }
 
-    /**
-     * Class holding one bookmarkentry.
-     * @author imi
-     */
-    public static class Bookmark implements Comparable<Bookmark> {
-        private String name;
-        private Bounds area;
-
-        public Bookmark() {
-            area = null;
-            name = null;
-        }
-
-        public Bookmark(Bounds area) {
-            this.area = area;
-        }
-
-        @Override public String toString() {
-            return name;
-        }
-
-        public int compareTo(Bookmark b) {
-            return name.toLowerCase().compareTo(b.name.toLowerCase());
-        }
-
-        public Bounds getArea() {
-            return area;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public void setArea(Bounds area) {
-            this.area = area;
-        }
-    }
-
     public interface ColorKey {
         String getColorName();
         String getSpecialName();
@@ -274,6 +232,15 @@ public class Preferences {
                 } else {
                     all.put(e.getKey(), e.getValue());
                 }
+        return all;
+    }
+
+    synchronized private Map<String, String> getAllPrefixDefault(final String prefix) {
+        final Map<String,String> all = new TreeMap<String,String>();
+        for (final Entry<String,String> e : defaults.entrySet())
+            if (e.getKey().startsWith(prefix)) {
+                all.put(e.getKey(), e.getValue());
+            }
         return all;
     }
 
@@ -530,65 +497,6 @@ public class Preferences {
         properties.clear();
     }
 
-    /* TODO: Bookmarks should be stored in preferences */
-    public File getBookmarksFile() {
-        return new File(getPreferencesDir(),"bookmarks");
-    }
-
-    public Collection<Bookmark> loadBookmarks() throws IOException {
-        File bookmarkFile = getBookmarksFile();
-        if (!bookmarkFile.exists()) {
-            bookmarkFile.createNewFile();
-        }
-        BufferedReader in = new BufferedReader(new InputStreamReader(
-                new FileInputStream(bookmarkFile), "utf-8"));
-
-        LinkedList<Bookmark> bookmarks = new LinkedList<Bookmark>();
-        for (String line = in.readLine(); line != null; line = in.readLine()) {
-            // FIXME: legacy code using ',' sign, should be \u001e only
-            Matcher m = Pattern.compile("^(.+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)[,\u001e](-?\\d+.\\d+)$").matcher(line);
-            if (!m.matches() || m.groupCount() != 5) {
-                System.err.println(tr("Error: Unexpected line ''{0}'' in bookmark file ''{1}''",line, bookmarkFile.toString()));
-                continue;
-            }
-            Bookmark b = new Bookmark();
-            b.setName(m.group(1));
-            double[] values= new double[4];
-            for (int i = 0; i < 4; ++i) {
-                try {
-                    values[i] = Double.parseDouble(m.group(i+2));
-                } catch(NumberFormatException e) {
-                    System.err.println(tr("Error: Illegal double value ''{0}'' on line ''{1}'' in bookmark file ''{2}''",m.group(i+2),line, bookmarkFile.toString()));
-                    continue;
-                }
-            }
-            b.setArea(new Bounds(values));
-            bookmarks.add(b);
-        }
-        in.close();
-        Collections.sort(bookmarks);
-        return bookmarks;
-    }
-
-    public void saveBookmarks(Collection<Bookmark> bookmarks) throws IOException {
-        File bookmarkFile = new File(Main.pref.getPreferencesDir()+"bookmarks");
-        if (!bookmarkFile.exists()) {
-            bookmarkFile.createNewFile();
-        }
-        PrintWriter out = new PrintWriter(new OutputStreamWriter(
-                new FileOutputStream(bookmarkFile), "utf-8"));
-        for (Bookmark b : bookmarks) {
-            out.print(b.getName()+ "\u001e");
-            Bounds area = b.getArea();
-            out.print(area.getMin().lat() +"\u001e");
-            out.print(area.getMin().lon() +"\u001e");
-            out.print(area.getMax().lat() +"\u001e");
-            out.print(area.getMax().lon());
-            out.println();
-        }
-        out.close();
-    }
-
     /**
      * Convenience method for accessing colour preferences.
      *
@@ -701,18 +609,7 @@ public class Preferences {
     synchronized public Collection<String> getCollection(String key, Collection<String> def) {
         String s = get(key);
         if(def != null)
-        {
-            String d = null;
-            for(String a : def)
-            {
-                if(d != null) {
-                    d += "\u001e" + a;
-                } else {
-                    d = a;
-                }
-            }
-            putDefault(key, d);
-        }
+            putCollectionDefault(key, def);
         if(s != null && s.length() != 0)
             return Arrays.asList(s.split("\u001e"));
         return def;
@@ -736,6 +633,58 @@ public class Preferences {
             }
         }
         return put(key, s);
+    }
+    synchronized private void putCollectionDefault(String key, Collection<String> val) {
+        String s = null;
+        if(val != null)
+        {
+            for(String a : val)
+            {
+                if(s != null) {
+                    s += "\u001e" + a;
+                } else {
+                    s = a;
+                }
+            }
+        }
+        putDefault(key, s);
+    }
+    synchronized public Collection<Collection<String>> getArray(String key,
+    Collection<Collection<String>> def) {
+        if(def != null) {
+            for(String k : getAllPrefixDefault(key + ".").keySet())
+                put(k, null);
+            int num = 0;
+            for(Collection<String> c : def)
+                putCollectionDefault(key+"."+num++, c);
+        }
+        String s = get(key+".0");
+        if(s != null && s.length() != 0)
+        {
+            Collection<Collection<String>> col = new LinkedList<Collection<String>>();
+            for(int num = 0; ; ++num) {
+                Collection<String> c = getCollection(key+"."+num++, null);
+                if(c == null)
+                    break;
+                col.add(c);
+            }
+            return col;
+        }
+        return def;
+    }
+    synchronized public boolean putArray(String key, Collection<Collection<String>> val) {
+        boolean res = true;
+        for(String k : getAllPrefix(key + ".").keySet())
+            put(k, null);
+        if(val != null) {
+            String s = null;
+            int num = 0;
+            for(Collection<String> c : val) {
+                if(!putCollection(key+"."+num++, c))
+                    res = false;
+            }
+        }
+        return res;
     }
 
     /**
