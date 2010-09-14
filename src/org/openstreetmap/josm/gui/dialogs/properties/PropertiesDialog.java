@@ -19,6 +19,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -27,9 +28,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
+import java.util.Vector;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -69,8 +70,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
-import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
+import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -163,6 +164,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     };
 
     private DataSetListenerAdapter dataChangedAdapter = new DataSetListenerAdapter(this);
+    private HelpAction helpAction = new HelpAction();
     private AddAction addAction = new AddAction();
     private Shortcut addActionShortcut = Shortcut.registerShortcut("properties:add", tr("Add Properties"), KeyEvent.VK_B,
             Shortcut.GROUP_MNEMONIC);
@@ -542,6 +544,19 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         // setting up the properties table
         propertyData.setColumnIdentifiers(new String[]{tr("Key"),tr("Value")});
         propertyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        propertyTable.addMouseListener(new PopupMenuLauncher() {
+            @Override
+            public void launch(MouseEvent evt) {
+                Point p = evt.getPoint();
+                int row = propertyTable.rowAtPoint(p);
+                if (row > -1) {
+                    propertyTable.changeSelection(row, 0, false, false);
+                    JPopupMenu menu = new JPopupMenu();
+                    menu.add(helpAction);
+                    menu.show(propertyTable, p.x, p.y-3);
+                }
+            }
+        });
 
         propertyTable.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer(){
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
@@ -577,10 +592,13 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 Point p = evt.getPoint();
                 int row = membershipTable.rowAtPoint(p);
                 if (row > -1) {
+                    membershipTable.changeSelection(row, 0, false, false);
                     JPopupMenu menu = new JPopupMenu();
                     Relation relation = (Relation)membershipData.getValueAt(row, 0);
                     menu.add(new SelectRelationAction(relation, true));
                     menu.add(new SelectRelationAction(relation, false));
+                    menu.addSeparator();
+                    menu.add(helpAction);
                     menu.show(membershipTable, p.x, p.y-3);
                 }
             }
@@ -711,8 +729,6 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         // -- help action
         //
-        HelpAction helpAction = new HelpAction();
-        propertyTable.getSelectionModel().addListSelectionListener(helpAction);
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(
                 KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "onHelp");
         getActionMap().put("onHelp", helpAction);
@@ -1033,28 +1049,27 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         }
     }
 
-    class HelpAction extends AbstractAction implements ListSelectionListener {
+    class HelpAction extends AbstractAction {
         public HelpAction() {
-            putValue(NAME, tr("Help"));
+            putValue(NAME, tr("Go to OSM wiki for tag help (F1)"));
             putValue(SHORT_DESCRIPTION, tr("Launch browser with wiki help to selected object"));
-            updateEnabledState();
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
         }
 
         public void actionPerformed(ActionEvent e) {
-            if (!isEnabled())
-                return;
-
             try {
                 String base = new String(Main.pref.get("url.openstreetmap-wiki", "http://wiki.openstreetmap.org/wiki/"));
                 String l = LanguageInfo.getWikiLanguagePrefix();
                 List<URI> uris = new ArrayList<URI>();
-
                 int row;
                 if (propertyTable.getSelectedRowCount() == 1) {
                     row = propertyTable.getSelectedRow();
-                    String key = propertyData.getValueAt(row, 0).toString();
+                    String key = URLEncoder.encode(propertyData.getValueAt(row, 0).toString(), "UTF-8");
                     @SuppressWarnings("unchecked")
-                    String val = ((Map<String,Integer>)propertyData.getValueAt(row, 1)).entrySet().iterator().next().getKey();
+                    String val = URLEncoder.encode(
+                            ((Map<String,Integer>)propertyData.getValueAt(row, 1))
+                            .entrySet().iterator().next().getKey(), "UTF-8"
+                    );
 
                     uris.add(new URI(String.format("%s%sTag:%s=%s", base, l, key, val)));
                     uris.add(new URI(String.format("%sTag:%s=%s", base, key, val)));
@@ -1064,45 +1079,59 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     uris.add(new URI(String.format("%sMap_Features", base)));
                 } else if (membershipTable.getSelectedRowCount() == 1) {
                     row = membershipTable.getSelectedRow();
-                    String type = ((Relation)membershipData.getValueAt(row, 0)).get("type");
-                    
+                    String type = URLEncoder.encode(
+                            ((Relation)membershipData.getValueAt(row, 0)).get("type"), "UTF-8"
+                    );
+
                     if (type != null && !type.equals("")) {
                         uris.add(new URI(String.format("%s%sRelation:%s", base, l, type)));
                         uris.add(new URI(String.format("%sRelation:%s", base, type)));
                     }
+
                     uris.add(new URI(String.format("%s%sRelations", base, l)));
                     uris.add(new URI(String.format("%sRelations", base)));
+                } else {
+                    // give the generic help page, if more than one element is selected
+                    uris.add(new URI(String.format("%s%sMap_Features", base, l)));
+                    uris.add(new URI(String.format("%sMap_Features", base)));
                 }
 
                 // find a page that actually exists in the wiki
-                URI uri = null;
-                for (URI u : uris) {
-                    System.out.println("INFO: looking for " + u);
-                    if (((HttpURLConnection) u.toURL().openConnection()).getResponseCode() == 200) {
-                        uri = u;
-                        break;
+                HttpURLConnection conn;
+                for(URI u : uris) {
+                    conn = (HttpURLConnection) u.toURL().openConnection();
+
+                    if (conn.getResponseCode() != 200) {
+                        System.out.println("INFO: " + u + " does not exist");
+                        conn.disconnect();
+                    } else {
+                        int osize = conn.getContentLength();
+                        conn.disconnect();
+
+                        conn = (HttpURLConnection) new URI(u.toString()
+                                .replace("=", "%3D") /* do not URLencode whole string! */
+                                .replaceFirst("/wiki/", "/w/index.php?redirect=no&title=")
+                        ).toURL().openConnection();
+
+                        /* redirect pages have different content length, but retrieving a "nonredirect"
+                         *  page using index.php and the direct-link method gives slightly different
+                         *  content lengths, so we have to be fuzzy.. (this is UGLY, recode if u know better)
+                         */
+                        if (Math.abs(conn.getContentLength()-osize) > 200) {
+                            System.out.println("INFO: " + u + " is a mediawiki redirect");
+                            conn.disconnect();
+                        } else {
+                            System.out.println("INFO: browsing to " + u);
+                            conn.disconnect();
+
+                            OpenBrowser.displayUrl(u.toString());
+                            break;
+                        }
                     }
-                }
-                    
-                // browse the help page
-                if (uri != null) {
-                    System.out.println("INFO: browsing to url " + uri);
-                    OpenBrowser.displayUrl(uri);
                 }
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
-        }
-
-        protected void updateEnabledState() {
-            setEnabled(
-                    propertyTable.getSelectedRowCount() == 1
-                    ^ membershipTable.getSelectedRowCount() == 1
-            );
-        }
-
-        public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
         }
     }
 
