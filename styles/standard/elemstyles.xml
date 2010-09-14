@@ -871,6 +871,14 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="highway" v="rest_area"/>
+		<area colour="services#c0c0c0"/>
+		<icon annotate="true" src="vehicle/parking.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="highway" v="ford"/>
 		<line width="2" realwidth="5" colour="ford#ff0000"/>
 		<icon annotate="true" src="vehicle/ford.png"/>
@@ -885,6 +893,15 @@ For external files the <rules> should have following elements:
 		<scale_max>50000</scale_max>
 	</rule>
 
+	<rule>
+		<condition k="highway" v="platform"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+		<line width="2" colour="highway_platform#c0c0c0"/>
+		<area colour="highway_platform#c0c0c0" closed="true"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+    
 	<rule>
 		<condition k="highway" v="turning_circle"/>
 		<area colour="turningcircle#c0c0c0"/>
@@ -912,6 +929,50 @@ For external files the <rules> should have following elements:
 		<condition k="highway" v="emergency_access_point"/>
 		<icon src="service/emergency_access_point.png"/>
 		<area colour="emergency_access_point#c0c0c0"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+<!-- traffic_calming tag -->
+
+	<rule>
+		<condition k="traffic_calming" v="bump"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="traffic_calming" v="hump"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="traffic_calming" v="table"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="traffic_calming" v="chicane"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="highway" v="choker"/>
+		<icon annotate="true" src="vehicle/passing_place.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="highway" v="cushion"/>
+		<icon annotate="true" src="vehicle/passing_place.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -4177,6 +4238,38 @@ For external files the <rules> should have following elements:
 		<condition k="sport" v="fishing"/>
 		<area colour="sport#bde3cb"/>
 		<icon annotate="true" src="sport/fishing.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="sport" v="karting"/>
+		<area colour="sport#bde3cb"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="sport" v="safety_training"/>
+		<area colour="sport#bde3cb"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="sport" v="model_aerodrome"/>
+		<area colour="sport#bde3cb"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="sport" v="rc_car"/>
+		<area colour="sport#bde3cb"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
