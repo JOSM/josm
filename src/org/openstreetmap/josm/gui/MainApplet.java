@@ -81,31 +81,33 @@ public class MainApplet extends JApplet {
     }
 
     @Override public void start() {
-        String username = args.containsKey("username") ? args.get("username").iterator().next() : null;
-        String password = args.containsKey("password") ? args.get("password").iterator().next() : null;
-        if (username == null || password == null) {
-            JPanel p = new JPanel(new GridBagLayout());
-            p.add(new JLabel(tr("Username")), GBC.std().insets(0,0,20,0));
-            JTextField user = new JTextField(username == null ? "" : username);
-            p.add(user, GBC.eol().fill(GBC.HORIZONTAL));
-            p.add(new JLabel(tr("Password")), GBC.std().insets(0,0,20,0));
-            JPasswordField pass = new JPasswordField(password == null ? "" : password);
-            p.add(pass, GBC.eol().fill(GBC.HORIZONTAL));
-            JOptionPane.showMessageDialog(null, p);
-            username = user.getText();
-            password = new String(pass.getPassword());
-            args.put("password", Arrays.asList(new String[]{password}));
-        }
-
         // initialize the plaform hook, and
         Main.determinePlatformHook();
-        // call the really early hook before we anything else
+        // call the really early hook before we do anything else
         Main.platform.preStartupHook();
 
         Main.preConstructorInit(args);
 
         Main.pref = new ServerSidePreferences(getCodeBase());
-        ((ServerSidePreferences)Main.pref).download(username, password);
+        if(!((ServerSidePreferences)Main.pref).download()) {
+            String username = args.containsKey("username") ? args.get("username").iterator().next() : null;
+            String password = args.containsKey("password") ? args.get("password").iterator().next() : null;
+            if (username == null || password == null) {
+                JPanel p = new JPanel(new GridBagLayout());
+                p.add(new JLabel(tr("Username")), GBC.std().insets(0,0,20,0));
+                JTextField user = new JTextField(username == null ? "" : username);
+                p.add(user, GBC.eol().fill(GBC.HORIZONTAL));
+                p.add(new JLabel(tr("Password")), GBC.std().insets(0,0,20,0));
+                JPasswordField pass = new JPasswordField(password == null ? "" : password);
+                p.add(pass, GBC.eol().fill(GBC.HORIZONTAL));
+                JOptionPane.showMessageDialog(null, p);
+                username = user.getText();
+                password = new String(pass.getPassword());
+                args.put("password", Arrays.asList(new String[]{password}));
+            }
+            ((ServerSidePreferences)Main.pref).download(username, password);
+        }
+
         Main.preConstructorInit(args);
         Main.parent = frame;
         Main.addListener();
