@@ -17,7 +17,7 @@ import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 
 /**
  * Displays the key and the secret of an OAuth Access Token.
- * 
+ *
  */
 public class AccessTokenInfoPanel extends JPanel {
 
@@ -80,7 +80,7 @@ public class AccessTokenInfoPanel extends JPanel {
 
     /**
      * Displays the key and secret in <code>token</code>.
-     * 
+     *
      * @param token the access  token. If null, the content in the info panel is cleared
      */
     public void setAccessToken(OAuthToken token) {

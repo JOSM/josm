@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  * A parser for the plugin list provided by a JOSM Plugin Download Site.
- * 
+ *
  * See <a href="http://josm.openstreetmap.de/plugin">http://josm.openstreetmap.de/plugin</a>
  * for a sample of the document. The format is a custom format, kind of mix of CSV and RFC822 style
  * name/value-pairs.
@@ -24,7 +24,7 @@ public class PluginListParser {
 
     /**
      * Creates the plugin information object
-     * 
+     *
      * @param name the plugin name
      * @param url the plugin download url
      * @param manifest the plugin manifest
@@ -47,11 +47,11 @@ public class PluginListParser {
 
     /**
      * Parses a plugin information document and replies a list of plugin information objects.
-     * 
+     *
      * See <a href="http://josm.openstreetmap.de/plugin">http://josm.openstreetmap.de/plugin</a>
      * for a sample of the document. The format is a custom format, kind of mix of CSV and RFC822 style
      * name/value-pairs.
-     * 
+     *
      * @param in the input stream from which to parse
      * @return the list of plugin information objects
      * @throws PluginListParseException thrown if something goes wrong while parsing

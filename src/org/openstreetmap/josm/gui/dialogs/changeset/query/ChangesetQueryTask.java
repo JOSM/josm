@@ -48,7 +48,7 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
 
     /**
      * Creates the task.
-     * 
+     *
      * @param query the query to submit to the OSM server. Must not be null.
      * @throws IllegalArgumentException thrown if query is null.
      */
@@ -60,7 +60,7 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
 
     /**
      * Creates the task.
-     * 
+     *
      * @param parent the parent component relative to which the {@see PleaseWaitDialog} is displayed.
      * Must not be null.
      * @param query the query to submit to the OSM server. Must not be null.
@@ -129,7 +129,7 @@ public class ChangesetQueryTask extends PleaseWaitRunnable implements ChangesetD
 
     /**
      * Tries to fully identify the current JOSM user
-     * 
+     *
      * @throws OsmTransferException thrown if something went wrong
      */
     protected void fullyIdentifyCurrentUser() throws OsmTransferException {

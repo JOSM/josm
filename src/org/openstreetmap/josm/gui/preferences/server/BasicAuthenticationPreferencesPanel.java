@@ -27,7 +27,7 @@ import org.openstreetmap.josm.io.auth.JosmPreferencesCredentialManager;
 /**
  * The preferences panel for parameters necessary for the Basic Authentication
  * Scheme.
- * 
+ *
  */
 public class BasicAuthenticationPreferencesPanel extends JPanel {
 

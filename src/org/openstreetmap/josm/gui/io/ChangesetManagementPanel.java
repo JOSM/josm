@@ -162,7 +162,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
 
     /**
      * Creates a new panel
-     * 
+     *
      * @param changesetCommentModel the changeset comment model. Must not be null.
      * @throws IllegalArgumentException thrown if {@code changesetCommentModel} is null
      */
@@ -185,7 +185,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
 
     /**
      * Sets the changeset to be used in the next upload
-     * 
+     *
      * @param cs the changeset
      */
     public void setSelectedChangesetForNextUpload(Changeset cs) {

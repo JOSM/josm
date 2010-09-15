@@ -47,7 +47,7 @@ public abstract class Plugin {
 
     /**
      * Creates the plugin
-     * 
+     *
      * @param info the plugin information describing the plugin.
      */
     public Plugin(PluginInformation info) {
@@ -56,7 +56,7 @@ public abstract class Plugin {
 
     /**
      * Replies the plugin information object for this plugin
-     * 
+     *
      * @return the plugin information object
      */
     public PluginInformation getPluginInformation() {
@@ -65,7 +65,7 @@ public abstract class Plugin {
 
     /**
      * Sets the plugin information object for this plugin
-     * 
+     *
      * @parma info the plugin information object
      */
     public void setPluginInformation(PluginInformation info) {
@@ -75,7 +75,7 @@ public abstract class Plugin {
     /**
      * @return The directory for the plugin to store all kind of stuff.
      */
-    public final String getPluginDir() {
+    public String getPluginDir() {
         return new File(Main.pref.getPluginsDirectory(), info.name).getPath();
     }
 
@@ -102,12 +102,12 @@ public abstract class Plugin {
      * Copies the resource 'from' to the file in the plugin directory named 'to'.
      */
     public void copy(String from, String to) throws FileNotFoundException, IOException {
-        String pluginDirName = Main.pref.getPluginsDirectory() + "/" + info.name + "/";
+        String pluginDirName = getPluginDir();
         File pluginDir = new File(pluginDirName);
         if (!pluginDir.exists()) {
             pluginDir.mkdirs();
         }
-        FileOutputStream out = new FileOutputStream(pluginDirName+to);
+        FileOutputStream out = new FileOutputStream(new File(pluginDirName, to));
         InputStream in = getClass().getResourceAsStream(from);
         byte[] buffer = new byte[8192];
         for(int len = in.read(buffer); len > 0; len = in.read(buffer)) {

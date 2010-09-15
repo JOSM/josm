@@ -34,10 +34,10 @@ import org.xml.sax.SAXException;
 
 /**
  * Checks whether an OSM API server can be accessed with a specific Access Token.
- * 
+ *
  * It retrieves the user details for the user which is authorized to access the server with
  * this token.
- * 
+ *
  */
 public class TestAccessTokenTask extends PleaseWaitRunnable {
     private OAuthToken token;
@@ -49,7 +49,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
 
     /**
      * Create the task
-     * 
+     *
      * @param parent the parent component relative to which the  {@see PleaseWaitRunnable}-Dialog is displayed
      * @param apiUrl the API URL. Must not be null.
      * @param parameters the OAuth parameters. Must not be null.

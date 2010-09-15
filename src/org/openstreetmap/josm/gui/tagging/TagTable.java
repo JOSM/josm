@@ -438,7 +438,7 @@ public class TagTable extends JTable  {
 
     /**
      * Inject a tag cell editor in the tag table
-     * 
+     *
      * @param editor
      */
     public void setTagCellEditor(TagCellEditor editor) {
@@ -542,7 +542,7 @@ public class TagTable extends JTable  {
     /**
      * This is a custom implementation of the CellEditorRemover used in JTable
      * to handle the client property <tt>terminateEditOnFocusLost</tt>.
-     * 
+     *
      * This implementation also checks whether focus is transferred to one of a list
      * of dedicated components, see {@see TagTable#doNotStopCellEditingWhenFocused}.
      * A typical example for such a component is a button in {@see TagEditorPanel}

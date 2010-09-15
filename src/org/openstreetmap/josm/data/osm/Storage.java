@@ -174,7 +174,7 @@ public class Storage<T> extends AbstractSet<T> {
         return bucket >= 0;
     }
 
-    @Override 
+    @Override
     public synchronized boolean add(T t) {
         T orig = putUnique(t);
         return orig == t;
@@ -186,7 +186,7 @@ public class Storage<T> extends AbstractSet<T> {
         T tOrig = removeElem(t);
         return tOrig != null;
     }
-    
+
     @Override
     public synchronized void clear() {
         copyArray();

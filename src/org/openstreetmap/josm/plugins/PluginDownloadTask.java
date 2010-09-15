@@ -28,10 +28,10 @@ import org.xml.sax.SAXException;
 
 /**
  * Asynchronous task for downloading a collection of plugins.
- * 
+ *
  * When the task is finished {@see #getDownloadedPlugins()} replies the list of downloaded plugins
  * and {@see #getFailedPlugins()} replies the list of failed plugins.
- * 
+ *
  */
 public class PluginDownloadTask extends PleaseWaitRunnable{
     @SuppressWarnings("unused")
@@ -46,7 +46,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
 
     /**
      * Creates the download task
-     * 
+     *
      * @param parent the parent component relative to which the {@see PleaseWaitDialog} is displayed
      * @param toUpdate a collection of plugin descriptions for plugins to update/download. Must not be null.
      * @param title the title to display in the {@see PleaseWaitDialog}
@@ -60,7 +60,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
 
     /**
      * Creates the task
-     * 
+     *
      * @param monitor a progress monitor. Defaults to {@see NullProgressMonitor#INSTANCE} if null
      * @param toUpdate a collection of plugin descriptions for plugins to update/download. Must not be null.
      * @param title the title to display in the {@see PleaseWaitDialog}
@@ -74,7 +74,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
 
     /**
      * Sets the collection of plugins to update.
-     * 
+     *
      * @param toUpdate the collection of plugins to update. Must not be null.
      * @throws IllegalArgumentException thrown if toUpdate is null
      */
@@ -189,7 +189,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
 
     /**
      * Replies true if the task was cancelled by the user
-     * 
+     *
      * @return
      */
     public boolean isCanceled() {
@@ -198,7 +198,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
 
     /**
      * Replies the list of successfully downloaded plugins
-     * 
+     *
      * @return the list of successfully downloaded plugins
      */
     public Collection<PluginInformation> getFailedPlugins() {
@@ -207,7 +207,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
 
     /**
      * Replies the list of plugins whose download has failed
-     * 
+     *
      * @return the list of plugins whose download has failed
      */
     public Collection<PluginInformation> getDownloadedPlugins() {

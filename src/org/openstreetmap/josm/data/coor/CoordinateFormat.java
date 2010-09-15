@@ -18,12 +18,12 @@ public enum CoordinateFormat {
      * the degrees/minutes/seconds format 9 deg 99 min 99 sec
      */
     DEGREES_MINUTES_SECONDS (tr("deg\u00B0 min'' sec\"")),
-    
+
     /**
-     * the nautical format 
+     * the nautical format
      */
     NAUTICAL (tr("deg\u00B0 min'' (Nautical)")),
-    
+
     /**
      * coordinates East/North
      */

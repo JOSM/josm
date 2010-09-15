@@ -65,7 +65,7 @@ public class RedirectInputMap extends ComponentInputMap {
         @SuppressWarnings("deprecation") JComponent target = Main.contentPane;
         redirect(source, target);
     }
-    
+
     public static void redirect(JComponent source, JComponent target) {
         InputMap lastParent = source.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         while (lastParent.getParent() != null) {

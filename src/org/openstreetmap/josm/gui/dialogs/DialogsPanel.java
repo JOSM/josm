@@ -177,9 +177,9 @@ public class DialogsPanel extends JPanel {
                     sumC += dlg.getHeight();
                 }
             }
-            
+
             /**
-             * If we add additional dialogs on startup (e.g. geoimage), they may 
+             * If we add additional dialogs on startup (e.g. geoimage), they may
              * not have an actual height yet.
              * In this case we simply reset everything to it's preferred size.
              */

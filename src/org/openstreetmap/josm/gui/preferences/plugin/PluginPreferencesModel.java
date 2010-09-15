@@ -86,7 +86,7 @@ public class PluginPreferencesModel extends Observable{
     /**
      * Updates the list of plugin information objects with new information from
      * plugin update sites.
-     * 
+     *
      * @param fromPluginSite plugin information read from plugin update sites
      */
     public void updateAvailablePlugins(Collection<PluginInformation> fromPluginSite) {
@@ -110,7 +110,7 @@ public class PluginPreferencesModel extends Observable{
 
     /**
      * Replies the list of selected plugin information objects
-     * 
+     *
      * @return the list of selected plugin information objects
      */
     public List<PluginInformation> getSelectedPlugins() {
@@ -128,7 +128,7 @@ public class PluginPreferencesModel extends Observable{
 
     /**
      * Replies the list of selected plugin information objects
-     * 
+     *
      * @return the list of selected plugin information objects
      */
     public Set<String> getSelectedPluginNames() {
@@ -157,7 +157,7 @@ public class PluginPreferencesModel extends Observable{
 
     /**
      * Replies the list of plugin informations to display
-     * 
+     *
      * @return the list of plugin informations to display
      */
     public List<PluginInformation> getDisplayedPlugins() {
@@ -167,7 +167,7 @@ public class PluginPreferencesModel extends Observable{
 
     /**
      * Replies the list of plugins waiting for update or download
-     * 
+     *
      * @return the list of plugins waiting for update or download
      */
     public List<PluginInformation> getPluginsScheduledForUpdateOrDownload() {
@@ -184,7 +184,7 @@ public class PluginPreferencesModel extends Observable{
 
     /**
      * Sets whether the plugin is selected or not.
-     * 
+     *
      * @param name the name of the plugin
      * @param selected true, if selected; false, otherwise
      */
@@ -204,7 +204,7 @@ public class PluginPreferencesModel extends Observable{
     /**
      * Removes all the plugin in {@code plugins} from the list of plugins
      * with a pending download
-     * 
+     *
      * @param plugins the list of plugins to clear for a pending download
      */
     public void clearPendingPlugins(Collection<PluginInformation> plugins){
@@ -217,7 +217,7 @@ public class PluginPreferencesModel extends Observable{
     /**
      * Replies the plugin info with the name <code>name</code>. null, if no
      * such plugin info exists.
-     * 
+     *
      * @param name the name. If null, replies null.
      * @return the plugin info.
      */
@@ -250,7 +250,7 @@ public class PluginPreferencesModel extends Observable{
     /**
      * Replies true if the plugin with name <code>name</code> is currently
      * selected in the plugin model
-     * 
+     *
      * @param name the plugin name
      * @return true if the plugin is selected; false, otherwise
      */
@@ -264,7 +264,7 @@ public class PluginPreferencesModel extends Observable{
     /**
      * Replies the set of plugins which have been added by the user to
      * the set of activated plugins.
-     * 
+     *
      * @return the set of newly deactivated plugins
      */
     public List<PluginInformation> getNewlyActivatedPlugins() {
@@ -282,7 +282,7 @@ public class PluginPreferencesModel extends Observable{
     /**
      * Replies the set of plugins which have been removed by the user from
      * the set of activated plugins.
-     * 
+     *
      * @return the set of newly deactivated plugins
      */
     public List<PluginInformation> getNewlyDeactivatedPlugins() {
@@ -301,7 +301,7 @@ public class PluginPreferencesModel extends Observable{
     /**
      * Replies the set of plugin names which have been added by the user to
      * the set of activated plugins.
-     * 
+     *
      * @return the set of newly activated plugin names
      */
     public Set<String> getNewlyActivatedPluginNames() {
@@ -317,7 +317,7 @@ public class PluginPreferencesModel extends Observable{
      * Replies true if the set of active plugins has been changed by the user
      * in this preference model. He has either added plugins or removed plugins
      * being active before.
-     * 
+     *
      * @return true if the collection of active plugins has changed
      */
     public boolean isActivePluginsChanged() {
@@ -328,7 +328,7 @@ public class PluginPreferencesModel extends Observable{
     /**
      * Refreshes the local version field on the plugins in <code>plugins</code> with
      * the version in the manifest of the downloaded "jar.new"-file for this plugin.
-     * 
+     *
      * @param plugins the collections of plugins to refresh
      */
     public void refreshLocalPluginVersion(Collection<PluginInformation> plugins) {

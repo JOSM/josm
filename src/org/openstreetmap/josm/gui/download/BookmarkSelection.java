@@ -88,7 +88,7 @@ public class BookmarkSelection implements DownloadSelection {
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.insets = new Insets(5,5,5,5);
         pnl.add(lblCurrentDownloadArea = new JMultilineLabel(""), gc);
-        
+
         gc.weightx = 1.0;
         gc.weighty = 1.0;
         bboxDisplay.setEditable(false);

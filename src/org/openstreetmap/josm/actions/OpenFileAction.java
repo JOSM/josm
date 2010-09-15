@@ -136,7 +136,7 @@ public class OpenFileAction extends DiskAccessAction {
                 msg.append("<li>").append(f.getAbsolutePath()).append("</li>");
             }
             msg.append("</ul>");
-            
+
             HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,
                     msg.toString(),
@@ -178,11 +178,11 @@ public class OpenFileAction extends DiskAccessAction {
                             SwingUtilities.invokeLater(new Runnable() {
                                 public void run() {
                                     JOptionPane.showMessageDialog(Main.parent, tr(
-                                            "<html>Cannot open directory ''{0}''.<br>Please select a file.</html>", 
+                                            "<html>Cannot open directory ''{0}''.<br>Please select a file.</html>",
                                             f.getAbsolutePath()), tr("Open file"), JOptionPane.ERROR_MESSAGE);
                                 }
                             });
-                            // TODO when changing to Java 6: Don't cancel the 
+                            // TODO when changing to Java 6: Don't cancel the
                             // task here but use different modality. (Currently 2 dialogs
                             // would block each other.)
                             return;

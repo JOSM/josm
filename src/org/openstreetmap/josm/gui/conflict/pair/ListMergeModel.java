@@ -114,7 +114,7 @@ public abstract class ListMergeModel<T> extends Observable {
     protected abstract void setValueAt(DefaultTableModel model, Object value, int row, int col);
 
     /**
-     * 
+     *
      * @param entry
      * @return Primitive from my dataset referenced by entry
      */

@@ -39,9 +39,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * The preferences panel for the OAuth preferences. This just a summary panel
  * showing the current Access Token Key and Access Token Secret, if the
  * user already has an Access Token.
- * 
+ *
  * For initial authorisation see {@see OAuthAuthorisationWizard}.
- * 
+ *
  */
 public class OAuthAuthenticationPreferencesPanel extends JPanel implements PropertyChangeListener {
     @SuppressWarnings("unused")
@@ -57,7 +57,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
     /**
      * Builds the panel for entering the advanced OAuth parameters
-     * 
+     *
      * @return
      */
     protected JPanel buildAdvancedPropertiesPanel() {
@@ -171,7 +171,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
     /**
      * The preferences panel displayed if there is currently no Access Token available.
      * This means that the user didn't run through the OAuth authorisation procedure yet.
-     * 
+     *
      */
     private class NotYetAuthorisedPanel extends JPanel {
         protected void build() {
@@ -208,7 +208,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
 
     /**
      * The preferences panel displayed if there is currently an AccessToken available.
-     * 
+     *
      */
     private class AlreadyAuthorisedPanel extends JPanel {
         private JTextField tfAccessTokenKey;

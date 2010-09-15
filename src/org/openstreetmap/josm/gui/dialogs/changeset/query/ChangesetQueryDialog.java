@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * This is a modal dialog for entering query criteria to search for changesets.
- * 
+ *
  */
 public class ChangesetQueryDialog extends JDialog {
 

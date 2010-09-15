@@ -55,7 +55,7 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
     /**
      * Creates a download task for downloading the child primitives {@code children} for all parent
      * relations in {@code parents}.
-     * 
+     *
      * @param parents the collection of parent relations
      * @param children the collection of child primitives to download
      * @param curLayer the current OSM layer

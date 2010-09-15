@@ -517,7 +517,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
     /**
      * Action for downloading incomplete members of selected relations
-     * 
+     *
      */
     class DownloadSelectedIncompleteMembersAction extends AbstractAction implements ListSelectionListener{
         public DownloadSelectedIncompleteMembersAction() {
@@ -671,7 +671,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
         /**
          * Replies the list of selected relations with incomplete members
-         * 
+         *
          * @return the list of selected relations with incomplete members
          */
         public List<Relation> getSelectedRelationsWithIncompleteMembers() {

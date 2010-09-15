@@ -363,25 +363,25 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
 
         /**
          * returns true if the user wants to revisit, false if they
-         * want to continue 
+         * want to continue
          */
         protected boolean warnUploadComment() {
             ExtendedDialog dlg = new ExtendedDialog(UploadDialog.this,
                 tr("Please revise upload comment"),
                 new String[] {tr("Revise"), tr("Cancel"), tr("Continue as is")});
-            dlg.setContent("<html>" + 
-                    tr("Your upload comment is <i>empty</i>, or <i>very short</i>.<br /><br />" + 
+            dlg.setContent("<html>" +
+                    tr("Your upload comment is <i>empty</i>, or <i>very short</i>.<br /><br />" +
                        "This is technically allowed, but please consider that many users who are<br />" +
                        "watching changes in their area depend on meaningful changeset comments<br />" +
                        "to understand what is going on!<br /><br />" +
                        "If you spend a minute now to explain your change, you will make life<br />" +
-                       "easier for many other mappers.") + 
+                       "easier for many other mappers.") +
                     "</html>");
             dlg.setButtonIcons(new Icon[] {
                 ImageProvider.get("ok"),
                 ImageProvider.get("cancel"),
                 ImageProvider.overlay(
-                    ImageProvider.get("upload"), 
+                    ImageProvider.get("upload"),
                     new ImageIcon(ImageProvider.get("warning-small").getImage().getScaledInstance(10 , 10, Image.SCALE_SMOOTH)),
                     ImageProvider.OverlayPosition.SOUTHEAST)});
             dlg.setToolTipTexts(new String[] {

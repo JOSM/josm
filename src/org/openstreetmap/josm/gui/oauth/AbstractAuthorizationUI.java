@@ -9,8 +9,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * This is the abstract base class for the three authorisation UIs.
- * 
- * 
+ *
+ *
  */
 public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel{
     /**
@@ -33,7 +33,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel{
     /**
      * Replies the URL of the OSM API for which this UI is currently trying to retrieve an OAuth
      * Access Token
-     * 
+     *
      * @return the API URL
      */
     public String getApiUrl() {
@@ -43,7 +43,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel{
     /**
      * Sets the URL of the OSM API for which this UI is currently trying to retrieve an OAuth
      * Access Token
-     * 
+     *
      * @param apiUrl the api URL
      */
     public void setApiUrl(String apiUrl) {
@@ -52,7 +52,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel{
 
     /**
      * Replies the panel for entering advanced OAuth parameters (see {@see OAuthParameters})
-     * 
+     *
      * @return the panel for entering advanced OAuth parameters
      * @see #getOAuthParameters()
      */
@@ -62,7 +62,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel{
 
     /**
      * Replies the current set of advanced OAuth parameters in this UI
-     * 
+     *
      * @return the current set of advanced OAuth parameters in this UI
      */
     public OAuthParameters getOAuthParameters() {
@@ -71,7 +71,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel{
 
     /**
      * Replies the retrieved Access Token. null, if no Access Token was retrieved.
-     * 
+     *
      * @return the retrieved Access Token
      */
     public  OAuthToken getAccessToken() {
@@ -81,7 +81,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel{
     /**
      * Sets the current Access Token. This will fire a property change event for {@see #ACCESS_TOKEN_PROP}
      * if the access token has changed
-     * 
+     *
      * @param accessToken the new access token. null, to clear the current access token
      */
     protected void setAccessToken(OAuthToken accessToken) {
@@ -98,7 +98,7 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel{
 
     /**
      * Replies true if this UI currently has an Access Token
-     * 
+     *
      * @return true if this UI currently has an Access Token
      */
     public boolean hasAccessToken() {
@@ -108,14 +108,14 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel{
     /**
      * Replies whether the user has chosen to save the Access Token in the JOSM
      * preferences or not.
-     * 
+     *
      * @return true if the user has chosen to save the Access Token
      */
     public abstract boolean isSaveAccessTokenToPreferences();
 
     /**
      * Initializes the authorisation UI with preference values in <code>pref</code>.
-     * 
+     *
      * @param pref the preferences. Must not be null.
      * @throws IllegalArgumentException thrown if pref is null
      */

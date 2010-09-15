@@ -31,7 +31,7 @@ public class RetrieveRequestTokenTask extends PleaseWaitRunnable {
 
     /**
      * Creates the task
-     * 
+     *
      * @param parent the parent component relative to which the {@see PleaseWaitRunnable}-Dialog
      * is displayed
      * @param parameters the OAuth parameters. Must not be null.
@@ -92,7 +92,7 @@ public class RetrieveRequestTokenTask extends PleaseWaitRunnable {
 
     /**
      * Replies true if the task was canceled
-     * 
+     *
      * @return true if the task was canceled
      */
     public boolean isCanceled() {
@@ -101,7 +101,7 @@ public class RetrieveRequestTokenTask extends PleaseWaitRunnable {
 
     /**
      * Replies the request token. null, if something went wrong.
-     * 
+     *
      * @return the request token
      */
     public OAuthToken getRequestToken() {

@@ -163,7 +163,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             // compute vertical and horizontal components.
             double xoff = en3.east() - base.east();
             double yoff = en3.north() - base.north();
-            
+
             newN1en = new EastNorth(en1.getX() + xoff, en1.getY() + yoff);
             newN2en = new EastNorth(en2.getX() + xoff, en2.getY() + yoff);
 

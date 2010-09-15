@@ -20,7 +20,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Asynchronous task for retrieving an Access Token.
- * 
+ *
  */
 public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
 
@@ -33,7 +33,7 @@ public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
 
     /**
      * Creates the task
-     * 
+     *
      * @param parent the parent component relative to which the {@see PleaseWaitRunnable}-Dialog
      * is displayed
      * @param parameters the OAuth parameters. Must not be null.
@@ -98,7 +98,7 @@ public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
 
     /**
      * Replies true if the task was canceled.
-     * 
+     *
      * @return
      */
     public boolean isCanceled() {
@@ -107,7 +107,7 @@ public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
 
     /**
      * Replies the retrieved Access Token. null, if something went wrong.
-     * 
+     *
      * @return the retrieved Access Token
      */
     public OAuthToken getAccessToken() {

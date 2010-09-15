@@ -16,9 +16,9 @@ import org.openstreetmap.josm.gui.help.Helpful;
 public class MapScaler extends JComponent implements Helpful {
 
     private final NavigatableComponent mv;
-    
+
     private static int PADDING_RIGHT = 100;
-    
+
     public MapScaler(NavigatableComponent mv) {
         this.mv = mv;
         setSize(100+PADDING_RIGHT,30);

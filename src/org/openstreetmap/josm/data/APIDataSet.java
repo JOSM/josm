@@ -144,7 +144,7 @@ public class APIDataSet {
     /**
      * Replies true if one of the primitives to be updated or to be deleted
      * participates in the conflict <code>conflict</code>
-     * 
+     *
      * @param conflict the conflict
      * @return true if one of the primitives to be updated or to be deleted
      * participates in the conflict <code>conflict</code>
@@ -163,7 +163,7 @@ public class APIDataSet {
     /**
      * Replies true if one of the primitives to be updated or to be deleted
      * participates in at least one conflict in <code>conflicts</code>
-     * 
+     *
      * @param conflicts the collection of conflicts
      * @return true if one of the primitives to be updated or to be deleted
      * participates in at least one conflict in <code>conflicts</code>

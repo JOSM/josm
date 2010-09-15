@@ -84,7 +84,7 @@ public class OsmPrivilegesPanel extends VerticallyScrollablePanel{
 
     /**
      * Replies the currently entered privileges
-     * 
+     *
      * @return the privileges
      */
     public OsmPrivileges getPrivileges() {

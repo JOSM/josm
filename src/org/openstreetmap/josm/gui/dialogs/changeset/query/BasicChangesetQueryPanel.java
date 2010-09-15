@@ -27,7 +27,7 @@ import org.openstreetmap.josm.io.ChangesetQuery;
 
 /**
  * This panel presents a list of basic queries for changests.
- * 
+ *
  */
 public class BasicChangesetQueryPanel extends JPanel {
 
@@ -241,7 +241,7 @@ public class BasicChangesetQueryPanel extends JPanel {
 
     /**
      * Responds to changes in the selected query
-     * 
+     *
      */
     class SelectQueryHandler implements ItemListener {
         public void itemStateChanged(ItemEvent e) {

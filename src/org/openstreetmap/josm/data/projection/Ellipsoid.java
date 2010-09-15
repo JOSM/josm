@@ -195,7 +195,7 @@ public class Ellipsoid {
         }
         return new LatLon(Math.toDegrees(lt), Math.toDegrees(lg));
     }
-    
+
     /**
      * convert ellipsoidal coordinates to cartesian coordinates
      *
@@ -211,7 +211,7 @@ public class Ellipsoid {
         XYZ[0] = Rn * Math.cos(phi) * Math.cos(lambda);
         XYZ[1] = Rn * Math.cos(phi) * Math.sin(lambda);
         XYZ[2] = Rn * (1 - e2) * Math.sin(phi);
-        
+
         return XYZ;
     }
 }

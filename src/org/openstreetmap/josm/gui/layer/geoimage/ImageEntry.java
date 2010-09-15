@@ -111,7 +111,7 @@ final public class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     }
     void setExifImgDir(double exifDir) {
         this.exifImgDir = exifDir;
-    } 
+    }
 
     @Override
     public ImageEntry clone() {

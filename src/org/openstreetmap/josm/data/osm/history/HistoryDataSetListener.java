@@ -7,7 +7,7 @@ public interface HistoryDataSetListener {
     /**
      * Fired by a {@see HistoryDataSet} if the cached history of an OSM primitive with
      * id <code>id</code> is updated
-     * 
+     *
      * @param source the data set firing the event
      * @param id the id of the updated primitive
      */
@@ -15,7 +15,7 @@ public interface HistoryDataSetListener {
 
     /**
      * Fired by a {@see HistoryDataSet} if the history cached is cleared.
-     * 
+     *
      * @param source the history data set firing the event
      */
     void historyDataSetCleared(HistoryDataSet source);

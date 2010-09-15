@@ -187,7 +187,7 @@ public class SimplifyWayAction extends JosmAction {
     /**
      * Replies true if <code>node</code> is a required node which can't be removed
      * in order to simplify the way.
-     * 
+     *
      * @param way the way to be simplified
      * @param node the node to check
      * @return true if <code>node</code> is a required node which can't be removed
@@ -209,7 +209,7 @@ public class SimplifyWayAction extends JosmAction {
 
     /**
      * Simplifies a way
-     * 
+     *
      * @param w the way to simplify
      */
     public SequenceCommand simplifyWay(Way w) {
@@ -254,7 +254,7 @@ public class SimplifyWayAction extends JosmAction {
     /**
      * Builds the simplified list of nodes for a way segment given by a lower index <code>from</code>
      * and an upper index <code>to</code>
-     * 
+     *
      * @param wnew the way to simplify
      * @param from the lower index
      * @param to the upper index

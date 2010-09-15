@@ -221,7 +221,7 @@ public class PluginPreference implements PreferenceSetting {
 
     /**
      * Replies the list of plugins waiting for update or download
-     * 
+     *
      * @return the list of plugins waiting for update or download
      */
     public List<PluginInformation> getPluginsScheduledForUpdateOrDownload() {
@@ -245,7 +245,7 @@ public class PluginPreference implements PreferenceSetting {
      * Reads locally available information about plugins from the local file system.
      * Scans cached plugin lists from plugin download sites and locally available
      * plugin jar files.
-     * 
+     *
      */
     public void readLocalPluginInformation() {
         final ReadLocalPluginInformationTask task = new ReadLocalPluginInformationTask();

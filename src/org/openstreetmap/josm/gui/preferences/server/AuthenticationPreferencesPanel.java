@@ -24,7 +24,7 @@ import org.openstreetmap.josm.io.auth.CredentialsManagerFactory;
 /**
  * This is the preference panel for the authentication method and the authentication
  * parameters.
- * 
+ *
  */
 public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel implements PropertyChangeListener{
 

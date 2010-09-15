@@ -43,7 +43,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * The "surviving" node will be the one with the lowest positive id.
  * (I.e. it was uploaded to the server and is the oldest one.)
- * 
+ *
  * However we use the location of the node that was selected *last*.
  * The "surviving" node will be moved to that location if it is
  * different from the last selected node.
@@ -93,7 +93,7 @@ public class MergeNodesAction extends JosmAction {
         }
         return targetNode;
     }
-    
+
     /**
      * Find which node to merge into (i.e. which one will be left)
      *
@@ -118,7 +118,7 @@ public class MergeNodesAction extends JosmAction {
         }
         return targetNode;
     }
-    
+
 
     /**
      * Fixes the parent ways referring to one of the nodes.
@@ -192,7 +192,7 @@ public class MergeNodesAction extends JosmAction {
     public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetNode) {
         return mergeNodes(layer, nodes, targetNode, targetNode);
     }
-    
+
     /**
      * Merges the nodes in <code>nodes</code> onto one of the nodes. Uses the dataset
      * managed by <code>layer</code> as reference.

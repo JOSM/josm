@@ -41,7 +41,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * This panel allows to specify a changeset query
- * 
+ *
  */
 public class AdvancedChangesetQueryPanel extends JPanel {
 
@@ -190,7 +190,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
     /**
      * Builds the changeset query based on the data entered in the form.
-     * 
+     *
      * @return the changeset query. null, if the data entered doesn't represent
      * a valid changeset query.
      */
@@ -367,7 +367,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
     /**
      * This is the panel for selecting whether the query should be restricted to a specific
      * user
-     * 
+     *
      */
     static private class UserRestrictionPanel extends JPanel {
         private ButtonGroup bgUserRestrictions;
@@ -508,12 +508,12 @@ public class AdvancedChangesetQueryPanel extends JPanel {
         /**
          * Sets the query restrictions on <code>query</code> for changeset owner based
          * restrictions.
-         * 
+         *
          * @param query the query. Must not be null.
          * @throws IllegalArgumentException thrown if query is null
          * @throws IllegalStateException thrown if one of the available values for query parameters in
          * this panel isn't valid
-         * 
+         *
          */
         public void fillInQuery(ChangesetQuery query) throws IllegalStateException, IllegalArgumentException  {
             CheckParameterUtil.ensureParameterNotNull(query, "query");
@@ -960,7 +960,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
     /**
      * Validator for user ids entered in in a {@see JTextComponent}.
-     * 
+     *
      */
     static private class UidInputFieldValidator extends AbstractTextComponentValidator {
         static public UidInputFieldValidator decorate(JTextComponent tc) {
@@ -1037,7 +1037,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
     /**
      * Validates dates entered as text in in a {@see JTextComponent}. Validates the input
      * on the fly and gives feedback about whether the date is valid or not.
-     * 
+     *
      * Dates can be entered in one of four standard formats defined for the current locale.
      */
     static private class DateValidator extends AbstractTextComponentValidator {
@@ -1100,7 +1100,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
     /**
      * Validates time values entered as text in in a {@see JTextComponent}. Validates the input
      * on the fly and gives feedback about whether the time value is valid or not.
-     * 
+     *
      * Time values can be entered in one of four standard formats defined for the current locale.
      */
     static private class TimeValidator extends AbstractTextComponentValidator {

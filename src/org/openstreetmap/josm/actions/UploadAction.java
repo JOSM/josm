@@ -119,7 +119,7 @@ public class UploadAction extends JosmAction{
      * Check whether the preconditions are met to upload data in <code>apiData</code>.
      * Makes sure primitives in <code>apiData</code> don't participate in conflicts and
      * runs the installed {@see UploadHook}s.
-     * 
+     *
      * @param layer the source layer of the data to be uploaded
      * @param apiData the data to be uploaded
      * @return true, if the preconditions are met; false, otherwise
@@ -142,7 +142,7 @@ public class UploadAction extends JosmAction{
 
     /**
      * Uploads data to the OSM API.
-     * 
+     *
      * @param layer the source layer for the data to upload
      * @param apiData the primitives to be added, updated, or deleted
      */

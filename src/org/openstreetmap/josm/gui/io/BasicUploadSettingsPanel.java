@@ -83,7 +83,7 @@ public class BasicUploadSettingsPanel extends JPanel {
 
     /**
      * Creates the panel
-     * 
+     *
      * @param changesetCommentModel the model for the changeset comment. Must not be null
      * @throws IllegalArgumentException thrown if {@code changesetCommentModel} is null
      */

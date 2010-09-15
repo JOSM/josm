@@ -170,7 +170,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
     /**
      * Replies the OAuth parameters currently edited in this properties panel.
-     * 
+     *
      * @return the OAuth parameters
      */
     public OAuthParameters getAdvancedParameters() {
@@ -187,7 +187,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
     /**
      * Sets the advanced parameters to be displayed
-     * 
+     *
      * @param parameters the advanced parameters. Must not be null.
      * @throws IllegalArgumentException thrown if parameters is null.
      */
@@ -213,7 +213,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
     /**
      * Initializes the panel from the values in the preferences <code>preferences</code>.
-     * 
+     *
      * @param pref the preferences. Must not be null.
      * @throws IllegalArgumentException thrown if pref is null
      */
@@ -237,7 +237,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
     /**
      * Remembers the current values in the preferences <code>pref</code>.
-     * 
+     *
      * @param pref the preferences. Must not be null.
      * @throws IllegalArgumentException thrown if pref is null.
      */

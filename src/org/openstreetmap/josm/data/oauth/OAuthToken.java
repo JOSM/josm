@@ -9,7 +9,7 @@ public class OAuthToken {
 
     /**
      * Creates an OAuthToken from the token currently managed by the {@see OAuthConsumer}.
-     * 
+     *
      * @param consumer the consumer
      * @return the token
      */
@@ -22,7 +22,7 @@ public class OAuthToken {
 
     /**
      * Creates a new token
-     * 
+     *
      * @param key the token key
      * @param secret the token secret
      */
@@ -33,7 +33,7 @@ public class OAuthToken {
 
     /**
      * Creates a clone of another token
-     * 
+     *
      * @param other the other token. Must not be null.
      * @throws IllegalArgumentException thrown if other is null
      */
@@ -45,7 +45,7 @@ public class OAuthToken {
 
     /**
      * Replies the token key
-     * 
+     *
      * @return the token key
      */
     public String getKey() {
@@ -54,7 +54,7 @@ public class OAuthToken {
 
     /**
      * Replies the token secret
-     * 
+     *
      * @return the token secret
      */
     public String getSecret() {

@@ -51,7 +51,7 @@ public class  Conflict<T extends OsmPrimitive> {
     /**
      * Replies true if the primitive <code>primitive</code> is participating
      * in this conflict
-     * 
+     *
      * @param primitive the primitive
      * @return true if the primitive <code>primitive</code> is participating
      * in this conflict
@@ -65,7 +65,7 @@ public class  Conflict<T extends OsmPrimitive> {
     /**
      * Replies true if the primitive with id <code>id</code> is participating
      * in this conflict
-     * 
+     *
      * @param id the primitive id
      * @return true if the primitive <code>primitive</code> is participating
      * in this conflict
@@ -103,7 +103,7 @@ public class  Conflict<T extends OsmPrimitive> {
     }
 
     /**
-     * 
+     *
      * @return True if my primitive was deleted but it has set non deleted status because it's referred by another
      * primitive and references to deleted primitives are not allowed.
      */

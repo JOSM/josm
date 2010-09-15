@@ -105,7 +105,7 @@ public class I18n {
         "GTKColorChooserPanel.redText",
         "GTKColorChooserPanel.saturationText",
         "GTKColorChooserPanel.valueText",
-        
+
         /* JOptionPane */
         "OptionPane.okButtonText",
         "OptionPane.yesButtonText",
@@ -143,7 +143,7 @@ public class I18n {
 
     /**
      * Provide translation in a context.
-     * There can be different translations for the same text (but 
+     * There can be different translations for the same text (but
      * different context).
      *
      * @param context string that helps translators to find an appropriate

@@ -22,7 +22,7 @@ import org.xml.sax.SAXException;
 /**
  * This is an asynchronous task for reading plugin information from the files
  * in the local plugin repositories.
- * 
+ *
  * It scans the files in the local plugins repository (see {@see Preferences#getPluginsDirectory()}
  * and extracts plugin information from three kind of files:
  * <ul>
@@ -230,7 +230,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
 
     /**
      * Replies information about available plugins detected by this task.
-     * 
+     *
      * @return information about available plugins detected by this task.
      */
     public List<PluginInformation> getAvailablePlugins() {
@@ -239,7 +239,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
 
     /**
      * Replies true if the task was cancelled by the user
-     * 
+     *
      * @return true if the task was cancelled by the user
      */
     public boolean isCanceled() {

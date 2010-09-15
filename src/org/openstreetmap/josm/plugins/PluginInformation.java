@@ -57,9 +57,9 @@ public class PluginInformation {
     /**
      * Creates a plugin information object by reading the plugin information from
      * the manifest in the plugin jar.
-     * 
+     *
      * The plugin name is derived from the file name.
-     * 
+     *
      * @param file the plugin jar file
      * @throws PluginException if reading the manifest fails
      */
@@ -100,7 +100,7 @@ public class PluginInformation {
     /**
      * Creates a plugin information object by reading plugin information in Manifest format
      * from the input stream {@code manifestStream}.
-     * 
+     *
      * @param manifestStream the stream to read the manifest from
      * @param name the plugin name
      * @param url the download URL for the plugin
@@ -124,7 +124,7 @@ public class PluginInformation {
      * Updates the plugin information of this plugin information object with the
      * plugin information in a plugin information object retrieved from a plugin
      * update site.
-     * 
+     *
      * @param other the plugin information object retrieved from the update
      * site
      */
@@ -226,7 +226,7 @@ public class PluginInformation {
     /**
      * Replies the description as HTML document, including a link to a web page with
      * more information, provided such a link is available.
-     * 
+     *
      * @return the description as HTML document
      */
     public String getDescriptionAsHtml() {
@@ -242,7 +242,7 @@ public class PluginInformation {
 
     /**
      * Load and instantiate the plugin
-     * 
+     *
      * @param the plugin class
      * @return the instantiated and initialized plugin
      */
@@ -264,7 +264,7 @@ public class PluginInformation {
 
     /**
      * Load the class of the plugin
-     * 
+     *
      * @param classLoader the class loader to use
      * @return the loaded class
      */
@@ -355,10 +355,10 @@ public class PluginInformation {
     /**
      * Replies true if the plugin with the given information is most likely outdated with
      * respect to the referenceVersion.
-     * 
+     *
      * @param referenceVersion the reference version. Can be null if we don't know a
      * reference version
-     * 
+     *
      * @return true, if the plugin needs to be updated; false, otherweise
      */
     public boolean isUpdateRequired(String referenceVersion) {
@@ -374,7 +374,7 @@ public class PluginInformation {
      * Replies true if this this plugin should be updated/downloaded because either
      * it is not available locally (its local version is null) or its local version is
      * older than the available version on the server.
-     * 
+     *
      * @return true if the plugin should be updated
      */
     public boolean isUpdateRequired() {
@@ -392,7 +392,7 @@ public class PluginInformation {
     /**
      * Replies true if either the name, the description, or the version match (case insensitive)
      * one of the words in filter. Replies true if filter is null.
-     * 
+     *
      * @param filter the filter expression
      * @return true if this plugin info matches with the filter
      */

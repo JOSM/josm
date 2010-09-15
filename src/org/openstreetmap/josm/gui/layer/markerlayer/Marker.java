@@ -174,7 +174,7 @@ public class Marker implements ActionListener {
             this.textMap.clear();
             this.textMap.putAll(textMap);
         }
-        
+
         this.text = null;
         this.offset = offset;
         this.time = time;

@@ -51,7 +51,7 @@ import org.xml.sax.SAXException;
 /**
  * This is an UI which supports a JOSM user to get an OAuth Access Token in a fully
  * automatic process.
- * 
+ *
  */
 public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
@@ -67,7 +67,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
     /**
      * Builds the panel with the three privileges the user can grant JOSM
-     * 
+     *
      * @return
      */
     protected VerticallyScrollablePanel buildGrantsPanel() {
@@ -77,7 +77,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
     /**
      * Builds the panel for entering the username and password
-     * 
+     *
      * @return
      */
     protected VerticallyScrollablePanel buildUserNamePasswordPanel() {
@@ -202,7 +202,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
     /**
      * Builds the panel with the action button  for starting the authorisation
-     * 
+     *
      * @return
      */
     protected JPanel buildActionButtonPanel() {
@@ -217,7 +217,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
     /**
      * Builds the panel which displays the generated Access Token.
-     * 
+     *
      * @return
      */
     protected JPanel buildResultsPanel() {
@@ -273,7 +273,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     /**
      * Prepares the UI for the first step in the automatic process: entering the authentication
      * and authorisation parameters.
-     * 
+     *
      */
     protected void prepareUIForEnteringRequest() {
         removeAll();
@@ -289,7 +289,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
     /**
      * Prepares the UI for the second step in the automatic process: displaying the access token
-     * 
+     *
      */
     protected void prepareUIForResultDisplay() {
         removeAll();

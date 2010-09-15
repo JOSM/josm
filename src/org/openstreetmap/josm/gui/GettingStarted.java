@@ -104,7 +104,7 @@ public class GettingStarted extends JPanel {
                 + "</h1><h2 align=\"center\">" + tr("Downloading \"Message of the day\"") + "</h2>");
         // clear the build-in command ctrl+shift+O, because it is used as shortcut in JOSM
         lg.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.SHIFT_MASK | InputEvent.CTRL_MASK), "none");
-            
+
         JScrollPane scroller = new JScrollPane(lg);
         scroller.setViewportBorder(new EmptyBorder(10, 100, 10, 100));
         add(scroller, BorderLayout.CENTER);

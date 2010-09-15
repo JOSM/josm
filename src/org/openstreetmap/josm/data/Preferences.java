@@ -101,7 +101,7 @@ public class Preferences {
         listeners.remove(listener);
     }
 
-    protected void firePrefrenceChanged(String key, String oldValue, String newValue) {
+    protected void firePreferenceChanged(String key, String oldValue, String newValue) {
         PreferenceChangeEvent evt = new DefaultPreferenceChangeEvent(key, oldValue, newValue);
         for (PreferenceChangedListener l : listeners) {
             l.preferenceChanged(evt);
@@ -113,19 +113,6 @@ public class Preferences {
      */
     protected final SortedMap<String, String> properties = new TreeMap<String, String>();
     protected final SortedMap<String, String> defaults = new TreeMap<String, String>();
-
-    /**
-     * Override some values on read. This is intended to be used for technology previews
-     * where we want to temporarily modify things without changing the user's preferences
-     * file.
-     */
-    protected static final SortedMap<String, String> override = new TreeMap<String, String>();
-    static {
-        //override.put("osm-server.version", "0.5");
-        //override.put("osm-server.additional-versions", "");
-        //override.put("osm-server.url", "http://openstreetmap.gryph.de/api");
-        //override.put("plugins", null);
-    }
 
     /**
      * Return the location of the user defined preferences file
@@ -197,13 +184,11 @@ public class Preferences {
     }
 
     synchronized public boolean hasKey(final String key) {
-        return override.containsKey(key) ? override.get(key) != null : properties.containsKey(key);
+        return properties.containsKey(key);
     }
 
     synchronized public String get(final String key) {
         putDefault(key, null);
-        if (override.containsKey(key))
-            return override.get(key);
         if (!properties.containsKey(key))
             return "";
         return properties.get(key);
@@ -211,8 +196,6 @@ public class Preferences {
 
     synchronized public String get(final String key, final String def) {
         putDefault(key, def);
-        if (override.containsKey(key))
-            return override.get(key);
         final String prop = properties.get(key);
         if (prop == null || prop.equals(""))
             return def;
@@ -225,13 +208,6 @@ public class Preferences {
             if (e.getKey().startsWith(prefix)) {
                 all.put(e.getKey(), e.getValue());
             }
-        for (final Entry<String,String> e : override.entrySet())
-            if (e.getKey().startsWith(prefix))
-                if (e.getValue() == null) {
-                    all.remove(e.getKey());
-                } else {
-                    all.put(e.getKey(), e.getValue());
-                }
         return all;
     }
 
@@ -254,13 +230,6 @@ public class Preferences {
             if (e.getKey().startsWith("color.")) {
                 all.put(e.getKey().substring(6), e.getValue());
             }
-        for (final Entry<String,String> e : override.entrySet())
-            if (e.getKey().startsWith("color."))
-                if (e.getValue() == null) {
-                    all.remove(e.getKey().substring(6));
-                } else {
-                    all.put(e.getKey().substring(6), e.getValue());
-                }
         return all;
     }
 
@@ -278,20 +247,15 @@ public class Preferences {
 
     synchronized public boolean getBoolean(final String key) {
         putDefault(key, null);
-        if (override.containsKey(key))
-            return override.get(key) == null ? false : Boolean.parseBoolean(override.get(key));
         return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : false;
     }
 
     synchronized public boolean getBoolean(final String key, final boolean def) {
         putDefault(key, Boolean.toString(def));
-        if (override.containsKey(key))
-            return override.get(key) == null ? def : Boolean.parseBoolean(override.get(key));
         return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : def;
     }
 
     public boolean put(final String key, String value) {
-
         boolean changed = false;
         String oldValue = null;
 
@@ -318,7 +282,7 @@ public class Preferences {
         }
         if (changed) {
             // Call outside of synchronized section in case some listener wait for other thread that wait for preference lock
-            firePrefrenceChanged(key, oldValue, value);
+            firePreferenceChanged(key, oldValue, value);
         }
         return changed;
     }
@@ -663,7 +627,7 @@ public class Preferences {
         {
             Collection<Collection<String>> col = new LinkedList<Collection<String>>();
             for(int num = 0; ; ++num) {
-                Collection<String> c = getCollection(key+"."+num++, null);
+                Collection<String> c = getCollection(key+"."+num, null);
                 if(c == null)
                     break;
                 col.add(c);
@@ -674,14 +638,23 @@ public class Preferences {
     }
     synchronized public boolean putArray(String key, Collection<Collection<String>> val) {
         boolean res = true;
-        for(String k : getAllPrefix(key + ".").keySet())
-            put(k, null);
+        Collection<String> keys = getAllPrefix(key).keySet();
+        key += ".";
         if(val != null) {
             String s = null;
             int num = 0;
             for(Collection<String> c : val) {
-                if(!putCollection(key+"."+num++, c))
+                keys.remove(key+num);
+                if(!putCollection(key+num++, c))
                     res = false;
+            }
+        }
+        int l = key.length();
+        for(String k : keys) {
+            try {
+              Integer.valueOf(k.substring(l));
+              put(k, null);
+            } catch(Exception e) {
             }
         }
         return res;
