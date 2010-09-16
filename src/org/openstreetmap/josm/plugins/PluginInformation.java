@@ -154,6 +154,14 @@ public class PluginInformation {
         if(s == null) {
             s = attr.getValue("Plugin-Link");
         }
+        if(s != null) {
+            try {
+                URL url = new URL(s);
+            } catch (MalformedURLException e) {
+                System.out.println(tr("Invalid URL ''{0}'' in plugin {1}", s, name));
+                s = null;
+            }
+        }
         link = s;
         requires = attr.getValue("Plugin-Requires");
         s = attr.getValue(lang+"Plugin-Description");
