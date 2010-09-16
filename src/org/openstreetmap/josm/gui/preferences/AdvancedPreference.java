@@ -215,31 +215,6 @@ public class AdvancedPreference implements PreferenceSetting {
         return false;
     }
 
-    private void editPreference(final PreferenceTabbedPane gui, final JTable list) {
-        if (list.getSelectedRowCount() != 1) {
-            JOptionPane.showMessageDialog(
-                    gui,
-                    tr("Please select the row to edit."),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-            );
-            return;
-        }
-        String v = (String) JOptionPane.showInputDialog(
-                Main.parent,
-                tr("New value for {0}", model.getValueAt(list.getSelectedRow(), 0)),
-                tr("New value"),
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                null,
-                model.getValueAt(list.getSelectedRow(), 1)
-        );
-        if (v != null) {
-            data.put((String) model.getValueAt(list.getSelectedRow(), 0), v);
-            model.setValueAt(v, list.getSelectedRow(), 1);
-        }
-    }
-
     private void removePreference(final PreferenceTabbedPane gui, final JTable list) {
         if (list.getSelectedRowCount() == 0) {
             JOptionPane.showMessageDialog(
@@ -257,22 +232,57 @@ public class AdvancedPreference implements PreferenceSetting {
     }
 
     private void addPreference(final PreferenceTabbedPane gui) {
+        String s[] = showEditDialog(gui, tr("Enter a new key/value pair"),
+            null, null);
+        if(s != null && !s[0].isEmpty() && !s[1].isEmpty()) {
+            data.put(s[0], s[1]);
+            dataToModel();
+        }
+    }
+
+    private void editPreference(final PreferenceTabbedPane gui, final JTable list) {
+        if (list.getSelectedRowCount() != 1) {
+            JOptionPane.showMessageDialog(
+                    gui,
+                    tr("Please select the row to edit."),
+                    tr("Warning"),
+                    JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+        String key = (String)model.getValueAt(list.getSelectedRow(), 0);
+        String value = data.get(key);
+        if(value.isEmpty())
+            value = defaults.get(key);
+        String s[] = showEditDialog(gui, tr("Change a key/value pair"),
+            key, value);
+        if(s != null && !s[0].isEmpty()) {
+            data.put(s[0], s[1]);
+            if(!s[0].equals(key))
+                data.put(key,"");
+            dataToModel();
+        }
+    }
+
+    private String[] showEditDialog(final PreferenceTabbedPane gui, String title,
+    String key, String value) {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new JLabel(tr("Key")), GBC.std().insets(0,0,5,0));
-        JTextField key = new JTextField(10);
-        JTextField value = new JTextField(10);
-        p.add(key, GBC.eop().insets(5,0,0,0).fill(GBC.HORIZONTAL));
+        JTextField tkey = new JTextField(key, 50);
+        JTextField tvalue = new JTextField(value, 50);
+        p.add(tkey, GBC.eop().insets(5,0,0,0).fill(GBC.HORIZONTAL));
         p.add(new JLabel(tr("Value")), GBC.std().insets(0,0,5,0));
-        p.add(value, GBC.eol().insets(5,0,0,0).fill(GBC.HORIZONTAL));
+        /* TODO: Split value at "\u001e" and present a table with automatic added lines */
+        p.add(tvalue, GBC.eol().insets(5,0,0,0).fill(GBC.HORIZONTAL));
         int answer = JOptionPane.showConfirmDialog(
                 gui, p,
-                tr("Enter a new key/value pair"),
+                title,
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE
         );
-        if (answer == JOptionPane.OK_OPTION) {
-            data.put(key.getText(), value.getText());
-            model.addRow(new String[]{key.getText(), value.getText()});
+        if(answer == JOptionPane.OK_OPTION) {
+            return new String[]{tkey.getText(), tvalue.getText()};
         }
+        return null;
     }
 }

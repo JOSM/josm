@@ -600,48 +600,32 @@ public class Preferences {
     }
     synchronized private void putCollectionDefault(String key, Collection<String> val) {
         String s = null;
-        if(val != null)
+        for(String a : val)
         {
-            for(String a : val)
-            {
-                if(s != null) {
-                    s += "\u001e" + a;
-                } else {
-                    s = a;
-                }
+            if(s != null) {
+                s += "\u001e" + a;
+            } else {
+                s = a;
             }
         }
         putDefault(key, s);
     }
     synchronized public Collection<Collection<String>> getArray(String key,
     Collection<Collection<String>> def) {
-        if(def != null) {
-            for(String k : getAllPrefixDefault(key + ".").keySet())
-                put(k, null);
-            int num = 0;
-            for(Collection<String> c : def)
-                putCollectionDefault(key+"."+num++, c);
-        }
-        String s = get(key+".0");
-        if(s != null && s.length() != 0)
-        {
-            Collection<Collection<String>> col = new LinkedList<Collection<String>>();
-            for(int num = 0; ; ++num) {
-                Collection<String> c = getCollection(key+"."+num, null);
-                if(c == null)
-                    break;
-                col.add(c);
-            }
-            return col;
-        }
-        return def;
+        if(def != null)
+            putArrayDefault(key, def);
+        key += ".";
+        int num = 0;
+        Collection<Collection<String>> col = new LinkedList<Collection<String>>();
+        while(properties.containsKey(key+num))
+            col.add(getCollection(key+num++, null));
+        return num == 0 && def != null ? def : col;
     }
     synchronized public boolean putArray(String key, Collection<Collection<String>> val) {
         boolean res = true;
-        Collection<String> keys = getAllPrefix(key).keySet();
         key += ".";
+        Collection<String> keys = getAllPrefix(key).keySet();
         if(val != null) {
-            String s = null;
             int num = 0;
             for(Collection<String> c : val) {
                 keys.remove(key+num);
@@ -658,6 +642,24 @@ public class Preferences {
             }
         }
         return res;
+    }
+
+    synchronized private void putArrayDefault(String key, Collection<Collection<String>> val) {
+        key += ".";
+        Collection<String> keys = getAllPrefixDefault(key).keySet();
+        int num = 0;
+        for(Collection<String> c : val) {
+            keys.remove(key+num);
+            putCollectionDefault(key+num++, c);
+        }
+        int l = key.length();
+        for(String k : keys) {
+            try {
+              Integer.valueOf(k.substring(l));
+              defaults.remove(k);
+            } catch(Exception e) {
+            }
+        }
     }
 
     /**

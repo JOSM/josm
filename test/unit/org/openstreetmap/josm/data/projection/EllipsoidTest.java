@@ -11,7 +11,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 public class EllipsoidTest {
 
     final double EPSILON = 1e-8;
-    
+
     /**
      * convert latlon to cartesian coordinates back and forth
      */
@@ -29,7 +29,7 @@ public class EllipsoidTest {
             for (int i=0; i<1000; ++i) {
                 double[] cart = ellips.latLon2Cart(ll);
                 ll = ellips.cart2LatLon(cart);
-                
+
                 if (!(Math.abs(lat - ll.lat())<EPSILON && Math.abs(lon - ll.lon())<EPSILON)) {
                     String error = String.format("point: %s iterations: %s current: %s errorLat: %s errorLon %s",
                             new LatLon(lat, lon), i, ll, Math.abs(lat - ll.lat()), Math.abs(lon - ll.lon()));
