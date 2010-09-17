@@ -748,7 +748,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         Roles lastrole = null;
 
         if (validate) {
-            parser.startWithValidation(in, "http://josm.openstreetmap.de/tagging-preset-1.0", new StreamSource(TaggingPreset.class.getResourceAsStream("tagging-preset.xsd")));
+            parser.startWithValidation(in, "http://josm.openstreetmap.de/tagging-preset-1.0", new StreamSource(TaggingPreset.class.getResourceAsStream("/data/tagging-preset.xsd")));
         } else {
             parser.start(in);
         }
