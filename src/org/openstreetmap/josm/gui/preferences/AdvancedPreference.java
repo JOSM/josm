@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -29,6 +31,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.tools.GBC;
 
 public class AdvancedPreference implements PreferenceSetting {
@@ -233,7 +236,7 @@ public class AdvancedPreference implements PreferenceSetting {
 
     private void addPreference(final PreferenceTabbedPane gui) {
         String s[] = showEditDialog(gui, tr("Enter a new key/value pair"),
-            null, null);
+            "", "");
         if(s != null && !s[0].isEmpty() && !s[1].isEmpty()) {
             data.put(s[0], s[1]);
             dataToModel();
@@ -271,18 +274,71 @@ public class AdvancedPreference implements PreferenceSetting {
         JTextField tkey = new JTextField(key, 50);
         JTextField tvalue = new JTextField(value, 50);
         p.add(tkey, GBC.eop().insets(5,0,0,0).fill(GBC.HORIZONTAL));
-        p.add(new JLabel(tr("Value")), GBC.std().insets(0,0,5,0));
-        /* TODO: Split value at "\u001e" and present a table with automatic added lines */
-        p.add(tvalue, GBC.eol().insets(5,0,0,0).fill(GBC.HORIZONTAL));
-        int answer = JOptionPane.showConfirmDialog(
-                gui, p,
-                title,
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE
-        );
-        if(answer == JOptionPane.OK_OPTION) {
-            return new String[]{tkey.getText(), tvalue.getText()};
+        PrefValueTableModel model = new PrefValueTableModel(value);
+        p.add(new JLabel(tr("Values")), GBC.std().insets(0,0,5,0));
+        JTable table = new JTable(model);
+        table.putClientProperty("terminateEditOnFocusLost", true);
+        table.getTableHeader().setVisible(false);
+        JScrollPane pane = new JScrollPane(table);
+        Dimension d = pane.getPreferredSize();
+        d.height = (d.height/20)*(model.getRowCount()+4);
+        pane.setPreferredSize(d);
+        p.add(pane, GBC.eol().insets(5,10,0,0).fill(GBC.HORIZONTAL));
+        ExtendedDialog ed = new ExtendedDialog(gui, title,
+                new String[] {tr("OK"), tr("Cancel")});
+        ed.setButtonIcons(new String[] {"ok.png", "cancel.png"});
+        ed.setContent(p);
+        ed.showDialog();
+        if(ed.getValue() == 1) {
+            return new String[]{tkey.getText(), model.getText()};
         }
         return null;
+    }
+    class PrefValueTableModel extends DefaultTableModel {
+        private final ArrayList<String> data = new ArrayList<String>();
+        public PrefValueTableModel(String val) {
+            data.addAll(Arrays.asList(val.split("\u001e")));
+            setColumnIdentifiers(new String[]{""});
+        }
+
+        public String getText() {
+            String s = null;
+            for(String a : data)
+            {
+                if(s == null) {
+                    s = a;
+                } else {
+                    s += "\u001e" + a;
+                }
+            }
+            return s == null ? "" : s;
+        }
+
+        @Override
+        public int getRowCount() {
+            return data == null ? 1 : data.size()+1;
+        }
+
+        @Override
+        public Object getValueAt(int row, int column) {
+            return data.size() == row ? "" : data.get(row);
+        }
+
+        @Override
+        public void setValueAt(Object o, int row, int column) {
+            String s = (String)o;
+            if(row == data.size()) {
+                data.add(s);
+                fireTableRowsInserted(row+1, row+1);
+            } else {
+                data.set(row, s);
+            }
+            fireTableCellUpdated(row, column);
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return true;
+        }
     }
 }
