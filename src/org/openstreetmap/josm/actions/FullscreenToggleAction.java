@@ -3,6 +3,9 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -10,13 +13,8 @@ import java.util.List;
 
 import javax.swing.ButtonModel;
 
-/* For enabling fullscreen */
-import java.awt.Frame;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import org.openstreetmap.josm.tools.PlatformHookUnixoid;
-
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class FullscreenToggleAction extends JosmAction {
@@ -71,12 +69,11 @@ public class FullscreenToggleAction extends JosmAction {
         Main.pref.put("draw.fullscreen", selected);
         notifySelectedState();
 
-        if (selected) {
-            Frame frame = (Frame)Main.parent;
-            gd.setFullScreenWindow(frame);
-        } else {
-            gd.setFullScreenWindow(null);
-        }
+        Frame frame = (Frame)Main.parent;
+        frame.dispose();
+        frame.setUndecorated(selected);
+        gd.setFullScreenWindow(selected ? frame : null);
+        frame.setVisible(true);
     }
 
     public void actionPerformed(ActionEvent e) {
