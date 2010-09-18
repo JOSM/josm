@@ -192,10 +192,7 @@ public class UnGlueAction extends JosmAction {
 
     /**
      * Checks if the selection consists of something we can work with.
-     * Checks only if the number and type of items selected looks good;
-     * does not check whether the selected items are really a valid
-     * input for splitting (this would be too expensive to be carried
-     * out from the selectionChanged listener).
+     * Checks only if the number and type of items selected looks good.
      *
      * If this method returns "true", selectedNode and selectedWay will
      * be set.
@@ -232,10 +229,7 @@ public class UnGlueAction extends JosmAction {
 
     /**
      * Checks if the selection consists of something we can work with.
-     * Checks only if the number and type of items selected looks good;
-     * does not check whether the selected items are really a valid
-     * input for splitting (this would be too expensive to be carried
-     * out from the selectionChanged listener).
+     * Checks only if the number and type of items selected looks good.
      *
      * Returns true if one way and any number of nodes that are part of
      * that way are selected. Note: "any" can be none, then all nodes of
@@ -346,19 +340,26 @@ public class UnGlueAction extends JosmAction {
      */
     private void unglueWays() {
         LinkedList<Command> cmds = new LinkedList<Command>();
-        List<Node> newNodes = new LinkedList<Node>();
+        LinkedList<Node> newNodes = new LinkedList<Node>();
 
         if (selectedWay == null) {
-            boolean firstway = true;
-            // modify all ways containing the nodes
-            for (Way w : OsmPrimitive.getFilteredList(selectedNode.getReferrers(), Way.class)) {
-                if (w.isDeleted() || w.isIncomplete()) {
-                    continue;
+            Way wayWithSelectedNode = null;
+            LinkedList<Way> parentWays = new LinkedList<Way>();
+            for (OsmPrimitive osm : selectedNode.getReferrers()) {
+                if (osm.isUsable() && osm instanceof Way) {
+                    Way w = (Way) osm;
+                    if (wayWithSelectedNode == null && !w.isFirstLastNode(selectedNode)) {
+                        wayWithSelectedNode = w;
+                    } else {
+                        parentWays.add(w);
+                    }
                 }
-                if (!firstway) {
-                    cmds.add(new ChangeCommand(w, modifyWay(selectedNode, w, cmds, newNodes)));
-                }
-                firstway = false;
+            }
+            if (wayWithSelectedNode == null) {
+                wayWithSelectedNode = parentWays.removeFirst();
+            }
+            for (Way w : parentWays) {
+                cmds.add(new ChangeCommand(w, modifyWay(selectedNode, w, cmds, newNodes)));
             }
         } else {
             cmds.add(new ChangeCommand(selectedWay, modifyWay(selectedNode, selectedWay, cmds, newNodes)));
@@ -367,10 +368,8 @@ public class UnGlueAction extends JosmAction {
         fixRelations(selectedNode, cmds, newNodes);
 
         Main.main.undoRedo.add(new SequenceCommand(tr("Dupe into {0} nodes", newNodes.size()+1), cmds));
-        if (selectedWay == null) { // if a node has been selected, new selection is ALL nodes
-            newNodes.add(selectedNode);
-        } // if a node and a way has been selected, new selection is only the new node that was added to the selected way
-        getCurrentDataSet().setSelected(newNodes);
+        // select one of the new nodes
+        getCurrentDataSet().setSelected(newNodes.getFirst());
     }
 
     /**
