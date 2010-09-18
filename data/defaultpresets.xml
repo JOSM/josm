@@ -174,6 +174,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             </optional>
         </item>
         <item name="Primary Link" icon="presets/way_primary.png" type="way">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=primary_link" />
             <label text="Edit Primary Link" />
             <space />
             <key key="highway" value="primary_link" />
@@ -650,6 +651,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             </optional>
         </item>
         <item name="Rest Area" icon="presets/parking.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=rest_area" />
             <label text="Edit Rest Area" />
             <space />
             <key key="highway" value="rest_area" />
@@ -659,6 +661,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             </optional>
         </item>
         <item name="Emergency Phone" icon="presets/telephone.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/emergency_phone" />
             <key key="amenity" value="emergency_phone" />
         </item>
         <separator/>
@@ -3627,6 +3630,29 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <role key="stop_%n" text="halt point" requisite="optional" type="node" />
                 <role key="forward_stop_%n" text="forward halt point" requisite="optional" type="node" />
                 <role key="backward_stop_%n" text="backward halt point" requisite="optional" type="node" />
+            </roles>
+        </item>
+        <item name="Route network" icon="presets/path.png" type="relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Relations/Proposed/Network"/>
+            <label text="Edit route network" />
+            <key key="type" value="network" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <optional>
+                <text key="network" text="Network" default="" delete_if_empty="true" />
+                <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            </optional>
+            <roles>
+                <role key="" text="member" requisite="required" type="relation" />
+            </roles>
+        </item>
+        <item name="Associated street" icon="presets/addresses.png" type="relation">
+            <link href="http://wiki.openstreetmap.org/wiki/Relation:associatedStreet"/>
+            <label text="Edit associated street" />
+            <key key="type" value="associatedStreet" />
+            <text key="name" text="Street name" default="" delete_if_empty="true" />
+            <roles>
+                <role key="street" text="street" requisite="required" count="1" type="way" />
+                <role key="house" text="house" requisite="required" type="node,closedway" />
             </roles>
         </item>
     </group> <!-- Relations -->
