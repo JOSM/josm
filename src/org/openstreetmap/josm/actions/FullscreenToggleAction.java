@@ -7,7 +7,9 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -26,6 +28,8 @@ public class FullscreenToggleAction extends JosmAction {
     // Java 6
     private boolean selected;
     private GraphicsDevice gd;
+    private Rectangle prevBounds;
+
     public FullscreenToggleAction() {
         super(
                 tr("Fullscreen View"),
@@ -72,7 +76,15 @@ public class FullscreenToggleAction extends JosmAction {
         Main.pref.put("draw.fullscreen", selected);
         notifySelectedState();
 
-        Frame frame = (Frame)Main.parent;
+        Frame frame = (Frame) Main.parent;
+
+        List<Window> visibleWindows = new ArrayList<Window>();
+        visibleWindows.add(frame);
+        for (Window w : Frame.getWindows()) {
+            if (w.isVisible() && w != frame) {
+                visibleWindows.add(w);
+            }
+        }
         
         // we cannot use hw-exclusive fullscreen mode in MS-Win, as long
         // as josm throws out modal dialogs as well :-), see here:
@@ -82,19 +94,26 @@ public class FullscreenToggleAction extends JosmAction {
         // since windows (or java?) draws the undecorated window full-
         // screen by default (it's a simulated mode, but should be ok)
         String exclusive = Main.pref.get("draw.fullscreen.exclusive-mode", "auto");
-        if ("yes".equals(exclusive) || ("auto".equals(exclusive) && !(Main.platform instanceof PlatformHookWindows))) {
+        if ("true".equals(exclusive) || ("auto".equals(exclusive) && !(Main.platform instanceof PlatformHookWindows))) {
             frame.dispose();
             frame.setUndecorated(selected);
             gd.setFullScreenWindow(selected ? frame : null);
-            frame.setVisible(true);
+            for (Window wind : visibleWindows) {
+                wind.setVisible(true);
+            }
         } else {
             frame.dispose();
-            if (Main.pref.getBoolean("draw.fullscreen.set-screen-bounds", true)) {
+            if (Main.pref.getBoolean("draw.fullscreen.set-screen-bounds", true) && selected) {
+                prevBounds = frame.getBounds();
                 Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
                 frame.setBounds(0, 0, dim.width, dim.height);
+            } else if (prevBounds != null) {
+                frame.setBounds(prevBounds);
             }
             frame.setUndecorated(selected);
-            frame.setVisible(true);
+            for (Window wind : visibleWindows) {
+                wind.setVisible(true);
+            }
         }
     }
 
