@@ -918,7 +918,7 @@ public class DataSet implements Cloneable {
         synchronized (selectionLock) {
             while (it.hasNext()) {
                 OsmPrimitive primitive = it.next();
-                if (primitive.isDeleted() && !primitive.isVisible()) {
+                if (primitive.isDeleted() && (!primitive.isVisible() || primitive.isNew())) {
                     selectedPrimitives.remove(primitive);
                     selectionSnapshot = null;
                     allPrimitives.remove(primitive);
