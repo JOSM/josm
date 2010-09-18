@@ -139,6 +139,7 @@ public class MainApplet extends JApplet {
     public static void main(String[] args) {
         Main.applet = true;
         MainApplet applet = new MainApplet();
+        Main.pref = new ServerSidePreferences(applet.getCodeBase());
         applet.setStub(new AppletStub() {
             public void appletResize(int w, int h) {
                 frame.setSize(w, h);

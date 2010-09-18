@@ -103,7 +103,7 @@ abstract public class Main {
     /**
      * Global application preferences
      */
-    public static Preferences pref = new Preferences();
+    public static Preferences pref;
 
     /**
      * The global paste buffer.

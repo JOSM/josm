@@ -33,6 +33,7 @@ import javax.swing.JTextArea;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.data.AutosaveTask;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -141,6 +142,7 @@ public class MainApplication extends Main {
     public static void main(final String[] argArray) {
         I18n.init();
         checkJava6();
+        Main.pref = new Preferences();
 
         Policy.setPolicy(new Policy() {
             // Permissions for plug-ins loaded when josm is started via webstart
