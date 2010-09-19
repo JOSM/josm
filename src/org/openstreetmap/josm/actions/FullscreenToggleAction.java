@@ -3,7 +3,6 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -85,9 +84,18 @@ public class FullscreenToggleAction extends JosmAction {
                 visibleWindows.add(w);
             }
         }
+
+        frame.dispose();
+        frame.setUndecorated(selected);
+
+        if (selected) {
+            prevBounds = frame.getBounds();
+            System.err.println(" get "+prevBounds);
+            frame.setBounds(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
+        }
         
         // we cannot use hw-exclusive fullscreen mode in MS-Win, as long
-        // as josm throws out modal dialogs as well :-), see here:
+        // as josm throws out modal dialogs, see here:
         // http://forums.sun.com/thread.jspa?threadID=5351882
         //
         // the good thing is: fullscreen works without exclusive mode,
@@ -95,25 +103,16 @@ public class FullscreenToggleAction extends JosmAction {
         // screen by default (it's a simulated mode, but should be ok)
         String exclusive = Main.pref.get("draw.fullscreen.exclusive-mode", "auto");
         if ("true".equals(exclusive) || ("auto".equals(exclusive) && !(Main.platform instanceof PlatformHookWindows))) {
-            frame.dispose();
-            frame.setUndecorated(selected);
             gd.setFullScreenWindow(selected ? frame : null);
-            for (Window wind : visibleWindows) {
-                wind.setVisible(true);
-            }
-        } else {
-            frame.dispose();
-            if (Main.pref.getBoolean("draw.fullscreen.set-screen-bounds", true) && selected) {
-                prevBounds = frame.getBounds();
-                Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-                frame.setBounds(0, 0, dim.width, dim.height);
-            } else if (prevBounds != null) {
-                frame.setBounds(prevBounds);
-            }
-            frame.setUndecorated(selected);
-            for (Window wind : visibleWindows) {
-                wind.setVisible(true);
-            }
+        }
+
+        if (!selected && prevBounds != null) {
+            System.err.println(" set "+prevBounds);
+            frame.setBounds(prevBounds);
+        }
+
+        for (Window wind : visibleWindows) {
+            wind.setVisible(true);
         }
     }
 
