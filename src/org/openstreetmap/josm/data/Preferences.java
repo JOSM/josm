@@ -649,7 +649,6 @@ public class Preferences {
               Integer.valueOf(k.substring(l));
               changed |= put(k, null);
             } catch(NumberFormatException e) {
-                System.err.println("Warning: invalid preference.");
                 e.printStackTrace();
             }
         }
