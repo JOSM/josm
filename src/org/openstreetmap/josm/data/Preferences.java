@@ -646,10 +646,10 @@ public class Preferences {
         int l = key.length();
         for(String k : keys) {
             try {
-              Integer.valueOf(k.substring(l));
-              changed |= put(k, null);
+                Integer.valueOf(k.substring(l));
+                changed |= put(k, null);
             } catch(NumberFormatException e) {
-                e.printStackTrace();
+                /* everything which does not end with a number should not be deleted */
             }
         }
         return changed;
@@ -666,9 +666,10 @@ public class Preferences {
         int l = key.length();
         for(String k : keys) {
             try {
-              Integer.valueOf(k.substring(l));
-              defaults.remove(k);
+                Integer.valueOf(k.substring(l));
+                defaults.remove(k);
             } catch(Exception e) {
+                /* everything which does not end with a number should not be deleted */
             }
         }
     }
