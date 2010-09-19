@@ -90,7 +90,6 @@ public class FullscreenToggleAction extends JosmAction {
 
         if (selected) {
             prevBounds = frame.getBounds();
-            System.err.println(" get "+prevBounds);
             frame.setBounds(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
         }
         
@@ -107,7 +106,6 @@ public class FullscreenToggleAction extends JosmAction {
         }
 
         if (!selected && prevBounds != null) {
-            System.err.println(" set "+prevBounds);
             frame.setBounds(prevBounds);
         }
 
