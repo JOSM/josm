@@ -86,8 +86,6 @@ public class MainApplet extends JApplet {
         // call the really early hook before we do anything else
         Main.platform.preStartupHook();
 
-        Main.preConstructorInit(args);
-
         Main.pref = new ServerSidePreferences(getCodeBase());
         if(!((ServerSidePreferences)Main.pref).download()) {
             String username = args.containsKey("username") ? args.get("username").iterator().next() : null;
