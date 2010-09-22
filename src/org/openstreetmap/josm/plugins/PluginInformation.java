@@ -217,7 +217,7 @@ public class PluginInformation {
         if (classPath != null) {
             for (String entry : classPath.split(" ")) {
                 File entryFile;
-                if (new File(entry).isAbsolute()) {
+                if (new File(entry).isAbsolute() || file == null) {
                     entryFile = new File(entry);
                 } else {
                     entryFile = new File(file.getParent(), entry);
