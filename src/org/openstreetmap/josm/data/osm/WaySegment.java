@@ -21,6 +21,14 @@ public final class WaySegment {
         lowerIndex = i;
     }
 
+    public Node getFirstNode(){
+        return way.getNode(lowerIndex);
+    }
+
+    public Node getSecondNode(){
+        return way.getNode(lowerIndex + 1);
+    }
+
     @Override public boolean equals(Object o) {
         return o != null && o instanceof WaySegment
             && ((WaySegment) o).way == way
