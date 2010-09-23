@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.PushbackReader;
 import java.io.StringReader;
+import java.text.Normalizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -234,9 +235,8 @@ public class SearchCompiler {
                 String v1 = caseSensitive ? mv : mv.toLowerCase();
                 String v2 = caseSensitive ? value : value.toLowerCase();
 
-                // is not Java 1.5
-                //v1 = java.text.Normalizer.normalize(v1, java.text.Normalizer.Form.NFC);
-                //v2 = java.text.Normalizer.normalize(v2, java.text.Normalizer.Form.NFC);
+                v1 = Normalizer.normalize(v1, Normalizer.Form.NFC);
+                v2 = Normalizer.normalize(v2, Normalizer.Form.NFC);
                 return v1.indexOf(v2) != -1;
             }
 
@@ -259,7 +259,7 @@ public class SearchCompiler {
         private final Mode mode;
 
         public ExactKeyValue(boolean regexp, String key, String value) throws ParseError {
-            if (key == "")
+            if ("".equals(key))
                 throw new ParseError(tr("Key cannot be empty when tag operator is used. Sample use: key=value"));
             this.key = key;
             this.value = value == null?"":value;
@@ -379,6 +379,7 @@ public class SearchCompiler {
         private final boolean caseSensitive;
 
         public Any(String s, boolean regexSearch, boolean caseSensitive) throws ParseError {
+            s = Normalizer.normalize(s, Normalizer.Form.NFC);
             this.caseSensitive = caseSensitive;
             if (regexSearch) {
                 try {
@@ -399,17 +400,14 @@ public class SearchCompiler {
         }
 
         @Override public boolean match(OsmPrimitive osm) {
-            if (!osm.hasKeys())
+            if (!osm.hasKeys() && osm.getUser() == null)
                 return search.equals("");
 
-            // is not Java 1.5
-            //search = java.text.Normalizer.normalize(search, java.text.Normalizer.Form.NFC);
             for (String key: osm.keySet()) {
                 String value = osm.get(key);
                 if (searchRegex != null) {
 
-                    // is not Java 1.5
-                    //value = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
+                    value = Normalizer.normalize(value, Normalizer.Form.NFC);
 
                     Matcher keyMatcher = searchRegex.matcher(key);
                     Matcher valMatcher = searchRegex.matcher(value);
@@ -425,22 +423,21 @@ public class SearchCompiler {
                         value = value.toLowerCase();
                     }
 
-                    // is not Java 1.5
-                    //value = java.text.Normalizer.normalize(value, java.text.Normalizer.Form.NFC);
+                    value = Normalizer.normalize(value, Normalizer.Form.NFC);
 
                     if (key.indexOf(search) != -1 || value.indexOf(search) != -1)
                         return true;
                 }
             }
             if (osm.getUser() != null) {
-                String name = osm.getUser().getName();
-                // is not Java 1.5
-                //String name = java.text.Normalizer.normalize(name, java.text.Normalizer.Form.NFC);
-                if (!caseSensitive) {
-                    name = name.toLowerCase();
+                for (String name : osm.getUser().getNames()) {
+                    name = Normalizer.normalize(name, Normalizer.Form.NFC);
+                    if (!caseSensitive) {
+                        name = name.toLowerCase();
+                    }
+                    if (name.indexOf(search) != -1)
+                        return true;
                 }
-                if (name.indexOf(search) != -1)
-                    return true;
             }
             return false;
         }
