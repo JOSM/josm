@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,11 +51,13 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.QuadStateCheckBox;
+import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
@@ -946,17 +949,19 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         } else if (answer == DIALOG_ANSWER_NEW_RELATION) {
             List<Command> cmds = new ArrayList<Command>(2);
             final Relation r = new Relation();
-            cmds.add(new AddCommand(r));
-            Command cmd = createCommand(Collections.<OsmPrimitive>singletonList(r), getChangedTags());
-            if (cmd != null) {
-                cmds.add(cmd);
+            final Collection<RelationMember> members = new HashSet<RelationMember>();
+            for(Tag t : getChangedTags()) {
+              r.put(t.getKey(), t.getValue());
             }
-            Main.main.undoRedo.add(new SequenceCommand(tr("Add relation"), cmds));
+            for(OsmPrimitive osm : sel) {
+              RelationMember rm = new RelationMember("", osm);
+              r.addMember(rm);
+              members.add(rm);
+            }
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    // Relation list dialog has to be updated first for selectRelation to work
-                    Main.map.relationListDialog.selectRelation(r);
+                    RelationEditor.getEditor(Main.main.getEditLayer(), r, members).setVisible(true);
                 }
             });
         }
