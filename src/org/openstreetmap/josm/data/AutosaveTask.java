@@ -220,16 +220,10 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                             savelayer(info);
                             File lastFile = info.backupFiles.pollLast();
                             if (lastFile != null) {
-                                File backupFile = new File(deletedLayersDir, lastFile.getName());
-                                lastFile.renameTo(backupFile);
-                                deletedLayers.add(lastFile);
+                                moveToDeletedLayersFolder(lastFile);
                             }
                             for (File file: info.backupFiles) {
                                 file.delete();
-                            }
-
-                            while (deletedLayers.size() > PROP_DELETED_LAYERS.get()) {
-                                deletedLayers.remove().delete();
                             }
                         } catch (IOException e) {
                             System.err.println(tr("Error while creating backup of removed layer: {0}", e.getMessage()));
@@ -269,7 +263,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 String layerName = f.getName();
                 layerName = layerName.substring(0, layerName.lastIndexOf('.'));
                 result.add(new OsmDataLayer(ds, layerName, null));
-                f.renameTo(new File(deletedLayersDir, f.getName()));
+                moveToDeletedLayersFolder(f);
             } catch (FileNotFoundException e) {
                 // Should not happen
                 System.err.println("File " + f.getAbsolutePath() + " not found");
@@ -281,10 +275,26 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         return result;
     }
 
-    public void dicardUnsavedLayers() {
-        for (File f: getUnsavedLayersFiles()) {
-            f.renameTo(new File(deletedLayersDir, f.getName()));
+    private void moveToDeletedLayersFolder(File f) {
+        File backupFile = new File(deletedLayersDir, f.getName());
+        if (backupFile.exists()) {
+            deletedLayers.remove(backupFile);
+            backupFile.delete();
+        }
+        if (f.renameTo(backupFile)) {
+            deletedLayers.add(backupFile);
+        } else {
+            System.err.println(String.format("Warning: Could not move autosaved file %s to %s folder", f.getName(), deletedLayersDir.getName()));
+            f.delete();
+        }
+        while (deletedLayers.size() > PROP_DELETED_LAYERS.get()) {
+            deletedLayers.remove().delete();
         }
     }
 
+    public void dicardUnsavedLayers() {
+        for (File f: getUnsavedLayersFiles()) {
+            moveToDeletedLayersFolder(f);
+        }
+    }
 }
