@@ -145,6 +145,9 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         if (o.isDeleted()) {
             s.append("; deleted");
         }
+        if (!o.isVisible()) {
+            s.append("; deleted-on-server");
+        }
         if (o.isModified()) {
             s.append("; modified");
         }

@@ -40,4 +40,11 @@ public final class Pair<A,B> {
         }
         return p;
     }
+
+    @Override
+    public String toString() {
+        return "<"+a+","+b+">";
+    }
+
+
 }
