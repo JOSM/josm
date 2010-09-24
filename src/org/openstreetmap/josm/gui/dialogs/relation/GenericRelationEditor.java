@@ -66,8 +66,8 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
-import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel.PresetHandler;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -536,31 +536,6 @@ public class GenericRelationEditor extends RelationEditor  {
         JToolBar tb = new JToolBar(JToolBar.VERTICAL);
         tb.setFloatable(false);
 
-        // -- add at end action
-        AddSelectedAtEndAction addSelectedAtEndAction = new AddSelectedAtEndAction();
-        selectionTableModel.addTableModelListener(addSelectedAtEndAction);
-        tb.add(addSelectedAtEndAction);
-
-        // -- select members action
-        SelectedMembersForSelectionAction selectMembersForSelectionAction = new SelectedMembersForSelectionAction();
-        selectionTableModel.addTableModelListener(selectMembersForSelectionAction);
-        memberTableModel.addTableModelListener(selectMembersForSelectionAction);
-        tb.add(selectMembersForSelectionAction);
-
-        tb.addSeparator();
-
-        // -- remove selected action
-        RemoveSelectedAction removeSelectedAction = new RemoveSelectedAction();
-        selectionTableModel.addTableModelListener(removeSelectedAction);
-        tb.add(removeSelectedAction);
-
-        // -- select action
-        SelectPrimitivesForSelectedMembersAction selectAction = new SelectPrimitivesForSelectedMembersAction();
-        memberTable.getSelectionModel().addListSelectionListener(selectAction);
-        tb.add(selectAction);
-
-        tb.addSeparator();
-
         // -- add at start action
         AddSelectedAtStartAction addSelectionAction = new AddSelectedAtStartAction();
         selectionTableModel.addTableModelListener(addSelectionAction);
@@ -577,6 +552,31 @@ public class GenericRelationEditor extends RelationEditor  {
         selectionTableModel.addTableModelListener(addSelectedAfterSelectionAction);
         memberTableModel.getSelectionModel().addListSelectionListener(addSelectedAfterSelectionAction);
         tb.add(addSelectedAfterSelectionAction);
+
+        // -- add at end action
+        AddSelectedAtEndAction addSelectedAtEndAction = new AddSelectedAtEndAction();
+        selectionTableModel.addTableModelListener(addSelectedAtEndAction);
+        tb.add(addSelectedAtEndAction);
+
+        tb.addSeparator();
+
+        // -- select members action
+        SelectedMembersForSelectionAction selectMembersForSelectionAction = new SelectedMembersForSelectionAction();
+        selectionTableModel.addTableModelListener(selectMembersForSelectionAction);
+        memberTableModel.addTableModelListener(selectMembersForSelectionAction);
+        tb.add(selectMembersForSelectionAction);
+
+        // -- select action
+        SelectPrimitivesForSelectedMembersAction selectAction = new SelectPrimitivesForSelectedMembersAction();
+        memberTable.getSelectionModel().addListSelectionListener(selectAction);
+        tb.add(selectAction);
+
+        tb.addSeparator();
+
+        // -- remove selected action
+        RemoveSelectedAction removeSelectedAction = new RemoveSelectedAction();
+        selectionTableModel.addTableModelListener(removeSelectedAction);
+        tb.add(removeSelectedAction);
 
         return tb;
     }
@@ -734,7 +734,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         protected void refreshEnabled() {
-            setEnabled(selectionTableModel.getRowCount() > 0 && memberTableModel.getRowCount() > 0);
+            setEnabled(selectionTableModel.getRowCount() > 0);
         }
 
         public void actionPerformed(ActionEvent e) {
