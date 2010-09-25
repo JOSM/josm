@@ -197,9 +197,9 @@ public class ExceptionUtil {
             Matcher m = p.matcher(msg);
             if (m.matches()) {
                 long changesetId = Long.parseLong(m.group(1));
-                // Example: Tue Oct 15 10:00:00 UTC 2009. Always parsed with english locale, regardless
+                // Example: "2010-09-07 14:39:41 UTC". Always parsed with US locale, regardless
                 // of the current locale in JOSM
-                DateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.US);
                 Date closeDate = null;
                 try {
                     closeDate = formatter.parse(m.group(2));
@@ -248,7 +248,7 @@ public class ExceptionUtil {
                 "<html>Failed to upload to changeset <strong>{0}</strong><br>"
                 +"because it has already been closed on {1}.</html>",
                 e.getChangesetId(),
-                dateFormat.format(e.getClosedOn())
+                e.getClosedOn() == null ? "?" : dateFormat.format(e.getClosedOn())
         );
         e.printStackTrace();
         return msg;

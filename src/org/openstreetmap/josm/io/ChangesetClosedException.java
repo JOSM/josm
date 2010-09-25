@@ -74,9 +74,9 @@ public class ChangesetClosedException extends OsmTransferException {
         Matcher m = p.matcher(errorHeader);
         if (m.matches()) {
             changesetId = Long.parseLong(m.group(1));
-            // Example: Tue Oct 15 10:00:00 UTC 2009. Always parsed with english locale regardless
+            // Example: "2010-09-07 14:39:41 UTC". Always parsed with US locale regardless
             // of the current locale in JOSM
-            DateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy",Locale.ENGLISH);
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.US);
             try {
                 closedOn = formatter.parse(m.group(2));
             } catch(ParseException ex) {
