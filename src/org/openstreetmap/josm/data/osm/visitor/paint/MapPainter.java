@@ -53,6 +53,10 @@ public class MapPainter {
 
     private final Collection<String> regionalNameOrder;
 
+    private static final double PHI = Math.toRadians(20);
+    private static final double cosPHI = Math.cos(PHI);
+    private static final double sinPHI = Math.sin(PHI);
+
     public MapPainter(MapPaintSettings settings, Graphics2D g, boolean inactive, NavigatableComponent nc, boolean virtual, double dist, double circum) {
         this.g = g;
         this.inactive = inactive;
@@ -84,21 +88,62 @@ public class MapPainter {
             boolean reversedDirection, boolean showHeadArrowOnly) {
 
         GeneralPath path = new GeneralPath();
+        GeneralPath arrows = new GeneralPath();
+        Rectangle bounds = g.getClipBounds();
+        bounds.grow(100, 100);                  // avoid arrow heads at the border
 
         Point lastPoint = null;
+        boolean initialMoveToNeeded = true;
         Iterator<Node> it = way.getNodes().iterator();
         while (it.hasNext()) {
             Node n = it.next();
             Point p = nc.getPoint(n);
             if(lastPoint != null) {
-                drawSegment(path, lastPoint, p, showHeadArrowOnly ? !it.hasNext() : showDirection, reversedDirection);
+                Point p1 = lastPoint;
+                Point p2 = p;
+
+                /**
+                 * Do custom clipping to work around openjdk bug. It leads to
+                 * drawing artefacts when zooming in a lot. (#4289, #4424)
+                 * (Looks like int overflow.)
+                 */
+                LineClip clip = new LineClip(p1, p2, bounds);
+                if (clip.execute()) {
+                    if (!p1.equals(clip.getP1())) {
+                        p1 = clip.getP1();
+                        path.moveTo(p1.x, p1.y);
+                    } else if (initialMoveToNeeded) {
+                        initialMoveToNeeded = false;
+                        path.moveTo(p1.x, p1.y);
+                    }
+                    p2 = clip.getP2();
+                    path.lineTo(p2.x, p2.y);
+
+                    /* draw arrow */
+                    if (showHeadArrowOnly ? !it.hasNext() : showDirection) {
+                        if (reversedDirection) {
+                            Point tmp = p1;
+                            p1 = p2;
+                            p2 = tmp;
+                        }
+                        final double l =  10. / p1.distance(p2);
+
+                        final double sx = l * (p1.x - p2.x);
+                        final double sy = l * (p1.y - p2.y);
+
+                        arrows.moveTo(p2.x, p2.y);
+                        arrows.lineTo (p2.x + (int) Math.round(cosPHI * sx - sinPHI * sy), p2.y + (int) Math.round(sinPHI * sx + cosPHI * sy));
+                        arrows.moveTo (p2.x + (int) Math.round(cosPHI * sx + sinPHI * sy), p2.y + (int) Math.round(- sinPHI * sx + cosPHI * sy));
+                        arrows.lineTo(p2.x, p2.y);
+                    }
+                }
             }
             lastPoint = p;
         }
-        displaySegments(path, color, width, dashed, dashedColor);
+        displaySegments(path, arrows, color, width, dashed, dashedColor);
     }
 
-    private void displaySegments(GeneralPath path, Color color, int width, float dashed[], Color dashedColor) {
+    private void displaySegments(GeneralPath path, GeneralPath arrows, Color color, int width, float dashed[], Color dashedColor) {
         g.setColor(inactive ? inactiveColor : color);
         if (useStrokes) {
             if (dashed.length > 0) {
@@ -108,6 +153,7 @@ public class MapPainter {
             }
         }
         g.draw(path);
+        g.draw(arrows);
 
         if(!inactive && useStrokes && dashedColor != null) {
             g.setColor(dashedColor);
@@ -121,56 +167,11 @@ public class MapPainter {
                 g.setStroke(new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
             }
             g.draw(path);
+            g.draw(arrows);
         }
 
         if(useStrokes) {
             g.setStroke(new BasicStroke());
-        }
-    }
-
-    private static final double PHI = Math.toRadians(20);
-    private static final double cosPHI = Math.cos(PHI);
-    private static final double sinPHI = Math.sin(PHI);
-
-    private void drawSegment(GeneralPath path, Point p1, Point p2, boolean showDirection, boolean reversedDirection) {
-        boolean drawIt = false;
-        if (Main.isOpenjdk) {
-            /**
-             * Work around openjdk bug. It leads to drawing artefacts when zooming in a lot. (#4289, #4424)
-             * (It looks like int overflow when clipping.) We do custom clipping.
-             */
-            Rectangle bounds = g.getClipBounds();
-            bounds.grow(100, 100);                  // avoid arrow heads at the border
-            LineClip clip = new LineClip();
-            drawIt = clip.cohenSutherland(p1.x, p1.y, p2.x, p2.y, bounds.x, bounds.y, bounds.x+bounds.width, bounds.y+bounds.height);
-            p1 = clip.getP1();
-            p2 = clip.getP2();
-        } else {
-            drawIt = isSegmentVisible(p1, p2);
-        }
-        if (drawIt) {
-            /* draw segment line */
-            path.moveTo(p1.x, p1.y);
-            path.lineTo(p2.x, p2.y);
-
-            /* draw arrow */
-            if (showDirection) {
-                Point q1 = p1;
-                Point q2 = p2;
-                if (reversedDirection) {
-                    q1 = p2;
-                    q2 = p1;
-                    path.moveTo(q2.x, q2.y);
-                }
-                final double l =  10. / q1.distance(q2);
-
-                final double sx = l * (q1.x - q2.x);
-                final double sy = l * (q1.y - q2.y);
-
-                path.lineTo (q2.x + (int) Math.round(cosPHI * sx - sinPHI * sy), q2.y + (int) Math.round(sinPHI * sx + cosPHI * sy));
-                path.moveTo (q2.x + (int) Math.round(cosPHI * sx + sinPHI * sy), q2.y + (int) Math.round(- sinPHI * sx + cosPHI * sy));
-                path.lineTo(q2.x, q2.y);
-            }
         }
     }
 

@@ -6,37 +6,50 @@ import static java.awt.geom.Rectangle2D.OUT_RIGHT;
 import static java.awt.geom.Rectangle2D.OUT_TOP;
 import static java.awt.geom.Rectangle2D.OUT_BOTTOM;
 import java.awt.Point;
+import java.awt.Rectangle;
 
 /**
  * Computes the part of a line that is visible in a given rectangle.
  * Using int leads to overflow, so we need long int.
- * http://en.wikipedia.org/wiki/Cohen-Sutherland
  */
 public class LineClip {
     private Point p1, p2;
+    private final Rectangle clipBounds;
 
-    /**
-     * The outcode of the point.
-     * We cannot use Rectangle.outcode since it does not work with long ints.
-     */
-    public int computeOutCode (long x, long y, long xmin, long ymin, long xmax, long ymax) {
-        int code = 0;
-        if (y > ymax) {
-            code |= OUT_TOP;
-        }
-        else if (y < ymin) {
-            code |= OUT_BOTTOM;
-        }
-        if (x > xmax) {
-            code |= OUT_RIGHT;
-        }
-        else if (x < xmin) {
-            code |= OUT_LEFT;
-        }
-        return code;
+    public LineClip(Point p1, Point p2, Rectangle clipBounds) {
+        this.p1 = p1;
+        this.p2 = p2;
+        this.clipBounds = clipBounds;
     }
 
-    public boolean cohenSutherland( long x1, long y1, long x2, long y2, long xmin, long ymin, long xmax, long ymax)
+    /**
+     * run the clipping algorithm
+     * @return true if the some parts of the line lies within the clip bounds
+     */
+    public boolean execute() {
+        return cohenSutherland(p1.x, p1.y, p2.x, p2.y, clipBounds.x , clipBounds.y, clipBounds.x + clipBounds.width, clipBounds.y + clipBounds.height);
+    }
+
+    /**
+     * @return start point of the clipped line
+     */
+    public Point getP1()
+    {
+        return p1;
+    }
+
+    /**
+     * @return end point of the clipped line
+     */
+    public Point getP2()
+    {
+        return p2;
+    }
+
+    /**
+     * see http://en.wikipedia.org/wiki/Cohen-Sutherland
+     */
+    private boolean cohenSutherland( long x1, long y1, long x2, long y2, long xmin, long ymin, long xmax, long ymax)
     {
         int outcode0, outcode1, outcodeOut;
         boolean accept = false;
@@ -93,13 +106,24 @@ public class LineClip {
         return false;
     }
 
-    public Point getP1()
-    {
-        return p1;
-    }
-
-    public Point getP2()
-    {
-        return p2;
+    /**
+     * The outcode of the point.
+     * We cannot use Rectangle.outcode since it does not work with long ints.
+     */
+    private static int computeOutCode (long x, long y, long xmin, long ymin, long xmax, long ymax) {
+        int code = 0;
+        if (y > ymax) {
+            code |= OUT_TOP;
+        }
+        else if (y < ymin) {
+            code |= OUT_BOTTOM;
+        }
+        if (x > xmax) {
+            code |= OUT_RIGHT;
+        }
+        else if (x < xmin) {
+            code |= OUT_LEFT;
+        }
+        return code;
     }
 }
