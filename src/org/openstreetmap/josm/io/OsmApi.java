@@ -388,7 +388,9 @@ public class OsmApi extends OsmConnection {
         try {
             monitor.beginTask(tr("Closing changeset..."));
             initialize(monitor);
-            sendRequest("PUT", "changeset" + "/" + changeset.getId() + "/close", null, monitor);
+            /* send "\r\n" instead of empty string, so we don't send zero payload - works around bugs
+               in proxy software */
+            sendRequest("PUT", "changeset" + "/" + changeset.getId() + "/close", "\r\n", monitor);
             changeset.setOpen(false);
         } finally {
             monitor.finishTask();
