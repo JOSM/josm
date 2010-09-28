@@ -11,6 +11,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -254,6 +256,14 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
         lsResult = new JList();
         lsResult.setModel(lsResultModel);
         lsResult.setCellRenderer(new ResultListCellRenderer());
+        lsResult.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount()>1) {
+                    buttonAction(0, null);
+                }
+            }
+        });
         content.add(new JScrollPane(lsResult), BorderLayout.CENTER);
 
         JPanel pnChecks = new JPanel();
@@ -278,6 +288,7 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
 
         ckSearchInTags = new JCheckBox();
         ckSearchInTags.setText(tr("Search in tags"));
+        ckSearchInTags.setSelected(true);
         ckSearchInTags.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
