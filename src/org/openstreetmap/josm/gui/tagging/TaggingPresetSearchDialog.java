@@ -288,7 +288,7 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
 
         ckSearchInTags = new JCheckBox();
         ckSearchInTags.setText(tr("Search in tags"));
-        ckSearchInTags.setSelected(true);
+        ckSearchInTags.setSelected(Main.pref.getBoolean("taggingpreset.dialog.search-in-tags", true));
         ckSearchInTags.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -422,6 +422,8 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
             }
             lsResultModel.getPresets().get(selectPreset).preset.actionPerformed(null);
         }
+
+        Main.pref.put("taggingpreset.dialog.search-in-tags", ckSearchInTags.isSelected());
     }
 
 }
