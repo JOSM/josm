@@ -2784,6 +2784,21 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="payment:credit_cards" text="Credit cards" default="off" delete_if_empty="true" />
             <check key="payment:telephone_cards" text="Telephone cards" default="off" delete_if_empty="true" />
         </item>
+        <item name="Clock" icon="styles/standard/service/clock.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=clock"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=clock" />
+            <label text="Edit Clock" />
+            <key key="amenity" value="clock" />
+            <optional>
+                <combo key="display" text="Display" values="analog,digital,sundial,unorthodox" default="" delete_if_empty="true" />
+                <combo key="support" text="Support" values="pole,wall_mounted,billboard,ground" default="" delete_if_empty="true" />
+                <combo key="visibility" text="Visibility/readability" values="house,street,area" display_values="(up to 5m),(up to 20m),(more than 20m)" default="" delete_if_empty="true" />
+                <check key="date" text="Shows current date" default="off" delete_if_empty="true" />
+                <check key="thermometer" text="Shows temperature" default="off" delete_if_empty="true" />
+                <check key="barometer" text="Shows barometric pressure" default="off" delete_if_empty="true" />
+                <check key="hygrometer" text="Shows humidity" default="off" delete_if_empty="true" />
+            </optional>
+        </item>
         <item name="Recycling" icon="presets/recycling.png" type="node,closedway">
            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=recycling"
                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=recycling" />
