@@ -2717,6 +2717,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="man_made" value="crane" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Mineshaft" icon="presets/no_icon.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dmineshaft" />
+            <label text="Edit Mineshaft" />
+            <key key="man_made" value="mineshaft" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="depth" text="Depth in meters" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+        </item>
         <item name="Beacon" icon="styles/standard/misc/landmark/beacon.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=beacon" />
             <label text="Edit Beacon" />
