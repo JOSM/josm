@@ -187,18 +187,16 @@ public abstract class SaveActionBase extends DiskAccessAction {
         }
 
         File file = fc.getSelectedFile();
-        if(extension != null){
-            String fn = file.getPath();
-            if(fn.indexOf('.') == -1)
-            {
-                FileFilter ff = fc.getFileFilter();
-                if (ff instanceof ExtensionFileFilter) {
-                    fn += "." + ((ExtensionFileFilter)ff).getDefaultExtension();
-                } else {
-                    fn += extension;
-                }
-                file = new File(fn);
+        String fn = file.getPath();
+        if(fn.indexOf('.') == -1)
+        {
+            FileFilter ff = fc.getFileFilter();
+            if (ff instanceof ExtensionFileFilter) {
+                fn += "." + ((ExtensionFileFilter)ff).getDefaultExtension();
+            } else if(extension != null) {
+                fn += "." + extension;
             }
+            file = new File(fn);
         }
         if(file == null || (file.exists())) {
             ExtendedDialog dialog = new ExtendedDialog(
