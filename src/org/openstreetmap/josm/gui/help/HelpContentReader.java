@@ -109,6 +109,10 @@ public class HelpContentReader {
                     isInContent = false;
                 } else if (line.contains("<h3>Attachments</h3>")) {
                     isInContent = false;
+                } else if (line.contains("<div id=\"attachments\">")) {
+                    isInContent = false;
+                } else if (line.contains("<div class=\"trac-modifiedby\">")) {
+                    continue;
                 } else if (line.contains("<input type=\"submit\" name=\"attachfilebutton\"")) {
                     // heuristic: if we find a button for uploading images we are in an
                     // existing pages. Otherwise this is probably the stub page for a not yet

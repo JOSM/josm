@@ -124,6 +124,10 @@ public class WikiReader {
                 inside = false;
             } else if (line.contains("<h3>Attachments</h3>")) {
                 inside = false;
+            } else if (line.contains("<div id=\"attachments\">")) {
+                inside = false;
+            } else if (line.contains("<div class=\"trac-modifiedby\">")) {
+                continue;
             }
             if (inside && !transl) {
                 // add a border="0" attribute to images, otherwise the internal help browser
