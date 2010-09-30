@@ -397,6 +397,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
             <text key="minspeed" text="Min. speed (km/h)" default="" delete_if_empty="true" />
             <text key="maxweight" text="Max. weight (tonnes)" default="" delete_if_empty="true" />
+            <text key="maxaxleload" text="Max. axleload (tonnes)" default="" delete_if_empty="true" />
             <text key="maxheight" text="Max. Height (meters)" default="" delete_if_empty="true" />
             <text key="maxwidth" text="Max. Width (meters)" default="" delete_if_empty="true" />
             <text key="maxlength" text="Max. Length (meters)" default="" delete_if_empty="true" />
