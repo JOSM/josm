@@ -1799,6 +1799,11 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="smoking" text="Smoking" values="yes,dedicated,separated,isolated,no" default="" delete_if_empty="true" />
             <combo key="wheelchair" text="Wheelchairs" values="yes,no" default="" delete_if_empty="true" />
             <space />
+            <text key="capacity" text="Number of places" default="" delete_if_empty="true" />
+            <combo key="fee" text="Requires a fee" values="yes,no,interval" delete_if_empty="true" />
+            <check key="power_supply" text="Power supply" default="off" delete_if_empty="true" />
+            <check key="tents" text="Tents allowed" default="off" delete_if_empty="true" />
+            <space />
             <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
             <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
             <text key="website" text="Website" default="" delete_if_empty="true" />
