@@ -94,6 +94,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
             </optional>
         </item>
         <item name="Motorway Link" icon="presets/motorway.png" type="way">
@@ -111,6 +112,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
             </optional>
         </item>
         <item name="Trunk" icon="presets/trunk.png" type="way">
@@ -131,6 +133,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
             </optional>
         </item>
         <item name="Trunk Link" icon="presets/trunk.png" type="way">
@@ -150,6 +153,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
             </optional>
         </item>
         <separator/>
@@ -171,6 +175,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
             </optional>
         </item>
         <item name="Primary Link" icon="presets/way_primary.png" type="way">
@@ -188,6 +193,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
             </optional>
         </item>
         <item name="Secondary" icon="presets/way_secondary.png" type="way">
@@ -208,6 +214,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
             </optional>
         </item>
         <item name="Tertiary" icon="presets/way_tertiary.png" type="way">
@@ -227,6 +234,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
             </optional>
         </item>
         <item name="Unclassified" icon="presets/way_unclassified.png" type="way">
@@ -243,6 +251,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <check key="passing_places" text="Passing Places" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
@@ -262,6 +271,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
@@ -280,6 +290,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
@@ -298,6 +309,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
@@ -317,6 +329,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <check key="passing_places" text="Passing Places" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
@@ -335,6 +348,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <optional>
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
             </optional>
         </item>
         <item name="Road (Unknown Type)" icon="presets/way_unclassified.png" type="way">
@@ -350,6 +364,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
@@ -369,6 +384,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <combo key="junction" text="Junction" values="roundabout" default="" delete_if_empty="true" />
@@ -471,6 +487,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="access" text="Access" values="yes,private,designated,official,destination,permissive,agricultural,forestry,delivery,unknown,no" default="" delete_if_empty="true" />
@@ -495,6 +512,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
                 <combo key="foot" text="Foot" values="yes,designated,official,no" default="" delete_if_empty="true" />
                 <combo key="bicycle" text="Bicycle" values="yes,designated,official,no" default="" delete_if_empty="true" />
@@ -522,6 +540,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
@@ -542,6 +561,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <combo key="foot" text="Pedestrians" values="unknown,yes,no" default="" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
@@ -565,6 +585,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
@@ -587,6 +608,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <check key="passing_places" text="Passing Places" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
@@ -605,6 +627,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <check key="passing_places" text="Passing Places" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
@@ -625,6 +648,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
                 <check key="cutting" text="Cutting" default="off" delete_if_empty="true" />
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
+                <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
                 <text key="step_count" text="Amount of Steps" default="" delete_if_empty="true" />
