@@ -1478,11 +1478,11 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
             <label text="Services:" />
-                <combo key="sale" text="Sale" values="yes,no" default="off" delete_if_empty="true" />
-                <combo key="rental" text="Rental" values="yes,no" default="off" delete_if_empty="true" />
-                <combo key="repair" text="Repair" values="yes,brand,no" default="off" delete_if_empty="true" />
-                <combo key="parts" text="Parts" values="yes,brand,no" default="off" delete_if_empty="true" />
-                <combo key="clothes" text="Clothes" values="yes,no" default="off" delete_if_empty="true" />
+                <combo key="sale" text="Sale" values="yes,used,no" default="" delete_if_empty="true" />
+                <combo key="rental" text="Rental" values="yes,no" default="" delete_if_empty="true" />
+                <combo key="repair" text="Repair" values="yes,brand,oldtimer,no" default="" delete_if_empty="true" />
+                <combo key="parts" text="Parts" values="yes,brand,oldtimer,no" default="" delete_if_empty="true" />
+                <combo key="clothes" text="Clothes" values="yes,no" default="" delete_if_empty="true" />
             <label text="Contact:" />
                 <text key="phone" text="Phone Number" default="" delete_if_empty="true" />
                 <text key="fax" text="Fax Number" default="" delete_if_empty="true" />
