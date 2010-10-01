@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Mercator;
 
@@ -15,6 +16,7 @@ public class RelationTest {
     @BeforeClass
     public static void setUp() {
         Main.proj = new Mercator();
+        Main.pref = new Preferences();
     }
 
     @Test(expected=NullPointerException.class)

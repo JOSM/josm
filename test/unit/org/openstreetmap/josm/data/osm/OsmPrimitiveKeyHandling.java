@@ -3,15 +3,23 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.junit.Assert.assertTrue;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
  * Some unit test cases for basic tag management on {@see OsmPrimitive}. Uses
  * {@see Node} for the tests, {@see OsmPrimitive} is abstract.
- * 
+ *
  */
 public class OsmPrimitiveKeyHandling {
+
+    @BeforeClass
+    public static void init() {
+        Main.pref = new Preferences();
+    }
 
     /**
      * test query and get methods on a node withouth keys
@@ -29,7 +37,7 @@ public class OsmPrimitiveKeyHandling {
 
     /**
      * Add a tag to an empty node and test the query and get methods.
-     * 
+     *
      */
     @Test
     public void put() {
@@ -61,7 +69,7 @@ public class OsmPrimitiveKeyHandling {
 
     /**
      * Remove tags from a node with two tags and test the state of the node.
-     * 
+     *
      */
     @Test
     public void remove() {
@@ -89,7 +97,7 @@ public class OsmPrimitiveKeyHandling {
 
     /**
      * Remove all tags from a node
-     * 
+     *
      */
     @Test
     public void removeAll() {

@@ -14,8 +14,10 @@ import java.util.GregorianCalendar;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Mercator;
 
@@ -57,6 +59,11 @@ public class DataSetMergerTest {
         // init projection
         Main.proj = new Mercator();
     }*/
+
+    @BeforeClass
+    public static void init() {
+        Main.pref = new Preferences();
+    }
 
     private DataSet my;
     private DataSet their;

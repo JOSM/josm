@@ -15,7 +15,10 @@ import java.util.List;
 
 import javax.swing.DefaultListSelectionModel;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.osm.DatasetFactory;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
@@ -25,6 +28,11 @@ public class NodeListMergeModelTest {
 
     private DatasetFactory my = new DatasetFactory();
     private DatasetFactory their = new DatasetFactory();
+
+    @BeforeClass
+    public static void init() {
+        Main.pref = new Preferences();
+    }
 
     @SuppressWarnings("unchecked")
     protected List<Node> inspectNodeList(NodeListMergeModel model, String name) {

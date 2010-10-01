@@ -10,14 +10,21 @@ import java.util.List;
 import org.fest.reflect.core.Reflection;
 import org.fest.reflect.reference.TypeRef;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmReader;
 
 public class QuadBucketsTest {
+
+    @BeforeClass
+    public static void init() {
+        Main.pref = new Preferences();
+    }
 
     private void removeAllTest(DataSet ds) {
         List<Node> allNodes = new ArrayList<Node>(ds.getNodes());

@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -24,9 +25,11 @@ import org.openstreetmap.josm.io.OsmReader;
 
 
 public class FilterTest {
+
     @BeforeClass
     public static void setUp() {
         Main.proj = new Mercator();
+        Main.pref = new Preferences();
     }
 
     @Test

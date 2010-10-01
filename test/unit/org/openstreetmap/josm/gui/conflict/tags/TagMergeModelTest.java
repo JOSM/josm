@@ -9,7 +9,10 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.conflict.pair.tags.TagMergeItem;
@@ -17,6 +20,11 @@ import org.openstreetmap.josm.gui.conflict.pair.tags.TagMergeModel;
 
 @SuppressWarnings("unchecked")
 public class TagMergeModelTest {
+
+    @BeforeClass
+    public static void init() {
+        Main.pref = new Preferences();
+    }
 
     @Test
     public void addPropertyChangeListener() {

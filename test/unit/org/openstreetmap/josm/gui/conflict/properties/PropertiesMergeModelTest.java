@@ -9,8 +9,10 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -42,10 +44,15 @@ public class PropertiesMergeModelTest {
 
     PropertiesMergeModel model;
 
+    @BeforeClass
+    public static void init() {
+        Main.proj = new Epsg4326();
+        Main.pref = new Preferences();
+    }
+
     @Before
     public void setUp() {
         model = new PropertiesMergeModel();
-        Main.proj = new Epsg4326();
     }
 
     private void populate(OsmPrimitive my, OsmPrimitive their) {

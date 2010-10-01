@@ -8,10 +8,16 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Mercator;
 
 public class OsmPrimitiveTest {
+
+    @BeforeClass
+    public static void init() {
+        Main.pref = new Preferences();
+    }
 
     private void compareReferrers(OsmPrimitive actual, OsmPrimitive... expected) {
         Assert.assertEquals(new HashSet<OsmPrimitive>(Arrays.asList(expected)),
