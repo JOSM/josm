@@ -142,6 +142,7 @@ Build-Date: ${build.tstamp}
 		<fileset dir="lib">
 			<include name="**/*.jar"/>
 		</fileset>
+		<pathelement path="dist/josm-custom.jar"/>
 	</path>
 
 	<target name="test-init">
@@ -154,13 +155,13 @@ Build-Date: ${build.tstamp}
 		<delete dir="${test.dir}/report"/>
 	</target>
 
-	<target name="test-compile" depends="test-init">
-		<javac srcdir="${src.dir}:${test.dir}/unit" classpathref="test.classpath" destdir="${test.dir}/${build.dir}"
+	<target name="test-compile" depends="test-init,dist">
+		<javac srcdir="${test.dir}/unit" classpathref="test.classpath" destdir="${test.dir}/${build.dir}"
 				target="1.5" source="1.5" debug="on" encoding="UTF-8">
 			<compilerarg value="-Xlint:deprecation"/>
 			<compilerarg value="-Xlint:unchecked"/>
 		</javac>
-		<javac srcdir="${src.dir}:${test.dir}/functional" classpathref="test.classpath" destdir="${test.dir}/${build.dir}"
+		<javac srcdir="${test.dir}/functional" classpathref="test.classpath" destdir="${test.dir}/${build.dir}"
 						target="1.5" source="1.5" debug="on" encoding="UTF-8">
 			<compilerarg value="-Xlint:deprecation"/>
 			<compilerarg value="-Xlint:unchecked"/>
@@ -194,7 +195,7 @@ Build-Date: ${build.tstamp}
 
 	 	-dontoptimize
 	 	-dontobfuscate
-	 	
+
 	 	-dontskipnonpubliclibraryclasses
 
 	 	-keepclasseswithmembers public class org.openstreetmap.josm.gui.MainApplication {
