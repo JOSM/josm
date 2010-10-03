@@ -447,7 +447,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:bridge" />
             <label text="Edit Bridge" />
             <space />
-            <key key="bridge" value="yes" />
+            <combo key="bridge" values="yes,viaduct,swing,aqueduct" required="true" default="yes" text="Bridge" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="1" delete_if_empty="true" />

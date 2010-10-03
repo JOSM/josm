@@ -119,8 +119,12 @@ public class PresetListPanel extends JPanel {
                         } else if ((i instanceof Check) && ((Check)i).required) {
                             key = ((Check)i).key;
                         }
-                        if (key != null && valueCount.get(key) == null) {
-                            found -= 100;
+                        if (key != null) {
+                            if (valueCount.get(key) != null) {
+                                found += 1;
+                            } else {
+                                found -= 100;
+                            }
                         }
                     }
                 }

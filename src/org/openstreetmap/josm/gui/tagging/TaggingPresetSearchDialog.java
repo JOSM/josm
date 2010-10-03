@@ -175,6 +175,11 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
             else
                 return result;
         }
+
+        @Override
+        public String toString() {
+            return classification + " " + preset.toString();
+        }
     }
 
 
