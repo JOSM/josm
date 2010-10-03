@@ -14,6 +14,8 @@ import org.openstreetmap.josm.data.coor.QuadTiling;
  * Note: bbox of primitives added to QuadBuckets has to stay the same. In case of coordinate change, primitive must
  * be removed and readded.
  *
+ * This class is (no longer) thread safe.
+ *
  */
 public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
 {
@@ -23,11 +25,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     private static final int NE_INDEX = 3;
     private static final int SE_INDEX = 2;
     private static final int SW_INDEX = 0;
-    /*
-     * Functions prefixed with __ need locking before
-     * being called.
-     */
-    private final Object split_lock = new Object();
 
     static void abort(String s)
     {
@@ -168,23 +165,21 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
 
         boolean remove_content(T o)
         {
-            synchronized (split_lock) {
-                // If two threads try to remove item at the same time from different buckets of this QBLevel,
-                // it might happen that one thread removes bucket but don't remove parent because it still sees
-                // another bucket set. Second thread do the same. Due to thread memory caching, it's possible that
-                // changes made by threads will show up in children array too late, leading to QBLevel with all children
-                // set to null
-                if (content == null)
-                    return false;
-                boolean ret = this.content.remove(o);
-                if (this.content.size() == 0) {
-                    this.content = null;
-                }
-                if (this.canRemove()) {
-                    this.remove_from_parent();
-                }
-                return ret;
+            // If two threads try to remove item at the same time from different buckets of this QBLevel,
+            // it might happen that one thread removes bucket but don't remove parent because it still sees
+            // another bucket set. Second thread do the same. Due to thread memory caching, it's possible that
+            // changes made by threads will show up in children array too late, leading to QBLevel with all children
+            // set to null
+            if (content == null)
+                return false;
+            boolean ret = this.content.remove(o);
+            if (this.content.size() == 0) {
+                this.content = null;
             }
+            if (this.canRemove()) {
+                this.remove_from_parent();
+            }
+            return ret;
         }
         // Get the correct index for the given primitive
         // at the given level.  If the primitive can not
@@ -393,18 +388,14 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                     abort("\nobject " + o + " does not belong in node at level: " + level + " bbox: " + this.bbox());
                 }
             }
-            synchronized (split_lock) {
-                __add_content(o);
-                if (isLeaf() && content.size() > MAX_OBJECTS_PER_LEVEL && level < QuadTiling.NR_LEVELS) {
-                    __split();
-                }
+            __add_content(o);
+            if (isLeaf() && content.size() > MAX_OBJECTS_PER_LEVEL && level < QuadTiling.NR_LEVELS) {
+                __split();
             }
         }
 
         void add(T o) {
-            synchronized (split_lock) {
-                findBucket(o.getBBox()).doAdd(o);
-            }
+            findBucket(o.getBBox()).doAdd(o);
         }
 
         private void search(BBox search_bbox, List<T> result)
@@ -528,23 +519,20 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         clear();
     }
     public void clear()  {
-        synchronized (split_lock) {
-            root = new QBLevel();
-            search_cache = null;
-            size = 0;
-            if (debug) {
-                out("QuadBuckets() cleared: " + this);
-                out("root: " + root + " level: " + root.level + " bbox: " + root.bbox());
-            }
+        root = new QBLevel();
+        search_cache = null;
+        size = 0;
+        if (debug) {
+            out("QuadBuckets() cleared: " + this);
+            out("root: " + root + " level: " + root.level + " bbox: " + root.bbox());
         }
     }
     public boolean add(T n) {
-        synchronized (split_lock) {
-            root.add(n);
-            size++;
-            return true;
-        }
+        root.add(n);
+        size++;
+        return true;
     }
+
     public void unsupported()
     {
         out("unsupported operation");
@@ -587,15 +575,13 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
     }
     public boolean remove(Object o) {
         @SuppressWarnings("unchecked") T t = (T) o;
-        synchronized (split_lock) {
-            search_cache = null; // Search cache might point to one of removed buckets
-            QBLevel bucket = root.findBucket(t.getBBox());
-            if (bucket.remove_content(t)) {
-                size--;
-                return true;
-            } else
-                return false;
-        }
+        search_cache = null; // Search cache might point to one of removed buckets
+        QBLevel bucket = root.findBucket(t.getBBox());
+        if (bucket.remove_content(t)) {
+            size--;
+            return true;
+        } else
+            return false;
     }
     public boolean contains(Object o) {
         @SuppressWarnings("unchecked") T t = (T) o;
@@ -633,9 +619,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 return null;
             QBLevel orig = q;
             QBLevel next;
-            synchronized (split_lock) {
-                next = q.nextContentNode();
-            }
+            next = q.nextContentNode();
             //if (consistency_testing && (orig == next))
             if (orig == next) {
                 abort("got same leaf back leaf: " + q.isLeaf());
@@ -725,9 +709,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         return new QuadBucketIterator(this);
     }
     public int size() {
-        synchronized (split_lock) {
-            return size;
-        }
+        return size;
     }
 
     public boolean isEmpty()

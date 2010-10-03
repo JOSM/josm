@@ -151,7 +151,12 @@ public class DataSet implements Cloneable {
     }
 
     public List<Node> searchNodes(BBox bbox) {
-        return nodes.search(bbox);
+        lock.readLock().lock();
+        try {
+            return nodes.search(bbox);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     /**
@@ -171,7 +176,12 @@ public class DataSet implements Cloneable {
     }
 
     public List<Way> searchWays(BBox bbox) {
-        return ways.search(bbox);
+        lock.readLock().lock();
+        try {
+            return ways.search(bbox);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     /**
@@ -189,14 +199,19 @@ public class DataSet implements Cloneable {
     }
 
     public List<Relation> searchRelations(BBox bbox) {
-        // QuadBuckets might be useful here (don't forget to do reindexing after some of rm is changed)
-        List<Relation> result = new ArrayList<Relation>();
-        for (Relation r: relations) {
-            if (r.getBBox().intersects(bbox)) {
-                result.add(r);
+        lock.readLock().lock();
+        try {
+            // QuadBuckets might be useful here (don't forget to do reindexing after some of rm is changed)
+            List<Relation> result = new ArrayList<Relation>();
+            for (Relation r: relations) {
+                if (r.getBBox().intersects(bbox)) {
+                    result.add(r);
+                }
             }
+            return result;
+        } finally {
+            lock.readLock().unlock();
         }
-        return result;
     }
 
     /**
