@@ -68,9 +68,6 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     private static final String EMPTY_TOOLBAR_MARKER = "<!-empty-!>";
 
     public static class ActionDefinition {
-
-        public static ActionDefinition SEPARATOR = new ActionDefinition(null);
-
         private final Action action;
         private final Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -93,6 +90,13 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             return action;
         }
 
+        public boolean isSeparator() {
+            return action == null;
+        }
+
+        public static ActionDefinition getSeparator() {
+            return new ActionDefinition(null);
+        }
     }
 
     public static class ActionParser {
@@ -206,14 +210,14 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
     private static class ActionParametersTableModel extends AbstractTableModel {
 
-        private ActionDefinition currentAction = ActionDefinition.SEPARATOR;
+        private ActionDefinition currentAction = ActionDefinition.getSeparator();
 
         public int getColumnCount() {
             return 2;
         }
 
         public int getRowCount() {
-            if (currentAction == ActionDefinition.SEPARATOR || !(currentAction.getAction() instanceof ParameterizedAction))
+            if (currentAction.isSeparator() || !(currentAction.getAction() instanceof ParameterizedAction))
                 return 0;
             ParameterizedAction pa = (ParameterizedAction)currentAction.getAction();
             return pa.getActionParameters().size();
@@ -285,7 +289,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     for (TreePath selectedAction : actionsTree.getSelectionPaths()) {
                         DefaultMutableTreeNode node = (DefaultMutableTreeNode) selectedAction.getLastPathComponent();
                         if (node.getUserObject() == null) {
-                            selected.add(leadItem++, ActionDefinition.SEPARATOR);
+                            selected.add(leadItem++, ActionDefinition.getSeparator());
                         } else if (node.getUserObject() instanceof Action) {
                             selected.add(leadItem++, new ActionDefinition((Action)node.getUserObject()));
 
@@ -409,8 +413,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 @Override public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                     String s;
                     Icon i;
-                    if (value != ActionDefinition.SEPARATOR) {
-                        ActionDefinition action = (ActionDefinition)value;
+                    ActionDefinition action = (ActionDefinition)value;
+                    if (!action.isSeparator()) {
                         s = (String) action.getAction().getValue(Action.NAME);
                         i = (Icon) action.getAction().getValue(Action.SMALL_ICON);
                     } else {
@@ -560,7 +564,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                         DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
                         Object obj = node.getUserObject();
                         if (obj == null) {
-                            dragActions.add(ActionDefinition.SEPARATOR);
+                            dragActions.add(ActionDefinition.getSeparator());
                         }
                         else if (obj instanceof Action) {
                             dragActions.add(new ActionDefinition((Action) obj));
@@ -641,12 +645,11 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             Collection<String> t = new LinkedList<String>();
             ActionParser parser = new ActionParser(null);
             for (int i = 0; i < selected.size(); ++i) {
-                if (selected.get(i) == ActionDefinition.SEPARATOR) {
-
+                ActionDefinition action = (ActionDefinition)selected.get(i);
+                if (action.isSeparator()) {
                     t.add("|");
-
                 } else {
-                    t.add(parser.saveAction((ActionDefinition)(selected.get(i))));
+                    t.add(parser.saveAction(action));
                 }
             }
             if (t.isEmpty()) {
@@ -730,7 +733,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         for (String s : getToolString()) {
             if (s.equals("|")) {
-                result.add(ActionDefinition.SEPARATOR);
+                result.add(ActionDefinition.getSeparator());
             } else {
                 ActionDefinition a = actionParser.loadAction(s);
                 if(a != null) {
@@ -760,9 +763,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         control.removeAll();
 
         for (ActionDefinition action : getDefinedActions()) {
-            if (action == ActionDefinition.SEPARATOR) {
+            if (action.isSeparator()) {
                 control.addSeparator();
-
             } else {
                 Action a = action.getParametrizedAction();
                 JButton b = control.add(a);
