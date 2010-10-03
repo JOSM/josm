@@ -84,6 +84,7 @@
 	<complexType name="link">
 		<attribute name="href" type="string" use="required" />
 		<attribute name="text" type="string" />
+		<attribute name="text_context" type="string" />
 
 		<attribute name="name" use="prohibited"/>
 		<anyAttribute processContents="skip"/>
@@ -91,6 +92,7 @@
 
 	<complexType name="label">
 		<attribute name="text" type="string" use="required" />
+		<attribute name="text_context" type="string" />
 
 		<attribute name="name" use="prohibited"/>
 		<anyAttribute processContents="skip"/>
@@ -101,6 +103,7 @@
 	<complexType name="text">
 		<attribute name="key" type="string" use="required"/>
 		<attribute name="text" type="string" />
+		<attribute name="text_context" type="string" />
 		<attribute name="default" type="string" />
 		<attribute name="delete_if_empty" type="boolean" />
 		<attribute name="use_last_as_default" type="boolean" />
@@ -116,11 +119,13 @@
 	<complexType name="combo">
 		<attribute name="key" type="string" use="required" />
 		<attribute name="text" type="string" />
+		<attribute name="text_context" type="string" />
 		<attribute name="values" type="string" use="required" />
+		<attribute name="values_context" type="string" />
+		<attribute name="display_values" type="string"/>
 		<attribute name="default" type="string" />
 		<attribute name="editable" type="boolean" />
 		<attribute name="delete_if_empty" type="boolean" />
-		<attribute name="display_values" type="string"/>
 		<attribute name="required" type="boolean"/>
 
 		<attribute name="type" use="prohibited"/>
@@ -134,10 +139,12 @@
 	<complexType name="check">
 		<attribute name="key" type="string" use="required" />
 		<attribute name="text" type="string" />
+		<attribute name="text_context" type="string" />
 		<attribute name="default" type="tns:check_default" />
-		<attribute name="delete_if_empty" type="boolean" />
 		<attribute name="use_last_as_default" type="boolean" />
 		<attribute name="required" type="boolean"/>
+		<attribute name="value_on" type="string"/>
+		<attribute name="value_off" type="string"/>
 
 		<attribute name="name" use="prohibited"/>
 		<attribute name="type" use="prohibited"/>
@@ -161,9 +168,11 @@
 	<complexType name="role">
 		<attribute name="key" type="string"/>
 		<attribute name="text" type="string"/>
+		<attribute name="text_context" type="string"/>
 		<attribute name="requisite" type="string"/>
 		<attribute name="type" type="string"/>
 		<attribute name="count" type="integer"/>
+		<attribute name="required" type="boolean"/>
 	</complexType>
 
 	<simpleType name="role_requisite">

@@ -21,7 +21,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,7 +42,6 @@ import javax.swing.SwingUtilities;
 import javax.xml.transform.stream.StreamSource;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -117,7 +115,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             field.setAutoCompletionList(list);
         }
 
-        public boolean focus = false;
         abstract boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel);
         abstract void addCommands(List<Tag> changedTags);
         boolean requestFocusInWindow() {return false;}
@@ -951,12 +948,12 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             final Relation r = new Relation();
             final Collection<RelationMember> members = new HashSet<RelationMember>();
             for(Tag t : getChangedTags()) {
-              r.put(t.getKey(), t.getValue());
+                r.put(t.getKey(), t.getValue());
             }
             for(OsmPrimitive osm : sel) {
-              RelationMember rm = new RelationMember("", osm);
-              r.addMember(rm);
-              members.add(rm);
+                RelationMember rm = new RelationMember("", osm);
+                r.addMember(rm);
+                members.add(rm);
             }
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
