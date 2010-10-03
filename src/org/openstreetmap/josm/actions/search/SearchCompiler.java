@@ -429,16 +429,6 @@ public class SearchCompiler {
                         return true;
                 }
             }
-            if (osm.getUser() != null) {
-                for (String name : osm.getUser().getNames()) {
-                    name = Normalizer.normalize(name, Normalizer.Form.NFC);
-                    if (!caseSensitive) {
-                        name = name.toLowerCase();
-                    }
-                    if (name.indexOf(search) != -1)
-                        return true;
-                }
-            }
             return false;
         }
         @Override public String toString() {
