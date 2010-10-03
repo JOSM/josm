@@ -501,7 +501,9 @@ public class PluginPreference implements PreferenceSetting {
                             null,
                             list.getSelectedValue()
                     );
-                    model.setElementAt(s, list.getSelectedIndex());
+                    if (s != null) {
+                        model.setElementAt(s, list.getSelectedIndex());
+                    }
                 }
             }), GBC.eol().fill(GBC.HORIZONTAL));
             buttons.add(new JButton(new AbstractAction(tr("Delete")){
