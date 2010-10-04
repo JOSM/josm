@@ -140,7 +140,8 @@ public class WikiReader {
                 transl = false;
             }
         }
-        if (b.indexOf("      Describe ") >= 0)
+        if (b.indexOf("      Describe ") >= 0
+        || b.indexOf(" does not exist. You can create it here.</p>") >= 0)
             return "";
         return "<html>" + b + "</html>";
     }

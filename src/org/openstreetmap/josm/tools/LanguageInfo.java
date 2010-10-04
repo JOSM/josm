@@ -22,6 +22,7 @@ public class LanguageInfo {
             /* do nothing */
         } else if (code.matches("[^_]+_[^_]+")) {
             code = code.substring(0,2);
+            if (code.equals("en")) return "";
         } else {
             System.err.println(tr("Warning: failed to derive wiki language prefix from JOSM locale code ''{0}''. Using default code ''en''.", code));
             return "";
