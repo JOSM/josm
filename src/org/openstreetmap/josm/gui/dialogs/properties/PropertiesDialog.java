@@ -1058,24 +1058,23 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
 
         public void actionPerformed(ActionEvent e) {
             try {
-                String base = new String(Main.pref.get("url.openstreetmap-wiki", "http://wiki.openstreetmap.org/wiki/"));
-                String l = LanguageInfo.getWikiLanguagePrefix();
-                List<URI> uris = new ArrayList<URI>();
+                String base = Main.pref.get("url.openstreetmap-wiki", "http://wiki.openstreetmap.org/wiki/");
+                String lang = LanguageInfo.getWikiLanguagePrefix();
+                final List<URI> uris = new ArrayList<URI>();
                 int row;
                 if (propertyTable.getSelectedRowCount() == 1) {
                     row = propertyTable.getSelectedRow();
                     String key = URLEncoder.encode(propertyData.getValueAt(row, 0).toString(), "UTF-8");
-                    @SuppressWarnings("unchecked")
                     String val = URLEncoder.encode(
                             ((Map<String,Integer>)propertyData.getValueAt(row, 1))
                             .entrySet().iterator().next().getKey(), "UTF-8"
                     );
 
-                    uris.add(new URI(String.format("%s%sTag:%s=%s", base, l, key, val)));
+                    uris.add(new URI(String.format("%s%sTag:%s=%s", base, lang, key, val)));
                     uris.add(new URI(String.format("%sTag:%s=%s", base, key, val)));
-                    uris.add(new URI(String.format("%s%sKey:%s", base, l, key)));
+                    uris.add(new URI(String.format("%s%sKey:%s", base, lang, key)));
                     uris.add(new URI(String.format("%sKey:%s", base, key)));
-                    uris.add(new URI(String.format("%s%sMap_Features", base, l)));
+                    uris.add(new URI(String.format("%s%sMap_Features", base, lang)));
                     uris.add(new URI(String.format("%sMap_Features", base)));
                 } else if (membershipTable.getSelectedRowCount() == 1) {
                     row = membershipTable.getSelectedRow();
@@ -1084,51 +1083,61 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     );
 
                     if (type != null && !type.equals("")) {
-                        uris.add(new URI(String.format("%s%sRelation:%s", base, l, type)));
+                        uris.add(new URI(String.format("%s%sRelation:%s", base, lang, type)));
                         uris.add(new URI(String.format("%sRelation:%s", base, type)));
                     }
 
-                    uris.add(new URI(String.format("%s%sRelations", base, l)));
+                    uris.add(new URI(String.format("%s%sRelations", base, lang)));
                     uris.add(new URI(String.format("%sRelations", base)));
                 } else {
                     // give the generic help page, if more than one element is selected
-                    uris.add(new URI(String.format("%s%sMap_Features", base, l)));
+                    uris.add(new URI(String.format("%s%sMap_Features", base, lang)));
                     uris.add(new URI(String.format("%sMap_Features", base)));
                 }
 
-                // find a page that actually exists in the wiki
-                HttpURLConnection conn;
-                for(URI u : uris) {
-                    conn = (HttpURLConnection) u.toURL().openConnection();
+                Main.worker.execute(new Runnable(){
+                    public void run() {
+                        try {
+                            // find a page that actually exists in the wiki
+                            HttpURLConnection conn;
+                            for (URI u : uris) {
+                                conn = (HttpURLConnection) u.toURL().openConnection();
+                                conn.setConnectTimeout(5000);
 
-                    if (conn.getResponseCode() != 200) {
-                        System.out.println("INFO: " + u + " does not exist");
-                        conn.disconnect();
-                    } else {
-                        int osize = conn.getContentLength();
-                        conn.disconnect();
+                                if (conn.getResponseCode() != 200) {
+                                    System.out.println("INFO: " + u + " does not exist");
+                                    conn.disconnect();
+                                } else {
+                                    int osize = conn.getContentLength();
+                                    conn.disconnect();
 
-                        conn = (HttpURLConnection) new URI(u.toString()
-                                .replace("=", "%3D") /* do not URLencode whole string! */
-                                .replaceFirst("/wiki/", "/w/index.php?redirect=no&title=")
-                        ).toURL().openConnection();
+                                    conn = (HttpURLConnection) new URI(u.toString()
+                                            .replace("=", "%3D") /* do not URLencode whole string! */
+                                            .replaceFirst("/wiki/", "/w/index.php?redirect=no&title=")
+                                    ).toURL().openConnection();
+                                    conn.setConnectTimeout(5000);
 
-                        /* redirect pages have different content length, but retrieving a "nonredirect"
-                         *  page using index.php and the direct-link method gives slightly different
-                         *  content lengths, so we have to be fuzzy.. (this is UGLY, recode if u know better)
-                         */
-                        if (Math.abs(conn.getContentLength()-osize) > 200) {
-                            System.out.println("INFO: " + u + " is a mediawiki redirect");
-                            conn.disconnect();
-                        } else {
-                            System.out.println("INFO: browsing to " + u);
-                            conn.disconnect();
+                                    /* redirect pages have different content length, but retrieving a "nonredirect"
+                                     *  page using index.php and the direct-link method gives slightly different
+                                     *  content lengths, so we have to be fuzzy.. (this is UGLY, recode if u know better)
+                                     */
+                                    if (Math.abs(conn.getContentLength() - osize) > 200) {
+                                        System.out.println("INFO: " + u + " is a mediawiki redirect");
+                                        conn.disconnect();
+                                    } else {
+                                        System.out.println("INFO: browsing to " + u);
+                                        conn.disconnect();
 
-                            OpenBrowser.displayUrl(u.toString());
-                            break;
+                                        OpenBrowser.displayUrl(u.toString());
+                                        break;
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
-                }
+                });
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
