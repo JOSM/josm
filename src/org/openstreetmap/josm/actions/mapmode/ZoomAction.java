@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -49,7 +50,7 @@ public class ZoomAction extends MapMode implements SelectionEnded {
     /**
      * Zoom to the rectangle on the map.
      */
-    public void selectionEnded(Rectangle r, boolean alt, boolean shift, boolean ctrl) {
+    public void selectionEnded(Rectangle r, MouseEvent e) {
         if (r.width >= 3 && r.height >= 3 && Main.isDisplayingMapView()) {
             MapView mv = Main.map.mapView;
             mv.zoomToFactor(mv.getEastNorth(r.x+r.width/2, r.y+r.height/2), r.getWidth()/mv.getWidth());

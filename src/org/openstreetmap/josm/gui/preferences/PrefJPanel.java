@@ -194,6 +194,7 @@ public class PrefJPanel extends javax.swing.JPanel {
         shortcutTable.getSelectionModel().addListSelectionListener(new cbAction(this));
         //shortcutTable.setFillsViewportHeight(true); Java 1.6
         shortcutTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        shortcutTable.setAutoCreateRowSorter(true);
         listScrollPane.setViewportView(shortcutTable);
 
         listPane.add(listScrollPane);

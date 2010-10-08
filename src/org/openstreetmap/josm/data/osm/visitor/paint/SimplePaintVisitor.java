@@ -12,6 +12,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -25,7 +26,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
-import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 
 /**
@@ -265,27 +265,23 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
             }
 
             final int size = max((ds.isSelected(n) ? selectedNodeSize : 0),
-                                    (n.isTagged() ? taggedNodeSize : 0),
-                                    (n.isConnectionNode() ? connectionNodeSize : 0),
-                                    unselectedNodeSize);
+                    (n.isTagged() ? taggedNodeSize : 0),
+                    (n.isConnectionNode() ? connectionNodeSize : 0),
+                    unselectedNodeSize);
 
             final boolean fill = (ds.isSelected(n) && fillSelectedNode) ||
-                                    (n.isTagged() && fillTaggedNode) ||
-                                    (n.isConnectionNode() && fillConnectionNode) ||
-                                    fillUnselectedNode;
+            (n.isTagged() && fillTaggedNode) ||
+            (n.isConnectionNode() && fillConnectionNode) ||
+            fillUnselectedNode;
 
             drawNode(n, color, size, fill);
         }
     }
 
-    public static boolean isLargeSegment(Point p1, Point p2, int space)
+    public static boolean isLargeSegment(Point2D p1, Point2D p2, int space)
     {
-        int xd = p1.x-p2.x; if(xd < 0) {
-            xd = -xd;
-        }
-        int yd = p1.y-p2.y; if(yd < 0) {
-            yd = -yd;
-        }
+        double xd = Math.abs(p1.getX()-p2.getX());
+        double yd = Math.abs(p1.getY()-p2.getY());
         return (xd+yd > space);
     }
 

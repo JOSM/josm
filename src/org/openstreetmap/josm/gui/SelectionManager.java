@@ -60,7 +60,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
          * @param ctrl Whether the ctrl key was pressed
          * @see InputEvent#getModifiersEx()
          */
-        public void selectionEnded(Rectangle r, boolean alt, boolean shift, boolean ctrl);
+        public void selectionEnded(Rectangle r, MouseEvent e);
         /**
          * Called to register the selection manager for "active" property.
          * @param listener The listener to register
@@ -188,11 +188,8 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         mousePosStart = null;
         mousePos = null;
 
-        boolean shift = (e.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0;
-        boolean alt = (e.getModifiersEx() & (MouseEvent.ALT_DOWN_MASK | MouseEvent.ALT_GRAPH_DOWN_MASK)) != 0;
-        boolean ctrl = (e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) != 0;
         if ((e.getModifiersEx() & MouseEvent.BUTTON3_DOWN_MASK) == 0) {
-            selectionEndedListener.selectionEnded(r, alt, shift, ctrl);
+            selectionEndedListener.selectionEnded(r, e);
         }
     }
 
@@ -276,7 +273,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         Point center = new Point(r.x+r.width/2, r.y+r.height/2);
 
         if (clicked) {
-            OsmPrimitive osm = nc.getNearest(center, OsmPrimitive.isSelectablePredicate);
+            OsmPrimitive osm = nc.getNearestNodeOrWay(center, OsmPrimitive.isSelectablePredicate);
             if (osm != null) {
                 selection.add(osm);
             }
