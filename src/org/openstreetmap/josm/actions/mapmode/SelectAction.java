@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -202,7 +202,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                     "Add and move a virtual new node to {0} ways", virtualWays.size(),
                     virtualWays.size());
             Main.main.undoRedo.add(new SequenceCommand(text, virtualCmds));
-            selectPrims(Collections.singleton((OsmPrimitive)virtualNode), false, false, false, false);
+            getCurrentDataSet().setSelected(Collections.singleton((OsmPrimitive)virtualNode));
             virtualWays.clear();
             virtualNode = null;
         } else {
@@ -268,33 +268,46 @@ public class SelectAction extends MapMode implements SelectionEnded {
         }
     }
 
-    private Collection<OsmPrimitive> getNearestCollectionVirtual(Point p, boolean allSegements) {
-        MapView c = Main.map.mapView;
+    private Collection<OsmPrimitive> getNearestCollectionVirtual(Point p) {
         int snapDistance = Main.pref.getInteger("mappaint.node.virtual-snap-distance", 8);
+        int virtualSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
         snapDistance *= snapDistance;
+
+        MapView c = Main.map.mapView;
+        Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
+
+        // take nearest node
         OsmPrimitive osm = c.getNearestNode(p, OsmPrimitive.isSelectablePredicate);
-        virtualWays.clear();
-        virtualNode = null;
-        Node virtualWayNode = null;
 
-        if (osm == null)
-        {
-            Collection<WaySegment> nearestWaySegs = allSegements
-            ? c.getNearestWaySegments(p, OsmPrimitive.isSelectablePredicate)
-                    : Collections.singleton(c.getNearestWaySegment(p, OsmPrimitive.isSelectablePredicate));
+        if (osm != null) {
+            for (Node n : c.getNearestNodes(p, OsmPrimitive.isSelectablePredicate)) {
+                if (sel.contains(n)) {
+                    // take nearest selected node
+                    osm = n;
+                    break;
+                }
+            }
+        } else {
+            Node virtualWayNode = null;
+            Way w = null;
 
-            for(WaySegment nearestWS : nearestWaySegs) {
+            Collection<WaySegment> virtualWaysInSel = new ArrayList<WaySegment>();
+            Collection<WaySegment> wss = c.getNearestWaySegments(p, OsmPrimitive.isSelectablePredicate);
+            for(WaySegment nearestWS : wss) {
                 if (nearestWS == null) {
                     continue;
                 }
 
-                osm = nearestWS.way;
-                if(Main.pref.getInteger("mappaint.node.virtual-size", 8) > 0)
-                {
-                    Way w = (Way)osm;
+                w = nearestWS.way;
+                if (osm == null && sel.contains(w)) {
+                    // take nearest selected way
+                    osm = w;
+                }
+
+                if (Main.pref.getInteger("mappaint.node.virtual-size", 8) > 0) {
                     Point p1 = c.getPoint(w.getNode(nearestWS.lowerIndex));
                     Point p2 = c.getPoint(w.getNode(nearestWS.lowerIndex+1));
-                    if(SimplePaintVisitor.isLargeSegment(p1, p2, Main.pref.getInteger("mappaint.node.virtual-space", 70)))
+                    if(SimplePaintVisitor.isLargeSegment(p1, p2, virtualSpace))
                     {
                         Point pc = new Point((p1.x+p2.x)/2, (p1.y+p2.y)/2);
                         if (p.distanceSq(pc) < snapDistance)
@@ -303,7 +316,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                             // virtual ways list. Otherwise ways that coincidentally have their
                             // virtual node at the same spot will be joined which is likely unwanted
                             if(virtualWayNode != null) {
-                                if(  !w.getNode(nearestWS.lowerIndex+1).equals(virtualWayNode)
+                                if(!w.getNode(nearestWS.lowerIndex+1).equals(virtualWayNode)
                                         && !w.getNode(nearestWS.lowerIndex).equals(virtualWayNode)) {
                                     continue;
                                 }
@@ -311,7 +324,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                                 virtualWayNode = w.getNode(nearestWS.lowerIndex+1);
                             }
 
-                            virtualWays.add(nearestWS);
+                            (!sel.contains(w) ? virtualWays : virtualWaysInSel).add(nearestWS);
                             if(virtualNode == null) {
                                 virtualNode = new Node(Main.map.mapView.getLatLon(pc.x, pc.y));
                             }
@@ -319,7 +332,19 @@ public class SelectAction extends MapMode implements SelectionEnded {
                     }
                 }
             }
+
+            if (virtualNode != null) {
+                // insert virtualNode into all segments if nothing was selected,
+                // else only into the (previously) selected segments
+                virtualWays = virtualWaysInSel.isEmpty() ? virtualWays : virtualWaysInSel;
+            }
+
+            if (osm == null && !wss.isEmpty()) {
+                // take nearest way
+                osm = wss.iterator().next().way;
+            }
         }
+
         if (osm == null)
             return Collections.emptySet();
         return Collections.singleton(osm);
@@ -337,8 +362,8 @@ public class SelectAction extends MapMode implements SelectionEnded {
     @Override public void mousePressed(MouseEvent e) {
         if(!Main.map.mapView.isActiveLayerVisible())
             return;
+
         // request focus in order to enable the expected keyboard shortcuts
-        //
         Main.map.mapView.requestFocus();
 
         cancelDrawMode = false;
@@ -346,7 +371,6 @@ public class SelectAction extends MapMode implements SelectionEnded {
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
         boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        boolean alt = (e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
         boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
 
         // We don't want to change to draw tool if the user tries to (de)select
@@ -359,7 +383,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
         didMove = false;
         initialMoveThresholdExceeded = false;
 
-        Collection<OsmPrimitive> osmColl = getNearestCollectionVirtual(e.getPoint(), alt);
+        Collection<OsmPrimitive> osmColl = getNearestCollectionVirtual(e.getPoint());
 
         if (ctrl && shift) {
             if (getCurrentDataSet().getSelected().isEmpty()) {
@@ -382,8 +406,8 @@ public class SelectAction extends MapMode implements SelectionEnded {
             selectionManager.register(Main.map.mapView);
             selectionManager.mousePressed(e);
         }
-        if(mode != Mode.move || shift || ctrl)
-        {
+
+        if(mode != Mode.move || shift || ctrl) {
             virtualNode = null;
             virtualWays.clear();
         }
@@ -420,14 +444,28 @@ public class SelectAction extends MapMode implements SelectionEnded {
         if (mode == Mode.move) {
             boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
             boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+            boolean alt = (e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0
+                            || Main.pref.getBoolean("selectaction.cycles.multiple.matches", false);
+
+            virtualWays.clear();
+            virtualNode = null;
+
             if (!didMove) {
-                selectPrims(
-                        Main.map.mapView.getNearestCollection(e.getPoint(), OsmPrimitive.isSelectablePredicate),
-                        shift, ctrl, true, false);
+                Collection<OsmPrimitive> c = Main.map.mapView.getNearestCollection(e.getPoint(), OsmPrimitive.isSelectablePredicate);
+                if (!c.isEmpty() && alt) {
+                    if (c.iterator().next() instanceof Node) {
+                        // consider all nearest nodes
+                        c = new ArrayList<OsmPrimitive>(Main.map.mapView.getNearestNodes(e.getPoint(), OsmPrimitive.isSelectablePredicate));
+                    } else {
+                        // consider all nearest primitives (should be only ways at this point..)
+                        c = Main.map.mapView.getAllNearest(e.getPoint(), OsmPrimitive.isSelectablePredicate);
+                    }
+                }
+                selectPrims(c, shift, ctrl, true, false);
 
                 // If the user double-clicked a node, change to draw mode
-                List<OsmPrimitive> sel = new ArrayList<OsmPrimitive>(getCurrentDataSet().getSelected());
-                if(e.getClickCount() >=2 && sel.size() == 1 && sel.get(0) instanceof Node) {
+                c = getCurrentDataSet().getSelected();
+                if(e.getClickCount() >=2 && c.size() == 1 && c.iterator().next() instanceof Node) {
                     // We need to do it like this as otherwise drawAction will see a double
                     // click and switch back to SelectMode
                     Main.worker.execute(new Runnable(){
@@ -500,11 +538,71 @@ public class SelectAction extends MapMode implements SelectionEnded {
         selectPrims(selectionManager.getObjectsInRectangle(r, alt), shift, ctrl, true, true);
     }
 
+    private boolean selMorePrims = false;
+    private OsmPrimitive selCycleStart = null;
+
     public void selectPrims(Collection<OsmPrimitive> selectionList, boolean shift,
             boolean ctrl, boolean released, boolean area) {
         DataSet ds = getCurrentDataSet();
-        if ((shift && ctrl) || (ctrl && !released))
-            return; // not allowed together
+
+        // decides on mousePressed whether
+        //      to cycle on mouseReleased (selList already selected)
+        //      or not                    (selList is a new selection)
+        selMorePrims = (released || area) ? selMorePrims : ds.getSelected().containsAll(selectionList);
+
+        // not allowed together: do not change dataset selection, return early
+        if ((shift && ctrl) || (ctrl && !released) || (!virtualWays.isEmpty()))
+            return;
+
+        // toggle through possible objects on mouse release
+        if (released && !area) {
+            if (selectionList.size() > 1) {
+                Collection<OsmPrimitive> coll = ds.getSelected();
+
+                OsmPrimitive first, foundInDS, node, nxt;
+                first = nxt = selectionList.iterator().next();
+                foundInDS = node = null;
+
+                for (Iterator<OsmPrimitive> i = selectionList.iterator(); i.hasNext(); ) {
+                    if (selMorePrims && shift) {
+                        if (!coll.contains(nxt = i.next())) {
+                            break; // take first primitive not in dsSel or last if all contained
+                        }
+                    } else {
+                        if (coll.contains(nxt = i.next())) {
+                            foundInDS = nxt;
+                            if (selMorePrims || ctrl) {
+                                ds.clearSelection(nxt);
+                                nxt = i.hasNext() ? i.next() : first;
+                            }
+                            break; // take next primitive of selList
+                        } else if (nxt instanceof Node && node == null) {
+                            node = nxt;
+                        }
+                    }
+                }
+
+                if (ctrl) {
+                    if (foundInDS != null) {
+                        // a member of selList was foundInDS
+                        if (!selectionList.contains(selCycleStart)) {
+                            selCycleStart = foundInDS;
+                        }
+                        // check if selCycleStart == prim (equals next(foundInDS))
+                        if (selCycleStart.equals(nxt)) {
+                            ds.addSelected(nxt);   // cycle complete, prim toggled below
+                            selCycleStart = null;  // check: might do w/out ??
+                        }
+                    } else {
+                        // no member of selList was foundInDS (sets were disjunct), setup for new cycle
+                        selCycleStart = nxt = (node != null) ? node : first;
+                    }
+                }
+
+                selectionList = new ArrayList<OsmPrimitive>(1); // do not modify the passed object..
+                selectionList.add(nxt);
+            }
+        }
 
         if (ctrl) {
             // Ctrl on an item toggles its selection status,
