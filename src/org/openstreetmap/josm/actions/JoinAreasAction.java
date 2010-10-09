@@ -500,29 +500,34 @@ public class JoinAreasAction extends JosmAction {
         //find polygons
         List<AssembledMultipolygon> preparedPolygons = findPolygons(bounadries);
 
-        //assemble final ways
+        //assemble final polygons
         List<Multipolygon> polygons = new ArrayList<Multipolygon>();
         for (AssembledMultipolygon pol : preparedPolygons) {
-            polygons.add(joinPolygon(pol));
+
+            //create the new ways
+            Multipolygon resultPol = joinPolygon(pol);
+
+            //create multipolygon relation, if necessary.
+            RelationRole ownMultipolygonRelation = addOwnMultigonRelation(resultPol.innerWays, resultPol.outerWay);
+
+            //add back the original relations, merged with our new multipolygon relation
+            fixRelations(relations, resultPol.outerWay, ownMultipolygonRelation);
+
+            //strip tags from inner ways
+            //TODO: preserve tags on existing inner ways
+            stripTags(resultPol.innerWays);
+
+            polygons.add(resultPol);
         }
+
+        commitCommands(marktr("Assemble new polygons"));
 
         // Delete the discarded inner ways
         if (discardedWays.size() > 0) {
             cmds.add(DeleteCommand.delete(Main.map.mapView.getEditLayer(), discardedWays, true));
-        }
-        commitCommands(marktr("Delete Ways that are not part of an inner multipolygon"));
-
-        // We can attach our new multipolygon relation and pretend it has always been there
-        for (Multipolygon pol : polygons) {
-            addOwnMultigonRelation(pol.innerWays, pol.outerWay, relations);
-            fixRelations(relations, pol.outerWay);
+            commitCommands(marktr("Delete Ways that are not part of an inner multipolygon"));
         }
 
-        commitCommands(marktr("Fix relations"));
-
-        for (Multipolygon pol : polygons) {
-            stripTags(pol.innerWays);
-        }
 
         makeCommitsOneAction(marktr("Joined overlapping areas"));
 
@@ -1629,8 +1634,8 @@ public class JoinAreasAction extends JosmAction {
      * @param Way The outer way
      * @param ArrayList<RelationRole> The list of relation with roles to add own relation to
      */
-    private void addOwnMultigonRelation(Collection<Way> inner, Way outer, ArrayList<RelationRole> rels) {
-        if (inner.size() == 0) return;
+    private RelationRole addOwnMultigonRelation(Collection<Way> inner, Way outer) {
+        if (inner.size() == 0) return null;
         // Create new multipolygon relation and add all inner ways to it
         Relation newRel = new Relation();
         newRel.put("type", "multipolygon");
@@ -1640,10 +1645,8 @@ public class JoinAreasAction extends JosmAction {
         cmds.add(new AddCommand(newRel));
 
         // We don't add outer to the relation because it will be handed to fixRelations()
-        // which will then do the remaining work. Collections are passed by reference, so no
-        // need to return it
-        rels.add(new RelationRole(newRel, "outer"));
-        //return rels;
+        // which will then do the remaining work.
+        return new RelationRole(newRel, "outer");
     }
 
 
@@ -1690,8 +1693,13 @@ public class JoinAreasAction extends JosmAction {
      * @param ArrayList<RelationRole> List of relations with roles the (original) ways were part of
      * @param Way The newly created outer area/way
      */
-    private void fixRelations(ArrayList<RelationRole> rels, Way outer) {
+    private void fixRelations(ArrayList<RelationRole> rels, Way outer, RelationRole ownMultipol) {
         ArrayList<RelationRole> multiouters = new ArrayList<RelationRole>();
+
+        if (ownMultipol != null){
+            multiouters.add(ownMultipol);
+        }
+
         for (RelationRole r : rels) {
             if (r.rel.get("type") != null &&
                     r.rel.get("type").equalsIgnoreCase("multipolygon") &&
