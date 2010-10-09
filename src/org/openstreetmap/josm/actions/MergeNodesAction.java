@@ -25,6 +25,7 @@ import org.openstreetmap.josm.command.ChangeNodesCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.RelationToChildReference;
@@ -87,11 +88,21 @@ public class MergeNodesAction extends JosmAction {
      * @return the coordinates of this node are later used for the target node
      */
     public static Node selectTargetLocationNode(LinkedHashSet<Node> candidates) {
-        Node targetNode = null;
-        for (Node n : candidates) { // pick last one
-            targetNode = n;
+        if (! Main.pref.getBoolean("merge-nodes.average-location", false)) {
+            Node targetNode = null;
+            for (final Node n : candidates) { // pick last one
+                targetNode = n;
+            }
+            return targetNode;
         }
-        return targetNode;
+
+        double lat = 0, lon = 0;
+        for (final Node n : candidates) {
+            lat += n.getCoor().lat();
+            lon += n.getCoor().lon();
+        }
+
+        return new Node(new LatLon(lat / candidates.size(), lon / candidates.size()));
     }
 
     /**
