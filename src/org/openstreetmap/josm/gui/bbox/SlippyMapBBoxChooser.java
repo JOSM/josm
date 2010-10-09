@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.bbox;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -115,7 +116,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
             }
 
             iSizeButton.paint(g);
-            iSourceButton.paint(g);
+            iSourceButton.paint((Graphics2D)g);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -226,7 +227,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
     /**
      * Sets the current bounding box in this bbox chooser without
      * emiting a property change event.
-     * 
+     *
      * @param bbox the bounding box. null to reset the bounding box
      */
     public void setBoundingBox(Bounds bbox) {

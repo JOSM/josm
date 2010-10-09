@@ -1,7 +1,11 @@
 package org.openstreetmap.josm.gui.bbox;
 
-import java.awt.Graphics;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 
 import javax.swing.ImageIcon;
 
@@ -9,14 +13,16 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 public class SourceButton {
 
-    private int x = 0;
-    private int y = 30;
+    // Filled in paint, used in hit
+    private int barX;
+    private int barY;
+    private int barWidth;
+    private int layerHeight;
+
+    private String[] sources = new String[] {"Mapnik", "Osmarender", "Cyclemap"};
 
     private ImageIcon enlargeImage;
     private ImageIcon shrinkImage;
-    private ImageIcon imageMapnik;
-    private ImageIcon imageOsmarender;
-    private ImageIcon imageCycleMap;
 
     private boolean isEnlarged = false;
 
@@ -30,36 +36,50 @@ public class SourceButton {
     public SourceButton() {
         enlargeImage = ImageProvider.get("layer-switcher-maximize.png");
         shrinkImage = ImageProvider.get("layer-switcher-minimize.png");
-        imageMapnik = ImageProvider.get("blue_Mapnik.png");
-        imageOsmarender = ImageProvider.get("blue_Osmarender.png");
-        imageCycleMap = ImageProvider.get("blue_CycleMap.png");
     }
 
-    public void paint(Graphics g) {
-
+    public void paint(Graphics2D g) {
         if (isEnlarged) {
-            if (currentMap == MAPNIK) {
-                g.drawImage(imageMapnik.getImage(), g.getClipBounds().width
-                        - imageMapnik.getIconWidth(), y, null);
-            }else if(currentMap == CYCLEMAP){
-                 g.drawImage(imageCycleMap.getImage(), g.getClipBounds().width
-                         - imageCycleMap.getIconWidth(), y, null);
-            }
-            else {
-                g.drawImage(imageOsmarender.getImage(), g.getClipBounds().width
-                        - imageMapnik.getIconWidth(), y, null);
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            int leftPadding = 5;
+            int radioButtonSize = 10;
+            int topPadding = 5;
+            int bottomPadding = 5;
+
+            int textWidth = 0;
+
+            g.setFont(g.getFont().deriveFont(Font.BOLD).deriveFont(15.0f));
+            FontMetrics fm = g.getFontMetrics();
+            for (String source: sources) {
+                int width = fm.stringWidth(source);
+                if (width > textWidth) {
+                    textWidth = width;
+                }
             }
 
-            if (shrinkImage != null) {
-                this.x = g.getClipBounds().width - shrinkImage.getIconWidth();
-                g.drawImage(shrinkImage.getImage(), x, y, null);
+            barWidth = textWidth + 50;
+            barX = g.getClipBounds().width  - barWidth - shrinkImage.getIconWidth();
+            barY = 30;
+            layerHeight = 20;
+
+            g.setColor(new Color(0, 0, 139, 179));
+            g.fillRoundRect(barX, barY, barWidth + shrinkImage.getIconWidth(), sources.length * layerHeight + topPadding + bottomPadding, 10, 10);
+            for (int i=0; i<sources.length; i++) {
+                g.setColor(Color.WHITE);
+                g.fillOval(barX + leftPadding, barY + topPadding + i * layerHeight + 6, radioButtonSize, radioButtonSize);
+                g.drawString(sources[i], barX + leftPadding + radioButtonSize + leftPadding, barY + topPadding + i * layerHeight + g.getFontMetrics().getHeight());
+                if (currentMap == i + 2) {
+                    g.setColor(Color.BLACK);
+                    g.fillOval(barX + leftPadding + 1, barY + topPadding + 7 + i * layerHeight, radioButtonSize - 2, radioButtonSize - 2);
+                }
             }
 
+            g.drawImage(shrinkImage.getImage(), barX + barWidth, barY, null);
         } else {
-            if (enlargeImage != null) {
-                this.x = g.getClipBounds().width - enlargeImage.getIconWidth();
-                g.drawImage(enlargeImage.getImage(), x, y, null);
-            }
+            barWidth = 0;
+            barX = g.getClipBounds().width  - shrinkImage.getIconWidth();
+            barY = 30;
+            g.drawImage(enlargeImage.getImage(), barX + barWidth, barY, null);
         }
     }
 
@@ -70,29 +90,20 @@ public class SourceButton {
 
     public int hit(Point point) {
         if (isEnlarged) {
-            if (x < point.x && point.x < x + shrinkImage.getIconWidth()) {
-                if (y < point.y && point.y < y + shrinkImage.getIconHeight()) {
+            if (barX + barWidth < point.x) {
+                if (barY < point.y && point.y < barY + shrinkImage.getIconHeight())
                     return HIDE_OR_SHOW;
-                }
-            } else if (x - imageMapnik.getIconWidth() < point.x && point.x < x) {
-                if (y < point.y && point.y < y + imageMapnik.getIconHeight() / 3) {
-                    currentMap = OSMARENDER;
-                    return OSMARENDER;
-                } else if (y + imageMapnik.getIconHeight() / 3 < point.y
-                        && point.y < y + imageMapnik.getIconHeight() *2/3) {
-                    currentMap = MAPNIK;
-                    return MAPNIK;
-                } else if (y + imageMapnik.getIconHeight()* 2/3 < point.y
-                        && point.y < y + imageMapnik.getIconHeight()) {
-                    currentMap = CYCLEMAP;
-                    return CYCLEMAP;
+            } else if (barX < point.x && point.x < barX + barWidth) {
+                int result = (point.y - barY - 5) / layerHeight;
+                if (result >= 0 && result < sources.length) {
+                    currentMap = result + 2;
+                    return currentMap;
                 }
             }
         } else {
-            if (x < point.x && point.x < x + enlargeImage.getIconWidth()) {
-                if (y < point.y && point.y < y + enlargeImage.getIconHeight()) {
+            if (barX + barWidth < point.x) {
+                if (barY < point.y && point.y < barY + shrinkImage.getIconHeight())
                     return HIDE_OR_SHOW;
-                }
             }
         }
 
@@ -103,6 +114,6 @@ public class SourceButton {
      * One of the constants OSMARENDER,MAPNIK or CYCLEMAP
      */
     public void setMapStyle (int style) {
-       currentMap = (style < 2 || style > 4) ? MAPNIK : style;
+        currentMap = (style < 2 || style > 4) ? MAPNIK : style;
     }
 }
