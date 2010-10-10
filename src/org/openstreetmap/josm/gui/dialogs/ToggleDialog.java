@@ -30,6 +30,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -81,6 +82,9 @@ public class ToggleDialog extends JPanel implements Helpful {
     /** the JDialog displaying the toggle dialog as undocked dialog */
     protected JDialog detachedDialog;
 
+    protected JToggleButton button;
+    protected boolean buttonHidden;
+
     /**
      * Constructor
      * (see below)
@@ -124,6 +128,8 @@ public class ToggleDialog extends JPanel implements Helpful {
         isShowing = Main.pref.getBoolean(preferencePrefix+".visible", defShow);
         isDocked = Main.pref.getBoolean(preferencePrefix+".docked", true);
         isCollapsed = Main.pref.getBoolean(preferencePrefix+".minimized", false);
+
+        buttonHidden = Main.pref.getBoolean(preferencePrefix+".button_hidden", false);
 
         RedirectInputMap.redirectToMainContentPane(this);
     }
@@ -186,17 +192,19 @@ public class ToggleDialog extends JPanel implements Helpful {
     }
 
     /**
-     * Changes the state of the dialog such that the user can see the content
-     * and takes care of the panel reconstruction.
+     * Changes the state of the dialog such that the user can see the content.
+     * (takes care of the panel reconstruction)
      */
-    public void unfurlDialog()
-    {
+    public void unfurlDialog() {
         if (isDialogInDefaultView())
             return;
         if (isDialogInCollapsedView()) {
             expand();
             dialogsPanel.reconstruct(Action.COLLAPSED_TO_DEFAULT, this);
         } else if (!isDialogShowing()) {
+            if (isButtonHidden()) {
+                showButtonImpl();
+            }
             showDialog();
             if (isDocked && isCollapsed) {
                 expand();
@@ -206,6 +214,28 @@ public class ToggleDialog extends JPanel implements Helpful {
             }
             showNotify();
         }
+    }
+
+    public void hideButton() {
+        if (!button.isVisible())
+            throw new AssertionError();
+        if ((Boolean) toggleAction.getValue("selected")) {
+            toggleAction.actionPerformed(null);
+        }
+        button.setVisible(false);
+        setButtonHidden(true);
+    }
+
+    public void showButton() {
+        showButtonImpl();
+        unfurlDialog();
+    }
+
+    protected void showButtonImpl() {
+        if (button.isVisible())
+            throw new AssertionError();
+        button.setVisible(true);
+        setButtonHidden(false);
     }
 
     /**
@@ -566,6 +596,25 @@ public class ToggleDialog extends JPanel implements Helpful {
      */
     public boolean isDialogInCollapsedView() {
         return isShowing && isDocked && isCollapsed;
+    }
+
+    public boolean isButtonHidden() {
+        return buttonHidden;
+    }
+
+    protected void setButtonHidden(boolean buttonHidden) {
+        this.buttonHidden = buttonHidden;
+        Main.pref.put(preferencePrefix+".button_hidden", buttonHidden);
+    }
+
+
+    public void setButton(JToggleButton button) {
+        this.button = button;
+        button.setVisible(!buttonHidden);
+    }
+
+    public JToggleButton getButton() {
+        return button;
     }
 
     /***

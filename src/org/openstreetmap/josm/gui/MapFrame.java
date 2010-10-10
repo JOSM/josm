@@ -1,10 +1,14 @@
 // License: GPL. See LICENSE file for details.
-
 package org.openstreetmap.josm.gui;
+
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -14,12 +18,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
@@ -48,6 +56,7 @@ import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.UserListDialog;
 import org.openstreetmap.josm.gui.dialogs.properties.PropertiesDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.Destroyable;
 
 /**
@@ -91,6 +100,8 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     private final DialogsPanel dialogsPanel;
 
     public final ButtonGroup toolGroup = new ButtonGroup();
+
+    public final JButton otherButton = new JButton(new OtherButtonsAction());
 
     /**
      * Default width of the toggle dialog area.
@@ -200,14 +211,16 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     public void destroy() {
         MapView.removeLayerChangeListener(this);
         dialogsPanel.destroy();
-        for (int i = 0; i < toolBarActions.getComponentCount(); ++i)
+        for (int i = 0; i < toolBarActions.getComponentCount(); ++i) {
             if (toolBarActions.getComponent(i) instanceof Destroyable) {
                 ((Destroyable)toolBarActions.getComponent(i)).destroy();
             }
-        for (int i = 0; i < toolBarToggle.getComponentCount(); ++i)
+        }
+        for (int i = 0; i < toolBarToggle.getComponentCount(); ++i) {
             if (toolBarToggle.getComponent(i) instanceof Destroyable) {
                 ((Destroyable)toolBarToggle.getComponent(i)).destroy();
             }
+        }
 
         // remove menu entries
         Main.main.menu.viewMenu.setVisible(false);
@@ -239,9 +252,25 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
      * Call this to add new toggle dialogs to the left button-list
      * @param dlg The toggle dialog. It must not be in the list already.
      */
-    public IconToggleButton addToggleDialog(ToggleDialog dlg) {
-        IconToggleButton button = new IconToggleButton(dlg.getToggleAction());
+    public IconToggleButton addToggleDialog(final ToggleDialog dlg) {
+        final IconToggleButton button = new IconToggleButton(dlg.getToggleAction());
         toolBarToggle.add(button);
+        button.addMouseListener(new PopupMenuLauncher(new JPopupMenu() {
+            {
+                add(new AbstractAction() {
+                    {
+                        putValue(NAME, tr("Hide this button"));
+                        putValue(SHORT_DESCRIPTION, tr("Click the arrow at the bottom to show it again."));
+                    }
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        dlg.hideButton();
+                    }
+                });
+            }
+        }));
+        dlg.setButton(button);
         allDialogs.add(dlg);
         if (dialogsPanel.initialized) {
             dialogsPanel.add(dlg);
@@ -297,9 +326,17 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         panel.add(this, BorderLayout.CENTER);
         JToolBar jb = new JToolBar(JToolBar.VERTICAL);
         jb.setFloatable(false);
+        toolBarActions.setAlignmentX(0.5f);
         jb.add(toolBarActions);
+
         jb.addSeparator(new Dimension(0,10));
+        toolBarToggle.setAlignmentX(0.5f);
         jb.add(toolBarToggle);
+        otherButton.setAlignmentX(0.5f);
+        otherButton.setBorder(null);
+        otherButton.setFont(otherButton.getFont().deriveFont(Font.PLAIN));
+        jb.add(otherButton);
+
         if(Main.pref.getBoolean("sidetoolbar.visible", true))
         {
             if(Main.pref.getBoolean("sidetoolbar.scrollable", true)) {
@@ -316,6 +353,38 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         }
         if (statusLine != null && Main.pref.getBoolean("statusline.visible", true)) {
             panel.add(statusLine, BorderLayout.SOUTH);
+        }
+    }
+
+    class OtherButtonsAction extends AbstractAction {
+
+        public OtherButtonsAction() {
+            putValue(NAME, ">>");
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JPopupMenu menu = new JPopupMenu();
+            for (final ToggleDialog t : allDialogs) {
+                menu.add(new JCheckBoxMenuItem(new AbstractAction() {
+                    {
+                        putValue(NAME, t.getToggleAction().getValue(NAME));
+                        putValue(SMALL_ICON, t.getToggleAction().getValue(SMALL_ICON));
+                        putValue(SELECTED_KEY, !t.isButtonHidden());
+                        putValue(SHORT_DESCRIPTION, tr("Hide or show this toggle button"));
+                    }
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if ((Boolean) getValue(SELECTED_KEY)) {
+                            t.showButton();
+                        } else {
+                            t.hideButton();
+                        }
+                    }
+                }));
+            }
+            Rectangle bounds = otherButton.getBounds();
+            menu.show(otherButton, bounds.x+bounds.width, 0);
         }
     }
 
