@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.preferences.ProjectionPreference;
@@ -54,6 +55,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public interface ZoomChangeListener {
         void zoomChanged();
     }
+
+    public static final IntegerProperty PROP_SNAP_DISTANCE = new IntegerProperty("mappaint.node.snap-distance", 10);
 
     /**
      * the zoom listeners
@@ -460,7 +463,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * The *result* does not depend on the current map selection state,
      * neither does the result *order*.
      * It solely depends on the distance to point p.
-     * 
+     *
      * @return a sorted map with the keys representing the distance of
      *      their associated nodes to point p.
      */
@@ -470,10 +473,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
         DataSet ds = getCurrentDataSet();
 
         if (ds != null) {
-            double dist, snapDistanceSq = Main.pref.getInteger("mappaint.node.snap-distance", 10);
+            double dist, snapDistanceSq = PROP_SNAP_DISTANCE.get();
             snapDistanceSq *= snapDistanceSq;
 
-            for (Node n : ds.searchNodes(getBBox(p, Main.pref.getInteger("mappaint.node.snap-distance", 10)))) {
+            for (Node n : ds.searchNodes(getBBox(p, PROP_SNAP_DISTANCE.get()))) {
                 if (predicate.evaluate(n)
                         && (dist = getPoint2D(n).distanceSq(p)) < snapDistanceSq)
                 {
@@ -496,7 +499,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * The *result* does not depend on the current map selection state,
      * neither does the result *order*.
      * It solely depends on the distance to point p.
-     * 
+     *
      * @return All nodes nearest to point p that are in a belt from
      *      dist(nearest) to dist(nearest)+4px around p and
      *      that are not in ignore.
@@ -543,11 +546,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * The *result* does not depend on the current map selection state,
      * neither does the result *order*.
      * It solely depends on the distance to point p.
-     * 
+     *
      * @return All nodes nearest to point p that are in a belt from
      *      dist(nearest) to dist(nearest)+4px around p.
      * @see #getNearestNodes(Point, Collection, Predicate)
-     * 
+     *
      * @param p the point for which to search the nearest segment.
      * @param predicate the returned objects have to fulfill certain properties.
      */
@@ -557,21 +560,21 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * The *result* depends on the current map selection state.
-     * 
+     *
      * If more than one node within node.snap-distance pixels is found,
      * the nearest node selected is returned.
-     * 
+     *
      * If no such node is found, the nearest new/id=0 node within
      * about the same distance as the true nearest node is returned.
-     * 
+     *
      * If no such node is found either, the true nearest
      * node to p is returned.
-     * 
+     *
      * Finally, if a node is not found at all, return null.
-     * 
+     *
      * @return A node within snap-distance to point p,
      *      that is chosen by the algorithm described.
-     * 
+     *
      * @param p the screen point
      * @param predicate this parameter imposes a condition on the returned object, e.g.
      *        give the nearest node that is tagged.
@@ -615,7 +618,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * The *result* does not depend on the current map selection state,
      * neither does the result *order*.
      * It solely depends on the distance to point p.
-     * 
+     *
      * @return a sorted map with the keys representing the perpendicular
      *      distance of their associated way segments to point p.
      */
@@ -684,10 +687,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * The result *order* depends on the current map selection state.
      * Segments within 10px of p are searched and sorted by their distance to @param p,
      * then, within groups of equally distant segments, prefer those that are selected.
-     * 
+     *
      * @return all segments within 10px of p that are not in ignore,
      *          sorted by their perpendicular distance.
-     * 
+     *
      * @param p the point for which to search the nearest segments.
      * @param ignore a collection of segments which are not to be returned.
      * @param predicate the returned objects have to fulfill certain properties.
@@ -715,7 +718,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * The result *order* depends on the current map selection state.
-     * 
+     *
      * @return all segments within 10px of p, sorted by their perpendicular distance.
      * @see #getNearestWaySegments(Point, Collection, Predicate)
      *
@@ -728,7 +731,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * The *result* depends on the current map selection state.
-     * 
+     *
      * @return The nearest way segment to point p,
      *      prefer a nearest, selected way segment, if found.
      * @see #getNearestWaySegments(Point, Collection, Predicate)
@@ -760,10 +763,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * The *result* does not depend on the current map selection state,
      * neither does the result *order*.
      * It solely depends on the perpendicular distance to point p.
-     * 
+     *
      * @return all nearest ways to the screen point given that are not in ignore.
      * @see #getNearestWaySegments(Point, Collection, Predicate)
-     * 
+     *
      * @param p the point for which to search the nearest ways.
      * @param ignore a collection of ways which are not to be returned.
      * @param predicate the returned object has to fulfill certain properties.
@@ -791,10 +794,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * The *result* does not depend on the current map selection state,
      * neither does the result *order*.
      * It solely depends on the perpendicular distance to point p.
-     * 
+     *
      * @return all nearest ways to the screen point given.
      * @see #getNearestWays(Point, Collection, Predicate)
-     * 
+     *
      * @param p the point for which to search the nearest ways.
      * @param predicate the returned object has to fulfill certain properties.
      */
@@ -826,19 +829,19 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * The *result* does not depend on the current map selection state,
      * neither does the result *order*.
      * It solely depends on the distance to point p.
-     * 
+     *
      * First, nodes will be searched. If there are nodes within BBox found,
      * return a collection of those nodes only.
-     * 
+     *
      * If no nodes are found, search for nearest ways. If there are ways
      * within BBox found, return a collection of those ways only.
-     * 
+     *
      * If nothing is found, return an empty collection.
-     * 
+     *
      * @return Primitives nearest to the given screen point that are not in ignore.
      * @see #getNearestNodes(Point, Collection, Predicate)
      * @see #getNearestWays(Point, Collection, Predicate)
-     * 
+     *
      * @param p The point on screen.
      * @param ignore a collection of ways which are not to be returned.
      * @param predicate the returned object has to fulfill certain properties.
@@ -866,10 +869,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * The *result* does not depend on the current map selection state,
      * neither does the result *order*.
      * It solely depends on the distance to point p.
-     * 
+     *
      * @return Primitives nearest to the given screen point.
      * @see #getNearests(Point, Collection, Predicate)
-     * 
+     *
      * @param p The point on screen.
      * @param predicate the returned object has to fulfill certain properties.
      */
@@ -879,9 +882,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * This is used as a helper routine to {@link #getNearestNodeOrWay(Point, Predicate, boolean)}
-     * 
+     *
      * @return true, if the node fulfills certain properties wrt p and use_sel
-     * 
+     *
      * @param osm node to check
      * @param p point clicked
      * @param use_sel whether to prefer a selected node
@@ -902,17 +905,17 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * The *result* depends on the current map selection state IF use_selected is true.
-     * 
+     *
      * IF use_selected is true, use {@link #getNearestNode(Point, Predicate)} to find
      * the nearest, selected node.  If not found, try {@link #getNearestWaySegment(Point, Predicate)}
      * to find the nearest selected way.
-     * 
+     *
      * IF use_selected is false, or if no selected primitive was found, do the following.
-     * 
+     *
      * If the nearest node found is within 4px of p, simply take it.
      * Else, find the nearest way segment. Then, if p is closer to its
      * middle than to the node, take the way segment, else take the node.
-     * 
+     *
      * Finally, if no nearest primitive is found at all, return null.
      *
      * @return A primitive within snap-distance to point p,
@@ -973,7 +976,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                         // a nearest node was not found
                         osm = ws.way;
                     } else {
-                        int maxWaySegLenSq = 3*Main.pref.getInteger("mappaint.node.snap-distance", 10);
+                        int maxWaySegLenSq = 3*PROP_SNAP_DISTANCE.get();
                         maxWaySegLenSq *= maxWaySegLenSq;
 
                         Point2D wp1 = getPoint2D(ws.way.getNode(ws.lowerIndex));
@@ -995,7 +998,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Convenience method to {@link #getNearestNodeOrWay(Point, Predicate, boolean)}.
-     * 
+     *
      * @return The nearest primitive to point p.
      */
     public final OsmPrimitive getNearestNodeOrWay(Point p, Predicate<OsmPrimitive> predicate) {
@@ -1032,7 +1035,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
-     * 
+     *
      * @param pt point to project onto (ab)
      * @param a root of vector
      * @param b vector
@@ -1053,7 +1056,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * if r = 0 returns a, if r=1 returns b,
      * if r = 0.5 returns center between a and b, etc..
-     * 
+     *
      * @param r scale value
      * @param a root of vector
      * @param b vector
@@ -1073,10 +1076,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * The *result* does not depend on the current map selection state,
      * neither does the result *order*.
      * It solely depends on the distance to point p.
-     * 
+     *
      * @return a list of all objects that are nearest to point p and
      *          not in ignore or an empty list if nothing was found.
-     * 
+     *
      * @param p The point on screen.
      * @param ignore a collection of ways which are not to be returned.
      * @param predicate the returned object has to fulfill certain properties.
@@ -1107,11 +1110,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * The *result* does not depend on the current map selection state,
      * neither does the result *order*.
      * It solely depends on the distance to point p.
-     * 
+     *
      * @return a list of all objects that are nearest to point p
      *          or an empty list if nothing was found.
      * @see #getAllNearest(Point, Collection, Predicate)
-     * 
+     *
      * @param p The point on screen.
      * @param predicate the returned object has to fulfill certain properties.
      */
