@@ -153,7 +153,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
 
         QBLevel findBucket(BBox bbox) {
-            if (isLeaf())
+            if (!hasChildren())
                 return this;
             else {
                 int index = get_index(bbox, level);
@@ -360,7 +360,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
         QBLevel nextNode()
         {
-            if (this.isLeaf())
+            if (!this.hasChildren())
                 return this.nextSibling();
             return this.firstChild();
         }
@@ -416,8 +416,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             if (this.hasContent()) {
                 search_contents(search_bbox, result);
             }
-            if (this.isLeaf())
-                return;
 
             if (debug) {
                 out("hit " + this.quads());
@@ -448,9 +446,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
         int index_of(QBLevel find_this)
         {
-            if (this.isLeaf())
-                return -1;
-
             QBLevel[] children = getChildren();
             for (int i = 0; i < QuadTiling.TILES_PER_LEVEL; i++) {
                 if (children[i] == find_this)
@@ -631,7 +626,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             if (debug) {
                 out(this + " is a new iterator qb: " + qb + " size: " + qb.size());
             }
-            if (qb.root.isLeaf() || qb.root.hasContent()) {
+            if (!qb.root.hasChildren() || qb.root.hasContent()) {
                 current_node = qb.root;
             } else {
                 current_node = next_content_node(qb.root);
