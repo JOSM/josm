@@ -169,7 +169,7 @@
 		<attribute name="key" type="string"/>
 		<attribute name="text" type="string"/>
 		<attribute name="text_context" type="string"/>
-		<attribute name="requisite" type="string"/>
+		<attribute name="requisite" type="tns:role_requisite"/>
 		<attribute name="type" type="string"/>
 		<attribute name="count" type="integer"/>
 		<attribute name="required" type="boolean"/>
