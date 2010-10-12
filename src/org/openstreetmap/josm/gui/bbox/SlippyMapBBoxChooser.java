@@ -7,7 +7,11 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
@@ -23,10 +27,67 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.preferences.StringProperty;
 
 public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
-    static private TileSource[] TILE_SOURCES = { new OsmTileSource.Mapnik(),
-        new OsmTileSource.TilesAtHome(), new OsmTileSource.CycleMap() };
+
+    public interface TileSourceProvider {
+        List<TileSource> getTileSources();
+    }
+
+    public static class RenamedSourceDecorator implements TileSource {
+
+        private final TileSource source;
+        private final String name;
+
+        public RenamedSourceDecorator(TileSource source, String name) {
+            this.source = source;
+            this.name = name;
+        }
+
+        @Override public String getName() {
+            return name;
+        }
+
+        @Override public int getMaxZoom() { return source.getMaxZoom(); }
+
+        @Override public int getMinZoom() { return source.getMinZoom(); }
+
+        @Override public int getTileSize() { return source.getTileSize(); }
+
+        @Override public String getTileType() { return source.getTileType(); }
+
+        @Override public TileUpdate getTileUpdate() { return source.getTileUpdate(); }
+
+        @Override public String getTileUrl(int zoom, int tilex, int tiley) { return source.getTileUrl(zoom, tilex, tiley); }
+
+
+    }
+
+    /**
+     * Plugins that wish to add custom tile sources to slippy map choose should call this method
+     * @param tileSourceProvider
+     */
+    public static void addTileSourceProvider(TileSourceProvider tileSourceProvider) {
+        providers.addIfAbsent(tileSourceProvider);
+    }
+
+    private static CopyOnWriteArrayList<TileSourceProvider> providers = new CopyOnWriteArrayList<TileSourceProvider>();
+
+    static {
+        addTileSourceProvider(new TileSourceProvider() {
+            @Override
+            public List<TileSource> getTileSources() {
+                return Arrays.<TileSource>asList(
+                        new RenamedSourceDecorator(new OsmTileSource.Mapnik(), "Mapnik"),
+                        new RenamedSourceDecorator(new OsmTileSource.TilesAtHome(), "Osmarender"),
+                        new RenamedSourceDecorator(new OsmTileSource.CycleMap(), "Cyclemap")
+                );
+            }
+        });
+    }
+
+    private static final StringProperty PROP_MAPSTYLE = new StringProperty("slippy_map_chooser.mapstyle", "Mapnik");
 
     // standard dimension
     private Dimension iDownloadDialogDimension;
@@ -34,8 +95,8 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
     private TileLoader cachedLoader;
     private TileLoader uncachedLoader;
 
-    private SizeButton iSizeButton = new SizeButton();
-    private SourceButton iSourceButton = new SourceButton();
+    private final SizeButton iSizeButton = new SizeButton();
+    private final SourceButton iSourceButton;
     private Bounds bbox;
 
     // upper left and lower right corners of the selection rectangle (x/y on
@@ -68,17 +129,26 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         }
         setMaxTilesInMemory(Main.pref.getInteger("slippy_map_chooser.max_tiles", 1000));
 
-        String mapStyle = Main.pref.get("slippy_map_chooser.mapstyle", "mapnik");
-        if (mapStyle.equals("osmarender")) {
-            iSourceButton.setMapStyle(SourceButton.OSMARENDER);
-            this.setTileSource(TILE_SOURCES[1]);
-        } else if (mapStyle.equals("cyclemap")) {
-            iSourceButton.setMapStyle(SourceButton.CYCLEMAP);
-            this.setTileSource(TILE_SOURCES[2]);
-        } else {
-            if (!mapStyle.equals("mapnik")) {
-                Main.pref.put("slippy_map_chooser", "mapnik");
+        List<TileSource> tileSources = new ArrayList<TileSource>();
+        for (TileSourceProvider provider: providers) {
+            tileSources.addAll(provider.getTileSources());
+        }
+
+        iSourceButton = new SourceButton(tileSources);
+
+        String mapStyle = PROP_MAPSTYLE.get();
+        boolean foundSource = false;
+        for (TileSource source: tileSources) {
+            if (source.getName().equals(mapStyle)) {
+                this.setTileSource(source);
+                iSourceButton.setCurrentMap(source);
+                foundSource = true;
+                break;
             }
+        }
+        if (!foundSource) {
+            setTileSource(tileSources.get(0));
+            iSourceButton.setCurrentMap(tileSources.get(0));
         }
 
         new SlippyMapControler(this, this, iSizeButton, iSourceButton);
@@ -206,18 +276,10 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         repaint();
     }
 
-    public void toggleMapSource(int mapSource) {
+    public void toggleMapSource(TileSource tileSource) {
         this.tileController.setTileCache(new MemoryTileCache());
-        if (mapSource == SourceButton.MAPNIK) {
-            this.setTileSource(TILE_SOURCES[0]);
-            Main.pref.put("slippy_map_chooser.mapstyle", "mapnik");
-        } else if (mapSource == SourceButton.CYCLEMAP) {
-            this.setTileSource(TILE_SOURCES[2]);
-            Main.pref.put("slippy_map_chooser.mapstyle", "cyclemap");
-        } else {
-            this.setTileSource(TILE_SOURCES[1]);
-            Main.pref.put("slippy_map_chooser.mapstyle", "osmarender");
-        }
+        this.setTileSource(tileSource);
+        PROP_MAPSTYLE.put(tileSource.getName()); // TODO Is name really unique?
     }
 
     public Bounds getBoundingBox() {

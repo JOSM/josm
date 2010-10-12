@@ -6,9 +6,11 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 
+import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class SourceButton {
@@ -19,21 +21,20 @@ public class SourceButton {
     private int barWidth;
     private int layerHeight;
 
-    private String[] sources = new String[] {"Mapnik", "Osmarender", "Cyclemap"};
+    private final TileSource[] sources;
 
     private ImageIcon enlargeImage;
     private ImageIcon shrinkImage;
 
     private boolean isEnlarged = false;
 
-    private int currentMap = MAPNIK;
+    private int currentMap;
 
     public static final int HIDE_OR_SHOW = 1;
-    public static final int MAPNIK = 2;
-    public static final int OSMARENDER = 3;
-    public static final int CYCLEMAP = 4;
 
-    public SourceButton() {
+    public SourceButton(List<TileSource> sources) {
+        this.sources = sources.toArray(new TileSource[sources.size()]);
+        this.currentMap = 2;
         enlargeImage = ImageProvider.get("layer-switcher-maximize.png");
         shrinkImage = ImageProvider.get("layer-switcher-minimize.png");
     }
@@ -50,8 +51,8 @@ public class SourceButton {
 
             g.setFont(g.getFont().deriveFont(Font.BOLD).deriveFont(15.0f));
             FontMetrics fm = g.getFontMetrics();
-            for (String source: sources) {
-                int width = fm.stringWidth(source);
+            for (TileSource source: sources) {
+                int width = fm.stringWidth(source.getName());
                 if (width > textWidth) {
                     textWidth = width;
                 }
@@ -67,7 +68,7 @@ public class SourceButton {
             for (int i=0; i<sources.length; i++) {
                 g.setColor(Color.WHITE);
                 g.fillOval(barX + leftPadding, barY + topPadding + i * layerHeight + 6, radioButtonSize, radioButtonSize);
-                g.drawString(sources[i], barX + leftPadding + radioButtonSize + leftPadding, barY + topPadding + i * layerHeight + g.getFontMetrics().getHeight());
+                g.drawString(sources[i].getName(), barX + leftPadding + radioButtonSize + leftPadding, barY + topPadding + i * layerHeight + g.getFontMetrics().getHeight());
                 if (currentMap == i + 2) {
                     g.setColor(Color.BLACK);
                     g.fillOval(barX + leftPadding + 1, barY + topPadding + 7 + i * layerHeight, radioButtonSize - 2, radioButtonSize - 2);
@@ -110,10 +111,20 @@ public class SourceButton {
         return 0;
     }
 
-    /**
-     * One of the constants OSMARENDER,MAPNIK or CYCLEMAP
-     */
-    public void setMapStyle (int style) {
-        currentMap = (style < 2 || style > 4) ? MAPNIK : style;
+    public TileSource hitToTileSource(int hit) {
+        if (hit >= 2 && hit < sources.length + 2)
+            return sources[hit - 2];
+        else
+            return null;
+    }
+
+    public void setCurrentMap(TileSource tileSource) {
+        for (int i=0; i<sources.length; i++) {
+            if (sources[i].equals(tileSource)) {
+                currentMap = i + 2;
+                return;
+            }
+        }
+        currentMap = 2;
     }
 }

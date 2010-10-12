@@ -125,6 +125,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
 
     }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
         if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK) {
             if (iStartSelectionPoint != null) {
@@ -151,9 +152,8 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
                 iSourceButton.toggle();
                 iSlippyMapChooser.repaint();
 
-            } else if (sourceButton == SourceButton.MAPNIK || sourceButton == SourceButton.OSMARENDER
-                    || sourceButton == SourceButton.CYCLEMAP) {
-                iSlippyMapChooser.toggleMapSource(sourceButton);
+            } else if (sourceButton != 0) {
+                iSlippyMapChooser.toggleMapSource(iSourceButton.hitToTileSource(sourceButton));
             } else {
                 if (e.getClickCount() == 1) {
                     iSlippyMapChooser.setSelection(iStartSelectionPoint, e.getPoint());
@@ -167,6 +167,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
         }
     }
 
+    @Override
     public void mouseMoved(MouseEvent e) {
     }
 
