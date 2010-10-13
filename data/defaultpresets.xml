@@ -1413,6 +1413,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="fuel:1_50" text="1/50 mix (mofa/moped)" default="off" delete_if_empty="true" />
             </optional>
         </item>
+        <item name="Charging Station" icon="styles/standard/accommodation/camping/hookup.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=fuel"/>
+            <label text="Edit Charging Station (for electric cars)" />
+            <key key="amenity" value="charging_station" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <text key="voltage" text="Voltage" default="" delete_if_empty="true" />
+            <text key="amperage" text="Amperage" default="" delete_if_empty="true" />
+        </item>            
         <item name="Parking" icon="presets/parking.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=parking"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=parking" />
