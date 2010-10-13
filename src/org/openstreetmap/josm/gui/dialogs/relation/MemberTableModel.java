@@ -501,8 +501,8 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      *
      * @return the set of selected referers
      */
-    public Set<OsmPrimitive> getSelectedChildPrimitives() {
-        HashSet<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+    public Collection<OsmPrimitive> getSelectedChildPrimitives() {
+        Collection<OsmPrimitive> ret = new ArrayList<OsmPrimitive>();
         for (RelationMember m: getSelectedMembers()) {
             ret.add(m.getMember());
         }
