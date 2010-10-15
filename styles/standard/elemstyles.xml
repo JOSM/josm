@@ -4565,14 +4565,14 @@ For external files the <rules> should have following elements:
 <!--public_transport tags --> 
 	<rule> 
 		<condition k="public_transport" v="stop_position"/> 
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="misc/no_icon.png" priority="-10"/>
 		<scale_min>1</scale_min> 
 		<scale_max>50000</scale_max> 
 	</rule> 
 
 	<rule> 
 		<condition k="public_transport" v="platform"/> 
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="misc/no_icon.png" priority="-10"/>
 		<line width="1" realwidth="1" colour="service#809bc0" dashed="9" dashedcolour="livingdashed#00ff00"/> 
 		<scale_min>1</scale_min> 
 		<scale_max>50000</scale_max> 

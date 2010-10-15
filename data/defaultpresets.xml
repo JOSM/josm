@@ -1384,6 +1384,24 @@ are supplied, then "values" will be treated as "display_values" and translated i
     </group> <!-- Aerialway -->
     <separator/>
     <group name="Car" icon="presets/car.png">
+        <item name="Parking" icon="presets/parking.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=parking"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=parking" />
+            <label text="Edit Parking" />
+            <key key="amenity" value="parking" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
+            <combo key="parking" text="Type" values="multi-storey,surface,underground" default="surface" delete_if_empty="true" />
+            <combo key="park_ride" text="Park and Ride" values="yes,no" default="" delete_if_empty="true" />
+            <combo key="fee" text="Fee" values="yes,no" default="" delete_if_empty="true" />
+            <space />
+            <text key="capacity" text="Capacity (overall)" default="" delete_if_empty="true" />
+            <combo key="capacity:disabled" text="Spaces for Disabled" values="yes,no,unknown,1,2,3" default="" delete_if_empty="true" />
+            <combo key="capacity:women" text="Spaces for Women" values="yes,no,unknown,1,2,3" default="" delete_if_empty="true" />
+            <combo key="capacity:parent" text="Spaces for Parents" values="yes,no,unknown,1,2,3" default="" delete_if_empty="true" />
+            <label text="See the Wiki for other capacity:[types]=*." />
+        </item>
+        <separator/>
         <item name="Fuel" icon="presets/fuel.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=fuel"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=fuel"
@@ -1421,23 +1439,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="voltage" text="Voltage" default="" delete_if_empty="true" />
             <text key="amperage" text="Amperage" default="" delete_if_empty="true" />
         </item>            
-        <item name="Parking" icon="presets/parking.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=parking"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=parking" />
-            <label text="Edit Parking" />
-            <key key="amenity" value="parking" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-            <text key="ref" text="Reference number" default="" delete_if_empty="true" />
-            <combo key="parking" text="Type" values="multi-storey,surface,underground" default="surface" delete_if_empty="true" />
-            <combo key="park_ride" text="Park and Ride" values="yes,no" default="" delete_if_empty="true" />
-            <combo key="fee" text="Fee" values="yes,no" default="" delete_if_empty="true" />
-            <space />
-            <text key="capacity" text="Capacity (overall)" default="" delete_if_empty="true" />
-            <combo key="capacity:disabled" text="Spaces for Disabled" values="yes,no,unknown,1,2,3" default="" delete_if_empty="true" />
-            <combo key="capacity:women" text="Spaces for Women" values="yes,no,unknown,1,2,3" default="" delete_if_empty="true" />
-            <combo key="capacity:parent" text="Spaces for Parents" values="yes,no,unknown,1,2,3" default="" delete_if_empty="true" />
-            <label text="See the Wiki for other capacity:[types]=*." />
-        </item>
         <item name="Wash" icon="presets/car_wash.png" type="node,closedway">
             <label text="Edit Car Wash" />
             <key key="amenity" value="car_wash" />
@@ -1446,6 +1447,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
+        <separator/>
         <item name="Car Dealer" icon="presets/car.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=car" />
             <label text="Edit Car Shop" />
@@ -1474,6 +1476,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <text key="website" text="Website" default="" delete_if_empty="true" />
                 <text key="email" text="Email Address" default="" delete_if_empty="true" />
          </item>
+        <separator/>
         <item name="Rental" icon="presets/car_rental.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=car_rental"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=car_rental"  />
@@ -1635,13 +1638,27 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="area" text="Area" default="off" delete_if_empty="true" />
         </item>
         <separator/>
-        <item name="Taxi" icon="presets/taxi.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=taxi" />
-            <label text="Edit Taxi station" />
-            <key key="amenity" value="taxi" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
+        <item name="Ticket Machine" de.name="Fahrausweisautomat" icon="presets/vending_machine.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dvending_machine" de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity%3Dvending_machine"/>
+            <key key="amenity" value="vending_machine"/>
+            <key key="vending" value="public_transport_tickets"/>
+            <text key="name" text="Name" default="" delete_if_empty="true"/>
+            <text key="operator" text="Operator" default="" delete_if_empty="true"/>
+            <text key="ref" text="Reference Number" default="" delete_if_empty="true"/>
+            <check key="payment:coins" text="Coins" default="off" delete_if_empty="true" />
+            <check key="payment:notes" text="Notes" default="off" delete_if_empty="true" />
+            <check key="payment:electronic_purses" text="Electronic purses and Charge cards" default="off" delete_if_empty="true" />
+            <check key="payment:debit_cards" text="Debit cards" default="off" delete_if_empty="true" />
+            <check key="payment:credit_cards" text="Credit cards" default="off" delete_if_empty="true" />
+            <check key="payment:account_cards" text="Account or loyalty cards" default="off" delete_if_empty="true" />
         </item>
     </group> <!-- Public Transport -->
+    <item name="Taxi" icon="presets/taxi.png" type="node,closedway">
+        <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=taxi" />
+        <label text="Edit Taxi station" />
+        <key key="amenity" value="taxi" />
+        <text key="name" text="Name" default="" delete_if_empty="true" />
+    </item>
     <separator/>
     <group name="Airport" icon="presets/plane.png">
         <item name="Airport Ground" icon="presets/plane.png" type="node,closedway">
