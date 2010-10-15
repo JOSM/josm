@@ -1552,7 +1552,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
         </item>
     </group> <!-- Bicycle -->
     <group name="Public Transport" icon="presets/bus.png">
-        <item name="Station" name_context="railway" icon="presets/station.png" type="node,closedway">
+        <item name="Station" name_context="railway" icon="styles/standard/transport/railway_station.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=station"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=station" />
             <label text="Edit Station" text_context="railway" />
@@ -1614,7 +1614,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <text key="name" text="Name" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Bus Stop" icon="presets/bus_halt.png" type="node">
+        <item name="Bus Stop" icon="presets/bus_small.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=bus_stop"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=bus_stop"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=bus_stop" />

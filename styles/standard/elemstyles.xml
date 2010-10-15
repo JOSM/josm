@@ -1234,7 +1234,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="railway" v="tram_stop"/>
-		<icon annotate="true" src="transport/railway_small.png"/>
+		<icon annotate="true" src="transport/tram.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
