@@ -39,7 +39,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.xml.transform.stream.StreamSource;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -748,7 +747,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         Roles lastrole = null;
 
         if (validate) {
-            parser.startWithValidation(in, "http://josm.openstreetmap.de/tagging-preset-1.0", new StreamSource(TaggingPreset.class.getResourceAsStream("/data/tagging-preset.xsd")));
+            parser.startWithValidation(in, "http://josm.openstreetmap.de/tagging-preset-1.0", "resource://data/tagging-preset.xsd");
         } else {
             parser.start(in);
         }

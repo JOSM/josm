@@ -1,3 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules xmlns="http://josm.openstreetmap.de/mappaint-style-1.0"
+       name="standard" author="Ulf Lamping" version="1.0" shortdescription="British map overlay"
+       description="Special rules to take differences in the british area into account (e.g. traffic signs).">
 <!--
  GB specific rules
  This file contains rules for a GB specific mappaint display.
@@ -7,8 +11,6 @@
  A general help about the mappaint rule syntax can be found in the elemstyles.xml file
 -->
 
-<rules name="standard" author="Ulf Lamping" version="1.0" shortdescription="British map overlay"
-	description="Special rules to take differences in the british area into account (e.g. traffic signs).">
 	<rule>
 		<condition k="restriction" v="no_left_turn"/>
 		<icon annotate="true" src="vehicle/restriction/turn_restrictions/ireland/no_left_turn.png" priority="10000" />

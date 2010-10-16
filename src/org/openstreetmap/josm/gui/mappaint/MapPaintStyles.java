@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -15,10 +16,9 @@ import javax.swing.ImageIcon;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.xml.sax.InputSource;
+import org.openstreetmap.josm.tools.XmlObjectParser;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
+import org.xml.sax.SAXParseException;
 
 public class MapPaintStyles {
 
@@ -85,24 +85,29 @@ public class MapPaintStyles {
                 } else {
                     a = new String[] { null, file };
                 }
-                XMLReader xmlReader = XMLReaderFactory.createXMLReader();
-                ElemStyleHandler handler = new ElemStyleHandler(a[0]);
-                xmlReader.setContentHandler(handler);
-                xmlReader.setErrorHandler(handler);
+                XmlObjectParser parser = new XmlObjectParser(new ElemStyleHandler(a[0]));
                 MirroredInputStream in = new MirroredInputStream(a[1]);
                 InputStream zip = in.getZipEntry("xml","style");
+                InputStreamReader ins;
                 if(zip != null)
                 {
                     zipIcons = in.getFile();
-                    xmlReader.parse(new InputSource(zip));
+                    ins = new InputStreamReader(zip);
                 } else {
-                    xmlReader.parse(new InputSource(in));
+                    ins = new InputStreamReader(in);
+                }
+                parser.startWithValidation(ins, "http://josm.openstreetmap.de/mappaint-styöe-1.0",
+                "resource://data/mappaint-style.xsd");
+                while(parser.hasNext()) {
                 }
             } catch(IOException e) {
                 System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", a[1], e.toString()));
                 e.printStackTrace();
+            } catch(SAXParseException e) {
+                System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Error was: [{1}:{2}] {3}", a[1], e.getLineNumber(), e.getColumnNumber(), e.getMessage()));
+                e.printStackTrace();
             } catch(SAXException e) {
-                System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Exception was: {1}", a[1], e.toString()));
+                System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Error was: {1}", a[1], e.getMessage()));
                 e.printStackTrace();
             }
         }

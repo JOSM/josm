@@ -4,6 +4,7 @@ package org.openstreetmap.josm.tools;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.Reader;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -18,9 +19,12 @@ import java.util.concurrent.BlockingQueue;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.ValidatorHandler;
+
+import org.openstreetmap.josm.io.MirroredInputStream;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -275,7 +279,7 @@ public class XmlObjectParser implements Iterable<Object> {
     }
 
     private Map<String, Entry> mapping = new HashMap<String, Entry>();
-    private Parser parser;
+    private DefaultHandler parser;
 
     /**
      * The queue of already parsed items from the parsing thread.
@@ -296,6 +300,10 @@ public class XmlObjectParser implements Iterable<Object> {
 
     public XmlObjectParser() {
         parser = new Parser();
+    }
+
+    public XmlObjectParser(DefaultHandler handler) {
+        parser = handler;
     }
 
     private Iterable<Object> start(final Reader in, final ContentHandler contentHandler) {
@@ -327,17 +335,20 @@ public class XmlObjectParser implements Iterable<Object> {
         return start(in, parser);
     }
 
-    public Iterable<Object> startWithValidation(final Reader in, String namespace, Source schemaSource) throws SAXException {
-        SchemaFactory factory =  SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
-        Schema schema = factory.newSchema(schemaSource);
-        ValidatorHandler validator = schema.newValidatorHandler();
-        validator.setContentHandler(parser);
-        validator.setErrorHandler(parser);
+    public Iterable<Object> startWithValidation(final Reader in, String namespace, String schemaSource) throws SAXException {
+        try {
+            SchemaFactory factory =  SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+            Schema schema = factory.newSchema(new StreamSource(new MirroredInputStream(schemaSource)));
+            ValidatorHandler validator = schema.newValidatorHandler();
+            validator.setContentHandler(parser);
+            validator.setErrorHandler(parser);
 
-        AddNamespaceFilter filter = new AddNamespaceFilter(namespace);
-        filter.setContentHandler(validator);
-
-        return start(in, filter);
+            AddNamespaceFilter filter = new AddNamespaceFilter(namespace);
+            filter.setContentHandler(validator);
+            return start(in, filter);
+        } catch(IOException e) {
+            throw new SAXException(tr("Failed to load XML schema."), e);
+        }
     }
 
     public void map(String tagName, Class<?> klass) {

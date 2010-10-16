@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://josm.openstreetmap.de/mappaint-style-1.0"
+	xmlns:tns="http://josm.openstreetmap.de/mappaint-style-1.0" elementFormDefault="qualified">
+
+	<!--
+		Localized attributes (for example de.description are not supported by
+		xsd, so root element needs <anyAttribute/>
+	-->
+
+	<element name="rules" type="tns:root"/>
+
+	<complexType name="root">
+		<sequence>
+			<choice minOccurs="0" maxOccurs="unbounded">
+				<element name="rule" type="tns:rule" />
+			</choice>
+		</sequence>
+		<attribute name="name" type="string" />
+		<attribute name="author" type="string" />
+		<attribute name="version" type="string" />
+		<attribute name="shortdescription" type="string" />
+		<attribute name="description" type="string" />
+		<attribute name="link" type="string"/>
+
+		<anyAttribute processContents="skip"/>
+	</complexType>
+
+	<!-- TODO: ensure that at least one of results exists, but only one of each element, except for linemod which may have more,
+	scale is totally optional, but each of the two may come only once -->
+	<complexType name="rule">
+		<sequence>
+			<element name="condition" type="tns:condition" minOccurs="1" maxOccurs="unbounded" />
+			<choice minOccurs="1" maxOccurs="unbounded" >
+				<group ref="tns:results" />
+				<group ref="tns:scale" />
+			</choice>
+		</sequence>
+	</complexType>
+
+	<group name="results">
+		<choice>
+			<element name="icon" type="tns:icon" />
+			<element name="area" type="tns:area" />
+			<element name="line" type="tns:line" />
+			<element name="linemod" type="tns:linemod" maxOccurs="unbounded" />
+		</choice>
+	</group>
+
+	<group name="scale">
+		<choice>
+			<element name="scale_min" type="integer" />
+			<element name="scale_max" type="integer" />
+		</choice>
+	</group>
+
+	<complexType name="condition">
+		<!-- TODO restrict to k, k+v or k+b, other attribute combinations are illegal -->
+		<attribute name="k" type="string" use="required" />
+		<attribute name="v" type="string" />
+		<attribute name="b" type="tns:yesno" />
+	</complexType>
+
+	<complexType name="icon">
+		<attribute name="src" type="string" use="required" />
+		<attribute name="annotate" type="boolean" />
+		<attribute name="priority" type="integer" />
+	</complexType>
+
+	<complexType name="line">
+		<attribute name="width" type="integer" />
+		<attribute name="dashed" type="tns:dashed" />
+		<attribute name="realwidth" type="integer" />
+		<attribute name="colour" type="tns:color" />
+		<attribute name="dashedcolour" type="tns:color" />
+		<attribute name="priority" type="integer" />
+	</complexType>
+
+	<complexType name="area">
+		<attribute name="colour" type="tns:color" />
+		<attribute name="closed" type="boolean" />
+		<attribute name="priority" type="integer" />
+	</complexType>
+
+	<complexType name="linemod">
+		<attribute name="dashed" type="tns:dashed" />
+		<attribute name="realwidth" type="integer" />
+		<attribute name="colour" type="tns:color" />
+		<attribute name="dashedcolour" type="tns:color" />
+		<attribute name="mode" type="tns:modifier_mode" use="required" />
+		<attribute name="width" type="tns:width" />
+	</complexType>
+
+	<simpleType name="yesno">
+		<restriction base="string">
+			<enumeration value="yes"/>
+			<enumeration value="no"/>
+		</restriction>
+	</simpleType>
+
+	<simpleType name="dashed">
+		<restriction base="string">
+			<pattern value="\d+(,\d+)*"/>
+			<pattern value="(true|false)"/>
+		</restriction>
+	</simpleType>
+
+	<simpleType name="modifier_mode">
+		<restriction base="string">
+			<enumeration value="under"/>
+			<enumeration value="over"/>
+		</restriction>
+	</simpleType>
+
+	<simpleType name="color">
+		<restriction base="string">
+			<pattern value="([a-z_]+#)?[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?"/>
+			<!-- name#color or color only, where color is 6 or 8 hex digits -->
+		</restriction>
+	</simpleType>
+
+	<simpleType name="width">
+		<restriction base="string">
+			<pattern value="\d+"/>
+			<pattern value="[+-]\d+"/>
+			<pattern value="\d+%"/>
+		</restriction>
+	</simpleType>
+</schema>

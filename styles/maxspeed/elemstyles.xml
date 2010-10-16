@@ -1,5 +1,6 @@
-
-<rules>
+<?xml version="1.0" encoding="UTF-8"?>
+<rules xmlns="http://josm.openstreetmap.de/mappaint-style-1.0"
+       name="standard">
 
 	<rule>
 		<condition k="maxspeed" v="5"/>

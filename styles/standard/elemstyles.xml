@@ -1,3 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules xmlns="http://josm.openstreetmap.de/mappaint-style-1.0"
+       name="standard">
 <!--
 A little help:
 1. every rule starts with <rule> and ends with </rule>
@@ -68,8 +71,6 @@ For external files the <rules> should have following elements:
                    - when the style replaces the whole rendering choose a new name
                    - when the style is additional choose "standard" or don't use name tag
 -->
-
-<rules name="standard">
 
 	<rule>
 		<condition k="restriction" v="no_left_turn"/>
