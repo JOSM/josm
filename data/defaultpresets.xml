@@ -1059,6 +1059,12 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
+         <item name="Groyne" icon="presets/empty.png" type="node,way,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dgroyne" />
+            <label text="Edit Groyne" />
+            <space />            
+            <key key="man_made" value="groyne" />                               
+        </item>
         <separator/>
         <item name="Basin" icon="presets/landuse_water.png" type="node,closedway,relation">
             <label text="Edit Basin Landuse" />
@@ -2080,6 +2086,15 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <check key="fireplace" text="Fireplace" default="off" delete_if_empty="true" />
         </item>
+        <item name="Public Grill" icon="presets/bbq.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dbbq" />
+            <label text="Edit Public Grill"/>
+            <space />            
+            <key key="amenity" value="bbq" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="covered" text="Covered" values="yes,no" default="" delete_if_empty="true" />                               
+            <combo key="fuel" text="Fuel" text_context="grill" values="charcoal,electric,wood" default="" delete_if_empty="true" />                               
+        </item>     	
         <separator/>
         <item name="Information Office" icon="presets/informationoffice.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Key:information" />
@@ -2242,6 +2257,18 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="leisure" value="fishing" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+         <item name="Sauna" de.name="Sauna" icon="presets/sauna.png" type="node,closedway">
+            <label text="Edit Sauna" />
+            <space />         	
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Sauna" />
+            <label text="Edit Sauna" de.text="bearbeite Sauna" />
+            <space />            
+            <key key="leisure" value="sauna" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" de.text="Betreiber" default="" delete_if_empty="true" />            
+            <combo key="opening_hours" text="Opening Hours" de.text="Öffnungszeiten" values="Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" /> 
+            <combo key="access" text="Zugang" values="yes,permissive,private,unknown" default="" delete_if_empty="true" />                                           
+        </item> 
     </group> <!-- Leisure -->
   </group>
   <group name="Sports" icon="presets/soccer.png">
@@ -2618,6 +2645,17 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
         <text key="operator" text="Operator" default="" delete_if_empty="true" />
         </item>
+        <item name="Studio" icon="presets/studio.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dstudio" />
+            <label text="Edit Studio" />
+            <space />            
+            <key key="amenity" value="studio" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />            
+            <combo key="type" text="Type" values="audio,video" default="" delete_if_empty="true" />
+            <text key="phone" text="Phone" default="" delete_if_empty="true" />
+            <text key="website" text="Website" default="" delete_if_empty="true" />                          
+        </item>        
         <separator/>
         <item name="Kindergarten" icon="presets/kindergarten.png" type="node,closedway,relation">
             <label text="Edit Kindergarten" />
@@ -2641,6 +2679,15 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit College" />
             <key key="amenity" value="college" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+         <item name="Driving School" icon="styles/standard/education/driving_school.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/driving_school" />
+            <label text="Edit Driving School"/>
+            <space />
+            <key key="amenity" value="driving_school" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <text key="license_classes" text="License Classes" values="A1;A;B;BE;C" default="" delete_if_empty="true" />
         </item>
         <separator/>
         <item name="Cinema" icon="presets/cinema.png" type="node,closedway,relation">
@@ -2699,6 +2746,15 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <text key="operator" text="Operator" delete_if_empty="true" />
             </optional>
         </item>
+        <item name="Chimney" icon="presets/chimney.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Chimney" />
+            <label text="Edit Chimney" />
+            <space />            
+            <key key="man_made" value="chimney" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />            
+            <text key="height" text="Height (meters)" default="" delete_if_empty="true" />            
+        </item>
         <item name="Water Tower" icon="presets/water_tower.png" type="node,closedway">
             <label text="Edit Water Tower" />
             <key key="man_made" value="water_tower" />
@@ -2721,6 +2777,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="man_made" value="windmill" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Watermill" icon="styles/standard/misc/landmark/watermill.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dwatermill" />
+            <label text="Edit Watermill"/>
+            <space />            
+            <key key="man_made" value="watermill" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>       
         <item name="Pipeline" icon="presets/empty.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=pipeline"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=pipeline"/>
@@ -2744,13 +2807,18 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="man_made" value="crane" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Mineshaft" icon="presets/empty.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dmineshaft" />
+        <item name="Mineshaft" icon="presets/mineshaft.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dmineshaft"
+                de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made%3Dmineshaft" />
             <label text="Edit Mineshaft" />
             <key key="man_made" value="mineshaft" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="mineshaft_type" text="Function" values="winding,air" default="" delete_if_empty="true" />
             <text key="depth" text="Depth in meters" default="" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="resource" text="Resource" values="aggregate,bauxite,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" default="" delete_if_empty="true" />
+            <combo key="headframe" text="Visible Headframe" values="yes,no" default="" delete_if_empty="true" />  
+            <check key="disused" text="Mineshaft Disused" default="off" delete_if_empty="true" />                                                             
         </item>
         <item name="Beacon" icon="styles/standard/misc/landmark/beacon.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=beacon" />
@@ -2939,10 +3007,10 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Butcher" icon="presets/cow.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=butcher" />
-            <label text="Edit Butcher" />
-            <key key="shop" value="butcher" />
+        <item name="Confectionery" icon="presets/confectionery.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dconfectionery" />
+            <label text="Edit Confectionery" />
+            <key key="shop" value="confectionery" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
@@ -2952,6 +3020,49 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="shop" value="bakery" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <item name="Butcher" icon="presets/cow.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=butcher" />
+            <label text="Edit Butcher" />
+            <key key="shop" value="butcher" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <item name="Seafood" icon="presets/seafood.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dseafood"/>
+            <label text="Edit Seafood" />
+            <space />            
+            <key key="shop" value="seafood" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <item name="Deli (Fine Food)" icon="presets/deli.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Ddeli"/>
+            <label text="Edit Deli (Fine Food)" />
+            <space />            
+            <key key="shop" value="deli" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>                     
+        <item name="Marketplace" icon="styles/standard/place/marketplace.png" type="node,way,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dmarketplace" />
+            <label text="Edit Marketplace" />
+            <space />            
+            <key key="amenity" value="marketplace" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />                      
+        </item>     	
+        <item name="Greengrocer" icon="presets/greengrocer.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dgreengrocer"/>
+            <label text="Edit Greengrocer" />
+            <space />            
+            <key key="shop" value="greengrocer" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Organic" icon="presets/fruits.png" type="node,closedway">
             <label text="Edit Organic Shop" />
@@ -2992,6 +3103,52 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
+        <item name="Hearing Aids" icon="presets/hearing_aids.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dhearing_aids"/>
+            <label text="Edit Hearing Aids" />
+            <space />            
+            <key key="shop" value="hearing_aids" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>             
+        <item name="Jewelry" icon="styles/standard/shop/jewelry.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Djewelry"/>
+            <label text="Edit Jewelry" />
+            <space />            
+            <key key="shop" value="jewelry" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" /> 
+        </item>                               
+        <item name="Erotic" icon="presets/erotic.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Derotic"/>
+            <label text="Edit Erotic" />
+            <space />            
+            <key key="shop" value="erotic" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>                    
+        <separator/>
+        <item name="Department Store" icon="styles/standard/shop/mall.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Ddepartment_store"/>
+            <label text="Edit Department Store" />
+            <space />            
+            <key key="shop" value="department_store" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>                                  
+        <item name="Mall" icon="styles/standard/shop/mall.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dmall"/>
+            <label text="Edit Mall" />
+            <space />            
+            <key key="shop" value="mall" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>                                  
         <separator/>
         <item name="Clothes" icon="styles/standard/shop/clothes.png" type="node,closedway">
             <label text="Edit Clothes Shop" />
@@ -2999,7 +3156,16 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Shoes" icon="styles/standard/shop/shoes.png" type="node,closedway">
+        <item name="Boutique" icon="presets/empty.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dboutique"/>
+            <label text="Edit Boutique" />
+            <space />            
+            <key key="shop" value="boutique" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>            
+         <item name="Shoes" icon="styles/standard/shop/shoes.png" type="node,closedway">
             <label text="Edit Shoe Shop" />
             <key key="shop" value="shoes" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -3038,6 +3204,15 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
+        <item name="Fabric" icon="presets/fabric.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dfabric"/>
+            <label text="Edit Fabric" />
+            <space />            
+            <key key="shop" value="fabric" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>                                                
         <separator/>
         <item name="Computer" icon="styles/standard/shop/computer.png" type="node,closedway">
             <label text="Edit Computer Shop" />
@@ -3051,6 +3226,24 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
+        <item name="Mobile Phone" icon="presets/mobile_phone.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dmobile_phone"/>
+            <label text="Edit Mobile Phone" />
+            <space />            
+            <key key="shop" value="mobile_phone" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>                                     
+        <item name="Vacuum Cleaner" icon="presets/vacuum_cleaner.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dvacuum_cleaner"/>
+            <label text="Edit Vacuum Cleaner" />
+            <space />            
+            <key key="shop" value="vacuum_cleaner" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>        
         <item name="Hifi" icon="styles/standard/shop/hifi.png" type="node,closedway">
             <label text="Edit Hifi Shop" />
             <key key="shop" value="hifi" />
@@ -3078,13 +3271,22 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Hardware" icon="presets/empty.png" type="node,closedway">
+        <item name="Hardware" icon="presets/hardware.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=hardware" />
             <label text="Edit Hardware Store" />
             <key key="shop" value="hardware" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
+        <item name="Paint" icon="presets/paint.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dpaint"/>
+            <label text="Edit Paint" />
+            <space />            
+            <key key="shop" value="paint" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>                                       
         <item name="Do-it-yourself-store" icon="presets/diy_store.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=doityourself" />
             <label text="Edit Do-it-yourself-store" />
@@ -3098,11 +3300,47 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
+        <item name="Kitchen" icon="presets/kitchen.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dkitchen"/>
+            <label text="Edit Kitchen" />
+            <space />            
+            <key key="shop" value="kitchen" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>                   
+        <item name="Curtain" icon="presets/curtain.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dcurtain"/>
+            <label text="Edit Curtain" />
+            <space />            
+            <key key="shop" value="curtain" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>                     
+        <item name="Frame" icon="presets/frame.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dframe"/>
+            <label text="Edit Frames" />
+            <space />            
+            <key key="shop" value="frame" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>                             
         <item name="Stationery" icon="presets/empty.png" type="node,closedway">
             <label text="Edit Stationery Shop" />
             <key key="shop" value="stationery" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <item name="Copyshop" icon="presets/copyshop.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dcopyshop"/>
+            <label text="Edit Copyshop" />
+            <space />            
+            <key key="shop" value="copyshop" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <item name="Book Store" icon="presets/book.png" type="node,closedway">
             <label text="Edit Book Store" />
@@ -3116,11 +3354,29 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
+        <item name="Musical Instrument" icon="presets/musical_instrument.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dmusical_instrument"/>
+            <label text="Edit Musical Instruments" />
+            <space />            
+            <key key="shop" value="musical_instrument" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>                                    
         <item name="Toys" icon="styles/standard/shop/toys.png" type="node,closedway">
             <label text="Edit Toy Shop" />
             <key key="shop" value="toys" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+        </item>
+        <item name="Variety Store" icon="presets/variety_store.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dvariety_store"/>
+            <label text="Edit Variety Store" />
+            <space />            
+            <key key="shop" value="variety_store" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />            
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
         <separator/>
         <item name="Vending machine" icon="presets/vending_machine.png" type="node">
