@@ -113,7 +113,7 @@
 
 	<simpleType name="color">
 		<restriction base="string">
-			<pattern value="([a-z_]+#)?[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?"/>
+			<pattern value="([a-z0-9_]+#)?[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?"/>
 			<!-- name#color or color only, where color is 6 or 8 hex digits -->
 		</restriction>
 	</simpleType>
