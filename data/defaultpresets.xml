@@ -2879,8 +2879,8 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Pipeline" />
             <key key="man_made" value="pipeline" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
-            <combo key="type" text="Type" values="water,gas,heat,oil,sewage,any substance" default="" delete_if_empty="true" />
-            <combo key="location" text="Location" values="underground,underwater,overground" default="" delete_if_empty="true" />
+            <combo key="type" text="Type" values="water,gas,heat,oil,sewage" default="" delete_if_empty="true" />
+            <combo key="location" text="Location" values="underground,underwater,overground" values_context="pipeline" default="" delete_if_empty="true" />
         </item>
         <item name="Crane" icon="presets/crane.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=crane" />
