@@ -2278,7 +2278,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="amenity" v="embassy"/>
-		<icon annotate="true" src="service.png"/>
+		<icon annotate="true" src="service/administration/embassy.png"/>
 		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -4030,7 +4030,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="sport" v="athletics"/>
 		<area colour="sport#bde3cb"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="sport/athletics.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -4230,7 +4230,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="sport" v="karting"/>
 		<area colour="sport#bde3cb"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="sport/karting.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -4262,7 +4262,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="sport" v="pelota"/>
 		<area colour="sport#bde3cb"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="sport/pelota.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -4278,7 +4278,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="sport" v="skating"/>
 		<area colour="sport#bde3cb"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="sport/skating.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -4428,17 +4428,9 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="sport" v="karting"/>
-		<area colour="sport#bde3cb"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
-	</rule>
-
-	<rule>
 		<condition k="sport" v="safety_training"/>
 		<area colour="sport#bde3cb"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="sport/safety_training.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>

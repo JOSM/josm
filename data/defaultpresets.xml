@@ -2263,7 +2263,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="amenity" value="townhall" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Embassy" icon="presets/empty.png" type="node,closedway,relation">
+        <item name="Embassy" icon="presets/embassy.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=embassy" />
             <label text="Edit Embassy" />
             <key key="amenity" value="embassy" />
@@ -2577,7 +2577,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Athletics" icon="presets/empty.png" type="node,closedway">
+        <item name="Athletics" icon="presets/athletics.png" type="node,closedway">
             <label text="Edit Athletics" />
             <key key="sport" value="athletics" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2631,7 +2631,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Skating" icon="presets/empty.png" type="node,closedway">
+        <item name="Skating" icon="presets/skating.png" type="node,closedway">
             <label text="Edit Skating" />
             <key key="sport" value="skating" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2763,7 +2763,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Pelota" icon="presets/empty.png" type="node,closedway">
+        <item name="Pelota" icon="presets/pelota.png" type="node,closedway">
             <label text="Edit Pelota" />
             <key key="sport" value="pelota" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2795,7 +2795,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Karting" icon="presets/empty.png" type="node,closedway">
+        <item name="Karting" icon="presets/karting.png" type="node,closedway">
             <label text="Edit Karting" />
             <key key="sport" value="karting" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2807,7 +2807,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Safety Training" icon="presets/empty.png" type="node,closedway">
+        <item name="Safety Training" icon="presets/safety_training.png" type="node,closedway">
             <label text="Edit Safety Training" />
             <key key="sport" value="safety_training" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
@@ -2830,7 +2830,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
   </group> <!-- Sports -->
   <group name="Man Made" icon="presets/works.png">
     <group name="Man Made" icon="presets/works.png">
-        <item name="Building" icon="presets/empty.png" type="closedway,relation">
+        <item name="Building" icon="styles/standard/misc/landmark/building.png" type="node,closedway,relation">
             <key key="building" value="yes" />
         </item>
         <item name="Tower" icon="presets/tower.png" type="node,closedway">
