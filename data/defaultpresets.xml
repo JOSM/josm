@@ -1363,7 +1363,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="aerialway" value="cable_car" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Gondola" icon="presets/cable_car.png" type="way">
+        <item name="Gondola" icon="presets/gondola.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/Piste_Maps#aerialway" />
             <label text="Edit Gondola" />
             <key key="aerialway" value="gondola" />
@@ -1382,7 +1382,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="aerialway" value="pylon" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Goods" name_context="aerialway" icon="presets/empty.png" type="node">
+        <item name="Goods" name_context="aerialway" icon="presets/goods.png" type="node">
             <label text="Edit Goods" text_context="aerialway" />
             <key key="aerialway" value="goods" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
