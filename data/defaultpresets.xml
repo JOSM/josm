@@ -2377,7 +2377,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="amenity" value="hospital" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Baby Hatch" icon="presets/empty.png" type="node,closedway">
+        <item name="Baby Hatch" icon="presets/baby_hatch.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=baby_hatch" />
             <label text="Edit Baby Hatch" />
             <key key="amenity" value="baby_hatch" />
@@ -2491,13 +2491,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="lock" text="Lock" values="yes,no,unknown" default="" delete_if_empty="true" />
         </item>
         <separator/>
-        <item name="Fountain" icon="presets/spring.png" type="node,closedway">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=fountain"
-                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=fountain" />
-            <label text="Edit Fountain" />
-            <key key="amenity" value="fountain" />
-            <text key="name" text="Name" default="" delete_if_empty="true" />
-        </item>
         <item name="Drinking Water" icon="presets/drinking_water.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=drinking_water"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=drinking_water" />
@@ -2901,6 +2894,16 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="headframe" text="Visible Headframe" values="yes,no" default="" delete_if_empty="true" />  
             <check key="disused" text="Disused" default="off" delete_if_empty="true" />                                                             
         </item>
+        <item name="Adit" icon="presets/tunnel.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dadit" />
+            <label text="Edit Adit" />
+            <key key="man_made" value="adit" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="length" text="Length in meters" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <combo key="resource" text="Resource" values="aggregate,bauxite,coal,copper,dimension_stone,gold,ilmenite,iron_ore,lead,limestone,nickel,rutile,salt,silver,tin,zinc,zircon" default="" delete_if_empty="true" />
+            <check key="disused" text="Disused" default="off" delete_if_empty="true" />                                                             
+        </item>
         <separator/>
         <item name="Water Tower" icon="presets/water_tower.png" type="node,closedway">
             <label text="Edit Water Tower" />
@@ -2922,6 +2925,19 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="man_made" value="watermill" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>       
+        <item name="Fountain" icon="presets/spring.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=fountain"
+                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=fountain" />
+            <label text="Edit Fountain" />
+            <key key="amenity" value="fountain" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
+        <item name="Water Well" icon="presets/empty.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dwater_well" />
+            <label text="Edit Water Well" />
+            <key key="man_made" value="water_well" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+        </item>
         <separator/>
         <item name="Lighthouse" icon="presets/lighthouse.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=lighthouse" />
@@ -2976,14 +2992,30 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <text key="ref" text="Line reference" default="" delete_if_empty="true" />
         </item>
-        <item name="Power Tower" icon="presets/power_tower.png" type="node,closedway">
+        <item name="Cable Distribution Cabinet" icon="presets/power.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power%3Dcable_distribution_cabinet"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power%3Dcable_distribution_cabinet" />
+            <label text="Edit Cable Distribution Cabinet" />
+            <key key="power" value="cable_distribution_cabinet" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+            <text key="ref" text="Reference" default="" delete_if_empty="true" />
+        </item>
+        <separator/>
+        <item name="Power Tower" icon="presets/power_tower.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=tower"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=tower"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:power=tower"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=tower" />
             <label text="Edit Power Tower" />
-            <combo key="power" text="Type" values="tower,pole" default="tower" delete_if_empty="true" />
+            <key key="power" value="tower" />
             <text key="ref" text="Tower reference" default="" delete_if_empty="true" />
+        </item>
+        <item name="Pole" icon="styles/standard/misc/landmark/power/pole.png" type="node">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power%3Dpole"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power%3Dpole" />
+            <label text="Edit Power Pole" />
+            <key key="power" value="tower" />
+            <text key="ref" text="Pole reference" default="" delete_if_empty="true" />
         </item>
         <item name="Power Line" icon="presets/power.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power=line"
@@ -3171,7 +3203,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Boutique" icon="presets/empty.png" type="node,closedway">
+        <item name="Boutique" icon="presets/boutique.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop%3Dboutique"/>
             <label text="Edit Boutique" />
             <space />            
@@ -3428,7 +3460,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>                             
         <separator/>
-        <item name="Stationery" icon="presets/empty.png" type="node,closedway">
+        <item name="Stationery" icon="presets/stationery.png" type="node,closedway">
             <label text="Edit Stationery Shop" />
             <key key="shop" value="stationery" />
             <text key="name" text="Name" default="" delete_if_empty="true" />

@@ -1627,6 +1627,13 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="power" v="cable_distribution_cabinet"/>
+		<icon annotate="true" src="misc/landmark/power.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="power_source" v="wind"/>
 		<icon annotate="true" src="misc/landmark/power/wind.png"/>
 		<area colour="power#eeeeee"/>
@@ -1757,6 +1764,14 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="man_made" v="adit"/>
+		<icon annotate="true" src="vehicle/tunnel.png"/>
+		<area colour="manmade#d8d8d8"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="man_made" v="pier"/>
 		<area colour="pier#660000" closed="true"/>
 		<line width="2" colour="pier#660000"/>
@@ -1831,6 +1846,14 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="man_made" v="water_tower"/>
 		<icon annotate="true" src="misc/landmark/water_tower.png"/>
+		<area colour="manmade#d8d8d8"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="man_made" v="water_well"/>
+		<icon annotate="true" src="misc/no_icon.png"/>
 		<area colour="manmade#d8d8d8"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2521,7 +2544,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="amenity" v="baby_hatch"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="health/baby_hatch.png"/>
 		<area colour="health#eeeeee"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2834,7 +2857,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="shop" v="boutique"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="shop/boutique.png"/>
 		<area colour="shop#00005f"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3155,7 +3178,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="shop" v="stationery"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="shop/stationery.png"/>
 		<area colour="shop#00005f"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
