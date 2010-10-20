@@ -487,7 +487,7 @@ For external files the <rules> should have following elements:
 	</rule>
 	<rule>
 		<condition k="barrier" v="block"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="vehicle/block.png"/>
 		<line width="3" colour="barrier#F0F050"/>
 		<area colour="barrier#F0F050" closed="true"/>
 		<scale_min>1</scale_min>
@@ -495,7 +495,7 @@ For external files the <rules> should have following elements:
 	</rule>
 	<rule>
 		<condition k="barrier" v="border_control"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="vehicle/border_control.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1192,7 +1192,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="waterway" v="dam"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="nautical/dam.png"/>
 		<line width="2" colour="manmade#d8d8d8"/>
 		<area colour="manmade#d8d8d8" closed="true"/>
 		<scale_min>1</scale_min>
@@ -1428,7 +1428,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="aeroway" v="runway"/>
 		<line width="3" colour="aeroway_dark#330000"/>
-		<icon annotate="true" src="transport/airport.png"/>
+		<icon annotate="true" src="transport/airport/runway.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1436,7 +1436,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="aeroway" v="taxiway"/>
 		<line width="2" colour="aeroway#660000"/>
-		<icon annotate="true" src="transport/airport.png"/>
+		<icon annotate="true" src="transport/airport/taxiway.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1444,14 +1444,22 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="aeroway" v="apron"/>
 		<area colour="aeroway_light#990000"/>
-		<icon annotate="true" src="transport/airport.png"/>
+		<icon annotate="true" src="transport/airport/apron.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="aeroway" v="hangar"/>
+		<area colour="aeroway_light#990000"/>
+		<icon annotate="true" src="transport/airport/hangar.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
 
 	<rule>
 		<condition k="aeroway" v="gate"/>
-		<icon annotate="true" src="transport/airport/terminal.png"/>
+		<icon annotate="true" src="transport/airport/gate.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1741,7 +1749,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="man_made" v="groyne"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="nautical/groyne.png"/>
 		<area colour="manmade#d8d8d8"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1750,6 +1758,14 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="man_made" v="lighthouse"/>
 		<icon annotate="true" src="misc/landmark/lighthouse.png"/>
+		<area colour="manmade#d8d8d8"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="man_made" v="measurement_station"/>
+		<icon annotate="true" src="misc/landmark/measurement_station.png"/>
 		<area colour="manmade#d8d8d8"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -1853,7 +1869,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="man_made" v="water_well"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="misc/landmark/water_well.png"/>
 		<area colour="manmade#d8d8d8"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3781,7 +3797,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="natural" v="cliff"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="misc/cliff.png"/>
 		<line width="2" colour="natural#002f00"/>
 		<area colour="natural#002f00" closed="true"/>
 		<scale_min>1</scale_min>
@@ -3846,7 +3862,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="natural" v="coastline"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="misc/coastline.png"/>
 		<line width="1" colour="water#0000ff"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3854,7 +3870,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="natural" v="mud"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="misc/mud.png"/>
 		<area colour="mud#cba762"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3862,7 +3878,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="natural" v="beach"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="misc/beach.png"/>
 		<area colour="beach#f8dba2"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3870,7 +3886,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="natural" v="bay"/>
-		<icon src="misc/no_icon.png"/>
+		<icon src="misc/bay.png"/>
 		<area colour="natural#002f00"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>

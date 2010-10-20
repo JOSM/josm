@@ -802,7 +802,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <link href="http://de.wikipedia.org/wiki/Umlaufgitter" />
             <key key="barrier" value="cycle_barrier" />
         </item> <!-- cycle_barrier -->
-        <item name="Block" icon="presets/empty.png" type="node,way,closedway">
+        <item name="Block" icon="presets/block.png" type="node,way,closedway">
             <key key="barrier" value="block" />
         </item> <!-- block -->
         <item name="Cattle Grid" icon="presets/cattle_grid.png" type="node">
@@ -857,22 +857,22 @@ are supplied, then "values" will be treated as "display_values" and translated i
         <separator/>
 
         <!-- *** linear barriers *** -->
-        <item name="Hedge" icon="presets/empty.png" type="way,closedway,relation">
+        <item name="Hedge" icon="presets/hedge.png" type="way,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=hedge" />
             <key key="barrier" value="hedge" />
         </item> <!-- hedge -->
-        <item name="Fence" icon="presets/empty.png" type="way,closedway">
+        <item name="Fence" icon="presets/fence.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=fence" />
             <combo key="barrier" text="Fence" values="fence,wood_fence,wire_fence" default="" delete_if_empty="true" />
         </item> <!-- fence -->
-        <item name="Wall" icon="presets/empty.png" type="way,closedway">
+        <item name="Wall" icon="presets/wall.png" type="way,closedway">
             <key key="barrier" value="wall" />
         </item> <!-- wall -->
-        <item name="City Wall" icon="presets/empty.png" type="way,closedway">
+        <item name="City Wall" icon="presets/city_wall.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=city_wall" />
             <key key="barrier" value="city_wall" />
         </item> <!-- city_wall -->
-        <item name="Retaining Wall" icon="presets/empty.png" type="way,closedway">
+        <item name="Retaining Wall" icon="presets/retaining_wall.png" type="way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=retaining_wall" />
             <key key="barrier" value="retaining_wall" />
         </item> <!-- retaining_wall -->
@@ -1051,7 +1051,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="waterway" value="weir" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Dam" icon="presets/empty.png" type="node,way,closedway">
+        <item name="Dam" icon="presets/dam.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=dam" />
             <label text="Edit Dam" />
             <space />
@@ -1059,7 +1059,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
-         <item name="Groyne" icon="presets/empty.png" type="node,way,closedway">
+         <item name="Groyne" icon="presets/groyne.png" type="node,way,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dgroyne" />
             <label text="Edit Groyne" />
             <space />            
@@ -1096,7 +1096,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="natural" value="land" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Coastline" icon="presets/empty.png" type="node,way,closedway,relation">
+        <item name="Coastline" icon="presets/coastline.png" type="node,way,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=coastline" />
             <label text="Edit Coastline" />
             <key key="natural" value="coastline" />
@@ -1120,23 +1120,23 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="wetland" text="Type" values="swamp,bog,marsh,reedbed,saltmarsh,tidalflat,mangrove" default="" delete_if_empty="true" />
         </item>
-        <item name="Mud" icon="presets/empty.png" type="node,closedway,relation">
+        <item name="Mud" icon="presets/mud.png" type="node,closedway,relation">
             <label text="Edit Mud" />
             <key key="natural" value="mud" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Beach" icon="styles/standard/rendering/beach.png" type="node,closedway,relation">
+        <item name="Beach" icon="presets/beach.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=beach" />
             <label text="Edit Beach" />
             <key key="natural" value="beach" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Bay" icon="presets/empty.png" type="node,closedway,relation">
+        <item name="Bay" icon="presets/bay.png" type="node,closedway,relation">
             <label text="Edit Bay" />
             <key key="natural" value="bay" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Cliff" icon="presets/empty.png" type="node,way,closedway,relation">
+        <item name="Cliff" icon="presets/cliff.png" type="node,way,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cliff" />
             <label text="Edit Cliff" />
             <key key="natural" value="cliff" />
@@ -1524,6 +1524,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <combo key="sale" text="Sale" values="yes,brand,used,no" values_context="motorcycle" default="" delete_if_empty="true" />
                 <combo key="rental" text="Rental" values="yes,brand,no" default="" delete_if_empty="true" />
                 <combo key="repair" text="Repair" values="yes,brand,oldtimer,no" default="" delete_if_empty="true" />
+                <combo key="inspection" text="Inspection" values="yes,DEKRA,GTÜ,MOT,TÜV,no" default="" delete_if_empty="true" />
                 <combo key="parts" text="Parts" values="yes,brand,oldtimer,no" default="" delete_if_empty="true" />
                 <combo key="clothes" text="Clothes" values="yes,brand,no" default="" delete_if_empty="true" />
                 <text key="services" text="Other" default="" delete_if_empty="true" />
@@ -1679,7 +1680,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             </optional>
         </item>
         <separator/>
-        <item name="Runway" icon="presets/empty.png" type="way">
+        <item name="Runway" icon="presets/runway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=runway" />
             <label text="Edit Runway" />
             <key key="aeroway" value="runway" />
@@ -1687,7 +1688,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <text key="ref" text="Reference" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Taxiway" icon="presets/empty.png" type="way">
+        <item name="Taxiway" icon="presets/taxiway.png" type="way">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=taxiway" />
             <label text="Edit Taxiway" />
             <key key="aeroway" value="taxiway" />
@@ -1703,17 +1704,17 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <text key="ref" text="Reference" default="" delete_if_empty="true" />
             </optional>
         </item>
-        <item name="Apron" icon="presets/empty.png" type="closedway">
+        <item name="Apron" icon="presets/apron.png" type="closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=apron" />
             <label text="Apron" />
             <key key="aeroway" value="apron" />
         </item>
-        <item name="Hangar" icon="presets/empty.png" type="closedway">
+        <item name="Hangar" icon="presets/hangar.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=hangar" />
             <label text="Hangar" />
             <key key="building" value="hangar" />
         </item>
-        <item name="Beacon" icon="presets/empty.png" type="node">
+        <item name="Beacon" icon="styles/standard/misc/landmark/beacon.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dbeacon" />
             <label text="Beacon" />
             <key key="man_made" value="beacon" />
@@ -1730,7 +1731,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="aeroway" value="terminal" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Gate" name_context="airport" icon="presets/empty.png" type="node">
+        <item name="Gate" name_context="airport" icon="presets/aeroway_gate.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=gate" />
             <label text="Edit Terminal Gate" />
             <key key="aeroway" value="gate" />
@@ -2967,14 +2968,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="amenity" value="fountain" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Water Well" icon="presets/empty.png" type="node">
+        <item name="Water Well" icon="presets/water_well.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dwater_well" />
             <label text="Edit Water Well" />
             <key key="man_made" value="water_well" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <separator/>
-        <item name="Lighthouse" icon="presets/lighthouse.png" type="node,closedway">
+        <item name="Lighthouse" icon="styles/standard/misc/landmark/lighthouse.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=lighthouse" />
             <label text="Edit Lighthouse" />
             <key key="man_made" value="lighthouse" />
@@ -2993,6 +2994,17 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="highway" value="street_lamp" />
             <combo key="opening_hours" text="Operation times" values="Mo-Fr 22:00-05:00" default="" delete_if_empty="true" />                                                                                        
         </item> 
+        <item name="Measurement Station" icon="presets/measurement_station.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/measurement_station" />
+            <label text="Edit Measurement Station" />
+            <space />            
+            <key key="man_made" value="measurement_station" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />             
+            <combo key="measurement" text="Measurement" values="particulate_matter,seismic,water_level,weather" default="" delete_if_empty="true" />
+            <combo key="recording" text="Recording" values="manually,automated,remote,no" default="" delete_if_empty="true" />  
+            <combo key="display" text="Display" values="analog,digital,no" default="" delete_if_empty="true" />                                     
+       </item>                	
         <item name="Survey Point" icon="presets/survey_point.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=survey_point" />
             <label text="Edit Survey Point" />
