@@ -959,7 +959,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="traffic_calming" v="chicane"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="misc/chicane.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -1877,7 +1877,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="man_made" v="water_works"/>
-		<icon annotate="true" src="misc/no_icon.png"/>
+		<icon annotate="true" src="misc/landmark/water_works.png"/>
 		<area colour="manmade#d8d8d8"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -2317,7 +2317,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="amenity" v="community_centre"/>
-		<icon annotate="true" src="service.png"/>
+		<icon annotate="true" src="service/community_centre.png"/>
 		<area colour="amenity_light#f7efb7"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3574,6 +3574,14 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
+		<condition k="landuse" v="greenhouse_horticulture"/>
+		<area colour="green#b1e0c2"/>
+		<icon src="misc/landmark/greenhouse_horticulture.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
 		<condition k="landuse" v="grass"/>
 		<area colour="green#b1e0c2"/>
 		<icon src="misc/landmark/plant.png"/>
@@ -3585,6 +3593,14 @@ For external files the <rules> should have following elements:
 		<condition k="landuse" v="residential"/>
 		<area colour="residential#f0f0f0"/>
 		<icon src="misc/landuse/residential.png"/>
+		<scale_min>1</scale_min>
+		<scale_max>50000</scale_max>
+	</rule>
+
+	<rule>
+		<condition k="landuse" v="garages"/>
+		<area colour="garages#f0f0f0"/>
+		<icon src="misc/landuse/garages.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -4381,7 +4397,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="sport" v="beachvolleyball"/>
 		<area colour="sport#bde3cb"/>
-		<icon annotate="true" src="sport/volleyball.png"/>
+		<icon annotate="true" src="sport/beachvolleyball.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>

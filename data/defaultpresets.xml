@@ -723,7 +723,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="supervised" text="Crossing attendant" default="off" delete_if_empty="true" />
             <combo key="crossing_ref" text="Type name (UK)" values="zebra,pelican,toucan,puffin,pegasus,tiger" default="" delete_if_empty="true" />
         </item>
-        <item name="Traffic Calming" icon="presets/empty.png" type="node">
+        <item name="Traffic Calming" icon="presets/chicane.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Key:traffic_calming"/>
             <label text="Edit Traffic Calming" />
             <combo key="traffic_calming" text="Type" values="yes,bump,chicane,choker,cushion,hump,table" default="" delete_if_empty="true" />
@@ -2263,6 +2263,15 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="amenity" value="townhall" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Community Centre" icon="presets/community_centre.png" type="node,closedway">      	
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dcommunity_centre" />
+            <label text="Community Centre" />
+            <space />            
+            <key key="amenity" value="community_centre" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" /> 
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true" />                      
+        </item>       	
         <item name="Embassy" icon="presets/embassy.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=embassy" />
             <label text="Edit Embassy" />
@@ -2714,6 +2723,24 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
+        <item name="Volleyball" icon="styles/standard/sport/volleyball.png" type="node">         	
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dvolleyball" />
+            <label text="Edit Volleyball" />
+            <space />            
+            <key key="sport" value="volleyball" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" /> 
+            <combo key="leisure" text="Type" values="stadium,pitch,sports_centre" default="" delete_if_empty="true" />
+        </item> 
+        <item name="Beachvolleyball" icon="presets/beachvolleyball.png" type="node">         	
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dbeachvolleyball" />
+            <label text="Edit Beachvolleyball" />
+            <space />            
+            <key key="sport" value="beachvolleyball" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" /> 
+            <combo key="leisure" text="Type" values="stadium,pitch,sports_centre" default="" delete_if_empty="true" />
+        </item> 
         <item name="Golf" icon="presets/golf.png" type="node,closedway">
             <label text="Edit Golf" />
             <key key="sport" value="golf" />
@@ -2910,6 +2937,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="man_made" value="water_tower" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Water Works" icon="presets/water_works.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dwater_works" />
+            <label text="Edit Water Works" />
+            <space />            
+            <key key="man_made" value="water_works" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />            
+        </item>              
         <item name="Wastewater Plant" icon="presets/wastewater_plant.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=wastewater_plant"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=wastewater_plant"
@@ -2951,6 +2986,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="man_made" value="beacon" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Street Lamp" icon="styles/standard/misc/streetlamp.png" type="node">         	
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:highway%3Dstreet_lamp" />
+            <label text="Edit Street Lamp" />
+            <space />            
+            <key key="highway" value="street_lamp" />
+            <combo key="opening_hours" text="Operation times" values="Mo-Fr 22:00-05:00" default="" delete_if_empty="true" />                                                                                        
+        </item> 
         <item name="Survey Point" icon="presets/survey_point.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=survey_point" />
             <label text="Edit Survey Point" />
@@ -3780,6 +3822,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="landuse" value="vineyard" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Greenhouse Horticulture" icon="presets/greenhouse_horticulture.png" type="closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse%3Dgreenhouse_horticulture" />
+            <label text="Edit Greenhouse Horticulture" />
+            <space />            
+            <key key="landuse" value="greenhouse_horticulture" />
+            <text key="name" text="Name" default="" delete_if_empty="true" /> 
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />                                                                
+        </item>        
         <item name="Allotments" icon="presets/landuse.png" type="node,closedway,relation">
             <label text="Edit Allotments Landuse" />
             <space />
@@ -3865,6 +3915,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="landuse" value="industrial" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
+        <item name="Garages" icon="presets/garages.png" type="closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse%3Dgarages" />
+            <label text="Edit Garages" />
+            <space />            
+            <key key="landuse" value="garages" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />                                                    
+            <text key="operator" text="Operator" default="" delete_if_empty="true" />
+        </item> 
         <item name="Railway land" icon="presets/rail_light.png" type="closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=railway" />
             <label text="Edit Railway Landuse" />
