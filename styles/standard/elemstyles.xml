@@ -959,7 +959,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="traffic_calming" v="chicane"/>
-		<icon annotate="true" src="misc/chicane.png"/>
+		<icon annotate="true" src="vehicle/chicane.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
@@ -3592,7 +3592,7 @@ For external files the <rules> should have following elements:
 	<rule>
 		<condition k="landuse" v="greenhouse_horticulture"/>
 		<area colour="green#b1e0c2"/>
-		<icon src="misc/landmark/greenhouse_horticulture.png"/>
+		<icon src="misc/landuse/greenhouse_horticulture.png"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
 	</rule>
