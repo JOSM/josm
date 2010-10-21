@@ -2777,7 +2777,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="shop" v="convenience"/>
-		<icon annotate="true" src="shop/supermarket.png"/>
+		<icon annotate="true" src="shop/convenience.png"/>
 		<area colour="shop#00005f"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>

@@ -3156,7 +3156,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
         </item>
-        <item name="Convenience Store" icon="styles/standard/shop/supermarket.png" type="node,closedway">
+        <item name="Convenience Store" icon="presets/convenience.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=convenience" />
             <label text="Edit Convenience Store" />
             <key key="shop" value="convenience" />
