@@ -1517,14 +1517,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Shop Motorcycle" />
             <key key="shop" value="motorcycle" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="brand" text="Brand" values="Independent" default="" delete_if_empty="true" />
+            <combo key="brand" text="Brand" values="independent" default="" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
             <label text="Services:" />
                 <combo key="sale" text="Sale" values="yes,brand,used,no" values_context="motorcycle" default="" delete_if_empty="true" />
                 <combo key="rental" text="Rental" values="yes,brand,no" default="" delete_if_empty="true" />
                 <combo key="repair" text="Repair" values="yes,brand,oldtimer,no" default="" delete_if_empty="true" />
-                <combo key="inspection" text="Inspection" values="yes,DEKRA,GTÜ,MOT,TÜV,no" default="" delete_if_empty="true" />
+                <combo key="safety_inspection" text="Safety inspection" values="yes,DEKRA,GTÜ,MOT,TÜV,no" default="" delete_if_empty="true" />
                 <combo key="parts" text="Parts" values="yes,brand,oldtimer,no" default="" delete_if_empty="true" />
                 <combo key="clothes" text="Clothes" values="yes,brand,no" default="" delete_if_empty="true" />
                 <text key="services" text="Other" default="" delete_if_empty="true" />
