@@ -170,7 +170,14 @@ public class MapStatus extends JPanel implements Helpful {
                     // The exception needed to handle with in the first place, means that this
                     // access to the data need to be restarted, if the main thread modifies
                     // the data.
+                    DataSet ds = null;
                     try {
+                        ds = mv.getCurrentDataSet();
+                        if (ds != null) {
+                            // This is not perfect, if current dataset was changed during execution, the lock would be useless
+                            ds.getReadLock().lock();
+                        }
+
                         // Set the text label in the bottom status bar
                         statusBarElementUpdate(ms);
 
@@ -236,6 +243,10 @@ public class MapStatus extends JPanel implements Helpful {
                         //x.printStackTrace();
                     } catch (NullPointerException x) {
                         //x.printStackTrace();
+                    } finally {
+                        if (ds != null) {
+                            ds.getReadLock().unlock();
+                        }
                     }
                 }
             } finally {
