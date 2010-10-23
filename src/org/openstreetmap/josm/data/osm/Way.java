@@ -5,8 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
@@ -293,15 +293,26 @@ public final class Way extends OsmPrimitive {
         }
     }
 
-    public void removeNodes(Collection<? extends OsmPrimitive> selection) {
+    public void removeNodes(Set<? extends OsmPrimitive> selection) {
         if (isIncomplete()) return;
         boolean locked = writeLock();
         try {
-            for(OsmPrimitive p : selection) {
-                if (p instanceof Node) {
-                    removeNode((Node)p);
+            boolean closed = (lastNode() == firstNode() && selection.contains(lastNode()));
+            List<Node> copy = new ArrayList<Node>();
+
+            for (Node n: nodes) {
+                if (!selection.contains(n)) {
+                    copy.add(n);
                 }
             }
+
+            int i = copy.size();
+            if (closed && i > 2) {
+                copy.add(copy.get(0));
+            } else if (i >= 2 && i <= 3 && copy.get(0) == copy.get(i-1)) {
+                copy.remove(i-1);
+            }
+            setNodes(copy);
         } finally {
             writeUnlock(locked);
         }
