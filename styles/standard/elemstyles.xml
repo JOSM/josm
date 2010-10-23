@@ -1781,7 +1781,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="man_made" v="adit"/>
-		<icon annotate="true" src="vehicle/tunnel.png"/>
+		<icon annotate="true" src="misc/landmark/adit.png"/>
 		<area colour="manmade#d8d8d8"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>
@@ -3902,7 +3902,7 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="natural" v="cave_entrance"/>
-		<icon src="vehicle/tunnel.png"/>
+		<icon src="misc/landmark/cave_entrance.png"/>
 		<area colour="natural#002f00"/>
 		<scale_min>1</scale_min>
 		<scale_max>50000</scale_max>

@@ -2922,7 +2922,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="headframe" text="Visible Headframe" values="yes,no" default="" delete_if_empty="true" />  
             <check key="disused" text="Disused" default="off" delete_if_empty="true" />                                                             
         </item>
-        <item name="Adit" icon="presets/tunnel.png" type="node">
+        <item name="Adit" icon="presets/adit.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made%3Dadit" />
             <label text="Edit Adit" />
             <key key="man_made" value="adit" />
@@ -3725,7 +3725,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="ele" text="Elevation" default="" delete_if_empty="true" />
             <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
-        <item name="Cave Entrance" icon="presets/tunnel.png" type="node,closedway">
+        <item name="Cave Entrance" icon="presets/cave_entrance.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cave_entrance" />
             <label text="Edit Cave Entrance" />
             <key key="natural" value="cave_entrance" />
