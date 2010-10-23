@@ -53,7 +53,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     private Mode mode = Mode.select;
 
     /**
-     * If true, when extruding create new node even if segments prallel.
+     * If true, when extruding create new node even if segments parallel.
      */
     private boolean alwaysCreateNodes = false;
     private long mouseDownTime = 0;
@@ -141,7 +141,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
     /**
      * If the left mouse button is pressed over a segment, switch
-     * to either extrude or translate mode depending on whether ctrl is held.
+     * to either extrude or translate mode depending on whether Ctrl is held.
      */
     @Override public void mousePressed(MouseEvent e) {
         if(!Main.map.mapView.isActiveLayerVisible())
@@ -193,7 +193,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                         initialN2en.getX() - en.getX(),
                         initialN2en.getY() - en.getY()));
             }
-            
+
             // Signifies that nothing has happened yet
             newN1en = null;
             newN2en = null;
@@ -305,9 +305,10 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
                     //find if the new points overlap existing segments (in case of 90 degree angles)
                     Node prevNode = getPreviousNode(selectedSegment.lowerIndex);
-                    boolean nodeOverlapsSegment = prevNode != null && pointsColinear(prevNode.getEastNorth(), initialN1en, newN1en);
+                    boolean nodeOverlapsSegment = prevNode != null && segmentsParralel(initialN1en, prevNode.getEastNorth(), initialN1en, newN1en);
+                    boolean hasOtherWays = this.hasNodeOtherWays(selectedSegment.getFirstNode(), selectedSegment.way);
 
-                    if (nodeOverlapsSegment && !alwaysCreateNodes) {
+                    if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
                         //move existing node
                         Node n1Old = selectedSegment.getFirstNode();
                         cmds.add(new MoveCommand(n1Old, Main.proj.eastNorth2latlon(newN1en)));
@@ -321,9 +322,10 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
                     //find if the new points overlap existing segments (in case of 90 degree angles)
                     Node nextNode = getNextNode(selectedSegment.lowerIndex + 1);
-                    nodeOverlapsSegment = nextNode != null && pointsColinear(nextNode.getEastNorth(), initialN2en, newN2en);
+                    nodeOverlapsSegment = nextNode != null && segmentsParralel(initialN2en, nextNode.getEastNorth(), initialN2en, newN2en);
+                    hasOtherWays = hasNodeOtherWays(selectedSegment.getFirstNode(), selectedSegment.way);
 
-                    if (nodeOverlapsSegment && !alwaysCreateNodes) {
+                    if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
                         //move existing node
                         Node n2Old = selectedSegment.getSecondNode();
                         cmds.add(new MoveCommand(n2Old, Main.proj.eastNorth2latlon(newN2en)));
@@ -361,6 +363,20 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         }
     }
 
+    /**
+     * This method tests if a node has other ways apart from the given one.
+     * @param node
+     * @param myWay
+     * @return true of node belongs only to myWay, false if there are more ways.
+     */
+    private boolean hasNodeOtherWays(Node node, Way myWay) {
+        for (OsmPrimitive p : node.getReferrers()) {
+            if (p instanceof Way && p.isUsable() && p != myWay)
+                return true;
+        }
+        return false;
+    }
+
     /***
      * This method calculates offset amount by witch to move the given segment perpendicularly for it to be in line with mouse position.
      * @param segmentP1
@@ -368,29 +384,24 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      * @param targetPos
      * @return offset amount of P1 and P2.
      */
-    private static EastNorth calculateSegmentOffset(EastNorth segmentP1, EastNorth segmentP2 ,EastNorth moveDirection , EastNorth targetPos)
-    {
-        EastNorth intersectionPoint = getLineLineIntersection(
-                segmentP1,
-                segmentP2,
-                targetPos,
+    private static EastNorth calculateSegmentOffset(EastNorth segmentP1, EastNorth segmentP2, EastNorth moveDirection,
+            EastNorth targetPos) {
+        EastNorth intersectionPoint = getLineLineIntersection(segmentP1, segmentP2, targetPos,
                 new EastNorth(targetPos.getX() + moveDirection.getX(), targetPos.getY() + moveDirection.getY()));
 
         if (intersectionPoint == null)
             return null;
         else
             //return distance form base to target position
-            return new EastNorth(targetPos.getX() - intersectionPoint.getX(), targetPos.getY() - intersectionPoint.getY());
+            return new EastNorth(targetPos.getX() - intersectionPoint.getX(),
+                        targetPos.getY() - intersectionPoint.getY());
     }
 
     /**
-     * Finds the intersection of two lines of inifinite length
-     * @return EastNorth null if no intersection was found, the Lon coordinates of the intersection otherwise
+     * Finds the intersection of two lines of infinite length.
+     * @return EastNorth null if no intersection was found, the coordinates of the intersection otherwise
      */
-    static public EastNorth getLineLineIntersection(
-            EastNorth p1, EastNorth p2,
-            EastNorth p3, EastNorth p4) {
-
+    public static EastNorth getLineLineIntersection(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
         // Convert line from (point, point) form to ax+by=c
         double a1 = p2.getY() - p1.getY();
         double b1 = p1.getX() - p2.getX();
@@ -401,42 +412,25 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         double c2 = p4.getX() * p3.getY() - p3.getX() * p4.getY();
 
         // Solve the equations
-        double det = a1*b2 - a2*b1;
-        if(det == 0) return null; // Lines are parallel
+        double det = a1 * b2 - a2 * b1;
+        if (det == 0)
+            return null; // Lines are parallel
 
-        return new EastNorth(
-                (b1*c2 - b2*c1)/det,
-                (a2*c1 - a1*c2)/det);
+        return new EastNorth((b1 * c2 - b2 * c1) / det, (a2 * c1 - a1 * c2) / det);
     }
 
-    /**
-     * Returns true if all points are on the same line.
-     */
-    private static boolean pointsColinear(EastNorth p1, EastNorth p2, EastNorth p3) {
+    private static boolean segmentsParralel(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
 
-        //the simple dumb way of triangle side lengths.
-        double distance1 = p1.distance(p2);
-        double distance2 = p1.distance(p3);
-        double distance3 = p2.distance(p3);
+        // Convert line from (point, point) form to ax+by=c
+        double a1 = p2.getY() - p1.getY();
+        double b1 = p1.getX() - p2.getX();
 
-        //sort so that distance 1 is the greatest
-        if (distance1 < distance2) {
-            double temp = distance1;
-            distance1 = distance2;
-            distance2 = temp;
-        }
+        double a2 = p4.getY() - p3.getY();
+        double b2 = p3.getX() - p4.getX();
 
-        if (distance1 < distance3) {
-            double temp = distance1;
-            distance1 = distance3;
-            distance3 = temp;
-        }
-
-        //test with some treshold
-        double difference = distance1 - distance2 - distance3;
-
-        return (Math.abs(difference) < 1e-15);
-
+        // Solve the equations
+        double det = a1 * b2 - a2 * b1;
+        return Math.abs(det) < 1e-13;
     }
 
     /**
