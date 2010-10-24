@@ -63,7 +63,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     }
 
     protected String buildText() {
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         for (Node n : new DatasetCollection<Node>(primitives, OsmPrimitive.nodePredicate)) {
             s.append("Node id="+n.getUniqueId());
             if (!checkDataSet(n)) {
@@ -76,7 +76,9 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                 addRelationReferrer(s, n);
                 continue;
             }
-            s.append(String.format(" lat=%s; lon=%s; ", Double.toString(n.getCoor().lat()), Double.toString(n.getCoor().lon())));
+            s.append(String.format(" lat=%s lon=%s (projected: x=%s, y=%s); ",
+                    Double.toString(n.getCoor().lat()), Double.toString(n.getCoor().lon()),
+                    Double.toString(n.getEastNorth().east()), Double.toString(n.getEastNorth().north())));
             addCommon(s, n);
             addAttributes(s, n);
             addWayReferrer(s, n);
@@ -133,7 +135,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         return s.toString().trim();
     }
 
-    protected void addCommon(StringBuffer s, OsmPrimitive o) {
+    protected void addCommon(StringBuilder s, OsmPrimitive o) {
         s.append(String.format("Data set: %X; User: [%s]; ChangeSet id: %H; Timestamp: %s, Version: %d",
                     o.getDataSet().hashCode(),
                     userString(o.getUser()),
@@ -166,7 +168,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         s.append("\n");
     }
 
-    protected void addAttributes(StringBuffer s, OsmPrimitive o) {
+    protected void addAttributes(StringBuilder s, OsmPrimitive o) {
         if (o.hasKeys()) {
             s.append("  tags:\n");
             for (String key: o.keySet()) {
@@ -175,7 +177,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         }
     }
 
-    protected void addWayReferrer(StringBuffer s, Node n) {
+    protected void addWayReferrer(StringBuilder s, Node n) {
         // add way referrer
         List<OsmPrimitive> refs = n.getReferrers();
         DatasetCollection<Way> wayRefs = new DatasetCollection<Way>(refs, OsmPrimitive.wayPredicate);
@@ -187,7 +189,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         }
     }
 
-    protected void addRelationReferrer(StringBuffer s, OsmPrimitive o) {
+    protected void addRelationReferrer(StringBuilder s, OsmPrimitive o) {
         List<OsmPrimitive> refs = o.getReferrers();
         DatasetCollection<Relation> relRefs = new DatasetCollection<Relation>(refs, OsmPrimitive.relationPredicate);
         if (relRefs.size() > 0) {
@@ -215,7 +217,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
         List<String> names = user.getNames();
 
-        StringBuffer us = new StringBuffer();
+        StringBuilder us = new StringBuilder();
 
         us.append("id:"+user.getId());
         if (names.size() == 1) {
