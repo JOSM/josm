@@ -22,8 +22,9 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
-import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy.PasteBufferChangedListener;
+import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.gui.conflict.tags.PasteTagsConflictResolverDialog;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -41,7 +42,7 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
 
         private final Collection<PrimitiveData> source;
         private final Collection<OsmPrimitive> target;
-        private final List<Command> commands = new ArrayList<Command>();
+        private final List<Tag> commands = new ArrayList<Tag>();
 
         public TagPaster(Collection<PrimitiveData> source, Collection<OsmPrimitive> target) {
             this.source = source;
@@ -99,22 +100,10 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
             return ! getSourceTagsByType(type).isEmpty();
         }
 
-        protected Command buildChangeCommand(Collection<? extends OsmPrimitive> selection, TagCollection tc) {
-            List<Command> commands = new ArrayList<Command>();
+        protected void buildChangeCommand(Collection<? extends OsmPrimitive> selection, TagCollection tc) {
             for (String key : tc.getKeys()) {
-                String value = tc.getValues(key).iterator().next();
-                value = value.equals("") ? null : value;
-                commands.add(new ChangePropertyCommand(selection,key,value));
+                commands.add(new Tag(key, tc.getValues(key).iterator().next()));
             }
-            if (!commands.isEmpty()) {
-                String title1 = trn("Pasting {0} tag", "Pasting {0} tags", tc.getKeys().size(), tc.getKeys().size());
-                String title2 = trn("to {0} primitive", "to {0} primtives", selection.size(), selection.size());
-                return new SequenceCommand(
-                        title1 + " " + title2,
-                        commands
-                );
-            }
-            return null;
         }
 
         protected Map<OsmPrimitiveType, Integer> getSourceStatistics() {
@@ -165,14 +154,12 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
                 dialog.setVisible(true);
                 if (dialog.isCanceled())
                     return;
-                Command cmd = buildChangeCommand(target, dialog.getResolution());
-                commands.add(cmd);
+                buildChangeCommand(target, dialog.getResolution());
             } else {
                 // no conflicts in the source tags to resolve. Just apply the tags
                 // to the target primitives
                 //
-                Command cmd = buildChangeCommand(target, tc);
-                commands.add(cmd);
+                buildChangeCommand(target, tc);
             }
         }
 
@@ -217,8 +204,7 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
             if (canPasteFromHeterogeneousSourceWithoutConflict(target)) {
                 for (OsmPrimitiveType type:OsmPrimitiveType.values()) {
                     if (hasSourceTagsByType(type) && hasTargetPrimitives(type.getOsmClass())) {
-                        Command cmd = buildChangeCommand(target, getSourceTagsByType(type));
-                        commands.add(cmd);
+                        buildChangeCommand(target, getSourceTagsByType(type));
                     }
                 }
             } else {
@@ -235,14 +221,13 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
                     return;
                 for (OsmPrimitiveType type:OsmPrimitiveType.values()) {
                     if (hasSourceTagsByType(type) && hasTargetPrimitives(type.getOsmClass())) {
-                        Command cmd = buildChangeCommand(OsmPrimitive.getFilteredList(target, type.getOsmClass()), dialog.getResolution(type));
-                        commands.add(cmd);
+                        buildChangeCommand(OsmPrimitive.getFilteredList(target, type.getOsmClass()), dialog.getResolution(type));
                     }
                 }
             }
         }
 
-        public List<Command> execute() {
+        public List<Tag> execute() {
             commands.clear();
             if (isHeteogeneousSource()) {
                 pasteFromHeterogeneousSource();
@@ -255,12 +240,27 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (getCurrentDataSet().getSelected().isEmpty())
+        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
+
+        if (selection.isEmpty())
             return;
-        TagPaster tagPaster = new TagPaster(Main.pasteBuffer.getDirectlyAdded(), getCurrentDataSet().getSelected());
-        for (Command c:tagPaster.execute()) {
-            Main.main.undoRedo.add(c);
+
+        TagPaster tagPaster = new TagPaster(Main.pasteBuffer.getDirectlyAdded(), selection);
+
+        List<Command> commands = new ArrayList<Command>();
+        for (Tag tag: tagPaster.execute()) {
+            commands.add(new ChangePropertyCommand(selection, tag.getKey(), "".equals(tag.getValue())?null:tag.getValue()));
         }
+        if (!commands.isEmpty()) {
+            String title1 = trn("Pasting {0} tag", "Pasting {0} tags", commands.size(), commands.size());
+            String title2 = trn("to {0} primitive", "to {0} primtives", selection.size(), selection.size());
+            Main.main.undoRedo.add(
+                    new SequenceCommand(
+                            title1 + " " + title2,
+                            commands
+                    ));
+        }
+
     }
 
     @Override public void pasteBufferChanged(PrimitiveDeepCopy newPasteBuffer) {

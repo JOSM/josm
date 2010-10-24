@@ -208,7 +208,11 @@ public class TagEditorModel extends AbstractTableModel {
         TagModel tag = get(name);
         if (tag == null) {
             tag = new TagModel(name, value);
-            tags.add(tag);
+            int index = tags.size();
+            while (index >= 1 && tags.get(index - 1).getName().isEmpty() && tags.get(index - 1).getValue().isEmpty()) {
+                index--; // If last line(s) is empty, add new tag before it
+            }
+            tags.add(index, tag);
         } else {
             tag.addValue(value);
         }

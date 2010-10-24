@@ -53,6 +53,7 @@ import javax.swing.event.TableModelListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.CopyAction;
+import org.openstreetmap.josm.actions.PasteTagsAction.TagPaster;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.ConflictAddCommand;
@@ -131,27 +132,7 @@ public class GenericRelationEditor extends RelationEditor  {
 
             @Override
             public void updateTags(List<Tag> tags) {
-                Map<String, TagModel> modelTags = new HashMap<String, TagModel>();
-                for (int i=0; i<tagEditorPanel.getModel().getRowCount(); i++) {
-                    TagModel tagModel = tagEditorPanel.getModel().get(i);
-                    modelTags.put(tagModel.getName(), tagModel);
-                }
-                for (Tag tag: tags) {
-                    TagModel existing = modelTags.get(tag.getKey());
-
-                    if (tag.getValue().isEmpty()) {
-                        if (existing != null) {
-                            tagEditorPanel.getModel().delete(tag.getKey());
-                        }
-                    } else {
-                        if (existing != null) {
-                            tagEditorPanel.getModel().updateTagValue(existing, tag.getValue());
-                        } else {
-                            tagEditorPanel.getModel().add(tag.getKey(), tag.getValue());
-                        }
-                    }
-
-                }
+                GenericRelationEditor.this.updateTags(tags);
             }
 
             @Override
@@ -428,6 +409,7 @@ public class GenericRelationEditor extends RelationEditor  {
 
         new PasteMembersAction();
         new CopyMembersAction();
+        new PasteTagsAction();
 
         return pnl3;
     }
@@ -647,6 +629,34 @@ public class GenericRelationEditor extends RelationEditor  {
         selectionTable.getInputMap(JComponent.WHEN_FOCUSED).put(shortcut, actionName);
         selectionTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(shortcut, actionName);
         selectionTable.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(shortcut, actionName);
+    }
+
+    protected void updateTags(List<Tag> tags) {
+
+        if (tags.isEmpty())
+            return;
+
+        Map<String, TagModel> modelTags = new HashMap<String, TagModel>();
+        for (int i=0; i<tagEditorPanel.getModel().getRowCount(); i++) {
+            TagModel tagModel = tagEditorPanel.getModel().get(i);
+            modelTags.put(tagModel.getName(), tagModel);
+        }
+        for (Tag tag: tags) {
+            TagModel existing = modelTags.get(tag.getKey());
+
+            if (tag.getValue().isEmpty()) {
+                if (existing != null) {
+                    tagEditorPanel.getModel().delete(tag.getKey());
+                }
+            } else {
+                if (existing != null) {
+                    tagEditorPanel.getModel().updateTagValue(existing, tag.getValue());
+                } else {
+                    tagEditorPanel.getModel().add(tag.getKey(), tag.getValue());
+                }
+            }
+
+        }
     }
 
     static class AddAbortException extends Exception  {
@@ -1560,6 +1570,22 @@ public class GenericRelationEditor extends RelationEditor  {
             if (!primitives.isEmpty()) {
                 CopyAction.copy(getLayer(), primitives);
             }
+        }
+
+    }
+
+    class PasteTagsAction extends AbstractAction {
+
+        public PasteTagsAction() {
+            registerCopyPasteAction(this, "PASTE_TAGS", Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")), KeyEvent.VK_V, Shortcut.GROUP_MENU, Shortcut.SHIFT_DEFAULT).getKeyStroke());
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Relation relation = new Relation();
+            tagEditorPanel.getModel().applyToPrimitive(relation);
+            TagPaster tagPaster = new TagPaster(Main.pasteBuffer.getDirectlyAdded(), Collections.<OsmPrimitive>singletonList(relation));
+            updateTags(tagPaster.execute());
         }
 
     }
