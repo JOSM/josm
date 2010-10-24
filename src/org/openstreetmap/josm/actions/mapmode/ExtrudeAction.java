@@ -323,7 +323,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     //find if the new points overlap existing segments (in case of 90 degree angles)
                     Node nextNode = getNextNode(selectedSegment.lowerIndex + 1);
                     nodeOverlapsSegment = nextNode != null && segmentsParralel(initialN2en, nextNode.getEastNorth(), initialN2en, newN2en);
-                    hasOtherWays = hasNodeOtherWays(selectedSegment.getFirstNode(), selectedSegment.way);
+                    hasOtherWays = hasNodeOtherWays(selectedSegment.getSecondNode(), selectedSegment.way);
 
                     if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
                         //move existing node
