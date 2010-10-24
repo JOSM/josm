@@ -179,9 +179,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         addToggleDialog(new UserListDialog());
         addToggleDialog(new HistoryDialog());
         addToggleDialog(conflictDialog = new ConflictDialog());
-        if(Main.pref.getBoolean("displayfilter", true)) {
-            addToggleDialog(filterDialog = new FilterDialog());
-        }
+        addToggleDialog(filterDialog = new FilterDialog());
         addToggleDialog(new ChangesetDialog(this));
 
         // status line below the map
