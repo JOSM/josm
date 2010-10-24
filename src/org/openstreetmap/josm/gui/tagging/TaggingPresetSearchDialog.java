@@ -120,7 +120,10 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
                     tags.add(((Combo)item).key);
                 } else if (item instanceof Key) {
                     tags.add(((Key) item).key);
-                    tags.add(((Key) item).value);
+                    String value = ((Key) item).value;
+                    if (value != null) {
+                        tags.add(value);
+                    }
                 } else if (item instanceof Text) {
                     tags.add(((Text) item).key);
                 } else if (item instanceof Roles) {
