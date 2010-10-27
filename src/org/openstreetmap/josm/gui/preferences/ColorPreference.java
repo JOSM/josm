@@ -84,7 +84,8 @@ public class ColorPreference implements PreferenceSetting {
             if(key.startsWith("layer ")) {
                 colorKeyList_layer.put(getName(key), key);
             } else if(key.startsWith("mappaint.")) {
-                colorKeyList_mappaint.put(getName(key), key);
+                /* use getName(key)+key, as getName() may be ambiguous */
+                colorKeyList_mappaint.put(getName(key)+key, key);
             } else {
                 colorKeyList.put(getName(key), key);
             }
