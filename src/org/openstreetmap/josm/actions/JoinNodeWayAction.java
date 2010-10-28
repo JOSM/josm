@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -36,47 +37,49 @@ public class JoinNodeWayAction extends JosmAction {
         if (!isEnabled())
             return;
         Collection<OsmPrimitive> sel = getCurrentDataSet().getSelected();
-        if (sel.size() != 1 || !(sel.iterator().next() instanceof Node)) return;
-        Node node = (Node) sel.iterator().next();
-
-        List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(
-                Main.map.mapView.getPoint(node), OsmPrimitive.isSelectablePredicate);
-        HashMap<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
-        for (WaySegment ws : wss) {
-            List<Integer> is;
-            if (insertPoints.containsKey(ws.way)) {
-                is = insertPoints.get(ws.way);
-            } else {
-                is = new ArrayList<Integer>();
-                insertPoints.put(ws.way, is);
-            }
-
-            if (ws.way.getNode(ws.lowerIndex) != node
-                    && ws.way.getNode(ws.lowerIndex+1) != node) {
-                is.add(ws.lowerIndex);
-            }
-        }
+        if (sel.size() < 1) return;
 
         Collection<Command> cmds = new LinkedList<Command>();
-        for (Map.Entry<Way, List<Integer>> insertPoint : insertPoints.entrySet()) {
-            List<Integer> is = insertPoint.getValue();
-            if (is.size() == 0)
-                continue;
 
-            Way w = insertPoint.getKey();
-            List<Node> nodesToAdd = w.getNodes();
-            pruneSuccsAndReverse(is);
-            for (int i : is) {
-                nodesToAdd.add(i+1, node);
+        for (OsmPrimitive osm : sel) {
+            if (!(osm instanceof Node)) continue;
+            Node node = (Node) osm;
+
+            List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(
+                    Main.map.mapView.getPoint(node), OsmPrimitive.isSelectablePredicate);
+            HashMap<Way, List<Integer>> insertPoints = new HashMap<Way, List<Integer>>();
+            for (WaySegment ws : wss) {
+                List<Integer> is;
+                if (insertPoints.containsKey(ws.way)) {
+                    is = insertPoints.get(ws.way);
+                } else {
+                    is = new ArrayList<Integer>();
+                    insertPoints.put(ws.way, is);
+                }
+
+                if (ws.way.getNode(ws.lowerIndex) != node
+                        && ws.way.getNode(ws.lowerIndex+1) != node) {
+                    is.add(ws.lowerIndex);
+                }
             }
-            Way wnew = new Way(w);
-            wnew.setNodes(nodesToAdd);
-            cmds.add(new ChangeCommand(w, wnew));
+
+            for (Map.Entry<Way, List<Integer>> insertPoint : insertPoints.entrySet()) {
+                List<Integer> is = insertPoint.getValue();
+                if (is.size() == 0)
+                    continue;
+
+                Way w = insertPoint.getKey();
+                List<Node> nodesToAdd = w.getNodes();
+                pruneSuccsAndReverse(is);
+                for (int i : is) {
+                    nodesToAdd.add(i+1, node);
+                }
+                Way wnew = new Way(w);
+                wnew.setNodes(nodesToAdd);
+                cmds.add(new ChangeCommand(w, wnew));
+            }
         }
-
-        if (cmds.size() == 0)
-            return;
-
+        if (cmds.size() == 0) return;
         Main.main.undoRedo.add(new SequenceCommand(tr("Join Node and Line"), cmds));
         Main.map.repaint();
     }
