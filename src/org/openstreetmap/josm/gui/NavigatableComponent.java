@@ -559,18 +559,18 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
-     * The *result* depends on the current map selection state.
+     * The *result* depends on the current map selection state IF use_selected is true.
      *
      * If more than one node within node.snap-distance pixels is found,
-     * the nearest node selected is returned.
+     * the nearest node selected is returned IF use_selected is true.
      *
-     * If no such node is found, the nearest new/id=0 node within
-     * about the same distance as the true nearest node is returned.
+     * Else the nearest new/id=0 node within about the same distance
+     * as the true nearest node is returned.
      *
      * If no such node is found either, the true nearest
      * node to p is returned.
      *
-     * Finally, if a node is not found at all, return null.
+     * Finally, if a node is not found at all, null is returned.
      *
      * @return A node within snap-distance to point p,
      *      that is chosen by the algorithm described.
@@ -579,7 +579,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param predicate this parameter imposes a condition on the returned object, e.g.
      *        give the nearest node that is tagged.
      */
-    public final Node getNearestNode(Point p, Predicate<OsmPrimitive> predicate) {
+    public final Node getNearestNode(Point p, Predicate<OsmPrimitive> predicate, boolean use_selected) {
         Node n = null;
 
         Map<Double, List<Node>> nlists = getNearestNodesImpl(p, predicate);
@@ -602,11 +602,21 @@ public class NavigatableComponent extends JComponent implements Helpful {
             }
 
             // take nearest selected, nearest new or true nearest node to p, in that order
-            n = (ntsel != null) ? ntsel : ((ntnew != null) ? ntnew
-                    : nlists.values().iterator().next().get(0));
+            n = (ntsel != null && use_selected) ? ntsel
+                    : ((ntnew != null) ? ntnew
+                            : nlists.values().iterator().next().get(0));
         }
 
         return n;
+    }
+
+    /**
+     * Convenience method to {@link #getNearestNode(Point, Predicate, boolean)}.
+     *
+     * @return The nearest node to point p.
+     */
+    public final Node getNearestNode(Point p, Predicate<OsmPrimitive> predicate) {
+        return getNearestNode(p, predicate, true);
     }
 
     @Deprecated
@@ -730,16 +740,17 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
-     * The *result* depends on the current map selection state.
+     * The *result* depends on the current map selection state IF use_selected is true.
      *
      * @return The nearest way segment to point p,
-     *      prefer a nearest, selected way segment, if found.
+     *      and, depending on use_selected, prefers a selected way segment, if found.
      * @see #getNearestWaySegments(Point, Collection, Predicate)
      *
      * @param p the point for which to search the nearest segment.
      * @param predicate the returned object has to fulfill certain properties.
+     * @param use_selected whether selected way segments should be preferred.
      */
-    public final WaySegment getNearestWaySegment(Point p, Predicate<OsmPrimitive> predicate) {
+    public final WaySegment getNearestWaySegment(Point p, Predicate<OsmPrimitive> predicate, boolean use_selected) {
         WaySegment wayseg = null, ntsel = null;
 
         for (List<WaySegment> wslist : getNearestWaySegmentsImpl(p, predicate).values()) {
@@ -756,7 +767,16 @@ public class NavigatableComponent extends JComponent implements Helpful {
             }
         }
 
-        return (ntsel != null) ? ntsel : wayseg;
+        return (ntsel != null && use_selected) ? ntsel : wayseg;
+    }
+
+    /**
+     * Convenience method to {@link #getNearestWaySegment(Point, Predicate, boolean)}.
+     *
+     * @return The nearest way segment to point p.
+     */
+    public final WaySegment getNearestWaySegment(Point p, Predicate<OsmPrimitive> predicate) {
+        return getNearestWaySegment(p, predicate, true);
     }
 
     /**
@@ -882,12 +902,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * This is used as a helper routine to {@link #getNearestNodeOrWay(Point, Predicate, boolean)}
+     * It decides, whether to yield the node to be tested or look for further (way) candidates.
      *
-     * @return true, if the node fulfills certain properties wrt p and use_sel
+     * @return true, if the node fulfills the properties of the function body
      *
      * @param osm node to check
      * @param p point clicked
-     * @param use_sel whether to prefer a selected node
+     * @param use_selected whether to prefer selected nodes
      */
     private boolean isPrecedenceNode(Node osm, Point p, boolean use_selected) {
         boolean ret = false;
@@ -929,80 +950,34 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param use_selected whether to prefer primitives that are currently selected.
      */
     public final OsmPrimitive getNearestNodeOrWay(Point p, Predicate<OsmPrimitive> predicate, boolean use_selected) {
-        OsmPrimitive osm = null;
+        OsmPrimitive osm = getNearestNode(p, predicate, use_selected);
         WaySegment ws = null;
 
-        // find a nearest, selected primitive
-        if (use_selected) {
-            osm = getNearestNode(p, predicate);
-            use_selected = isPrecedenceNode((Node)osm, p, use_selected);
+        if (!isPrecedenceNode((Node)osm, p, use_selected)) {
+            ws = getNearestWaySegment(p, predicate, use_selected);
 
-            if (!use_selected) {
-                ws = getNearestWaySegment(p, predicate);
-                if (ws != null) {
-                    if (ws.way.isSelected() || osm == null) {
-                        // either no nearest nodes found or none were selected
-                        use_selected = true;
-                        osm = ws.way;
-                    } // else { unselected node and wayseg found, do the stuff below }
+            if (ws != null) {
+                if ((ws.way.isSelected() && use_selected) || osm == null) {
+                    // either (no _selected_ nearest node found, if desired) or no nearest node was found
+                    osm = ws.way;
                 } else {
-                    // no nearest wayseg found, osm is null or the nearest node
-                    use_selected = true;
-                }
-            }
-        }
+                    int maxWaySegLenSq = 3*PROP_SNAP_DISTANCE.get();
+                    maxWaySegLenSq *= maxWaySegLenSq;
 
-        // no nearest, selected primitive was found or caller does not care about current selection
-        if (!use_selected) {
-            if (osm == null) {
-                // get the true nearest node (if unselected found before, reuse it)
-                for (List<Node> nlist : getNearestNodesImpl(p, predicate).values()) {
-                    osm = nlist.get(0);
-                    break;
-                }
-            }
+                    Point2D wp1 = getPoint2D(ws.way.getNode(ws.lowerIndex));
+                    Point2D wp2 = getPoint2D(ws.way.getNode(ws.lowerIndex+1));
 
-            // there is no nearest node OR it does not fulfill criteria to simply be chosen
-            if (osm == null || !isPrecedenceNode((Node)osm, p, use_selected)) {
-                if (ws == null) {
-                    // get the true nearest wayseg (if unselected found before, reuse it)
-                    for (WaySegment wseg : getNearestWaySegments(p, predicate)) {
-                        ws = wseg;
-                        break;
-                    }
-                }
-                if (ws != null) {
-                    if (osm == null) {
-                        // a nearest node was not found
+                    // is wayseg shorter than maxWaySegLenSq and
+                    // is p closer to the middle of wayseg  than  to the nearest node?
+                    if (wp1.distanceSq(wp2) < maxWaySegLenSq &&
+                            p.distanceSq(project(0.5, wp1, wp2)) < p.distanceSq(getPoint2D((Node)osm))) {
                         osm = ws.way;
-                    } else {
-                        int maxWaySegLenSq = 3*PROP_SNAP_DISTANCE.get();
-                        maxWaySegLenSq *= maxWaySegLenSq;
-
-                        Point2D wp1 = getPoint2D(ws.way.getNode(ws.lowerIndex));
-                        Point2D wp2 = getPoint2D(ws.way.getNode(ws.lowerIndex+1));
-
-                        // is wayseg shorter than maxWaySegLenSq and
-                        // is p closer to the middle of wayseg than to the nearest node?
-                        if (wp1.distanceSq(wp2) < maxWaySegLenSq &&
-                                p.distanceSq(project(0.5, wp1, wp2)) < p.distanceSq(getPoint2D((Node)osm))) {
-                            osm = ws.way;
-                        }
                     }
                 }
             }
         }
 
         return osm;
-    }
-
-    /**
-     * Convenience method to {@link #getNearestNodeOrWay(Point, Predicate, boolean)}.
-     *
-     * @return The nearest primitive to point p.
-     */
-    public final OsmPrimitive getNearestNodeOrWay(Point p, Predicate<OsmPrimitive> predicate) {
-        return getNearestNodeOrWay(p, predicate, false);
     }
 
     @Deprecated

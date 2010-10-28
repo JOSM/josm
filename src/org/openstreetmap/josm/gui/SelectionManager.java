@@ -273,7 +273,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
         Point center = new Point(r.x+r.width/2, r.y+r.height/2);
 
         if (clicked) {
-            OsmPrimitive osm = nc.getNearestNodeOrWay(center, OsmPrimitive.isSelectablePredicate);
+            OsmPrimitive osm = nc.getNearestNodeOrWay(center, OsmPrimitive.isSelectablePredicate, false);
             if (osm != null) {
                 selection.add(osm);
             }

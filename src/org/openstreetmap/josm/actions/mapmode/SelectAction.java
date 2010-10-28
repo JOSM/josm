@@ -340,24 +340,20 @@ public class SelectAction extends MapMode implements SelectionEnded {
     private Collection<OsmPrimitive> cycleSetup(Collection<OsmPrimitive> single, MouseEvent e) {
         OsmPrimitive osm = null;
 
-        if (single == null) {
-            single = MapView.asColl(
-                    mv.getNearestNodeOrWay(e.getPoint(), OsmPrimitive.isSelectablePredicate, false));
-        }
+        if (single != null && !single.isEmpty()) {
+            osm = single.iterator().next();
 
-        if (!single.isEmpty()) {
+            Point p = e.getPoint();
             boolean waitForMouseUp = Main.pref.getBoolean("mappaint.select.waits-for-mouse-up", false);
             boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
             boolean alt = ((e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0
                     || Main.pref.getBoolean("selectaction.cycles.multiple.matches", false));
 
-            Point p = e.getPoint();
-            osm = single.iterator().next();
-
             if (!alt) {
                 cycleList = MapView.asColl(osm);
+
                 if (waitForMouseUp) {
-                    // find a selected nearest node or way, not the true nearest..
+                    // prefer a selected nearest node or way, if possible
                     osm = mv.getNearestNodeOrWay(p, OsmPrimitive.isSelectablePredicate, true);
                 }
             } else {
@@ -367,7 +363,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                     cycleList = new LinkedList<OsmPrimitive>(mv.getNearestWays(p, OsmPrimitive.isSelectablePredicate));
                 }
 
-                if (!waitForMouseUp && cycleList.size()>1) {
+                if (cycleList.size()>1) {
                     cyclePrims = false;
 
                     OsmPrimitive old = osm;
@@ -379,14 +375,18 @@ public class SelectAction extends MapMode implements SelectionEnded {
                         }
                     }
 
-                    // for cycle groups of 2, we can toggle to the true nearest
-                    // primitive on mouse presses, if it is not selected and if ctrl is not used
-                    // else, if rotation is possible, defer sel change to mouse release
-                    if (cycleList.size()==2) {
-                        if (!(old.equals(osm) || ctrl)) {
+                    // special case:  for cycle groups of 2, we can toggle to the
+                    // true nearest primitive on mousePressed right away
+                    if (cycleList.size()==2 && !waitForMouseUp) {
+                        if (!(osm.equals(old) || osm.isNew() || ctrl)) {
                             cyclePrims = false;
                             osm = old;
-                        }
+                        } // else defer toggling to mouseRelease time in those cases:
+                        /*
+                         * osm == old        -- the true nearest node is the selected one
+                         * osm is a new node -- do not break unglue ways in ALT mode
+                         * ctrl is pressed   -- ctrl generally works on mouseReleased
+                         */
                     }
                 }
             }

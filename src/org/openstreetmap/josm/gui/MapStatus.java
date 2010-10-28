@@ -299,7 +299,7 @@ public class MapStatus extends JPanel implements Helpful {
          * @param ms
          */
         private final void statusBarElementUpdate(MouseState ms) {
-            final OsmPrimitive osmNearest = mv.getNearestNodeOrWay(ms.mousePos, OsmPrimitive.isUsablePredicate);
+            final OsmPrimitive osmNearest = mv.getNearestNodeOrWay(ms.mousePos, OsmPrimitive.isUsablePredicate, false);
             if (osmNearest != null) {
                 nameText.setText(osmNearest.getDisplayName(DefaultNameFormatter.getInstance()));
             } else {
