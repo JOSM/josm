@@ -140,6 +140,11 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
     public void showNotify() {
         HistoryDataSet.getInstance().addHistoryDataSetListener(this);
         DataSet.addSelectionListener(model);
+        if (Main.main.getCurrentDataSet() == null) {
+            model.selectionChanged(null);
+        } else {
+            model.selectionChanged(Main.main.getCurrentDataSet().getSelected());
+        }
     }
 
     @Override
