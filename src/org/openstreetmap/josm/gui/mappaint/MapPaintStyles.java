@@ -96,7 +96,7 @@ public class MapPaintStyles {
                 } else {
                     ins = new InputStreamReader(in);
                 }
-                parser.startWithValidation(ins, "http://josm.openstreetmap.de/mappaint-styöe-1.0",
+                parser.startWithValidation(ins, "http://josm.openstreetmap.de/mappaint-style-1.0",
                 "resource://data/mappaint-style.xsd");
                 while(parser.hasNext()) {
                 }
