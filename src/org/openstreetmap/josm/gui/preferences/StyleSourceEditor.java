@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -44,8 +43,10 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
@@ -100,16 +101,56 @@ public class StyleSourceEditor extends JPanel {
         lstAvailableStyles = new JList(availableStylesModel =new AvailableStylesListModel(selectionModel));
         lstAvailableStyles.setSelectionModel(selectionModel);
         lstAvailableStyles.setCellRenderer(new StyleSourceCellRenderer());
-        //availableStylesModel.setStyleSources(reloadAvailableStyles(availableStylesUrl));
         this.availableStylesUrl = availableStylesUrl;
 
         this.pref = stylesPreferencesKey;
         this.iconpref = iconsPreferenceKey;
 
-        JButton iconadd = null;
-        JButton iconedit = null;
-        JButton icondelete = null;
+        EditActiveStyleAction editActiveStyleAction = new EditActiveStyleAction();
+        tblActiveStyles.getSelectionModel().addListSelectionListener(editActiveStyleAction);
 
+        RemoveActiveStylesAction removeActiveStylesAction = new RemoveActiveStylesAction();
+        tblActiveStyles.getSelectionModel().addListSelectionListener(removeActiveStylesAction);
+        tblActiveStyles.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "delete");
+        tblActiveStyles.getActionMap().put("delete", removeActiveStylesAction);
+
+        ActivateStylesAction activateStylesAction = new ActivateStylesAction();
+        lstAvailableStyles.addListSelectionListener(activateStylesAction);
+        JButton activate = new JButton(activateStylesAction);
+
+        setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        setLayout(new GridBagLayout());
+        add(new JLabel(tr("Active styles:")), GBC.eol().insets(11, 5, 5, 0));
+        JScrollPane sp = new JScrollPane(tblActiveStyles);
+        add(sp, GBC.std().insets(10, 0, 3, 0).fill(GBC.BOTH));
+        sp.setColumnHeaderView(null);
+
+        JToolBar sideButtonTB = new JToolBar(JToolBar.VERTICAL);
+        sideButtonTB.setFloatable(false);
+        sideButtonTB.setBorderPainted(false);
+        sideButtonTB.setOpaque(false);
+        sideButtonTB.add(new NewActiveStyleAction());
+        sideButtonTB.add(editActiveStyleAction);
+        sideButtonTB.add(removeActiveStylesAction);
+        add(sideButtonTB, GBC.eol().insets(0, 0, 10, 0).fill(GBC.VERTICAL));
+
+        JToolBar bottomButtonTB = new JToolBar();
+        bottomButtonTB.setFloatable(false);
+        bottomButtonTB.setBorderPainted(false);
+        bottomButtonTB.setOpaque(false);
+        bottomButtonTB.add(activate);
+        add(bottomButtonTB, GBC.eol().insets(12, 4, 5, 4).fill(GBC.HORIZONTAL));
+
+        add(new JLabel(tr("Available styles (from {0}):", availableStylesUrl)), GBC.eol().insets(11, 0, 5, 0));
+        add(new JScrollPane(lstAvailableStyles), GBC.std().insets(10, 0, 3, 0).fill(GBC.BOTH));
+
+        sideButtonTB = new JToolBar(JToolBar.VERTICAL);
+        sideButtonTB.setFloatable(false);
+        sideButtonTB.setBorderPainted(false);
+        sideButtonTB.setOpaque(false);
+        sideButtonTB.add(new ReloadStylesAction(availableStylesUrl));
+        add(sideButtonTB, GBC.eol().insets(0, 0, 10, 0).fill(GBC.VERTICAL));
+        
         if (iconsPreferenceKey != null) {
             selectionModel = new DefaultListSelectionModel();
             tblIconPaths = new JTable(iconPathsModel = new IconPathTableModel(selectionModel));
@@ -120,63 +161,26 @@ public class StyleSourceEditor extends JPanel {
             tblIconPaths.setRowHeight(20);
             iconPathsModel.setIconPaths(Main.pref.getCollection(iconsPreferenceKey, null));
 
-            iconadd = new JButton(new NewIconPathAction());
-
             EditIconPathAction editIconPathAction = new EditIconPathAction();
             tblIconPaths.getSelectionModel().addListSelectionListener(editIconPathAction);
-            iconedit = new JButton(editIconPathAction);
 
             RemoveIconPathAction removeIconPathAction = new RemoveIconPathAction();
             tblIconPaths.getSelectionModel().addListSelectionListener(removeIconPathAction);
-            icondelete = new JButton(removeIconPathAction);
             tblIconPaths.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "delete");
             tblIconPaths.getActionMap().put("delete", removeIconPathAction);
-        }
 
-        JButton add = new JButton(new NewActiveStyleAction());
-
-        EditActiveStyleAction editActiveStyleAction = new EditActiveStyleAction();
-        tblActiveStyles.getSelectionModel().addListSelectionListener(editActiveStyleAction);
-        JButton edit = new JButton(editActiveStyleAction);
-
-        RemoveActiveStylesAction removeActiveStylesAction = new RemoveActiveStylesAction();
-        tblActiveStyles.getSelectionModel().addListSelectionListener(removeActiveStylesAction);
-        tblActiveStyles.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "delete");
-        tblActiveStyles.getActionMap().put("delete", removeActiveStylesAction);
-        JButton delete = new JButton(removeActiveStylesAction);
-
-        ActivateStylesAction activateStylesAction = new ActivateStylesAction();
-        lstAvailableStyles.addListSelectionListener(activateStylesAction);
-        JButton copy = new JButton(activateStylesAction);
-
-        JButton update = new JButton(new ReloadStylesAction(availableStylesUrl));
-
-        setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        setLayout(new GridBagLayout());
-        add(new JLabel(tr("Active styles")), GBC.eol().insets(5, 5, 5, 0));
-        JScrollPane sp;
-        add(sp = new JScrollPane(tblActiveStyles), GBC.eol().insets(5, 0, 5, 0).fill(GBC.BOTH));
-        sp.setColumnHeaderView(null);
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        add(buttonPanel, GBC.eol().insets(5, 0, 5, 5).fill(GBC.HORIZONTAL));
-        buttonPanel.add(add, GBC.std().insets(0, 5, 0, 0));
-        buttonPanel.add(edit, GBC.std().insets(5, 5, 5, 0));
-        buttonPanel.add(delete, GBC.std().insets(0, 5, 5, 0));
-        buttonPanel.add(copy, GBC.std().insets(0, 5, 5, 0));
-        add(new JLabel(tr("Available styles (from {0})", availableStylesUrl)), GBC.eol().insets(5, 5, 5, 0));
-        add(new JScrollPane(lstAvailableStyles), GBC.eol().insets(5, 0, 5, 0).fill(GBC.BOTH));
-        buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        add(buttonPanel, GBC.eol().insets(5, 0, 5, 5).fill(GBC.HORIZONTAL));
-        buttonPanel.add(update, GBC.std().insets(0, 5, 0, 0));
-        if (tblIconPaths != null) {
-            add(new JLabel(tr("Icon paths")), GBC.eol().insets(5, -5, 5, 0));
-            add(sp = new JScrollPane(tblIconPaths), GBC.eol().insets(5, 0, 5, 0).fill(GBC.BOTH));
+            add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(5, 10, 5, 10));
+            add(new JLabel(tr("Icon paths:")), GBC.eol().insets(11, 0, 5, 0));
+            add(sp = new JScrollPane(tblIconPaths), GBC.std().insets(10, 0, 3, 0).fill(GBC.BOTH));
             sp.setColumnHeaderView(null);
-            buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            add(buttonPanel, GBC.eol().insets(5, 0, 5, 5).fill(GBC.HORIZONTAL));
-            buttonPanel.add(iconadd);
-            buttonPanel.add(iconedit);
-            buttonPanel.add(icondelete);
+            sideButtonTB = new JToolBar(JToolBar.VERTICAL);
+            sideButtonTB.setFloatable(false);
+            sideButtonTB.setBorderPainted(false);
+            sideButtonTB.setOpaque(false);
+            add(sideButtonTB, GBC.eol().insets(0, 0, 10, 0).fill(GBC.VERTICAL));
+            sideButtonTB.add(new NewIconPathAction());
+            sideButtonTB.add(editIconPathAction);
+            sideButtonTB.add(removeIconPathAction);
         }
     }
 
@@ -529,7 +533,7 @@ public class StyleSourceEditor extends JPanel {
         public ReloadStylesAction(String url) {
             putValue(NAME, tr("Reload"));
             putValue(SHORT_DESCRIPTION, tr("Reloads the list of available styles from ''{0}''", url));
-            putValue(SMALL_ICON, ImageProvider.get("download"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/refresh"));
             this.url = url;
         }
 
