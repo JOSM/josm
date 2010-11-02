@@ -3886,7 +3886,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <separator/>
-        <item name="Residential area" icon="presets/empty.png" type="closedway,relation">
+        <item name="Residential area" icon="styles/standard/misc/landmark/building.png" type="closedway,relation">
             <label text="Edit Residential Landuse" />
             <space />
             <key key="landuse" value="residential" />
