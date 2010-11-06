@@ -47,6 +47,7 @@ import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
+
 /**
  * Join Areas (i.e. closed ways and multipolygons)
  */
@@ -401,7 +402,7 @@ public class JoinAreasAction extends JosmAction {
         }
 
         //find intersection points
-        ArrayList<Node> nodes = Geometry.addIntersections(allStartingWays, true, cmds);
+        Set<Node> nodes = Geometry.addIntersections(allStartingWays, true, cmds);
         return nodes.size() > 0;
     }
 
@@ -437,7 +438,7 @@ public class JoinAreasAction extends JosmAction {
         }
 
         //find intersection points
-        ArrayList<Node> nodes = Geometry.addIntersections(allStartingWays, false, cmds);
+        Set<Node> nodes = Geometry.addIntersections(allStartingWays, false, cmds);
 
         //no intersections, return.
         if (nodes.isEmpty())
@@ -473,8 +474,11 @@ public class JoinAreasAction extends JosmAction {
         //find polygons
         List<AssembledMultipolygon> preparedPolygons = findPolygons(bounadries);
 
+
         //assemble final polygons
         List<Multipolygon> polygons = new ArrayList<Multipolygon>();
+        Set<Relation> relationsToDelete = new LinkedHashSet<Relation>();
+
         for (AssembledMultipolygon pol : preparedPolygons) {
 
             //create the new ways
@@ -484,7 +488,7 @@ public class JoinAreasAction extends JosmAction {
             RelationRole ownMultipolygonRelation = addOwnMultigonRelation(resultPol.innerWays, resultPol.outerWay);
 
             //add back the original relations, merged with our new multipolygon relation
-            fixRelations(relations, resultPol.outerWay, ownMultipolygonRelation);
+            fixRelations(relations, resultPol.outerWay, ownMultipolygonRelation, relationsToDelete);
 
             //strip tags from inner ways
             //TODO: preserve tags on existing inner ways
@@ -494,6 +498,12 @@ public class JoinAreasAction extends JosmAction {
         }
 
         commitCommands(marktr("Assemble new polygons"));
+
+        for(Relation rel: relationsToDelete) {
+            cmds.add(new DeleteCommand(rel));
+        }
+
+        commitCommands(marktr("Delete relations"));
 
         // Delete the discarded inner ways
         if (discardedWays.size() > 0) {
@@ -827,7 +837,7 @@ public class JoinAreasAction extends JosmAction {
      * Uses  SplitWayAction.splitWay for the heavy lifting.
      * @return list of split ways (or original ways if no splitting is done).
      */
-    private ArrayList<Way> splitWayOnNodes(Way way, Collection<Node> nodes) {
+    private ArrayList<Way> splitWayOnNodes(Way way, Set<Node> nodes) {
 
         ArrayList<Way> result = new ArrayList<Way>();
         List<List<Node>> chunks = buildNodeChunks(way, nodes);
@@ -1094,8 +1104,9 @@ public class JoinAreasAction extends JosmAction {
      */
     public static boolean wayInsideWay(AssembledPolygon inside, AssembledPolygon outside) {
         Set<Node> outsideNodes = new HashSet<Node>(outside.getNodes());
+        List<Node> insideNodes = inside.getNodes();
 
-        for (Node insideNode : inside.getNodes()) {
+        for (Node insideNode : insideNodes) {
 
             if (!outsideNodes.contains(insideNode))
                 //simply test the one node
@@ -1363,8 +1374,9 @@ public class JoinAreasAction extends JosmAction {
      * members of both. This function depends on multigon relations to be valid already, it won't fix them.
      * @param ArrayList<RelationRole> List of relations with roles the (original) ways were part of
      * @param Way The newly created outer area/way
+     * @param relationsToDelete - set of relations to delete.
      */
-    private void fixRelations(ArrayList<RelationRole> rels, Way outer, RelationRole ownMultipol) {
+    private void fixRelations(ArrayList<RelationRole> rels, Way outer, RelationRole ownMultipol, Set<Relation> relationsToDelete) {
         ArrayList<RelationRole> multiouters = new ArrayList<RelationRole>();
 
         if (ownMultipol != null){
@@ -1409,7 +1421,7 @@ public class JoinAreasAction extends JosmAction {
                     newRel.put(key, r.rel.get(key));
                 }
                 // Delete old relation
-                cmds.add(new DeleteCommand(r.rel));
+                relationsToDelete.add(r.rel);
             }
             newRel.addMember(new RelationMember("outer", outer));
             cmds.add(new AddCommand(newRel));

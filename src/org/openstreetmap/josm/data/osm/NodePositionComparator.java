@@ -11,6 +11,10 @@ import java.util.Comparator;
 public class NodePositionComparator implements Comparator<Node> {
     @Override
     public int compare(Node n1, Node n2) {
+
+        if (n1.getCoor().equalsEpsilon(n2.getCoor()))
+            return 0;
+
         double dLat = n1.getCoor().lat() - n2.getCoor().lat();
         if (dLat > 0)
             return 1;

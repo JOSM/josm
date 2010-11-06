@@ -40,6 +40,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -305,7 +306,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
                     //find if the new points overlap existing segments (in case of 90 degree angles)
                     Node prevNode = getPreviousNode(selectedSegment.lowerIndex);
-                    boolean nodeOverlapsSegment = prevNode != null && segmentsParralel(initialN1en, prevNode.getEastNorth(), initialN1en, newN1en);
+                    boolean nodeOverlapsSegment = prevNode != null && Geometry.segmentsParralel(initialN1en, prevNode.getEastNorth(), initialN1en, newN1en);
                     boolean hasOtherWays = this.hasNodeOtherWays(selectedSegment.getFirstNode(), selectedSegment.way);
 
                     if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
@@ -322,7 +323,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
                     //find if the new points overlap existing segments (in case of 90 degree angles)
                     Node nextNode = getNextNode(selectedSegment.lowerIndex + 1);
-                    nodeOverlapsSegment = nextNode != null && segmentsParralel(initialN2en, nextNode.getEastNorth(), initialN2en, newN2en);
+                    nodeOverlapsSegment = nextNode != null && Geometry.segmentsParralel(initialN2en, nextNode.getEastNorth(), initialN2en, newN2en);
                     hasOtherWays = hasNodeOtherWays(selectedSegment.getSecondNode(), selectedSegment.way);
 
                     if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
@@ -386,7 +387,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      */
     private static EastNorth calculateSegmentOffset(EastNorth segmentP1, EastNorth segmentP2, EastNorth moveDirection,
             EastNorth targetPos) {
-        EastNorth intersectionPoint = getLineLineIntersection(segmentP1, segmentP2, targetPos,
+        EastNorth intersectionPoint = Geometry.getLineLineIntersection(segmentP1, segmentP2, targetPos,
                 new EastNorth(targetPos.getX() + moveDirection.getX(), targetPos.getY() + moveDirection.getY()));
 
         if (intersectionPoint == null)
@@ -394,44 +395,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         else
             //return distance form base to target position
             return new EastNorth(targetPos.getX() - intersectionPoint.getX(),
-                        targetPos.getY() - intersectionPoint.getY());
+                    targetPos.getY() - intersectionPoint.getY());
     }
 
-    /**
-     * Finds the intersection of two lines of infinite length.
-     * @return EastNorth null if no intersection was found, the coordinates of the intersection otherwise
-     */
-    public static EastNorth getLineLineIntersection(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
-        // Convert line from (point, point) form to ax+by=c
-        double a1 = p2.getY() - p1.getY();
-        double b1 = p1.getX() - p2.getX();
-        double c1 = p2.getX() * p1.getY() - p1.getX() * p2.getY();
-
-        double a2 = p4.getY() - p3.getY();
-        double b2 = p3.getX() - p4.getX();
-        double c2 = p4.getX() * p3.getY() - p3.getX() * p4.getY();
-
-        // Solve the equations
-        double det = a1 * b2 - a2 * b1;
-        if (det == 0)
-            return null; // Lines are parallel
-
-        return new EastNorth((b1 * c2 - b2 * c1) / det, (a2 * c1 - a1 * c2) / det);
-    }
-
-    private static boolean segmentsParralel(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
-
-        // Convert line from (point, point) form to ax+by=c
-        double a1 = p2.getY() - p1.getY();
-        double b1 = p1.getX() - p2.getX();
-
-        double a2 = p4.getY() - p3.getY();
-        double b2 = p3.getX() - p4.getX();
-
-        // Solve the equations
-        double det = a1 * b2 - a2 * b1;
-        return Math.abs(det) < 1e-13;
-    }
 
     /**
      * Gets a node from selected way before given index.
