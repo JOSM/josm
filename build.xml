@@ -239,6 +239,7 @@ Build-Date: ${build.tstamp}
 			<path>
 				<fileset file="dist/josm-custom-optimized.jar" />
 				<fileset file="${java.home}/lib/rt.jar" />
+				<fileset file="${java.home}/lib/jce.jar" />
 			</path>
 		</as:build-signatures>
 
@@ -274,6 +275,9 @@ Build-Date: ${build.tstamp}
 			<ignore classname="org.jvnet.staxex.*"/>
 			<ignore classname="javax.mail.*"/>
 			<ignore classname="com.sun.jdmk.*"/>
+			<ignore classname="org.apache.avalon.framework.logger.Logger"/>
+			<ignore classname="org.apache.log.*"/>
+			<ignore classname="junit.*"/>
 			<path path="${dir}"/>
 		</as:check-signature>
 
