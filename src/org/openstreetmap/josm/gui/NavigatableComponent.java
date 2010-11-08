@@ -592,6 +592,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
                     // find the nearest selected node
                     if (ntsel == null && nd.isSelected()) {
                         ntsel = nd;
+                        // if there are multiple nearest nodes, prefer the one
+                        // that is selected. This is required in order to drag
+                        // the selected node if multiple nodes have the same
+                        // coordinates (e.g. after unglue)
+                        use_selected |= (distSq == minDistSq);
                     }
                     // find the nearest newest node that is within about the same
                     // distance as the true nearest node
@@ -603,10 +608,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
             // take nearest selected, nearest new or true nearest node to p, in that order
             n = (ntsel != null && use_selected) ? ntsel
-                    : ((ntnew != null) ? ntnew
-                            : nlists.values().iterator().next().get(0));
+                    : (ntnew != null) ? ntnew
+                            : nlists.values().iterator().next().get(0);
         }
-
         return n;
     }
 
@@ -993,13 +997,13 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * @return o as collection of o's type.
      */
-    public final static <T> Collection<T> asColl(T o) {
+    public static <T> Collection<T> asColl(T o) {
         if (o == null)
             return Collections.emptySet();
         return Collections.singleton(o);
     }
 
-    public final static double perDist(Point2D pt, Point2D a, Point2D b) {
+    public static double perDist(Point2D pt, Point2D a, Point2D b) {
         if (pt != null && a != null && b != null) {
             double pd = (
                     (a.getX()-pt.getX())*(b.getX()-a.getX()) -
@@ -1017,7 +1021,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @return point of intersection of line given by (ab)
      *      with its orthogonal line running through pt
      */
-    public final static Point2D project(Point2D pt, Point2D a, Point2D b) {
+    public static Point2D project(Point2D pt, Point2D a, Point2D b) {
         if (pt != null && a != null && b != null) {
             double r = ((
                     (pt.getX()-a.getX())*(b.getX()-a.getX()) +
@@ -1037,7 +1041,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param b vector
      * @return new point at a + r*(ab)
      */
-    public final static Point2D project(double r, Point2D a, Point2D b) {
+    public static Point2D project(double r, Point2D a, Point2D b) {
         Point2D ret = null;
 
         if (a != null && b != null) {
