@@ -16,7 +16,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -25,6 +29,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
@@ -37,6 +42,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -44,41 +50,83 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 public class LatLonDialog extends JDialog {
     private static final Color BG_COLOR_ERROR = new Color(255,224,224);
 
-    private JTextField tfLat;
-    private JTextField tfLon;
+    private JTextField tfLatLon;
     private String help;
     private boolean canceled = false;
     private LatLon coordinates;
     private OKAction actOK;
     private CancelAction actCancel;
 
+    private static final double ZERO = 0.0;
+    private static final String DEG = "\u00B0";
+    private static final String MIN = "\u2032";
+    private static final String SEC = "\u2033";
+
+    private static final char N_TR = LatLon.NORTH.charAt(0);
+    private static final char S_TR = LatLon.SOUTH.charAt(0);
+    private static final char E_TR = LatLon.EAST.charAt(0);
+    private static final char W_TR = LatLon.WEST.charAt(0);
+
+    private static final Pattern p = Pattern.compile(
+            "([+|-]?\\d+[.,]\\d+)|"             // (1)
+            + "([+|-]?\\d+)|"                   // (2)
+            + "("+DEG+"|o|deg)|"                // (3)
+            + "('|"+MIN+"|min)|"                // (4)
+            + "(\"|"+SEC+"|sec)|"               // (5)
+            + "(,|;)|"                          // (6)
+            + "([NSEW"+N_TR+S_TR+E_TR+W_TR+"])|"// (7)
+            + "\\s+|"
+            + "(.+)");
+
     protected JPanel buildInputForm() {
         JPanel pnl = new JPanel(new GridBagLayout());
         pnl.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-        pnl.add(new JLabel("<html>"+
-                tr("Enter the coordinates for the new node.") +
-                "<br>" + tr("Use decimal degrees.") +
-                "<br>" + tr("Negative values denote Western/Southern hemisphere.")),
-                GBC.eol());
 
-        pnl.add(new JLabel(tr("Latitude")), GBC.std().insets(0,10,5,0));
-        tfLat = new JTextField(12);
-        pnl.add(tfLat, GBC.eol().insets(0,10,0,0));
-        pnl.add(new JLabel(tr("Longitude")), GBC.std().insets(0,0,5,10));
-        tfLon = new JTextField(12);
-        pnl.add(tfLon, GBC.eol().insets(0,0,0,10));
+        pnl.add(new JLabel(tr("Coordinates:")), GBC.std().insets(0,10,5,0));
+        tfLatLon = new JTextField(24);
+        pnl.add(tfLatLon, GBC.eol().insets(0,10,0,0).fill(GBC.HORIZONTAL).weight(1.0, 0.0));
+
+        pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0,5,0,5));
+
+        pnl.add(new HtmlPanel(
+                tr("Enter the coordinates for the new node.<br/>You can separate longitude and latitude with space, comma or semicolon.<br/>" +
+                		"Use positive numbers or N, E characters to indicate North or East cardinal direction.<br/>" +
+                		"For South and West cardinal directions you can use either negative numbers or S, W characters.<br/>" +
+                		"Coordinate value can be in one of three formats:<ul>" +
+                        "<li><i>degrees</i><tt>&deg;</tt></li>" +
+                        "<li><i>degrees</i><tt>&deg;</tt> <i>minutes</i><tt>&#39;</tt></li>" +
+                        "<li><i>degrees</i><tt>&deg;</tt> <i>minutes</i><tt>&#39;</tt> <i>seconds</i><tt>&quot</tt></li>" +
+                		"</ul>" +
+                		"Symbols <tt>&deg;</tt>, <tt>&#39;</tt>, <tt>&prime;</tt>, <tt>&quot;</tt>, <tt>&Prime;</tt> are optional.<br/><br/>" +
+                		"Some examples:<ul>" +
+                        "<li>49.29918&deg; 19.24788&deg;</li>" +
+                        "<li>N 49.29918 E 19.24788</li>" +
+                        "<li>W 49&deg;29.918&#39; S 19&deg;24.788&#39;</li>" +
+                        "<li>N 49&deg;29&#39;04&quot; E 19&deg;24&#39;43&quot;</li>" +
+                        "<li>49.29918 N, 19.24788 E</li>" +
+                        "<li>49&deg;29&#39;21&quot; N 19&deg;24&#39;38&quot; E</li>" +
+                        "<li>49 29 51, 19 24 18</li>" +
+                        "<li>49 29, 19 24</li>" +
+                        "<li>E 49 29, N 19 24</li>" +
+                        "<li>49&deg; 29; 19&deg; 24</li>" +
+                        "<li>N 49&deg; 29, W 19&deg; 24</li>" +
+                        "<li>49&deg; 29.5 S, 19&deg; 24.6 E</li>" +
+                        "<li>N 49 29.918 E 19 15.88</li>" +
+                        "<li>49 29.4 19 24.5</li>" +
+                        "<li>-49 29.4 N -19 24.5 W</li></ul>" +
+                        "<li>48 deg 42' 52.13\" N, 21 deg 11' 47.60\" E</li></ul>"
+                		)),
+                GBC.eol().fill().weight(1.0, 1.0));
 
         // parse and verify input on the fly
         //
         LatLonInputVerifier inputVerifier = new LatLonInputVerifier();
-        tfLat.getDocument().addDocumentListener(inputVerifier);
-        tfLon.getDocument().addDocumentListener(inputVerifier);
+        tfLatLon.getDocument().addDocumentListener(inputVerifier);
 
         // select the text in the field on focus
         //
         TextFieldFocusHandler focusHandler = new TextFieldFocusHandler();
-        tfLat.addFocusListener(focusHandler);
-        tfLon.addFocusListener(focusHandler);
+        tfLatLon.addFocusListener(focusHandler);
         return pnl;
     }
 
@@ -130,8 +178,7 @@ public class LatLonDialog extends JDialog {
             coordinates = new LatLon(0,0);
         }
         this.coordinates = coordinates;
-        tfLat.setText(coordinates.latToString(CoordinateFormat.DECIMAL_DEGREES));
-        tfLon.setText(coordinates.lonToString(CoordinateFormat.DECIMAL_DEGREES));
+        tfLatLon.setText(coordinates.latToString(CoordinateFormat.DEGREES_MINUTES_SECONDS) + " " + coordinates.lonToString(CoordinateFormat.DEGREES_MINUTES_SECONDS));
         actOK.setEnabled(true);
     }
 
@@ -156,7 +203,7 @@ public class LatLonDialog extends JDialog {
         // remove white space and an optional degree symbol
         //
         input = input.trim();
-        input = input.replaceAll("\u00B0", ""); // the degree symbol
+        input = input.replaceAll(DEG, "");
 
         // try to parse using the current locale
         //
@@ -176,36 +223,23 @@ public class LatLonDialog extends JDialog {
         return n== null ? null : n.doubleValue();
     }
 
-    protected Double parseLatFromUserInput() {
-        Double d = parseDoubleFromUserInput(tfLat.getText());
-        if (d == null || ! LatLon.isValidLat(d)) {
-            setErrorFeedback(tfLat, tr("Please enter a valid latitude in the range -90..90"));
-            return null;
-        } else {
-            clearErrorFeedback(tfLat,tr("Please enter a latitude in the range -90..90"));
-        }
-        return d;
-    }
-
-    protected Double parseLonFromUserInput() {
-        Double d = parseDoubleFromUserInput(tfLon.getText());
-        if (d == null || ! LatLon.isValidLon(d)) {
-            setErrorFeedback(tfLon, tr("Please enter a valid longitude in the range -180..180"));
-            return null;
-        } else {
-            clearErrorFeedback(tfLon,tr("Please enter a longitude in the range -180..180"));
-        }
-        return d;
-    }
-
     protected void parseUserInput() {
-        Double lat = parseLatFromUserInput();
-        Double lon = parseLonFromUserInput();
-        if (lat == null || lon == null) {
+        LatLon latLon;
+        try {
+            latLon = parse(tfLatLon.getText());
+            if (!LatLon.isValidLat(latLon.lat()) || !LatLon.isValidLon(latLon.lon())) {
+                latLon = null;
+            }
+        } catch (IllegalArgumentException e) {
+            latLon = null;
+        }
+        if (latLon == null) {
+            setErrorFeedback(tfLatLon, tr("Please enter a GPS coordinates"));
             coordinates = null;
             actOK.setEnabled(false);
         } else {
-            coordinates = new LatLon(lat,lon);
+            clearErrorFeedback(tfLatLon,tr("Please enter a GPS coordinates"));
+            coordinates = latLon;
             actOK.setEnabled(true);
         }
     }
@@ -287,8 +321,133 @@ public class LatLonDialog extends JDialog {
 
         @Override
         public void windowOpened(WindowEvent e) {
-            tfLat.requestFocusInWindow();
+            tfLatLon.requestFocusInWindow();
         }
     }
 
+    private static LatLon parse(final String coord) {
+        final Matcher m = p.matcher(coord);
+
+        final StringBuilder sb = new StringBuilder();
+        final List<Object> list = new ArrayList<Object>();
+
+        while (m.find()) {
+            if (m.group(1) != null) {
+                sb.append('R');     // floating point number
+                list.add(Double.parseDouble(m.group(1).replace(',', '.')));
+            } else if (m.group(2) != null) {
+                sb.append('Z');     // integer number
+                list.add(Double.parseDouble(m.group(2)));
+            } else if (m.group(3) != null) {
+                sb.append('o');     // degree sign
+            } else if (m.group(4) != null) {
+                sb.append('\'');    // seconds sign
+            } else if (m.group(5) != null) {
+                sb.append('"');     // minutes sign
+            } else if (m.group(6) != null) {
+                sb.append(',');     // separator
+            } else if (m.group(7) != null) {
+                sb.append("x");     // cardinal direction
+                String c = m.group(7).toUpperCase();
+                if (c.equals("N") || c.equals("S") || c.equals("E") || c.equals("W")) {
+                    list.add(c);
+                } else {
+                    list.add(c.replace(N_TR, 'N').replace(S_TR, 'S')
+                            .replace(E_TR, 'E').replace(W_TR, 'W'));
+                }
+            } else if (m.group(8) != null) {
+                throw new IllegalArgumentException("invalid token: " + m.group(8));
+            }
+        }
+
+        final String pattern = sb.toString();
+
+        final Object[] params = list.toArray();
+        final LatLonHolder latLon = new LatLonHolder();
+
+        if (pattern.matches("Ro?,?Ro?")) {
+            setLatLonObj(latLon,
+                    params[0], ZERO, ZERO, "N",
+                    params[1], ZERO, ZERO, "E");
+        } else if (pattern.matches("xRo?,?xRo?")) {
+            setLatLonObj(latLon,
+                    params[1], ZERO, ZERO, params[0],
+                    params[3], ZERO, ZERO, params[2]);
+        } else if (pattern.matches("Ro?x,?Ro?x")) {
+            setLatLonObj(latLon,
+                    params[0], ZERO, ZERO, params[1],
+                    params[2], ZERO, ZERO, params[3]);
+        } else if (pattern.matches("Zo[RZ]'?,?Zo[RZ]'?|Z[RZ],?Z[RZ]")) {
+            setLatLonObj(latLon,
+                    params[0], params[1], ZERO, "N",
+                    params[2], params[3], ZERO, "E");
+        } else if (pattern.matches("xZo[RZ]'?,?xZo[RZ]'?|xZo?[RZ],?xZo?[RZ]")) {
+            setLatLonObj(latLon,
+                    params[1], params[2], ZERO, params[0],
+                    params[4], params[5], ZERO, params[3]);
+        } else if (pattern.matches("Zo[RZ]'?x,?Zo[RZ]'?x|Zo?[RZ]x,?Zo?[RZ]x")) {
+            setLatLonObj(latLon,
+                    params[0], params[1], ZERO, params[2],
+                    params[3], params[4], ZERO, params[5]);
+        } else if (pattern.matches("ZoZ'[RZ]\"?x,?ZoZ'[RZ]\"?x|ZZ[RZ]x,?ZZ[RZ]x")) {
+            setLatLonObj(latLon,
+                    params[0], params[1], params[2], params[3],
+                    params[4], params[5], params[6], params[7]);
+        } else if (pattern.matches("xZoZ'[RZ]\"?,?xZoZ'[RZ]\"?|xZZ[RZ],?xZZ[RZ]")) {
+            setLatLonObj(latLon,
+                    params[1], params[2], params[3], params[0],
+                    params[5], params[6], params[7], params[4]);
+        } else if (pattern.matches("ZZ[RZ],?ZZ[RZ]")) {
+            setLatLonObj(latLon,
+                    params[0], params[1], params[2], "N",
+                    params[3], params[4], params[5], "E");
+        } else {
+            throw new IllegalArgumentException("invalid format: " + pattern);
+        }
+
+        return new LatLon(latLon.lat, latLon.lon);
+    }
+
+    private static class LatLonHolder {
+        double lat, lon;
+    }
+
+    private static void setLatLonObj(final LatLonHolder latLon,
+            final Object coord1deg, final Object coord1min, final Object coord1sec, final Object card1,
+            final Object coord2deg, final Object coord2min, final Object coord2sec, final Object card2) {
+
+        setLatLon(latLon,
+                (Double) coord1deg, (Double) coord1min, (Double) coord1sec, (String) card1,
+                (Double) coord2deg, (Double) coord2min, (Double) coord2sec, (String) card2);
+    }
+
+    private static void setLatLon(final LatLonHolder latLon,
+            final double coord1deg, final double coord1min, final double coord1sec, final String card1,
+            final double coord2deg, final double coord2min, final double coord2sec, final String card2) {
+
+        setLatLon(latLon, coord1deg, coord1min, coord1sec, card1);
+        setLatLon(latLon, coord2deg, coord2min, coord2sec, card2);
+    }
+
+    private static void setLatLon(final LatLonHolder latLon, final double coordDeg, final double coordMin, final double coordSec, final String card) {
+        if (coordDeg < -180 || coordDeg > 180 || coordMin < 0 || coordMin >= 60 || coordSec < 0 || coordSec > 60) {
+            throw new IllegalArgumentException("out of range");
+        }
+
+        double coord = (coordDeg < 0 ? -1 : 1) * (Math.abs(coordDeg) + coordMin / 60 + coordSec / 3600);
+        coord = card.equals("N") || card.equals("E") ? coord : -coord;
+        if (card.equals("N") || card.equals("S")) {
+            latLon.lat = coord;
+        } else {
+            latLon.lon = coord;
+        }
+    }
+
+    public String getText() {
+        return tfLatLon.getText();
+    }
+
+    public void setText(String text) {
+        tfLatLon.setText(text);
+    }
 }

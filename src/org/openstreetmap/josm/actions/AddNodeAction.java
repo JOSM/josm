@@ -19,6 +19,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  * and when ok is pressed, a new node is created at the specified position.
  */
 public final class AddNodeAction extends JosmAction {
+    // remember input from last time
+    private String text;
+
     //static private final Logger logger = Logger.getLogger(AddNodeAction.class.getName());
 
     public AddNodeAction() {
@@ -33,6 +36,11 @@ public final class AddNodeAction extends JosmAction {
             return;
 
         LatLonDialog dialog = new LatLonDialog(Main.parent, tr("Add Node..."), ht("/Action/AddNode"));
+
+        if (text != null) {
+            dialog.setText(text);
+        }
+
         dialog.setVisible(true);
         if (dialog.isCanceled())
             return;
@@ -40,6 +48,9 @@ public final class AddNodeAction extends JosmAction {
         LatLon coordinates = dialog.getCoordinates();
         if (coordinates == null)
             return;
+
+        text = dialog.getText();
+
         Node nnew = new Node(coordinates);
 
         // add the node
