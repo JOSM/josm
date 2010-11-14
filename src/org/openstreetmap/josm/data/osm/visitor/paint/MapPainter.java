@@ -215,11 +215,9 @@ public class MapPainter {
      */
     public void drawNode(Node n, Color color, int size, boolean fill, String name) {
         if (size > 1) {
-            int radius = size / 2;
             Point p = nc.getPoint(n);
-            if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth())
-                    || (p.y > nc.getHeight()))
-                return;
+            if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
+            int radius = size / 2;
 
             if (inactive || n.isDisabled()) {
                 g.setColor(inactiveColor);
@@ -227,8 +225,7 @@ public class MapPainter {
                 g.setColor(color);
             }
             if (fill) {
-                g.fillRect(p.x - radius, p.y - radius, size, size);
-                g.drawRect(p.x - radius, p.y - radius, size, size);
+                g.fillRect(p.x - radius, p.y - radius, size + 1, size + 1);
             } else {
                 g.drawRect(p.x - radius, p.y - radius, size, size);
             }

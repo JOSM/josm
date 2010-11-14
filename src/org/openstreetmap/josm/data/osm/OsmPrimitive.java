@@ -1285,6 +1285,31 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return result;
     }
 
+    /**
+      Return true, if this primitive is referred by at least n ways
+      @param n Minimal number of ways to return true. Must be positive
+     */
+    public final boolean isReferredByWays(int n) {
+        // Count only referrers that are members of the same dataset (primitive can have some fake references, for example
+        // when way is cloned
+        Object referrers = this.referrers;
+        if (referrers == null) return false;
+        checkDataset();
+        if (referrers instanceof OsmPrimitive) {
+          return n<=1 && referrers instanceof Way && ((OsmPrimitive)referrers).dataSet == dataSet;
+        } else {
+          int counter=0;
+          for (OsmPrimitive o : (OsmPrimitive[])referrers) {
+            if (dataSet == o.dataSet && o instanceof Way) {
+              if (++counter >= n) 
+                return true;
+            }
+          }
+          return false;
+        }
+    }
+
+
     /*-----------------
      * OTHER METHODS
      *----------------/

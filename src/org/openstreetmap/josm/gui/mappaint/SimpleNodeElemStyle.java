@@ -32,12 +32,13 @@ public class SimpleNodeElemStyle extends ElemStyle {
         } else {
 
             Color color;
+            boolean isConnection = n.isConnectionNode();
 
             if (painter.isInactive() || n.isDisabled()) {
                 color = settings.getInactiveColor();
             } else if (selected) {
                 color = member ? settings.getRelationSelectedColor() : settings.getSelectedColor();
-            } else if (n.isConnectionNode()) {
+            } else if (isConnection) {
                 if (n.isTagged()) {
                     color = settings.getTaggedConnectionColor();
                 } else {
@@ -53,12 +54,12 @@ public class SimpleNodeElemStyle extends ElemStyle {
 
             final int size = max((selected ? settings.getSelectedNodeSize() : 0),
                                     (n.isTagged() ? settings.getTaggedNodeSize() : 0),
-                                    (n.isConnectionNode() ? settings.getConnectionNodeSize() : 0),
+                                    (isConnection ? settings.getConnectionNodeSize() : 0),
                                     settings.getUnselectedNodeSize());
 
             final boolean fill = (selected && settings.isFillSelectedNode()) ||
                                     (n.isTagged() && settings.isFillTaggedNode()) ||
-                                    (n.isConnectionNode() && settings.isFillConnectionNode()) ||
+                                    (isConnection && settings.isFillConnectionNode()) ||
                                     settings.isFillUnselectedNode();
 
             painter.drawNode(n, color, size, fill, name);

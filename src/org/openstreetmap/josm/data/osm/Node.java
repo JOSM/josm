@@ -233,7 +233,7 @@ public final class Node extends OsmPrimitive {
     }
 
     public boolean isConnectionNode() {
-        return (OsmPrimitive.getFilteredList(getReferrers(), Way.class)).size() > 1;
+        return isReferredByWays(2);
     }
 
     public String get3892DebugInfo() {

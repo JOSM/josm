@@ -110,10 +110,11 @@ public class MapPaintVisitor implements PaintVisitor {
 
     public void drawNode(Node n) {
         /* check, if the node is visible at all */
-        if((n.getEastNorth().east()  > maxEN.east() ) ||
-                (n.getEastNorth().north() > maxEN.north()) ||
-                (n.getEastNorth().east()  < minEN.east() ) ||
-                (n.getEastNorth().north() < minEN.north()))
+        EastNorth en = n.getEastNorth();
+        if((en.east()  > maxEN.east() ) ||
+                (en.north() > maxEN.north()) ||
+                (en.east()  < minEN.east() ) ||
+                (en.north() < minEN.north()))
             return;
 
         ElemStyle nodeStyle = getPrimitiveStyle(n, false);
