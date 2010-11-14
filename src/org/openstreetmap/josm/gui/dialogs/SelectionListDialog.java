@@ -675,7 +675,12 @@ public class SelectionListDialog extends ToggleDialog  {
          * Sorts the current elements in the selection
          */
         public void sort() {
-            Collections.sort(this.selection, new OsmPrimitiveComparator());
+            if (this.selection.size()>Main.pref.getInteger("selection.no_sort_above",100000)) return;
+            if (this.selection.size()>Main.pref.getInteger("selection.fast_sort_above",10000)) {
+                Collections.sort(this.selection, new OsmPrimitiveQuickComparator());
+            } else {
+                Collections.sort(this.selection, new OsmPrimitiveComparator());
+            }
         }
 
         /* ------------------------------------------------------------------------ */
@@ -910,6 +915,7 @@ public class SelectionListDialog extends ToggleDialog  {
         }
     }
 
+    /** Comparator, comparing by type and objects display names */
     static private class OsmPrimitiveComparator implements Comparator<OsmPrimitive> {
         final private HashMap<OsmPrimitive, String> cache= new HashMap<OsmPrimitive, String>();
         final private DefaultNameFormatter df  = DefaultNameFormatter.getInstance();
@@ -939,8 +945,6 @@ public class SelectionListDialog extends ToggleDialog  {
 
         private int compareType(OsmPrimitive a, OsmPrimitive b) {
             // show ways before relations, then nodes
-            //
-            if (a.getType().equals(b.getType())) return 0;
             if (a.getType().equals(OsmPrimitiveType.WAY)) return -1;
             if (a.getType().equals(OsmPrimitiveType.NODE)) return 1;
             // a is a relation
@@ -948,10 +952,40 @@ public class SelectionListDialog extends ToggleDialog  {
             // b is a node
             return -1;
         }
+
         public int compare(OsmPrimitive a, OsmPrimitive b) {
             if (a.getType().equals(b.getType()))
                 return compareName(a, b);
             return compareType(a, b);
         }
     }
+
+    /** Quicker comparator, comparing just by type and ID's */
+    static private class OsmPrimitiveQuickComparator implements Comparator<OsmPrimitive> {
+
+        private int compareId(OsmPrimitive a, OsmPrimitive b) {
+            long id_a=a.getUniqueId();
+            long id_b=b.getUniqueId();
+            if (id_a<id_b) return -1;
+            if (id_a>id_b) return 1;
+            return 0;
+        }
+
+        private int compareType(OsmPrimitive a, OsmPrimitive b) {
+            // show ways before relations, then nodes
+            if (a.getType().equals(OsmPrimitiveType.WAY)) return -1;
+            if (a.getType().equals(OsmPrimitiveType.NODE)) return 1;
+            // a is a relation
+            if (b.getType().equals(OsmPrimitiveType.WAY)) return 1;
+            // b is a node
+            return -1;
+        }
+
+        public int compare(OsmPrimitive a, OsmPrimitive b) {
+            if (a.getType().equals(b.getType()))
+                return compareId(a, b);
+            return compareType(a, b);
+        }
+    }
+
 }
