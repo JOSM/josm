@@ -839,7 +839,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             uninteresting = Main.pref.getCollection("tags.uninteresting",
                     Arrays.asList(new String[]{"source", "source_ref", "source:", "note", "comment",
                             "converted_by", "created_by", "watch", "watch:", "fixme", "FIXME",
-                    "description"}));
+                            "description", "attribution"}));
         }
         return uninteresting;
     }
