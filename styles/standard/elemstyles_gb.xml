@@ -14,32 +14,22 @@
 	<rule>
 		<condition k="restriction" v="no_left_turn"/>
 		<icon annotate="true" src="vehicle/restriction/turn_restrictions/ireland/no_left_turn.png" priority="10000" />
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
 	</rule>
 	<rule>
 		<condition k="restriction" v="no_right_turn"/>
 		<icon annotate="true" src="vehicle/restriction/turn_restrictions/ireland/no_right_turn.png" priority="10000" />
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
 	</rule>
 	<rule>
 		<condition k="restriction" v="no_straight_on"/>
 		<icon annotate="true" src="vehicle/restriction/turn_restrictions/ireland/no_straight_on.png" priority="10000" />
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
 	</rule>
 	<rule>
 		<condition k="restriction" v="no_u_turn"/>
 		<icon annotate="true" src="vehicle/restriction/turn_restrictions/ireland/no_u_turn.png" priority="10000" />
-		<scale_min>1</scale_min>
-		<scale_max>40000</scale_max>
 	</rule>
 	<rule>
 		<condition k="highway" v="mini_roundabout"/>
 		<icon annotate="true" src="vehicle/restriction/roundabout_left.png" priority="10000"/>
-		<scale_min>1</scale_min>
-		<scale_max>50000</scale_max>
 	</rule>
 
 </rules>
