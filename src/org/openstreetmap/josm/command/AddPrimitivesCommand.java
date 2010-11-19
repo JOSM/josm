@@ -14,12 +14,18 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 public class AddPrimitivesCommand extends Command {
 
     private final List<PrimitiveData> data = new ArrayList<PrimitiveData>();
 
     public AddPrimitivesCommand(List<PrimitiveData> data) {
+        this.data.addAll(data);
+    }
+    
+    public AddPrimitivesCommand(List<PrimitiveData> data, OsmDataLayer layer) {
+        super(layer);
         this.data.addAll(data);
     }
 
