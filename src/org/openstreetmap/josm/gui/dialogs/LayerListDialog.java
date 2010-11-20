@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ImageIcon;
@@ -35,6 +36,7 @@ import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
+import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -203,7 +205,6 @@ public class LayerListDialog extends ToggleDialog {
                 new LayerListModelListener() {
                     @Override
                     public void makeVisible(int row, Layer layer) {
-                        System.err.println(Thread.currentThread());
                         layerList.scrollToVisible(row, 0);
                         layerList.repaint();
                     }
@@ -375,6 +376,7 @@ public class LayerListDialog extends ToggleDialog {
          */
         public ShowHideLayerAction(Layer layer) throws IllegalArgumentException {
             this();
+            putValue(NAME, tr("Show/Hide"));
             CheckParameterUtil.ensureParameterNotNull(layer, "layer");
             this.layer = layer;
             updateEnabledState();
@@ -1231,7 +1233,9 @@ public class LayerListDialog extends ToggleDialog {
      * @return the action
      */
     public ShowHideLayerAction createShowHideLayerAction() {
-        return new ShowHideLayerAction();
+        ShowHideLayerAction act = new ShowHideLayerAction();
+        act.putValue(Action.NAME, tr("Show/Hide"));
+        return act;
     }
 
     /**

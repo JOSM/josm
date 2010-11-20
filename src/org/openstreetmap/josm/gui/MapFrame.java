@@ -458,6 +458,8 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
             mapMode.exitMode();
             mapMode.enterMode();
         }
+        // invalidate repaint cache
+        Main.map.mapView.preferenceChanged(null);
     }
 
     @Override
