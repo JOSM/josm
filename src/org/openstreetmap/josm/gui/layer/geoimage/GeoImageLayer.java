@@ -2,7 +2,6 @@
 // Copyright 2007 by Christian Gallioz (aka khris78)
 // Parts of code from Geotagged plugin (by Rob Neild)
 // and the core JOSM source code (by Immanuel Scholz and others)
-
 package org.openstreetmap.josm.gui.layer.geoimage;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -205,7 +204,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         }
 
         protected String formatErrorMessages() {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append("<html>");
             if (errorMessages.size() == 1) {
                 sb.append(errorMessages.iterator().next());
