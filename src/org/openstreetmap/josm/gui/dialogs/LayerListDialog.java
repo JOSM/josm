@@ -4,11 +4,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -18,24 +19,30 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.AbstractAction;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
+import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListSelectionModel;
-import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JViewport;
 import javax.swing.KeyStroke;
-import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DuplicateLayerAction;
@@ -52,7 +59,6 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.ImageProvider.OverlayPosition;
 
 /**
  * This is a toggle dialog which displays the list of layers. Actions allow to
@@ -96,7 +102,7 @@ public class LayerListDialog extends ToggleDialog {
     /** the selection model */
     private DefaultListSelectionModel selectionModel;
 
-    /** the list of layers */
+    /** the list of layers (technically its a JTable, but appears like a list) */
     private LayerList layerList;
 
     ActivateLayerAction activateLayerAction;
@@ -167,10 +173,26 @@ public class LayerListDialog extends ToggleDialog {
         //
         layerList = new LayerList(model);
         layerList.setSelectionModel(selectionModel);
-        layerList.addMouseListener(new DblClickAdapter());
         layerList.addMouseListener(new PopupMenuHandler());
         layerList.setBackground(UIManager.getColor("Button.background"));
-        layerList.setCellRenderer(new LayerListCellRenderer());
+        layerList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        layerList.setTableHeader(null);
+        layerList.setShowGrid(false);
+        layerList.setIntercellSpacing(new Dimension(0, 0));
+        final int ICON_WIDTH = 16;
+        layerList.getColumnModel().getColumn(0).setCellRenderer(new ActiveLayerCellRenderer());
+        layerList.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new ActiveLayerCheckBox()));
+        layerList.getColumnModel().getColumn(0).setMaxWidth(ICON_WIDTH);
+        layerList.getColumnModel().getColumn(0).setPreferredWidth(ICON_WIDTH);
+        layerList.getColumnModel().getColumn(0).setResizable(false);
+        layerList.getColumnModel().getColumn(1).setCellRenderer(new LayerVisibleCellRenderer());
+        layerList.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new LayerVisibleCheckBox()));
+        layerList.getColumnModel().getColumn(1).setMaxWidth(ICON_WIDTH);
+        layerList.getColumnModel().getColumn(1).setPreferredWidth(ICON_WIDTH);
+        layerList.getColumnModel().getColumn(1).setResizable(false);
+        layerList.getColumnModel().getColumn(2).setCellRenderer(new LayerNameCellRenderer());
+        layerList.getColumnModel().getColumn(2).setCellEditor(new LayerNameCellEditor(new JTextField()));
+
         add(new JScrollPane(layerList), BorderLayout.CENTER);
 
         // init the model
@@ -180,8 +202,10 @@ public class LayerListDialog extends ToggleDialog {
         model.setSelectedLayer(mapView.getActiveLayer());
         model.addLayerListModelListener(
                 new LayerListModelListener() {
-                    public void makeVisible(int index, Layer layer) {
-                        layerList.ensureIndexIsVisible(index);
+                    public void makeVisible(int row, Layer layer) {
+                        System.err.println(Thread.currentThread());
+                        layerList.scrollToVisible(row, 0);
+                        layerList.repaint();
                     }
                     public void refresh() {
                         layerList.repaint();
@@ -209,7 +233,7 @@ public class LayerListDialog extends ToggleDialog {
         return model;
     }
 
-    private interface IEnabledStateUpdating {
+    protected interface IEnabledStateUpdating {
         void updateEnabledState();
     }
 
@@ -239,21 +263,15 @@ public class LayerListDialog extends ToggleDialog {
      * @param listener  the listener
      * @param listSelectionModel  the source emitting {@see ListDataEvent}s
      */
-    protected void adaptTo(final IEnabledStateUpdating listener, ListModel listModel) {
-        listModel.addListDataListener(
-                new ListDataListener() {
-                    public void contentsChanged(ListDataEvent e) {
-                        listener.updateEnabledState();
-                    }
+    protected void adaptTo(final IEnabledStateUpdating listener, LayerListModel listModel) {
+        listModel.addTableModelListener(
+            new TableModelListener() {
 
-                    public void intervalAdded(ListDataEvent e) {
-                        listener.updateEnabledState();
-                    }
-
-                    public void intervalRemoved(ListDataEvent e) {
-                        listener.updateEnabledState();
-                    }
+                @Override
+                public void tableChanged(TableModelEvent e) {
+                    listener.updateEnabledState();
                 }
+            }
         );
     }
 
@@ -576,11 +594,63 @@ public class LayerListDialog extends ToggleDialog {
         }
     }
 
-    /**
-     * the list cell renderer used to render layer list entries
-     *
-     */
-    static class LayerListCellRenderer extends DefaultListCellRenderer {
+    private static class ActiveLayerCheckBox extends JCheckBox {
+        public ActiveLayerCheckBox() {
+            setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            ImageIcon blank = ImageProvider.get("dialogs/layerlist", "blank");
+            ImageIcon active = ImageProvider.get("dialogs/layerlist", "active");
+            setIcon(blank);
+            setSelectedIcon(active);
+            setRolloverIcon(blank);
+            setRolloverSelectedIcon(active);
+            setPressedIcon(active);
+        }
+    }
+
+    private static class LayerVisibleCheckBox extends JCheckBox {
+        public LayerVisibleCheckBox() {
+            setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            ImageIcon eye = ImageProvider.get("dialogs/layerlist", "eye");
+            ImageIcon eye_off = ImageProvider.get("dialogs/layerlist", "eye-off");
+            setIcon(eye_off);
+            setSelectedIcon(eye);
+            setRolloverIcon(eye_off);
+            setRolloverSelectedIcon(eye);
+            setPressedIcon(ImageProvider.get("dialogs/layerlist", "eye-pressed"));
+        }
+    }
+
+    private static class ActiveLayerCellRenderer implements TableCellRenderer {
+        JCheckBox cb;
+        public ActiveLayerCellRenderer() {
+            cb = new ActiveLayerCheckBox();
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            boolean active = (Boolean) value;
+            cb.setSelected(active);
+            cb.setToolTipText(active ? tr("this layer is the active layer") : tr("this layer is not currently active (click to activate)"));
+            return cb;
+        }
+    }
+
+    private static class LayerVisibleCellRenderer implements TableCellRenderer {
+        JCheckBox cb;
+        public LayerVisibleCellRenderer() {
+            cb = new LayerVisibleCheckBox();
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            boolean visible = (Boolean) value;
+            cb.setSelected(visible);
+            cb.setToolTipText(visible ? tr("layer is currently visible (click to hide layer)") : tr("layer is currently hidden (click to show layer)"));
+            return cb;
+        }
+    }
+
+   private static class LayerNameCellRenderer extends DefaultTableCellRenderer {
 
         protected boolean isActiveLayer(Layer layer) {
             if (Main.map == null) return false;
@@ -588,20 +658,32 @@ public class LayerListDialog extends ToggleDialog {
             return Main.map.mapView.getActiveLayer() == layer;
         }
 
-        @Override public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Layer layer = (Layer)value;
-            JLabel label = (JLabel)super.getListCellRendererComponent(list,
-                    layer.getName(), index, isSelected, cellHasFocus);
-            Icon icon = layer.getIcon();
+            JLabel label = (JLabel)super.getTableCellRendererComponent(table,
+                    layer.getName(), isSelected, hasFocus, row, column);
             if (isActiveLayer(layer)) {
-                icon = ImageProvider.overlay(icon, "overlay/active", OverlayPosition.SOUTHWEST);
+                label.setFont(label.getFont().deriveFont(Font.BOLD));
             }
-            if (!layer.isVisible()) {
-                icon = ImageProvider.overlay(icon, "overlay/invisiblenew", OverlayPosition.SOUTHEAST);
-            }
-            label.setIcon(icon);
+            //label.setEnabled(layer.isVisible());
+            label.setIcon(layer.getIcon());
             label.setToolTipText(layer.getToolTipText());
             return label;
+        }
+    }
+
+    private static class LayerNameCellEditor extends DefaultCellEditor {
+        public LayerNameCellEditor(JTextField tf) {
+            super(tf);
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            JTextField tf = (JTextField) super.getTableCellEditorComponent(table, value, isSelected, row, column);
+            Layer l = (Layer) value;
+            tf.setText(l.getName());
+            return tf;
         }
     }
 
@@ -609,28 +691,16 @@ public class LayerListDialog extends ToggleDialog {
         @Override
         public void launch(MouseEvent evt) {
             Point p = evt.getPoint();
-            int index = layerList.locationToIndex(p);
+            int index = layerList.rowAtPoint(p);
             if (index < 0) return;
-            if (!layerList.getCellBounds(index, index).contains(evt.getPoint()))
+            if (!layerList.getCellRect(index, 2, false).contains(evt.getPoint()))
                 return;
-            if (!layerList.isSelectedIndex(index)) {
-                layerList.setSelectedIndex(index);
+            if (!layerList.isRowSelected(index)) {
+                layerList.setRowSelectionInterval(index, index);
             }
             Layer layer = model.getLayer(index);
             LayerListPopup menu = new LayerListPopup(getModel().getSelectedLayers(), layer);
             menu.show(LayerListDialog.this, p.x, p.y-3);
-        }
-    }
-
-    class DblClickAdapter extends MouseAdapter {
-        @Override public void mouseClicked(MouseEvent e) {
-            if (e.getClickCount() == 2) {
-                int index = layerList.locationToIndex(e.getPoint());
-                if (!layerList.getCellBounds(index, index).contains(e.getPoint()))
-                    return;
-                Layer layer = model.getLayer(index);
-                layer.toggleVisible();
-            }
         }
     }
 
@@ -685,7 +755,7 @@ public class LayerListDialog extends ToggleDialog {
      * The layer list model. The model manages a list of layers and provides methods for
      * moving layers up and down, for toggling their visibility, and for activating a layer.
      *
-     * The model is a {@see ListModel} and it provides a {@see ListSelectionModel}. It expectes
+     * The model is a {@see TableModel} and it provides a {@see ListSelectionModel}. It expects
      * to be configured with a {@see DefaultListSelectionModel}. The selection model is used
      * to update the selection state of views depending on messages sent to the model.
      *
@@ -695,8 +765,7 @@ public class LayerListDialog extends ToggleDialog {
      * It also listens to {@see PropertyChangeEvent}s of every {@see Layer} it manages, in particular to
      * the properties {@see Layer#VISIBLE_PROP} and {@see Layer#NAME_PROP}.
      */
-    public static class LayerListModel extends DefaultListModel implements MapView.LayerChangeListener, PropertyChangeListener{
-
+    public static class LayerListModel extends AbstractTableModel implements MapView.LayerChangeListener, PropertyChangeListener {
         /** manages list selection state*/
         private DefaultListSelectionModel selectionModel;
         private CopyOnWriteArrayList<LayerListModelListener> listeners;
@@ -767,7 +836,7 @@ public class LayerListDialog extends ToggleDialog {
                 layer.removePropertyChangeListener(this);
                 layer.addPropertyChangeListener(this);
             }
-            fireContentsChanged(this, 0, getSize());
+            fireTableDataChanged();
         }
 
         /**
@@ -783,7 +852,6 @@ public class LayerListDialog extends ToggleDialog {
             if (idx >= 0) {
                 selectionModel.setSelectionInterval(idx, idx);
             }
-            fireContentsChanged(this, 0, getSize());
             ensureSelectedIsVisible();
         }
 
@@ -830,11 +898,12 @@ public class LayerListDialog extends ToggleDialog {
             if (layer == null)
                 return;
             layer.removePropertyChangeListener(this);
-            int size = getSize();
+            int size = getRowCount();
             List<Integer> rows = getSelectedRows();
             if (rows.isEmpty() && size > 0) {
                 selectionModel.setSelectionInterval(size-1, size-1);
             }
+            fireTableDataChanged();
             fireRefresh();
             ensureActiveSelected();
         }
@@ -847,7 +916,7 @@ public class LayerListDialog extends ToggleDialog {
         protected void onAddLayer(Layer layer) {
             if (layer == null) return;
             layer.addPropertyChangeListener(this);
-            fireContentsChanged(this, 0, getSize());
+            fireTableDataChanged();
             int idx = getLayers().indexOf(layer);
             selectionModel.setSelectionInterval(idx, idx);
             ensureSelectedIsVisible();
@@ -859,7 +928,7 @@ public class LayerListDialog extends ToggleDialog {
          * @return the first layer. Null if no layers are present
          */
         public Layer getFirstLayer() {
-            if (getSize() == 0) return null;
+            if (getRowCount() == 0) return null;
             return getLayers().get(0);
         }
 
@@ -871,7 +940,7 @@ public class LayerListDialog extends ToggleDialog {
          * if index is out of range.
          */
         public Layer getLayer(int index) {
-            if (index < 0 || index >= getSize())
+            if (index < 0 || index >= getRowCount())
                 return null;
             return getLayers().get(index);
         }
@@ -901,7 +970,7 @@ public class LayerListDialog extends ToggleDialog {
                 Main.map.mapView.moveLayer(l2,row);
                 Main.map.mapView.moveLayer(l1, row-1);
             }
-            fireContentsChanged(this, 0, getSize());
+            fireTableDataChanged();
             selectionModel.clearSelection();
             for(int row: sel) {
                 selectionModel.addSelectionInterval(row-1, row-1);
@@ -935,7 +1004,7 @@ public class LayerListDialog extends ToggleDialog {
                 Main.map.mapView.moveLayer(l1, row+1);
                 Main.map.mapView.moveLayer(l2, row);
             }
-            fireContentsChanged(this, 0, getSize());
+            fireTableDataChanged();
             selectionModel.clearSelection();
             for(int row: sel) {
                 selectionModel.addSelectionInterval(row+1, row+1);
@@ -997,7 +1066,8 @@ public class LayerListDialog extends ToggleDialog {
          *
          */
         protected void ensureActiveSelected() {
-            if (getLayers().size() == 0) return;
+            if (getLayers().isEmpty())
+                return;
             if (getActiveLayer() != null) {
                 // there's an active layer - select it and make it
                 // visible
@@ -1023,44 +1093,82 @@ public class LayerListDialog extends ToggleDialog {
         }
 
         /* ------------------------------------------------------------------------------ */
-        /* Interface ListModel                                                            */
+        /* Interface TableModel                                                           */
         /* ------------------------------------------------------------------------------ */
-        @Override
-        public Object getElementAt(int index) {
-            return getLayers().get(index);
-        }
 
         @Override
-        public int getSize() {
+        public int getRowCount() {
             List<Layer> layers = getLayers();
             if (layers == null) return 0;
             return layers.size();
         }
 
+        @Override
+        public int getColumnCount() {
+            return 3;
+        }
+
+        @Override
+        public Object getValueAt(int row, int col) {
+            switch (col) {
+            case 0: return getLayers().get(row) == getActiveLayer();
+            case 1: return getLayers().get(row).isVisible();
+            case 2: return getLayers().get(row);
+            default: throw new RuntimeException();
+            }
+        }
+
+        public boolean isCellEditable(int row, int col) {
+            if (col == 0 && getActiveLayer() == getLayers().get(row))
+                return false;
+            return true;
+        }
+
+        public void setValueAt(Object value, int row, int col) {
+            Layer l = getLayers().get(row);
+            switch (col) {
+            case 0:
+                Main.map.mapView.setActiveLayer(l);
+                l.setVisible(true);
+                break;
+            case 1:
+                l.setVisible((Boolean) value);
+                break;
+            case 2:
+                l.setName((String) value);
+                break;
+                default: throw new RuntimeException();
+            }
+            fireTableCellUpdated(row, col);
+        }
+
         /* ------------------------------------------------------------------------------ */
         /* Interface LayerChangeListener                                                  */
         /* ------------------------------------------------------------------------------ */
+        @Override
         public void activeLayerChange(Layer oldLayer, Layer newLayer) {
             if (oldLayer != null) {
                 int idx = getLayers().indexOf(oldLayer);
                 if (idx >= 0) {
-                    fireContentsChanged(this, idx,idx);
+                    fireTableRowsUpdated(idx,idx);
                 }
             }
 
             if (newLayer != null) {
                 int idx = getLayers().indexOf(newLayer);
                 if (idx >= 0) {
-                    fireContentsChanged(this, idx,idx);
+                    fireTableRowsUpdated(idx,idx);
                 }
             }
             ensureActiveSelected();
         }
 
+        @Override
         public void layerAdded(Layer newLayer) {
             onAddLayer(newLayer);
         }
 
+        @Override
         public void layerRemoved(final Layer oldLayer) {
             onRemoveLayer(oldLayer);
         }
@@ -1068,6 +1176,7 @@ public class LayerListDialog extends ToggleDialog {
         /* ------------------------------------------------------------------------------ */
         /* Interface PropertyChangeListener                                               */
         /* ------------------------------------------------------------------------------ */
+        @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (evt.getSource() instanceof Layer) {
                 Layer layer = (Layer)evt.getSource();
@@ -1078,23 +1187,19 @@ public class LayerListDialog extends ToggleDialog {
         }
     }
 
-    static class LayerList extends JList {
-        public LayerList(ListModel dataModel) {
+    static class LayerList extends JTable {
+        public LayerList(TableModel dataModel) {
             super(dataModel);
         }
 
-        @Override
-        protected void processMouseEvent(MouseEvent e) {
-            // if the layer list is embedded in a detached dialog, the last row is
-            // selected if a user clicks in the empty space *below* the last row.
-            // This mouse event filter prevents this.
-            //
-            int idx = locationToIndex(e.getPoint());
-            // sometimes bounds can be null, see #3539
-            Rectangle bounds = getCellBounds(idx,idx);
-            if (bounds != null && bounds.contains(e.getPoint())) {
-                super.processMouseEvent(e);
-            }
+        public void scrollToVisible(int row, int col) {
+            if (!(getParent() instanceof JViewport))
+                return;
+            JViewport viewport = (JViewport) getParent();
+            Rectangle rect = getCellRect(row, col, true);
+            Point pt = viewport.getViewPosition();
+            rect.setLocation(rect.x - pt.x, rect.y - pt.y);
+            viewport.scrollRectToVisible(rect);
         }
     }
 
