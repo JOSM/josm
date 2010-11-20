@@ -179,16 +179,15 @@ public class LayerListDialog extends ToggleDialog {
         layerList.setTableHeader(null);
         layerList.setShowGrid(false);
         layerList.setIntercellSpacing(new Dimension(0, 0));
-        final int ICON_WIDTH = 16;
         layerList.getColumnModel().getColumn(0).setCellRenderer(new ActiveLayerCellRenderer());
         layerList.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new ActiveLayerCheckBox()));
-        layerList.getColumnModel().getColumn(0).setMaxWidth(ICON_WIDTH);
-        layerList.getColumnModel().getColumn(0).setPreferredWidth(ICON_WIDTH);
+        layerList.getColumnModel().getColumn(0).setMaxWidth(12);
+        layerList.getColumnModel().getColumn(0).setPreferredWidth(12);
         layerList.getColumnModel().getColumn(0).setResizable(false);
         layerList.getColumnModel().getColumn(1).setCellRenderer(new LayerVisibleCellRenderer());
         layerList.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(new LayerVisibleCheckBox()));
-        layerList.getColumnModel().getColumn(1).setMaxWidth(ICON_WIDTH);
-        layerList.getColumnModel().getColumn(1).setPreferredWidth(ICON_WIDTH);
+        layerList.getColumnModel().getColumn(1).setMaxWidth(16);
+        layerList.getColumnModel().getColumn(1).setPreferredWidth(16);
         layerList.getColumnModel().getColumn(1).setResizable(false);
         layerList.getColumnModel().getColumn(2).setCellRenderer(new LayerNameCellRenderer());
         layerList.getColumnModel().getColumn(2).setCellEditor(new LayerNameCellEditor(new JTextField()));
@@ -390,7 +389,6 @@ public class LayerListDialog extends ToggleDialog {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "showhide"));
             putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the selected layer."));
             putValue("help", HelpUtil.ht("/Dialog/LayerDialog#ShowHideLayer"));
-            putValue(NAME, tr("Show/Hide"));
             updateEnabledState();
         }
 
@@ -619,13 +617,13 @@ public class LayerListDialog extends ToggleDialog {
             setSelectedIcon(active);
             setRolloverIcon(blank);
             setRolloverSelectedIcon(active);
-            setPressedIcon(active);
+            setPressedIcon(ImageProvider.get("dialogs/layerlist", "active-pressed"));
         }
     }
 
     private static class LayerVisibleCheckBox extends JCheckBox {
         public LayerVisibleCheckBox() {
-            setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
             ImageIcon eye = ImageProvider.get("dialogs/layerlist", "eye");
             ImageIcon eye_off = ImageProvider.get("dialogs/layerlist", "eye-off");
             setIcon(eye_off);
@@ -682,7 +680,6 @@ public class LayerListDialog extends ToggleDialog {
             if (isActiveLayer(layer)) {
                 label.setFont(label.getFont().deriveFont(Font.BOLD));
             }
-            //label.setEnabled(layer.isVisible());
             label.setIcon(layer.getIcon());
             label.setToolTipText(layer.getToolTipText());
             return label;
@@ -785,7 +782,7 @@ public class LayerListDialog extends ToggleDialog {
      * It also listens to {@see PropertyChangeEvent}s of every {@see Layer} it manages, in particular to
      * the properties {@see Layer#VISIBLE_PROP} and {@see Layer#NAME_PROP}.
      */
-    public static class LayerListModel extends AbstractTableModel implements MapView.LayerChangeListener, PropertyChangeListener {
+    public class LayerListModel extends AbstractTableModel implements MapView.LayerChangeListener, PropertyChangeListener {
         /** manages list selection state*/
         private DefaultListSelectionModel selectionModel;
         private CopyOnWriteArrayList<LayerListModelListener> listeners;
@@ -938,6 +935,7 @@ public class LayerListDialog extends ToggleDialog {
             layer.addPropertyChangeListener(this);
             fireTableDataChanged();
             int idx = getLayers().indexOf(layer);
+            layerList.setRowHeight(idx, Math.max(16, layer.getIcon().getIconHeight()));
             selectionModel.setSelectionInterval(idx, idx);
             ensureSelectedIsVisible();
         }
