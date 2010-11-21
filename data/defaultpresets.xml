@@ -1414,7 +1414,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:amenity=fuel" />
             <label text="Edit Fuel" />
             <key key="amenity" value="fuel" />
-            <combo key="brand" text="Brand" values="gip,Aral,Avia,BP,Chevron,Citgo,Esso,Exxon,Gulf,Mobil,OMV,Petro-Canada,Pioneer,Q8,Repsol,Shell,Sunoco,Statoil,Tamoil,Texaco,Total,Independent" default="" delete_if_empty="true" />
+            <combo key="brand" text="Brand" values="Agip,Aral,Avia,BP,Chevron,Citgo,Esso,Exxon,Gulf,Mobil,OMV,Petro-Canada,Pioneer,Q8,Repsol,Shell,Sunoco,Statoil,Tamoil,Texaco,Total,Independent" default="" delete_if_empty="true" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
                 <text key="operator" text="Operator" default="" delete_if_empty="true" />
