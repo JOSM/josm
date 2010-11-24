@@ -54,6 +54,7 @@ import org.openstreetmap.josm.gui.dialogs.RelationListDialog;
 import org.openstreetmap.josm.gui.dialogs.SelectionListDialog;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.UserListDialog;
+import org.openstreetmap.josm.gui.dialogs.ValidatorDialog;
 import org.openstreetmap.josm.gui.dialogs.properties.PropertiesDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
@@ -91,6 +92,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
     public ConflictDialog conflictDialog;
     public FilterDialog filterDialog;
     public RelationListDialog relationListDialog;
+    public ValidatorDialog validatorDialog;
     public SelectionListDialog selectionListDialog;
     /**
      * The panel list of all toggle dialog icons. To add new toggle dialog actions, use addToggleDialog
@@ -179,6 +181,7 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         addToggleDialog(new UserListDialog());
         addToggleDialog(new HistoryDialog());
         addToggleDialog(conflictDialog = new ConflictDialog());
+        addToggleDialog(validatorDialog = new ValidatorDialog());
         addToggleDialog(filterDialog = new FilterDialog());
         addToggleDialog(new ChangesetDialog(this));
 

@@ -200,7 +200,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
     }
 
     protected void filterOldPlugins() {
-        for (String p : PluginHandler.DEPRECATED_PLUGINS) {
+        for (String p : PluginHandler.DEPRECATED_PLUGINS.keySet()) {
             if (canceled)return;
             if (availablePlugins.containsKey(p)) {
                 availablePlugins.remove(p);

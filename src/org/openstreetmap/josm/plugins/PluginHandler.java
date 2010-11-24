@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -66,11 +68,21 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class PluginHandler {
 
-    final public static String [] DEPRECATED_PLUGINS = new String[] {"mappaint", "unglueplugin",
-        "lang-de", "lang-en_GB", "lang-fr", "lang-it", "lang-pl", "lang-ro",
-        "lang-ru", "ewmsplugin", "ywms", "tways-0.2", "geotagged", "landsat",
-        "namefinder", "waypoints", "slippy_map_chooser", "tcx-support", "usertools",
-        "AgPifoJ", "utilsplugin", "ghost"};
+    /* deprecated plugins that are removed on start
+       key - plugin name; value - explanation for deprecation (optional, can be null) */
+    public final static Map<String, String> DEPRECATED_PLUGINS = new TreeMap<String, String>();
+    static {
+        String IN_CORE = tr("integrated into main program");
+        for (String[] depr : new String[][] {
+            {"mappaint"}, {"unglueplugin"}, {"lang-de"}, {"lang-en_GB"}, {"lang-fr"},
+            {"lang-it"}, {"lang-pl"}, {"lang-ro"}, {"lang-ru"}, {"ewmsplugin"},
+            {"ywms"}, {"tways-0.2"}, {"geotagged"}, {"landsat"}, {"namefinder"},
+            {"waypoints"}, {"slippy_map_chooser"}, {"tcx-support"}, {"usertools"},
+            {"AgPifoJ", IN_CORE}, {"utilsplugin", IN_CORE}, {"ghost"},
+            {"validator", IN_CORE}}) {
+            DEPRECATED_PLUGINS.put(depr[0], depr.length >= 2 ? depr[1] : null);
+        }
+    }
 
     final public static String [] UNMAINTAINED_PLUGINS = new String[] {"gpsbabelgui", "Intersect_way"};
 
@@ -89,8 +101,8 @@ public class PluginHandler {
      * @param plugins the collection of plugins
      */
     private static void filterDeprecatedPlugins(Window parent, Collection<String> plugins) {
-        Set<String> removedPlugins = new HashSet<String>();
-        for (String p : DEPRECATED_PLUGINS) {
+        Set<String> removedPlugins = new TreeSet<String>();
+        for (String p : DEPRECATED_PLUGINS.keySet()) {
             if (plugins.contains(p)) {
                 plugins.remove(p);
                 Main.pref.removeFromCollection("plugins", p);
@@ -102,7 +114,7 @@ public class PluginHandler {
 
         // notify user about removed deprecated plugins
         //
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append(trn(
                 "The following plugin is no longer necessary and has been deactivated:",
@@ -111,7 +123,12 @@ public class PluginHandler {
         ));
         sb.append("<ul>");
         for (String name: removedPlugins) {
-            sb.append("<li>").append(name).append("</li>");
+            sb.append("<li>").append(name);
+            String explanation = DEPRECATED_PLUGINS.get(name);
+            if (explanation != null) {
+                sb.append(" ("+explanation+")");
+            }
+            sb.append("</li>");
         }
         sb.append("</ul>");
         sb.append("</html>");

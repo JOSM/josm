@@ -76,6 +76,7 @@ import org.openstreetmap.josm.actions.WireframeToggleAction;
 import org.openstreetmap.josm.actions.ZoomInAction;
 import org.openstreetmap.josm.actions.ZoomOutAction;
 import org.openstreetmap.josm.actions.OrthogonalizeAction.Undo;
+import org.openstreetmap.josm.actions.ValidateAction;
 import org.openstreetmap.josm.actions.audio.AudioBackAction;
 import org.openstreetmap.josm.actions.audio.AudioFasterAction;
 import org.openstreetmap.josm.actions.audio.AudioFwdAction;

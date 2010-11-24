@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -62,6 +63,7 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.SimplePaintVisitor;
+import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
@@ -85,6 +87,8 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
     private boolean requiresUploadToServer = false;
     private boolean isChanged = true;
     private int highlightUpdateCount;
+
+    public List<TestError> validationErrors = new ArrayList<TestError>();
 
     protected void setRequiresSaveToFile(boolean newValue) {
         boolean oldValue = requiresSaveToFile;
@@ -482,7 +486,7 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
                 trkAttr.put("name", w.get("name"));
             }
 
-            ArrayList<WayPoint> trkseg = null;
+            List<WayPoint> trkseg = null;
             for (Node n : w.getNodes()) {
                 if (!n.isUsable()) {
                     trkseg = null;

@@ -43,8 +43,8 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
     static private final Logger logger = Logger.getLogger(PreferenceTabbedPane.class.getName());
 
     /**
-     * Allows PreferenceSettings to do validation of entered values when ok was pressed. If data are invalid then event can
-     * return false to cancel closing of preferences dialog
+     * Allows PreferenceSettings to do validation of entered values when ok was pressed. 
+     * If data is invalid then event can return false to cancel closing of preferences dialog.
      *
      */
     public interface ValidationListener {
@@ -167,7 +167,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
                 // information from the plugin download task and - if necessary - a hint
                 // to restart JOSM
                 //
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 sb.append("<html>");
                 if (task != null && !task.isCanceled()) {
                     sb.append(PluginPreference.buildDownloadSummary(task));
@@ -221,7 +221,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
     }
 
     public void buildGui() {
-        for (PreferenceSettingFactory factory:settingsFactory) {
+        for (PreferenceSettingFactory factory : settingsFactory) {
             // logger.info("creating settings: " + factory);
             PreferenceSetting setting = factory.createPreferenceSetting();
             if (setting != null) {
@@ -275,6 +275,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
         settingsFactory.add(Main.toolbar);
         settingsFactory.add(new AudioPreference.Factory());
         settingsFactory.add(new ShortcutPreference.Factory());
+        settingsFactory.add(new ValidatorPreference.Factory());
 
         PluginHandler.getPreferenceSetting(settingsFactory);
 

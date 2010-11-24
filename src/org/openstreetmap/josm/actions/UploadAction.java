@@ -15,6 +15,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.upload.ApiPreconditionCheckerHook;
 import org.openstreetmap.josm.actions.upload.RelationUploadOrderHook;
 import org.openstreetmap.josm.actions.upload.UploadHook;
+import org.openstreetmap.josm.actions.upload.ValidateUploadHook;
 import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
@@ -49,6 +50,7 @@ public class UploadAction extends JosmAction{
      */
     private static final LinkedList<UploadHook> uploadHooks = new LinkedList<UploadHook>();
     static {
+        uploadHooks.add(new ValidateUploadHook());
         /**
          * Checks server capabilities before upload.
          */

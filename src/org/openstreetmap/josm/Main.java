@@ -51,9 +51,11 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.gui.GettingStarted;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -135,10 +137,11 @@ abstract public class Main {
      */
     public final MainMenu menu;
 
+    public final OsmValidator validator;
     /**
      * The MOTD Layer.
      */
-    private GettingStarted gettingStarted=new GettingStarted();
+    private GettingStarted gettingStarted = new GettingStarted();
 
     /**
      * Print a debug message if debugging is on.
@@ -216,6 +219,9 @@ abstract public class Main {
 
         TaggingPresetPreference.initialize();
         MapPaintPreference.initialize();
+
+        validator = new OsmValidator();
+        MapView.addLayerChangeListener(validator);
 
         toolbar.refreshToolbarControl();
 
@@ -386,10 +392,8 @@ abstract public class Main {
         String geometry = null;
         if (args.containsKey("geometry")) {
             geometry = args.get("geometry").iterator().next();
-            // Main.debug("Main window geometry from args: \""+geometry+"\"");
         } else {
             geometry = Main.pref.get("gui.geometry");
-            // Main.debug("Main window geometry from preferences: \""+geometry+"\"");
         }
         if (geometry.length() != 0) {
             final Matcher m = Pattern.compile("(\\d+)x(\\d+)(([+-])(\\d+)([+-])(\\d+))?").matcher(geometry);
