@@ -28,7 +28,7 @@ public class ValUtil
      */
     public static String getPluginDir()
     {
-        return Main.pref.getPreferencesDir() + "plugins/validator/";
+        return Main.pref.getPreferencesDir() + "validator/";
     }
 
     /**
