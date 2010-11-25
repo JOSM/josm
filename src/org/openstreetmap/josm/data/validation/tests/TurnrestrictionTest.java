@@ -135,7 +135,7 @@ public class TurnrestrictionTest extends Test {
             if (!toWay.isFirstLastNode(viaNode)) {
                 errors.add(new TestError(this, Severity.ERROR,
                         tr("The \"to\" way does not start or end at a \"via\" node"), TO_VIA_NODE, r));
-                //FIXME: return; ?
+                return;
             }
         } else {
             Way viaWay = (Way) via;

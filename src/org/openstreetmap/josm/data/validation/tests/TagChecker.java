@@ -835,6 +835,7 @@ public class TagChecker extends Test
             public boolean tagAll = false;
             public boolean valueAll = false;
             public boolean valueBool = false;
+
             private Pattern getPattern(String str) throws IllegalStateException, PatternSyntaxException {
                 if (str.endsWith("/i"))
                     return Pattern.compile(str.substring(1,str.length()-2), Pattern.CASE_INSENSITIVE);
@@ -849,28 +850,24 @@ public class TagChecker extends Test
 
                 String n = m.group(1).trim();
 
-                // FIXME FIXME: indentation and { } pairs don't match, probably coding error
-
-                if(n.equals("*"))
+                if(n.equals("*")) {
                     tagAll = true;
-                else
+                } else {
                     tag = n.startsWith("/") ? getPattern(n) : n;
                     noMatch = m.group(2).equals("!=");
                     n = m.group(3).trim();
-                    if(n.equals("*"))
+                    if (n.equals("*")) {
                         valueAll = true;
-                    else if(n.equals("BOOLEAN_TRUE"))
-                    {
+                    } else if (n.equals("BOOLEAN_TRUE")) {
                         valueBool = true;
                         value = OsmUtils.trueval;
-                    }
-                    else if(n.equals("BOOLEAN_FALSE"))
-                    {
+                    } else if (n.equals("BOOLEAN_FALSE")) {
                         valueBool = true;
                         value = OsmUtils.falseval;
-                    }
-                    else
+                    } else {
                         value = n.startsWith("/") ? getPattern(n) : n;
+                    }
+                }
             }
 
             public boolean match(OsmPrimitive osm, Map<String, String> keys) {

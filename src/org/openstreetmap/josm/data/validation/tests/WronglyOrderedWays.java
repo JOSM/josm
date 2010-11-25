@@ -82,7 +82,7 @@ public class WronglyOrderedWays extends Test {
          * If the area is negative the way is ordered in a clockwise direction
          *
          */
-        if(w.getNode(0) == w.getNode(w.getNodesCount()-1)) {
+        if (w.getNode(0) == w.getNode(w.getNodesCount()-1)) {
             double area2 = 0;
 
             for (int node = 1; node < w.getNodesCount(); node++) {

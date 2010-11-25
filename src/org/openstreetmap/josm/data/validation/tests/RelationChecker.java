@@ -134,7 +134,7 @@ public class RelationChecker extends Test {
                 for (TaggingPreset.Role r : allroles) {
                     done.add(r.key);
                     String keyname = r.key;
-                    if (keyname == "") { //FIXME
+                    if ("".equals(keyname)) {
                         keyname = tr("<empty>");
                     }
                     RoleInfo ri = map.get(r.key);
@@ -143,17 +143,17 @@ public class RelationChecker extends Test {
                     if (count != vc) {
                         if (count == 0) {
                             String s = marktr("Role {0} missing");
-                            errors.add( new TestError(this, Severity.WARNING, tr("Role verification problem"),
-                                    tr(s, keyname), MessageFormat.format(s, keyname), ROLE_MISSING, n) );
+                            errors.add(new TestError(this, Severity.WARNING, tr("Role verification problem"),
+                                    tr(s, keyname), MessageFormat.format(s, keyname), ROLE_MISSING, n));
                         }
                         else if (vc > count) {
                             String s = marktr("Number of {0} roles too low ({1})");
-                            errors.add( new TestError(this, Severity.WARNING, tr("Role verification problem"),
-                                    tr(s, keyname, count), MessageFormat.format(s, keyname, count), LOW_COUNT, n) );
+                            errors.add(new TestError(this, Severity.WARNING, tr("Role verification problem"),
+                                    tr(s, keyname, count), MessageFormat.format(s, keyname, count), LOW_COUNT, n));
                         } else {
                             String s = marktr("Number of {0} roles too high ({1})");
-                            errors.add( new TestError(this, Severity.WARNING, tr("Role verification problem"),
-                                    tr(s, keyname, count), MessageFormat.format(s, keyname, count), HIGH_COUNT, n) );
+                            errors.add(new TestError(this, Severity.WARNING, tr("Role verification problem"),
+                                    tr(s, keyname, count), MessageFormat.format(s, keyname, count), HIGH_COUNT, n));
                         }
                     }
                     if (ri != null && ((!r.types.contains(PresetType.WAY) && (r.types.contains(PresetType.CLOSEDWAY) ? ri.openways > 0 : ri.ways > 0))

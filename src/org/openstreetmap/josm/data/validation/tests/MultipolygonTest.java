@@ -80,7 +80,7 @@ public class MultipolygonTest extends Test {
         result.moveTo((float) nodes.get(0).getCoor().lat(), (float) nodes.get(0).getCoor().lon());
         for (int i=1; i<nodes.size(); i++) {
             Node n = nodes.get(i);
-            result.lineTo((float )n.getCoor().lat(), (float) n.getCoor().lon());
+            result.lineTo((float) n.getCoor().lat(), (float) n.getCoor().lon());
         }
         return result;
     }
