@@ -57,30 +57,27 @@ public class DuplicateNode extends Test {
         @SuppressWarnings("unchecked")
         private LatLon getLatLon(Object o) {
             if (o instanceof Node) {
-                if (precision==0) {
+                if (precision==0)
                     return ((Node) o).getCoor().getRoundedToOsmPrecision();
-                } else {
-                    return RoundCoord((Node) o);
-                }
+                return RoundCoord((Node) o);
             } else if (o instanceof List<?>) {
-                if (precision==0) {
+                if (precision==0)
                     return ((List<Node>) o).get(0).getCoor().getRoundedToOsmPrecision();
-                } else {
-                    return RoundCoord(((List<Node>) o).get(0));
-                }
+                return RoundCoord(((List<Node>) o).get(0));
             } else {
                 throw new AssertionError();
             }
         }
 
+        @Override
         public boolean equals(Object k, Object t) {
             return getLatLon(k).equals(getLatLon(t));
         }
 
+        @Override
         public int getHashCode(Object k) {
             return getLatLon(k).hashCode();
         }
-
     }
 
     protected static int DUPLICATE_NODE = 1;
@@ -106,8 +103,7 @@ public class DuplicateNode extends Test {
     /**
      * Constructor
      */
-    public DuplicateNode()
-    {
+    public DuplicateNode() {
         super(tr("Duplicated nodes")+".",
                 tr("This test checks that there are no nodes at the very same location."));
     }
@@ -131,7 +127,7 @@ public class DuplicateNode extends Test {
 
             // multiple nodes at the same position -> report errors
             //
-            List<Node> nodes = (List<Node>)v;
+            List<Node> nodes = (List<Node>) v;
             errors.addAll(buildTestErrors(this, nodes));
         }
         super.endTest();
@@ -153,7 +149,7 @@ public class DuplicateNode extends Test {
         // check whether we have multiple nodes at the same position with
         // the same tag set
         //
-        for (Iterator<Map<String,String>> it = bag.keySet().iterator(); it.hasNext(); ) {
+        for (Iterator<Map<String,String>> it = bag.keySet().iterator(); it.hasNext();) {
             Map<String,String> tagSet = it.next();
             if (bag.get(tagSet).size() > 1) {
 
@@ -176,7 +172,9 @@ public class DuplicateNode extends Test {
                                         typed=true;
                                     }
                                 }
-                                if (!typed) typeMap.put("none", true);
+                                if (!typed) {
+                                    typeMap.put("none", true);
+                                }
                             }
                         }
 
@@ -185,7 +183,9 @@ public class DuplicateNode extends Test {
 
                 int nbType=0;
                 for (String type: typeMap.keySet()) {
-                    if (typeMap.get(type)) nbType++;
+                    if (typeMap.get(type)) {
+                        nbType++;
+                    }
                 }
 
                 if (nbType>1) {
@@ -302,7 +302,6 @@ public class DuplicateNode extends Test {
                 }
                 it.remove();
             }
-
         }
 
         // check whether we have multiple nodes at the same position with
@@ -358,8 +357,7 @@ public class DuplicateNode extends Test {
      * Copied from UtilsPlugin.MergePointsAction
      */
     @Override
-    public Command fixError(TestError testError)
-    {
+    public Command fixError(TestError testError) {
         Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>(testError.getPrimitives());
         LinkedHashSet<Node> nodes = new LinkedHashSet<Node>(OsmPrimitive.getFilteredList(sel, Node.class));
 

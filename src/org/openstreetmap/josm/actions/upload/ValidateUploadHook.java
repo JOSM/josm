@@ -40,8 +40,8 @@ public class ValidateUploadHook implements UploadHook
     /**
      * Validate the modified data before uploading
      */
-    public boolean checkUpload(APIDataSet apiDataSet)
-    {
+    public boolean checkUpload(APIDataSet apiDataSet) {
+
         Collection<Test> tests = OsmValidator.getEnabledTests(true);
         if (tests.isEmpty())
             return true;
@@ -51,48 +51,44 @@ public class ValidateUploadHook implements UploadHook
         Collection<OsmPrimitive> selection = v.visit(apiDataSet.getPrimitivesToUpdate());
 
         List<TestError> errors = new ArrayList<TestError>(30);
-        for(Test test : tests)
-        {
+        for (Test test : tests) {
             test.setBeforeUpload(true);
             test.setPartialSelection(true);
             test.startTest(null);
             test.visit(selection);
             test.endTest();
-            if(Main.pref.getBoolean(ValidatorPreference.PREF_OTHER_UPLOAD, false))
+            if (Main.pref.getBoolean(ValidatorPreference.PREF_OTHER_UPLOAD, false)) {
                 errors.addAll( test.getErrors() );
-            else
-            {
-                for(TestError e : test.getErrors())
-                {
-                    if(e.getSeverity() != Severity.OTHER)
+            }
+            else {
+                for (TestError e : test.getErrors()) {
+                    if (e.getSeverity() != Severity.OTHER) {
                         errors.add(e);
+                    }
                 }
             }
         }
         tests = null;
-        if(errors == null || errors.isEmpty())
+        if (errors == null || errors.isEmpty())
             return true;
 
-        if(Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true))
-        {
+        if (Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true)) {
             int nume = 0;
-            for(TestError error : errors)
-            {
+            for (TestError error : errors) {
                 List<String> s = new ArrayList<String>();
                 s.add(error.getIgnoreState());
                 s.add(error.getIgnoreGroup());
                 s.add(error.getIgnoreSubGroup());
-                for(String state : s)
-                {
-                    if(state != null && OsmValidator.hasIgnoredError(state))
-                    {
+                for (String state : s) {
+                    if (state != null && OsmValidator.hasIgnoredError(state)) {
                         error.setIgnored(true);
                     }
                 }
-                if(!error.getIgnored())
+                if (!error.getIgnored()) {
                     ++nume;
+                }
             }
-            if(nume == 0)
+            if (nume == 0)
                 return true;
         }
         return displayErrorScreen(errors);
@@ -105,17 +101,17 @@ public class ValidateUploadHook implements UploadHook
      * @return <code>true</code>, if the upload should continue. <code>false</code>
      *          if the user requested cancel.
      */
-    private boolean displayErrorScreen(List<TestError> errors)
-    {
+    private boolean displayErrorScreen(List<TestError> errors) {
         JPanel p = new JPanel(new GridBagLayout());
         ValidatorTreePanel errorPanel = new ValidatorTreePanel(errors);
         errorPanel.expandAll();
         p.add(new JScrollPane(errorPanel), GBC.eol());
 
-        int res  = JOptionPane.showConfirmDialog(Main.parent, p,
-        tr("Data with errors. Upload anyway?"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if(res == JOptionPane.NO_OPTION)
-        {
+        int res = JOptionPane.showConfirmDialog(Main.parent, p,
+            tr("Data with errors. Upload anyway?"),
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE);
+        if (res == JOptionPane.NO_OPTION) {
             OsmValidator.initializeErrorLayer();
             Main.map.validatorDialog.unfurlDialog();
             Main.map.validatorDialog.tree.setErrors(errors);

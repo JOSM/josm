@@ -32,7 +32,6 @@ import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
  *
  * @author frsantos
  */
-
 public class ValidatorTreePanel extends JTree {
     /** Serializable ID */
     private static final long serialVersionUID = 2952292777351992696L;
@@ -40,7 +39,7 @@ public class ValidatorTreePanel extends JTree {
     /**
      * The validation data.
      */
-    protected DefaultTreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
+    protected DefaultTreeModel valTreeModel = new DefaultTreeModel(new DefaultMutableTreeNode());
 
     /** The list of errors shown in the tree */
     private List<TestError> errors = new ArrayList<TestError>();
@@ -59,7 +58,7 @@ public class ValidatorTreePanel extends JTree {
      */
     public ValidatorTreePanel(List<TestError> errors) {
         ToolTipManager.sharedInstance().registerComponent(this);
-        this.setModel(treeModel);
+        this.setModel(valTreeModel);
         this.setRootVisible(false);
         this.setShowsRootHandles(true);
         this.expandRow(0);
@@ -86,8 +85,9 @@ public class ValidatorTreePanel extends JTree {
                 if (d != null)
                     res += "<br>" + d;
                 res += "</html>";
-            } else
+            } else {
                 res = node.toString();
+            }
         }
         return res;
     }
@@ -99,10 +99,11 @@ public class ValidatorTreePanel extends JTree {
 
     @Override
     public void setVisible(boolean v) {
-        if (v)
+        if (v) {
             buildTree();
-        else
-            treeModel.setRoot(new DefaultMutableTreeNode());
+        } else {
+            valTreeModel.setRoot(new DefaultMutableTreeNode());
+        }
         super.setVisible(v);
     }
 
@@ -114,7 +115,7 @@ public class ValidatorTreePanel extends JTree {
         DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode();
 
         if (errors == null || errors.isEmpty()) {
-            treeModel.setRoot(rootNode);
+            valTreeModel.setRoot(rootNode);
             return;
         }
 
@@ -126,9 +127,9 @@ public class ValidatorTreePanel extends JTree {
                 TreePath path = expanded.nextElement();
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
                 Object userObject = node.getUserObject();
-                if (userObject instanceof Severity)
+                if (userObject instanceof Severity) {
                     oldSelectedRows.add(userObject);
-                else if (userObject instanceof String) {
+                } else if (userObject instanceof String) {
                     String msg = (String) userObject;
                     msg = msg.substring(0, msg.lastIndexOf(" ("));
                     oldSelectedRows.add(msg);
@@ -144,8 +145,9 @@ public class ValidatorTreePanel extends JTree {
         }
 
         for (TestError e : errors) {
-            if (e.getIgnored())
+            if (e.getIgnored()) {
                 continue;
+            }
             Severity s = e.getSeverity();
             String d = e.getDescription();
             String m = e.getMessage();
@@ -157,8 +159,9 @@ public class ValidatorTreePanel extends JTree {
                         break;
                     }
                 }
-                if (!found)
+                if (!found) {
                     continue;
+                }
             }
             if (d != null) {
                 Bag<String, TestError> b = errorTreeDeep.get(s).get(m);
@@ -167,28 +170,31 @@ public class ValidatorTreePanel extends JTree {
                     errorTreeDeep.get(s).put(m, b);
                 }
                 b.add(d, e);
-            } else
+            } else {
                 errorTree.get(s).add(m, e);
+            }
         }
 
         List<TreePath> expandedPaths = new ArrayList<TreePath>();
         for (Severity s : Severity.values()) {
             Bag<String, TestError> severityErrors = errorTree.get(s);
             Map<String, Bag<String, TestError>> severityErrorsDeep = errorTreeDeep.get(s);
-            if (severityErrors.isEmpty() && severityErrorsDeep.isEmpty())
+            if (severityErrors.isEmpty() && severityErrorsDeep.isEmpty()) {
                 continue;
+            }
 
             // Severity node
             DefaultMutableTreeNode severityNode = new DefaultMutableTreeNode(s);
             rootNode.add(severityNode);
 
-            if (oldSelectedRows.contains(s))
+            if (oldSelectedRows.contains(s)) {
                 expandedPaths.add(new TreePath(new Object[] { rootNode, severityNode }));
+            }
 
             for (Entry<String, List<TestError>> msgErrors : severityErrors.entrySet()) {
                 // Message node
-                List<TestError> errors = msgErrors.getValue();
-                String msg = msgErrors.getKey() + " (" + errors.size() + ")";
+                List<TestError> errs = msgErrors.getValue();
+                String msg = msgErrors.getKey() + " (" + errs.size() + ")";
                 DefaultMutableTreeNode messageNode = new DefaultMutableTreeNode(msg);
                 severityNode.add(messageNode);
 
@@ -196,7 +202,7 @@ public class ValidatorTreePanel extends JTree {
                     expandedPaths.add(new TreePath(new Object[] { rootNode, severityNode, messageNode }));
                 }
 
-                for (TestError error : errors) {
+                for (TestError error : errs) {
                     // Error node
                     DefaultMutableTreeNode errorNode = new DefaultMutableTreeNode(error);
                     messageNode.add(errorNode);
@@ -217,17 +223,19 @@ public class ValidatorTreePanel extends JTree {
 
                 for (Entry<String, List<TestError>> msgErrors : errorlist.entrySet()) {
                     // Message node
-                    List<TestError> errors = msgErrors.getValue();
+                    List<TestError> errs = msgErrors.getValue();
                     String msg;
-                    if (groupNode != null)
-                        msg = msgErrors.getKey() + " (" + errors.size() + ")";
-                    else
-                        msg = bag.getKey() + " - " + msgErrors.getKey() + " (" + errors.size() + ")";
+                    if (groupNode != null) {
+                        msg = msgErrors.getKey() + " (" + errs.size() + ")";
+                    } else {
+                        msg = bag.getKey() + " - " + msgErrors.getKey() + " (" + errs.size() + ")";
+                    }
                     DefaultMutableTreeNode messageNode = new DefaultMutableTreeNode(msg);
-                    if (groupNode != null)
+                    if (groupNode != null) {
                         groupNode.add(messageNode);
-                    else
+                    } else {
                         severityNode.add(messageNode);
+                    }
 
                     if (oldSelectedRows.contains(msgErrors.getKey())) {
                         if (groupNode != null) {
@@ -238,7 +246,7 @@ public class ValidatorTreePanel extends JTree {
                         }
                     }
 
-                    for (TestError error : errors) {
+                    for (TestError error : errs) {
                         // Error node
                         DefaultMutableTreeNode errorNode = new DefaultMutableTreeNode(error);
                         messageNode.add(errorNode);
@@ -247,7 +255,7 @@ public class ValidatorTreePanel extends JTree {
             }
         }
 
-        treeModel.setRoot(rootNode);
+        valTreeModel.setRoot(rootNode);
         for (TreePath path : expandedPaths) {
             this.expandPath(path);
         }
@@ -259,8 +267,9 @@ public class ValidatorTreePanel extends JTree {
      */
     public void setErrorList(List<TestError> errors) {
         this.errors = errors;
-        if (isVisible())
+        if (isVisible()) {
             buildTree();
+        }
     }
 
     /**
@@ -272,11 +281,13 @@ public class ValidatorTreePanel extends JTree {
             return;
         errors.clear();
         for (TestError error : newerrors) {
-            if (!error.getIgnored())
+            if (!error.getIgnored()) {
                 errors.add(error);
+            }
         }
-        if (isVisible())
+        if (isVisible()) {
             buildTree();
+        }
     }
 
     /**
@@ -292,12 +303,14 @@ public class ValidatorTreePanel extends JTree {
     }
 
     public void setFilter(Set<OsmPrimitive> filter) {
-        if (filter != null && filter.size() == 0)
+        if (filter != null && filter.isEmpty()) {
             this.filter = null;
-        else
+        } else {
             this.filter = filter;
-        if (isVisible())
+        }
+        if (isVisible()) {
             buildTree();
+        }
     }
 
     /**
@@ -329,7 +342,7 @@ public class ValidatorTreePanel extends JTree {
      * @return The root node model
      */
     public DefaultMutableTreeNode getRoot() {
-        return (DefaultMutableTreeNode) treeModel.getRoot();
+        return (DefaultMutableTreeNode) valTreeModel.getRoot();
     }
 
     public int getUpdateCount() {

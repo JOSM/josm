@@ -33,16 +33,14 @@ public enum Severity {
      * @param icon Associated icon
      * @param color The color of this severity
      */
-    Severity(String message, String icon, Color color)
-    {
+    Severity(String message, String icon, Color color) {
         this.message = message;
         this.icon = icon;
         this.color = color;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return message;
     }
 
@@ -50,8 +48,7 @@ public enum Severity {
      * Gets the associated icon
      * @return the associated icon
      */
-    public String getIcon()
-    {
+    public String getIcon() {
         return icon;
     }
 
@@ -59,8 +56,7 @@ public enum Severity {
      * Gets the associated color
      * @return The associated color
      */
-    public Color getColor()
-    {
+    public Color getColor() {
         return color;
     }
 

@@ -43,8 +43,7 @@ public class UntaggedWay extends Test
 
     /** Ways that must have a name */
     public static final Set<String> NAMED_WAYS = new HashSet<String>();
-    static
-    {
+    static {
         NAMED_WAYS.add( "motorway" );
         NAMED_WAYS.add( "trunk" );
         NAMED_WAYS.add( "primary" );
@@ -57,107 +56,91 @@ public class UntaggedWay extends Test
     /**
      * Constructor
      */
-    public UntaggedWay()
-    {
+    public UntaggedWay() {
         super(tr("Untagged, empty and one node ways."),
               tr("This test checks for untagged, empty and one node ways."));
     }
 
     @Override
-    public void visit(Way w)
-    {
-        if (!w.isUsable()) return;
+    public void visit(Way w) {
+        if (!w.isUsable())
+            return;
 
         Map<String, String> tags = w.getKeys();
-        if( tags.size() != 0 )
-        {
+        if (!tags.isEmpty()) {
             String highway = tags.get("highway");
-            if(highway != null && NAMED_WAYS.contains(highway))
-            {
-                if( !tags.containsKey("name") && !tags.containsKey("ref") )
-                {
+            if (highway != null && NAMED_WAYS.contains(highway)) {
+                if (!tags.containsKey("name") && !tags.containsKey("ref")) {
                     boolean isRoundabout = false;
                     boolean hasName = false;
-                    for( String key : w.keySet())
-                    {
+                    for (String key : w.keySet()) {
                         hasName = key.startsWith("name:") || key.endsWith("_name") || key.endsWith("_ref");
-                        if( hasName )
+                        if (hasName) {
                             break;
-                        if(key.equals("junction"))
-                        {
+                        }
+                        if (key.equals("junction")) {
                             isRoundabout = w.get("junction").equals("roundabout");
                             break;
                         }
                     }
 
-                    if( !hasName && !isRoundabout)
-                        errors.add( new TestError(this, Severity.WARNING, tr("Unnamed ways"), UNNAMED_WAY, w) );
-                    else if(isRoundabout)
-                        errors.add( new TestError(this, Severity.WARNING, tr("Unnamed junction"), UNNAMED_JUNCTION, w) );
+                    if (!hasName && !isRoundabout) {
+                        errors.add(new TestError(this, Severity.WARNING, tr("Unnamed ways"), UNNAMED_WAY, w));
+                    } else if (isRoundabout) {
+                        errors.add(new TestError(this, Severity.WARNING, tr("Unnamed junction"), UNNAMED_JUNCTION, w));
+                    }
                 }
             }
         }
 
-        if(!w.isTagged() && !multipolygonways.contains(w))
-        {
-            if(w.hasKeys())
-                errors.add( new TestError(this, Severity.WARNING, tr("Untagged ways (commented)"), COMMENTED_WAY, w) );
-            else
-                errors.add( new TestError(this, Severity.WARNING, tr("Untagged ways"), UNTAGGED_WAY, w) );
+        if (!w.isTagged() && !multipolygonways.contains(w)) {
+            if (w.hasKeys()) {
+                errors.add(new TestError(this, Severity.WARNING, tr("Untagged ways (commented)"), COMMENTED_WAY, w));
+            } else {
+                errors.add(new TestError(this, Severity.WARNING, tr("Untagged ways"), UNTAGGED_WAY, w));
+            }
         }
 
-        if( w.getNodesCount() == 0 )
-        {
-            errors.add( new TestError(this, Severity.ERROR, tr("Empty ways"), EMPTY_WAY, w) );
+        if (w.getNodesCount() == 0) {
+            errors.add(new TestError(this, Severity.ERROR, tr("Empty ways"), EMPTY_WAY, w));
+        } else if (w.getNodesCount() == 1) {
+            errors.add(new TestError(this, Severity.ERROR, tr("One node ways"), ONE_NODE_WAY, w));
         }
-        else if( w.getNodesCount() == 1 )
-        {
-            errors.add( new TestError(this, Severity.ERROR, tr("One node ways"), ONE_NODE_WAY, w) );
-        }
-
     }
 
     @Override
-    public void startTest(ProgressMonitor monitor)
-    {
+    public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
         multipolygonways = new LinkedList<Way>();
-        for (Relation r : Main.main.getCurrentDataSet().getRelations())
-        {
-            if(r.isUsable() && "multipolygon".equals(r.get("type")))
-            {
-                for (RelationMember m : r.getMembers())
-                {
-                    if(m.getMember() != null && m.getMember() instanceof Way &&
-                    m.getMember().isUsable() && !m.getMember().isTagged())
+        for (Relation r : Main.main.getCurrentDataSet().getRelations()) {
+            if (r.isUsable() && "multipolygon".equals(r.get("type"))) {
+                for (RelationMember m : r.getMembers()) {
+                    if (m.getMember() != null && m.getMember() instanceof Way &&
+                            m.getMember().isUsable() && !m.getMember().isTagged()) {
                         multipolygonways.add((Way)m.getMember());
+                    }
                 }
             }
         }
     }
 
     @Override
-    public void endTest()
-    {
+    public void endTest() {
         multipolygonways = null;
         super.endTest();
     }
 
     @Override
-    public boolean isFixable(TestError testError)
-    {
-        if( testError.getTester() instanceof UntaggedWay )
-        {
+    public boolean isFixable(TestError testError) {
+        if (testError.getTester() instanceof UntaggedWay)
             return testError.getCode() == EMPTY_WAY
                 || testError.getCode() == ONE_NODE_WAY;
-        }
 
         return false;
     }
 
     @Override
-    public Command fixError(TestError testError)
-    {
+    public Command fixError(TestError testError) {
         return DeleteCommand.delete(Main.map.mapView.getEditLayer(), testError.getPrimitives());
     }
 }

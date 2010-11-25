@@ -22,10 +22,10 @@ import org.openstreetmap.josm.tools.GBC;
  *
  * @author frsantos
  */
-public class ValidatorPreference implements PreferenceSetting
-{
+public class ValidatorPreference implements PreferenceSetting {
 
     public static class Factory implements PreferenceSettingFactory {
+        @Override
         public PreferenceSetting createPreferenceSetting() {
             return new ValidatorPreference();
         }
@@ -65,6 +65,7 @@ public class ValidatorPreference implements PreferenceSetting
     /** The list of all tests */
     private Collection<Test> allTests;
 
+    @Override
     public void addGui(PreferenceTabbedPane gui)
     {
         JPanel testPanel = new JPanel(new GridBagLayout());
@@ -88,8 +89,7 @@ public class ValidatorPreference implements PreferenceSetting
         testPanel.add( new JLabel(tr("On upload")), a );
 
         allTests = OsmValidator.getTests();
-        for(Test test: allTests)
-        {
+        for (Test test: allTests) {
             test.addGui(testPanel);
         }
 
@@ -102,31 +102,31 @@ public class ValidatorPreference implements PreferenceSetting
         tab.add(GBC.glue(0,10), a);
     }
 
-    public boolean ok()
-    {
+    @Override
+    public boolean ok() {
         StringBuilder tests = new StringBuilder();
         StringBuilder testsBeforeUpload = new StringBuilder();
-        Boolean res = false;
 
-        for (Test test : allTests)
-        {
-            if(test.ok())
-                res = false;
+        for (Test test : allTests) {
             String name = test.getClass().getSimpleName();
-            tests.append( ',' ).append( name ).append( '=' ).append( test.enabled );
-            testsBeforeUpload.append( ',' ).append( name ).append( '=' ).append( test.testBeforeUpload );
+            tests.append(',').append(name).append('=').append(test.enabled);
+            testsBeforeUpload.append(',').append(name).append('=').append(test.testBeforeUpload);
         }
 
-        if (tests.length() > 0 ) tests = tests.deleteCharAt(0);
-        if (testsBeforeUpload.length() > 0 ) testsBeforeUpload = testsBeforeUpload.deleteCharAt(0);
+        if (tests.length() > 0) {
+            tests = tests.deleteCharAt(0);
+        }
+        if (testsBeforeUpload.length() > 0) {
+            testsBeforeUpload = testsBeforeUpload.deleteCharAt(0);
+        }
 
-        OsmValidator.initializeTests( allTests );
+        OsmValidator.initializeTests(allTests);
 
-        Main.pref.put( PREF_TESTS, tests.toString());
-        Main.pref.put( PREF_TESTS_BEFORE_UPLOAD, testsBeforeUpload.toString());
-        Main.pref.put( PREF_USE_IGNORE, prefUseIgnore.isSelected());
-        Main.pref.put( PREF_OTHER_UPLOAD, prefOtherUpload.isSelected());
-        Main.pref.put( PREF_LAYER, prefUseLayer.isSelected());
+        Main.pref.put(PREF_TESTS, tests.toString());
+        Main.pref.put(PREF_TESTS_BEFORE_UPLOAD, testsBeforeUpload.toString());
+        Main.pref.put(PREF_USE_IGNORE, prefUseIgnore.isSelected());
+        Main.pref.put(PREF_OTHER_UPLOAD, prefOtherUpload.isSelected());
+        Main.pref.put(PREF_LAYER, prefUseLayer.isSelected());
         return false;
     }
 }

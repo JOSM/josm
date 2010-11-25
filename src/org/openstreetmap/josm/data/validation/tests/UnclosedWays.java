@@ -26,7 +26,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  */
 public class UnclosedWays extends Test {
     /** The already detected errors */
-    Bag<Way, Way> _errorWays;
+    protected Bag<Way, Way> errorWays;
 
     /**
      * Constructor
@@ -38,12 +38,12 @@ public class UnclosedWays extends Test {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        _errorWays = new Bag<Way, Way>();
+        errorWays = new Bag<Way, Way>();
     }
 
     @Override
     public void endTest() {
-        _errorWays = null;
+        errorWays = null;
         super.endTest();
     }
 
@@ -73,35 +73,45 @@ public class UnclosedWays extends Test {
             return;
 
         test = w.get("natural");
-        if (test != null && !"coastline".equals(test) && !"cliff".equals(test))
+        if (test != null && !"coastline".equals(test) && !"cliff".equals(test)) {
             set(1101, marktr("natural type {0}"), test);
+        }
         test = w.get("landuse");
-        if (test != null)
+        if (test != null) {
             set(1102, marktr("landuse type {0}"), test);
+        }
         test = w.get("amenities");
-        if (test != null)
+        if (test != null) {
             set(1103, marktr("amenities type {0}"), test);
+        }
         test = w.get("sport");
-        if (test != null && !test.equals("water_slide"))
+        if (test != null && !test.equals("water_slide")) {
             set(1104, marktr("sport type {0}"), test);
+        }
         test = w.get("tourism");
-        if (test != null)
+        if (test != null) {
             set(1105, marktr("tourism type {0}"), test);
+        }
         test = w.get("shop");
-        if (test != null)
+        if (test != null) {
             set(1106, marktr("shop type {0}"), test);
+        }
         test = w.get("leisure");
-        if (test != null)
+        if (test != null) {
             set(1107, marktr("leisure type {0}"), test);
+        }
         test = w.get("waterway");
-        if (test != null && test.equals("riverbank"))
+        if (test != null && test.equals("riverbank")) {
             set(1108, marktr("waterway type {0}"), test);
+        }
         Boolean btest = OsmUtils.getOsmBoolean(w.get("building"));
-        if (btest != null && btest)
+        if (btest != null && btest) {
             set(1120, marktr("building"));
+        }
         btest = OsmUtils.getOsmBoolean(w.get("area"));
-        if (btest != null && btest)
+        if (btest != null && btest) {
             set(1130, marktr("area"));
+        }
 
         if (type != null && !w.isClosed()) {
             for (OsmPrimitive parent: w.getReferrers()) {
@@ -122,7 +132,7 @@ public class UnclosedWays extends Test {
 
             errors.add(new TestError(this, Severity.WARNING, tr("Unclosed way"),
                             type, etype, mode, primitives, highlight));
-            _errorWays.add(w, w);
+            errorWays.add(w, w);
         }
     }
 }

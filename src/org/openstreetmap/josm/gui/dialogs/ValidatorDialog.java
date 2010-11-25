@@ -1,8 +1,6 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.gui.dialogs;
 
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -47,11 +45,12 @@ import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.ValidatorVisitor;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapView.EditLayerChangeListener;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.validator.ValidatorTreePanel;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -72,12 +71,12 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
     /** The display tree */
     public ValidatorTreePanel tree;
 
-    private SideButton fixButton;
     /** The fix button */
-    private SideButton ignoreButton;
+    private SideButton fixButton;
     /** The ignore button */
-    private SideButton selectButton;
+    private SideButton ignoreButton;
     /** The select button */
+    private SideButton selectButton;
 
     private JPopupMenu popupMenu;
     private TestError popupMenuError = null;
@@ -97,6 +96,7 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
 
         JMenuItem zoomTo = new JMenuItem(tr("Zoom to problem"));
         zoomTo.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 zoomToProblem();
             }
@@ -128,7 +128,6 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
             ignoreButton = null;
         }
         add(buttonPanel, BorderLayout.SOUTH);
-
     }
 
     @Override
@@ -153,8 +152,9 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
 
     @Override
     public void setVisible(boolean v) {
-        if (tree != null)
+        if (tree != null) {
             tree.setVisible(v);
+        }
         super.setVisible(v);
         Main.map.repaint();
     }
@@ -175,14 +175,16 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
         LinkedList<TestError> errorsToFix = new LinkedList<TestError>();
         for (TreePath path : selectionPaths) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-            if (node == null)
+            if (node == null) {
                 continue;
+            }
 
             Enumeration<DefaultMutableTreeNode> children = node.breadthFirstEnumeration();
             while (children.hasMoreElements()) {
                 DefaultMutableTreeNode childNode = children.nextElement();
-                if (processedNodes.contains(childNode))
+                if (processedNodes.contains(childNode)) {
                     continue;
+                }
 
                 processedNodes.add(childNode);
                 Object nodeInfo = childNode.getUserObject();
@@ -214,8 +216,9 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
         Set<DefaultMutableTreeNode> processedNodes = new HashSet<DefaultMutableTreeNode>();
         for (TreePath path : selectionPaths) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-            if (node == null)
+            if (node == null) {
                 continue;
+            }
 
             Object mainNodeInfo = node.getUserObject();
             if (!(mainNodeInfo instanceof TestError)) {
@@ -231,8 +234,9 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
                     Enumeration<DefaultMutableTreeNode> children = node.breadthFirstEnumeration();
                     while (children.hasMoreElements()) {
                         DefaultMutableTreeNode childNode = children.nextElement();
-                        if (processedNodes.contains(childNode))
+                        if (processedNodes.contains(childNode)) {
                             continue;
+                        }
 
                         processedNodes.add(childNode);
                         Object nodeInfo = childNode.getUserObject();
@@ -247,15 +251,17 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
                         OsmValidator.addIgnoredError(s);
                     }
                     continue;
-                } else if (asked == JOptionPane.CANCEL_OPTION)
+                } else if (asked == JOptionPane.CANCEL_OPTION) {
                     continue;
+                }
             }
 
             Enumeration<DefaultMutableTreeNode> children = node.breadthFirstEnumeration();
             while (children.hasMoreElements()) {
                 DefaultMutableTreeNode childNode = children.nextElement();
-                if (processedNodes.contains(childNode))
+                if (processedNodes.contains(childNode)) {
                     continue;
+                }
 
                 processedNodes.add(childNode);
                 Object nodeInfo = childNode.getUserObject();
@@ -328,18 +334,19 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
                 }
             }
         }
-
         Main.main.getCurrentDataSet().setSelected(sel);
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         String actionCommand = e.getActionCommand();
-        if (actionCommand.equals("Select"))
+        if (actionCommand.equals("Select")) {
             setSelectedItems();
-        else if (actionCommand.equals("Fix"))
+        } else if (actionCommand.equals("Fix")) {
             fixErrors(e);
-        else if (actionCommand.equals("Ignore"))
+        } else if (actionCommand.equals("Ignore")) {
             ignoreErrors(e);
+        }
     }
 
     /**
@@ -388,8 +395,9 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
             }
         }
         selectButton.setEnabled(true);
-        if (ignoreButton != null)
+        if (ignoreButton != null) {
             ignoreButton.setEnabled(true);
+        }
 
         return hasFixes;
     }
@@ -414,8 +422,9 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
         @Override
         public void mouseClicked(MouseEvent e) {
             fixButton.setEnabled(false);
-            if (ignoreButton != null)
+            if (ignoreButton != null) {
                 ignoreButton.setEnabled(false);
+            }
             selectButton.setEnabled(false);
 
             boolean isDblClick = e.getClickCount() > 1;
@@ -427,8 +436,9 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
 
             if (isDblClick) {
                 Main.main.getCurrentDataSet().setSelected(sel);
-                if(Main.pref.getBoolean("validator.autozoom", false))
+                if(Main.pref.getBoolean("validator.autozoom", false)) {
                     AutoScaleAction.zoomTo(sel);
+                }
             }
         }
 
@@ -448,10 +458,12 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
      * Watches for tree selection.
      */
     public class SelectionWatch implements TreeSelectionListener {
+        @Override
         public void valueChanged(TreeSelectionEvent e) {
             fixButton.setEnabled(false);
-            if (ignoreButton != null)
+            if (ignoreButton != null) {
                 ignoreButton.setEnabled(false);
+            }
             selectButton.setEnabled(false);
 
             if (e.getSource() instanceof JScrollPane) {
@@ -466,13 +478,14 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
     }
 
     public static class ValidatorBoundingXYVisitor extends BoundingXYVisitor implements ValidatorVisitor {
-
+        @Override
         public void visit(OsmPrimitive p) {
             if (p.isUsable()) {
                 p.visit(this);
             }
         }
 
+        @Override
         public void visit(WaySegment ws) {
             if (ws.lowerIndex < 0 || ws.lowerIndex + 1 >= ws.way.getNodesCount())
                 return;
@@ -480,6 +493,7 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
             visit(ws.way.getNodes().get(ws.lowerIndex + 1));
         }
 
+        @Override
         public void visit(List<Node> nodes) {
             for (Node n: nodes) {
                 visit(n);
@@ -490,12 +504,14 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
     public void updateSelection(Collection<? extends OsmPrimitive> newSelection) {
         if (!Main.pref.getBoolean(ValidatorPreference.PREF_FILTER_BY_SELECTION, false))
             return;
-        if (newSelection.isEmpty())
+        if (newSelection.isEmpty()) {
             tree.setFilter(null);
+        }
         HashSet<OsmPrimitive> filter = new HashSet<OsmPrimitive>(newSelection);
         tree.setFilter(filter);
     }
 
+    @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         updateSelection(newSelection);
     }
@@ -538,19 +554,19 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
                         return;
                     final Command fixCommand = error.getFix();
                     if (fixCommand != null) {
-                        SwingUtilities.invokeAndWait(
-                                new Runnable() {
-                                    public void run() {
-                                        Main.main.undoRedo.addNoRedraw(fixCommand);
-                                    }
-                                }
-                        );
+                        SwingUtilities.invokeAndWait(new Runnable() {
+                            @Override
+                            public void run() {
+                                Main.main.undoRedo.addNoRedraw(fixCommand);
+                            }
+                        });
                         error.setIgnored(true);
                     }
                     monitor.worked(1);
                 }
                 monitor.subTask(tr("Updating map ..."));
                 SwingUtilities.invokeAndWait(new Runnable() {
+                    @Override
                     public void run() {
                         Main.main.undoRedo.afterAdd();
                         Main.map.repaint();

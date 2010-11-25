@@ -71,8 +71,8 @@ public class NameMismatch extends Test {
 
         if (name == null) {
             errors.add(new TestError(this, Severity.OTHER,
-                tr("A name is missing, even though name:* exists."),
-                                     NAME_MISSING, p));
+                    tr("A name is missing, even though name:* exists."),
+                    NAME_MISSING, p));
         return;
     }
 
@@ -104,7 +104,8 @@ public class NameMismatch extends Test {
      */
     @Override public void visit(Collection<OsmPrimitive> selection) {
         for (OsmPrimitive p : selection)
-            if (!p.isDeleted() && !p.isIncomplete())
+            if (!p.isDeleted() && !p.isIncomplete()) {
                 check(p);
+            }
     }
 }

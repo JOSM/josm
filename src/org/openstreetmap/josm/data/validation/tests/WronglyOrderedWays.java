@@ -19,70 +19,60 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  *
  * @author jrreid
  */
-public class WronglyOrderedWays extends Test  {
+public class WronglyOrderedWays extends Test {
+
     protected static int WRONGLY_ORDERED_COAST = 1001;
     protected static int WRONGLY_ORDERED_WATER = 1002;
     protected static int WRONGLY_ORDERED_LAND  = 1003;
 
     /** The already detected errors */
-    Bag<Way, Way> _errorWays;
+    protected Bag<Way, Way> errorWays;
 
     /**
      * Constructor
      */
-    public WronglyOrderedWays()
-    {
+    public WronglyOrderedWays() {
         super(tr("Wrongly Ordered Ways."),
               tr("This test checks the direction of water, land and coastline ways."));
     }
 
     @Override
-    public void startTest(ProgressMonitor monitor)
-    {
+    public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        _errorWays = new Bag<Way, Way>();
+        errorWays = new Bag<Way, Way>();
     }
 
     @Override
-    public void endTest()
-    {
-        _errorWays = null;
+    public void endTest() {
+        errorWays = null;
         super.endTest();
     }
 
     @Override
-    public void visit(Way w)
-    {
+    public void visit(Way w) {
         String errortype = "";
         int type;
 
-        if( !w.isUsable() )
+        if (!w.isUsable())
             return;
         if (w.getNodesCount() <= 0)
             return;
 
         String natural = w.get("natural");
-        if( natural == null)
+        if (natural == null)
             return;
 
-        if( natural.equals("coastline") )
-        {
+        if (natural.equals("coastline")) {
             errortype = tr("Reversed coastline: land not on left side");
             type= WRONGLY_ORDERED_COAST;
-        }
-        else if(natural.equals("water") )
-        {
+        } else if (natural.equals("water")) {
             errortype = tr("Reversed water: land not on left side");
             type= WRONGLY_ORDERED_WATER;
-        }
-        else if( natural.equals("land") )
-        {
+        } else if (natural.equals("land")) {
             errortype = tr("Reversed land: land not on left side");
             type= WRONGLY_ORDERED_LAND;
-        }
-        else
+        } else
             return;
-
 
         /**
          * Test the directionality of the way
@@ -92,24 +82,20 @@ public class WronglyOrderedWays extends Test  {
          * If the area is negative the way is ordered in a clockwise direction
          *
          */
-
-        if(w.getNode(0) == w.getNode(w.getNodesCount()-1))
-        {
+        if(w.getNode(0) == w.getNode(w.getNodesCount()-1)) {
             double area2 = 0;
 
-            for (int node = 1; node < w.getNodesCount(); node++)
-            {
+            for (int node = 1; node < w.getNodesCount(); node++) {
                 area2 += (w.getNode(node-1).getCoor().lon() * w.getNode(node).getCoor().lat()
                 - w.getNode(node).getCoor().lon() * w.getNode(node-1).getCoor().lat());
             }
 
-            if(((natural.equals("coastline") || natural.equals("land")) && area2 < 0.)
-            || (natural.equals("water") && area2 > 0.))
-            {
+            if (((natural.equals("coastline") || natural.equals("land")) && area2 < 0.)
+                    || (natural.equals("water") && area2 > 0.)) {
                 List<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
                 primitives.add(w);
                 errors.add( new TestError(this, Severity.OTHER, errortype, type, primitives) );
-                _errorWays.add(w,w);
+                errorWays.add(w,w);
             }
         }
     }

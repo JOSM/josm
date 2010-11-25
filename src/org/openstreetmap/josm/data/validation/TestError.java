@@ -156,12 +156,13 @@ public class TestError {
             if (o.isNew())
                 return null;
             String type = "u";
-            if (o instanceof Way)
+            if (o instanceof Way) {
                 type = "w";
-            else if (o instanceof Relation)
+            } else if (o instanceof Relation) {
                 type = "r";
-            else if (o instanceof Node)
+            } else if (o instanceof Node) {
                 type = "n";
+            }
             strings.add(type + "_" + o.getId());
         }
         for (String o : strings) {
@@ -172,8 +173,9 @@ public class TestError {
 
     public String getIgnoreSubGroup() {
         String ignorestring = getIgnoreGroup();
-        if (description_en != null)
+        if (description_en != null) {
             ignorestring += "_" + description_en;
+        }
         return ignorestring;
     }
 
@@ -215,7 +217,7 @@ public class TestError {
     }
 
     /**
-     * Fixes the error with the appropiate command
+     * Fixes the error with the appropriate command
      *
      * @return The command to fix the error
      */
@@ -242,11 +244,11 @@ public class TestError {
     @SuppressWarnings("unchecked")
     public void visitHighlighted(ValidatorVisitor v) {
         for (Object o : highlighted) {
-            if (o instanceof OsmPrimitive)
+            if (o instanceof OsmPrimitive) {
                 v.visit((OsmPrimitive) o);
-            else if (o instanceof WaySegment)
+            } else if (o instanceof WaySegment) {
                 v.visit((WaySegment) o);
-            else if (o instanceof List<?>) {
+            } else if (o instanceof List<?>) {
                 v.visit((List<Node>)o);
             }
         }
@@ -272,6 +274,7 @@ public class TestError {
             this.mv = mv;
         }
 
+        @Override
         public void visit(OsmPrimitive p) {
             if (p.isUsable()) {
                 p.visit(this);
@@ -288,8 +291,9 @@ public class TestError {
             g.setColor(color);
             if (selected) {
                 g.fillOval(p.x - 5, p.y - 5, 10, 10);
-            } else
+            } else {
                 g.drawOval(p.x - 5, p.y - 5, 10, 10);
+            }
         }
 
         public void drawSegment(Point p1, Point p2, Color color) {
@@ -300,18 +304,18 @@ public class TestError {
             double sinT = Math.sin(t);
             int deg = (int) Math.toDegrees(t);
             if (selected) {
-                int[] x = new int[] { (int) (p1.x + 5 * cosT), (int) (p2.x + 5 * cosT), (int) (p2.x - 5 * cosT),
-                        (int) (p1.x - 5 * cosT) };
-                int[] y = new int[] { (int) (p1.y - 5 * sinT), (int) (p2.y - 5 * sinT), (int) (p2.y + 5 * sinT),
-                        (int) (p1.y + 5 * sinT) };
+                int[] x = new int[] { (int) (p1.x + 5 * cosT), (int) (p2.x + 5 * cosT),
+                                      (int) (p2.x - 5 * cosT), (int) (p1.x - 5 * cosT) };
+                int[] y = new int[] { (int) (p1.y - 5 * sinT), (int) (p2.y - 5 * sinT),
+                                      (int) (p2.y + 5 * sinT), (int) (p1.y + 5 * sinT) };
                 g.fillPolygon(x, y, 4);
                 g.fillArc(p1.x - 5, p1.y - 5, 10, 10, deg, 180);
                 g.fillArc(p2.x - 5, p2.y - 5, 10, 10, deg, -180);
             } else {
-                g.drawLine((int) (p1.x + 5 * cosT), (int) (p1.y - 5 * sinT), (int) (p2.x + 5 * cosT),
-                        (int) (p2.y - 5 * sinT));
-                g.drawLine((int) (p1.x - 5 * cosT), (int) (p1.y + 5 * sinT), (int) (p2.x - 5 * cosT),
-                        (int) (p2.y + 5 * sinT));
+                g.drawLine((int) (p1.x + 5 * cosT), (int) (p1.y - 5 * sinT),
+                           (int) (p2.x + 5 * cosT), (int) (p2.y - 5 * sinT));
+                g.drawLine((int) (p1.x - 5 * cosT), (int) (p1.y + 5 * sinT),
+                           (int) (p2.x - 5 * cosT), (int) (p2.y + 5 * sinT));
                 g.drawArc(p1.x - 5, p1.y - 5, 10, 10, deg, 180);
                 g.drawArc(p2.x - 5, p2.y - 5, 10, 10, deg, -180);
             }
@@ -333,15 +337,19 @@ public class TestError {
          *
          * @param n The node to draw.
          */
+        @Override
         public void visit(Node n) {
-            if (isNodeVisible(n))
+            if (isNodeVisible(n)) {
                 drawNode(n, severity.getColor());
+            }
         }
 
+        @Override
         public void visit(Way w) {
             visit(w.getNodes());
         }
 
+        @Override
         public void visit(WaySegment ws) {
             if (ws.lowerIndex < 0 || ws.lowerIndex + 1 >= ws.way.getNodesCount())
                 return;
@@ -351,6 +359,7 @@ public class TestError {
             }
         }
 
+        @Override
         public void visit(Relation r) {
             /* No idea how to draw a relation. */
         }
@@ -386,6 +395,7 @@ public class TestError {
             return true;
         }
 
+        @Override
         public void visit(List<Node> nodes) {
             Node lastN = null;
             for (Node n : nodes) {

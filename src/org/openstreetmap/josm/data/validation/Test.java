@@ -66,8 +66,7 @@ public class Test extends AbstractVisitor
      * @param name Name of the test
      * @param description Description of the test
      */
-    public Test(String name, String description)
-    {
+    public Test(String name, String description) {
         this.name = name;
         this.description = description;
     }
@@ -76,8 +75,7 @@ public class Test extends AbstractVisitor
      * Constructor
      * @param name Name of the test
      */
-    public Test(String name)
-    {
+    public Test(String name) {
         this(name, null);
     }
 
@@ -85,7 +83,8 @@ public class Test extends AbstractVisitor
      * Initializes any global data used this tester.
      * @throws Exception When cannot initialize the test
      */
-    public void initialize() throws Exception {}
+    public void initialize() throws Exception {
+    }
 
     /**
      * Start the test using a given progress monitor
@@ -94,9 +93,9 @@ public class Test extends AbstractVisitor
      */
     public void startTest(ProgressMonitor progressMonitor) {
         if (progressMonitor == null) {
-                this.progressMonitor = NullProgressMonitor.INSTANCE;
+            this.progressMonitor = NullProgressMonitor.INSTANCE;
         } else {
-                this.progressMonitor = progressMonitor;
+            this.progressMonitor = progressMonitor;
         }
         this.progressMonitor.beginTask(tr("Running test {0}", name));
         errors = new ArrayList<TestError>(30);
@@ -106,8 +105,7 @@ public class Test extends AbstractVisitor
      * Flag notifying that this test is run over a partial data selection
      * @param partialSelection Whether the test is on a partial selection data
      */
-    public void setPartialSelection(boolean partialSelection)
-    {
+    public void setPartialSelection(boolean partialSelection) {
         this.partialSelection = partialSelection;
     }
 
@@ -115,8 +113,7 @@ public class Test extends AbstractVisitor
      * Gets the validation errors accumulated until this moment.
      * @return The list of errors
      */
-    public List<TestError> getErrors()
-    {
+    public List<TestError> getErrors() {
         return errors;
     }
 
@@ -135,28 +132,30 @@ public class Test extends AbstractVisitor
      *
      * @param selection The primitives to be tested
      */
-    public void visit(Collection<OsmPrimitive> selection)
-    {
+    public void visit(Collection<OsmPrimitive> selection) {
         progressMonitor.setTicksCount(selection.size());
         for (OsmPrimitive p : selection) {
-            if( p.isUsable() )
+            if (p.isUsable()) {
                 p.visit(this);
+            }
             progressMonitor.worked(1);
         }
     }
 
+    @Override
     public void visit(Node n) {}
 
+    @Override
     public void visit(Way w) {}
 
+    @Override
     public void visit(Relation r) {}
 
     /**
      * Allow the tester to manage its own preferences
      * @param testPanel The panel to add any preferences component
      */
-    public void addGui(JPanel testPanel)
-    {
+    public void addGui(JPanel testPanel) {
         checkEnabled = new JCheckBox(name, enabled);
         checkEnabled.setToolTipText(description);
         testPanel.add(checkEnabled, GBC.std());
@@ -171,21 +170,19 @@ public class Test extends AbstractVisitor
     /**
      * Called when the used submits the preferences
      */
-    public boolean ok()
-    {
+    public boolean ok() {
         enabled = checkEnabled.isSelected();
         testBeforeUpload = checkBeforeUpload.isSelected();
         return false;
     }
 
     /**
-     * Fixes the error with the appropiate command
+     * Fixes the error with the appropriate command
      *
      * @param testError
      * @return The command to fix the error
      */
-    public Command fixError(TestError testError)
-    {
+    public Command fixError(TestError testError) {
         return null;
     }
 
@@ -195,8 +192,7 @@ public class Test extends AbstractVisitor
      * @param testError The error to check if can be fixed
      * @return true if the error can be fixed
      */
-    public boolean isFixable(TestError testError)
-    {
+    public boolean isFixable(TestError testError) {
         return false;
     }
 
@@ -204,8 +200,7 @@ public class Test extends AbstractVisitor
      * Returns true if this plugin must check the uploaded data before uploading
      * @return true if this plugin must check the uploaded data before uploading
      */
-    public boolean testBeforeUpload()
-    {
+    public boolean testBeforeUpload() {
         return testBeforeUpload;
     }
 
@@ -213,8 +208,7 @@ public class Test extends AbstractVisitor
      * Sets the flag that marks an upload check
      * @param isUpload if true, the test is before upload
      */
-    public void setBeforeUpload(boolean isUpload)
-    {
+    public void setBeforeUpload(boolean isUpload) {
         this.isBeforeUpload = isUpload;
     }
 

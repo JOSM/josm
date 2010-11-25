@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.ArrayList;
 
-
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
@@ -38,14 +37,14 @@ public class NodesWithSameName extends Test {
         String sign = n.get("traffic_sign");
         String highway = n.get("highway");
         if (name == null
-            || (sign != null && sign.equals("city_limit"))
-            || (highway != null && highway.equals("bus_stop"))) {
+                || (sign != null && sign.equals("city_limit"))
+                || (highway != null && highway.equals("bus_stop")))
             return;
-        }
 
         List<Node> nodes = namesToNodes.get(name);
-        if (nodes == null)
+        if (nodes == null) {
             namesToNodes.put(name, nodes = new ArrayList<Node>());
+        }
 
         nodes.add(n);
     }
@@ -60,7 +59,7 @@ public class NodesWithSameName extends Test {
                     String ref = n.get("ref");
                     if (ref == null || !refs.add(ref)) {
                         errors.add(new TestError(this, Severity.OTHER,
-                            tr("Nodes with same name"), SAME_NAME, nodes));
+                                tr("Nodes with same name"), SAME_NAME, nodes));
                         break;
                     }
                 }

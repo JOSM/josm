@@ -49,11 +49,12 @@ public class ChangePropertyKeyCommand extends Command {
         this.newKey = newKey;
     }
 
-    @Override public boolean executeCommand() {
-        if (!super.executeCommand()) return false; // save old
+    @Override
+    public boolean executeCommand() {
+        if (!super.executeCommand())
+            return false; // save old
         for (OsmPrimitive osm : objects) {
-            if(osm.hasKeys())
-            {
+            if (osm.hasKeys()) {
                 osm.setModified(true);
                 String oldValue = osm.get(key);
                 osm.put(newKey, oldValue);
@@ -63,22 +64,26 @@ public class ChangePropertyKeyCommand extends Command {
         return true;
     }
 
-    @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
+    @Override
+    public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
         modified.addAll(objects);
     }
 
-    @Override public JLabel getDescription() {
+    @Override
+    public JLabel getDescription() {
         String text = tr( "Replace \"{0}\" by \"{1}\" for", key, newKey);
         if (objects.size() == 1) {
             NameVisitor v = new NameVisitor();
             objects.iterator().next().visit(v);
             text += " "+tr(v.className)+" "+v.name;
-        } else
+        } else {
             text += " "+objects.size()+" "+trn("object","objects",objects.size());
+        }
         return new JLabel(text, ImageProvider.get("data", "key"), JLabel.HORIZONTAL);
     }
 
-    @Override public Collection<PseudoCommand> getChildren() {
+    @Override
+    public Collection<PseudoCommand> getChildren() {
         if (objects.size() == 1)
             return null;
         List<PseudoCommand> children = new ArrayList<PseudoCommand>();
@@ -87,10 +92,12 @@ public class ChangePropertyKeyCommand extends Command {
         for (final OsmPrimitive osm : objects) {
             osm.visit(v);
             children.add(new PseudoCommand() {
-                @Override public JLabel getDescription() {
+                @Override
+                public JLabel getDescription() {
                     return v.toLabel();
                 }
-                @Override public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
+                @Override
+                public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
                     return Collections.singleton(osm);
                 }
             });

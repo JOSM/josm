@@ -46,7 +46,6 @@ import org.openstreetmap.josm.data.validation.tests.UntaggedNode;
 import org.openstreetmap.josm.data.validation.tests.UntaggedWay;
 import org.openstreetmap.josm.data.validation.tests.WronglyOrderedWays;
 import org.openstreetmap.josm.data.validation.util.ValUtil;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.ValidatorDialog;
 import org.openstreetmap.josm.gui.layer.ValidatorLayer;
@@ -114,9 +113,10 @@ public class OsmValidator implements LayerChangeListener {
      */
     private void checkPluginDir() {
         try {
-        File pathDir = new File(ValUtil.getPluginDir());
-        if (!pathDir.exists())
-            pathDir.mkdirs();
+            File pathDir = new File(ValUtil.getPluginDir());
+            if (!pathDir.exists()) {
+                pathDir.mkdirs();
+            }
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -149,8 +149,9 @@ public class OsmValidator implements LayerChangeListener {
     public static void saveIgnoredErrors() {
         try {
             final PrintWriter out = new PrintWriter(new FileWriter(ValUtil.getPluginDir() + "ignorederrors"), false);
-            for (String e : ignoredErrors)
+            for (String e : ignoredErrors) {
                 out.println(e);
+            }
             out.close();
         } catch (final IOException e) {
             e.printStackTrace();
@@ -220,8 +221,9 @@ public class OsmValidator implements LayerChangeListener {
     public static Collection<Test> getEnabledTests(boolean beforeUpload) {
         Collection<Test> enabledTests = getTests();
         for (Test t : new ArrayList<Test>(enabledTests)) {
-            if (beforeUpload ? t.testBeforeUpload : t.enabled)
+            if (beforeUpload ? t.testBeforeUpload : t.enabled) {
                 continue;
+            }
             enabledTests.remove(t);
         }
         return enabledTests;
@@ -242,12 +244,13 @@ public class OsmValidator implements LayerChangeListener {
      * until most bugs were discovered while keeping the processing time reasonable)
      */
     public void initializeGridDetail() {
-        if (Main.proj.toString().equals(new Epsg4326().toString()))
+        if (Main.proj.toString().equals(new Epsg4326().toString())) {
             OsmValidator.griddetail = 10000;
-        else if (Main.proj.toString().equals(new Mercator().toString()))
+        } else if (Main.proj.toString().equals(new Mercator().toString())) {
             OsmValidator.griddetail = 100000;
-        else if (Main.proj.toString().equals(new Lambert().toString()))
+        } else if (Main.proj.toString().equals(new Lambert().toString())) {
             OsmValidator.griddetail = 0.1;
+        }
     }
 
     /**
@@ -274,10 +277,15 @@ public class OsmValidator implements LayerChangeListener {
     /* -------------------------------------------------------------------------- */
     /* interface LayerChangeListener                                              */
     /* -------------------------------------------------------------------------- */
-    public void activeLayerChange(Layer oldLayer, Layer newLayer) {}
+    @Override
+    public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+    }
 
-    public void layerAdded(Layer newLayer) {}
+    @Override
+    public void layerAdded(Layer newLayer) {
+    }
 
+    @Override
     public void layerRemoved(Layer oldLayer) {
         if (oldLayer instanceof OsmDataLayer && Main.map.mapView.getActiveLayer() == oldLayer) {
             Main.map.validatorDialog.tree.setErrorList(new ArrayList<TestError>());

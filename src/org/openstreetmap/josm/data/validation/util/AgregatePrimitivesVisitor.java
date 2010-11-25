@@ -18,8 +18,7 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
  *
  * @author frsantos
  */
-public class AgregatePrimitivesVisitor extends AbstractVisitor
-{
+public class AgregatePrimitivesVisitor extends AbstractVisitor {
     /** Aggregated data */
     final Collection<OsmPrimitive> aggregatedData = new HashSet<OsmPrimitive>();
 
@@ -28,32 +27,32 @@ public class AgregatePrimitivesVisitor extends AbstractVisitor
      * @param data The collection of primitives
      * @return The aggregated primitives
      */
-    public Collection<OsmPrimitive> visit(Collection<OsmPrimitive> data)
-    {
-        for (OsmPrimitive osm : data)
-        {
+    public Collection<OsmPrimitive> visit(Collection<OsmPrimitive> data) {
+        for (OsmPrimitive osm : data) {
             osm.visit(this);
         }
 
         return aggregatedData;
     }
 
-    public void visit(Node n)
-    {
-        if(!aggregatedData.contains(n))
+    @Override
+    public void visit(Node n) {
+        if (!aggregatedData.contains(n)) {
             aggregatedData.add(n);
-    }
-
-    public void visit(Way w)
-    {
-        if(!aggregatedData.contains(w))
-        {
-            aggregatedData.add(w);
-            for (Node n : w.getNodes())
-                visit(n);
         }
     }
 
+    @Override
+    public void visit(Way w) {
+        if (!aggregatedData.contains(w)) {
+            aggregatedData.add(w);
+            for (Node n : w.getNodes()) {
+                visit(n);
+            }
+        }
+    }
+
+    @Override
     public void visit(Relation r) {
         if (!aggregatedData.contains(r)) {
             aggregatedData.add(r);

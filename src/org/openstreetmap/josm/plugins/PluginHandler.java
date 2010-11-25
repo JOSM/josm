@@ -91,7 +91,6 @@ public class PluginHandler {
      */
     public final static Collection<PluginProxy> pluginList = new LinkedList<PluginProxy>();
 
-
     /**
      * Removes deprecated plugins from a collection of plugins. Modifies the
      * collection <code>plugins</code>.

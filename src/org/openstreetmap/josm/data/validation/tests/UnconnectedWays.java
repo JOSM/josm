@@ -36,8 +36,8 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  *
  * @author frsantos
  */
-public class UnconnectedWays extends Test
-{
+public class UnconnectedWays extends Test {
+
     protected static int UNCONNECTED_WAYS = 1301;
     protected static final String PREFIX = ValidatorPreference.PREFIX + "." + UnconnectedWays.class.getSimpleName();
 
@@ -53,18 +53,17 @@ public class UnconnectedWays extends Test
 
     double mindist;
     double minmiddledist;
+
     /**
      * Constructor
      */
-    public UnconnectedWays()
-    {
+    public UnconnectedWays() {
         super(tr("Unconnected ways."),
               tr("This test checks if a way has an endpoint very near to another way."));
     }
 
     @Override
-    public void startTest(ProgressMonitor monitor)
-    {
+    public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
         ways = new HashSet<MyWaySegment>();
         endnodes = new HashSet<Node>();
@@ -78,57 +77,52 @@ public class UnconnectedWays extends Test
     }
 
     @Override
-    public void endTest()
-    {
+    public void endTest() {
         //Area a = Main.ds.getDataSourceArea();
         Map<Node, Way> map = new HashMap<Node, Way>();
-        long last = -1;
+        //long last = -1;
         for (int iter = 0; iter < 1; iter++) {
-        last = System.currentTimeMillis();
-        long last_print = -1;
-        int nr = 0;
-        Collection<MyWaySegment> tmp_ways = ways;
-        for(MyWaySegment s : tmp_ways) {
-            nr++;
-            long now = System.currentTimeMillis();
-            if (now - last_print > 200) {
-                //System.err.println("processing segment nr: " + nr + " of " + ways.size());
-                last_print = now;
+            //last = System.currentTimeMillis();
+            long last_print = -1;
+            int nr = 0;
+            Collection<MyWaySegment> tmp_ways = ways;
+            for (MyWaySegment s : tmp_ways) {
+                nr++;
+                long now = System.currentTimeMillis();
+                if (now - last_print > 200) {
+                    //System.err.println("processing segment nr: " + nr + " of " + ways.size());
+                    last_print = now;
+                }
+                for (Node en : s.nearbyNodes(mindist)) {
+                    if (en == null || !s.highway || !endnodes_highway.contains(en)) {
+                        continue;
+                    }
+                    if ("turning_circle".equals(en.get("highway"))
+                        || "bus_stop".equals(en.get("highway"))
+                        || OsmUtils.isTrue(en.get("noexit"))
+                        || en.hasKey("barrier")) {
+                        continue;
+                    }
+                    // There's a small false-positive here.  Imagine an intersection
+                    // like a 't'.  If the top part of the 't' is short enough, it
+                    // will trigger the node at the very top of the 't' to be unconnected
+                    // to the way that "crosses" the 't'.  We should probably check that
+                    // the ways to which 'en' belongs are not connected to 's.w'.
+                    map.put(en, s.w);
+                }
             }
-            for(Node en : s.nearbyNodes(mindist)) {
-                if (en == null)
-                    continue;
-                if(!s.highway)
-                    continue;
-                if (!endnodes_highway.contains(en))
-                    continue;
-                if("turning_circle".equals(en.get("highway")) 
-                    || "bus_stop".equals(en.get("highway")) 
-                    || OsmUtils.isTrue(en.get("noexit"))
-                    || en.hasKey("barrier"))
-                    continue;
-                // There's a small false-positive here.  Imagine an intersection
-                // like a 't'.  If the top part of the 't' is short enough, it
-                // will trigger the node at the very top of the 't' to be unconnected
-                // to the way that "crosses" the 't'.  We should probably check that
-                // the ways to which 'en' belongs are not connected to 's.w'.
-                map.put(en, s.w);
-            }
+            //System.out.println("p1 elapsed: " + (System.currentTimeMillis()-last));
+            //last = System.currentTimeMillis();
         }
-        //System.out.println("p1 elapsed: " + (System.currentTimeMillis()-last));
-        last = System.currentTimeMillis();
-        }
-        for(Map.Entry<Node, Way> error : map.entrySet())
-        {
+        for (Map.Entry<Node, Way> error : map.entrySet()) {
             errors.add(new TestError(this, Severity.WARNING,
-            tr("Way end node near other highway"), UNCONNECTED_WAYS,
-            Arrays.asList(error.getKey(), error.getValue())));
+                    tr("Way end node near other highway"),
+                    UNCONNECTED_WAYS,
+                    Arrays.asList(error.getKey(), error.getValue())));
         }
         map.clear();
-        for(MyWaySegment s : ways)
-        {
-            for(Node en : s.nearbyNodes(mindist))
-            {
+        for (MyWaySegment s : ways) {
+            for (Node en : s.nearbyNodes(mindist)) {
                 if (endnodes_highway.contains(en) && !s.highway && !s.isArea()) {
                     map.put(en, s.w);
                 } else if (endnodes.contains(en) && !s.isArea()) {
@@ -137,62 +131,58 @@ public class UnconnectedWays extends Test
             }
         }
         //System.out.println("p2 elapsed: " + (System.currentTimeMillis()-last));
-        last = System.currentTimeMillis();
-        for(Map.Entry<Node, Way> error : map.entrySet())
-        {
+        //last = System.currentTimeMillis();
+        for (Map.Entry<Node, Way> error : map.entrySet()) {
             errors.add(new TestError(this, Severity.WARNING,
-            tr("Way end node near other way"), UNCONNECTED_WAYS,
-            Arrays.asList(error.getKey(), error.getValue())));
+                    tr("Way end node near other way"),
+                    UNCONNECTED_WAYS,
+                    Arrays.asList(error.getKey(), error.getValue())));
         }
         /* the following two use a shorter distance */
-        if(minmiddledist > 0.0)
-        {
+        if (minmiddledist > 0.0) {
             map.clear();
-            for(MyWaySegment s : ways)
-            {
-                for(Node en : s.nearbyNodes(minmiddledist))
-                {
-                    if (!middlenodes.contains(en))
+            for (MyWaySegment s : ways) {
+                for (Node en : s.nearbyNodes(minmiddledist)) {
+                    if (!middlenodes.contains(en)) {
                         continue;
+                    }
                     map.put(en, s.w);
                 }
             }
             //System.out.println("p3 elapsed: " + (System.currentTimeMillis()-last));
-            last = System.currentTimeMillis();
-            for(Map.Entry<Node, Way> error : map.entrySet())
-            {
+            //last = System.currentTimeMillis();
+            for (Map.Entry<Node, Way> error : map.entrySet()) {
                 errors.add(new TestError(this, Severity.OTHER,
-                tr("Way node near other way"), UNCONNECTED_WAYS,
-                Arrays.asList(error.getKey(), error.getValue())));
+                        tr("Way node near other way"),
+                        UNCONNECTED_WAYS,
+                        Arrays.asList(error.getKey(), error.getValue())));
             }
             map.clear();
-            for(MyWaySegment s : ways)
-            {
-                for(Node en : s.nearbyNodes(minmiddledist))
-                {
-                    if (!othernodes.contains(en))
+            for (MyWaySegment s : ways) {
+                for (Node en : s.nearbyNodes(minmiddledist)) {
+                    if (!othernodes.contains(en)) {
                         continue;
+                    }
                     map.put(en, s.w);
                 }
             }
             //System.out.println("p4 elapsed: " + (System.currentTimeMillis()-last));
-            last = System.currentTimeMillis();
-            for(Map.Entry<Node, Way> error : map.entrySet())
-            {
+            //last = System.currentTimeMillis();
+            for (Map.Entry<Node, Way> error : map.entrySet()) {
                 errors.add(new TestError(this, Severity.OTHER,
-                tr("Connected way end node near other way"), UNCONNECTED_WAYS,
-                Arrays.asList(error.getKey(), error.getValue())));
+                        tr("Connected way end node near other way"),
+                        UNCONNECTED_WAYS,
+                        Arrays.asList(error.getKey(), error.getValue())));
             }
         }
         ways = null;
         endnodes = null;
         super.endTest();
         //System.out.println("p99 elapsed: " + (System.currentTimeMillis()-last));
-        last = System.currentTimeMillis();
+        //last = System.currentTimeMillis();
     }
 
-    private class MyWaySegment
-    {
+    private class MyWaySegment {
         private final Line2D line;
         public final Way w;
         public final boolean isAbandoned;
@@ -204,8 +194,7 @@ public class UnconnectedWays extends Test
         final Node n1;
         final Node n2;
 
-        public MyWaySegment(Way w, Node n1, Node n2)
-        {
+        public MyWaySegment(Way w, Node n1, Node n2) {
             this.w = w;
             String railway = w.get("railway");
             String highway = w.get("highway");
@@ -219,10 +208,7 @@ public class UnconnectedWays extends Test
             this.n2 = n2;
         }
 
-        public boolean nearby(Node n, double dist)
-        {
-//            return !w.containsNode(n)
-//            && line.ptSegDist(n.getEastNorth().east(), n.getEastNorth().north()) < dist;
+        public boolean nearby(Node n, double dist) {
             if (w == null) {
                 Main.debug("way null");
                 return false;
@@ -239,8 +225,8 @@ public class UnconnectedWays extends Test
                 return false;
             return line.ptSegDist(p) < dist;
         }
-        public List<LatLon> getBounds(double fudge)
-        {
+
+        public List<LatLon> getBounds(double fudge) {
             double x1 = n1.getCoor().lon();
             double x2 = n2.getCoor().lon();
             if (x1 > x2) {
@@ -263,8 +249,7 @@ public class UnconnectedWays extends Test
             return ret;
         }
 
-        public Collection<Node> nearbyNodes(double dist)
-        {
+        public Collection<Node> nearbyNodes(double dist) {
             // If you're looking for nodes that are farther
             // away that we looked for last time, the cached
             // result is no good
@@ -283,8 +268,9 @@ public class UnconnectedWays extends Test
                     // area, but keep the old larger cache.
                     Set<Node> trimmed = new HashSet<Node>(nearbyNodeCache);
                     for (Node n : new HashSet<Node>(nearbyNodeCache)) {
-                        if (!nearby(n, dist))
+                        if (!nearby(n, dist)) {
                             trimmed.remove(n);
+                        }
                     }
                     return trimmed;
                 }
@@ -306,18 +292,21 @@ public class UnconnectedWays extends Test
 
             for (Node n : found_nodes) {
                 if (!nearby(n, dist) ||
-                     (ds_area != null && !ds_area.contains(n.getCoor())))
+                     (ds_area != null && !ds_area.contains(n.getCoor()))) {
                     continue;
+                }
                 // It is actually very rare for us to find a node
                 // so defer as much of the work as possible, like
                 // allocating the hash set
-                if (nearbyNodeCache == null)
+                if (nearbyNodeCache == null) {
                     nearbyNodeCache = new HashSet<Node>();
+                }
                 nearbyNodeCache.add(n);
             }
             nearbyNodeCacheDist = dist;
-            if (nearbyNodeCache == null)
+            if (nearbyNodeCache == null) {
                 nearbyNodeCache = Collections.emptySet();
+            }
             return nearbyNodeCache;
         }
 
@@ -329,8 +318,7 @@ public class UnconnectedWays extends Test
         }
     }
 
-    List<MyWaySegment> getWaySegments(Way w)
-    {
+    List<MyWaySegment> getWaySegments(Way w) {
         List<MyWaySegment> ret = new ArrayList<MyWaySegment>();
         if (!w.isUsable()
             || w.hasKey("barrier")
@@ -338,51 +326,52 @@ public class UnconnectedWays extends Test
             return ret;
 
         int size = w.getNodesCount();
-        if(size < 2)
+        if (size < 2)
             return ret;
-        for(int i = 1; i < size; ++i)
-        {
-            if(i < size-1)
+        for (int i = 1; i < size; ++i) {
+            if(i < size-1) {
                 addNode(w.getNode(i), middlenodes);
+            }
             MyWaySegment ws = new MyWaySegment(w, w.getNode(i-1), w.getNode(i));
-            if (ws.isBoundary || ws.isAbandoned)
+            if (ws.isBoundary || ws.isAbandoned) {
                 continue;
+            }
             ret.add(ws);
         }
         return ret;
     }
 
     @Override
-    public void visit(Way w)
-    {
+    public void visit(Way w) {
         ways.addAll(getWaySegments(w));
         Set<Node> set = endnodes;
-        if(w.hasKey("highway") || w.hasKey("railway"))
+        if (w.hasKey("highway") || w.hasKey("railway")) {
             set = endnodes_highway;
+        }
         addNode(w.firstNode(), set);
         addNode(w.lastNode(), set);
     }
+
     @Override
-    public void visit(Node n)
-    {
+    public void visit(Node n) {
     }
-    private void addNode(Node n, Set<Node> s)
-    {
+
+    private void addNode(Node n, Set<Node> s) {
         boolean m = middlenodes.contains(n);
         boolean e = endnodes.contains(n);
         boolean eh = endnodes_highway.contains(n);
         boolean o = othernodes.contains(n);
-        if(!m && !e && !o && !eh)
+        if (!m && !e && !o && !eh) {
             s.add(n);
-        else if(!o)
-        {
+        } else if (!o) {
             othernodes.add(n);
-            if(e)
+            if (e) {
                 endnodes.remove(n);
-            else if(eh)
+            } else if (eh) {
                 endnodes_highway.remove(n);
-            else
+            } else {
                 middlenodes.remove(n);
+            }
         }
     }
 }

@@ -33,6 +33,7 @@ import org.xml.sax.SAXException;
  * @author frsantos
  */
 public class ValidateAction extends JosmAction {
+    
     /** Serializable ID */
     private static final long serialVersionUID = -2304521273582574603L;
 
@@ -83,10 +84,11 @@ public class ValidateAction extends JosmAction {
                 lastSelection = selection;
             }
         } else {
-            if (lastSelection == null)
+            if (lastSelection == null) {
                 selection = Main.main.getCurrentDataSet().allNonDeletedPrimitives();
-            else
+            } else {
                 selection = lastSelection;
+            }
         }
 
         ValidationTask task = new ValidationTask(tests, selection, lastSelection);
@@ -103,7 +105,6 @@ public class ValidateAction extends JosmAction {
      * of primitives
      *
      */
-
     class ValidationTask extends PleaseWaitRunnable {
         private Collection<Test> tests;
         private Collection<OsmPrimitive> validatedPrimitmives;
@@ -136,6 +137,7 @@ public class ValidateAction extends JosmAction {
             // update GUI on Swing EDT
             //
             Runnable r = new Runnable()  {
+                @Override
                 public void run() {
                     Main.map.validatorDialog.tree.setErrors(errors);
                     Main.map.validatorDialog.unfurlDialog();
@@ -152,12 +154,14 @@ public class ValidateAction extends JosmAction {
         @Override
         protected void realRun() throws SAXException, IOException,
                 OsmTransferException {
-            if (tests == null || tests.isEmpty()) return;
+            if (tests == null || tests.isEmpty())
+                return;
             errors = new ArrayList<TestError>(200);
             getProgressMonitor().setTicksCount(tests.size() * validatedPrimitmives.size());
             int testCounter = 0;
             for (Test test : tests) {
-                if (canceled) return;
+                if (canceled)
+                    return;
                 testCounter++;
                 getProgressMonitor().setCustomText(tr("Test {0}/{1}: Starting {2}", testCounter, tests.size(),test.getName()));
                 test.setPartialSelection(formerValidatedPrimitives != null);

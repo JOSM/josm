@@ -24,8 +24,8 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  *
  * @author frsantos
  */
-public class SimilarNamedWays extends Test
-{
+public class SimilarNamedWays extends Test {
+
     protected static int SIMILAR_NAMED = 701;
 
     /** All ways, grouped by cells */
@@ -36,57 +36,52 @@ public class SimilarNamedWays extends Test
     /**
      * Constructor
      */
-    public SimilarNamedWays()
-    {
+    public SimilarNamedWays() {
         super(tr("Similarly named ways")+".",
               tr("This test checks for ways with similar names that may have been misspelled."));
     }
 
     @Override
-    public void startTest(ProgressMonitor monitor)
-    {
+    public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
         cellWays = new HashMap<Point2D,List<Way>>(1000);
         errorWays = new Bag<Way, Way>();
     }
 
     @Override
-    public void endTest()
-    {
+    public void endTest() {
         cellWays = null;
         errorWays = null;
         super.endTest();
     }
 
     @Override
-    public void visit(Way w)
-    {
-        if( !w.isUsable() )
+    public void visit(Way w) {
+        if (!w.isUsable())
             return;
 
         String name = w.get("name");
-        if( name == null || name.length() < 6 )
+        if (name == null || name.length() < 6)
             return;
 
         List<List<Way>> theCellWays = ValUtil.getWaysInCell(w, cellWays);
-        for( List<Way> ways : theCellWays)
-        {
-            for( Way w2 : ways)
-            {
-                if( errorWays.contains(w, w2) || errorWays.contains(w2, w) )
+        for (List<Way> ways : theCellWays) {
+            for (Way w2 : ways) {
+                if (errorWays.contains(w, w2) || errorWays.contains(w2, w)) {
                     continue;
+                }
 
                 String name2 = w2.get("name");
-                if( name2 == null || name2.length() < 6 )
+                if (name2 == null || name2.length() < 6) {
                     continue;
+                }
 
                 int levenshteinDistance = getLevenshteinDistance(name, name2);
-                if( 0 < levenshteinDistance && levenshteinDistance <= 2 )
-                {
+                if (0 < levenshteinDistance && levenshteinDistance <= 2) {
                     List<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
                     primitives.add(w);
                     primitives.add(w2);
-                    errors.add( new TestError(this, Severity.WARNING, tr("Similarly named ways"), SIMILAR_NAMED, primitives) );
+                    errors.add(new TestError(this, Severity.WARNING, tr("Similarly named ways"), SIMILAR_NAMED, primitives));
                     errorWays.add(w, w2);
                 }
             }
@@ -101,8 +96,7 @@ public class SimilarNamedWays extends Test
      * @param t Second word
      * @return The distance between words
      */
-    public int getLevenshteinDistance(String s, String t)
-    {
+    public int getLevenshteinDistance(String s, String t) {
         int d[][]; // matrix
         int n; // length of s
         int m; // length of t
@@ -113,39 +107,41 @@ public class SimilarNamedWays extends Test
         int cost; // cost
 
         // Step 1
-
         n = s.length();
         m = t.length();
-        if (n == 0) return m;
-        if (m == 0) return n;
+        if (n == 0)
+            return m;
+        if (m == 0)
+            return n;
         d = new int[n + 1][m + 1];
 
         // Step 2
-        for (i = 0; i <= n; i++) d[i][0] = i;
-        for (j = 0; j <= m; j++) d[0][j] = j;
+        for (i = 0; i <= n; i++) {
+            d[i][0] = i;
+        }
+        for (j = 0; j <= m; j++) {
+            d[0][j] = j;
+        }
 
         // Step 3
-        for (i = 1; i <= n; i++)
-        {
+        for (i = 1; i <= n; i++) {
+
             s_i = s.charAt(i - 1);
 
             // Step 4
-            for (j = 1; j <= m; j++)
-            {
+            for (j = 1; j <= m; j++) {
+
                 t_j = t.charAt(j - 1);
 
                 // Step 5
-                if (s_i == t_j)
-                {
+                if (s_i == t_j) {
                     cost = 0;
-                }
-                else
-                {
+                } else {
                     cost = 1;
                 }
 
                 // Step 6
-                d[i][j] = Minimum(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
+                d[i][j] = min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
             }
         }
 
@@ -153,22 +149,18 @@ public class SimilarNamedWays extends Test
         return d[n][m];
     }
 
-    /**
+    /** // FIXME: move to utils
      * Get minimum of three values
      * @param a First value
      * @param b Second value
      * @param c Third value
-     * @return The minimum of the tre values
+     * @return The minimum of the three values
      */
-    private static int Minimum(int a, int b, int c)
-    {
+    private static int min(int a, int b, int c) {
         int mi = a;
-        if (b < mi)
-        {
+        if (b < mi) {
             mi = b;
-        }
-        if (c < mi)
-        {
+        } if (c < mi) {
             mi = c;
         }
         return mi;

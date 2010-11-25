@@ -135,9 +135,10 @@ public class UploadAction extends JosmAction{
         // Call all upload hooks in sequence.
         // FIXME: this should become an asynchronous task
         //
-        for(UploadHook hook : uploadHooks)
-            if(!hook.checkUpload(apiData))
+        for (UploadHook hook : uploadHooks) {
+            if (!hook.checkUpload(apiData))
                 return false;
+        }
 
         return true;
     }

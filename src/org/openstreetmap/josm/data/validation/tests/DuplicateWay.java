@@ -39,13 +39,16 @@ public class DuplicateWay extends Test
             coor=_coor;
             keys=_keys;
         }
+
         @Override
         public int hashCode() {
             return coor.hashCode()+keys.hashCode();
         }
+
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof WayPair)) return false;
+            if (!(obj instanceof WayPair))
+                return false;
             WayPair wp = (WayPair) obj;
             return wp.coor.equals(coor) && wp.keys.equals(keys);
         }
@@ -59,44 +62,38 @@ public class DuplicateWay extends Test
     /**
      * Constructor
      */
-    public DuplicateWay()
-    {
+    public DuplicateWay() {
         super(tr("Duplicated ways")+".",
               tr("This test checks that there are no ways with same tags and same node coordinates."));
     }
 
 
     @Override
-    public void startTest(ProgressMonitor monitor)
-    {
+    public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
         ways = new Bag<WayPair, OsmPrimitive>(1000);
     }
 
     @Override
-    public void endTest()
-    {
+    public void endTest() {
         super.endTest();
-        for(List<OsmPrimitive> duplicated : ways.values() )
-        {
-            if( duplicated.size() > 1)
-            {
+        for (List<OsmPrimitive> duplicated : ways.values()) {
+            if (duplicated.size() > 1) {
                 TestError testError = new TestError(this, Severity.ERROR, tr("Duplicated ways"), DUPLICATE_WAY, duplicated);
-                errors.add( testError );
+                errors.add(testError);
             }
         }
         ways = null;
     }
 
     @Override
-    public void visit(Way w)
-    {
-        if( !w.isUsable() )
+    public void visit(Way w) {
+        if (!w.isUsable())
             return;
         List<Node> wNodes=w.getNodes();
         Vector<LatLon> wLat=new Vector<LatLon>(wNodes.size());
-        for(int i=0;i<wNodes.size();i++) {
-                 wLat.add(wNodes.get(i).getCoor());
+        for (int i=0;i<wNodes.size();i++) {
+             wLat.add(wNodes.get(i).getCoor());
         }
         Map<String, String> wkeys=w.getKeys();
         wkeys.remove("created_by");
@@ -108,16 +105,17 @@ public class DuplicateWay extends Test
      * Fix the error by removing all but one instance of duplicate ways
      */
     @Override
-    public Command fixError(TestError testError)
-    {
+    public Command fixError(TestError testError) {
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
         HashSet<Way> ways = new HashSet<Way>();
 
-        for (OsmPrimitive osm : sel)
-            if (osm instanceof Way)
+        for (OsmPrimitive osm : sel) {
+            if (osm instanceof Way) {
                 ways.add((Way)osm);
+            }
+        }
 
-        if( ways.size() < 2 )
+        if (ways.size() < 2)
             return null;
 
         long idToKeep = 0;
@@ -170,8 +168,7 @@ public class DuplicateWay extends Test
     }
 
     @Override
-    public boolean isFixable(TestError testError)
-    {
+    public boolean isFixable(TestError testError) {
         if (!(testError.getTester() instanceof DuplicateWay))
             return false;
 
@@ -179,9 +176,11 @@ public class DuplicateWay extends Test
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
         HashSet<Way> ways = new HashSet<Way>();
 
-        for (OsmPrimitive osm : sel)
-            if (osm instanceof Way)
+        for (OsmPrimitive osm : sel) {
+            if (osm instanceof Way) {
                 ways.add((Way)osm);
+            }
+        }
 
         if (ways.size() < 2)
             return false;

@@ -34,7 +34,6 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
 
     private int updateCount = -1;
 
-
     public ValidatorLayer() {
         super(tr("Validation errors"));
         MapView.addLayerChangeListener(this);
@@ -66,8 +65,9 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
             Enumeration<DefaultMutableTreeNode> errorMessages = severity.breadthFirstEnumeration();
             while (errorMessages.hasMoreElements()) {
                 Object tn = errorMessages.nextElement().getUserObject();
-                if (tn instanceof TestError)
+                if (tn instanceof TestError) {
                     ((TestError) tn).paint(g, mv);
+                }
             }
 
             // Severities in inverse order
@@ -85,8 +85,9 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
 
         StringBuilder b = new StringBuilder();
         for (Severity s : Severity.values()) {
-            if (errorTree.containsKey(s))
+            if (errorTree.containsKey(s)) {
                 b.append(tr(s.toString())).append(": ").append(errorTree.get(s).size()).append("<br>");
+            }
         }
 
         if (b.length() == 0)
@@ -133,15 +134,18 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
     public void destroy() {
     }
 
+    @Override
     public void activeLayerChange(Layer oldLayer, Layer newLayer) {
     }
 
+    @Override
     public void layerAdded(Layer newLayer) {
     }
 
     /**
      * If layer is the OSM Data layer, remove all errors
      */
+    @Override
     public void layerRemoved(Layer oldLayer) {
         if (oldLayer instanceof OsmDataLayer &&  Main.map.mapView.getEditLayer() == null) {
             Main.map.mapView.removeLayer(this);

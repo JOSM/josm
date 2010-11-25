@@ -30,8 +30,7 @@ public class MultipleNameVisitor extends NameVisitor
      * Visits a collection of primitives
      * @param data The collection of primitives
      */
-    public void visit(Collection<? extends OsmPrimitive> data)
-    {
+    public void visit(Collection<? extends OsmPrimitive> data) {
         String multipleName = null;
         String multiplePluralClassname = null;
         String firstName = null;
@@ -39,47 +38,43 @@ public class MultipleNameVisitor extends NameVisitor
         size = data.size();
 
         multipleClassname = null;
-        for (OsmPrimitive osm : data)
-        {
+        for (OsmPrimitive osm : data) {
             String name = osm.get("name");
-            if(name == null) name = osm.get("ref");
-            if(!initializedname)
-            {
-                multipleName = name; initializedname = true;
+            if (name == null) {
+                name = osm.get("ref");
             }
-            else if(multipleName != null && (name == null  || !name.equals(multipleName)))
-            {
+            if (!initializedname) {
+                multipleName = name; initializedname = true;
+            } else if (multipleName != null && (name == null  || !name.equals(multipleName))) {
                 multipleName = null;
             }
 
-            if(firstName == null && name != null)
+            if (firstName == null && name != null) {
                 firstName = name;
+            }
             osm.visit(this);
-            if (multipleClassname == null)
-            {
+            if (multipleClassname == null) {
                 multipleClassname = className;
                 multiplePluralClassname = classNamePlural;
-            }
-            else if (!multipleClassname.equals(className))
-            {
+            } else if (!multipleClassname.equals(className)) {
                 multipleClassname = "object";
                 multiplePluralClassname = trn("object", "objects", 2);
             }
         }
 
-        if( size == 1 )
+        if (size == 1) {
             displayName = name;
-        else if(multipleName != null)
+        } else if (multipleName != null) {
             displayName = size + " " + trn(multipleClassname, multiplePluralClassname, size) + ": " + multipleName;
-        else if(firstName != null)
+        } else if (firstName != null) {
             displayName = size + " " + trn(multipleClassname, multiplePluralClassname, size) + ": " + tr("{0}, ...", firstName);
-        else
+        } else {
             displayName = size + " " + trn(multipleClassname, multiplePluralClassname, size);
+        }
     }
 
     @Override
-    public JLabel toLabel()
-    {
+    public JLabel toLabel() {
         return new JLabel(getText(), getIcon(), JLabel.HORIZONTAL);
     }
 
@@ -87,8 +82,7 @@ public class MultipleNameVisitor extends NameVisitor
      * Gets the name of the items
      * @return the name of the items
      */
-    public String getText()
-    {
+    public String getText() {
         return displayName;
     }
 
@@ -96,9 +90,8 @@ public class MultipleNameVisitor extends NameVisitor
      * Gets the icon of the items
      * @return the icon of the items
      */
-    public Icon getIcon()
-    {
-        if( size == 1 )
+    public Icon getIcon() {
+        if (size == 1)
             return icon;
         else
             return ImageProvider.get("data", multipleClassname);

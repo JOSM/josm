@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.validation.TestError;
  * Checks for self-intersecting ways.
  */
 public class SelfIntersectingWay extends Test {
+    
     protected static int SELF_INTERSECT = 401;
 
     public SelfIntersectingWay() {

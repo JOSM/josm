@@ -24,7 +24,8 @@ public class DuplicatedWayNodes extends Test {
             tr("Checks for ways with identical consecutive nodes."));
     }
 
-    @Override public void visit(Way w) {
+    @Override
+    public void visit(Way w) {
         if (!w.isUsable()) return;
 
         Node lastN = null;

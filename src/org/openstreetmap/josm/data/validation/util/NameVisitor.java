@@ -42,6 +42,7 @@ public class NameVisitor extends AbstractVisitor {
      * If the node has a name-key or id-key, this is displayed. If not, (lat,lon)
      * is displayed.
      */
+    @Override
     public void visit(Node n) {
         name = n.getDisplayName(DefaultNameFormatter.getInstance());
         addId(n);
@@ -54,6 +55,7 @@ public class NameVisitor extends AbstractVisitor {
      * If the way has a name-key or id-key, this is displayed. If not, (x nodes)
      * is displayed with x being the number of nodes in the way.
      */
+    @Override
     public void visit(Way w) {
         name = w.getDisplayName(DefaultNameFormatter.getInstance());
         addId(w);
@@ -64,6 +66,7 @@ public class NameVisitor extends AbstractVisitor {
 
     /**
      */
+    @Override
     public void visit(Relation e) {
         name = e.getDisplayName(DefaultNameFormatter.getInstance());
         addId(e);
@@ -76,9 +79,9 @@ public class NameVisitor extends AbstractVisitor {
         return new JLabel(name, icon, JLabel.HORIZONTAL);
     }
 
-
     private void addId(OsmPrimitive osm) {
-        if (Main.pref.getBoolean("osm-primitives.showid"))
+        if (Main.pref.getBoolean("osm-primitives.showid")) {
             name += tr(" [id: {0}]", osm.getId());
+        }
     }
 }

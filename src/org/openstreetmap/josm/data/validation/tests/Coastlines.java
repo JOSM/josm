@@ -27,8 +27,8 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  * @author frsantos
  * @author Teemu Koskinen
  */
-public class Coastlines extends Test
-{
+public class Coastlines extends Test {
+
     protected static int UNORDERED_COASTLINE = 901;
     protected static int REVERSED_COASTLINE = 902;
     protected static int UNCONNECTED_COASTLINE = 903;
@@ -40,34 +40,34 @@ public class Coastlines extends Test
     /**
      * Constructor
      */
-    public Coastlines()
-    {
+    public Coastlines() {
         super(tr("Coastlines."),
               tr("This test checks that coastlines are correct."));
     }
 
     @Override
-    public void startTest(ProgressMonitor monitor)
-    {
+    public void startTest(ProgressMonitor monitor) {
+
         super.startTest(monitor);
 
         OsmDataLayer layer = Main.map.mapView.getEditLayer();
 
-        if (layer != null)
+        if (layer != null) {
             downloadedArea = layer.data.getDataSourceArea();
+        }
 
         coastlines = new LinkedList<Way>();
     }
 
     @Override
-    public void endTest()
-    {
+    public void endTest() {
         for (Way c1 : coastlines) {
             Node head = c1.firstNode();
             Node tail = c1.lastNode();
 
-            if (head.equals(tail))
+            if (head.equals(tail)) {
                 continue;
+            }
 
             int headWays = 0;
             int tailWays = 0;
@@ -79,30 +79,32 @@ public class Coastlines extends Test
             Way prev = null;
 
             for (Way c2 : coastlines) {
-                if (c1 == c2)
+                if (c1 == c2) {
                     continue;
+                }
 
                 if (c2.containsNode(head)) {
                     headWays++;
                     next = c2;
 
-                    if (head.equals(c2.firstNode()))
+                    if (head.equals(c2.firstNode())) {
                         headReversed = true;
-                    else if (!head.equals(c2.lastNode()))
+                    } else if (!head.equals(c2.lastNode())) {
                         headUnordered = true;
+                    }
                 }
 
                 if (c2.containsNode(tail)) {
                     tailWays++;
                     prev = c2;
 
-                    if (tail.equals(c2.lastNode()))
+                    if (tail.equals(c2.lastNode())) {
                         tailReversed = true;
-                    else if (!tail.equals(c2.firstNode()))
+                    } else if (!tail.equals(c2.firstNode())) {
                         tailUnordered = true;
+                    }
                 }
             }
-
 
             List<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
             primitives.add(c1);
@@ -120,23 +122,26 @@ public class Coastlines extends Test
                     highlight.add(tail);
                 }
 
-                if (highlight.size() > 0)
+                if (highlight.size() > 0) {
                     errors.add(new TestError(this, Severity.ERROR, tr("Unconnected coastline"),
                                              UNCONNECTED_COASTLINE, primitives, highlight));
+                }
             }
 
             boolean unordered = false;
             boolean reversed = false;
 
-            if (headWays == 1 && headReversed && tailWays == 1 && tailReversed)
+            if (headWays == 1 && headReversed && tailWays == 1 && tailReversed) {
                 reversed = true;
+            }
 
-            if (headWays > 1 || tailWays > 1)
+            if (headWays > 1 || tailWays > 1) {
                 unordered = true;
-            else if (headUnordered || tailUnordered)
+            } else if (headUnordered || tailUnordered) {
                 unordered = true;
-            else if (reversed && next == prev)
+            } else if (reversed && next == prev) {
                 unordered = true;
+            }
 
             if (unordered) {
                 List<OsmPrimitive> highlight = new ArrayList<OsmPrimitive>();
@@ -167,8 +172,7 @@ public class Coastlines extends Test
     }
 
     @Override
-    public void visit(Way way)
-    {
+    public void visit(Way way) {
         if (!way.isUsable())
             return;
 
@@ -191,15 +195,13 @@ public class Coastlines extends Test
 
             return new ChangeCommand(way, newWay);
         }
-
         return null;
     }
 
     @Override
     public boolean isFixable(TestError testError) {
-        if (testError.getTester() instanceof Coastlines) {
+        if (testError.getTester() instanceof Coastlines)
             return (testError.getCode() == REVERSED_COASTLINE);
-        }
 
         return false;
     }

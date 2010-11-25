@@ -22,8 +22,8 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  *
  * @author frsantos
  */
-public class UntaggedNode extends Test
-{
+public class UntaggedNode extends Test {
+
     protected static final int UNTAGGED_NODE_BLANK = 201;
     protected static final int UNTAGGED_NODE_FIXME = 202;
     protected static final int UNTAGGED_NODE_NOTE = 203;
@@ -35,21 +35,18 @@ public class UntaggedNode extends Test
     /**
      * Constructor
      */
-    public UntaggedNode()
-    {
+    public UntaggedNode() {
         super(tr("Untagged and unconnected nodes")+".",
                 tr("This test checks for untagged nodes that are not part of any way."));
     }
 
     @Override
-    public void startTest(ProgressMonitor monitor)
-    {
+    public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
     }
 
     @Override
-    public void visit(Collection<OsmPrimitive> selection)
-    {
+    public void visit(Collection<OsmPrimitive> selection) {
         for (OsmPrimitive p : selection) {
             if (p.isUsable() && p instanceof Node) {
                 p.visit(this);
@@ -58,8 +55,7 @@ public class UntaggedNode extends Test
     }
 
     @Override
-    public void visit(Node n)
-    {
+    public void visit(Node n) {
         if(n.isUsable() && !n.isTagged() && n.getReferrers().isEmpty()) {
             if (!n.hasKeys()) {
                 String msg = marktr("No tags");
@@ -68,7 +64,6 @@ public class UntaggedNode extends Test
             }
             for (Map.Entry<String, String> tag : n.getKeys().entrySet()) {
                 String key = tag.getKey();
-                String value = tag.getValue();
                 if (contains(tag, "fixme") || contains(tag, "FIXME")) {
                     /* translation note: don't translate quoted words */
                     String msg = marktr("Has tag containing ''fixme'' or ''FIXME''");
@@ -113,8 +108,7 @@ public class UntaggedNode extends Test
     }
 
     @Override
-    public Command fixError(TestError testError)
-    {
+    public Command fixError(TestError testError) {
         return DeleteCommand.delete(Main.map.mapView.getEditLayer(), testError.getPrimitives());
     }
 

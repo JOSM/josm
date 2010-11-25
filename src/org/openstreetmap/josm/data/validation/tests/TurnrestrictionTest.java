@@ -32,8 +32,7 @@ public class TurnrestrictionTest extends Test {
     protected static final int TO_VIA_WAY = 1812;
 
     public TurnrestrictionTest() {
-        super(tr("Turnrestriction"),
-                tr("This test checks if turnrestrictions are valid"));
+        super(tr("Turnrestriction"), tr("This test checks if turnrestrictions are valid"));
     }
 
     @Override
@@ -50,71 +49,67 @@ public class TurnrestrictionTest extends Test {
         boolean morevia = false;
 
         /* find the "from", "via" and "to" elements */
-        for (RelationMember m : r.getMembers())
-        {
-            if(m.getMember().isIncomplete())
+        for (RelationMember m : r.getMembers()) {
+            if (m.getMember().isIncomplete())
                 return;
-            else
-            {
-                ArrayList<OsmPrimitive> l = new ArrayList<OsmPrimitive>();
-                l.add(r);
-                l.add(m.getMember());
-                if(m.isWay())
-                {
-                    Way w = m.getWay();
-                    if(w.getNodesCount() < 2) {
-                        continue;
-                    }
 
-                    if("from".equals(m.getRole())) {
-                        if(fromWay != null) {
-                            morefrom = true;
-                        } else {
-                            fromWay = w;
-                        }
-                    } else if("to".equals(m.getRole())) {
-                        if(toWay != null) {
-                            moreto = true;
-                        } else {
-                            toWay = w;
-                        }
-                    } else if("via".equals(m.getRole())) {
-                        if(via != null) {
-                            morevia = true;
-                        } else {
-                            via = w;
-                        }
-                    } else {
-                        errors.add(new TestError(this, Severity.WARNING, tr("Unknown role"), UNKNOWN_ROLE,
-                        l, Collections.singletonList(m)));
-                    }
+            ArrayList<OsmPrimitive> l = new ArrayList<OsmPrimitive>();
+            l.add(r);
+            l.add(m.getMember());
+            if (m.isWay()) {
+                Way w = m.getWay();
+                if (w.getNodesCount() < 2) {
+                    continue;
                 }
-                else if(m.isNode())
-                {
-                    Node n = m.getNode();
-                    if("via".equals(m.getRole()))
-                    {
-                        if(via != null) {
-                            morevia = true;
-                        } else {
-                            via = n;
-                        }
+
+                if ("from".equals(m.getRole())) {
+                    if (fromWay != null) {
+                        morefrom = true;
                     } else {
-                        errors.add(new TestError(this, Severity.WARNING, tr("Unknown role"), UNKNOWN_ROLE,
-                        l, Collections.singletonList(m)));
+                        fromWay = w;
+                    }
+                } else if ("to".equals(m.getRole())) {
+                    if (toWay != null) {
+                        moreto = true;
+                    } else {
+                        toWay = w;
+                    }
+                } else if ("via".equals(m.getRole())) {
+                    if (via != null) {
+                        morevia = true;
+                    } else {
+                        via = w;
                     }
                 } else {
-                    errors.add(new TestError(this, Severity.WARNING, tr("Unknown member type"), UNKNOWN_TYPE,
-                    l, Collections.singletonList(m)));
+                    errors.add(new TestError(this, Severity.WARNING, tr("Unknown role"), UNKNOWN_ROLE,
+                            l, Collections.singletonList(m)));
                 }
+            } else if (m.isNode()) {
+                Node n = m.getNode();
+                if ("via".equals(m.getRole())) {
+                    if (via != null) {
+                        morevia = true;
+                    } else {
+                        via = n;
+                    }
+                } else {
+                    errors.add(new TestError(this, Severity.WARNING, tr("Unknown role"), UNKNOWN_ROLE,
+                            l, Collections.singletonList(m)));
+                }
+            } else {
+                errors.add(new TestError(this, Severity.WARNING, tr("Unknown member type"), UNKNOWN_TYPE,
+                        l, Collections.singletonList(m)));
             }
         }
-        if(morefrom)
+        if (morefrom) {
             errors.add(new TestError(this, Severity.ERROR, tr("More than one \"from\" way found"), MORE_FROM, r));
-        if(moreto)
+        }
+        if (moreto) {
             errors.add(new TestError(this, Severity.ERROR, tr("More than one \"to\" way found"), MORE_TO, r));
-        if(morevia)
+        }
+        if (morevia) {
             errors.add(new TestError(this, Severity.ERROR, tr("More than one \"via\" way found"), MORE_VIA, r));
+        }
 
         if (fromWay == null) {
             errors.add(new TestError(this, Severity.ERROR, tr("No \"from\" way found"), NO_FROM, r));
@@ -130,30 +125,27 @@ public class TurnrestrictionTest extends Test {
         }
 
         Node viaNode;
-        if(via instanceof Node)
-        {
+        if (via instanceof Node) {
             viaNode = (Node) via;
-            if(!fromWay.isFirstLastNode(viaNode)) {
+            if (!fromWay.isFirstLastNode(viaNode)) {
                 errors.add(new TestError(this, Severity.ERROR,
-                tr("The \"from\" way does not start or end at a \"via\" node"), FROM_VIA_NODE, r));
+                        tr("The \"from\" way does not start or end at a \"via\" node"), FROM_VIA_NODE, r));
                 return;
             }
-            if(!toWay.isFirstLastNode(viaNode)) {
+            if (!toWay.isFirstLastNode(viaNode)) {
                 errors.add(new TestError(this, Severity.ERROR,
-                tr("The \"to\" way does not start or end at a \"via\" node"), TO_VIA_NODE, r));
+                        tr("The \"to\" way does not start or end at a \"via\" node"), TO_VIA_NODE, r));
+                //FIXME: return; ?
             }
-        }
-        else
-        {
+        } else {
             Way viaWay = (Way) via;
             Node firstNode = viaWay.firstNode();
             Node lastNode = viaWay.lastNode();
             Boolean onewayvia = false;
 
             String onewayviastr = viaWay.get("oneway");
-            if(onewayviastr != null)
-            {
-                if("-1".equals(onewayviastr)) {
+            if (onewayviastr != null) {
+                if ("-1".equals(onewayviastr)) {
                     onewayvia = true;
                     Node tmp = firstNode;
                     firstNode = lastNode;
@@ -166,19 +158,18 @@ public class TurnrestrictionTest extends Test {
                 }
             }
 
-            if(fromWay.isFirstLastNode(firstNode))
+            if (fromWay.isFirstLastNode(firstNode)) {
                 viaNode = firstNode;
-            else if(!onewayvia && fromWay.isFirstLastNode(lastNode))
+            } else if (!onewayvia && fromWay.isFirstLastNode(lastNode)) {
                 viaNode = lastNode;
-            else
-            {
+            } else {
                 errors.add(new TestError(this, Severity.ERROR,
-                tr("The \"from\" way does not start or end at a \"via\" way."), FROM_VIA_WAY, r));
+                        tr("The \"from\" way does not start or end at a \"via\" way."), FROM_VIA_WAY, r));
                 return;
             }
-            if(!toWay.isFirstLastNode(viaNode == firstNode ? lastNode : firstNode)) {
+            if (!toWay.isFirstLastNode(viaNode == firstNode ? lastNode : firstNode)) {
                 errors.add(new TestError(this, Severity.ERROR,
-                tr("The \"to\" way does not start or end at a \"via\" way."), TO_VIA_WAY, r));
+                        tr("The \"to\" way does not start or end at a \"via\" way."), TO_VIA_WAY, r));
             }
         }
     }
