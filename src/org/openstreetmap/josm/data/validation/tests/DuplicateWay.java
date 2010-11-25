@@ -3,12 +3,13 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+import java.util.Set;
 
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -23,8 +24,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.data.validation.util.Bag;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.MultiMap;
 
 /**
  * Tests if there are duplicate ways
@@ -35,14 +36,14 @@ public class DuplicateWay extends Test
     private static class WayPair {
         public List<LatLon> coor;
         public Map<String, String> keys;
-        public WayPair(List<LatLon> _coor,Map<String, String> _keys) {
+        public WayPair(List<LatLon> _coor, Map<String, String> _keys) {
             coor=_coor;
             keys=_keys;
         }
 
         @Override
         public int hashCode() {
-            return coor.hashCode()+keys.hashCode();
+            return coor.hashCode() + keys.hashCode();
         }
 
         @Override
@@ -57,7 +58,7 @@ public class DuplicateWay extends Test
     protected static int DUPLICATE_WAY = 1401;
 
     /** Bag of all ways */
-    Bag<WayPair, OsmPrimitive> ways;
+    MultiMap<WayPair, OsmPrimitive> ways;
 
     /**
      * Constructor
@@ -71,13 +72,13 @@ public class DuplicateWay extends Test
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        ways = new Bag<WayPair, OsmPrimitive>(1000);
+        ways = new MultiMap<WayPair, OsmPrimitive>(1000);
     }
 
     @Override
     public void endTest() {
         super.endTest();
-        for (List<OsmPrimitive> duplicated : ways.values()) {
+        for (Set<OsmPrimitive> duplicated : ways.values()) {
             if (duplicated.size() > 1) {
                 TestError testError = new TestError(this, Severity.ERROR, tr("Duplicated ways"), DUPLICATE_WAY, duplicated);
                 errors.add(testError);
@@ -90,15 +91,15 @@ public class DuplicateWay extends Test
     public void visit(Way w) {
         if (!w.isUsable())
             return;
-        List<Node> wNodes=w.getNodes();
-        Vector<LatLon> wLat=new Vector<LatLon>(wNodes.size());
+        List<Node> wNodes = w.getNodes();
+        List<LatLon> wLat = new ArrayList<LatLon>(wNodes.size());
         for (int i=0;i<wNodes.size();i++) {
              wLat.add(wNodes.get(i).getCoor());
         }
-        Map<String, String> wkeys=w.getKeys();
+        Map<String, String> wkeys = w.getKeys();
         wkeys.remove("created_by");
-        WayPair wKey=new WayPair(wLat,wkeys);
-        ways.add(wKey, w);
+        WayPair wKey = new WayPair(wLat, wkeys);
+        ways.put(wKey, w);
     }
 
     /**

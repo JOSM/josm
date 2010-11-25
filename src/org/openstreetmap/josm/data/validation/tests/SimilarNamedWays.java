@@ -14,9 +14,10 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.data.validation.util.Bag;
 import org.openstreetmap.josm.data.validation.util.ValUtil;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Checks for similar named ways, symptom of a possible typo. It uses the
@@ -31,7 +32,7 @@ public class SimilarNamedWays extends Test {
     /** All ways, grouped by cells */
     Map<Point2D,List<Way>> cellWays;
     /** The already detected errors */
-    Bag<Way, Way> errorWays;
+    MultiMap<Way, Way> errorWays;
 
     /**
      * Constructor
@@ -45,7 +46,7 @@ public class SimilarNamedWays extends Test {
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
         cellWays = new HashMap<Point2D,List<Way>>(1000);
-        errorWays = new Bag<Way, Way>();
+        errorWays = new MultiMap<Way, Way>();
     }
 
     @Override
@@ -82,7 +83,7 @@ public class SimilarNamedWays extends Test {
                     primitives.add(w);
                     primitives.add(w2);
                     errors.add(new TestError(this, Severity.WARNING, tr("Similarly named ways"), SIMILAR_NAMED, primitives));
-                    errorWays.add(w, w2);
+                    errorWays.put(w, w2);
                 }
             }
             ways.add(w);
@@ -141,28 +142,11 @@ public class SimilarNamedWays extends Test {
                 }
 
                 // Step 6
-                d[i][j] = min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
+                d[i][j] = Utils.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
             }
         }
 
         // Step 7
         return d[n][m];
-    }
-
-    /** // FIXME: move to utils
-     * Get minimum of three values
-     * @param a First value
-     * @param b Second value
-     * @param c Third value
-     * @return The minimum of the three values
-     */
-    private static int min(int a, int b, int c) {
-        int mi = a;
-        if (b < mi) {
-            mi = b;
-        } if (c < mi) {
-            mi = c;
-        }
-        return mi;
     }
 }

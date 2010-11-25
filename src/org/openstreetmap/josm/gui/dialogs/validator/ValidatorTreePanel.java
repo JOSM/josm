@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,8 +23,8 @@ import javax.swing.tree.TreeSelectionModel;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.data.validation.util.Bag;
 import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
+import org.openstreetmap.josm.tools.MultiMap;
 
 /**
  * A panel that displays the error tree. The selection manager
@@ -137,11 +138,11 @@ public class ValidatorTreePanel extends JTree {
             }
         }
 
-        Map<Severity, Bag<String, TestError>> errorTree = new HashMap<Severity, Bag<String, TestError>>();
-        Map<Severity, HashMap<String, Bag<String, TestError>>> errorTreeDeep = new HashMap<Severity, HashMap<String, Bag<String, TestError>>>();
+        Map<Severity, MultiMap<String, TestError>> errorTree = new HashMap<Severity, MultiMap<String, TestError>>();
+        Map<Severity, HashMap<String, MultiMap<String, TestError>>> errorTreeDeep = new HashMap<Severity, HashMap<String, MultiMap<String, TestError>>>();
         for (Severity s : Severity.values()) {
-            errorTree.put(s, new Bag<String, TestError>(20));
-            errorTreeDeep.put(s, new HashMap<String, Bag<String, TestError>>());
+            errorTree.put(s, new MultiMap<String, TestError>(20));
+            errorTreeDeep.put(s, new HashMap<String, MultiMap<String, TestError>>());
         }
 
         for (TestError e : errors) {
@@ -164,21 +165,21 @@ public class ValidatorTreePanel extends JTree {
                 }
             }
             if (d != null) {
-                Bag<String, TestError> b = errorTreeDeep.get(s).get(m);
+                MultiMap<String, TestError> b = errorTreeDeep.get(s).get(m);
                 if (b == null) {
-                    b = new Bag<String, TestError>(20);
+                    b = new MultiMap<String, TestError>(20);
                     errorTreeDeep.get(s).put(m, b);
                 }
-                b.add(d, e);
+                b.put(d, e);
             } else {
-                errorTree.get(s).add(m, e);
+                errorTree.get(s).put(m, e);
             }
         }
 
         List<TreePath> expandedPaths = new ArrayList<TreePath>();
         for (Severity s : Severity.values()) {
-            Bag<String, TestError> severityErrors = errorTree.get(s);
-            Map<String, Bag<String, TestError>> severityErrorsDeep = errorTreeDeep.get(s);
+            MultiMap<String, TestError> severityErrors = errorTree.get(s);
+            Map<String, MultiMap<String, TestError>> severityErrorsDeep = errorTreeDeep.get(s);
             if (severityErrors.isEmpty() && severityErrorsDeep.isEmpty()) {
                 continue;
             }
@@ -191,9 +192,9 @@ public class ValidatorTreePanel extends JTree {
                 expandedPaths.add(new TreePath(new Object[] { rootNode, severityNode }));
             }
 
-            for (Entry<String, List<TestError>> msgErrors : severityErrors.entrySet()) {
+            for (Entry<String, LinkedHashSet<TestError>> msgErrors : severityErrors.entrySet()) {
                 // Message node
-                List<TestError> errs = msgErrors.getValue();
+                Set<TestError> errs = msgErrors.getValue();
                 String msg = msgErrors.getKey() + " (" + errs.size() + ")";
                 DefaultMutableTreeNode messageNode = new DefaultMutableTreeNode(msg);
                 severityNode.add(messageNode);
@@ -208,9 +209,9 @@ public class ValidatorTreePanel extends JTree {
                     messageNode.add(errorNode);
                 }
             }
-            for (Entry<String, Bag<String, TestError>> bag : severityErrorsDeep.entrySet()) {
+            for (Entry<String, MultiMap<String, TestError>> bag : severityErrorsDeep.entrySet()) {
                 // Group node
-                Bag<String, TestError> errorlist = bag.getValue();
+                MultiMap<String, TestError> errorlist = bag.getValue();
                 DefaultMutableTreeNode groupNode = null;
                 if (errorlist.size() > 1) {
                     String nmsg = bag.getKey() + " (" + errorlist.size() + ")";
@@ -221,9 +222,9 @@ public class ValidatorTreePanel extends JTree {
                     }
                 }
 
-                for (Entry<String, List<TestError>> msgErrors : errorlist.entrySet()) {
+                for (Entry<String, LinkedHashSet<TestError>> msgErrors : errorlist.entrySet()) {
                     // Message node
-                    List<TestError> errs = msgErrors.getValue();
+                    Set<TestError> errs = msgErrors.getValue();
                     String msg;
                     if (groupNode != null) {
                         msg = msgErrors.getKey() + " (" + errs.size() + ")";

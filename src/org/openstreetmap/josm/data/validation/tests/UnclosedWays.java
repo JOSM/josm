@@ -16,7 +16,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.data.validation.util.Bag;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
@@ -25,8 +24,6 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  * @author stoecker
  */
 public class UnclosedWays extends Test {
-    /** The already detected errors */
-    protected Bag<Way, Way> errorWays;
 
     /**
      * Constructor
@@ -38,12 +35,10 @@ public class UnclosedWays extends Test {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        errorWays = new Bag<Way, Way>();
     }
 
     @Override
     public void endTest() {
-        errorWays = null;
         super.endTest();
     }
 
@@ -132,7 +127,6 @@ public class UnclosedWays extends Test {
 
             errors.add(new TestError(this, Severity.WARNING, tr("Unclosed way"),
                             type, etype, mode, primitives, highlight));
-            errorWays.add(w, w);
         }
     }
 }

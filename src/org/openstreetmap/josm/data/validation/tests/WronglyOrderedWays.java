@@ -11,7 +11,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.data.validation.util.Bag;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
@@ -25,9 +24,6 @@ public class WronglyOrderedWays extends Test {
     protected static int WRONGLY_ORDERED_WATER = 1002;
     protected static int WRONGLY_ORDERED_LAND  = 1003;
 
-    /** The already detected errors */
-    protected Bag<Way, Way> errorWays;
-
     /**
      * Constructor
      */
@@ -39,12 +35,10 @@ public class WronglyOrderedWays extends Test {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        errorWays = new Bag<Way, Way>();
     }
 
     @Override
     public void endTest() {
-        errorWays = null;
         super.endTest();
     }
 
@@ -95,7 +89,6 @@ public class WronglyOrderedWays extends Test {
                 List<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
                 primitives.add(w);
                 errors.add( new TestError(this, Severity.OTHER, errortype, type, primitives) );
-                errorWays.add(w,w);
             }
         }
     }

@@ -18,12 +18,12 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.data.validation.util.Bag;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.MultiMap;
 
 /**
  * A layer showing error messages.
@@ -77,10 +77,10 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
 
     @Override
     public String getToolTipText() {
-        Bag<Severity, TestError> errorTree = new Bag<Severity, TestError>();
+        MultiMap<Severity, TestError> errorTree = new MultiMap<Severity, TestError>();
         List<TestError> errors = Main.map.validatorDialog.tree.getErrors();
         for (TestError e : errors) {
-            errorTree.add(e.getSeverity(), e);
+            errorTree.put(e.getSeverity(), e);
         }
 
         StringBuilder b = new StringBuilder();

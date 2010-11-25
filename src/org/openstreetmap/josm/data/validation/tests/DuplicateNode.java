@@ -14,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,9 +33,9 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.data.validation.util.Bag;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.MultiMap;
 
 /**
  * Tests if there are duplicate nodes
@@ -137,9 +138,9 @@ public class DuplicateNode extends Test {
     public List<TestError> buildTestErrors(Test parentTest, List<Node> nodes) {
         List<TestError> errors = new ArrayList<TestError>();
 
-        Bag<Map<String,String>, OsmPrimitive> bag = new Bag<Map<String,String>, OsmPrimitive>();
+        MultiMap<Map<String,String>, OsmPrimitive> mm = new MultiMap<Map<String,String>, OsmPrimitive>();
         for (Node n: nodes) {
-            bag.add(n.getKeys(), n);
+            mm.put(n.getKeys(), n);
         }
 
         Map<String,Boolean> typeMap=new HashMap<String,Boolean>();
@@ -149,15 +150,15 @@ public class DuplicateNode extends Test {
         // check whether we have multiple nodes at the same position with
         // the same tag set
         //
-        for (Iterator<Map<String,String>> it = bag.keySet().iterator(); it.hasNext();) {
+        for (Iterator<Map<String,String>> it = mm.keySet().iterator(); it.hasNext();) {
             Map<String,String> tagSet = it.next();
-            if (bag.get(tagSet).size() > 1) {
+            if (mm.get(tagSet).size() > 1) {
 
                 for (String type: types) {
                     typeMap.put(type, false);
                 }
 
-                for (OsmPrimitive p : bag.get(tagSet)) {
+                for (OsmPrimitive p : mm.get(tagSet)) {
                     if (p.getType()==OsmPrimitiveType.NODE) {
                         Node n = (Node) p;
                         List<OsmPrimitive> lp=n.getReferrers();
@@ -197,7 +198,7 @@ public class DuplicateNode extends Test {
                             tr(msg),
                             msg,
                             DUPLICATE_NODE_MIXED,
-                            bag.get(tagSet)
+                            mm.get(tagSet)
                     ));
                 } else if (typeMap.get("highway")) {
                     String msg = marktr("Highway duplicated nodes");
@@ -208,7 +209,7 @@ public class DuplicateNode extends Test {
                             tr(msg),
                             msg,
                             DUPLICATE_NODE_HIGHWAY,
-                            bag.get(tagSet)
+                            mm.get(tagSet)
                     ));
                 } else if (typeMap.get("railway")) {
                     String msg = marktr("Railway duplicated nodes");
@@ -219,7 +220,7 @@ public class DuplicateNode extends Test {
                             tr(msg),
                             msg,
                             DUPLICATE_NODE_RAILWAY,
-                            bag.get(tagSet)
+                            mm.get(tagSet)
                     ));
                 } else if (typeMap.get("waterway")) {
                     String msg = marktr("Waterway duplicated nodes");
@@ -230,7 +231,7 @@ public class DuplicateNode extends Test {
                             tr(msg),
                             msg,
                             DUPLICATE_NODE_WATERWAY,
-                            bag.get(tagSet)
+                            mm.get(tagSet)
                     ));
                 } else if (typeMap.get("boundary")) {
                     String msg = marktr("Boundary duplicated nodes");
@@ -241,7 +242,7 @@ public class DuplicateNode extends Test {
                             tr(msg),
                             msg,
                             DUPLICATE_NODE_BOUNDARY,
-                            bag.get(tagSet)
+                            mm.get(tagSet)
                     ));
                 } else if (typeMap.get("power")) {
                     String msg = marktr("Power duplicated nodes");
@@ -252,7 +253,7 @@ public class DuplicateNode extends Test {
                             tr(msg),
                             msg,
                             DUPLICATE_NODE_POWER,
-                            bag.get(tagSet)
+                            mm.get(tagSet)
                     ));
                 } else if (typeMap.get("natural")) {
                     String msg = marktr("Natural duplicated nodes");
@@ -263,7 +264,7 @@ public class DuplicateNode extends Test {
                             tr(msg),
                             msg,
                             DUPLICATE_NODE_NATURAL,
-                            bag.get(tagSet)
+                            mm.get(tagSet)
                     ));
                 } else if (typeMap.get("building")) {
                     String msg = marktr("Building duplicated nodes");
@@ -274,7 +275,7 @@ public class DuplicateNode extends Test {
                             tr(msg),
                             msg,
                             DUPLICATE_NODE_BUILDING,
-                            bag.get(tagSet)
+                            mm.get(tagSet)
                     ));
                 } else if (typeMap.get("landuse")) {
                     String msg = marktr("Landuse duplicated nodes");
@@ -285,7 +286,7 @@ public class DuplicateNode extends Test {
                             tr(msg),
                             msg,
                             DUPLICATE_NODE_LANDUSE,
-                            bag.get(tagSet)
+                            mm.get(tagSet)
                     ));
                 } else {
                     String msg = marktr("Other duplicated nodes");
@@ -296,7 +297,7 @@ public class DuplicateNode extends Test {
                             tr(msg),
                             msg,
                             DUPLICATE_NODE_OTHER,
-                            bag.get(tagSet)
+                            mm.get(tagSet)
                     ));
 
                 }
@@ -307,9 +308,9 @@ public class DuplicateNode extends Test {
         // check whether we have multiple nodes at the same position with
         // differing tag sets
         //
-        if (!bag.isEmpty()) {
+        if (!mm.isEmpty()) {
             List<OsmPrimitive> duplicates = new ArrayList<OsmPrimitive>();
-            for (List<OsmPrimitive> l: bag.values()) {
+            for (Set<OsmPrimitive> l: mm.values()) {
                 duplicates.addAll(l);
             }
             if (duplicates.size() > 1) {

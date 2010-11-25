@@ -33,9 +33,9 @@ public class TestError {
     private String description;
     private String description_en;
     /** The affected primitives */
-    private List<? extends OsmPrimitive> primitives;
+    private Collection<? extends OsmPrimitive> primitives;
     /** The primitives to be highlighted */
-    private List<?> highlighted;
+    private Collection<?> highlighted;
     /** The tester that raised this error */
     private Test tester;
     /** Internal code used by testers to classify errors */
@@ -53,7 +53,7 @@ public class TestError {
      * @param code The test error reference code
      */
     public TestError(Test tester, Severity severity, String message, String description, String description_en,
-            int code, List<? extends OsmPrimitive> primitives, List<?> highlighted) {
+            int code, Collection<? extends OsmPrimitive> primitives, Collection<?> highlighted) {
         this.tester = tester;
         this.severity = severity;
         this.message = message;
@@ -64,17 +64,17 @@ public class TestError {
         this.code = code;
     }
 
-    public TestError(Test tester, Severity severity, String message, int code, List<? extends OsmPrimitive> primitives,
-            List<?> highlighted) {
+    public TestError(Test tester, Severity severity, String message, int code, Collection<? extends OsmPrimitive> primitives,
+            Collection<?> highlighted) {
         this(tester, severity, message, null, null, code, primitives, highlighted);
     }
 
     public TestError(Test tester, Severity severity, String message, String description, String description_en,
-            int code, List<? extends OsmPrimitive> primitives) {
+            int code, Collection<? extends OsmPrimitive> primitives) {
         this(tester, severity, message, description, description_en, code, primitives, primitives);
     }
 
-    public TestError(Test tester, Severity severity, String message, int code, List<? extends OsmPrimitive> primitives) {
+    public TestError(Test tester, Severity severity, String message, int code, Collection<? extends OsmPrimitive> primitives) {
         this(tester, severity, message, null, null, code, primitives, primitives);
     }
 
@@ -116,7 +116,7 @@ public class TestError {
      * Gets the list of primitives affected by this error
      * @return the list of primitives affected by this error
      */
-    public List<? extends OsmPrimitive> getPrimitives() {
+    public Collection<? extends OsmPrimitive> getPrimitives() {
         return primitives;
     }
 
