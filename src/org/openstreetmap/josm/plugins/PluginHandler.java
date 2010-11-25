@@ -74,11 +74,20 @@ public class PluginHandler {
     static {
         String IN_CORE = tr("integrated into main program");
         for (String[] depr : new String[][] {
-            {"mappaint"}, {"unglueplugin"}, {"lang-de"}, {"lang-en_GB"}, {"lang-fr"},
-            {"lang-it"}, {"lang-pl"}, {"lang-ro"}, {"lang-ru"}, {"ewmsplugin"},
-            {"ywms"}, {"tways-0.2"}, {"geotagged"}, {"landsat"}, {"namefinder"},
-            {"waypoints"}, {"slippy_map_chooser"}, {"tcx-support"}, {"usertools"},
-            {"AgPifoJ", IN_CORE}, {"utilsplugin", IN_CORE}, {"ghost"},
+            {"mappaint", IN_CORE}, {"unglueplugin", IN_CORE},
+            {"lang-de", IN_CORE}, {"lang-en_GB", IN_CORE}, {"lang-fr", IN_CORE},
+            {"lang-it", IN_CORE}, {"lang-pl", IN_CORE}, {"lang-ro", IN_CORE},
+            {"lang-ru", IN_CORE},
+            {"ewmsplugin", tr("replaced by {0} plugin","wmsplugin")},
+            {"ywms", tr("replaced by {0} plugin","wmsplugin")},
+            {"tways-0.2", IN_CORE},
+            {"geotagged", IN_CORE},
+            {"landsat", tr("replaced by {0} plugin","lakewalker")},
+            {"namefinder", IN_CORE},
+            {"waypoints", IN_CORE}, {"slippy_map_chooser", IN_CORE},
+            {"tcx-support", tr("replaced by {0} plugin","dataimport")},
+            {"usertools", IN_CORE},
+            {"AgPifoJ", IN_CORE}, {"utilsplugin", IN_CORE}, {"ghost", IN_CORE},
             {"validator", IN_CORE}}) {
             DEPRECATED_PLUGINS.put(depr[0], depr.length >= 2 ? depr[1] : null);
         }
