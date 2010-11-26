@@ -112,12 +112,11 @@ public class LambertEST implements Projection {
     public Bounds getWorldBoundsLatLon()
     {
         return new Bounds(
-                new LatLon(-90.0, -180.0),
-                new LatLon(90.0, 180.0));
+                new LatLon(56.05, 21.64),
+                new LatLon(61.13, 28.58));
     }
 
     public double getDefaultZoomInPPD() {
-        // TODO FIXME
-        return 0;
+        return 10;
     }
 }
