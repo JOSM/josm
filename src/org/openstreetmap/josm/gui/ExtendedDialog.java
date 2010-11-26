@@ -90,7 +90,7 @@ public class ExtendedDialog extends JDialog {
     protected ArrayList<JButton> buttons = new ArrayList<JButton>();
 
     /**
-     * This method sets up the most basic options for the dialog. Add all more
+     * This method sets up the most basic options for the dialog. Add more
      * advanced features with dedicated methods.
      * Possible features:
      * <ul>

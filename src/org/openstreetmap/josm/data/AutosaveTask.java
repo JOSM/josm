@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Deque;
 import java.util.HashSet;
@@ -244,13 +245,18 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     public List<File> getUnsavedLayersFiles() {
         List<File> result = new ArrayList<File>();
         File[] files = autosaveDir.listFiles();
+        System.err.println("autosave debug (getUnsavedLayersFiles) files="+(files == null ? null : Arrays.toString(files)));
         if (files == null)
             return result;
         for (File file: files) {
+            System.err.println("autosave debug (getUnsavedLayersFiles) file="+file);
+
             if (file.isFile()) {
+                System.err.println("autosave debug (getUnsavedLayersFiles) isFile");
                 result.add(file);
             }
         }
+        System.err.println("autosave debug (getUnsavedLayersFiles) result="+result);
         return result;
     }
 
@@ -276,24 +282,51 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     }
 
     private void moveToDeletedLayersFolder(File f) {
+        System.err.println("autosave debug (moveToDeletedLayersFolder) f="+f);
+        System.err.println("autosave debug (moveToDeletedLayersFolder) f.getName="+f.getName());
+
         File backupFile = new File(deletedLayersDir, f.getName());
+
+        System.err.println("autosave debug (moveToDeletedLayersFolder) backupFile="+backupFile);
         if (backupFile.exists()) {
-            deletedLayers.remove(backupFile);
-            backupFile.delete();
+            System.err.println("autosave debug (moveToDeletedLayersFolder) backupFile exisist");
+
+            boolean res = deletedLayers.remove(backupFile);
+
+            System.err.println("autosave debug (moveToDeletedLayersFolder) res="+res);
+
+            boolean res2 = backupFile.delete();
+
+            System.err.println("autosave debug (moveToDeletedLayersFolder) res2="+res2);
         }
         if (f.renameTo(backupFile)) {
+            System.err.println("autosave debug (moveToDeletedLayersFolder) rename ok");
+
             deletedLayers.add(backupFile);
+
+            System.err.println("autosave debug (moveToDeletedLayersFolder) deletedLayers="+deletedLayers);
         } else {
             System.err.println(String.format("Warning: Could not move autosaved file %s to %s folder", f.getName(), deletedLayersDir.getName()));
-            f.delete();
+            boolean res3 = f.delete();
+
+            System.err.println("autosave debug (moveToDeletedLayersFolder) res3="+res3);
         }
         while (deletedLayers.size() > PROP_DELETED_LAYERS.get()) {
-            deletedLayers.remove().delete();
+            File next = deletedLayers.remove();
+
+            System.err.println("autosave debug (moveToDeletedLayersFolder) next="+next);
+
+            boolean res4 = next.delete();
+
+            System.err.println("autosave debug (moveToDeletedLayersFolder) res4="+res4);
         }
     }
 
     public void dicardUnsavedLayers() {
-        for (File f: getUnsavedLayersFiles()) {
+        List<File> ulfs = getUnsavedLayersFiles();
+        System.err.println("autosave debug (dicardUnsavedLayers) ulfs="+ulfs);
+        for (File f: ulfs) {
+            System.err.println("autosave debug (dicardUnsavedLayers) f="+f);
             moveToDeletedLayersFolder(f);
         }
     }
