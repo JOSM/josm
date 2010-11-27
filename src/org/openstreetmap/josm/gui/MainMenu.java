@@ -293,6 +293,9 @@ public class MainMenu extends JMenuBar {
             fullscreen.setAccelerator(fullscreenToggleAction.getShortcut().getKeyStroke());
             fullscreenToggleAction.addButtonModel(fullscreen.getModel());
         }
+        viewMenu.addSeparator();
+        add(viewMenu, info);
+        add(viewMenu, historyinfo);
 
         add(presetsMenu, presetSearchAction);
 
@@ -316,9 +319,6 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, joinNodeWay);
         add(toolsMenu, unglueNodes);
         add(toolsMenu, joinAreas);
-        toolsMenu.addSeparator();
-        add(toolsMenu, info);
-        add(toolsMenu, historyinfo);
 
         if (!Main.pref.getBoolean("audio.menuinvisible", false)) {
             audioMenu = addMenu(marktr("Audio"), KeyEvent.VK_A, 5, ht("/Menu/Audio"));
