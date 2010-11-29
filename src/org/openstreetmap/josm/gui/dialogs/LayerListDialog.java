@@ -148,9 +148,6 @@ public class LayerListDialog extends ToggleDialog {
 
         //-- delete layer action
         DeleteLayerAction deleteLayerAction = new DeleteLayerAction();
-        layerList.getInputMap(JComponent.WHEN_FOCUSED).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),"deleteLayer"
-        );
         layerList.getActionMap().put("deleteLayer", deleteLayerAction);
         adaptTo(deleteLayerAction, selectionModel);
         buttonPanel.add(new SideButton(deleteLayerAction, false));
