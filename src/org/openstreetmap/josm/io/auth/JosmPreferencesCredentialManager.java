@@ -39,7 +39,7 @@ public class JosmPreferencesCredentialManager implements CredentialsManager {
             password = Main.pref.get(ProxyPreferencesPanel.PROXY_PASS, null);
             if (user == null)
                 return null;
-            return new PasswordAuthentication(user, password == null ? null : password.toCharArray());
+            return new PasswordAuthentication(user, password == null ? new char[0] : password.toCharArray());
         }
         return null;
     }
