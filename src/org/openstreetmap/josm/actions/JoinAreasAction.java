@@ -324,7 +324,7 @@ public class JoinAreasAction extends JosmAction {
         List<Node> allNodes = new ArrayList<Node>();
         for (Way way : ways) {
             if (!way.isClosed()) {
-                JOptionPane.showMessageDialog(Main.parent, tr("\"{0}\" is not closed and therefore cannot be joined.", way.getName()));
+                JOptionPane.showMessageDialog(Main.parent, tr("One of the selected ways is not closed and therefore cannot be joined."));
                 return;
             }
 
