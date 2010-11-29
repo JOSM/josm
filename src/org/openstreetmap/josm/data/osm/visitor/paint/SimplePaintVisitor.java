@@ -191,11 +191,12 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         //}
 
         //profilerN = 0;
-        for (final OsmPrimitive osm : data.getSelected())
+        for (final OsmPrimitive osm : data.getSelected()) {
             if (!osm.isDeleted()) {
                 osm.visit(this);
                 //        profilerN++;
             }
+        }
         displaySegments();
 
         //if(profiler)
@@ -468,22 +469,12 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
     private static final double sinPHI = Math.sin(PHI);
 
     protected void drawSegment(GeneralPath path, Point p1, Point p2, boolean showDirection) {
-        boolean drawIt = false;
-        if (Main.isOpenjdk) {
-            /**
-             * Work around openjdk bug. It leads to drawing artefacts when zooming in a lot. (#4289, #4424)
-             * (It looks like int overflow when clipping.) We do custom clipping.
-             */
-            Rectangle bounds = g.getClipBounds();
-            bounds.grow(100, 100);                  // avoid arrow heads at the border
-            LineClip clip = new LineClip(p1, p2, bounds);
-            drawIt = clip.execute();
+        Rectangle bounds = g.getClipBounds();
+        bounds.grow(100, 100);                  // avoid arrow heads at the border
+        LineClip clip = new LineClip(p1, p2, bounds);
+        if (clip.execute()) {
             p1 = clip.getP1();
             p2 = clip.getP2();
-        } else {
-            drawIt = isSegmentVisible(p1, p2);
-        }
-        if (drawIt) {
             path.moveTo(p1.x, p1.y);
             path.lineTo(p2.x, p2.y);
 
