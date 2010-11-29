@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions.search;
 
+import java.awt.Dimension;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
@@ -146,6 +147,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         List<String> searchExpressionHistory = getSearchExpressionHistory();
         Collections.reverse(searchExpressionHistory);
         hcbSearchString.setPossibleItems(searchExpressionHistory);
+        hcbSearchString.setPreferredSize(new Dimension(40, hcbSearchString.getPreferredSize().height));
 
         JRadioButton replace = new JRadioButton(tr("replace selection"), initialValues.mode == SearchMode.replace);
         JRadioButton add = new JRadioButton(tr("add to selection"), initialValues.mode == SearchMode.add);
