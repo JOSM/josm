@@ -276,8 +276,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     Main.main.undoRedo.add(moveCommand);
                 } else {
                     //reuse existing move command
-                    moveCommand.undoCommand();
-                    moveCommand.moveAgain(bestMovement.getX(), bestMovement.getY());
+                    moveCommand.moveAgainTo(bestMovement.getX(), bestMovement.getY());
                 }
             }
 

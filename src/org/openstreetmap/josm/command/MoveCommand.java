@@ -97,6 +97,10 @@ public class MoveCommand extends Command {
         this.y += y;
     }
 
+    public void moveAgainTo(double x, double y) {
+        moveAgain(x - this.x, y - this.y);
+    }
+
     @Override public boolean executeCommand() {
         for (Node n : nodes) {
             // in case #3892 happens again
