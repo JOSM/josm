@@ -35,7 +35,6 @@ public abstract class FileImporter implements Comparable<FileImporter> {
 
     /**
      * Needs to be implemented if isBatchImporter() returns false.
-     * @throws IllegalDataException
      */
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         throw new IOException(tr("Could not import ''{0}''.", file.getName()));
@@ -43,7 +42,6 @@ public abstract class FileImporter implements Comparable<FileImporter> {
 
     /**
      * Needs to be implemented if isBatchImporter() returns true.
-     * @throws IllegalDataException
      */
     public void importData(List<File> files, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         throw new IOException(tr("Could not import files."));
@@ -51,11 +49,13 @@ public abstract class FileImporter implements Comparable<FileImporter> {
 
     /**
      * Wrapper to give meaningful output if things go wrong.
+     * @return true if data import was successful
      */
-    public void importDataHandleExceptions(File f, ProgressMonitor progressMonitor) {
+    public boolean importDataHandleExceptions(File f, ProgressMonitor progressMonitor) {
         try {
             System.out.println("Open file: " + f.getAbsolutePath() + " (" + f.length() + " bytes)");
             importData(f, progressMonitor);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             HelpAwareOptionPane.showMessageDialogInEDT(
@@ -64,12 +64,14 @@ public abstract class FileImporter implements Comparable<FileImporter> {
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE, null
             );
+            return false;
         }
     }
-    public void importDataHandleExceptions(List<File> files, ProgressMonitor progressMonitor) {
+    public boolean importDataHandleExceptions(List<File> files, ProgressMonitor progressMonitor) {
         try {
             System.out.println("Open "+files.size()+" files");
             importData(files, progressMonitor);
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             HelpAwareOptionPane.showMessageDialogInEDT(
@@ -78,6 +80,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE, null
             );
+            return false;
         }
     }
 

@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
@@ -29,12 +28,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.data.AutosaveTask;
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.DefaultProxySelector;
@@ -249,40 +247,36 @@ public class MainApplication extends Main {
             // Main.debug("Main window not maximized");
         }
 
-        if (AutosaveTask.PROP_AUTOSAVE_ENABLED.get()) {
-            AutosaveTask autosaveTask = new AutosaveTask();
-            List<File> unsavedLayerFiles = autosaveTask.getUnsavedLayersFiles();
-            if (!unsavedLayerFiles.isEmpty()) {
-                System.err.println("autosave debug: unsavedLayerFiles="+unsavedLayerFiles);
-                ExtendedDialog dialog = new ExtendedDialog(
-                        Main.parent,
-                        tr("Unsaved osm data"),
-                        new String[] {tr("Restore"), tr("Cancel"), tr("Discard")}
-                );
-                dialog.setContent(
-                        trn("JOSM found {0} unsaved osm data layer. ",
-                        "JOSM found {0} unsaved osm data layers. ", unsavedLayerFiles.size(), unsavedLayerFiles.size()) +
-                        tr("It looks like JOSM crashed last time. Do you like to restore the data?"));
-                dialog.setButtonIcons(new String[] {"ok", "cancel", "dialogs/remove"});
-                int selection = dialog.showDialog().getValue();
-                System.err.println("autosave debug: user selection="+selection);
-                if (selection == 1) {
-                    for (OsmDataLayer layer: autosaveTask.getUnsavedLayers()) {
-                        Main.main.addLayer(layer);
-                    }
-                    AutoScaleAction.autoScale("data");
-                } else if (selection == 3) {
-                    System.err.println("autosave debug: discard autosaved layers");
-                    autosaveTask.dicardUnsavedLayers();
-                    System.err.println("autosave debug: discard autosaved layers [DONE]");
-                }
-            }
-            autosaveTask.schedule();
-        }
-
-
-        EventQueue.invokeLater(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
             public void run() {
+                if (AutosaveTask.PROP_AUTOSAVE_ENABLED.get()) {
+                    AutosaveTask autosaveTask = new AutosaveTask();
+                    List<File> unsavedLayerFiles = autosaveTask.getUnsavedLayersFiles();
+                    if (!unsavedLayerFiles.isEmpty()) {
+                        System.err.println("autosave debug: unsavedLayerFiles="+unsavedLayerFiles);
+                        ExtendedDialog dialog = new ExtendedDialog(
+                                Main.parent,
+                                tr("Unsaved osm data"),
+                                new String[] {tr("Restore"), tr("Cancel"), tr("Discard")}
+                        );
+                        dialog.setContent(
+                                trn("JOSM found {0} unsaved osm data layer. ",
+                                "JOSM found {0} unsaved osm data layers. ", unsavedLayerFiles.size(), unsavedLayerFiles.size()) +
+                                tr("It looks like JOSM crashed last time. Do you like to restore the data?"));
+                        dialog.setButtonIcons(new String[] {"ok", "cancel", "dialogs/remove"});
+                        int selection = dialog.showDialog().getValue();
+                        System.err.println("autosave debug: user selection="+selection);
+                        if (selection == 1) {
+                            autosaveTask.recoverUnsavedLayers();
+                        } else if (selection == 3) {
+                            System.err.println("autosave debug: discard autosaved layers");
+                            autosaveTask.dicardUnsavedLayers();
+                            System.err.println("autosave debug: discard autosaved layers [DONE]");
+                        }
+                    }
+                    autosaveTask.schedule();
+                }
+                
                 main.postConstructorProcessCmdLine(args);
             }
         });

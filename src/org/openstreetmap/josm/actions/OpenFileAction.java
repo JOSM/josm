@@ -75,14 +75,20 @@ public class OpenFileAction extends DiskAccessAction {
 
     static public class OpenFileTask extends PleaseWaitRunnable {
         private List<File> files;
+        private List<File> successfullyOpenedFiles = new ArrayList<File>();
         private FileFilter fileFilter;
         private boolean cancelled;
 
-        public OpenFileTask(List<File> files, FileFilter fileFilter) {
-            super(tr("Opening files"), false /* don't ignore exception */);
+        public OpenFileTask(List<File> files, FileFilter fileFilter, String title) {
+            super(title, false /* don't ignore exception */);
             this.files = new ArrayList<File>(files);
             this.fileFilter = fileFilter;
         }
+
+        public OpenFileTask(List<File> files, FileFilter fileFilter) {
+            this(files, fileFilter, tr("Opening files"));
+        }
+
         @Override
         protected void cancel() {
             this.cancelled = true;
@@ -239,14 +245,22 @@ public class OpenFileAction extends DiskAccessAction {
                 }
                 getProgressMonitor().setCustomText(msg);
                 getProgressMonitor().indeterminateSubTask(msg);
-                importer.importDataHandleExceptions(files, getProgressMonitor().createSubTaskMonitor(files.size(), false));
+                if (importer.importDataHandleExceptions(files, getProgressMonitor().createSubTaskMonitor(files.size(), false))) {
+                    successfullyOpenedFiles.addAll(files);
+                }
             } else {
                 for (File f : files) {
                     if (cancelled) return;
                     getProgressMonitor().indeterminateSubTask(tr("Opening file ''{0}'' ...", f.getAbsolutePath()));
-                    importer.importDataHandleExceptions(f, getProgressMonitor().createSubTaskMonitor(1, false));
+                    if (importer.importDataHandleExceptions(f, getProgressMonitor().createSubTaskMonitor(1, false))) {
+                        successfullyOpenedFiles.add(f);
+                    }
                 }
             }
+        }
+
+        public List<File> getSuccessfullyOpenedFiles() {
+            return successfullyOpenedFiles;
         }
     }
 }

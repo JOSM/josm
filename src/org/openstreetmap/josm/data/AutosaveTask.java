@@ -4,8 +4,6 @@ package org.openstreetmap.josm.data;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +19,7 @@ import java.util.TimerTask;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.OpenFileAction.OpenFileTask;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
@@ -31,11 +30,11 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmExporter;
-import org.openstreetmap.josm.io.OsmReader;
 
+/**
+ * Saves data layers periodically so they can be recovered in case of a crash.
+ */
 public class AutosaveTask extends TimerTask implements LayerChangeListener, Listener {
 
     private static final char[] ILLEGAL_CHARACTERS = { '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':' };
@@ -54,8 +53,6 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         String layerFileName;
         final Deque<File> backupFiles = new LinkedList<File>();
     }
-
-    //"data layer 1_20100711_1330"
 
     private final DataSetListenerAdapter datasetAdapter = new DataSetListenerAdapter(this);
     private Set<DataSet> changedDatasets = new HashSet<DataSet>();
@@ -260,25 +257,17 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         return result;
     }
 
-    public List<OsmDataLayer> getUnsavedLayers() {
-        List<OsmDataLayer> result = new ArrayList<OsmDataLayer>();
-
-        for (File f: getUnsavedLayersFiles()) {
-            try {
-                DataSet ds = OsmReader.parseDataSet(new FileInputStream(f), NullProgressMonitor.INSTANCE);
-                String layerName = f.getName();
-                layerName = layerName.substring(0, layerName.lastIndexOf('.'));
-                result.add(new OsmDataLayer(ds, layerName, null));
-                moveToDeletedLayersFolder(f);
-            } catch (FileNotFoundException e) {
-                // Should not happen
-                System.err.println("File " + f.getAbsolutePath() + " not found");
-            } catch (IllegalDataException e) {
-                System.err.println(tr("Unable to read autosaved osm data ({0}) - {1}", f.getAbsoluteFile(), e.getMessage()));
-            }
-        }
-
-        return result;
+    public void recoverUnsavedLayers() {
+        List<File> files = getUnsavedLayersFiles();
+        final OpenFileTask openFileTsk = new OpenFileTask(files, null, tr("Restoring files"));
+        Main.worker.submit(openFileTsk);
+        Main.worker.submit(new Runnable() {
+            public void run() {
+                for (File f: openFileTsk.getSuccessfullyOpenedFiles()) {
+                    moveToDeletedLayersFolder(f);
+                }
+            }          
+        });
     }
 
     private void moveToDeletedLayersFolder(File f) {
