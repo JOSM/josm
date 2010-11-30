@@ -34,6 +34,19 @@ import org.openstreetmap.josm.io.OsmExporter;
 
 /**
  * Saves data layers periodically so they can be recovered in case of a crash.
+ *
+ * There are 2 directories
+ *  - autosave dir: copies of the currently open data layers are saved here every
+ *      PROP_INTERVAL seconds. When a data layer is closed normally, the corresponding
+ *      files are removed. If this dir is non-empty on start, JOSM assumes
+ *      that it crashed last time.
+ *  - deleted layers dir: "secondary archive" - when autosaved layers are restored
+ *      they are copied to this directory. We cannot keep them in the autosave folder,
+ *      but just deleting it would be dangerous: Maybe a feature inside the file
+ *      caused JOSM to crash. If the data is valuable, the user can still try to
+ *      open with another versions of JOSM or fix the problem manually.
+ *
+ *      The deleted layers dir keeps at most PROP_DELETED_LAYERS files.
  */
 public class AutosaveTask extends TimerTask implements LayerChangeListener, Listener {
 
@@ -77,9 +90,8 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
             }
 
             for (File f: deletedLayersDir.listFiles()) {
-                deletedLayers.add(f);
+                deletedLayers.add(f); // FIXME: sort by mtime
             }
-
 
             timer = new Timer(true);
             timer.schedule(this, 1000, PROP_INTERVAL.get() * 1000);
@@ -242,18 +254,13 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     public List<File> getUnsavedLayersFiles() {
         List<File> result = new ArrayList<File>();
         File[] files = autosaveDir.listFiles();
-        System.err.println("autosave debug (getUnsavedLayersFiles) files="+(files == null ? null : Arrays.toString(files)));
         if (files == null)
             return result;
         for (File file: files) {
-            System.err.println("autosave debug (getUnsavedLayersFiles) file="+file);
-
             if (file.isFile()) {
-                System.err.println("autosave debug (getUnsavedLayersFiles) isFile");
                 result.add(file);
             }
         }
-        System.err.println("autosave debug (getUnsavedLayersFiles) result="+result);
         return result;
     }
 
@@ -270,52 +277,45 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         });
     }
 
+    /**
+     * Move file to the deleted layers directory.
+     * If moving does not work, it will try to delete the file directly.
+     * Afterwards, if the number of deleted layers gets larger than PROP_DELETED_LAYERS,
+     * some files in the deleted layers directory will be removed.
+     *
+     * @param f the file, usually from the autosave dir
+     */
     private void moveToDeletedLayersFolder(File f) {
-        System.err.println("autosave debug (moveToDeletedLayersFolder) f="+f);
-        System.err.println("autosave debug (moveToDeletedLayersFolder) f.getName="+f.getName());
-
         File backupFile = new File(deletedLayersDir, f.getName());
 
-        System.err.println("autosave debug (moveToDeletedLayersFolder) backupFile="+backupFile);
         if (backupFile.exists()) {
-            System.err.println("autosave debug (moveToDeletedLayersFolder) backupFile exisist");
-
-            boolean res = deletedLayers.remove(backupFile);
-
-            System.err.println("autosave debug (moveToDeletedLayersFolder) res="+res);
-
-            boolean res2 = backupFile.delete();
-
-            System.err.println("autosave debug (moveToDeletedLayersFolder) res2="+res2);
+            deletedLayers.remove(backupFile);
+            if (!backupFile.delete()) {
+                System.err.println(String.format("Warning: Could not delete old backup file %s", backupFile));
+            }
         }
         if (f.renameTo(backupFile)) {
-            System.err.println("autosave debug (moveToDeletedLayersFolder) rename ok");
-
             deletedLayers.add(backupFile);
-
-            System.err.println("autosave debug (moveToDeletedLayersFolder) deletedLayers="+deletedLayers);
         } else {
             System.err.println(String.format("Warning: Could not move autosaved file %s to %s folder", f.getName(), deletedLayersDir.getName()));
-            boolean res3 = f.delete();
-
-            System.err.println("autosave debug (moveToDeletedLayersFolder) res3="+res3);
+            // we cannot move to deleted folder, so just try to delete it directly
+            if (!f.delete()) {
+                System.err.println(String.format("Warning: Could not delete backup file %s", f));
+            }
         }
         while (deletedLayers.size() > PROP_DELETED_LAYERS.get()) {
             File next = deletedLayers.remove();
-
-            System.err.println("autosave debug (moveToDeletedLayersFolder) next="+next);
-
-            boolean res4 = next.delete();
-
-            System.err.println("autosave debug (moveToDeletedLayersFolder) res4="+res4);
+            if (next == null) {
+                break;
+            }
+            if (!next.delete()) {
+                System.err.println(String.format("Warning: Could not delete archived backup file %s", next));
+            }
         }
     }
 
     public void dicardUnsavedLayers() {
-        List<File> ulfs = getUnsavedLayersFiles();
-        System.err.println("autosave debug (dicardUnsavedLayers) ulfs="+ulfs);
-        for (File f: ulfs) {
-            System.err.println("autosave debug (dicardUnsavedLayers) f="+f);
+        for (File f: getUnsavedLayersFiles()) {
             moveToDeletedLayersFolder(f);
         }
     }

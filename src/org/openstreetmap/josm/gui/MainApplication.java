@@ -253,7 +253,6 @@ public class MainApplication extends Main {
                     AutosaveTask autosaveTask = new AutosaveTask();
                     List<File> unsavedLayerFiles = autosaveTask.getUnsavedLayersFiles();
                     if (!unsavedLayerFiles.isEmpty()) {
-                        System.err.println("autosave debug: unsavedLayerFiles="+unsavedLayerFiles);
                         ExtendedDialog dialog = new ExtendedDialog(
                                 Main.parent,
                                 tr("Unsaved osm data"),
@@ -265,13 +264,10 @@ public class MainApplication extends Main {
                                 tr("It looks like JOSM crashed last time. Do you like to restore the data?"));
                         dialog.setButtonIcons(new String[] {"ok", "cancel", "dialogs/remove"});
                         int selection = dialog.showDialog().getValue();
-                        System.err.println("autosave debug: user selection="+selection);
                         if (selection == 1) {
                             autosaveTask.recoverUnsavedLayers();
                         } else if (selection == 3) {
-                            System.err.println("autosave debug: discard autosaved layers");
                             autosaveTask.dicardUnsavedLayers();
-                            System.err.println("autosave debug: discard autosaved layers [DONE]");
                         }
                     }
                     autosaveTask.schedule();
