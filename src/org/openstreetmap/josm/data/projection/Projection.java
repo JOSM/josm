@@ -27,6 +27,7 @@ public interface Projection {
         new UTM_France_DOM(),
         new TransverseMercatorLV(),
         new Puwg(),
+        new Epsg3008(), // SWEREF99 13 30
         new SwissGrid(),
     };
 

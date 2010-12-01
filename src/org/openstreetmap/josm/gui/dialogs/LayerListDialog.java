@@ -706,8 +706,7 @@ public class LayerListDialog extends ToggleDialog {
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
             JTextField tf = (JTextField) super.getTableCellEditorComponent(table, value, isSelected, row, column);
-            Layer l = (Layer) value;
-            tf.setText(l.getName());
+            tf.setText(value == null ? "" : ((Layer) value).getName());
             return tf;
         }
     }
