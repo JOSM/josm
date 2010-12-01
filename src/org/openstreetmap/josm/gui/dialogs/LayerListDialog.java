@@ -10,6 +10,7 @@ import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -36,7 +37,6 @@ import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
-import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -190,6 +190,19 @@ public class LayerListDialog extends ToggleDialog {
         layerList.getColumnModel().getColumn(1).setResizable(false);
         layerList.getColumnModel().getColumn(2).setCellRenderer(new LayerNameCellRenderer());
         layerList.getColumnModel().getColumn(2).setCellEditor(new LayerNameCellEditor(new JTextField()));
+        for (KeyStroke ks : new KeyStroke[] {
+                KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.SHIFT_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.SHIFT_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, InputEvent.SHIFT_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, InputEvent.SHIFT_MASK),
+                KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, 0),
+                KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, 0),
+                })
+        {
+            layerList.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(ks, new Object());
+        }
 
         add(new JScrollPane(layerList), BorderLayout.CENTER);
 
