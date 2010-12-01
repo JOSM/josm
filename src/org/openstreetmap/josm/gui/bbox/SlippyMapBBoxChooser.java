@@ -1,9 +1,11 @@
+// License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.gui.bbox;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -61,7 +63,15 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
 
         @Override public String getTileUrl(int zoom, int tilex, int tiley) { return source.getTileUrl(zoom, tilex, tiley); }
 
+        @Override public Image getAttributionImage() { return source.getAttributionImage(); }
+ 
+        @Override public String getAttributionText(int zoom, LatLon topLeft, LatLon botRight) { return source.getAttributionText(zoom, topLeft, botRight); }
 
+        @Override public boolean requiresAttribution() { return source.requiresAttribution(); }
+
+        @Override public String getAttributionLinkURL() { return source.getAttributionLinkURL(); }
+
+        @Override public String getTermsOfUseURL() { return source.getTermsOfUseURL(); }
     }
 
     /**
