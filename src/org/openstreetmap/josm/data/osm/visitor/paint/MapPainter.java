@@ -27,6 +27,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
 public class MapPainter {
+
     private final Graphics2D g;
     private final NavigatableComponent nc;
     private final boolean inactive;
@@ -34,6 +35,7 @@ public class MapPainter {
     private final boolean useStrokes;
     private final boolean showNames;
     private final boolean showIcons;
+    private final boolean outlineOnly;
 
     private final Color inactiveColor;
     private final Color textColor;
@@ -57,13 +59,17 @@ public class MapPainter {
     private static final double cosPHI = Math.cos(PHI);
     private static final double sinPHI = Math.sin(PHI);
 
-    public MapPainter(MapPaintSettings settings, Graphics2D g, boolean inactive, NavigatableComponent nc, boolean virtual, double dist, double circum) {
+    public MapPainter(MapPaintSettings settings, Graphics2D g, 
+        boolean inactive, NavigatableComponent nc, boolean virtual, 
+        double dist, double circum) {
+
         this.g = g;
         this.inactive = inactive;
         this.nc = nc;
         this.useStrokes = settings.getUseStrokesDistance() > dist;
         this.showNames = settings.getShowNamesDistance() > dist;
         this.showIcons = settings.getShowIconsDistance() > dist;
+        this.outlineOnly = settings.isOutlineOnly();
 
         this.inactiveColor = PaintColors.INACTIVE.get();
         this.textColor = PaintColors.TEXT.get();
@@ -248,7 +254,13 @@ public class MapPainter {
 
         /* set the opacity (alpha) level of the filled polygon */
         g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), fillAlpha));
-        g.fillPolygon(polygon);
+
+        if (outlineOnly) {
+            g.drawPolygon(polygon);
+        } else {
+            g.fillPolygon(polygon);
+        }
+            
 
         if (name != null) {
             Rectangle pb = polygon.getBounds();

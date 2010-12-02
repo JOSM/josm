@@ -59,6 +59,7 @@ public class DrawingPreference implements PreferenceSetting {
     private JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
     private JCheckBox useAntialiasing = new JCheckBox(tr("Smooth map graphics (antialiasing)"));
     private JCheckBox makeAutoMarkers = new JCheckBox(tr("Create markers when reading GPX."));
+    private JCheckBox outlineOnly = new JCheckBox(tr("Draw only outlines of areas"));
     private JComboBox waypointLabel = new JComboBox(new String[] {tr("Auto"), /* gpx data field name */ trc("gpx_field", "Name"),
                                       /* gpx data field name */ trc("gpx_field", "Desc(ription)"), tr("Both"), tr("None")});
 
@@ -276,6 +277,11 @@ public class DrawingPreference implements PreferenceSetting {
         inactive.setSelected(Main.pref.getBoolean("draw.data.inactive_color", true));
         panel.add(inactive, GBC.eop().insets(20,0,0,0));
 
+        // outlineOnly
+        outlineOnly.setSelected(Main.pref.getBoolean("draw.data.area_outline_only", false));
+        outlineOnly.setToolTipText(tr("This option suppresses the filling of areas, overriding anything specified in the selected style."));
+        panel.add(outlineOnly, GBC.eol().insets(20,0,0,5));
+
         panel.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
         scrollpane = new JScrollPane(panel);
         scrollpane.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
@@ -284,6 +290,7 @@ public class DrawingPreference implements PreferenceSetting {
 
     public boolean ok() {
         Main.pref.put("marker.makeautomarkers", makeAutoMarkers.isSelected());
+        Main.pref.put("draw.data.area_outline_only", outlineOnly.isSelected());
         Main.pref.put("draw.rawgps.lines", drawRawGpsLinesAll.isSelected());
         Main.pref.put("draw.rawgps.lines.localfiles", drawRawGpsLinesLocal.isSelected());
         Main.pref.put("draw.rawgps.max-line-length", drawRawGpsMaxLineLength.getText());

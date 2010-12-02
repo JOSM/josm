@@ -28,6 +28,7 @@ public class MapPaintSettings implements PreferenceChangedListener {
     private boolean fillUnselectedNode;
     private boolean fillTaggedNode;
     private boolean fillConnectionNode;
+    private boolean outlineOnly;
     private Color selectedColor;
     private Color relationSelectedColor;
     private Color highlightColor;
@@ -77,6 +78,9 @@ public class MapPaintSettings implements PreferenceChangedListener {
         fillUnselectedNode = Main.pref.getBoolean("mappaint.node.fill-unselected", false);
         fillTaggedNode = Main.pref.getBoolean("mappaint.node.fill-tagged", true);
         fillConnectionNode = Main.pref.getBoolean("mappaint.node.fill-connection", false);
+
+        outlineOnly = Main.pref.getBoolean("draw.data.area_outline_only", false);
+
     }
 
     public void preferenceChanged(PreferenceChangeEvent e) {
@@ -185,5 +189,9 @@ public class MapPaintSettings implements PreferenceChangedListener {
 
     public boolean isFillTaggedNode() {
         return fillTaggedNode;
+    }
+
+    public boolean isOutlineOnly() {
+        return outlineOnly;
     }
 }
