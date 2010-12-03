@@ -21,7 +21,7 @@ import org.openstreetmap.josm.Main;
 /**
  * Mirrors a file to a local file.
  * <p>
- * The file mirrored is only downloaded if it has been more than one day since last download
+ * The file mirrored is only downloaded if it has been more than 7 days since last download
  */
 public class MirroredInputStream extends InputStream {
     InputStream fs = null;
@@ -39,6 +39,17 @@ public class MirroredInputStream extends InputStream {
         this(name, destDir, -1L);
     }
 
+    /**
+     * Get an inputstream from a given filename, url or internal resource.
+     * @param name can be
+     *  - relative or absolute file name
+     *  - file:///SOME/FILE the same as above
+     *  - resource://SOME/FILE file from the classpath (usually in the current *.jar)
+     *  - http://... a url. It will be cached on disk.
+     * @param destDir the destination directory for the cache file. only applies for urls.
+     * @param maxTime the maximum age of the cache file (in seconds)
+     * @throws IOException when the resource with the given name could not be retrieved
+     */
     public MirroredInputStream(String name, String destDir, long maxTime) throws IOException {
         URL url;
         try {
@@ -125,7 +136,8 @@ public class MirroredInputStream extends InputStream {
             url = new URL(name);
             if (!url.getProtocol().equals("file"))
             {
-                String localPath = Main.pref.get("mirror." + url);
+                String prefKey = getPrefKey(url, destDir);
+                String localPath = Main.pref.get(prefKey);
                 if (localPath != null && localPath.length() > 0)
                 {
                     String[] lp = localPath.split(";");
@@ -134,13 +146,33 @@ public class MirroredInputStream extends InputStream {
                         lfile.delete();
                     }
                 }
-                Main.pref.put("mirror." + url, null);
+                Main.pref.put(prefKey, null);
             }
         } catch (java.net.MalformedURLException e) {}
     }
 
+    /**
+     * get preference key to store the location and age of the cached file.
+     * 2 resources that point to the same url, but that are to be stored in different
+     * directories will not share a cache file.
+     */
+    private static String getPrefKey(URL url, String destDir) {
+        StringBuilder prefKey = new StringBuilder("mirror.");
+        if (destDir != null) {
+            String prefDir = Main.pref.getPreferencesDir();
+            if (destDir.startsWith(prefDir)) {
+                destDir = destDir.substring(prefDir.length());
+            }
+            prefKey.append(destDir);
+            prefKey.append(".");
+        }
+        prefKey.append(url.toString());
+        return prefKey.toString();
+    }
+
     private File checkLocal(URL url, String destDir, long maxTime) throws IOException {
-        String localPath = Main.pref.get("mirror." + url);
+        String prefKey = getPrefKey(url, destDir);
+        String localPath = Main.pref.get(prefKey);
         File file = null;
         if (localPath != null && localPath.length() > 0) {
             String[] lp = localPath.split(";");
@@ -195,7 +227,7 @@ public class MirroredInputStream extends InputStream {
             }
             file = new File(destDir, localPath);
             destDirFile.renameTo(file);
-            Main.pref.put("mirror." + url, System.currentTimeMillis() + ";" + file);
+            Main.pref.put(prefKey, System.currentTimeMillis() + ";" + file);
         }
 
         return file;
