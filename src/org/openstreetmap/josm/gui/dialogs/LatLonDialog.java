@@ -178,7 +178,7 @@ public class LatLonDialog extends JDialog {
             coordinates = new LatLon(0,0);
         }
         this.coordinates = coordinates;
-        tfLatLon.setText(coordinates.latToString(CoordinateFormat.DEGREES_MINUTES_SECONDS) + " " + coordinates.lonToString(CoordinateFormat.DEGREES_MINUTES_SECONDS));
+        tfLatLon.setText(coordinates.latToString(CoordinateFormat.getDefaultFormat()) + " " + coordinates.lonToString(CoordinateFormat.getDefaultFormat()));
         actOK.setEnabled(true);
     }
 
