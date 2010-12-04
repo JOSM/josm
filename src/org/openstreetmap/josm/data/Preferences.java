@@ -619,6 +619,10 @@ public class Preferences {
         putDefault(key, s);
     }
     
+    /**
+     * Used to read a 2-dimensional array of strings from the preference file.
+     * If not a single entry could be found, def is returned.
+     */ 
     synchronized public Collection<Collection<String>> getArray(String key,
     Collection<Collection<String>> def) {
         if(def != null)
@@ -629,7 +633,7 @@ public class Preferences {
         while(properties.containsKey(key+num)) {
             col.add(getCollection(key+num++, null));
         }
-        return num == 0 && def != null ? def : col;
+        return num == 0 ? def : col;
     }
     
     synchronized public boolean putArray(String key, Collection<Collection<String>> val) {
