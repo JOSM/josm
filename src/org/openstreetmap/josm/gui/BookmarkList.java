@@ -121,7 +121,7 @@ public class BookmarkList extends JList {
                 model.addElement(b);
             }
         }
-        else if(!Main.applet) { /* FIXME: remove else clause after spring 2011 */
+        else if(!Main.applet) { /* FIXME: remove else clause after spring 2011, but fix windows installer before */
             File bookmarkFile = new File(Main.pref.getPreferencesDir(),"bookmarks");
             try {
                 LinkedList<Bookmark> bookmarks = new LinkedList<Bookmark>();
