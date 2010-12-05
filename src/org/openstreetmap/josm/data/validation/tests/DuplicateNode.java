@@ -374,7 +374,7 @@ public class DuplicateNode extends Test {
             target = nodes.iterator().next();
         }
 
-        if(checkAndConfirmOutlyingDeletes(nodes))
+        if(checkAndConfirmOutlyingDeletes(nodes, target))
             return MergeNodesAction.mergeNodes(Main.main.getEditLayer(), nodes, target);
 
         return null;// undoRedo handling done in mergeNodes
@@ -389,11 +389,11 @@ public class DuplicateNode extends Test {
      * Check whether user is about to delete data outside of the download area.
      * Request confirmation if he is.
      */
-    private static boolean checkAndConfirmOutlyingDeletes(LinkedHashSet<Node> del) {
+    private static boolean checkAndConfirmOutlyingDeletes(LinkedHashSet<Node> del, Node ignore) {
         Area a = Main.main.getCurrentDataSet().getDataSourceArea();
         if (a != null) {
             for (OsmPrimitive osm : del) {
-                if (osm instanceof Node && !osm.isNew()) {
+                if (osm instanceof Node && !osm.isNew() && osm != ignore) {
                     Node n = (Node) osm;
                     if (!a.contains(n.getCoor())) {
                         JPanel msg = new JPanel(new GridBagLayout());
