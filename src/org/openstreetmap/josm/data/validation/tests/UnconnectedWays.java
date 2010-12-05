@@ -215,6 +215,8 @@ public class UnconnectedWays extends Test {
             }
             if (w.containsNode(n))
                 return false;
+            if (OsmUtils.isTrue(n.get("noexit")))
+                return false;
             EastNorth coord = n.getEastNorth();
             if (coord == null)
                 return false;
