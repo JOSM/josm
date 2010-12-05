@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.geom.Area;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -106,6 +107,42 @@ public class Coastlines extends Test {
                 }
             }
 
+            // To avoid false positives on upload (only modified primitives
+            // are visited), we have to check possible connection to ways
+            // that are not in the set of validated primitives.
+            if (headWays == 0) {
+                Collection<OsmPrimitive> refs = head.getReferrers();
+                for (OsmPrimitive ref : refs) {
+                    if (ref != c1 && isCoastline(ref)) {
+                        // ref cannot be in <code>coastlines</code>, otherwise we would
+                        // have picked it up already
+                        headWays++;
+                        next = (Way) ref;
+
+                        if (head.equals(next.firstNode())) {
+                            headReversed = true;
+                        } else if (!head.equals(next.lastNode())) {
+                            headUnordered = true;
+                        }
+                    }
+                }
+            }
+            if (tailWays == 0) {
+                Collection<OsmPrimitive> refs = tail.getReferrers();
+                for (OsmPrimitive ref : refs) {
+                    if (ref != c1 && isCoastline(ref)) {
+                        tailWays++;
+                        prev = (Way) ref;
+
+                        if (tail.equals(prev.lastNode())) {
+                            tailReversed = true;
+                        } else if (!tail.equals(prev.firstNode())) {
+                            tailUnordered = true;
+                        }
+                    }
+                }
+            }
+
             List<OsmPrimitive> primitives = new ArrayList<OsmPrimitive>();
             primitives.add(c1);
 
@@ -129,11 +166,7 @@ public class Coastlines extends Test {
             }
 
             boolean unordered = false;
-            boolean reversed = false;
-
-            if (headWays == 1 && headReversed && tailWays == 1 && tailReversed) {
-                reversed = true;
-            }
+            boolean reversed = headWays == 1 && headReversed && tailWays == 1 && tailReversed;
 
             if (headWays > 1 || tailWays > 1) {
                 unordered = true;
@@ -176,11 +209,13 @@ public class Coastlines extends Test {
         if (!way.isUsable())
             return;
 
-        String natural = way.get("natural");
-        if (natural == null || !natural.equals("coastline"))
-            return;
+        if (isCoastline(way)) {
+            coastlines.add(way);
+        }
+    }
 
-        coastlines.add(way);
+    private static boolean isCoastline(OsmPrimitive osm) {
+        return osm instanceof Way && "coastline".equals(osm.get("natural"));
     }
 
     @Override
