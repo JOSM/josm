@@ -24,6 +24,7 @@ import org.openstreetmap.josm.actions.CloseChangesetAction;
 import org.openstreetmap.josm.actions.CombineWayAction;
 import org.openstreetmap.josm.actions.CopyAction;
 import org.openstreetmap.josm.actions.CreateCircleAction;
+import org.openstreetmap.josm.actions.CreateMultipolygonAction;
 import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.actions.DistributeAction;
 import org.openstreetmap.josm.actions.DownloadAction;
@@ -134,6 +135,8 @@ public class MainMenu extends JMenuBar {
 
     /* View menu */
     public final JosmAction toggleGPXLines = new ToggleGPXLinesAction();
+    public final InfoAction info = new InfoAction();
+    public final HistoryInfoAction historyinfo = new HistoryInfoAction();
 
     /* Tools menu */
     public final JosmAction splitWay = new SplitWayAction();
@@ -153,8 +156,7 @@ public class MainMenu extends JMenuBar {
     public final JosmAction unglueNodes = new UnGlueAction();
     public final JosmAction simplifyWay = new SimplifyWayAction();
     public final JosmAction joinAreas = new JoinAreasAction();
-    public final InfoAction info = new InfoAction();
-    public final HistoryInfoAction historyinfo = new HistoryInfoAction();
+    public final JosmAction createMultipolygon = new CreateMultipolygonAction();
 
     /* Audio menu */
     public final JosmAction audioPlayPause = new AudioPlayPauseAction();
@@ -318,7 +320,9 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, mergeNodes);
         add(toolsMenu, joinNodeWay);
         add(toolsMenu, unglueNodes);
+        toolsMenu.addSeparator();
         add(toolsMenu, joinAreas);
+        add(toolsMenu, createMultipolygon);
 
         if (!Main.pref.getBoolean("audio.menuinvisible", false)) {
             audioMenu = addMenu(marktr("Audio"), KeyEvent.VK_A, 5, ht("/Menu/Audio"));
