@@ -69,6 +69,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
     }
 
     static public final String VISIBLE_PROP = Layer.class.getName() + ".visible";
+    static public final String OPACITY_PROP = Layer.class.getName() + ".opacity";
     static public final String NAME_PROP = Layer.class.getName() + ".name";
 
 
@@ -80,6 +81,12 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
      *
      */
     private boolean visible = true;
+
+    /**
+     * The opacity of the layer.
+     *
+     */
+    private double opacity = 1;
 
     /**
      * The layer should be handled as a background layer in automatic handling
@@ -110,6 +117,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
      * Paint the dataset using the engine set.
      * @param mv The object that can translate GeoPoints to screen coordinates.
      */
+    @Override
     abstract public void paint(Graphics2D g, MapView mv, Bounds box);
     /**
      * Return a representative small image for this layer. The image must not
@@ -159,6 +167,7 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
      * to the layerlist dialog, because there may be no such dialog yet (loaded
      * via command line parameter).
      */
+    @Override
     public void destroy() {}
 
     public File getAssociatedFile() { return associatedFile; }
@@ -215,10 +224,12 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
      * @param visible true, if the layer is visible; false, otherwise.
      */
     public void setVisible(boolean visible) {
-        boolean oldValue = this.visible;
+        boolean oldValue = isVisible();
         this.visible  = visible;
-        if (oldValue != this.visible) {
-            fireVisibleChanged(oldValue, this.visible);
+        if (visible && opacity == 0) {
+            setOpacity(1);
+        } else if (oldValue != isVisible()) {
+            fireVisibleChanged(oldValue, isVisible());
         }
     }
 
@@ -227,7 +238,25 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
      * @return  true if this layer is visible. False, otherwise.
      */
     public boolean isVisible() {
-        return visible;
+        return visible && opacity != 0;
+    }
+
+    public double getOpacity() {
+        return opacity;
+    }
+
+    public void setOpacity(double opacity) {
+        if (!(opacity >= 0 && opacity <= 1))
+            throw new IllegalArgumentException("Opacity value must be between 0 and 1");
+        double oldOpacity = getOpacity();
+        boolean oldVisible = isVisible();
+        this.opacity = opacity;
+        if (oldOpacity != getOpacity()) {
+            fireOpacityChanged(oldOpacity, getOpacity());
+        }
+        if (oldVisible != isVisible()) {
+            fireVisibleChanged(oldVisible, isVisible());
+        }
     }
 
     /**
@@ -263,6 +292,16 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
      */
     protected void fireVisibleChanged(boolean oldValue, boolean newValue) {
         propertyChangeSupport.firePropertyChange(VISIBLE_PROP, oldValue, newValue);
+    }
+
+    /**
+     * fires a property change for the property {@see #OPACITY_PROP}
+     *
+     * @param oldValue the old value
+     * @param newValue the new value
+     */
+    protected void fireOpacityChanged(double oldValue, double newValue) {
+        propertyChangeSupport.firePropertyChange(OPACITY_PROP, oldValue, newValue);
     }
 
     /**

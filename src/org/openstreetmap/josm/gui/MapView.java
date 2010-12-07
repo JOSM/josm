@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -183,6 +184,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     private BufferedImage offscreenBuffer;
     // Layers that wasn't changed since last paint
     private final List<Layer> nonChangedLayers = new ArrayList<Layer>();
+    private Layer changedLayer;
     private int lastViewID;
     private boolean paintPreferencesChanged = true;
     private Rectangle lastClipBounds = new Rectangle();
@@ -439,6 +441,14 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         return ret;
     }
 
+    private void paintLayer(Layer layer, Graphics2D g, Bounds box) {
+        if (layer.getOpacity() < 1) {
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)layer.getOpacity()));
+        }
+        layer.paint(g, this, box);
+        g.setPaintMode();
+    }
+
     /**
      * Draw the component.
      */
@@ -453,7 +463,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
 
         int nonChangedLayersCount = 0;
         for (Layer l: visibleLayers) {
-            if (l.isChanged()) {
+            if (l.isChanged() || l == changedLayer) {
                 break;
             } else {
                 nonChangedLayersCount++;
@@ -489,7 +499,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             g2.fillRect(0, 0, getWidth(), getHeight());
 
             for (int i=0; i<nonChangedLayersCount; i++) {
-                visibleLayers.get(i).paint(g2, this, box);
+                paintLayer(visibleLayers.get(i),g2, box);
             }
         } else {
             // Maybe there were more unchanged layers then last time - draw them to buffer
@@ -497,12 +507,13 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
                 Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
                 g2.setClip(g.getClip());
                 for (int i=nonChangedLayers.size(); i<nonChangedLayersCount; i++) {
-                    visibleLayers.get(i).paint(g2, this, box);
+                    paintLayer(visibleLayers.get(i),g2, box);
                 }
             }
         }
 
         nonChangedLayers.clear();
+        changedLayer = null;
         for (int i=0; i<nonChangedLayersCount; i++) {
             nonChangedLayers.add(visibleLayers.get(i));
         }
@@ -513,7 +524,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         tempG.drawImage(nonChangedLayersBuffer, 0, 0, null);
 
         for (int i=nonChangedLayersCount; i<visibleLayers.size(); i++) {
-            visibleLayers.get(i).paint(tempG, this, box);
+            paintLayer(visibleLayers.get(i),tempG, box);
         }
 
         for (MapViewPaintable mvp : temporaryLayers) {
@@ -782,6 +793,12 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(Layer.VISIBLE_PROP)) {
             repaint();
+        } else if (evt.getPropertyName().equals(Layer.OPACITY_PROP)) {
+            Layer l = (Layer)evt.getSource();
+            if (l.isVisible()) {
+                changedLayer = l;
+                repaint();
+            }
         } else if (evt.getPropertyName().equals(OsmDataLayer.REQUIRES_SAVE_TO_DISK_PROP)
                 || evt.getPropertyName().equals(OsmDataLayer.REQUIRES_UPLOAD_TO_SERVER_PROP)) {
             OsmDataLayer layer = (OsmDataLayer)evt.getSource();
