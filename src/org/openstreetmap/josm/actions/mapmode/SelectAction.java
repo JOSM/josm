@@ -26,6 +26,7 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.RotateCommand;
+import org.openstreetmap.josm.command.ScaleCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -60,39 +61,37 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class SelectAction extends MapMode implements SelectionEnded {
     //static private final Logger logger = Logger.getLogger(SelectAction.class.getName());
 
-    enum Mode { move, rotate, select }
+    enum Mode { move, rotate, scale, select }
+    
     private Mode mode = null;
     private SelectionManager selectionManager;
-
     private boolean cancelDrawMode = false;
     private boolean didMouseDrag = false;
-
     /**
      * The component this SelectAction is associated with.
      */
     private final MapView mv;
-
     /**
      * The old cursor before the user pressed the mouse button.
      */
     private Cursor oldCursor;
-
     /**
-     * The position of the mouse before the user moves a node.
+     * The position of the mouse before the user starts to drag it while pressing a button.
      */
-    private Point mousePos;
-
+    private Point startingDraggingPos;
+    /**
+     * The last known position of the mouse.
+     */
+    private Point lastMousePos;
     /**
      * The time of the user mouse down event.
      */
     private long mouseDownTime = 0;
-
     /**
      * The time which needs to pass between click and release before something
      * counts as a move, in milliseconds
      */
     private int initialMoveDelay;
-
     /**
      * The screen distance which needs to be travelled before something
      * counts as a move, in pixels
@@ -105,15 +104,15 @@ public class SelectAction extends MapMode implements SelectionEnded {
      * @param mapFrame The MapFrame this action belongs to.
      */
     public SelectAction(MapFrame mapFrame) {
-        super(tr("Select"), "move/move", tr("Select, move and rotate objects"),
+        super(tr("Select"), "move/move", tr("Select, move, scale and rotate objects"),
                 Shortcut.registerShortcut("mapmode:select", tr("Mode: {0}", tr("Select")), KeyEvent.VK_S, Shortcut.GROUP_EDIT),
                 mapFrame,
                 getCursor("normal", "selection", Cursor.DEFAULT_CURSOR));
         mv = mapFrame.mapView;
         putValue("help", "Action/Move/Move");
         selectionManager = new SelectionManager(this, false, mv);
-        initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
-        initialMoveThreshold = Main.pref.getInteger("edit.initial-move-threshold",5);
+        initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay", 200);
+        initialMoveThreshold = Main.pref.getInteger("edit.initial-move-threshold", 5);
     }
 
     private static Cursor getCursor(String name, String mod, int def) {
@@ -138,7 +137,8 @@ public class SelectAction extends MapMode implements SelectionEnded {
         }
     }
 
-    @Override public void enterMode() {
+    @Override
+    public void enterMode() {
         super.enterMode();
         mv.addMouseListener(this);
         mv.addMouseMotionListener(this);
@@ -146,7 +146,8 @@ public class SelectAction extends MapMode implements SelectionEnded {
                 Main.pref.getInteger("mappaint.node.virtual-size", 8) != 0);
     }
 
-    @Override public void exitMode() {
+    @Override
+    public void exitMode() {
         super.exitMode();
         selectionManager.unregister(mv);
         mv.removeMouseListener(this);
@@ -159,36 +160,47 @@ public class SelectAction extends MapMode implements SelectionEnded {
      * objects (if one of them is under the mouse) or the current one under the
      * mouse (which will become selected).
      */
-    @Override public void mouseDragged(MouseEvent e) {
-        if(!mv.isActiveLayerVisible())
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        if (!mv.isActiveLayerVisible())
             return;
 
         cancelDrawMode = true;
-        if (mode == Mode.select) return;
+        if (mode == Mode.select)
+            return;
 
         // do not count anything as a move if it lasts less than 100 milliseconds.
-        if ((mode == Mode.move) && (System.currentTimeMillis() - mouseDownTime < initialMoveDelay)) return;
+        if ((mode == Mode.move) && (System.currentTimeMillis() - mouseDownTime < initialMoveDelay))
+            return;
 
-        if(mode != Mode.rotate) // button is pressed in rotate mode
+        if (mode != Mode.rotate && mode != Mode.scale) // button is pressed in rotate mode
+        {
             if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == 0)
                 return;
+        }
 
         if (mode == Mode.move) {
             setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
         }
 
+        if (startingDraggingPos == null) {
+            startingDraggingPos = new Point(e.getX(), e.getY());
+        }
+
         if (!initialMoveThresholdExceeded) {
-            int dxp = mousePos.x - e.getX();
-            int dyp = mousePos.y - e.getY();
-            int dp = (int) Math.sqrt(dxp*dxp+dyp*dyp);
-            if (dp < initialMoveThreshold) return;
+            int dxp = lastMousePos.x - e.getX();
+            int dyp = lastMousePos.y - e.getY();
+            int dp = (int) Math.sqrt(dxp * dxp + dyp * dyp);
+            if (dp < initialMoveThreshold)
+                return;
             initialMoveThresholdExceeded = true;
         }
 
-        EastNorth mouseEN = mv.getEastNorth(e.getX(), e.getY());
-        EastNorth mouseStartEN = mv.getEastNorth(mousePos.x, mousePos.y);
-        double dx = mouseEN.east() - mouseStartEN.east();
-        double dy = mouseEN.north() - mouseStartEN.north();
+        EastNorth currentEN = mv.getEastNorth(e.getX(), e.getY());
+        EastNorth lastEN = mv.getEastNorth(lastMousePos.x, lastMousePos.y);
+        //EastNorth startEN = mv.getEastNorth(startingDraggingPos.x, startingDraggingPos.y);
+        double dx = currentEN.east() - lastEN.east();
+        double dy = currentEN.north() - lastEN.north();
         if (dx == 0 && dy == 0)
             return;
 
@@ -198,7 +210,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
             for (WaySegment virtualWay : virtualWays) {
                 Way w = virtualWay.way;
                 Way wnew = new Way(w);
-                wnew.addNode(virtualWay.lowerIndex+1, virtualNode);
+                wnew.addNode(virtualWay.lowerIndex + 1, virtualNode);
                 virtualCmds.add(new ChangeCommand(w, wnew));
             }
             virtualCmds.add(new MoveCommand(virtualNode, dx, dy));
@@ -206,28 +218,28 @@ public class SelectAction extends MapMode implements SelectionEnded {
                     "Add and move a virtual new node to {0} ways", virtualWays.size(),
                     virtualWays.size());
             Main.main.undoRedo.add(new SequenceCommand(text, virtualCmds));
-            getCurrentDataSet().setSelected(Collections.singleton((OsmPrimitive)virtualNode));
+            getCurrentDataSet().setSelected(Collections.singleton((OsmPrimitive) virtualNode));
             virtualWays.clear();
             virtualNode = null;
         } else {
-            // Currently we support moving and rotating, which do not affect relations.
+            // Currently we support only transformations which do not affect relations.
             // So don't add them in the first place to make handling easier
             Collection<OsmPrimitive> selection = getCurrentDataSet().getSelectedNodesAndWays();
             Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
 
-            // when rotating, having only one node makes no sense - quit silently
-            if (mode == Mode.rotate && affectedNodes.size() < 2)
+            // for these transformations, having only one node makes no sense - quit silently
+            if (affectedNodes.size() < 2 && (mode == Mode.rotate || mode == Mode.scale))
                 return;
 
             Command c = !Main.main.undoRedo.commands.isEmpty()
-            ? Main.main.undoRedo.commands.getLast() : null;
+                    ? Main.main.undoRedo.commands.getLast() : null;
             if (c instanceof SequenceCommand) {
-                c = ((SequenceCommand)c).getLastCommand();
+                c = ((SequenceCommand) c).getLastCommand();
             }
 
             if (mode == Mode.move) {
-                if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand)c).getParticipatingPrimitives())) {
-                    ((MoveCommand)c).moveAgain(dx,dy);
+                if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
+                    ((MoveCommand) c).moveAgain(dx, dy);
                 } else {
                     Main.main.undoRedo.add(
                             c = new MoveCommand(selection, dx, dy));
@@ -242,36 +254,42 @@ public class SelectAction extends MapMode implements SelectionEnded {
                                 Main.parent,
                                 tr("Cannot move objects outside of the world."),
                                 tr("Warning"),
-                                JOptionPane.WARNING_MESSAGE
-
-                        );
+                                JOptionPane.WARNING_MESSAGE);
                         restoreCursor();
                         return;
                     }
                 }
             } else if (mode == Mode.rotate) {
-                if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand)c).getRotatedNodes())) {
-                    ((RotateCommand)c).rotateAgain(mouseStartEN, mouseEN);
+                if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand) c).getTransformedNodes())) {
+                    ((RotateCommand) c).handleEvent(currentEN);
                 } else {
-                    Main.main.undoRedo.add(new RotateCommand(selection, mouseStartEN, mouseEN));
+                    Main.main.undoRedo.add(new RotateCommand(selection, currentEN));
+                }
+            } else if (mode == Mode.scale) {
+                if (c instanceof ScaleCommand && affectedNodes.equals(((ScaleCommand) c).getTransformedNodes())) {
+                    ((ScaleCommand) c).handleEvent(currentEN);
+                } else {
+                    Main.main.undoRedo.add(new ScaleCommand(selection, currentEN));
                 }
             }
         }
 
         mv.repaint();
-        mousePos = e.getPoint();
+        if (mode != Mode.scale) {
+            lastMousePos = e.getPoint();
+        }
 
         didMouseDrag = true;
     }
 
-    @Override public void mouseMoved(MouseEvent e) {
+    @Override
+    public void mouseMoved(MouseEvent e) {
         // Mac OSX simulates with  ctrl + mouse 1  the second mouse button hence no dragging events get fired.
         //
-        if ((Main.platform instanceof PlatformHookOsx) && mode == Mode.rotate) {
+        if ((Main.platform instanceof PlatformHookOsx) && (mode == Mode.rotate || mode == Mode.scale)) {
             mouseDragged(e);
         }
     }
-
     private Node virtualNode = null;
     private Collection<WaySegment> virtualWays = new LinkedList<WaySegment>();
 
@@ -294,16 +312,14 @@ public class SelectAction extends MapMode implements SelectionEnded {
             Point p = e.getPoint();
             Way w = null;
 
-            for(WaySegment ws : mv.getNearestWaySegments(p, OsmPrimitive.isSelectablePredicate)) {
+            for (WaySegment ws : mv.getNearestWaySegments(p, OsmPrimitive.isSelectablePredicate)) {
                 w = ws.way;
 
                 Point2D p1 = mv.getPoint2D(wnp.a = w.getNode(ws.lowerIndex));
-                Point2D p2 = mv.getPoint2D(wnp.b = w.getNode(ws.lowerIndex+1));
-                if(SimplePaintVisitor.isLargeSegment(p1, p2, virtualSpace))
-                {
-                    Point2D pc = new Point2D.Double((p1.getX()+p2.getX())/2, (p1.getY()+p2.getY())/2);
-                    if (p.distanceSq(pc) < virtualSnapDistSq)
-                    {
+                Point2D p2 = mv.getPoint2D(wnp.b = w.getNode(ws.lowerIndex + 1));
+                if (SimplePaintVisitor.isLargeSegment(p1, p2, virtualSpace)) {
+                    Point2D pc = new Point2D.Double((p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
+                    if (p.distanceSq(pc) < virtualSnapDistSq) {
                         // Check that only segments on top of each other get added to the
                         // virtual ways list. Otherwise ways that coincidentally have their
                         // virtual node at the same spot will be joined which is likely unwanted
@@ -326,7 +342,6 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
         return !virtualWays.isEmpty();
     }
-
     private Collection<OsmPrimitive> cycleList = Collections.emptyList();
     private boolean cyclePrims = false;
     private OsmPrimitive cycleStart = null;
@@ -346,8 +361,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
             Point p = e.getPoint();
             boolean waitForMouseUp = Main.pref.getBoolean("mappaint.select.waits-for-mouse-up", false);
             boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-            boolean alt = ((e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0
-                    || Main.pref.getBoolean("selectaction.cycles.multiple.matches", false));
+            boolean alt = ((e.getModifiers() & (ActionEvent.ALT_MASK | InputEvent.ALT_GRAPH_MASK)) != 0 || Main.pref.getBoolean("selectaction.cycles.multiple.matches", false));
 
             if (!alt) {
                 cycleList = MapView.asColl(osm);
@@ -363,7 +377,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                     cycleList = new LinkedList<OsmPrimitive>(mv.getNearestWays(p, OsmPrimitive.isSelectablePredicate));
                 }
 
-                if (cycleList.size()>1) {
+                if (cycleList.size() > 1) {
                     cyclePrims = false;
 
                     OsmPrimitive old = osm;
@@ -377,7 +391,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
                     // special case:  for cycle groups of 2, we can toggle to the
                     // true nearest primitive on mousePressed right away
-                    if (cycleList.size()==2 && !waitForMouseUp) {
+                    if (cycleList.size() == 2 && !waitForMouseUp) {
                         if (!(osm.equals(old) || osm.isNew() || ctrl)) {
                             cyclePrims = false;
                             osm = old;
@@ -404,20 +418,21 @@ public class SelectAction extends MapMode implements SelectionEnded {
      * Also remember the starting position of the movement and change the mouse
      * cursor to movement.
      */
-    @Override public void mousePressed(MouseEvent e) {
+    @Override
+    public void mousePressed(MouseEvent e) {
         debug("mousePressed: e.getPoint()=" + e.getPoint());
 
         // return early
-        if(!mv.isActiveLayerVisible()
-                || !(Boolean)this.getValue("active")
-                || e.getButton() != MouseEvent.BUTTON1)
+        if (!mv.isActiveLayerVisible() || !(Boolean) this.getValue("active") || e.getButton() != MouseEvent.BUTTON1) {
             return;
+        }
 
         // request focus in order to enable the expected keyboard shortcuts
         mv.requestFocus();
 
         boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
         boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
+        boolean alt = (e.getModifiers() & ActionEvent.ALT_MASK) != 0;
 
         // We don't want to change to draw tool if the user tries to (de)select
         // stuff but accidentally clicks in an empty area when selection is empty
@@ -425,7 +440,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
         didMouseDrag = false;
         initialMoveThresholdExceeded = false;
         mouseDownTime = System.currentTimeMillis();
-        mousePos = e.getPoint();
+        lastMousePos = e.getPoint();
 
         Collection<OsmPrimitive> c = MapView.asColl(
                 mv.getNearestNodeOrWay(e.getPoint(), OsmPrimitive.isSelectablePredicate, false));
@@ -441,6 +456,18 @@ public class SelectAction extends MapMode implements SelectionEnded {
             // Mode.move   redraws when mouseDragged is called
             // Mode.rotate redraws here
             setCursor(ImageProvider.getCursor("rotate", null));
+            mv.repaint();
+        } else if (alt && ctrl) {
+            mode = Mode.scale;
+
+            if (getCurrentDataSet().getSelected().isEmpty()) {
+                getCurrentDataSet().setSelected(c);
+            }
+
+            // Mode.select redraws when selectPrims is called
+            // Mode.move   redraws when mouseDragged is called
+            // Mode.scale redraws here
+            setCursor(ImageProvider.getCursor("scale", null));
             mv.repaint();
         } else if (!c.isEmpty()) {
             mode = Mode.move;
@@ -465,15 +492,18 @@ public class SelectAction extends MapMode implements SelectionEnded {
     public void mouseReleased(MouseEvent e) {
         debug("mouseReleased: e.getPoint()=" + e.getPoint());
 
-        if(!mv.isActiveLayerVisible())
+        if (!mv.isActiveLayerVisible()) {
             return;
+        }
+
+        startingDraggingPos = null;
 
         restoreCursor();
         if (mode == Mode.select) {
             selectionManager.unregister(mv);
 
             // Select Draw Tool if no selection has been made
-            if(getCurrentDataSet().getSelected().size() == 0 && !cancelDrawMode) {
+            if (getCurrentDataSet().getSelected().size() == 0 && !cancelDrawMode) {
                 Main.map.selectDrawTool(true);
                 return;
             }
@@ -487,15 +517,16 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
                 // do nothing if the click was to short to be recognized as a drag,
                 // but the release position is farther than 10px away from the press position
-                if (mousePos.distanceSq(e.getPoint())<100) {
+                if (lastMousePos.distanceSq(e.getPoint()) < 100) {
                     selectPrims(cyclePrims(cycleList, e), e, true, false);
 
                     // If the user double-clicked a node, change to draw mode
                     Collection<OsmPrimitive> c = getCurrentDataSet().getSelected();
-                    if(e.getClickCount() >=2 && c.size() == 1 && c.iterator().next() instanceof Node) {
+                    if (e.getClickCount() >= 2 && c.size() == 1 && c.iterator().next() instanceof Node) {
                         // We need to do it like this as otherwise drawAction will see a double
                         // click and switch back to SelectMode
-                        Main.worker.execute(new Runnable(){
+                        Main.worker.execute(new Runnable() {
+
                             public void run() {
                                 Main.map.selectDrawTool(true);
                             }
@@ -507,7 +538,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                 int max = Main.pref.getInteger("warn.move.maxelements", 20), limit = max;
                 for (OsmPrimitive osm : getCurrentDataSet().getSelected()) {
                     if (osm instanceof Way) {
-                        limit -= ((Way)osm).getNodes().size();
+                        limit -= ((Way) osm).getNodes().size();
                     }
                     if ((limit -= 1) < 0) {
                         break;
@@ -517,16 +548,14 @@ public class SelectAction extends MapMode implements SelectionEnded {
                     ExtendedDialog ed = new ExtendedDialog(
                             Main.parent,
                             tr("Move elements"),
-                            new String[] {tr("Move them"), tr("Undo move")});
-                    ed.setButtonIcons(new String[] {"reorder.png", "cancel.png"});
-                    ed.setContent(tr("You moved more than {0} elements. "
-                            + "Moving a large number of elements is often an error.\n"
-                            + "Really move them?", max));
+                            new String[]{tr("Move them"), tr("Undo move")});
+                    ed.setButtonIcons(new String[]{"reorder.png", "cancel.png"});
+                    ed.setContent(tr("You moved more than {0} elements. " + "Moving a large number of elements is often an error.\n" + "Really move them?", max));
                     ed.setCancelButton(2);
                     ed.toggleEnable("movedManyElements");
                     ed.showDialog();
 
-                    if(ed.getValue() != 1) {
+                    if (ed.getValue() != 1) {
                         Main.main.undoRedo.undo();
                     }
                 } else {
@@ -571,7 +600,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
             OsmPrimitive first = prims.iterator().next(), foundInDS = null;
             nxt = first;
 
-            for (Iterator<OsmPrimitive> i = prims.iterator(); i.hasNext(); ) {
+            for (Iterator<OsmPrimitive> i = prims.iterator(); i.hasNext();) {
                 if (cyclePrims && shift) {
                     if (!(nxt = i.next()).isSelected()) {
                         debug("cyclePrims(): taking " + nxt.getId());
@@ -630,7 +659,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                 nodesToMerge.add(target.iterator().next());
 
                 Command cmd = MergeNodesAction.mergeNodes(Main.main.getEditLayer(), nodesToMerge, target.iterator().next());
-                if(cmd != null) {
+                if (cmd != null) {
                     Main.main.undoRedo.add(cmd);
                 }
             }
@@ -643,8 +672,9 @@ public class SelectAction extends MapMode implements SelectionEnded {
         DataSet ds = getCurrentDataSet();
 
         // not allowed together: do not change dataset selection, return early
-        if ((shift && ctrl) || (ctrl && !released) || (!virtualWays.isEmpty()))
+        if ((shift && ctrl) || (ctrl && !released) || (!virtualWays.isEmpty())) {
             return;
+        }
 
         if (!released) {
             // Don't replace the selection if the user clicked on a
@@ -671,18 +701,23 @@ public class SelectAction extends MapMode implements SelectionEnded {
         }
     }
 
-    @Override public String getModeHelpText() {
-        if (mode == Mode.select)
+    @Override
+    public String getModeHelpText() {
+        if (mode == Mode.select) {
             return tr("Release the mouse button to select the objects in the rectangle.");
-        else if (mode == Mode.move)
+        } else if (mode == Mode.move) {
             return tr("Release the mouse button to stop moving. Ctrl to merge with nearest node.");
-        else if (mode == Mode.rotate)
+        } else if (mode == Mode.rotate) {
             return tr("Release the mouse button to stop rotating.");
-        else
-            return tr("Move objects by dragging; Shift to add to selection (Ctrl to toggle); Shift-Ctrl to rotate selected; or change selection");
+        } else if (mode == Mode.scale) {
+            return tr("Release the mouse button to stop scaling.");
+        } else {
+            return tr("Move objects by dragging; Shift to add to selection (Ctrl to toggle); Shift-Ctrl to rotate selected; Alt-Ctrl to scale selected; or change selection");
+        }
     }
 
-    @Override public boolean layerIsSupported(Layer l) {
+    @Override
+    public boolean layerIsSupported(Layer l) {
         return l instanceof OsmDataLayer;
     }
 

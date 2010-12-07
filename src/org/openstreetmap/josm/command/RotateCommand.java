@@ -1,19 +1,15 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 
 import javax.swing.JLabel;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -21,125 +17,88 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @author Frederik Ramm <frederik@remote.org>
  */
-public class RotateCommand extends Command {
+public class RotateCommand extends TransformNodesCommand {
 
     /**
-     * The objects to rotate.
-     */
-    private Collection<Node> nodes = new LinkedList<Node>();
-
-    /**
-     * pivot point
+     * Pivot point
      */
     private EastNorth pivot;
 
     /**
-     * Small helper for holding the interesting part of the old data state of the
-     * objects.
+     * World position of the mouse when the user started the command.
+     *
      */
-    public static class OldState {
-        LatLon latlon;
-        EastNorth eastNorth;
-        boolean modified;
-    }
+    EastNorth startEN = null;
 
     /**
      * angle of rotation starting click to pivot
      */
-    private double startAngle;
+    private double startAngle = 0.0;
 
     /**
      * computed rotation angle between starting click and current mouse pos
      */
-    private double rotationAngle;
-
-    /**
-     * List of all old states of the objects.
-     */
-    private Map<Node, OldState> oldState = new HashMap<Node, OldState>();
+    private double rotationAngle = 0.0;
 
     /**
      * Creates a RotateCommand.
-     * Assign the initial object set, compute pivot point and rotation angle.
-     * Computation of pivot point is done by the same rules that are used in
-     * the "align nodes in circle" action.
+     * Assign the initial object set, compute pivot point and inital rotation angle.
      */
-    public RotateCommand(Collection<OsmPrimitive> objects, EastNorth start, EastNorth end) {
+    public RotateCommand(Collection<OsmPrimitive> objects, EastNorth currentEN) {
+        super(objects);
 
-        this.nodes = AllNodesVisitor.getAllNodes(objects);
-        pivot = new EastNorth(0,0);
+        pivot = getNodesCenter();
 
-        for (Node n : this.nodes) {
-            OldState os = new OldState();
-            os.latlon = new LatLon(n.getCoor());
-            os.eastNorth = n.getEastNorth();
-            os.modified = n.isModified();
-            oldState.put(n, os);
-            pivot = pivot.add(os.eastNorth.east(), os.eastNorth.north());
-        }
-        pivot = new EastNorth(pivot.east()/this.nodes.size(), pivot.north()/this.nodes.size());
+        // We remember the very first position of the mouse for this action.
+        // Note that SelectAction will keep the same ScaleCommand when the user
+        // releases the button and presses it again with the same modifiers.
+        // The very first point of this operation is stored here.
+        startEN   = currentEN;
 
-        rotationAngle = Math.PI/2;
-        rotateAgain(start, end);
+        startAngle = getAngle(currentEN);
+        rotationAngle = 0.0;
+
+        handleEvent(currentEN);
+    }
+    
+    /**
+     * Get angle between the horizontal axis and the line formed by the pivot and give points.
+     **/
+    protected double getAngle(EastNorth currentEN) {
+        if ( pivot == null )
+            return 0.0; // should never happen by contract
+        return Math.atan2(currentEN.east()-pivot.east(), currentEN.north()-pivot.north());
     }
 
     /**
-     * Rotate the same set of objects again, by the angle between given
-     * start and end nodes. Internally this is added to the existing
-     * rotation so a later undo will undo the whole rotation.
+     * Compute new rotation angle and transform nodes accordingly.
      */
-    public void rotateAgain(EastNorth start, EastNorth end) {
-        // compute angle
-        startAngle = Math.atan2(start.east()-pivot.east(), start.north()-pivot.north());
-        double endAngle = Math.atan2(end.east()-pivot.east(), end.north()-pivot.north());
-        rotationAngle += startAngle - endAngle;
-        rotateNodes(false);
+    @Override
+    public void handleEvent(EastNorth currentEN) {
+        double currentAngle = getAngle(currentEN);
+        rotationAngle = currentAngle - startAngle;
+        transformNodes();
     }
 
     /**
-     * Helper for actually rotationg the nodes.
-     * @param setModified - true if rotated nodes should be flagged "modified"
+     * Rotate nodes.
      */
-    private void rotateNodes(boolean setModified) {
+    @Override
+    protected void transformNodes() {
         for (Node n : nodes) {
             double cosPhi = Math.cos(rotationAngle);
             double sinPhi = Math.sin(rotationAngle);
-            EastNorth oldEastNorth = oldState.get(n).eastNorth;
+            EastNorth oldEastNorth = oldStates.get(n).eastNorth;
             double x = oldEastNorth.east() - pivot.east();
             double y = oldEastNorth.north() - pivot.north();
-            double nx =  sinPhi * x + cosPhi * y + pivot.east();
-            double ny = -cosPhi * x + sinPhi * y + pivot.north();
+            double nx =  cosPhi * x + sinPhi * y + pivot.east();
+            double ny = -sinPhi * x + cosPhi * y + pivot.north();
             n.setEastNorth(new EastNorth(nx, ny));
-            if (setModified) {
-                n.setModified(true);
-            }
         }
     }
 
-    @Override public boolean executeCommand() {
-        rotateNodes(true);
-        return true;
-    }
-
-    @Override public void undoCommand() {
-        for (Node n : nodes) {
-            OldState os = oldState.get(n);
-            n.setCoor(os.latlon);
-            n.setModified(os.modified);
-        }
-    }
-
-    @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
-        for (OsmPrimitive osm : nodes) {
-            modified.add(osm);
-        }
-    }
-
-    @Override public JLabel getDescription() {
+    @Override
+    public JLabel getDescription() {
         return new JLabel(trn("Rotate {0} node", "Rotate {0} nodes", nodes.size(), nodes.size()), ImageProvider.get("data", "node"), JLabel.HORIZONTAL);
-    }
-
-    public Collection<Node> getRotatedNodes() {
-        return nodes;
     }
 }
