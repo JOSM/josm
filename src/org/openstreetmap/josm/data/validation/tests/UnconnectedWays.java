@@ -99,6 +99,7 @@ public class UnconnectedWays extends Test {
                     }
                     if ("turning_circle".equals(en.get("highway"))
                         || "bus_stop".equals(en.get("highway"))
+                        || "buffer_stop".equals(en.get("railway"))
                         || OsmUtils.isTrue(en.get("noexit"))
                         || en.hasKey("barrier")) {
                         continue;
