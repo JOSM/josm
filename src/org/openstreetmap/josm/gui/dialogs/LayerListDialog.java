@@ -140,6 +140,12 @@ public class LayerListDialog extends ToggleDialog {
         adaptTo(showHideLayerAction, selectionModel);
         buttonPanel.add(new SideButton(showHideLayerAction));
 
+        //-- layer opacity action
+        LayerOpacityAction layerOpacityAction = new LayerOpacityAction();
+        adaptTo(layerOpacityAction, selectionModel);
+        opacityButton = new SideButton(layerOpacityAction);
+        buttonPanel.add(opacityButton);
+
         // -- merge layer action
         MergeAction mergeLayerAction = new MergeAction();
         adaptTo(mergeLayerAction, model);
@@ -157,12 +163,6 @@ public class LayerListDialog extends ToggleDialog {
         layerList.getActionMap().put("deleteLayer", deleteLayerAction);
         adaptTo(deleteLayerAction, selectionModel);
         buttonPanel.add(new SideButton(deleteLayerAction, false));
-
-        //-- layer opacity action
-        LayerOpacityAction layerOpacityAction = new LayerOpacityAction();
-        adaptTo(layerOpacityAction, selectionModel);
-        opacityButton = new SideButton(layerOpacityAction);
-        buttonPanel.add(opacityButton);
 
         return buttonPanel;
     }
