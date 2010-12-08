@@ -615,10 +615,16 @@ public class Preferences {
                 return def;
     }
 
+    /**
+     * Get a list of values for a certain key
+     * @param key the identifier for the setting
+     * @param def the default value.
+     * @return the corresponding value if the property has been set before,
+     *  def otherwise
+     */
     synchronized public Collection<String> getCollection(String key, Collection<String> def) {
+        putCollectionDefault(key, def);
         String s = get(key);
-        if(def != null)
-            putCollectionDefault(key, def);
         if(s != null && s.length() != 0)
             return Arrays.asList(s.split("\u001e"));
         return def;
@@ -650,16 +656,20 @@ public class Preferences {
     }
     
     synchronized private void putCollectionDefault(String key, Collection<String> val) {
-        String s = null;
-        for(String a : val)
-        {
-            if(s != null) {
-                s += "\u001e" + a;
-            } else {
-                s = a;
+        if (val == null) {
+            putDefault(key, null);
+        } else {
+            String s = null;
+            for(String a : val)
+            {
+                if(s != null) {
+                    s += "\u001e" + a;
+                } else {
+                    s = a;
+                }
             }
+            putDefault(key, s);
         }
-        putDefault(key, s);
     }
     
     /**
