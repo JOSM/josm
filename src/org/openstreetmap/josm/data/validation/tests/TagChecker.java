@@ -47,11 +47,11 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.Entities;
-import org.openstreetmap.josm.data.validation.util.ValUtil;
 import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -198,7 +198,7 @@ public class TagChecker extends Test
             return;
         for (String source : sources.split(";")) {
             try {
-                MirroredInputStream s = new MirroredInputStream(source, ValUtil.getPluginDir(), -1);
+                MirroredInputStream s = new MirroredInputStream(source, OsmValidator.getValidatorDir(), -1);
                 InputStreamReader r;
                 try {
                     r = new InputStreamReader(s, "UTF-8");

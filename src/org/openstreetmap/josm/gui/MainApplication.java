@@ -38,6 +38,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.auth.CredentialsManagerFactory;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
+import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.BugReportExceptionHandler;
@@ -218,6 +219,10 @@ public class MainApplication extends Main {
         preConstructorInit(args);
         removeObsoletePreferences();
         monitor.worked(1);
+
+        if (RemoteControl.on && RemoteControl.PROP_REMOTECONTROL_ENABLED.get()) {
+            RemoteControl.start();
+        }
 
         monitor.indeterminateSubTask(tr("Creating main GUI"));
         JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));

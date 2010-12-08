@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -21,16 +20,6 @@ import org.openstreetmap.josm.data.validation.OsmValidator;
  */
 public class ValUtil
 {
-    /**
-     * Returns the plugin's directory of the plugin
-     *
-     * @return The directory of the plugin
-     */
-    public static String getPluginDir()
-    {
-        return Main.pref.getPreferencesDir() + "validator/";
-    }
-
     /**
      * Returns the start and end cells of a way.
      * @param w The way

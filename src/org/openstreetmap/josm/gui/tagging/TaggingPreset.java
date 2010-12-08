@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
@@ -60,6 +59,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPritority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -895,7 +895,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         }
         p.add(items, GBC.eol().fill());
         if (selected.size() == 0 && !supportsRelation()) {
-            setEnabledRec(items, false);
+            GuiHelper.setEnabledRec(items, false);
         }
 
         for(Item link : l) {
@@ -903,21 +903,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         }
 
         return p;
-    }
-
-    /**
-     * setEnabled() does not propagate to child elements, so we need this workaround.
-     */
-    static void setEnabledRec(Container root, boolean enabled) {
-        root.setEnabled(enabled);
-        Component children[] = root.getComponents();
-        for(int i = 0; i < children.length; i++) {
-            if(children[i] instanceof Container) {
-                setEnabledRec((Container)children[i], enabled);
-            } else {
-                children[i].setEnabled(enabled);
-            }
-        }
     }
 
     public boolean isShowable()

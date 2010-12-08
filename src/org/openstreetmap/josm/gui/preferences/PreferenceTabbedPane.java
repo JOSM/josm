@@ -25,6 +25,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
@@ -225,7 +226,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
             // logger.info("creating settings: " + factory);
             PreferenceSetting setting = factory.createPreferenceSetting();
             if (setting != null) {
-                settings.add(factory.createPreferenceSetting());
+                settings.add(setting);
             }
         }
 
@@ -276,6 +277,9 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
         settingsFactory.add(new AudioPreference.Factory());
         settingsFactory.add(new ShortcutPreference.Factory());
         settingsFactory.add(new ValidatorPreference.Factory());
+        if (RemoteControl.on) {
+            settingsFactory.add(new RemoteControlPreference.Factory());
+        }
 
         PluginHandler.getPreferenceSetting(settingsFactory);
 

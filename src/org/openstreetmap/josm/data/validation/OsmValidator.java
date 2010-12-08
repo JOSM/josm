@@ -45,9 +45,7 @@ import org.openstreetmap.josm.data.validation.tests.UnconnectedWays;
 import org.openstreetmap.josm.data.validation.tests.UntaggedNode;
 import org.openstreetmap.josm.data.validation.tests.UntaggedWay;
 import org.openstreetmap.josm.data.validation.tests.WronglyOrderedWays;
-import org.openstreetmap.josm.data.validation.util.ValUtil;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
-import org.openstreetmap.josm.gui.dialogs.ValidatorDialog;
 import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -65,9 +63,6 @@ public class OsmValidator implements LayerChangeListener {
 
     /** The validate action */
     public ValidateAction validateAction = new ValidateAction();
-
-    /** The validation dialog */
-    ValidatorDialog validationDialog;
 
     /** Grid detail, multiplier of east,north values for valuable cell sizing */
     public static double griddetail;
@@ -102,18 +97,28 @@ public class OsmValidator implements LayerChangeListener {
     };
 
     public OsmValidator() {
-        checkPluginDir();
+        checkValidatorDir();
         initializeGridDetail();
         initializeTests(getTests());
         loadIgnoredErrors(); //FIXME: load only when needed
     }
 
     /**
+     * Returns the plugin's directory of the plugin
+     *
+     * @return The directory of the plugin
+     */
+    public static String getValidatorDir()
+    {
+        return Main.pref.getPreferencesDir() + "validator/";
+    }
+
+    /**
      * Check if plugin directory exists (store ignored errors file)
      */
-    private void checkPluginDir() {
+    private void checkValidatorDir() {
         try {
-            File pathDir = new File(ValUtil.getPluginDir());
+            File pathDir = new File(getValidatorDir());
             if (!pathDir.exists()) {
                 pathDir.mkdirs();
             }
@@ -126,7 +131,7 @@ public class OsmValidator implements LayerChangeListener {
         ignoredErrors.clear();
         if (Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true)) {
             try {
-                final BufferedReader in = new BufferedReader(new FileReader(ValUtil.getPluginDir() + "ignorederrors"));
+                final BufferedReader in = new BufferedReader(new FileReader(getValidatorDir() + "ignorederrors"));
                 for (String line = in.readLine(); line != null; line = in.readLine()) {
                     ignoredErrors.add(line);
                 }
@@ -148,7 +153,7 @@ public class OsmValidator implements LayerChangeListener {
 
     public static void saveIgnoredErrors() {
         try {
-            final PrintWriter out = new PrintWriter(new FileWriter(ValUtil.getPluginDir() + "ignorederrors"), false);
+            final PrintWriter out = new PrintWriter(new FileWriter(getValidatorDir() + "ignorederrors"), false);
             for (String e : ignoredErrors) {
                 out.println(e);
             }
