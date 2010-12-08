@@ -37,6 +37,15 @@ import org.openstreetmap.josm.tools.ColorHelper;
  * Other classes can register their beloved properties here. All properties will be
  * saved upon set-access.
  *
+ * Each property is a simple key=value pair of Strings.
+ * In addition, each key has a unique default value that is set when the value is first
+ * accessed using one of the get...() methods. You can use the same preference
+ * key in different parts of the code, but the default value must be the same
+ * everywhere. null is a legitimate default value.
+ *
+ * At the moment, there is no such thing as an empty value.
+ * If you put "" or null as value, the property is removed.
+ *
  * @author imi
  */
 public class Preferences {
@@ -48,6 +57,12 @@ public class Preferences {
      * @see #getPreferencesDirFile()
      */
     private File preferencesDirFile = null;
+
+    /**
+     * Map the property name to the property object. Does not contain null or "" values.
+     */
+    protected final SortedMap<String, String> properties = new TreeMap<String, String>();
+    protected final SortedMap<String, String> defaults = new TreeMap<String, String>();
 
     public interface PreferenceChangeEvent{
         String getKey();
@@ -105,12 +120,6 @@ public class Preferences {
             l.preferenceChanged(evt);
         }
     }
-
-    /**
-     * Map the property name to the property object.
-     */
-    protected final SortedMap<String, String> properties = new TreeMap<String, String>();
-    protected final SortedMap<String, String> defaults = new TreeMap<String, String>();
 
     /**
      * Return the location of the user defined preferences file
@@ -185,6 +194,12 @@ public class Preferences {
         return properties.containsKey(key);
     }
 
+    /**
+     * Get settings value for a certain key.
+     * @param key the identifier for the setting
+     * @return "" if there is nothing set for the preference key,
+     *  the corresponding value otherwise. The result is not null.
+     */
     synchronized public String get(final String key) {
         putDefault(key, null);
         if (!properties.containsKey(key))
@@ -192,6 +207,14 @@ public class Preferences {
         return properties.get(key);
     }
 
+    /**
+     * Get settings value for a certain key and provide default a value.
+     * @param key the identifier for the setting
+     * @param def the default value. For each call of get() with a given key, the
+     *  default value must be the same.
+     * @return the corresponding value if the property has been set before,
+     *  def otherwise
+     */
     synchronized public String get(final String key, final String def) {
         putDefault(key, def);
         final String prop = properties.get(key);
@@ -257,6 +280,15 @@ public class Preferences {
         return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : def;
     }
 
+    /**
+     * Set a value for a certain setting. The changed setting is saved
+     * to the preference file immediately. Due to caching mechanisms on modern
+     * operating systems and hardware, this shouldn't be a performance problem.
+     * @param key the unique identifier for the setting
+     * @param value the value of the setting. Can be null or "" wich both removes
+     *  the key-value entry.
+     * @return if true, something has changed (i.e. value is different than before)
+     */
     public boolean put(final String key, String value) {
         boolean changed = false;
         String oldValue = null;
@@ -266,9 +298,16 @@ public class Preferences {
             if(value != null && value.length() == 0) {
                 value = null;
             }
-            if(!((oldValue == null && (value == null || value.equals(defaults.get(key))))
-                    || (value != null && oldValue != null && oldValue.equals(value))))
-            {
+            // value is the same as before - no need to save anything
+            boolean equalValue = oldValue != null && oldValue.equals(value);
+            // The setting was previously unset and we are supposed to put a
+            // value that equals the default value. This is not necessary because
+            // the default value is the same throughout josm. In addition we like
+            // to have the possibility to change the default value from version
+            // to version, which would not work if we wrote it to the preference file.
+            boolean unsetIsDefault = oldValue == null && (value == null || value.equals(defaults.get(key)));
+
+            if (!(equalValue || unsetIsDefault)) {
                 if (value == null) {
                     properties.remove(key);
                 } else {
@@ -289,19 +328,19 @@ public class Preferences {
         return changed;
     }
 
-    synchronized public boolean put(final String key, final boolean value) {
+    public boolean put(final String key, final boolean value) {
         return put(key, Boolean.toString(value));
     }
 
-    synchronized public boolean putInteger(final String key, final Integer value) {
+    public boolean putInteger(final String key, final Integer value) {
         return put(key, Integer.toString(value));
     }
 
-    synchronized public boolean putDouble(final String key, final Double value) {
+    public boolean putDouble(final String key, final Double value) {
         return put(key, Double.toString(value));
     }
 
-    synchronized public boolean putLong(final String key, final Long value) {
+    public boolean putLong(final String key, final Long value) {
         return put(key, Long.toString(value));
     }
 
@@ -379,7 +418,11 @@ public class Preferences {
                     errLines.add(lineNumber);
                     continue;
                 }
-                properties.put(line.substring(0,i), line.substring(i+1));
+                String key = line.substring(0,i);
+                String value = line.substring(i+1);
+                if (!value.isEmpty()) {
+                    properties.put(key, value);
+                }
             }
             if (!errLines.isEmpty())
                 throw new IOException(tr("Malformed config file at lines {0}", errLines));
@@ -624,7 +667,8 @@ public class Preferences {
      * If not a single entry could be found, def is returned.
      */ 
     synchronized public Collection<Collection<String>> getArray(String key,
-    Collection<Collection<String>> def) {
+            Collection<Collection<String>> def)
+    {
         if(def != null)
             putArrayDefault(key, def);
         key += ".";
