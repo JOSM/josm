@@ -13,9 +13,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import java.util.Set;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -56,6 +58,7 @@ public class OpenFileAction extends DiskAccessAction {
             return;
         File[] files = fc.getSelectedFiles();
         OpenFileTask task = new OpenFileTask(Arrays.asList(files), fc.getFileFilter());
+        task.setRecordHistory(true);
         Main.worker.submit(task);
     }
 
@@ -78,6 +81,7 @@ public class OpenFileAction extends DiskAccessAction {
         private List<File> successfullyOpenedFiles = new ArrayList<File>();
         private FileFilter fileFilter;
         private boolean cancelled;
+        private boolean recordHistory = false;
 
         public OpenFileTask(List<File> files, FileFilter fileFilter, String title) {
             super(title, false /* don't ignore exception */);
@@ -87,6 +91,18 @@ public class OpenFileAction extends DiskAccessAction {
 
         public OpenFileTask(List<File> files, FileFilter fileFilter) {
             this(files, fileFilter, tr("Opening files"));
+        }
+
+        /**
+         * save filename in history (for list of recently opened files)
+         * default: false
+         */
+        public void setRecordHistory(boolean recordHistory) {
+            this.recordHistory = recordHistory;
+        }
+
+        public boolean isRecordHistory() {
+            return recordHistory;
         }
 
         @Override
@@ -166,8 +182,8 @@ public class OpenFileAction extends DiskAccessAction {
                 }
             }
             /**
-             * If the filter wasn't changed in the dialog, chosenImporter is null now.
-             * When the filter was explicitly set to AllFormatsImporter, treat this the same.
+             * If the filter hasn't been changed in the dialog, chosenImporter is null now.
+             * When the filter has been set explicitly to AllFormatsImporter, treat this the same.
              */
             if (chosenImporter instanceof AllFormatsImporter) {
                 chosenImporter = null;
@@ -209,13 +225,11 @@ public class OpenFileAction extends DiskAccessAction {
             } else {
                 // find appropriate importer
                 MultiMap<FileImporter, File> map = new MultiMap<FileImporter, File>();
-                List<File> filesWithKnownImporter = new LinkedList<File>();
                 List<File> filesWithUnknownImporter = new LinkedList<File>();
                 FILES: for (File f : files) {
                     for (FileImporter importer : ExtensionFileFilter.importers) {
                         if (importer.acceptFile(f)) {
                             map.put(importer, f);
-                            filesWithKnownImporter.add(f);
                             continue FILES;
                         }
                     }
@@ -227,9 +241,33 @@ public class OpenFileAction extends DiskAccessAction {
                 List<FileImporter> ims = new ArrayList<FileImporter>(map.keySet());
                 Collections.sort(ims);
                 Collections.reverse(ims);
+
+                Set<String> fileHistory = new LinkedHashSet<String>();
+
                 for (FileImporter importer : ims) {
                     List<File> files = new ArrayList<File>(map.get(importer));
                     importData(importer, files);
+
+                    if (recordHistory && !importer.isBatchImporter()) {
+                        for (File f : files) {
+                            fileHistory.add(f.getPath());
+                        }
+                    }
+                }
+
+                if (recordHistory) {
+                    Collection<String> oldFileHistory = Main.pref.getCollection("file-open.history");
+                    fileHistory.addAll(oldFileHistory);
+                    int maxsize = Math.max(0, Main.pref.getInteger("file-open.history.max-size", 15));
+                    Collection<String> trimmedFileHistory = new ArrayList<String>(Math.min(maxsize, fileHistory.size()));
+                    int i = 0;
+                    for (String s : fileHistory) {
+                        if (++i > maxsize) {
+                            break;
+                        }
+                        trimmedFileHistory.add(s);
+                    }
+                    Main.pref.putCollection("file-open.history", trimmedFileHistory);
                 }
             }
         }

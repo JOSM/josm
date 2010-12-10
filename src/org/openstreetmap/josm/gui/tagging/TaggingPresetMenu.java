@@ -57,9 +57,8 @@ public class TaggingPresetMenu extends TaggingPreset {
         {
             Component co = (Component)s;
             JPopupMenu pm = new JPopupMenu(getName());
-            for(Component c : menu.getMenuComponents())
+            for (Component c : menu.getMenuComponents()) {
                 pm.add(copyMenuComponent(c));
-            {
             }
             pm.show(co, co.getWidth()/2, co.getHeight()/2);
         }

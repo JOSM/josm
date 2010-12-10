@@ -84,6 +84,7 @@ import org.openstreetmap.josm.actions.audio.AudioPlayPauseAction;
 import org.openstreetmap.josm.actions.audio.AudioPrevAction;
 import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
+import org.openstreetmap.josm.gui.io.RecentlyOpenedFilesMenu;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSearchAction;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -101,6 +102,7 @@ public class MainMenu extends JMenuBar {
     /* File menu */
     public final NewAction newAction = new NewAction();
     public final OpenFileAction openFile = new OpenFileAction();
+    public final RecentlyOpenedFilesMenu recentlyOpened = new RecentlyOpenedFilesMenu();
     public final OpenLocationAction openLocation = new OpenLocationAction();
     public final JosmAction save = new SaveAction();
     public final JosmAction saveAs = new SaveAsAction();
@@ -222,6 +224,7 @@ public class MainMenu extends JMenuBar {
 
         add(fileMenu, newAction);
         add(fileMenu, openFile);
+        fileMenu.add(recentlyOpened);
         add(fileMenu, openLocation);
         fileMenu.addSeparator();
         add(fileMenu, save);

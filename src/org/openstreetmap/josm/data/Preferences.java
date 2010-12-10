@@ -630,6 +630,20 @@ public class Preferences {
         return def;
     }
 
+    /**
+     * Get a list of values for a certain key
+     * @param key the identifier for the setting
+     * @return the corresponding value if the property has been set before,
+     *  an empty Collection otherwise.
+     */
+    synchronized public Collection<String> getCollection(String key) {
+        putCollectionDefault(key, null);
+        String s = get(key);
+        if (s != null && s.length() != 0)
+            return Arrays.asList(s.split("\u001e"));
+        return Collections.emptyList();
+    }
+
     synchronized public void removeFromCollection(String key, String value) {
         List<String> a = new ArrayList<String>(getCollection(key, Collections.<String>emptyList()));
         a.remove(value);
@@ -637,39 +651,11 @@ public class Preferences {
     }
 
     synchronized public boolean putCollection(String key, Collection<String> val) {
-        String s = null;
-        if(val != null)
-        {
-            for(String a : val)
-            {
-                if (a == null) {
-                    a = "";
-                }
-                if(s != null) {
-                    s += "\u001e" + a;
-                } else {
-                    s = a;
-                }
-            }
-        }
-        return put(key, s);
+        return put(key, join("\u001e", val));
     }
     
     synchronized private void putCollectionDefault(String key, Collection<String> val) {
-        if (val == null) {
-            putDefault(key, null);
-        } else {
-            String s = null;
-            for(String a : val)
-            {
-                if(s != null) {
-                    s += "\u001e" + a;
-                } else {
-                    s = a;
-                }
-            }
-            putDefault(key, s);
-        }
+        putDefault(key, join("\u001e", val));
     }
     
     /**
@@ -763,6 +749,33 @@ public class Preferences {
      */
     public void setPluginSites(Collection<String> sites) {
         putCollection("pluginmanager.sites", sites);
+    }
+
+    /**
+     * Joins a collection of strings into a single string with fields
+     * separated by the value of sep.
+     * @param sep the separator
+     * @param values collection of strings, null strings are converted to the
+     *  empty string
+     * @return null if values is null. The joined string otherwise.
+     */
+    public static String join(String sep, Collection<?> values) {
+        if (values == null)
+            return null;
+        if (values.isEmpty())
+            return "";
+        StringBuilder s = null;
+        for (Object a : values) {
+            if (a == null) {
+                a = "";
+            }
+            if(s != null) {
+                s.append(sep).append(a.toString());
+            } else {
+                s = new StringBuilder(a.toString());
+            }
+        }
+        return s.toString();
     }
 
 }

@@ -77,6 +77,7 @@ public class FileDrop
                     public void filesDropped( java.io.File[] files ){
                         // start asynchronous loading of files
                         OpenFileAction.OpenFileTask task = new OpenFileAction.OpenFileTask(Arrays.asList(files), null);
+                        task.setRecordHistory(true);
                         Main.worker.submit(task);
                     }
                 }
