@@ -70,7 +70,7 @@ public class ExtendedDialog extends JDialog {
     private Icon[] bIcons;
     private List<Integer> cancelButtonIdx = Collections.emptyList();
     private int defaultButtonIdx = 1;
-    private JButton defaultButton = null;
+    protected JButton defaultButton = null;
     private Icon icon;
     private boolean modal;
 

@@ -26,4 +26,18 @@ public class Utils {
             return c;
         }
     }
+
+    /**
+     * return the modulus in the range [0, n)
+     */
+    public static int mod(int a, int n) {
+        if (n <= 0)
+            throw new IllegalArgumentException();
+        int res = a % n;
+        if (res < 0) {
+            res += n;
+        }
+        return res;
+    }
+
 }
