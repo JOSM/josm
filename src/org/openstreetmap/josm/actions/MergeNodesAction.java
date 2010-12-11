@@ -12,7 +12,6 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -61,15 +60,21 @@ public class MergeNodesAction extends JosmAction {
         if (!isEnabled())
             return;
         Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
-        LinkedHashSet<Node> selectedNodes = OsmPrimitive.getFilteredSet(selection, Node.class);
-        if (selectedNodes.size() < 2) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("Please select at least two nodes to merge."),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-            );
-            return;
+        List<Node> selectedNodes = OsmPrimitive.getFilteredList(selection, Node.class);
+
+        if (selectedNodes.size() == 1) {
+            List<Node> nearestNodes = Main.map.mapView.getNearestNodes(Main.map.mapView.getPoint(selectedNodes.get(0)), selectedNodes, OsmPrimitive.isUsablePredicate);
+            if (nearestNodes.isEmpty()) {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("Please select at least two nodes to merge or node that is close to another node."),
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
+
+                return;
+            }
+            selectedNodes.addAll(nearestNodes);
         }
 
         Node targetNode = selectTargetNode(selectedNodes);
@@ -87,7 +92,7 @@ public class MergeNodesAction extends JosmAction {
      * @param candidates the collection of candidate nodes
      * @return the coordinates of this node are later used for the target node
      */
-    public static Node selectTargetLocationNode(LinkedHashSet<Node> candidates) {
+    public static Node selectTargetLocationNode(List<Node> candidates) {
         if (! Main.pref.getBoolean("merge-nodes.average-location", false)) {
             Node targetNode = null;
             for (final Node n : candidates) { // pick last one
@@ -111,7 +116,7 @@ public class MergeNodesAction extends JosmAction {
      * @param candidates the collection of candidate nodes
      * @return the selected target node
      */
-    public static Node selectTargetNode(LinkedHashSet<Node> candidates) {
+    public static Node selectTargetNode(List<Node> candidates) {
         Node targetNode = null;
         Node lastNode = null;
         for (Node n : candidates) {
@@ -297,10 +302,6 @@ public class MergeNodesAction extends JosmAction {
             return;
         }
         boolean ok = true;
-        if (selection.size() < 2) {
-            setEnabled(false);
-            return;
-        }
         for (OsmPrimitive osm : selection) {
             if (!(osm instanceof Node)) {
                 ok = false;

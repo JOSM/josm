@@ -1,8 +1,8 @@
 //License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +41,9 @@ public class JoinNodeWayAction extends JosmAction {
         Collection<Command> cmds = new LinkedList<Command>();
 
         for (OsmPrimitive osm : sel) {
-            if (!(osm instanceof Node)) continue;
+            if (!(osm instanceof Node)) {
+                continue;
+            }
             Node node = (Node) osm;
 
             List<WaySegment> wss = Main.map.mapView.getNearestWaySegments(
@@ -65,8 +66,9 @@ public class JoinNodeWayAction extends JosmAction {
 
             for (Map.Entry<Way, List<Integer>> insertPoint : insertPoints.entrySet()) {
                 List<Integer> is = insertPoint.getValue();
-                if (is.size() == 0)
+                if (is.size() == 0) {
                     continue;
+                }
 
                 Way w = insertPoint.getKey();
                 List<Node> nodesToAdd = w.getNodes();
