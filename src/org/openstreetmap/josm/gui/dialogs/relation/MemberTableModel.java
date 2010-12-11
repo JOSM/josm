@@ -381,9 +381,10 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     public void addMembersAtBeginning(List<OsmPrimitive> primitives) {
         if (primitives == null)
             return;
+        int index = 0;
         for (OsmPrimitive primitive : primitives) {
             RelationMember member = new RelationMember("", primitive);
-            members.add(0, member);
+            members.add(index++, member);
         }
         fireTableDataChanged();
         getSelectionModel().clearSelection();
@@ -415,7 +416,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
 
         for (OsmPrimitive primitive : primitives) {
             RelationMember member = new RelationMember("", primitive);
-            members.add(idx, member);
+            members.add(idx++, member);
         }
         fireTableDataChanged();
         getSelectionModel().setValueIsAdjusting(true);
