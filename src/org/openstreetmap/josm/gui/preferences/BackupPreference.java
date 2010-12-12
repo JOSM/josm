@@ -42,7 +42,7 @@ public class BackupPreference implements PreferenceSetting {
         panel.setLayout(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
-        autosave = new JCheckBox("Auto save enabled");
+        autosave = new JCheckBox(tr("Auto save enabled"));
         autosave.setSelected(AutosaveTask.PROP_AUTOSAVE_ENABLED.get());
         panel.add(autosave, GBC.eol());
 
