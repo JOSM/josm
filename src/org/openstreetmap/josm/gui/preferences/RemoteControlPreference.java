@@ -6,21 +6,22 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagLayout;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
 import javax.swing.JSeparator;
 import javax.swing.UIManager;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandler;
+import org.openstreetmap.josm.io.remotecontrol.handler.ImageryHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.ImportHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.LoadAndZoomHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
@@ -45,6 +46,7 @@ public class RemoteControlPreference implements PreferenceSetting
 
     private JCheckBox permissionLoadData = new JCheckBox(tr("load data from API"));
     private JCheckBox permissionImportData = new JCheckBox(tr("import data from URL"));
+    private JCheckBox permissionLoadImagery = new JCheckBox(tr("load imagery layers"));
     private JCheckBox permissionCreateObjects = new JCheckBox(tr("create new objects"));
     private JCheckBox permissionChangeSelection = new JCheckBox(tr("change the selection"));
     private JCheckBox permissionChangeViewport = new JCheckBox(tr("change the viewport"));
@@ -74,6 +76,7 @@ public class RemoteControlPreference implements PreferenceSetting
         int INDENT = 15;
         wrapper.add(permissionLoadData, GBC.eol().insets(INDENT,5,0,0).fill(GBC.HORIZONTAL));
         wrapper.add(permissionImportData, GBC.eol().insets(INDENT,5,0,0).fill(GBC.HORIZONTAL));
+        wrapper.add(permissionLoadImagery, GBC.eol().insets(INDENT,5,0,0).fill(GBC.HORIZONTAL));
         wrapper.add(permissionChangeSelection, GBC.eol().insets(INDENT,5,0,0).fill(GBC.HORIZONTAL));
         wrapper.add(permissionChangeViewport, GBC.eol().insets(INDENT,5,0,0).fill(GBC.HORIZONTAL));
         wrapper.add(permissionCreateObjects, GBC.eol().insets(INDENT,5,0,0).fill(GBC.HORIZONTAL));
@@ -93,6 +96,7 @@ public class RemoteControlPreference implements PreferenceSetting
 
         permissionLoadData.setSelected(Main.pref.getBoolean(LoadAndZoomHandler.loadDataPermissionKey, LoadAndZoomHandler.loadDataPermissionDefault));
         permissionImportData.setSelected(Main.pref.getBoolean(ImportHandler.permissionKey, ImportHandler.permissionDefault));
+        permissionLoadImagery.setSelected(Main.pref.getBoolean(ImageryHandler.permissionKey, ImageryHandler.permissionDefault));
         permissionChangeSelection.setSelected(Main.pref.getBoolean(LoadAndZoomHandler.changeSelectionPermissionKey, LoadAndZoomHandler.changeSelectionPermissionDefault));
         permissionChangeViewport.setSelected(Main.pref.getBoolean(LoadAndZoomHandler.changeViewportPermissionKey, LoadAndZoomHandler.changeViewportPermissionDefault));
         permissionCreateObjects.setSelected(Main.pref.getBoolean(AddNodeHandler.permissionKey, AddNodeHandler.permissionDefault));
@@ -119,6 +123,7 @@ public class RemoteControlPreference implements PreferenceSetting
         if (enabled) {
             Main.pref.put(LoadAndZoomHandler.loadDataPermissionKey, permissionLoadData.isSelected());
             Main.pref.put(ImportHandler.permissionKey, permissionImportData.isSelected());
+            Main.pref.put(ImageryHandler.permissionKey, permissionLoadImagery.isSelected());
             Main.pref.put(LoadAndZoomHandler.changeSelectionPermissionKey, permissionChangeSelection.isSelected());
             Main.pref.put(LoadAndZoomHandler.changeViewportPermissionKey, permissionChangeViewport.isSelected());
             Main.pref.put(AddNodeHandler.permissionKey, permissionCreateObjects.isSelected());

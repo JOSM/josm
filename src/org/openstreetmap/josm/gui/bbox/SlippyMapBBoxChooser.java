@@ -11,6 +11,8 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -29,7 +31,10 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.preferences.StringProperty;
+import org.openstreetmap.josm.gui.layer.TMSLayer;
 
 public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
 
@@ -64,8 +69,8 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         @Override public String getTileUrl(int zoom, int tilex, int tiley) { return source.getTileUrl(zoom, tilex, tiley); }
 
         @Override public Image getAttributionImage() { return source.getAttributionImage(); }
- 
-        @Override public String getAttributionText(int zoom, LatLon topLeft, LatLon botRight) { return source.getAttributionText(zoom, topLeft, botRight); }
+
+        @Override public String getAttributionText(int zoom, Coordinate topLeft, Coordinate botRight) { return source.getAttributionText(zoom, topLeft, botRight); }
 
         @Override public boolean requiresAttribution() { return source.requiresAttribution(); }
 
@@ -73,6 +78,40 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
 
         @Override public String getTermsOfUseURL() { return source.getTermsOfUseURL(); }
     }
+
+    /**
+     * TMS TileSource provider for the slippymap chooser
+     */
+    public static class TMSTileSourceProvider implements TileSourceProvider {
+        static final HashSet<String> existingSlippyMapUrls = new HashSet<String>();
+        static {
+            // Urls that already exist in the slippymap chooser and shouldn't be copied from TMS layer list
+            existingSlippyMapUrls.add("http://tile.openstreetmap.org/");
+            existingSlippyMapUrls.add("http://tah.openstreetmap.org/Tiles/tile/");
+            existingSlippyMapUrls.add("http://tile.opencyclemap.org/cycle/");
+        }
+
+        @Override
+        public List<TileSource> getTileSources() {
+            if (!TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get()) return Collections.<TileSource>emptyList();
+            List<TileSource> sources = new ArrayList<TileSource>();
+            for (ImageryInfo info : ImageryLayerInfo.instance.getLayers()) {
+                if (existingSlippyMapUrls.contains(info.getURL())) {
+                    continue;
+                }
+                TileSource source = TMSLayer.getTileSource(info);
+                if (source != null) {
+                    sources.add(source);
+                }
+            }
+            return sources;
+        }
+
+        public static void addExistingSlippyMapUrl(String url) {
+            existingSlippyMapUrls.add(url);
+        }
+    }
+
 
     /**
      * Plugins that wish to add custom tile sources to slippy map choose should call this method
@@ -95,6 +134,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
                 );
             }
         });
+        addTileSourceProvider(new TMSTileSourceProvider());
     }
 
     private static final StringProperty PROP_MAPSTYLE = new StringProperty("slippy_map_chooser.mapstyle", "Mapnik");

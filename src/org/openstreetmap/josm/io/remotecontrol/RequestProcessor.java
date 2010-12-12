@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandler;
+import org.openstreetmap.josm.io.remotecontrol.handler.ImageryHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.ImportHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.LoadAndZoomHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
@@ -111,6 +112,7 @@ public class RequestProcessor extends Thread {
                 LoadAndZoomHandler.class, true);
         addRequestHandlerClass(LoadAndZoomHandler.command2,
                 LoadAndZoomHandler.class, true);
+        addRequestHandlerClass(ImageryHandler.command, ImageryHandler.class, true);
         addRequestHandlerClass(AddNodeHandler.command, AddNodeHandler.class, true);
         addRequestHandlerClass(ImportHandler.command, ImportHandler.class, true);
         addRequestHandlerClass(VersionHandler.command, VersionHandler.class, true);

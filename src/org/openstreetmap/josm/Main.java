@@ -61,6 +61,7 @@ import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
+import org.openstreetmap.josm.gui.preferences.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.ProjectionPreference;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
@@ -219,6 +220,7 @@ abstract public class Main {
 
         TaggingPresetPreference.initialize();
         MapPaintPreference.initialize();
+        ImageryPreference.initialize();
 
         validator = new OsmValidator();
         MapView.addLayerChangeListener(validator);

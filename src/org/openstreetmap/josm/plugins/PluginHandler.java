@@ -88,7 +88,9 @@ public class PluginHandler {
             {"tcx-support", tr("replaced by {0} plugin","dataimport")},
             {"usertools", IN_CORE},
             {"AgPifoJ", IN_CORE}, {"utilsplugin", IN_CORE}, {"ghost", IN_CORE},
-            {"validator", IN_CORE}, {"multipoly", IN_CORE}}) {
+            {"validator", IN_CORE}, {"multipoly", IN_CORE},
+            {"remotecontrol", IN_CORE},
+            {"imagery", IN_CORE}, {"slippymap", IN_CORE}, {"wmsplugin", IN_CORE}}) {
             DEPRECATED_PLUGINS.put(depr[0], depr.length >= 2 ? depr[1] : null);
         }
     }

@@ -4,8 +4,12 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 
+import java.awt.Component;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.List;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -15,6 +19,7 @@ import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
+import org.openstreetmap.josm.actions.AddImageryLayerAction;
 import org.openstreetmap.josm.actions.AddNodeAction;
 import org.openstreetmap.josm.actions.AlignInCircleAction;
 import org.openstreetmap.josm.actions.AlignInLineAction;
@@ -41,6 +46,7 @@ import org.openstreetmap.josm.actions.JoinAreasAction;
 import org.openstreetmap.josm.actions.JoinNodeWayAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.JumpToAction;
+import org.openstreetmap.josm.actions.Map_Rectifier_WMSmenuAction;
 import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.actions.MergeSelectionAction;
@@ -84,8 +90,12 @@ import org.openstreetmap.josm.actions.audio.AudioPlayPauseAction;
 import org.openstreetmap.josm.actions.audio.AudioPrevAction;
 import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
+import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.gui.io.RecentlyOpenedFilesMenu;
+import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSearchAction;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -179,9 +189,10 @@ public class MainMenu extends JMenuBar {
     public final JMenu viewMenu = addMenu(marktr("View"), KeyEvent.VK_V, 2, ht("/Menu/View"));
     public final JMenu toolsMenu = addMenu(marktr("Tools"), KeyEvent.VK_T, 3, ht("/Menu/Tools"));
     public final JMenu presetsMenu = addMenu(marktr("Presets"), KeyEvent.VK_P, 4, ht("/Menu/Presets"));
+    public final JMenu imageryMenu = addMenu(marktr("Imagery"), KeyEvent.VK_I, 5, ht("/Menu/Imagery"));
     public JMenu audioMenu = null;
-    public final JMenu helpMenu = addMenu(marktr("Help"), KeyEvent.VK_H, 5, ht("/Menu/Help"));
-    public final int defaultMenuPos = 5;
+    public final JMenu helpMenu = addMenu(marktr("Help"), KeyEvent.VK_H, 6, ht("/Menu/Help"));
+    public final int defaultMenuPos = 6;
 
     public final JosmAction moveUpAction = new MoveAction(MoveAction.Direction.UP);
     public final JosmAction moveDownAction = new MoveAction(MoveAction.Direction.DOWN);
@@ -190,7 +201,7 @@ public class MainMenu extends JMenuBar {
     public final JumpToAction jumpToAct = new JumpToAction();
 
     public final TaggingPresetSearchAction presetSearchAction = new TaggingPresetSearchAction();
-
+    public final ImageryMenuUpdater imageryMenuUpdater;
 
     /**
      * Add a JosmAction to a menu.
@@ -328,7 +339,7 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, createMultipolygon);
 
         if (!Main.pref.getBoolean("audio.menuinvisible", false)) {
-            audioMenu = addMenu(marktr("Audio"), KeyEvent.VK_A, 5, ht("/Menu/Audio"));
+            audioMenu = addMenu(marktr("Audio"), KeyEvent.VK_A, defaultMenuPos, ht("/Menu/Audio"));
             add(audioMenu, audioPlayPause);
             add(audioMenu, audioNext);
             add(audioMenu, audioPrev);
@@ -346,6 +357,7 @@ public class MainMenu extends JMenuBar {
         add(helpMenu, about);
 
         new PresetsMenuEnabler(presetsMenu).refreshEnabled();
+        imageryMenuUpdater = new ImageryMenuUpdater();
     }
 
     static class PresetsMenuEnabler implements MapView.LayerChangeListener {
@@ -374,6 +386,91 @@ public class MainMenu extends JMenuBar {
         }
 
         public void layerRemoved(Layer oldLayer) {
+            refreshEnabled();
+        }
+    }
+
+    public class ImageryMenuUpdater implements MapView.LayerChangeListener {
+        JMenu offsetSubMenu = new JMenu(trc("layer","Offset"));
+
+        public ImageryMenuUpdater() {
+            MapView.addLayerChangeListener(this);
+        }
+
+        public void refreshImageryMenu() {
+            imageryMenu.removeAll();
+
+            // for each configured WMSInfo, add a menu entry.
+            for (final ImageryInfo u : ImageryLayerInfo.instance.getLayers()) {
+                imageryMenu.add(new JMenuItem(new AddImageryLayerAction(u)));
+            }
+            imageryMenu.addSeparator();
+            imageryMenu.add(new JMenuItem(new Map_Rectifier_WMSmenuAction()));
+
+            imageryMenu.addSeparator();
+            imageryMenu.add(offsetSubMenu);
+            imageryMenu.addSeparator();
+            imageryMenu.add(new JMenuItem(new
+                    JosmAction(tr("Blank Layer"), "blankmenu", tr("Open a blank WMS layer to load data from a file"), null, false) {
+                @Override
+                public void actionPerformed(ActionEvent ev) {
+                    Main.main.addLayer(new WMSLayer());
+                }
+            }));
+            refreshEnabled();
+        }
+
+        public void refreshEnabled() {
+            imageryMenu.setEnabled(Main.map != null
+                    && Main.map.mapView !=null
+            );
+        }
+
+        public void refreshOffsetMenu() {
+            offsetSubMenu.removeAll();
+            if (Main.map == null || Main.map.mapView == null) {
+                offsetSubMenu.setEnabled(false);
+                return;
+            }
+            List<ImageryLayer> layers = Main.map.mapView.getLayersOfType(ImageryLayer.class);
+            if (layers.isEmpty()) {
+                offsetSubMenu.setEnabled(false);
+                return;
+            }
+            offsetSubMenu.setEnabled(true);
+            if (layers.size() == 1) {
+                for (Component c : layers.get(0).getOffsetMenu()) {
+                    offsetSubMenu.add(c);
+                }
+                return;
+            }
+            for (ImageryLayer layer : layers) {
+                JMenu subMenu = new JMenu(layer.getName());
+                subMenu.setIcon(layer.getIcon());
+                for (Component c : layer.getOffsetMenu()) {
+                    subMenu.add(c);
+                }
+                offsetSubMenu.add(subMenu);
+            }
+        }
+
+        @Override
+        public void activeLayerChange(Layer oldLayer, Layer newLayer) {
+        }
+
+        @Override
+        public void layerAdded(Layer newLayer) {
+            if (newLayer instanceof ImageryLayer) {
+                refreshOffsetMenu();
+            }
+            refreshEnabled();
+        }
+
+        @Override
+        public void layerRemoved(Layer oldLayer) {
+            if (oldLayer instanceof ImageryLayer) {
+                refreshOffsetMenu();
+            }
             refreshEnabled();
         }
     }

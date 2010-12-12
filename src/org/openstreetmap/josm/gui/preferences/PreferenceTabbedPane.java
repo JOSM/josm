@@ -25,7 +25,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
@@ -44,7 +43,7 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
     static private final Logger logger = Logger.getLogger(PreferenceTabbedPane.class.getName());
 
     /**
-     * Allows PreferenceSettings to do validation of entered values when ok was pressed. 
+     * Allows PreferenceSettings to do validation of entered values when ok was pressed.
      * If data is invalid then event can return false to cancel closing of preferences dialog.
      *
      */
@@ -277,9 +276,8 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
         settingsFactory.add(new AudioPreference.Factory());
         settingsFactory.add(new ShortcutPreference.Factory());
         settingsFactory.add(new ValidatorPreference.Factory());
-        if (RemoteControl.on) {
-            settingsFactory.add(new RemoteControlPreference.Factory());
-        }
+        settingsFactory.add(new RemoteControlPreference.Factory());
+        settingsFactory.add(new ImageryPreference.Factory());
 
         PluginHandler.getPreferenceSetting(settingsFactory);
 

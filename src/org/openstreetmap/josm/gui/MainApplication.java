@@ -220,7 +220,7 @@ public class MainApplication extends Main {
         removeObsoletePreferences();
         monitor.worked(1);
 
-        if (RemoteControl.on && RemoteControl.PROP_REMOTECONTROL_ENABLED.get()) {
+        if (RemoteControl.PROP_REMOTECONTROL_ENABLED.get()) {
             RemoteControl.start();
         }
 
@@ -265,8 +265,8 @@ public class MainApplication extends Main {
                         );
                         dialog.setContent(
                                 trn("JOSM found {0} unsaved osm data layer. ",
-                                "JOSM found {0} unsaved osm data layers. ", unsavedLayerFiles.size(), unsavedLayerFiles.size()) +
-                                tr("It looks like JOSM crashed last time. Do you like to restore the data?"));
+                                        "JOSM found {0} unsaved osm data layers. ", unsavedLayerFiles.size(), unsavedLayerFiles.size()) +
+                                        tr("It looks like JOSM crashed last time. Do you like to restore the data?"));
                         dialog.setButtonIcons(new String[] {"ok", "cancel", "dialogs/remove"});
                         int selection = dialog.showDialog().getValue();
                         if (selection == 1) {
@@ -277,7 +277,7 @@ public class MainApplication extends Main {
                     }
                     autosaveTask.schedule();
                 }
-                
+
                 main.postConstructorProcessCmdLine(args);
             }
         });

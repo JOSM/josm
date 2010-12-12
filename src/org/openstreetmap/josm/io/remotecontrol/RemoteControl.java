@@ -14,9 +14,6 @@ import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
  */
 public class RemoteControl
 {
-    // deactivate the remote control code for now. FIXME: Remove this completely if it gets turned on.
-    static final public boolean on = false;
-
     /**
      * If the remote cotrol feature is enabled or disabled. If disabled,
      * it should not start the server.
