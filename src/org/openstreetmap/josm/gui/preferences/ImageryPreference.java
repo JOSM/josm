@@ -18,7 +18,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -61,6 +60,8 @@ public class ImageryPreference implements PreferenceSetting {
     }
     ImageryProvidersPanel imageryProviders;
 
+    static ImagerySettingsMigration settingsMigration;
+
     // Common settings
     private Color colFadeColor;
     private JButton btnFadeColor;
@@ -86,8 +87,6 @@ public class ImageryPreference implements PreferenceSetting {
 
         this.colFadeColor = ImageryLayer.getFadeColor();
         this.btnFadeColor = new JButton();
-        this.btnFadeColor.setBackground(colFadeColor);
-        this.btnFadeColor.setText(ColorHelper.color2html(colFadeColor));
 
         this.btnFadeColor.addActionListener(new ActionListener() {
             @Override
@@ -113,7 +112,6 @@ public class ImageryPreference implements PreferenceSetting {
         p.add(new JLabel(tr("Fade amount: ")), GBC.std());
         p.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
         p.add(this.fadeAmount, GBC.eol().fill(GBC.HORIZONTAL));
-        this.fadeAmount.setValue(ImageryLayer.PROP_FADE_AMOUNT.get());
 
         this.sharpen = new JComboBox(new String[] {
                 tr("None"),
@@ -121,9 +119,25 @@ public class ImageryPreference implements PreferenceSetting {
                 tr("Strong")});
         p.add(new JLabel(tr("Sharpen (requires layer re-add): ")));
         p.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
-        p.add(this.sharpen, GBC.std().fill(GBC.HORIZONTAL));
-        this.sharpen.setSelectedIndex(ImageryLayer.PROP_SHARPEN_LEVEL.get());
+        p.add(this.sharpen, GBC.eol().fill(GBC.HORIZONTAL));
 
+        if (settingsMigration != null) {
+            final JButton btnSettingsMigration = new JButton(tr("WMSPlugin/SlippyMap settings migration"));
+            btnSettingsMigration.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (settingsMigration == null) return;
+                    settingsMigration.settingsMigrationDialog(gui);
+                    loadSettings();
+                    imageryProviders.model.fireTableDataChanged();
+                    if (!settingsMigration.hasConflicts()) {
+                        btnSettingsMigration.setEnabled(false);
+                        settingsMigration = null;
+                    }
+                }
+            });
+            p.add(btnSettingsMigration,GBC.eol().insets(0,5,0,5));
+        }
         return p;
     }
 
@@ -135,14 +149,13 @@ public class ImageryPreference implements PreferenceSetting {
                 "gnome-web-photo-fixed {0}",
         "webkit-image-gtk {0}"});
         browser.setEditable(true);
-        browser.setSelectedItem(HTMLGrabber.PROP_BROWSER.get());
         p.add(new JLabel(tr("Downloader:")), GBC.eol().fill(GBC.HORIZONTAL));
         p.add(browser);
 
         // Overlap
         p.add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
 
-        overlapCheckBox = new JCheckBox(tr("Overlap tiles"), WMSLayer.PROP_OVERLAP.get());
+        overlapCheckBox = new JCheckBox(tr("Overlap tiles"));
         JLabel labelEast = new JLabel(tr("% of east:"));
         JLabel labelNorth = new JLabel(tr("% of north:"));
         spinEast = new JSpinner(new SpinnerNumberModel(WMSLayer.PROP_OVERLAP_EAST.get(), 1, 50, 1));
@@ -195,11 +208,6 @@ public class ImageryPreference implements PreferenceSetting {
         tmsTab.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
         tmsTab.add(addToSlippyMapChosser, GBC.eol().fill(GBC.HORIZONTAL));
 
-        this.autozoomActive.setSelected(TMSLayer.PROP_DEFAULT_AUTOZOOM.get());
-        this.autoloadTiles.setSelected(TMSLayer.PROP_DEFAULT_AUTOLOAD.get());
-        this.addToSlippyMapChosser.setSelected(TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get());
-        this.maxZoomLvl.setValue(TMSLayer.getMaxZoomLvl(null));
-        this.minZoomLvl.setValue(TMSLayer.getMinZoomLvl(null));
         return tmsTab;
     }
 
@@ -231,10 +239,33 @@ public class ImageryPreference implements PreferenceSetting {
         pane.add(imageryProviders);
         pane.add(buildSettingsPanel(gui));
         pane.add(new OffsetBookmarksPanel(gui));
+        loadSettings();
         pane.setTitleAt(0, tr("Imagery providers"));
         pane.setTitleAt(1, tr("Settings"));
         pane.setTitleAt(2, tr("Offset bookmarks"));
         p.add(pane,GBC.std().fill(GBC.BOTH));
+    }
+
+    private void loadSettings() {
+        // Common settings
+        this.btnFadeColor.setBackground(colFadeColor);
+        this.btnFadeColor.setText(ColorHelper.color2html(colFadeColor));
+        this.fadeAmount.setValue(ImageryLayer.PROP_FADE_AMOUNT.get());
+        this.sharpen.setSelectedIndex(ImageryLayer.PROP_SHARPEN_LEVEL.get());
+
+        // WMS Settings
+        this.browser.setSelectedItem(HTMLGrabber.PROP_BROWSER.get());
+        this.overlapCheckBox.setSelected(WMSLayer.PROP_OVERLAP.get());
+        this.spinEast.setValue(WMSLayer.PROP_OVERLAP_EAST.get());
+        this.spinNorth.setValue(WMSLayer.PROP_OVERLAP_NORTH.get());
+        this.spinSimConn.setValue(WMSLayer.PROP_SIMULTANEOUS_CONNECTIONS.get());
+
+        // TMS Settings
+        this.autozoomActive.setSelected(TMSLayer.PROP_DEFAULT_AUTOZOOM.get());
+        this.autoloadTiles.setSelected(TMSLayer.PROP_DEFAULT_AUTOLOAD.get());
+        this.addToSlippyMapChosser.setSelected(TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get());
+        this.maxZoomLvl.setValue(TMSLayer.getMaxZoomLvl(null));
+        this.minZoomLvl.setValue(TMSLayer.getMinZoomLvl(null));
     }
 
     @Override
@@ -706,91 +737,14 @@ public class ImageryPreference implements PreferenceSetting {
     }
 
     public static void initialize() {
-        migrateWMSPlugin();
-        migrateSlippyMapPlugin();
+        settingsMigration = new ImagerySettingsMigration();
+        settingsMigration.migrateSettings();
+        if (!settingsMigration.hasConflicts()) {
+            settingsMigration = null;
+        }
         ImageryLayerInfo.instance.load();
         OffsetBookmark.loadBookmarks();
         Main.main.menu.imageryMenuUpdater.refreshImageryMenu();
         Main.main.menu.imageryMenuUpdater.refreshOffsetMenu();
     }
-
-    // Migration of WMSPlugin and SlippyMap settings
-    static boolean wmsLayersConflict;
-    static boolean wmsSettingsConflict;
-    static boolean tmsSettingsConflict;
-
-    static class SettingsConflictException extends Exception {
-    }
-
-    static void migrateProperty(String oldProp, String newProp)
-    throws SettingsConflictException {
-        String oldValue = Main.pref.get(oldProp, null);
-        if (oldValue == null) return;
-        String newValue = Main.pref.get(newProp, null);
-        if (newValue != null && !oldValue.equals(newValue)) {
-            System.out.println(tr("Imagery settings migration: conflict when moving property {0} -> {1}",
-                    oldProp, newProp));
-            throw new SettingsConflictException();
-        }
-        Main.pref.put(newProp, oldValue);
-        Main.pref.put(oldProp, null);
-    }
-
-    static void migrateWMSPlugin() {
-        try {
-            migrateProperty("wmslayers", "imagery.layers");
-        } catch (SettingsConflictException e) {
-            wmsLayersConflict = true;
-        }
-        try {
-            Main.pref.put("wmslayers.default", null);
-            migrateProperty("imagery.remotecontrol", "remotecontrol.permission.imagery");
-            migrateProperty("wmsplugin.remotecontrol", "remotecontrol.permission.imagery");
-            migrateProperty("wmsplugin.alpha_channel", "imagery.wms.alpha_channel");
-            migrateProperty("wmsplugin.browser", "imagery.wms.browser");
-            migrateProperty("wmsplugin.user_agent", "imagery.wms.user_agent");
-            migrateProperty("wmsplugin.timeout.connect", "imagery.wms.timeout.connect");
-            migrateProperty("wmsplugin.timeout.read", "imagery.wms.timeout.read");
-            migrateProperty("wmsplugin.simultaneousConnections", "imagery.wms.simultaneousConnections");
-            migrateProperty("wmsplugin.overlap", "imagery.wms.overlap");
-            migrateProperty("wmsplugin.overlapEast", "imagery.wms.overlapEast");
-            migrateProperty("wmsplugin.overlapNorth", "imagery.wms.overlapNorth");
-            Map<String, String> unknownProps = Main.pref.getAllPrefix("wmsplugin");
-            if (!unknownProps.isEmpty()) {
-                System.out.println(tr("There are {0} unknown WMSPlugin settings", unknownProps.size()));
-                wmsSettingsConflict = true;
-            }
-        } catch (SettingsConflictException e) {
-            wmsSettingsConflict = true;
-        }
-    }
-
-    static void migrateSlippyMapPlugin() {
-        try {
-            Main.pref.put("slippymap.tile_source", null);
-            Main.pref.put("slippymap.last_zoom_lvl", null);
-            migrateProperty("slippymap.draw_debug", "imagery.tms.draw_debug");
-            migrateProperty("slippymap.autoload_tiles", "imagery.tms.autoload");
-            migrateProperty("slippymap.autozoom", "imagery.tms.autozoom");
-            migrateProperty("slippymap.min_zoom_lvl", "imagery.tms.min_zoom_lvl");
-            migrateProperty("slippymap.max_zoom_lvl", "imagery.tms.max_zoom_lvl");
-            if (Main.pref.get("slippymap.fade_background_100", null) == null) {
-                try {
-                    Main.pref.putInteger("slippymap.fade_background_100", (int)Math.round(
-                            Double.valueOf(Main.pref.get("slippymap.fade_background", "0"))*100.0));
-                } catch (NumberFormatException e) {
-                }
-            }
-            Main.pref.put("slippymap.fade_background", null);
-            migrateProperty("slippymap.fade_background_100", "imagery.fade_amount");
-            Map<String, String> unknownProps = Main.pref.getAllPrefix("slippymap");
-            if (!unknownProps.isEmpty()) {
-                System.out.println(tr("There are {0} unknown slippymap plugin settings", unknownProps.size()));
-                wmsSettingsConflict = true;
-            }
-        } catch (SettingsConflictException e) {
-            tmsSettingsConflict = true;
-        }
-    }
-
 }

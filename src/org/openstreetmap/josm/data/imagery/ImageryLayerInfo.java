@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.io.MirroredInputStream;
 
 public class ImageryLayerInfo {
@@ -67,7 +68,8 @@ public class ImageryLayerInfo {
                             defaultsSave.add(url);
                             if(!defaults.contains(url)) {
                                 for(ImageryInfo i : layers) {
-                                    if(url.equals(i.url)) {
+                                    if ((i.getImageryType() == ImageryType.WMS && url.equals(i.getURL()))
+                                            || url.equals(i.getFullURL())) {
                                         force = false;
                                     }
                                 }
