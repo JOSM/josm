@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.tags;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;

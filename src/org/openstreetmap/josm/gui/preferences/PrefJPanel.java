@@ -1,9 +1,4 @@
-/*
- * prefJPanel.java
- *
- * Created on 28. September 2008, 17:47
- */
-
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;

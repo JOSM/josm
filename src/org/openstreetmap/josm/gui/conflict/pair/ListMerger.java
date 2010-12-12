@@ -1,3 +1,4 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
