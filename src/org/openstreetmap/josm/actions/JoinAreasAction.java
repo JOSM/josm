@@ -372,9 +372,14 @@ public class JoinAreasAction extends JosmAction {
 
             if (result.hasChanges) {
 
-                Main.map.mapView.repaint();
+                List<Way> allWays = new ArrayList<Way>();
+                for (Multipolygon pol : result.polygons) {
+                    allWays.add(pol.outerWay);
+                    allWays.addAll(pol.innerWays);
+                }
                 DataSet ds = Main.main.getCurrentDataSet();
-                ds.fireSelectionChanged();
+                ds.setSelected(allWays);
+                Main.map.mapView.repaint();
             } else {
                 JOptionPane.showMessageDialog(Main.parent, tr("No intersection found. Nothing was changed."));
             }
