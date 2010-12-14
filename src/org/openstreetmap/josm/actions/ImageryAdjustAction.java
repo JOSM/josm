@@ -3,10 +3,14 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.AWTEvent;
 import java.awt.Cursor;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -24,12 +28,13 @@ import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 
-public class ImageryAdjustAction extends MapMode implements MouseListener, MouseMotionListener{
+public class ImageryAdjustAction extends MapMode implements MouseListener, MouseMotionListener, AWTEventListener{
     static ImageryOffsetDialog offsetDialog;
     static Cursor cursor = ImageProvider.getCursor("normal", "move");
 
@@ -57,6 +62,10 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         Main.map.mapView.addMouseMotionListener(this);
         oldDx = layer.getDx();
         oldDy = layer.getDy();
+        try {
+            Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
+        } catch (SecurityException ex) {
+        }
         offsetDialog = new ImageryOffsetDialog();
         offsetDialog.setVisible(true);
     }
@@ -68,8 +77,36 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             offsetDialog.setVisible(false);
             offsetDialog = null;
         }
+        try {
+            Toolkit.getDefaultToolkit().removeAWTEventListener(this);
+        } catch (SecurityException ex) {
+        }
         Main.map.mapView.removeMouseListener(this);
         Main.map.mapView.removeMouseMotionListener(this);
+    }
+
+    @Override
+    public void eventDispatched(AWTEvent event) {
+        if (!(event instanceof KeyEvent)) return;
+        if (event.getID() != KeyEvent.KEY_PRESSED) return;
+        if (layer == null) return;
+        KeyEvent kev = (KeyEvent)event;
+        double dx = 0, dy = 0;
+        switch (kev.getKeyCode()) {
+        case KeyEvent.VK_UP : dy = +1; break;
+        case KeyEvent.VK_DOWN : dy = -1; break;
+        case KeyEvent.VK_LEFT : dx = -1; break;
+        case KeyEvent.VK_RIGHT : dx = +1; break;
+        }
+        if (dx != 0 || dy != 0) {
+            double ppd = layer.getPPD();
+            layer.displace(dx / ppd, dy / ppd);
+            if (offsetDialog != null) {
+                offsetDialog.updateOffset();
+            }
+            kev.consume();
+            Main.map.repaint();
+        }
     }
 
     @Override public void mousePressed(MouseEvent e) {
@@ -111,7 +148,6 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         super.actionPerformed(e);
     }
 
-
     class ImageryOffsetDialog extends ExtendedDialog implements PropertyChangeListener {
         public final JFormattedTextField easting = new JFormattedTextField(new DecimalFormat("0.00000E0"));
         public final JFormattedTextField northing = new JFormattedTextField(new DecimalFormat("0.00000E0"));
@@ -123,13 +159,15 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
                     new String[] { tr("OK"),tr("Cancel") },
                     false);
             setButtonIcons(new String[] { "ok", "cancel" });
-            contentInsets = new Insets(15, 15, 5, 15);
-            JPanel pnl = new JPanel();
-            pnl.setLayout(new GridBagLayout());
+            contentInsets = new Insets(10, 15, 5, 15);
+            JPanel pnl = new JPanel(new GridBagLayout());
+            pnl.add(new JMultilineLabel(tr("Use arrow keys or drag the imagery layer with mouse to adjust the imagery offset.\n" +
+                    "You can also enter east and north offset in the {0} coordinates.\n" +
+                    "If you want to save the offset as bookmark, enter the bookmark name below",Main.proj.toString())), GBC.eop());
             pnl.add(new JLabel(tr("Easting") + ": "),GBC.std());
             pnl.add(easting,GBC.std().fill(GBC.HORIZONTAL).insets(0, 0, 5, 0));
             pnl.add(new JLabel(tr("Northing") + ": "),GBC.std());
-            pnl.add(northing,GBC.eol());
+            pnl.add(northing,GBC.eol().fill(GBC.HORIZONTAL));
             pnl.add(new JLabel(tr("Bookmark name: ")),GBC.eol().insets(0,5,0,0));
             pnl.add(tBookmarkName,GBC.eol().fill(GBC.HORIZONTAL));
             easting.setColumns(8);
