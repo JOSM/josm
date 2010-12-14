@@ -24,7 +24,9 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
+import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.Main;
 
 /**
  * A panel that displays the error tree. The selection manager
@@ -145,11 +147,15 @@ public class ValidatorTreePanel extends JTree {
             errorTreeDeep.put(s, new HashMap<String, MultiMap<String, TestError>>());
         }
 
+        boolean other = Main.pref.getBoolean(ValidatorPreference.PREF_OTHER, false);
         for (TestError e : errors) {
             if (e.getIgnored()) {
                 continue;
             }
             Severity s = e.getSeverity();
+            if(!other && s == Severity.OTHER) {
+                continue;
+            }
             String d = e.getDescription();
             String m = e.getMessage();
             if (filter != null) {

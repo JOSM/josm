@@ -52,6 +52,9 @@ public class ValidatorPreference implements PreferenceSetting {
     /** The preferences key for ignored severity other on upload */
     public static final String PREF_OTHER_UPLOAD = PREFIX + ".otherUpload";
 
+    /** The preferences key for ignored severity other */
+    public static final String PREF_OTHER = PREFIX + ".other";
+
     /**
      * The preferences key for enabling the permanent filtering
      * of the displayed errors in the tree regarding the current selection
@@ -61,6 +64,7 @@ public class ValidatorPreference implements PreferenceSetting {
     private JCheckBox prefUseIgnore;
     private JCheckBox prefUseLayer;
     private JCheckBox prefOtherUpload;
+    private JCheckBox prefOther;
 
     /** The list of all tests */
     private Collection<Test> allTests;
@@ -78,6 +82,10 @@ public class ValidatorPreference implements PreferenceSetting {
         prefUseLayer = new JCheckBox(tr("Use error layer."), Main.pref.getBoolean(PREF_LAYER, true));
         prefUseLayer.setToolTipText(tr("Use the error layer to display problematic elements."));
         testPanel.add(prefUseLayer, GBC.eol());
+
+        prefOther = new JCheckBox(tr("Show informational level."), Main.pref.getBoolean(PREF_OTHER, false));
+        prefOther.setToolTipText(tr("Show the informational tests."));
+        testPanel.add(prefOther, GBC.eol());
 
         prefOtherUpload = new JCheckBox(tr("Show informational level on upload."), Main.pref.getBoolean(PREF_OTHER_UPLOAD, false));
         prefOtherUpload.setToolTipText(tr("Show the informational tests in the upload check windows."));
@@ -125,6 +133,7 @@ public class ValidatorPreference implements PreferenceSetting {
         Main.pref.put(PREF_TESTS, tests.toString());
         Main.pref.put(PREF_TESTS_BEFORE_UPLOAD, testsBeforeUpload.toString());
         Main.pref.put(PREF_USE_IGNORE, prefUseIgnore.isSelected());
+        Main.pref.put(PREF_OTHER, prefOther.isSelected());
         Main.pref.put(PREF_OTHER_UPLOAD, prefOtherUpload.isSelected());
         Main.pref.put(PREF_LAYER, prefUseLayer.isSelected());
         return false;
