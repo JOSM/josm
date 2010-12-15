@@ -9,6 +9,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -66,7 +67,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
 
         @Override public TileUpdate getTileUpdate() { return source.getTileUpdate(); }
 
-        @Override public String getTileUrl(int zoom, int tilex, int tiley) { return source.getTileUrl(zoom, tilex, tiley); }
+        @Override public String getTileUrl(int zoom, int tilex, int tiley) throws IOException { return source.getTileUrl(zoom, tilex, tiley); }
 
         @Override public Image getAttributionImage() { return source.getAttributionImage(); }
 
