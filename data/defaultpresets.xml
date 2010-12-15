@@ -505,7 +505,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="highway" value="path" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
-                <combo key="sac_scale" text="SAC Scale" values="hiking,mountain_hiking,demanding_mountain_hiking,alpine_hiking,demanding_alpine_hiking,difficult_alpine_hiking" default="" delete_if_empty="true" display_values="T1 - hiking trail,T2 - mountain hiking trail,T3 - difficult,T4 - difficult\, exposed\, steep alpine trail,T5 - difficult\, exposed\, steep alpine trail&lt;br&gt;with climbing,T6 - difficult\, hazardous alpine trail with&lt;br&gt;climbing">
+                <combo key="sac_scale" text="SAC Scale" values="hiking,mountain_hiking,demanding_mountain_hiking,alpine_hiking,demanding_alpine_hiking,difficult_alpine_hiking" default="" delete_if_empty="true" display_values="T1 - hiking trail,T2 - mountain hiking trail,T3 - difficult,T4 - difficult\, exposed\, steep alpine trail,T5 - difficult alpine trail with climbing,T6 - hazardous alpine trail with climbing">
                     <short_description>Trail well cleared. Area flat or slightly sloped, no fall hazard</short_description>
                     <short_description>Trail with continuous line and balanced ascent. Terrain partially steep, fall hazard possible</short_description>
                     <short_description>exposed sites may be secured with ropes or chains, possible need to use hands for balance. Partly exposed sites with fall hazard, scree, pathless jagged rocks</short_description>

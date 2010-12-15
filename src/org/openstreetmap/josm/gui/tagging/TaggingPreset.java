@@ -393,12 +393,12 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             }
 
             if (display_array.length != value_array.length) {
-                System.err.println(tr("Broken tagging preset \"{0}-{1}\" - number of items in display_values must be the same as in values", key, text));
+                System.err.println(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''display_values'' must be the same as in ''values''", key, text));
                 display_array = value_array;
             }
 
             if (short_descriptions_array != null && short_descriptions_array.length != value_array.length) {
-                System.err.println(tr("Broken tagging preset \"{0}-{1}\" - number of items in short_descriptions must be the same as in values", key, text));
+                System.err.println(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''short_descriptions'' must be the same as in ''values''", key, text));
                 short_descriptions_array = null;
             }
 
