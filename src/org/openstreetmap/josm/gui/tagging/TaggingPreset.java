@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
@@ -26,6 +27,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
@@ -34,9 +36,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
@@ -60,6 +64,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPritority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -343,16 +348,19 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String values_context;
         public String display_values;
         public String locale_display_values;
+        public String short_descriptions;
+        public String locale_short_descriptions;
         public String default_;
         public boolean delete_if_empty = false;
         public boolean editable = true;
         public boolean use_last_as_default = false;
         public boolean required = false;
 
+        private List<String> short_description_list;
         private JComboBox combo;
-        private LinkedHashMap<String,String> lhm;
+        private Map<String, PresetListEnty> lhm;
         private Usage usage;
-        private String originalValue;
+        private PresetListEnty originalValue;
 
         @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
 
@@ -362,17 +370,25 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
             String[] value_array = values.split(",");
             String[] display_array;
+            String[] short_descriptions_array = null;
 
             if(locale_display_values != null) {
-                display_array = locale_display_values.split(",");
-            } else if(display_values != null) {
-                display_array = display_values.split(",");
+                display_array = splitEscaped(locale_display_values);
+            } else if (display_values != null) {
+                display_array = splitEscaped(display_values);
             } else {
                 display_array = value_array;
             }
 
-            if(use_last_as_default && def == null && lastValue.containsKey(key))
-            {
+            if (locale_short_descriptions != null) {
+                short_descriptions_array = splitEscaped(locale_short_descriptions);
+            } else if (short_descriptions != null) {
+                short_descriptions_array = splitEscaped(short_descriptions);
+            } else if (short_description_list != null) {
+                short_descriptions_array = short_description_list.toArray(new String[0]);
+            }
+
+            if (use_last_as_default && def == null && lastValue.containsKey(key)) {
                 def = lastValue.get(key);
             }
 
@@ -381,30 +397,40 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 display_array = value_array;
             }
 
-            lhm = new LinkedHashMap<String,String>();
-            if (!usage.hasUniqueValue() && !usage.unused()){
-                lhm.put(DIFFERENT, DIFFERENT);
+            if (short_descriptions_array != null && short_descriptions_array.length != value_array.length) {
+                System.err.println(tr("Broken tagging preset \"{0}-{1}\" - number of items in short_descriptions must be the same as in values", key, text));
+                short_descriptions_array = null;
+            }
+
+            lhm = new LinkedHashMap<String, PresetListEnty>();
+            if (!usage.hasUniqueValue() && !usage.unused()) {
+                lhm.put(DIFFERENT, new PresetListEnty(DIFFERENT));
             }
             for (int i=0; i<value_array.length; i++) {
-                lhm.put(value_array[i], (locale_display_values == null)
+                PresetListEnty e = new PresetListEnty(value_array[i]);
+                e.display_value = (locale_display_values == null)
                         ? (values_context == null ? tr(display_array[i])
-                                : trc(values_context, display_array[i])) : display_array[i]);
+                                : trc(values_context, display_array[i])) : display_array[i];
+                if (short_descriptions_array != null) {
+                    e.short_description = locale_short_descriptions == null ? tr(short_descriptions_array[i])
+                            : short_descriptions_array[i];
+                }
+                lhm.put(value_array[i], e);
             }
             if(!usage.unused()){
                 for (String s : usage.values) {
                     if (!lhm.containsKey(s)) {
-                        lhm.put(s, s);
+                        lhm.put(s, new PresetListEnty(s));
                     }
                 }
             }
             if (def != null && !lhm.containsKey(def)) {
-                lhm.put(def, def);
+                lhm.put(def, new PresetListEnty(def));
             }
-            if(!lhm.containsKey("")) {
-                lhm.put("", "");
-            }
+            lhm.put("", new PresetListEnty(""));
 
             combo = new JComboBox(lhm.values().toArray());
+            combo.setRenderer(new PresetComboListCellRenderer());
             combo.setEditable(editable);
             combo.setMaximumRowCount(13);
             AutoCompletingTextField tf = new AutoCompletingTextField();
@@ -413,22 +439,19 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             combo.setEditor(tf);
 
             if (usage.hasUniqueValue() && !usage.unused()){
-                originalValue=usage.getFirst();
-                combo.setSelectedItem(lhm.get(originalValue));
+                originalValue=lhm.get(usage.getFirst());
             }
             // use default only in case it is a totally new entry
             else if(def != null && !usage.hadKeys()) {
-                combo.setSelectedItem(def);
-                originalValue=DIFFERENT;
+                originalValue=lhm.get(DIFFERENT);
             }
             else if(usage.unused()){
-                combo.setSelectedItem("");
-                originalValue="";
+                originalValue=lhm.get("");
             }
             else{
-                combo.setSelectedItem(DIFFERENT);
-                originalValue=DIFFERENT;
+                originalValue=lhm.get(DIFFERENT);
             }
+            combo.setSelectedItem(originalValue);
 
             if(locale_text == null) {
                 if(text_context != null) {
@@ -441,6 +464,99 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             p.add(combo, GBC.eol().fill(GBC.HORIZONTAL));
             return true;
         }
+
+        private static class PresetListEnty {
+            String value;
+            String display_value;
+            String short_description;
+
+            public String getListDisplay() {
+                if (value.equals(DIFFERENT))
+                    return "<b>"+DIFFERENT.replaceAll("<", "&lt;").replaceAll(">", "&gt;")+"</b>";
+
+                if (value.equals(""))
+                    return "&nbsp;";
+
+                StringBuilder res = new StringBuilder("<b>");
+                if (display_value != null) {
+                    res.append(display_value);
+                } else {
+                    res.append(value);
+                }
+                res.append("</b>");
+                if (short_description != null) {
+                    // wrap in table to restrict the text width
+                    res.append("<br><table><td width='232'>(").append(short_description).append(")</td></table>");
+                }
+                return res.toString();
+            }
+
+            public PresetListEnty(String value) {
+                this.value = value;
+                this.display_value = value;
+            }
+
+            public PresetListEnty(String value, String display_value) {
+                this.value = value;
+                this.display_value = display_value;
+            }
+
+            // toString is mainly used to initialize the Editor
+            @Override
+            public String toString() {
+                if (value.equals(DIFFERENT))
+                    return DIFFERENT;
+                return display_value.replaceAll("<.*>", ""); // remove additional markup, e.g. <br>
+            }
+        }
+
+        private static class PresetComboListCellRenderer implements ListCellRenderer {
+
+            HtmlPanel lbl;
+            JComponent dummy = new JComponent() {};
+
+            public PresetComboListCellRenderer() {
+                lbl = new HtmlPanel();
+            }
+
+            public Component getListCellRendererComponent(
+                    JList list,
+                    Object value,
+                    int index,
+                    boolean isSelected,
+                    boolean cellHasFocus)
+            {
+                if (isSelected) {
+                    lbl.setBackground(list.getSelectionBackground());
+                    lbl.setForeground(list.getSelectionForeground());
+                } else {
+                    lbl.setBackground(list.getBackground());
+                    lbl.setForeground(list.getForeground());
+                }
+
+                PresetListEnty item = (PresetListEnty) value;
+                String s = item.getListDisplay();
+                lbl.setText(s);
+                // We do not want the editor to have the maximum height of all
+                // entries. Return a dummy with bogus height.
+                if (index == -1) {
+                    dummy.setPreferredSize(new Dimension(lbl.getPreferredSize().width, 10));
+                    return dummy;
+                }
+                return lbl;
+            }
+        }
+
+        // allow escaped comma in comma separated list:
+        // "A\, B\, C,one\, two" --> ["A, B, C", "one, two"]
+        private static String[] splitEscaped(String s) {
+            String[] res = s.replaceAll("\\\\,", "\u0091").split(",");
+            for (int i=0; i<res.length; ++i) {
+                res[i] = res[i].replaceAll("\u0091", ",");
+            }
+            return res;
+        }
+
         @Override public void addCommands(List<Tag> changedTags) {
             Object obj = combo.getSelectedItem();
             String display = (obj == null) ? null : obj.toString();
@@ -452,7 +568,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             if (display != null)
             {
                 for (String key : lhm.keySet()) {
-                    String k = lhm.get(key);
+                    String k = lhm.get(key).toString();
                     if (k != null && k.equals(display)) {
                         value=key;
                     }
@@ -465,7 +581,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             }
 
             // no change if same as before
-            if (value.equals(originalValue) || (originalValue == null &&  value.length() == 0)) return;
+            if (originalValue == null) {
+                if (value.length() == 0)
+                    return;
+            } else if (value.equals(originalValue.toString()))
+                return;
 
             if (delete_if_empty && value.length() == 0) {
                 value = null;
@@ -473,8 +593,17 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             if (use_last_as_default) {
                 lastValue.put(key, value);
             }
+            System.err.print("change: "+key+" "+value);
             changedTags.add(new Tag(key, value));
         }
+
+        public void setShort_description(String s) {
+            if (short_description_list == null) {
+                short_description_list = new ArrayList<String>();
+            }
+            short_description_list.add(tr(s));
+        }
+
         @Override boolean requestFocusInWindow() {return combo.requestFocusInWindow();}
     }
 

@@ -505,7 +505,14 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="highway" value="path" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
-                <combo key="sac_scale" text="SAC Scale" values="hiking,mountain_hiking,demanding_mountain_hiking,alpine_hiking,demanding_alpine_hiking,difficult_alpine_hiking" default="" delete_if_empty="true" />
+                <combo key="sac_scale" text="SAC Scale" values="hiking,mountain_hiking,demanding_mountain_hiking,alpine_hiking,demanding_alpine_hiking,difficult_alpine_hiking" default="" delete_if_empty="true" display_values="T1 - hiking trail,T2 - mountain hiking trail,T3 - difficult,T4 - difficult\, exposed\, steep alpine trail,T5 - difficult\, exposed\, steep alpine trail&lt;br&gt;with climbing,T6 - difficult\, hazardous alpine trail with&lt;br&gt;climbing">
+                    <short_description>Trail well cleared. Area flat or slightly sloped, no fall hazard</short_description>
+                    <short_description>Trail with continuous line and balanced ascent. Terrain partially steep, fall hazard possible</short_description>
+                    <short_description>exposed sites may be secured with ropes or chains, possible need to use hands for balance. Partly exposed sites with fall hazard, scree, pathless jagged rocks</short_description>
+                    <short_description>sometimes need for hand use to get ahead. Terrain quite exposed, precarious grassy acclivities, jagged rocks, facile snow-free glaciers.</short_description>
+                    <short_description>single plainly climbing up to second grade. Exposed, demanding terrain, jagged rocks, few dangerous glacier and snow</short_description>
+                    <short_description>climbing up to second grade. Often very exposed, precarious jagged rocks, glacier with danger to slip and fall</short_description>
+                </combo>
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" default="" delete_if_empty="true" />
                 <combo key="trail_visibility" text="Visibility" values="excellent,good,intermediate,bad,horrible,no" default="" delete_if_empty="true" />
