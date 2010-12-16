@@ -5,12 +5,11 @@ import java.util.Collection;
 
 import org.openstreetmap.josm.Main;
 
-public class CollectionProperty {
-    private final String key;
-    private final Collection<String> defaultValue;
+public class CollectionProperty extends AbstractProperty {
+    protected final Collection<String> defaultValue;
 
     public CollectionProperty(String key, Collection<String> defaultValue) {
-        this.key = key;
+        super(key);
         this.defaultValue = defaultValue;
     }
 
@@ -20,10 +19,6 @@ public class CollectionProperty {
 
     public boolean put(Collection<String> value) {
         return Main.pref.putCollection(getKey(), value);
-    }
-
-    public String getKey() {
-        return key;
     }
 
     public Collection<String> getDefaultValue() {

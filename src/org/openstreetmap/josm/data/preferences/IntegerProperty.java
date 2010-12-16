@@ -3,13 +3,12 @@ package org.openstreetmap.josm.data.preferences;
 
 import org.openstreetmap.josm.Main;
 
-public class IntegerProperty {
+public class IntegerProperty extends AbstractProperty {
 
-    private final String key;
-    private final int defaultValue;
+    protected final int defaultValue;
 
     public IntegerProperty(String key, int defaultValue) {
-        this.key = key;
+        super(key);
         this.defaultValue = defaultValue;
     }
 
@@ -35,10 +34,6 @@ public class IntegerProperty {
             return false;
         }
         return put(intVal);
-    }
-
-    public String getKey() {
-        return key;
     }
 
     public int getDefaultValue() {

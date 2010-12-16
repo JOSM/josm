@@ -3,13 +3,12 @@ package org.openstreetmap.josm.data.preferences;
 
 import org.openstreetmap.josm.Main;
 
-public class StringProperty {
+public class StringProperty extends AbstractProperty {
 
-    private final String key;
-    private final String defaultValue;
+    protected final String defaultValue;
 
     public StringProperty(String key, String defaultValue) {
-        this.key = key;
+        super(key);
         this.defaultValue = defaultValue;
     }
 
@@ -19,10 +18,6 @@ public class StringProperty {
 
     public boolean put(String value) {
         return Main.pref.put(getKey(), value);
-    }
-
-    public String getKey() {
-        return key;
     }
 
     public String getDefaultValue() {

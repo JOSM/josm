@@ -294,7 +294,10 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
      */
     protected List<PluginInformation> filterDeprecatedPlugins(List<PluginInformation> plugins) {
         List<PluginInformation> ret = new ArrayList<PluginInformation>(plugins.size());
-        HashSet<String> deprecatedPluginNames = new HashSet<String>(PluginHandler.DEPRECATED_PLUGINS.keySet());
+        HashSet<String> deprecatedPluginNames = new HashSet<String>();
+        for (PluginHandler.DeprecatedPlugin p : PluginHandler.DEPRECATED_PLUGINS) {
+            deprecatedPluginNames.add(p.name);
+        }
         for (PluginInformation plugin: plugins) {
             if (deprecatedPluginNames.contains(plugin.name)) {
                 continue;

@@ -3,13 +3,12 @@ package org.openstreetmap.josm.data.preferences;
 
 import org.openstreetmap.josm.Main;
 
-public class BooleanProperty {
+public class BooleanProperty extends AbstractProperty {
 
-    private final String key;
-    private final boolean defaultValue;
+    protected final boolean defaultValue;
 
     public BooleanProperty(String key, boolean defaultValue) {
-        this.key = key;
+        super(key);
         this.defaultValue = defaultValue;
     }
 
@@ -21,12 +20,7 @@ public class BooleanProperty {
         return Main.pref.put(getKey(), value);
     }
 
-    public String getKey() {
-        return key;
-    }
-
     public boolean isDefaultValue() {
         return defaultValue;
     }
-
 }

@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -58,6 +57,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -69,28 +69,84 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class PluginHandler {
 
-    /* deprecated plugins that are removed on start
-       key - plugin name; value - explanation for deprecation (optional, can be null) */
-    public final static Map<String, String> DEPRECATED_PLUGINS = new TreeMap<String, String>();
+    /* deprecated plugins that are removed on start */
+    public final static Collection<DeprecatedPlugin> DEPRECATED_PLUGINS;
     static {
         String IN_CORE = tr("integrated into main program");
-        for (String[] depr : new String[][] {
-            {"mappaint", IN_CORE}, {"unglueplugin", IN_CORE},
-            {"lang-de", IN_CORE}, {"lang-en_GB", IN_CORE}, {"lang-fr", IN_CORE},
-            {"lang-it", IN_CORE}, {"lang-pl", IN_CORE}, {"lang-ro", IN_CORE},
-            {"lang-ru", IN_CORE}, {"ewmsplugin", IN_CORE}, {"ywms", IN_CORE},
-            {"tways-0.2", IN_CORE},
-            {"geotagged", IN_CORE},
-            {"landsat", tr("replaced by {0} plugin","lakewalker")},
-            {"namefinder", IN_CORE},
-            {"waypoints", IN_CORE}, {"slippy_map_chooser", IN_CORE},
-            {"tcx-support", tr("replaced by {0} plugin","dataimport")},
-            {"usertools", IN_CORE},
-            {"AgPifoJ", IN_CORE}, {"utilsplugin", IN_CORE}, {"ghost", IN_CORE},
-            {"validator", IN_CORE}, {"multipoly", IN_CORE},
-            {"remotecontrol", IN_CORE},
-            {"imagery", IN_CORE}, {"slippymap", IN_CORE}, {"wmsplugin", IN_CORE}}) {
-            DEPRECATED_PLUGINS.put(depr[0], depr.length >= 2 ? depr[1] : null);
+
+        class RemotecontrolMigration implements Runnable {
+            public void run() {
+                System.out.println("Migrating remotecontrol plugin...");
+                if (!RemoteControl.PROP_REMOTECONTROL_ENABLED.isSet()) {
+                    System.out.println("  Setting "+RemoteControl.PROP_REMOTECONTROL_ENABLED.getKey()+"=true");
+                    RemoteControl.PROP_REMOTECONTROL_ENABLED.put(true);
+                }
+                System.out.println("...Done.");
+            }
+        }
+
+        DEPRECATED_PLUGINS = Arrays.asList(new DeprecatedPlugin[] {
+            new DeprecatedPlugin("mappaint", IN_CORE),
+            new DeprecatedPlugin("unglueplugin", IN_CORE),
+            new DeprecatedPlugin("lang-de", IN_CORE),
+            new DeprecatedPlugin("lang-en_GB", IN_CORE),
+            new DeprecatedPlugin("lang-fr", IN_CORE),
+            new DeprecatedPlugin("lang-it", IN_CORE),
+            new DeprecatedPlugin("lang-pl", IN_CORE),
+            new DeprecatedPlugin("lang-ro", IN_CORE),
+            new DeprecatedPlugin("lang-ru", IN_CORE),
+            new DeprecatedPlugin("ewmsplugin", IN_CORE),
+            new DeprecatedPlugin("ywms", IN_CORE),
+            new DeprecatedPlugin("tways-0.2", IN_CORE),
+            new DeprecatedPlugin("geotagged", IN_CORE),
+            new DeprecatedPlugin("landsat", tr("replaced by new {0} plugin","lakewalker")),
+            new DeprecatedPlugin("namefinder", IN_CORE),
+            new DeprecatedPlugin("waypoints", IN_CORE),
+            new DeprecatedPlugin("slippy_map_chooser", IN_CORE),
+            new DeprecatedPlugin("tcx-support", tr("replaced by new {0} plugin","dataimport")),
+            new DeprecatedPlugin("usertools", IN_CORE),
+            new DeprecatedPlugin("AgPifoJ", IN_CORE),
+            new DeprecatedPlugin("utilsplugin", IN_CORE),
+            new DeprecatedPlugin("ghost", IN_CORE),
+            new DeprecatedPlugin("validator", IN_CORE),
+            new DeprecatedPlugin("multipoly", IN_CORE),
+            new DeprecatedPlugin("remotecontrol", IN_CORE, new RemotecontrolMigration()),
+            new DeprecatedPlugin("imagery", IN_CORE),
+            new DeprecatedPlugin("slippymap", IN_CORE),
+            new DeprecatedPlugin("wmsplugin", IN_CORE),
+        });
+    }
+
+    public static class DeprecatedPlugin implements Comparable<DeprecatedPlugin> {
+        public String name;
+        // short explanation, can be null
+        public String reason;
+        // migration, can be null
+        private Runnable migration;
+
+        public DeprecatedPlugin(String name) {
+            this.name = name;
+        }
+
+        public DeprecatedPlugin(String name, String reason) {
+            this.name = name;
+            this.reason = reason;
+        }
+
+        public DeprecatedPlugin(String name, String reason, Runnable migration) {
+            this.name = name;
+            this.reason = reason;
+            this.migration = migration;
+        }
+
+        public void migrate() {
+            if (migration != null) {
+                migration.run();
+            }
+        }
+
+        public int compareTo(DeprecatedPlugin o) {
+            return name.compareTo(o.name);
         }
     }
 
@@ -110,12 +166,13 @@ public class PluginHandler {
      * @param plugins the collection of plugins
      */
     private static void filterDeprecatedPlugins(Window parent, Collection<String> plugins) {
-        Set<String> removedPlugins = new TreeSet<String>();
-        for (String p : DEPRECATED_PLUGINS.keySet()) {
-            if (plugins.contains(p)) {
-                plugins.remove(p);
-                Main.pref.removeFromCollection("plugins", p);
-                removedPlugins.add(p);
+        Set<DeprecatedPlugin> removedPlugins = new TreeSet<DeprecatedPlugin>();
+        for (DeprecatedPlugin depr : DEPRECATED_PLUGINS) {
+            if (plugins.contains(depr.name)) {
+                plugins.remove(depr.name);
+                Main.pref.removeFromCollection("plugins", depr.name);
+                removedPlugins.add(depr);
+                depr.migrate();
             }
         }
         if (removedPlugins.isEmpty())
@@ -131,11 +188,10 @@ public class PluginHandler {
                 removedPlugins.size()
         ));
         sb.append("<ul>");
-        for (String name: removedPlugins) {
-            sb.append("<li>").append(name);
-            String explanation = DEPRECATED_PLUGINS.get(name);
-            if (explanation != null) {
-                sb.append(" ("+explanation+")");
+        for (DeprecatedPlugin depr: removedPlugins) {
+            sb.append("<li>").append(depr.name);
+            if (depr.reason != null) {
+                sb.append(" (").append(depr.reason).append(")");
             }
             sb.append("</li>");
         }
