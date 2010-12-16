@@ -28,8 +28,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ImageryAdjustAction;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
-import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
+import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -190,9 +190,9 @@ public abstract class ImageryLayer extends Layer {
         tmp.getGraphics().drawImage(img, 0, 0, null);
         Kernel kernel;
         if (sharpenLevel == 1) {
-            kernel = new Kernel(2, 2, new float[] { 4, -1, -1, -1});
+            kernel = new Kernel(3, 3, new float[] { -0.25f, -0.5f, -0.25f, -0.5f, 4, -0.5f, -0.25f, -0.5f, -0.25f});
         } else {
-            kernel = new Kernel(3, 3, new float[] { -1, -1, -1, -1, 9, -1, -1, -1, -1});
+            kernel = new Kernel(3, 3, new float[] { -0.5f, -1, -0.5f, -1, 7, -1, -0.5f, -1, -0.5f});
         }
         BufferedImageOp op = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
         return op.filter(tmp, null);

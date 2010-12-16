@@ -42,9 +42,9 @@ import javax.swing.table.TableColumnModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
-import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
@@ -252,7 +252,7 @@ public class ImageryPreference implements PreferenceSetting {
         this.btnFadeColor.setBackground(colFadeColor);
         this.btnFadeColor.setText(ColorHelper.color2html(colFadeColor));
         this.fadeAmount.setValue(ImageryLayer.PROP_FADE_AMOUNT.get());
-        this.sharpen.setSelectedIndex(ImageryLayer.PROP_SHARPEN_LEVEL.get());
+        this.sharpen.setSelectedIndex(Math.max(0, Math.min(2, ImageryLayer.PROP_SHARPEN_LEVEL.get())));
 
         // WMS Settings
         this.browser.setSelectedItem(HTMLGrabber.PROP_BROWSER.get());
