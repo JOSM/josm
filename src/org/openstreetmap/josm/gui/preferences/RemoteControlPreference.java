@@ -44,19 +44,18 @@ public class RemoteControlPreference implements PreferenceSetting
 
     private JCheckBox enableRemoteControl;
 
-    private JCheckBox permissionLoadData = new JCheckBox(tr("load data from API"));
-    private JCheckBox permissionImportData = new JCheckBox(tr("import data from URL"));
-    private JCheckBox permissionLoadImagery = new JCheckBox(tr("load imagery layers"));
-    private JCheckBox permissionCreateObjects = new JCheckBox(tr("create new objects"));
-    private JCheckBox permissionChangeSelection = new JCheckBox(tr("change the selection"));
-    private JCheckBox permissionChangeViewport = new JCheckBox(tr("change the viewport"));
-    private JCheckBox permissionReadProtocolversion = new JCheckBox(tr("read protocol version"));
-    private JCheckBox alwaysAskUserConfirm = new JCheckBox(tr("confirm all Remote Control actions manually"));
+    private JCheckBox permissionLoadData = new JCheckBox(tr("Load data from API"));
+    private JCheckBox permissionImportData = new JCheckBox(tr("Import data from URL"));
+    private JCheckBox permissionLoadImagery = new JCheckBox(tr("Load imagery layers"));
+    private JCheckBox permissionCreateObjects = new JCheckBox(tr("Create new objects"));
+    private JCheckBox permissionChangeSelection = new JCheckBox(tr("Change the selection"));
+    private JCheckBox permissionChangeViewport = new JCheckBox(tr("Change the viewport"));
+    private JCheckBox permissionReadProtocolversion = new JCheckBox(tr("Read protocol version"));
+    private JCheckBox alwaysAskUserConfirm = new JCheckBox(tr("Confirm all Remote Control actions manually"));
 
-    public void addGui(final PreferenceTabbedPane gui)
-    {
+    public void addGui(final PreferenceTabbedPane gui) {
 
-        JPanel remote = gui.createPreferenceTab("remotecontrol.gif", tr("Remote Control"), tr("Settings for the Remote Control freature."));
+        JPanel remote = gui.createPreferenceTab("remotecontrol.gif", tr("Remote Control"), tr("Settings for the remote control feature."));
 
         remote.add(enableRemoteControl = new JCheckBox(tr("Enable remote control"), RemoteControl.PROP_REMOTECONTROL_ENABLED.get()), GBC.eol());
 
@@ -86,8 +85,8 @@ public class RemoteControlPreference implements PreferenceSetting
 
         wrapper.add(alwaysAskUserConfirm, GBC.eol().fill(GBC.HORIZONTAL));
 
-        final JLabel portLabel = new JLabel("<html>"+tr("JOSM will always listen on port 8111 on localhost." +
-                "The port is not configurable because it is referenced by external applications talking to JOSM.") + "</html>");
+        final JLabel portLabel = new JLabel("<html>"+tr("JOSM will always listen at port 8111 on localhost." +
+                "This port is not configurable because it is referenced by external applications talking to JOSM.") + "</html>");
         portLabel.setFont(portLabel.getFont().deriveFont(Font.PLAIN));
 
         wrapper.add(portLabel, GBC.eol().insets(5,5,0,10).fill(GBC.HORIZONTAL));
@@ -103,7 +102,7 @@ public class RemoteControlPreference implements PreferenceSetting
         permissionReadProtocolversion.setSelected(Main.pref.getBoolean(VersionHandler.permissionKey, VersionHandler.permissionDefault));
         alwaysAskUserConfirm.setSelected(Main.pref.getBoolean(RequestHandler.globalConfirmationKey, RequestHandler.globalConfirmationDefault));
 
-        ActionListener remoteControlEnabled = new ActionListener(){
+        ActionListener remoteControlEnabled = new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 boolean enabled = enableRemoteControl.isSelected();
                 GuiHelper.setEnabledRec(wrapper, enableRemoteControl.isSelected());
@@ -130,7 +129,6 @@ public class RemoteControlPreference implements PreferenceSetting
             Main.pref.put(VersionHandler.permissionKey, permissionReadProtocolversion.isSelected());
             Main.pref.put(RequestHandler.globalConfirmationKey, alwaysAskUserConfirm.isSelected());
         }
-        // FIXME confirm return value - really no restart needed?
         return changed;
     }
 }
