@@ -111,6 +111,7 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (!isEnabled()) return;
         JPanel panel = new JPanel(new GridBagLayout());
         panel.add(new JLabel(tr("Supported Rectifier Services:")), GBC.eol());
 
@@ -122,8 +123,9 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
         JRadioButton firstBtn = null;
         for(RectifierService s : services) {
             JRadioButton serviceBtn = new JRadioButton(s.name);
-            if(firstBtn == null)
+            if(firstBtn == null) {
                 firstBtn = serviceBtn;
+            }
             // Checks clipboard contents against current service if no match has been found yet.
             // If the contents match, they will be inserted into the text field and the corresponding
             // service will be pre-selected.
@@ -137,13 +139,15 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
             if(!s.url.equals("")) {
                 panel.add(serviceBtn, GBC.std());
                 panel.add(new UrlLabel(s.url, tr("Visit Homepage")), GBC.eol().anchor(GridBagConstraints.EAST));
-            } else
+            } else {
                 panel.add(serviceBtn, GBC.eol().anchor(GridBagConstraints.WEST));
+            }
         }
 
         // Fallback in case no match was found
-        if(tfWmsUrl.getText().equals("") && firstBtn != null)
+        if(tfWmsUrl.getText().equals("") && firstBtn != null) {
             firstBtn.setSelected(true);
+        }
 
         panel.add(new JLabel(tr("WMS URL or Image ID:")), GBC.eol());
         panel.add(tfWmsUrl, GBC.eol().fill(GridBagConstraints.HORIZONTAL));
@@ -161,14 +165,16 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
             diag.showDialog();
             int answer = diag.getValue();
             // Break loop when the user cancels
-            if(answer != 1)
+            if(answer != 1) {
                 break;
+            }
 
             String text = tfWmsUrl.getText().trim();
             // Loop all services until we find the selected one
             for(RectifierService s : services) {
-                if(!s.isSelected())
+                if(!s.isSelected()) {
                     continue;
+                }
 
                 // We've reached the custom WMS URL service
                 // Just set the URL and hope everything works out
@@ -235,5 +241,10 @@ public class Map_Rectifier_WMSmenuAction extends JosmAction {
             return "";
         }
         return result.trim();
+    }
+
+    @Override
+    protected void updateEnabledState() {
+        setEnabled(Main.map != null && Main.map.mapView != null && !Main.map.mapView.getAllLayers().isEmpty());
     }
 }

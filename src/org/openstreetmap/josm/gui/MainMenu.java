@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -57,6 +56,7 @@ import org.openstreetmap.josm.actions.NewAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.actions.OpenLocationAction;
 import org.openstreetmap.josm.actions.OrthogonalizeAction;
+import org.openstreetmap.josm.actions.OrthogonalizeAction.Undo;
 import org.openstreetmap.josm.actions.PasteAction;
 import org.openstreetmap.josm.actions.PasteTagsAction;
 import org.openstreetmap.josm.actions.PreferencesAction;
@@ -81,7 +81,6 @@ import org.openstreetmap.josm.actions.UploadSelectionAction;
 import org.openstreetmap.josm.actions.WireframeToggleAction;
 import org.openstreetmap.josm.actions.ZoomInAction;
 import org.openstreetmap.josm.actions.ZoomOutAction;
-import org.openstreetmap.josm.actions.OrthogonalizeAction.Undo;
 import org.openstreetmap.josm.actions.audio.AudioBackAction;
 import org.openstreetmap.josm.actions.audio.AudioFasterAction;
 import org.openstreetmap.josm.actions.audio.AudioFwdAction;
@@ -97,6 +96,7 @@ import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSearchAction;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -391,10 +391,13 @@ public class MainMenu extends JMenuBar {
     }
 
     public class ImageryMenuUpdater implements MapView.LayerChangeListener {
-        JMenu offsetSubMenu = new JMenu(trc("layer","Offset"));
+        JMenuItem disabledOffset = new JMenuItem(trc("layer","Offset"));
+        JMenuItem offsetSubMenu = disabledOffset;
+        int offsPos;
 
         public ImageryMenuUpdater() {
             MapView.addLayerChangeListener(this);
+            disabledOffset.setEnabled(false);
         }
 
         public void refreshImageryMenu() {
@@ -402,56 +405,54 @@ public class MainMenu extends JMenuBar {
 
             // for each configured WMSInfo, add a menu entry.
             for (final ImageryInfo u : ImageryLayerInfo.instance.getLayers()) {
-                imageryMenu.add(new JMenuItem(new AddImageryLayerAction(u)));
+                imageryMenu.add(new AddImageryLayerAction(u));
             }
             imageryMenu.addSeparator();
             imageryMenu.add(new JMenuItem(new Map_Rectifier_WMSmenuAction()));
 
             imageryMenu.addSeparator();
+            offsPos = imageryMenu.getMenuComponentCount();
             imageryMenu.add(offsetSubMenu);
             imageryMenu.addSeparator();
-            imageryMenu.add(new JMenuItem(new
-                    JosmAction(tr("Blank Layer"), "blankmenu", tr("Open a blank WMS layer to load data from a file"), null, false) {
+            imageryMenu.add(new JMenuItem(new JosmAction(
+                    tr("Blank Layer"), "blankmenu", tr("Open a blank WMS layer to load data from a file"), null, false) {
                 @Override
                 public void actionPerformed(ActionEvent ev) {
+                    if (!isEnabled()) return;
                     Main.main.addLayer(new WMSLayer());
                 }
+
+                @Override
+                protected void updateEnabledState() {
+                    setEnabled(Main.map != null && Main.map.mapView != null && !Main.map.mapView.getAllLayers().isEmpty());
+                }
             }));
-            refreshEnabled();
         }
 
-        public void refreshEnabled() {
-            imageryMenu.setEnabled(Main.map != null
-                    && Main.map.mapView !=null
-            );
+        private JMenuItem getNewOffsetMenu(){
+            if (Main.map == null || Main.map.mapView == null)
+                return disabledOffset;
+            List<ImageryLayer> layers = Main.map.mapView.getLayersOfType(ImageryLayer.class);
+            if (layers.isEmpty())
+                return disabledOffset;
+            if (layers.size() == 1)
+                return layers.get(0).getOffsetMenuItem();
+            JMenu newMenu = new JMenu(trc("layer","Offset"));
+            newMenu.setIcon(ImageProvider.get("mapmode", "adjustimg"));
+            for (ImageryLayer layer : layers) {
+                JMenuItem layerMenu = layer.getOffsetMenuItem();
+                layerMenu.setText(layer.getName());
+                layerMenu.setIcon(layer.getIcon());
+                newMenu.add(layerMenu);
+            }
+            return newMenu;
         }
 
         public void refreshOffsetMenu() {
-            offsetSubMenu.removeAll();
-            if (Main.map == null || Main.map.mapView == null) {
-                offsetSubMenu.setEnabled(false);
-                return;
-            }
-            List<ImageryLayer> layers = Main.map.mapView.getLayersOfType(ImageryLayer.class);
-            if (layers.isEmpty()) {
-                offsetSubMenu.setEnabled(false);
-                return;
-            }
-            offsetSubMenu.setEnabled(true);
-            if (layers.size() == 1) {
-                for (Component c : layers.get(0).getOffsetMenu()) {
-                    offsetSubMenu.add(c);
-                }
-                return;
-            }
-            for (ImageryLayer layer : layers) {
-                JMenu subMenu = new JMenu(layer.getName());
-                subMenu.setIcon(layer.getIcon());
-                for (Component c : layer.getOffsetMenu()) {
-                    subMenu.add(c);
-                }
-                offsetSubMenu.add(subMenu);
-            }
+            JMenuItem newItem = getNewOffsetMenu();
+            imageryMenu.remove(offsetSubMenu);
+            imageryMenu.add(newItem, offsPos);
+            offsetSubMenu = newItem;
         }
 
         @Override
@@ -463,7 +464,6 @@ public class MainMenu extends JMenuBar {
             if (newLayer instanceof ImageryLayer) {
                 refreshOffsetMenu();
             }
-            refreshEnabled();
         }
 
         @Override
@@ -471,7 +471,6 @@ public class MainMenu extends JMenuBar {
             if (oldLayer instanceof ImageryLayer) {
                 refreshOffsetMenu();
             }
-            refreshEnabled();
         }
     }
 }

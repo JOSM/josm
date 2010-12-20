@@ -258,12 +258,13 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     }
 
     private double getPPDeg() {
+        MapView mv = Main.map.mapView;
         return mv.getWidth()/(mv.getLatLon(mv.getWidth(), mv.getHeight()/2).lon()-mv.getLatLon(0, mv.getHeight()/2).lon());
     }
 
     private int getBestZoom() {
+        if (Main.map == null || Main.map.mapView == null) return 3;
         double ret = Math.log(getPPDeg()*360/tileSource.getTileSize())/Math.log(2);
-        System.out.println("Detected best zoom " + ret);
         return (int)Math.round(ret);
     }
 

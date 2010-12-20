@@ -30,15 +30,15 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.GeorefImage;
-import org.openstreetmap.josm.data.imagery.ImageryInfo;
-import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.GeorefImage.State;
+import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
+import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -76,6 +76,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
     protected boolean autoDownloadEnabled = true;
     protected boolean settingsChanged;
     protected ImageryInfo info;
+    protected final MapView mv;
 
     // Image index boundary for current view
     private volatile int bminx;
@@ -108,6 +109,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
 
     public WMSLayer(ImageryInfo info) {
         super(info);
+        mv = Main.map.mapView;
         setBackgroundLayer(true); /* set global background variable */
         initializeImages();
         this.info = new ImageryInfo(info);

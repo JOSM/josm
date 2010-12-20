@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -14,7 +13,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -31,7 +29,6 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
-import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public abstract class ImageryLayer extends Layer {
@@ -54,7 +51,6 @@ public abstract class ImageryLayer extends Layer {
     }
 
     protected final ImageryInfo info;
-    protected MapView mv;
 
     protected double dx = 0.0;
     protected double dy = 0.0;
@@ -64,13 +60,13 @@ public abstract class ImageryLayer extends Layer {
     public ImageryLayer(ImageryInfo info) {
         super(info.getName());
         this.info = info;
-        this.mv = Main.map.mapView;
         this.sharpenLevel = PROP_SHARPEN_LEVEL.get();
     }
 
     public double getPPD(){
-        ProjectionBounds bounds = mv.getProjectionBounds();
-        return mv.getWidth() / (bounds.max.east() - bounds.min.east());
+        if (Main.map == null || Main.map.mapView == null) return Main.proj.getDefaultZoomInPPD();
+        ProjectionBounds bounds = Main.map.mapView.getProjectionBounds();
+        return Main.map.mapView.getWidth() / (bounds.max.east() - bounds.min.east());
     }
 
     public double getDx() {
@@ -131,16 +127,8 @@ public abstract class ImageryLayer extends Layer {
         @Override
         public void actionPerformed(ActionEvent ev) {
             setOffset(b.dx, b.dy);
+            Main.main.menu.imageryMenuUpdater.refreshOffsetMenu();
             Main.map.repaint();
-            if (!(ev.getSource() instanceof Component)) return;
-            Component source = (Component)ev.getSource();
-            if (source.getParent() == null) return;
-            Container m = source.getParent();
-            for (Component c : m.getComponents()) {
-                if (c instanceof JCheckBoxMenuItem && c != source) {
-                    ((JCheckBoxMenuItem)c).setSelected(false);
-                }
-            }
         }
     }
 
@@ -148,27 +136,29 @@ public abstract class ImageryLayer extends Layer {
         @Override
         public void actionPerformed(ActionEvent e) {
         }
+
         @Override
         public Component createMenuComponent() {
-            JMenu menu = new JMenu(trc("layer", "Offset"));
-            menu.setIcon(ImageProvider.get("mapmode", "adjustimg"));
-            for (Component item : getOffsetMenu()) {
-                menu.add(item);
-            }
-            return menu;
+            return getOffsetMenuItem();
         }
+
         @Override
         public boolean supportLayers(List<Layer> layers) {
             return false;
         }
     }
 
-    public List<Component> getOffsetMenu() {
-        List<Component> result = new ArrayList<Component>();
-        result.add(new JMenuItem(new ImageryAdjustAction(this)));
-        if (OffsetBookmark.allBookmarks.isEmpty()) return result;
+    ImageryAdjustAction adjustAction = new ImageryAdjustAction(this);
 
-        result.add(new JSeparator(JSeparator.HORIZONTAL));
+    public JMenuItem getOffsetMenuItem() {
+        JMenuItem adjustMenuItem = new JMenuItem(adjustAction);
+        if (OffsetBookmark.allBookmarks.isEmpty()) return adjustMenuItem;
+
+        JMenu subMenu = new JMenu(trc("layer", "Offset"));
+        subMenu.setIcon(ImageProvider.get("mapmode", "adjustimg"));
+        subMenu.add(adjustMenuItem);
+        subMenu.add(new JSeparator());
+        boolean hasBookmarks = false;
         for (OffsetBookmark b : OffsetBookmark.allBookmarks) {
             if (!b.isUsable(this)) {
                 continue;
@@ -177,9 +167,10 @@ public abstract class ImageryLayer extends Layer {
             if (b.dx == dx && b.dy == dy) {
                 item.setSelected(true);
             }
-            result.add(item);
+            subMenu.add(item);
+            hasBookmarks = true;
         }
-        return result;
+        return hasBookmarks ? subMenu : adjustMenuItem;
     }
 
     public BufferedImage sharpenImage(BufferedImage img) {
