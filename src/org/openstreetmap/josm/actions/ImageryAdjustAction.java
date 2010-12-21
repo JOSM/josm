@@ -194,19 +194,33 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             ignoreListener = false;
         }
 
+        private boolean confirmOverwriteBookmark() {
+            ExtendedDialog dialog = new ExtendedDialog(
+                    Main.parent,
+                    tr("Overwrite"),
+                    new String[] {tr("Overwrite"), tr("Cancel")}
+            ) {{
+                contentInsets = new Insets(10, 15, 10, 15);
+            }};
+            dialog.setContent(tr("Offset bookmark already exists. Overwrite?"));
+            dialog.setButtonIcons(new String[] {"ok.png", "cancel.png"});
+            dialog.setupDialog();
+            dialog.setVisible(true);
+            return dialog.getValue() == 1;
+        }
+
         @Override
         protected void buttonAction(int buttonIndex, ActionEvent evt) {
+            if (buttonIndex != 1 && tBookmarkName.getText() != null && !"".equals(tBookmarkName.getText()) &&
+                    OffsetBookmark.getBookmarkByName(layer, tBookmarkName.getText()) != null) {
+                if (!confirmOverwriteBookmark()) return;
+            }
             super.buttonAction(buttonIndex, evt);
             offsetDialog = null;
             if (buttonIndex == 1) {
                 layer.setOffset(oldDx, oldDy);
             } else if (tBookmarkName.getText() != null && !"".equals(tBookmarkName.getText())) {
-                OffsetBookmark b = new OffsetBookmark(
-                        Main.proj,layer.getInfo().getName(),
-                        tBookmarkName.getText(),
-                        layer.getDx(),layer.getDy());
-                OffsetBookmark.allBookmarks.add(b);
-                OffsetBookmark.saveBookmarks();
+                OffsetBookmark.bookmarkOffset(tBookmarkName.getText(), layer);
             }
             Main.main.menu.imageryMenuUpdater.refreshOffsetMenu();
             if (Main.map == null) return;

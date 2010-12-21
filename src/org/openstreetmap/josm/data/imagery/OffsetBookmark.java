@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -75,4 +76,27 @@ public class OffsetBookmark {
         Main.pref.putArray("imagery.offsets", coll);
     }
 
+    public static OffsetBookmark getBookmarkByName(ImageryLayer layer, String name) {
+        for (OffsetBookmark b : allBookmarks) {
+            if (b.isUsable(layer) && name.equals(b.name))
+                return b;
+        }
+        return null;
+    }
+
+    public static void bookmarkOffset(String name, ImageryLayer layer) {
+        OffsetBookmark nb = new OffsetBookmark(
+                Main.proj, layer.getInfo().getName(),
+                name, layer.getDx(), layer.getDy());
+        for (ListIterator<OffsetBookmark> it = allBookmarks.listIterator();it.hasNext();) {
+            OffsetBookmark b = it.next();
+            if (b.isUsable(layer) && name.equals(b.name)) {
+                it.set(nb);
+                saveBookmarks();
+                return;
+            }
+        }
+        allBookmarks.add(nb);
+        saveBookmarks();
+    }
 }
