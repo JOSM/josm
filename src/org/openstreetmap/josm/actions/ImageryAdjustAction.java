@@ -222,7 +222,7 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             } else if (tBookmarkName.getText() != null && !"".equals(tBookmarkName.getText())) {
                 OffsetBookmark.bookmarkOffset(tBookmarkName.getText(), layer);
             }
-            Main.main.menu.imageryMenuUpdater.refreshOffsetMenu();
+            Main.main.menu.imageryMenu.refreshOffsetMenu();
             if (Main.map == null) return;
             if (oldMapMode != null) {
                 Main.map.selectMapMode(oldMapMode);

@@ -120,6 +120,6 @@ public class ImageryLayerInfo {
     public static void addLayer(ImageryInfo info) {
         instance.add(info);
         instance.save();
-        Main.main.menu.imageryMenuUpdater.refreshImageryMenu();
+        Main.main.menu.imageryMenu.refreshImageryMenu();
     }
 }

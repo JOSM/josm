@@ -4,11 +4,8 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trc;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.List;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -18,7 +15,6 @@ import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AboutAction;
-import org.openstreetmap.josm.actions.AddImageryLayerAction;
 import org.openstreetmap.josm.actions.AddNodeAction;
 import org.openstreetmap.josm.actions.AlignInCircleAction;
 import org.openstreetmap.josm.actions.AlignInLineAction;
@@ -45,7 +41,6 @@ import org.openstreetmap.josm.actions.JoinAreasAction;
 import org.openstreetmap.josm.actions.JoinNodeWayAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.JumpToAction;
-import org.openstreetmap.josm.actions.Map_Rectifier_WMSmenuAction;
 import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.actions.MergeSelectionAction;
@@ -89,14 +84,9 @@ import org.openstreetmap.josm.actions.audio.AudioPlayPauseAction;
 import org.openstreetmap.josm.actions.audio.AudioPrevAction;
 import org.openstreetmap.josm.actions.audio.AudioSlowerAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
-import org.openstreetmap.josm.data.imagery.ImageryInfo;
-import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.gui.io.RecentlyOpenedFilesMenu;
-import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSearchAction;
-import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -189,7 +179,8 @@ public class MainMenu extends JMenuBar {
     public final JMenu viewMenu = addMenu(marktr("View"), KeyEvent.VK_V, 2, ht("/Menu/View"));
     public final JMenu toolsMenu = addMenu(marktr("Tools"), KeyEvent.VK_T, 3, ht("/Menu/Tools"));
     public final JMenu presetsMenu = addMenu(marktr("Presets"), KeyEvent.VK_P, 4, ht("/Menu/Presets"));
-    public final JMenu imageryMenu = addMenu(marktr("Imagery"), KeyEvent.VK_I, 5, ht("/Menu/Imagery"));
+    public final ImageryMenu imageryMenu =
+        (ImageryMenu)addMenu(new ImageryMenu(), marktr("Imagery"), KeyEvent.VK_I, 5, ht("/Menu/Imagery"));
     public JMenu audioMenu = null;
     public final JMenu helpMenu = addMenu(marktr("Help"), KeyEvent.VK_H, 6, ht("/Menu/Help"));
     public final int defaultMenuPos = 6;
@@ -201,7 +192,6 @@ public class MainMenu extends JMenuBar {
     public final JumpToAction jumpToAct = new JumpToAction();
 
     public final TaggingPresetSearchAction presetSearchAction = new TaggingPresetSearchAction();
-    public final ImageryMenuUpdater imageryMenuUpdater;
 
     /**
      * Add a JosmAction to a menu.
@@ -222,7 +212,10 @@ public class MainMenu extends JMenuBar {
     }
 
     public JMenu addMenu(String name, int mnemonicKey, int position, String relativeHelpTopic) {
-        JMenu menu = new JMenu(tr(name));
+        return addMenu(new JMenu(tr(name)), name, mnemonicKey, position, relativeHelpTopic);
+    }
+
+    public JMenu addMenu(JMenu menu, String name, int mnemonicKey, int position, String relativeHelpTopic) {
         Shortcut.registerShortcut("menu:" + name, tr("Menu: {0}", tr(name)), mnemonicKey,
                 Shortcut.GROUP_MNEMONIC).setMnemonic(menu);
         add(menu, position);
@@ -357,7 +350,6 @@ public class MainMenu extends JMenuBar {
         add(helpMenu, about);
 
         new PresetsMenuEnabler(presetsMenu).refreshEnabled();
-        imageryMenuUpdater = new ImageryMenuUpdater();
     }
 
     static class PresetsMenuEnabler implements MapView.LayerChangeListener {
@@ -387,90 +379,6 @@ public class MainMenu extends JMenuBar {
 
         public void layerRemoved(Layer oldLayer) {
             refreshEnabled();
-        }
-    }
-
-    public class ImageryMenuUpdater implements MapView.LayerChangeListener {
-        JMenuItem disabledOffset = new JMenuItem(trc("layer","Offset"));
-        JMenuItem offsetSubMenu = disabledOffset;
-        int offsPos;
-
-        public ImageryMenuUpdater() {
-            MapView.addLayerChangeListener(this);
-            disabledOffset.setEnabled(false);
-        }
-
-        public void refreshImageryMenu() {
-            imageryMenu.removeAll();
-
-            // for each configured WMSInfo, add a menu entry.
-            for (final ImageryInfo u : ImageryLayerInfo.instance.getLayers()) {
-                imageryMenu.add(new AddImageryLayerAction(u));
-            }
-            imageryMenu.addSeparator();
-            imageryMenu.add(new JMenuItem(new Map_Rectifier_WMSmenuAction()));
-
-            imageryMenu.addSeparator();
-            offsPos = imageryMenu.getMenuComponentCount();
-            imageryMenu.add(offsetSubMenu);
-            imageryMenu.addSeparator();
-            imageryMenu.add(new JMenuItem(new JosmAction(
-                    tr("Blank Layer"), "blankmenu", tr("Open a blank WMS layer to load data from a file"), null, false) {
-                @Override
-                public void actionPerformed(ActionEvent ev) {
-                    if (!isEnabled()) return;
-                    Main.main.addLayer(new WMSLayer());
-                }
-
-                @Override
-                protected void updateEnabledState() {
-                    setEnabled(Main.map != null && Main.map.mapView != null && !Main.map.mapView.getAllLayers().isEmpty());
-                }
-            }));
-        }
-
-        private JMenuItem getNewOffsetMenu(){
-            if (Main.map == null || Main.map.mapView == null)
-                return disabledOffset;
-            List<ImageryLayer> layers = Main.map.mapView.getLayersOfType(ImageryLayer.class);
-            if (layers.isEmpty())
-                return disabledOffset;
-            if (layers.size() == 1)
-                return layers.get(0).getOffsetMenuItem();
-            JMenu newMenu = new JMenu(trc("layer","Offset"));
-            newMenu.setIcon(ImageProvider.get("mapmode", "adjustimg"));
-            for (ImageryLayer layer : layers) {
-                JMenuItem layerMenu = layer.getOffsetMenuItem();
-                layerMenu.setText(layer.getName());
-                layerMenu.setIcon(layer.getIcon());
-                newMenu.add(layerMenu);
-            }
-            return newMenu;
-        }
-
-        public void refreshOffsetMenu() {
-            JMenuItem newItem = getNewOffsetMenu();
-            imageryMenu.remove(offsetSubMenu);
-            imageryMenu.add(newItem, offsPos);
-            offsetSubMenu = newItem;
-        }
-
-        @Override
-        public void activeLayerChange(Layer oldLayer, Layer newLayer) {
-        }
-
-        @Override
-        public void layerAdded(Layer newLayer) {
-            if (newLayer instanceof ImageryLayer) {
-                refreshOffsetMenu();
-            }
-        }
-
-        @Override
-        public void layerRemoved(Layer oldLayer) {
-            if (oldLayer instanceof ImageryLayer) {
-                refreshOffsetMenu();
-            }
         }
     }
 }

@@ -273,8 +273,8 @@ public class ImageryPreference implements PreferenceSetting {
     public boolean ok() {
         boolean restartRequired = false;
         ImageryLayerInfo.instance.save();
-        Main.main.menu.imageryMenuUpdater.refreshImageryMenu();
-        Main.main.menu.imageryMenuUpdater.refreshOffsetMenu();
+        Main.main.menu.imageryMenu.refreshImageryMenu();
+        Main.main.menu.imageryMenu.refreshOffsetMenu();
         OffsetBookmark.saveBookmarks();
 
         WMSLayer.PROP_OVERLAP.put(overlapCheckBox.getModel().isSelected());
@@ -745,7 +745,7 @@ public class ImageryPreference implements PreferenceSetting {
         }
         ImageryLayerInfo.instance.load();
         OffsetBookmark.loadBookmarks();
-        Main.main.menu.imageryMenuUpdater.refreshImageryMenu();
-        Main.main.menu.imageryMenuUpdater.refreshOffsetMenu();
+        Main.main.menu.imageryMenu.refreshImageryMenu();
+        Main.main.menu.imageryMenu.refreshOffsetMenu();
     }
 }

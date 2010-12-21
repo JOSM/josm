@@ -18,6 +18,7 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
@@ -127,7 +128,7 @@ public abstract class ImageryLayer extends Layer {
         @Override
         public void actionPerformed(ActionEvent ev) {
             setOffset(b.dx, b.dy);
-            Main.main.menu.imageryMenuUpdater.refreshOffsetMenu();
+            Main.main.menu.imageryMenu.refreshOffsetMenu();
             Main.map.repaint();
         }
     }
@@ -151,11 +152,15 @@ public abstract class ImageryLayer extends Layer {
     ImageryAdjustAction adjustAction = new ImageryAdjustAction(this);
 
     public JMenuItem getOffsetMenuItem() {
+        JMenu subMenu = new JMenu(trc("layer", "Offset"));
+        subMenu.setIcon(ImageProvider.get("mapmode", "adjustimg"));
+        return (JMenuItem)getOffsetMenuItem(subMenu);
+    }
+
+    public JComponent getOffsetMenuItem(JComponent subMenu) {
         JMenuItem adjustMenuItem = new JMenuItem(adjustAction);
         if (OffsetBookmark.allBookmarks.isEmpty()) return adjustMenuItem;
 
-        JMenu subMenu = new JMenu(trc("layer", "Offset"));
-        subMenu.setIcon(ImageProvider.get("mapmode", "adjustimg"));
         subMenu.add(adjustMenuItem);
         subMenu.add(new JSeparator());
         boolean hasBookmarks = false;
