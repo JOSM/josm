@@ -116,6 +116,7 @@ public class ValidatorPreference implements PreferenceSetting {
         StringBuilder testsBeforeUpload = new StringBuilder();
 
         for (Test test : allTests) {
+            test.ok();
             String name = test.getClass().getSimpleName();
             tests.append(',').append(name).append('=').append(test.enabled);
             testsBeforeUpload.append(',').append(name).append('=').append(test.testBeforeUpload);
