@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -851,6 +852,13 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             if (md != null) {
                 g.drawString(md, p.x + 2, texty);
                 texty += 1 + fontHeight;
+            }
+            Map<String, String> meta = tile.getMetadata();
+            if (meta != null) {
+                for (Map.Entry<String, String> entry : meta.entrySet()) {
+                    g.drawString(entry.getKey() + ": " + entry.getValue(), p.x + 2, texty);
+                    texty += 1 + fontHeight;
+                }
             }
         }
 
