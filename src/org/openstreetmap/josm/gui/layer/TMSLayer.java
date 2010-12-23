@@ -144,6 +144,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     private Image attrImage;
     private String attrTermsUrl;
     private Rectangle attrImageBounds, attrToUBounds;
+    private static final Font InfoFont = new Font("sansserif", Font.BOLD, 13);
     private static final Font ATTR_FONT = new Font("Arial", Font.PLAIN, 10);
     private static final Font ATTR_LINK_FONT;
     static {
@@ -831,6 +832,14 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         return missedTiles;
     }
 
+    void myDrawString(Graphics g, String text, int x, int y) {
+        Color oldColor = g.getColor();
+        g.setColor(Color.black);
+        g.drawString(text,x+1,y+1);
+        g.setColor(oldColor);
+        g.drawString(text,x,y);
+    }
+
     void paintTileText(TileSet ts, Tile tile, Graphics g, MapView mv, int zoom, Tile t) {
         int fontHeight = g.getFontMetrics().getHeight();
         if (tile == null)
@@ -839,10 +848,10 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         int texty = p.y + 2 + fontHeight;
 
         if (PROP_DRAW_DEBUG.get()) {
-            g.drawString("x=" + t.getXtile() + " y=" + t.getYtile() + " z=" + zoom + "", p.x + 2, texty);
+            myDrawString(g, "x=" + t.getXtile() + " y=" + t.getYtile() + " z=" + zoom + "", p.x + 2, texty);
             texty += 1 + fontHeight;
             if ((t.getXtile() % 32 == 0) && (t.getYtile() % 32 == 0)) {
-                g.drawString("x=" + t.getXtile() / 32 + " y=" + t.getYtile() / 32 + " z=7", p.x + 2, texty);
+                myDrawString(g, "x=" + t.getXtile() / 32 + " y=" + t.getYtile() / 32 + " z=7", p.x + 2, texty);
                 texty += 1 + fontHeight;
             }
         }// end of if draw debug
@@ -850,13 +859,13 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         if (tile == showMetadataTile) {
             String md = tile.toString();
             if (md != null) {
-                g.drawString(md, p.x + 2, texty);
+                myDrawString(g, md, p.x + 2, texty);
                 texty += 1 + fontHeight;
             }
             Map<String, String> meta = tile.getMetadata();
             if (meta != null) {
                 for (Map.Entry<String, String> entry : meta.entrySet()) {
-                    g.drawString(entry.getKey() + ": " + entry.getValue(), p.x + 2, texty);
+                    myDrawString(g, entry.getKey() + ": " + entry.getValue(), p.x + 2, texty);
                     texty += 1 + fontHeight;
                 }
             }
@@ -864,7 +873,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
         String tileStatus = tile.getStatus();
         if (!tile.isLoaded() && PROP_DRAW_DEBUG.get()) {
-            g.drawString(tr("image " + tileStatus), p.x + 2, texty);
+            myDrawString(g, tr("image " + tileStatus), p.x + 2, texty);
             texty += 1 + fontHeight;
         }
 
@@ -1121,6 +1130,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             out("still missed "+missedTiles.size()+" in the end");
         }
         g.setColor(Color.red);
+        g.setFont(InfoFont);
 
         // The current zoom tileset is guaranteed to have all of
         // its tiles
@@ -1132,6 +1142,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             // Draw attribution
             Font font = g.getFont();
             g.setFont(ATTR_LINK_FONT);
+            g.setColor(Color.white);
 
             // Draw terms of use text
             Rectangle2D termsStringBounds = g.getFontMetrics().getStringBounds("Background Terms of Use", g);
@@ -1142,10 +1153,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 int x = 2;
                 int y = mv.getHeight() - textHeight;
                 attrToUBounds = new Rectangle(x, y, textWidth, textHeight);
-                g.setColor(Color.black);
-                g.drawString("Background Terms of Use", x+1, y+1);
-                g.setColor(Color.white);
-                g.drawString("Background Terms of Use", x, y);
+                myDrawString(g, "Background Terms of Use", x, y);
             }
 
             // Draw attribution logo
@@ -1165,10 +1173,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             {
                 int x = mv.getWidth() - (int) stringBounds.getWidth();
                 int y = mv.getHeight() - textHeight;
-                g.setColor(Color.black);
-                g.drawString(attributionText, x+1, y+1);
-                g.setColor(Color.white);
-                g.drawString(attributionText, x, y);
+                myDrawString(g, attributionText, x, y);
             }
 
             g.setFont(font);
@@ -1196,11 +1201,11 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         //g.drawString("currentZoomLevel=" + currentZoomLevel, 120, 120);
         g.setColor(Color.black);
         if (ts.insane()) {
-            g.drawString("zoom in to load any tiles", 120, 120);
+            myDrawString(g, "zoom in to load any tiles", 120, 120);
         } else if (ts.tooLarge()) {
-            g.drawString("zoom in to load more tiles", 120, 120);
+            myDrawString(g, "zoom in to load more tiles", 120, 120);
         } else if (ts.tooSmall()) {
-            g.drawString("increase zoom level to see more detail", 120, 120);
+            myDrawString(g, "increase zoom level to see more detail", 120, 120);
         }
     }// end of paint method
 
