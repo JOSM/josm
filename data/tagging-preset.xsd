@@ -117,6 +117,9 @@
 	</complexType>
 
 	<complexType name="combo">
+		<sequence>
+			<element name="short_description" type="string" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
 		<attribute name="key" type="string" use="required" />
 		<attribute name="text" type="string" />
 		<attribute name="text_context" type="string" />
