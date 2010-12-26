@@ -1166,6 +1166,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 Main.map.mapView.getEditLayer().data.setSelected(relation);
             } else {
                 Main.map.relationListDialog.selectRelation(relation);
+                Main.map.relationListDialog.unfurlDialog();
             }
         }
     }
