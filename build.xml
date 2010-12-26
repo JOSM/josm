@@ -96,6 +96,7 @@ Build-Date: ${build.tstamp}
 			</manifest>
 			<zipfileset dir="images" prefix="images" />
 			<zipfileset dir="data" prefix="data" />
+			<zipfileset dir="src/org/openstreetmap/gui/jmapviewer/images" prefix="org/openstreetmap/gui/jmapviewer/images" />
 
 			<!-- All jar files necessary to run only JOSM (no tests) -->
 			<zipfileset src="lib/metadata-extractor-2.3.1-nosun.jar" />
