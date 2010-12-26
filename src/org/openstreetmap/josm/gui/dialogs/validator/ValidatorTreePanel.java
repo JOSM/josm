@@ -147,7 +147,7 @@ public class ValidatorTreePanel extends JTree {
             errorTreeDeep.put(s, new HashMap<String, MultiMap<String, TestError>>());
         }
 
-        boolean other = Main.pref.getBoolean(ValidatorPreference.PREF_OTHER, false);
+        boolean other = Main.pref.getBoolean(ValidatorPreference.PREF_OTHER_UPLOAD, false);
         for (TestError e : errors) {
             if (e.getIgnored()) {
                 continue;
