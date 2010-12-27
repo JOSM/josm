@@ -3,7 +3,6 @@ package org.openstreetmap.josm.io.imagery;
 
 import java.awt.image.BufferedImage;
 
-import org.openstreetmap.josm.data.imagery.GeorefImage;
 import org.openstreetmap.josm.data.imagery.GeorefImage.State;
 
 public class WMSRequest implements Comparable<WMSRequest> {

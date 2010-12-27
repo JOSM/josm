@@ -22,7 +22,7 @@ abstract public class Grabber implements Runnable {
     protected WMSRequest request;
     protected volatile boolean canceled;
 
-    Grabber(MapView mv, WMSLayer layer, CacheFiles cache) {
+    Grabber(MapView mv, WMSLayer layer) {
         this.mv = mv;
         this.layer = layer;
     }
@@ -49,7 +49,7 @@ abstract public class Grabber implements Runnable {
         this.request = request;
     }
 
-    abstract void fetch(WMSRequest request) throws Exception; // the image fetch code
+    abstract void fetch(WMSRequest request, int attempt) throws Exception; // the image fetch code
 
     int width(){
         return layer.getBaseImageWidth();
@@ -85,7 +85,7 @@ abstract public class Grabber implements Runnable {
             try {
                 if (!layer.requestIsValid(request))
                     return;
-                fetch(request);
+                fetch(request, i);
                 break; // break out of the retry loop
             } catch (Exception e) {
                 try { // sleep some time and then ask the server again

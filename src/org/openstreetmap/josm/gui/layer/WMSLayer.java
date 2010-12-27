@@ -89,6 +89,10 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
     // Request queue
     private final List<WMSRequest> requestQueue = new ArrayList<WMSRequest>();
     private final List<WMSRequest> finishedRequests = new ArrayList<WMSRequest>();
+    /**
+     * List of request currently being processed by download threads
+     */
+    private final List<WMSRequest> processingRequests = new ArrayList<WMSRequest>();
     private final Lock requestQueueLock = new ReentrantLock();
     private final Condition queueEmpty = requestQueueLock.newCondition();
     private final List<Grabber> grabbers = new ArrayList<Grabber>();
@@ -419,7 +423,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
             while (it.hasNext()) {
                 WMSRequest item = it.next();
                 int priority = getRequestPriority(item);
-                if (priority == -1) {
+                if (priority == -1 || finishedRequests.contains(item) || processingRequests.contains(item)) {
                     it.remove();
                 } else {
                     item.setPriority(priority);
@@ -445,8 +449,11 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
             workingThreadCount++;
             if (canceled)
                 return null;
-            else
-                return requestQueue.remove(0);
+            else {
+                WMSRequest request = requestQueue.remove(0);
+                processingRequests.add(request);
+                return request;
+            }
 
         } finally {
             requestQueueLock.unlock();
@@ -458,6 +465,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
             throw new IllegalArgumentException("Finished request without state");
         requestQueueLock.lock();
         try {
+            processingRequests.remove(request);
             finishedRequests.add(request);
         } finally {
             requestQueueLock.unlock();
@@ -467,7 +475,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
     public void addRequest(WMSRequest request) {
         requestQueueLock.lock();
         try {
-            if (!requestQueue.contains(request)) {
+            if (!requestQueue.contains(request) && !finishedRequests.contains(request) && !processingRequests.contains(request)) {
                 requestQueue.add(request);
                 queueEmpty.signalAll();
             }
@@ -490,8 +498,8 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
                 }
             }
         } finally {
-            finishedRequests.clear();
             requestQueueLock.unlock();
+            finishedRequests.clear();
         }
     }
 
@@ -787,9 +795,9 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
 
     protected Grabber getGrabber(){
         if(getInfo().getImageryType() == ImageryType.HTML)
-            return new HTMLGrabber(mv, this, Grabber.cache);
+            return new HTMLGrabber(mv, this);
         else if(getInfo().getImageryType() == ImageryType.WMS)
-            return new WMSGrabber(mv, this, Grabber.cache);
+            return new WMSGrabber(mv, this);
         else throw new IllegalStateException("getGrabber() called for non-WMS layer type");
     }
 

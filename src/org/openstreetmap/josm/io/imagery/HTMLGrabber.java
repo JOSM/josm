@@ -13,20 +13,19 @@ import javax.imageio.ImageIO;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
-import org.openstreetmap.josm.io.CacheFiles;
 
 public class HTMLGrabber extends WMSGrabber {
     public static final StringProperty PROP_BROWSER = new StringProperty("imagery.wms.browser", "webkit-image {0}");
 
-    public HTMLGrabber(MapView mv, WMSLayer layer, CacheFiles cache) {
-        super(mv, layer, cache);
+    public HTMLGrabber(MapView mv, WMSLayer layer) {
+        super(mv, layer);
     }
 
     @Override
-    protected BufferedImage grab(URL url) throws IOException {
+    protected BufferedImage grab(URL url, int attempt) throws IOException {
         String urlstring = url.toExternalForm();
 
-        System.out.println("Grabbing HTML " + url);
+        System.out.println("Grabbing HTML " + (attempt > 1? "(attempt " + attempt + ") ":"") + url);
 
         ArrayList<String> cmdParams = new ArrayList<String>();
         StringTokenizer st = new StringTokenizer(MessageFormat.format(PROP_BROWSER.get(), urlstring));

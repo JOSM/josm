@@ -26,12 +26,11 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.GeorefImage.State;
+import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
-import org.openstreetmap.josm.io.CacheFiles;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.ProgressInputStream;
 
@@ -41,22 +40,22 @@ public class WMSGrabber extends Grabber {
     protected String baseURL;
     private final boolean urlWithPatterns;
 
-    public WMSGrabber(MapView mv, WMSLayer layer, CacheFiles cache) {
-        super(mv, layer, cache);
+    public WMSGrabber(MapView mv, WMSLayer layer) {
+        super(mv, layer);
         this.baseURL = layer.getInfo().getURL();
         /* URL containing placeholders? */
         urlWithPatterns = ImageryInfo.isUrlWithPatterns(baseURL);
     }
 
     @Override
-    void fetch(WMSRequest request) throws Exception{
+    void fetch(WMSRequest request, int attempt) throws Exception{
         URL url = null;
         try {
             url = getURL(
                     b.min.east(), b.min.north(),
                     b.max.east(), b.max.north(),
                     width(), height());
-            request.finish(State.IMAGE, grab(url));
+            request.finish(State.IMAGE, grab(url, attempt));
 
         } catch(Exception e) {
             e.printStackTrace();
@@ -164,8 +163,8 @@ public class WMSGrabber extends Grabber {
         return false;
     }
 
-    protected BufferedImage grab(URL url) throws IOException, OsmTransferException {
-        System.out.println("Grabbing WMS " + url);
+    protected BufferedImage grab(URL url, int attempt) throws IOException, OsmTransferException {
+        System.out.println("Grabbing WMS " + (attempt > 1? "(attempt " + attempt + ") ":"") + url);
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         if(layer.getInfo().getCookies() != null && !layer.getInfo().getCookies().equals("")) {
@@ -192,13 +191,16 @@ public class WMSGrabber extends Grabber {
         StringBuilder exception = new StringBuilder();
         InputStream in = conn.getInputStream();
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
-
-        String line = null;
-        while( (line = br.readLine()) != null) {
-            // filter non-ASCII characters and control characters
-            exception.append(line.replaceAll("[^\\p{Print}]", ""));
-            exception.append('\n');
+        try {
+            String line = null;
+            while( (line = br.readLine()) != null) {
+                // filter non-ASCII characters and control characters
+                exception.append(line.replaceAll("[^\\p{Print}]", ""));
+                exception.append('\n');
+            }
+            return exception.toString();
+        } finally {
+            br.close();
         }
-        return exception.toString();
     }
 }
