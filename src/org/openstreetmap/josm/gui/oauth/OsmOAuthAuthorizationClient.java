@@ -432,7 +432,7 @@ public class OsmOAuthAuthorizationClient {
             dout.close();
 
             int retCode = connection.getResponseCode();
-            if (retCode != HttpURLConnection.HTTP_MOVED_TEMP)
+            if (retCode != HttpURLConnection.HTTP_OK)
                 throw new OsmOAuthAuthorizationException(tr("Failed to authorize OAuth request  ''{0}''", requestToken.getKey()));
         } catch(MalformedURLException e) {
             throw new OsmOAuthAuthorizationException(e);
