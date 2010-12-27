@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.preferences;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collection;
 
 import javax.swing.BorderFactory;
@@ -90,6 +92,14 @@ public class ValidatorPreference implements PreferenceSetting {
         prefOtherUpload = new JCheckBox(tr("Show informational level on upload."), Main.pref.getBoolean(PREF_OTHER_UPLOAD, false));
         prefOtherUpload.setToolTipText(tr("Show the informational tests in the upload check windows."));
         testPanel.add(prefOtherUpload, GBC.eol());
+
+        ActionListener otherUploadEnabled = new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                prefOtherUpload.setEnabled(prefOther.isSelected());
+            }
+        };
+        prefOther.addActionListener(otherUploadEnabled);
+        otherUploadEnabled.actionPerformed(null);
 
         GBC a = GBC.eol().insets(-5,0,0,0);
         a.anchor = GBC.EAST;
