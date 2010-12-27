@@ -16,6 +16,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
@@ -296,6 +297,14 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
         pnlChangesetManagement.setSelectedChangesetForNextUpload(cs);
     }
 
+    public Map<String, String> getDefaultChangesetTags() {
+        return pnlTagSettings.getDefaultTags();
+    }
+
+    public void setDefaultChangesetTags(Map<String, String> tags) {
+        pnlTagSettings.setDefaultTags(tags);
+    }
+
     /**
      * Replies the {@see UploadStrategySpecification} the user entered in the dialog.
      *
@@ -368,27 +377,27 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
          */
         protected boolean warnUploadComment() {
             ExtendedDialog dlg = new ExtendedDialog(UploadDialog.this,
-                tr("Please revise upload comment"),
-                new String[] {tr("Revise"), tr("Cancel"), tr("Continue as is")});
+                    tr("Please revise upload comment"),
+                    new String[] {tr("Revise"), tr("Cancel"), tr("Continue as is")});
             dlg.setContent("<html>" +
                     tr("Your upload comment is <i>empty</i>, or <i>very short</i>.<br /><br />" +
-                       "This is technically allowed, but please consider that many users who are<br />" +
-                       "watching changes in their area depend on meaningful changeset comments<br />" +
-                       "to understand what is going on!<br /><br />" +
-                       "If you spend a minute now to explain your change, you will make life<br />" +
-                       "easier for many other mappers.") +
-                    "</html>");
+                            "This is technically allowed, but please consider that many users who are<br />" +
+                            "watching changes in their area depend on meaningful changeset comments<br />" +
+                            "to understand what is going on!<br /><br />" +
+                            "If you spend a minute now to explain your change, you will make life<br />" +
+                    "easier for many other mappers.") +
+            "</html>");
             dlg.setButtonIcons(new Icon[] {
-                ImageProvider.get("ok"),
-                ImageProvider.get("cancel"),
-                ImageProvider.overlay(
-                    ImageProvider.get("upload"),
-                    new ImageIcon(ImageProvider.get("warning-small").getImage().getScaledInstance(10 , 10, Image.SCALE_SMOOTH)),
-                    ImageProvider.OverlayPosition.SOUTHEAST)});
+                    ImageProvider.get("ok"),
+                    ImageProvider.get("cancel"),
+                    ImageProvider.overlay(
+                            ImageProvider.get("upload"),
+                            new ImageIcon(ImageProvider.get("warning-small").getImage().getScaledInstance(10 , 10, Image.SCALE_SMOOTH)),
+                            ImageProvider.OverlayPosition.SOUTHEAST)});
             dlg.setToolTipTexts(new String[] {
-                tr("Return to the previous dialog to enter a more descriptive comment"),
-                tr("Cancel and return to the previous dialog"),
-                tr("Ignore this hint and upload anyway")});
+                    tr("Return to the previous dialog to enter a more descriptive comment"),
+                    tr("Cancel and return to the previous dialog"),
+                    tr("Ignore this hint and upload anyway")});
             dlg.setIcon(JOptionPane.WARNING_MESSAGE);
             dlg.toggleEnable("upload_comment_is_empty_or_very_short");
             dlg.setToggleCheckboxText(tr("Do not show this message again"));

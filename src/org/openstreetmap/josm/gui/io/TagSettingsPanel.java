@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.io;
 
 import java.awt.BorderLayout;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -22,7 +23,8 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
     private TagEditorPanel pnlTagEditor;
     /** the model for the changeset comment */
     private ChangesetCommentModel changesetCommentModel;
-
+    /** tags that applied to uploaded changesets by default*/
+    private Map<String, String> defaultTags = new HashMap<String, String>();
 
     protected void build() {
         setLayout(new BorderLayout());
@@ -48,7 +50,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
      *
      * @return the default value for "created_by"
      */
-    protected String getDefaultCreatedBy() {
+    public static String getDefaultCreatedBy() {
         Object ua = System.getProperties().get("http.agent");
         return(ua == null) ? "JOSM" : ua.toString();
     }
@@ -81,31 +83,22 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
         return tag.getValue();
     }
 
-    protected void initNewChangeset() {
+    public void initFromChangeset(Changeset cs) {
         String currentComment = getUploadComment();
-        pnlTagEditor.getModel().clear();
-        if (currentComment != null) {
-            pnlTagEditor.getModel().add("comment", currentComment);
+        Map<String,String> tags = getDefaultTags();
+        if (cs != null) {
+            tags.putAll(cs.getKeys());
         }
-        pnlTagEditor.getModel().add("created_by", getDefaultCreatedBy());
-    }
-
-    protected void initFromExistingChangeset(Changeset cs) {
-        String currentComment = getUploadComment();
-        Map<String,String> tags = cs.getKeys();
         if (tags.get("comment") == null) {
             tags.put("comment", currentComment);
         }
-        tags.put("created_by", getDefaultCreatedBy());
-        pnlTagEditor.getModel().initFromTags(tags);
-    }
-
-    public void initFromChangeset(Changeset cs) {
-        if (cs == null) {
-            initNewChangeset();
-        } else {
-            initFromExistingChangeset(cs);
+        String created_by = tags.get("created_by");
+        if (created_by == null || "".equals(created_by)) {
+            tags.put("created_by", getDefaultCreatedBy());
+        } else if (!created_by.contains(getDefaultCreatedBy())) {
+            tags.put("created_by", created_by + ";" + getDefaultCreatedBy());
         }
+        pnlTagEditor.getModel().initFromTags(tags);
     }
 
     /**
@@ -115,6 +108,17 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
      */
     public Map<String,String> getTags() {
         return pnlTagEditor.getModel().getTags();
+    }
+
+    public Map<String,String> getDefaultTags() {
+        Map<String,String> tags = new HashMap<String, String>();
+        tags.putAll(defaultTags);
+        return tags;
+    }
+
+    public void setDefaultTags(Map<String, String> tags) {
+        defaultTags.clear();
+        defaultTags.putAll(tags);
     }
 
     public void startUserInput() {
