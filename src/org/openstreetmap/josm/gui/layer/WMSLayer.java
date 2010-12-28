@@ -461,12 +461,13 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
     }
 
     public void finishRequest(WMSRequest request) {
-        if (request.getState() == null)
-            throw new IllegalArgumentException("Finished request without state");
         requestQueueLock.lock();
         try {
             processingRequests.remove(request);
-            finishedRequests.add(request);
+            if (request.getState() != null) {
+                finishedRequests.add(request);
+                mv.repaint();
+            }
         } finally {
             requestQueueLock.unlock();
         }

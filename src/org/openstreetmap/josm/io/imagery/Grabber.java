@@ -70,10 +70,7 @@ abstract public class Grabber implements Runnable {
             if(!loadFromCache(request)){
                 attempt(request);
             }
-            if (request.getState() != null) {
-                layer.finishRequest(request);
-                mv.repaint();
-            }
+            layer.finishRequest(request);
         }
     }
 
