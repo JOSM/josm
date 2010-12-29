@@ -127,7 +127,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
             s.append("  members:\n");
             for (RelationMember m : r.getMembers() ) {
-                s.append(String.format("    %d %s\n", m.getMember().getUniqueId(), m.getRole()));
+                s.append(String.format("    %s%d '%s'\n", m.getMember().getType().getAPIName().substring(0,1), m.getMember().getUniqueId(), m.getRole()));
             }
             s.append('\n');
         }
