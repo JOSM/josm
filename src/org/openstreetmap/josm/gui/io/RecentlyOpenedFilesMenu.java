@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -28,6 +29,7 @@ public class RecentlyOpenedFilesMenu extends JMenu {
         super(tr("Open Recent"));
         setToolTipText(tr("List of recently opened files"));
         setIcon(ImageProvider.get("openrecent.png"));
+        putClientProperty("help", ht("/Action/OpenRecent"));
 
         // build dynamically
         addMenuListener(new MenuListener() {
@@ -54,6 +56,7 @@ public class RecentlyOpenedFilesMenu extends JMenu {
             add(new AbstractAction() {
                 {
                     putValue(NAME, file);
+                    putValue("help", ht("/Action/OpenRecent"));
                 }
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -78,6 +81,7 @@ public class RecentlyOpenedFilesMenu extends JMenu {
         public ClearAction() {
             super(tr("Clear"));
             putValue(SHORT_DESCRIPTION, tr("Clear the list of recently opened files"));
+            putValue("help", ht("/Action/OpenRecent"));
         }
 
         @Override

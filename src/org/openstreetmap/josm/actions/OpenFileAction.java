@@ -138,7 +138,7 @@ public class OpenFileAction extends DiskAccessAction {
                     msg.toString(),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE,
-                    HelpUtil.ht("/Action/OpenFile#ImporterCantImportFiles")
+                    HelpUtil.ht("/Action/Open#ImporterCantImportFiles")
             );
         }
 
@@ -164,7 +164,7 @@ public class OpenFileAction extends DiskAccessAction {
                     msg.toString(),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE,
-                    HelpUtil.ht("/Action/OpenFile#MissingImporterForFiles")
+                    HelpUtil.ht("/Action/Open#MissingImporterForFiles")
             );
         }
 
