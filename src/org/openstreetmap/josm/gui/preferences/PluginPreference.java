@@ -320,8 +320,7 @@ public class PluginPreference implements PreferenceSetting {
                     sb.toString(),
                     tr("Update plugins"),
                     !failed.isEmpty() ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE,
-                            // FIXME: check help topic
-                            HelpUtil.ht("/Preferences/Plugin")
+                            HelpUtil.ht("/Preferences/Plugins")
             );
         }
 

@@ -126,7 +126,7 @@ public class UploadPrimitivesTask extends  AbstractUploadTask {
                 null, /* no special icon */
                 specs,
                 specs[0],
-                ht("/Action/UploadAction#ChangesetFull")
+                ht("/Action/Upload#ChangesetFull")
         );
         switch(ret) {
         case 0: return MaxChangesetSizeExceededPolicy.AUTOMATICALLY_OPEN_NEW_CHANGESETS;

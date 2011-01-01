@@ -72,7 +72,7 @@ public class ChangesetQueryDialog extends JDialog {
         pnl.add(new SideButton(new CancelAction()));
 
         // -- help action
-        pnl.add(new SideButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Dialog/ChangesetQuery"))));
+        pnl.add(new SideButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Dialog/ChangesetQueryDialog"))));
 
         return pnl;
     }
@@ -90,7 +90,7 @@ public class ChangesetQueryDialog extends JDialog {
         getRootPane().getActionMap().put("cancel", new CancelAction());
 
         // context sensitive help
-        HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Dialog/ChangesetQuery"));
+        HelpUtil.setHelpContext(getRootPane(), HelpUtil.ht("/Dialog/ChangesetQueryDialog"));
 
         addWindowListener(new WindowEventHandler());
     }

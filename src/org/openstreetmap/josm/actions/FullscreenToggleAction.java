@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Frame;
@@ -37,6 +38,7 @@ public class FullscreenToggleAction extends JosmAction {
                 Shortcut.registerShortcut("menu:view:fullscreen", tr("Toggle Fullscreen view"),KeyEvent.VK_F11, Shortcut.GROUP_DIRECT),
                 true /* register shortcut */
         );
+        putValue("help", ht("/Action/FullscreenView"));
         gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         selected = Main.pref.getBoolean("draw.fullscreen", false);
         notifySelectedState();

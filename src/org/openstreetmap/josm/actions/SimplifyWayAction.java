@@ -90,7 +90,7 @@ public class SimplifyWayAction extends JosmAction {
                         null, // no special icon
                         options,
                         options[0],
-                        HelpUtil.ht("/Action/SimplifyAction#ConfirmDeleteNodesOutsideBoundingBoxes")
+                        HelpUtil.ht("/Action/SimplifyWay#ConfirmDeleteNodesOutsideBoundingBoxes")
         );
         return ret == 0;
     }
@@ -101,7 +101,7 @@ public class SimplifyWayAction extends JosmAction {
                 tr("Please select at least one way to simplify."),
                 tr("Warning"),
                 JOptionPane.WARNING_MESSAGE,
-                HelpUtil.ht("/Action/SimplifyAction#SelectAWayToSimplify")
+                HelpUtil.ht("/Action/SimplifyWay#SelectAWayToSimplify")
         );
     }
 
@@ -131,7 +131,7 @@ public class SimplifyWayAction extends JosmAction {
                 null, // no special icon
                 options,
                 options[0],
-                HelpUtil.ht("/Action/SimplifyAction#ConfirmSimplifyAll")
+                HelpUtil.ht("/Action/SimplifyWay#ConfirmSimplifyAll")
         );
         return ret == 0;
     }
