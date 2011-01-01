@@ -1,6 +1,7 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.gui;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.AWTEvent;
@@ -623,7 +624,7 @@ public class MapStatus extends JPanel implements Helpful {
     }
 
     public String helpTopic() {
-        return "Statusline";
+        return ht("/Statusline");
     }
 
     @Override

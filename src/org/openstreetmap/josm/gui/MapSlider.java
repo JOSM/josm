@@ -1,6 +1,8 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -63,6 +65,6 @@ class MapSlider extends JSlider implements PropertyChangeListener, ChangeListene
     }
 
     public String helpTopic() {
-        return "MapView/Slider";
+        return ht("/MapView/Slider");
     }
 }

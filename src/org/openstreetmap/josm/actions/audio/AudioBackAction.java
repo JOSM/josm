@@ -19,7 +19,7 @@ public class AudioBackAction extends JosmAction {
     public AudioBackAction() {
         super(trc("audio", "Back"), "audio-back", trc("audio", "Jump back."),
         Shortcut.registerShortcut("audio:back", tr("Audio: {0}", trc("audio", "Back")), KeyEvent.VK_F6, Shortcut.GROUP_DIRECT), true);
-        this.putValue("help", ht("Action/AudioBack"));
+        this.putValue("help", ht("/Action/AudioBack"));
     }
 
     public void actionPerformed(ActionEvent e) {

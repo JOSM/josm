@@ -756,7 +756,7 @@ public class StyleSourceEditor extends JPanel {
                     msg,
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE,
-                    ht("Preferences/Styles#FailedToLoadStyleSources")
+                    ht("/Preferences/Styles#FailedToLoadStyleSources")
             );
         }
 

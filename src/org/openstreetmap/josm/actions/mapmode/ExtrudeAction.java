@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions.mapmode;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BasicStroke;
@@ -109,7 +110,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                 Shortcut.registerShortcut("mapmode:extrude", tr("Mode: {0}", tr("Extrude")), KeyEvent.VK_X, Shortcut.GROUP_EDIT),
                 mapFrame,
                 getCursor("normal", "rectangle", Cursor.DEFAULT_CURSOR));
-        putValue("help", "Action/Extrude/Extrude");
+        putValue("help", ht("/Action/Extrude/Extrude"));
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
         selectedColor = PaintColors.SELECTED.get();
     }

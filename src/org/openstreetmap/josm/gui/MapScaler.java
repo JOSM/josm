@@ -2,6 +2,7 @@
 
 package org.openstreetmap.josm.gui;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.Color;
@@ -45,6 +46,6 @@ public class MapScaler extends JComponent implements Helpful {
     }
 
     public String helpTopic() {
-        return "MapView/Scaler";
+        return ht("/MapView/Scaler");
     }
 }

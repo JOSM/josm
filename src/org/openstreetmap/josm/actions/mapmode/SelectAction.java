@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions.mapmode;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
@@ -109,7 +110,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                 mapFrame,
                 getCursor("normal", "selection", Cursor.DEFAULT_CURSOR));
         mv = mapFrame.mapView;
-        putValue("help", "Action/Move/Move");
+        putValue("help", ht("/Action/Move/Move"));
         selectionManager = new SelectionManager(this, false, mv);
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay", 200);
         initialMoveThreshold = Main.pref.getInteger("edit.initial-move-threshold", 5);

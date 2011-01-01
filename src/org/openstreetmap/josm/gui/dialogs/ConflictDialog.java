@@ -1,6 +1,7 @@
 // License: GPL. See LICENSE file for details.
 package org.openstreetmap.josm.gui.dialogs;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -257,7 +258,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
     @Override
     public String helpTopic() {
-        return "Dialogs/ConflictListDialog";
+        return ht("/Dialogs/ConflictListDialog");
     }
 
     /**
@@ -326,7 +327,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             putValue(NAME, tr("Resolve"));
             putValue(SHORT_DESCRIPTION,  tr("Open a merge dialog of all selected items in the list above."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "conflict"));
-            putValue("help", "Dialogs/ConflictListDialog#ResolveAction");
+            putValue("help", ht("/Dialogs/ConflictListDialog#ResolveAction"));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -346,7 +347,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             putValue(NAME, tr("Select"));
             putValue(SHORT_DESCRIPTION,  tr("Set the selected elements on the map to the selected items in the list above."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
-            putValue("help", "Dialogs/ConflictListDialog#SelectAction");
+            putValue("help", ht("/Dialogs/ConflictListDialog#SelectAction"));
         }
 
         public void actionPerformed(ActionEvent e) {

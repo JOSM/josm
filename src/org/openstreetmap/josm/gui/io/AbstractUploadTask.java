@@ -178,7 +178,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
                 null,
                 spec,
                 spec[0],
-                ht("Concepts/Conflict")
+                ht("/Concepts/Conflict")
         );
         if (ret == 0) {
             synchronizeDataSet();

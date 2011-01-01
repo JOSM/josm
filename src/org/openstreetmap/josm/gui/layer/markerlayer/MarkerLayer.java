@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.layer.markerlayer;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
@@ -376,7 +377,7 @@ public class MarkerLayer extends Layer {
         public ShowHideMarkerText(MarkerLayer layer) {
             super(tr("Show Text/Icons"), ImageProvider.get("dialogs", "showhide"));
             putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the marker text and icons."));
-            putValue("help", "Action/ShowHideTextIcons");
+            putValue("help", ht("/Action/ShowHideTextIcons"));
             this.layer = layer;
         }
 
@@ -405,7 +406,7 @@ public class MarkerLayer extends Layer {
 
         public CustomizeColor() {
             super(tr("Customize Color"), ImageProvider.get("colorchooser"));
-            putValue("help", "Action/LayerCustomizeColor");
+            putValue("help", ht("/Action/LayerCustomizeColor"));
         }
 
         @Override
@@ -440,7 +441,7 @@ public class MarkerLayer extends Layer {
 
         public SynchronizeAudio() {
             super(tr("Synchronize Audio"), ImageProvider.get("audio-sync"));
-            putValue("help", "Action/SynchronizeAudio");
+            putValue("help", ht("/Action/SynchronizeAudio"));
         }
 
         @Override
@@ -477,7 +478,7 @@ public class MarkerLayer extends Layer {
 
         public MoveAudio() {
             super(tr("Make Audio Marker at Play Head"), ImageProvider.get("addmarkers"));
-            putValue("help", "Action/MakeAudioMarkerAtPlayHead");
+            putValue("help", ht("/Action/MakeAudioMarkerAtPlayHead"));
         }
 
         @Override
