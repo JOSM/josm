@@ -17,7 +17,7 @@ public class NewAction extends JosmAction {
     public NewAction() {
         super(tr("New Layer"), "new", tr("Create a new map layer."),
                 Shortcut.registerShortcut("system:new", tr("File: {0}", tr("New Layer")), KeyEvent.VK_N, Shortcut.GROUP_MENU), true);
-        putValue("help", ht("/Action/New"));
+        putValue("help", ht("/Action/NewLayer"));
     }
 
     public void actionPerformed(ActionEvent e) {

@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.dialogs;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
@@ -29,6 +30,7 @@ public class LayerListPopup extends JPopupMenu {
         private final Layer layer;
         public InfoAction(Layer layer) {
             super(tr("Info"), ImageProvider.get("info"));
+            putValue("help", ht("/Action/LayerInfo"));
             this.layer = layer;
         }
         public void actionPerformed(ActionEvent e) {

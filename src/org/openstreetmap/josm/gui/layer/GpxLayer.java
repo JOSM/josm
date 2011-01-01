@@ -1276,7 +1276,7 @@ public class GpxLayer extends Layer {
 
         public CustomizeColor() {
             super(tr("Customize Color"), ImageProvider.get("colorchooser"));
-            putValue("help", "Action/LayerCustomizeColor");
+            putValue("help", ht("Action/LayerCustomizeColor"));
         }
 
         @Override
@@ -1311,7 +1311,7 @@ public class GpxLayer extends Layer {
 
         public MarkersFromNamedPoins() {
             super(tr("Markers From Named Points"), ImageProvider.get("addmarkers"));
-            putValue("help", "Action/MarkersFromNamedPoints");
+            putValue("help", ht("Action/MarkersFromNamedPoints"));
         }
 
         @Override
@@ -1339,7 +1339,7 @@ public class GpxLayer extends Layer {
 
         public ImportAudio() {
             super(tr("Import Audio"), ImageProvider.get("importaudio"));
-            putValue("help", "ImportAudio");
+            putValue("help", ht("ImportAudio"));
         }
 
         private void warnCantImportIntoServerLayer(GpxLayer layer) {

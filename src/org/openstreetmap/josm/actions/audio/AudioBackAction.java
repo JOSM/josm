@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions.audio;
 
+import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
@@ -18,7 +19,7 @@ public class AudioBackAction extends JosmAction {
     public AudioBackAction() {
         super(trc("audio", "Back"), "audio-back", trc("audio", "Jump back."),
         Shortcut.registerShortcut("audio:back", tr("Audio: {0}", trc("audio", "Back")), KeyEvent.VK_F6, Shortcut.GROUP_DIRECT), true);
-        this.putValue("help", "Action/Back");
+        this.putValue("help", ht("Action/AudioBack"));
     }
 
     public void actionPerformed(ActionEvent e) {
