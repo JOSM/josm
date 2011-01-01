@@ -154,4 +154,8 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         dialog.dispose();
         dialog = null;
     }
+    
+    public Component getDialog() {
+        return dialog;
+    }
 }
