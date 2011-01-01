@@ -1339,7 +1339,7 @@ public class GpxLayer extends Layer {
 
         public ImportAudio() {
             super(tr("Import Audio"), ImageProvider.get("importaudio"));
-            putValue("help", ht("/ImportAudio"));
+            putValue("help", ht("/Action/ImportAudio"));
         }
 
         private void warnCantImportIntoServerLayer(GpxLayer layer) {
@@ -1352,7 +1352,7 @@ public class GpxLayer extends Layer {
                     msg,
                     tr("Import not possible"),
                     JOptionPane.WARNING_MESSAGE,
-                    ht("/Action/ImportImages#CantImportIntoGpxLayerFromServer")
+                    ht("/Action/ImportAudio#CantImportIntoGpxLayerFromServer")
             );
         }
 
