@@ -167,7 +167,7 @@ public class DownloadDialog extends JDialog  {
 
         // -- help button
         SideButton btnHelp;
-        pnl.add(btnHelp = new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/DownloadDialog"))));
+        pnl.add(btnHelp = new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/Download"))));
         btnHelp.setFocusable(true);
         btnHelp.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0), "enter");
         btnHelp.getActionMap().put("enter",btnHelp.getAction());
@@ -189,7 +189,7 @@ public class DownloadDialog extends JDialog  {
                 checkClipboardContents();
             }
         });
-        HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/DownloadDialog"));
+        HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/Download"));
         addWindowListener(new WindowEventHandler());
         restoreSettings();
     }
