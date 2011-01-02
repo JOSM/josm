@@ -334,7 +334,7 @@ public abstract class ListMergeModel<T> extends Observable {
                 sb.toString(),
                 tr("Merging deleted primitives failed"),
                 JOptionPane.WARNING_MESSAGE,
-                HelpUtil.ht("/Dialog/ConflictResolution#MergingDeletedPrimitivesFailed")
+                HelpUtil.ht("/Dialog/Conflict#MergingDeletedPrimitivesFailed")
         );
     }
 
