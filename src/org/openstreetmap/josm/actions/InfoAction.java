@@ -17,7 +17,7 @@ public class InfoAction extends AbstractInfoAction {
                 tr("Display object information about OSM nodes, ways, or relations."),
                 Shortcut.registerShortcut("core:information",
                         tr("Info about Element"), KeyEvent.VK_I, Shortcut.GROUP_HOTKEY), true);
-        putValue("help", ht("/Action/Info"));
+        putValue("help", ht("/Action/InfoAboutElements"));
     }
 
     @Override
