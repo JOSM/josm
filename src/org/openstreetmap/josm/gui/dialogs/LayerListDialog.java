@@ -319,7 +319,7 @@ public class LayerListDialog extends ToggleDialog {
             putValue(SMALL_ICON,ImageProvider.get("dialogs", "delete"));
             putValue(SHORT_DESCRIPTION, tr("Delete the selected layers."));
             putValue(NAME, tr("Delete"));
-            putValue("help", HelpUtil.ht("/Dialog/LayerDialog#DeleteLayer"));
+            putValue("help", HelpUtil.ht("/Dialog/LayerList#DeleteLayer"));
             updateEnabledState();
         }
 
@@ -412,7 +412,7 @@ public class LayerListDialog extends ToggleDialog {
         public ShowHideLayerAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "showhide"));
             putValue(SHORT_DESCRIPTION, tr("Toggle visible state of the selected layer."));
-            putValue("help", HelpUtil.ht("/Dialog/LayerDialog#ShowHideLayer"));
+            putValue("help", HelpUtil.ht("/Dialog/LayerList#ShowHideLayer"));
             updateEnabledState();
         }
 
@@ -575,7 +575,7 @@ public class LayerListDialog extends ToggleDialog {
         public ActivateLayerAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "activate"));
             putValue(SHORT_DESCRIPTION, tr("Activate the selected layer"));
-            putValue("help", HelpUtil.ht("/Dialog/LayerDialog#ActivateLayer"));
+            putValue("help", HelpUtil.ht("/Dialog/LayerList#ActivateLayer"));
             updateEnabledState();
         }
 
@@ -644,7 +644,7 @@ public class LayerListDialog extends ToggleDialog {
         public MergeAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "mergedown"));
             putValue(SHORT_DESCRIPTION, tr("Merge this layer into another layer"));
-            putValue("help", HelpUtil.ht("/Dialog/LayerDialog#MergeLayer"));
+            putValue("help", HelpUtil.ht("/Dialog/LayerList#MergeLayer"));
             updateEnabledState();
         }
 
@@ -698,7 +698,7 @@ public class LayerListDialog extends ToggleDialog {
         public DuplicateAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "duplicatelayer"));
             putValue(SHORT_DESCRIPTION, tr("Duplicate this layer"));
-            putValue("help", HelpUtil.ht("/Dialog/LayerDialog#DuplicateLayer"));
+            putValue("help", HelpUtil.ht("/Dialog/LayerList#DuplicateLayer"));
             updateEnabledState();
         }
 
