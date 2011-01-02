@@ -133,9 +133,9 @@ public class AutoScaleAction extends JosmAction {
         } else if (mode.equals("download")) {
             putValue("help", ht("/Action/ZoomToDownload"));
         } else if (mode.equals("previous")) {
-            putValue("help", ht("/Action/ZoomPrevious"));
+            putValue("help", ht("/Action/ZoomToPrevious"));
         } else if (mode.equals("next")) {
-            putValue("help", ht("/Action/ZoomNext"));
+            putValue("help", ht("/Action/ZoomToNext"));
         }
     }
 
