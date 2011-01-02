@@ -70,7 +70,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
                 Shortcut.registerShortcut("subwindow:history", tr("Toggle: {0}", tr("History")), KeyEvent.VK_H,
                         Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
         build();
-        HelpUtil.setHelpContext(this, HelpUtil.ht("/Dialog/HistoryDialog"));
+        HelpUtil.setHelpContext(this, HelpUtil.ht("/Dialog/History"));
     }
 
     /**
