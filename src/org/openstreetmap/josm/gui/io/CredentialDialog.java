@@ -76,7 +76,7 @@ public class CredentialDialog extends JDialog {
         JPanel pnl = new JPanel(new FlowLayout());
         pnl.add(new SideButton(new OKAction()));
         pnl.add(new SideButton(new CancelAction()));
-        pnl.add(new SideButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Dialog/PasswordDialog"))));
+        pnl.add(new SideButton(new ContextSensitiveHelpAction(HelpUtil.ht("/Dialog/Password"))));
         return pnl;
     }
 

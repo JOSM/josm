@@ -168,8 +168,8 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0),
                 JComponent.WHEN_IN_FOCUSED_WINDOW
         );
-        pnl.add(new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/UploadDialog"))));
-        HelpUtil.setHelpContext(getRootPane(),ht("/Dialog/UploadDialog"));
+        pnl.add(new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/Upload"))));
+        HelpUtil.setHelpContext(getRootPane(),ht("/Dialog/Upload"));
         return pnl;
     }
 
@@ -411,7 +411,7 @@ public class UploadDialog extends JDialog implements PropertyChangeListener, Pre
                     tr("Please enter a valid chunk size first"),
                     tr("Illegal chunk size"),
                     JOptionPane.ERROR_MESSAGE,
-                    ht("/Dialog/UploadDialog#IllegalChunkSize")
+                    ht("/Dialog/Upload#IllegalChunkSize")
             );
         }
 
