@@ -258,7 +258,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
 
     @Override
     public String helpTopic() {
-        return ht("/Dialogs/ConflictListDialog");
+        return ht("/Dialog/ConflictList");
     }
 
     /**
@@ -327,7 +327,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             putValue(NAME, tr("Resolve"));
             putValue(SHORT_DESCRIPTION,  tr("Open a merge dialog of all selected items in the list above."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "conflict"));
-            putValue("help", ht("/Dialogs/ConflictListDialog#ResolveAction"));
+            putValue("help", ht("/Dialog/ConflictList#ResolveAction"));
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -347,7 +347,7 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
             putValue(NAME, tr("Select"));
             putValue(SHORT_DESCRIPTION,  tr("Set the selected elements on the map to the selected items in the list above."));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
-            putValue("help", ht("/Dialogs/ConflictListDialog#SelectAction"));
+            putValue("help", ht("/Dialog/ConflictList#SelectAction"));
         }
 
         public void actionPerformed(ActionEvent e) {

@@ -169,7 +169,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         getContentPane().add(buildButtonRow(), BorderLayout.SOUTH);
 
         resolver.addPropertyChangeListener(this);
-        HelpUtil.setHelpContext(this.getRootPane(), "Dialog/ConflictDialog");
+        HelpUtil.setHelpContext(this.getRootPane(), ht("Dialog/Conflict"));
 
         registerListeners();
     }
@@ -211,7 +211,7 @@ public class ConflictResolutionDialog extends JDialog implements PropertyChangeL
         }
 
         public void actionPerformed(ActionEvent arg0) {
-            HelpBrowser.setUrlForHelpTopic("/Dialog/ConflictDialog");
+            HelpBrowser.setUrlForHelpTopic(ht("/Dialog/Conflict"));
         }
     }
 
