@@ -110,7 +110,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                 Shortcut.registerShortcut("mapmode:extrude", tr("Mode: {0}", tr("Extrude")), KeyEvent.VK_X, Shortcut.GROUP_EDIT),
                 mapFrame,
                 getCursor("normal", "rectangle", Cursor.DEFAULT_CURSOR));
-        putValue("help", ht("/Action/Extrude/Extrude"));
+        putValue("help", ht("/Action/Extrude"));
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
         selectedColor = PaintColors.SELECTED.get();
     }
