@@ -75,12 +75,12 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         btn.setName("btn.close");
         pnl.add(btn);
 
-        btn = new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/History")));
+        btn = new SideButton(new ContextSensitiveHelpAction(ht("/Dialog/HistoryBrowser")));
         btn.setName("btn.help");
         pnl.add(btn);
         add(pnl, BorderLayout.SOUTH);
 
-        HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/History"));
+        HelpUtil.setHelpContext(getRootPane(), ht("/Dialog/HistoryBrowser"));
 
         setSize(800, 500);
     }
