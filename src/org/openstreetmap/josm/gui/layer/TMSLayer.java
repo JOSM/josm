@@ -16,7 +16,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.IOException;
 import java.net.URI;
@@ -75,7 +74,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     public static final int MAX_ZOOM = 30;
     public static final int MIN_ZOOM = 2;
-    public static final int DEFAULT_MAX_ZOOM = 18;
+    public static final int DEFAULT_MAX_ZOOM = 20;
     public static final int DEFAULT_MIN_ZOOM = 2;
 
     public static final BooleanProperty PROP_DEFAULT_AUTOZOOM = new BooleanProperty(PREFERENCE_PREFIX + ".default_autozoom", true);
@@ -100,17 +99,19 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     @Override
     public synchronized void tileLoadingFinished(Tile tile, boolean success)
     {
-        if (!success) {
-            BufferedImage img = new BufferedImage(tileSource.getTileSize(),tileSource.getTileSize(), BufferedImage.TYPE_INT_RGB);
-            drawErrorTile(img);
-            tile.setImage(img);
+        if (tile.hasError()) {
+            success = false;
+            tile.setImage(null);
+        }
+        if (sharpenLevel != 0 && success) {
+            tile.setImage(sharpenImage(tile.getImage()));
         }
         tile.setLoaded(true);
         needRedraw = true;
         Main.map.repaint(100);
         tileRequestsOutstanding.remove(tile);
-        if (sharpenLevel != 0 && success) {
-            tile.setImage(sharpenImage(tile.getImage()));
+        if (success) {
+            displayZoomLevel = tile.getZoom();
         }
         if (debug) {
             out("tileLoadingFinished() tile: " + tile + " success: " + success);
@@ -134,6 +135,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
      * Actual zoom lvl. Initial zoom lvl is set to
      */
     public int currentZoomLevel;
+    public int bestZoomLevel;
+    public int displayZoomLevel = 0;
 
     private Tile clickedTile;
     private boolean needRedraw;
@@ -241,13 +244,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             attrTermsUrl = tileSource.getTermsOfUseURL();
         }
 
-        currentZoomLevel = getBestZoom();
-        if (currentZoomLevel > getMaxZoomLvl()) {
-            currentZoomLevel = getMaxZoomLvl();
-        }
-        if (currentZoomLevel < getMinZoomLvl()) {
-            currentZoomLevel = getMinZoomLvl();
-        }
+        updateBestZoom();
+        currentZoomLevel = bestZoomLevel;
+
         clearTileCache();
         //tileloader = new OsmTileLoader(this);
         tileLoader = new OsmFileCacheTileLoader(this);
@@ -268,6 +267,16 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         if (Main.map == null || Main.map.mapView == null) return 3;
         double ret = Math.log(getPPDeg()*360/tileSource.getTileSize())/Math.log(2);
         return (int)Math.round(ret);
+    }
+
+    private void updateBestZoom() {
+        bestZoomLevel = getBestZoom();
+        if (bestZoomLevel > getMaxZoomLvl()) {
+            bestZoomLevel = getMaxZoomLvl();
+        }
+        if (bestZoomLevel < getMinZoomLvl()) {
+            bestZoomLevel = getMinZoomLvl();
+        }
     }
 
     @SuppressWarnings("serial")
@@ -504,6 +513,16 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                     "MaxZoomLvl ("+this.getMaxZoomLvl()+") reached.");
             return false;
         }
+        return true;
+    }
+
+    public boolean setZoomLevel(int zoom)
+    {
+        if (zoom > this.getMaxZoomLvl()) return false;
+        if (zoom < this.getMinZoomLvl()) return false;
+        currentZoomLevel = zoom;
+        lastImageScale = null;
+        zoomChanged();
         return true;
     }
 
@@ -812,7 +831,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         boolean imageScaleRecorded = false;
         for (Tile tile : ts.allTiles()) {
             Image img = getLoadedTileImage(tile);
-            if (img == null) {
+            if (img == null || tile.hasError()) {
                 if (debug) {
                     out("missed tile: " + tile);
                 }
@@ -874,6 +893,11 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         String tileStatus = tile.getStatus();
         if (!tile.isLoaded() && PROP_DRAW_DEBUG.get()) {
             myDrawString(g, tr("image " + tileStatus), p.x + 2, texty);
+            texty += 1 + fontHeight;
+        }
+
+        if (tile.hasError() && (displayZoomLevel == 0 || !"no-tile".equals(tile.getValue("tile-info")))) {
+            myDrawString(g, tr("Error") + ": " + tr(tile.getErrorMessage()), p.x + 2, texty);
             texty += 1 + fontHeight;
         }
 
@@ -1167,7 +1191,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             }
 
             g.setFont(ATTR_FONT);
-            String attributionText = tileSource.getAttributionText(currentZoomLevel,
+            String attributionText = tileSource.getAttributionText(displayZoomLevel,
                     getShiftedCoord(topLeft), getShiftedCoord(botRight));
             Rectangle2D stringBounds = g.getFontMetrics().getStringBounds(attributionText, g);
             {
@@ -1199,7 +1223,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             }
         }
         //g.drawString("currentZoomLevel=" + currentZoomLevel, 120, 120);
-        g.setColor(Color.black);
+        g.setColor(Color.lightGray);
         if (ts.insane()) {
             myDrawString(g, "zoom in to load any tiles", 120, 120);
         } else if (ts.tooLarge()) {
