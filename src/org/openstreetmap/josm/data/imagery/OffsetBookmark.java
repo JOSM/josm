@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 
@@ -21,17 +22,25 @@ public class OffsetBookmark {
     public String layerName;
     public String name;
     public double dx, dy;
+    public double centerX, centerY;
 
     public boolean isUsable(ImageryLayer layer) {
         return Main.proj.getClass() == proj.getClass() &&
         layer.getInfo().getName().equals(layerName);
     }
+
     public OffsetBookmark(Projection proj, String layerName, String name, double dx, double dy) {
+        this(proj, layerName, name, dx, dy, 0, 0);
+    }
+
+    public OffsetBookmark(Projection proj, String layerName, String name, double dx, double dy, double centerX, double centerY) {
         this.proj = proj;
         this.layerName = layerName;
         this.name = name;
         this.dx = dx;
         this.dy = dy;
+        this.centerX = centerX;
+        this.centerY = centerY;
     }
 
     public OffsetBookmark(Collection<String> list) {
@@ -49,6 +58,10 @@ public class OffsetBookmark {
         this.name = array.get(2);
         this.dx = Double.valueOf(array.get(3));
         this.dy = Double.valueOf(array.get(4));
+        if (array.size() >= 7) {
+            this.centerX = Double.valueOf(array.get(5));
+            this.centerY = Double.valueOf(array.get(6));
+        }
     }
 
     public ArrayList<String> getInfoArray() {
@@ -58,6 +71,10 @@ public class OffsetBookmark {
         res.add(name);
         res.add(String.valueOf(dx));
         res.add(String.valueOf(dy));
+        if (this.centerX != 0 || this.centerY != 0) {
+            res.add(String.valueOf(centerX));
+            res.add(String.valueOf(centerY));
+        }
         return res;
     }
 
@@ -85,9 +102,15 @@ public class OffsetBookmark {
     }
 
     public static void bookmarkOffset(String name, ImageryLayer layer) {
+        LatLon center;
+        if (Main.map != null && Main.map.mapView != null) {
+            center = Main.proj.eastNorth2latlon(Main.map.mapView.getCenter());
+        } else {
+            center = new LatLon(0,0);
+        }
         OffsetBookmark nb = new OffsetBookmark(
                 Main.proj, layer.getInfo().getName(),
-                name, layer.getDx(), layer.getDy());
+                name, layer.getDx(), layer.getDy(), center.lon(), center.lat());
         for (ListIterator<OffsetBookmark> it = allBookmarks.listIterator();it.hasNext();) {
             OffsetBookmark b = it.next();
             if (b.isUsable(layer) && name.equals(b.name)) {
