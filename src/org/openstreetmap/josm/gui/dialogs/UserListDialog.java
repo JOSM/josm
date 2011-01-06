@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.Component;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -28,7 +29,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JLabel;
 import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumnModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -45,6 +49,8 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.ImageProvider;
+import javax.swing.ImageIcon;
 
 /**
  * Displays a dialog with all users who have last edited something in the
@@ -60,6 +66,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     private UserTableModel model;
     private SelectUsersPrimitivesAction selectionUsersPrimitivesAction;
     private ShowUserInfoAction showUserInfoAction;
+    private LoadRelicensingInformationAction loadRelicensingInformationAction;
 
     public UserListDialog() {
         super(tr("Authors"), "userlist", tr("Open a list of people working on the selected objects."),
@@ -94,6 +101,10 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         showUserInfoAction = new ShowUserInfoAction();
         userTable.getSelectionModel().addListSelectionListener(showUserInfoAction);
         pnl.add(new SideButton(showUserInfoAction));
+
+        // -- load relicensing info action
+        loadRelicensingInformationAction = new LoadRelicensingInformationAction();
+        pnl.add(new SideButton(loadRelicensingInformationAction));
         return pnl;
     }
 
@@ -103,6 +114,16 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         model = new UserTableModel();
         userTable = new JTable(model);
         userTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        TableColumnModel columnModel = userTable.getColumnModel();
+        columnModel.getColumn(3).setPreferredWidth(20);
+        columnModel.getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                final JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                label.setIcon((ImageIcon)value);
+                label.setText("");
+                return label;
+            };
+        });
         pnl.add(new JScrollPane(userTable), BorderLayout.CENTER);
 
         // -- the button row
@@ -181,7 +202,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         }
     }
 
-    /**
+    /*
      * Action for launching the info page of a user
      */
     class ShowUserInfoAction extends AbstractInfoAction implements ListSelectionListener {
@@ -243,6 +264,28 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         }
     }
 
+    /*
+     */
+    class LoadRelicensingInformationAction extends AbstractAction {
+
+        public LoadRelicensingInformationAction() {
+            super();
+            putValue(NAME, tr("Load CT"));
+            putValue(SHORT_DESCRIPTION, tr("Loads information about relicensing status from the server. Users having agreed to the new contributor terms will show a green check mark."));
+            putValue(SMALL_ICON, ImageProvider.get("about"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            User.loadRelicensingInformation();
+            Layer layer = Main.main.getActiveLayer();
+            if (layer instanceof OsmDataLayer) {
+               refresh(((OsmDataLayer)layer).data.getSelected());
+            }
+            setEnabled(false);
+        }
+    }
+
     class DoubleClickAdapter extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -279,6 +322,12 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
                 return tr("<new object>");
             return user.getName();
         }
+
+        public int getRelicensingStatus() {
+            if (user == null)
+                return User.STATUS_UNKNOWN;
+            return user.getRelicensingStatus();
+        }
     }
 
     /**
@@ -287,10 +336,12 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
      */
     static class UserTableModel extends DefaultTableModel {
         private ArrayList<UserInfo> data;
+        private ImageIcon greenCheckmark;
 
         public UserTableModel() {
-            setColumnIdentifiers(new String[]{tr("Author"),tr("# Objects"),"%"});
+            setColumnIdentifiers(new String[]{tr("Author"),tr("# Objects"),"%", tr("CT")});
             data = new ArrayList<UserInfo>();
+            greenCheckmark = ImageProvider.get("misc", "green_check.png");
         }
 
         protected Map<User, Integer> computeStatistics(Collection<? extends OsmPrimitive> primitives) {
@@ -331,6 +382,10 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             case 0: /* author */ return info.getName() == null ? "" : info.getName();
             case 1: /* count */ return info.count;
             case 2: /* percent */ return NumberFormat.getPercentInstance().format(info.percent);
+            case 3: /* relicensing status */
+                if (info.getRelicensingStatus() == User.STATUS_AGREED) return greenCheckmark;
+                if (info.getRelicensingStatus() == User.STATUS_AUTO_AGREED) return greenCheckmark;
+                return null;
             }
             return null;
         }

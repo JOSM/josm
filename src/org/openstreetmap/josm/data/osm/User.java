@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import org.openstreetmap.josm.io.MirroredInputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 
 /**
  * A simple class to keep a list of user names.
@@ -24,6 +27,7 @@ public class User {
      * the map of known users
      */
     private static HashMap<Long,User> userMap = new HashMap<Long,User>();
+    private static HashSet<Long> relicensingUsers = null;
 
     private static long getNextLocalUid() {
         return uidCounter.decrementAndGet();
@@ -101,10 +105,43 @@ public class User {
         return ret;
     }
 
+    public static void loadRelicensingInformation() {
+        relicensingUsers = new HashSet<Long>();
+        try {
+        MirroredInputStream stream = new MirroredInputStream("http://planet.openstreetmap.org/users_agreed/users_agreed.txt");
+        InputStreamReader r;
+        r = new InputStreamReader(stream);
+        BufferedReader reader = new BufferedReader(r);
+        String line;
+        while ((line = reader.readLine()) != null) {
+            if (line.startsWith("#")) continue;
+            try {
+                relicensingUsers.add(new Long(Long.parseLong(line.trim())));
+            } catch (java.lang.NumberFormatException ex) {
+            }
+        }
+        stream.close();
+        } catch (java.io.IOException ex) {
+        }
+    }
+
     /** the user name */
     private final HashSet<String> names = new HashSet<String>();
     /** the user id */
     private final long uid;
+
+    public static final int STATUS_UNKNOWN = 0;
+    public static final int STATUS_AGREED = 1;
+    public static final int STATUS_NOT_AGREED = 2;
+    public static final int STATUS_AUTO_AGREED = 3;
+
+    /** 
+    */
+    public int getRelicensingStatus() {
+        if (uid >= 286582) return STATUS_AUTO_AGREED;
+        if (relicensingUsers == null) return STATUS_UNKNOWN;
+        return (relicensingUsers.contains(new Long(uid)) ? STATUS_AGREED : STATUS_NOT_AGREED);
+    }
 
     /**
      * Replies the user name
