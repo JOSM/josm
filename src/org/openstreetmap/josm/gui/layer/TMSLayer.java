@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -110,9 +111,6 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         needRedraw = true;
         Main.map.repaint(100);
         tileRequestsOutstanding.remove(tile);
-        if (success) {
-            displayZoomLevel = tile.getZoom();
-        }
         if (debug) {
             out("tileLoadingFinished() tile: " + tile + " success: " + success);
         }
@@ -132,14 +130,24 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     }
 
     /**
-     * Actual zoom lvl. Initial zoom lvl is set to
+     * Zoomlevel at which tiles is currently downloaded.
+     * Initial zoom lvl is set to bestZoom
      */
     public int currentZoomLevel;
+    /**
+     * Optimal TMS Zoomlevel for current mapview.
+     * Works correctly only for Mercatator, so currently used only for initial zoom.
+     */
     public int bestZoomLevel;
+    /**
+     * Painting zoomlevel. Set to the currentZoomLevel when first tile at this zoomlevel is loaded.
+     */
     public int displayZoomLevel = 0;
 
     private Tile clickedTile;
     private boolean needRedraw;
+    private boolean overZoomed;
+    private boolean overZoomedFlag;
     private JPopupMenu tileOptionMenu;
     JCheckBoxMenuItem autoZoomPopup;
     JCheckBoxMenuItem autoLoadPopup;
@@ -486,6 +494,10 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         return getMinZoomLvl(tileSource);
     }
 
+    boolean isOverZoomed() {
+        return overZoomed || overZoomedFlag;
+    }
+
     /**
      * Zoom in, go closer to map.
      *
@@ -493,7 +505,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
      */
     public boolean zoomIncreaseAllowed()
     {
-        boolean zia = currentZoomLevel < this.getMaxZoomLvl();
+        boolean zia = currentZoomLevel < this.getMaxZoomLvl() && !isOverZoomed();
         if (debug) {
             out("zoomIncreaseAllowed(): " + zia + " " + currentZoomLevel + " vs. " + this.getMaxZoomLvl() );
         }
@@ -718,7 +730,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         int painted = 0;
         debug = true;
         for (int zoomOff : otherZooms) {
-            int zoom = currentZoomLevel + zoomOff;
+            int zoom = displayZoomLevel + zoomOff;
             if ((zoom < this.getMinZoomLvl()) ||
                     (zoom > this.getMaxZoomLvl())) {
                 continue;
@@ -820,9 +832,10 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     //
     // The "border" tile tells us the boundaries of where we may
     // draw.  It will not be from the zoom level that is being
-    // drawn currently.  If drawing the currentZoomLevel,
+    // drawn currently.  If drawing the displayZoomLevel,
     // border is null and we draw the entire tile set.
     List<Tile> paintTileImages(Graphics g, TileSet ts, int zoom, Tile border) {
+        if (zoom <= 0) return Collections.emptyList();
         Rectangle borderRect = null;
         if (border != null) {
             borderRect = tileToRect(border);
@@ -843,7 +856,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 continue;
             }
             drawImageInside(g, img, sourceRect, borderRect);
-            if (!imageScaleRecorded && zoom == currentZoomLevel) {
+            if (!imageScaleRecorded && zoom == displayZoomLevel) {
                 lastImageScale = new Double(getImageScaling(img, sourceRect));
                 imageScaleRecorded = true;
             }
@@ -896,7 +909,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             texty += 1 + fontHeight;
         }
 
-        if (tile.hasError() && (displayZoomLevel == 0 || !"no-tile".equals(tile.getValue("tile-info")))) {
+        if (tile.hasError()) {
             myDrawString(g, tr("Error") + ": " + tr(tile.getErrorMessage()), p.x + 2, texty);
             texty += 1 + fontHeight;
         }
@@ -943,7 +956,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         return new Coordinate(ll.lat(),ll.lon());
     }
     private class TileSet {
-        int z12x0, z12x1, z12y0, z12y1;
+        int x0, x1, y0, y1;
         int zoom;
         int tileMax = -1;
 
@@ -960,32 +973,32 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         TileSet(LatLon topLeft, LatLon botRight, int zoom) {
             this.zoom = zoom;
 
-            z12x0 = lonToTileX(topLeft.lon(),  zoom);
-            z12y0 = latToTileY(topLeft.lat(),  zoom);
-            z12x1 = lonToTileX(botRight.lon(), zoom);
-            z12y1 = latToTileY(botRight.lat(), zoom);
-            if (z12x0 > z12x1) {
-                int tmp = z12x0;
-                z12x0 = z12x1;
-                z12x1 = tmp;
+            x0 = lonToTileX(topLeft.lon(),  zoom);
+            y0 = latToTileY(topLeft.lat(),  zoom);
+            x1 = lonToTileX(botRight.lon(), zoom);
+            y1 = latToTileY(botRight.lat(), zoom);
+            if (x0 > x1) {
+                int tmp = x0;
+                x0 = x1;
+                x1 = tmp;
             }
-            if (z12y0 > z12y1) {
-                int tmp = z12y0;
-                z12y0 = z12y1;
-                z12y1 = tmp;
+            if (y0 > y1) {
+                int tmp = y0;
+                y0 = y1;
+                y1 = tmp;
             }
             tileMax = (int)Math.pow(2.0, zoom);
-            if (z12x0 < 0) {
-                z12x0 = 0;
+            if (x0 < 0) {
+                x0 = 0;
             }
-            if (z12y0 < 0) {
-                z12y0 = 0;
+            if (y0 < 0) {
+                y0 = 0;
             }
-            if (z12x1 > tileMax) {
-                z12x1 = tileMax;
+            if (x1 > tileMax) {
+                x1 = tileMax;
             }
-            if (z12y1 > tileMax) {
-                z12y1 = tileMax;
+            if (y1 > tileMax) {
+                y1 = tileMax;
             }
         }
         boolean tooSmall() {
@@ -1002,8 +1015,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         }
 
         double size() {
-            double x_span = z12x1 - z12x0 + 1.0;
-            double y_span = z12y1 - z12y0 + 1.0;
+            double x_span = x1 - x0 + 1.0;
+            double y_span = y1 - y0 + 1.0;
             return x_span * y_span;
         }
 
@@ -1022,8 +1035,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             // Someone created a crazy number of them
             if (this.insane())
                 return ret;
-            for (int x = z12x0; x <= z12x1; x++) {
-                for (int y = z12y0; y <= z12y1; y++) {
+            for (int x = x0; x <= x1; x++) {
+                for (int y = y0; y <= y1; y++) {
                     Tile t;
                     if (create) {
                         t = getOrCreateTile(x % tileMax, y % tileMax, zoom);
@@ -1037,6 +1050,11 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             }
             return ret;
         }
+
+        int totalTiles() {
+            return (y1 - y0 + 1) * (x1 - x0 + 1);
+        }
+
         void loadAllTiles(boolean force)
         {
             List<Tile> tiles = this.allTiles(true);
@@ -1088,43 +1106,88 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 }
                 if (decreaseZoomLevel()) {
                     this.paint(g, mv, bounds);
+                    return;
                 }
-                return;
             }
-            if (zoomIncreaseAllowed() && ts.tooSmall()) {
-                if (debug) {
-                    out("too zoomed in, (" + ts.tilesSpanned()
-                            + "), increasing zoom from " + currentZoomLevel);
+
+            // Auto-detection of Bing zoomlevel
+            if (tileSource instanceof BingAerialTileSource) {
+                List<Tile> allTiles = ts.allTiles();
+                boolean hasVisibleTiles = false;
+                boolean hasOverzoomedTiles = false;
+                boolean hasLoadingTiles = allTiles.size() < ts.totalTiles();
+                for (Tile t : allTiles) {
+                    if (t.isLoaded()) {
+                        if (!t.hasError()) {
+                            hasVisibleTiles = true;
+                        }
+                        if ("no-tile".equals(t.getValue("tile-info"))) {
+                            hasOverzoomedTiles = true;
+                        }
+                    } else {
+                        hasLoadingTiles = true;
+                    }
                 }
-                // This is a hack.  ts.tooSmall() is proabably a bad thing, and this works
-                // around it.  If we have a very small window, the tileSet may be well
-                // less than 1 real tile wide, but that's expected.  But, this sees the
-                // tile set as too small and zooms in.  The code below that checks for
-                // pixel stretching disagrees and tries to zoom out.  Both calls recurse,
-                // hillarity ensues, and the stack overflows.
-                //
-                // This really needs to get fixed properly.  We probably shouldn't even
-                // have the tooSmall() check on tileSets.  But, this also helps the zoom
-                // converge to the correct place much faster.
-                boolean tmp = az_disable;
-                az_disable = true;
-                if (increaseZoomLevel()) {
+                if (!hasLoadingTiles) {
+                    overZoomed = false;
+                }
+                if (!hasVisibleTiles && hasOverzoomedTiles) {
+                    overZoomed = true;
+                    if (displayZoomLevel == 0 || !hasLoadingTiles) {
+                        boolean tmp = overZoomedFlag;
+                        overZoomedFlag = true;
+                        if (decreaseZoomLevel()) {
+                            this.paint(g, mv, bounds);
+                            overZoomedFlag = tmp;
+                            return;
+                        }
+                        overZoomedFlag = tmp;
+                    }
+                } else if (hasVisibleTiles) {
+                    displayZoomLevel = currentZoomLevel;
+                }
+            } else {
+                displayZoomLevel = currentZoomLevel;
+                if (zoomIncreaseAllowed() && ts.tooSmall()) {
+                    if (debug) {
+                        out("too zoomed in, (" + ts.tilesSpanned()
+                                + "), increasing zoom from " + currentZoomLevel);
+                    }
+                    // This is a hack.  ts.tooSmall() is proabably a bad thing, and this works
+                    // around it.  If we have a very small window, the tileSet may be well
+                    // less than 1 real tile wide, but that's expected.  But, this sees the
+                    // tile set as too small and zooms in.  The code below that checks for
+                    // pixel stretching disagrees and tries to zoom out.  Both calls recurse,
+                    // hillarity ensues, and the stack overflows.
+                    //
+                    // This really needs to get fixed properly.  We probably shouldn't even
+                    // have the tooSmall() check on tileSets.  But, this also helps the zoom
+                    // converge to the correct place much faster.
+                    boolean tmp = az_disable;
+                    az_disable = true;
+                    increaseZoomLevel();
                     this.paint(g, mv, bounds);
+                    az_disable = tmp;
+                    return;
                 }
-                az_disable = tmp;
-                return;
             }
+        } else {
+            displayZoomLevel = currentZoomLevel;
         }
 
-        // Too many tiles... refuse to draw
+        // Too many tiles... refuse to download
         if (!ts.tooLarge()) {
             //out("size: " + ts.size() + " spanned: " + ts.tilesSpanned());
             ts.loadAllTiles(false);
         }
 
+        if (displayZoomLevel != zoom) {
+            ts = new TileSet(topLeft, botRight, displayZoomLevel);
+        }
+
         g.setColor(Color.DARK_GRAY);
 
-        List<Tile> missedTiles = this.paintTileImages(g, ts, currentZoomLevel, null);
+        List<Tile> missedTiles = this.paintTileImages(g, ts, displayZoomLevel, null);
         int otherZooms[] = { -1, 1, -2, 2, -3, -4, -5};
         for (int zoomOffset : otherZooms) {
             if (!autoZoomEnabled()) {
@@ -1133,7 +1196,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             if (!autoLoad) {
                 break;
             }
-            int newzoom = currentZoomLevel + zoomOffset;
+            int newzoom = displayZoomLevel + zoomOffset;
             if (missedTiles.size() <= 0) {
                 break;
             }
@@ -1159,7 +1222,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         // The current zoom tileset is guaranteed to have all of
         // its tiles
         for (Tile t : ts.allTiles()) {
-            this.paintTileText(ts, t, g, mv, currentZoomLevel, t);
+            this.paintTileText(ts, t, g, mv, displayZoomLevel, t);
         }
 
         if (tileSource.requiresAttribution()) {
@@ -1224,12 +1287,21 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         }
         //g.drawString("currentZoomLevel=" + currentZoomLevel, 120, 120);
         g.setColor(Color.lightGray);
-        if (ts.insane()) {
-            myDrawString(g, "zoom in to load any tiles", 120, 120);
-        } else if (ts.tooLarge()) {
-            myDrawString(g, "zoom in to load more tiles", 120, 120);
-        } else if (ts.tooSmall()) {
-            myDrawString(g, "increase zoom level to see more detail", 120, 120);
+        if (!autoZoom) {
+            if (ts.insane()) {
+                myDrawString(g, tr("zoom in to load any tiles"), 120, 120);
+            } else if (ts.tooLarge()) {
+                myDrawString(g, tr("zoom in to load more tiles"), 120, 120);
+            } else if (ts.tooSmall()) {
+                myDrawString(g, tr("increase zoom level to see more detail"), 120, 120);
+            }
+        }
+        if (isOverZoomed()) {
+            myDrawString(g, tr("No tiles at this zoom level"), 120, 120);
+        }
+        if (debug) {
+            myDrawString(g, tr("Current zoom: {0}", currentZoomLevel), 50, 140);
+            myDrawString(g, tr("Display zoom: {0}", displayZoomLevel), 50, 155);
         }
     }// end of paint method
 
