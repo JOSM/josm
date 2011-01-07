@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -40,6 +41,7 @@ import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JobDispatcher;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
+import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.TMSTileSource;
 import org.openstreetmap.gui.jmapviewer.TemplatedTMSTileSource;
 import org.openstreetmap.gui.jmapviewer.Tile;
@@ -57,6 +59,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -84,6 +87,16 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public static final IntegerProperty PROP_MAX_ZOOM_LVL = new IntegerProperty(PREFERENCE_PREFIX + ".max_zoom_lvl", DEFAULT_MAX_ZOOM);
     public static final BooleanProperty PROP_DRAW_DEBUG = new BooleanProperty(PREFERENCE_PREFIX + ".draw_debug", false);
     public static final BooleanProperty PROP_ADD_TO_SLIPPYMAP_CHOOSER = new BooleanProperty(PREFERENCE_PREFIX + ".add_to_slippymap_chooser", true);
+    public static final StringProperty PROP_TILECACHE_DIR;
+
+    static {
+        String defPath = null;
+        try {
+            defPath = OsmFileCacheTileLoader.getDefaultCacheDir().getAbsolutePath();
+        } catch (SecurityException e) {
+        }
+        PROP_TILECACHE_DIR = new StringProperty(PREFERENCE_PREFIX + ".tileceche_path", defPath);
+    }
 
     boolean debug = false;
     void out(String s)
@@ -256,8 +269,17 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         currentZoomLevel = bestZoomLevel;
 
         clearTileCache();
-        //tileloader = new OsmTileLoader(this);
-        tileLoader = new OsmFileCacheTileLoader(this);
+        String cachePath = TMSLayer.PROP_TILECACHE_DIR.get();
+        tileLoader = null;
+        if (cachePath != null && !cachePath.isEmpty()) {
+            try {
+                tileLoader = new OsmFileCacheTileLoader(this, new File(cachePath));
+            } catch (IOException e) {
+            }
+        }
+        if (tileLoader == null) {
+            tileLoader = new OsmTileLoader(this);
+        }
     }
 
     @Override

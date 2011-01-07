@@ -36,15 +36,16 @@ import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
-import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
@@ -82,6 +83,7 @@ public class ImageryPreference implements PreferenceSetting {
     private JSpinner minZoomLvl;
     private JSpinner maxZoomLvl;
     private JCheckBox addToSlippyMapChosser = new JCheckBox();
+    private JTextField tilecacheDir = new JTextField();
 
     private JPanel buildCommonSettingsPanel(final PreferenceTabbedPane gui) {
         final JPanel p = new JPanel(new GridBagLayout());
@@ -190,34 +192,41 @@ public class ImageryPreference implements PreferenceSetting {
         maxZoomLvl = new JSpinner(new SpinnerNumberModel(TMSLayer.DEFAULT_MAX_ZOOM, TMSLayer.MIN_ZOOM, TMSLayer.MAX_ZOOM, 1));
 
         tmsTab.add(new JLabel(tr("Auto zoom by default: ")), GBC.std());
-        tmsTab.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
+        tmsTab.add(GBC.glue(5, 0), GBC.std());
         tmsTab.add(autozoomActive, GBC.eol().fill(GBC.HORIZONTAL));
 
         tmsTab.add(new JLabel(tr("Autoload tiles by default: ")), GBC.std());
-        tmsTab.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
+        tmsTab.add(GBC.glue(5, 0), GBC.std());
         tmsTab.add(autoloadTiles, GBC.eol().fill(GBC.HORIZONTAL));
 
         tmsTab.add(new JLabel(tr("Min zoom lvl: ")), GBC.std());
-        tmsTab.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
-        tmsTab.add(this.minZoomLvl, GBC.eol().fill(GBC.HORIZONTAL));
+        tmsTab.add(GBC.glue(5, 0), GBC.std());
+        tmsTab.add(this.minZoomLvl, GBC.eol());
 
         tmsTab.add(new JLabel(tr("Max zoom lvl: ")), GBC.std());
-        tmsTab.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
-        tmsTab.add(this.maxZoomLvl, GBC.eol().fill(GBC.HORIZONTAL));
+        tmsTab.add(GBC.glue(5, 0), GBC.std());
+        tmsTab.add(this.maxZoomLvl, GBC.eol());
 
         tmsTab.add(new JLabel(tr("Add to slippymap chooser: ")), GBC.std());
-        tmsTab.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
+        tmsTab.add(GBC.glue(5, 0), GBC.std());
         tmsTab.add(addToSlippyMapChosser, GBC.eol().fill(GBC.HORIZONTAL));
+
+        tmsTab.add(new JLabel(tr("Tile cache directory: ")), GBC.std());
+        tmsTab.add(GBC.glue(5, 0), GBC.std());
+        tmsTab.add(tilecacheDir, GBC.eol().fill(GBC.HORIZONTAL));
 
         return tmsTab;
     }
 
     private void addSettingsSection(final JPanel p, String name, JPanel section) {
+        addSettingsSection(p, name, section, GBC.eol());
+    }
+    private void addSettingsSection(final JPanel p, String name, JPanel section, GBC gbc) {
         final JLabel lbl = new JLabel(name);
         lbl.setFont(lbl.getFont().deriveFont(Font.BOLD));
         p.add(lbl,GBC.std());
         p.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 0));
-        p.add(section,GBC.eol().insets(20,5,0,10));
+        p.add(section, gbc.insets(20,5,0,10));
     }
 
     private Component buildSettingsPanel(final PreferenceTabbedPane gui) {
@@ -226,7 +235,8 @@ public class ImageryPreference implements PreferenceSetting {
 
         addSettingsSection(p, tr("Common Settings"), buildCommonSettingsPanel(gui));
         addSettingsSection(p, tr("WMS Settings"), buildWMSSettingsPanel());
-        addSettingsSection(p, tr("TMS Settings"), buildTMSSettingsPanel());
+        addSettingsSection(p, tr("TMS Settings"), buildTMSSettingsPanel(),
+                GBC.eol().fill(GBC.HORIZONTAL));
 
         p.add(new JPanel(),GBC.eol().fill(GBC.BOTH));
         return new JScrollPane(p);
@@ -267,6 +277,7 @@ public class ImageryPreference implements PreferenceSetting {
         this.addToSlippyMapChosser.setSelected(TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get());
         this.maxZoomLvl.setValue(TMSLayer.getMaxZoomLvl(null));
         this.minZoomLvl.setValue(TMSLayer.getMinZoomLvl(null));
+        this.tilecacheDir.setText(TMSLayer.PROP_TILECACHE_DIR.get());
     }
 
     @Override
@@ -292,6 +303,7 @@ public class ImageryPreference implements PreferenceSetting {
         TMSLayer.PROP_DEFAULT_AUTOLOAD.put(this.autoloadTiles.isSelected());
         TMSLayer.setMaxZoomLvl((Integer)this.maxZoomLvl.getValue());
         TMSLayer.setMinZoomLvl((Integer)this.minZoomLvl.getValue());
+        TMSLayer.PROP_TILECACHE_DIR.put(this.tilecacheDir.getText());
 
         ImageryLayer.PROP_FADE_AMOUNT.put(this.fadeAmount.getValue());
         ImageryLayer.setFadeColor(this.colFadeColor);

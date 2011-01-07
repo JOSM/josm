@@ -9,6 +9,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -157,14 +158,15 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
 
     public SlippyMapBBoxChooser() {
         super();
-        try {
-            cachedLoader = new OsmFileCacheTileLoader(this);
-        } catch (SecurityException e) {
-            // set to null if a SecurityException was thrown
-            // while creating the cachedLoader
-            //
-            cachedLoader = null;
+        cachedLoader = null;
+        String cachePath = TMSLayer.PROP_TILECACHE_DIR.get();
+        if (cachePath != null && !cachePath.isEmpty()) {
+            try {
+                cachedLoader = new OsmFileCacheTileLoader(this, new File(cachePath));
+            } catch (IOException e) {
+            }
         }
+
         uncachedLoader = new OsmTileLoader(this);
         setZoomContolsVisible(false);
         setMapMarkerVisible(false);
