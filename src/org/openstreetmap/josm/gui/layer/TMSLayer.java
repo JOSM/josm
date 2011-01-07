@@ -95,7 +95,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             defPath = OsmFileCacheTileLoader.getDefaultCacheDir().getAbsolutePath();
         } catch (SecurityException e) {
         }
-        PROP_TILECACHE_DIR = new StringProperty(PREFERENCE_PREFIX + ".tileceche_path", defPath);
+        PROP_TILECACHE_DIR = new StringProperty(PREFERENCE_PREFIX + ".tilecache_path", defPath);
     }
 
     boolean debug = false;
