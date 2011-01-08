@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.projection;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
+import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -14,8 +15,6 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -185,7 +184,8 @@ public class LambertCC9Zones implements Projection, ProjectionSubPrefs {
         tr("{0} ({1} to {2} degrees)", 9,49,51)
     };
 
-    public void setupPreferencePanel(JPanel p) {
+    @Override
+    public void setupPreferencePanel(JPanel p, ActionListener listener) {
         JComboBox prefcb = new JComboBox(lambert9zones);
 
         prefcb.setSelectedIndex(layoutZone);
@@ -196,6 +196,10 @@ public class LambertCC9Zones implements Projection, ProjectionSubPrefs {
         p.add(prefcb, GBC.eop().fill(GBC.HORIZONTAL));
         p.add(new JLabel(ImageProvider.get("data/projection", "LambertCC9Zones.png")), GBC.eol().fill(GBC.HORIZONTAL));
         p.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
+
+        if (listener != null) {
+            prefcb.addActionListener(listener);
+        }
     }
 
     public Collection<String> getPreferences(JPanel p) {
@@ -223,15 +227,24 @@ public class LambertCC9Zones implements Projection, ProjectionSubPrefs {
         }
     }
 
+    @Override
+    public String[] allCodes() {
+        String[] zones = new String[9];
+        for (int zone = 0; zone < 9; zone++) {
+            zones[zone] = "EPSG:" + (3942 + zone);
+        }
+        return zones;
+    }
+
     public Collection<String> getPreferencesFromCode(String code)
     {
         //zone 1=CC42=EPSG:3942 up to zone 9=CC50=EPSG:3950
         if (code.startsWith("EPSG:39") && code.length() == 9) {
             try {
-                String zonestring = code.substring(5,4);
+                String zonestring = code.substring(5,9);
                 int zoneval = Integer.parseInt(zonestring)-3942;
                 if(zoneval >= 0 && zoneval <= 8)
-                    return Collections.singleton(zonestring);
+                    return Collections.singleton(String.valueOf(zoneval+1));
             } catch(NumberFormatException e) {}
         }
         return null;

@@ -8,6 +8,7 @@ package org.openstreetmap.josm.data.projection;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
+import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -409,7 +410,8 @@ public class UTM_France_DOM implements Projection, ProjectionSubPrefs {
         return currentGeodesic;
     }
 
-    public void setupPreferencePanel(JPanel p) {
+    @Override
+    public void setupPreferencePanel(JPanel p, ActionListener listener) {
         JComboBox prefcb = new JComboBox(utmGeodesicsNames);
 
         prefcb.setSelectedIndex(currentGeodesic);
@@ -418,6 +420,9 @@ public class UTM_France_DOM implements Projection, ProjectionSubPrefs {
         p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
         p.add(prefcb, GBC.eop().fill(GBC.HORIZONTAL));
         p.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
+        if (listener != null) {
+            prefcb.addActionListener(listener);
+        }
     }
 
     public Collection<String> getPreferences(JPanel p) {
@@ -429,10 +434,15 @@ public class UTM_France_DOM implements Projection, ProjectionSubPrefs {
         return Collections.singleton(Integer.toString(currentGeodesic+1));
     }
 
+    @Override
+    public String[] allCodes() {
+        return utmEPSGs;
+    }
+
     public Collection<String> getPreferencesFromCode(String code) {
         for (int i=0; i < utmEPSGs.length; i++ )
             if (utmEPSGs[i].endsWith(code))
-                return Collections.singleton(Integer.toString(i));
+                return Collections.singleton(Integer.toString(i+1));
         return null;
     }
 
@@ -443,7 +453,7 @@ public class UTM_France_DOM implements Projection, ProjectionSubPrefs {
                 for(String s : args)
                 {
                     currentGeodesic = Integer.parseInt(s)-1;
-                    if(currentGeodesic < 0 || currentGeodesic > 4) {
+                    if(currentGeodesic < 0 || currentGeodesic >= utmEPSGs.length) {
                         currentGeodesic = DEFAULT_GEODESIC;
                     }
                     break;

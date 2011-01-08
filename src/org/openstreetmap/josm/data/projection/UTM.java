@@ -4,6 +4,8 @@ package org.openstreetmap.josm.data.projection;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -111,7 +113,8 @@ public class UTM extends TransverseMercator implements ProjectionSubPrefs {
                     new LatLon(5.0, UTMCentralMeridianDeg(getzone())+5.0));
     }
 
-    public void setupPreferencePanel(JPanel p) {
+    @Override
+    public void setupPreferencePanel(JPanel p, ActionListener listener) {
         //Zone
         JComboBox zonecb = new JComboBox();
         for(int i = 1; i <= 60; i++) {
@@ -160,6 +163,13 @@ public class UTM extends TransverseMercator implements ProjectionSubPrefs {
         /* Note: we use component position 2 below to find this again */
         p.add(offsetBox, GBC.eop().fill(GBC.HORIZONTAL));
         p.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
+
+        if (listener != null) {
+            north.addActionListener(listener);
+            south.addActionListener(listener);
+            zonecb.addActionListener(listener);
+            offsetBox.addActionListener(listener);
+        }
     }
 
     public Collection<String> getPreferences(JPanel p) {
@@ -213,6 +223,19 @@ public class UTM extends TransverseMercator implements ProjectionSubPrefs {
             }
         }
         updateParameters();
+    }
+
+    public String[] allCodes() {
+        ArrayList<String> projections = new ArrayList<String>(60*4);
+        for (int zone = 1;zone <= 60; zone++) {
+            for (boolean offset : new boolean[] { false, true }) {
+                for (Hemisphere hemisphere : Hemisphere.values()) {
+                    projections.add("EPSG:" + ((offset?325800:32600) + zone + (hemisphere == Hemisphere.South?100:0)));
+                }
+            }
+        }
+        return projections.toArray(new String[0]);
+
     }
 
     public Collection<String> getPreferencesFromCode(String code)

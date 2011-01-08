@@ -13,6 +13,7 @@ import java.util.ListIterator;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionInfo;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 
 public class OffsetBookmark {
@@ -25,8 +26,9 @@ public class OffsetBookmark {
     public double centerX, centerY;
 
     public boolean isUsable(ImageryLayer layer) {
-        return Main.proj.getClass() == proj.getClass() &&
-        layer.getInfo().getName().equals(layerName);
+        if (proj == null) return false;
+        if (!Main.proj.toCode().equals(proj.toCode())) return false;
+        return layer.getInfo().getName().equals(layerName);
     }
 
     public OffsetBookmark(Projection proj, String layerName, String name, double dx, double dy) {
@@ -45,15 +47,16 @@ public class OffsetBookmark {
 
     public OffsetBookmark(Collection<String> list) {
         ArrayList<String> array = new ArrayList<String>(list);
-        String projectionName = array.get(0);
-        for (Projection proj : Projection.allProjections) {
-            if (proj.getCacheDirectoryName().equals(projectionName)) {
-                this.proj = proj;
-                break;
+        String projectionStr = array.get(0);
+        proj = ProjectionInfo.getProjectionByCode(projectionStr);
+        if (proj == null) {
+            for (Projection proj : Projection.allProjections) {
+                if (proj.getCacheDirectoryName().equals(projectionStr)) {
+                    this.proj = proj;
+                    break;
+                }
             }
         }
-        if (this.proj == null)
-            throw new IllegalStateException(tr("Projection ''{0}'' not found", projectionName));
         this.layerName = array.get(1);
         this.name = array.get(2);
         this.dx = Double.valueOf(array.get(3));
@@ -62,11 +65,18 @@ public class OffsetBookmark {
             this.centerX = Double.valueOf(array.get(5));
             this.centerY = Double.valueOf(array.get(6));
         }
+        if (proj == null) {
+            System.err.println(tr("Projection ''{0}'' is not found, bookmark ''{1}'' is not usable", projectionStr, name));
+        }
     }
 
     public ArrayList<String> getInfoArray() {
-        ArrayList<String> res = new ArrayList<String>(5);
-        res.add(proj.getCacheDirectoryName()); // we should use non-localized projection name
+        ArrayList<String> res = new ArrayList<String>(7);
+        if (proj != null) {
+            res.add(proj.toCode());
+        } else {
+            res.add("");
+        }
         res.add(layerName);
         res.add(name);
         res.add(String.valueOf(dx));

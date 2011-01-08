@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.projection;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -253,7 +254,8 @@ public class Lambert implements Projection, ProjectionSubPrefs {
         tr("{0} (Corsica)", 4)
     };
 
-    public void setupPreferencePanel(JPanel p) {
+    @Override
+    public void setupPreferencePanel(JPanel p, ActionListener listener) {
         JComboBox prefcb = new JComboBox(lambert4zones);
 
         prefcb.setSelectedIndex(layoutZone);
@@ -264,6 +266,10 @@ public class Lambert implements Projection, ProjectionSubPrefs {
         p.add(prefcb, GBC.eop().fill(GBC.HORIZONTAL));
         p.add(new JLabel(ImageProvider.get("data/projection", "Departements_Lambert4Zones.png")), GBC.eol().fill(GBC.HORIZONTAL));
         p.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
+
+        if (listener != null) {
+            prefcb.addActionListener(listener);
+        }
     }
 
     public Collection<String> getPreferences(JPanel p) {
@@ -290,8 +296,17 @@ public class Lambert implements Projection, ProjectionSubPrefs {
         }
     }
 
+    @Override
+    public String[] allCodes() {
+        String[] zones = new String[4];
+        for (int zone = 0; zone < 4; zone++) {
+            zones[zone] = "EPSG:"+(27561+zone);
+        }
+        return zones;
+    }
+
     public Collection<String> getPreferencesFromCode(String code) {
-        if (code.startsWith("EPSG:2756") && code.length() == 9) {
+        if (code.startsWith("EPSG:2756") && code.length() == 10) {
             try {
                 String zonestring = code.substring(9);
                 int zoneval = Integer.parseInt(zonestring);

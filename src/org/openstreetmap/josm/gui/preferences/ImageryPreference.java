@@ -707,6 +707,7 @@ public class ImageryPreference implements PreferenceSetting {
                 OffsetBookmark info = bookmarks.get(row);
                 switch (column) {
                 case 0:
+                    if (info.proj == null) return "";
                     return info.proj.toString();
                 case 1:
                     return info.layerName;

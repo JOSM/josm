@@ -3,8 +3,10 @@ package org.openstreetmap.josm.data.projection;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.Collections;
+
 import javax.swing.Box;
 import javax.swing.JPanel;
 
@@ -35,8 +37,8 @@ public class SwissGrid implements Projection, ProjectionSubPrefs {
     private static final double alpha = Math.sqrt(1 + (Ellipsoid.Bessel1841.eb2 * Math.pow(Math.cos(phi0), 4)));
     private static final double b0 = Math.asin(Math.sin(phi0) / alpha);
     private static final double K = Math.log(Math.tan(Math.PI / 4 + b0 / 2)) - alpha
-            * Math.log(Math.tan(Math.PI / 4 + phi0 / 2)) + alpha * Ellipsoid.Bessel1841.e / 2
-            * Math.log((1 + Ellipsoid.Bessel1841.e * Math.sin(phi0)) / (1 - Ellipsoid.Bessel1841.e * Math.sin(phi0)));
+    * Math.log(Math.tan(Math.PI / 4 + phi0 / 2)) + alpha * Ellipsoid.Bessel1841.e / 2
+    * Math.log((1 + Ellipsoid.Bessel1841.e * Math.sin(phi0)) / (1 - Ellipsoid.Bessel1841.e * Math.sin(phi0)));
 
     private static final double xTrans = 200000;
     private static final double yTrans = 600000;
@@ -70,7 +72,7 @@ public class SwissGrid implements Projection, ProjectionSubPrefs {
         double lambda = Math.toRadians(coord.lon());
 
         double S = alpha * Math.log(Math.tan(Math.PI / 4 + phi / 2)) - alpha * Ellipsoid.Bessel1841.e / 2
-                * Math.log((1 + Ellipsoid.Bessel1841.e * Math.sin(phi)) / (1 - Ellipsoid.Bessel1841.e * Math.sin(phi))) + K;
+        * Math.log((1 + Ellipsoid.Bessel1841.e * Math.sin(phi)) / (1 - Ellipsoid.Bessel1841.e * Math.sin(phi))) + K;
         double b = 2 * (Math.atan(Math.exp(S)) - Math.PI / 4);
         double l = alpha * (lambda - lambda0);
 
@@ -106,12 +108,11 @@ public class SwissGrid implements Projection, ProjectionSubPrefs {
         int iteration = 0;
         // iteration to finds S and phi
         while (Math.abs(phi - prevPhi) > DELTA_PHI) {
-            if (++iteration > 30) {
+            if (++iteration > 30)
                 throw new RuntimeException("Two many iterations");
-            }
             prevPhi = phi;
             S = 1 / alpha * (Math.log(Math.tan(Math.PI / 4 + b / 2)) - K) + Ellipsoid.Bessel1841.e
-                    * Math.log(Math.tan(Math.PI / 4 + Math.asin(Ellipsoid.Bessel1841.e * Math.sin(phi)) / 2));
+            * Math.log(Math.tan(Math.PI / 4 + Math.asin(Ellipsoid.Bessel1841.e * Math.sin(phi)) / 2));
             phi = 2 * Math.atan(Math.exp(S)) - Math.PI / 2;
         }
 
@@ -151,7 +152,7 @@ public class SwissGrid implements Projection, ProjectionSubPrefs {
     }
 
     @Override
-    public void setupPreferencePanel(JPanel p) {
+    public void setupPreferencePanel(JPanel p, ActionListener listener) {
         p.add(new HtmlPanel("<i>CH1903 / LV03 (without local corrections)</i>"), GBC.eol().fill(GBC.HORIZONTAL));
         p.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
     }
@@ -163,6 +164,11 @@ public class SwissGrid implements Projection, ProjectionSubPrefs {
     @Override
     public Collection<String> getPreferences(JPanel p) {
         return Collections.singletonList("CH1903");
+    }
+
+    @Override
+    public String[] allCodes() {
+        return new String[] { "EPSG:21781" };
     }
 
     @Override

@@ -227,19 +227,18 @@ public class ProjectionPreference implements PreferenceSetting {
         }
     }
 
-    private class SBPanel extends JPanel
+    private class SBPanel extends JPanel implements ActionListener
     {
-        private Projection p;
-        public SBPanel(Projection pr)
+        private ProjectionSubPrefs p;
+        public SBPanel(ProjectionSubPrefs pr)
         {
             super();
             p = pr;
         }
+
         @Override
-        public void paint(java.awt.Graphics g)
-        {
-            super.paint(g);
-            ((ProjectionSubPrefs) p).setPreferences(((ProjectionSubPrefs) p).getPreferences(this));
+        public void actionPerformed(ActionEvent e) {
+            p.setPreferences(p.getPreferences(this));
             updateMeta(p);
         }
     }
@@ -254,8 +253,8 @@ public class ProjectionPreference implements PreferenceSetting {
             projSubPrefPanel = new JPanel();
         } else {
             ProjectionSubPrefs projPref = (ProjectionSubPrefs) proj;
-            projSubPrefPanel = new SBPanel(proj);
-            projPref.setupPreferencePanel(projSubPrefPanel);
+            projSubPrefPanel = new SBPanel(projPref);
+            projPref.setupPreferencePanel(projSubPrefPanel, (SBPanel)projSubPrefPanel);
         }
 
         // Don't try to update if we're still starting up

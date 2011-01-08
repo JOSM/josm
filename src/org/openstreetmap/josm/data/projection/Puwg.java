@@ -5,6 +5,7 @@ package org.openstreetmap.josm.data.projection;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
+import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.Collections;
@@ -98,7 +99,7 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
     }
 
     @Override
-    public void setupPreferencePanel(JPanel p) {
+    public void setupPreferencePanel(JPanel p, ActionListener listener) {
         JComboBox prefcb = new JComboBox(Puwg.Zones);
 
         prefcb.setSelectedIndex(zone);
@@ -108,6 +109,10 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
         /* Note: we use component position 2 below to find this again */
         p.add(prefcb, GBC.eop().fill(GBC.HORIZONTAL));
         p.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
+
+        if (listener != null) {
+            prefcb.addActionListener(listener);
+        }
     }
 
     @Override
@@ -117,6 +122,15 @@ public class Puwg extends UTM implements Projection,ProjectionSubPrefs {
             return null;
         int zone = ((JComboBox)prefcb).getSelectedIndex();
         return Collections.singleton((Puwg.Zones[zone]).toCode());
+    }
+
+    @Override
+    public String[] allCodes() {
+        String[] zones = new String[Zones.length];
+        for (int zone = 0; zone < Zones.length; zone++) {
+            zones[zone] = Zones[zone].toCode();
+        }
+        return zones;
     }
 
     @Override
