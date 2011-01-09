@@ -359,6 +359,7 @@ public class DuplicateNode extends Test {
      */
     @Override
     public Command fixError(TestError testError) {
+        if (!isFixable(testError)) return null;
         Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>(testError.getPrimitives());
         LinkedHashSet<Node> nodes = new LinkedHashSet<Node>(OsmPrimitive.getFilteredList(sel, Node.class));
 
@@ -374,7 +375,7 @@ public class DuplicateNode extends Test {
             target = nodes.iterator().next();
         }
 
-        if(checkAndConfirmOutlyingDeletes(nodes, target))
+        if (checkAndConfirmOutlyingDeletes(nodes, target))
             return MergeNodesAction.mergeNodes(Main.main.getEditLayer(), nodes, target);
 
         return null;// undoRedo handling done in mergeNodes
@@ -382,7 +383,7 @@ public class DuplicateNode extends Test {
 
     @Override
     public boolean isFixable(TestError testError) {
-        return (testError.getTester() instanceof DuplicateNode);
+        return (testError.getTester() instanceof DuplicateNode && testError.getSeverity() == Severity.ERROR);
     }
 
     /**
