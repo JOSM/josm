@@ -73,6 +73,9 @@ import org.openstreetmap.josm.tools.Predicate;
  *
  * Note that it is not necessary to call beginUpdate/endUpdate for every dataset modification - dataset will get locked
  * automatically.
+ * 
+ * Note that locks cannot be upgraded - if one threads use read lock and and then write lock, dead lock will occur - see #5814 for
+ * sample ticket
  *
  * @author imi
  */

@@ -172,25 +172,32 @@ public class MapStatus extends JPanel implements Helpful {
                     // access to the data need to be restarted, if the main thread modifies
                     // the data.
                     DataSet ds = null;
+                    // The popup != null check is required because a left-click
+                    // produces several events as well, which would make this
+                    // variable true. Of course we only want the popup to show
+                    // if the middle mouse button has been pressed in the first
+                    // place
+                    boolean isAtOldPosition = (oldMousePos != null
+                            && oldMousePos.equals(ms.mousePos)
+                            && popup != null);
+                    boolean middleMouseDown = (ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0;
                     try {
                         ds = mv.getCurrentDataSet();
                         if (ds != null) {
                             // This is not perfect, if current dataset was changed during execution, the lock would be useless
-                            ds.getReadLock().lock();
+                            if(isAtOldPosition && middleMouseDown) {
+                                // Write lock is necessary when selecting in popupCycleSelection
+                                // locks can not be upgraded -> if do read lock here and write lock later (in OsmPrimitive.updateFlags)
+                                // then always occurs deadlock (#5814)
+                                ds.beginUpdate();
+                            } else {
+                                ds.getReadLock().lock();
+                            }
                         }
 
                         // Set the text label in the bottom status bar
                         statusBarElementUpdate(ms);
 
-                        // The popup != null check is required because a left-click
-                        // produces several events as well, which would make this
-                        // variable true. Of course we only want the popup to show
-                        // if the middle mouse button has been pressed in the first
-                        // place
-                        boolean isAtOldPosition = (oldMousePos != null
-                                && oldMousePos.equals(ms.mousePos)
-                                && popup != null);
-                        boolean middleMouseDown = (ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0;
 
                         // Popup Information
                         // display them if the middle mouse button is pressed and
@@ -246,7 +253,11 @@ public class MapStatus extends JPanel implements Helpful {
                         //x.printStackTrace();
                     } finally {
                         if (ds != null) {
-                            ds.getReadLock().unlock();
+                            if(isAtOldPosition && middleMouseDown) {
+                                ds.endUpdate();
+                            } else {
+                                ds.getReadLock().unlock();
+                            }
                         }
                     }
                 }
