@@ -84,6 +84,7 @@ public class DuplicateNode extends Test {
     protected static int DUPLICATE_NODE = 1;
     protected static int DUPLICATE_NODE_MIXED = 2;
     protected static int DUPLICATE_NODE_OTHER = 3;
+    protected static int DUPLICATE_NODE_UNCLOSED = 4;
     protected static int DUPLICATE_NODE_BUILDING = 10;
     protected static int DUPLICATE_NODE_BOUNDARY = 11;
     protected static int DUPLICATE_NODE_HIGHWAY = 12;
@@ -154,6 +155,8 @@ public class DuplicateNode extends Test {
             Map<String,String> tagSet = it.next();
             if (mm.get(tagSet).size() > 1) {
 
+                boolean oneWayClosed = false;
+
                 for (String type: types) {
                     typeMap.put(type, false);
                 }
@@ -166,6 +169,7 @@ public class DuplicateNode extends Test {
                             if (sp.getType()==OsmPrimitiveType.WAY) {
                                 boolean typed = false;
                                 Way w=(Way) sp;
+                                oneWayClosed = oneWayClosed || w.isClosed();
                                 Map<String, String> keys = w.getKeys();
                                 for (String type: typeMap.keySet()) {
                                     if (keys.containsKey(type)) {
@@ -189,7 +193,18 @@ public class DuplicateNode extends Test {
                     }
                 }
 
-                if (nbType>1) {
+                if (!oneWayClosed) {
+                    String msg = marktr("Duplicate nodes in two un-closed ways");
+                    errors.add(new TestError(
+                            parentTest,
+                            Severity.WARNING,
+                            tr("Duplicated nodes"),
+                            tr(msg),
+                            msg,
+                            DUPLICATE_NODE_UNCLOSED,
+                            mm.get(tagSet)
+                    ));
+                } else if (nbType>1) {
                     String msg = marktr("Mixed type duplicated nodes");
                     errors.add(new TestError(
                             parentTest,
@@ -383,7 +398,13 @@ public class DuplicateNode extends Test {
 
     @Override
     public boolean isFixable(TestError testError) {
-        return (testError.getTester() instanceof DuplicateNode && testError.getSeverity() == Severity.ERROR);
+        if (!(testError.getTester() instanceof DuplicateNode)) return false;
+        // never merge nodes with different tags.
+        if (testError.getCode() == DUPLICATE_NODE) return false;
+        // never merge nodes from two different non-closed geometries
+        if (testError.getCode() == DUPLICATE_NODE_UNCLOSED) return false;
+        // everything else is ok to merge
+        return true;
     }
 
     /**
