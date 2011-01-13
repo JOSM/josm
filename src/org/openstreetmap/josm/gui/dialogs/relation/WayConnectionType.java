@@ -10,8 +10,8 @@ public class WayConnectionType {
     private final boolean invalid;
 
     /** True, if linked to the previous / next member.  */
-    public final boolean linkPrev;
-    public final boolean linkNext;
+    public boolean linkPrev;
+    public boolean linkNext;
 
     /**
      * direction is FORWARD if the first node of this way is connected to the previous way
@@ -22,7 +22,7 @@ public class WayConnectionType {
      * If there is no connection to the previous or next member, then
      * direction has the value NONE.
      */
-    public final Direction direction;
+    public Direction direction;
 
     public enum Direction {
         FORWARD, BACKWARD, ROUNDABOUT_LEFT, ROUNDABOUT_RIGHT, NONE;
@@ -35,7 +35,11 @@ public class WayConnectionType {
     /** True, if the element is part of a closed loop of ways. */
     public boolean isLoop;
 
-    public boolean isRoundabout = false;
+    public boolean isOnewayLoopForwardPart = false;
+    public boolean isOnewayLoopBackwardPart = false;
+    public boolean isOnewayHead = false;
+    public boolean isOnewayTail = false;
+//    public boolean isOnewayOppositeConnected = true;
 
     public WayConnectionType(boolean linkPrev, boolean linkNext, Direction direction) {
         this.linkPrev = linkPrev;
@@ -43,6 +47,10 @@ public class WayConnectionType {
         this.isLoop = false;
         this.direction = direction;
         invalid = false;
+    }
+
+    public WayConnectionType(boolean invalid){
+        this.invalid = invalid;
     }
 
     /** construct invalid instance */
@@ -60,7 +68,9 @@ public class WayConnectionType {
 
     @Override
     public String toString() {
-        return "[P "+linkPrev+" ;N "+linkNext+" ;D "+direction+" ;L "+isLoop+"]";
+        return "[P "+linkPrev+" ;N "+linkNext+" ;D "+direction+" ;L "+isLoop+
+                " ;FP " + isOnewayLoopForwardPart+";BP " + isOnewayLoopBackwardPart+
+                ";OH " + isOnewayHead+";OT " + isOnewayTail+"]";
     }
 
     public String getToolTip() {

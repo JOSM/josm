@@ -1,11 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
-import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.BACKWARD;
-import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.FORWARD;
-import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.NONE;
-import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.ROUNDABOUT_LEFT;
-import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.ROUNDABOUT_RIGHT;
+import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,6 +52,8 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     private DefaultListSelectionModel listSelectionModel;
     private CopyOnWriteArrayList<IMemberModelListener> listeners;
     private OsmDataLayer layer;
+
+    private final int UNCONNECTED = Integer.MIN_VALUE;
 
     /**
      * constructor
@@ -786,6 +784,9 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         setSelectedMembers(sortedMembers);
     }
 
+    private Direction determineDirection(int ref_i, Direction ref_direction, int k) {
+        return determineDirection(ref_i, ref_direction, k, false);
+    }
     /**
      * Determines the direction of way k with respect to the way ref_i.
      * The way ref_i is assumed to have the direction ref_direction and
@@ -795,17 +796,17 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      *
      * Else the direction is given as follows:
      * Let the relation be a route of oneway streets, and someone travels them in the given order.
-     * Direction is FORWARD if it is legel and BACKWARD if it is illegal to do so for the given way.
+     * Direction is FORWARD if it is legal and BACKWARD if it is illegal to do so for the given way.
      *
      **/
-    private Direction determineDirection(int ref_i,Direction ref_direction, int k) {
+    private Direction determineDirection(int ref_i, final Direction ref_direction, int k, boolean reversed) {
         if (ref_i < 0 || k < 0 || ref_i >= members.size() || k >= members.size())
             return NONE;
         if (ref_direction == NONE)
             return NONE;
 
-        RelationMember m_ref = members.get(ref_i);
-        RelationMember m = members.get(k);
+        final RelationMember m_ref = members.get(ref_i);
+        final RelationMember m = members.get(k);
         Way way_ref = null;
         Way way = null;
 
@@ -846,6 +847,19 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
                 for (Node nn : way.getNodes()) {
                     if (n == nn)
                         return roundaboutType(k);
+                }
+            } else if(isOneway(m)) {
+                if (n == RelationNodeMap.firstOnewayNode(m) && !reversed) {
+                    if(isBackward(m))
+                        return BACKWARD;
+                    else
+                        return FORWARD;
+                }
+                if (n == RelationNodeMap.lastOnewayNode(m) && reversed) {
+                    if(isBackward(m))
+                        return FORWARD;
+                    else
+                        return BACKWARD;
                 }
             } else {
                 if (n == way.firstNode())
@@ -931,80 +945,205 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
      */
     public void updateLinks() {
         connectionType = null;
-        ArrayList<WayConnectionType> con = new ArrayList<WayConnectionType>();
+        final List<WayConnectionType> con = new ArrayList<WayConnectionType>();
 
         for (int i=0; i<members.size(); ++i) {
             con.add(null);
         }
 
         int firstGroupIdx=0;
-        boolean resetFirstGoupIdx=false;
+
+        lastForwardWay = UNCONNECTED;
+        lastBackwardWay = UNCONNECTED;
+        onewayBeginning = false;
+        WayConnectionType lastWct = null;
 
         for (int i=0; i<members.size(); ++i) {
-            if (resetFirstGoupIdx) {
-                firstGroupIdx = i;
-                resetFirstGoupIdx = false;
-            }
-
-            RelationMember m = members.get(i);
+            final RelationMember m = members.get(i);
             if (! m.isWay()) {
                 con.set(i, new WayConnectionType());
-                resetFirstGoupIdx = true;
+                firstGroupIdx = i;
                 continue;
             }
 
-            Way w = m.getWay();
+            final Way w = m.getWay();
             if (w == null || w.isIncomplete()) {
                 con.set(i, new WayConnectionType());
-                resetFirstGoupIdx = true;
+                firstGroupIdx = i;
                 continue;
             }
+          
+            WayConnectionType wct = new WayConnectionType(false);
+            wct.linkPrev = i>0 && con.get(i-1) != null && con.get(i-1).isValid();
+            wct.direction = NONE;
 
-            boolean linkPrev = (i != firstGroupIdx);
-            boolean linkNext;
-            Direction dir;
-            if (linkPrev) {
-                dir = determineDirection(i-1, con.get(i-1).direction, i);
-                linkNext = (determineDirection(i, dir, i+1) != NONE);
+            if(isOneway(m)){
+                if(lastWct != null && lastWct.isOnewayTail)
+                    wct.isOnewayHead = true;
+                if(lastBackwardWay == UNCONNECTED && lastForwardWay == UNCONNECTED){ //Beginning of new oneway
+                    wct.isOnewayHead = true;
+                    lastForwardWay = i-1;
+                    lastBackwardWay = i;
+                    onewayBeginning = true;
+                }
+            }            
+
+            if (wct.linkPrev) {
+                if(lastBackwardWay != UNCONNECTED && lastForwardWay != UNCONNECTED) {
+                    wct = determineOnewayConnectionType(con, m, i, wct);
+                    if(!wct.linkPrev)
+                        firstGroupIdx = i;
+                }
+
+                if(!isOneway(m)) {
+                    wct.direction = determineDirection(i-1, lastWct.direction, i);
+                    wct.linkPrev = (wct.direction != NONE);
+                }                   
             }
-            else {
-                if (roundaboutType(i) != NONE) {
-                    dir = determineDirection(i, roundaboutType(i), i+1) != NONE ? roundaboutType(i) : NONE;
-                } else { /** guess the direction and see if it fits with the next member */
-                    dir = determineDirection(i, FORWARD, i+1) != NONE ? FORWARD : NONE;
-                    if (dir == NONE) {
-                        dir = determineDirection(i, BACKWARD, i+1) != NONE ? BACKWARD : NONE;
-                    }
+            
+            if (!wct.linkPrev) {
+                wct.direction = determineDirectionOfFirst(i, m);
+                if(isOneway(m)){
+                    wct.isOnewayLoopForwardPart = true;
+                    lastForwardWay = i;
                 }
-                linkNext = (dir != NONE);
-                if (dir == NONE) {
-                    if (roundaboutType(i) != NONE) {
-                        dir = roundaboutType(i);
-                    }
-                }
-
             }
 
-            con.set(i, new WayConnectionType(linkPrev, linkNext, dir));
+            wct.linkNext = false;
+            if(lastWct != null)
+                lastWct.linkNext = wct.linkPrev;
+            con.set(i, wct);
+            lastWct = wct;
 
-            if (! linkNext) {
-                boolean loop;
-                if (i == firstGroupIdx) {
-                    loop = determineDirection(i, FORWARD, i) == FORWARD;
-                } else {
-                    loop = determineDirection(i, dir, firstGroupIdx) == con.get(firstGroupIdx).direction;
-                }
-                if (loop) {
-                    for (int j=firstGroupIdx; j <= i; ++j) {
-                        con.get(j).isLoop = true;
-                    }
-                }
-                resetFirstGoupIdx = true;
+            if(!wct.linkPrev) {
+                if(i > 0) makeLoopIfNeeded(con, i-1, firstGroupIdx);
+                firstGroupIdx = i;
             }
         }
+        makeLoopIfNeeded(con, members.size()-1, firstGroupIdx);
         connectionType = con;
         //        for (int i=0; i<con.size(); ++i) {
         //            System.err.println(con.get(i));
         //        }
+    }
+
+//    private static void unconnectPreviousLink(List<WayConnectionType> con, int beg, boolean backward){
+//        int i = beg;
+//        while(true){
+//            WayConnectionType t = con.get(i--);
+//            t.isOnewayOppositeConnected = false;
+//            if(backward && t.isOnewayLoopBackwardPart) break;
+//            if(!backward && t.isOnewayLoopForwardPart) break;
+//        }
+//    }
+
+    private static Direction reverse(final Direction dir){
+        if(dir == FORWARD) return BACKWARD;
+        if(dir == BACKWARD) return FORWARD;
+        return dir;
+    }
+
+    private static boolean isBackward(final RelationMember member){
+        return member.getRole().equals("backward");
+    }
+
+    private static boolean isForward(final RelationMember member){
+        return member.getRole().equals("forward");
+    }
+    
+    public static boolean isOneway(final RelationMember member){
+        return isForward(member) || isBackward(member);
+    }
+
+    private void makeLoopIfNeeded(final List<WayConnectionType> con, final int i, final int firstGroupIdx) {
+        boolean loop;
+        if (i == firstGroupIdx) { //is primitive loop
+            loop = determineDirection(i, FORWARD, i) == FORWARD;
+        } else {
+            loop = determineDirection(i, con.get(i).direction, firstGroupIdx) == con.get(firstGroupIdx).direction;
+        }
+        if (loop) {
+            for (int j=firstGroupIdx; j <= i; ++j) {
+                con.get(j).isLoop = true;
+            }
+        }
+    }
+
+    private Direction determineDirectionOfFirst(final int i, final RelationMember m) {
+        if (roundaboutType(i) != NONE) {
+            return roundaboutType(i);
+        }
+        
+        if (isOneway(m)){
+            if(isBackward(m)) return BACKWARD;
+            else return FORWARD;
+        } else { /** guess the direction and see if it fits with the next member */
+            if(determineDirection(i, FORWARD, i+1) != NONE) return FORWARD;
+            if(determineDirection(i, BACKWARD, i+1) != NONE) return BACKWARD;
+        }
+        return NONE;
+    }
+
+    int lastForwardWay, lastBackwardWay;
+    boolean onewayBeginning;
+    private WayConnectionType determineOnewayConnectionType(final List<WayConnectionType> con,
+            RelationMember m, int i, final WayConnectionType wct) {
+        Direction dirFW = determineDirection(lastForwardWay, con.get(lastForwardWay).direction, i);
+        Direction dirBW = NONE;
+        if(onewayBeginning) {
+            if(lastBackwardWay != i)
+                dirBW = determineDirection(lastBackwardWay, reverse(con.get(lastBackwardWay).direction), i, true);
+            if(dirBW != NONE)
+                onewayBeginning = false;
+        } else
+            dirBW = determineDirection(lastBackwardWay, con.get(lastBackwardWay).direction, i, true);
+
+        if(isOneway(m)) {
+            if(dirBW != NONE){
+                wct.direction = dirBW;
+                lastBackwardWay = i;
+                wct.isOnewayLoopBackwardPart = true;
+            }
+            if(dirFW != NONE){
+                wct.direction = dirFW;
+                lastForwardWay = i;
+                wct.isOnewayLoopForwardPart = true;
+            }
+            if(dirFW == NONE && dirBW == NONE) { //Not connected to previous
+//                        unconnectPreviousLink(con, i, true);
+//                        unconnectPreviousLink(con, i, false);
+                wct.linkPrev = false;
+                if(isOneway(m)){
+                    wct.isOnewayHead = true;
+                    lastForwardWay = i-1;
+                    lastBackwardWay = i;
+                } else {
+                    lastForwardWay = UNCONNECTED;
+                    lastBackwardWay = UNCONNECTED;
+                }
+                onewayBeginning = true;
+            }
+
+            if(dirFW != NONE && dirBW != NONE) { //End of oneway loop
+                if(i+1<members.size() && determineDirection(i, dirFW, i+1) != NONE) {
+                    wct.isOnewayLoopBackwardPart = false;
+                    dirBW = NONE;
+                    wct.direction = dirFW;
+                } else {
+                    wct.isOnewayLoopForwardPart = false;
+                    dirFW = NONE;
+                    wct.direction = dirBW;
+                }
+
+                wct.isOnewayTail = true;
+            }
+
+        } else {
+            lastForwardWay = UNCONNECTED;
+            lastBackwardWay = UNCONNECTED;
+            if(dirFW == NONE || dirBW == NONE)
+                wct.linkPrev = false;
+        }
+        return wct;
     }
 }
