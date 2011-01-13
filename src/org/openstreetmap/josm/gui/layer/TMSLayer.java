@@ -1020,13 +1020,14 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     private class DeepTileSet {
         final EastNorth topLeft, botRight;
-        final int minZoom;
+        final int minZoom, maxZoom;
         private final TileSet[] tileSets;
         private final TileSetInfo[] tileSetInfos;
         public DeepTileSet(EastNorth topLeft, EastNorth botRight, int minZoom, int maxZoom) {
             this.topLeft = topLeft;
             this.botRight = botRight;
             this.minZoom = minZoom;
+            this.maxZoom = maxZoom;
             this.tileSets = new TileSet[maxZoom - minZoom + 1];
             this.tileSetInfos = new TileSetInfo[maxZoom - minZoom + 1];
         }
@@ -1076,7 +1077,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             }
         }
 
-        DeepTileSet dts = new DeepTileSet(topLeft, botRight, getMinZoomLvl(), getMaxZoomLvl());
+        DeepTileSet dts = new DeepTileSet(topLeft, botRight, getMinZoomLvl(), zoom);
         TileSet ts = dts.getTileSet(zoom);
 
         int displayZoomLevel = zoom;
@@ -1088,26 +1089,25 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             if (!tsi.hasVisibleTiles && (!tsi.hasLoadingTiles || tsi.hasOverzoomedTiles)) {
                 noTilesAtZoom = true;
             }
-            if (!tsi.hasVisibleTiles && tsi.hasOverzoomedTiles) {
-                while (displayZoomLevel > dts.minZoom && !tsi.hasVisibleTiles && tsi.hasOverzoomedTiles){
-                    displayZoomLevel--;
-                    tsi = dts.getTileSetInfo(displayZoomLevel);
-                }
-                if (zoom > displayZoomLevel && !dts.getTileSetInfo(displayZoomLevel+1).hasLoadingTiles) {
-                    zoom = displayZoomLevel+1;
-                } else {
-                    zoom = displayZoomLevel;
-                }
-                while (displayZoomLevel >= dts.minZoom && !tsi.hasVisibleTiles){
-                    displayZoomLevel--;
-                    tsi = dts.getTileSetInfo(displayZoomLevel);
-                }
-                if (displayZoomLevel < dts.minZoom) {
-                    displayZoomLevel = 0;
-                }
+            // Find highest zoom level with at least one visible tile
+            while (displayZoomLevel > dts.minZoom &&
+                    !dts.getTileSetInfo(displayZoomLevel).hasVisibleTiles) {
+                displayZoomLevel--;
+            }
+            // Do binary search between currentZoomLevel and displayZoomLevel
+            while (zoom > displayZoomLevel && !tsi.hasVisibleTiles && tsi.hasOverzoomedTiles){
+                zoom = (zoom + displayZoomLevel)/2;
                 tsi = dts.getTileSetInfo(zoom);
             }
+
             setZoomLevel(zoom);
+
+            // If all tiles at displayZoomLevel is loaded, load all tiles at next zoom level
+            // to make sure there're really no more zoom levels
+            if (zoom == displayZoomLevel && !tsi.hasLoadingTiles && zoom < dts.maxZoom) {
+                zoom++;
+                tsi = dts.getTileSetInfo(zoom);
+            }
             // When we have overzoomed tiles and all tiles at current zoomlevel is loaded,
             // load tiles at previovus zoomlevels until we have all tiles on screen is loaded.
             while (zoom > dts.minZoom && tsi.hasOverzoomedTiles && !tsi.hasLoadingTiles) {
