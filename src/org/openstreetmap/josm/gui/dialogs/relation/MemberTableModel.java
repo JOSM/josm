@@ -951,7 +951,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
             con.add(null);
         }
 
-        int firstGroupIdx=0;
+        firstGroupIdx=0;
 
         lastForwardWay = UNCONNECTED;
         lastBackwardWay = UNCONNECTED;
@@ -983,7 +983,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
                 if(lastBackwardWay == UNCONNECTED && lastForwardWay == UNCONNECTED){ //Beginning of new oneway
                     wct.isOnewayHead = true;
                     lastForwardWay = i-1;
-                    lastBackwardWay = i;
+                    lastBackwardWay = i-1;
                     onewayBeginning = true;
                 }
             }            
@@ -1016,11 +1016,11 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
             lastWct = wct;
 
             if(!wct.linkPrev) {
-                if(i > 0) makeLoopIfNeeded(con, i-1, firstGroupIdx);
+                if(i > 0) makeLoopIfNeeded(con, i-1);
                 firstGroupIdx = i;
             }
         }
-        makeLoopIfNeeded(con, members.size()-1, firstGroupIdx);
+        makeLoopIfNeeded(con, members.size()-1);
         connectionType = con;
         //        for (int i=0; i<con.size(); ++i) {
         //            System.err.println(con.get(i));
@@ -1055,7 +1055,8 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         return isForward(member) || isBackward(member);
     }
 
-    private void makeLoopIfNeeded(final List<WayConnectionType> con, final int i, final int firstGroupIdx) {
+    int firstGroupIdx;
+    private void makeLoopIfNeeded(final List<WayConnectionType> con, final int i) {
         boolean loop;
         if (i == firstGroupIdx) { //is primitive loop
             loop = determineDirection(i, FORWARD, i) == FORWARD;
@@ -1091,8 +1092,11 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         Direction dirFW = determineDirection(lastForwardWay, con.get(lastForwardWay).direction, i);
         Direction dirBW = NONE;
         if(onewayBeginning) {
-            if(lastBackwardWay != i)
-                dirBW = determineDirection(lastBackwardWay, reverse(con.get(lastBackwardWay).direction), i, true);
+            if(lastBackwardWay < 0)
+                dirBW = determineDirection(firstGroupIdx, reverse(con.get(firstGroupIdx).direction), i, true);
+            else
+                dirBW = determineDirection(lastBackwardWay, con.get(lastBackwardWay).direction, i, true);
+
             if(dirBW != NONE)
                 onewayBeginning = false;
         } else
@@ -1116,7 +1120,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
                 if(isOneway(m)){
                     wct.isOnewayHead = true;
                     lastForwardWay = i-1;
-                    lastBackwardWay = i;
+                    lastBackwardWay = i-1;
                 } else {
                     lastForwardWay = UNCONNECTED;
                     lastBackwardWay = UNCONNECTED;
