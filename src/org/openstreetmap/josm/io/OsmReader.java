@@ -168,6 +168,7 @@ public class OsmReader {
                     nd.setCoor(new LatLon(getDouble(atts, "lat"), getDouble(atts, "lon")));
                     readCommon(atts, nd);
                     Node n = new Node(nd.getId(), nd.getVersion());
+                    n.setVisible(nd.isVisible());
                     n.load(nd);
                     externalIdMap.put(nd.getPrimitiveId(), n);
                     currentPrimitive = n;
@@ -176,6 +177,7 @@ public class OsmReader {
                     WayData wd = new WayData();
                     readCommon(atts, wd);
                     Way w = new Way(wd.getId(), wd.getVersion());
+                    w.setVisible(wd.isVisible());
                     w.load(wd);
                     externalIdMap.put(wd.getPrimitiveId(), w);
                     ways.put(wd.getUniqueId(), new ArrayList<Long>());
@@ -211,6 +213,7 @@ public class OsmReader {
                     RelationData rd = new RelationData();
                     readCommon(atts, rd);
                     Relation r = new Relation(rd.getId(), rd.getVersion());
+                    r.setVisible(rd.isVisible());
                     r.load(rd);
                     externalIdMap.put(rd.getPrimitiveId(), r);
                     relations.put(rd.getUniqueId(), new LinkedList<RelationMemberData>());
