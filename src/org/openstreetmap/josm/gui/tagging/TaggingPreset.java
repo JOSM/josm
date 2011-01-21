@@ -597,7 +597,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             if (use_last_as_default) {
                 lastValue.put(key, value);
             }
-            System.err.print("change: "+key+" "+value);
             changedTags.add(new Tag(key, value));
         }
 
@@ -843,7 +842,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             if (use_last_as_default) {
                 lastValue.put(key, value);
             }
-            System.err.print("change: "+key+" "+value);
             changedTags.add(new Tag(key, value));
         }
 
