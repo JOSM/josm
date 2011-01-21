@@ -28,6 +28,15 @@ public class Utils {
     }
 
     /**
+     * for convenience: test whether 2 objects are either both null or a.equals(b)
+     */
+    public static <T> boolean equal(T a, T b) {
+        if (a == null && b == null)
+            return true;
+        return (a != null && a.equals(b));
+    }
+
+    /**
      * return the modulus in the range [0, n)
      */
     public static int mod(int a, int n) {

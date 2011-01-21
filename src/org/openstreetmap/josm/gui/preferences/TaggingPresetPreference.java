@@ -1,12 +1,15 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.gui.preferences;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,6 +27,7 @@ import javax.swing.event.ChangeListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
+import org.openstreetmap.josm.gui.preferences.StyleSourceEditor.StyleSourceInfo;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetMenu;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSeparator;
@@ -43,18 +47,18 @@ public class TaggingPresetPreference implements PreferenceSetting {
     public static Collection<TaggingPreset> taggingPresets;
     private StyleSourceEditor sources;
     private JCheckBox sortMenu;
-    private JCheckBox enableDefault;
-
 
     private ValidationListener validationListener = new ValidationListener() {
         public boolean validatePreferences() {
             if (sources.hasActiveStylesChanged()) {
-                List<String> sourcesToRemove = new ArrayList<String>();
+                List<Integer> sourcesToRemove = new ArrayList<Integer>();
+                int i = -1;
                 SOURCES:
-                    for (String source: sources.getActiveStyles()) {
+                    for (SourceEntry source: sources.getActiveStyles()) {
+                        i++;
                         boolean canLoad = false;
                         try {
-                            TaggingPreset.readAll(source, false);
+                            TaggingPreset.readAll(source.url, false);
                             canLoad = true;
                         } catch (IOException e) {
                             System.err.println(tr("Warning: Could not read tagging preset source: {0}", source));
@@ -65,7 +69,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
                             case 1:
                                 continue SOURCES;
                             case 2:
-                                sourcesToRemove.add(source);
+                                sourcesToRemove.add(i);
                                 continue SOURCES;
                             default:
                                 return false;
@@ -77,7 +81,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
                         String errorMessage = null;
 
                         try {
-                            TaggingPreset.readAll(source, true);
+                            TaggingPreset.readAll(source.url, true);
                         } catch (IOException e) {
                             // Should not happen, but at least show message
                             String msg = tr("Could not read tagging preset source {0}", source);
@@ -116,16 +120,14 @@ public class TaggingPresetPreference implements PreferenceSetting {
                             case JOptionPane.YES_OPTION:
                                 continue SOURCES;
                             case JOptionPane.NO_OPTION:
-                                sourcesToRemove.add(source);
+                                sourcesToRemove.add(i);
                                 continue SOURCES;
                             default:
                                 return false;
                             }
                         }
                     }
-                for (String toRemove:sourcesToRemove) {
-                    sources.removeSource(toRemove);
-                }
+                sources.removeSources(sourcesToRemove);
                 return true;
             }  else
                 return true;
@@ -135,15 +137,11 @@ public class TaggingPresetPreference implements PreferenceSetting {
     public void addGui(final PreferenceTabbedPane gui) {
         sortMenu = new JCheckBox(tr("Sort presets menu"),
                 Main.pref.getBoolean("taggingpreset.sortmenu", false));
-        enableDefault = new JCheckBox(tr("Enable built-in defaults"),
-                Main.pref.getBoolean("taggingpreset.enable-defaults", true));
 
         final JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
         panel.add(sortMenu, GBC.eol().insets(5,5,5,0));
-        panel.add(enableDefault, GBC.eol().insets(5,0,5,0));
-        sources = new StyleSourceEditor("taggingpreset.sources", "taggingpreset.icon.sources",
-        "http://josm.openstreetmap.de/presets");
+        sources = new TaggingPresetSourceEditor();
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
         gui.mapcontent.addTab(tr("Tagging Presets"), panel);
 
@@ -162,15 +160,86 @@ public class TaggingPresetPreference implements PreferenceSetting {
         gui.addValidationListener(validationListener);
     }
 
+    class TaggingPresetSourceEditor extends StyleSourceEditor {
+
+        final private String iconpref = "taggingpreset.icon.sources";
+
+        public TaggingPresetSourceEditor() {
+            super("http://josm.openstreetmap.de/presets");
+        }
+
+        @Override
+        public Collection<? extends SourceEntry> getInitialSourcesList() {
+            return (new PresetPrefMigration()).get();
+        }
+
+        @Override
+        public boolean finish() {
+            List<SourceEntry> activeStyles = activeStylesModel.getStyles();
+
+            boolean changed = (new PresetPrefMigration()).put(activeStyles);
+
+            if (tblIconPaths != null) {
+                List<String> iconPaths = iconPathsModel.getIconPaths();
+
+                if (!iconPaths.isEmpty()) {
+                    if (Main.pref.putCollection(iconpref, iconPaths)) {
+                        changed = true;
+                    }
+                } else if (Main.pref.putCollection(iconpref, null)) {
+                    changed = true;
+                }
+            }
+            return changed;
+        }
+
+        @Override
+        public Collection<StyleSourceInfo> getDefault() {
+            return (new PresetPrefMigration()).getDefault();
+        }
+
+        @Override
+        public Collection<String> getInitialIconPathsList() {
+            return Main.pref.getCollection(iconpref, null);
+        }
+
+        @Override
+        public String getStr(I18nString ident) {
+            switch (ident) {
+                case AVAILABLE_SOURCES:
+                    return tr("Available presets:");
+                case ACTIVE_SOURCES:
+                    return tr("Active presets:");
+                case NEW_SOURCE_ENTRY:
+                    return tr("New preset entry:");
+                case REMOVE_SOURCE_TOOLTIP:
+                    return tr("Remove the selected presets from the list of active presets");
+                case EDIT_SOURCE_TOOLTIP:
+                    return tr("Edit the filename or URL for the selected active preset");
+                case ACTIVATE_TOOLTIP:
+                    return tr("Add the selected available presets to the list of active presets");
+                case RELOAD_ALL_AVAILABLE:
+                    return marktr("Reloads the list of available presets from ''{0}''");
+                case LOADING_SOURCES_FROM:
+                    return marktr("Loading preset sources from ''{0}''");
+                case FAILED_TO_LOAD_SOURCES_FROM:
+                    return marktr("<html>Failed to load the list of preset sources from<br>"
+                            + "''{0}''.<br>"
+                            + "<br>"
+                            + "Details (untranslated):<br>{1}</html>");
+                case FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC:
+                    return "/Preferences/Presets#FailedToLoadPresetSources";
+                case ILLEGAL_FORMAT_OF_ENTRY:
+                    return marktr("Warning: illegal format of entry in preset list ''{0}''. Got ''{1}''");
+                default: throw new AssertionError();
+            }
+        }
+    }
+
     public boolean ok() {
-        boolean restart = Main.pref.put("taggingpreset.enable-defaults",
-                enableDefault.getSelectedObjects() != null);
-        if(Main.pref.put("taggingpreset.sortmenu", sortMenu.getSelectedObjects() != null)) {
-            restart = true;
-        }
-        if(sources.finish()) {
-            restart = true;
-        }
+        boolean restart = Main.pref.put("taggingpreset.sortmenu", sortMenu.getSelectedObjects() != null);
+        restart |= sources.finish();
+
         return restart;
     }
 
@@ -214,6 +283,37 @@ public class TaggingPresetPreference implements PreferenceSetting {
         }
         if(Main.pref.getBoolean("taggingpreset.sortmenu")) {
             TaggingPresetMenu.sortMenu(Main.main.menu.presetsMenu);
+        }
+    }
+
+    public static class PresetPrefMigration extends StyleSourceEditor.SourcePrefMigration {
+
+        public PresetPrefMigration() {
+            super("taggingpreset.sources",
+                  "taggingpreset.enable-defaults",
+                  "taggingpreset.sources-list");
+        }
+
+        @Override
+        public Collection<StyleSourceInfo> getDefault() {
+            StyleSourceInfo i = new StyleSourceInfo("defaultpresets.xml", "resource://data/defaultpresets.xml");
+            i.shortdescription = tr("Internal Preset");
+            i.description = tr("The default preset for JOSM");
+            return Collections.singletonList(i);
+        }
+
+        @Override
+        public Collection<String> serialize(SourceEntry entry) {
+            return Arrays.asList(new String[] {entry.url, entry.shortdescription});
+        }
+
+        @Override
+        public SourceEntry deserialize(List<String> entryStr) {
+            if (entryStr.size() < 2)
+                return null;
+            String url = entryStr.get(0);
+            String shortdescription = entryStr.get(1);
+            return new SourceEntry(url, null, shortdescription, true);
         }
     }
 }

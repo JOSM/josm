@@ -3,14 +3,19 @@ package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,6 +38,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
@@ -54,10 +60,15 @@ import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.io.MirroredInputStream;
@@ -67,47 +78,63 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.xml.sax.SAXException;
 
-public class StyleSourceEditor extends JPanel {
-    private JTable tblActiveStyles;
-    private ActiveStylesModel activeStylesModel;
-    private JList lstAvailableStyles;
-    private AvailableStylesListModel availableStylesModel;
-    private JTable tblIconPaths = null;
-    private IconPathTableModel iconPathsModel;
-    private String pref;
-    private String iconpref;
-    private boolean stylesInitiallyLoaded;
-    private String availableStylesUrl;
+public abstract class StyleSourceEditor extends JPanel {
+
+    protected JTable tblActiveStyles;
+    protected ActiveStylesModel activeStylesModel;
+    protected JList lstAvailableStyles;
+    protected AvailableStylesListModel availableStylesModel;
+    protected JTable tblIconPaths = null;
+    protected IconPathTableModel iconPathsModel;
+    protected boolean stylesInitiallyLoaded;
+    protected String availableStylesUrl;
 
     /**
-     *
-     * @param stylesPreferencesKey the preferences key with the list of active style sources (filenames and URLs)
-     * @param iconsPreferenceKey the preference key with the list of icon sources (can be null)
+     * constructor
      * @param availableStylesUrl the URL to the list of available style sources
      */
-    public StyleSourceEditor(String stylesPreferencesKey, String iconsPreferenceKey, final String availableStylesUrl) {
+    public StyleSourceEditor(final String availableStylesUrl) {
 
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
-        tblActiveStyles = new JTable(activeStylesModel = new ActiveStylesModel(selectionModel));
-        tblActiveStyles.putClientProperty("terminateEditOnFocusLost", true);
-        tblActiveStyles.setSelectionModel(selectionModel);
-        tblActiveStyles.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        tblActiveStyles.setTableHeader(null);
-        tblActiveStyles.getColumnModel().getColumn(0).setCellEditor(new FileOrUrlCellEditor(true));
-        tblActiveStyles.setRowHeight(20);
-        activeStylesModel.setActiveStyles(Main.pref.getCollection(stylesPreferencesKey, null));
-
-        selectionModel = new DefaultListSelectionModel();
-        lstAvailableStyles = new JList(availableStylesModel =new AvailableStylesListModel(selectionModel));
+        lstAvailableStyles = new JList(availableStylesModel = new AvailableStylesListModel(selectionModel));
         lstAvailableStyles.setSelectionModel(selectionModel);
         lstAvailableStyles.setCellRenderer(new StyleSourceCellRenderer());
         this.availableStylesUrl = availableStylesUrl;
 
-        this.pref = stylesPreferencesKey;
-        this.iconpref = iconsPreferenceKey;
-
-        EditActiveStyleAction editActiveStyleAction = new EditActiveStyleAction();
+        selectionModel = new DefaultListSelectionModel();
+        tblActiveStyles = new JTable(activeStylesModel = new ActiveStylesModel(selectionModel));
+        tblActiveStyles.putClientProperty("terminateEditOnFocusLost", true);
+        tblActiveStyles.setSelectionModel(selectionModel);
+        tblActiveStyles.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        tblActiveStyles.setShowGrid(false);
+        tblActiveStyles.setIntercellSpacing(new Dimension(0, 0));
+        tblActiveStyles.setTableHeader(null);
+        tblActiveStyles.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        SourceEntryRenderer sourceEntryRenderer = new SourceEntryRenderer();
+        tblActiveStyles.getColumnModel().getColumn(0).setCellRenderer(sourceEntryRenderer);
+        activeStylesModel.addTableModelListener(new TableModelListener() {
+            // Force swing to show horizontal scrollbars for the JTable
+            // Yes, this is a little ugly, but should work
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                adjustColumnWidth(tblActiveStyles, 0);
+            }
+        });
+        activeStylesModel.setActiveStyles(getInitialSourcesList());
+        
+        final EditActiveStyleAction editActiveStyleAction = new EditActiveStyleAction();
         tblActiveStyles.getSelectionModel().addListSelectionListener(editActiveStyleAction);
+        tblActiveStyles.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int row = tblActiveStyles.rowAtPoint(e.getPoint());
+                    if (row < 0 || row >= tblActiveStyles.getRowCount())
+                        return;
+                    editActiveStyleAction.actionPerformed(null);
+                }
+            }
+        });
 
         RemoveActiveStylesAction removeActiveStylesAction = new RemoveActiveStylesAction();
         tblActiveStyles.getSelectionModel().addListSelectionListener(removeActiveStylesAction);
@@ -120,10 +147,59 @@ public class StyleSourceEditor extends JPanel {
 
         setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         setLayout(new GridBagLayout());
-        add(new JLabel(tr("Active styles:")), GBC.eol().insets(11, 5, 5, 0));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.5;
+        gbc.gridwidth = 2;
+        gbc.anchor = GBC.WEST;
+        gbc.insets = new Insets(5, 11, 0, 0);
+
+        add(new JLabel(getStr(I18nString.AVAILABLE_SOURCES)), gbc);
+
+        gbc.gridx = 2;
+        gbc.insets = new Insets(5, 0, 0, 6);
+
+        add(new JLabel(getStr(I18nString.ACTIVE_SOURCES)), gbc);
+
+        gbc.gridwidth = 1;
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.weighty = 0.8;
+        gbc.fill = GBC.BOTH;
+        gbc.anchor = GBC.CENTER;
+        gbc.insets = new Insets(0, 11, 0, 0);
+
+        JScrollPane sp1 = new JScrollPane(lstAvailableStyles);
+        add(sp1, gbc);
+
+        gbc.gridx = 1;
+        gbc.weightx = 0.0;
+        gbc.fill = GBC.VERTICAL;
+        gbc.insets = new Insets(0, 0, 0, 0);
+
+        JToolBar middleTB = new JToolBar();
+        middleTB.setFloatable(false);
+        middleTB.setBorderPainted(false);
+        middleTB.setOpaque(false);
+        middleTB.add(Box.createHorizontalGlue());
+        middleTB.add(activate);
+        middleTB.add(Box.createHorizontalGlue());
+        add(middleTB, gbc);
+
+        gbc.gridx++;
+        gbc.weightx = 0.5;
+        gbc.fill = GBC.BOTH;
+
         JScrollPane sp = new JScrollPane(tblActiveStyles);
-        add(sp, GBC.std().insets(10, 0, 3, 0).fill(GBC.BOTH));
+        add(sp, gbc);
         sp.setColumnHeaderView(null);
+
+        gbc.gridx++;
+        gbc.weightx = 0.0;
+        gbc.fill = GBC.VERTICAL;
+        gbc.insets = new Insets(0, 0, 0, 6);
 
         JToolBar sideButtonTB = new JToolBar(JToolBar.VERTICAL);
         sideButtonTB.setFloatable(false);
@@ -132,94 +208,167 @@ public class StyleSourceEditor extends JPanel {
         sideButtonTB.add(new NewActiveStyleAction());
         sideButtonTB.add(editActiveStyleAction);
         sideButtonTB.add(removeActiveStylesAction);
-        add(sideButtonTB, GBC.eol().insets(0, 0, 10, 0).fill(GBC.VERTICAL));
+        add(sideButtonTB, gbc);
 
-        JToolBar bottomButtonTB = new JToolBar();
-        bottomButtonTB.setFloatable(false);
-        bottomButtonTB.setBorderPainted(false);
-        bottomButtonTB.setOpaque(false);
-        bottomButtonTB.add(activate);
-        add(bottomButtonTB, GBC.eol().insets(12, 4, 5, 4).fill(GBC.HORIZONTAL));
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.weighty = 0.0;
+        gbc.weightx = 0.5;
+        gbc.fill = GBC.HORIZONTAL;
+        gbc.anchor = GBC.WEST;
+        gbc.insets = new Insets(0, 11, 0, 0);
 
-        add(new JLabel(tr("Available styles (from {0}):", availableStylesUrl)), GBC.eol().insets(11, 0, 5, 0));
-        add(new JScrollPane(lstAvailableStyles), GBC.std().insets(10, 0, 3, 0).fill(GBC.BOTH));
+        JToolBar bottomLeftTB = new JToolBar(JToolBar.VERTICAL);
+        bottomLeftTB.setFloatable(false);
+        bottomLeftTB.setBorderPainted(false);
+        bottomLeftTB.setOpaque(false);
+        bottomLeftTB.add(new ReloadStylesAction(availableStylesUrl));
+        middleTB.add(Box.createHorizontalGlue());
+        add(bottomLeftTB, gbc);
 
-        sideButtonTB = new JToolBar(JToolBar.VERTICAL);
-        sideButtonTB.setFloatable(false);
-        sideButtonTB.setBorderPainted(false);
-        sideButtonTB.setOpaque(false);
-        sideButtonTB.add(new ReloadStylesAction(availableStylesUrl));
-        add(sideButtonTB, GBC.eol().insets(0, 0, 10, 0).fill(GBC.VERTICAL));
-        
-        if (iconsPreferenceKey != null) {
-            selectionModel = new DefaultListSelectionModel();
-            tblIconPaths = new JTable(iconPathsModel = new IconPathTableModel(selectionModel));
-            tblIconPaths.setSelectionModel(selectionModel);
-            tblIconPaths.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-            tblIconPaths.setTableHeader(null);
-            tblIconPaths.getColumnModel().getColumn(0).setCellEditor(new FileOrUrlCellEditor(false));
-            tblIconPaths.setRowHeight(20);
-            iconPathsModel.setIconPaths(Main.pref.getCollection(iconsPreferenceKey, null));
+        gbc.gridx = 2;
+        gbc.anchor = GBC.CENTER;
+        gbc.insets = new Insets(0, 0, 0, 0);
 
-            EditIconPathAction editIconPathAction = new EditIconPathAction();
-            tblIconPaths.getSelectionModel().addListSelectionListener(editIconPathAction);
+        JToolBar bottomRightTB = new JToolBar();
+        bottomRightTB.setFloatable(false);
+        bottomRightTB.setBorderPainted(false);
+        bottomRightTB.setOpaque(false);
+        bottomRightTB.add(Box.createHorizontalGlue());
+        bottomRightTB.add(new JButton(new ResetAction()));
+        add(bottomRightTB, gbc);
 
-            RemoveIconPathAction removeIconPathAction = new RemoveIconPathAction();
-            tblIconPaths.getSelectionModel().addListSelectionListener(removeIconPathAction);
-            tblIconPaths.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "delete");
-            tblIconPaths.getActionMap().put("delete", removeIconPathAction);
+        /***
+         * Icon configuration
+         **/
 
-            add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(5, 10, 5, 10));
-            add(new JLabel(tr("Icon paths:")), GBC.eol().insets(11, 0, 5, 0));
-            add(sp = new JScrollPane(tblIconPaths), GBC.std().insets(10, 0, 3, 0).fill(GBC.BOTH));
-            sp.setColumnHeaderView(null);
-            sideButtonTB = new JToolBar(JToolBar.VERTICAL);
-            sideButtonTB.setFloatable(false);
-            sideButtonTB.setBorderPainted(false);
-            sideButtonTB.setOpaque(false);
-            add(sideButtonTB, GBC.eol().insets(0, 0, 10, 0).fill(GBC.VERTICAL));
-            sideButtonTB.add(new NewIconPathAction());
-            sideButtonTB.add(editIconPathAction);
-            sideButtonTB.add(removeIconPathAction);
-        }
+        selectionModel = new DefaultListSelectionModel();
+        tblIconPaths = new JTable(iconPathsModel = new IconPathTableModel(selectionModel));
+        tblIconPaths.setSelectionModel(selectionModel);
+        tblIconPaths.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        tblIconPaths.setTableHeader(null);
+        tblIconPaths.getColumnModel().getColumn(0).setCellEditor(new FileOrUrlCellEditor(false));
+        tblIconPaths.setRowHeight(20);
+        tblIconPaths.putClientProperty("terminateEditOnFocusLost", true);
+        iconPathsModel.setIconPaths(getInitialIconPathsList());
+
+        EditIconPathAction editIconPathAction = new EditIconPathAction();
+        tblIconPaths.getSelectionModel().addListSelectionListener(editIconPathAction);
+
+        RemoveIconPathAction removeIconPathAction = new RemoveIconPathAction();
+        tblIconPaths.getSelectionModel().addListSelectionListener(removeIconPathAction);
+        tblIconPaths.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "delete");
+        tblIconPaths.getActionMap().put("delete", removeIconPathAction);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.weightx = 1.0;
+        gbc.gridwidth = GBC.REMAINDER;
+        gbc.insets = new Insets(8, 11, 8, 6);
+
+        add(new JSeparator(), gbc);
+
+        gbc.gridy++;
+        gbc.insets = new Insets(0, 11, 0, 6);
+
+        add(new JLabel(tr("Icon paths:")), gbc);
+
+        gbc.gridy++;
+        gbc.weighty = 0.2;
+        gbc.gridwidth = 3;
+        gbc.fill = GBC.BOTH;
+        gbc.insets = new Insets(0, 11, 0, 0);
+
+        add(sp = new JScrollPane(tblIconPaths), gbc);
+        sp.setColumnHeaderView(null);
+
+        gbc.gridx = 3;
+        gbc.gridwidth = 1;
+        gbc.weightx = 0.0;
+        gbc.fill = GBC.VERTICAL;
+        gbc.insets = new Insets(0, 0, 0, 6);
+
+        JToolBar sideButtonTBIcons = new JToolBar(JToolBar.VERTICAL);
+        sideButtonTBIcons.setFloatable(false);
+        sideButtonTBIcons.setBorderPainted(false);
+        sideButtonTBIcons.setOpaque(false);
+        sideButtonTBIcons.add(new NewIconPathAction());
+        sideButtonTBIcons.add(editIconPathAction);
+        sideButtonTBIcons.add(removeIconPathAction);
+        add(sideButtonTBIcons, gbc);
+    }
+
+    /**
+     * Load the list of source entries that the user has configured.
+     */
+    abstract public Collection<? extends SourceEntry> getInitialSourcesList();
+
+    /**
+     * Load the list of configured icon paths.
+     */
+    abstract public Collection<String> getInitialIconPathsList();
+
+    /**
+     * Get the default list of entries (used when resetting the list).
+     */
+    abstract public Collection<StyleSourceInfo> getDefault();
+
+    /**
+     * Save the settings after user clicked "Ok".
+     * @return true if restart is required
+     */
+    abstract public boolean finish();
+
+    /**
+     * Provide the GUI strings. (There are differences for MapPaint and Preset)
+     */
+    abstract protected String getStr(I18nString ident);
+
+    /**
+     * Identifiers for strings that need to be provided.
+     */
+    protected enum I18nString { AVAILABLE_SOURCES, ACTIVE_SOURCES, NEW_SOURCE_ENTRY,
+            REMOVE_SOURCE_TOOLTIP, EDIT_SOURCE_TOOLTIP, ACTIVATE_TOOLTIP, RELOAD_ALL_AVAILABLE,
+            LOADING_SOURCES_FROM, FAILED_TO_LOAD_SOURCES_FROM, FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC,
+            ILLEGAL_FORMAT_OF_ENTRY }
+
+    /**
+     * adjust the preferred width of column col to the maximum preferred width of the cells
+     * requires JTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+     */
+    private static void adjustColumnWidth(JTable tbl, int col) {
+        int maxwidth = 0;
+		for (int row=0; row<tbl.getRowCount(); row++) {
+            TableCellRenderer tcr = tbl.getCellRenderer(row, col);
+                Object val = tbl.getValueAt(row, col);
+                Component comp = tcr.getTableCellRendererComponent(tbl, val, false, false, row, col);
+                maxwidth = Math.max(comp.getPreferredSize().width, maxwidth);
+		}
+		tbl.getColumnModel().getColumn(col).setPreferredWidth(maxwidth);
     }
 
     public boolean hasActiveStylesChanged() {
-        return !activeStylesModel.getStyles().equals(Main.pref.getCollection(pref, Collections.<String>emptyList()));
+        Collection<? extends SourceEntry> prev = getInitialSourcesList();
+        List<SourceEntry> cur = activeStylesModel.getStyles();
+        if (prev.size() != cur.size())
+            return true;
+        Iterator<? extends SourceEntry> p = prev.iterator();
+        Iterator<SourceEntry> c = cur.iterator();
+        while (p.hasNext()) {
+            SourceEntry pe = p.next();
+            SourceEntry ce = c.next();
+            if (!equal(pe.url, ce.url) || !equal(pe.name, ce.name) || pe.active != ce.active)
+                return true;
+        }
+        return false;
     }
 
-    public Collection<String> getActiveStyles() {
+    public Collection<SourceEntry> getActiveStyles() {
         return activeStylesModel.getStyles();
     }
 
-    public void removeSource(String source) {
-        activeStylesModel.remove(source);
-    }
-
-    public boolean finish() {
-        boolean changed = false;
-        List<String> activeStyles = activeStylesModel.getStyles();
-
-        if (activeStyles.size() > 0) {
-            if (Main.pref.putCollection(pref, activeStyles)) {
-                changed = true;
-            }
-        } else if (Main.pref.putCollection(pref, null)) {
-            changed = true;
-        }
-
-        if (tblIconPaths != null) {
-            List<String> iconPaths = iconPathsModel.getIconPaths();
-
-            if (!iconPaths.isEmpty()) {
-                if (Main.pref.putCollection(iconpref, iconPaths)) {
-                    changed = true;
-                }
-            } else if (Main.pref.putCollection(iconpref, null)) {
-                changed = true;
-            }
-        }
-        return changed;
+    public void removeSources(Collection<Integer> idxs) {
+        activeStylesModel.removeIdxs(idxs);
     }
 
     protected void reloadAvailableStyles(String url) {
@@ -233,7 +382,7 @@ public class StyleSourceEditor extends JPanel {
         stylesInitiallyLoaded = true;
     }
 
-    static class AvailableStylesListModel extends DefaultListModel {
+    protected static class AvailableStylesListModel extends DefaultListModel {
         private ArrayList<StyleSourceInfo> data;
         private DefaultListSelectionModel selectionModel;
 
@@ -285,13 +434,13 @@ public class StyleSourceEditor extends JPanel {
         }
     }
 
-    static class ActiveStylesModel extends AbstractTableModel {
-        private ArrayList<String> data;
+    protected static class ActiveStylesModel extends AbstractTableModel {
+        private List<SourceEntry> data;
         private DefaultListSelectionModel selectionModel;
 
         public ActiveStylesModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
-            this.data = new ArrayList<String>();
+            this.data = new ArrayList<SourceEntry>();
         }
 
         public int getColumnCount() {
@@ -302,13 +451,14 @@ public class StyleSourceEditor extends JPanel {
             return data == null ? 0 : data.size();
         }
 
-        public Object getValueAt(int rowIndex, int columnIndex) {
+        @Override
+        public SourceEntry getValueAt(int rowIndex, int columnIndex) {
             return data.get(rowIndex);
         }
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return true;
+            return false;
         }
 
         @Override
@@ -316,19 +466,18 @@ public class StyleSourceEditor extends JPanel {
             updateStyle(rowIndex, (String)aValue);
         }
 
-        public void setActiveStyles(Collection<String> styles) {
+        public void setActiveStyles(Collection<? extends SourceEntry> sources) {
+            //abstract public Collection<? extends StyleSourceEntry> getInitialStyleSources();
             data.clear();
-            if (styles !=null) {
-                data.addAll(styles);
+            if (sources != null) {
+                data.addAll(sources);
             }
-            sort();
             fireTableDataChanged();
         }
 
-        public void addStyle(String style) {
+        public void addStyle(SourceEntry style) {
             if (style == null) return;
             data.add(style);
-            sort();
             fireTableDataChanged();
             int idx = data.indexOf(style);
             if (idx >= 0) {
@@ -339,8 +488,7 @@ public class StyleSourceEditor extends JPanel {
         public void updateStyle(int pos, String style) {
             if (style == null) return;
             if (pos < 0 || pos >= getRowCount()) return;
-            data.set(pos, style);
-            sort();
+            data.get(pos).url = style;
             fireTableDataChanged();
             int idx = data.indexOf(style);
             if (idx >= 0) {
@@ -349,7 +497,7 @@ public class StyleSourceEditor extends JPanel {
         }
 
         public void removeSelected() {
-            Iterator<String> it = data.iterator();
+            Iterator<SourceEntry> it = data.iterator();
             int i=0;
             while(it.hasNext()) {
                 it.next();
@@ -361,72 +509,59 @@ public class StyleSourceEditor extends JPanel {
             fireTableDataChanged();
         }
 
-        public void remove(String source) {
-            data.remove(source);
+        public void removeIdxs(Collection<Integer> idxs) {
+            List<SourceEntry> newData = new ArrayList<SourceEntry>();
+            for (int i=0; i<data.size(); ++i) {
+                if (!idxs.contains(i)) {
+                    newData.add(data.get(i));
+                }
+            }
+            data = newData;
             fireTableDataChanged();
-        }
-
-        protected void sort() {
-            Collections.sort(
-                    data,
-                    new Comparator<String>() {
-                        public int compare(String o1, String o2) {
-                            if (o1.equals("") && o2.equals(""))
-                                return 0;
-                            if (o1.equals("")) return 1;
-                            if (o2.equals("")) return -1;
-                            return o1.compareTo(o2);
-                        }
-                    }
-            );
         }
 
         public void addStylesFromSources(List<StyleSourceInfo> sources) {
             if (sources == null) return;
             for (StyleSourceInfo info: sources) {
-                data.add(info.url);
+                data.add(new SourceEntry(info.url, info.name, info.getDisplayName(), true));
             }
-            sort();
             fireTableDataChanged();
             selectionModel.clearSelection();
             for (StyleSourceInfo info: sources) {
-                int pos = data.indexOf(info.url);
+                int pos = data.indexOf(info);
                 if (pos >=0) {
                     selectionModel.addSelectionInterval(pos, pos);
                 }
             }
         }
 
-        public List<String> getStyles() {
-            return new ArrayList<String>(data);
-        }
-
-        public String getStyle(int pos) {
-            return data.get(pos);
+        public List<SourceEntry> getStyles() {
+            return new ArrayList<SourceEntry>(data);
         }
     }
 
-    public static class StyleSourceInfo {
-        String version;
-        String name;
-        String url;
-        String author;
-        String link;
-        String description;
-        String shortdescription;
+    public static class StyleSourceInfo extends SourceEntry {
+        public String simpleFileName;
+        public String version;
+        public String author;
+        public String link;
+        public String description;
 
-        public StyleSourceInfo(String name, String url) {
-            this.name = name;
-            this.url = url;
+        public StyleSourceInfo(String simpleFileName, String url) {
+            super(url, null, null, true);
+            this.simpleFileName = simpleFileName;
             version = author = link = description = shortdescription = null;
         }
 
-        public String getName() {
-            return shortdescription == null ? name : shortdescription;
+        /**
+         * @return string representation for GUI list or menu entry
+         */
+        public String getDisplayName() {
+            return shortdescription == null ? simpleFileName : shortdescription;
         }
 
         public String getTooltip() {
-            String s = tr("Short Description: {0}", getName()) + "<br>" + tr("URL: {0}", url);
+            String s = tr("Short Description: {0}", getDisplayName()) + "<br>" + tr("URL: {0}", url);
             if (author != null) {
                 s += "<br>" + tr("Author: {0}", author);
             }
@@ -444,7 +579,95 @@ public class StyleSourceEditor extends JPanel {
 
         @Override
         public String toString() {
-            return getName() + " (" + url + ")";
+            return "<html><b>" + getDisplayName() + "</b> (" + url + ")</html>";
+        }
+    }
+
+    protected class EditSourceEntryDialog extends ExtendedDialog {
+
+        /**
+         * We call this text field "name", but it is actually the shortdescription.
+         */
+        private JTextField tfName;
+        private JTextField tfURL;
+
+        public EditSourceEntryDialog(Component parent, String title, SourceEntry e) {
+            super(parent,
+                    title,
+                    new String[] {tr("Ok"), tr("Cancel")});
+
+            JPanel p = new JPanel(new GridBagLayout());
+
+            tfName = new JTextField(60);
+            p.add(new JLabel(tr("Name (optional):")), GBC.std().insets(15, 0, 5, 5));
+            p.add(tfName, GBC.eol().insets(0, 0, 5, 5));
+
+            tfURL = new JTextField(60);
+            p.add(new JLabel(tr("URL / File:")), GBC.std().insets(15, 0, 5, 0));
+            p.add(tfURL, GBC.std().insets(0, 0, 5, 0));
+            JButton fileChooser = new JButton(new LaunchFileChooserAction());
+            fileChooser.setMargin(new Insets(0, 0, 0, 0));
+            p.add(fileChooser, GBC.eol().insets(0, 0, 5, 0));
+
+            if (e != null) {
+                if (e.shortdescription != null) {
+                    tfName.setText(e.shortdescription);
+                }
+                tfURL.setText(e.url);
+            }
+
+            setButtonIcons(new String[] {"ok", "cancel"});
+            setContent(p);
+        }
+
+        class LaunchFileChooserAction extends AbstractAction {
+            public LaunchFileChooserAction() {
+                putValue(SMALL_ICON, ImageProvider.get("open"));
+                putValue(SHORT_DESCRIPTION, tr("Launch a file chooser to select a file"));
+            }
+
+            protected void prepareFileChooser(String url, JFileChooser fc) {
+                if (url == null || url.trim().length() == 0) return;
+                URL sourceUrl = null;
+                try {
+                    sourceUrl = new URL(url);
+                } catch(MalformedURLException e) {
+                    File f = new File(url);
+                    if (f.isFile()) {
+                        f = f.getParentFile();
+                    }
+                    if (f != null) {
+                        fc.setCurrentDirectory(f);
+                    }
+                    return;
+                }
+                if (sourceUrl.getProtocol().startsWith("file")) {
+                    File f = new File(sourceUrl.getPath());
+                    if (f.isFile()) {
+                        f = f.getParentFile();
+                    }
+                    if (f != null) {
+                        fc.setCurrentDirectory(f);
+                    }
+                }
+            }
+
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fc= new JFileChooser();
+                prepareFileChooser(tfURL.getText(), fc);
+                int ret = fc.showOpenDialog(JOptionPane.getFrameForComponent(StyleSourceEditor.this));
+                if (ret != JFileChooser.APPROVE_OPTION)
+                    return;
+                tfURL.setText(fc.getSelectedFile().toString());
+            }
+        }
+
+        public String getShortdescription() {
+            return tfName.getText();
+        }
+
+        public String getURL() {
+            return tfURL.getText();
         }
     }
 
@@ -455,10 +678,18 @@ public class StyleSourceEditor extends JPanel {
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
         }
 
-        public void actionPerformed(ActionEvent e) {
-            activeStylesModel.addStyle("");
-            tblActiveStyles.requestFocusInWindow();
-            tblActiveStyles.editCellAt(activeStylesModel.getRowCount()-1, 0);
+        public void actionPerformed(ActionEvent evt) {
+            EditSourceEntryDialog editEntryDialog = new EditSourceEntryDialog(
+                    StyleSourceEditor.this,
+                    getStr(I18nString.NEW_SOURCE_ENTRY),
+                    null);
+            editEntryDialog.showDialog();
+            if (editEntryDialog.getValue() == 1) {
+                activeStylesModel.addStyle(new SourceEntry(
+                        editEntryDialog.getURL(),
+                        null, editEntryDialog.getShortdescription(), true));
+                activeStylesModel.fireTableDataChanged();
+            }
         }
     }
 
@@ -466,7 +697,7 @@ public class StyleSourceEditor extends JPanel {
 
         public RemoveActiveStylesAction() {
             putValue(NAME, tr("Remove"));
-            putValue(SHORT_DESCRIPTION, tr("Remove the selected styles from the list of active styles"));
+            putValue(SHORT_DESCRIPTION, getStr(I18nString.REMOVE_SOURCE_TOOLTIP));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
             updateEnabledState();
         }
@@ -487,7 +718,7 @@ public class StyleSourceEditor extends JPanel {
     class EditActiveStyleAction extends AbstractAction implements ListSelectionListener {
         public EditActiveStyleAction() {
             putValue(NAME, tr("Edit"));
-            putValue(SHORT_DESCRIPTION, tr("Edit the filename or URL for the selected active style"));
+            putValue(SHORT_DESCRIPTION, getStr(I18nString.EDIT_SOURCE_TOOLTIP));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
             updateEnabledState();
         }
@@ -500,16 +731,32 @@ public class StyleSourceEditor extends JPanel {
             updateEnabledState();
         }
 
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent evt) {
             int pos = tblActiveStyles.getSelectedRow();
-            tblActiveStyles.editCellAt(pos, 0);
+            if (pos < 0 || pos >= tblActiveStyles.getRowCount())
+                return;
+
+            SourceEntry e = activeStylesModel.getValueAt(pos, 0);
+
+            EditSourceEntryDialog editEntryDialog = new EditSourceEntryDialog(
+                    StyleSourceEditor.this, tr("Edit source entry:"), e);
+            editEntryDialog.showDialog();
+            if (editEntryDialog.getValue() == 1) {
+                if (e.shortdescription != null || !equal(editEntryDialog.getShortdescription(), "")) {
+                    e.shortdescription = editEntryDialog.getShortdescription();
+                    if (equal(e.shortdescription, "")) {
+                        e.shortdescription = null;
+                    }
+                }
+                e.url = editEntryDialog.getURL();
+                activeStylesModel.fireTableCellUpdated(pos, 0);
+            }
         }
     }
 
     class ActivateStylesAction extends AbstractAction implements ListSelectionListener {
         public ActivateStylesAction() {
-            putValue(NAME, tr("Activate"));
-            putValue(SHORT_DESCRIPTION, tr("Add the selected available styles to the list of active styles"));
+            putValue(SHORT_DESCRIPTION, getStr(I18nString.ACTIVATE_TOOLTIP));
             putValue(SMALL_ICON, ImageProvider.get("preferences", "activatestyle"));
             updateEnabledState();
         }
@@ -528,11 +775,24 @@ public class StyleSourceEditor extends JPanel {
         }
     }
 
+    class ResetAction extends AbstractAction {
+
+        public ResetAction() {
+            putValue(NAME, tr("Reset"));
+            putValue(SHORT_DESCRIPTION, tr("Reset to default"));
+            putValue(SMALL_ICON, ImageProvider.get("preferences", "reset"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            activeStylesModel.setActiveStyles(getDefault());
+        }
+    }
+
     class ReloadStylesAction extends AbstractAction {
         private String url;
         public ReloadStylesAction(String url) {
             putValue(NAME, tr("Reload"));
-            putValue(SHORT_DESCRIPTION, tr("Reloads the list of available styles from ''{0}''", url));
+            putValue(SHORT_DESCRIPTION, tr(getStr(I18nString.RELOAD_ALL_AVAILABLE), url));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/refresh"));
             this.url = url;
         }
@@ -543,7 +803,7 @@ public class StyleSourceEditor extends JPanel {
         }
     }
 
-    static class IconPathTableModel extends AbstractTableModel {
+    protected static class IconPathTableModel extends AbstractTableModel {
         private ArrayList<String> data;
         private DefaultListSelectionModel selectionModel;
 
@@ -710,6 +970,7 @@ public class StyleSourceEditor extends JPanel {
             }
             setEnabled(list.isEnabled());
             setFont(list.getFont());
+            setFont(getFont().deriveFont(Font.PLAIN));
             setOpaque(true);
             setToolTipText(((StyleSourceInfo) value).getTooltip());
             return this;
@@ -722,7 +983,7 @@ public class StyleSourceEditor extends JPanel {
         private boolean canceled;
 
         public StyleSourceLoader(String url) {
-            super(tr("Loading style sources from ''{0}''", url));
+            super(tr(getStr(I18nString.LOADING_SOURCES_FROM), url));
             this.url = url;
         }
 
@@ -744,19 +1005,14 @@ public class StyleSourceEditor extends JPanel {
         protected void warn(Exception e) {
             String emsg = e.getMessage() != null ? e.getMessage() : e.toString();
             emsg = emsg.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-            String msg = tr("<html>Failed to load the list of style sources from<br>"
-                    + "''{0}''.<br>"
-                    + "<br>"
-                    + "Details (untranslated):<br>{1}</html>",
-                    url, emsg
-            );
+            String msg = tr(getStr(I18nString.FAILED_TO_LOAD_SOURCES_FROM), url, emsg);
 
             HelpAwareOptionPane.showOptionDialog(
                     Main.parent,
                     msg,
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE,
-                    ht("/Preferences/Styles#FailedToLoadStyleSources")
+                    ht(getStr(I18nString.FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC))
             );
         }
 
@@ -765,10 +1021,7 @@ public class StyleSourceEditor extends JPanel {
             LinkedList<StyleSourceInfo> styles = new LinkedList<StyleSourceInfo>();
             String lang = LanguageInfo.getLanguageCodeXML();
             try {
-                StyleSourceInfo i = new StyleSourceInfo("elemstyles.xml", "resource://data/elemstyles.xml");
-                i.shortdescription = tr("Internal style");
-                i.description = tr("Internal style to be used as base for runtime switchable overlay styles");
-                styles.add(i);
+                styles.addAll(getDefault());
                 MirroredInputStream stream = new MirroredInputStream(url);
                 InputStreamReader r;
                 try {
@@ -788,7 +1041,7 @@ public class StyleSourceEditor extends JPanel {
                     if (line.startsWith("\t")) {
                         Matcher m = Pattern.compile("^\t([^:]+): *(.+)$").matcher(line);
                         if (! m.matches()) {
-                            System.err.println(tr("Warning: illegal format of entry in style list ''{0}''. Got ''{1}''", url, line));
+                            System.err.println(tr(getStr(I18nString.ILLEGAL_FORMAT_OF_ENTRY), url, line));
                             continue;
                         }
                         if (last != null) {
@@ -804,6 +1057,8 @@ public class StyleSourceEditor extends JPanel {
                                 last.description = value;
                             } else if ("shortdescription".equals(key) && last.shortdescription == null) {
                                 last.shortdescription = value;
+                            } else if ("name".equals(key) && last.name == null) {
+                                last.name = value;
                             } else if ((lang + "author").equals(key)) {
                                 last.author = value;
                             } else if ((lang + "link").equals(key)) {
@@ -820,7 +1075,7 @@ public class StyleSourceEditor extends JPanel {
                         if (m.matches()) {
                             styles.add(last = new StyleSourceInfo(m.group(1), m.group(2)));
                         } else {
-                            System.err.println(tr("Warning: illegal format of entry in style list ''{0}''. Got ''{1}''", url, line));
+                            System.err.println(tr(getStr(I18nString.ILLEGAL_FORMAT_OF_ENTRY), url, line));
                         }
                     }
                 }
@@ -834,6 +1089,29 @@ public class StyleSourceEditor extends JPanel {
                 return;
             }
             availableStylesModel.setStyleSources(styles);
+        }
+    }
+    
+    class SourceEntryRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            SourceEntry se = (SourceEntry) value;
+            JLabel label = (JLabel)super.getTableCellRendererComponent(table,
+                    fromSourceEntry(se), isSelected, hasFocus, row, column);
+            return label;
+        }
+
+        private String fromSourceEntry(SourceEntry entry) {
+            StringBuilder s = new StringBuilder("<html><b>");
+            if (entry.shortdescription != null) {
+                s.append(entry.shortdescription).append("</b> (");
+            }
+            s.append(entry.url);
+            if (entry.name != null) {
+                s.append(")");
+            }
+            s.append("</html>");
+            return s.toString();
         }
     }
 
@@ -991,6 +1269,128 @@ public class StyleSourceEditor extends JPanel {
                     return;
                 tfFileName.setText(fc.getSelectedFile().toString());
             }
+        }
+    }
+
+
+    /**
+     * Convert mappaint and preset source preferences from a simple list to
+     * array with one line for each source entry.
+     *
+     * MapPaint:
+     *
+     *    Old format
+     *      key: mappaint.style.sources
+     *      value: list of "<name>=<url>" pairs. The "<name>=" part is optional.
+     *          The style is always active.
+     *      default: empty list
+     *
+     *      key: mappaint.style.enable-defaults
+     *      value: if true, the default style "resource://data/elemstyles.xml" should
+     *          be loaded.
+     *      default: true
+     *
+     *    New format
+     *      key: mappaint.style.sources-list
+     *      value: each line is a list with entries: url, name, shortdescription, active
+     *      default:
+     *          One line: "resource://data/elemstyles.xml", "standard", tr("Internal Style"), true
+     *
+     * Tagging Preset:
+     *
+     *      the same, but "name" and "active" are not needed and omitted
+     *
+     */
+    abstract public static class SourcePrefMigration {
+
+        private final String oldPref;
+        private final String oldPrefEnableDefaults;
+        private final String pref;
+
+        public SourcePrefMigration(String oldPref, String oldPrefEnableDefaults, String pref) {
+            this.oldPref = oldPref;
+            this.oldPrefEnableDefaults = oldPrefEnableDefaults;
+            this.pref = pref;
+        }
+
+        abstract public Collection<StyleSourceInfo> getDefault();
+
+        abstract public Collection<String> serialize(SourceEntry entry);
+
+        abstract public SourceEntry deserialize(List<String> entryStr);
+
+        public List<SourceEntry> get() {
+            List<SourceEntry> entries = readNewFormatImpl();
+            if (entries == null) {
+
+                entries = readOldFormat();
+                put(entries);
+                return entries;
+            }
+            return entries;
+        }
+
+        public boolean put(Collection<? extends SourceEntry> entries) {
+            boolean changed = false;
+            if (entries.isEmpty()) {
+                changed |= Main.pref.put(pref + "._empty_", true);
+                changed |= Main.pref.putArray(pref, null);
+            } else {
+                Collection<Collection<String>> setting = new ArrayList<Collection<String>>();
+                for (SourceEntry e : entries) {
+                    setting.add(serialize(e));
+                }
+                changed |= Main.pref.put(pref + "._empty_", null);
+                changed |= Main.pref.putArray(pref, setting);
+            }
+            return changed;
+        }
+
+        public List<SourceEntry> readOldFormat() {
+            List<SourceEntry> result = new ArrayList<SourceEntry>();
+            if (Main.pref.getBoolean(oldPrefEnableDefaults, true)) {
+                result.addAll(getDefault());
+            }
+
+            List<String> lines = new LinkedList<String>(Main.pref.getCollection(oldPref));
+            for (String line : lines) {
+                String[] a = null;
+                if (line.indexOf("=") >= 0) {
+                    a = line.split("=", 2);
+                } else {
+                    a = new String[] { null, line };
+                }
+                result.add(new SourceEntry(a[1], a[0], null, true));
+            }
+
+            return result;
+        }
+
+        public Collection<? extends SourceEntry> readNewFormat() {
+            List<SourceEntry> entries = readNewFormatImpl();
+            if (entries == null) {
+                return getDefault();
+            }
+            return entries;
+        }
+
+        private List<SourceEntry> readNewFormatImpl() {
+            List<SourceEntry> entries = new ArrayList<SourceEntry>();
+            Collection<Collection<String>> mappaintSrc = Main.pref.getArray(pref, null);
+            if (mappaintSrc == null || mappaintSrc.isEmpty()) {
+                if (Main.pref.getBoolean(pref + "._empty_", false)) {
+                    return Collections.<SourceEntry>emptyList();
+                }
+                return null;
+            }
+
+            for (Collection<String> sourcePref : mappaintSrc) {
+                SourceEntry e = deserialize(new ArrayList<String>(sourcePref));
+                if (e != null) {
+                    entries.add(e);
+                }
+            }
+            return entries;
         }
     }
 
