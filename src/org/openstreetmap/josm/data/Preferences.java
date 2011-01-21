@@ -626,7 +626,7 @@ public class Preferences {
         putCollectionDefault(key, def);
         String s = get(key);
         if(s != null && s.length() != 0)
-            return Arrays.asList(s.split("\u001e"));
+            return Arrays.asList(s.split("\u001e", -1));
         return def;
     }
 
@@ -640,7 +640,7 @@ public class Preferences {
         putCollectionDefault(key, null);
         String s = get(key);
         if (s != null && s.length() != 0)
-            return Arrays.asList(s.split("\u001e"));
+            return Arrays.asList(s.split("\u001e", -1));
         return Collections.emptyList();
     }
 
