@@ -51,7 +51,7 @@ public class MapPaintVisitor implements PaintVisitor {
     private boolean drawMultipolygon;
     private boolean drawRestriction;
     private boolean leftHandTraffic;
-    private ElemStyles.StyleSet styles;
+    private StyleSet styles;
     private double circum;
     private double dist;
     private static int paintid = 0;
