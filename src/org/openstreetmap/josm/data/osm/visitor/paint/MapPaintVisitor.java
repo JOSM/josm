@@ -3,8 +3,6 @@ package org.openstreetmap.josm.data.osm.visitor.paint;
 
 /* To enable debugging or profiling remove the double / signs */
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
@@ -32,15 +30,14 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
-import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
-import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.IconElemStyle;
 import org.openstreetmap.josm.gui.mappaint.LineElemStyle;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.SimpleNodeElemStyle;
+import org.openstreetmap.josm.gui.mappaint.StyleSource;
 
 public class MapPaintVisitor implements PaintVisitor {
 
@@ -51,7 +48,7 @@ public class MapPaintVisitor implements PaintVisitor {
     private boolean drawMultipolygon;
     private boolean drawRestriction;
     private boolean leftHandTraffic;
-    private StyleSet styles;
+    private StyleSource styles;
     private double circum;
     private double dist;
     private static int paintid = 0;
