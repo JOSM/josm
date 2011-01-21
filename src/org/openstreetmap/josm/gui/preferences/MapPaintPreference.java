@@ -23,11 +23,11 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.gui.preferences.StyleSourceEditor.StyleSourceInfo;
+import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 import org.openstreetmap.josm.tools.GBC;
 
 public class MapPaintPreference implements PreferenceSetting {
-    private StyleSourceEditor sources;
+    private SourceEditor sources;
     private JCheckBox enableIconDefault;
     private JCheckBox enableDefault;
     private JComboBox styleCombo = new JComboBox();
@@ -80,14 +80,14 @@ public class MapPaintPreference implements PreferenceSetting {
                 new ChangeListener() {
                     public void stateChanged(ChangeEvent e) {
                         if (gui.mapcontent.getSelectedComponent() == panel) {
-                            sources.initiallyLoadAvailableStyles();
+                            sources.initiallyLoadAvailableSources();
                         }
                     }
                 }
         );
     }
 
-    class MapPaintSourceEditor extends StyleSourceEditor {
+    class MapPaintSourceEditor extends SourceEditor {
 
         final private String iconpref = "mappaint.icon.sources";
 
@@ -102,7 +102,7 @@ public class MapPaintPreference implements PreferenceSetting {
 
         @Override
         public boolean finish() {
-            List<SourceEntry> activeStyles = activeStylesModel.getStyles();
+            List<SourceEntry> activeStyles = activeSourcesModel.getSources();
 
             boolean changed = (new MapPaintPrefMigration()).put(activeStyles);
 
@@ -121,7 +121,7 @@ public class MapPaintPreference implements PreferenceSetting {
         }
 
         @Override
-        public Collection<StyleSourceInfo> getDefault() {
+        public Collection<ExtendedSourceEntry> getDefault() {
             return (new MapPaintPrefMigration()).getDefault();
         }
 
@@ -137,6 +137,8 @@ public class MapPaintPreference implements PreferenceSetting {
                     return tr("Available styles:");
                 case ACTIVE_SOURCES:
                     return tr("Active styles:");
+                case NEW_SOURCE_ENTRY_TOOLTIP:
+                     return tr("Add a new style by entering filename or URL");
                 case NEW_SOURCE_ENTRY:
                     return tr("New style entry:");
                 case REMOVE_SOURCE_TOOLTIP:
@@ -193,7 +195,7 @@ public class MapPaintPreference implements PreferenceSetting {
         MapPaintStyles.readFromPreferences();
     }
 
-    public static class MapPaintPrefMigration extends StyleSourceEditor.SourcePrefMigration {
+    public static class MapPaintPrefMigration extends SourceEditor.SourcePrefMigration {
 
         public MapPaintPrefMigration() {
             super("mappaint.style.sources",
@@ -202,8 +204,8 @@ public class MapPaintPreference implements PreferenceSetting {
         }
 
         @Override
-        public Collection<StyleSourceInfo> getDefault() {
-            StyleSourceInfo i = new StyleSourceInfo("elemstyles.xml", "resource://data/elemstyles.xml");
+        public Collection<ExtendedSourceEntry> getDefault() {
+            ExtendedSourceEntry i = new ExtendedSourceEntry("elemstyles.xml", "resource://data/elemstyles.xml");
             i.name = "standard";
             i.shortdescription = tr("Internal Style");
             i.description = tr("Internal style to be used as base for runtime switchable overlay styles");

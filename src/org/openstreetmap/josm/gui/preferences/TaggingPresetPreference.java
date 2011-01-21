@@ -27,7 +27,7 @@ import javax.swing.event.ChangeListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
-import org.openstreetmap.josm.gui.preferences.StyleSourceEditor.StyleSourceInfo;
+import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetMenu;
 import org.openstreetmap.josm.gui.tagging.TaggingPresetSeparator;
@@ -45,16 +45,16 @@ public class TaggingPresetPreference implements PreferenceSetting {
     }
 
     public static Collection<TaggingPreset> taggingPresets;
-    private StyleSourceEditor sources;
+    private SourceEditor sources;
     private JCheckBox sortMenu;
 
     private ValidationListener validationListener = new ValidationListener() {
         public boolean validatePreferences() {
-            if (sources.hasActiveStylesChanged()) {
+            if (sources.hasActiveSourcesChanged()) {
                 List<Integer> sourcesToRemove = new ArrayList<Integer>();
                 int i = -1;
                 SOURCES:
-                    for (SourceEntry source: sources.getActiveStyles()) {
+                    for (SourceEntry source: sources.getActiveSources()) {
                         i++;
                         boolean canLoad = false;
                         try {
@@ -152,7 +152,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
                 new ChangeListener() {
                     public void stateChanged(ChangeEvent e) {
                         if (gui.mapcontent.getSelectedComponent() == panel) {
-                            sources.initiallyLoadAvailableStyles();
+                            sources.initiallyLoadAvailableSources();
                         }
                     }
                 }
@@ -160,7 +160,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
         gui.addValidationListener(validationListener);
     }
 
-    class TaggingPresetSourceEditor extends StyleSourceEditor {
+    class TaggingPresetSourceEditor extends SourceEditor {
 
         final private String iconpref = "taggingpreset.icon.sources";
 
@@ -175,7 +175,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
 
         @Override
         public boolean finish() {
-            List<SourceEntry> activeStyles = activeStylesModel.getStyles();
+            List<SourceEntry> activeStyles = activeSourcesModel.getSources();
 
             boolean changed = (new PresetPrefMigration()).put(activeStyles);
 
@@ -194,7 +194,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
         }
 
         @Override
-        public Collection<StyleSourceInfo> getDefault() {
+        public Collection<ExtendedSourceEntry> getDefault() {
             return (new PresetPrefMigration()).getDefault();
         }
 
@@ -210,6 +210,8 @@ public class TaggingPresetPreference implements PreferenceSetting {
                     return tr("Available presets:");
                 case ACTIVE_SOURCES:
                     return tr("Active presets:");
+                case NEW_SOURCE_ENTRY_TOOLTIP:
+                     return tr("Add a new preset by entering filename or URL");
                 case NEW_SOURCE_ENTRY:
                     return tr("New preset entry:");
                 case REMOVE_SOURCE_TOOLTIP:
@@ -286,7 +288,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
         }
     }
 
-    public static class PresetPrefMigration extends StyleSourceEditor.SourcePrefMigration {
+    public static class PresetPrefMigration extends SourceEditor.SourcePrefMigration {
 
         public PresetPrefMigration() {
             super("taggingpreset.sources",
@@ -295,8 +297,8 @@ public class TaggingPresetPreference implements PreferenceSetting {
         }
 
         @Override
-        public Collection<StyleSourceInfo> getDefault() {
-            StyleSourceInfo i = new StyleSourceInfo("defaultpresets.xml", "resource://data/defaultpresets.xml");
+        public Collection<ExtendedSourceEntry> getDefault() {
+            ExtendedSourceEntry i = new ExtendedSourceEntry("defaultpresets.xml", "resource://data/defaultpresets.xml");
             i.shortdescription = tr("Internal Preset");
             i.description = tr("The default preset for JOSM");
             return Collections.singletonList(i);

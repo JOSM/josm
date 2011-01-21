@@ -78,72 +78,72 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.xml.sax.SAXException;
 
-public abstract class StyleSourceEditor extends JPanel {
+public abstract class SourceEditor extends JPanel {
 
-    protected JTable tblActiveStyles;
-    protected ActiveStylesModel activeStylesModel;
-    protected JList lstAvailableStyles;
-    protected AvailableStylesListModel availableStylesModel;
+    protected JTable tblActiveSources;
+    protected ActiveSourcesModel activeSourcesModel;
+    protected JList lstAvailableSources;
+    protected AvailableSourcesListModel availableSourcesModel;
     protected JTable tblIconPaths = null;
     protected IconPathTableModel iconPathsModel;
-    protected boolean stylesInitiallyLoaded;
-    protected String availableStylesUrl;
+    protected boolean sourcesInitiallyLoaded;
+    protected String availableSourcesUrl;
 
     /**
      * constructor
-     * @param availableStylesUrl the URL to the list of available style sources
+     * @param availableSourcesUrl the URL to the list of available sources
      */
-    public StyleSourceEditor(final String availableStylesUrl) {
+    public SourceEditor(final String availableSourcesUrl) {
 
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
-        lstAvailableStyles = new JList(availableStylesModel = new AvailableStylesListModel(selectionModel));
-        lstAvailableStyles.setSelectionModel(selectionModel);
-        lstAvailableStyles.setCellRenderer(new StyleSourceCellRenderer());
-        this.availableStylesUrl = availableStylesUrl;
+        lstAvailableSources = new JList(availableSourcesModel = new AvailableSourcesListModel(selectionModel));
+        lstAvailableSources.setSelectionModel(selectionModel);
+        lstAvailableSources.setCellRenderer(new SourceEntryListCellRenderer());
+        this.availableSourcesUrl = availableSourcesUrl;
 
         selectionModel = new DefaultListSelectionModel();
-        tblActiveStyles = new JTable(activeStylesModel = new ActiveStylesModel(selectionModel));
-        tblActiveStyles.putClientProperty("terminateEditOnFocusLost", true);
-        tblActiveStyles.setSelectionModel(selectionModel);
-        tblActiveStyles.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        tblActiveStyles.setShowGrid(false);
-        tblActiveStyles.setIntercellSpacing(new Dimension(0, 0));
-        tblActiveStyles.setTableHeader(null);
-        tblActiveStyles.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        SourceEntryRenderer sourceEntryRenderer = new SourceEntryRenderer();
-        tblActiveStyles.getColumnModel().getColumn(0).setCellRenderer(sourceEntryRenderer);
-        activeStylesModel.addTableModelListener(new TableModelListener() {
+        tblActiveSources = new JTable(activeSourcesModel = new ActiveSourcesModel(selectionModel));
+        tblActiveSources.putClientProperty("terminateEditOnFocusLost", true);
+        tblActiveSources.setSelectionModel(selectionModel);
+        tblActiveSources.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        tblActiveSources.setShowGrid(false);
+        tblActiveSources.setIntercellSpacing(new Dimension(0, 0));
+        tblActiveSources.setTableHeader(null);
+        tblActiveSources.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        SourceEntryTableCellRenderer sourceEntryRenderer = new SourceEntryTableCellRenderer();
+        tblActiveSources.getColumnModel().getColumn(0).setCellRenderer(sourceEntryRenderer);
+        activeSourcesModel.addTableModelListener(new TableModelListener() {
             // Force swing to show horizontal scrollbars for the JTable
             // Yes, this is a little ugly, but should work
             @Override
             public void tableChanged(TableModelEvent e) {
-                adjustColumnWidth(tblActiveStyles, 0);
+                adjustColumnWidth(tblActiveSources, 0);
             }
         });
-        activeStylesModel.setActiveStyles(getInitialSourcesList());
+        activeSourcesModel.setActiveSources(getInitialSourcesList());
         
-        final EditActiveStyleAction editActiveStyleAction = new EditActiveStyleAction();
-        tblActiveStyles.getSelectionModel().addListSelectionListener(editActiveStyleAction);
-        tblActiveStyles.addMouseListener(new MouseAdapter() {
+        final EditActiveSourceAction editActiveSourceAction = new EditActiveSourceAction();
+        tblActiveSources.getSelectionModel().addListSelectionListener(editActiveSourceAction);
+        tblActiveSources.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    int row = tblActiveStyles.rowAtPoint(e.getPoint());
-                    if (row < 0 || row >= tblActiveStyles.getRowCount())
+                    int row = tblActiveSources.rowAtPoint(e.getPoint());
+                    if (row < 0 || row >= tblActiveSources.getRowCount())
                         return;
-                    editActiveStyleAction.actionPerformed(null);
+                    editActiveSourceAction.actionPerformed(null);
                 }
             }
         });
 
-        RemoveActiveStylesAction removeActiveStylesAction = new RemoveActiveStylesAction();
-        tblActiveStyles.getSelectionModel().addListSelectionListener(removeActiveStylesAction);
-        tblActiveStyles.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "delete");
-        tblActiveStyles.getActionMap().put("delete", removeActiveStylesAction);
+        RemoveActiveSourcesAction removeActiveSourcesAction = new RemoveActiveSourcesAction();
+        tblActiveSources.getSelectionModel().addListSelectionListener(removeActiveSourcesAction);
+        tblActiveSources.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "delete");
+        tblActiveSources.getActionMap().put("delete", removeActiveSourcesAction);
 
-        ActivateStylesAction activateStylesAction = new ActivateStylesAction();
-        lstAvailableStyles.addListSelectionListener(activateStylesAction);
-        JButton activate = new JButton(activateStylesAction);
+        ActivateSourcesAction activateSourcesAction = new ActivateSourcesAction();
+        lstAvailableSources.addListSelectionListener(activateSourcesAction);
+        JButton activate = new JButton(activateSourcesAction);
 
         setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         setLayout(new GridBagLayout());
@@ -171,7 +171,7 @@ public abstract class StyleSourceEditor extends JPanel {
         gbc.anchor = GBC.CENTER;
         gbc.insets = new Insets(0, 11, 0, 0);
 
-        JScrollPane sp1 = new JScrollPane(lstAvailableStyles);
+        JScrollPane sp1 = new JScrollPane(lstAvailableSources);
         add(sp1, gbc);
 
         gbc.gridx = 1;
@@ -192,7 +192,7 @@ public abstract class StyleSourceEditor extends JPanel {
         gbc.weightx = 0.5;
         gbc.fill = GBC.BOTH;
 
-        JScrollPane sp = new JScrollPane(tblActiveStyles);
+        JScrollPane sp = new JScrollPane(tblActiveSources);
         add(sp, gbc);
         sp.setColumnHeaderView(null);
 
@@ -205,9 +205,9 @@ public abstract class StyleSourceEditor extends JPanel {
         sideButtonTB.setFloatable(false);
         sideButtonTB.setBorderPainted(false);
         sideButtonTB.setOpaque(false);
-        sideButtonTB.add(new NewActiveStyleAction());
-        sideButtonTB.add(editActiveStyleAction);
-        sideButtonTB.add(removeActiveStylesAction);
+        sideButtonTB.add(new NewActiveSourceAction());
+        sideButtonTB.add(editActiveSourceAction);
+        sideButtonTB.add(removeActiveSourcesAction);
         add(sideButtonTB, gbc);
 
         gbc.gridx = 0;
@@ -222,7 +222,7 @@ public abstract class StyleSourceEditor extends JPanel {
         bottomLeftTB.setFloatable(false);
         bottomLeftTB.setBorderPainted(false);
         bottomLeftTB.setOpaque(false);
-        bottomLeftTB.add(new ReloadStylesAction(availableStylesUrl));
+        bottomLeftTB.add(new ReloadSourcesAction(availableSourcesUrl));
         middleTB.add(Box.createHorizontalGlue());
         add(bottomLeftTB, gbc);
 
@@ -311,7 +311,7 @@ public abstract class StyleSourceEditor extends JPanel {
     /**
      * Get the default list of entries (used when resetting the list).
      */
-    abstract public Collection<StyleSourceInfo> getDefault();
+    abstract public Collection<ExtendedSourceEntry> getDefault();
 
     /**
      * Save the settings after user clicked "Ok".
@@ -327,7 +327,7 @@ public abstract class StyleSourceEditor extends JPanel {
     /**
      * Identifiers for strings that need to be provided.
      */
-    protected enum I18nString { AVAILABLE_SOURCES, ACTIVE_SOURCES, NEW_SOURCE_ENTRY,
+    protected enum I18nString { AVAILABLE_SOURCES, ACTIVE_SOURCES, NEW_SOURCE_ENTRY_TOOLTIP, NEW_SOURCE_ENTRY,
             REMOVE_SOURCE_TOOLTIP, EDIT_SOURCE_TOOLTIP, ACTIVATE_TOOLTIP, RELOAD_ALL_AVAILABLE,
             LOADING_SOURCES_FROM, FAILED_TO_LOAD_SOURCES_FROM, FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC,
             ILLEGAL_FORMAT_OF_ENTRY }
@@ -347,9 +347,9 @@ public abstract class StyleSourceEditor extends JPanel {
 		tbl.getColumnModel().getColumn(col).setPreferredWidth(maxwidth);
     }
 
-    public boolean hasActiveStylesChanged() {
+    public boolean hasActiveSourcesChanged() {
         Collection<? extends SourceEntry> prev = getInitialSourcesList();
-        List<SourceEntry> cur = activeStylesModel.getStyles();
+        List<SourceEntry> cur = activeSourcesModel.getSources();
         if (prev.size() != cur.size())
             return true;
         Iterator<? extends SourceEntry> p = prev.iterator();
@@ -363,38 +363,38 @@ public abstract class StyleSourceEditor extends JPanel {
         return false;
     }
 
-    public Collection<SourceEntry> getActiveStyles() {
-        return activeStylesModel.getStyles();
+    public Collection<SourceEntry> getActiveSources() {
+        return activeSourcesModel.getSources();
     }
 
     public void removeSources(Collection<Integer> idxs) {
-        activeStylesModel.removeIdxs(idxs);
+        activeSourcesModel.removeIdxs(idxs);
     }
 
-    protected void reloadAvailableStyles(String url) {
-        Main.worker.submit(new StyleSourceLoader(url));
+    protected void reloadAvailableSources(String url) {
+        Main.worker.submit(new SourceLoader(url));
     }
 
-    public void initiallyLoadAvailableStyles() {
-        if (!stylesInitiallyLoaded) {
-            reloadAvailableStyles(this.availableStylesUrl);
+    public void initiallyLoadAvailableSources() {
+        if (!sourcesInitiallyLoaded) {
+            reloadAvailableSources(this.availableSourcesUrl);
         }
-        stylesInitiallyLoaded = true;
+        sourcesInitiallyLoaded = true;
     }
 
-    protected static class AvailableStylesListModel extends DefaultListModel {
-        private ArrayList<StyleSourceInfo> data;
+    protected static class AvailableSourcesListModel extends DefaultListModel {
+        private ArrayList<ExtendedSourceEntry> data;
         private DefaultListSelectionModel selectionModel;
 
-        public AvailableStylesListModel(DefaultListSelectionModel selectionModel) {
-            data = new ArrayList<StyleSourceInfo>();
+        public AvailableSourcesListModel(DefaultListSelectionModel selectionModel) {
+            data = new ArrayList<ExtendedSourceEntry>();
             this.selectionModel = selectionModel;
         }
 
-        public void setStyleSources(List<StyleSourceInfo> styleSources) {
+        public void setSources(List<ExtendedSourceEntry> sources) {
             data.clear();
-            if (styleSources != null) {
-                data.addAll(styleSources);
+            if (sources != null) {
+                data.addAll(sources);
             }
             fireContentsChanged(this, 0, data.size());
         }
@@ -411,7 +411,7 @@ public abstract class StyleSourceEditor extends JPanel {
         }
 
         public void deleteSelected() {
-            Iterator<StyleSourceInfo> it = data.iterator();
+            Iterator<ExtendedSourceEntry> it = data.iterator();
             int i=0;
             while(it.hasNext()) {
                 it.next();
@@ -423,8 +423,8 @@ public abstract class StyleSourceEditor extends JPanel {
             fireContentsChanged(this, 0, data.size());
         }
 
-        public List<StyleSourceInfo> getSelected() {
-            ArrayList<StyleSourceInfo> ret = new ArrayList<StyleSourceInfo>();
+        public List<ExtendedSourceEntry> getSelected() {
+            ArrayList<ExtendedSourceEntry> ret = new ArrayList<ExtendedSourceEntry>();
             for(int i=0; i<data.size();i++) {
                 if (selectionModel.isSelectedIndex(i)) {
                     ret.add(data.get(i));
@@ -434,11 +434,11 @@ public abstract class StyleSourceEditor extends JPanel {
         }
     }
 
-    protected static class ActiveStylesModel extends AbstractTableModel {
+    protected static class ActiveSourcesModel extends AbstractTableModel {
         private List<SourceEntry> data;
         private DefaultListSelectionModel selectionModel;
 
-        public ActiveStylesModel(DefaultListSelectionModel selectionModel) {
+        public ActiveSourcesModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
             this.data = new ArrayList<SourceEntry>();
         }
@@ -463,11 +463,10 @@ public abstract class StyleSourceEditor extends JPanel {
 
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            updateStyle(rowIndex, (String)aValue);
+            updateSource(rowIndex, (String)aValue);
         }
 
-        public void setActiveStyles(Collection<? extends SourceEntry> sources) {
-            //abstract public Collection<? extends StyleSourceEntry> getInitialStyleSources();
+        public void setActiveSources(Collection<? extends SourceEntry> sources) {
             data.clear();
             if (sources != null) {
                 data.addAll(sources);
@@ -475,22 +474,22 @@ public abstract class StyleSourceEditor extends JPanel {
             fireTableDataChanged();
         }
 
-        public void addStyle(SourceEntry style) {
-            if (style == null) return;
-            data.add(style);
+        public void addSource(SourceEntry entry) {
+            if (entry == null) return;
+            data.add(entry);
             fireTableDataChanged();
-            int idx = data.indexOf(style);
+            int idx = data.indexOf(entry);
             if (idx >= 0) {
                 selectionModel.setSelectionInterval(idx, idx);
             }
         }
 
-        public void updateStyle(int pos, String style) {
-            if (style == null) return;
+        public void updateSource(int pos, String src) {
+            if (src == null) return;
             if (pos < 0 || pos >= getRowCount()) return;
-            data.get(pos).url = style;
+            data.get(pos).url = src;
             fireTableDataChanged();
-            int idx = data.indexOf(style);
+            int idx = data.indexOf(src);
             if (idx >= 0) {
                 selectionModel.setSelectionInterval(idx, idx);
             }
@@ -520,14 +519,14 @@ public abstract class StyleSourceEditor extends JPanel {
             fireTableDataChanged();
         }
 
-        public void addStylesFromSources(List<StyleSourceInfo> sources) {
+        public void addExtendedSourceEntries(List<ExtendedSourceEntry> sources) {
             if (sources == null) return;
-            for (StyleSourceInfo info: sources) {
+            for (ExtendedSourceEntry info: sources) {
                 data.add(new SourceEntry(info.url, info.name, info.getDisplayName(), true));
             }
             fireTableDataChanged();
             selectionModel.clearSelection();
-            for (StyleSourceInfo info: sources) {
+            for (ExtendedSourceEntry info: sources) {
                 int pos = data.indexOf(info);
                 if (pos >=0) {
                     selectionModel.addSelectionInterval(pos, pos);
@@ -535,19 +534,19 @@ public abstract class StyleSourceEditor extends JPanel {
             }
         }
 
-        public List<SourceEntry> getStyles() {
+        public List<SourceEntry> getSources() {
             return new ArrayList<SourceEntry>(data);
         }
     }
 
-    public static class StyleSourceInfo extends SourceEntry {
+    public static class ExtendedSourceEntry extends SourceEntry {
         public String simpleFileName;
         public String version;
         public String author;
         public String link;
         public String description;
 
-        public StyleSourceInfo(String simpleFileName, String url) {
+        public ExtendedSourceEntry(String simpleFileName, String url) {
             super(url, null, null, true);
             this.simpleFileName = simpleFileName;
             version = author = link = description = shortdescription = null;
@@ -655,7 +654,7 @@ public abstract class StyleSourceEditor extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fc= new JFileChooser();
                 prepareFileChooser(tfURL.getText(), fc);
-                int ret = fc.showOpenDialog(JOptionPane.getFrameForComponent(StyleSourceEditor.this));
+                int ret = fc.showOpenDialog(JOptionPane.getFrameForComponent(SourceEditor.this));
                 if (ret != JFileChooser.APPROVE_OPTION)
                     return;
                 tfURL.setText(fc.getSelectedFile().toString());
@@ -671,31 +670,31 @@ public abstract class StyleSourceEditor extends JPanel {
         }
     }
 
-    class NewActiveStyleAction extends AbstractAction {
-        public NewActiveStyleAction() {
+    class NewActiveSourceAction extends AbstractAction {
+        public NewActiveSourceAction() {
             putValue(NAME, tr("New"));
-            putValue(SHORT_DESCRIPTION, tr("Add a filename or an URL of an active style"));
+            putValue(SHORT_DESCRIPTION, getStr(I18nString.NEW_SOURCE_ENTRY_TOOLTIP));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
         }
 
         public void actionPerformed(ActionEvent evt) {
             EditSourceEntryDialog editEntryDialog = new EditSourceEntryDialog(
-                    StyleSourceEditor.this,
+                    SourceEditor.this,
                     getStr(I18nString.NEW_SOURCE_ENTRY),
                     null);
             editEntryDialog.showDialog();
             if (editEntryDialog.getValue() == 1) {
-                activeStylesModel.addStyle(new SourceEntry(
+                activeSourcesModel.addSource(new SourceEntry(
                         editEntryDialog.getURL(),
                         null, editEntryDialog.getShortdescription(), true));
-                activeStylesModel.fireTableDataChanged();
+                activeSourcesModel.fireTableDataChanged();
             }
         }
     }
 
-    class RemoveActiveStylesAction extends AbstractAction implements ListSelectionListener {
+    class RemoveActiveSourcesAction extends AbstractAction implements ListSelectionListener {
 
-        public RemoveActiveStylesAction() {
+        public RemoveActiveSourcesAction() {
             putValue(NAME, tr("Remove"));
             putValue(SHORT_DESCRIPTION, getStr(I18nString.REMOVE_SOURCE_TOOLTIP));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
@@ -703,7 +702,7 @@ public abstract class StyleSourceEditor extends JPanel {
         }
 
         protected void updateEnabledState() {
-            setEnabled(tblActiveStyles.getSelectedRowCount() > 0);
+            setEnabled(tblActiveSources.getSelectedRowCount() > 0);
         }
 
         public void valueChanged(ListSelectionEvent e) {
@@ -711,12 +710,12 @@ public abstract class StyleSourceEditor extends JPanel {
         }
 
         public void actionPerformed(ActionEvent e) {
-            activeStylesModel.removeSelected();
+            activeSourcesModel.removeSelected();
         }
     }
 
-    class EditActiveStyleAction extends AbstractAction implements ListSelectionListener {
-        public EditActiveStyleAction() {
+    class EditActiveSourceAction extends AbstractAction implements ListSelectionListener {
+        public EditActiveSourceAction() {
             putValue(NAME, tr("Edit"));
             putValue(SHORT_DESCRIPTION, getStr(I18nString.EDIT_SOURCE_TOOLTIP));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "edit"));
@@ -724,7 +723,7 @@ public abstract class StyleSourceEditor extends JPanel {
         }
 
         protected void updateEnabledState() {
-            setEnabled(tblActiveStyles.getSelectedRowCount() == 1);
+            setEnabled(tblActiveSources.getSelectedRowCount() == 1);
         }
 
         public void valueChanged(ListSelectionEvent e) {
@@ -732,14 +731,14 @@ public abstract class StyleSourceEditor extends JPanel {
         }
 
         public void actionPerformed(ActionEvent evt) {
-            int pos = tblActiveStyles.getSelectedRow();
-            if (pos < 0 || pos >= tblActiveStyles.getRowCount())
+            int pos = tblActiveSources.getSelectedRow();
+            if (pos < 0 || pos >= tblActiveSources.getRowCount())
                 return;
 
-            SourceEntry e = activeStylesModel.getValueAt(pos, 0);
+            SourceEntry e = activeSourcesModel.getValueAt(pos, 0);
 
             EditSourceEntryDialog editEntryDialog = new EditSourceEntryDialog(
-                    StyleSourceEditor.this, tr("Edit source entry:"), e);
+                    SourceEditor.this, tr("Edit source entry:"), e);
             editEntryDialog.showDialog();
             if (editEntryDialog.getValue() == 1) {
                 if (e.shortdescription != null || !equal(editEntryDialog.getShortdescription(), "")) {
@@ -749,20 +748,20 @@ public abstract class StyleSourceEditor extends JPanel {
                     }
                 }
                 e.url = editEntryDialog.getURL();
-                activeStylesModel.fireTableCellUpdated(pos, 0);
+                activeSourcesModel.fireTableCellUpdated(pos, 0);
             }
         }
     }
 
-    class ActivateStylesAction extends AbstractAction implements ListSelectionListener {
-        public ActivateStylesAction() {
+    class ActivateSourcesAction extends AbstractAction implements ListSelectionListener {
+        public ActivateSourcesAction() {
             putValue(SHORT_DESCRIPTION, getStr(I18nString.ACTIVATE_TOOLTIP));
             putValue(SMALL_ICON, ImageProvider.get("preferences", "activatestyle"));
             updateEnabledState();
         }
 
         protected void updateEnabledState() {
-            setEnabled(lstAvailableStyles.getSelectedIndices().length > 0);
+            setEnabled(lstAvailableSources.getSelectedIndices().length > 0);
         }
 
         public void valueChanged(ListSelectionEvent e) {
@@ -770,8 +769,8 @@ public abstract class StyleSourceEditor extends JPanel {
         }
 
         public void actionPerformed(ActionEvent e) {
-            List<StyleSourceInfo> styleSources = availableStylesModel.getSelected();
-            activeStylesModel.addStylesFromSources(styleSources);
+            List<ExtendedSourceEntry> sources = availableSourcesModel.getSelected();
+            activeSourcesModel.addExtendedSourceEntries(sources);
         }
     }
 
@@ -784,13 +783,13 @@ public abstract class StyleSourceEditor extends JPanel {
         }
 
         public void actionPerformed(ActionEvent e) {
-            activeStylesModel.setActiveStyles(getDefault());
+            activeSourcesModel.setActiveSources(getDefault());
         }
     }
 
-    class ReloadStylesAction extends AbstractAction {
+    class ReloadSourcesAction extends AbstractAction {
         private String url;
-        public ReloadStylesAction(String url) {
+        public ReloadSourcesAction(String url) {
             putValue(NAME, tr("Reload"));
             putValue(SHORT_DESCRIPTION, tr(getStr(I18nString.RELOAD_ALL_AVAILABLE), url));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/refresh"));
@@ -799,7 +798,7 @@ public abstract class StyleSourceEditor extends JPanel {
 
         public void actionPerformed(ActionEvent e) {
             MirroredInputStream.cleanup(url);
-            reloadAvailableStyles(url);
+            reloadAvailableSources(url);
         }
     }
 
@@ -834,10 +833,10 @@ public abstract class StyleSourceEditor extends JPanel {
             updatePath(rowIndex, (String)aValue);
         }
 
-        public void setIconPaths(Collection<String> styles) {
+        public void setIconPaths(Collection<String> paths) {
             data.clear();
-            if (styles !=null) {
-                data.addAll(styles);
+            if (paths !=null) {
+                data.addAll(paths);
             }
             sort();
             fireTableDataChanged();
@@ -956,7 +955,7 @@ public abstract class StyleSourceEditor extends JPanel {
         }
     }
 
-    static class StyleSourceCellRenderer extends JLabel implements ListCellRenderer {
+    static class SourceEntryListCellRenderer extends JLabel implements ListCellRenderer {
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
                 boolean cellHasFocus) {
             String s = value.toString();
@@ -972,17 +971,17 @@ public abstract class StyleSourceEditor extends JPanel {
             setFont(list.getFont());
             setFont(getFont().deriveFont(Font.PLAIN));
             setOpaque(true);
-            setToolTipText(((StyleSourceInfo) value).getTooltip());
+            setToolTipText(((ExtendedSourceEntry) value).getTooltip());
             return this;
         }
     }
 
-    class StyleSourceLoader extends PleaseWaitRunnable {
+    class SourceLoader extends PleaseWaitRunnable {
         private String url;
         private BufferedReader reader;
         private boolean canceled;
 
-        public StyleSourceLoader(String url) {
+        public SourceLoader(String url) {
             super(tr(getStr(I18nString.LOADING_SOURCES_FROM), url));
             this.url = url;
         }
@@ -1018,10 +1017,10 @@ public abstract class StyleSourceEditor extends JPanel {
 
         @Override
         protected void realRun() throws SAXException, IOException, OsmTransferException {
-            LinkedList<StyleSourceInfo> styles = new LinkedList<StyleSourceInfo>();
+            LinkedList<ExtendedSourceEntry> sources = new LinkedList<ExtendedSourceEntry>();
             String lang = LanguageInfo.getLanguageCodeXML();
             try {
-                styles.addAll(getDefault());
+                sources.addAll(getDefault());
                 MirroredInputStream stream = new MirroredInputStream(url);
                 InputStreamReader r;
                 try {
@@ -1032,7 +1031,7 @@ public abstract class StyleSourceEditor extends JPanel {
                 reader = new BufferedReader(r);
 
                 String line;
-                StyleSourceInfo last = null;
+                ExtendedSourceEntry last = null;
 
                 while ((line = reader.readLine()) != null && !canceled) {
                     if (line.trim().equals("")) {
@@ -1073,7 +1072,7 @@ public abstract class StyleSourceEditor extends JPanel {
                         last = null;
                         Matcher m = Pattern.compile("^(.+);(.+)$").matcher(line);
                         if (m.matches()) {
-                            styles.add(last = new StyleSourceInfo(m.group(1), m.group(2)));
+                            sources.add(last = new ExtendedSourceEntry(m.group(1), m.group(2)));
                         } else {
                             System.err.println(tr(getStr(I18nString.ILLEGAL_FORMAT_OF_ENTRY), url, line));
                         }
@@ -1088,11 +1087,11 @@ public abstract class StyleSourceEditor extends JPanel {
                 warn(ex);
                 return;
             }
-            availableStylesModel.setStyleSources(styles);
+            availableSourcesModel.setSources(sources);
         }
     }
     
-    class SourceEntryRenderer extends DefaultTableCellRenderer {
+    class SourceEntryTableCellRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             SourceEntry se = (SourceEntry) value;
@@ -1264,7 +1263,7 @@ public abstract class StyleSourceEditor extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fc = getFileChooser();
                 prepareFileChooser(tfFileName.getText(), fc);
-                int ret = fc.showOpenDialog(JOptionPane.getFrameForComponent(StyleSourceEditor.this));
+                int ret = fc.showOpenDialog(JOptionPane.getFrameForComponent(SourceEditor.this));
                 if (ret != JFileChooser.APPROVE_OPTION)
                     return;
                 tfFileName.setText(fc.getSelectedFile().toString());
@@ -1313,7 +1312,7 @@ public abstract class StyleSourceEditor extends JPanel {
             this.pref = pref;
         }
 
-        abstract public Collection<StyleSourceInfo> getDefault();
+        abstract public Collection<ExtendedSourceEntry> getDefault();
 
         abstract public Collection<String> serialize(SourceEntry entry);
 
