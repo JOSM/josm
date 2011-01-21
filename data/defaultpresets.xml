@@ -49,6 +49,25 @@ combo: combo box, with multiple choices and possible to enter free form text
   delete_if_empty: true/false
   use_last_as_default: true/false
 
+multiselect: list of values from which zero or more can be selected
+  key: key to set
+  text: fixed label to display
+  delimiter: character that separates values (default: semicolon) - this
+             will also be used to separate selected values in the tag.
+  values: delimiter-separated list of values (delimiter can be escaped with backslash)
+  display_values: delimiter-separated list of values to be displayed instead of the
+                  database values, order and number must be equal to values
+  short_description: delimiter-separated list of texts to be displayed below each
+                    display_value. (Only if it is not possible to describe 
+                    the entry in 2-3 words.) Instead of a separated list, you can
+                    also write it in the following form: 
+                        <short_description>first description</short_description>
+                                ...
+                        <short_description>last description</short_description>
+  default: default string to display
+  delete_if_empty: true/false
+  use_last_as_default: true/false
+
 check: checkbox
   key: key to set
   text: fixed label to display

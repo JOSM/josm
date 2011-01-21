@@ -71,6 +71,7 @@
 			<element name="link" type="tns:link" />
 			<element name="text" type="tns:text" />
 			<element name="combo" type="tns:combo" />
+			<element name="multiselect" type="tns:multiselect" />
 			<element name="check" type="tns:check" />
 		</choice>
 	</group>
@@ -128,6 +129,26 @@
 		<attribute name="display_values" type="string"/>
 		<attribute name="default" type="string" />
 		<attribute name="editable" type="boolean" />
+		<attribute name="delete_if_empty" type="boolean" />
+		<attribute name="required" type="boolean"/>
+
+		<attribute name="type" use="prohibited"/>
+		<attribute name="value" use="prohibited"/>
+		<attribute name="name" use="prohibited"/>
+		<attribute name="delete-if-empty" use="prohibited"/>
+		<attribute name="display-values" use="prohibited"/>
+		<anyAttribute processContents="skip"/>
+	</complexType>
+
+	<complexType name="multiselect">
+		<attribute name="key" type="string" use="required" />
+		<attribute name="text" type="string" />
+		<attribute name="text_context" type="string" />
+		<attribute name="values" type="string" use="required" />
+		<attribute name="values_context" type="string" />
+		<attribute name="display_values" type="string"/>
+		<attribute name="default" type="string" />
+		<attribute name="delimiter" type="string" />
 		<attribute name="delete_if_empty" type="boolean" />
 		<attribute name="required" type="boolean"/>
 
