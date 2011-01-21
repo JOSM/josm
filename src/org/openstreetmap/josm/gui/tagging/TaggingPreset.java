@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,8 +40,10 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
+import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
@@ -175,6 +178,51 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         }
         return returnValue;
     }
+
+        protected static class PresetListEntry {
+            String value;
+            String display_value;
+            String short_description;
+
+            public String getListDisplay() {
+                if (value.equals(DIFFERENT))
+                    return "<b>"+DIFFERENT.replaceAll("<", "&lt;").replaceAll(">", "&gt;")+"</b>";
+
+                if (value.equals(""))
+                    return "&nbsp;";
+
+                StringBuilder res = new StringBuilder("<b>");
+                if (display_value != null) {
+                    res.append(display_value);
+                } else {
+                    res.append(value);
+                }
+                res.append("</b>");
+                if (short_description != null) {
+                    // wrap in table to restrict the text width
+                    res.append("<br><table><td width='232'>(").append(short_description).append(")</td></table>");
+                }
+                return res.toString();
+            }
+
+            public PresetListEntry(String value) {
+                this.value = value;
+                this.display_value = value;
+            }
+
+            public PresetListEntry(String value, String display_value) {
+                this.value = value;
+                this.display_value = display_value;
+            }
+
+            // toString is mainly used to initialize the Editor
+            @Override
+            public String toString() {
+                if (value.equals(DIFFERENT))
+                    return DIFFERENT;
+                return display_value.replaceAll("<.*>", ""); // remove additional markup, e.g. <br>
+            }
+        }
 
     public static class Text extends Item {
 
@@ -358,9 +406,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
         private List<String> short_description_list;
         private JComboBox combo;
-        private Map<String, PresetListEnty> lhm;
+        private Map<String, PresetListEntry> lhm;
         private Usage usage;
-        private PresetListEnty originalValue;
+        private PresetListEntry originalValue;
 
         @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
 
@@ -402,12 +450,12 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 short_descriptions_array = null;
             }
 
-            lhm = new LinkedHashMap<String, PresetListEnty>();
+            lhm = new LinkedHashMap<String, PresetListEntry>();
             if (!usage.hasUniqueValue() && !usage.unused()) {
-                lhm.put(DIFFERENT, new PresetListEnty(DIFFERENT));
+                lhm.put(DIFFERENT, new PresetListEntry(DIFFERENT));
             }
             for (int i=0; i<value_array.length; i++) {
-                PresetListEnty e = new PresetListEnty(value_array[i]);
+                PresetListEntry e = new PresetListEntry(value_array[i]);
                 e.display_value = (locale_display_values == null)
                         ? (values_context == null ? tr(display_array[i])
                                 : trc(values_context, display_array[i])) : display_array[i];
@@ -420,14 +468,14 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             if(!usage.unused()){
                 for (String s : usage.values) {
                     if (!lhm.containsKey(s)) {
-                        lhm.put(s, new PresetListEnty(s));
+                        lhm.put(s, new PresetListEntry(s));
                     }
                 }
             }
             if (def != null && !lhm.containsKey(def)) {
-                lhm.put(def, new PresetListEnty(def));
+                lhm.put(def, new PresetListEntry(def));
             }
-            lhm.put("", new PresetListEnty(""));
+            lhm.put("", new PresetListEntry(""));
 
             combo = new JComboBox(lhm.values().toArray());
             combo.setRenderer(new PresetComboListCellRenderer());
@@ -465,50 +513,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             return true;
         }
 
-        private static class PresetListEnty {
-            String value;
-            String display_value;
-            String short_description;
-
-            public String getListDisplay() {
-                if (value.equals(DIFFERENT))
-                    return "<b>"+DIFFERENT.replaceAll("<", "&lt;").replaceAll(">", "&gt;")+"</b>";
-
-                if (value.equals(""))
-                    return "&nbsp;";
-
-                StringBuilder res = new StringBuilder("<b>");
-                if (display_value != null) {
-                    res.append(display_value);
-                } else {
-                    res.append(value);
-                }
-                res.append("</b>");
-                if (short_description != null) {
-                    // wrap in table to restrict the text width
-                    res.append("<br><table><td width='232'>(").append(short_description).append(")</td></table>");
-                }
-                return res.toString();
-            }
-
-            public PresetListEnty(String value) {
-                this.value = value;
-                this.display_value = value;
-            }
-
-            public PresetListEnty(String value, String display_value) {
-                this.value = value;
-                this.display_value = display_value;
-            }
-
-            // toString is mainly used to initialize the Editor
-            @Override
-            public String toString() {
-                if (value.equals(DIFFERENT))
-                    return DIFFERENT;
-                return display_value.replaceAll("<.*>", ""); // remove additional markup, e.g. <br>
-            }
-        }
 
         private static class PresetComboListCellRenderer implements ListCellRenderer {
 
@@ -534,7 +538,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     lbl.setForeground(list.getForeground());
                 }
 
-                PresetListEnty item = (PresetListEnty) value;
+                PresetListEntry item = (PresetListEntry) value;
                 String s = item.getListDisplay();
                 lbl.setText(s);
                 // We do not want the editor to have the maximum height of all
@@ -605,6 +609,252 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         }
 
         @Override boolean requestFocusInWindow() {return combo.requestFocusInWindow();}
+    }
+
+    /**
+     * Class that allows list values to be assigned and retrived as a comma-delimited
+     * string.
+     */
+    public static class ConcatenatingJList extends JList {
+        private String delimiter;
+        public ConcatenatingJList(String del, Object[] o) {
+            super(o);
+            delimiter = del;
+        }
+        public void setSelectedItem(Object o) {
+            if (o == null) {
+                clearSelection();
+            } else {
+                String s = o.toString();
+                HashSet<String> parts = new HashSet<String>(Arrays.asList(s.split(delimiter)));
+                ListModel lm = getModel();
+                int[] intParts = new int[lm.getSize()];
+                int j = 0;
+                for (int i = 0; i < lm.getSize(); i++) {
+                    if (parts.contains((((PresetListEntry)lm.getElementAt(i)).value))) 
+                        intParts[j++]=i;
+                }
+                setSelectedIndices(Arrays.copyOf(intParts, j));
+                // check if we have acutally managed to represent the full 
+                // value with our presets. if not, cop out; we will not offer
+                // a selection list that threatens to ruin the value.
+                setEnabled(s.equals(getSelectedItem()));
+            }
+        }
+        public String getSelectedItem() {
+            ListModel lm = getModel();
+            int[] si = getSelectedIndices();
+            StringBuilder builder = new StringBuilder();
+            for (int i=0; i<si.length; i++) { 
+                if (i>0) builder.append(delimiter);
+                builder.append(((PresetListEntry)lm.getElementAt(si[i])).value);
+            }
+            return builder.toString();
+        }
+    }
+
+    public static class MultiSelect extends Item {
+
+        public String key;
+        public String text;
+        public String text_context;
+        public String locale_text;
+        public String values;
+        public String values_context;
+        public String display_values;
+        public String locale_display_values;
+        public String short_descriptions;
+        public String locale_short_descriptions;
+        public String default_;
+        public String delimiter = ";";
+        public boolean delete_if_empty = false;
+        public boolean use_last_as_default = false;
+        public boolean required = false;
+
+        private List<String> short_description_list;
+        private ConcatenatingJList list;
+        private Map<String, PresetListEntry> lhm;
+        private Usage usage;
+        private String originalValue;
+
+        @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
+
+            // find out if our key is already used in the selection.
+            usage = determineTextUsage(sel, key);
+            String def = default_;
+
+            String[] value_array = values.split(delimiter);
+            String[] display_array;
+            String[] short_descriptions_array = null;
+
+            if (locale_display_values != null) {
+                display_array = splitEscaped(delimiter, locale_display_values);
+            } else if (display_values != null) {
+                display_array = splitEscaped(delimiter, display_values);
+            } else {
+                display_array = value_array;
+            }
+
+            if (locale_short_descriptions != null) {
+                short_descriptions_array = splitEscaped(delimiter, locale_short_descriptions);
+            } else if (short_descriptions != null) {
+                short_descriptions_array = splitEscaped(delimiter, short_descriptions);
+            } else if (short_description_list != null) {
+                short_descriptions_array = short_description_list.toArray(new String[0]);
+            }
+
+            if (use_last_as_default && def == null && lastValue.containsKey(key)) {
+                def = lastValue.get(key);
+            }
+
+            if (display_array.length != value_array.length) {
+                System.err.println(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''display_values'' must be the same as in ''values''", key, text));
+                display_array = value_array;
+            }
+
+            if (short_descriptions_array != null && short_descriptions_array.length != value_array.length) {
+                System.err.println(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''short_descriptions'' must be the same as in ''values''", key, text));
+                short_descriptions_array = null;
+            }
+
+            lhm = new LinkedHashMap<String, PresetListEntry>();
+            if (!usage.hasUniqueValue() && !usage.unused()) {
+                lhm.put(DIFFERENT, new PresetListEntry(DIFFERENT));
+            }
+            for (int i=0; i<value_array.length; i++) {
+                PresetListEntry e = new PresetListEntry(value_array[i]);
+                e.display_value = (locale_display_values == null)
+                        ? (values_context == null ? tr(display_array[i])
+                                : trc(values_context, display_array[i])) : display_array[i];
+                if (short_descriptions_array != null) {
+                    e.short_description = locale_short_descriptions == null ? tr(short_descriptions_array[i])
+                            : short_descriptions_array[i];
+                }
+                lhm.put(value_array[i], e);
+            }
+
+            list = new ConcatenatingJList(delimiter, lhm.values().toArray());
+            list.setCellRenderer(new PresetListCellRenderer());
+
+            if (usage.hasUniqueValue() && !usage.unused()) {
+                originalValue=usage.getFirst();
+            }
+            else if (def != null && !usage.hadKeys()) {
+                originalValue=def;
+            }
+            else if (usage.unused()) {
+                originalValue=null;
+            }
+            else {
+                originalValue=DIFFERENT;
+            }
+            list.setSelectedItem(originalValue);
+
+            if (locale_text == null) {
+                if(text_context != null) {
+                    locale_text = trc(text_context, text);
+                } else {
+                    locale_text = tr(text);
+                }
+            }
+            p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
+            p.add(new JScrollPane(list), GBC.eol().fill(GBC.HORIZONTAL));
+            return true;
+        }
+
+        private static class PresetListCellRenderer implements ListCellRenderer {
+
+            HtmlPanel lbl;
+            JComponent dummy = new JComponent() {};
+
+            public PresetListCellRenderer() {
+                lbl = new HtmlPanel();
+            }
+
+            public Component getListCellRendererComponent(
+                    JList list,
+                    Object value,
+                    int index,
+                    boolean isSelected,
+                    boolean cellHasFocus)
+            {
+                if (isSelected) {
+                    lbl.setBackground(list.getSelectionBackground());
+                    lbl.setForeground(list.getSelectionForeground());
+                } else {
+                    lbl.setBackground(list.getBackground());
+                    lbl.setForeground(list.getForeground());
+                }
+
+                PresetListEntry item = (PresetListEntry) value;
+                String s = item.getListDisplay();
+                lbl.setText(s);
+                lbl.setEnabled(list.isEnabled());
+                // We do not want the editor to have the maximum height of all
+                // entries. Return a dummy with bogus height.
+                if (index == -1) {
+                    dummy.setPreferredSize(new Dimension(lbl.getPreferredSize().width, 10));
+                    return dummy;
+                }
+                return lbl;
+            }
+        }
+
+        // allow escaped delimiter in comma separated list:
+        // "A\, B\, C,one\, two" --> ["A, B, C", "one, two"]
+        private static String[] splitEscaped(String delimiter, String s) {
+            String[] res = s.replaceAll("\\\\,", "\u0091").split(delimiter);
+            for (int i=0; i<res.length; ++i) {
+                res[i] = res[i].replaceAll("\u0091", delimiter);
+            }
+            return res;
+        }
+
+        @Override public void addCommands(List<Tag> changedTags) {
+            Object obj = list.getSelectedItem();
+            String display = (obj == null) ? null : obj.toString();
+            String value = null;
+
+            if (display != null)
+            {
+                for (String key : lhm.keySet()) {
+                    String k = lhm.get(key).toString();
+                    if (k != null && k.equals(display)) {
+                        value=key;
+                    }
+                }
+                if (value == null) {
+                    value = display;
+                }
+            } else {
+                value = "";
+            }
+
+            // no change if same as before
+            if (originalValue == null) {
+                if (value.length() == 0)
+                    return;
+            } else if (value.equals(originalValue.toString()))
+                return;
+
+            if (delete_if_empty && value.length() == 0) {
+                value = null;
+            }
+            if (use_last_as_default) {
+                lastValue.put(key, value);
+            }
+            System.err.print("change: "+key+" "+value);
+            changedTags.add(new Tag(key, value));
+        }
+
+        public void setShort_description(String s) {
+            if (short_description_list == null) {
+                short_description_list = new ArrayList<String>();
+            }
+            short_description_list.add(tr(s));
+        }
+
+        @Override boolean requestFocusInWindow() {return list.requestFocusInWindow();}
     }
 
     public static class Label extends Item {
@@ -868,6 +1118,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         parser.map("role", Role.class);
         parser.map("check", Check.class);
         parser.map("combo", Combo.class);
+        parser.map("multiselect", MultiSelect.class);
         parser.map("label", Label.class);
         parser.map("space", Space.class);
         parser.map("key", Key.class);
