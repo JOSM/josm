@@ -1926,7 +1926,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="amenity" value="restaurant" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
-            <combo key="cuisine" text="Cuisine" values="italian,chinese,pizza,burger,greek,german,indian,regional,kebab,turkish,asian,thai,mexican,japanese,french,sandwich,sushi" default="" delete_if_empty="true" />
+            <multiselect key="cuisine" text="Cuisine" values="italian;chinese;pizza;burger;greek;german;indian;regional;kebab;turkish;asian;thai;mexican;japanese;french;sandwich;sushi" default=""/>
             <check key="microbrewery" text="Microbrewery" default="off" delete_if_empty="true" />
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" default="" delete_if_empty="true" />
@@ -3604,7 +3604,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
         <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=vending_machine" />
         <label text="Edit Vending machine" />
         <key key="amenity" value="vending_machine" />
-        <combo key="vending" text="Vending products" values="public_transport_tickets,public_transport_plans,parking_tickets,food,drinks,sweets,cigarettes,photos,animal_food,news_papers,toys,stamps,SIM-cards,telephone_vouchers,vouchers,bicycle_tube,condoms,tampons,excrement_bags" default="" delete_if_empty="true" />
+        <multiselect key="vending" text="Vending products" values="public_transport_tickets;public_transport_plans;parking_tickets;food;drinks;sweets;cigarettes;photos;animal_food;news_papers;toys;stamps;SIM-cards;telephone_vouchers;vouchers;bicycle_tube;condoms;tampons;excrement_bags" default="" />
         <text key="operator" text="Operator" default="" delete_if_empty="true" />
         <text key="ref" text="Reference number" default="" delete_if_empty="true" />
         <text key="note" text="Note" default="" delete_if_empty="true" />
