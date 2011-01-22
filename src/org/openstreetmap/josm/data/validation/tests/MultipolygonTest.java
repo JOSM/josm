@@ -23,8 +23,8 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
+import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.gui.mappaint.StyleSource;
 
 public class MultipolygonTest extends Test {
 
@@ -40,7 +40,7 @@ public class MultipolygonTest extends Test {
     protected static final int NO_STYLE = 1610;
     protected static final int NO_STYLE_POLYGON = 1611;
 
-    private static StyleSource styles;
+    private static ElemStyles styles;
 
     private final List<List<Node>> nonClosedWays = new ArrayList<List<Node>>();
 
@@ -51,7 +51,7 @@ public class MultipolygonTest extends Test {
 
     @Override
     public void initialize() throws Exception {
-        styles = MapPaintStyles.getStyles().getStyleSet();
+        styles = MapPaintStyles.getStyles();
     }
 
     private List<List<Node>> joinWays(Collection<Way> ways) {

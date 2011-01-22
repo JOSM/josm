@@ -44,7 +44,7 @@ public class AreaElemStyle extends ElemStyle
         priority = 0;
     }
 
-    public ElemStyle getLineStyle() {
+    public LineElemStyle getLineStyle() {
         return line;
     }
 

@@ -75,8 +75,9 @@ public class MapPaintStyles {
         Collection<? extends SourceEntry> sourceEntries = (new MapPaintPrefMigration()).get();
 
         for (SourceEntry entry : sourceEntries) {
+            StyleSource style = new StyleSource(entry);
             try {
-                XmlObjectParser parser = new XmlObjectParser(new ElemStyleHandler(entry.name));
+                XmlObjectParser parser = new XmlObjectParser(new ElemStyleHandler(style));
                 MirroredInputStream in = new MirroredInputStream(entry.url);
                 InputStream zip = in.getZipEntry("xml","style");
                 InputStreamReader ins;
@@ -94,13 +95,17 @@ public class MapPaintStyles {
             } catch(IOException e) {
                 System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", entry.url, e.toString()));
                 e.printStackTrace();
+                style.hasError = true;
             } catch(SAXParseException e) {
                 System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Error was: [{1}:{2}] {3}", entry.url, e.getLineNumber(), e.getColumnNumber(), e.getMessage()));
                 e.printStackTrace();
+                style.hasError = true;
             } catch(SAXException e) {
                 System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Error was: {1}", entry.url, e.getMessage()));
                 e.printStackTrace();
+                style.hasError = true;
             }
+            styles.add(style);
         }
         iconDirs = null;
         zipIcons = null;

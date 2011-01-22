@@ -14,11 +14,11 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class ElemStyleHandler extends DefaultHandler
 {
-    boolean inDoc, inRule, inCondition, inLine, inLineMod, inIcon, inArea, inScaleMax, inScaleMin;
-    boolean hadLine, hadLineMod, hadIcon, hadArea;
-    ElemStyles styles;
-    String styleName;
-    RuleElem rule = new RuleElem();
+    private boolean inDoc, inRule, inCondition, inLine, inLineMod, inIcon, inArea, inScaleMax, inScaleMin;
+    private boolean hadLine, hadLineMod, hadIcon, hadArea;
+    private RuleElem rule = new RuleElem();
+
+    StyleSource style;
 
     static class RuleElem {
         Rule rule = new Rule();
@@ -42,23 +42,22 @@ public class ElemStyleHandler extends DefaultHandler
         }
     }
 
-    public ElemStyleHandler(String name) {
-        styleName = name;
+    public ElemStyleHandler(StyleSource style) {
+        this.style = style;
         inDoc=inRule=inCondition=inLine=inIcon=inArea=false;
         rule.init();
-        styles = MapPaintStyles.getStyles();
     }
 
     Color convertColor(String colString)
     {
         int i = colString.indexOf("#");
         Color ret;
-        if(i < 0) {
-            ret = Main.pref.getColor("mappaint."+styleName+"."+colString, Color.red);
+        if (i < 0) {
+            ret = Main.pref.getColor("mappaint."+style.getPrefName()+"."+colString, Color.red);
         } else if(i == 0) {
             ret = ColorHelper.html2color(colString);
         } else {
-            ret = Main.pref.getColor("mappaint."+styleName+"."+colString.substring(0,i),
+            ret = Main.pref.getColor("mappaint."+style.getPrefName()+"."+colString.substring(0,i),
                     ColorHelper.html2color(colString.substring(i)));
         }
         return ret;
@@ -73,7 +72,7 @@ public class ElemStyleHandler extends DefaultHandler
     }
 
     private void error(String message) {
-        System.out.println(styleName + " (" + rule.rule.key + "=" + rule.rule.value + "): " + message);
+        System.out.println(style.getDisplayString() + " (" + rule.rule.key + "=" + rule.rule.value + "): " + message);
     }
 
     private void startElementLine(String qName, Attributes atts, LineElemStyle line) {
@@ -140,13 +139,11 @@ public class ElemStyleHandler extends DefaultHandler
                 inRule=true;
             } else if (qName.equals("rules"))
             {
-                if(styleName == null)
-                {
-                    String n = atts.getValue("name");
-                    if(n == null) {
-                        n = "standard";
-                    }
-                    styleName = n;
+                if (style.name == null) {
+                    style.name = atts.getValue("name");
+                }
+                if (style.shortdescription == null) {
+                    style.shortdescription = atts.getValue("shortdescription");
                 }
             }
             else if (qName.equals("scale_max")) {
@@ -202,7 +199,7 @@ public class ElemStyleHandler extends DefaultHandler
                 for (int count=0; count<atts.getLength(); count++)
                 {
                     if (atts.getQName(count).equals("src")) {
-                        ImageIcon icon = MapPaintStyles.getIcon(atts.getValue(count), styleName);
+                        ImageIcon icon = MapPaintStyles.getIcon(atts.getValue(count), style.getPrefName());
                         hadIcon = (icon != null);
                         rule.icon.icon = icon;
                     } else if (atts.getQName(count).equals("annotate")) {
@@ -241,22 +238,22 @@ public class ElemStyleHandler extends DefaultHandler
         {
             if(hadLine)
             {
-                styles.add(styleName, rule.rule, rule.rules,
+                style.add(rule.rule, rule.rules,
                         new LineElemStyle(rule.line, rule.scaleMax, rule.scaleMin));
             }
             if(hadLineMod)
             {
-                styles.addModifier(styleName, rule.rule, rule.rules,
+                style.addModifier(rule.rule, rule.rules,
                         new LineElemStyle(rule.linemod, rule.scaleMax, rule.scaleMin));
             }
             if(hadIcon)
             {
-                styles.add(styleName, rule.rule, rule.rules,
+                style.add(rule.rule, rule.rules,
                         new IconElemStyle(rule.icon, rule.scaleMax, rule.scaleMin));
             }
             if(hadArea)
             {
-                styles.add(styleName, rule.rule, rule.rules,
+                style.add(rule.rule, rule.rules,
                         new AreaElemStyle(rule.area, rule.scaleMax, rule.scaleMin));
             }
             inRule = false;

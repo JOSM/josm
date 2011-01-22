@@ -33,11 +33,11 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.Poly
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
+import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.IconElemStyle;
 import org.openstreetmap.josm.gui.mappaint.LineElemStyle;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.SimpleNodeElemStyle;
-import org.openstreetmap.josm.gui.mappaint.StyleSource;
 
 public class MapPaintVisitor implements PaintVisitor {
 
@@ -48,7 +48,7 @@ public class MapPaintVisitor implements PaintVisitor {
     private boolean drawMultipolygon;
     private boolean drawRestriction;
     private boolean leftHandTraffic;
-    private StyleSource styles;
+    private ElemStyles styles;
     private double circum;
     private double dist;
     private static int paintid = 0;
@@ -534,7 +534,7 @@ public class MapPaintVisitor implements PaintVisitor {
 
         zoomLevelDisplay = Main.pref.getBoolean("mappaint.zoomLevelDisplay", false);
         circum = nc.getDist100Pixel();
-        styles = MapPaintStyles.getStyles().getStyleSet();
+        styles = MapPaintStyles.getStyles();
         drawMultipolygon = Main.pref.getBoolean("mappaint.multipolygon", true);
         drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
         leftHandTraffic = Main.pref.getBoolean("mappaint.lefthandtraffic", false);
