@@ -16,7 +16,7 @@ import javax.swing.JTextArea;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.DatasetCollection;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -64,7 +64,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
     protected String buildText() {
         StringBuilder s = new StringBuilder();
-        for (Node n : new DatasetCollection<Node>(primitives, OsmPrimitive.nodePredicate)) {
+        for (Node n : new SubclassFilteredCollection<OsmPrimitive, Node>(primitives, OsmPrimitive.nodePredicate)) {
             s.append("Node id="+n.getUniqueId());
             if (!checkDataSet(n)) {
                 s.append(" not in data set");
@@ -86,7 +86,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
             s.append('\n');
         }
 
-        for (Way w : new DatasetCollection<Way>(primitives, OsmPrimitive.wayPredicate)) {
+        for (Way w : new SubclassFilteredCollection<OsmPrimitive, Way>(primitives, OsmPrimitive.wayPredicate)) {
             s.append("Way id="+ w.getUniqueId());
             if (!checkDataSet(w)) {
                 s.append(" not in data set");
@@ -109,7 +109,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
             s.append('\n');
         }
 
-        for (Relation r : new DatasetCollection<Relation>(primitives, OsmPrimitive.relationPredicate)) {
+        for (Relation r : new SubclassFilteredCollection<OsmPrimitive, Relation>(primitives, OsmPrimitive.relationPredicate)) {
             s.append("Relation id="+r.getUniqueId());
             if (!checkDataSet(r)) {
                 s.append(" not in data set");
@@ -180,7 +180,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     protected void addWayReferrer(StringBuilder s, Node n) {
         // add way referrer
         List<OsmPrimitive> refs = n.getReferrers();
-        DatasetCollection<Way> wayRefs = new DatasetCollection<Way>(refs, OsmPrimitive.wayPredicate);
+        Collection<Way> wayRefs = new SubclassFilteredCollection<OsmPrimitive, Way>(refs, OsmPrimitive.wayPredicate);
         if (wayRefs.size() > 0) {
             s.append("  way referrer:\n");
             for (Way w : wayRefs) {
@@ -191,7 +191,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
     protected void addRelationReferrer(StringBuilder s, OsmPrimitive o) {
         List<OsmPrimitive> refs = o.getReferrers();
-        DatasetCollection<Relation> relRefs = new DatasetCollection<Relation>(refs, OsmPrimitive.relationPredicate);
+        Collection<Relation> relRefs = new SubclassFilteredCollection<OsmPrimitive, Relation>(refs, OsmPrimitive.relationPredicate);
         if (relRefs.size() > 0) {
             s.append("  relation referrer:\n");
             for (Relation r : relRefs) {

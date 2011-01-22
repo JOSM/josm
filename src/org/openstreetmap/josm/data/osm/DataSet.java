@@ -33,7 +33,9 @@ import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
+import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
  * DataSet is the data behind the application. It can consists of only a few points up to the whole
@@ -173,7 +175,7 @@ public class DataSet implements Cloneable {
     private QuadBuckets<Node> nodes = new QuadBuckets<Node>();
 
     private <T extends OsmPrimitive> Collection<T> getPrimitives(Predicate<OsmPrimitive> predicate) {
-        return new DatasetCollection<T>(allPrimitives, predicate);
+        return new SubclassFilteredCollection<OsmPrimitive, T>(allPrimitives, predicate);
     }
 
     /**
@@ -385,7 +387,7 @@ public class DataSet implements Cloneable {
     private Collection<OsmPrimitive> selectionSnapshot;
 
     public Collection<OsmPrimitive> getSelectedNodesAndWays() {
-        return new DatasetCollection<OsmPrimitive>(getSelected(), new Predicate<OsmPrimitive>() {
+        return new FilteredCollection<OsmPrimitive>(getSelected(), new Predicate<OsmPrimitive>() {
             @Override
             public boolean evaluate(OsmPrimitive primitive) {
                 return primitive instanceof Node || primitive instanceof Way;
@@ -414,21 +416,21 @@ public class DataSet implements Cloneable {
      * Return selected nodes.
      */
     public Collection<Node> getSelectedNodes() {
-        return new DatasetCollection<Node>(getSelected(), OsmPrimitive.nodePredicate);
+        return new SubclassFilteredCollection<OsmPrimitive, Node>(getSelected(), OsmPrimitive.nodePredicate);
     }
 
     /**
      * Return selected ways.
      */
     public Collection<Way> getSelectedWays() {
-        return new DatasetCollection<Way>(getSelected(), OsmPrimitive.wayPredicate);
+        return new SubclassFilteredCollection<OsmPrimitive, Way>(getSelected(), OsmPrimitive.wayPredicate);
     }
 
     /**
      * Return selected relations.
      */
     public Collection<Relation> getSelectedRelations() {
-        return new DatasetCollection<Relation>(getSelected(), OsmPrimitive.relationPredicate);
+        return new SubclassFilteredCollection<OsmPrimitive, Relation>(getSelected(), OsmPrimitive.relationPredicate);
     }
 
     /**

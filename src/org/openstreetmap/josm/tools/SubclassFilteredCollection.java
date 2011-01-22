@@ -1,20 +1,31 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.data.osm;
+package org.openstreetmap.josm.tools;
 
 import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.openstreetmap.josm.tools.Predicate;
+/**
+ * Filtered view of a collection.
+ * (read-only collection, but elements can be changed, of course)
+ * Lets you iterate through those elements of a given collection that satisfy a
+ * certain condition (imposed by a predicate).
+ * @param <S> element type of the underlying collection
+ * @param <T> element type of filtered collection (and subclass of S). The predicate
+ *      must except only objects of type T.
+ */
+public class SubclassFilteredCollection<S, T extends S> extends AbstractCollection<T> {
 
-public class DatasetCollection<T extends OsmPrimitive> extends AbstractCollection<T> {
+    private final Collection<? extends S> collection;
+    private final Predicate<? super S> predicate;
+    int size = -1;
 
     private class FilterIterator implements Iterator<T> {
 
-        private final Iterator<? extends OsmPrimitive> iterator;
-        private OsmPrimitive current;
+        private final Iterator<? extends S> iterator;
+        private S current;
 
-        public FilterIterator(Iterator<? extends OsmPrimitive> iterator) {
+        public FilterIterator(Iterator<? extends S> iterator) {
             this.iterator = iterator;
         }
 
@@ -34,12 +45,11 @@ public class DatasetCollection<T extends OsmPrimitive> extends AbstractCollectio
             return current != null;
         }
 
-        @SuppressWarnings("unchecked")
         public T next() {
             findNext();
-            OsmPrimitive old = current;
+            S old = current;
             current = null;
-            return (T)old;
+            return (T) old;
         }
 
         public void remove() {
@@ -47,18 +57,14 @@ public class DatasetCollection<T extends OsmPrimitive> extends AbstractCollectio
         }
     }
 
-    private final Collection<? extends OsmPrimitive> primitives;
-    private final Predicate<OsmPrimitive> predicate;
-    int size = -1;
-
-    public DatasetCollection(Collection<? extends OsmPrimitive> primitives, Predicate<OsmPrimitive> predicate) {
-        this.primitives = primitives;
+    public SubclassFilteredCollection(Collection<? extends S> collection, Predicate<? super S> predicate) {
+        this.collection = collection;
         this.predicate = predicate;
     }
 
     @Override
     public Iterator<T> iterator() {
-        return new FilterIterator(primitives.iterator());
+        return new FilterIterator(collection.iterator());
     }
 
     @Override

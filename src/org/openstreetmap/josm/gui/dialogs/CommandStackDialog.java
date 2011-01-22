@@ -37,13 +37,13 @@ import javax.swing.tree.TreeSelectionModel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.PseudoCommand;
-import org.openstreetmap.josm.data.osm.DatasetCollection;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Predicate;
@@ -330,7 +330,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
 
             final OsmDataLayer currentLayer = Main.map.mapView.getEditLayer();
 
-            DatasetCollection<OsmPrimitive> prims = new DatasetCollection<OsmPrimitive>(
+            FilteredCollection<OsmPrimitive> prims = new FilteredCollection<OsmPrimitive>(
                     c.getParticipatingPrimitives(),
                     new Predicate<OsmPrimitive>(){
                         public boolean evaluate(OsmPrimitive o) {
