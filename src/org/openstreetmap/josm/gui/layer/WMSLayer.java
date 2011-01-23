@@ -732,6 +732,14 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         public void actionPerformed(ActionEvent e) {
             autoDownloadEnabled = !autoDownloadEnabled;
             if (autoDownloadEnabled) {
+                for (int x = 0; x < dax; ++x) {
+                    for (int y = 0; y < day; ++y) {
+                        GeorefImage img = images[modulo(x,dax)][modulo(y,day)];
+                        if(img.getState() == State.NOT_IN_CACHE){
+                            addRequest(new WMSRequest(img.getXIndex(), img.getYIndex(), info.getPixelPerDegree(), false));
+                        }
+                    }
+                }
                 mv.repaint();
             }
         }
