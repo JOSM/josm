@@ -148,7 +148,7 @@ public class PushbackTokenizer {
                 prefix = "-";
             }
             currentText = prefix + getString();
-            if ("or".equals(currentText))
+            if ("or".equalsIgnoreCase(currentText))
                 return Token.OR;
             try {
                 currentNumber = Long.parseLong(currentText);
