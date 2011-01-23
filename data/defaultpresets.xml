@@ -3100,7 +3100,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <link href="http://wiki.openstreetmap.org/wiki/Tag:power%3Dpole"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power%3Dpole" />
             <label text="Edit Power Pole" />
-            <key key="power" value="tower" />
+            <key key="power" value="pole" />
             <text key="ref" text="Pole reference" default="" delete_if_empty="true" />
         </item>
         <item name="Power Line" icon="presets/power.png" type="way">
