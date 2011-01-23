@@ -55,7 +55,7 @@ public class RemoteControlPreference implements PreferenceSetting
 
     public void addGui(final PreferenceTabbedPane gui) {
 
-        JPanel remote = gui.createPreferenceTab("remotecontrol.gif", tr("Remote Control"), tr("Settings for the remote control feature."));
+        JPanel remote = gui.createPreferenceTab("remotecontrol", tr("Remote Control"), tr("Settings for the remote control feature."));
 
         remote.add(enableRemoteControl = new JCheckBox(tr("Enable remote control"), RemoteControl.PROP_REMOTECONTROL_ENABLED.get()), GBC.eol());
 
