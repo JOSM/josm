@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
+import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSourceHandler;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
@@ -77,7 +78,7 @@ public class MapPaintStyles {
         for (SourceEntry entry : sourceEntries) {
             StyleSource style = new StyleSource(entry);
             try {
-                XmlObjectParser parser = new XmlObjectParser(new ElemStyleHandler(style));
+                XmlObjectParser parser = new XmlObjectParser(new XmlStyleSourceHandler(style));
                 MirroredInputStream in = new MirroredInputStream(entry.url);
                 InputStream zip = in.getZipEntry("xml","style");
                 InputStreamReader ins;

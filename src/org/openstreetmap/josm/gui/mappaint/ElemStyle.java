@@ -7,6 +7,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
+import org.openstreetmap.josm.gui.mappaint.xml.XmlCondition;
 
 abstract public class ElemStyle {
     // zoom range to display the feature
@@ -15,7 +16,7 @@ abstract public class ElemStyle {
 
     public int priority;
     public String code;
-    Collection<Rule> rules = null;
+    Collection<XmlCondition> conditions = null;
 
     @Override
     public boolean equals(Object o) {
@@ -28,11 +29,11 @@ abstract public class ElemStyle {
     }
 
     public String getCode() {
-        if(code == null) {
+        if (code == null) {
             code = "";
-            if (rules != null) {
-                for(Rule r: rules) {
-                    code += r.toCode();
+            if (conditions != null) {
+                for (XmlCondition c: conditions) {
+                    code += c.toCode();
                 }
             }
         }
@@ -40,13 +41,13 @@ abstract public class ElemStyle {
     }
     public boolean check(OsmPrimitive primitive)
     {
-        if(rules == null)
+        if(conditions == null)
             return true;
-        for(Rule r : rules)
+        for(XmlCondition c : conditions)
         {
-            String k = primitive.get(r.key);
-            String bv = OsmUtils.getNamedOsmBoolean(r.boolValue);
-            if(k == null || (r.value != null && !k.equals(r.value))
+            String k = primitive.get(c.key);
+            String bv = OsmUtils.getNamedOsmBoolean(c.boolValue);
+            if(k == null || (c.value != null && !k.equals(c.value))
                     || (bv != null && !bv.equals(OsmUtils.getNamedOsmBoolean(k))))
                 return false;
         }

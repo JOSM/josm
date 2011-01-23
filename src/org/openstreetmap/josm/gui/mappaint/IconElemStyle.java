@@ -21,7 +21,7 @@ public class IconElemStyle extends ElemStyle
         this.priority = i.priority;
         this.maxScale = maxScale;
         this.minScale = minScale;
-        this.rules = i.rules;
+        this.conditions = i.conditions;
     }
     public IconElemStyle() { init(); }
 

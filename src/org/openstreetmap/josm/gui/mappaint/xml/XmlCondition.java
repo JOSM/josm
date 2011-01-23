@@ -1,23 +1,23 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.mappaint;
+package org.openstreetmap.josm.gui.mappaint.xml;
 
 import org.openstreetmap.josm.data.osm.OsmUtils;
 
-public class Rule
+public class XmlCondition
 {
-    String key;
-    String value;
-    String boolValue;
+    public String key;
+    public String value;
+    public String boolValue;
 
-    public Rule()
+    public XmlCondition()
     {
       init();
     }
-    public Rule(Rule r)
+    public XmlCondition(XmlCondition c)
     {
-      key = r.key;
-      value = r.value;
-      boolValue = r.boolValue;
+      key = c.key;
+      value = c.value;
+      boolValue = c.boolValue;
     }
     public String getKey()
     {

@@ -9,10 +9,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.mappaint.xml.XmlCondition;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 
 public class StyleSource extends SourceEntry {
@@ -171,56 +173,56 @@ public class StyleSource extends SourceEntry {
         return areas.size() > 0;
     }
 
-    public void add(Rule r, Collection<Rule> rules, LineElemStyle style) {
-        if(rules != null)
+    public void add(XmlCondition c, Collection<XmlCondition> conditions, LineElemStyle style) {
+        if(conditions != null)
         {
-            style.rules = rules;
+            style.conditions = conditions;
             linesList.add(style);
         }
         else {
-            String key = r.getKey();
+            String key = c.getKey();
             style.code = key;
             lines.put(key, style);
         }
     }
 
-    public void addModifier(Rule r, Collection<Rule> rules, LineElemStyle style) {
-        if(rules != null)
+    public void addModifier(XmlCondition c, Collection<XmlCondition> conditions, LineElemStyle style) {
+        if(conditions != null)
         {
-            style.rules = rules;
+            style.conditions = conditions;
             modifiersList.add(style);
         }
         else
         {
-            String key = r.getKey();
+            String key = c.getKey();
             style.code = key;
             modifiers.put(key, style);
         }
     }
 
-    public void add(Rule r, Collection<Rule> rules, AreaElemStyle style) {
-        if(rules != null)
+    public void add(XmlCondition c, Collection<XmlCondition> conditions, AreaElemStyle style) {
+        if(conditions != null)
         {
-            style.rules = rules;
+            style.conditions = conditions;
             areasList.add(style);
         }
         else
         {
-            String key = r.getKey();
+            String key = c.getKey();
             style.code = key;
             areas.put(key, style);
         }
     }
 
-    public void add(Rule r, Collection<Rule> rules, IconElemStyle style) {
-        if(rules != null)
+    public void add(XmlCondition c, Collection<XmlCondition> conditions, IconElemStyle style) {
+        if(conditions != null)
         {
-            style.rules = rules;
+            style.conditions = conditions;
             iconsList.add(style);
         }
         else
         {
-            String key = r.getKey();
+            String key = c.getKey();
             style.code = key;
             icons.put(key, style);
         }
