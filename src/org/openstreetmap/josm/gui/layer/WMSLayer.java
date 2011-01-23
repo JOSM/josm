@@ -7,6 +7,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -274,13 +275,11 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
     }
 
     public int getImageWidth(int xIndex) {
-        int overlap = (int)(PROP_OVERLAP.get()?PROP_OVERLAP_EAST.get() * imageSize * getPPD() / info.getPixelPerDegree() / 100:0);
-        return getImageX(xIndex + 1) - getImageX(xIndex) + overlap;
+        return getImageX(xIndex + 1) - getImageX(xIndex);
     }
 
     public int getImageHeight(int yIndex) {
-        int overlap = (int)(PROP_OVERLAP.get()?PROP_OVERLAP_NORTH.get() * imageSize * getPPD() / info.getPixelPerDegree() / 100:0);
-        return getImageY(yIndex + 1) - getImageY(yIndex) + overlap;
+        return getImageY(yIndex + 1) - getImageY(yIndex);
     }
 
     /**
@@ -299,6 +298,24 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
     public int getBaseImageHeight() {
         int overlap = (PROP_OVERLAP.get()?PROP_OVERLAP_NORTH.get() * imageSize / 100:0);
         return imageSize + overlap;
+    }
+
+    public int getImageSize() {
+        return imageSize;
+    }
+
+    /**
+     * 
+     * @return When overlapping is enabled, return visible part of tile. Otherwise return original image
+     */
+    public BufferedImage normalizeImage(BufferedImage img) {
+        if (WMSLayer.PROP_OVERLAP.get() && (WMSLayer.PROP_OVERLAP_EAST.get() > 0 || WMSLayer.PROP_OVERLAP_NORTH.get() > 0)) {
+            BufferedImage copy = img;
+            img = new BufferedImage(imageSize, imageSize, copy.getType());
+            img.createGraphics().drawImage(copy, 0, 0, imageSize, imageSize,
+                    0, copy.getHeight() - imageSize, imageSize, copy.getHeight(), null);
+        }
+        return img;
     }
 
 

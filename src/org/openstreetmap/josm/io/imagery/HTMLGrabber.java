@@ -42,7 +42,7 @@ public class HTMLGrabber extends WMSGrabber {
             throw new IOException( "Could not start browser. Please check that the executable path is correct.\n" + ioe.getMessage() );
         }
 
-        BufferedImage img = ImageIO.read(browser.getInputStream());
+        BufferedImage img = layer.normalizeImage(ImageIO.read(browser.getInputStream()));
         cache.saveImg(urlstring, img);
         return img;
     }

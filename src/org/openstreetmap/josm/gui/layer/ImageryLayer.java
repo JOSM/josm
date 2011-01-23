@@ -200,6 +200,8 @@ public abstract class ImageryLayer extends Layer {
         g.fillRect(0, 0, img.getWidth(), img.getHeight());
         g.setFont(g.getFont().deriveFont(Font.PLAIN).deriveFont(36.0f));
         g.setColor(Color.BLACK);
-        g.drawString(tr("ERROR"), 30, img.getHeight()/2);
+
+        String text = tr("ERROR");
+        g.drawString(text, (img.getWidth() + g.getFontMetrics().stringWidth(text)) / 2, img.getHeight()/2);
     }
 }

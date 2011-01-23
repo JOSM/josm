@@ -87,7 +87,8 @@ public class GeorefImage implements Serializable {
             Font tempFont = font.deriveFont(Font.PLAIN).deriveFont(36.0f);
             g.setFont(tempFont);
             g.setColor(Color.BLACK);
-            g.drawString(tr("Not in cache"), 10, img.getHeight()/2);
+            String text = tr("Not in cache");
+            g.drawString(text, (img.getWidth() - g.getFontMetrics().stringWidth(text)) / 2, img.getHeight()/2);
             g.setFont(font);
             this.image = img;
             break;
@@ -99,7 +100,7 @@ public class GeorefImage implements Serializable {
     }
 
     private BufferedImage createImage() {
-        return new BufferedImage(layer.getBaseImageWidth(), layer.getBaseImageHeight(), BufferedImage.TYPE_INT_RGB);
+        return new BufferedImage(layer.getImageSize(), layer.getImageSize(), BufferedImage.TYPE_INT_RGB);
     }
 
     public boolean paint(Graphics g, NavigatableComponent nc, int xIndex, int yIndex, int leftEdge, int bottomEdge) {

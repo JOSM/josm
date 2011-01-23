@@ -180,7 +180,7 @@ public class WMSGrabber extends Grabber {
             throw new IOException(readException(conn));
 
         InputStream is = new ProgressInputStream(conn, null);
-        BufferedImage img = ImageIO.read(is);
+        BufferedImage img = layer.normalizeImage(ImageIO.read(is));
         is.close();
 
         cache.saveImg(url.toString(), img);
