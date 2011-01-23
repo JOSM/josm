@@ -37,7 +37,9 @@ public class SimpleNodeElemStyle extends ElemStyle {
             if (painter.isInactive() || n.isDisabled()) {
                 color = settings.getInactiveColor();
             } else if (selected) {
-                color = member ? settings.getRelationSelectedColor() : settings.getSelectedColor();
+                color = settings.getSelectedColor();
+            } else if (member) {
+                color = settings.getRelationSelectedColor();
             } else if (isConnection) {
                 if (n.isTagged()) {
                     color = settings.getTaggedConnectionColor();

@@ -180,7 +180,9 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
         if(w.isHighlighted()) {
             markColor = paintSettings.getHighlightColor();
         } else if (selected) {
-            markColor = member ? paintSettings.getRelationSelectedColor() : paintSettings.getSelectedColor();
+            markColor = paintSettings.getSelectedColor();
+        } else if (member) {
+            markColor = paintSettings.getRelationSelectedColor();
         } else if(w.isDisabled()) {
             markColor = paintSettings.getInactiveColor();
             myDashedColor = paintSettings.getInactiveColor();

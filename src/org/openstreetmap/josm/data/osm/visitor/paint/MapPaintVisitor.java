@@ -522,7 +522,7 @@ public class MapPaintVisitor implements PaintVisitor {
     }
 
     /* Shows areas before non-areas */
-    public void visitAll(DataSet data, boolean virtual, Bounds bounds) {
+    public void visitAll(final DataSet data, boolean virtual, Bounds bounds) {
         BBox bbox = new BBox(bounds);
         this.data = data;
         ++paintid;
@@ -633,13 +633,13 @@ public class MapPaintVisitor implements PaintVisitor {
                                     if(style instanceof AreaElemStyle) {
                                         ((AreaElemStyle)style).getLineStyle().paintPrimitive(osm, paintSettings, painter, true, true);
                                     } else {
-                                        style.paintPrimitive(osm, paintSettings, painter, true, true);
+                                        style.paintPrimitive(osm, paintSettings, painter, data.isSelected(osm), true);
                                     }
                                 }
                                 else if(osm instanceof Node)
                                 {
                                     if(isZoomOk(style)) {
-                                        style.paintPrimitive(osm, paintSettings, painter, true, true);
+                                        style.paintPrimitive(osm, paintSettings, painter, data.isSelected(osm), true);
                                     }
                                 }
                                 osm.mappaintDrawnCode = paintid;

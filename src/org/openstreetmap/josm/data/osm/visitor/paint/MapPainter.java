@@ -206,10 +206,10 @@ public class MapPainter {
             g.drawString (name, p.x+w/2+2, p.y+h/2+2);
             g.setFont(defaultFont);
         }
-        if (selected)
+        if (selected || member)
         {
-            g.setColor (  member ? relationSelectedColor : selectedColor );
-            g.drawRect (p.x-w/2-2, p.y-h/2-2, w+4, h+4);
+            g.setColor(selected? selectedColor : relationSelectedColor);
+            g.drawRect(p.x-w/2-2, p.y-h/2-2, w+4, h+4);
         }
     }
 
