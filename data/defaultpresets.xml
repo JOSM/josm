@@ -2123,7 +2123,6 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="bicycle" text="Cycling" default="off" delete_if_empty="true" />
             <check key="mtb" text="Mountainbiking" default="off" delete_if_empty="true" />
             <check key="ski" text="Skiing" default="off" delete_if_empty="true" />
-            <check key="ski" text="Skiing" default="off" delete_if_empty="true" />
             <check key="horse" text="Riding" default="off" delete_if_empty="true" />
             <label text="... other transportation modes possible" />
         </item>
