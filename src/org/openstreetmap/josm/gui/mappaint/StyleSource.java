@@ -43,23 +43,23 @@ public class StyleSource extends SourceEntry {
             String val = primitive.get(key);
             IconElemStyle style;
             if ((style = icons.get("n" + key + "=" + val)) != null) {
-                if (icon == null || style.priority > icon.priority) {
+                if (icon == null || style.priority >= icon.priority) {
                     icon = style;
                 }
             }
             if ((style = icons.get("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val))) != null) {
-                if (icon == null || style.priority > icon.priority) {
+                if (icon == null || style.priority >= icon.priority) {
                     icon = style;
                 }
             }
             if ((style = icons.get("x" + key)) != null) {
-                if (icon == null || style.priority > icon.priority) {
+                if (icon == null || style.priority >= icon.priority) {
                     icon = style;
                 }
             }
         }
         for (IconElemStyle s : iconsList) {
-            if ((icon == null || s.priority > icon.priority) && s.check(primitive)) {
+            if ((icon == null || s.priority >= icon.priority) && s.check(primitive)) {
                 icon = s;
             }
         }
@@ -74,10 +74,10 @@ public class StyleSource extends SourceEntry {
             AreaElemStyle styleArea;
             LineElemStyle styleLine;
             String idx = "n" + key + "=" + val;
-            if ((styleArea = areas.get(idx)) != null && (area == null || styleArea.priority > area.priority) && (!noclosed || !styleArea.closed)) {
+            if ((styleArea = areas.get(idx)) != null && (area == null || styleArea.priority >= area.priority) && (!noclosed || !styleArea.closed)) {
                 area = styleArea;
             }
-            if ((styleLine = lines.get(idx)) != null && (line == null || styleLine.priority > line.priority)) {
+            if ((styleLine = lines.get(idx)) != null && (line == null || styleLine.priority >= line.priority)) {
                 line = styleLine;
                 lineIdx = idx;
             }
@@ -85,10 +85,10 @@ public class StyleSource extends SourceEntry {
                 overlayMap.put(idx, styleLine);
             }
             idx = "b" + key + "=" + OsmUtils.getNamedOsmBoolean(val);
-            if ((styleArea = areas.get(idx)) != null && (area == null || styleArea.priority > area.priority) && (!noclosed || !styleArea.closed)) {
+            if ((styleArea = areas.get(idx)) != null && (area == null || styleArea.priority >= area.priority) && (!noclosed || !styleArea.closed)) {
                 area = styleArea;
             }
-            if ((styleLine = lines.get(idx)) != null && (line == null || styleLine.priority > line.priority)) {
+            if ((styleLine = lines.get(idx)) != null && (line == null || styleLine.priority >= line.priority)) {
                 line = styleLine;
                 lineIdx = idx;
             }
@@ -96,10 +96,10 @@ public class StyleSource extends SourceEntry {
                 overlayMap.put(idx, styleLine);
             }
             idx = "x" + key;
-            if ((styleArea = areas.get(idx)) != null && (area == null || styleArea.priority > area.priority) && (!noclosed || !styleArea.closed)) {
+            if ((styleArea = areas.get(idx)) != null && (area == null || styleArea.priority >= area.priority) && (!noclosed || !styleArea.closed)) {
                 area = styleArea;
             }
-            if ((styleLine = lines.get(idx)) != null && (line == null || styleLine.priority > line.priority)) {
+            if ((styleLine = lines.get(idx)) != null && (line == null || styleLine.priority >= line.priority)) {
                 line = styleLine;
                 lineIdx = idx;
             }
@@ -108,12 +108,12 @@ public class StyleSource extends SourceEntry {
             }
         }
         for (AreaElemStyle s : areasList) {
-            if ((area == null || s.priority > area.priority) && (!noclosed || !s.closed) && s.check(primitive)) {
+            if ((area == null || s.priority >= area.priority) && (!noclosed || !s.closed) && s.check(primitive)) {
                 area = s;
             }
         }
         for (LineElemStyle s : linesList) {
-            if ((line == null || s.priority > line.priority) && s.check(primitive)) {
+            if ((line == null || s.priority >= line.priority) && s.check(primitive)) {
                 line = s;
             }
         }
