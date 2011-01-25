@@ -574,6 +574,13 @@ public class SearchCompiler {
         @Override public String toString() {return "untagged";}
     }
 
+    private static class Closed extends Match {
+        @Override public boolean match(OsmPrimitive osm) {
+            return osm instanceof Way && ((Way) osm).isClosed();
+        }
+        @Override public String toString() {return "closed";}
+    }
+
     private static class Parent extends Match {
         private Match child;
         public Parent(Match m) { child = m; }
@@ -709,6 +716,8 @@ public class SearchCompiler {
                 return new Untagged();
             else if ("selected".equals(key))
                 return new Selected();
+            else if ("closed".equals(key))
+                return new Closed();
             else if ("child".equals(key))
                 return new Child(parseFactor());
             else if ("parent".equals(key))

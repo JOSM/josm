@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions.search;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -131,6 +132,9 @@ public class PushbackTokenizer {
         case '|':
             getChar();
             return Token.OR;
+        case '&':
+            getChar();
+            return nextToken();
         case '?':
             getChar();
             return Token.QUESTION_MARK;
@@ -150,6 +154,8 @@ public class PushbackTokenizer {
             currentText = prefix + getString();
             if ("or".equalsIgnoreCase(currentText))
                 return Token.OR;
+            if ("and".equalsIgnoreCase(currentText))
+                return nextToken();
             try {
                 currentNumber = Long.parseLong(currentText);
             } catch (NumberFormatException e) {
@@ -171,7 +177,7 @@ public class PushbackTokenizer {
 
     public boolean readIfEqual(Token token) {
         Token nextTok = nextToken();
-        if (nextTok == null ? token == null : nextTok == token)
+        if (equal(nextTok, token))
             return true;
         currentToken = nextTok;
         return false;
