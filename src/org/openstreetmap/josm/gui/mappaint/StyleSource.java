@@ -66,7 +66,12 @@ public class StyleSource extends SourceEntry {
         return icon;
     }
 
-    public ElemStyle get(OsmPrimitive primitive, boolean noclosed, AreaElemStyle area, LineElemStyle line) {
+    /**
+     * @param closed The primitive is a closed way or we pretend it is closed.
+     *  This is useful for multipolygon relations and outer ways of untagged
+     *  multipolygon relations.
+     */
+    public ElemStyle get(OsmPrimitive primitive, boolean closed, AreaElemStyle area, LineElemStyle line) {
         String lineIdx = null;
         HashMap<String, LineElemStyle> overlayMap = new HashMap<String, LineElemStyle>();
         for (String key : primitive.keySet()) {
@@ -74,7 +79,7 @@ public class StyleSource extends SourceEntry {
             AreaElemStyle styleArea;
             LineElemStyle styleLine;
             String idx = "n" + key + "=" + val;
-            if ((styleArea = areas.get(idx)) != null && (area == null || styleArea.priority >= area.priority) && (!noclosed || !styleArea.closed)) {
+            if ((styleArea = areas.get(idx)) != null && (area == null || styleArea.priority >= area.priority) && (closed || !styleArea.closed)) {
                 area = styleArea;
             }
             if ((styleLine = lines.get(idx)) != null && (line == null || styleLine.priority >= line.priority)) {
@@ -85,7 +90,7 @@ public class StyleSource extends SourceEntry {
                 overlayMap.put(idx, styleLine);
             }
             idx = "b" + key + "=" + OsmUtils.getNamedOsmBoolean(val);
-            if ((styleArea = areas.get(idx)) != null && (area == null || styleArea.priority >= area.priority) && (!noclosed || !styleArea.closed)) {
+            if ((styleArea = areas.get(idx)) != null && (area == null || styleArea.priority >= area.priority) && (closed || !styleArea.closed)) {
                 area = styleArea;
             }
             if ((styleLine = lines.get(idx)) != null && (line == null || styleLine.priority >= line.priority)) {
@@ -96,7 +101,7 @@ public class StyleSource extends SourceEntry {
                 overlayMap.put(idx, styleLine);
             }
             idx = "x" + key;
-            if ((styleArea = areas.get(idx)) != null && (area == null || styleArea.priority >= area.priority) && (!noclosed || !styleArea.closed)) {
+            if ((styleArea = areas.get(idx)) != null && (area == null || styleArea.priority >= area.priority) && (closed || !styleArea.closed)) {
                 area = styleArea;
             }
             if ((styleLine = lines.get(idx)) != null && (line == null || styleLine.priority >= line.priority)) {
@@ -108,7 +113,7 @@ public class StyleSource extends SourceEntry {
             }
         }
         for (AreaElemStyle s : areasList) {
-            if ((area == null || s.priority >= area.priority) && (!noclosed || !s.closed) && s.check(primitive)) {
+            if ((area == null || s.priority >= area.priority) && (closed || !s.closed) && s.check(primitive)) {
                 area = s;
             }
         }

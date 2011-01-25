@@ -42,44 +42,37 @@ public class ElemStyles {
     }
 
     public ElemStyle get(OsmPrimitive osm) {
-        return get(osm, false);
+        return (!osm.hasKeys()) ? null : ((osm instanceof Node) ? getNode(osm) : get(osm, false));
+    }
+
+    public ElemStyle getNode(OsmPrimitive osm) {
+        IconElemStyle icon = null;
+        for (StyleSource s : getStyleSources()) {
+            icon = s.getNode(osm, icon);
+        }
+        return icon;
     }
 
     public ElemStyle get(OsmPrimitive osm, boolean forceArea) {
         if (!osm.hasKeys())
             return null;
-
-        if (osm instanceof Node) {
-            IconElemStyle icon = null;
-            for (StyleSource s : getStyleSources()) {
-                icon = s.getNode(osm, icon);
-            }
-            return icon;
-        } else {
-            boolean noclosed;
-            if (forceArea) {
-                noclosed = false;
-            } else {
-                noclosed = osm instanceof Way && !((Way) osm).isClosed();
-            }
-            AreaElemStyle area = null;
-            LineElemStyle line = null;
-            ElemStyle result = null;
-            for (StyleSource s : getStyleSources()) {
-                result = s.get(osm, noclosed, area, line);
-                if (result instanceof LineElemStyle) {
-                    area = null;
-                    line = (LineElemStyle) result;
-                } else if (result instanceof AreaElemStyle) {
-                    area = (AreaElemStyle) result;
-                    if (area.getLineStyle() != null) {
-                        line = area.getLineStyle();
-                    }
-                } else if (result != null)
-                    throw new AssertionError();
-            }
-            return result;
+        AreaElemStyle area = null;
+        LineElemStyle line = null;
+        ElemStyle result = null;
+        for (StyleSource s : getStyleSources()) {
+            result = s.get(osm, forceArea || !(osm instanceof Way) || ((Way) osm).isClosed(), area, line);
+            if (result instanceof LineElemStyle) {
+                area = null;
+                line = (LineElemStyle) result;
+            } else if (result instanceof AreaElemStyle) {
+                area = (AreaElemStyle) result;
+                if (area.getLineStyle() != null) {
+                    line = area.getLineStyle();
+                }
+            } else if (result != null)
+                throw new AssertionError();
         }
+        return result;
     }
 
     public boolean hasAreas() {
@@ -110,7 +103,7 @@ public class ElemStyles {
     }
 
     public IconElemStyle getIcon(OsmPrimitive osm) {
-        return osm.hasKeys() ? (IconElemStyle) get(osm) : null;
+        return osm.hasKeys() ? (IconElemStyle) getNode(osm) : null;
     }
 
     public Collection<String> getStyleNames() {
