@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
@@ -30,8 +32,10 @@ import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
@@ -715,5 +719,40 @@ abstract public class Main {
     public static void addListener() {
         parent.addComponentListener(new WindowPositionSizeListener());
         ((JFrame)parent).addWindowStateListener(new WindowPositionSizeListener());
+    }
+
+    public static void checkJava6() {
+        String version = System.getProperty("java.version");
+        if (version != null) {
+            if (version.startsWith("1.6") || version.startsWith("6") ||
+                    version.startsWith("1.7") || version.startsWith("7"))
+                return;
+            if (version.startsWith("1.5") || version.startsWith("5")) {
+                JLabel ho = new JLabel("<html>"+
+                        tr("<h2>JOSM requires Java version 6.</h2>"+
+                                "Detected Java version: {0}.<br>"+
+                                "You can <ul><li>update your Java (JRE) or</li>"+
+                                "<li>use an earlier (Java 5 compatible) version of JOSM.</li></ul>"+
+                                "More Info:", version)+"</html>");
+                JTextArea link = new JTextArea("http://josm.openstreetmap.de/wiki/Help/SystemRequirements");
+                link.setEditable(false);
+                link.setBackground(panel.getBackground());
+                JPanel panel = new JPanel(new GridBagLayout());
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.gridwidth = GridBagConstraints.REMAINDER;
+                gbc.anchor = GridBagConstraints.WEST;
+                gbc.weightx = 1.0;
+                panel.add(ho, gbc);
+                panel.add(link, gbc);
+                final String EXIT = tr("Exit JOSM");
+                final String CONTINUE = tr("Continue, try anyway");
+                int ret = JOptionPane.showOptionDialog(null, panel, tr("Error"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, null, new String[] {EXIT, CONTINUE}, EXIT);
+                if (ret == 0) {
+                    System.exit(0);
+                }
+                return;
+            }
+        }
+        System.err.println("Error: Could not recognize Java Version: "+version);
     }
 }

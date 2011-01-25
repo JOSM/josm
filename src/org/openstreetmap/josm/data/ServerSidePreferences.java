@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -37,7 +37,14 @@ import org.openstreetmap.josm.tools.XmlObjectParser;
  * @author Imi
  */
 public class ServerSidePreferences extends Preferences {
-    static private final Logger logger = Logger.getLogger(ServerSidePreferences.class.getName());
+    //static private final Logger logger = Logger.getLogger(ServerSidePreferences.class.getName());
+
+    public class MissingPassword extends Exception{
+        public String realm;
+        public MissingPassword(String r) {
+            realm = r;
+        }
+    }
 
     private final Connection connection;
 
@@ -46,14 +53,22 @@ public class ServerSidePreferences extends Preferences {
         public Connection(URL serverUrl) {
             this.serverUrl = serverUrl;
         }
-        public String download() {
+        public String download() throws MissingPassword {
             try {
                 System.out.println("reading preferences from "+serverUrl);
                 URLConnection con = serverUrl.openConnection();
-                if (con instanceof HttpURLConnection) {
-                    addAuth((HttpURLConnection) con);
-                }
+                String username = get("applet.username");
+                String password = get("applet.password");
+                if(password.isEmpty() && username.isEmpty())
+                    con.addRequestProperty("Authorization", "Basic "+Base64.encode(username+":"+password));
                 con.connect();
+                if(username.isEmpty() && con instanceof HttpURLConnection
+                    && ((HttpURLConnection) con).getResponseCode()
+                    == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                    String t = ((HttpURLConnection) con).getHeaderField("WWW-Authenticate");
+                    t = t.replace("Basic realm=\"","").replace("\"","");
+                    throw new MissingPassword(t);
+                }
                 BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 StringBuilder b = new StringBuilder();
                 for (String line = reader.readLine(); line != null; line = reader.readLine()) {
@@ -66,8 +81,6 @@ public class ServerSidePreferences extends Preferences {
                 return b.toString();
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch(OsmTransferException e) {
-                e.printStackTrace();
             }
             return null;
         }
@@ -76,11 +89,10 @@ public class ServerSidePreferences extends Preferences {
                 URL u = new URL(getPreferencesDir());
                 System.out.println("uploading preferences to "+u);
                 HttpURLConnection con = (HttpURLConnection)u.openConnection();
-                // FIXME:
-                // - doesn't work if CredentialManager isn't JosmPreferencesCredentialManager
-                // - doesn't work for OAuth
-
-                con.addRequestProperty("Authorization", "Basic "+Base64.encode(get("osm-server.username")+":"+get("osm-server.password")));
+                String username = get("applet.username");
+                String password = get("applet.password");
+                if(password.isEmpty() && username.isEmpty())
+                    con.addRequestProperty("Authorization", "Basic "+Base64.encode(username+":"+password));
                 con.setRequestMethod("POST");
                 con.setDoOutput(true);
                 con.connect();
@@ -145,16 +157,19 @@ public class ServerSidePreferences extends Preferences {
     }
 
     public void download(String userName, String password) {
-        if (!properties.containsKey("osm-server.username") && userName != null) {
-            properties.put("osm-server.username", userName);
+        if (!properties.containsKey("applet.username") && userName != null) {
+            properties.put("applet.username", userName);
         }
-        if (!properties.containsKey("osm-server.password") && password != null) {
-            properties.put("osm-server.password", password);
+        if (!properties.containsKey("applet.password") && password != null) {
+            properties.put("applet.password", password);
         }
-        download();
+        try {
+            download();
+        } catch (MissingPassword e) {
+        }
     }
 
-    public boolean download() {
+    public boolean download() throws MissingPassword {
         resetToDefault();
         String cont = connection.download();
         if (cont == null) return false;

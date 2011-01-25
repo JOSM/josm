@@ -10,7 +10,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
 
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.exception.OAuthException;
@@ -31,7 +31,7 @@ import org.openstreetmap.josm.tools.Base64;
  */
 public class OsmConnection {
     @SuppressWarnings("unused")
-    private static final Logger logger = Logger.getLogger(OsmConnection.class.getName());
+    //private static final Logger logger = Logger.getLogger(OsmConnection.class.getName());
 
     protected boolean cancel = false;
     protected HttpURLConnection activeConnection;

@@ -28,6 +28,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.ServerSidePreferences;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class MainApplet extends JApplet {
@@ -81,17 +82,24 @@ public class MainApplet extends JApplet {
     }
 
     @Override public void start() {
-        // initialize the plaform hook, and
+        I18n.init();
+        Main.checkJava6();
+
+        // initialize the platform hook, and
         Main.determinePlatformHook();
         // call the really early hook before we do anything else
         Main.platform.preStartupHook();
 
         Main.pref = new ServerSidePreferences(getCodeBase());
-        if(!((ServerSidePreferences)Main.pref).download()) {
+        try
+        {
+            ((ServerSidePreferences)Main.pref).download();
+        } catch (ServerSidePreferences.MissingPassword e) {
             String username = args.containsKey("username") ? args.get("username").iterator().next() : null;
             String password = args.containsKey("password") ? args.get("password").iterator().next() : null;
             if (username == null || password == null) {
                 JPanel p = new JPanel(new GridBagLayout());
+                p.add(new JLabel(tr(e.realm)), GBC.eol().fill(GBC.HORIZONTAL));
                 p.add(new JLabel(tr("Username")), GBC.std().insets(0,0,20,0));
                 JTextField user = new JTextField(username == null ? "" : username);
                 p.add(user, GBC.eol().fill(GBC.HORIZONTAL));
@@ -100,10 +108,15 @@ public class MainApplet extends JApplet {
                 p.add(pass, GBC.eol().fill(GBC.HORIZONTAL));
                 JOptionPane.showMessageDialog(null, p);
                 username = user.getText();
+                if("".equals(username))
+                    username = null;
                 password = new String(pass.getPassword());
-                args.put("password", Arrays.asList(new String[]{password}));
+                if("".equals(password))
+                    password = null;
             }
-            ((ServerSidePreferences)Main.pref).download(username, password);
+            if (username != null && password != null) {
+                ((ServerSidePreferences)Main.pref).download(username, password);
+            }
         }
 
         Main.preConstructorInit(args);
