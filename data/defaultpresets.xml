@@ -706,7 +706,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
                 <text key="operator" text="Operator" default="" delete_if_empty="true" />
-                <check key="toilets" default="off" delete_if_empty="true" />
+                <check key="toilets" text="Toilets" default="off" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Rest Area" icon="presets/parking.png" type="node,closedway">
@@ -716,7 +716,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="highway" value="rest_area" />
             <optional>
                 <text key="name" text="Name" default="" delete_if_empty="true" />
-                <check key="toilets" default="off" delete_if_empty="true" />
+                <check key="toilets" text="Toilets" default="off" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Emergency Phone" icon="presets/telephone.png" type="node">
