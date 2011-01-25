@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -37,7 +38,10 @@ import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
@@ -52,6 +56,7 @@ import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.io.imagery.HTMLGrabber;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProvider;
 
 public class ImageryPreference implements PreferenceSetting {
     public static class Factory implements PreferenceSettingFactory {
@@ -348,127 +353,201 @@ public class ImageryPreference implements PreferenceSetting {
 
     static class ImageryProvidersPanel extends JPanel {
         final ImageryLayerTableModel model;
+        final ImageryDefaultLayerTableModel modeldef;
         private final ImageryLayerInfo layerInfo;
+        private JTable listActive;
+        final JTable listdef;
+        final PreferenceTabbedPane gui;
 
         public ImageryProvidersPanel(final PreferenceTabbedPane gui, ImageryLayerInfo layerInfo) {
             super(new GridBagLayout());
+            this.gui = gui;
             this.layerInfo = layerInfo;
             this.model = new ImageryLayerTableModel();
 
-            final JTable list = new JTable(model) {
+            listActive = new JTable(model) {
                 @Override
                 public String getToolTipText(MouseEvent e) {
                     java.awt.Point p = e.getPoint();
                     return model.getValueAt(rowAtPoint(p), columnAtPoint(p)).toString();
                 }
             };
-            JScrollPane scroll = new JScrollPane(list);
-            add(scroll, GBC.eol().fill(GridBagConstraints.BOTH));
-            scroll.setPreferredSize(new Dimension(200, 200));
 
-            final ImageryDefaultLayerTableModel modeldef = new ImageryDefaultLayerTableModel();
-            final JTable listdef = new JTable(modeldef) {
+            modeldef = new ImageryDefaultLayerTableModel();
+            listdef = new JTable(modeldef) {
                 @Override
                 public String getToolTipText(MouseEvent e) {
                     java.awt.Point p = e.getPoint();
                     return (String) modeldef.getValueAt(rowAtPoint(p), columnAtPoint(p));
                 }
             };
-            JScrollPane scrolldef = new JScrollPane(listdef);
-            // scrolldef is added after the buttons so it's clearer the buttons
-            // control the top list and not the default one
-            scrolldef.setPreferredSize(new Dimension(200, 200));
 
             TableColumnModel mod = listdef.getColumnModel();
             mod.getColumn(1).setPreferredWidth(800);
             mod.getColumn(0).setPreferredWidth(200);
-            mod = list.getColumnModel();
+            mod = listActive.getColumnModel();
             mod.getColumn(2).setPreferredWidth(50);
             mod.getColumn(1).setPreferredWidth(800);
             mod.getColumn(0).setPreferredWidth(200);
 
-            JPanel buttonPanel = new JPanel(new FlowLayout());
+            RemoveEntryAction remove = new RemoveEntryAction();
+            listActive.getSelectionModel().addListSelectionListener(remove);
 
-            JButton add = new JButton(tr("Add"));
-            buttonPanel.add(add, GBC.std().insets(0, 5, 0, 0));
-            add.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    AddWMSLayerPanel p = new AddWMSLayerPanel();
-                    int answer = JOptionPane.showConfirmDialog(
-                            gui, p,
-                            tr("Add Imagery URL"),
-                            JOptionPane.OK_CANCEL_OPTION);
-                    if (answer == JOptionPane.OK_OPTION) {
-                        model.addRow(new ImageryInfo(p.getUrlName(), p.getUrl()));
-                    }
-                }
-            });
-
-            JButton delete = new JButton(tr("Delete"));
-            buttonPanel.add(delete, GBC.std().insets(0, 5, 0, 0));
-            delete.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (list.getSelectedRow() == -1) {
-                        JOptionPane.showMessageDialog(gui, tr("Please select the row to delete."));
-                    } else {
-                        Integer i;
-                        while ((i = list.getSelectedRow()) != -1) {
-                            model.removeRow(i);
-                        }
-                    }
-                }
-            });
-
-            JButton copy = new JButton(tr("Copy Selected Default(s)"));
-            buttonPanel.add(copy, GBC.std().insets(0, 5, 0, 0));
-            copy.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int[] lines = listdef.getSelectedRows();
-                    if (lines.length == 0) {
-                        JOptionPane.showMessageDialog(
-                                gui,
-                                tr("Please select at least one row to copy."),
-                                tr("Information"),
-                                JOptionPane.INFORMATION_MESSAGE);
-                        return;
-                    }
-
-                    outer: for (int i = 0; i < lines.length; i++) {
-                        ImageryInfo info = modeldef.getRow(lines[i]);
-
-                        // Check if an entry with exactly the same values already
-                        // exists
-                        for (int j = 0; j < model.getRowCount(); j++) {
-                            if (info.equalsBaseValues(model.getRow(j))) {
-                                // Select the already existing row so the user has
-                                // some feedback in case an entry exists
-                                list.getSelectionModel().setSelectionInterval(j, j);
-                                list.scrollRectToVisible(list.getCellRect(j, 0, true));
-                                continue outer;
-                            }
-                        }
-
-                        if (info.eulaAcceptanceRequired != null) {
-                            if (!confirmEulaAcceptance(gui, info.eulaAcceptanceRequired)) {
-                                continue outer;
-                            }
-                        }
-
-                        model.addRow(new ImageryInfo(info));
-                        int lastLine = model.getRowCount() - 1;
-                        list.getSelectionModel().setSelectionInterval(lastLine, lastLine);
-                        list.scrollRectToVisible(list.getCellRect(lastLine, 0, true));
-                    }
-                }
-            });
-
-            add(buttonPanel);
-            add(Box.createHorizontalGlue(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+            add(new JLabel(tr("Available default entries:")), GBC.eol().insets(5, 5, 0, 0));
             // Add default item list
-            add(scrolldef, GBC.eol().insets(0, 5, 0, 0).fill(GridBagConstraints.BOTH));
+            JScrollPane scrolldef = new JScrollPane(listdef);
+            scrolldef.setPreferredSize(new Dimension(200, 200));
+            add(scrolldef, GBC.std().insets(0, 5, 0, 0).fill(GridBagConstraints.BOTH).weight(1.0, 0.6).insets(5, 0, 0, 0));
+
+            JToolBar tb = new JToolBar(JToolBar.VERTICAL);
+            tb.setFloatable(false);
+            tb.setBorderPainted(false);
+            tb.setOpaque(false);
+            tb.add(new ReloadAction());
+            add(tb, GBC.eol().anchor(GBC.SOUTH).insets(0, 0, 5, 0));
+
+            ActivateAction activate = new ActivateAction();
+            listdef.getSelectionModel().addListSelectionListener(activate);
+            JButton btnActivate = new JButton(activate);
+
+            JToolBar tb2 = new JToolBar(JToolBar.VERTICAL);
+            tb2.setFloatable(false);
+            tb2.setBorderPainted(false);
+            tb2.setOpaque(false);
+            tb2.add(btnActivate);
+            add(tb2, GBC.eol().anchor(GBC.CENTER).insets(5, 15, 5, 0));
+
+            add(Box.createHorizontalGlue(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+
+            add(new JLabel(tr("Selected entries:")), GBC.eol().insets(5, 0, 0, 0));
+            JScrollPane scroll = new JScrollPane(listActive);
+            add(scroll, GBC.std().fill(GridBagConstraints.BOTH).weight(1.0, 0.4).insets(5, 0, 0, 5));
+            scroll.setPreferredSize(new Dimension(200, 200));
+
+            JToolBar sideButtonTB = new JToolBar(JToolBar.VERTICAL);
+            sideButtonTB.setFloatable(false);
+            sideButtonTB.setBorderPainted(false);
+            sideButtonTB.setOpaque(false);
+            sideButtonTB.add(new NewEntryAction());
+            //sideButtonTB.add(edit); TODO
+            sideButtonTB.add(remove);
+            add(sideButtonTB, GBC.eol().anchor(GBC.NORTH).insets(0, 0, 5, 5));
+
+        }
+
+        class NewEntryAction extends AbstractAction {
+            public NewEntryAction() {
+                putValue(NAME, tr("New"));
+                putValue(SHORT_DESCRIPTION, tr("add a new wms/tms entry by entering the url"));
+                putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
+            }
+
+            public void actionPerformed(ActionEvent evt) {
+                AddWMSLayerPanel p = new AddWMSLayerPanel();
+                int answer = JOptionPane.showConfirmDialog(
+                        gui, p,
+                        tr("Add Imagery URL"),
+                        JOptionPane.OK_CANCEL_OPTION);
+                if (answer == JOptionPane.OK_OPTION) {
+                    model.addRow(new ImageryInfo(p.getUrlName(), p.getUrl()));
+                }
+            }
+        }
+
+        class RemoveEntryAction extends AbstractAction implements ListSelectionListener {
+
+            public RemoveEntryAction() {
+                putValue(NAME, tr("Remove"));
+                putValue(SHORT_DESCRIPTION, tr("remove entry"));
+                putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+                updateEnabledState();
+            }
+
+            protected void updateEnabledState() {
+                setEnabled(listActive.getSelectedRowCount() > 0);
+            }
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                updateEnabledState();
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Integer i;
+                while ((i = listActive.getSelectedRow()) != -1) {
+                    model.removeRow(i);
+                }
+            }
+        }
+
+        class ActivateAction extends AbstractAction implements ListSelectionListener {
+            public ActivateAction() {
+                putValue(NAME, tr("Activate"));
+                putValue(SHORT_DESCRIPTION, tr("copy selected defaults"));
+                putValue(SMALL_ICON, ImageProvider.get("preferences", "activate-down"));
+            }
+
+            protected void updateEnabledState() {
+                setEnabled(listdef.getSelectedRowCount() > 0);
+            }
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                updateEnabledState();
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int[] lines = listdef.getSelectedRows();
+                if (lines.length == 0) {
+                    JOptionPane.showMessageDialog(
+                            gui,
+                            tr("Please select at least one row to copy."),
+                            tr("Information"),
+                            JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+
+                outer: for (int i = 0; i < lines.length; i++) {
+                    ImageryInfo info = modeldef.getRow(lines[i]);
+
+                    // Check if an entry with exactly the same values already
+                    // exists
+                    for (int j = 0; j < model.getRowCount(); j++) {
+                        if (info.equalsBaseValues(model.getRow(j))) {
+                            // Select the already existing row so the user has
+                            // some feedback in case an entry exists
+                            listActive.getSelectionModel().setSelectionInterval(j, j);
+                            listActive.scrollRectToVisible(listActive.getCellRect(j, 0, true));
+                            continue outer;
+                        }
+                    }
+
+                    if (info.eulaAcceptanceRequired != null) {
+                        if (!confirmEulaAcceptance(gui, info.eulaAcceptanceRequired)) {
+                            continue outer;
+                        }
+                    }
+
+                    model.addRow(new ImageryInfo(info));
+                    int lastLine = model.getRowCount() - 1;
+                    listActive.getSelectionModel().setSelectionInterval(lastLine, lastLine);
+                    listActive.scrollRectToVisible(listActive.getCellRect(lastLine, 0, true));
+                }
+            }
+        }
+
+        class ReloadAction extends AbstractAction {
+            public ReloadAction() {
+                putValue(SHORT_DESCRIPTION, tr("reload defaults"));
+                putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
+            }
+
+            public void actionPerformed(ActionEvent evt) {
+                layerInfo.load();
+                modeldef.fireTableDataChanged();
+            }
         }
 
         /**

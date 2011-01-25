@@ -218,12 +218,12 @@ public abstract class SourceEditor extends JPanel {
         gbc.anchor = GBC.WEST;
         gbc.insets = new Insets(0, 11, 0, 0);
 
-        JToolBar bottomLeftTB = new JToolBar(JToolBar.VERTICAL);
+        JToolBar bottomLeftTB = new JToolBar();
         bottomLeftTB.setFloatable(false);
         bottomLeftTB.setBorderPainted(false);
         bottomLeftTB.setOpaque(false);
         bottomLeftTB.add(new ReloadSourcesAction(availableSourcesUrl));
-        middleTB.add(Box.createHorizontalGlue());
+        bottomLeftTB.add(Box.createHorizontalGlue());
         add(bottomLeftTB, gbc);
 
         gbc.gridx = 2;
@@ -756,7 +756,7 @@ public abstract class SourceEditor extends JPanel {
     class ActivateSourcesAction extends AbstractAction implements ListSelectionListener {
         public ActivateSourcesAction() {
             putValue(SHORT_DESCRIPTION, getStr(I18nString.ACTIVATE_TOOLTIP));
-            putValue(SMALL_ICON, ImageProvider.get("preferences", "activatestyle"));
+            putValue(SMALL_ICON, ImageProvider.get("preferences", "activate-right"));
             updateEnabledState();
         }
 
@@ -792,7 +792,7 @@ public abstract class SourceEditor extends JPanel {
         public ReloadSourcesAction(String url) {
             putValue(NAME, tr("Reload"));
             putValue(SHORT_DESCRIPTION, tr(getStr(I18nString.RELOAD_ALL_AVAILABLE), url));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs/refresh"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
             this.url = url;
         }
 
