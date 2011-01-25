@@ -85,6 +85,10 @@ public class MainApplet extends JApplet {
         I18n.init();
         Main.checkJava6();
 
+        String url = getParameter("load_url");
+        if(url != null)
+            args.put("download", Arrays.asList(new String[]{url}));
+
         // initialize the platform hook, and
         Main.determinePlatformHook();
         // call the really early hook before we do anything else
