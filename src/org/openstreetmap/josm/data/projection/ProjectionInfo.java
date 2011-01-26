@@ -38,7 +38,7 @@ public class ProjectionInfo {
         if (code.equals(proj.toCode())) return proj;
         if (!(proj instanceof ProjectionSubPrefs))
             throw new IllegalStateException(tr(
-                    "Projection code mismatch in '{0}': toCode() returns ''{1}'', expected ''{2}''",
+                    "Projection code mismatch in ''{0}'': toCode() returns ''{1}'', expected ''{2}''.",
                     proj.getClass().toString(), proj.toCode(), code));
         ProjectionSubPrefs projSub = recreateProj((ProjectionSubPrefs)proj);
         Collection<String> prefs = projSub.getPreferencesFromCode(code);
@@ -47,7 +47,7 @@ public class ProjectionInfo {
         }
         if (!code.equals(projSub.toCode()))
             throw new IllegalStateException(tr(
-                    "Bad implementation of '{0}' projection class: cannot set preferences to match code ''{1}''",
+                    "Bad implementation of ''{0}'' projection class: cannot set preferences to match code ''{1}''.",
                     projSub.getClass().toString(), code));
         allCodes.put(code, projSub);
         return projSub;
