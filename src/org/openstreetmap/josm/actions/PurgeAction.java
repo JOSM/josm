@@ -33,6 +33,7 @@ import org.openstreetmap.josm.command.PurgeCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
@@ -155,6 +156,35 @@ public class PurgeAction extends JosmAction {
             toPurgeAdditionally.addAll(wayNodes);
         }
 
+        if (Main.pref.getBoolean("purge.add_relations_with_only_incomplete_members", true)) {
+            Set<Relation> relSet = new HashSet<Relation>();
+            for (OsmPrimitive osm : toPurgeChecked) {
+                for (OsmPrimitive parent : osm.getReferrers()) {
+                    if (parent instanceof Relation
+                            && !(toPurgeChecked.contains(parent))
+                            && hasOnlyIncompleteMembers((Relation) parent, toPurgeChecked, relSet)) {
+                        relSet.add((Relation) parent);
+                    }
+                }
+            }
+
+            /**
+             * Add higher level relations (list gets extended while looping over it)
+             */
+            List<Relation> relLst = new ArrayList<Relation>(relSet);
+            for (int i=0; i<relLst.size(); ++i) {
+                for (OsmPrimitive parent : relLst.get(i).getReferrers()) {
+                    if (!(toPurgeChecked.contains(parent))
+                            && hasOnlyIncompleteMembers((Relation) parent, toPurgeChecked, relLst)) {
+                        relLst.add((Relation) parent);
+                    }
+                }
+            }
+            relSet = new HashSet<Relation>(relLst);
+            toPurgeChecked.addAll(relSet);
+            toPurgeAdditionally.addAll(relSet);
+        }
+
         boolean modified = false;
         for (OsmPrimitive osm : toPurgeChecked) {
             if (osm.isModified()) {
@@ -267,5 +297,13 @@ public class PurgeAction extends JosmAction {
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         setEnabled(selection != null && !selection.isEmpty());
+    }
+
+    private boolean hasOnlyIncompleteMembers(Relation r, Collection<OsmPrimitive> toPurge, Collection<? extends OsmPrimitive> moreToPurge) {
+        for (RelationMember m : r.getMembers()) {
+            if (!m.getMember().isIncomplete() && !toPurge.contains(m.getMember()) && !moreToPurge.contains(m.getMember()))
+                return false;
+        }
+        return true;
     }
 }
