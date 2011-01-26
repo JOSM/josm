@@ -169,7 +169,7 @@ public class MapPaintVisitor implements PaintVisitor {
             /* way with area style */
             if (fillAreas > dist)
             {
-                painter.drawArea(getPolygon(w), (data.isSelected(w) ? paintSettings.getSelectedColor() : areaStyle.color), painter.getAreaName(w));
+                areaStyle.paintPrimitive(w, paintSettings, painter, data.isSelected(w), false);
             }
             areaStyle.getLineStyle().paintPrimitive(w, paintSettings, painter, data.isSelected(w), false);
         }
@@ -460,18 +460,6 @@ public class MapPaintVisitor implements PaintVisitor {
         if (bounds.x + bounds.width < 0) return false;
         if (bounds.y + bounds.height < 0) return false;
         return true;
-    }
-
-    protected Polygon getPolygon(Way w)
-    {
-        Polygon polygon = new Polygon();
-
-        for (Node n : w.getNodes())
-        {
-            Point p = nc.getPoint(n);
-            polygon.addPoint(p.x,p.y);
-        }
-        return polygon;
     }
 
     protected Point2D getCentroid(Polygon p)

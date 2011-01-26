@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui.mappaint;
 import java.awt.Color;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
 
@@ -50,10 +52,11 @@ public class AreaElemStyle extends ElemStyle
 
     @Override
     public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, MapPainter painter, boolean selected, boolean member) {
-        // TODO
-        /*Way way = (Way)primitive;
-        String name = painter.isShowNames() ? painter.getWayName(way) : null;
-        painter.drawArea(getPolygon(way), selected ? paintSettings.getSelectedColor() : color, name);
-        line.paintPrimitive(way, paintSettings, painter, selected);*/
+        if (primitive instanceof Way) {
+            Way w = (Way) primitive;
+            String name = painter.isShowNames() ? painter.getAreaName(w) : null;
+            painter.drawArea(w, w.isSelected() ? paintSettings.getSelectedColor() : color, name);
+            // line.paintPrimitive(way, paintSettings, painter, selected);
+        }
     }
 }

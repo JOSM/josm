@@ -250,6 +250,21 @@ public class MapPainter {
         }
     }
 
+    private Polygon getPolygon(Way w) {
+        Polygon polygon = new Polygon();
+
+        for (Node n : w.getNodes()) {
+            Point p = nc.getPoint(n);
+            polygon.addPoint(p.x,p.y);
+        }
+        return polygon;
+    }
+
+    public void drawArea(Way w, Color color, String name) {
+        Polygon polygon = getPolygon(w);
+        drawArea(polygon, color, name);
+    }
+
     protected void drawArea(Polygon polygon, Color color, String name) {
 
         /* set the opacity (alpha) level of the filled polygon */
