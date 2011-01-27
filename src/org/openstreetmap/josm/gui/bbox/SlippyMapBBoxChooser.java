@@ -98,7 +98,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
             if (!TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get()) return Collections.<TileSource>emptyList();
             List<TileSource> sources = new ArrayList<TileSource>();
             for (ImageryInfo info : ImageryLayerInfo.instance.getLayers()) {
-                if (existingSlippyMapUrls.contains(info.getURL())) {
+                if (existingSlippyMapUrls.contains(info.getUrl())) {
                     continue;
                 }
                 TileSource source = TMSLayer.getTileSource(info);

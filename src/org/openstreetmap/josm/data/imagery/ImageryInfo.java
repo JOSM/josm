@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Class that stores info about a WMS server.
+ * Class that stores info about an image background layer.
  *
  * @author Frederik Ramm <frederik@remote.org>
  */
 public class ImageryInfo implements Comparable<ImageryInfo> {
+
     public enum ImageryType {
         WMS("wms"),
         TMS("tms"),
@@ -25,13 +26,22 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         }
     }
 
+    private final static String[] BLACKLIST_REGEXES = {
+        // These entries are for Google tile servers (names and IPV4 numbers)
+        ".*\\.google\\.com/.*",
+        ".*209\\.85\\.2\\d\\d.*",
+        ".*209\\.85\\.1[3-9]\\d.*",
+        ".*209\\.85\\.12[89].*"
+    };
+
     String name;
-    String url=null;
+    String url = null;
     String cookies = null;
     public final String eulaAcceptanceRequired;
     ImageryType imageryType = ImageryType.WMS;
     double pixelPerDegree = 0.0;
     int maxZoom = 0;
+    private boolean blacklisted = false;
 
     public ImageryInfo(String name) {
         this.name=name;
@@ -40,26 +50,26 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
 
     public ImageryInfo(String name, String url) {
         this.name=name;
-        setURL(url);
+        setUrl(url);
         this.eulaAcceptanceRequired = null;
     }
 
     public ImageryInfo(String name, String url, String eulaAcceptanceRequired) {
         this.name=name;
-        setURL(url);
+        setUrl(url);
         this.eulaAcceptanceRequired = eulaAcceptanceRequired;
     }
 
     public ImageryInfo(String name, String url, String eulaAcceptanceRequired, String cookies) {
         this.name=name;
-        setURL(url);
+        setUrl(url);
         this.cookies=cookies;
         this.eulaAcceptanceRequired = eulaAcceptanceRequired;
     }
 
     public ImageryInfo(String name, String url, String cookies, double pixelPerDegree) {
         this.name=name;
-        setURL(url);
+        setUrl(url);
         this.cookies=cookies;
         this.pixelPerDegree=pixelPerDegree;
         this.eulaAcceptanceRequired = null;
@@ -70,7 +80,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         String e3 = null;
         String e4 = null;
         if(url != null && !url.isEmpty()) {
-            e2 = getFullURL();
+            e2 = getFullUrl();
         }
         if(cookies != null && !cookies.isEmpty()) {
             e3 = cookies;
@@ -109,7 +119,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         ArrayList<String> array = new ArrayList<String>(list);
         this.name=array.get(0);
         if(array.size() >= 2) {
-            setURL(array.get(1));
+            setUrl(array.get(1));
         }
         if(array.size() >= 3) {
             this.cookies=array.get(2);
@@ -159,7 +169,18 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         this.maxZoom = maxZoom;
     }
 
-    public void setURL(String url) {
+    public void setUrl(String url) {
+
+        // determine if URL is on blacklist and flag accordingly.
+        blacklisted = false;
+        for (String blacklistRegex : BLACKLIST_REGEXES) {
+            if (url.matches(blacklistRegex)) {
+                blacklisted = true;
+                System.err.println("layer '" + name + "' uses blacklisted URL");
+                break;
+            }
+        }
+
         for (ImageryType type : ImageryType.values()) {
             if (url.startsWith(type.getUrlString() + ":")) {
                 this.url = url.substring(type.getUrlString().length() + 1);
@@ -181,7 +202,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         this.name = name;
     }
 
-    public String getURL() {
+    public String getUrl() {
         return this.url;
     }
 
@@ -197,7 +218,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         return this.maxZoom;
     }
 
-    public String getFullURL() {
+    public String getFullUrl() {
         return imageryType.getUrlString() + ":" + url;
     }
 
@@ -227,5 +248,9 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
 
     public static boolean isUrlWithPatterns(String url) {
         return url != null && url.contains("{") && url.contains("}");
+    }
+
+    public boolean isBlacklisted() {
+        return blacklisted;
     }
 }

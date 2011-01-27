@@ -19,11 +19,14 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.io.MirroredInputStream;
 
 public class ImageryLayerInfo {
+
     public static final ImageryLayerInfo instance = new ImageryLayerInfo();
     ArrayList<ImageryInfo> layers = new ArrayList<ImageryInfo>();
     ArrayList<ImageryInfo> defaultLayers = new ArrayList<ImageryInfo>();
-    private final static String[] DEFAULT_LAYER_SITES
-    = { "http://josm.openstreetmap.de/maps"};
+
+    private final static String[] DEFAULT_LAYER_SITES = { 
+        "http://josm.openstreetmap.de/maps" 
+    };
 
     public void load() {
         layers.clear();
@@ -31,7 +34,7 @@ public class ImageryLayerInfo {
                 "imagery.layers.default", Collections.<String>emptySet());
         for(Collection<String> c : Main.pref.getArray("imagery.layers",
                 Collections.<Collection<String>>emptySet())) {
-            layers.add(new ImageryInfo(c));
+            add(new ImageryInfo(c));
         }
 
         ArrayList<String> defaultsSave = new ArrayList<String>();
@@ -59,23 +62,25 @@ public class ImageryLayerInfo {
                         String name = tr(val[1]);
                         String url = val[2];
                         String eulaAcceptanceRequired = null;
+
                         if (val.length == 4) {
                             // 4th parameter optional for license agreement (EULA)
                             eulaAcceptanceRequired = val[3];
                         }
+
                         defaultLayers.add(new ImageryInfo(name, url, eulaAcceptanceRequired));
 
-                        if(force) {
+                        if (force) {
                             defaultsSave.add(url);
-                            if(!defaults.contains(url)) {
-                                for(ImageryInfo i : layers) {
-                                    if ((i.getImageryType() == ImageryType.WMS && url.equals(i.getURL()))
-                                            || url.equals(i.getFullURL())) {
+                            if (!defaults.contains(url)) {
+                                for (ImageryInfo i : layers) {
+                                    if ((i.getImageryType() == ImageryType.WMS && url.equals(i.getUrl()))
+                                            || url.equals(i.getFullUrl())) {
                                         force = false;
                                     }
                                 }
-                                if(force) {
-                                    layers.add(new ImageryInfo(name, url));
+                                if (force) {
+                                    add(new ImageryInfo(name, url));
                                 }
                             }
                         }

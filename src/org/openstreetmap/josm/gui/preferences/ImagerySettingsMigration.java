@@ -127,12 +127,12 @@ class ImagerySettingsMigration {
         ImageryLayerInfo layerInfo = ImageryLayerInfo.instance;
         HashSet<String> existingUrls = new HashSet<String>();
         for (ImageryInfo info : layerInfo.getLayers()) {
-            existingUrls.add(info.getFullURL());
+            existingUrls.add(info.getFullUrl());
         }
         for(Collection<String> c : Main.pref.getArray("wmslayers",
                 Collections.<Collection<String>>emptySet())) {
             ImageryInfo info = new ImageryInfo(c);
-            if (!existingUrls.contains(info.getFullURL())) {
+            if (!existingUrls.contains(info.getFullUrl())) {
                 layerInfo.add(info);
             }
         }

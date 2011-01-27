@@ -42,7 +42,7 @@ public class WMSGrabber extends Grabber {
 
     public WMSGrabber(MapView mv, WMSLayer layer) {
         super(mv, layer);
-        this.baseURL = layer.getInfo().getURL();
+        this.baseURL = layer.getInfo().getUrl();
         /* URL containing placeholders? */
         urlWithPatterns = ImageryInfo.isUrlWithPatterns(baseURL);
     }
