@@ -14,19 +14,25 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.mappaint.ElemStyles.WayPrototypesRecord;
+import org.openstreetmap.josm.gui.mappaint.xml.AreaPrototype;
+import org.openstreetmap.josm.gui.mappaint.xml.IconPrototype;
+import org.openstreetmap.josm.gui.mappaint.xml.LinePrototype;
+import org.openstreetmap.josm.gui.mappaint.xml.LinemodPrototype;
+import org.openstreetmap.josm.gui.mappaint.xml.Prototype;
 import org.openstreetmap.josm.gui.mappaint.xml.XmlCondition;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 
 public class StyleSource extends SourceEntry {
 
-    public final HashMap<String, IconElemStyle> icons = new HashMap<String, IconElemStyle>();
-    public final HashMap<String, LineElemStyle> lines = new HashMap<String, LineElemStyle>();
-    public final HashMap<String, LineElemStyle> modifiers = new HashMap<String, LineElemStyle>();
-    public final HashMap<String, AreaElemStyle> areas = new HashMap<String, AreaElemStyle>();
-    public final LinkedList<IconElemStyle> iconsList = new LinkedList<IconElemStyle>();
-    public final LinkedList<LineElemStyle> linesList = new LinkedList<LineElemStyle>();
-    public final LinkedList<LineElemStyle> modifiersList = new LinkedList<LineElemStyle>();
-    public final LinkedList<AreaElemStyle> areasList = new LinkedList<AreaElemStyle>();
+    public final HashMap<String, IconPrototype> icons = new HashMap<String, IconPrototype>();
+    public final HashMap<String, LinePrototype> lines = new HashMap<String, LinePrototype>();
+    public final HashMap<String, LinemodPrototype> modifiers = new HashMap<String, LinemodPrototype>();
+    public final HashMap<String, AreaPrototype> areas = new HashMap<String, AreaPrototype>();
+    public final LinkedList<IconPrototype> iconsList = new LinkedList<IconPrototype>();
+    public final LinkedList<LinePrototype> linesList = new LinkedList<LinePrototype>();
+    public final LinkedList<LinemodPrototype> modifiersList = new LinkedList<LinemodPrototype>();
+    public final LinkedList<AreaPrototype> areasList = new LinkedList<AreaPrototype>();
 
     public boolean hasError = false;
 
@@ -38,10 +44,10 @@ public class StyleSource extends SourceEntry {
         super(entry.url, entry.name, entry.shortdescription, entry.active);
     }
 
-    public IconElemStyle getNode(OsmPrimitive primitive, IconElemStyle icon) {
+    public IconPrototype getNode(OsmPrimitive primitive, IconPrototype icon) {
         for (String key : primitive.keySet()) {
             String val = primitive.get(key);
-            IconElemStyle style;
+            IconPrototype style;
             if ((style = icons.get("n" + key + "=" + val)) != null) {
                 if (icon == null || style.priority >= icon.priority) {
                     icon = style;
@@ -58,7 +64,7 @@ public class StyleSource extends SourceEntry {
                 }
             }
         }
-        for (IconElemStyle s : iconsList) {
+        for (IconPrototype s : iconsList) {
             if ((icon == null || s.priority >= icon.priority) && s.check(primitive)) {
                 icon = s;
             }
@@ -71,80 +77,73 @@ public class StyleSource extends SourceEntry {
      *  This is useful for multipolygon relations and outer ways of untagged
      *  multipolygon relations.
      */
-    public ElemStyle get(OsmPrimitive primitive, boolean closed, AreaElemStyle area, LineElemStyle line) {
+    public void get(OsmPrimitive primitive, boolean closed, WayPrototypesRecord p) {
         String lineIdx = null;
-        HashMap<String, LineElemStyle> overlayMap = new HashMap<String, LineElemStyle>();
+        HashMap<String, LinemodPrototype> overlayMap = new HashMap<String, LinemodPrototype>();
         for (String key : primitive.keySet()) {
             String val = primitive.get(key);
-            AreaElemStyle styleArea;
-            LineElemStyle styleLine;
+            AreaPrototype styleArea;
+            LinePrototype styleLine;
+            LinemodPrototype styleLinemod;
             String idx = "n" + key + "=" + val;
-            if ((styleArea = areas.get(idx)) != null && (area == null || styleArea.priority >= area.priority) && (closed || !styleArea.closed)) {
-                area = styleArea;
+            if ((styleArea = areas.get(idx)) != null && (p.area == null || styleArea.priority >= p.area.priority) && (closed || !styleArea.closed)) {
+                p.area = styleArea;
             }
-            if ((styleLine = lines.get(idx)) != null && (line == null || styleLine.priority >= line.priority)) {
-                line = styleLine;
+            if ((styleLine = lines.get(idx)) != null && (p.line == null || styleLine.priority >= p.line.priority)) {
+                p.line = styleLine;
                 lineIdx = idx;
             }
-            if ((styleLine = modifiers.get(idx)) != null) {
-                overlayMap.put(idx, styleLine);
+            if ((styleLinemod = modifiers.get(idx)) != null) {
+                overlayMap.put(idx, styleLinemod);
             }
             idx = "b" + key + "=" + OsmUtils.getNamedOsmBoolean(val);
-            if ((styleArea = areas.get(idx)) != null && (area == null || styleArea.priority >= area.priority) && (closed || !styleArea.closed)) {
-                area = styleArea;
+            if ((styleArea = areas.get(idx)) != null && (p.area == null || styleArea.priority >= p.area.priority) && (closed || !styleArea.closed)) {
+                p.area = styleArea;
             }
-            if ((styleLine = lines.get(idx)) != null && (line == null || styleLine.priority >= line.priority)) {
-                line = styleLine;
+            if ((styleLine = lines.get(idx)) != null && (p.line == null || styleLine.priority >= p.line.priority)) {
+                p.line = styleLine;
                 lineIdx = idx;
             }
-            if ((styleLine = modifiers.get(idx)) != null) {
-                overlayMap.put(idx, styleLine);
+            if ((styleLinemod = modifiers.get(idx)) != null) {
+                overlayMap.put(idx, styleLinemod);
             }
             idx = "x" + key;
-            if ((styleArea = areas.get(idx)) != null && (area == null || styleArea.priority >= area.priority) && (closed || !styleArea.closed)) {
-                area = styleArea;
+            if ((styleArea = areas.get(idx)) != null && (p.area == null || styleArea.priority >= p.area.priority) && (closed || !styleArea.closed)) {
+                p.area = styleArea;
             }
-            if ((styleLine = lines.get(idx)) != null && (line == null || styleLine.priority >= line.priority)) {
-                line = styleLine;
+            if ((styleLine = lines.get(idx)) != null && (p.line == null || styleLine.priority >= p.line.priority)) {
+                p.line = styleLine;
                 lineIdx = idx;
             }
-            if ((styleLine = modifiers.get(idx)) != null) {
-                overlayMap.put(idx, styleLine);
+            if ((styleLinemod = modifiers.get(idx)) != null) {
+                overlayMap.put(idx, styleLinemod);
             }
         }
-        for (AreaElemStyle s : areasList) {
-            if ((area == null || s.priority >= area.priority) && (closed || !s.closed) && s.check(primitive)) {
-                area = s;
+        for (AreaPrototype s : areasList) {
+            if ((p.area == null || s.priority >= p.area.priority) && (closed || !s.closed) && s.check(primitive)) {
+                p.area = s;
             }
         }
-        for (LineElemStyle s : linesList) {
-            if ((line == null || s.priority >= line.priority) && s.check(primitive)) {
-                line = s;
+        for (LinePrototype s : linesList) {
+            if ((p.line == null || s.priority >= p.line.priority) && s.check(primitive)) {
+                p.line = s;
             }
         }
-        for (LineElemStyle s : modifiersList) {
+        for (LinemodPrototype s : modifiersList) {
             if (s.check(primitive)) {
                 overlayMap.put(s.getCode(), s);
             }
         }
         overlayMap.remove(lineIdx); // do not use overlay if linestyle is from the same rule (example: railway=tram)
-        if (!overlayMap.isEmpty() && line != null) {
-            List<LineElemStyle> tmp = new LinkedList<LineElemStyle>();
-            if (line.overlays != null) {
-                tmp.addAll(line.overlays);
+        if (!overlayMap.isEmpty() && p.line != null) {
+            List<LinemodPrototype> tmp = new LinkedList<LinemodPrototype>();
+            if (p.linemods != null) {
+                tmp.addAll(p.linemods);
             }
             tmp.addAll(overlayMap.values());
             Collections.sort(tmp);
-            line = new LineElemStyle(line, tmp);
+            p.linemods = tmp;
         }
-        if (area != null) {
-            if (line != null) {
-                return new AreaElemStyle(area, line);
-            } else {
-                return area;
-            }
-        }
-        return line;
     }
 
     public boolean isArea(OsmPrimitive o) {
@@ -154,7 +153,7 @@ public class StyleSource extends SourceEntry {
             while (iterator.hasNext()) {
                 String key = iterator.next();
                 String val = o.get(key);
-                AreaElemStyle s = areas.get("n" + key + "=" + val);
+                AreaPrototype s = areas.get("n" + key + "=" + val);
                 if (s == null || (s.closed && noclosed)) {
                     s = areas.get("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val));
                 }
@@ -165,7 +164,7 @@ public class StyleSource extends SourceEntry {
                     return true;
                 }
             }
-            for (AreaElemStyle s : areasList) {
+            for (AreaPrototype s : areasList) {
                 if (!(s.closed && noclosed) && s.check(o)) {
                     return true;
                 }
@@ -178,60 +177,36 @@ public class StyleSource extends SourceEntry {
         return areas.size() > 0;
     }
 
-    public void add(XmlCondition c, Collection<XmlCondition> conditions, LineElemStyle style) {
-        if(conditions != null)
-        {
-            style.conditions = conditions;
-            linesList.add(style);
-        }
-        else {
-            String key = c.getKey();
-            style.code = key;
-            lines.put(key, style);
-        }
-    }
-
-    public void addModifier(XmlCondition c, Collection<XmlCondition> conditions, LineElemStyle style) {
-        if(conditions != null)
-        {
-            style.conditions = conditions;
-            modifiersList.add(style);
-        }
-        else
-        {
-            String key = c.getKey();
-            style.code = key;
-            modifiers.put(key, style);
-        }
-    }
-
-    public void add(XmlCondition c, Collection<XmlCondition> conditions, AreaElemStyle style) {
-        if(conditions != null)
-        {
-            style.conditions = conditions;
-            areasList.add(style);
-        }
-        else
-        {
-            String key = c.getKey();
-            style.code = key;
-            areas.put(key, style);
-        }
-    }
-
-    public void add(XmlCondition c, Collection<XmlCondition> conditions, IconElemStyle style) {
-        if(conditions != null)
-        {
-            style.conditions = conditions;
-            iconsList.add(style);
-        }
-        else
-        {
-            String key = c.getKey();
-            style.code = key;
-            icons.put(key, style);
-        }
-    }
+    public void add(XmlCondition c, Collection<XmlCondition> conditions, Prototype prot) {
+         if(conditions != null)
+         {
+            prot.conditions = conditions;
+            if (prot instanceof IconPrototype) {
+                iconsList.add((IconPrototype) prot);
+            } else if (prot instanceof LinemodPrototype) {
+                modifiersList.add((LinemodPrototype) prot);
+            } else if (prot instanceof LinePrototype) {
+                linesList.add((LinePrototype) prot);
+            } else if (prot instanceof AreaPrototype) {
+                areasList.add((AreaPrototype) prot);
+            } else
+                throw new RuntimeException();
+         }
+         else {
+             String key = c.getKey();
+            prot.code = key;
+            if (prot instanceof IconPrototype) {
+                icons.put(key, (IconPrototype) prot);
+            } else if (prot instanceof LinemodPrototype) {
+               modifiers.put(key, (LinemodPrototype) prot);
+            } else if (prot instanceof LinePrototype) {
+                lines.put(key, (LinePrototype) prot);
+            } else if (prot instanceof AreaPrototype) {
+                areas.put(key, (AreaPrototype) prot);
+            } else
+                throw new RuntimeException();
+         }
+     }
 
     /**
      * the name / identifier that should be used to save custom color values

@@ -7,16 +7,16 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
 
-public class SimpleNodeElemStyle extends ElemStyle {
+public class SimpleNodeElemStyle extends NodeElemStyle {
 
     public static final SimpleNodeElemStyle INSTANCE = new SimpleNodeElemStyle();
 
     private SimpleNodeElemStyle() {
-        minScale = 0;
-        maxScale = 1500;
+        super(0, Long.MAX_VALUE);
+        annotate = true;
     }
 
-    private static final int max(int a, int b, int c, int d) {
+    private static int max(int a, int b, int c, int d) {
         return Math.max(Math.max(a, b), Math.max(c, d));
     }
 
@@ -24,11 +24,9 @@ public class SimpleNodeElemStyle extends ElemStyle {
     public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings settings, MapPainter painter,
             boolean selected, boolean member) {
         Node n = (Node)primitive;
-        String name = painter.isShowNames()?painter.getNodeName(n):null;
-
 
         if (n.isHighlighted()) {
-            painter.drawNode(n, settings.getHighlightColor(), settings.getSelectedNodeSize(), settings.isFillSelectedNode(), name);
+            painter.drawNode(n, settings.getHighlightColor(), settings.getSelectedNodeSize(), settings.isFillSelectedNode(), getName(n, painter));
         } else {
 
             Color color;
@@ -64,8 +62,7 @@ public class SimpleNodeElemStyle extends ElemStyle {
                                     (isConnection && settings.isFillConnectionNode()) ||
                                     settings.isFillUnselectedNode();
 
-            painter.drawNode(n, color, size, fill, name);
+            painter.drawNode(n, color, size, fill, getName(n, painter));
         }
     }
-
 }

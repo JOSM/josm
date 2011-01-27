@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.mappaint;
 
 import java.awt.Color;
-import java.util.Collection;
+import java.util.Arrays;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -10,14 +10,18 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
-import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.Utils;
 
-public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle> {
+public class LineElemStyle extends ElemStyle {
 
     public static final LineElemStyle UNTAGGED_WAY;
 
     static {
-        UNTAGGED_WAY = new LineElemStyle();
+        UNTAGGED_WAY = new LineElemStyle(0, Long.MAX_VALUE, -1, 0, PaintColors.UNTAGGED.get(), new float[0], null);
+    }
+
+    public static LineElemStyle createSimpleLineStyle(Color color) {
+        return new LineElemStyle(0, Long.MAX_VALUE, -1, 0, color, new float[0], null);
     }
 
     private int width;
@@ -26,115 +30,13 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
     private float[] dashed;
     public Color dashedColor;
 
-    public boolean over;
-    public enum WidthMode { ABSOLUTE, PERCENT, OFFSET }
-    public WidthMode widthMode;
-
-    public Collection<LineElemStyle> overlays;
-
-    public LineElemStyle(LineElemStyle s, long maxScale, long minScale) {
-        this.width = s.width;
-        this.realWidth = s.realWidth;
-        this.color = s.color;
-        this.dashed = s.dashed;
-        this.dashedColor = s.dashedColor;
-        this.over = s.over;
-        this.widthMode = s.widthMode;
-
-        this.priority = s.priority;
-        this.maxScale = maxScale;
-        this.minScale = minScale;
-        this.conditions = s.conditions;
-    }
-
-    public LineElemStyle(LineElemStyle s, Collection<LineElemStyle> overlays) {
-        this.width = s.width;
-        this.realWidth = s.realWidth;
-        this.color = s.color;
-        this.dashed = s.dashed;
-        this.dashedColor = s.dashedColor;
-        this.over = s.over;
-        this.widthMode = s.widthMode;
-
-        this.priority = s.priority;
-        this.maxScale = s.maxScale;
-        this.minScale = s.minScale;
-        this.conditions = s.conditions;
-
-        this.overlays = overlays;
-        this.code = s.code;
-        for (LineElemStyle o : overlays) {
-            this.code += o.code;
-        }
-    }
-
-    public LineElemStyle() { init(); }
-
-    public void init()
-    {
-        width = -1;
-        realWidth = 0;
-        dashed = new float[0];
-        dashedColor = null;
-        priority = 0;
-        color = PaintColors.UNTAGGED.get();
-        over = true; // only used for line modifications
-        widthMode = WidthMode.ABSOLUTE;
-        overlays = null;
-    }
-
-    // get width for overlays
-    public int getWidth(int ref)
-    {
-        int res;
-        if(widthMode == WidthMode.ABSOLUTE) {
-            res = width;
-        } else if(widthMode == WidthMode.OFFSET) {
-            res = ref + width;
-        } else
-        {
-            if(width < 0) {
-                res = 0;
-            } else {
-                res = ref*width/100;
-            }
-        }
-        return res <= 0 ? 1 : res;
-    }
-
-    public int compareTo(LineElemStyle s) {
-        if(s.priority != priority)
-            return s.priority > priority ? 1 : -1;
-            if(!over && s.over)
-                return -1;
-            // we have no idea how to order other objects :-)
-            return 0;
-    }
-
-    public float[] getDashed() {
-        return dashed;
-    }
-
-    public void setDashed(float[] dashed) {
-        if (dashed.length == 0) {
-            this.dashed = dashed;
-            return;
-        }
-
-        boolean found = false;
-        for (int i=0; i<dashed.length; i++) {
-            if (dashed[i] > 0) {
-                found = true;
-            }
-            if (dashed[i] < 0) {
-                System.out.println(I18n.tr("Illegal dash pattern, values must be positive"));
-            }
-        }
-        if (found) {
-            this.dashed = dashed;
-        } else {
-            System.out.println(I18n.tr("Illegal dash pattern, at least one value must be > 0"));
-        }
+    public LineElemStyle(long minScale, long maxScale, int width, int realWidth, Color color, float[] dashed, Color dashedColor) {
+        super(minScale, maxScale);
+        setWidth(width);
+        this.realWidth = realWidth;
+        this.color = color;
+        this.dashed = dashed;
+        this.dashedColor = dashedColor;
     }
 
     @Override
@@ -188,41 +90,8 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
             myDashedColor = paintSettings.getInactiveColor();
         }
 
-        /* draw overlays under the way */
-        if(overlays != null) {
-            for(LineElemStyle s : overlays) {
-                if(!s.over) {
-                    painter.drawWay(w,
-                        markColor != null ?
-                            (s.color != null ? new Color(markColor.getRed(), markColor.getGreen(), markColor.getBlue(), s.color.getAlpha()) : markColor) :
-                            s.color,
-                        s.getWidth(myWidth),
-                        s.getDashed(),
-                        w.isDisabled() ? paintSettings.getInactiveColor() : s.dashedColor,
-                        false, false, false);
-                }
-            }
-        }
-
-        /* draw the way */
         painter.drawWay(w, markColor != null ? markColor : color, myWidth, dashed, myDashedColor, showDirection,
                     selected ? false : reversedDirection, showOnlyHeadArrowOnly);
-
-        /* draw overlays above the way */
-        if(overlays != null)  {
-            for(LineElemStyle s : overlays) {
-                if(s.over) {
-                    painter.drawWay(w,
-                        markColor != null ?
-                            (s.color != null ? new Color(markColor.getRed(), markColor.getGreen(), markColor.getBlue(), s.color.getAlpha()) : markColor) :
-                            s.color,
-                        s.getWidth(myWidth),
-                        s.getDashed(),
-                        s.dashedColor,
-                        false, false, false);
-                }
-            }
-        }
 
         if(paintSettings.isShowOrderNumber()) {
             int orderNumber = 0;
@@ -245,5 +114,35 @@ public class LineElemStyle extends ElemStyle implements Comparable<LineElemStyle
 
     public void setWidth(int width) {
         this.width = width;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (!super.equals(obj))
+            return false;
+        final LineElemStyle other = (LineElemStyle) obj;
+        return width == other.width &&
+                realWidth == other.realWidth &&
+                Utils.equal(color, other.color) &&
+                Arrays.equals(dashed, other.dashed) &&
+                Utils.equal(dashedColor, other.dashedColor);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 29 * hash + this.width;
+        hash = 29 * hash + this.realWidth;
+        hash = 29 * hash + this.color.hashCode();
+        hash = 29 * hash + Arrays.hashCode(this.dashed);
+        hash = 29 * hash + (this.dashedColor != null ? this.dashedColor.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        return "LineElemStyle{" + "width=" + width + " realWidth=" + realWidth + " color=" + color + " dashed=" + Arrays.toString(dashed) + " dashedColor=" + dashedColor + '}';
     }
 }

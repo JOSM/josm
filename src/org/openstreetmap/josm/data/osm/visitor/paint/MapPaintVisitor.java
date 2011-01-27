@@ -1,7 +1,5 @@
-/* License: GPL. Copyright 2007 by Immanuel Scholz and others */
+// License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm.visitor.paint;
-
-/* To enable debugging or profiling remove the double / signs */
 
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -37,7 +35,7 @@ import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.IconElemStyle;
 import org.openstreetmap.josm.gui.mappaint.LineElemStyle;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.gui.mappaint.SimpleNodeElemStyle;
+import org.openstreetmap.josm.gui.mappaint.StyleCache;
 
 public class MapPaintVisitor implements PaintVisitor {
 
@@ -69,7 +67,7 @@ public class MapPaintVisitor implements PaintVisitor {
         return !(circum >= e.maxScale || circum < e.minScale);
     }
 
-    public ElemStyle getPrimitiveStyle(OsmPrimitive osm, boolean nodefault) {
+    public StyleCache getPrimitiveStyle(OsmPrimitive osm, boolean nodefault) {
         if(osm.mappaintStyle == null)
         {
             if(styles != null) {
@@ -78,23 +76,29 @@ public class MapPaintVisitor implements PaintVisitor {
                     ((Way)osm).isMappaintArea = styles.isArea(osm);
                 }
             }
-            if (osm.mappaintStyle == null) {
+            if (osm.mappaintStyle.equals(StyleCache.EMPTY_STYLECACHE)) {
                 if(osm instanceof Node)
-                    osm.mappaintStyle = SimpleNodeElemStyle.INSTANCE;
+                    osm.mappaintStyle = StyleCache.SIMPLE_NODE_STYLECACHE;// SimpleNodeElemStyle.INSTANCE;
                 else if (osm instanceof Way)
-                    osm.mappaintStyle = LineElemStyle.UNTAGGED_WAY;
+                    osm.mappaintStyle = StyleCache.UNTAGGED_WAY_STYLECACHE;//LineElemStyle.UNTAGGED_WAY;
             }
         }
-        if(nodefault && osm.mappaintStyle == LineElemStyle.UNTAGGED_WAY)
-            return null;
+        if (nodefault && osm.mappaintStyle.equals(StyleCache.UNTAGGED_WAY_STYLECACHE))
+            return StyleCache.EMPTY_STYLECACHE;
         return osm.mappaintStyle;
     }
 
     public IconElemStyle getPrimitiveNodeStyle(OsmPrimitive osm) {
-        if(osm.mappaintStyle == null && styles != null)
-            osm.mappaintStyle = styles.getIcon(osm);
-
-        return (IconElemStyle)osm.mappaintStyle;
+        if(osm.mappaintStyle == null && styles != null) {
+            IconElemStyle icon = styles.getIcon(osm);
+            osm.mappaintStyle = StyleCache.create(icon);
+            return icon;
+        }
+        for (ElemStyle s : osm.mappaintStyle.getStyles()) {
+            if (s instanceof IconElemStyle)
+                return (IconElemStyle) s;
+        }
+        return null;
     }
 
     public boolean isPrimitiveArea(Way osm) {
@@ -114,11 +118,13 @@ public class MapPaintVisitor implements PaintVisitor {
                 (en.north() < minEN.north()))
             return;
 
-        ElemStyle nodeStyle = getPrimitiveStyle(n, false);
+        StyleCache sc = getPrimitiveStyle(n, false);
 
-        if (isZoomOk(nodeStyle)) {
-            nodeStyle.paintPrimitive(n, paintSettings, painter, data.isSelected(n),
-            false);
+        for (ElemStyle s : sc.getStyles()) {
+            if (isZoomOk(s)) {
+                s.paintPrimitive(n, paintSettings, painter, data.isSelected(n), false);
+            }
+
         }
     }
 
@@ -157,21 +163,13 @@ public class MapPaintVisitor implements PaintVisitor {
                 (maxy < minEN.north()))
             return;
 
-        ElemStyle wayStyle = getPrimitiveStyle(w, false);
-
-        if(!isZoomOk(wayStyle))
-            return;
-
-        if(wayStyle instanceof LineElemStyle) {
-            wayStyle.paintPrimitive(w, paintSettings, painter, data.isSelected(w), false);
-        } else if (wayStyle instanceof AreaElemStyle) {
-            AreaElemStyle areaStyle = (AreaElemStyle) wayStyle;
-            /* way with area style */
-            if (fillAreas > dist)
-            {
-                areaStyle.paintPrimitive(w, paintSettings, painter, data.isSelected(w), false);
+        StyleCache sc = getPrimitiveStyle(w, false);
+        for (ElemStyle s : sc.getStyles()) {
+            if(!isZoomOk(s))
+                return;
+            if (fillAreas > dist || !(s instanceof AreaElemStyle)) {
+                s.paintPrimitive(w, paintSettings, painter, data.isSelected(w), false);
             }
-            areaStyle.getLineStyle().paintPrimitive(w, paintSettings, painter, data.isSelected(w), false);
         }
     }
 
@@ -368,28 +366,41 @@ public class MapPaintVisitor implements PaintVisitor {
         Multipolygon multipolygon = new Multipolygon(nc);
         multipolygon.load(r);
 
-        ElemStyle wayStyle = getPrimitiveStyle(r, false);
+        AreaElemStyle areaStyle = null;
+        LineElemStyle lineStyle = null;
+        for (ElemStyle s : getPrimitiveStyle(r, false).getStyles()) {
+            if (s instanceof AreaElemStyle) {
+                areaStyle = (AreaElemStyle) s;
+            } else if (s instanceof LineElemStyle) {
+                lineStyle = (LineElemStyle) s;
+            }
+        }
 
         boolean disabled = r.isDisabled();
         // If area style was not found for relation then use style of ways
-        if(styles != null && !(wayStyle instanceof AreaElemStyle)) {
+        if(styles != null && areaStyle == null) {
             for (Way w : multipolygon.getOuterWays()) {
-                wayStyle = styles.getArea(w);
+                for (ElemStyle s : styles.getArea(w).getStyles()) {
+                    if (s instanceof AreaElemStyle) {
+                        areaStyle = (AreaElemStyle) s;
+                    } else if (s instanceof LineElemStyle) {
+                        lineStyle = (LineElemStyle) s;
+                    }
+                }
                 disabled = disabled || w.isDisabled();
-                if(wayStyle != null) {
+                if(areaStyle != null) {
                     break;
                 }
             }
         }
 
-        if (wayStyle instanceof AreaElemStyle) {
-            boolean zoomok = isZoomOk(wayStyle);
+        if (areaStyle != null) {
+            boolean zoomok = isZoomOk(areaStyle);
             boolean visible = false;
 
             drawn = true;
 
             if(zoomok && !disabled && !multipolygon.getOuterWays().isEmpty()) {
-                AreaElemStyle areaStyle = (AreaElemStyle)wayStyle;
                 for (PolyData pd : multipolygon.getCombinedPolygons()) {
                     Polygon p = pd.get();
                     if(!isPolygonVisible(p)) {
@@ -398,7 +409,7 @@ public class MapPaintVisitor implements PaintVisitor {
 
                     boolean selected = pd.selected || data.isSelected(r);
                     painter.drawArea(p, selected ? paintSettings.getRelationSelectedColor()
-                    : areaStyle.color, painter.getAreaName(r));
+                                : areaStyle.color, painter.getAreaName(r));
                     visible = true;
                 }
             }
@@ -406,23 +417,29 @@ public class MapPaintVisitor implements PaintVisitor {
             if(!visible)
                 return drawn;
             for (Way wInner : multipolygon.getInnerWays()) {
-                ElemStyle innerStyle = getPrimitiveStyle(wInner, true);
-                if(innerStyle == null) {
+                StyleCache inner = getPrimitiveStyle(wInner, true);
+                AreaElemStyle innerArea = null;
+                for (ElemStyle s : inner.getStyles()) {
+                    if (s instanceof AreaElemStyle) {
+                        innerArea = (AreaElemStyle) s;
+                        break;
+                    }
+                }
+
+                if(inner.getStyles().isEmpty()) {
                     if (data.isSelected(wInner) || disabled)
                         continue;
                     if(zoomok && (wInner.mappaintDrawnCode != paintid || multipolygon.getOuterWays().isEmpty())) {
-                        ((AreaElemStyle)wayStyle).getLineStyle().paintPrimitive(wInner, paintSettings,
-                        painter, (data.isSelected(wInner) || data.isSelected(r)), false);
+                        lineStyle.paintPrimitive(wInner, paintSettings,
+                                painter, (data.isSelected(wInner) || data.isSelected(r)), false);
                     }
                     wInner.mappaintDrawnCode = paintid;
                 }
-                else
-                {
-                    if(wayStyle.equals(innerStyle))
-                    {
+                else {
+                    if(areaStyle.equals(innerArea)) {
                         wInner.mappaintDrawnAreaCode = paintid;
-                        if(!data.isSelected(wInner))
-                        {
+                        
+                        if(!data.isSelected(wInner)) {
                             wInner.mappaintDrawnCode = paintid;
                             drawWay(wInner, 0);
                         }
@@ -430,17 +447,25 @@ public class MapPaintVisitor implements PaintVisitor {
                 }
             }
             for (Way wOuter : multipolygon.getOuterWays()) {
-                ElemStyle outerStyle = getPrimitiveStyle(wOuter, true);
-                if(outerStyle == null) {
+                StyleCache outer = getPrimitiveStyle(wOuter, true);
+                boolean hasOuterArea = false;
+                for (ElemStyle s : outer.getStyles()) {
+                    if (s instanceof AreaElemStyle) {
+                        hasOuterArea = true;
+                        break;
+                    }
+                }
+
+                if (outer.getStyles().isEmpty()) {
                     // Selected ways are drawn at the very end
                     if (data.isSelected(wOuter))
                         continue;
                     if(zoomok) {
-                        ((AreaElemStyle)wayStyle).getLineStyle().paintPrimitive(wOuter, paintSettings, painter,
-                        (data.isSelected(wOuter) || data.isSelected(r)), r.isSelected());
+                        lineStyle.paintPrimitive(wOuter, paintSettings, painter,
+                            (data.isSelected(wOuter) || data.isSelected(r)), r.isSelected());
                     }
                     wOuter.mappaintDrawnCode = paintid;
-                } else if(outerStyle instanceof AreaElemStyle) {
+                } else if (hasOuterArea) {
                     wOuter.mappaintDrawnAreaCode = paintid;
                     if(!data.isSelected(wOuter)) {
                         wOuter.mappaintDrawnCode = paintid;
@@ -511,6 +536,7 @@ public class MapPaintVisitor implements PaintVisitor {
 
     /* Shows areas before non-areas */
     public void visitAll(final DataSet data, boolean virtual, Bounds bounds) {
+        //long start = System.currentTimeMillis();
         BBox bbox = new BBox(bounds);
         this.data = data;
         ++paintid;
@@ -615,19 +641,21 @@ public class MapPaintVisitor implements PaintVisitor {
                         for (RelationMember m : r.getMembers()) {
                             OsmPrimitive osm = m.getMember();
                             if(osm.isDrawable()) {
-                                ElemStyle style = getPrimitiveStyle(m.getMember(), false);
+                                StyleCache sc = getPrimitiveStyle(m.getMember(), false);
                                 if(osm instanceof Way)
                                 {
-                                    if(style instanceof AreaElemStyle) {
-                                        ((AreaElemStyle)style).getLineStyle().paintPrimitive(osm, paintSettings, painter, true, true);
-                                    } else {
-                                        style.paintPrimitive(osm, paintSettings, painter, data.isSelected(osm), true);
+                                    for (ElemStyle s : sc.getStyles()) {
+                                        if (!(s instanceof AreaElemStyle)) {
+                                            s.paintPrimitive(osm, paintSettings, painter, data.isSelected(osm), true);
+                                        }
                                     }
                                 }
                                 else if(osm instanceof Node)
                                 {
-                                    if(isZoomOk(style)) {
-                                        style.paintPrimitive(osm, paintSettings, painter, data.isSelected(osm), true);
+                                    for (ElemStyle s : sc.getStyles()) {
+                                        if (isZoomOk(s)) {
+                                            s.paintPrimitive(osm, paintSettings, painter, data.isSelected(osm), true);
+                                        }
                                     }
                                 }
                                 osm.mappaintDrawnCode = paintid;
@@ -647,6 +675,7 @@ public class MapPaintVisitor implements PaintVisitor {
         }
 
         painter.drawVirtualNodes(data.searchWays(bbox));
+        //System.err.println("PAINTING TOOK "+(System.currentTimeMillis() - start));
     }
 
     public void setGraphics(Graphics2D g) {

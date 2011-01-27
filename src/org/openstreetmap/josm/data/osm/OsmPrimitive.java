@@ -25,7 +25,7 @@ import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
-import org.openstreetmap.josm.gui.mappaint.ElemStyle;
+import org.openstreetmap.josm.gui.mappaint.StyleCache;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Predicate;
 
@@ -298,7 +298,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     /*----------
      * MAPPAINT
      *--------*/
-    public ElemStyle mappaintStyle = null;
+    public StyleCache mappaintStyle = null;
     public int mappaintDrawnCode = 0;
 
     /* This should not be called from outside. Fixing the UI to add relevant

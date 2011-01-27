@@ -9,26 +9,13 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
 
-public class IconElemStyle extends ElemStyle
-{
+public class IconElemStyle extends NodeElemStyle {
     public ImageIcon icon;
     private ImageIcon disabledIcon;
-    public boolean annotate;
 
-    public IconElemStyle (IconElemStyle i, long maxScale, long minScale) {
-        this.icon = i.icon;
-        this.annotate = i.annotate;
-        this.priority = i.priority;
-        this.maxScale = maxScale;
-        this.minScale = minScale;
-        this.conditions = i.conditions;
-    }
-    public IconElemStyle() { init(); }
-
-    public void init() {
-        icon = null;
-        priority = 0;
-        annotate = true;
+    public IconElemStyle(long minScale, long maxScale, ImageIcon icon) {
+        super(minScale, maxScale);
+        this.icon = icon;
     }
 
     public ImageIcon getDisabledIcon() {
@@ -38,15 +25,37 @@ public class IconElemStyle extends ElemStyle
             return null;
         return disabledIcon = new ImageIcon(GrayFilter.createDisabledImage(icon.getImage()));
     }
+
     @Override
     public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings settings, MapPainter painter, boolean selected, boolean member) {
         if (painter.isShowIcons()) {
             Node n = (Node) primitive;
-            String name = painter.isShowNames() && annotate?painter.getNodeName(n):null;
-            painter.drawNodeIcon(n, (painter.isInactive() || n.isDisabled())?getDisabledIcon():icon, selected, member, name);
+            painter.drawNodeIcon(n, (painter.isInactive() || n.isDisabled())?getDisabledIcon():icon, selected, member, getName(n, painter));
         } else {
             SimpleNodeElemStyle.INSTANCE.paintPrimitive(primitive, settings, painter, selected, member);
         }
 
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        if (!super.equals(obj))
+            return false;
+        
+        final IconElemStyle other = (IconElemStyle) obj;
+        // we should get the same image object due to caching
+        return this.icon.getImage() == other.icon.getImage();
+    }
+
+    @Override
+    public int hashCode() {
+        return icon.getImage().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "IconElemStyle{" + "icon=" + icon + '}';
     }
 }
