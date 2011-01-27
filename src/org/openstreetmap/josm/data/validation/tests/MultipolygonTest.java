@@ -54,7 +54,7 @@ public class MultipolygonTest extends Test {
     @Override
     public void initialize() throws Exception {
         styles = MapPaintStyles.getStyles();
-}
+    }
 
     private List<List<Node>> joinWays(Collection<Way> ways) {
         List<List<Node>> result = new ArrayList<List<Node>>();

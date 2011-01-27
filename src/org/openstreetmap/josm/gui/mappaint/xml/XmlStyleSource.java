@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.mappaint;
+package org.openstreetmap.josm.gui.mappaint.xml;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -7,23 +7,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles.WayPrototypesRecord;
-import org.openstreetmap.josm.gui.mappaint.xml.AreaPrototype;
-import org.openstreetmap.josm.gui.mappaint.xml.IconPrototype;
-import org.openstreetmap.josm.gui.mappaint.xml.LinePrototype;
-import org.openstreetmap.josm.gui.mappaint.xml.LinemodPrototype;
-import org.openstreetmap.josm.gui.mappaint.xml.Prototype;
-import org.openstreetmap.josm.gui.mappaint.xml.XmlCondition;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 
-public class StyleSource extends SourceEntry {
+public class XmlStyleSource extends SourceEntry {
 
     public final HashMap<String, IconPrototype> icons = new HashMap<String, IconPrototype>();
     public final HashMap<String, LinePrototype> lines = new HashMap<String, LinePrototype>();
@@ -36,11 +28,11 @@ public class StyleSource extends SourceEntry {
 
     public boolean hasError = false;
 
-    public StyleSource(String url, String name, String shortdescription) {
+    public XmlStyleSource(String url, String name, String shortdescription) {
         super(url, name, shortdescription, true);
     }
 
-    public StyleSource(SourceEntry entry) {
+    public XmlStyleSource(SourceEntry entry) {
         super(entry.url, entry.name, entry.shortdescription, entry.active);
     }
 
@@ -215,27 +207,5 @@ public class StyleSource extends SourceEntry {
      */
     public String getPrefName() {
         return name == null ? "standard" : name;
-    }
-
-    /**
-     * String to show in menus and error messages.
-     * @return Usually the shortdescription, but can be the file name
-     * if no shortdescription is available.
-     */
-    public String getDisplayString() {
-        if (shortdescription != null)
-            return shortdescription;
-        /**
-         * extract file part from url, e.g.:
-         * http://www.test.com/file.xml?format=text  --> file.xml
-         */
-        Pattern p = Pattern.compile("([^/\\\\]*?)([?].*)?$");
-        Matcher m = p.matcher(url);
-        if (m.find()) {
-            return m.group(1);
-        } else {
-            System.err.println("Warning: Unexpected URL format: "+url);
-            return url;
-        }
     }
 }

@@ -9,7 +9,6 @@ import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -20,7 +19,7 @@ public class XmlStyleSourceHandler extends DefaultHandler
     private boolean hadLine, hadLineMod, hadIcon, hadArea;
     private RuleElem rule = new RuleElem();
 
-    StyleSource style;
+    XmlStyleSource style;
 
     static class RuleElem {
         XmlCondition cond = new XmlCondition();
@@ -44,7 +43,7 @@ public class XmlStyleSourceHandler extends DefaultHandler
         }
     }
 
-    public XmlStyleSourceHandler(StyleSource style) {
+    public XmlStyleSourceHandler(XmlStyleSource style) {
         this.style = style;
         inDoc=inRule=inCondition=inLine=inIcon=inArea=false;
         rule.init();

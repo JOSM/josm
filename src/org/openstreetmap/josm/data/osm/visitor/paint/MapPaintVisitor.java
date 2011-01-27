@@ -78,9 +78,9 @@ public class MapPaintVisitor implements PaintVisitor {
             }
             if (osm.mappaintStyle.equals(StyleCache.EMPTY_STYLECACHE)) {
                 if(osm instanceof Node)
-                    osm.mappaintStyle = StyleCache.SIMPLE_NODE_STYLECACHE;// SimpleNodeElemStyle.INSTANCE;
+                    osm.mappaintStyle = StyleCache.SIMPLE_NODE_STYLECACHE;
                 else if (osm instanceof Way)
-                    osm.mappaintStyle = StyleCache.UNTAGGED_WAY_STYLECACHE;//LineElemStyle.UNTAGGED_WAY;
+                    osm.mappaintStyle = StyleCache.UNTAGGED_WAY_STYLECACHE;
             }
         }
         if (nodefault && osm.mappaintStyle.equals(StyleCache.UNTAGGED_WAY_STYLECACHE))

@@ -1,4 +1,8 @@
+// License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.openstreetmap.josm.tools.Utils.equal;
 
@@ -69,5 +73,26 @@ public class SourceEntry {
         return shortdescription != null ? shortdescription : url;
     }
 
+    /**
+     * String to show in menus and error messages.
+     * @return Usually the shortdescription, but can be the file name
+     * if no shortdescription is available.
+     */
+    public String getDisplayString() {
+        if (shortdescription != null)
+            return shortdescription;
+        /**
+         * extract file part from url, e.g.:
+         * http://www.test.com/file.xml?format=text  --> file.xml
+         */
+        Pattern p = Pattern.compile("([^/\\\\]*?)([?].*)?$");
+        Matcher m = p.matcher(url);
+        if (m.find()) {
+            return m.group(1);
+        } else {
+            System.err.println("Warning: Unexpected URL format: "+url);
+            return url;
+        }
+    }
 
 }

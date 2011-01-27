@@ -5,8 +5,6 @@ import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,29 +17,29 @@ import org.openstreetmap.josm.gui.mappaint.xml.AreaPrototype;
 import org.openstreetmap.josm.gui.mappaint.xml.IconPrototype;
 import org.openstreetmap.josm.gui.mappaint.xml.LinePrototype;
 import org.openstreetmap.josm.gui.mappaint.xml.LinemodPrototype;
-import org.openstreetmap.josm.gui.mappaint.xml.Prototype;
+import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
 import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.Predicate;
 
 public class ElemStyles {
-    private List<StyleSource> styleSources;
+    private List<XmlStyleSource> styleSources;
 
     public ElemStyles()
     {
-        styleSources = new ArrayList<StyleSource>();
+        styleSources = new ArrayList<XmlStyleSource>();
     }
 
-    public void add(StyleSource style) {
+    public void add(XmlStyleSource style) {
         styleSources.add(style);
     }
 
-    public Collection<StyleSource> getStyleSources() {
-        return new FilteredCollection<StyleSource>(styleSources, new Predicate<StyleSource>() {
+    public Collection<XmlStyleSource> getStyleSources() {
+        return new FilteredCollection<XmlStyleSource>(styleSources, new Predicate<XmlStyleSource>() {
 
             String name = Main.pref.get("mappaint.style", "standard");
 
             @Override
-            public boolean evaluate(StyleSource s) {
+            public boolean evaluate(XmlStyleSource s) {
                 return equal(s.getPrefName(), name);
             }
 
@@ -49,9 +47,9 @@ public class ElemStyles {
     }
 
     public static class WayPrototypesRecord {
-        LinePrototype line;
-        List<LinemodPrototype> linemods;
-        AreaPrototype area;
+        public LinePrototype line;
+        public List<LinemodPrototype> linemods;
+        public AreaPrototype area;
 
         public List<ElemStyle> createStyles() {
             List<ElemStyle> ret = new ArrayList<ElemStyle>();
@@ -96,7 +94,7 @@ public class ElemStyles {
 
     public IconPrototype getNode(OsmPrimitive osm) {
         IconPrototype icon = null;
-        for (StyleSource s : getStyleSources()) {
+        for (XmlStyleSource s : getStyleSources()) {
             icon = s.getNode(osm, icon);
         }
         return icon;
@@ -104,14 +102,14 @@ public class ElemStyles {
 
     private WayPrototypesRecord get(OsmPrimitive osm, boolean forceArea) {
         WayPrototypesRecord p = new WayPrototypesRecord();
-        for (StyleSource s : getStyleSources()) {
+        for (XmlStyleSource s : getStyleSources()) {
             s.get(osm, forceArea || !(osm instanceof Way) || ((Way) osm).isClosed(), p);
         }
         return p;
     }
 
     public boolean hasAreas() {
-        for (StyleSource s : getStyleSources()) {
+        for (XmlStyleSource s : getStyleSources()) {
             if (s.hasAreas())
                 return true;
         }
@@ -119,7 +117,7 @@ public class ElemStyles {
     }
 
     public boolean isArea(OsmPrimitive osm) {
-        for (StyleSource s : getStyleSources()) {
+        for (XmlStyleSource s : getStyleSources()) {
             if (s.isArea(osm))
                 return true;
         }
@@ -159,7 +157,7 @@ public class ElemStyles {
     public Collection<String> getStyleNames() {
         Set<String> names = new HashSet<String>();
         names.add("standard");
-        for (StyleSource s : styleSources) {
+        for (XmlStyleSource s : styleSources) {
             if (s.name != null) {
                 names.add(s.name);
             }
