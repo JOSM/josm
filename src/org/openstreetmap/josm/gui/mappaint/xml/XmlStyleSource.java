@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.xml;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ public class XmlStyleSource extends SourceEntry {
     public final LinkedList<AreaPrototype> areasList = new LinkedList<AreaPrototype>();
 
     public boolean hasError = false;
+    public File zipIcons;
 
     public XmlStyleSource(String url, String name, String shortdescription) {
         super(url, name, shortdescription, true);
@@ -199,13 +201,4 @@ public class XmlStyleSource extends SourceEntry {
                 throw new RuntimeException();
          }
      }
-
-    /**
-     * the name / identifier that should be used to save custom color values
-     * and similar stuff to the preference file
-     * @return the identifier; never null. Usually the result is "standard"
-     */
-    public String getPrefName() {
-        return name == null ? "standard" : name;
-    }
 }

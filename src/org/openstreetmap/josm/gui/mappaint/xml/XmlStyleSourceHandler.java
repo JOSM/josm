@@ -5,10 +5,8 @@ import java.awt.Color;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import javax.swing.ImageIcon;
-
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -210,7 +208,7 @@ public class XmlStyleSourceHandler extends DefaultHandler
                 for (int count=0; count<atts.getLength(); count++)
                 {
                     if (atts.getQName(count).equals("src")) {
-                        ImageIcon icon = MapPaintStyles.getIcon(atts.getValue(count), style.getPrefName());
+                        IconReference icon = new IconReference(atts.getValue(count), style);
                         hadIcon = (icon != null);
                         rule.icon.icon = icon;
                     } else if (atts.getQName(count).equals("annotate")) {

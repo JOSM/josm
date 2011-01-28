@@ -22,6 +22,7 @@ import org.openstreetmap.josm.gui.preferences.MapPaintPreference.MapPaintPrefMig
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.XmlObjectParser;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -29,15 +30,26 @@ public class MapPaintStyles {
 
     private static ElemStyles styles = new ElemStyles();
     private static Collection<String> iconDirs;
-    private static File zipIcons;
 
     public static ElemStyles getStyles()
     {
         return styles;
     }
+    
+    public static class IconReference {
 
-    public static ImageIcon getIcon(String name, String styleName)
+        public String iconName;
+        public XmlStyleSource source;
+
+        public IconReference(String iconName, XmlStyleSource source) {
+            this.iconName = iconName;
+            this.source = source;
+        }
+    }
+
+    public static ImageIcon getIcon(IconReference ref)
     {
+        String styleName = ref.source.getPrefName();
         List<String> dirs = new LinkedList<String>();
         for(String fileset : iconDirs)
         {
@@ -53,10 +65,10 @@ public class MapPaintStyles {
                 dirs.add(a[1]);
             }
         }
-        ImageIcon i = ImageProvider.getIfAvailable(dirs, "mappaint."+styleName, null, name, zipIcons);
+        ImageIcon i = ImageProvider.getIfAvailable(dirs, "mappaint."+styleName, null, ref.iconName, ref.source.zipIcons);
         if(i == null)
         {
-            System.out.println("Mappaint style \""+styleName+"\" icon \"" + name + "\" not found.");
+            System.out.println("Mappaint style \""+styleName+"\" icon \"" + ref.iconName + "\" not found.");
             i = ImageProvider.getIfAvailable(dirs, "mappaint."+styleName, null, "misc/no_icon.png");
         }
         return i;
@@ -85,7 +97,7 @@ public class MapPaintStyles {
                 InputStreamReader ins;
                 if(zip != null)
                 {
-                    zipIcons = in.getFile();
+                    style.zipIcons = in.getFile();
                     ins = new InputStreamReader(zip);
                 } else {
                     ins = new InputStreamReader(in);
@@ -109,7 +121,5 @@ public class MapPaintStyles {
             }
             styles.add(style);
         }
-        iconDirs = null;
-        zipIcons = null;
     }
 }

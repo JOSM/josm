@@ -95,4 +95,12 @@ public class SourceEntry {
         }
     }
 
+    /**
+     * the name / identifier that should be used to save custom color values
+     * and similar stuff to the preference file
+     * @return the identifier; never null. Usually the result is "standard"
+     */
+    public String getPrefName() {
+        return name == null ? "standard" : name;
+    }
 }

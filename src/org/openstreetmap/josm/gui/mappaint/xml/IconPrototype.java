@@ -1,15 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.xml;
 
-import javax.swing.ImageIcon;
-
 import org.openstreetmap.josm.gui.mappaint.IconElemStyle;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
 import org.openstreetmap.josm.gui.mappaint.SimpleNodeElemStyle;
 
 public class IconPrototype extends Prototype {
     
-    public ImageIcon icon;
+    public IconReference icon;
     public boolean annotate;
 
     public IconPrototype (IconPrototype i, long maxScale, long minScale) {
@@ -32,7 +32,7 @@ public class IconPrototype extends Prototype {
         if (icon == null) {
             return SimpleNodeElemStyle.INSTANCE;
         } else {
-            IconElemStyle i = new IconElemStyle(minScale, maxScale, icon);
+            IconElemStyle i = new IconElemStyle(minScale, maxScale, MapPaintStyles.getIcon(icon));
             i.annotate = annotate;
             return i;
         }
