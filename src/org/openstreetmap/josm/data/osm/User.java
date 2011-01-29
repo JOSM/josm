@@ -108,7 +108,7 @@ public class User {
     public static void loadRelicensingInformation() {
         relicensingUsers = new HashSet<Long>();
         try {
-        MirroredInputStream stream = new MirroredInputStream("http://planet.openstreetmap.org/users_agreed/users_agreed.txt");
+        MirroredInputStream stream = new MirroredInputStream("http://planet.openstreetmap.org/users_agreed/users_agreed.txt", 7200);
         InputStreamReader r;
         r = new InputStreamReader(stream);
         BufferedReader reader = new BufferedReader(r);
