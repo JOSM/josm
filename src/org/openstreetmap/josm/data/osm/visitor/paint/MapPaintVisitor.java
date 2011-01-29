@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.data.osm.visitor.paint;
 
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -21,7 +20,6 @@ import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -176,188 +174,12 @@ public class MapPaintVisitor implements PaintVisitor {
     public void paintUnselectedRelation(Relation r) {
         if (drawMultipolygon && "multipolygon".equals(r.get("type")))
             drawMultipolygon(r);
-        else if (drawRestriction && "restriction".equals(r.get("type")))
-            drawRestriction(r);
-    }
-
-    public void drawRestriction(Relation r) {
-
-        Way fromWay = null;
-        Way toWay = null;
-        OsmPrimitive via = null;
-
-        /* find the "from", "via" and "to" elements */
-        for (RelationMember m : r.getMembers())
-        {
-            if(m.getMember().isIncomplete())
-                return;
-            else
-            {
-                if(m.isWay())
-                {
-                    Way w = m.getWay();
-                    if(w.getNodesCount() < 2) {
-                        continue;
-                    }
-
-                    if("from".equals(m.getRole())) {
-                        if(fromWay == null)
-                            fromWay = w;
-                    } else if("to".equals(m.getRole())) {
-                        if(toWay == null)
-                            toWay = w;
-                    } else if("via".equals(m.getRole())) {
-                        if(via == null)
-                            via = w;
-                    }
-                }
-                else if(m.isNode())
-                {
-                    Node n = m.getNode();
-                    if("via".equals(m.getRole()) && via == null)
-                        via = n;
-                }
+        else if (drawRestriction && "restriction".equals(r.get("type"))) {
+            IconElemStyle nodeStyle = getPrimitiveNodeStyle(r);
+            if (nodeStyle != null) {
+                painter.drawRestriction(r, leftHandTraffic, nodeStyle);
             }
         }
-
-        if (fromWay == null || toWay == null || via == null)
-            return;
-
-        Node viaNode;
-        if(via instanceof Node)
-        {
-            viaNode = (Node) via;
-            if(!fromWay.isFirstLastNode(viaNode)) {
-                return;
-            }
-        }
-        else
-        {
-            Way viaWay = (Way) via;
-            Node firstNode = viaWay.firstNode();
-            Node lastNode = viaWay.lastNode();
-            Boolean onewayvia = false;
-
-            String onewayviastr = viaWay.get("oneway");
-            if(onewayviastr != null)
-            {
-                if("-1".equals(onewayviastr)) {
-                    onewayvia = true;
-                    Node tmp = firstNode;
-                    firstNode = lastNode;
-                    lastNode = tmp;
-                } else {
-                    onewayvia = OsmUtils.getOsmBoolean(onewayviastr);
-                    if (onewayvia == null) {
-                        onewayvia = false;
-                    }
-                }
-            }
-
-            if(fromWay.isFirstLastNode(firstNode)) {
-                viaNode = firstNode;
-            } else if (!onewayvia && fromWay.isFirstLastNode(lastNode)) {
-                viaNode = lastNode;
-            } else {
-                return;
-            }
-        }
-
-        /* find the "direct" nodes before the via node */
-        Node fromNode = null;
-        if(fromWay.firstNode() == via) {
-            fromNode = fromWay.getNode(1);
-        } else {
-            fromNode = fromWay.getNode(fromWay.getNodesCount()-2);
-        }
-
-        Point pFrom = nc.getPoint(fromNode);
-        Point pVia = nc.getPoint(viaNode);
-
-        /* starting from via, go back the "from" way a few pixels
-           (calculate the vector vx/vy with the specified length and the direction
-           away from the "via" node along the first segment of the "from" way)
-         */
-        double distanceFromVia=14;
-        double dx = (pFrom.x >= pVia.x) ? (pFrom.x - pVia.x) : (pVia.x - pFrom.x);
-        double dy = (pFrom.y >= pVia.y) ? (pFrom.y - pVia.y) : (pVia.y - pFrom.y);
-
-        double fromAngle;
-        if(dx == 0.0) {
-            fromAngle = Math.PI/2;
-        } else {
-            fromAngle = Math.atan(dy / dx);
-        }
-        double fromAngleDeg = Math.toDegrees(fromAngle);
-
-        double vx = distanceFromVia * Math.cos(fromAngle);
-        double vy = distanceFromVia * Math.sin(fromAngle);
-
-        if(pFrom.x < pVia.x) {
-            vx = -vx;
-        }
-        if(pFrom.y < pVia.y) {
-            vy = -vy;
-        }
-
-        /* go a few pixels away from the way (in a right angle)
-           (calculate the vx2/vy2 vector with the specified length and the direction
-           90degrees away from the first segment of the "from" way)
-         */
-        double distanceFromWay=10;
-        double vx2 = 0;
-        double vy2 = 0;
-        double iconAngle = 0;
-
-        if(pFrom.x >= pVia.x && pFrom.y >= pVia.y) {
-            if(!leftHandTraffic) {
-                vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg - 90));
-                vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg - 90));
-            } else {
-                vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 90));
-                vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 90));
-            }
-            iconAngle = 270+fromAngleDeg;
-        }
-        if(pFrom.x < pVia.x && pFrom.y >= pVia.y) {
-            if(!leftHandTraffic) {
-                vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg));
-                vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg));
-            } else {
-                vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 180));
-                vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 180));
-            }
-            iconAngle = 90-fromAngleDeg;
-        }
-        if(pFrom.x < pVia.x && pFrom.y < pVia.y) {
-            if(!leftHandTraffic) {
-                vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 90));
-                vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 90));
-            } else {
-                vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg - 90));
-                vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg - 90));
-            }
-            iconAngle = 90+fromAngleDeg;
-        }
-        if(pFrom.x >= pVia.x && pFrom.y < pVia.y) {
-            if(!leftHandTraffic) {
-                vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 180));
-                vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 180));
-            } else {
-                vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg));
-                vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg));
-            }
-            iconAngle = 270-fromAngleDeg;
-        }
-
-        IconElemStyle nodeStyle = getPrimitiveNodeStyle(r);
-
-        if (nodeStyle == null) {
-            return;
-        }
-
-        painter.drawRestriction(inactive || r.isDisabled() ? nodeStyle.getDisabledIcon() : nodeStyle.icon,
-                pVia, vx, vx2, vy, vy2, iconAngle, data.isSelected(r));
     }
 
     public boolean drawMultipolygon(Relation r) {
