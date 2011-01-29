@@ -253,7 +253,20 @@ Build-Date: ${build.tstamp}
 				<fileset file="${java.home}/lib/jce.jar" />
 			</path>
 		</as:build-signatures>
-
+		
+		<!-- List of deprecated plugins -->
+		<loadfile property="deprecated-plugins" srcFile="src/org/openstreetmap/josm/plugins/PluginHandler.java">
+			<filterchain>
+				<linecontains>
+					<contains value="new DeprecatedPlugin("/>
+				</linecontains>
+				<tokenfilter>
+					<replaceregex pattern='.*new DeprecatedPlugin\("(.+?)".*' replace="\1|" flags="gi"/>
+				</tokenfilter>
+				<striplinebreaks/>
+			</filterchain>
+		</loadfile>
+		
 		<!-- Download plugins -->
 		<loadresource property="plugins">
 			<url url="http://josm.openstreetmap.de/plugin"/>
@@ -262,8 +275,7 @@ Build-Date: ${build.tstamp}
 					<regexp pattern="^\t.*"/>
 				</linecontainsregexp>
 				<linecontainsregexp negate="true">
-					<!-- List from PluginHandler.DEPRECATED_PLUGINS -->
-					<regexp pattern="mappaint|unglueplugin|ewmsplugin|ywms|tways-0.2|geotagged|landsat|namefinder|waypoints|slippy_map_chooser|tcx-support|usertools|AgPifoJ|utilsplugin"/>
+					<regexp pattern="${deprecated-plugins}"/>
 				</linecontainsregexp>
 				<tokenfilter>
 					<replaceregex pattern="^.*;" replace="" flags="gi"/>
