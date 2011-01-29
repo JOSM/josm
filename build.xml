@@ -186,6 +186,16 @@ Build-Date: ${build.tstamp}
 		</junit>
 	</target>
 
+	<target name="test-html" depends="test" description="Generate HTML test reports">
+		<!-- May require additional ant dependencies like ant-trax package -->
+		<junitreport todir="${test.dir}/report">
+			<fileset dir="${test.dir}/report">
+				<include name="TEST-*.xml"/>
+			</fileset>
+			<report todir="${test.dir}/report/html"/>
+		</junitreport>
+	</target>
+
 	<target name="dist-optimized" depends="dist">
 		<taskdef resource="proguard/ant/task.properties" classpath="tools/proguard.jar" />
 		<proguard>
