@@ -132,12 +132,10 @@ public class DeleteAction extends MapMode implements AWTEventListener {
 
     @Override public void actionPerformed(ActionEvent e) {
         super.actionPerformed(e);
-        if(!Main.map.mapView.isActiveLayerDrawable())
-            return;
         doActionPerformed(e);
     }
 
-    public void doActionPerformed(ActionEvent e) {
+    static public void doActionPerformed(ActionEvent e) {
         if(!Main.map.mapView.isActiveLayerDrawable())
             return;
         boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;

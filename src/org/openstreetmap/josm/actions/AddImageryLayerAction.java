@@ -24,8 +24,7 @@ public class AddImageryLayerAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled()) return;
-        ImageryLayer wmsLayer = ImageryLayer.create(info);
-        Main.main.addLayer(wmsLayer);
+        Main.main.addLayer(ImageryLayer.create(info));
     }
 
     @Override

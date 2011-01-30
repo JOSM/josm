@@ -126,7 +126,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
      *
      * @return the current edit layer. null, if no edit layer exists
      */
-    protected OsmDataLayer getEditLayer() {
+    protected static OsmDataLayer getEditLayer() {
         return Main.main.getEditLayer();
     }
 
@@ -135,7 +135,7 @@ abstract public class JosmAction extends AbstractAction implements Destroyable {
      *
      * @return the current dataset. null, if no current dataset exists
      */
-    protected DataSet getCurrentDataSet() {
+    protected static DataSet getCurrentDataSet() {
         return Main.main.getCurrentDataSet();
     }
 
