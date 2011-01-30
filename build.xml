@@ -263,7 +263,10 @@ Build-Date: ${build.tstamp}
 				<tokenfilter>
 					<replaceregex pattern='.*new DeprecatedPlugin\("(.+?)".*' replace="\1|" flags="gi"/>
 				</tokenfilter>
-				<striplinebreaks/>
+				<striplinebreaks/>				
+				<tokenfilter>
+					<replaceregex pattern='\|$' replace="" flags="gi"/>
+				</tokenfilter>
 			</filterchain>
 		</loadfile>
 		
