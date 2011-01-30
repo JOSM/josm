@@ -20,6 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import org.apache.commons.codec.binary.Base64;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.gui.JMultilineLabel;
@@ -87,7 +89,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                 if (answer != 1)  return;
 
                 try {
-                    final int maxlen = 7000;
+                    final int maxlen = 6000;
                     StringWriter stack = new StringWriter();
                     e.printStackTrace(new PrintWriter(stack));
 
@@ -106,23 +108,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                     }
 
                     URL url = new URL("http://josm.openstreetmap.de/josmticket?" +
-                            "data="+
-                            Base64.encode(
-                                    // To note that it came from this code
-                                    "keywords=template_report&" +
-                                    "description=" + java.net.URLEncoder.encode(
-                                            // Note: This doesn't use tr() intentionally, we want bug reports in English
-                                            "What steps will reproduce the problem?\n"
-                                            + " 1. \n"
-                                            + " 2. \n"
-                                            + " 3. \n"
-                                            + "\n"
-                                            + "What is the expected result?\n\n"
-                                            + "What happens instead?\n\n"
-                                            + "Please provide any additional information below. Attach a screenshot if\n"
-                                            + "possible.\n\n"
-                                            + "{{{\n" + urltext + "\n}}}\n",
-                                    "UTF-8")));
+                            "tdata="+Base64.encodeBase64URLSafeString(urltext.getBytes("UTF8")));
 
                     JPanel p = new JPanel(new GridBagLayout());
                     p.add(new JMultilineLabel(
