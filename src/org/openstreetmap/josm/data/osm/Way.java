@@ -111,16 +111,6 @@ public final class Way extends OsmPrimitive {
         return false;
     }
 
-    /* mappaint data */
-    public boolean isMappaintArea = false;
-    public Integer mappaintDrawnAreaCode = 0;
-    /* end of mappaint data */
-    @Override public void clearCached() {
-        super.clearCached();
-        isMappaintArea = false;
-        mappaintDrawnAreaCode = 0;
-    }
-
     public List<Pair<Node,Node>> getNodePairs(boolean sort) {
         List<Pair<Node,Node>> chunkSet = new ArrayList<Pair<Node,Node>>();
         if (isIncomplete()) return chunkSet;

@@ -25,7 +25,6 @@ import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.gui.mappaint.StyleCache;
 import org.openstreetmap.josm.gui.mappaint.xml.AreaPrototype;
 
 public class MultipolygonTest extends Test {
@@ -45,6 +44,8 @@ public class MultipolygonTest extends Test {
     private static ElemStyles styles;
 
     private final List<List<Node>> nonClosedWays = new ArrayList<List<Node>>();
+
+    private final double SCALE = 1.0; // arbitrary scale - we could test every possible scale, but this should suffice
 
     public MultipolygonTest() {
         super(tr("Multipolygon"),
@@ -114,9 +115,11 @@ public class MultipolygonTest extends Test {
     @Override
     public void visit(Way w) {
         if (styles != null && !w.isClosed()) {
-            AreaPrototype e = styles.getAreaProto(w);
-            if (e != null && ! e.closed) {
-                errors.add( new TestError(this, Severity.WARNING, tr("Area style way is not closed"), NOT_CLOSED,  w));
+            for (ElemStyle s : styles.generateStyles(w, SCALE, null, false).a) {
+                if (s instanceof AreaElemStyle) {
+                    errors.add( new TestError(this, Severity.WARNING, tr("Area style way is not closed"), NOT_CLOSED,  w));
+                    break;
+                }
             }
         }
     }
@@ -142,10 +145,9 @@ public class MultipolygonTest extends Test {
             List<List<Node>> innerWays = joinWays(polygon.getInnerWays()); // Side effect - sets nonClosedWays
             List<List<Node>> outerWays = joinWays(polygon.getOuterWays());
             if (styles != null) {
-                StyleCache sc = styles.get(r);
 
                 AreaElemStyle area = null;
-                for (ElemStyle s : sc.getStyles()) {
+                for (ElemStyle s : styles.generateStyles(r, SCALE, null, false).a) {
                     if (s instanceof AreaElemStyle) {
                         area = (AreaElemStyle) s;
                         break;
@@ -154,10 +156,10 @@ public class MultipolygonTest extends Test {
                 // If area style was not found for relation then use style of ways
                 if (area == null) {
                     errors.add( new TestError(this, Severity.OTHER, tr("No style in multipolygon relation"),
-                    NO_STYLE_POLYGON, r));
+                            NO_STYLE_POLYGON, r));
                     for (Way w : polygon.getOuterWays()) {
 
-                        for (ElemStyle s : styles.getArea(w).getStyles()) {
+                        for (ElemStyle s : styles.generateStyles(r, SCALE, null, true).a) {
                             if (s instanceof AreaElemStyle) {
                                 area = (AreaElemStyle) s;
                                 break;
@@ -172,7 +174,7 @@ public class MultipolygonTest extends Test {
                 if (area != null) {
                     for (Way wInner : polygon.getInnerWays()) {
                         AreaElemStyle areaInner = null;
-                        for (ElemStyle s : styles.get(wInner).getStyles()) {
+                        for (ElemStyle s : styles.generateStyles(wInner, SCALE, null, false).a) {
                             if (s instanceof AreaElemStyle) {
                                 areaInner = (AreaElemStyle) s;
                                 break;
@@ -184,12 +186,12 @@ public class MultipolygonTest extends Test {
                             l.add(r);
                             l.add(wInner);
                             errors.add( new TestError(this, Severity.WARNING, tr("Style for inner way equals multipolygon"),
-                            INNER_STYLE_MISMATCH, l, Collections.singletonList(wInner)));
+                                    INNER_STYLE_MISMATCH, l, Collections.singletonList(wInner)));
                         }
                     }
                     for (Way wOuter : polygon.getOuterWays()) {
                         AreaElemStyle areaOuter = null;
-                        for (ElemStyle s : styles.get(wOuter).getStyles()) {
+                        for (ElemStyle s : styles.generateStyles(wOuter, SCALE, null, false).a) {
                             if (s instanceof AreaElemStyle) {
                                 areaOuter = (AreaElemStyle) s;
                                 break;

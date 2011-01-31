@@ -3,12 +3,38 @@ package org.openstreetmap.josm.tools;
 
 public class Utils {
 
-    public static <T> boolean exists(Iterable<? extends T> coll, Predicate<? super T> pred) {
-        for (T el : coll) {
-            if (pred.evaluate(el))
+    public static <T> boolean exists(Iterable<? extends T> collection, Predicate<? super T> predicate) {
+        for (T item : collection) {
+            if (predicate.evaluate(item))
                 return true;
         }
         return false;
+    }
+
+    public static <T> boolean exists(Iterable collection, Class<? extends T> klass) {
+        for (Object item : collection) {
+            if (klass.isInstance(item))
+                return true;
+        }
+        return false;
+    }
+
+    public static <T> T find(Iterable<? extends T> collection, Predicate<? super T> predicate) {
+        for (T item : collection) {
+            if (predicate.evaluate(item))
+                return item;
+        }
+        return null;
+    }
+
+    public static <T> T find(Iterable collection, Class<? extends T> klass) {
+        for (Object item : collection) {
+            if (klass.isInstance(item)) {
+                @SuppressWarnings("unchecked") T res = (T) item;
+                return res;
+            }
+        }
+        return null;
     }
 
     /**
@@ -27,11 +53,15 @@ public class Utils {
         }
     }
 
+    public static int max(int a, int b, int c, int d) {
+        return Math.max(Math.max(a, b), Math.max(c, d));
+    }
+
     /**
      * for convenience: test whether 2 objects are either both null or a.equals(b)
      */
     public static <T> boolean equal(T a, T b) {
-        if (a == null && b == null)
+        if (a == b)
             return true;
         return (a != null && a.equals(b));
     }

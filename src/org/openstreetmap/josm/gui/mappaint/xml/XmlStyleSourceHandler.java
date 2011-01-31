@@ -7,6 +7,7 @@ import java.util.LinkedList;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
+import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -22,8 +23,8 @@ public class XmlStyleSourceHandler extends DefaultHandler
     static class RuleElem {
         XmlCondition cond = new XmlCondition();
         Collection<XmlCondition> conditions;
-        long scaleMax;
-        long scaleMin;
+        double scaleMax;
+        double scaleMin;
         LinePrototype line = new LinePrototype();
         LinemodPrototype linemod = new LinemodPrototype();
         AreaPrototype area = new AreaPrototype();
@@ -31,7 +32,7 @@ public class XmlStyleSourceHandler extends DefaultHandler
         public void init()
         {
             conditions = null;
-            scaleMax = 1000000000;
+            scaleMax = Double.POSITIVE_INFINITY;
             scaleMin = 0;
             line.init();
             cond.init();
@@ -101,7 +102,7 @@ public class XmlStyleSourceHandler extends DefaultHandler
                     if(isDashed) {
                         dashed = new float[]{9};
                     } else {
-                        dashed = new float[0];
+                        dashed = null;
                     }
                 }
                 line.setDashed(dashed);
@@ -248,22 +249,22 @@ public class XmlStyleSourceHandler extends DefaultHandler
             if(hadLine)
             {
                 style.add(rule.cond, rule.conditions,
-                        new LinePrototype(rule.line, rule.scaleMax, rule.scaleMin));
+                        new LinePrototype(rule.line, new Range(rule.scaleMin, rule.scaleMax)));
             }
             if(hadLineMod)
             {
                 style.add(rule.cond, rule.conditions,
-                        new LinemodPrototype(rule.linemod, rule.scaleMax, rule.scaleMin));
+                        new LinemodPrototype(rule.linemod, new Range(rule.scaleMin, rule.scaleMax)));
             }
             if(hadIcon)
             {
                 style.add(rule.cond, rule.conditions,
-                        new IconPrototype(rule.icon, rule.scaleMax, rule.scaleMin));
+                        new IconPrototype(rule.icon, new Range(rule.scaleMin, rule.scaleMax)));
             }
             if(hadArea)
             {
                 style.add(rule.cond, rule.conditions,
-                        new AreaPrototype(rule.area, rule.scaleMax, rule.scaleMin));
+                        new AreaPrototype(rule.area, new Range(rule.scaleMin, rule.scaleMax)));
             }
             inRule = false;
             hadLine = hadLineMod = hadIcon = hadArea = false;

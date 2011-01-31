@@ -3,14 +3,14 @@ package org.openstreetmap.josm.gui.mappaint.xml;
 
 import java.awt.Color;
 
-import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
+import org.openstreetmap.josm.gui.mappaint.Range;
 
 public class AreaPrototype extends Prototype {
     public Color color;
-    public boolean closed;
+    public boolean closed; // if true, it does not apply to unclosed ways
 
-    public AreaPrototype (AreaPrototype a, long maxScale, long minScale) {
-        super(maxScale, minScale);
+    public AreaPrototype (AreaPrototype a, Range range) {
+        super(range);
         this.color = a.color;
         this.closed = a.closed;
         this.priority = a.priority;
@@ -21,12 +21,9 @@ public class AreaPrototype extends Prototype {
 
     public void init()
     {
+        priority = 0;
+        range = new Range();
         closed = false;
         color = null;
-        priority = 0;
-    }
-
-    public AreaElemStyle createStyle() {
-        return new AreaElemStyle(minScale, maxScale, color);
     }
 }

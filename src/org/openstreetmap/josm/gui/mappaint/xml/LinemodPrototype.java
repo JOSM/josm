@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.xml;
 
-import org.openstreetmap.josm.gui.mappaint.LineElemStyle;
+import org.openstreetmap.josm.gui.mappaint.Range;
 
 public class LinemodPrototype extends LinePrototype implements Comparable<LinemodPrototype> {
 
@@ -10,8 +10,8 @@ public class LinemodPrototype extends LinePrototype implements Comparable<Linemo
     public enum WidthMode { ABSOLUTE, PERCENT, OFFSET }
     public WidthMode widthMode;
 
-    public LinemodPrototype(LinemodPrototype s, long maxScale, long minScale) {
-        super(s, maxScale, minScale);
+    public LinemodPrototype(LinemodPrototype s, Range range) {
+        super(s, range);
         this.over = s.over;
         this.widthMode = s.widthMode;
     }
@@ -27,9 +27,9 @@ public class LinemodPrototype extends LinePrototype implements Comparable<Linemo
     }
 
     // get width for overlays
-    public int getWidth(int ref)
+    public float getWidth(float ref)
     {
-        int res;
+        float res;
         if(widthMode == WidthMode.ABSOLUTE) {
             res = width;
         } else if(widthMode == WidthMode.OFFSET) {
@@ -58,18 +58,5 @@ public class LinemodPrototype extends LinePrototype implements Comparable<Linemo
                 return -1;
             // we have no idea how to order other objects :-)
             return 0;
-    }
-
-    /**
-     * this method cannot be used for LinemodPrototypes
-     *  - use createStyle(int) instead
-     */
-    @Override
-    public LineElemStyle createStyle() {
-        throw new UnsupportedOperationException();
-    }
-
-    public LineElemStyle createStyle(int refWidth) {
-        return new LineElemStyle(minScale, maxScale, getWidth(refWidth), realWidth, color, dashed, dashedColor);
     }
 }

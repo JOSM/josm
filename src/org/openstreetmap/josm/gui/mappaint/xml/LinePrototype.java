@@ -5,19 +5,19 @@ import java.awt.Color;
 
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
-import org.openstreetmap.josm.gui.mappaint.LineElemStyle;
+import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.tools.I18n;
 
 public class LinePrototype extends Prototype {
 
     protected int width;
-    public int realWidth; //the real width of this line in meter
+    public Integer realWidth; // the real width of this line in meter
     public Color color;
     protected float[] dashed;
     public Color dashedColor;
 
-    public LinePrototype(LinePrototype s, long maxScale, long minScale) {
-        super(maxScale, minScale);
+    public LinePrototype(LinePrototype s, Range range) {
+        super(range);
         this.width = s.width;
         this.realWidth = s.realWidth;
         this.color = s.color;
@@ -31,11 +31,12 @@ public class LinePrototype extends Prototype {
 
     public void init()
     {
-        width = -1;
-        realWidth = 0;
-        dashed = new float[0];
-        dashedColor = null;
         priority = 0;
+        range = new Range();
+        width = -1;
+        realWidth = null;
+        dashed = null;
+        dashedColor = null;
         color = PaintColors.UNTAGGED.get();
     }
 
@@ -44,7 +45,7 @@ public class LinePrototype extends Prototype {
     }
 
     public void setDashed(float[] dashed) {
-        if (dashed.length == 0) {
+        if (dashed == null || dashed.length == 0) {
             this.dashed = dashed;
             return;
         }
@@ -73,9 +74,5 @@ public class LinePrototype extends Prototype {
 
     public void setWidth(int width) {
         this.width = width;
-    }
-
-    public LineElemStyle createStyle() {
-        return new LineElemStyle(minScale, maxScale, width, realWidth, color, dashed, dashedColor);
     }
 }

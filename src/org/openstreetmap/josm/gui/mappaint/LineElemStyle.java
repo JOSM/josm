@@ -14,29 +14,51 @@ import org.openstreetmap.josm.tools.Utils;
 
 public class LineElemStyle extends ElemStyle {
 
-    public static final LineElemStyle UNTAGGED_WAY;
-
-    static {
-        UNTAGGED_WAY = new LineElemStyle(0, Long.MAX_VALUE, -1, 0, PaintColors.UNTAGGED.get(), new float[0], null);
-    }
-
     public static LineElemStyle createSimpleLineStyle(Color color) {
-        return new LineElemStyle(0, Long.MAX_VALUE, -1, 0, color, new float[0], null);
+        return new LineElemStyle(Cascade.EMPTY_CASCADE, -1f, 0f, color != null ? color : PaintColors.UNTAGGED.get(), null, null);
     }
+    public static final LineElemStyle UNTAGGED_WAY = createSimpleLineStyle(null);
 
-    private int width;
-    public int realWidth; //the real width of this line in meter
+    private float width;
+    public float realWidth; // the real width of this line in meter
     public Color color;
     private float[] dashed;
     public Color dashedColor;
 
-    public LineElemStyle(long minScale, long maxScale, int width, int realWidth, Color color, float[] dashed, Color dashedColor) {
-        super(minScale, maxScale);
+    protected LineElemStyle(Cascade c, float width, float realWidth, Color color, float[] dashed, Color dashedColor) {
+        super(c);
         setWidth(width);
         this.realWidth = realWidth;
         this.color = color;
         this.dashed = dashed;
         this.dashedColor = dashedColor;
+    }
+
+    public static LineElemStyle createLine(Cascade c) {
+        return createImpl(c, "");
+    }
+
+    public static LineElemStyle createCasing(Cascade c) {
+        return createImpl(c, "casing-");
+    }
+
+    private static LineElemStyle createImpl(Cascade c, String prefix) {
+        Float width = c.get(prefix + "width", null, Float.class);
+        if (width == null)
+            return null;
+
+        float realWidth = c.get(prefix + "real-width", 0f, Float.class);
+        Color color = c.get(prefix + "color", null, Color.class);
+        if (color == null) {
+            color = c.get(prefix + "fill-color", null, Color.class);
+        }
+        if (color == null) {
+            color = PaintColors.UNTAGGED_WAY.get();
+        }
+        float[] dashes = c.get(prefix + "dashes", null, float[].class);
+        Color dashesBackground = c.get(prefix + "dashes-background-color", null, Color.class);
+
+        return new LineElemStyle(c, width, realWidth, color, dashes, dashesBackground);
     }
 
     @Override
@@ -54,7 +76,7 @@ public class LineElemStyle extends ElemStyle {
         Node lastN;
 
         Color myDashedColor = dashedColor;
-        int myWidth = getWidth();
+        float myWidth = getWidth();
 
         if (realWidth > 0 && paintSettings.isUseRealWidth() && !showDirection) {
 
@@ -66,7 +88,7 @@ public class LineElemStyle extends ElemStyle {
             }
             if(widthTag != null) {
                 try {
-                    realWidth = Integer.parseInt(widthTag);
+                    realWidth = new Float(Integer.parseInt(widthTag));
                 }
                 catch(NumberFormatException nfe) {
                 }
@@ -106,13 +128,13 @@ public class LineElemStyle extends ElemStyle {
         }
     }
 
-    public int getWidth() {
-        if (width == -1)
+    public float getWidth() {
+        if (width == -1f)
             return MapPaintSettings.INSTANCE.getDefaultSegmentWidth();
         return width;
     }
 
-    public void setWidth(int width) {
+    public void setWidth(float width) {
         this.width = width;
     }
 
@@ -132,17 +154,17 @@ public class LineElemStyle extends ElemStyle {
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 29 * hash + this.width;
-        hash = 29 * hash + this.realWidth;
-        hash = 29 * hash + this.color.hashCode();
-        hash = 29 * hash + Arrays.hashCode(this.dashed);
-        hash = 29 * hash + (this.dashedColor != null ? this.dashedColor.hashCode() : 0);
+        int hash = super.hashCode();
+        hash = 29 * hash + Float.floatToIntBits(width);
+        hash = 29 * hash + Float.floatToIntBits(realWidth);
+        hash = 29 * hash + color.hashCode();
+        hash = 29 * hash + Arrays.hashCode(dashed);
+        hash = 29 * hash + (dashedColor != null ? dashedColor.hashCode() : 0);
         return hash;
     }
 
     @Override
     public String toString() {
-        return "LineElemStyle{" + "width=" + width + " realWidth=" + realWidth + " color=" + color + " dashed=" + Arrays.toString(dashed) + " dashedColor=" + dashedColor + '}';
+        return "LineElemStyle{" + super.toString() + "width=" + width + " realWidth=" + realWidth + " color=" + color + " dashed=" + Arrays.toString(dashed) + " dashedColor=" + dashedColor + '}';
     }
 }

@@ -12,7 +12,7 @@ import java.util.Iterator;
  * certain condition (imposed by a predicate).
  * @param <S> element type of the underlying collection
  * @param <T> element type of filtered collection (and subclass of S). The predicate
- *      must except only objects of type T.
+ *      must accept only objects of type T.
  */
 public class SubclassFilteredCollection<S, T extends S> extends AbstractCollection<T> {
 
@@ -49,7 +49,9 @@ public class SubclassFilteredCollection<S, T extends S> extends AbstractCollecti
             findNext();
             S old = current;
             current = null;
-            return (T) old;
+            // we are save because predicate only accepts objects of type T
+            @SuppressWarnings("unchecked") T res = (T) old;
+            return res;
         }
 
         public void remove() {

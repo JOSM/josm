@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.mappaint;
 import java.awt.Color;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
@@ -13,9 +14,16 @@ public class AreaElemStyle extends ElemStyle
 {
     public Color color;
 
-    public AreaElemStyle(long minScale, long maxScale, Color color) {
-        super(minScale, maxScale);
+    protected AreaElemStyle(Cascade c, Color color) {
+        super(c);
         this.color = color;
+    }
+
+    public static AreaElemStyle create(Cascade c) {
+        Color color = c.get("fill-color", null, Color.class);
+        if (color == null)
+            return null;
+        return new AreaElemStyle(c, color);
     }
 
     @Override
@@ -24,7 +32,8 @@ public class AreaElemStyle extends ElemStyle
             Way w = (Way) primitive;
             String name = painter.isShowNames() ? painter.getAreaName(w) : null;
             painter.drawArea(w, w.isSelected() ? paintSettings.getSelectedColor() : color, name);
-            // line.paintPrimitive(way, paintSettings, painter, selected);
+        } else if (primitive instanceof Relation) {
+            painter.drawArea((Relation) primitive, selected ? paintSettings.getRelationSelectedColor() : color, painter.getAreaName(primitive));
         }
     }
 
@@ -39,11 +48,11 @@ public class AreaElemStyle extends ElemStyle
 
     @Override
     public int hashCode() {
-        return color.hashCode();
+        return 11 * super.hashCode() + color.hashCode();
     }
 
     @Override
     public String toString() {
-        return "AreaElemStyle{" + "color=" + color + '}';
+        return "AreaElemStyle{" + super.toString() + "color=" + color + '}';
     }
 }

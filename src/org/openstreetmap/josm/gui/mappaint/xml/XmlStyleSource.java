@@ -9,12 +9,17 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.mappaint.ElemStyles.WayPrototypesRecord;
+import org.openstreetmap.josm.gui.mappaint.Cascade;
+import org.openstreetmap.josm.gui.mappaint.MultiCascade;
+import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
+import org.openstreetmap.josm.tools.Utils;
 
 public class XmlStyleSource extends SourceEntry {
 
@@ -38,29 +43,58 @@ public class XmlStyleSource extends SourceEntry {
         super(entry.url, entry.name, entry.shortdescription, entry.active);
     }
 
-    public IconPrototype getNode(OsmPrimitive primitive, IconPrototype icon) {
+    private static class WayPrototypesRecord {
+        public LinePrototype line;
+        public List<LinemodPrototype> linemods;
+        public AreaPrototype area;
+    }
+
+    private <T extends Prototype> T update(T current, T candidate, Double scale, MultiCascade mc) {
+        return requiresUpdate(current, candidate, scale, mc) ? candidate : current;
+    }
+
+    /**
+     * checks whether a certain match is better than the current match
+     * @param current can be null
+     * @param candidate the new Prototype that could be used instead
+     * @param scale ignored if null, otherwise checks if scale is within the range of candidate
+     * @param mc side effect: update the valid region for the current MultiCascade
+     */
+    private boolean requiresUpdate(Prototype current, Prototype candidate, Double scale, MultiCascade mc) {
+        if (current == null || candidate.priority >= current.priority) {
+            if (scale == null)
+                return true;
+
+            if (candidate.range.contains(scale)) {
+                mc.range = Range.cut(mc.range, candidate.range);
+                return true;
+            } else {
+                mc.range = mc.range.reduceAround(scale, candidate.range);
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private IconPrototype getNode(OsmPrimitive primitive, Double scale, MultiCascade mc) {
+        IconPrototype icon = null;
         for (String key : primitive.keySet()) {
             String val = primitive.get(key);
-            IconPrototype style;
-            if ((style = icons.get("n" + key + "=" + val)) != null) {
-                if (icon == null || style.priority >= icon.priority) {
-                    icon = style;
-                }
+            IconPrototype p;
+            if ((p = icons.get("n" + key + "=" + val)) != null) {
+                icon = update(icon, p, scale, mc);
             }
-            if ((style = icons.get("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val))) != null) {
-                if (icon == null || style.priority >= icon.priority) {
-                    icon = style;
-                }
+            if ((p = icons.get("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val))) != null) {
+                icon = update(icon, p, scale, mc);
             }
-            if ((style = icons.get("x" + key)) != null) {
-                if (icon == null || style.priority >= icon.priority) {
-                    icon = style;
-                }
+            if ((p = icons.get("x" + key)) != null) {
+                icon = update(icon, p, scale, mc);
             }
         }
         for (IconPrototype s : iconsList) {
-            if ((icon == null || s.priority >= icon.priority) && s.check(primitive)) {
-                icon = s;
+            if (s.check(primitive))
+            {
+                icon = update(icon, s, scale, mc);
             }
         }
         return icon;
@@ -71,7 +105,7 @@ public class XmlStyleSource extends SourceEntry {
      *  This is useful for multipolygon relations and outer ways of untagged
      *  multipolygon relations.
      */
-    public void get(OsmPrimitive primitive, boolean closed, WayPrototypesRecord p) {
+    private void get(OsmPrimitive primitive, boolean closed, WayPrototypesRecord p, Double scale, MultiCascade mc) {
         String lineIdx = null;
         HashMap<String, LinemodPrototype> overlayMap = new HashMap<String, LinemodPrototype>();
         for (String key : primitive.keySet()) {
@@ -80,56 +114,70 @@ public class XmlStyleSource extends SourceEntry {
             LinePrototype styleLine;
             LinemodPrototype styleLinemod;
             String idx = "n" + key + "=" + val;
-            if ((styleArea = areas.get(idx)) != null && (p.area == null || styleArea.priority >= p.area.priority) && (closed || !styleArea.closed)) {
-                p.area = styleArea;
+            if ((styleArea = areas.get(idx)) != null && (closed || !styleArea.closed)) {
+                p.area = update(p.area, styleArea, scale, mc);
             }
-            if ((styleLine = lines.get(idx)) != null && (p.line == null || styleLine.priority >= p.line.priority)) {
-                p.line = styleLine;
-                lineIdx = idx;
+            if ((styleLine = lines.get(idx)) != null) {
+                if (requiresUpdate(p.line, styleLine, scale, mc)) {
+                    p.line = styleLine;
+                    lineIdx = idx;
+                }
             }
             if ((styleLinemod = modifiers.get(idx)) != null) {
-                overlayMap.put(idx, styleLinemod);
+                if (requiresUpdate(null, styleLinemod, scale, mc)) {
+                    overlayMap.put(idx, styleLinemod);
+                }
             }
             idx = "b" + key + "=" + OsmUtils.getNamedOsmBoolean(val);
-            if ((styleArea = areas.get(idx)) != null && (p.area == null || styleArea.priority >= p.area.priority) && (closed || !styleArea.closed)) {
-                p.area = styleArea;
+            if ((styleArea = areas.get(idx)) != null && (closed || !styleArea.closed)) {
+                p.area = update(p.area, styleArea, scale, mc);
             }
-            if ((styleLine = lines.get(idx)) != null && (p.line == null || styleLine.priority >= p.line.priority)) {
-                p.line = styleLine;
-                lineIdx = idx;
+            if ((styleLine = lines.get(idx)) != null) {
+                if (requiresUpdate(p.line, styleLine, scale, mc)) {
+                    p.line = styleLine;
+                    lineIdx = idx;
+                }
             }
             if ((styleLinemod = modifiers.get(idx)) != null) {
-                overlayMap.put(idx, styleLinemod);
+                if (requiresUpdate(null, styleLinemod, scale, mc)) {
+                    overlayMap.put(idx, styleLinemod);
+                }
             }
             idx = "x" + key;
-            if ((styleArea = areas.get(idx)) != null && (p.area == null || styleArea.priority >= p.area.priority) && (closed || !styleArea.closed)) {
-                p.area = styleArea;
+            if ((styleArea = areas.get(idx)) != null && (closed || !styleArea.closed)) {
+                p.area = update(p.area, styleArea, scale, mc);
             }
-            if ((styleLine = lines.get(idx)) != null && (p.line == null || styleLine.priority >= p.line.priority)) {
-                p.line = styleLine;
-                lineIdx = idx;
+            if ((styleLine = lines.get(idx)) != null) {
+                if (requiresUpdate(p.line, styleLine, scale, mc)) {
+                    p.line = styleLine;
+                    lineIdx = idx;
+                }
             }
             if ((styleLinemod = modifiers.get(idx)) != null) {
-                overlayMap.put(idx, styleLinemod);
+                if (requiresUpdate(null, styleLinemod, scale, mc)) {
+                    overlayMap.put(idx, styleLinemod);
+                }
             }
         }
         for (AreaPrototype s : areasList) {
-            if ((p.area == null || s.priority >= p.area.priority) && (closed || !s.closed) && s.check(primitive)) {
-                p.area = s;
+            if ((closed || !s.closed) && s.check(primitive)) {
+                p.area = update(p.area, s, scale, mc);
             }
         }
         for (LinePrototype s : linesList) {
-            if ((p.line == null || s.priority >= p.line.priority) && s.check(primitive)) {
-                p.line = s;
+            if (s.check(primitive)) {
+                p.line = update(p.line, s, scale, mc);
             }
         }
         for (LinemodPrototype s : modifiersList) {
             if (s.check(primitive)) {
-                overlayMap.put(s.getCode(), s);
+                if (requiresUpdate(null, s, scale, mc)) {
+                    overlayMap.put(s.getCode(), s);
+                }
             }
         }
         overlayMap.remove(lineIdx); // do not use overlay if linestyle is from the same rule (example: railway=tram)
-        if (!overlayMap.isEmpty() && p.line != null) {
+        if (!overlayMap.isEmpty()) {
             List<LinemodPrototype> tmp = new LinkedList<LinemodPrototype>();
             if (p.linemods != null) {
                 tmp.addAll(p.linemods);
@@ -138,37 +186,6 @@ public class XmlStyleSource extends SourceEntry {
             Collections.sort(tmp);
             p.linemods = tmp;
         }
-    }
-
-    public boolean isArea(OsmPrimitive o) {
-        if (o.hasKeys() && !(o instanceof Node)) {
-            boolean noclosed = o instanceof Way && !((Way) o).isClosed();
-            Iterator<String> iterator = o.keySet().iterator();
-            while (iterator.hasNext()) {
-                String key = iterator.next();
-                String val = o.get(key);
-                AreaPrototype s = areas.get("n" + key + "=" + val);
-                if (s == null || (s.closed && noclosed)) {
-                    s = areas.get("b" + key + "=" + OsmUtils.getNamedOsmBoolean(val));
-                }
-                if (s == null || (s.closed && noclosed)) {
-                    s = areas.get("x" + key);
-                }
-                if (s != null && !(s.closed && noclosed)) {
-                    return true;
-                }
-            }
-            for (AreaPrototype s : areasList) {
-                if (!(s.closed && noclosed) && s.check(o)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public boolean hasAreas() {
-        return areas.size() > 0;
     }
 
     public void add(XmlCondition c, Collection<XmlCondition> conditions, Prototype prot) {
@@ -201,4 +218,71 @@ public class XmlStyleSource extends SourceEntry {
                 throw new RuntimeException();
          }
      }
+
+    public void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed) {
+        Cascade def = mc.getCascade("default");
+        boolean useMinMaxScale = Main.pref.getBoolean("mappaint.zoomLevelDisplay", false);
+
+        if (osm instanceof Node || (osm instanceof Relation && "restriction".equals(osm.get("type")))) {
+            IconPrototype icon = getNode(osm, (useMinMaxScale ? scale : null), mc);
+            if (icon != null) {
+                def.put("icon-image", icon.icon);
+                if (osm instanceof Node) {
+                    if (icon.annotate != null) {
+                        if (icon.annotate) {
+                            def.put("text", "yes");
+                        } else {
+                            def.remove("text");
+                        }
+                    }
+                }
+            }
+        } else if (osm instanceof Way || (osm instanceof Relation && "multipolygon".equals(osm.get("type")))) {
+            WayPrototypesRecord p = new WayPrototypesRecord();
+            get(osm, pretendWayIsClosed || !(osm instanceof Way) || ((Way) osm).isClosed(), p, (useMinMaxScale ? scale : null), mc);
+            if (p.line != null) {
+                def.put("width", new Float(p.line.getWidth()));
+                def.putOrClear("real-width", p.line.realWidth != null ? new Float(p.line.realWidth) : null);
+                def.putOrClear("color", p.line.color);
+                def.putOrClear("dashes", p.line.getDashed());
+                def.putOrClear("dashes-background-color", p.line.dashedColor);
+            }
+            Float refWidth = def.get("width", null, Float.class);
+            if (refWidth != null && p.linemods != null) {
+                int numOver = 0, numUnder = 0;
+
+                while (mc.containsKey(String.format("over_%d", ++numOver))) {}
+                while (mc.containsKey(String.format("under_%d", ++numUnder))) {}
+
+                for (LinemodPrototype mod : p.linemods) {
+                    Cascade c;
+                    if (mod.over) {
+                        c = mc.getCascade(String.format("over_%d", numOver));
+                        c.put("object-z-index", new Float(numOver));
+                        ++numOver;
+                    } else {
+                        c = mc.getCascade(String.format("under_%d", numUnder));
+                        c.put("object-z-index", new Float(-numUnder));
+                        ++numUnder;
+                    }
+                    c.put("width", new Float(mod.getWidth(refWidth)));
+                    c.putOrClear("color", mod.color);
+                    c.putOrClear("dashes", mod.getDashed());
+                    c.putOrClear("dashes-background-color", mod.dashedColor);
+                }
+            }
+            if (multipolyOuterWay != null) {
+                WayPrototypesRecord p2 = new WayPrototypesRecord();
+                get(multipolyOuterWay, true, p2, (useMinMaxScale ? scale : null), mc);
+                if (Utils.equal(p.area, p2.area)) {
+                    p.area = null;
+                }
+            }
+            if (p.area != null) {
+                def.putOrClear("fill-color", p.area.color);
+                def.remove("fill-image");
+            }
+        }
+    }
+
 }

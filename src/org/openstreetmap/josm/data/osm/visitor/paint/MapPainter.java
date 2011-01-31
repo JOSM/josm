@@ -25,8 +25,10 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
+import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.gui.mappaint.IconElemStyle;
+import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
@@ -57,6 +59,8 @@ public class MapPainter {
 
     private final double circum;
 
+    private final boolean leftHandTraffic;
+
     private final Collection<String> regionalNameOrder;
 
     private static final double PHI = Math.toRadians(20);
@@ -65,14 +69,14 @@ public class MapPainter {
 
     public MapPainter(MapPaintSettings settings, Graphics2D g, 
         boolean inactive, NavigatableComponent nc, boolean virtual, 
-        double dist, double circum) {
-
+        double circum, boolean leftHandTraffic)
+    {
         this.g = g;
         this.inactive = inactive;
         this.nc = nc;
-        this.useStrokes = settings.getUseStrokesDistance() > dist;
-        this.showNames = settings.getShowNamesDistance() > dist;
-        this.showIcons = settings.getShowIconsDistance() > dist;
+        this.useStrokes = settings.getUseStrokesDistance() > circum;
+        this.showNames = settings.getShowNamesDistance() > circum;
+        this.showIcons = settings.getShowIconsDistance() > circum;
         this.outlineOnly = settings.isOutlineOnly();
 
         this.inactiveColor = PaintColors.INACTIVE.get();
@@ -92,9 +96,10 @@ public class MapPainter {
         String[] names = {"name:" + LanguageInfo.getJOSMLocaleCode(), "name", "int_name", "ref", "operator", "brand", "addr:housenumber"};
         this.regionalNameOrder = Main.pref.getCollection("mappaint.nameOrder", Arrays.asList(names));
         this.circum = circum;
+        this.leftHandTraffic = leftHandTraffic;
     }
 
-    public void drawWay(Way way, Color color, int width, float dashed[], Color dashedColor, boolean showDirection,
+    public void drawWay(Way way, Color color, float width, float dashed[], Color dashedColor, boolean showDirection,
             boolean reversedDirection, boolean showHeadArrowOnly) {
 
         GeneralPath path = new GeneralPath();
@@ -153,10 +158,10 @@ public class MapPainter {
         displaySegments(path, arrows, color, width, dashed, dashedColor);
     }
 
-    private void displaySegments(GeneralPath path, GeneralPath arrows, Color color, int width, float dashed[], Color dashedColor) {
+    private void displaySegments(GeneralPath path, GeneralPath arrows, Color color, float width, float dashed[], Color dashedColor) {
         g.setColor(inactive ? inactiveColor : color);
         if (useStrokes) {
-            if (dashed.length > 0) {
+            if (dashed == null || dashed.length > 0) {
                 g.setStroke(new BasicStroke(width,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0, dashed,0));
             } else {
                 g.setStroke(new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
@@ -167,7 +172,7 @@ public class MapPainter {
 
         if(!inactive && useStrokes && dashedColor != null) {
             g.setColor(dashedColor);
-            if (dashed.length > 0) {
+            if (dashed == null || dashed.length > 0) {
                 float[] dashedOffset = new float[dashed.length];
                 System.arraycopy(dashed, 1, dashedOffset, 0, dashed.length - 1);
                 dashedOffset[dashed.length-1] = dashed[0];
@@ -318,6 +323,30 @@ public class MapPainter {
         }
     }
 
+    public void drawArea(Relation r, Color color, String name) {
+        Multipolygon multipolygon = new Multipolygon(nc);
+        multipolygon.load(r);
+        if(!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
+            for (PolyData pd : multipolygon.getCombinedPolygons()) {
+                Polygon p = pd.get();
+                if(!isPolygonVisible(p)) {
+                    continue;
+                }
+                drawArea(p, color, getAreaName(r));
+            }
+        }
+    }
+
+    private boolean isPolygonVisible(Polygon polygon) {
+        Rectangle bounds = polygon.getBounds();
+        if (bounds.width == 0 && bounds.height == 0) return false;
+        if (bounds.x > nc.getWidth()) return false;
+        if (bounds.y > nc.getHeight()) return false;
+        if (bounds.x + bounds.width < 0) return false;
+        if (bounds.y + bounds.height < 0) return false;
+        return true;
+    }
+
     public void drawRestriction(ImageIcon icon, Point pVia, double vx, double vx2, double vy, double vy2, double iconAngle, boolean selected) {
         /* rotate icon with direction last node in from to */
         ImageIcon rotatedIcon = ImageProvider.createRotatedImage(null /*icon2*/, icon, iconAngle);
@@ -333,7 +362,7 @@ public class MapPainter {
         }
     }
 
-    public void drawRestriction(Relation r, boolean leftHandTraffic, IconElemStyle icon) {
+    public void drawRestriction(Relation r, NodeElemStyle icon) {
 
         Way fromWay = null;
         Way toWay = null;

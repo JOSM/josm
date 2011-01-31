@@ -299,14 +299,12 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * MAPPAINT
      *--------*/
     public StyleCache mappaintStyle = null;
-    public int mappaintDrawnCode = 0;
 
     /* This should not be called from outside. Fixing the UI to add relevant
        get/set functions calling this implicitely is preferred, so we can have
        transparent cache handling in the future. */
     public void clearCached()
     {
-        mappaintDrawnCode = 0;
         mappaintStyle = null;
     }
     /* end of mappaint data */
@@ -807,6 +805,18 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     public boolean isSelected() {
         return dataSet != null && dataSet.isSelected(this);
+    }
+
+    public boolean isMemberOfSelected() {
+        if (referrers == null)
+            return false;
+        if (referrers instanceof OsmPrimitive)
+            return referrers instanceof Relation && ((OsmPrimitive) referrers).isSelected();
+        for (OsmPrimitive ref : (OsmPrimitive[]) referrers) {
+            if (ref instanceof Relation && ref.isSelected())
+                return true;
+        }
+        return false;
     }
 
     public void setHighlighted(boolean highlighted) {
