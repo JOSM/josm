@@ -67,9 +67,9 @@ public class MapPainter {
     private static final double cosPHI = Math.cos(PHI);
     private static final double sinPHI = Math.sin(PHI);
 
-    public MapPainter(MapPaintSettings settings, Graphics2D g, 
-        boolean inactive, NavigatableComponent nc, boolean virtual, 
-        double circum, boolean leftHandTraffic)
+    public MapPainter(MapPaintSettings settings, Graphics2D g,
+            boolean inactive, NavigatableComponent nc, boolean virtual,
+            double circum, boolean leftHandTraffic)
     {
         this.g = g;
         this.inactive = inactive;
@@ -161,7 +161,7 @@ public class MapPainter {
     private void displaySegments(GeneralPath path, GeneralPath arrows, Color color, float width, float dashed[], Color dashedColor) {
         g.setColor(inactive ? inactiveColor : color);
         if (useStrokes) {
-            if (dashed == null || dashed.length > 0) {
+            if (dashed != null && dashed.length > 0) {
                 g.setStroke(new BasicStroke(width,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0, dashed,0));
             } else {
                 g.setStroke(new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
@@ -172,7 +172,7 @@ public class MapPainter {
 
         if(!inactive && useStrokes && dashedColor != null) {
             g.setColor(dashedColor);
-            if (dashed == null || dashed.length > 0) {
+            if (dashed != null && dashed.length > 0) {
                 float[] dashedOffset = new float[dashed.length];
                 System.arraycopy(dashed, 1, dashedOffset, 0, dashed.length - 1);
                 dashedOffset[dashed.length-1] = dashed[0];
@@ -284,7 +284,7 @@ public class MapPainter {
         } else {
             g.fillPolygon(polygon);
         }
-            
+
 
         if (name != null) {
             Rectangle pb = polygon.getBounds();
@@ -383,21 +383,25 @@ public class MapPainter {
                     }
 
                     if("from".equals(m.getRole())) {
-                        if(fromWay == null)
+                        if(fromWay == null) {
                             fromWay = w;
+                        }
                     } else if("to".equals(m.getRole())) {
-                        if(toWay == null)
+                        if(toWay == null) {
                             toWay = w;
+                        }
                     } else if("via".equals(m.getRole())) {
-                        if(via == null)
+                        if(via == null) {
                             via = w;
+                        }
                     }
                 }
                 else if(m.isNode())
                 {
                     Node n = m.getNode();
-                    if("via".equals(m.getRole()) && via == null)
+                    if("via".equals(m.getRole()) && via == null) {
                         via = n;
+                    }
                 }
             }
         }
@@ -409,9 +413,8 @@ public class MapPainter {
         if(via instanceof Node)
         {
             viaNode = (Node) via;
-            if(!fromWay.isFirstLastNode(viaNode)) {
+            if(!fromWay.isFirstLastNode(viaNode))
                 return;
-            }
         }
         else
         {
@@ -440,9 +443,8 @@ public class MapPainter {
                 viaNode = firstNode;
             } else if (!onewayvia && fromWay.isFirstLastNode(lastNode)) {
                 viaNode = lastNode;
-            } else {
+            } else
                 return;
-            }
         }
 
         /* find the "direct" nodes before the via node */
