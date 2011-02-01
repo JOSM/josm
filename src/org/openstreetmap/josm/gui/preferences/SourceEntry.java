@@ -103,4 +103,10 @@ public class SourceEntry {
     public String getPrefName() {
         return name == null ? "standard" : name;
     }
+
+    public boolean isLocal() {
+        if (url.startsWith("http://") || url.startsWith("resource://"))
+            return false;
+        return true;
+    }
 }

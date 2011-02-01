@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.dialogs.DialogsPanel;
 import org.openstreetmap.josm.gui.dialogs.FilterDialog;
 import org.openstreetmap.josm.gui.dialogs.HistoryDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
+import org.openstreetmap.josm.gui.dialogs.MapPaintDialog;
 import org.openstreetmap.josm.gui.dialogs.RelationListDialog;
 import org.openstreetmap.josm.gui.dialogs.SelectionListDialog;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
@@ -184,6 +185,9 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         addToggleDialog(validatorDialog = new ValidatorDialog());
         addToggleDialog(filterDialog = new FilterDialog());
         addToggleDialog(new ChangesetDialog(this));
+        if (Main.pref.getBoolean("mappaintdialog.show", false)) {
+            addToggleDialog(new MapPaintDialog());
+        }
 
         // status line below the map
         statusLine = new MapStatus(this);

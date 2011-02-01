@@ -1,11 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.xml;
 
-import java.io.File;
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,10 +21,15 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.Range;
+import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
+import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlObjectParser;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
-public class XmlStyleSource extends SourceEntry {
+public class XmlStyleSource extends StyleSource {
 
     public final HashMap<String, IconPrototype> icons = new HashMap<String, IconPrototype>();
     public final HashMap<String, LinePrototype> lines = new HashMap<String, LinePrototype>();
@@ -32,15 +40,46 @@ public class XmlStyleSource extends SourceEntry {
     public final LinkedList<LinemodPrototype> modifiersList = new LinkedList<LinemodPrototype>();
     public final LinkedList<AreaPrototype> areasList = new LinkedList<AreaPrototype>();
 
-    public boolean hasError = false;
-    public File zipIcons;
-
     public XmlStyleSource(String url, String name, String shortdescription) {
-        super(url, name, shortdescription, true);
+        super(url, name, shortdescription);
     }
 
     public XmlStyleSource(SourceEntry entry) {
-        super(entry.url, entry.name, entry.shortdescription, entry.active);
+        super(entry);
+    }
+
+    @Override
+    public void loadStyleSource() {
+        try {
+            MirroredInputStream in = new MirroredInputStream(url);
+            InputStream zip = in.getZipEntry("xml", "style");
+            InputStreamReader reader = null;
+            if (zip != null) {
+                reader = new InputStreamReader(zip);
+            } else {
+                reader = new InputStreamReader(in);
+            }
+
+            XmlObjectParser parser = new XmlObjectParser(new XmlStyleSourceHandler(this));
+            parser.startWithValidation(reader,
+                    "http://josm.openstreetmap.de/mappaint-style-1.0",
+                    "resource://data/mappaint-style.xsd");
+            while(parser.hasNext()) {
+            }
+            
+        } catch(IOException e) {
+            System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
+            e.printStackTrace();
+            hasError = true;
+        } catch(SAXParseException e) {
+            System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Error was: [{1}:{2}] {3}", url, e.getLineNumber(), e.getColumnNumber(), e.getMessage()));
+            e.printStackTrace();
+            hasError = true;
+        } catch(SAXException e) {
+            System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
+            e.printStackTrace();
+            hasError = true;
+        }
     }
 
     private static class WayPrototypesRecord {
@@ -219,6 +258,7 @@ public class XmlStyleSource extends SourceEntry {
          }
      }
 
+    @Override
     public void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed) {
         Cascade def = mc.getCascade("default");
         boolean useMinMaxScale = Main.pref.getBoolean("mappaint.zoomLevelDisplay", false);

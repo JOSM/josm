@@ -299,6 +299,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      * MAPPAINT
      *--------*/
     public StyleCache mappaintStyle = null;
+    public int mappaintCacheIdx;
 
     /* This should not be called from outside. Fixing the UI to add relevant
        get/set functions calling this implicitely is preferred, so we can have

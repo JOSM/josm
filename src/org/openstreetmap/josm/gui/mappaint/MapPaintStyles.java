@@ -1,14 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
-import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSourceHandler;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -17,14 +13,11 @@ import java.util.List;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.MapPaintPreference.MapPaintPrefMigration;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.XmlObjectParser;
-import org.openstreetmap.josm.tools.Utils;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 public class MapPaintStyles {
 
@@ -89,37 +82,22 @@ public class MapPaintStyles {
         Collection<? extends SourceEntry> sourceEntries = (new MapPaintPrefMigration()).get();
 
         for (SourceEntry entry : sourceEntries) {
-            XmlStyleSource style = new XmlStyleSource(entry);
+            StyleSource style = new XmlStyleSource(entry);
             try {
-                XmlObjectParser parser = new XmlObjectParser(new XmlStyleSourceHandler(style));
                 MirroredInputStream in = new MirroredInputStream(entry.url);
                 InputStream zip = in.getZipEntry("xml","style");
-                InputStreamReader ins;
-                if(zip != null)
-                {
+                if (zip != null) {
                     style.zipIcons = in.getFile();
-                    ins = new InputStreamReader(zip);
-                } else {
-                    ins = new InputStreamReader(in);
-                }
-                parser.startWithValidation(ins, "http://josm.openstreetmap.de/mappaint-style-1.0",
-                "resource://data/mappaint-style.xsd");
-                while(parser.hasNext()) {
-                }
+                } 
             } catch(IOException e) {
                 System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", entry.url, e.toString()));
                 e.printStackTrace();
                 style.hasError = true;
-            } catch(SAXParseException e) {
-                System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Error was: [{1}:{2}] {3}", entry.url, e.getLineNumber(), e.getColumnNumber(), e.getMessage()));
-                e.printStackTrace();
-                style.hasError = true;
-            } catch(SAXException e) {
-                System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Error was: {1}", entry.url, e.getMessage()));
-                e.printStackTrace();
-                style.hasError = true;
             }
             styles.add(style);
+        }
+        for (StyleSource s : styles.getStyleSources()) {
+            s.loadStyleSource();
         }
     }
 }

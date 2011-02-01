@@ -18,32 +18,33 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
-import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
 import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 public class ElemStyles {
-    private List<XmlStyleSource> styleSources;
+    private List<StyleSource> styleSources;
     private boolean drawMultipolygon;
+
+    public static int cacheIdx;
 
     public ElemStyles()
     {
-        styleSources = new ArrayList<XmlStyleSource>();
+        styleSources = new ArrayList<StyleSource>();
     }
 
-    public void add(XmlStyleSource style) {
+    public void add(StyleSource style) {
         styleSources.add(style);
     }
 
-    public Collection<XmlStyleSource> getStyleSources() {
-        return new FilteredCollection<XmlStyleSource>(styleSources, new Predicate<XmlStyleSource>() {
+    public Collection<StyleSource> getStyleSources() {
+        return new FilteredCollection<StyleSource>(styleSources, new Predicate<StyleSource>() {
 
             String name = Main.pref.get("mappaint.style", "standard");
 
             @Override
-            public boolean evaluate(XmlStyleSource s) {
+            public boolean evaluate(StyleSource s) {
                 return Utils.equal(s.getPrefName(), name);
             }
 
@@ -53,7 +54,7 @@ public class ElemStyles {
     public Collection<String> getStyleNames() {
         Set<String> names = new HashSet<String>();
         names.add("standard");
-        for (XmlStyleSource s : styleSources) {
+        for (StyleSource s : styleSources) {
             if (s.name != null) {
                 names.add(s.name);
             }
@@ -66,7 +67,7 @@ public class ElemStyles {
     }
 
     public Pair<StyleList, Range> getStyleCacheWithRange(OsmPrimitive osm, double scale, NavigatableComponent nc) {
-        if (osm.mappaintStyle == null) {
+        if (osm.mappaintStyle == null || osm.mappaintCacheIdx != cacheIdx) {
             osm.mappaintStyle = StyleCache.EMPTY_STYLECACHE;
         } else {
             Pair<StyleList, Range> lst = osm.mappaintStyle.getWithRange(scale);
@@ -82,6 +83,7 @@ public class ElemStyles {
             p.a = new StyleList(p.a, line);
         }
         osm.mappaintStyle = osm.mappaintStyle.put(p.a, p.b);
+        osm.mappaintCacheIdx = cacheIdx;
         return p;
     }
 
@@ -89,7 +91,7 @@ public class ElemStyles {
         if (osm instanceof Node)
         {
             return generateStyles(osm, scale, null, false);
-        } 
+        }
         else if (osm instanceof Way)
         {
             Pair<StyleList, Range> p = generateStyles(osm, scale, null, false);
@@ -177,7 +179,7 @@ public class ElemStyles {
                 }
             }
             return p;
-        } 
+        }
         else if (osm instanceof Relation)
         {
             Pair<StyleList, Range> p = generateStyles(osm, scale, null, true);
@@ -215,8 +217,10 @@ public class ElemStyles {
         List<ElemStyle> sl = new ArrayList<ElemStyle>();
         MultiCascade mc = new MultiCascade();
 
-        for (XmlStyleSource s : styleSources) {
-            s.apply(mc, osm, scale, multipolyOuterWay, pretendWayIsClosed);
+        for (StyleSource s : styleSources) {
+            if (s.active) {
+                s.apply(mc, osm, scale, multipolyOuterWay, pretendWayIsClosed);
+            }
         }
 
         for (Entry<String, Cascade> e : mc.entrySet()) {
