@@ -22,6 +22,7 @@ import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -352,6 +353,47 @@ public class NavigatableComponent extends JComponent implements Helpful {
             zoomTo(((CachedLatLon)newCenter).getEastNorth(), scale);
         } else {
             zoomTo(getProjection().latlon2eastNorth(newCenter), scale);
+        }
+    }
+
+    public void smoothScrollTo(LatLon newCenter) {
+        if (newCenter instanceof CachedLatLon) {
+            smoothScrollTo(((CachedLatLon)newCenter).getEastNorth());
+        } else {
+            smoothScrollTo(getProjection().latlon2eastNorth(newCenter));
+        }
+    }
+
+    /**
+     * Create a thread that moves the viewport to the given center in an 
+     * animated fashion.
+     */
+    public void smoothScrollTo(EastNorth newCenter) {
+        // fixme make these configurable.
+        final int fps = 20;     // animation frames per second
+        final int speed = 1500; // milliseconds for full-screen-width pan
+        if (!newCenter.equals(center)) {
+            final EastNorth oldCenter = center;
+            final double distance = newCenter.distance(oldCenter) / scale;
+            final double milliseconds = distance / getWidth() * speed;
+            final double frames = milliseconds * fps / 1000;
+            final EastNorth finalNewCenter = newCenter;
+
+            // we attempt to smooth-scroll at 10 fps, and use 2 seconds to scroll one 
+            // screen width.
+
+            new Thread(
+                new Runnable() {
+                    public void run() {
+                        for (int i=0; i<frames; i++)
+                        {
+                            // fixme - not use zoom history here
+                            zoomTo(oldCenter.interpolate(finalNewCenter, (double) (i+1) / (double) frames));
+                            try { Thread.sleep(1000 / fps); } catch (InterruptedException ex) { };
+                        }
+                    }
+                }
+            ).start();
         }
     }
 

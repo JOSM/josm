@@ -81,6 +81,8 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer);
     }
 
+    public boolean viewportFollowing = false;
+
     /**
      * the layer listeners
      */

@@ -35,6 +35,10 @@ public class EastNorth extends Coordinate {
         return new EastNorth((this.x + en2.x)/2.0, (this.y + en2.y)/2.0);
     }
 
+    public double distance(EastNorth en2) {
+        return Math.sqrt((this.x-en2.x)*(this.x-en2.x) + (this.y-en2.y)*(this.y-en2.y));
+    }
+
     /**
      * Returns the heading, in radians, that you have to use to get from
      * this EastNorth to another. Heading is mapped into [0, 2pi)

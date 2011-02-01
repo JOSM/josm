@@ -73,6 +73,7 @@ import org.openstreetmap.josm.actions.UpdateModifiedAction;
 import org.openstreetmap.josm.actions.UpdateSelectionAction;
 import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.actions.UploadSelectionAction;
+import org.openstreetmap.josm.actions.ViewportFollowToggleAction;
 import org.openstreetmap.josm.actions.WireframeToggleAction;
 import org.openstreetmap.josm.actions.ZoomInAction;
 import org.openstreetmap.josm.actions.ZoomOutAction;
@@ -284,6 +285,13 @@ public class MainMenu extends JMenuBar {
             JosmAction autoScaleAction = new AutoScaleAction(mode);
             add(viewMenu, autoScaleAction);
         }
+
+        // -- viewport follow toggle action
+        ViewportFollowToggleAction viewportFollowToggleAction = new ViewportFollowToggleAction();
+        final JCheckBoxMenuItem vft = new JCheckBoxMenuItem(viewportFollowToggleAction);
+        viewMenu.add(vft);
+        vft.setAccelerator(viewportFollowToggleAction.getShortcut().getKeyStroke());
+        viewportFollowToggleAction.addButtonModel(vft.getModel());
 
         // -- changeset manager toggle action
         ChangesetManagerToggleAction changesetManagerToggleAction = new ChangesetManagerToggleAction();

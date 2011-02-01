@@ -558,6 +558,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         getCurrentDataSet().setSelected(newSelection);
 
+        // "viewport following" mode for tracing long features 
+        // from aerial imagery or GPS tracks. 
+        if (n != null && Main.map.mapView.viewportFollowing) {
+            Main.map.mapView.smoothScrollTo(n.getEastNorth());
+        };
         computeHelperLine();
         removeHighlighting();
         redrawIfRequired();
