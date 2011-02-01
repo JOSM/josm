@@ -379,9 +379,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
             final double frames = milliseconds * fps / 1000;
             final EastNorth finalNewCenter = newCenter;
 
-            // we attempt to smooth-scroll at 10 fps, and use 2 seconds to scroll one 
-            // screen width.
-
             new Thread(
                 new Runnable() {
                     public void run() {
