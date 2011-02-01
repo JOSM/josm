@@ -5,10 +5,16 @@ import java.nio.ByteBuffer;
 
 public class Base64 {
 
-    private static String enc = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    private static String encDefault = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    private static String encUrlSafe = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
     public static String encode(String s) {
+        return encode(s, false);
+    }
+
+    public static String encode(String s, boolean urlsafe) {
         StringBuilder out = new StringBuilder();
+        String enc = urlsafe ? encUrlSafe : encDefault;
         for (int i = 0; i < (s.length()+2)/3; ++i) {
             int l = Math.min(3, s.length()-i*3);
             String buf = s.substring(i*3, i*3+l);
@@ -25,7 +31,12 @@ public class Base64 {
     }
 
     public static String encode(ByteBuffer s) {
+        return encode(s, false);
+    }
+
+    public static String encode(ByteBuffer s, boolean urlsafe) {
         StringBuilder out = new StringBuilder();
+        String enc = urlsafe ? encUrlSafe : encDefault;
         // Read 3 bytes at a time.
         for (int i = 0; i < (s.limit()+2)/3; ++i) {
             int l = Math.min(3, s.limit()-i*3);

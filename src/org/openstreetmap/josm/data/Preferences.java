@@ -655,7 +655,7 @@ public class Preferences {
                 s = s.replace(sep, "\u001e");
                 put(key, s);
             }
-            return Arrays.asList(s.split("\u001e"));
+            return Arrays.asList(s.split("\u001e", -1));
         }
         return Collections.emptyList();
     }
@@ -669,11 +669,11 @@ public class Preferences {
     synchronized public boolean putCollection(String key, Collection<String> val) {
         return put(key, join("\u001e", val));
     }
-    
+
     synchronized private void putCollectionDefault(String key, Collection<String> val) {
         putDefault(key, join("\u001e", val));
     }
-    
+
     /**
      * Used to read a 2-dimensional array of strings from the preference file.
      * If not a single entry could be found, def is returned.

@@ -13,14 +13,13 @@ import java.awt.datatransfer.Transferable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.nio.ByteBuffer;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-
-import org.apache.commons.codec.binary.Base64;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
@@ -108,7 +107,7 @@ public final class BugReportExceptionHandler implements Thread.UncaughtException
                     }
 
                     URL url = new URL("http://josm.openstreetmap.de/josmticket?" +
-                            "tdata="+Base64.encodeBase64URLSafeString(urltext.getBytes("UTF8")));
+                            "tdata="+Base64.encode(ByteBuffer.wrap(urltext.getBytes("UTF8")), true));
 
                     JPanel p = new JPanel(new GridBagLayout());
                     p.add(new JMultilineLabel(
