@@ -417,7 +417,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             usage = determineTextUsage(sel, key);
             String def = default_;
 
-            String[] value_array = values.split(",");
+            String[] value_array = splitEscaped(values);
             String[] display_array;
             String[] short_descriptions_array = null;
 
@@ -555,11 +555,24 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         // allow escaped comma in comma separated list:
         // "A\, B\, C,one\, two" --> ["A, B, C", "one, two"]
         private static String[] splitEscaped(String s) {
-            String[] res = s.replaceAll("\\\\,", "\u0091").split(",");
-            for (int i=0; i<res.length; ++i) {
-                res[i] = res[i].replaceAll("\u0091", ",");
+            List<String> result = new ArrayList<String>();
+            boolean backslash = false;
+            StringBuffer item = new StringBuffer();
+            for (int i=0; i<s.length(); i++) {
+                char ch = s.charAt(i);
+                if (backslash) {
+                    item.append(ch);
+                    backslash = false;
+                } else if (ch == '\\') {
+                    backslash = true;
+                } else if (ch == ',') {
+                    result.add(item.toString());
+                    item.setLength(0);
+                } else {
+                    item.append(ch);
+                }
             }
-            return res;
+            return result.toArray(new String[result.size()]);
         }
 
         @Override public void addCommands(List<Tag> changedTags) {
