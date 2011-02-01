@@ -10,7 +10,6 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -181,50 +180,50 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         return returnValue;
     }
 
-        protected static class PresetListEntry {
-            String value;
-            String display_value;
-            String short_description;
+    protected static class PresetListEntry {
+        String value;
+        String display_value;
+        String short_description;
 
-            public String getListDisplay() {
-                if (value.equals(DIFFERENT))
-                    return "<b>"+DIFFERENT.replaceAll("<", "&lt;").replaceAll(">", "&gt;")+"</b>";
+        public String getListDisplay() {
+            if (value.equals(DIFFERENT))
+                return "<b>"+DIFFERENT.replaceAll("<", "&lt;").replaceAll(">", "&gt;")+"</b>";
 
-                if (value.equals(""))
-                    return "&nbsp;";
+            if (value.equals(""))
+                return "&nbsp;";
 
-                StringBuilder res = new StringBuilder("<b>");
-                if (display_value != null) {
-                    res.append(display_value);
-                } else {
-                    res.append(value);
-                }
-                res.append("</b>");
-                if (short_description != null) {
-                    // wrap in table to restrict the text width
-                    res.append("<br><table><td width='232'>(").append(short_description).append(")</td></table>");
-                }
-                return res.toString();
+            StringBuilder res = new StringBuilder("<b>");
+            if (display_value != null) {
+                res.append(display_value);
+            } else {
+                res.append(value);
             }
-
-            public PresetListEntry(String value) {
-                this.value = value;
-                this.display_value = value;
+            res.append("</b>");
+            if (short_description != null) {
+                // wrap in table to restrict the text width
+                res.append("<br><table><td width='232'>(").append(short_description).append(")</td></table>");
             }
-
-            public PresetListEntry(String value, String display_value) {
-                this.value = value;
-                this.display_value = display_value;
-            }
-
-            // toString is mainly used to initialize the Editor
-            @Override
-            public String toString() {
-                if (value.equals(DIFFERENT))
-                    return DIFFERENT;
-                return display_value.replaceAll("<.*>", ""); // remove additional markup, e.g. <br>
-            }
+            return res.toString();
         }
+
+        public PresetListEntry(String value) {
+            this.value = value;
+            this.display_value = value;
+        }
+
+        public PresetListEntry(String value, String display_value) {
+            this.value = value;
+            this.display_value = display_value;
+        }
+
+        // toString is mainly used to initialize the Editor
+        @Override
+        public String toString() {
+            if (value.equals(DIFFERENT))
+                return DIFFERENT;
+            return display_value.replaceAll("<.*>", ""); // remove additional markup, e.g. <br>
+        }
+    }
 
     public static class Text extends Item {
 
@@ -459,8 +458,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             for (int i=0; i<value_array.length; i++) {
                 PresetListEntry e = new PresetListEntry(value_array[i]);
                 e.display_value = (locale_display_values == null)
-                        ? (values_context == null ? tr(display_array[i])
-                                : trc(values_context, display_array[i])) : display_array[i];
+                ? (values_context == null ? tr(display_array[i])
+                        : trc(values_context, display_array[i])) : display_array[i];
                 if (short_descriptions_array != null) {
                     e.short_description = locale_short_descriptions == null ? tr(short_descriptions_array[i])
                             : short_descriptions_array[i];
@@ -632,11 +631,12 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 int[] intParts = new int[lm.getSize()];
                 int j = 0;
                 for (int i = 0; i < lm.getSize(); i++) {
-                    if (parts.contains((((PresetListEntry)lm.getElementAt(i)).value))) 
+                    if (parts.contains((((PresetListEntry)lm.getElementAt(i)).value))) {
                         intParts[j++]=i;
+                    }
                 }
                 setSelectedIndices(Arrays.copyOf(intParts, j));
-                // check if we have acutally managed to represent the full 
+                // check if we have acutally managed to represent the full
                 // value with our presets. if not, cop out; we will not offer
                 // a selection list that threatens to ruin the value.
                 setEnabled(s.equals(getSelectedItem()));
@@ -646,8 +646,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             ListModel lm = getModel();
             int[] si = getSelectedIndices();
             StringBuilder builder = new StringBuilder();
-            for (int i=0; i<si.length; i++) { 
-                if (i>0) builder.append(delimiter);
+            for (int i=0; i<si.length; i++) {
+                if (i>0) {
+                    builder.append(delimiter);
+                }
                 builder.append(((PresetListEntry)lm.getElementAt(si[i])).value);
             }
             return builder.toString();
@@ -725,8 +727,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             for (int i=0; i<value_array.length; i++) {
                 PresetListEntry e = new PresetListEntry(value_array[i]);
                 e.display_value = (locale_display_values == null)
-                        ? (values_context == null ? tr(display_array[i])
-                                : trc(values_context, display_array[i])) : display_array[i];
+                ? (values_context == null ? tr(display_array[i])
+                        : trc(values_context, display_array[i])) : display_array[i];
                 if (short_descriptions_array != null) {
                     e.short_description = locale_short_descriptions == null ? tr(short_descriptions_array[i])
                             : short_descriptions_array[i];

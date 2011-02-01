@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Deque;
 import java.util.HashSet;
@@ -273,7 +272,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 for (File f: openFileTsk.getSuccessfullyOpenedFiles()) {
                     moveToDeletedLayersFolder(f);
                 }
-            }          
+            }
         });
     }
 

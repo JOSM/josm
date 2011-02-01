@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://josm.openstreetmap.de/tagging-preset-1.0"
-	xmlns:tns="http://josm.openstreetmap.de/tagging-preset-1.0" elementFormDefault="qualified">
+	xmlns:tns="http://josm.openstreetmap.de/tagging-preset-1.0"
+	elementFormDefault="qualified">
 
-	<!--
-		Localized attributes (for example de.description are not supported by
-		xsd, so every element needs <anyAttribute/>
-		To cover at least some common errors, elements have specified prohibited attributes
-	-->
+	<!-- Localized attributes (for example de.description are not supported 
+		by xsd, so every element needs <anyAttribute/> To cover at least some common 
+		errors, elements have specified prohibited attributes -->
 
-	<element name="annotations" type="tns:root"/>
-	<element name="presets" type="tns:root"/>
+	<element name="annotations" type="tns:root" />
+	<element name="presets" type="tns:root" />
 
 	<complexType name="root">
 		<complexContent>
-			<extension base="tns:group">
+			<extension base="tns:group-parent">
 				<attribute name="author" type="string" />
 				<attribute name="version" type="string" />
 				<attribute name="shortdescription" type="string" />
 				<attribute name="description" type="string" />
-				<attribute name="link" type="string"/>
+				<attribute name="link" type="string" />
 
-				<anyAttribute processContents="skip"/>
+				<anyAttribute processContents="skip" />
 			</extension>
 		</complexContent>
 	</complexType>
 
-	<complexType name="group">
+	<complexType name="group-parent">
 		<sequence>
 			<choice minOccurs="1" maxOccurs="unbounded">
 				<element name="group" type="tns:group" />
@@ -33,12 +32,19 @@
 				<element name="separator" type="tns:separator" />
 			</choice>
 		</sequence>
-		<attribute name="name" type="string" />
 		<attribute name="icon" type="string" />
 
-		<attribute name="type" use="prohibited"/>
-		<attribute name="text" use="prohibited"/>
-		<anyAttribute processContents="skip"/>
+		<attribute name="type" use="prohibited" />
+		<attribute name="text" use="prohibited" />
+		<anyAttribute processContents="skip" />
+	</complexType>
+
+	<complexType name="group">
+		<complexContent>
+			<extension base="tns:group-parent">
+				<attribute name="name" type="string" use="required" />
+			</extension>
+		</complexContent>
 	</complexType>
 
 	<complexType name="separator" />
@@ -52,12 +58,12 @@
 			</choice>
 			<element name="roles" type="tns:roles" minOccurs="0" />
 		</sequence>
-		<attribute name="name" type="string" />
+		<attribute name="name" type="string" use="required" />
 		<attribute name="icon" type="string" />
 		<attribute name="type" type="string" />
 
-		<attribute name="text" use="prohibited"/>
-		<anyAttribute processContents="skip"/>
+		<attribute name="text" use="prohibited" />
+		<anyAttribute processContents="skip" />
 	</complexType>
 
 	<complexType name="optional">
@@ -77,8 +83,8 @@
 	</group>
 
 	<complexType name="key">
-		<attribute name="key" type="string" use="required"/>
-		<attribute name="value" type="string"/>
+		<attribute name="key" type="string" use="required" />
+		<attribute name="value" type="string" />
 	</complexType>
 
 
@@ -87,57 +93,58 @@
 		<attribute name="text" type="string" />
 		<attribute name="text_context" type="string" />
 
-		<attribute name="name" use="prohibited"/>
-		<anyAttribute processContents="skip"/>
+		<attribute name="name" use="prohibited" />
+		<anyAttribute processContents="skip" />
 	</complexType>
 
 	<complexType name="label">
 		<attribute name="text" type="string" use="required" />
 		<attribute name="text_context" type="string" />
 
-		<attribute name="name" use="prohibited"/>
-		<anyAttribute processContents="skip"/>
+		<attribute name="name" use="prohibited" />
+		<anyAttribute processContents="skip" />
 	</complexType>
 
 	<complexType name="space" />
 
 	<complexType name="text">
-		<attribute name="key" type="string" use="required"/>
+		<attribute name="key" type="string" use="required" />
 		<attribute name="text" type="string" />
 		<attribute name="text_context" type="string" />
 		<attribute name="default" type="string" />
 		<attribute name="delete_if_empty" type="boolean" />
 		<attribute name="use_last_as_default" type="boolean" />
-		<attribute name="required" type="boolean"/>
+		<attribute name="required" type="boolean" />
 
-		<attribute name="type" use="prohibited"/>
-		<attribute name="name" use="prohibited"/>
-		<attribute name="value" use="prohibited"/>
-		<attribute name="values" use="prohibited"/>
-		<anyAttribute processContents="skip"/>
+		<attribute name="type" use="prohibited" />
+		<attribute name="name" use="prohibited" />
+		<attribute name="value" use="prohibited" />
+		<attribute name="values" use="prohibited" />
+		<anyAttribute processContents="skip" />
 	</complexType>
 
 	<complexType name="combo">
 		<sequence>
-			<element name="short_description" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="short_description" type="string" minOccurs="0"
+				maxOccurs="unbounded" />
 		</sequence>
 		<attribute name="key" type="string" use="required" />
 		<attribute name="text" type="string" />
 		<attribute name="text_context" type="string" />
 		<attribute name="values" type="string" use="required" />
 		<attribute name="values_context" type="string" />
-		<attribute name="display_values" type="string"/>
+		<attribute name="display_values" type="string" />
 		<attribute name="default" type="string" />
 		<attribute name="editable" type="boolean" />
 		<attribute name="delete_if_empty" type="boolean" />
-		<attribute name="required" type="boolean"/>
+		<attribute name="required" type="boolean" />
 
-		<attribute name="type" use="prohibited"/>
-		<attribute name="value" use="prohibited"/>
-		<attribute name="name" use="prohibited"/>
-		<attribute name="delete-if-empty" use="prohibited"/>
-		<attribute name="display-values" use="prohibited"/>
-		<anyAttribute processContents="skip"/>
+		<attribute name="type" use="prohibited" />
+		<attribute name="value" use="prohibited" />
+		<attribute name="name" use="prohibited" />
+		<attribute name="delete-if-empty" use="prohibited" />
+		<attribute name="display-values" use="prohibited" />
+		<anyAttribute processContents="skip" />
 	</complexType>
 
 	<complexType name="multiselect">
@@ -146,18 +153,18 @@
 		<attribute name="text_context" type="string" />
 		<attribute name="values" type="string" use="required" />
 		<attribute name="values_context" type="string" />
-		<attribute name="display_values" type="string"/>
+		<attribute name="display_values" type="string" />
 		<attribute name="default" type="string" />
 		<attribute name="delimiter" type="string" />
 		<attribute name="delete_if_empty" type="boolean" />
-		<attribute name="required" type="boolean"/>
+		<attribute name="required" type="boolean" />
 
-		<attribute name="type" use="prohibited"/>
-		<attribute name="value" use="prohibited"/>
-		<attribute name="name" use="prohibited"/>
-		<attribute name="delete-if-empty" use="prohibited"/>
-		<attribute name="display-values" use="prohibited"/>
-		<anyAttribute processContents="skip"/>
+		<attribute name="type" use="prohibited" />
+		<attribute name="value" use="prohibited" />
+		<attribute name="name" use="prohibited" />
+		<attribute name="delete-if-empty" use="prohibited" />
+		<attribute name="display-values" use="prohibited" />
+		<anyAttribute processContents="skip" />
 	</complexType>
 
 	<complexType name="check">
@@ -166,14 +173,14 @@
 		<attribute name="text_context" type="string" />
 		<attribute name="default" type="tns:check_default" />
 		<attribute name="use_last_as_default" type="boolean" />
-		<attribute name="required" type="boolean"/>
-		<attribute name="value_on" type="string"/>
-		<attribute name="value_off" type="string"/>
+		<attribute name="required" type="boolean" />
+		<attribute name="value_on" type="string" />
+		<attribute name="value_off" type="string" />
 
-		<attribute name="name" use="prohibited"/>
-		<attribute name="type" use="prohibited"/>
-		<attribute name="value" use="prohibited"/>
-		<anyAttribute processContents="skip"/>
+		<attribute name="name" use="prohibited" />
+		<attribute name="type" use="prohibited" />
+		<attribute name="value" use="prohibited" />
+		<anyAttribute processContents="skip" />
 	</complexType>
 
 	<simpleType name="check_default">
@@ -185,24 +192,24 @@
 
 	<complexType name="roles">
 		<sequence>
-			<element name="role" type="tns:role" minOccurs="1" maxOccurs="unbounded"/>
+			<element name="role" type="tns:role" minOccurs="1" maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
 
 	<complexType name="role">
-		<attribute name="key" type="string"/>
-		<attribute name="text" type="string"/>
-		<attribute name="text_context" type="string"/>
-		<attribute name="requisite" type="tns:role_requisite"/>
-		<attribute name="type" type="string"/>
-		<attribute name="count" type="integer"/>
-		<attribute name="required" type="boolean"/>
+		<attribute name="key" type="string" />
+		<attribute name="text" type="string" />
+		<attribute name="text_context" type="string" />
+		<attribute name="requisite" type="tns:role_requisite" />
+		<attribute name="type" type="string" />
+		<attribute name="count" type="integer" />
+		<attribute name="required" type="boolean" />
 	</complexType>
 
 	<simpleType name="role_requisite">
 		<restriction base="string">
-			<enumeration value="required"/>
-			<enumeration value="optional"/>
+			<enumeration value="required" />
+			<enumeration value="optional" />
 		</restriction>
 	</simpleType>
 
