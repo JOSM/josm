@@ -127,7 +127,7 @@ public class MultipolygonTest extends Test {
     @Override
     public void visit(Relation r) {
         nonClosedWays.clear();
-        if ("multipolygon".equals(r.get("type"))) {
+        if (r.isMultipolygon()) {
             checkMembersAndRoles(r);
 
             Multipolygon polygon = new Multipolygon(Main.map.mapView);

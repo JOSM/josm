@@ -428,6 +428,11 @@ public final class Way extends OsmPrimitive {
         return OsmPrimitiveType.WAY;
     }
 
+    @Override
+    public OsmPrimitiveType getDisplayType() {
+        return isClosed() ? OsmPrimitiveType.CLOSEDWAY : OsmPrimitiveType.WAY;
+    }
+
     private void checkNodes() {
         DataSet dataSet = getDataSet();
         if (dataSet != null) {

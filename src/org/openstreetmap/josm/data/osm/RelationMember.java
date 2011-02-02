@@ -57,6 +57,15 @@ public class RelationMember implements PrimitiveId {
 
     /**
      *
+     * @return type of member for icon display
+     * @since 3844
+     */
+    public OsmPrimitiveType getDisplayType() {
+        return member.getDisplayType();
+    }
+
+    /**
+     *
      * @return True if member is node
      * @since 1937
      */

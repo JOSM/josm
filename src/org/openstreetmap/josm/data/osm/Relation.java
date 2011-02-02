@@ -370,6 +370,15 @@ public final class Relation extends OsmPrimitive {
         return OsmPrimitiveType.RELATION;
     }
 
+    public OsmPrimitiveType getDisplayType() {
+        return isMultipolygon() ? OsmPrimitiveType.MULTIPOLYGON
+        : OsmPrimitiveType.RELATION;
+    }
+
+    public boolean isMultipolygon() {
+        return "multipolygon".equals(get("type"));
+    }
+
     @Override
     public BBox getBBox() {
         RelationMember[] members = this.members;

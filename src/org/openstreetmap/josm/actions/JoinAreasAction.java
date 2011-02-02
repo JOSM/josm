@@ -1215,9 +1215,7 @@ public class JoinAreasAction extends JosmAction {
         Set<Way> processedInnerWays = new LinkedHashSet<Way>();
 
         for (Relation r : CombineWayAction.getParentRelations(selectedWays)) {
-            if (r.isDeleted() ||
-                    r.get("type") == null ||
-                    !r.get("type").equalsIgnoreCase("multipolygon")) {
+            if (r.isDeleted() || !r.isMultipolygon()) {
                 continue;
             }
 
@@ -1389,10 +1387,7 @@ public class JoinAreasAction extends JosmAction {
         }
 
         for (RelationRole r : rels) {
-            if (r.rel.get("type") != null &&
-                    r.rel.get("type").equalsIgnoreCase("multipolygon") &&
-                    r.role.equalsIgnoreCase("outer")
-            ) {
+            if (r.rel.isMultipolygon() && r.role.equalsIgnoreCase("outer")) {
                 multiouters.add(r);
                 continue;
             }

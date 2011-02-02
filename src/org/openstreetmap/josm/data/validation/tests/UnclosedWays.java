@@ -110,7 +110,7 @@ public class UnclosedWays extends Test {
 
         if (type != null && !w.isClosed()) {
             for (OsmPrimitive parent: w.getReferrers()) {
-                if (parent instanceof Relation && "multipolygon".equals(parent.get("type")))
+                if (parent instanceof Relation && ((Relation)parent).isMultipolygon())
                     return;
             }
             Node f = w.firstNode();

@@ -102,7 +102,7 @@ public class ElemStyles {
 
             for (OsmPrimitive referrer : osm.getReferrers()) {
                 Relation r = (Relation) referrer;
-                if (!drawMultipolygon || !"multipolygon".equals(r.get("type"))  || !r.isUsable()) {
+                if (!drawMultipolygon || !r.isMultipolygon()  || !r.isUsable()) {
                     continue;
                 }
                 Multipolygon multipolygon = new Multipolygon(nc);
@@ -149,7 +149,7 @@ public class ElemStyles {
 
             for (OsmPrimitive referrer : osm.getReferrers()) {
                 Relation ref = (Relation) referrer;
-                if (!drawMultipolygon || !"multipolygon".equals(ref.get("type"))  || !ref.isUsable()) {
+                if (!drawMultipolygon || !ref.isMultipolygon() || !ref.isUsable()) {
                     continue;
                 }
                 Multipolygon multipolygon = new Multipolygon(nc);
@@ -183,7 +183,7 @@ public class ElemStyles {
         else if (osm instanceof Relation)
         {
             Pair<StyleList, Range> p = generateStyles(osm, scale, null, true);
-            if (drawMultipolygon && "multipolygon".equals(osm.get("type"))) {
+            if (drawMultipolygon && ((Relation)osm).isMultipolygon()) {
                 if (!Utils.exists(p.a, AreaElemStyle.class)) {
                     // look at outer ways to find area style
                     Multipolygon multipolygon = new Multipolygon(nc);
@@ -234,7 +234,7 @@ public class ElemStyles {
             } else if (osm instanceof Node) {
                 addIfNotNull(sl, NodeElemStyle.create(c));
             } else if (osm instanceof Relation) {
-                if ("multipolygon".equals(osm.get("type"))) {
+                if (((Relation)osm).isMultipolygon()) {
                     addIfNotNull(sl, AreaElemStyle.create(c));
                     addIfNotNull(sl, LineElemStyle.createLine(c));
                     addIfNotNull(sl, LineElemStyle.createCasing(c));

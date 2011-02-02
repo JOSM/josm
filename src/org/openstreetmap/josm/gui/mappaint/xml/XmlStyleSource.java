@@ -66,7 +66,7 @@ public class XmlStyleSource extends StyleSource {
                     "resource://data/mappaint-style.xsd");
             while(parser.hasNext()) {
             }
-            
+
         } catch(IOException e) {
             System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
             e.printStackTrace();
@@ -277,7 +277,7 @@ public class XmlStyleSource extends StyleSource {
                     }
                 }
             }
-        } else if (osm instanceof Way || (osm instanceof Relation && "multipolygon".equals(osm.get("type")))) {
+        } else if (osm instanceof Way || (osm instanceof Relation && ((Relation)osm).isMultipolygon())) {
             WayPrototypesRecord p = new WayPrototypesRecord();
             get(osm, pretendWayIsClosed || !(osm instanceof Way) || ((Way) osm).isClosed(), p, (useMinMaxScale ? scale : null), mc);
             if (p.line != null) {

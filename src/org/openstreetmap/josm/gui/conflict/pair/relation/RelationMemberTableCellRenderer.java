@@ -37,21 +37,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
 
     public final static Color BGCOLOR_FROZEN = new Color(234,234,234);
 
-    private ImageIcon nodeIcon;
-    private ImageIcon wayIcon;
-    private ImageIcon relationIcon;
     private  Border rowNumberBorder = null;
-
-    /**
-     * Load the image icon for an OSM primitive of type node
-     *
-     * @return the icon; null, if not found
-     */
-    protected void loadIcons() {
-        nodeIcon = ImageProvider.get("data", "node");
-        wayIcon = ImageProvider.get("data", "way");
-        relationIcon = ImageProvider.get("data", "relation");
-    }
 
     /**
      * constructor
@@ -59,7 +45,6 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
     public RelationMemberTableCellRenderer() {
         setIcon(null);
         setOpaque(true);
-        loadIcons();
         rowNumberBorder = BorderFactory.createEmptyBorder(0,4,0,0);
     }
 
@@ -155,16 +140,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
         String displayName = member.getMember().getDisplayName(DefaultNameFormatter.getInstance());
         setText(displayName);
         setToolTipText(buildToolTipText(member.getMember()));
-        if (member.isNode()) {
-            setIcon(nodeIcon);
-        } else if (member.isWay()) {
-            setIcon(wayIcon);
-        } else if (member.isRelation()) {
-            setIcon(relationIcon);
-        } else {
-            // should not happen
-            setIcon(null);
-        }
+        setIcon(ImageProvider.get(member.getDisplayType()));
     }
 
     /**

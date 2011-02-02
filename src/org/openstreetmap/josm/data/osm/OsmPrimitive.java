@@ -561,6 +561,10 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
         return new SimplePrimitiveId(getUniqueId(), getType());
     }
 
+    public OsmPrimitiveType getDisplayType() {
+        return getType();
+    }
+
     public void setTimestamp(Date timestamp) {
         boolean locked = writeLock();
         try {
