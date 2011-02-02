@@ -176,6 +176,7 @@ public class ServerSidePreferences extends Preferences {
         Reader in = new StringReader(cont);
         boolean res = false;
         try {
+            /* TODO: parse collection! */
             XmlObjectParser.Uniform<Prop> parser = new XmlObjectParser.Uniform<Prop>(in, "tag", Prop.class);
             for (Prop p : parser) {
                 res = true;
@@ -199,11 +200,27 @@ public class ServerSidePreferences extends Preferences {
             if (p.getKey().equals("osm-server.password")) {
                 continue; // do not upload password. It would get stored in plain!
             }
-            b.append("<tag key='");
-            b.append(XmlWriter.encode(p.getKey()));
-            b.append("' value='");
-            b.append(XmlWriter.encode(p.getValue()));
-            b.append("' />\n");
+            String r = p.getValue();
+            if(r.contains("\u001e"))
+            {
+                b.append("<collection key='");
+                b.append(XmlWriter.encode(p.getKey()));
+                b.append(">\n");
+                for (String val : r.split("\u001e", -1))
+                {
+                    b.append("  <entry value='");
+                    b.append(XmlWriter.encode(val));
+                    b.append("' />\n");
+                }
+            }
+            else
+            {
+                b.append("<tag key='");
+                b.append(XmlWriter.encode(p.getKey()));
+                b.append("' value='");
+                b.append(XmlWriter.encode(p.getValue()));
+                b.append("' />\n");
+            }
         }
         b.append("</preferences>");
         connection.upload(b.toString());
