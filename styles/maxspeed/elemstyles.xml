@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rules xmlns="http://josm.openstreetmap.de/mappaint-style-1.0"
-       name="standard">
+       name="standard" author="Ulf Lamping" version="1.0" shortdescription="Maxspeed"
+       description="Display maxspeed entries.">
 
 	<rule>
 		<condition k="maxspeed" v="5"/>
