@@ -20,7 +20,7 @@ public class AreaElemStyle extends ElemStyle
     }
 
     public static AreaElemStyle create(Cascade c) {
-        Color color = c.get("fill-color", null, Color.class);
+        Color color = c.getColor("fill-color", null);
         if (color == null)
             return null;
         return new AreaElemStyle(c, color);

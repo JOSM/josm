@@ -39,24 +39,28 @@ public class LineElemStyle extends ElemStyle {
     }
 
     public static LineElemStyle createCasing(Cascade c) {
-        return createImpl(c, "casing-");
+        LineElemStyle casing =  createImpl(c, "casing-");
+        if (casing != null) {
+            casing.object_z_index = -1;
+        }
+        return casing;
     }
 
     private static LineElemStyle createImpl(Cascade c, String prefix) {
-        Float width = c.get(prefix + "width", null, Float.class);
+        Float width = c.getFloat(prefix + "width", null);
         if (width == null)
             return null;
 
-        float realWidth = c.get(prefix + "real-width", 0f, Float.class);
-        Color color = c.get(prefix + "color", null, Color.class);
+        float realWidth = c.getFloat(prefix + "real-width", 0f);
+        Color color = c.getColor(prefix + "color", null);
         if (color == null) {
-            color = c.get(prefix + "fill-color", null, Color.class);
+            color = c.getColor(prefix + "fill-color", null);
         }
         if (color == null) {
-            color = PaintColors.UNTAGGED_WAY.get();
+            color = PaintColors.UNTAGGED.get();
         }
         float[] dashes = c.get(prefix + "dashes", null, float[].class);
-        Color dashesBackground = c.get(prefix + "dashes-background-color", null, Color.class);
+        Color dashesBackground = c.getColor(prefix + "dashes-background-color", null);
 
         return new LineElemStyle(c, width, realWidth, color, dashes, dashesBackground);
     }

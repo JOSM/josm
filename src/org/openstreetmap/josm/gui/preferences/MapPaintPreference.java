@@ -20,8 +20,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 import org.openstreetmap.josm.tools.GBC;
@@ -29,7 +27,6 @@ import org.openstreetmap.josm.tools.GBC;
 public class MapPaintPreference implements PreferenceSetting {
     private SourceEditor sources;
     private JCheckBox enableIconDefault;
-    private JCheckBox enableDefault;
     private JComboBox styleCombo = new JComboBox();
 
     public static class Factory implements PreferenceSettingFactory {
@@ -39,8 +36,6 @@ public class MapPaintPreference implements PreferenceSetting {
     }
 
     public void addGui(final PreferenceTabbedPane gui) {
-        enableDefault = new JCheckBox(tr("Enable built-in defaults"),
-                Main.pref.getBoolean("mappaint.style.enable-defaults", true));
         enableIconDefault = new JCheckBox(tr("Enable built-in icon defaults"),
                 Main.pref.getBoolean("mappaint.icon.enable-defaults", true));
 
@@ -167,7 +162,7 @@ public class MapPaintPreference implements PreferenceSetting {
     }
 
     public boolean ok() {
-        Boolean restart = Main.pref.put("mappaint.style.enable-defaults", enableDefault.isSelected());
+        Boolean restart = false;
         if(Main.pref.put("mappaint.icon.enable-defaults", enableIconDefault.isSelected())) {
             restart = true;
         }
@@ -177,13 +172,7 @@ public class MapPaintPreference implements PreferenceSetting {
         if(Main.pref.put("mappaint.style", styleCombo.getEditor().getItem().toString())
         && Main.isDisplayingMapView())
         {
-          for(OsmDataLayer l : Main.map.mapView.getLayersOfType(OsmDataLayer.class))
-          {
-            for(OsmPrimitive osm : l.data.allPrimitives())
-            {
-              osm.clearCached();
-            }
-          }
+            MapPaintStyles.getStyles().clearCached();
         }
         return restart;
     }

@@ -1,0 +1,415 @@
+// License: GPL. For details, see LICENSE file.
+options {
+  STATIC = false;
+}
+
+PARSER_BEGIN(MapCSSParser)
+package org.openstreetmap.josm.gui.mappaint.mapcss.parser;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSRule;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Expression.FunctionExpression;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Expression.LiteralExpression;
+import org.openstreetmap.josm.tools.Pair;
+
+public class MapCSSParser {
+}
+PARSER_END(MapCSSParser)
+
+/*************
+ * Token definitions
+ */
+
+<DEFAULT>
+TOKEN:
+{
+    < IDENT: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
+|   < UINT: ["1"-"9"] ( ["0"-"9"] )* >
+|   < UFLOAT: ( ["0"-"9"] )+ ( "." ( ["0"-"9"] )+ )? >
+|   < STRING: "\"" ( [" ","!","#"-"&","("-"[","]"-"~","\u0080"-"\uFFFF"] | "\\\"" | "\\\\" )*  "\"" >
+|   < #H: ["0"-"9","a"-"f","A"-"F"] >
+|   < HEXCOLOR: "#" ( <H><H><H><H><H><H> | <H><H><H> ) >
+|   < S: ( " " | "\t" | "\n" | "\r" | "\f" )+ >
+|   < STAR: "*" >
+|   < SLASH: "/" >
+|   < LBRACE: "{" >
+|   < RBRACE: "}" >
+|   < LSQUARE: "[" >
+|   < RSQUARE: "]" >
+|   < LPAR: "(" >
+|   < RPAR: ")" >
+|   < EQUAL: "=" >
+|   < EXCLAMATION: "!" >
+|   < EXCLAMATION_EQUAL: "!=" >
+|   < COLON: ":" >
+|   < DCOLON: "::" >
+|   < SEMICOLON: ";" >
+|   < COMMA: "," >
+|   < PIPE_Z: "|z" >
+|   < PLUS: "+" >
+|   < MINUS: "-" >
+|   < COMMENT_START: "/*" > : COMMENT
+|   < UNEXPECTED_CHAR : ~[] > // avoid TokenMgrErrors because they are hard to recover from
+}
+
+<COMMENT>
+TOKEN:
+{
+    < COMMENT_END: "*/" > : DEFAULT
+}
+
+<COMMENT>
+SKIP:
+{
+    < ~[] >
+}
+
+/*************
+ * Parser definitions
+ *
+ *                       rule
+ *  _______________________|______________________________
+ * |                                                      |
+ *        selector                      declaration
+ *  _________|___________________   _________|____________
+ * |                             | |                      |
+ *
+ * way|z11-12[highway=residential] { color: red; width: 3 }
+ *
+ *    |_____||___________________|   |_________|
+ *       |            |                   |
+ *     zoom       condition          instruction
+ *
+ * more general:
+ *
+ * way|z13-[a=b][c=d]::subpart, way|z-3[u=v]:closed::subpart2 { p1 : val; p2 : val; }
+ *
+ * 'val' can be a literal, or an expression like "prop(width, default) + 0.8".
+ *
+ */
+
+int uint() :
+{
+    Token i;
+}
+{
+    i=<UINT> { return Integer.parseInt(i.image); }
+}
+
+float ufloat() :
+{
+    Token f;
+}
+{
+    ( f=<UFLOAT> | f=<UINT> )
+    { return Float.parseFloat(f.image); }
+}
+
+String string() :
+{
+    Token t;
+}
+{
+    t=<STRING>
+    {
+        return t.image.substring(1, t.image.length() - 1).replace("\\\"", "\"").replace("\\\\", "\\");
+    }
+}
+
+String string_or_ident() :
+{
+    Token t;
+    String s;
+}
+{
+    t=<IDENT> { return t.image; } | s=string() { return s; }
+}
+
+/**
+ * white-space
+ */
+void s() :
+{
+}
+{
+    ( <S> )?
+}
+
+/**
+ * mix of white-space and comments
+ */
+void w() :
+{
+}
+{
+    ( <S> | ( <COMMENT_START> <COMMENT_END> ) )*
+}
+
+/**
+ * comma delimited list of floats (at least 2, all >= 0)
+ */
+float[] float_array() :
+{
+    float f;
+    List<Float> fs = new ArrayList<Float>();
+}
+{
+    f=ufloat() { fs.add(f); }
+    (
+        <COMMA> s()
+        f=ufloat() { fs.add(f); }
+    )+
+    {
+        float[] a = new float[fs.size()];
+        for (int i=0; i<fs.size(); ++i) {
+            a[i] = fs.get(i);
+        }
+        return a;
+    }
+}
+
+/**
+ * root
+ */
+void sheet(MapCSSStyleSource sheet):
+{
+    MapCSSRule r;
+    Token com = null;
+}
+{
+    w()
+    ( r=rule() { sheet.rules.add(r); } w() )*
+    <EOF>
+}
+
+MapCSSRule rule():
+{
+    List<Selector> selectors = new ArrayList<Selector>();
+    Selector sel;
+    List<Instruction> decl;
+}
+{
+    sel=selector() { selectors.add(sel); } w()
+    (
+        <COMMA> w()
+        sel=selector() { selectors.add(sel); } w()
+    )*
+    decl=declaration()
+    { return new MapCSSRule(selectors, decl); }
+}
+
+Selector selector() :
+{
+    Token base;
+    Condition c;
+    Pair<Integer, Integer> r = null;
+    List<Condition> conditions = new ArrayList<Condition>();
+    String sub = null;
+}
+{
+    ( base=<IDENT> | base=<STAR> )
+    ( r=zoom() )?
+    ( ( c=condition() | c=pseudoclass() ) { conditions.add(c); } )*
+    ( sub=subpart() )?
+    { return new Selector(base.image, r, conditions, sub); }
+}
+
+Pair<Integer, Integer> zoom() :
+{
+    Integer min = 0;
+    Integer max = Integer.MAX_VALUE;
+}
+{
+    <PIPE_Z>
+    (
+        ( <MINUS> max=uint() ) |
+        ( min=uint() ( <MINUS> ( max=uint() )? )? )
+    )
+    { return new Pair<Integer, Integer>(min, max); }
+}
+
+Condition condition() :
+{
+    boolean not = false;
+    String key;
+    String val;
+}
+{
+    <LSQUARE>
+    ( <EXCLAMATION> { not = true; } )?
+    key=string_or_ident()
+    (
+        ( <EXCLAMATION_EQUAL> { not = true; } | <EQUAL> )
+        val=string_or_ident()
+        <RSQUARE>
+        { return new Condition.KeyValueCondition(key, val, not ? Condition.Op.NEQ : Condition.Op.EQ); }
+    )?
+    <RSQUARE>
+    { return new Condition.KeyCondition(key, not); }
+}
+
+Condition pseudoclass() :
+{
+    Token t;
+    boolean not = false;
+}
+{
+    <COLON>
+    ( <EXCLAMATION> { not = true; } )? t=<IDENT>
+    { return new Condition.PseudoClassCondition(t.image, not); }
+}
+
+String subpart() :
+{
+    Token t;
+}
+{
+    <DCOLON>
+    ( t=<IDENT> | t=<STAR> )
+    { return t.image; }
+}
+
+List<Instruction> declaration() :
+{
+    List<Instruction> ins = new ArrayList<Instruction>();
+    Instruction i;
+}
+{
+    <LBRACE> w()
+    ( <RBRACE> { return ins; } )?
+    try {
+        i=instruction() { if (i != null) ins.add(i); }
+        (
+            <SEMICOLON> w()
+            ( <RBRACE> { return ins; } )?
+            i=instruction() { if (i != null) ins.add(i); }
+        )*
+        <RBRACE> { return ins; }
+    } catch (ParseException ex) {
+        error_skipto(RBRACE);
+        return ins;
+    }
+}
+
+Instruction instruction() :
+{
+    Token key;
+    Object val;
+}
+{
+    key=<IDENT> w()
+    <COLON> w()
+    (
+        LOOKAHEAD(2) // both number and float array start with a number
+            ( val=float_array() w() )
+        |
+            val=expression()
+    )
+    {
+        if (val instanceof LiteralExpression)
+            return new Instruction.AssignmentInstruction(key.image, ((LiteralExpression) val).evaluate(null));
+        else
+            return new Instruction.AssignmentInstruction(key.image, val);
+    }
+}
+
+Expression expression():
+{
+    List<Expression> args = new ArrayList<Expression>();
+    Expression e;
+    String op = null;
+}
+{
+    e=primary() { args.add(e); } w()
+    (
+            ( <PLUS> { op = "+"; } w() e=primary() { args.add(e); } w() )+
+        |
+            ( <STAR> { op = "*"; } w() e=primary() { args.add(e); } w() )+
+        |
+            ( <MINUS> { op = "-"; } w() e=primary() { args.add(e); } w() )
+        |
+            ( <SLASH> { op = "/"; } w() e=primary() { args.add(e); } w() )
+    )?
+    {
+        if (args.size() == 1)
+            return args.get(0);
+        return new FunctionExpression(op, args);
+    }
+}
+
+Expression primary() :
+{
+    Expression nested;
+    FunctionExpression fn;
+    Object lit;
+}
+{
+    LOOKAHEAD(2) // both function and identifier start with an identifier
+        fn=function() { return fn; }
+    |
+        lit=literal() { return new LiteralExpression(lit); }
+    |
+        ( <LPAR> w() nested=expression() <RPAR> ) { return nested; }
+}
+
+FunctionExpression function() :
+{
+    Token tmp;
+    Expression arg;
+    String name;
+    List<Expression> args = new ArrayList<Expression>();
+}
+{
+    tmp=<IDENT> { name = tmp.image; } w()
+    <LPAR> w()
+    arg=expression() { args.add(arg); }
+    ( <COMMA> w() arg=expression() { args.add(arg); } )*
+    <RPAR>
+    { return new FunctionExpression(name, args); }
+}
+
+Object literal() :
+{
+    Object val;
+    Token t;
+    float f;
+}
+{
+        val=string_or_ident() { return val; }
+    |
+        ( <PLUS> f=ufloat() ) { return new Instruction.RelativeFloat(f); }
+    |
+        ( <MINUS> f=ufloat() ) { return -f; }
+    |
+        f=ufloat() { return f; }
+    |
+        t=<HEXCOLOR>
+            {
+                String clr = t.image.substring(1);
+                if (clr.length() == 3) {
+                    clr = new String(new char[] {clr.charAt(0),clr.charAt(0),clr.charAt(1),clr.charAt(1),clr.charAt(2),clr.charAt(2)});
+                }
+                if (clr.length() != 6)
+                    throw new AssertionError();
+                return new Color(Integer.parseInt(clr, 16));
+            }
+}
+
+JAVACODE
+void error_skipto(int kind) {
+  ParseException e = generateParseException();
+  System.err.println(e);
+  Token t;
+  do {
+    t = getNextToken();
+  } while (t.kind != kind);
+}
+

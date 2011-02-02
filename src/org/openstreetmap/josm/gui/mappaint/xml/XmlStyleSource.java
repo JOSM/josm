@@ -31,14 +31,14 @@ import org.xml.sax.SAXParseException;
 
 public class XmlStyleSource extends StyleSource {
 
-    public final HashMap<String, IconPrototype> icons = new HashMap<String, IconPrototype>();
-    public final HashMap<String, LinePrototype> lines = new HashMap<String, LinePrototype>();
-    public final HashMap<String, LinemodPrototype> modifiers = new HashMap<String, LinemodPrototype>();
-    public final HashMap<String, AreaPrototype> areas = new HashMap<String, AreaPrototype>();
-    public final LinkedList<IconPrototype> iconsList = new LinkedList<IconPrototype>();
-    public final LinkedList<LinePrototype> linesList = new LinkedList<LinePrototype>();
-    public final LinkedList<LinemodPrototype> modifiersList = new LinkedList<LinemodPrototype>();
-    public final LinkedList<AreaPrototype> areasList = new LinkedList<AreaPrototype>();
+    protected final HashMap<String, IconPrototype> icons = new HashMap<String, IconPrototype>();
+    protected final HashMap<String, LinePrototype> lines = new HashMap<String, LinePrototype>();
+    protected final HashMap<String, LinemodPrototype> modifiers = new HashMap<String, LinemodPrototype>();
+    protected final HashMap<String, AreaPrototype> areas = new HashMap<String, AreaPrototype>();
+    protected final LinkedList<IconPrototype> iconsList = new LinkedList<IconPrototype>();
+    protected final LinkedList<LinePrototype> linesList = new LinkedList<LinePrototype>();
+    protected final LinkedList<LinemodPrototype> modifiersList = new LinkedList<LinemodPrototype>();
+    protected final LinkedList<AreaPrototype> areasList = new LinkedList<AreaPrototype>();
 
     public XmlStyleSource(String url, String name, String shortdescription) {
         super(url, name, shortdescription);
@@ -48,16 +48,30 @@ public class XmlStyleSource extends StyleSource {
         super(entry);
     }
 
+    protected void init() {
+        icons.clear();
+        lines.clear();
+        modifiers.clear();
+        areas.clear();
+        iconsList.clear();
+        linesList.clear();
+        modifiersList.clear();
+        areasList.clear();
+    }
+
     @Override
     public void loadStyleSource() {
+        init();
         try {
             MirroredInputStream in = new MirroredInputStream(url);
             InputStream zip = in.getZipEntry("xml", "style");
             InputStreamReader reader = null;
             if (zip != null) {
                 reader = new InputStreamReader(zip);
+                zipIcons = in.getFile();
             } else {
                 reader = new InputStreamReader(in);
+                zipIcons = null;
             }
 
             XmlObjectParser parser = new XmlObjectParser(new XmlStyleSourceHandler(this));
@@ -287,7 +301,7 @@ public class XmlStyleSource extends StyleSource {
                 def.putOrClear("dashes", p.line.getDashed());
                 def.putOrClear("dashes-background-color", p.line.dashedColor);
             }
-            Float refWidth = def.get("width", null, Float.class);
+            Float refWidth = def.getFloat("width", null);
             if (refWidth != null && p.linemods != null) {
                 int numOver = 0, numUnder = 0;
 

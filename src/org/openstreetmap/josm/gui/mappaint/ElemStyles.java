@@ -27,11 +27,15 @@ public class ElemStyles {
     private List<StyleSource> styleSources;
     private boolean drawMultipolygon;
 
-    public static int cacheIdx;
+    private int cacheIdx;
 
     public ElemStyles()
     {
         styleSources = new ArrayList<StyleSource>();
+    }
+
+    public void clearCached() {
+        cacheIdx++;
     }
 
     public void add(StyleSource style) {

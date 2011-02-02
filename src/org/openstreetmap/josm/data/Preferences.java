@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This class holds all preferences for JOSM.
@@ -667,11 +668,11 @@ public class Preferences {
     }
 
     synchronized public boolean putCollection(String key, Collection<String> val) {
-        return put(key, join("\u001e", val));
+        return put(key, Utils.join("\u001e", val));
     }
 
     synchronized private void putCollectionDefault(String key, Collection<String> val) {
-        putDefault(key, join("\u001e", val));
+        putDefault(key, Utils.join("\u001e", val));
     }
 
     /**
@@ -766,32 +767,4 @@ public class Preferences {
     public void setPluginSites(Collection<String> sites) {
         putCollection("pluginmanager.sites", sites);
     }
-
-    /**
-     * Joins a collection of strings into a single string with fields
-     * separated by the value of sep.
-     * @param sep the separator
-     * @param values collection of strings, null strings are converted to the
-     *  empty string
-     * @return null if values is null. The joined string otherwise.
-     */
-    public static String join(String sep, Collection<?> values) {
-        if (values == null)
-            return null;
-        if (values.isEmpty())
-            return "";
-        StringBuilder s = null;
-        for (Object a : values) {
-            if (a == null) {
-                a = "";
-            }
-            if(s != null) {
-                s.append(sep).append(a.toString());
-            } else {
-                s = new StringBuilder(a.toString());
-            }
-        }
-        return s.toString();
-    }
-
 }

@@ -9,9 +9,13 @@ import java.awt.GridBagLayout;
 import java.util.Collection;
 import java.util.List;
 
+import javax.swing.event.ChangeEvent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.SingleSelectionModel;
+import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
@@ -23,6 +27,16 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.mappaint.ElemStyle;
+import org.openstreetmap.josm.gui.mappaint.ElemStyles;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.mappaint.MultiCascade;
+import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
+import org.openstreetmap.josm.gui.mappaint.StyleSource;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
+import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -37,32 +51,49 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class InspectPrimitiveDialog extends ExtendedDialog {
     protected Collection<OsmPrimitive> primitives;
-    protected JTextArea textArea;
+    private JTextArea txtData;
+    private JTextArea txtMappaint;
+    boolean mappaintTabLoaded;
 
     public InspectPrimitiveDialog(Collection<OsmPrimitive> primitives) {
         super(Main.parent, tr("Advanced object info"), new String[] {"Close"});
         this.primitives = primitives;
-        setPreferredSize(new Dimension(450, 350));
+        setPreferredSize(new Dimension(750, 550));
 
         setButtonIcons(new String[] {"ok.png"});
-        JPanel p = buildPanel();
-        textArea.setText(buildText());
-        setContent(p, false);
+        final JTabbedPane tabs = new JTabbedPane();
+        JPanel pData = buildDataPanel();
+        tabs.addTab(tr("data"), pData);
+        final JPanel pMapPaint = new JPanel();
+        tabs.addTab(tr("map style"), pMapPaint);
+        tabs.getModel().addChangeListener(new ChangeListener() {
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if (!mappaintTabLoaded && ((SingleSelectionModel) e.getSource()).getSelectedIndex() == 1) {
+                    mappaintTabLoaded = true;
+                    buildMapPaintPanel(pMapPaint);
+                    createMapPaintText();
+                }
+            }
+        });
+        txtData.setText(buildDataText());
+        setContent(tabs, false);
     }
 
-    protected JPanel buildPanel() {
+    protected JPanel buildDataPanel() {
         JPanel p = new JPanel(new GridBagLayout());
-        textArea = new JTextArea();
-        textArea.setFont(new Font("Monospaced", textArea.getFont().getStyle(), textArea.getFont().getSize()));
-        textArea.setEditable(false);
+        txtData = new JTextArea();
+        txtData.setFont(new Font("Monospaced", txtData.getFont().getStyle(), txtData.getFont().getSize()));
+        txtData.setEditable(false);
 
-        JScrollPane scroll = new JScrollPane(textArea);
+        JScrollPane scroll = new JScrollPane(txtData);
 
         p.add(scroll, GBC.std().fill());
         return p;
     }
 
-    protected String buildText() {
+    protected String buildDataText() {
         StringBuilder s = new StringBuilder();
         for (Node n : new SubclassFilteredCollection<OsmPrimitive, Node>(primitives, OsmPrimitive.nodePredicate)) {
             s.append("Node id="+n.getUniqueId());
@@ -228,4 +259,54 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         }
         return us.toString();
     }
+
+    protected void buildMapPaintPanel(JPanel p) {
+        p.setLayout(new GridBagLayout());
+        txtMappaint = new JTextArea();
+        txtMappaint.setFont(new Font("Monospaced", txtMappaint.getFont().getStyle(), txtMappaint.getFont().getSize()));
+        txtMappaint.setEditable(false);
+
+        p.add(new JScrollPane(txtMappaint), GBC.std().fill());
+    }
+
+    protected void createMapPaintText() {
+        final Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+        ElemStyles elemstyles = MapPaintStyles.getStyles();
+        NavigatableComponent nc = Main.map.mapView;
+        double scale = nc.getDist100Pixel();
+
+        for (OsmPrimitive osm : sel) {
+            txtMappaint.append("Styles Cache for \""+osm.getDisplayName(DefaultNameFormatter.getInstance())+"\":");
+
+            MultiCascade mc = new MultiCascade();
+
+            for (StyleSource s : elemstyles.getStyleSources()) {
+                if (s.active) {
+                    txtMappaint.append("\n\n> applying "+getSort(s)+" style \""+s.getDisplayString()+"\n");
+                    s.apply(mc, osm, scale, null, false);
+                    txtMappaint.append("\nRange:"+mc.range);
+                    for (String key : mc.keySet()) {
+                        txtMappaint.append("\n "+key+": \n"+mc.get(key));
+                    }
+                } else {
+                    txtMappaint.append("\n\n> skipping \""+s.getDisplayString()+"\" (not active)");
+                }
+            }
+            txtMappaint.append("\n\nList of generated Styles:\n");
+            StyleList sl = elemstyles.get(osm, scale, nc);
+            for (ElemStyle s : sl) {
+                txtMappaint.append(" * "+s+"\n");
+            }
+            txtMappaint.append("\n\n");
+        }
+    }
+
+    private String getSort(StyleSource s) {
+        if (s instanceof XmlStyleSource)
+            return "xml";
+        if (s instanceof MapCSSStyleSource)
+            return "mapcss";
+        return "unkown";
+    }
+
 }

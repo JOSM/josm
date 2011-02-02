@@ -16,8 +16,8 @@ abstract public class ElemStyle {
     }
 
     protected ElemStyle(Cascade c) {
-        z_index = c.get("z-index", 0f, Float.class);
-        object_z_index = c.get("object-z-index", 0f, Float.class);
+        z_index = c.getFloat("z-index", 0f);
+        object_z_index = c.getFloat("object-z-index", 0f);
     }
 
     public abstract void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, MapPainter painter, boolean selected, boolean member);

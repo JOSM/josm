@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -21,6 +20,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -28,8 +28,8 @@ import javax.swing.table.AbstractTableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintStyleLoader;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -150,7 +150,7 @@ public class MapPaintDialog extends ToggleDialog {
             } else {
                 model.fireTableDataChanged();
             }
-            ElemStyles.cacheIdx++;
+            MapPaintStyles.getStyles().clearCached();
             Main.map.mapView.preferenceChanged(null);
             Main.map.mapView.repaint();
         }
@@ -206,17 +206,34 @@ public class MapPaintDialog extends ToggleDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            int[] pos = tblStyles.getSelectedRows();
-            for (int p : pos) {
-                StyleSource s = model.data.get(p);
-                s.loadStyleSource();
+
+            final int[] rows = tblStyles.getSelectedRows();
+            List<StyleSource> sources = new ArrayList<StyleSource>();
+            for (int p : rows) {
+                sources.add(model.data.get(p));
             }
-            ElemStyles.cacheIdx++;
-            Main.map.mapView.preferenceChanged(null);
-            Main.map.mapView.repaint();
+            Main.worker.submit(new MapPaintStyleLoader(sources));
+            Main.worker.submit(new Runnable() {
+                @Override
+                public void run() {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (rows.length == 1) {
+                                model.fireTableCellUpdated(rows[0], 1);
+                            } else {
+                                model.fireTableDataChanged();
+                            }
+                            MapPaintStyles.getStyles().clearCached();
+                            Main.map.mapView.preferenceChanged(null);
+                            Main.map.mapView.repaint();
+                        }
+                    });
+                }
+            });
         }
     }
-
+    
     class PopupMenuHandler extends PopupMenuLauncher {
         @Override
         public void launch(MouseEvent evt) {

@@ -13,9 +13,12 @@ import java.util.List;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.MapPaintPreference.MapPaintPrefMigration;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -82,22 +85,70 @@ public class MapPaintStyles {
         Collection<? extends SourceEntry> sourceEntries = (new MapPaintPrefMigration()).get();
 
         for (SourceEntry entry : sourceEntries) {
-            StyleSource style = new XmlStyleSource(entry);
+            StyleSource style = null;
             try {
                 MirroredInputStream in = new MirroredInputStream(entry.url);
                 InputStream zip = in.getZipEntry("xml","style");
                 if (zip != null) {
-                    style.zipIcons = in.getFile();
-                } 
+                    style = new XmlStyleSource(entry);
+                    continue;
+                }
+                zip = in.getZipEntry("mapcss","style");
+                if (zip != null) {
+                    style = new MapCSSStyleSource(entry);
+                    continue;
+                }
+                if (entry.url.toLowerCase().endsWith(".mapcss")) {
+                    style = new MapCSSStyleSource(entry);
+                } else {
+                    style = new XmlStyleSource(entry);
+                }
             } catch(IOException e) {
                 System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", entry.url, e.toString()));
                 e.printStackTrace();
-                style.hasError = true;
+                if (style != null) {
+                    style.hasError = true;
+                }
             }
-            styles.add(style);
+            if (style != null) {
+                styles.add(style);
+            }
         }
         for (StyleSource s : styles.getStyleSources()) {
             s.loadStyleSource();
         }
     }
+
+    public static class MapPaintStyleLoader extends PleaseWaitRunnable {
+        private boolean canceled;
+        private List<StyleSource> sources;
+
+        public MapPaintStyleLoader(List<StyleSource> sources) {
+            super(tr("Reloading style sources"));
+            this.sources = sources;
+        }
+
+        @Override
+        protected void cancel() {
+            canceled = true;
+        }
+
+        @Override
+        protected void finish() {
+        }
+
+        @Override
+        protected void realRun() {
+            ProgressMonitor monitor = getProgressMonitor();
+            monitor.setTicksCount(sources.size());
+            for (StyleSource s : sources) {
+                if (canceled)
+                    return;
+                monitor.subTask(tr("loading style ''{0}''...", s.getDisplayString()));
+                s.loadStyleSource();
+                monitor.worked(1);
+            }
+        }
+    }
+
 }
