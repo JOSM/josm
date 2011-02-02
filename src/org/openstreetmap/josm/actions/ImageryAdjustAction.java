@@ -145,6 +145,7 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         if (offsetDialog != null || layer == null || Main.map == null)
             return;
         oldMapMode = Main.map.mapMode;
+        layer.enableOffsetServer(false);
         super.actionPerformed(e);
     }
 

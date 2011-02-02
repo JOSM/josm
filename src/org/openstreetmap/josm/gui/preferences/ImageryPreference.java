@@ -40,6 +40,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -47,13 +49,15 @@ import javax.swing.table.TableColumnModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
-import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.io.imagery.HTMLGrabber;
+import org.openstreetmap.josm.io.imagery.OffsetServer;
+import org.openstreetmap.josm.io.imagery.OsmosnimkiOffsetServer;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -74,6 +78,8 @@ public class ImageryPreference implements PreferenceSetting {
     private JButton btnFadeColor;
     private JSlider fadeAmount = new JSlider(0, 100);
     private JComboBox sharpen;
+    private JCheckBox useOffsetServer;
+    private JTextField offsetServerUrl;
 
     // WMS Settings
     private JComboBox browser;
@@ -146,6 +152,17 @@ public class ImageryPreference implements PreferenceSetting {
             });
             p.add(btnSettingsMigration,GBC.eol().insets(0,5,0,5));
         }
+        this.useOffsetServer = new JCheckBox(tr("Use offset server: "));
+        this.offsetServerUrl = new JTextField();
+        this.useOffsetServer.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                offsetServerUrl.setEnabled(useOffsetServer.isSelected());
+            }
+        });
+        offsetServerUrl.setEnabled(useOffsetServer.isSelected());
+        p.add(this.useOffsetServer, GBC.eol().fill(GBC.HORIZONTAL));
+        p.add(this.offsetServerUrl, GBC.eol().fill(GBC.HORIZONTAL));
         return p;
     }
 
@@ -268,6 +285,8 @@ public class ImageryPreference implements PreferenceSetting {
         this.btnFadeColor.setText(ColorHelper.color2html(colFadeColor));
         this.fadeAmount.setValue(ImageryLayer.PROP_FADE_AMOUNT.get());
         this.sharpen.setSelectedIndex(Math.max(0, Math.min(2, ImageryLayer.PROP_SHARPEN_LEVEL.get())));
+        this.useOffsetServer.setSelected(OffsetServer.PROP_SERVER_ENABLED.get());
+        this.offsetServerUrl.setText(OsmosnimkiOffsetServer.PROP_SERVER_URL.get());
 
         // WMS Settings
         this.browser.setSelectedItem(HTMLGrabber.PROP_BROWSER.get());
@@ -299,6 +318,8 @@ public class ImageryPreference implements PreferenceSetting {
         WMSLayer.PROP_SIMULTANEOUS_CONNECTIONS.put((Integer) spinSimConn.getModel().getValue());
 
         HTMLGrabber.PROP_BROWSER.put(browser.getEditor().getItem().toString());
+        OffsetServer.PROP_SERVER_ENABLED.put(useOffsetServer.isSelected());
+        OsmosnimkiOffsetServer.PROP_SERVER_URL.put(offsetServerUrl.getText());
 
         if (TMSLayer.PROP_ADD_TO_SLIPPYMAP_CHOOSER.get() != this.addToSlippyMapChosser.isSelected()) {
             restartRequired = true;
