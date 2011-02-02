@@ -417,22 +417,22 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             usage = determineTextUsage(sel, key);
             String def = default_;
 
-            String[] value_array = splitEscaped(values);
+            String[] value_array = splitEscaped(',', values);
             String[] display_array;
             String[] short_descriptions_array = null;
 
             if(locale_display_values != null) {
-                display_array = splitEscaped(locale_display_values);
+                display_array = splitEscaped(',', locale_display_values);
             } else if (display_values != null) {
-                display_array = splitEscaped(display_values);
+                display_array = splitEscaped(',', display_values);
             } else {
                 display_array = value_array;
             }
 
             if (locale_short_descriptions != null) {
-                short_descriptions_array = splitEscaped(locale_short_descriptions);
+                short_descriptions_array = splitEscaped(',', locale_short_descriptions);
             } else if (short_descriptions != null) {
-                short_descriptions_array = splitEscaped(short_descriptions);
+                short_descriptions_array = splitEscaped(',', short_descriptions);
             } else if (short_description_list != null) {
                 short_descriptions_array = short_description_list.toArray(new String[0]);
             }
@@ -550,29 +550,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 }
                 return lbl;
             }
-        }
-
-        // allow escaped comma in comma separated list:
-        // "A\, B\, C,one\, two" --> ["A, B, C", "one, two"]
-        private static String[] splitEscaped(String s) {
-            List<String> result = new ArrayList<String>();
-            boolean backslash = false;
-            StringBuffer item = new StringBuffer();
-            for (int i=0; i<s.length(); i++) {
-                char ch = s.charAt(i);
-                if (backslash) {
-                    item.append(ch);
-                    backslash = false;
-                } else if (ch == '\\') {
-                    backslash = true;
-                } else if (ch == ',') {
-                    result.add(item.toString());
-                    item.setLength(0);
-                } else {
-                    item.append(ch);
-                }
-            }
-            return result.toArray(new String[result.size()]);
         }
 
         @Override public void addCommands(List<Tag> changedTags) {
@@ -699,22 +676,27 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             usage = determineTextUsage(sel, key);
             String def = default_;
 
-            String[] value_array = values.split(delimiter);
+            char delChar = ';';
+            if (delimiter.length() > 0) {
+                delChar = delimiter.charAt(0);
+            }
+
+            String[] value_array = splitEscaped(delChar, values);
             String[] display_array;
             String[] short_descriptions_array = null;
 
             if (locale_display_values != null) {
-                display_array = splitEscaped(delimiter, locale_display_values);
+                display_array = splitEscaped(delChar, locale_display_values);
             } else if (display_values != null) {
-                display_array = splitEscaped(delimiter, display_values);
+                display_array = splitEscaped(delChar, display_values);
             } else {
                 display_array = value_array;
             }
 
             if (locale_short_descriptions != null) {
-                short_descriptions_array = splitEscaped(delimiter, locale_short_descriptions);
+                short_descriptions_array = splitEscaped(delChar, locale_short_descriptions);
             } else if (short_descriptions != null) {
-                short_descriptions_array = splitEscaped(delimiter, short_descriptions);
+                short_descriptions_array = splitEscaped(delChar, short_descriptions);
             } else if (short_description_list != null) {
                 short_descriptions_array = short_description_list.toArray(new String[0]);
             }
@@ -816,16 +798,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             }
         }
 
-        // allow escaped delimiter in comma separated list:
-        // "A\, B\, C,one\, two" --> ["A, B, C", "one, two"]
-        private static String[] splitEscaped(String delimiter, String s) {
-            String[] res = s.replaceAll("\\\\,", "\u0091").split(delimiter);
-            for (int i=0; i<res.length; ++i) {
-                res[i] = res[i].replaceAll("\u0091", delimiter);
-            }
-            return res;
-        }
-
         @Override public void addCommands(List<Tag> changedTags) {
             Object obj = list.getSelectedItem();
             String display = (obj == null) ? null : obj.toString();
@@ -870,6 +842,34 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         }
 
         @Override boolean requestFocusInWindow() {return list.requestFocusInWindow();}
+    }
+
+    /**
+     * allow escaped comma in comma separated list:
+     * "A\, B\, C,one\, two" --> ["A, B, C", "one, two"]
+     * @param delimiter the delimiter, e.g. a comma. separates the entries and
+     *      must be escaped within one entry
+     * @param s the string
+     */
+    private static String[] splitEscaped(char delemiter, String s) {
+        List<String> result = new ArrayList<String>();
+        boolean backslash = false;
+        StringBuilder item = new StringBuilder();
+        for (int i=0; i<s.length(); i++) {
+            char ch = s.charAt(i);
+            if (backslash) {
+                item.append(ch);
+                backslash = false;
+            } else if (ch == '\\') {
+                backslash = true;
+            } else if (ch == delemiter) {
+                result.add(item.toString());
+                item.setLength(0);
+            } else {
+                item.append(ch);
+            }
+        }
+        return result.toArray(new String[result.size()]);
     }
 
     public static class Label extends Item {

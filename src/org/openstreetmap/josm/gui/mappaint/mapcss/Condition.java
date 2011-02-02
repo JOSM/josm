@@ -79,7 +79,7 @@ abstract public class Condition {
             if ("closed".equals(id)) {
                 if (osm instanceof Way && ((Way) osm).isClosed())
                     return true;
-                if (osm instanceof Relation && "multipolygon".equals(osm.get("type")))
+                if (osm instanceof Relation && ((Relation) osm).isMultipolygon())
                     return true;
                 return false;
             }
