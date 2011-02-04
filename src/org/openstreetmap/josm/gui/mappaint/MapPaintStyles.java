@@ -91,11 +91,13 @@ public class MapPaintStyles {
                 InputStream zip = in.getZipEntry("xml","style");
                 if (zip != null) {
                     style = new XmlStyleSource(entry);
+                    styles.add(style);
                     continue;
                 }
                 zip = in.getZipEntry("mapcss","style");
                 if (zip != null) {
                     style = new MapCSSStyleSource(entry);
+                    styles.add(style);
                     continue;
                 }
                 if (entry.url.toLowerCase().endsWith(".mapcss")) {
