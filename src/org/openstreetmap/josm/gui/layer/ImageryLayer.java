@@ -268,7 +268,7 @@ public abstract class ImageryLayer extends Layer {
         @Override
         public void run() {
             if (!offsetServerSupported) {
-                if (!offsetServer.isLayerSupported(getInfo())) return;
+                if (!offsetServer.isLayerSupported(info)) return;
                 offsetServerSupported = true;
             }
             offsetServerUsed = true;

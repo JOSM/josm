@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.imagery;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -24,8 +26,10 @@ public class OsmosnimkiOffsetServer implements OffsetServer {
     public boolean isLayerSupported(ImageryInfo info) {
         try {
             URL url = new URL(this.url + "action=CheckAvailability&id=" + URLEncoder.encode(info.getFullUrl(), "UTF-8"));
+            System.out.println(tr("Querying offset availability: {0}", url));
             final BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream(), "UTF-8"));
             String response = rdr.readLine();
+            System.out.println(tr("Offset server response: {0}", response));
             if (response.contains("\"offsets_available\": true")) return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -37,7 +41,8 @@ public class OsmosnimkiOffsetServer implements OffsetServer {
     public EastNorth getOffset(ImageryInfo info, EastNorth en) {
         LatLon ll = Main.proj.eastNorth2latlon(en);
         try {
-            URL url = new URL(this.url + "action=GetOffsetForPoint&lat=" + ll.lat() + "&lon=" + ll.lon() + "&id=" + URLEncoder.encode(info.getUrl(), "UTF-8"));
+            URL url = new URL(this.url + "action=GetOffsetForPoint&lat=" + ll.lat() + "&lon=" + ll.lon() + "&id=" + URLEncoder.encode(info.getFullUrl(), "UTF-8"));
+            System.out.println(tr("Querying offset: {0}", url.toString()));
             final BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream(), "UTF-8"));
             String s = rdr.readLine();
             int i = s.indexOf(',');
