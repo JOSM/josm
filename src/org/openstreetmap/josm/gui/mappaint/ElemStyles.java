@@ -4,13 +4,11 @@ package org.openstreetmap.josm.gui.mappaint;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -18,9 +16,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
-import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.Pair;
-import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.Utils;
 
 public class ElemStyles {
@@ -43,27 +39,7 @@ public class ElemStyles {
     }
 
     public Collection<StyleSource> getStyleSources() {
-        return new FilteredCollection<StyleSource>(styleSources, new Predicate<StyleSource>() {
-
-            String name = Main.pref.get("mappaint.style", "standard");
-
-            @Override
-            public boolean evaluate(StyleSource s) {
-                return Utils.equal(s.getPrefName(), name);
-            }
-
-        });
-    }
-
-    public Collection<String> getStyleNames() {
-        Set<String> names = new HashSet<String>();
-        names.add("standard");
-        for (StyleSource s : styleSources) {
-            if (s.name != null) {
-                names.add(s.name);
-            }
-        }
-        return names;
+        return Collections.<StyleSource>unmodifiableCollection(styleSources);
     }
 
     public StyleList get(OsmPrimitive osm, double scale, NavigatableComponent nc) {

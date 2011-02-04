@@ -27,7 +27,6 @@ import org.openstreetmap.josm.tools.GBC;
 public class MapPaintPreference implements PreferenceSetting {
     private SourceEditor sources;
     private JCheckBox enableIconDefault;
-    private JComboBox styleCombo = new JComboBox();
 
     public static class Factory implements PreferenceSettingFactory {
         public PreferenceSetting createPreferenceSetting() {
@@ -41,27 +40,8 @@ public class MapPaintPreference implements PreferenceSetting {
 
         sources = new MapPaintSourceEditor();
 
-        Collection<String> styles = new TreeSet<String>(MapPaintStyles.getStyles().getStyleNames());
-        String defstyle = Main.pref.get("mappaint.style", "standard");
-        styles.add(defstyle);
-        for(String style : styles) {
-            styleCombo.addItem(style);
-        }
-
-        styleCombo.setEditable(true);
-        for (int i = 0; i < styleCombo.getItemCount(); ++i) {
-            if (((String)styleCombo.getItemAt(i)).equals(defstyle)) {
-                styleCombo.setSelectedIndex(i);
-                break;
-            }
-        }
-
         final JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder( 0, 0, 0, 0 ));
-
-        panel.add(new JLabel(tr("Used style")), GBC.std().insets(5,5,0,5));
-        panel.add(GBC.glue(5,0), GBC.std().fill(GBC.HORIZONTAL));
-        panel.add(styleCombo, GBC.eop().fill(GBC.HORIZONTAL).insets(0,0,5,0));
 
         panel.add(sources, GBC.eol().fill(GBC.BOTH));
         panel.add(enableIconDefault, GBC.eol().insets(11,2,5,0));
@@ -169,8 +149,7 @@ public class MapPaintPreference implements PreferenceSetting {
         if(sources.finish()) {
             restart = true;
         }
-        if(Main.pref.put("mappaint.style", styleCombo.getEditor().getItem().toString())
-        && Main.isDisplayingMapView())
+        if(Main.isDisplayingMapView())
         {
             MapPaintStyles.getStyles().clearCached();
         }
