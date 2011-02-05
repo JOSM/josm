@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
+import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
@@ -299,6 +300,12 @@ public class XmlStyleSource extends StyleSource {
                 def.put("width", new Float(p.line.getWidth()));
                 def.putOrClear("real-width", p.line.realWidth != null ? new Float(p.line.realWidth) : null);
                 def.putOrClear("color", p.line.color);
+                if (p.line.color != null) {
+                    int alpha = p.line.color.getAlpha();
+                    if (alpha != 255) {
+                        def.put("opacity", ElemStyle.color_int2float(alpha));
+                    }
+                }
                 def.putOrClear("dashes", p.line.getDashed());
                 def.putOrClear("dashes-background-color", p.line.dashedColor);
             }
@@ -322,6 +329,12 @@ public class XmlStyleSource extends StyleSource {
                     }
                     c.put("width", new Float(mod.getWidth(refWidth)));
                     c.putOrClear("color", mod.color);
+                    if (mod.color != null) {
+                        int alpha = mod.color.getAlpha();
+                        if (alpha != 255) {
+                            c.put("opacity", ElemStyle.color_int2float(alpha));
+                        }
+                    }
                     c.putOrClear("dashes", mod.getDashed());
                     c.putOrClear("dashes-background-color", mod.dashedColor);
                 }

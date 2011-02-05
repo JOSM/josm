@@ -107,8 +107,16 @@ public class MapPaintSettings implements PreferenceChangedListener {
         return selectedColor;
     }
 
+    public Color getSelectedColor(int alpha) {
+        return new Color(selectedColor.getRGB() & 0x00ffffff | (alpha << 24), true);
+    }
+
     public Color getRelationSelectedColor() {
         return relationSelectedColor;
+    }
+
+    public Color getRelationSelectedColor(int alpha) {
+        return new Color(relationSelectedColor.getRGB() & 0x00ffffff | (alpha << 24), true);
     }
 
     public Color getHighlightColor() {

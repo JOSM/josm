@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import java.util.Arrays;
 
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
+
 abstract public class Instruction {
 
     public abstract void execute(Environment env);
@@ -31,11 +33,13 @@ abstract public class Instruction {
 
         @Override
         public void execute(Environment env) {
-            if (val instanceof Expression) {
-                env.getCascade().putOrClear(key, ((Expression) val).evaluate(env));
-            } else {
-                env.getCascade().putOrClear(key, val);
+            Object value = (val instanceof Expression) ? ((Expression) val).evaluate(env) : val;
+            if (key.equals("icon-image")) {
+                if (value instanceof String) {
+                    value = new IconReference((String) value, env.source);
+                }
             }
+            env.getCascade().putOrClear(key, value);
         }
 
         @Override

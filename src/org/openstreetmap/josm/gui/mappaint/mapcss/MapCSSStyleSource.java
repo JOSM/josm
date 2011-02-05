@@ -79,7 +79,7 @@ public class MapCSSStyleSource extends StyleSource {
         String code = LanguageInfo.getJOSMLocaleCode();
         n.put("lang", code);
         // create a fake environment to read the meta data block
-        Environment env = new Environment(n, mc, "default");
+        Environment env = new Environment(n, mc, "default", this);
 
         NEXT_RULE:
         for (MapCSSRule r : rules) {
@@ -104,7 +104,7 @@ public class MapCSSStyleSource extends StyleSource {
 
     @Override
     public void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed) {
-        Environment env = new Environment(osm, mc, null);
+        Environment env = new Environment(osm, mc, null, this);
         for (MapCSSRule r : rules) {
             for (Selector s : r.selectors) {
                 if (s.applies(env)) {

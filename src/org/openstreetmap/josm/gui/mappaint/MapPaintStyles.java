@@ -46,11 +46,16 @@ public class MapPaintStyles {
     public static class IconReference {
 
         public String iconName;
-        public XmlStyleSource source;
+        public StyleSource source;
 
-        public IconReference(String iconName, XmlStyleSource source) {
+        public IconReference(String iconName, StyleSource source) {
             this.iconName = iconName;
             this.source = source;
+        }
+
+        @Override
+        public String toString() {
+            return "IconReference{" + "iconName=" + iconName + " source=" + source.getDisplayString() + '}';
         }
     }
 

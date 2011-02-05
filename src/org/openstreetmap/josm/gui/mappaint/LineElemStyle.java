@@ -59,6 +59,14 @@ public class LineElemStyle extends ElemStyle {
         if (color == null) {
             color = PaintColors.UNTAGGED.get();
         }
+
+        int alpha = 255;
+        Integer pAlpha = color_float2int(c.get("opacity", null, float.class));
+        if (pAlpha != null) {
+            alpha = pAlpha;
+        }
+        color = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+
         float[] dashes = c.get(prefix + "dashes", null, float[].class);
         if (dashes != null) {
             boolean hasPositive = false;
@@ -123,9 +131,9 @@ public class LineElemStyle extends ElemStyle {
         if(w.isHighlighted()) {
             markColor = paintSettings.getHighlightColor();
         } else if (selected) {
-            markColor = paintSettings.getSelectedColor();
+            markColor = paintSettings.getSelectedColor(color.getAlpha());
         } else if (member) {
-            markColor = paintSettings.getRelationSelectedColor();
+            markColor = paintSettings.getRelationSelectedColor(color.getAlpha());
         } else if(w.isDisabled()) {
             markColor = paintSettings.getInactiveColor();
             myDashedColor = paintSettings.getInactiveColor();

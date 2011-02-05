@@ -276,8 +276,7 @@ public class MapPainter {
 
     protected void drawArea(Polygon polygon, Color color, String name) {
 
-        /* set the opacity (alpha) level of the filled polygon */
-        g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), fillAlpha));
+        g.setColor(color);
 
         if (outlineOnly) {
             g.drawPolygon(polygon);

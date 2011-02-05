@@ -159,6 +159,8 @@ public class Cascade implements Cloneable {
             Object val = prop.get(key);
             if (val instanceof float[]) {
                 res.append(Arrays.toString((float[]) val));
+            } else if (val instanceof Color) {
+                res.append(String.format("#%x", ((Color) val).getRGB()));
             } else {
                 res.append(val+"");
             }
