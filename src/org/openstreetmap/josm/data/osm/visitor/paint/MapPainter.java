@@ -99,7 +99,7 @@ public class MapPainter {
         this.leftHandTraffic = leftHandTraffic;
     }
 
-    public void drawWay(Way way, Color color, float width, float dashed[], Color dashedColor, boolean showDirection,
+    public void drawWay(Way way, Color color, float width, float dashed[], float dashesOffset, Color dashedColor, boolean showDirection,
             boolean reversedDirection, boolean showHeadArrowOnly) {
 
         GeneralPath path = new GeneralPath();
@@ -155,14 +155,14 @@ public class MapPainter {
             }
             lastPoint = p;
         }
-        displaySegments(path, arrows, color, width, dashed, dashedColor);
+        displaySegments(path, arrows, color, width, dashed, dashesOffset, dashedColor);
     }
 
-    private void displaySegments(GeneralPath path, GeneralPath arrows, Color color, float width, float dashed[], Color dashedColor) {
+    private void displaySegments(GeneralPath path, GeneralPath arrows, Color color, float width, float dashed[], float dashesOffset, Color dashedColor) {
         g.setColor(inactive ? inactiveColor : color);
         if (useStrokes) {
             if (dashed != null && dashed.length > 0) {
-                g.setStroke(new BasicStroke(width,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0, dashed,0));
+                g.setStroke(new BasicStroke(width,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,dashed,dashesOffset));
             } else {
                 g.setStroke(new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
             }
@@ -174,10 +174,10 @@ public class MapPainter {
             g.setColor(dashedColor);
             if (dashed != null && dashed.length > 0) {
                 float[] dashedOffset = new float[dashed.length];
-                System.arraycopy(dashed, 1, dashedOffset, 0, dashed.length - 1);
-                dashedOffset[dashed.length-1] = dashed[0];
-                float offset = dashedOffset[0];
-                g.setStroke(new BasicStroke(width,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,dashedOffset,offset));
+                System.arraycopy(dashed, 0, dashedOffset, 1, dashed.length - 1);
+                dashedOffset[0] = dashed[dashed.length-1];
+                float offset = dashedOffset[0] + dashesOffset;
+                g.setStroke(new BasicStroke(width,BasicStroke.CAP_BUTT,BasicStroke.JOIN_ROUND,0,dashedOffset, offset));
             } else {
                 g.setStroke(new BasicStroke(width,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
             }

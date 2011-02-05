@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import java.awt.Color;
 import java.util.Collection;
 
 public class Utils {
@@ -108,5 +109,18 @@ public class Utils {
             }
         }
         return s.toString();
+    }
+
+    /**
+     * convert Color to String
+     * (Color.toString() omits alpha value)
+     */
+    public static String toString(Color c) {
+        if (c == null)
+            return "null";
+        if (c.getAlpha() == 255)
+            return String.format("#%06x", c.getRGB() & 0x00ffffff);
+        else
+            return String.format("#%06x(alpha=%d)", c.getRGB() & 0x00ffffff, c.getAlpha());
     }
 }

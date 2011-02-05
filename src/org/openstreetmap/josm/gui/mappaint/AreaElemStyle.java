@@ -64,6 +64,6 @@ public class AreaElemStyle extends ElemStyle
 
     @Override
     public String toString() {
-        return "AreaElemStyle{" + super.toString() + "color=" + color + '}';
+        return "AreaElemStyle{" + super.toString() + "color=" + Utils.toString(color) + '}';
     }
 }
