@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.mappaint.xml;
 
 import java.awt.Color;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -90,22 +91,22 @@ public class XmlStyleSourceHandler extends DefaultHandler
             } else if (atts.getQName(count).equals("realwidth")) {
                 line.realWidth=Integer.parseInt(atts.getValue(count));
             } else if (atts.getQName(count).equals("dashed")) {
-                float[] dashed;
+                Float[] dashed;
                 try {
                     String[] parts = atts.getValue(count).split(",");
-                    dashed = new float[parts.length];
+                    dashed = new Float[parts.length];
                     for (int i = 0; i < parts.length; i++) {
-                        dashed[i] = (Integer.parseInt(parts[i]));
+                        dashed[i] = (float) Integer.parseInt(parts[i]);
                     }
                 } catch (NumberFormatException nfe) {
                     boolean isDashed = Boolean.parseBoolean(atts.getValue(count));
                     if(isDashed) {
-                        dashed = new float[]{9};
+                        dashed = new Float[]{9f};
                     } else {
                         dashed = null;
                     }
                 }
-                line.setDashed(dashed);
+                line.setDashed(dashed == null ? null : Arrays.asList(dashed));
             } else if (atts.getQName(count).equals("dashedcolour")) {
                 line.dashedColor=convertColor(atts.getValue(count));
             } else if(atts.getQName(count).equals("priority")) {

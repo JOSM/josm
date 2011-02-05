@@ -302,7 +302,7 @@ public class XmlStyleSource extends StyleSource {
                 def.putOrClear("dashes", p.line.getDashed());
                 def.putOrClear("dashes-background-color", p.line.dashedColor);
             }
-            Float refWidth = def.getFloat("width", null);
+            Float refWidth = def.get("width", null, Float.class);
             if (refWidth != null && p.linemods != null) {
                 int numOver = 0, numUnder = 0;
 

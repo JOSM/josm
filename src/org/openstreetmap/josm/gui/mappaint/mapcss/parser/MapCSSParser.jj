@@ -53,9 +53,12 @@ TOKEN:
 |   < DCOLON: "::" >
 |   < SEMICOLON: ";" >
 |   < COMMA: "," >
+|   < PIPE: "|" >
 |   < PIPE_Z: "|z" >
 |   < PLUS: "+" >
 |   < MINUS: "-" >
+|   < AMPERSAND: "&" >
+|   < QUESTION: "?" >
 |   < COMMENT_START: "/*" > : COMMENT
 |   < UNEXPECTED_CHAR : ~[] > // avoid TokenMgrErrors because they are hard to recover from
 }
@@ -156,7 +159,7 @@ void w() :
 /**
  * comma delimited list of floats (at least 2, all >= 0)
  */
-float[] float_array() :
+List<Float> float_array() :
 {
     float f;
     List<Float> fs = new ArrayList<Float>();
@@ -168,11 +171,7 @@ float[] float_array() :
         f=ufloat() { fs.add(f); }
     )+
     {
-        float[] a = new float[fs.size()];
-        for (int i=0; i<fs.size(); ++i) {
-            a[i] = fs.get(i);
-        }
-        return a;
+        return fs;
     }
 }
 
@@ -238,22 +237,46 @@ Pair<Integer, Integer> zoom() :
 
 Condition condition() :
 {
+    Condition c;
+    Expression e;
+}
+{
+    <LSQUARE>
+    ( 
+        LOOKAHEAD(2)
+            ( c=simple_key_condition() <RSQUARE> { return c; } )
+        |   
+        LOOKAHEAD(3)
+            c=simple_key_value_condition() 
+        |   
+            e=expression() { c = new Condition.ExpressionCondition(e); }
+    )
+    <RSQUARE>
+    { return c; }
+}
+
+Condition simple_key_condition() :
+{
+    boolean not = false;
+    String key;
+}
+{
+    ( <EXCLAMATION> { not = true; } )?
+    key=string_or_ident()
+    { return new Condition.KeyCondition(key, not); }
+}
+
+Condition simple_key_value_condition() :
+{
     boolean not = false;
     String key;
     String val;
 }
 {
-    <LSQUARE>
-    ( <EXCLAMATION> { not = true; } )?
     key=string_or_ident()
-    (
-        ( <EXCLAMATION_EQUAL> { not = true; } | <EQUAL> )
-        val=string_or_ident()
-        <RSQUARE>
-        { return new Condition.KeyValueCondition(key, val, not ? Condition.Op.NEQ : Condition.Op.EQ); }
-    )?
-    <RSQUARE>
-    { return new Condition.KeyCondition(key, not); }
+    ( <EXCLAMATION_EQUAL> { not = true; } | <EQUAL> )
+    val=string_or_ident()
+    { return new Condition.KeyValueCondition(key, val, not ? Condition.Op.NEQ : Condition.Op.EQ); }
 }
 
 Condition pseudoclass() :
@@ -330,16 +353,22 @@ Expression expression():
 {
     e=primary() { args.add(e); } w()
     (
-            ( <PLUS> { op = "+"; } w() e=primary() { args.add(e); } w() )+
+            ( <PLUS> { op = "plus"; } w() e=primary() { args.add(e); } w() )+
         |
-            ( <STAR> { op = "*"; } w() e=primary() { args.add(e); } w() )+
+            ( <STAR> { op = "times"; } w() e=primary() { args.add(e); } w() )+
         |
-            ( <MINUS> { op = "-"; } w() e=primary() { args.add(e); } w() )
+            ( <MINUS> { op = "minus"; } w() e=primary() { args.add(e); } w() )+
         |
-            ( <SLASH> { op = "/"; } w() e=primary() { args.add(e); } w() )
+            ( <SLASH> { op = "divided_by"; } w() e=primary() { args.add(e); } w() )+
+        |
+            ( <AMPERSAND> <AMPERSAND> { op = "and"; } w() e=primary() { args.add(e); } w() )
+        |
+            ( <PIPE> <PIPE> { op = "or"; } w() e=primary() { args.add(e); } w() )
+        |
+            ( <QUESTION> { op = "cond"; } w() e=primary() { args.add(e); } w() <COLON> w() e=primary() { args.add(e); } w() )
     )?
     {
-        if (args.size() == 1)
+        if (op == null)
             return args.get(0);
         return new FunctionExpression(op, args);
     }
@@ -370,8 +399,10 @@ FunctionExpression function() :
 {
     tmp=<IDENT> { name = tmp.image; } w()
     <LPAR> w()
-    arg=expression() { args.add(arg); }
-    ( <COMMA> w() arg=expression() { args.add(arg); } )*
+    (
+        arg=expression() { args.add(arg); }
+        ( <COMMA> w() arg=expression() { args.add(arg); } )*
+    )?
     <RPAR>
     { return new FunctionExpression(name, args); }
 }

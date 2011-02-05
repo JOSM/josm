@@ -47,20 +47,35 @@ public class LineElemStyle extends ElemStyle {
     }
 
     private static LineElemStyle createImpl(Cascade c, String prefix) {
-        Float width = c.getFloat(prefix + "width", null);
+        Float width = c.get(prefix + "width", null, Float.class);
         if (width == null)
             return null;
 
-        float realWidth = c.getFloat(prefix + "real-width", 0f);
-        Color color = c.getColor(prefix + "color", null);
+        float realWidth = c.get(prefix + "real-width", 0f, Float.class);
+        Color color = c.get(prefix + "color", null, Color.class);
         if (color == null) {
-            color = c.getColor(prefix + "fill-color", null);
+            color = c.get(prefix + "fill-color", null, Color.class);
         }
         if (color == null) {
             color = PaintColors.UNTAGGED.get();
         }
         float[] dashes = c.get(prefix + "dashes", null, float[].class);
-        Color dashesBackground = c.getColor(prefix + "dashes-background-color", null);
+        if (dashes != null) {
+            boolean hasPositive = false;
+            for (float f : dashes) {
+                if (f > 0) {
+                    hasPositive = true;
+                }
+                if (f < 0) {
+                    dashes = null;
+                    break;
+                }
+            }
+            if (!hasPositive) {
+                dashes = null;
+            }
+        }
+        Color dashesBackground = c.get(prefix + "dashes-background-color", null, Color.class);
 
         return new LineElemStyle(c, width, realWidth, color, dashes, dashesBackground);
     }

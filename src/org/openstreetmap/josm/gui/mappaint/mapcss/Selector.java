@@ -33,11 +33,11 @@ public class Selector {
         this.subpart = subpart;
     }
 
-    public boolean applies(OsmPrimitive osm) {
-        if (!baseApplies(osm))
+    public boolean applies(Environment e) {
+        if (!baseApplies(e.osm))
             return false;
         for (Condition c : conds) {
-            if (!c.applies(osm))
+            if (!c.applies(e))
                 return false;
         }
         return true;

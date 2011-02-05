@@ -86,7 +86,7 @@ public class MapCSSStyleSource extends StyleSource {
             for (Selector s : r.selectors) {
                 if (s.base.equals("meta")) {
                     for (Condition cnd : s.conds) {
-                        if (!cnd.applies(n))
+                        if (!cnd.applies(env))
                             continue NEXT_RULE;
                     }
                     for (Instruction i : r.declaration) {
@@ -104,9 +104,10 @@ public class MapCSSStyleSource extends StyleSource {
 
     @Override
     public void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed) {
+        Environment env = new Environment(osm, mc, null);
         for (MapCSSRule r : rules) {
             for (Selector s : r.selectors) {
-                if (s.applies(osm)) {
+                if (s.applies(env)) {
                     if (s.range.contains(scale)) {
                         mc.range = Range.cut(mc.range, s.range);
                     } else {
@@ -129,15 +130,15 @@ public class MapCSSStyleSource extends StyleSource {
                         mc.put(sub, c);
                     }
 
-                    if (sub.equals("*")) {
+                    if (sub.equals("*")) { // fixme: proper subparts handling
                         for (Entry<String, Cascade> entry : mc.entrySet()) {
-                            Environment env = new Environment(osm, mc, entry.getKey());
+                            env.layer = entry.getKey();
                             for (Instruction i : r.declaration) {
                                 i.execute(env);
                             }
                         }
                     } else {
-                        Environment env = new Environment(osm, mc, sub);
+                        env.layer = sub;
                         for (Instruction i : r.declaration) {
                             i.execute(env);
                         }

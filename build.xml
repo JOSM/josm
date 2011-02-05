@@ -136,6 +136,16 @@ Build-Date: ${build.tstamp}
 		<delete dir="dist" />
 	</target>
 
+	<target name="javacc">
+		<exec executable="javacc">
+			<arg value="-debug_parser=false"/>
+			<arg value="-debug_lookahead=false"/>
+			<arg value="-debug_token_manager=false"/>
+			<arg value="-output_directory=${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss/parser"/>
+			<arg value="${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss/parser/MapCSSParser.jj"/>
+		</exec>
+	</target>
+
 	<path id="test.classpath">
 		<fileset dir="${test.dir}/lib">
 			<include name="**/*.jar"/>

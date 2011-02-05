@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.mappaint;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
@@ -25,49 +26,104 @@ public class Cascade implements Cloneable {
      * @return if a value with class klass has been mapped to key, returns this
      *      value, def otherwise
      */
-    public <T> T get(String key, T def, Class klass) {
+    public <T> T get(String key, T def, Class<T> klass) {
         if (def != null && !klass.isInstance(def))
             throw new IllegalArgumentException();
         Object o = prop.get(key);
         if (o == null)
             return def;
-        if (klass.isInstance(o)) {
-            @SuppressWarnings("unchecked") T res = (T) klass.cast(o);
+        T res = convertTo(o, klass);
+        if (res == null) {
+            System.err.println(String.format("Warning: unable to convert property %s to type %s: found %s of type %s!", key, klass, o, o.getClass()));
+            return def;
+        } else
             return res;
-        }
-        System.err.println(String.format("Warning: wrong type for mappaint property %s: %s expected, but %s of type %s found!", key, klass, o, o.getClass()));
-        return def;
     }
 
     public Object get(String key) {
         return prop.get(key);
     }
 
-    public Float getFloat(String key, Float def) {
-        Object o = prop.get(key);
+    @SuppressWarnings("unchecked")
+    public static <T> T convertTo(Object o, Class<T> klass) {
         if (o == null)
-            return def;
-        if (o instanceof Float)
-            return (Float) o;
-        if (o instanceof Integer)
-            return new Float((Integer) o);
-        return def;
+            return null;
+        if (klass.isInstance(o))
+            return (T) o;
+
+        if (klass == float.class || klass == Float.class)
+            return (T) toFloat(o);
+
+        if (klass == double.class || klass == Double.class) {
+            o = toFloat(o);
+            if (o != null) {
+                o = new Double((Float) o);
+            }
+            return (T) o;
+        }
+
+        if (klass == boolean.class || klass == Boolean.class)
+            return (T) toBool(o);
+
+        if (klass == float[].class) {
+            return (T) toFloatArray(o);
+        }
+
+        if (klass == Color.class) {
+            return (T) toColor(o);
+        }
+        return null;
     }
 
-    public Color getColor(String key, Color def) {
-        Object o = prop.get(key);
-        if (o == null)
-            return def;
+    private static Float toFloat(Object o) {
+        if (o instanceof Float)
+            return (Float) o;
+        if (o instanceof Double)
+            return new Float((Double) o);
+        if (o instanceof Integer)
+            return new Float((Integer) o);
+        if (o instanceof String) {
+            try {
+                float f = Float.parseFloat((String) o);
+                return f;
+            } catch (NumberFormatException e) {
+            }
+        }
+        return null;
+    }
+
+    private static Boolean toBool(Object o) {
+        if (o instanceof Boolean)
+            return (Boolean) o;
+        if (o instanceof String)
+            return Boolean.parseBoolean((String) o);
+        return null;
+    }
+
+    private static float[] toFloatArray(Object o) {
+        if (o instanceof float[])
+            return (float[]) o;
+        if (o instanceof List) {
+            List l = (List) o;
+            float[] a = new float[l.size()];
+            for (int i=0; i<l.size(); ++i) {
+                Float f = toFloat(l.get(i));
+                if (f == null)
+                    return null;
+                else
+                    a[i] = f;
+            }
+            return a;
+        }
+        return null;
+    }
+
+     public static Color toColor(Object o) {
         if (o instanceof Color)
             return (Color) o;
-        if (o instanceof String) {
-            Color clr = CSSColors.get((String) o);
-            if (clr != null)
-                return clr;
-            else
-                return def;
-        }
-        return def;
+        if (o instanceof String)
+            return CSSColors.get((String) o);
+        return null;
     }
 
     public void put(String key, Object val) {
@@ -109,5 +165,9 @@ public class Cascade implements Cloneable {
             res.append("; ");
         }
         return res.append("}").toString();
+    }
+
+    public boolean containsKey(String key) {
+        return prop.containsKey(key);
     }
 }

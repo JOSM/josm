@@ -55,17 +55,23 @@ public interface MapCSSParserConstants {
   /** RegularExpression Id. */
   int COMMA = 22;
   /** RegularExpression Id. */
-  int PIPE_Z = 23;
+  int PIPE = 23;
   /** RegularExpression Id. */
-  int PLUS = 24;
+  int PIPE_Z = 24;
   /** RegularExpression Id. */
-  int MINUS = 25;
+  int PLUS = 25;
   /** RegularExpression Id. */
-  int COMMENT_START = 26;
+  int MINUS = 26;
   /** RegularExpression Id. */
-  int UNEXPECTED_CHAR = 27;
+  int AMPERSAND = 27;
   /** RegularExpression Id. */
-  int COMMENT_END = 28;
+  int QUESTION = 28;
+  /** RegularExpression Id. */
+  int COMMENT_START = 29;
+  /** RegularExpression Id. */
+  int UNEXPECTED_CHAR = 30;
+  /** RegularExpression Id. */
+  int COMMENT_END = 31;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -97,13 +103,16 @@ public interface MapCSSParserConstants {
     "\"::\"",
     "\";\"",
     "\",\"",
+    "\"|\"",
     "\"|z\"",
     "\"+\"",
     "\"-\"",
+    "\"&\"",
+    "\"?\"",
     "\"/*\"",
     "<UNEXPECTED_CHAR>",
     "\"*/\"",
-    "<token of kind 29>",
+    "<token of kind 32>",
   };
 
 }

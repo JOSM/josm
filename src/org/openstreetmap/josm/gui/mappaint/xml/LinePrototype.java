@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.mappaint.xml;
 
 import java.awt.Color;
+import java.util.List;
 
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
@@ -13,7 +14,7 @@ public class LinePrototype extends Prototype {
     protected int width;
     public Integer realWidth; // the real width of this line in meter
     public Color color;
-    protected float[] dashed;
+    protected List<Float> dashed;
     public Color dashedColor;
 
     public LinePrototype(LinePrototype s, Range range) {
@@ -40,29 +41,35 @@ public class LinePrototype extends Prototype {
         color = PaintColors.UNTAGGED.get();
     }
 
-    public float[] getDashed() {
+    public List<Float> getDashed() {
         return dashed;
     }
 
-    public void setDashed(float[] dashed) {
-        if (dashed == null || dashed.length == 0) {
-            this.dashed = dashed;
+    public void setDashed(List<Float> dashed) {
+        if (dashed == null || dashed.isEmpty()) {
+            this.dashed = null;
             return;
         }
 
         boolean found = false;
-        for (int i=0; i<dashed.length; i++) {
-            if (dashed[i] > 0) {
+        for (Float f : dashed) {
+            if (f == null) {
+                this.dashed = null;
+                return;
+            }
+            if (f > 0) {
                 found = true;
             }
-            if (dashed[i] < 0) {
-                System.out.println(I18n.tr("Illegal dash pattern, values must be positive"));
+            if (f < 0) {
+                System.err.println(I18n.tr("Illegal dash pattern, values must be positive"));
+                this.dashed = null;
+                return;
             }
         }
         if (found) {
             this.dashed = dashed;
         } else {
-            System.out.println(I18n.tr("Illegal dash pattern, at least one value must be > 0"));
+            System.err.println(I18n.tr("Illegal dash pattern, at least one value must be > 0"));
         }
     }
 

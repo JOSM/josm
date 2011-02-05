@@ -1,14 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.Utils;
 
 abstract public class Condition {
 
-    abstract public boolean applies(OsmPrimitive osm);
+    abstract public boolean applies(Environment e);
 
     public static enum Op {EQ, NEQ}
 
@@ -26,12 +25,12 @@ abstract public class Condition {
         }
 
         @Override
-        public boolean applies(OsmPrimitive osm) {
+        public boolean applies(Environment e) {
             switch (op) {
                 case EQ:
-                    return Utils.equal(osm.get(k), v);
+                    return Utils.equal(e.osm.get(k), v);
                 case NEQ:
-                    return !Utils.equal(osm.get(k), v);
+                    return !Utils.equal(e.osm.get(k), v);
                 default:
                     throw new AssertionError();
             }
@@ -54,8 +53,8 @@ abstract public class Condition {
         }
 
         @Override
-        public boolean applies(OsmPrimitive osm) {
-            return osm.hasKey(k) ^ not;
+        public boolean applies(Environment e) {
+            return e.osm.hasKey(k) ^ not;
         }
 
         @Override
@@ -75,11 +74,11 @@ abstract public class Condition {
         }
 
         @Override
-        public boolean applies(OsmPrimitive osm) {
+        public boolean applies(Environment e) {
             if ("closed".equals(id)) {
-                if (osm instanceof Way && ((Way) osm).isClosed())
+                if (e.osm instanceof Way && ((Way) e.osm).isClosed())
                     return true;
-                if (osm instanceof Relation && ((Relation) osm).isMultipolygon())
+                if (e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon())
                     return true;
                 return false;
             }
@@ -89,6 +88,28 @@ abstract public class Condition {
         @Override
         public String toString() {
             return ":" + (not ? "!" : "") + id;
+        }
+    }
+    
+    public static class ExpressionCondition extends Condition {
+
+        private Expression e;
+
+        public ExpressionCondition(Expression e) {
+            this.e = e;
+        }
+
+        @Override
+        public boolean applies(Environment env) {
+            Object o = e.evaluate(env);
+            if (o instanceof Boolean)
+                return (Boolean) o;
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            return "[" + e + "]";
         }
     }
 
