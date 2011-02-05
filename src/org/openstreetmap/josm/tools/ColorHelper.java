@@ -30,6 +30,8 @@ public class ColorHelper {
     }
 
     public static String color2html(Color col) {
+        if (col == null)
+            return null;
         return "#"+int2hex(col.getRed())+int2hex(col.getGreen())+int2hex(col.getBlue());
     }
 }

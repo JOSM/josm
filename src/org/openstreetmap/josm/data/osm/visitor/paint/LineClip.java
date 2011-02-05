@@ -48,6 +48,7 @@ public class LineClip {
 
     /**
      * see http://en.wikipedia.org/wiki/Cohen-Sutherland
+     * @return true, if line is visible in the given clip region
      */
     private boolean cohenSutherland( long x1, long y1, long x2, long y2, long xmin, long ymin, long xmax, long ymax)
     {
