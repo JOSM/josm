@@ -47,6 +47,13 @@ public class SourceEntry {
         this.active = active;
     }
 
+    public SourceEntry(SourceEntry e) {
+        this.url = e.url;
+        this.name = e.name;
+        this.shortdescription = e.shortdescription;
+        this.active = e.active;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null || getClass() != obj.getClass())

@@ -165,19 +165,19 @@ public class TaggingPresetPreference implements PreferenceSetting {
         final private String iconpref = "taggingpreset.icon.sources";
 
         public TaggingPresetSourceEditor() {
-            super("http://josm.openstreetmap.de/presets");
+            super(false, "http://josm.openstreetmap.de/presets");
         }
 
         @Override
         public Collection<? extends SourceEntry> getInitialSourcesList() {
-            return (new PresetPrefMigration()).get();
+            return PresetPrefMigration.INSTANCE.get();
         }
 
         @Override
         public boolean finish() {
             List<SourceEntry> activeStyles = activeSourcesModel.getSources();
 
-            boolean changed = (new PresetPrefMigration()).put(activeStyles);
+            boolean changed = PresetPrefMigration.INSTANCE.put(activeStyles);
 
             if (tblIconPaths != null) {
                 List<String> iconPaths = iconPathsModel.getIconPaths();
@@ -195,7 +195,7 @@ public class TaggingPresetPreference implements PreferenceSetting {
 
         @Override
         public Collection<ExtendedSourceEntry> getDefault() {
-            return (new PresetPrefMigration()).getDefault();
+            return PresetPrefMigration.INSTANCE.getDefault();
         }
 
         @Override
@@ -289,6 +289,8 @@ public class TaggingPresetPreference implements PreferenceSetting {
     }
 
     public static class PresetPrefMigration extends SourceEditor.SourcePrefMigration {
+
+        public final static PresetPrefMigration INSTANCE = new PresetPrefMigration();
 
         public PresetPrefMigration() {
             super("taggingpreset.sources",

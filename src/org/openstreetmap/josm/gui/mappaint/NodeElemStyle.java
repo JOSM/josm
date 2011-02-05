@@ -96,7 +96,7 @@ public class NodeElemStyle extends ElemStyle {
                     painter.drawNode(n, color, size, fill, getName(n, painter));
                 }
             }
-        } else if (primitive instanceof Relation) {
+        } else if (primitive instanceof Relation && icon != null) {
             painter.drawRestriction((Relation) primitive, this);
         }
     }

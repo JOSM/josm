@@ -130,4 +130,9 @@ public class PreferenceDialog extends JDialog {
             new CancelAction().cancel();
         }
     }
+
+    public void selectMapPaintPreferenceTab() {
+        tpPreferences.setSelectedComponent(tpPreferences.map);
+        tpPreferences.mapcontent.setSelectedIndex(1);
+    }
 }

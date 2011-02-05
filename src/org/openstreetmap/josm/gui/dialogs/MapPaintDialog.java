@@ -6,12 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
@@ -19,25 +17,28 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintStyleLoader;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
+import org.openstreetmap.josm.gui.preferences.PreferenceDialog;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
 public class MapPaintDialog extends ToggleDialog {
 
-    protected JTable tblStyles;
+    protected StylesTable tblStyles;
     protected StylesModel model;
     protected DefaultListSelectionModel selectionModel;
 
@@ -46,7 +47,7 @@ public class MapPaintDialog extends ToggleDialog {
 
     public MapPaintDialog() {
         super(tr("Map Paint Styles"), "mapstyle", tr("configure the map painting style"),
-                Shortcut.registerShortcut("subwindow:authors", tr("Toggle: {0}", tr("Authors")), KeyEvent.VK_M, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 250);
+                Shortcut.registerShortcut("subwindow:authors", tr("Toggle: {0}", tr("Authors")), KeyEvent.VK_M, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
         build();
     }
 
@@ -55,9 +56,8 @@ public class MapPaintDialog extends ToggleDialog {
         pnl.setLayout(new BorderLayout());
 
         model = new StylesModel();
-        model.setStyles(MapPaintStyles.getStyles().getStyleSources());
         
-        tblStyles = new JTable(model);
+        tblStyles = new StylesTable(model);
         tblStyles.setSelectionModel(selectionModel= new DefaultListSelectionModel());
         tblStyles.addMouseListener(new PopupMenuHandler());
         tblStyles.putClientProperty("terminateEditOnFocusLost", true);
@@ -76,21 +76,55 @@ public class MapPaintDialog extends ToggleDialog {
         add(pnl, BorderLayout.CENTER);
     }
 
+    protected static class StylesTable extends JTable {
+
+        public StylesTable(TableModel dm) {
+            super(dm);
+        }
+
+        public void scrollToVisible(int row, int col) {
+            if (!(getParent() instanceof JViewport))
+                return;
+            JViewport viewport = (JViewport) getParent();
+            Rectangle rect = getCellRect(row, col, true);
+            Point pt = viewport.getViewPosition();
+            rect.setLocation(rect.x - pt.x, rect.y - pt.y);
+            viewport.scrollRectToVisible(rect);
+        }
+    }
+
     protected JPanel buildButtonRow() {
-        JPanel p = getButtonPanel(1);
+        JPanel p = getButtonPanel(4);
         reloadAction = new ReloadAction();
         onoffAction = new OnOffAction();
+        MoveUpDownAction up = new MoveUpDownAction(false);
+        MoveUpDownAction down = new MoveUpDownAction(true);
         selectionModel.addListSelectionListener(onoffAction);
         selectionModel.addListSelectionListener(reloadAction);
+        selectionModel.addListSelectionListener(up);
+        selectionModel.addListSelectionListener(down);
         p.add(new SideButton(onoffAction));
+        p.add(new SideButton(up));
+        p.add(new SideButton(down));
+        p.add(new SideButton(new LaunchMapPaintPreferencesAction()));
+
         return p;
     }
-    
-    protected class StylesModel extends AbstractTableModel {
-        List<StyleSource> data;
 
-        public StylesModel() {
-            this.data = new ArrayList<StyleSource>();
+    @Override
+    public void showNotify() {
+        MapPaintStyles.addMapPaintSylesUpdateListener(model);
+    }
+
+    @Override
+    public void hideNotify() {
+        MapPaintStyles.removeMapPaintSylesUpdateListener(model);
+    }
+
+    protected class StylesModel extends AbstractTableModel implements MapPaintSylesUpdateListener {
+
+        private StyleSource getRow(int i) {
+            return MapPaintStyles.getStyles().getStyleSources().get(i);
         }
 
         @Override
@@ -100,15 +134,15 @@ public class MapPaintDialog extends ToggleDialog {
 
         @Override
         public int getRowCount() {
-            return data.size();
+            return MapPaintStyles.getStyles().getStyleSources().size();
         }
         
         @Override
         public Object getValueAt(int row, int column) {
             if (column == 0)
-                return data.get(row).active;
+                return getRow(row).active;
             else
-                return data.get(row).getDisplayString();
+                return getRow(row).getDisplayString();
         }
 
         @Override
@@ -128,31 +162,36 @@ public class MapPaintDialog extends ToggleDialog {
             if (row < 0 || row >= getRowCount() || aValue == null)
                 return;
             if (column == 0) {
-                toggleOnOff(row);
+                MapPaintStyles.toggleStyleActive(row);
             }
         }
 
-        public void setStyles(Collection<? extends StyleSource> styles) {
-            data.clear();
-            if (styles !=null) {
-                data.addAll(styles);
-            }
+        /**
+         * Make sure the first of the selected entry is visible in the
+         * views of this model.
+         */
+        protected void ensureSelectedIsVisible() {
+            int index = selectionModel.getMinSelectionIndex();
+            if (index < 0) return;
+            if (index >= getRowCount()) return;
+            tblStyles.scrollToVisible(index, 0);
+            tblStyles.repaint();
+        }
+
+        /**
+         * MapPaintSylesUpdateListener interface
+         */
+
+        @Override
+        public void mapPaintStylesUpdated() {
             fireTableDataChanged();
+            tblStyles.repaint();
         }
 
-        public void toggleOnOff(int... rows) {
-            for (Integer p : rows) {
-                StyleSource s = model.data.get(p);
-                s.active = !s.active;
-            }
-            if (rows.length == 1) {
-                model.fireTableCellUpdated(rows[0], 0);
-            } else {
-                model.fireTableDataChanged();
-            }
-            MapPaintStyles.getStyles().clearCached();
-            Main.map.mapView.preferenceChanged(null);
-            Main.map.mapView.repaint();
+        @Override
+        public void mapPaintStyleEntryUpdated(int idx) {
+            fireTableRowsUpdated(idx, idx);
+            tblStyles.repaint();
         }
     }
 
@@ -175,7 +214,61 @@ public class MapPaintDialog extends ToggleDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             int[] pos = tblStyles.getSelectedRows();
-            model.toggleOnOff(pos);
+            MapPaintStyles.toggleStyleActive(pos);
+            selectionModel.clearSelection();
+            for (int p: pos) {
+                selectionModel.addSelectionInterval(p, p);
+            }
+        }
+    }
+
+    /**
+     * The action to move down the currently selected entries in the list.
+     */
+    class MoveUpDownAction extends AbstractAction implements ListSelectionListener {
+        final int increment;
+        public MoveUpDownAction(boolean isDown) {
+            increment = isDown ? 1 : -1;
+            putValue(SMALL_ICON, isDown ? ImageProvider.get("dialogs", "down") : ImageProvider.get("dialogs", "up"));
+            putValue(SHORT_DESCRIPTION, isDown ? tr("Move the selected entry one row down.") : tr("Move the selected entry one row up."));
+            updateEnabledState();
+        }
+
+        public void updateEnabledState() {
+            int[] sel = tblStyles.getSelectedRows();
+            setEnabled(MapPaintStyles.canMoveStyles(sel, increment));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int[] sel = tblStyles.getSelectedRows();
+            MapPaintStyles.moveStyles(sel, increment);
+
+            selectionModel.clearSelection();
+            for (int row: sel) {
+                selectionModel.addSelectionInterval(row + increment, row + increment);
+            }
+            model.ensureSelectedIsVisible();
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+    }
+    
+    /**
+     * Opens preferences window and selects the mappaint tab.
+     */
+    class LaunchMapPaintPreferencesAction extends AbstractAction {
+        public LaunchMapPaintPreferencesAction() {
+            putValue(SMALL_ICON, ImageProvider.get("dialogs", "mappaintpreference"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            final PreferenceDialog p =new PreferenceDialog(Main.parent);
+            p.selectMapPaintPreferenceTab();
+            p.setVisible(true);
         }
     }
 
@@ -191,7 +284,7 @@ public class MapPaintDialog extends ToggleDialog {
             int[] pos = tblStyles.getSelectedRows();
             boolean e = pos.length > 0;
             for (int i : pos) {
-                if (!model.data.get(i).isLocal()) {
+                if (!model.getRow(i).isLocal()) {
                     e = false;
                     break;
                 }
@@ -206,29 +299,21 @@ public class MapPaintDialog extends ToggleDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
             final int[] rows = tblStyles.getSelectedRows();
-            List<StyleSource> sources = new ArrayList<StyleSource>();
-            for (int p : rows) {
-                sources.add(model.data.get(p));
-            }
-            Main.worker.submit(new MapPaintStyleLoader(sources));
+            MapPaintStyles.reloadStyles(rows);
             Main.worker.submit(new Runnable() {
                 @Override
                 public void run() {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
-                            if (rows.length == 1) {
-                                model.fireTableCellUpdated(rows[0], 1);
-                            } else {
-                                model.fireTableDataChanged();
+                            selectionModel.clearSelection();
+                            for (int r: rows) {
+                                selectionModel.addSelectionInterval(r, r);
                             }
-                            MapPaintStyles.getStyles().clearCached();
-                            Main.map.mapView.preferenceChanged(null);
-                            Main.map.mapView.repaint();
                         }
                     });
+
                 }
             });
         }

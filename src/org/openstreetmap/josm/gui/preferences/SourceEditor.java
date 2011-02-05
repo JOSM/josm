@@ -11,6 +11,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -42,6 +43,7 @@ import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -80,6 +82,8 @@ import org.xml.sax.SAXException;
 
 public abstract class SourceEditor extends JPanel {
 
+    final protected boolean isMapPaint;
+    
     protected JTable tblActiveSources;
     protected ActiveSourcesModel activeSourcesModel;
     protected JList lstAvailableSources;
@@ -91,10 +95,13 @@ public abstract class SourceEditor extends JPanel {
 
     /**
      * constructor
+     * @param isMapPaint true for MapPaintPreference subclass, false
+     *  for TaggingPresetPreference subclass
      * @param availableSourcesUrl the URL to the list of available sources
      */
-    public SourceEditor(final String availableSourcesUrl) {
+    public SourceEditor(final boolean isMapPaint, final String availableSourcesUrl) {
 
+        this.isMapPaint = isMapPaint;
         DefaultListSelectionModel selectionModel = new DefaultListSelectionModel();
         lstAvailableSources = new JList(availableSourcesModel = new AvailableSourcesListModel(selectionModel));
         lstAvailableSources.setSelectionModel(selectionModel);
@@ -102,7 +109,13 @@ public abstract class SourceEditor extends JPanel {
         this.availableSourcesUrl = availableSourcesUrl;
 
         selectionModel = new DefaultListSelectionModel();
-        tblActiveSources = new JTable(activeSourcesModel = new ActiveSourcesModel(selectionModel));
+        tblActiveSources = new JTable(activeSourcesModel = new ActiveSourcesModel(selectionModel)) {
+            // some kind of hack to prevent the table from scrolling slightly to the
+            // right when clicking on the text
+            public void scrollRectToVisible(Rectangle aRect) {
+                super.scrollRectToVisible(new Rectangle(0, aRect.y, aRect.width, aRect.height));
+            }
+        };
         tblActiveSources.putClientProperty("terminateEditOnFocusLost", true);
         tblActiveSources.setSelectionModel(selectionModel);
         tblActiveSources.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -111,13 +124,20 @@ public abstract class SourceEditor extends JPanel {
         tblActiveSources.setTableHeader(null);
         tblActiveSources.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         SourceEntryTableCellRenderer sourceEntryRenderer = new SourceEntryTableCellRenderer();
-        tblActiveSources.getColumnModel().getColumn(0).setCellRenderer(sourceEntryRenderer);
+        if (isMapPaint) {
+            tblActiveSources.getColumnModel().getColumn(0).setMaxWidth(1);
+            tblActiveSources.getColumnModel().getColumn(0).setResizable(false);
+            tblActiveSources.getColumnModel().getColumn(1).setCellRenderer(sourceEntryRenderer);
+        } else {
+            tblActiveSources.getColumnModel().getColumn(0).setCellRenderer(sourceEntryRenderer);
+        }
+
         activeSourcesModel.addTableModelListener(new TableModelListener() {
             // Force swing to show horizontal scrollbars for the JTable
             // Yes, this is a little ugly, but should work
             @Override
             public void tableChanged(TableModelEvent e) {
-                adjustColumnWidth(tblActiveSources, 0);
+                adjustColumnWidth(tblActiveSources, isMapPaint ? 1 : 0);
             }
         });
         activeSourcesModel.setActiveSources(getInitialSourcesList());
@@ -129,7 +149,10 @@ public abstract class SourceEditor extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     int row = tblActiveSources.rowAtPoint(e.getPoint());
+                    int col = tblActiveSources.columnAtPoint(e.getPoint());
                     if (row < 0 || row >= tblActiveSources.getRowCount())
+                        return;
+                    if (isMapPaint  && col != 1)
                         return;
                     editActiveSourceAction.actionPerformed(null);
                 }
@@ -140,6 +163,17 @@ public abstract class SourceEditor extends JPanel {
         tblActiveSources.getSelectionModel().addListSelectionListener(removeActiveSourcesAction);
         tblActiveSources.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0), "delete");
         tblActiveSources.getActionMap().put("delete", removeActiveSourcesAction);
+
+        MoveUpDownAction moveUp = null;
+        MoveUpDownAction moveDown = null;
+        if (isMapPaint) {
+            moveUp = new MoveUpDownAction(false);
+            moveDown = new MoveUpDownAction(true);
+            tblActiveSources.getSelectionModel().addListSelectionListener(moveUp);
+            tblActiveSources.getSelectionModel().addListSelectionListener(moveDown);
+            activeSourcesModel.addTableModelListener(moveUp);
+            activeSourcesModel.addTableModelListener(moveDown);
+        }
 
         ActivateSourcesAction activateSourcesAction = new ActivateSourcesAction();
         lstAvailableSources.addListSelectionListener(activateSourcesAction);
@@ -208,6 +242,11 @@ public abstract class SourceEditor extends JPanel {
         sideButtonTB.add(new NewActiveSourceAction());
         sideButtonTB.add(editActiveSourceAction);
         sideButtonTB.add(removeActiveSourcesAction);
+        sideButtonTB.addSeparator(new Dimension(12, 30));
+        if (isMapPaint) {
+            sideButtonTB.add(moveUp);
+            sideButtonTB.add(moveDown);
+        }
         add(sideButtonTB, gbc);
 
         gbc.gridx = 0;
@@ -434,7 +473,7 @@ public abstract class SourceEditor extends JPanel {
         }
     }
 
-    protected static class ActiveSourcesModel extends AbstractTableModel {
+    protected class ActiveSourcesModel extends AbstractTableModel {
         private List<SourceEntry> data;
         private DefaultListSelectionModel selectionModel;
 
@@ -444,7 +483,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         public int getColumnCount() {
-            return 1;
+            return isMapPaint ? 2 : 1;
         }
 
         public int getRowCount() {
@@ -452,24 +491,40 @@ public abstract class SourceEditor extends JPanel {
         }
 
         @Override
-        public SourceEntry getValueAt(int rowIndex, int columnIndex) {
-            return data.get(rowIndex);
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            if (isMapPaint && columnIndex == 0)
+                return data.get(rowIndex).active;
+            else
+                return data.get(rowIndex);
         }
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return false;
+            return isMapPaint && columnIndex == 0;
+        }
+
+        Class<?>[] columnClasses = {Boolean.class, SourceEntry.class};
+
+        @Override
+        public Class<?> getColumnClass(int column) {
+            return isMapPaint ? columnClasses[column] : SourceEntry.class;
         }
 
         @Override
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            updateSource(rowIndex, (String)aValue);
+        public void setValueAt(Object aValue, int row, int column) {
+            if (row < 0 || row >= getRowCount() || aValue == null)
+                return;
+            if (isMapPaint && column == 0) {
+                data.get(row).active = ! data.get(row).active;
+            }
         }
 
         public void setActiveSources(Collection<? extends SourceEntry> sources) {
             data.clear();
             if (sources != null) {
-                data.addAll(sources);
+                for (SourceEntry e : sources) {
+                    data.add(new SourceEntry(e));
+                }
             }
             fireTableDataChanged();
         }
@@ -479,17 +534,6 @@ public abstract class SourceEditor extends JPanel {
             data.add(entry);
             fireTableDataChanged();
             int idx = data.indexOf(entry);
-            if (idx >= 0) {
-                selectionModel.setSelectionInterval(idx, idx);
-            }
-        }
-
-        public void updateSource(int pos, String src) {
-            if (src == null) return;
-            if (pos < 0 || pos >= getRowCount()) return;
-            data.get(pos).url = src;
-            fireTableDataChanged();
-            int idx = data.indexOf(src);
             if (idx >= 0) {
                 selectionModel.setSelectionInterval(idx, idx);
             }
@@ -536,6 +580,33 @@ public abstract class SourceEditor extends JPanel {
 
         public List<SourceEntry> getSources() {
             return new ArrayList<SourceEntry>(data);
+        }
+
+        public boolean canMove(int i) {
+            int[] sel = tblActiveSources.getSelectedRows();
+            if (sel.length == 0)
+                return false;
+            if (i < 0) { // Up
+                return sel[0] >= -i;
+            } else if (i > 0) { // Down
+                return sel[sel.length-1] <= getRowCount()-1 - i;
+            } else
+                return true;
+        }
+
+        public void move(int i) {
+            if (!canMove(i)) return;
+            int[] sel = tblActiveSources.getSelectedRows();
+            for (int row: sel) {
+                SourceEntry t1 = data.get(row);
+                SourceEntry t2 = data.get(row + i);
+                data.set(row, t2);
+                data.set(row + i, t1);
+            }
+            selectionModel.clearSelection();
+            for (int row: sel) {
+                selectionModel.addSelectionInterval(row + i, row + i);
+            }
         }
     }
 
@@ -589,6 +660,7 @@ public abstract class SourceEditor extends JPanel {
          */
         private JTextField tfName;
         private JTextField tfURL;
+        private JCheckBox cbActive;
 
         public EditSourceEntryDialog(Component parent, String title, SourceEntry e) {
             super(parent,
@@ -603,10 +675,10 @@ public abstract class SourceEditor extends JPanel {
 
             tfURL = new JTextField(60);
             p.add(new JLabel(tr("URL / File:")), GBC.std().insets(15, 0, 5, 0));
-            p.add(tfURL, GBC.std().insets(0, 0, 5, 0));
+            p.add(tfURL, GBC.std().insets(0, 0, 5, 5));
             JButton fileChooser = new JButton(new LaunchFileChooserAction());
             fileChooser.setMargin(new Insets(0, 0, 0, 0));
-            p.add(fileChooser, GBC.eol().insets(0, 0, 5, 0));
+            p.add(fileChooser, GBC.eol().insets(0, 0, 5, 5));
 
             if (e != null) {
                 if (e.shortdescription != null) {
@@ -615,6 +687,10 @@ public abstract class SourceEditor extends JPanel {
                 tfURL.setText(e.url);
             }
 
+            if (isMapPaint) {
+                cbActive = new JCheckBox(tr("active"), e != null ? e.active : true);
+                p.add(cbActive, GBC.eol().insets(15, 0, 5, 0));
+            }
             setButtonIcons(new String[] {"ok", "cancel"});
             setContent(p);
         }
@@ -668,6 +744,12 @@ public abstract class SourceEditor extends JPanel {
         public String getURL() {
             return tfURL.getText();
         }
+
+        public boolean active() {
+            if (!isMapPaint)
+                throw new UnsupportedOperationException();
+            return cbActive.isSelected();
+        }
     }
 
     class NewActiveSourceAction extends AbstractAction {
@@ -684,9 +766,13 @@ public abstract class SourceEditor extends JPanel {
                     null);
             editEntryDialog.showDialog();
             if (editEntryDialog.getValue() == 1) {
+                boolean active = true;
+                if (isMapPaint) {
+                    active = editEntryDialog.active();
+                }
                 activeSourcesModel.addSource(new SourceEntry(
                         editEntryDialog.getURL(),
-                        null, editEntryDialog.getShortdescription(), true));
+                        null, editEntryDialog.getShortdescription(), active));
                 activeSourcesModel.fireTableDataChanged();
             }
         }
@@ -735,7 +821,7 @@ public abstract class SourceEditor extends JPanel {
             if (pos < 0 || pos >= tblActiveSources.getRowCount())
                 return;
 
-            SourceEntry e = activeSourcesModel.getValueAt(pos, 0);
+            SourceEntry e = (SourceEntry) activeSourcesModel.getValueAt(pos, 1);
 
             EditSourceEntryDialog editEntryDialog = new EditSourceEntryDialog(
                     SourceEditor.this, tr("Edit source entry:"), e);
@@ -748,8 +834,41 @@ public abstract class SourceEditor extends JPanel {
                     }
                 }
                 e.url = editEntryDialog.getURL();
-                activeSourcesModel.fireTableCellUpdated(pos, 0);
+                if (isMapPaint) {
+                    e.active = editEntryDialog.active();
+                }
+                activeSourcesModel.fireTableRowsUpdated(pos, pos);
             }
+        }
+    }
+
+    /**
+     * The action to move the currently selected entries up or down in the list.
+     */
+    class MoveUpDownAction extends AbstractAction implements ListSelectionListener, TableModelListener {
+        final int increment;
+        public MoveUpDownAction(boolean isDown) {
+            increment = isDown ? 1 : -1;
+            putValue(SMALL_ICON, isDown ? ImageProvider.get("dialogs", "down") : ImageProvider.get("dialogs", "up"));
+            putValue(SHORT_DESCRIPTION, isDown ? tr("Move the selected entry one row down.") : tr("Move the selected entry one row up."));
+            updateEnabledState();
+        }
+
+        public void updateEnabledState() {
+            setEnabled(activeSourcesModel.canMove(increment));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            activeSourcesModel.move(increment);
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+
+        public void tableChanged(TableModelEvent e) {
+            updateEnabledState();
         }
     }
 
@@ -1106,7 +1225,7 @@ public abstract class SourceEditor extends JPanel {
                 s.append(entry.shortdescription).append("</b> (");
             }
             s.append(entry.url);
-            if (entry.name != null) {
+            if (entry.shortdescription != null) {
                 s.append(")");
             }
             s.append("</html>");

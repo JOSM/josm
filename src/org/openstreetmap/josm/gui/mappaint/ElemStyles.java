@@ -34,12 +34,8 @@ public class ElemStyles {
         cacheIdx++;
     }
 
-    public void add(StyleSource style) {
-        styleSources.add(style);
-    }
-
-    public Collection<StyleSource> getStyleSources() {
-        return Collections.<StyleSource>unmodifiableCollection(styleSources);
+    public List<StyleSource> getStyleSources() {
+        return Collections.<StyleSource>unmodifiableList(styleSources);
     }
 
     public StyleList get(OsmPrimitive osm, double scale, NavigatableComponent nc) {
@@ -240,4 +236,27 @@ public class ElemStyles {
     public void setDrawMultipolygon(boolean drawMultipolygon) {
         this.drawMultipolygon = drawMultipolygon;
     }
+
+    /**
+     * remove all style sources; only accessed from MapPaintStyles
+     */
+    void clear() {
+        styleSources.clear();
+    }
+
+    /**
+     * add a style source; only accessed from MapPaintStyles
+     */
+    void add(StyleSource style) {
+        styleSources.add(style);
+    }
+
+    /**
+     * set the style sources; only accessed from MapPaintStyles
+     */
+    void setStyleSources(Collection<StyleSource> sources) {
+        styleSources.clear();
+        styleSources.addAll(sources);
+    }
+
 }

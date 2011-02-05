@@ -40,6 +40,7 @@ public class MapCSSStyleSource extends StyleSource {
     @Override
     public void loadStyleSource() {
         rules.clear();
+        hasError = false;
         try {
             MirroredInputStream in = new MirroredInputStream(url);
             InputStream zip = in.getZipEntry("mapcss", "style");

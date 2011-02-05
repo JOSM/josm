@@ -67,19 +67,19 @@ public class MapPaintPreference implements PreferenceSetting {
         final private String iconpref = "mappaint.icon.sources";
 
         public MapPaintSourceEditor() {
-            super("http://josm.openstreetmap.de/styles");
+            super(true, "http://josm.openstreetmap.de/styles");
         }
 
         @Override
         public Collection<? extends SourceEntry> getInitialSourcesList() {
-            return (new MapPaintPrefMigration()).get();
+            return MapPaintPrefMigration.INSTANCE.get();
         }
 
         @Override
         public boolean finish() {
             List<SourceEntry> activeStyles = activeSourcesModel.getSources();
 
-            boolean changed = (new MapPaintPrefMigration()).put(activeStyles);
+            boolean changed = MapPaintPrefMigration.INSTANCE.put(activeStyles);
 
             if (tblIconPaths != null) {
                 List<String> iconPaths = iconPathsModel.getIconPaths();
@@ -97,7 +97,7 @@ public class MapPaintPreference implements PreferenceSetting {
 
         @Override
         public Collection<ExtendedSourceEntry> getDefault() {
-            return (new MapPaintPrefMigration()).getDefault();
+            return MapPaintPrefMigration.INSTANCE.getDefault();
         }
 
         @Override
@@ -142,18 +142,16 @@ public class MapPaintPreference implements PreferenceSetting {
     }
 
     public boolean ok() {
-        Boolean restart = false;
-        if(Main.pref.put("mappaint.icon.enable-defaults", enableIconDefault.isSelected())) {
-            restart = true;
+        boolean reload = Main.pref.put("mappaint.icon.enable-defaults", enableIconDefault.isSelected());
+        reload |= sources.finish();
+        if (reload) {
+            MapPaintStyles.readFromPreferences();
         }
-        if(sources.finish()) {
-            restart = true;
-        }
-        if(Main.isDisplayingMapView())
+        if (Main.isDisplayingMapView())
         {
             MapPaintStyles.getStyles().clearCached();
         }
-        return restart;
+        return false;
     }
 
     /**
@@ -164,6 +162,8 @@ public class MapPaintPreference implements PreferenceSetting {
     }
 
     public static class MapPaintPrefMigration extends SourceEditor.SourcePrefMigration {
+
+        public final static MapPaintPrefMigration INSTANCE = new MapPaintPrefMigration();
 
         public MapPaintPrefMigration() {
             super("mappaint.style.sources",
