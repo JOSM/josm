@@ -14,6 +14,7 @@ import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
+import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.tools.Utils;
 
 public interface Expression {
@@ -136,6 +137,14 @@ public interface Expression {
                     c = env.mc.getCascade(layer);
                 }
                 return c.containsKey(key);
+            }
+
+            public String get_tag_value(String key) {
+                return env.osm.get(key);
+            }
+
+            public boolean has_tag_key(String key) {
+                return env.osm.hasKey(key);
             }
 
             public Object cond(boolean cond, Object if_, Object else_) {

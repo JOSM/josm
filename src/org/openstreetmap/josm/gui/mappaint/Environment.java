@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.mappaint.mapcss;
+package org.openstreetmap.josm.gui.mappaint;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
@@ -8,10 +8,10 @@ import org.openstreetmap.josm.gui.mappaint.StyleSource;
 
 public class Environment {
     
-    OsmPrimitive osm;
-    MultiCascade mc;
-    String layer;
-    StyleSource source;
+    public OsmPrimitive osm;
+    public MultiCascade mc;
+    public String layer;
+    public StyleSource source;
 
     public Environment(OsmPrimitive osm, MultiCascade mc, String layer, StyleSource source) {
         this.osm = osm;

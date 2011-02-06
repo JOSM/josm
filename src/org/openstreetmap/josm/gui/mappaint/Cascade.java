@@ -18,15 +18,21 @@ public class Cascade implements Cloneable {
 
     protected Map<String, Object> prop = new HashMap<String, Object>();
 
+    public <T> T get(String key, T def, Class<T> klass) {
+        return get(key, def, klass, false);
+    }
+    
     /**
      * Get value for the given key
      * @param key the key
      * @param def default value, can be null
      * @param klass the same as T
+     * @param suppressWarnings show or don't show a warning when some value is
+     *      found, but cannot be converted to the requested type
      * @return if a value with class klass has been mapped to key, returns this
      *      value, def otherwise
      */
-    public <T> T get(String key, T def, Class<T> klass) {
+    public <T> T get(String key, T def, Class<T> klass, boolean suppressWarnings) {
         if (def != null && !klass.isInstance(def))
             throw new IllegalArgumentException();
         Object o = prop.get(key);
@@ -34,7 +40,9 @@ public class Cascade implements Cloneable {
             return def;
         T res = convertTo(o, klass);
         if (res == null) {
-            System.err.println(String.format("Warning: unable to convert property %s to type %s: found %s of type %s!", key, klass, o, o.getClass()));
+            if (!suppressWarnings) {
+                System.err.println(String.format("Warning: unable to convert property %s to type %s: found %s of type %s!", key, klass, o, o.getClass()));
+            }
             return def;
         } else
             return res;

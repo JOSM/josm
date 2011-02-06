@@ -192,6 +192,7 @@ public class ElemStyles {
 
         List<ElemStyle> sl = new ArrayList<ElemStyle>();
         MultiCascade mc = new MultiCascade();
+        Environment env = new Environment(osm, mc, null, null);
 
         for (StyleSource s : styleSources) {
             if (s.active) {
@@ -202,18 +203,19 @@ public class ElemStyles {
         for (Entry<String, Cascade> e : mc.entrySet()) {
             if ("*".equals(e.getKey()))
                 continue;
+            env.layer = e.getKey();
             Cascade c = e.getValue();
             if (osm instanceof Way) {
                 addIfNotNull(sl, AreaElemStyle.create(c));
-                addIfNotNull(sl, LineElemStyle.createLine(c));
-                addIfNotNull(sl, LineElemStyle.createCasing(c));
+                addIfNotNull(sl, LineElemStyle.createLine(env));
+                addIfNotNull(sl, LineElemStyle.createCasing(env));
             } else if (osm instanceof Node) {
                 addIfNotNull(sl, NodeElemStyle.create(c));
             } else if (osm instanceof Relation) {
                 if (((Relation)osm).isMultipolygon()) {
                     addIfNotNull(sl, AreaElemStyle.create(c));
-                    addIfNotNull(sl, LineElemStyle.createLine(c));
-                    addIfNotNull(sl, LineElemStyle.createCasing(c));
+                    addIfNotNull(sl, LineElemStyle.createLine(env));
+                    addIfNotNull(sl, LineElemStyle.createCasing(env));
                 } else if ("restriction".equals(osm.get("type"))) {
                     addIfNotNull(sl, NodeElemStyle.create(c));
                 }
