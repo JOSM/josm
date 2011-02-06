@@ -869,6 +869,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 item.append(ch);
             }
         }
+        if (item.length() > 0) {
+            result.add(item.toString());
+        }
         return result.toArray(new String[result.size()]);
     }
 
