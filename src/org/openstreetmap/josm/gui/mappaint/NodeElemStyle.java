@@ -36,8 +36,8 @@ public class NodeElemStyle extends ElemStyle {
         IconReference iconRef = c.get("icon-image", null, IconReference.class);
         if (iconRef == null)
             return null;
-
-        ImageIcon icon = MapPaintStyles.getIcon(iconRef);
+        ImageIcon icon = MapPaintStyles.getIcon(iconRef, false);
+        
         String text = c.get("text", null, String.class);
 
         boolean annotate = text != null;

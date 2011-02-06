@@ -10,8 +10,10 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.TexturePaint;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -41,7 +43,6 @@ public class MapPainter {
     private final boolean useStrokes;
     private final boolean showNames;
     private final boolean showIcons;
-    private final boolean outlineOnly;
 
     private final Color inactiveColor;
     private final Color textColor;
@@ -77,7 +78,6 @@ public class MapPainter {
         this.useStrokes = settings.getUseStrokesDistance() > circum;
         this.showNames = settings.getShowNamesDistance() > circum;
         this.showIcons = settings.getShowIconsDistance() > circum;
-        this.outlineOnly = settings.isOutlineOnly();
 
         this.inactiveColor = PaintColors.INACTIVE.get();
         this.textColor = PaintColors.TEXT.get();
@@ -257,21 +257,23 @@ public class MapPainter {
         return polygon;
     }
 
-    public void drawArea(Way w, Color color, String name) {
+    public void drawArea(Way w, Color color, BufferedImage fillImage, String name) {
         Polygon polygon = getPolygon(w);
-        drawArea(polygon, color, name);
+        drawArea(polygon, color, fillImage, name);
     }
 
-    protected void drawArea(Polygon polygon, Color color, String name) {
+    protected void drawArea(Polygon polygon, Color color, BufferedImage fillImage, String name) {
 
-        g.setColor(color);
-
-        if (outlineOnly) {
-            g.drawPolygon(polygon);
-        } else {
+        if (fillImage == null) {
+            g.setColor(color);
             g.fillPolygon(polygon);
-        }
+        } else {
+            TexturePaint texture = new TexturePaint(fillImage, 
+                    new Rectangle(polygon.xpoints[0], polygon.ypoints[0], fillImage.getWidth(), fillImage.getHeight()));
 
+            g.setPaint(texture);
+            g.fill(polygon);
+        }
 
         if (name != null) {
             Rectangle pb = polygon.getBounds();
@@ -310,7 +312,7 @@ public class MapPainter {
         }
     }
 
-    public void drawArea(Relation r, Color color, String name) {
+    public void drawArea(Relation r, Color color, BufferedImage fillImage, String name) {
         Multipolygon multipolygon = new Multipolygon(nc);
         multipolygon.load(r);
         if(!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
@@ -319,7 +321,7 @@ public class MapPainter {
                 if(!isPolygonVisible(p)) {
                     continue;
                 }
-                drawArea(p, color, getAreaName(r));
+                drawArea(p, color, fillImage, getAreaName(r));
             }
         }
     }

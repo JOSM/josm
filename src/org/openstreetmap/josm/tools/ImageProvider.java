@@ -51,9 +51,22 @@ public class ImageProvider {
     }
 
     /**
+     * remember whether the image has been sanitized
+     */
+    private static class ImageWrapper {
+        Image img;
+        boolean sanitized;
+
+        public ImageWrapper(Image img, boolean sanitized) {
+            this.img = img;
+            this.sanitized = sanitized;
+        }
+    }
+
+    /**
      * The icon cache
      */
-    private static Map<String, Image> cache = new HashMap<String, Image>();
+    private static Map<String, ImageWrapper> cache = new HashMap<String, ImageWrapper>();
 
     /**
      * Add here all ClassLoader whose resource should be searched. Plugin's class loaders are added
@@ -83,7 +96,7 @@ public class ImageProvider {
         return getIfAvailable((Collection<String>) null, null, subdir, name);
     }
 
-    public static final ImageIcon getIfAvailable(String[] dirs, String id, String subdir, String name) {
+    public static ImageIcon getIfAvailable(String[] dirs, String id, String subdir, String name) {
         return getIfAvailable(Arrays.asList(dirs), id, subdir, name);
     }
 
@@ -96,6 +109,10 @@ public class ImageProvider {
         return getIfAvailable(dirs, id, subdir, name, null);
     }
 
+    public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive) {
+        return getIfAvailable(dirs, id, subdir, name, archive, false);
+    }
+
     /**
      * The full path of the image is either a url (starting with http://)
      * or something like
@@ -105,22 +122,36 @@ public class ImageProvider {
      * @param subdir    Subdirectory the image lies in.
      * @param name      The name of the image. If it contains no '.', a png extension is added.
      * @param archive   A zip file where the image is located.
+     * @param sanitize  If the image should be repainted to a new BufferedImage to work
+     *                  around certain issues.
      */
-    public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive) {
+    public static ImageIcon getIfAvailable(Collection<String> dirs, String id, String subdir, String name, File archive, boolean sanitize) {
+        ImageWrapper iw = getIfAvailableImpl(dirs, id, subdir, name, archive);
+        if (iw == null)
+            return null;
+        if (sanitize && !iw.sanitized) {
+            iw.img = sanitize(iw.img);
+            iw.sanitized = true;
+        }
+        return new ImageIcon(iw.img);
+    }
+
+    private static ImageWrapper getIfAvailableImpl(Collection<String> dirs, String id, String subdir, String name, File archive) {
         if (name == null)
             return null;
         if (name.startsWith("http://")) {
-            Image img = cache.get(name);
-            if (img == null) {
+            ImageWrapper iw = cache.get(name);
+            if (iw == null) {
                 try {
                     MirroredInputStream is = new MirroredInputStream(name, new File(Main.pref.getPreferencesDir(),
                     "images").toString());
-                    img = Toolkit.getDefaultToolkit().createImage(is.getFile().toURI().toURL());
-                    cache.put(name, img);
+                    Image img = Toolkit.getDefaultToolkit().createImage(is.getFile().toURI().toURL());
+                    iw = new ImageWrapper(img, false);
+                    cache.put(name, iw);
                 } catch (IOException e) {
                 }
             }
-            return img == null ? null : new ImageIcon(img);
+            return iw;
         }
         if (subdir == null) {
             subdir = "";
@@ -138,8 +169,8 @@ public class ImageProvider {
             }
         }
 
-        Image img = cache.get(cache_name);
-        if (img == null) {
+        ImageWrapper iw = cache.get(cache_name);
+        if (iw == null) {
             if(archive != null)
             {
                 ZipFile zipFile = null;
@@ -161,7 +192,8 @@ public class ImageProvider {
                                 offs += l;
                                 size -= l;
                             }
-                            img = Toolkit.getDefaultToolkit().createImage(buf);
+                            Image img = Toolkit.getDefaultToolkit().createImage(buf);
+                            iw = new ImageWrapper(img, false);
                         } finally {
                             if (is != null) {
                                 is.close();
@@ -184,17 +216,18 @@ public class ImageProvider {
             // index the cache by the name of the icon we're looking for
             // and don't bother to create a URL unless we're actually
             // creating the image.
-            if(img == null)
+            if(iw == null)
             {
                 URL path = getImageUrl(full_name, dirs);
                 if (path == null)
                     return null;
-                img = Toolkit.getDefaultToolkit().createImage(path);
+                Image img = Toolkit.getDefaultToolkit().createImage(path);
+                iw = new ImageWrapper(img, false);
             }
-            cache.put(cache_name, img);
+            cache.put(cache_name, iw);
         }
 
-        return new ImageIcon(img);
+        return iw;
     }
 
     private static URL getImageUrl(String path, String name) {
@@ -403,5 +436,14 @@ public class ImageProvider {
     public static ImageIcon get(OsmPrimitiveType type) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(type, "type");
         return get("data", type.getAPIName());
+    }
+
+    public static BufferedImage sanitize(Image img) {
+        (new ImageIcon(img)).getImage(); // load competely
+        int width = img.getWidth(null);
+        int height = img.getHeight(null);
+        BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        result.getGraphics().drawImage(img, 0, 0, null);
+        return result;
     }
 }

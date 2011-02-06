@@ -80,7 +80,7 @@ public class MapPaintSettings implements PreferenceChangedListener {
         fillConnectionNode = Main.pref.getBoolean("mappaint.node.fill-connection", false);
 
         outlineOnly = Main.pref.getBoolean("draw.data.area_outline_only", false);
-
+        
     }
 
     public void preferenceChanged(PreferenceChangeEvent e) {

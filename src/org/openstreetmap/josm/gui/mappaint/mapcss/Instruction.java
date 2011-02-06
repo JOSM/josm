@@ -35,7 +35,7 @@ abstract public class Instruction {
         @Override
         public void execute(Environment env) {
             Object value = (val instanceof Expression) ? ((Expression) val).evaluate(env) : val;
-            if (key.equals("icon-image")) {
+            if (key.equals("icon-image") || key.equals("fill-image")) {
                 if (value instanceof String) {
                     value = new IconReference((String) value, env.source);
                 }

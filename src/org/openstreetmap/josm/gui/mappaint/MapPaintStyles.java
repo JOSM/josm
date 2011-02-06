@@ -59,7 +59,7 @@ public class MapPaintStyles {
         }
     }
 
-    public static ImageIcon getIcon(IconReference ref)
+    public static ImageIcon getIcon(IconReference ref, boolean sanitize)
     {
         String styleName = ref.source.getPrefName();
         List<String> dirs = new LinkedList<String>();
@@ -77,7 +77,7 @@ public class MapPaintStyles {
                 dirs.add(a[1]);
             }
         }
-        ImageIcon i = ImageProvider.getIfAvailable(dirs, "mappaint."+styleName, null, ref.iconName, ref.source.zipIcons);
+        ImageIcon i = ImageProvider.getIfAvailable(dirs, "mappaint."+styleName, null, ref.iconName, ref.source.zipIcons, sanitize);
         if(i == null)
         {
             System.out.println("Mappaint style \""+styleName+"\" icon \"" + ref.iconName + "\" not found.");

@@ -2,6 +2,11 @@
 package org.openstreetmap.josm.gui.mappaint;
 
 import java.awt.Color;
+import java.awt.Rectangle;
+import java.awt.TexturePaint;
+import java.awt.image.BufferedImage;
+
+import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -9,41 +14,74 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.tools.Utils;
+
 
 public class AreaElemStyle extends ElemStyle
 {
     public Color color;
+    public BufferedImage fillImage;
 
-    protected AreaElemStyle(Cascade c, Color color) {
+    protected AreaElemStyle(Cascade c, Color color, BufferedImage fillImage) {
         super(c);
         this.color = color;
+        this.fillImage = fillImage;
     }
 
     public static AreaElemStyle create(Cascade c) {
-        Color color = c.get("fill-color", null, Color.class);
-        if (color == null)
-            return null;
-        int alpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
-        Integer pAlpha = color_float2int(c.get("fill-opacity", null, float.class));
-        if (pAlpha != null) {
-            alpha = pAlpha;
+        BufferedImage fillImage = null;
+        IconReference iconRef = c.get("fill-image", null, IconReference.class);
+        if (iconRef != null) {
+            ImageIcon icon = MapPaintStyles.getIcon(iconRef, false);
+            if (icon != null) {
+                if (!(icon.getImage() instanceof BufferedImage)) {
+                    icon = MapPaintStyles.getIcon(iconRef, true);
+                }
+                if (!(icon.getImage() instanceof BufferedImage))
+                    throw new RuntimeException();
+                fillImage = (BufferedImage) icon.getImage();
+            }
         }
-        color = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
-        return new AreaElemStyle(c, color);
+
+        Color color = c.get("fill-color", null, Color.class);
+        if (color != null) {
+
+            int alpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
+            Integer pAlpha = color_float2int(c.get("fill-opacity", null, float.class));
+            if (pAlpha != null) {
+                alpha = pAlpha;
+            }
+            color = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+        }
+        
+        if (fillImage != null || color != null)
+            return new AreaElemStyle(c, color, fillImage);
+        else
+            return null;
     }
 
     @Override
     public void paintPrimitive(OsmPrimitive osm, MapPaintSettings paintSettings, MapPainter painter, boolean selected, boolean member) {
         if (osm instanceof Way)
         {
-            painter.drawArea((Way) osm,
-                    osm.isSelected() ? paintSettings.getSelectedColor(color.getAlpha()) : color,
+            Color myColor = color;
+            if (color != null) {
+                if (osm.isSelected()) {
+                    myColor = paintSettings.getSelectedColor(color.getAlpha());
+                }
+            }
+            painter.drawArea((Way) osm, myColor, fillImage,
                     painter.isShowNames() ? painter.getAreaName(osm) : null);
         } else if (osm instanceof Relation)
         {
-            painter.drawArea((Relation) osm,
-                    selected ? paintSettings.getRelationSelectedColor(color.getAlpha()) : color,
+            Color myColor = color;
+            if (color != null) {
+                if (selected) {
+                    myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
+                }
+            }
+            painter.drawArea((Relation) osm, myColor, fillImage,
                     painter.getAreaName(osm));
         }
     }
@@ -54,12 +92,21 @@ public class AreaElemStyle extends ElemStyle
             return false;
         if (!super.equals(obj))
             return false;
-        return Utils.equal(color, ((AreaElemStyle) obj).color);
+        AreaElemStyle other = (AreaElemStyle) obj;
+        // we should get the same image object due to caching
+        if (fillImage != other.fillImage && (fillImage == null || other.fillImage == null || fillImage != other.fillImage))
+            return false;
+        if (!Utils.equal(color, other.color))
+            return false;
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return 11 * super.hashCode() + color.hashCode();
+        int hash = 3;
+        hash = 61 * hash + (this.color != null ? this.color.hashCode() : 0);
+        hash = 61 * hash + (this.fillImage != null ? this.fillImage.hashCode() : 0);
+        return hash;
     }
 
     @Override

@@ -100,8 +100,10 @@ public class MapPaintVisitor implements PaintVisitor {
 
         styles = MapPaintStyles.getStyles();
 
+        this.paintSettings = MapPaintSettings.INSTANCE;
+
         circum = nc.getDist100Pixel();
-        boolean drawArea = circum <= Main.pref.getInteger("mappaint.fillareas", 10000000);
+        boolean drawArea = circum <= Main.pref.getInteger("mappaint.fillareas", 10000000) && !paintSettings.isOutlineOnly();
         boolean drawMultipolygon = drawArea && Main.pref.getBoolean("mappaint.multipolygon", true);
         styles.setDrawMultipolygon(drawMultipolygon);
         boolean drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
@@ -111,7 +113,6 @@ public class MapPaintVisitor implements PaintVisitor {
                 Main.pref.getBoolean("mappaint.use-antialiasing", false) ?
                         RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 
-        this.paintSettings = MapPaintSettings.INSTANCE;
         this.painter = new MapPainter(paintSettings, g, inactive, nc, virtual, circum, leftHandTraffic);
 
         StyleCollector scDisabledLines = new StyleCollector(LineElemStyle.class);

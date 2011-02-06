@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,6 +34,7 @@ import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
+import org.openstreetmap.josm.gui.mappaint.StyleCache;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
@@ -298,6 +300,21 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                 txtMappaint.append(" * "+s+"\n");
             }
             txtMappaint.append("\n\n");
+        }
+
+        if (sel.size() == 2) {
+            List<OsmPrimitive> selList = new ArrayList<OsmPrimitive>(sel);
+            StyleCache sc1 = selList.get(0).mappaintStyle;
+            StyleCache sc2 = selList.get(1).mappaintStyle;
+            if (sc1 == sc2) {
+                txtMappaint.append("The 2 selected Objects have identical style caches.");
+            }
+            if (!sc1.equals(sc2)) {
+                txtMappaint.append("The 2 selected Objects have different style caches.");
+            }
+            if (sc1.equals(sc2) && sc1 != sc2) {
+                txtMappaint.append("Warning: The 2 selected Objects have equal, but not identical style caches.");
+            }
         }
     }
 
