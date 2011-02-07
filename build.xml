@@ -82,9 +82,6 @@ Build-Date: ${build.tstamp}
 		<copy file="README" todir="build"/>
 		<copy file="LICENSE" todir="build"/>
 
-		<!-- styles -->
-		<copy file="styles/standard/elemstyles.xml" todir="build/data"/>
-
 		<!-- create josm-custom.jar -->
 		<delete file="dist/josm-custom.jar"/>
 		<jar destfile="dist/josm-custom.jar" basedir="build" level="${clevel}">
@@ -96,6 +93,7 @@ Build-Date: ${build.tstamp}
 			</manifest>
 			<zipfileset dir="images" prefix="images" />
 			<zipfileset dir="data" prefix="data" />
+			<zipfileset dir="styles" prefix="styles" />
 			<zipfileset dir="src/org/openstreetmap/gui/jmapviewer/images" prefix="org/openstreetmap/gui/jmapviewer/images" />
 
 			<!-- All jar files necessary to run only JOSM (no tests) -->

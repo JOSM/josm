@@ -172,8 +172,32 @@ public class MapPaintPreference implements PreferenceSetting {
         }
 
         @Override
+        public List<SourceEntry> get() {
+            List<SourceEntry> ls = super.get();
+            if (adapt_elemstyles_xml(ls)) {
+                put(ls);
+            }
+            return ls;
+        }
+
+        /**
+         * The internal path of elemstyles.xml has changed, this
+         * can be removed when a few months have passed.
+         */
+        private boolean adapt_elemstyles_xml(List<SourceEntry> ls) {
+            boolean changed = false;
+            for (SourceEntry se : ls) {
+                if (se.url.equals("resource://data/elemstyles.xml")) {
+                    se.url = "resource://styles/standard/elemstyles.xml";
+                    changed = true;
+                }
+            }
+            return changed;
+        }
+
+        @Override
         public Collection<ExtendedSourceEntry> getDefault() {
-            ExtendedSourceEntry i = new ExtendedSourceEntry("elemstyles.xml", "resource://data/elemstyles.xml");
+            ExtendedSourceEntry i = new ExtendedSourceEntry("elemstyles.xml", "resource://styles/standard/elemstyles.xml");
             i.name = "standard";
             i.shortdescription = tr("Internal Style");
             i.description = tr("Internal style to be used as base for runtime switchable overlay styles");
