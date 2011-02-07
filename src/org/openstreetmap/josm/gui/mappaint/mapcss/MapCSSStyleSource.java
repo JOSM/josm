@@ -41,33 +41,35 @@ public class MapCSSStyleSource extends StyleSource {
     @Override
     public void loadStyleSource() {
         rules.clear();
-        hasError = false;
+        clearErrors();
         try {
-            MirroredInputStream in = new MirroredInputStream(url);
-            InputStream zip = in.getZipEntry("mapcss", "style");
-            InputStream input;
-            if (zip != null) {
-                input = zip;
-                zipIcons = in.getFile();
-            } else {
-                input = in;
-                zipIcons = null;
-            }
-            MapCSSParser parser = new MapCSSParser(input, "UTF-8");
+            MapCSSParser parser = new MapCSSParser(getSourceInputStream(), "UTF-8");
             parser.sheet(this);
             loadMeta();
         } catch(IOException e) {
             System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
             e.printStackTrace();
-            hasError = true;
+            logError(e);
         } catch (TokenMgrError e) {
             System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
             e.printStackTrace();
-            hasError = true;
+            logError(e);
         } catch (ParseException e) {
             System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
             e.printStackTrace();
-            hasError = true;
+            logError(e);
+        }
+    }
+
+    public InputStream getSourceInputStream() throws IOException {
+        MirroredInputStream in = new MirroredInputStream(url);
+        InputStream zip = in.getZipEntry("mapcss", "style");
+        if (zip != null) {
+            zipIcons = in.getFile();
+            return zip;
+        } else {
+            zipIcons = null;
+            return in;
         }
     }
 

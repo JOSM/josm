@@ -16,6 +16,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Expression.LiteralExpression;
 import org.openstreetmap.josm.tools.Pair;
 
 public class MapCSSParser implements MapCSSParserConstants {
+    MapCSSStyleSource sheet;
 
 /*************
  * Parser definitions
@@ -170,6 +171,7 @@ public class MapCSSParser implements MapCSSParserConstants {
   final public void sheet(MapCSSStyleSource sheet) throws ParseException {
     MapCSSRule r;
     Token com = null;
+      this.sheet = sheet;
     w();
     label_3:
     while (true) {
@@ -778,12 +780,15 @@ public class MapCSSParser implements MapCSSParserConstants {
   }
 
   void error_skipto(int kind) throws ParseException {
-  ParseException e = generateParseException();
-  System.err.println(e);
-  Token t;
-  do {
-    t = getNextToken();
-  } while (t.kind != kind);
+    ParseException e = generateParseException();
+    System.err.println(e);
+    if (sheet != null) {
+        sheet.logError(e);
+    }
+    Token t;
+    do {
+        t = getNextToken();
+    } while (t.kind != kind);
   }
 
   private boolean jj_2_1(int xla) {
@@ -812,18 +817,6 @@ public class MapCSSParser implements MapCSSParserConstants {
     try { return !jj_3_4(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(3, xla); }
-  }
-
-  private boolean jj_3R_13() {
-    if (jj_3R_17()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_18()) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(16)) return true;
-    }
-    if (jj_3R_17()) return true;
-    return false;
   }
 
   private boolean jj_3R_20() {
@@ -902,18 +895,18 @@ public class MapCSSParser implements MapCSSParserConstants {
     return false;
   }
 
+  private boolean jj_3_1() {
+    if (jj_3R_12()) return true;
+    if (jj_scan_token(RSQUARE)) return true;
+    return false;
+  }
+
   private boolean jj_3R_21() {
     Token xsp;
     while (true) {
       xsp = jj_scanpos;
       if (jj_3R_24()) { jj_scanpos = xsp; break; }
     }
-    return false;
-  }
-
-  private boolean jj_3_1() {
-    if (jj_3R_12()) return true;
-    if (jj_scan_token(RSQUARE)) return true;
     return false;
   }
 
@@ -944,6 +937,18 @@ public class MapCSSParser implements MapCSSParserConstants {
 
   private boolean jj_3R_22() {
     if (jj_scan_token(IDENT)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_13() {
+    if (jj_3R_17()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_18()) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(16)) return true;
+    }
+    if (jj_3R_17()) return true;
     return false;
   }
 

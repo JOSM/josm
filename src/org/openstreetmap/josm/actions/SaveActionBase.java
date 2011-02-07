@@ -198,7 +198,13 @@ public abstract class SaveActionBase extends DiskAccessAction {
             }
             file = new File(fn);
         }
-        if(file == null || (file.exists())) {
+        if (!confirmOverride(file))
+            return null;
+        return file;
+    }
+
+    public static boolean confirmOverride(File file) {
+        if (file == null || (file.exists())) {
             ExtendedDialog dialog = new ExtendedDialog(
                     Main.parent,
                     tr("Overwrite"),
@@ -207,8 +213,8 @@ public abstract class SaveActionBase extends DiskAccessAction {
             dialog.setContent(tr("File exists. Overwrite?"));
             dialog.setButtonIcons(new String[] {"save_as.png", "cancel.png"});
             dialog.showDialog();
-            if (dialog.getValue() != 1) return null;
+            return (dialog.getValue() == 1);
         }
-        return file;
+        return true;
     }
 }

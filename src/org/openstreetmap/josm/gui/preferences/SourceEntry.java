@@ -88,10 +88,15 @@ public class SourceEntry {
     public String getDisplayString() {
         if (shortdescription != null)
             return shortdescription;
-        /**
-         * extract file part from url, e.g.:
-         * http://www.test.com/file.xml?format=text  --> file.xml
-         */
+        else
+            return getFileNamePart();
+    }
+
+    /**
+     * extract file part from url, e.g.:
+     * http://www.test.com/file.xml?format=text  --> file.xml
+     */
+    public String getFileNamePart() {
         Pattern p = Pattern.compile("([^/\\\\]*?)([?].*)?$");
         Matcher m = p.matcher(url);
         if (m.find()) {

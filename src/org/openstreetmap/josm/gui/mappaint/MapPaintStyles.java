@@ -101,41 +101,45 @@ public class MapPaintStyles {
         Collection<? extends SourceEntry> sourceEntries = MapPaintPrefMigration.INSTANCE.get();
 
         for (SourceEntry entry : sourceEntries) {
-            StyleSource style = null;
-            try {
-                MirroredInputStream in = new MirroredInputStream(entry.url);
-                InputStream zip = in.getZipEntry("xml","style");
-                if (zip != null) {
-                    style = new XmlStyleSource(entry);
-                    styles.add(style);
-                    continue;
-                }
-                zip = in.getZipEntry("mapcss","style");
-                if (zip != null) {
-                    style = new MapCSSStyleSource(entry);
-                    styles.add(style);
-                    continue;
-                }
-                if (entry.url.toLowerCase().endsWith(".mapcss")) {
-                    style = new MapCSSStyleSource(entry);
-                } else {
-                    style = new XmlStyleSource(entry);
-                }
-            } catch(IOException e) {
-                System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", entry.url, e.toString()));
-                e.printStackTrace();
-                if (style != null) {
-                    style.hasError = true;
-                }
-            }
-            if (style != null) {
-                styles.add(style);
+            StyleSource source = fromSourceEntry(entry);
+            if (source != null) {
+                styles.add(source);
             }
         }
-        for (StyleSource s : styles.getStyleSources()) {
-            s.loadStyleSource();
+        for (StyleSource source : styles.getStyleSources()) {
+            source.loadStyleSource();
         }
+        
         fireMapPaintSylesUpdated();
+    }
+
+    private static StyleSource fromSourceEntry(SourceEntry entry) {
+        MirroredInputStream in = null;
+        try {
+            in = new MirroredInputStream(entry.url);
+            InputStream zip = in.getZipEntry("xml", "style");
+            if (zip != null) {
+                return new XmlStyleSource(entry);
+            }
+            zip = in.getZipEntry("mapcss", "style");
+            if (zip != null) {
+                return new MapCSSStyleSource(entry);
+            }
+            if (entry.url.toLowerCase().endsWith(".mapcss")) {
+                return new MapCSSStyleSource(entry);
+            } else {
+                return new XmlStyleSource(entry);
+            }
+        } catch (IOException e) {
+            System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", entry.url, e.toString()));
+            e.printStackTrace();
+        } finally {
+            try {
+                in.close();
+            } catch (IOException ex) {
+            }
+        }
+        return null;
     }
 
     /**
@@ -247,6 +251,18 @@ public class MapPaintStyles {
         }
         styles.clearCached();
         Main.map.mapView.repaint();
+    }
+
+    public static void addStyle(SourceEntry entry) {
+        StyleSource source = fromSourceEntry(entry);
+        if (source != null) {
+            styles.add(source);
+            source.loadStyleSource();
+            MapPaintPrefMigration.INSTANCE.put(styles.getStyleSources());
+            fireMapPaintSylesUpdated();
+            styles.clearCached();
+            Main.map.mapView.repaint();
+        }
     }
 
     /***********************************

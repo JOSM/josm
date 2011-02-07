@@ -4,35 +4,62 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
+import javax.swing.SingleSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.SaveActionBase;
+import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.preferences.PreferenceDialog;
+import org.openstreetmap.josm.gui.preferences.SourceEntry;
+import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -66,6 +93,7 @@ public class MapPaintDialog extends ToggleDialog {
         tblStyles.setTableHeader(null);
         tblStyles.getColumnModel().getColumn(0).setMaxWidth(1);
         tblStyles.getColumnModel().getColumn(0).setResizable(false);
+        tblStyles.getColumnModel().getColumn(1).setCellRenderer(new StyleSourceRenderer());
         tblStyles.setShowGrid(false);
         tblStyles.setIntercellSpacing(new Dimension(0, 0));
 
@@ -123,8 +151,14 @@ public class MapPaintDialog extends ToggleDialog {
 
     protected class StylesModel extends AbstractTableModel implements MapPaintSylesUpdateListener {
 
+        List<StyleSource> data = new ArrayList<StyleSource>();
+
+        public StylesModel() {
+            data = new ArrayList<StyleSource>(MapPaintStyles.getStyles().getStyleSources());
+        }
+
         private StyleSource getRow(int i) {
-            return MapPaintStyles.getStyles().getStyleSources().get(i);
+            return data.get(i);
         }
 
         @Override
@@ -134,7 +168,7 @@ public class MapPaintDialog extends ToggleDialog {
 
         @Override
         public int getRowCount() {
-            return MapPaintStyles.getStyles().getStyleSources().size();
+            return data.size();
         }
         
         @Override
@@ -142,7 +176,7 @@ public class MapPaintDialog extends ToggleDialog {
             if (column == 0)
                 return getRow(row).active;
             else
-                return getRow(row).getDisplayString();
+                return getRow(row);
         }
 
         @Override
@@ -170,7 +204,7 @@ public class MapPaintDialog extends ToggleDialog {
          * Make sure the first of the selected entry is visible in the
          * views of this model.
          */
-        protected void ensureSelectedIsVisible() {
+        public void ensureSelectedIsVisible() {
             int index = selectionModel.getMinSelectionIndex();
             if (index < 0) return;
             if (index >= getRowCount()) return;
@@ -184,14 +218,28 @@ public class MapPaintDialog extends ToggleDialog {
 
         @Override
         public void mapPaintStylesUpdated() {
+            data = new ArrayList<StyleSource>(MapPaintStyles.getStyles().getStyleSources());
             fireTableDataChanged();
             tblStyles.repaint();
         }
 
         @Override
         public void mapPaintStyleEntryUpdated(int idx) {
+            data = new ArrayList<StyleSource>(MapPaintStyles.getStyles().getStyleSources());
             fireTableRowsUpdated(idx, idx);
             tblStyles.repaint();
+        }
+    }
+
+    private static class StyleSourceRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            StyleSource s = (StyleSource) value;
+            JLabel label = (JLabel)super.getTableCellRendererComponent(table,
+                    s.getDisplayString(), isSelected, hasFocus, row, column);
+            label.setIcon(s.getIcon());
+            label.setToolTipText(s.getToolTipText());
+            return label;
         }
     }
 
@@ -226,7 +274,9 @@ public class MapPaintDialog extends ToggleDialog {
      * The action to move down the currently selected entries in the list.
      */
     class MoveUpDownAction extends AbstractAction implements ListSelectionListener {
+
         final int increment;
+
         public MoveUpDownAction(boolean isDown) {
             increment = isDown ? 1 : -1;
             putValue(SMALL_ICON, isDown ? ImageProvider.get("dialogs", "down") : ImageProvider.get("dialogs", "up"));
@@ -319,6 +369,232 @@ public class MapPaintDialog extends ToggleDialog {
         }
     }
     
+    protected class SaveAsAction extends AbstractAction {
+
+        public SaveAsAction() {
+            putValue(NAME, tr("Save as..."));
+            putValue(SHORT_DESCRIPTION, tr("Save a copy of this Style to file and add it to the list"));
+            putValue(SMALL_ICON, ImageProvider.get("copy"));
+            setEnabled(tblStyles.getSelectedRows().length == 1);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int sel = tblStyles.getSelectionModel().getLeadSelectionIndex();
+            if (sel < 0 || sel >= model.getRowCount())
+                return;
+            final StyleSource s = model.getRow(sel);
+
+            String curDir = Main.pref.get("mappaint.clone-style.lastDirectory", System.getProperty("user.home"));
+
+            String suggestion = curDir + File.separator + s.getFileNamePart();
+            JFileChooser fc = new JFileChooser();
+            fc.setSelectedFile(new File(suggestion));
+
+            int answer = fc.showSaveDialog(Main.parent);
+            if (answer != JFileChooser.APPROVE_OPTION)
+                return;
+
+            if (!fc.getCurrentDirectory().getAbsolutePath().equals(curDir)) {
+                Main.pref.put("mappaint.clone-style.lastDirectory", fc.getCurrentDirectory().getAbsolutePath());
+            }
+            File file = fc.getSelectedFile();
+
+            if (!SaveActionBase.confirmOverride(file))
+                return;
+
+            Main.worker.submit(new SaveToFileTask(s, file));
+        }
+
+        private class SaveToFileTask extends PleaseWaitRunnable {
+            private StyleSource s;
+            private File file;
+
+            private boolean canceled;
+            private boolean error;
+
+            public SaveToFileTask(StyleSource s, File file) {
+                super(tr("Reloading style sources"));
+                this.s = s;
+                this.file = file;
+            }
+
+            @Override
+            protected void cancel() {
+                canceled = true;
+            }
+
+            @Override
+            protected void realRun() {
+                getProgressMonitor().indeterminateSubTask(
+                        tr("Save style ''{0}'' as ''{1}''", s.getDisplayString(), file.getPath()));
+                BufferedInputStream bis = null;
+                BufferedOutputStream bos = null;
+                try {
+                    bis = new BufferedInputStream(s.getSourceInputStream());
+                    bos = new BufferedOutputStream(new FileOutputStream(file));
+                    byte[] buffer = new byte[4096];
+                    int length;
+                    while ((length = bis.read(buffer)) > -1 && !canceled) {
+                        bos.write(buffer, 0, length);
+                    }
+                } catch (IOException e) {
+                    error = true;
+                } finally {
+                    if (bis != null) {
+                        try {
+                            bis.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (bos != null) {
+                        try {
+                            bos.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            protected void finish() {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!error && !canceled) {
+                            SourceEntry se = new SourceEntry(s);
+                            se.url = file.getPath();
+                            MapPaintStyles.addStyle(se);
+                            tblStyles.getSelectionModel().setSelectionInterval(model.getRowCount() - 1 , model.getRowCount() - 1);
+                            model.ensureSelectedIsVisible();
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    protected class InfoAction extends AbstractAction {
+
+        boolean errorsTabLoaded;
+        boolean sourceTabLoaded;
+
+        public InfoAction() {
+            putValue(NAME, tr("Info"));
+            putValue(SHORT_DESCRIPTION, tr("view meta information, error log and source definition"));
+            putValue(SMALL_ICON, ImageProvider.get("info"));
+            setEnabled(tblStyles.getSelectedRows().length == 1);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int sel = tblStyles.getSelectionModel().getLeadSelectionIndex();
+            if (sel < 0 || sel >= model.getRowCount())
+                return;
+            final StyleSource s = model.getRow(sel);
+            ExtendedDialog info = new ExtendedDialog(Main.parent, tr("Map Style info"), new String[] {"Close"});
+            info.setPreferredSize(new Dimension(600, 400));
+            info.setButtonIcons(new String[] {"ok.png"});
+
+            final JTabbedPane tabs = new JTabbedPane();
+
+            tabs.add("Info", buildInfoPanel(s));
+            JLabel lblInfo = new JLabel(tr("Info"));
+            lblInfo.setFont(lblInfo.getFont().deriveFont(Font.PLAIN));
+            tabs.setTabComponentAt(0, lblInfo);
+
+            final JPanel pErrors = new JPanel(new GridBagLayout());
+            tabs.add("Errors", pErrors);
+            JLabel lblErrors;
+            if (s.getErrors().isEmpty()) {
+                lblErrors = new JLabel(tr("Errors"));
+                lblErrors.setFont(lblInfo.getFont().deriveFont(Font.PLAIN));
+                lblErrors.setEnabled(false);
+                tabs.setTabComponentAt(1, lblErrors);
+                tabs.setEnabledAt(1, false);
+            } else {
+                lblErrors = new JLabel(tr("Errors"), ImageProvider.get("misc", "error"), JLabel.HORIZONTAL);
+                tabs.setTabComponentAt(1, lblErrors);
+            }
+
+            final JPanel pSource = new JPanel(new GridBagLayout());
+            tabs.addTab("Source", pSource);
+            JLabel lblSource = new JLabel(tr("Source"));
+            lblSource.setFont(lblSource.getFont().deriveFont(Font.PLAIN));
+            tabs.setTabComponentAt(2, lblSource);
+
+            tabs.getModel().addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    if (!errorsTabLoaded && ((SingleSelectionModel) e.getSource()).getSelectedIndex() == 1) {
+                        errorsTabLoaded = true;
+                        buildErrorsPanel(s, pErrors);
+                    }
+                    if (!sourceTabLoaded && ((SingleSelectionModel) e.getSource()).getSelectedIndex() == 2) {
+                        sourceTabLoaded = true;
+                        buildSourcePanel(s, pSource);
+                    }
+                }
+            });
+            info.setContent(tabs, false);
+            info.showDialog();
+        }
+
+        private JPanel buildInfoPanel(StyleSource s) {
+            JPanel p = new JPanel(new GridBagLayout());
+            StringBuilder text = new StringBuilder("<table cellpadding=3><tr><td>");
+            text.append("<b>" + tr("Name:") + "</b></td><td>" + s.getDisplayString() + "</td></tr>");
+            text.append("<tr><td>");
+            if (s.url.startsWith("http://")) {
+                text.append("<b>" + tr("URL:") + "</b></td><td>" + s.url + "</td></tr>");
+            } else if (s.url.startsWith("resource://")) {
+                text.append("<b>" + tr("Built-in Style, internal path:</b>") + "</b></td><td>" + s.url + "</td></tr>");
+            } else {
+                text.append("<b>" + tr("Path:") + "</b></td><td>" + s.url + "</td></tr>");
+            }
+            text.append("<tr><td><b>" + tr("Style is currently active?") + "</b></td><td>" + (s.active ? tr("Yes") : tr("No")) + "</td></tr>");
+            text.append("</table>");
+            p.add(new JScrollPane(new HtmlPanel(text.toString())), GBC.eol().fill(GBC.BOTH));
+            return p;
+        }
+
+        private void buildSourcePanel(StyleSource s, JPanel p) {
+            JTextArea txtSource = new JTextArea();
+            txtSource.setFont(new Font("Monospaced", txtSource.getFont().getStyle(), txtSource.getFont().getSize()));
+            txtSource.setEditable(false);
+            p.add(new JScrollPane(txtSource), GBC.std().fill());
+
+            InputStream is = null;
+            try {
+                is = s.getSourceInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    txtSource.append(line + "\n");
+                }
+            } catch (IOException ex) {
+                txtSource.append("<ERROR: failed to read file!>");
+            } finally {
+                try {
+                    is.close();
+                } catch (IOException ex) {
+                }
+            }
+        }
+
+        private void buildErrorsPanel(StyleSource s, JPanel p) {
+            JTextArea txtErrors = new JTextArea();
+            txtErrors.setFont(new Font("Monospaced", txtErrors.getFont().getStyle(), txtErrors.getFont().getSize()));
+            txtErrors.setEditable(false);
+            p.add(new JScrollPane(txtErrors), GBC.std().fill());
+            for (Throwable t : s.getErrors()) {
+                txtErrors.append(t.toString() + "\n");
+            }
+        }
+    }
+
     class PopupMenuHandler extends PopupMenuLauncher {
         @Override
         public void launch(MouseEvent evt) {
@@ -338,6 +614,9 @@ public class MapPaintDialog extends ToggleDialog {
     public class MapPaintPopup extends JPopupMenu {
         public MapPaintPopup() {
             add(reloadAction);
+            add(new SaveAsAction());
+            addSeparator();
+            add(new InfoAction());
         }
     }
 }

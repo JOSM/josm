@@ -50,7 +50,7 @@ public class XmlStyleSource extends StyleSource {
     }
 
     protected void init() {
-        hasError = false;
+        clearErrors();
         icons.clear();
         lines.clear();
         modifiers.clear();
@@ -65,17 +65,7 @@ public class XmlStyleSource extends StyleSource {
     public void loadStyleSource() {
         init();
         try {
-            MirroredInputStream in = new MirroredInputStream(url);
-            InputStream zip = in.getZipEntry("xml", "style");
-            InputStreamReader reader = null;
-            if (zip != null) {
-                reader = new InputStreamReader(zip);
-                zipIcons = in.getFile();
-            } else {
-                reader = new InputStreamReader(in);
-                zipIcons = null;
-            }
-
+            InputStreamReader reader = new InputStreamReader(getSourceInputStream());
             XmlObjectParser parser = new XmlObjectParser(new XmlStyleSourceHandler(this));
             parser.startWithValidation(reader,
                     "http://josm.openstreetmap.de/mappaint-style-1.0",
@@ -86,15 +76,27 @@ public class XmlStyleSource extends StyleSource {
         } catch(IOException e) {
             System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
             e.printStackTrace();
-            hasError = true;
+            logError(e);
         } catch(SAXParseException e) {
             System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Error was: [{1}:{2}] {3}", url, e.getLineNumber(), e.getColumnNumber(), e.getMessage()));
             e.printStackTrace();
-            hasError = true;
+            logError(e);
         } catch(SAXException e) {
             System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
             e.printStackTrace();
-            hasError = true;
+            logError(e);
+        }
+    }
+
+    public InputStream getSourceInputStream() throws IOException {
+        MirroredInputStream in = new MirroredInputStream(url);
+        InputStream zip = in.getZipEntry("xml", "style");
+        if (zip != null) {
+            zipIcons = in.getFile();
+            return zip;
+        } else {
+            zipIcons = null;
+            return in;
         }
     }
 

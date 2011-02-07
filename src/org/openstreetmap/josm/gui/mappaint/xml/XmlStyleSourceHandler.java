@@ -73,7 +73,9 @@ public class XmlStyleSourceHandler extends DefaultHandler
     }
 
     private void error(String message) {
-        System.out.println(style.getDisplayString() + " (" + rule.cond.key + "=" + rule.cond.value + "): " + message);
+        String warning = style.getDisplayString() + " (" + rule.cond.key + "=" + rule.cond.value + "): " + message;
+        System.err.println(warning);
+        style.logError(new Exception(warning));
     }
 
     private void startElementLine(String qName, Attributes atts, LinePrototype line) {

@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Expression.LiteralExpression;
 import org.openstreetmap.josm.tools.Pair;
 
 public class MapCSSParser {
+    MapCSSStyleSource sheet;
 }
 PARSER_END(MapCSSParser)
 
@@ -184,6 +185,7 @@ void sheet(MapCSSStyleSource sheet):
     Token com = null;
 }
 {
+    { this.sheet = sheet; }
     w()
     ( r=rule() { sheet.rules.add(r); } w() )*
     <EOF>
@@ -436,11 +438,14 @@ Object literal() :
 
 JAVACODE
 void error_skipto(int kind) {
-  ParseException e = generateParseException();
-  System.err.println(e);
-  Token t;
-  do {
-    t = getNextToken();
-  } while (t.kind != kind);
+    ParseException e = generateParseException();
+    System.err.println(e);
+    if (sheet != null) {
+        sheet.logError(e);
+    }
+    Token t;
+    do {
+        t = getNextToken();
+    } while (t.kind != kind);
 }
 
