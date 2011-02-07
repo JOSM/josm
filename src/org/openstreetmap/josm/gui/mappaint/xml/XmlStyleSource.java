@@ -19,7 +19,6 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
-import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
@@ -288,7 +287,7 @@ public class XmlStyleSource extends StyleSource {
                 if (osm instanceof Node) {
                     if (icon.annotate != null) {
                         if (icon.annotate) {
-                            def.put("text", "yes");
+                            def.put("text", "auto");
                         } else {
                             def.remove("text");
                         }
@@ -305,7 +304,7 @@ public class XmlStyleSource extends StyleSource {
                 if (p.line.color != null) {
                     int alpha = p.line.color.getAlpha();
                     if (alpha != 255) {
-                        def.put("opacity", ElemStyle.color_int2float(alpha));
+                        def.put("opacity", Utils.color_int2float(alpha));
                     }
                 }
                 def.putOrClear("dashes", p.line.getDashed());
@@ -334,7 +333,7 @@ public class XmlStyleSource extends StyleSource {
                     if (mod.color != null) {
                         int alpha = mod.color.getAlpha();
                         if (alpha != 255) {
-                            c.put("opacity", ElemStyle.color_int2float(alpha));
+                            c.put("opacity", Utils.color_int2float(alpha));
                         }
                     }
                     c.putOrClear("dashes", mod.getDashed());

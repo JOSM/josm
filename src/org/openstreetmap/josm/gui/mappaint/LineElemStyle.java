@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class LineElemStyle extends ElemStyle {
 
     public static LineElemStyle createSimpleLineStyle(Color color) {
-        Cascade c = new Cascade();
+        Cascade c = new Cascade(false);
         c.put("width", -1f);
         c.put("color", color != null ? color : PaintColors.UNTAGGED.get());
         MultiCascade mc = new MultiCascade();
@@ -28,11 +28,11 @@ public class LineElemStyle extends ElemStyle {
     }
     public static final LineElemStyle UNTAGGED_WAY = createSimpleLineStyle(null);
 
-    public float realWidth; // the real width of this line in meter
+    private BasicStroke line;
     public Color color;
     public Color dashesBackground;
+    public float realWidth; // the real width of this line in meter
 
-    private BasicStroke line;
     private BasicStroke dashesLine;
 
     protected LineElemStyle(Cascade c, BasicStroke line, Color color, BasicStroke dashesLine, Color dashesBackground, float realWidth) {
@@ -105,7 +105,7 @@ public class LineElemStyle extends ElemStyle {
         }
 
         int alpha = 255;
-        Integer pAlpha = color_float2int(c.get("opacity", null, float.class));
+        Integer pAlpha = Utils.color_float2int(c.get("opacity", null, float.class));
         if (pAlpha != null) {
             alpha = pAlpha;
         }
@@ -130,7 +130,7 @@ public class LineElemStyle extends ElemStyle {
         float dashesOffset = c.get(prefix + "dashes-offset", 0f, Float.class);
         Color dashesBackground = c.get(prefix + "dashes-background-color", null, Color.class);
         if (dashesBackground != null) {
-            pAlpha = color_float2int(c.get(prefix + "dashes-background-opacity", null, Float.class));
+            pAlpha = Utils.color_float2int(c.get(prefix + "dashes-background-opacity", null, Float.class));
             if (pAlpha != null) {
                 alpha = pAlpha;
             }

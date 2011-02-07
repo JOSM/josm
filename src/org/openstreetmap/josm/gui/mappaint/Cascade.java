@@ -14,9 +14,23 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
  */
 public class Cascade implements Cloneable {
     
-    public static final Cascade EMPTY_CASCADE = new Cascade();
+    public static final Cascade EMPTY_CASCADE = new Cascade(false);
 
     protected Map<String, Object> prop = new HashMap<String, Object>();
+
+    /**
+     * constructor
+     * @param isModifier Everything that is not on the default layer is assumed to
+     *                   be a modifier. Can be overridden in style definition.
+     */
+    public Cascade(boolean isModifier) {
+        if (isModifier) {
+            put("modifier", true);
+        }
+    }
+
+    private Cascade() {
+    }
 
     public <T> T get(String key, T def, Class<T> klass) {
         return get(key, def, klass, false);

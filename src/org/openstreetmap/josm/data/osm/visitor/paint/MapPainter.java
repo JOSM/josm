@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.visitor.paint;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -30,7 +31,9 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
+import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 
@@ -53,7 +56,6 @@ public class MapPainter {
     private final Color backgroundColor;
 
     private final Font orderFont;
-    private final int fillAlpha;
     private final int virtualNodeSize;
     private final int virtualNodeSpace;
     private final int segmentNumberSpace;
@@ -88,7 +90,6 @@ public class MapPainter {
         this.backgroundColor = PaintColors.BACKGROUND.get();
 
         this.orderFont = new Font(Main.pref.get("mappaint.font", "Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
-        this.fillAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
         this.virtualNodeSize = virtual ? Main.pref.getInteger("mappaint.node.virtual-size", 8) / 2 : 0;
         this.virtualNodeSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
         this.segmentNumberSpace = Main.pref.getInteger("mappaint.segmentnumber.space", 40);
@@ -186,12 +187,16 @@ public class MapPainter {
         return true;
     }
 
-    public void drawNodeIcon(Node n, ImageIcon icon, boolean selected, boolean member, String name) {
+    public void drawNodeIcon(Node n, ImageIcon icon, float iconAlpha, boolean selected, boolean member, String name) {
         Point p = nc.getPoint(n);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
 
         int w = icon.getIconWidth(), h=icon.getIconHeight();
+        if (iconAlpha != 1f) {
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, iconAlpha));
+        }
         icon.paintIcon ( nc, g, p.x-w/2, p.y-h/2 );
+        g.setPaintMode();
         if(name != null) {
             if (inactive || n.isDisabled()) {
                 g.setColor(inactiveColor);
@@ -207,6 +212,37 @@ public class MapPainter {
         {
             g.setColor(selected? selectedColor : relationSelectedColor);
             g.drawRect(p.x-w/2-2, p.y-h/2-2, w+4, h+4);
+        }
+    }
+
+    public void drawNodeSymbol(Node n, Symbol s, boolean selected, boolean member, String name) {
+        Point p = nc.getPoint(n);
+        if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
+        int radius = (int) (s.size / 2);
+
+        if (s.fillColor != null) {
+            g.setColor(s.fillColor);
+            switch (s.symbol) {
+                case CIRCLE:
+                    g.fillOval(p.x - radius, p.y - radius, (int) s.size, (int) s.size);
+                    break;
+                case SQUARE:
+                    g.fillRect(p.x - radius, p.y - radius, (int) s.size, (int) s.size);
+                    break;
+            }
+        }
+        if (s.stroke != null) {
+            g.setStroke(s.stroke);
+            g.setColor(s.strokeColor);
+            switch (s.symbol) {
+                case CIRCLE:
+                    g.drawOval(p.x - radius, p.y - radius, (int) s.size - 1, (int) s.size - 1);
+                    break;
+                case SQUARE:
+                    g.drawRect(p.x - radius, p.y - radius, (int) s.size - 1, (int) s.size - 1);
+                    break;
+            }
+            g.setStroke(new BasicStroke());
         }
     }
 
@@ -270,9 +306,12 @@ public class MapPainter {
         } else {
             TexturePaint texture = new TexturePaint(fillImage, 
                     new Rectangle(polygon.xpoints[0], polygon.ypoints[0], fillImage.getWidth(), fillImage.getHeight()));
-
             g.setPaint(texture);
+            if (color.getAlpha() != 255) {
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ElemStyle.color_int2float(color.getAlpha())));
+            }
             g.fill(polygon);
+            g.setPaintMode();
         }
 
         if (name != null) {

@@ -48,8 +48,6 @@ public class StyleCache {
     {
         private List<ElemStyle> lst;
 
-        public static final StyleList SIMPLE_NODE = new StyleList(NodeElemStyle.SIMPLE_NODE_ELEMSTYLE);
-
         public StyleList() {
             lst = new ArrayList<ElemStyle>();
         }

@@ -128,7 +128,7 @@ public class MapCSSStyleSource extends StyleSource {
                         if (mc.containsKey("*")) {
                             c = mc.get("*").clone();
                         } else {
-                            c = new Cascade();
+                            c = new Cascade(!sub.equals("default"));
                         }
                         mc.put(sub, c);
                     }

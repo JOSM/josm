@@ -51,12 +51,30 @@ public class ElemStyles {
                 return lst;
         }
         Pair<StyleList, Range> p = getImpl(osm, scale, nc);
-        if (osm instanceof Node && p.a.isEmpty()) {
-            p.a = StyleList.SIMPLE_NODE;
-        } else if (osm instanceof Way && !Utils.exists(p.a, LineElemStyle.class)) {
-            AreaElemStyle area = Utils.find(p.a, AreaElemStyle.class);
-            LineElemStyle line = (area == null ? LineElemStyle.UNTAGGED_WAY : LineElemStyle.createSimpleLineStyle(area.color));
-            p.a = new StyleList(p.a, line);
+        if (osm instanceof Node) {
+            boolean hasNonModifier = false;
+            for (ElemStyle s : p.a) {
+                if (!s.isModifier) {
+                    hasNonModifier = true;
+                    break;
+                }
+            }
+            if (!hasNonModifier) {
+                p.a = new StyleList(p.a, NodeElemStyle.SIMPLE_NODE_ELEMSTYLE);
+            }
+        } else if (osm instanceof Way) {
+            boolean hasNonModifierLine = false;
+            for (ElemStyle s : p.a) {
+                if (s instanceof LineElemStyle && !s.isModifier) {
+                    hasNonModifierLine = true;
+                    break;
+                }
+            }
+            if (!hasNonModifierLine) {
+                AreaElemStyle area = Utils.find(p.a, AreaElemStyle.class);
+                LineElemStyle line = (area == null ? LineElemStyle.UNTAGGED_WAY : LineElemStyle.createSimpleLineStyle(area.color));
+                p.a = new StyleList(p.a, line);
+            }
         }
         osm.mappaintStyle = osm.mappaintStyle.put(p.a, p.b);
         osm.mappaintCacheIdx = cacheIdx;

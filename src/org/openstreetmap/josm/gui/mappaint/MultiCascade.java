@@ -17,12 +17,14 @@ public class MultiCascade extends HashMap<String, Cascade> {
     }
 
     public Cascade getCascade(String key) {
-        Cascade ret = get(key);
-        if (ret == null) {
-            ret = new Cascade();
-            put(key, ret);
+        if (key == null)
+            throw new IllegalArgumentException();
+        Cascade c = get(key);
+        if (c == null) {
+            c = new Cascade(!key.equals("default"));
+            put(key, c);
         }
-        return ret;
+        return c;
     }
 
 }

@@ -123,4 +123,28 @@ public class Utils {
         else
             return String.format("#%06x(alpha=%d)", c.getRGB() & 0x00ffffff, c.getAlpha());
     }
+
+    /**
+     * convert float range 0 <= x <= 1 to integer range 0..255
+     * when dealing with colors and color alpha value
+     */
+    public static Integer color_float2int(Float val) {
+        if (val == null)
+            return null;
+        if (val < 0 || val > 1)
+            return 255;
+        return (int) (255f * val + 0.5f);
+    }
+
+    /**
+     * convert back
+     */
+    public static Float color_int2float(Integer val) {
+        if (val == null)
+            return null;
+        if (val < 0 || val > 255)
+            return 1f;
+        return ((float) val) / 255f;
+    }
+
 }

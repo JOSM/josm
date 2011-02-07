@@ -2,8 +2,6 @@
 package org.openstreetmap.josm.gui.mappaint;
 
 import java.awt.Color;
-import java.awt.Rectangle;
-import java.awt.TexturePaint;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
@@ -16,7 +14,6 @@ import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.tools.Utils;
-
 
 public class AreaElemStyle extends ElemStyle
 {
@@ -32,6 +29,8 @@ public class AreaElemStyle extends ElemStyle
     public static AreaElemStyle create(Cascade c) {
         BufferedImage fillImage = null;
         IconReference iconRef = c.get("fill-image", null, IconReference.class);
+        Integer fillImageAlpha = null;
+
         if (iconRef != null) {
             ImageIcon icon = MapPaintStyles.getIcon(iconRef, false);
             if (icon != null) {
@@ -41,22 +40,37 @@ public class AreaElemStyle extends ElemStyle
                 if (!(icon.getImage() instanceof BufferedImage))
                     throw new RuntimeException();
                 fillImage = (BufferedImage) icon.getImage();
+
+                fillImageAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fill-image-alpha", 255))));
+                Integer pAlpha = Utils.color_float2int(c.get("fill-opacity", null, float.class));
+                if (pAlpha != null) {
+                    fillImageAlpha = pAlpha;
+                }
             }
         }
 
         Color color = c.get("fill-color", null, Color.class);
         if (color != null) {
 
-            int alpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
-            Integer pAlpha = color_float2int(c.get("fill-opacity", null, float.class));
-            if (pAlpha != null) {
-                alpha = pAlpha;
+            int alpha;
+            if (fillImageAlpha != null) {
+                alpha = fillImageAlpha;
+            } else {
+                alpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.fillalpha", 50))));
+                Integer pAlpha = Utils.color_float2int(c.get("fill-opacity", null, float.class));
+                if (pAlpha != null) {
+                    alpha = pAlpha;
+                }
             }
             color = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
         }
         
-        if (fillImage != null || color != null)
+        if (fillImage != null || color != null) {
+            if (color == null) {
+                color = new Color(0, 0, 0, fillImageAlpha);
+            }
             return new AreaElemStyle(c, color, fillImage);
+        }
         else
             return null;
     }
