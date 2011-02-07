@@ -70,6 +70,9 @@ public interface Expression {
             public Float minus(float... args) {
                 if (args.length == 0)
                     return 0f;
+                if (args.length == 1) { // unary minus
+                    return -args[0];
+                }
                 float res = args[0];
                 for (int i=1; i<args.length; ++i) {
                     res -= args[i];
@@ -166,6 +169,35 @@ public interface Expression {
             public boolean or(boolean... bs) {
                 for (boolean b : bs) {
                     if (b)
+                        return true;
+                }
+                return false;
+            }
+
+            public boolean greater_equal(float a, float b) {
+                return a >= b;
+            }
+
+            public boolean less_equal(float a, float b) {
+                return a <= b;
+            }
+
+            public boolean greater(float a, float b) {
+                return a > b;
+            }
+
+            public boolean less(float a, float b) {
+                return a < b;
+            }
+
+            public boolean equal(Object a, Object b) {
+                // make sure the casts are done in a meaningful way, so
+                // the 2 objects really can be considered equal
+                for (Class klass : new Class[] {
+                        Float.class, Boolean.class, Color.class, float[].class, String.class }) {
+                    Object a2 = Cascade.convertTo(a, klass);
+                    Object b2 = Cascade.convertTo(a, klass);
+                    if (a2 != null && b2 != null && a2.equals(b2))
                         return true;
                 }
                 return false;

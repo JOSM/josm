@@ -31,11 +31,11 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Utils;
 
 public class MapPainter {
 
@@ -308,7 +308,7 @@ public class MapPainter {
                     new Rectangle(polygon.xpoints[0], polygon.ypoints[0], fillImage.getWidth(), fillImage.getHeight()));
             g.setPaint(texture);
             if (color.getAlpha() != 255) {
-                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ElemStyle.color_int2float(color.getAlpha())));
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Utils.color_int2float(color.getAlpha())));
             }
             g.fill(polygon);
             g.setPaintMode();

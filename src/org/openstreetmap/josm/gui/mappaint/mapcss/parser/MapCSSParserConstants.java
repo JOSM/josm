@@ -41,37 +41,45 @@ public interface MapCSSParserConstants {
   /** RegularExpression Id. */
   int RPAR = 15;
   /** RegularExpression Id. */
-  int EQUAL = 16;
+  int GREATER_EQUAL = 16;
   /** RegularExpression Id. */
-  int EXCLAMATION = 17;
+  int LESS_EQUAL = 17;
   /** RegularExpression Id. */
-  int EXCLAMATION_EQUAL = 18;
+  int GREATER = 18;
   /** RegularExpression Id. */
-  int COLON = 19;
+  int LESS = 19;
   /** RegularExpression Id. */
-  int DCOLON = 20;
+  int EQUAL = 20;
   /** RegularExpression Id. */
-  int SEMICOLON = 21;
+  int EXCLAMATION = 21;
   /** RegularExpression Id. */
-  int COMMA = 22;
+  int EXCLAMATION_EQUAL = 22;
   /** RegularExpression Id. */
-  int PIPE = 23;
+  int COLON = 23;
   /** RegularExpression Id. */
-  int PIPE_Z = 24;
+  int DCOLON = 24;
   /** RegularExpression Id. */
-  int PLUS = 25;
+  int SEMICOLON = 25;
   /** RegularExpression Id. */
-  int MINUS = 26;
+  int COMMA = 26;
   /** RegularExpression Id. */
-  int AMPERSAND = 27;
+  int PIPE = 27;
   /** RegularExpression Id. */
-  int QUESTION = 28;
+  int PIPE_Z = 28;
   /** RegularExpression Id. */
-  int COMMENT_START = 29;
+  int PLUS = 29;
   /** RegularExpression Id. */
-  int UNEXPECTED_CHAR = 30;
+  int MINUS = 30;
   /** RegularExpression Id. */
-  int COMMENT_END = 31;
+  int AMPERSAND = 31;
+  /** RegularExpression Id. */
+  int QUESTION = 32;
+  /** RegularExpression Id. */
+  int COMMENT_START = 33;
+  /** RegularExpression Id. */
+  int UNEXPECTED_CHAR = 34;
+  /** RegularExpression Id. */
+  int COMMENT_END = 35;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -96,6 +104,10 @@ public interface MapCSSParserConstants {
     "\"]\"",
     "\"(\"",
     "\")\"",
+    "\">=\"",
+    "\"<=\"",
+    "\">\"",
+    "\"<\"",
     "\"=\"",
     "\"!\"",
     "\"!=\"",
@@ -112,7 +124,7 @@ public interface MapCSSParserConstants {
     "\"/*\"",
     "<UNEXPECTED_CHAR>",
     "\"*/\"",
-    "<token of kind 32>",
+    "<token of kind 36>",
   };
 
 }

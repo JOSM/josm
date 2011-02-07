@@ -47,6 +47,10 @@ TOKEN:
 |   < RSQUARE: "]" >
 |   < LPAR: "(" >
 |   < RPAR: ")" >
+|   < GREATER_EQUAL: ">=" >
+|   < LESS_EQUAL: "<=" >
+|   < GREATER: ">" >
+|   < LESS: "<" >
 |   < EQUAL: "=" >
 |   < EXCLAMATION: "!" >
 |   < EXCLAMATION_EQUAL: "!=" >
@@ -187,7 +191,7 @@ void sheet(MapCSSStyleSource sheet):
 {
     { this.sheet = sheet; }
     w()
-    ( r=rule() { sheet.rules.add(r); } w() )*
+    ( r=rule() { if (r != null) { sheet.rules.add(r); } } w() )*
     <EOF>
 }
 
@@ -198,11 +202,16 @@ MapCSSRule rule():
     List<Instruction> decl;
 }
 {
-    sel=selector() { selectors.add(sel); } w()
-    (
-        <COMMA> w()
+    try {
         sel=selector() { selectors.add(sel); } w()
-    )*
+        (
+            <COMMA> w()
+            sel=selector() { selectors.add(sel); } w()
+        )*
+    } catch (ParseException ex) {
+        error_skipto(RBRACE);
+        return null;
+    }
     decl=declaration()
     { return new MapCSSRule(selectors, decl); }
 }
@@ -297,7 +306,7 @@ String subpart() :
     Token t;
 }
 {
-    <DCOLON>
+    ( <SLASH> | <DCOLON> )
     ( t=<IDENT> | t=<STAR> )
     { return t.image; }
 }
@@ -353,22 +362,41 @@ Expression expression():
     String op = null;
 }
 {
-    e=primary() { args.add(e); } w()
     (
-            ( <PLUS> { op = "plus"; } w() e=primary() { args.add(e); } w() )+
-        |
-            ( <STAR> { op = "times"; } w() e=primary() { args.add(e); } w() )+
-        |
-            ( <MINUS> { op = "minus"; } w() e=primary() { args.add(e); } w() )+
-        |
-            ( <SLASH> { op = "divided_by"; } w() e=primary() { args.add(e); } w() )+
-        |
-            ( <AMPERSAND> <AMPERSAND> { op = "and"; } w() e=primary() { args.add(e); } w() )
-        |
-            ( <PIPE> <PIPE> { op = "or"; } w() e=primary() { args.add(e); } w() )
-        |
-            ( <QUESTION> { op = "cond"; } w() e=primary() { args.add(e); } w() <COLON> w() e=primary() { args.add(e); } w() )
-    )?
+        ( <EXCLAMATION> { op = "not"; } w() e=primary() { args.add(e); } w() )
+    |
+        ( <MINUS> { op = "minus"; } w() e=primary() { args.add(e); } w() )
+    |
+    
+        (
+            e=primary() { args.add(e); } w()
+            (
+                    ( <PLUS> { op = "plus"; } w() e=primary() { args.add(e); } w() )+
+                |
+                    ( <STAR> { op = "times"; } w() e=primary() { args.add(e); } w() )+
+                |
+                    ( <MINUS> { op = "minus"; } w() e=primary() { args.add(e); } w() )+
+                |
+                    ( <SLASH> { op = "divided_by"; } w() e=primary() { args.add(e); } w() )+
+                |
+                    ( <GREATER_EQUAL> { op = "greater_equal"; } w() e=primary() { args.add(e); } w() )
+                |
+                    ( <LESS_EQUAL> { op = "less_equal"; } w() e=primary() { args.add(e); } w() )
+                |
+                    ( <GREATER> { op = "greater"; } w() e=primary() { args.add(e); } w() )
+                |
+                    ( <EQUAL> ( <EQUAL> )? { op = "equal"; } w() e=primary() { args.add(e); } w() )
+                |
+                    ( <LESS> { op = "less"; } w() e=primary() { args.add(e); } w() )
+                |
+                    ( <AMPERSAND> <AMPERSAND> { op = "and"; } w() e=primary() { args.add(e); } w() )
+                |
+                    ( <PIPE> <PIPE> { op = "or"; } w() e=primary() { args.add(e); } w() )
+                |
+                    ( <QUESTION> { op = "cond"; } w() e=primary() { args.add(e); } w() <COLON> w() e=primary() { args.add(e); } w() )
+            )?
+        )
+    )
     {
         if (op == null)
             return args.get(0);
@@ -420,8 +448,6 @@ Object literal() :
     |
         ( <PLUS> f=ufloat() ) { return new Instruction.RelativeFloat(f); }
     |
-        ( <MINUS> f=ufloat() ) { return -f; }
-    |
         f=ufloat() { return f; }
     |
         t=<HEXCOLOR>
@@ -446,6 +472,8 @@ void error_skipto(int kind) {
     Token t;
     do {
         t = getNextToken();
-    } while (t.kind != kind);
+    } while (t.kind != kind && t.kind != EOF);
+    if (t.kind == EOF)
+        throw new ParseException("Reached end of file while parsing");
 }
 

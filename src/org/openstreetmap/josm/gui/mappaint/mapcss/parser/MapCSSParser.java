@@ -185,7 +185,7 @@ public class MapCSSParser implements MapCSSParserConstants {
         break label_3;
       }
       r = rule();
-                 sheet.rules.add(r);
+                 if (r != null) { sheet.rules.add(r); }
       w();
     }
     jj_consume_token(0);
@@ -195,24 +195,29 @@ public class MapCSSParser implements MapCSSParserConstants {
     List<Selector> selectors = new ArrayList<Selector>();
     Selector sel;
     List<Instruction> decl;
-    sel = selector();
-                     selectors.add(sel);
-    w();
-    label_4:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case COMMA:
-        ;
-        break;
-      default:
-        jj_la1[7] = jj_gen;
-        break label_4;
-      }
-      jj_consume_token(COMMA);
-      w();
+    try {
       sel = selector();
                          selectors.add(sel);
       w();
+      label_4:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case COMMA:
+          ;
+          break;
+        default:
+          jj_la1[7] = jj_gen;
+          break label_4;
+        }
+        jj_consume_token(COMMA);
+        w();
+        sel = selector();
+                             selectors.add(sel);
+        w();
+      }
+    } catch (ParseException ex) {
+        error_skipto(RBRACE);
+        {if (true) return null;}
     }
     decl = declaration();
       {if (true) return new MapCSSRule(selectors, decl);}
@@ -271,6 +276,7 @@ public class MapCSSParser implements MapCSSParserConstants {
                                             conditions.add(c);
     }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case SLASH:
     case DCOLON:
       sub = subpart();
       break;
@@ -337,6 +343,7 @@ public class MapCSSParser implements MapCSSParserConstants {
       case STRING:
       case HEXCOLOR:
       case LPAR:
+      case EXCLAMATION:
       case PLUS:
       case MINUS:
         e = expression();
@@ -413,7 +420,18 @@ public class MapCSSParser implements MapCSSParserConstants {
 
   final public String subpart() throws ParseException {
     Token t;
-    jj_consume_token(DCOLON);
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case SLASH:
+      jj_consume_token(SLASH);
+      break;
+    case DCOLON:
+      jj_consume_token(DCOLON);
+      break;
+    default:
+      jj_la1[20] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case IDENT:
       t = jj_consume_token(IDENT);
@@ -422,7 +440,7 @@ public class MapCSSParser implements MapCSSParserConstants {
       t = jj_consume_token(STAR);
       break;
     default:
-      jj_la1[20] = jj_gen;
+      jj_la1[21] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -441,7 +459,7 @@ public class MapCSSParser implements MapCSSParserConstants {
                  {if (true) return ins;}
       break;
     default:
-      jj_la1[21] = jj_gen;
+      jj_la1[22] = jj_gen;
       ;
     }
     try {
@@ -454,7 +472,7 @@ public class MapCSSParser implements MapCSSParserConstants {
           ;
           break;
         default:
-          jj_la1[22] = jj_gen;
+          jj_la1[23] = jj_gen;
           break label_6;
         }
         jj_consume_token(SEMICOLON);
@@ -465,7 +483,7 @@ public class MapCSSParser implements MapCSSParserConstants {
                          {if (true) return ins;}
           break;
         default:
-          jj_la1[23] = jj_gen;
+          jj_la1[24] = jj_gen;
           ;
         }
         i = instruction();
@@ -498,12 +516,13 @@ public class MapCSSParser implements MapCSSParserConstants {
       case STRING:
       case HEXCOLOR:
       case LPAR:
+      case EXCLAMATION:
       case PLUS:
       case MINUS:
         val = expression();
         break;
       default:
-        jj_la1[24] = jj_gen;
+        jj_la1[25] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -519,134 +538,217 @@ public class MapCSSParser implements MapCSSParserConstants {
     List<Expression> args = new ArrayList<Expression>();
     Expression e;
     String op = null;
-    e = primary();
-                  args.add(e);
-    w();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case STAR:
-    case SLASH:
-    case PIPE:
-    case PLUS:
-    case MINUS:
-    case AMPERSAND:
-    case QUESTION:
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case PLUS:
-        label_7:
-        while (true) {
-          jj_consume_token(PLUS);
-                       op = "plus";
-          w();
-          e = primary();
-                                                        args.add(e);
-          w();
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case PLUS:
-            ;
-            break;
-          default:
-            jj_la1[25] = jj_gen;
-            break label_7;
-          }
-        }
-        break;
-      case STAR:
-        label_8:
-        while (true) {
-          jj_consume_token(STAR);
-                       op = "times";
-          w();
-          e = primary();
-                                                         args.add(e);
-          w();
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case STAR:
-            ;
-            break;
-          default:
-            jj_la1[26] = jj_gen;
-            break label_8;
-          }
-        }
-        break;
-      case MINUS:
-        label_9:
-        while (true) {
-          jj_consume_token(MINUS);
-                        op = "minus";
-          w();
-          e = primary();
+    case EXCLAMATION:
+      jj_consume_token(EXCLAMATION);
+                          op = "not";
+      w();
+      e = primary();
                                                           args.add(e);
-          w();
-          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case MINUS:
-            ;
-            break;
-          default:
-            jj_la1[27] = jj_gen;
-            break label_9;
-          }
-        }
-        break;
+      w();
+      break;
+    case MINUS:
+      jj_consume_token(MINUS);
+                    op = "minus";
+      w();
+      e = primary();
+                                                      args.add(e);
+      w();
+      break;
+    case IDENT:
+    case UINT:
+    case UFLOAT:
+    case STRING:
+    case HEXCOLOR:
+    case LPAR:
+    case PLUS:
+      e = primary();
+                          args.add(e);
+      w();
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case STAR:
       case SLASH:
-        label_10:
-        while (true) {
-          jj_consume_token(SLASH);
-                        op = "divided_by";
+      case GREATER_EQUAL:
+      case LESS_EQUAL:
+      case GREATER:
+      case LESS:
+      case EQUAL:
+      case PIPE:
+      case PLUS:
+      case MINUS:
+      case AMPERSAND:
+      case QUESTION:
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case PLUS:
+          label_7:
+          while (true) {
+            jj_consume_token(PLUS);
+                               op = "plus";
+            w();
+            e = primary();
+                                                                args.add(e);
+            w();
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case PLUS:
+              ;
+              break;
+            default:
+              jj_la1[26] = jj_gen;
+              break label_7;
+            }
+          }
+          break;
+        case STAR:
+          label_8:
+          while (true) {
+            jj_consume_token(STAR);
+                               op = "times";
+            w();
+            e = primary();
+                                                                 args.add(e);
+            w();
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case STAR:
+              ;
+              break;
+            default:
+              jj_la1[27] = jj_gen;
+              break label_8;
+            }
+          }
+          break;
+        case MINUS:
+          label_9:
+          while (true) {
+            jj_consume_token(MINUS);
+                                op = "minus";
+            w();
+            e = primary();
+                                                                  args.add(e);
+            w();
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case MINUS:
+              ;
+              break;
+            default:
+              jj_la1[28] = jj_gen;
+              break label_9;
+            }
+          }
+          break;
+        case SLASH:
+          label_10:
+          while (true) {
+            jj_consume_token(SLASH);
+                                op = "divided_by";
+            w();
+            e = primary();
+                                                                       args.add(e);
+            w();
+            switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+            case SLASH:
+              ;
+              break;
+            default:
+              jj_la1[29] = jj_gen;
+              break label_10;
+            }
+          }
+          break;
+        case GREATER_EQUAL:
+          jj_consume_token(GREATER_EQUAL);
+                                        op = "greater_equal";
           w();
           e = primary();
-                                                               args.add(e);
+                                                                                  args.add(e);
           w();
+          break;
+        case LESS_EQUAL:
+          jj_consume_token(LESS_EQUAL);
+                                     op = "less_equal";
+          w();
+          e = primary();
+                                                                            args.add(e);
+          w();
+          break;
+        case GREATER:
+          jj_consume_token(GREATER);
+                                  op = "greater";
+          w();
+          e = primary();
+                                                                      args.add(e);
+          w();
+          break;
+        case EQUAL:
+          jj_consume_token(EQUAL);
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-          case SLASH:
-            ;
+          case EQUAL:
+            jj_consume_token(EQUAL);
             break;
           default:
-            jj_la1[28] = jj_gen;
-            break label_10;
+            jj_la1[30] = jj_gen;
+            ;
           }
+                                             op = "equal";
+          w();
+          e = primary();
+                                                                               args.add(e);
+          w();
+          break;
+        case LESS:
+          jj_consume_token(LESS);
+                               op = "less";
+          w();
+          e = primary();
+                                                                args.add(e);
+          w();
+          break;
+        case AMPERSAND:
+          jj_consume_token(AMPERSAND);
+          jj_consume_token(AMPERSAND);
+                                                op = "and";
+          w();
+          e = primary();
+                                                                                args.add(e);
+          w();
+          break;
+        case PIPE:
+          jj_consume_token(PIPE);
+          jj_consume_token(PIPE);
+                                      op = "or";
+          w();
+          e = primary();
+                                                                     args.add(e);
+          w();
+          break;
+        case QUESTION:
+          jj_consume_token(QUESTION);
+                                   op = "cond";
+          w();
+          e = primary();
+                                                                    args.add(e);
+          w();
+          jj_consume_token(COLON);
+          w();
+          e = primary();
+                                                                                                                 args.add(e);
+          w();
+          break;
+        default:
+          jj_la1[31] = jj_gen;
+          jj_consume_token(-1);
+          throw new ParseException();
         }
-        break;
-      case AMPERSAND:
-        jj_consume_token(AMPERSAND);
-        jj_consume_token(AMPERSAND);
-                                        op = "and";
-        w();
-        e = primary();
-                                                                        args.add(e);
-        w();
-        break;
-      case PIPE:
-        jj_consume_token(PIPE);
-        jj_consume_token(PIPE);
-                              op = "or";
-        w();
-        e = primary();
-                                                             args.add(e);
-        w();
-        break;
-      case QUESTION:
-        jj_consume_token(QUESTION);
-                           op = "cond";
-        w();
-        e = primary();
-                                                            args.add(e);
-        w();
-        jj_consume_token(COLON);
-        w();
-        e = primary();
-                                                                                                         args.add(e);
-        w();
         break;
       default:
-        jj_la1[29] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
+        jj_la1[32] = jj_gen;
+        ;
       }
       break;
     default:
-      jj_la1[30] = jj_gen;
-      ;
+      jj_la1[33] = jj_gen;
+      jj_consume_token(-1);
+      throw new ParseException();
     }
         if (op == null)
             {if (true) return args.get(0);}
@@ -670,7 +772,6 @@ public class MapCSSParser implements MapCSSParserConstants {
       case STRING:
       case HEXCOLOR:
       case PLUS:
-      case MINUS:
         lit = literal();
                         {if (true) return new LiteralExpression(lit);}
         break;
@@ -682,7 +783,7 @@ public class MapCSSParser implements MapCSSParserConstants {
                                                     {if (true) return nested;}
         break;
       default:
-        jj_la1[31] = jj_gen;
+        jj_la1[34] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -707,6 +808,7 @@ public class MapCSSParser implements MapCSSParserConstants {
     case STRING:
     case HEXCOLOR:
     case LPAR:
+    case EXCLAMATION:
     case PLUS:
     case MINUS:
       arg = expression();
@@ -718,7 +820,7 @@ public class MapCSSParser implements MapCSSParserConstants {
           ;
           break;
         default:
-          jj_la1[32] = jj_gen;
+          jj_la1[35] = jj_gen;
           break label_11;
         }
         jj_consume_token(COMMA);
@@ -728,7 +830,7 @@ public class MapCSSParser implements MapCSSParserConstants {
       }
       break;
     default:
-      jj_la1[33] = jj_gen;
+      jj_la1[36] = jj_gen;
       ;
     }
     jj_consume_token(RPAR);
@@ -751,11 +853,6 @@ public class MapCSSParser implements MapCSSParserConstants {
       f = ufloat();
                                 {if (true) return new Instruction.RelativeFloat(f);}
       break;
-    case MINUS:
-      jj_consume_token(MINUS);
-      f = ufloat();
-                                 {if (true) return -f;}
-      break;
     case UINT:
     case UFLOAT:
       f = ufloat();
@@ -772,7 +869,7 @@ public class MapCSSParser implements MapCSSParserConstants {
                 {if (true) return new Color(Integer.parseInt(clr, 16));}
       break;
     default:
-      jj_la1[34] = jj_gen;
+      jj_la1[37] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -788,7 +885,9 @@ public class MapCSSParser implements MapCSSParserConstants {
     Token t;
     do {
         t = getNextToken();
-    } while (t.kind != kind);
+    } while (t.kind != kind && t.kind != EOF);
+    if (t.kind == EOF)
+        throw new ParseException("Reached end of file while parsing");
   }
 
   private boolean jj_2_1(int xla) {
@@ -819,26 +918,26 @@ public class MapCSSParser implements MapCSSParserConstants {
     finally { jj_save(3, xla); }
   }
 
-  private boolean jj_3R_20() {
-    if (jj_scan_token(COMMA)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_16() {
-    if (jj_scan_token(EXCLAMATION)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_25() {
-    if (jj_scan_token(STRING)) return true;
-    return false;
-  }
-
   private boolean jj_3R_12() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_16()) jj_scanpos = xsp;
     if (jj_3R_17()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_20() {
+    if (jj_scan_token(COMMA)) return true;
+    return false;
+  }
+
+  private boolean jj_3_4() {
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_25() {
+    if (jj_scan_token(STRING)) return true;
     return false;
   }
 
@@ -858,10 +957,8 @@ public class MapCSSParser implements MapCSSParserConstants {
     return false;
   }
 
-  private boolean jj_3R_15() {
-    if (jj_scan_token(IDENT)) return true;
-    if (jj_3R_21()) return true;
-    if (jj_scan_token(LPAR)) return true;
+  private boolean jj_3_2() {
+    if (jj_3R_13()) return true;
     return false;
   }
 
@@ -880,8 +977,9 @@ public class MapCSSParser implements MapCSSParserConstants {
     return false;
   }
 
-  private boolean jj_3_2() {
-    if (jj_3R_13()) return true;
+  private boolean jj_3_1() {
+    if (jj_3R_12()) return true;
+    if (jj_scan_token(RSQUARE)) return true;
     return false;
   }
 
@@ -892,12 +990,6 @@ public class MapCSSParser implements MapCSSParserConstants {
     jj_scanpos = xsp;
     if (jj_3R_26()) return true;
     }
-    return false;
-  }
-
-  private boolean jj_3_1() {
-    if (jj_3R_12()) return true;
-    if (jj_scan_token(RSQUARE)) return true;
     return false;
   }
 
@@ -915,13 +1007,27 @@ public class MapCSSParser implements MapCSSParserConstants {
     return false;
   }
 
-  private boolean jj_3_4() {
-    if (jj_3R_15()) return true;
+  private boolean jj_3R_18() {
+    if (jj_scan_token(EXCLAMATION_EQUAL)) return true;
     return false;
   }
 
-  private boolean jj_3R_18() {
-    if (jj_scan_token(EXCLAMATION_EQUAL)) return true;
+  private boolean jj_3R_15() {
+    if (jj_scan_token(IDENT)) return true;
+    if (jj_3R_21()) return true;
+    if (jj_scan_token(LPAR)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_13() {
+    if (jj_3R_17()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_18()) {
+    jj_scanpos = xsp;
+    if (jj_scan_token(20)) return true;
+    }
+    if (jj_3R_17()) return true;
     return false;
   }
 
@@ -940,15 +1046,8 @@ public class MapCSSParser implements MapCSSParserConstants {
     return false;
   }
 
-  private boolean jj_3R_13() {
-    if (jj_3R_17()) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_18()) {
-    jj_scanpos = xsp;
-    if (jj_scan_token(16)) return true;
-    }
-    if (jj_3R_17()) return true;
+  private boolean jj_3R_16() {
+    if (jj_scan_token(EXCLAMATION)) return true;
     return false;
   }
 
@@ -963,7 +1062,7 @@ public class MapCSSParser implements MapCSSParserConstants {
   private Token jj_scanpos, jj_lastpos;
   private int jj_la;
   private int jj_gen;
-  final private int[] jj_la1 = new int[35];
+  final private int[] jj_la1 = new int[38];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -971,10 +1070,10 @@ public class MapCSSParser implements MapCSSParserConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0xc,0x12,0x80,0x20000080,0x20000080,0x400000,0x102,0x400000,0x102,0x1000000,0x81000,0x81000,0x100000,0x4,0x4000000,0x4000004,0x600405e,0x20000,0x50000,0x20000,0x102,0x800,0x200000,0x800,0x600405e,0x2000000,0x100,0x4000000,0x200,0x1e800300,0x1e800300,0x600405e,0x400000,0x600405e,0x600005e,};
+      jj_la1_0 = new int[] {0xc,0x12,0x80,0x80,0x80,0x4000000,0x102,0x4000000,0x102,0x10000000,0x801000,0x801000,0x1000200,0x4,0x40000000,0x40000004,0x6020405e,0x200000,0x500000,0x200000,0x1000200,0x102,0x800,0x2000000,0x800,0x6020405e,0x20000000,0x100,0x40000000,0x200,0x100000,0xe81f0300,0xe81f0300,0x6020405e,0x2000405e,0x4000000,0x6020405e,0x2000005e,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_1 = new int[] {0x0,0x0,0x0,0x2,0x2,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1,0x1,0x0,0x0,0x0,0x0,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[4];
   private boolean jj_rescan = false;
@@ -991,7 +1090,7 @@ public class MapCSSParser implements MapCSSParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 35; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 38; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1006,7 +1105,7 @@ public class MapCSSParser implements MapCSSParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 35; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 38; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1017,7 +1116,7 @@ public class MapCSSParser implements MapCSSParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 35; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 38; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1028,7 +1127,7 @@ public class MapCSSParser implements MapCSSParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 35; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 38; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1038,7 +1137,7 @@ public class MapCSSParser implements MapCSSParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 35; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 38; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1048,7 +1147,7 @@ public class MapCSSParser implements MapCSSParserConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 35; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 38; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1160,12 +1259,12 @@ public class MapCSSParser implements MapCSSParserConstants {
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[33];
+    boolean[] la1tokens = new boolean[37];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 35; i++) {
+    for (int i = 0; i < 38; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -1177,7 +1276,7 @@ public class MapCSSParser implements MapCSSParserConstants {
         }
       }
     }
-    for (int i = 0; i < 33; i++) {
+    for (int i = 0; i < 37; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
