@@ -232,9 +232,7 @@ public class MapPaintPreference implements PreferenceSetting {
             for (SourceEntry def : defaults) {
                 knownDefaults.add(def.url);
             }
-            if (Main.pref.putCollection("mappaint.style.known-defaults", knownDefaults)) {
-                changed = true;
-            }
+            Main.pref.putCollection("mappaint.style.known-defaults", knownDefaults);
 
             return changed;
         }
