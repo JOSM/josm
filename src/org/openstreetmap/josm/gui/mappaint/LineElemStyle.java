@@ -163,6 +163,9 @@ public class LineElemStyle extends ElemStyle {
         }
 
         float miterlimit = c.get(prefix + "miterlimit", 10f, Float.class);
+        if (miterlimit < 1f) {
+            miterlimit = 10f;
+        }
 
         BasicStroke line = new BasicStroke(width, cap, join, miterlimit, dashes, dashesOffset);
         BasicStroke dashesLine = null;

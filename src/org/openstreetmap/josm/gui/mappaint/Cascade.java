@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Simple map of properties with dynamic typing.
@@ -182,7 +183,7 @@ public class Cascade implements Cloneable {
             if (val instanceof float[]) {
                 res.append(Arrays.toString((float[]) val));
             } else if (val instanceof Color) {
-                res.append(String.format("#%x", ((Color) val).getRGB()));
+                res.append(Utils.toString((Color)val));
             } else {
                 res.append(val+"");
             }

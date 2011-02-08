@@ -32,6 +32,14 @@ public class CheckParameterUtil {
     }
 
     /**
+     * can find line number in the stack trace, so parameter name is optional
+     */
+    public static void ensureParameterNotNull(Object value) {
+        if (value == null)
+            throw new IllegalArgumentException("Parameter must not be null");
+    }
+
+    /**
      * Ensures that <code>id</code> is non-null primitive id of type {@see OsmPrimitiveType#NODE}
      *
      * @param id  the primitive  id

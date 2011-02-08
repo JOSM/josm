@@ -12,6 +12,8 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.TexturePaint;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineMetrics;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -32,7 +34,10 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
+import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.HorizontalTextAlignment;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
+import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.TextElement;
+import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.VerticalTextAlignment;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Utils;
@@ -187,7 +192,7 @@ public class MapPainter {
         return true;
     }
 
-    public void drawNodeIcon(Node n, ImageIcon icon, float iconAlpha, boolean selected, boolean member, String name) {
+    public void drawNodeIcon(Node n, ImageIcon icon, float iconAlpha, boolean selected, boolean member, TextElement text) {
         Point p = nc.getPoint(n);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
 
@@ -197,17 +202,7 @@ public class MapPainter {
         }
         icon.paintIcon ( nc, g, p.x-w/2, p.y-h/2 );
         g.setPaintMode();
-        if(name != null) {
-            if (inactive || n.isDisabled()) {
-                g.setColor(inactiveColor);
-            } else {
-                g.setColor(textColor);
-            }
-            Font defaultFont = g.getFont();
-            g.setFont (orderFont);
-            g.drawString (name, p.x+w/2+2, p.y+h/2+2);
-            g.setFont(defaultFont);
-        }
+        drawNodeText(n, text, p, w/2, h/2);
         if (selected || member)
         {
             g.setColor(selected? selectedColor : relationSelectedColor);
@@ -215,35 +210,48 @@ public class MapPainter {
         }
     }
 
-    public void drawNodeSymbol(Node n, Symbol s, boolean selected, boolean member, String name) {
+    public void drawNodeSymbol(Node n, Symbol s, boolean selected, boolean member, TextElement text) {
         Point p = nc.getPoint(n);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
-        int radius = (int) (s.size / 2);
+        int radius = s.size / 2;
 
         if (s.fillColor != null) {
-            g.setColor(s.fillColor);
+            if (inactive || n.isDisabled()) {
+                g.setColor(inactiveColor);
+            } else {
+                g.setColor(s.fillColor);
+            }
             switch (s.symbol) {
-                case CIRCLE:
-                    g.fillOval(p.x - radius, p.y - radius, (int) s.size, (int) s.size);
-                    break;
                 case SQUARE:
-                    g.fillRect(p.x - radius, p.y - radius, (int) s.size, (int) s.size);
+                    g.fillRect(p.x - radius, p.y - radius, s.size, s.size);
                     break;
+                case CIRCLE:
+                    g.fillOval(p.x - radius, p.y - radius, s.size, s.size);
+                    break;
+                default:
+                    throw new AssertionError();
             }
         }
         if (s.stroke != null) {
             g.setStroke(s.stroke);
-            g.setColor(s.strokeColor);
+            if (inactive || n.isDisabled()) {
+                g.setColor(inactiveColor);
+            } else {
+                g.setColor(s.strokeColor);
+            }
             switch (s.symbol) {
-                case CIRCLE:
-                    g.drawOval(p.x - radius, p.y - radius, (int) s.size - 1, (int) s.size - 1);
-                    break;
                 case SQUARE:
-                    g.drawRect(p.x - radius, p.y - radius, (int) s.size - 1, (int) s.size - 1);
+                    g.drawRect(p.x - radius, p.y - radius, s.size - 1, s.size - 1);
                     break;
+                case CIRCLE:
+                    g.drawOval(p.x - radius, p.y - radius, s.size - 1, s.size - 1);
+                    break;
+                default:
+                    throw new AssertionError();
             }
             g.setStroke(new BasicStroke());
         }
+        drawNodeText(n, text, p, radius, radius);
     }
 
     /**
@@ -252,7 +260,7 @@ public class MapPainter {
      * @param n  The node to draw.
      * @param color The color of the node.
      */
-    public void drawNode(Node n, Color color, int size, boolean fill, String name) {
+    public void drawNode(Node n, Color color, int size, boolean fill, TextElement text) {
         if (size > 1) {
             Point p = nc.getPoint(n);
             if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
@@ -269,18 +277,69 @@ public class MapPainter {
                 g.drawRect(p.x - radius, p.y - radius, size, size);
             }
 
-            if(name != null)            {
-                if (inactive || n.isDisabled()) {
-                    g.setColor(inactiveColor);
-                } else {
-                    g.setColor(textColor);
-                }
-                Font defaultFont = g.getFont();
-                g.setFont (orderFont);
-                g.drawString (name, p.x+radius+2, p.y+radius+2);
-                g.setFont(defaultFont);
-            }
+            drawNodeText(n, text, p, radius, radius + 4);
         }
+    }
+
+    private void drawNodeText(Node n, TextElement text, Point p, int w_half, int h_half) {
+        if (!isShowNames() || text == null)
+            return;
+
+        String s = text.textKey == null ? getNodeName(n) : n.get(text.textKey);
+        if (s == null)
+            return;
+
+        if (inactive || n.isDisabled()) {
+            g.setColor(inactiveColor);
+        } else {
+            g.setColor(text.color);
+        }
+        Font defaultFont = g.getFont();
+        g.setFont(text.font);
+
+        int x = p.x + text.xOffset;
+        int y = p.y + text.yOffset;
+        /**
+         *
+         *       left-above __center-above___ right-above
+         *         left-top|                 |right-top
+         *                 |                 |
+         *      left-center|  center-center  |right-center
+         *                 |                 |
+         *      left-bottom|_________________|right-bottom
+         *       left-below   center-below    right-below
+         *
+         */
+        if (text.hAlign == HorizontalTextAlignment.RIGHT) {
+            x += w_half + 2;
+        } else {
+            FontRenderContext frc = g.getFontRenderContext();
+            Rectangle2D bounds = text.font.getStringBounds(s, frc);
+            int textWidth = (int) bounds.getWidth();
+            if (text.hAlign == HorizontalTextAlignment.CENTER) {
+                x -= textWidth / 2;
+            } else if (text.hAlign == HorizontalTextAlignment.LEFT) {
+                x -= w_half + 4 + textWidth;
+            } else throw new AssertionError();
+        }
+
+        if (text.vAlign == VerticalTextAlignment.BOTTOM) {
+            y += h_half - 2;
+        } else {
+            FontRenderContext frc = g.getFontRenderContext();
+            LineMetrics metrics = text.font.getLineMetrics(s, frc);
+            if (text.vAlign == VerticalTextAlignment.ABOVE) {
+                y -= h_half + metrics.getDescent();
+            } else if (text.vAlign == VerticalTextAlignment.TOP) {
+                y -= h_half - metrics.getAscent();
+            } else if (text.vAlign == VerticalTextAlignment.CENTER) {
+                y += (metrics.getAscent() - metrics.getDescent()) / 2;
+            } else if (text.vAlign == VerticalTextAlignment.BELOW) {
+                y += h_half + metrics.getAscent();
+            } else throw new AssertionError();
+        }
+        g.drawString(s, x, y);
+        g.setFont(defaultFont);
     }
 
     private Polygon getPolygon(Way w) {
