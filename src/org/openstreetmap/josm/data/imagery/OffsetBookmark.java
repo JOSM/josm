@@ -13,6 +13,7 @@ import java.util.ListIterator;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.data.projection.ProjectionInfo;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 
@@ -50,7 +51,7 @@ public class OffsetBookmark {
         String projectionStr = array.get(0);
         proj = ProjectionInfo.getProjectionByCode(projectionStr);
         if (proj == null) {
-            for (Projection proj : Projection.allProjections) {
+            for (Projection proj : Projections.getProjections()) {
                 if (proj.getCacheDirectoryName().equals(projectionStr)) {
                     this.proj = proj;
                     break;

@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.preferences.ParametrizedCollectionProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.data.projection.ProjectionSubPrefs;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.tools.GBC;
@@ -83,7 +84,7 @@ public class ProjectionPreference implements PreferenceSetting {
     /**
      * Combobox with all projections available
      */
-    private JComboBox projectionCombo = new JComboBox(Projection.allProjections);
+    private JComboBox projectionCombo = new JComboBox(Projections.getProjections().toArray());
 
     /**
      * Combobox with all coordinate display possibilities

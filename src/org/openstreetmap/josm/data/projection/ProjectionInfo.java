@@ -20,7 +20,7 @@ public class ProjectionInfo {
 
     static {
         allCodes = new HashMap<String, Projection>();
-        for (Projection proj : Projection.allProjections) {
+        for (Projection proj : Projections.getProjections()) {
             if (proj instanceof ProjectionSubPrefs) {
                 ProjectionSubPrefs projSub = recreateProj((ProjectionSubPrefs)proj);
                 for (String code : projSub.allCodes()) {

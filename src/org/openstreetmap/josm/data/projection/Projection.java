@@ -13,25 +13,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
  */
 public interface Projection {
     /**
-     * List of all available projections.
-     */
-    public static Projection[] allProjections = new Projection[]{
-        // global projections
-        new Epsg4326(),
-        new Mercator(),
-        new UTM(),
-        // regional - alphabetical order by country name
-        new LambertEST(), // Still needs proper default zoom
-        new Lambert(),    // Still needs proper default zoom
-        new LambertCC9Zones(),    // Still needs proper default zoom
-        new UTM_France_DOM(),
-        new TransverseMercatorLV(),
-        new Puwg(),
-        new Epsg3008(), // SWEREF99 13 30
-        new SwissGrid(),
-    };
-
-    /**
      * Returns the default zoom scale in pixel per degree ({@see #NavigatableComponent#scale}))
      */
     double getDefaultZoomInPPD();
