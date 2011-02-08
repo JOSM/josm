@@ -205,15 +205,24 @@ public class ProjectionPreference implements PreferenceSetting {
         try {
             Main.proj = (Projection)Class.forName(name).newInstance();
         } catch (final Exception e) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("The projection {0} could not be activated. Using Mercator", name),
-                    tr("Error"),
-                    JOptionPane.ERROR_MESSAGE
-            );
-            coll = null;
-            Main.proj = new Mercator();
-            name = Main.proj.getClass().getName();
+            // backup plan: if we cannot instantiate this, maybe we have an instance already.
+            Main.proj = null;
+            for (Projection p : Projections.getProjections()) {
+                if (p.getClass().getName().equals(name)) {
+                    Main.proj = p; break;
+                } 
+            }
+            if (Main.proj == null) {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("The projection {0} could not be activated. Using Mercator", name),
+                        tr("Error"),
+                        JOptionPane.ERROR_MESSAGE
+                );
+                coll = null;
+                Main.proj = new Mercator();
+                name = Main.proj.getClass().getName();
+            }
         }
         PROP_SUB_PROJECTION.put(coll);
         PROP_PROJECTION_SUBPROJECTION.put(coll, name);
