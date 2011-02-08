@@ -13,8 +13,6 @@ import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -23,6 +21,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Predicate;
+import org.openstreetmap.josm.tools.Utils;
 
 public class MapPaintPreference implements PreferenceSetting {
     private SourceEditor sources;
@@ -177,6 +177,9 @@ public class MapPaintPreference implements PreferenceSetting {
             if (adapt_elemstyles_xml(ls)) {
                 put(ls);
             }
+            if (insertNewDefaults(ls)) {
+                put(ls);
+            }
             return ls;
         }
 
@@ -192,6 +195,47 @@ public class MapPaintPreference implements PreferenceSetting {
                     changed = true;
                 }
             }
+            return changed;
+        }
+
+        /**
+         * If the selection of default styles changes in future releases, add
+         * the new entries to the user-configured list. Remember the known URLs,
+         * so an item that was deleted explicitly is not added again.
+         */
+        private boolean insertNewDefaults(List<SourceEntry> list) {
+            boolean changed = false;
+            
+            Collection<String> knownDefaults = new TreeSet<String>(Main.pref.getCollection("mappaint.style.known-defaults"));
+
+            Collection<ExtendedSourceEntry> defaults = getDefault();
+            int insertionIdx = 0;
+            for (final SourceEntry def : defaults) {
+                int i = Utils.indexOf(list,
+                        new Predicate<SourceEntry>() {
+                            @Override
+                            public boolean evaluate(SourceEntry se) {
+                                return Utils.equal(def.url, se.url);
+                            }
+                        });
+                if (i == -1 && !knownDefaults.contains(def.url)) {
+                    list.add(insertionIdx, def);
+                    insertionIdx++;
+                    changed = true;
+                } else {
+                    if (i > insertionIdx) {
+                        insertionIdx = i + 1;
+                    }
+                }
+            }
+
+            for (SourceEntry def : defaults) {
+                knownDefaults.add(def.url);
+            }
+            if (Main.pref.putCollection("mappaint.style.known-defaults", knownDefaults)) {
+                changed = true;
+            }
+
             return changed;
         }
 

@@ -40,6 +40,16 @@ public class Utils {
         return null;
     }
 
+    public static <T> int indexOf(Iterable<? extends T> collection, Predicate<? super T> predicate) {
+        int i = 0;
+        for (T item : collection) {
+            if (predicate.evaluate(item))
+                return i;
+            i++;
+        }
+        return -1;
+    }
+
     /**
      * Get minimum of 3 values
      */
