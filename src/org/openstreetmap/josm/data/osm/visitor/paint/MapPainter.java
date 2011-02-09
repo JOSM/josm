@@ -210,17 +210,13 @@ public class MapPainter {
         }
     }
 
-    public void drawNodeSymbol(Node n, Symbol s, boolean selected, boolean member, TextElement text) {
+    public void drawNodeSymbol(Node n, Symbol s, Color fillColor, Color strokeColor, TextElement text) {
         Point p = nc.getPoint(n);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
         int radius = s.size / 2;
 
-        if (s.fillColor != null) {
-            if (inactive || n.isDisabled()) {
-                g.setColor(inactiveColor);
-            } else {
-                g.setColor(s.fillColor);
-            }
+        if (fillColor != null) {
+            g.setColor(fillColor);
             switch (s.symbol) {
                 case SQUARE:
                     g.fillRect(p.x - radius, p.y - radius, s.size, s.size);
@@ -234,11 +230,7 @@ public class MapPainter {
         }
         if (s.stroke != null) {
             g.setStroke(s.stroke);
-            if (inactive || n.isDisabled()) {
-                g.setColor(inactiveColor);
-            } else {
-                g.setColor(s.strokeColor);
-            }
+            g.setColor(strokeColor);
             switch (s.symbol) {
                 case SQUARE:
                     g.drawRect(p.x - radius, p.y - radius, s.size - 1, s.size - 1);
@@ -352,12 +344,12 @@ public class MapPainter {
         return polygon;
     }
 
-    public void drawArea(Way w, Color color, BufferedImage fillImage, String name) {
+    public void drawArea(Way w, Color color, BufferedImage fillImage, float fillImageAlpha, String name) {
         Polygon polygon = getPolygon(w);
-        drawArea(polygon, color, fillImage, name);
+        drawArea(polygon, color, fillImage, fillImageAlpha, name);
     }
 
-    protected void drawArea(Polygon polygon, Color color, BufferedImage fillImage, String name) {
+    protected void drawArea(Polygon polygon, Color color, BufferedImage fillImage, float fillImageAlpha, String name) {
 
         if (fillImage == null) {
             g.setColor(color);
@@ -366,8 +358,8 @@ public class MapPainter {
             TexturePaint texture = new TexturePaint(fillImage, 
                     new Rectangle(polygon.xpoints[0], polygon.ypoints[0], fillImage.getWidth(), fillImage.getHeight()));
             g.setPaint(texture);
-            if (color.getAlpha() != 255) {
-                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Utils.color_int2float(color.getAlpha())));
+            if (fillImageAlpha != 1f) {
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fillImageAlpha));
             }
             g.fill(polygon);
             g.setPaintMode();
@@ -410,7 +402,7 @@ public class MapPainter {
         }
     }
 
-    public void drawArea(Relation r, Color color, BufferedImage fillImage, String name) {
+    public void drawArea(Relation r, Color color, BufferedImage fillImage, float fillImageAlpha, String name) {
         Multipolygon multipolygon = new Multipolygon(nc);
         multipolygon.load(r);
         if(!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
@@ -419,7 +411,7 @@ public class MapPainter {
                 if(!isPolygonVisible(p)) {
                     continue;
                 }
-                drawArea(p, color, fillImage, getAreaName(r));
+                drawArea(p, color, fillImage, fillImageAlpha, getAreaName(r));
             }
         }
     }

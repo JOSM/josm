@@ -137,6 +137,8 @@ public class Utils {
     /**
      * convert float range 0 <= x <= 1 to integer range 0..255
      * when dealing with colors and color alpha value
+     * @return null if val is null, the corresponding int if val is in the
+     *         range 0...1. If val is outside that range, return 255
      */
     public static Integer color_float2int(Float val) {
         if (val == null)

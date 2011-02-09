@@ -239,33 +239,41 @@ public class NodeElemStyle extends ElemStyle {
         } else
             return null;
 
-        Float size = c.get("symbol-size", null, Float.class);
-        if (size == null || size <= 0)
+        float size = c.get("symbol-size", 10f, Float.class);
+        if (size <= 0)
             return null;
 
         Float strokeWidth = c.get("symbol-stroke-width", null, Float.class);
+        if (strokeWidth != null && strokeWidth <= 0) {
+            strokeWidth = null;
+        }
         Color strokeColor = c.get("symbol-stroke-color", null, Color.class);
+
+        if (strokeWidth == null && strokeColor != null) {
+            strokeWidth = 1f;
+        } else if (strokeWidth != null && strokeColor == null) {
+            strokeColor = Color.ORANGE;
+        }
+
+        Stroke stroke = null;
         if (strokeColor != null) {
             float strokeAlpha = c.get("symbol-stroke-opacity", 1f, Float.class);
             strokeColor = new Color(strokeColor.getRed(), strokeColor.getGreen(),
                     strokeColor.getBlue(), Utils.color_float2int(strokeAlpha));
-        }
-        Stroke stroke = null;
-        if (strokeWidth != null && strokeWidth > 0 && strokeColor != null) {
             stroke = new BasicStroke(strokeWidth);
         }
 
         Color fillColor = c.get("symbol-fill-color", null, Color.class);
+        if (stroke == null && fillColor == null)
+            fillColor = Color.BLUE;
+
         if (fillColor != null) {
             float fillAlpha = c.get("symbol-fill-opacity", 1f, Float.class);
             fillColor = new Color(fillColor.getRed(), fillColor.getGreen(),
                     fillColor.getBlue(), Utils.color_float2int(fillAlpha));
         }
 
-        if ((stroke == null || strokeColor == null) && fillColor == null)
-            return null;
-
-        return new Symbol(shape, size.intValue(), stroke, strokeColor, fillColor);
+        return new Symbol(shape, Math.round(size), stroke, strokeColor, fillColor);
     }
 
     @Override
@@ -276,7 +284,35 @@ public class NodeElemStyle extends ElemStyle {
                 painter.drawNodeIcon(n, (painter.isInactive() || n.isDisabled()) ? getDisabledIcon() : icon,
                         Utils.color_int2float(iconAlpha), selected, member, text);
             } else if (symbol != null) {
-                painter.drawNodeSymbol(n, symbol, selected, member, text);
+                Color fillColor = symbol.fillColor;
+                if (fillColor != null) {
+                    if (n.isHighlighted()) {
+                        fillColor = settings.getHighlightColor();
+                    } else {
+                        if (painter.isInactive() || n.isDisabled()) {
+                            fillColor = settings.getInactiveColor();
+                        } else if (selected) {
+                            fillColor = settings.getSelectedColor(fillColor.getAlpha());
+                        } else if (member) {
+                            fillColor = settings.getRelationSelectedColor(fillColor.getAlpha());
+                        }
+                    }
+                }
+                Color strokeColor = symbol.strokeColor;
+                if (strokeColor != null) {
+                    if (n.isHighlighted()) {
+                        strokeColor = settings.getHighlightColor();
+                    } else {
+                        if (painter.isInactive() || n.isDisabled()) {
+                            strokeColor = settings.getInactiveColor();
+                        } else if (selected) {
+                            strokeColor = settings.getSelectedColor(strokeColor.getAlpha());
+                        } else if (member) {
+                            strokeColor = settings.getRelationSelectedColor(strokeColor.getAlpha());
+                        }
+                    }
+                }
+                painter.drawNodeSymbol(n, symbol, fillColor, strokeColor, text);
             } else {
                 if (n.isHighlighted()) {
                     painter.drawNode(n, settings.getHighlightColor(), settings.getSelectedNodeSize(), settings.isFillSelectedNode(), text);
