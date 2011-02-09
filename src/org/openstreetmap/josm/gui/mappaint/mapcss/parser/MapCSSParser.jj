@@ -35,7 +35,9 @@ TOKEN:
     < IDENT: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","-","0"-"9"] )* >
 |   < UINT: ["1"-"9"] ( ["0"-"9"] )* >
 |   < UFLOAT: ( ["0"-"9"] )+ ( "." ( ["0"-"9"] )+ )? >
-|   < STRING: "\"" ( [" ","!","#"-"&","("-"[","]"-"~","\u0080"-"\uFFFF"] | "\\\"" | "\\\\" )*  "\"" >
+|   < STRING: "\"" ( [" ","!","#"-"[","]"-"~","\u0080"-"\uFFFF"] | "\\\"" | "\\\\" )*  "\"" >
+|   < #REGEX_CHAR_WITHOUT_STAR: [" "-")","+"-".","0"-"[","]"-"~","\u0080"-"\uFFFF"] | "\\/" | "\\\\" >
+|   < REGEX: "/" <REGEX_CHAR_WITHOUT_STAR> ( <REGEX_CHAR_WITHOUT_STAR> | "*" )*  "/" >
 |   < #H: ["0"-"9","a"-"f","A"-"F"] >
 |   < HEXCOLOR: "#" ( <H><H><H><H><H><H> | <H><H><H> ) >
 |   < S: ( " " | "\t" | "\n" | "\r" | "\f" )+ >
@@ -53,7 +55,7 @@ TOKEN:
 |   < LESS: "<" >
 |   < EQUAL: "=" >
 |   < EXCLAMATION: "!" >
-|   < EXCLAMATION_EQUAL: "!=" >
+|   < TILDE: "~" >
 |   < COLON: ":" >
 |   < DCOLON: "::" >
 |   < SEMICOLON: ";" >
@@ -64,6 +66,8 @@ TOKEN:
 |   < MINUS: "-" >
 |   < AMPERSAND: "&" >
 |   < QUESTION: "?" >
+|   < DOLLAR: "$" >
+|   < CARET: "^" >
 |   < COMMENT_START: "/*" > : COMMENT
 |   < UNEXPECTED_CHAR : ~[] > // avoid TokenMgrErrors because they are hard to recover from
 }
@@ -121,15 +125,21 @@ float ufloat() :
     { return Float.parseFloat(f.image); }
 }
 
+float float_() :
+{
+    float f;
+}
+{
+    <MINUS> f=ufloat() { return -f; } | f=ufloat() { return f; }
+}
+
 String string() :
 {
     Token t;
 }
 {
     t=<STRING>
-    {
-        return t.image.substring(1, t.image.length() - 1).replace("\\\"", "\"").replace("\\\\", "\\");
-    }
+    { return t.image.substring(1, t.image.length() - 1).replace("\\\"", "\"").replace("\\\\", "\\"); }
 }
 
 String string_or_ident() :
@@ -139,6 +149,15 @@ String string_or_ident() :
 }
 {
     t=<IDENT> { return t.image; } | s=string() { return s; }
+}
+
+String regex() :
+{
+    Token t;
+}
+{
+    t=<REGEX>
+    { return t.image.substring(1, t.image.length() - 1); }
 }
 
 /**
@@ -158,7 +177,7 @@ void w() :
 {
 }
 {
-    ( <S> | ( <COMMENT_START> <COMMENT_END> ) )*
+    ( <S> | <COMMENT_START> <COMMENT_END> )*
 }
 
 /**
@@ -191,7 +210,14 @@ void sheet(MapCSSStyleSource sheet):
 {
     { this.sheet = sheet; }
     w()
-    ( r=rule() { if (r != null) { sheet.rules.add(r); } } w() )*
+    (
+        try {
+            r=rule() { if (r != null) { sheet.rules.add(r); } } w()
+        } catch (ParseException ex) {
+            error_skipto(RBRACE);
+            w();
+        }
+    )*
     <EOF>
 }
 
@@ -202,16 +228,11 @@ MapCSSRule rule():
     List<Instruction> decl;
 }
 {
-    try {
+    sel=selector() { selectors.add(sel); } w()
+    (
+        <COMMA> w()
         sel=selector() { selectors.add(sel); } w()
-        (
-            <COMMA> w()
-            sel=selector() { selectors.add(sel); } w()
-        )*
-    } catch (ParseException ex) {
-        error_skipto(RBRACE);
-        return null;
-    }
+    )*
     decl=declaration()
     { return new MapCSSRule(selectors, decl); }
 }
@@ -240,8 +261,9 @@ Pair<Integer, Integer> zoom() :
 {
     <PIPE_Z>
     (
-        ( <MINUS> max=uint() ) |
-        ( min=uint() ( <MINUS> ( max=uint() )? )? )
+            <MINUS> max=uint()
+        |
+            min=uint() ( <MINUS> ( max=uint() )? )?
     )
     { return new Pair<Integer, Integer>(min, max); }
 }
@@ -253,17 +275,15 @@ Condition condition() :
 }
 {
     <LSQUARE>
-    ( 
-        LOOKAHEAD(2)
-            ( c=simple_key_condition() <RSQUARE> { return c; } )
-        |   
+    (
         LOOKAHEAD(3)
-            c=simple_key_value_condition() 
-        |   
-            e=expression() { c = new Condition.ExpressionCondition(e); }
+            c=simple_key_condition() <RSQUARE> { return c; }
+        |
+        LOOKAHEAD(5)
+            c=simple_key_value_condition() <RSQUARE> { return c; }
+        |
+            e=expression() <RSQUARE> { return new Condition.ExpressionCondition(e); }
     )
-    <RSQUARE>
-    { return c; }
 }
 
 Condition simple_key_condition() :
@@ -279,15 +299,47 @@ Condition simple_key_condition() :
 
 Condition simple_key_value_condition() :
 {
-    boolean not = false;
     String key;
     String val;
+    float f;
+    Condition.Op op;
 }
 {
     key=string_or_ident()
-    ( <EXCLAMATION_EQUAL> { not = true; } | <EQUAL> )
-    val=string_or_ident()
-    { return new Condition.KeyValueCondition(key, val, not ? Condition.Op.NEQ : Condition.Op.EQ); }
+    (
+            (
+                    <EXCLAMATION> <EQUAL> { op=Condition.Op.NEQ; } val=string_or_ident()
+                |
+                    <EQUAL> { op=Condition.Op.EQ; }
+                    (
+                            <TILDE> { op=Condition.Op.REGEX; }
+                            val=regex()
+                        |
+                            val=string_or_ident()
+                    )
+                |
+                    <TILDE> <EQUAL> { op=Condition.Op.ONE_OF; } val=string_or_ident()
+                |
+                    <CARET> <EQUAL> { op=Condition.Op.BEGINS_WITH; } val=string_or_ident()
+                |
+                    <DOLLAR> <EQUAL> { op=Condition.Op.ENDS_WITH; } val=string_or_ident()
+                |
+                    <STAR> <EQUAL> { op=Condition.Op.CONTAINS; } val=string_or_ident()
+            )
+            { return new Condition.KeyValueCondition(key, val, op); }
+        |
+            (
+                    <GREATER_EQUAL> { op=Condition.Op.GREATER_OR_EQUAL; }
+                |
+                    <GREATER> { op=Condition.Op.GREATER; }
+                |
+                    <LESS_EQUAL> { op=Condition.Op.LESS_OR_EQUAL; }
+                |
+                    <LESS> { op=Condition.Op.LESS; }
+            )
+            f=float_()
+            { return new Condition.KeyValueCondition(key, Float.toString(f), op); }
+    )
 }
 
 Condition pseudoclass() :
@@ -306,7 +358,7 @@ String subpart() :
     Token t;
 }
 {
-    ( <SLASH> | <DCOLON> )
+    <DCOLON>
     ( t=<IDENT> | t=<STAR> )
     { return t.image; }
 }
@@ -315,44 +367,30 @@ List<Instruction> declaration() :
 {
     List<Instruction> ins = new ArrayList<Instruction>();
     Instruction i;
-}
-{
-    <LBRACE> w()
-    ( <RBRACE> { return ins; } )?
-    try {
-        i=instruction() { if (i != null) ins.add(i); }
-        (
-            <SEMICOLON> w()
-            ( <RBRACE> { return ins; } )?
-            i=instruction() { if (i != null) ins.add(i); }
-        )*
-        <RBRACE> { return ins; }
-    } catch (ParseException ex) {
-        error_skipto(RBRACE);
-        return ins;
-    }
-}
-
-Instruction instruction() :
-{
     Token key;
     Object val;
 }
 {
-    key=<IDENT> w()
-    <COLON> w()
+    <LBRACE> w()
     (
-        LOOKAHEAD(2) // both number and float array start with a number
-            ( val=float_array() w() )
-        |
-            val=expression()
-    )
-    {
-        if (val instanceof LiteralExpression)
-            return new Instruction.AssignmentInstruction(key.image, ((LiteralExpression) val).evaluate(null));
-        else
-            return new Instruction.AssignmentInstruction(key.image, val);
-    }
+        key=<IDENT> w() <COLON> w()
+        (
+            LOOKAHEAD( float_array() w() ( <SEMICOLON> | <RBRACE> ) )
+                val=float_array()
+                { ins.add(new Instruction.AssignmentInstruction(key.image, val)); }
+                w()
+                ( <RBRACE> { return ins; } | <SEMICOLON> w() )
+            |
+            LOOKAHEAD( expression() ( <SEMICOLON> | <RBRACE> ) )
+                val=expression()
+                { ins.add(new Instruction.AssignmentInstruction(key.image, val)); }
+                ( <RBRACE> { return ins; } | <SEMICOLON> w() )
+            |
+                val=readRaw() w() { ins.add(new Instruction.AssignmentInstruction(key.image, val)); }
+        )
+    )*
+    <RBRACE>
+    { return ins; }
 }
 
 Expression expression():
@@ -363,11 +401,11 @@ Expression expression():
 }
 {
     (
-        ( <EXCLAMATION> { op = "not"; } w() e=primary() { args.add(e); } w() )
+        <EXCLAMATION> { op = "not"; } w() e=primary() { args.add(e); } w()
     |
-        ( <MINUS> { op = "minus"; } w() e=primary() { args.add(e); } w() )
+        <MINUS> { op = "minus"; } w() e=primary() { args.add(e); } w()
     |
-    
+
         (
             e=primary() { args.add(e); } w()
             (
@@ -379,21 +417,21 @@ Expression expression():
                 |
                     ( <SLASH> { op = "divided_by"; } w() e=primary() { args.add(e); } w() )+
                 |
-                    ( <GREATER_EQUAL> { op = "greater_equal"; } w() e=primary() { args.add(e); } w() )
+                    <GREATER_EQUAL> { op = "greater_equal"; } w() e=primary() { args.add(e); } w()
                 |
-                    ( <LESS_EQUAL> { op = "less_equal"; } w() e=primary() { args.add(e); } w() )
+                    <LESS_EQUAL> { op = "less_equal"; } w() e=primary() { args.add(e); } w()
                 |
-                    ( <GREATER> { op = "greater"; } w() e=primary() { args.add(e); } w() )
+                    <GREATER> { op = "greater"; } w() e=primary() { args.add(e); } w()
                 |
-                    ( <EQUAL> ( <EQUAL> )? { op = "equal"; } w() e=primary() { args.add(e); } w() )
+                    <EQUAL> ( <EQUAL> )? { op = "equal"; } w() e=primary() { args.add(e); } w()
                 |
-                    ( <LESS> { op = "less"; } w() e=primary() { args.add(e); } w() )
+                    <LESS> { op = "less"; } w() e=primary() { args.add(e); } w()
                 |
-                    ( <AMPERSAND> <AMPERSAND> { op = "and"; } w() e=primary() { args.add(e); } w() )
+                    <AMPERSAND> <AMPERSAND> { op = "and"; } w() e=primary() { args.add(e); } w()
                 |
-                    ( <PIPE> <PIPE> { op = "or"; } w() e=primary() { args.add(e); } w() )
+                    <PIPE> <PIPE> { op = "or"; } w() e=primary() { args.add(e); } w()
                 |
-                    ( <QUESTION> { op = "cond"; } w() e=primary() { args.add(e); } w() <COLON> w() e=primary() { args.add(e); } w() )
+                    <QUESTION> { op = "cond"; } w() e=primary() { args.add(e); } w() <COLON> w() e=primary() { args.add(e); } w()
             )?
         )
     )
@@ -416,7 +454,7 @@ Expression primary() :
     |
         lit=literal() { return new LiteralExpression(lit); }
     |
-        ( <LPAR> w() nested=expression() <RPAR> ) { return nested; }
+        <LPAR> w() nested=expression() <RPAR> { return nested; }
 }
 
 FunctionExpression function() :
@@ -446,7 +484,7 @@ Object literal() :
 {
         val=string_or_ident() { return val; }
     |
-        ( <PLUS> f=ufloat() ) { return new Instruction.RelativeFloat(f); }
+        <PLUS> f=ufloat() { return new Instruction.RelativeFloat(f); }
     |
         f=ufloat() { return f; }
     |
@@ -465,6 +503,7 @@ Object literal() :
 JAVACODE
 void error_skipto(int kind) {
     ParseException e = generateParseException();
+    System.err.println("Skipping to the next rule, because of an error:");
     System.err.println(e);
     if (sheet != null) {
         sheet.logError(e);
@@ -475,5 +514,23 @@ void error_skipto(int kind) {
     } while (t.kind != kind && t.kind != EOF);
     if (t.kind == EOF)
         throw new ParseException("Reached end of file while parsing");
+}
+
+JAVACODE
+/**
+ * read everything to the next semicolon
+ */
+String readRaw() {
+    Token t;
+    StringBuilder s = new StringBuilder();
+    while (true) {
+        t = getNextToken();
+        if (t.kind == SEMICOLON || t.kind == EOF)
+            break;
+        s.append(t.image);
+    }
+    if (t.kind == EOF)
+        throw new ParseException("Reached end of file while parsing");
+    return s.toString();
 }
 

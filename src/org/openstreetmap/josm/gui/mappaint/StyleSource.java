@@ -48,9 +48,12 @@ abstract public class StyleSource extends SourceEntry {
         errors.clear();
     }
 
-    private ImageIcon pencil = ImageProvider.get("dialogs/mappaint", "pencil");
+    private static ImageIcon pencil;
 
     protected ImageIcon getSourceIcon() {
+        if (pencil == null) {
+            pencil = ImageProvider.get("dialogs/mappaint", "pencil");
+        }
         return pencil;
     }
 

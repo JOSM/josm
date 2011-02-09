@@ -17,7 +17,7 @@ public class MapCSSRule {
 
     @Override
     public String toString() {
-        return Utils.join(",", selectors) + " {\n  " + Utils.join(";\n  ", declaration) + "\n}";
+        return Utils.join(",", selectors) + " {\n  " + Utils.join("\n  ", declaration) + "\n}";
     }
 }
 

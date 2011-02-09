@@ -29,7 +29,11 @@ abstract public class Instruction {
 
         public AssignmentInstruction(String key, Object val) {
             this.key = key;
-            this.val = val;
+            if (val instanceof Expression.LiteralExpression) {
+                this.val = ((Expression.LiteralExpression) val).evaluate(null);
+            } else {
+                this.val = val;
+            }
         }
 
         @Override
