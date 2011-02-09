@@ -48,7 +48,7 @@ public class Selector {
         if (base.equals("*"))
             return true;
         if (base.equals("area")) {
-            if (osm instanceof Way && ((Way)osm).isClosed())
+            if (osm instanceof Way)
                 return true;
             if (osm instanceof Relation && ((Relation) osm).isMultipolygon())
                 return true;

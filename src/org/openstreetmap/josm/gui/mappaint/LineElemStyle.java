@@ -13,7 +13,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.RelativeFloat;
 import org.openstreetmap.josm.tools.Utils;
 
 public class LineElemStyle extends ElemStyle {
@@ -31,53 +30,51 @@ public class LineElemStyle extends ElemStyle {
     private BasicStroke line;
     public Color color;
     public Color dashesBackground;
+    public TextElement text;
     public float realWidth; // the real width of this line in meter
 
     private BasicStroke dashesLine;
 
-    protected LineElemStyle(Cascade c, BasicStroke line, Color color, BasicStroke dashesLine, Color dashesBackground, float realWidth) {
+    protected LineElemStyle(Cascade c, BasicStroke line, Color color, BasicStroke dashesLine, Color dashesBackground, TextElement text, float realWidth) {
         super(c);
         this.line = line;
         this.color = color;
         this.dashesLine = dashesLine;
         this.dashesBackground = dashesBackground;
+        this.text = text;
         this.realWidth = realWidth;
     }
 
     public static LineElemStyle createLine(Environment env) {
-        return createImpl(env, "");
+        return createImpl(env, false);
     }
 
     public static LineElemStyle createCasing(Environment env) {
-        LineElemStyle casing =  createImpl(env, "casing-");
+        LineElemStyle casing =  createImpl(env, true);
         if (casing != null) {
             casing.object_z_index = -1;
         }
         return casing;
     }
 
-    private static LineElemStyle createImpl(Environment env, String prefix) {
+    private static LineElemStyle createImpl(Environment env, boolean casing) {
         Cascade c = env.getCascade();
-        Float width = c.get(prefix + "width", null, Float.class, true);
-        if (width != null) {
-            if (width == -1f) {
-                width = (float) MapPaintSettings.INSTANCE.getDefaultSegmentWidth();
-            }
-            if (width <= 0)
-                return null;
+        Cascade c_def = env.mc.getCascade("default");
+
+        String prefix = casing ? "casing-" : "";
+
+        Float width;
+        if (casing) {
+            Float widthOnDefault = getWidth(c_def, "width", null);
+            Float widthLine = getWidth(c, "width", widthOnDefault);
+            width = getWidth(c, "casing-width", widthLine);
         } else {
-            String width_key = c.get(prefix + "width", null, String.class, true);
-            if (equal(width_key, "thinnest")) {
-                width = 0f;
-            } else if (! equal(env.layer, "default")) {
-                RelativeFloat width_rel = c.get(prefix + "width", null, RelativeFloat.class, true);
-                if (width_rel != null) {
-                    width = env.mc.getCascade("default").get("width", 0f, Float.class) + width_rel.val;
-                } else
-                    return null;
-            } else
-                return null;
+            Float widthOnDefault = getWidth(c_def, "width", null);
+            width = getWidth(c, "width", widthOnDefault);
         }
+
+        if (width == null)
+            return null;
 
         float realWidth = c.get(prefix + "real-width", 0f, Float.class);
         if (realWidth > 0 && MapPaintSettings.INSTANCE.isUseRealWidth()) {
@@ -177,7 +174,15 @@ public class LineElemStyle extends ElemStyle {
             dashesLine = new BasicStroke(width, cap, join, miterlimit, dashes2, dashes2[0] + dashesOffset);
         }
 
-        return new LineElemStyle(c, line, color, dashesLine, dashesBackground, realWidth);
+        TextElement text = null;
+        if (!casing) {
+            String textPos = c.get("text-position", null, String.class);
+            if (textPos == null || equal(textPos, "line")) {
+                text = TextElement.create(c);
+            }
+        }
+
+        return new LineElemStyle(c, line, color, dashesLine, dashesBackground, text, realWidth);
     }
 
     @Override
@@ -221,7 +226,7 @@ public class LineElemStyle extends ElemStyle {
             myDashedColor = paintSettings.getInactiveColor();
         }
 
-        painter.drawWay(w, markColor != null ? markColor : color, myLine, myDashLine, myDashedColor, showDirection,
+        painter.drawWay(w, markColor != null ? markColor : color, myLine, myDashLine, myDashedColor, text, showDirection,
                 selected ? false : reversedDirection, showOnlyHeadArrowOnly);
 
         if(paintSettings.isShowOrderNumber()) {
@@ -248,6 +253,7 @@ public class LineElemStyle extends ElemStyle {
                 equal(color, other.color) &&
                 equal(dashesLine, other.dashesLine) &&
                 equal(dashesBackground, other.dashesBackground) &&
+                equal(text, other.text) &&
                 realWidth == other.realWidth;
     }
 
@@ -258,6 +264,7 @@ public class LineElemStyle extends ElemStyle {
         hash = 29 * hash + color.hashCode();
         hash = 29 * hash + (dashesLine != null ? dashesLine.hashCode() : 0);
         hash = 29 * hash + (dashesBackground != null ? dashesBackground.hashCode() : 0);
+        hash = 29 * hash + (text != null ? text.hashCode() : 0);
         hash = 29 * hash + Float.floatToIntBits(realWidth);
         return hash;
     }

@@ -190,6 +190,7 @@ public interface Expression {
                 return a < b;
             }
 
+            @SuppressWarnings("unchecked")
             public boolean equal(Object a, Object b) {
                 // make sure the casts are done in a meaningful way, so
                 // the 2 objects really can be considered equal

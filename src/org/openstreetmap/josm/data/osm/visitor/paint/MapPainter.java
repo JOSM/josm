@@ -13,7 +13,9 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.TexturePaint;
 import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 import java.awt.font.LineMetrics;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -36,11 +38,11 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.HorizontalTextAlignment;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
-import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.TextElement;
+import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.NodeTextElement;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.VerticalTextAlignment;
+import org.openstreetmap.josm.gui.mappaint.TextElement;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
-import org.openstreetmap.josm.tools.Utils;
 
 public class MapPainter {
 
@@ -105,7 +107,7 @@ public class MapPainter {
         this.leftHandTraffic = leftHandTraffic;
     }
 
-    public void drawWay(Way way, Color color, BasicStroke line, BasicStroke dashes, Color dashedColor, boolean showDirection,
+    public void drawWay(Way way, Color color, BasicStroke line, BasicStroke dashes, Color dashedColor, TextElement text, boolean showDirection,
             boolean reversedDirection, boolean showHeadArrowOnly) {
 
         GeneralPath path = new GeneralPath();
@@ -162,6 +164,7 @@ public class MapPainter {
             lastPoint = p;
         }
         displaySegments(path, arrows, color, line, dashes, dashedColor);
+        drawTextOnPath(way, text);
     }
 
     private void displaySegments(GeneralPath path, GeneralPath arrows, Color color, BasicStroke line, BasicStroke dashes, Color dashedColor) {
@@ -192,7 +195,101 @@ public class MapPainter {
         return true;
     }
 
-    public void drawNodeIcon(Node n, ImageIcon icon, float iconAlpha, boolean selected, boolean member, TextElement text) {
+    private void drawTextOnPath(Way way, TextElement text) {
+        if (text == null)
+            return;
+        String name = getAreaName(way);
+        if (name == null || name.equals(""))
+            return;
+
+        Polygon poly = new Polygon();
+        Point lastPoint = null;
+        Iterator<Node> it = way.getNodes().iterator();
+        double pathLength = 0;
+        int dx, dy;
+        while (it.hasNext()) {
+            Node n = it.next();
+            Point p = nc.getPoint(n);
+            poly.addPoint(p.x, p.y);
+
+            if(lastPoint != null) {
+                dx = p.x - lastPoint.x;
+                dy = p.y - lastPoint.y;
+                pathLength += Math.sqrt(dx*dx + dy*dy);
+            }
+            lastPoint = p;
+        }
+
+        FontMetrics fontMetrics = g.getFontMetrics(text.font); // if slow, use cache
+        Rectangle2D rec = fontMetrics.getStringBounds(name, g); // if slow, approximate by strlen()*maxcharbounds(font)
+
+        if (rec.getWidth() > pathLength)
+            return;
+
+        double t1 = (pathLength/2 - rec.getWidth()/2) / pathLength;
+        double t2 = (pathLength/2 + rec.getWidth()/2) / pathLength;
+
+        double[] p1 = pointAt(t1, poly, pathLength);
+        double[] p2 = pointAt(t2, poly, pathLength);
+
+        double angleOffset;
+        double offsetSign;
+        double tStart;
+
+        if (p1[0] < p2[0] &&
+            p1[2] < Math.PI/2 &&
+            p1[2] > -Math.PI/2) {
+            angleOffset = 0;
+            offsetSign = 1;
+            tStart = t1;
+        } else {
+            angleOffset = Math.PI;
+            offsetSign = -1;
+            tStart = t2;
+        }
+
+        FontRenderContext frc = g.getFontRenderContext();
+        GlyphVector gv = text.font.createGlyphVector(frc, name);
+
+        for (int i=0; i<gv.getNumGlyphs(); ++i) {
+            Rectangle2D rect = gv.getGlyphLogicalBounds(i).getBounds2D();
+            double t = tStart + offsetSign * (rect.getX() + rect.getWidth()/2) / pathLength;
+            double[] p = pointAt(t, poly, pathLength);
+            AffineTransform trfm = AffineTransform.getTranslateInstance(p[0] - rect.getX(), p[1]);
+            trfm.rotate(p[2]+angleOffset);
+            double off = -rect.getY() - rect.getHeight()/2 + text.yOffset;
+            trfm.translate(-rect.getWidth()/2, off);
+            gv.setGlyphTransform(i, trfm);
+        }
+        g.setColor(text.color);
+        g.drawGlyphVector(gv, 0, 0);
+
+    }
+
+    private double[] pointAt(double t, Polygon poly, double pathLength) {
+        double totalLen = t * pathLength;
+        double curLen = 0;
+        int dx, dy;
+        double segLen;
+
+        // Yes, it is ineffecient to iterate from the beginning for each glyph.
+        // Can be optimized if it turns out to be slow.
+        for (int i = 1; i < poly.npoints; ++i) {
+            dx = poly.xpoints[i] - poly.xpoints[i-1];
+            dy = poly.ypoints[i] - poly.ypoints[i-1];
+            segLen = Math.sqrt(dx*dx + dy*dy);
+            if (totalLen > curLen + segLen) {
+                curLen += segLen;
+                continue;
+            }
+            return new double[] {poly.xpoints[i-1]+(totalLen - curLen)/segLen*dx,
+                                 poly.ypoints[i-1]+(totalLen - curLen)/segLen*dy,
+                                 Math.atan2(dy, dx)};
+        }
+        return null;
+    }
+
+    public void drawNodeIcon(Node n, ImageIcon icon, float iconAlpha, boolean selected, boolean member, NodeTextElement text) {
         Point p = nc.getPoint(n);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
 
@@ -210,7 +307,7 @@ public class MapPainter {
         }
     }
 
-    public void drawNodeSymbol(Node n, Symbol s, Color fillColor, Color strokeColor, TextElement text) {
+    public void drawNodeSymbol(Node n, Symbol s, Color fillColor, Color strokeColor, NodeTextElement text) {
         Point p = nc.getPoint(n);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
         int radius = s.size / 2;
@@ -252,7 +349,7 @@ public class MapPainter {
      * @param n  The node to draw.
      * @param color The color of the node.
      */
-    public void drawNode(Node n, Color color, int size, boolean fill, TextElement text) {
+    public void drawNode(Node n, Color color, int size, boolean fill, NodeTextElement text) {
         if (size > 1) {
             Point p = nc.getPoint(n);
             if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
@@ -273,7 +370,7 @@ public class MapPainter {
         }
     }
 
-    private void drawNodeText(Node n, TextElement text, Point p, int w_half, int h_half) {
+    private void drawNodeText(Node n, NodeTextElement text, Point p, int w_half, int h_half) {
         if (!isShowNames() || text == null)
             return;
 
@@ -344,12 +441,12 @@ public class MapPainter {
         return polygon;
     }
 
-    public void drawArea(Way w, Color color, BufferedImage fillImage, float fillImageAlpha, String name) {
+    public void drawArea(Way w, Color color, BufferedImage fillImage, float fillImageAlpha, TextElement text) {
         Polygon polygon = getPolygon(w);
-        drawArea(polygon, color, fillImage, fillImageAlpha, name);
+        drawArea(w, polygon, color, fillImage, fillImageAlpha, text);
     }
 
-    protected void drawArea(Polygon polygon, Color color, BufferedImage fillImage, float fillImageAlpha, String name) {
+    protected void drawArea(OsmPrimitive osm, Polygon polygon, Color color, BufferedImage fillImage, float fillImageAlpha, TextElement text) {
 
         if (fillImage == null) {
             g.setColor(color);
@@ -365,7 +462,11 @@ public class MapPainter {
             g.setPaintMode();
         }
 
-        if (name != null) {
+        if (text != null && isShowNames()) {
+            String name = text.textKey == null ? getAreaName(osm) : osm.get(text.textKey);
+            if (name == null)
+                return;
+
             Rectangle pb = polygon.getBounds();
             FontMetrics fontMetrics = g.getFontMetrics(orderFont); // if slow, use cache
             Rectangle2D nb = fontMetrics.getStringBounds(name, g); // if slow, approximate by strlen()*maxcharbounds(font)
@@ -402,7 +503,7 @@ public class MapPainter {
         }
     }
 
-    public void drawArea(Relation r, Color color, BufferedImage fillImage, float fillImageAlpha, String name) {
+    public void drawArea(Relation r, Color color, BufferedImage fillImage, float fillImageAlpha, TextElement text) {
         Multipolygon multipolygon = new Multipolygon(nc);
         multipolygon.load(r);
         if(!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
@@ -411,7 +512,7 @@ public class MapPainter {
                 if(!isPolygonVisible(p)) {
                     continue;
                 }
-                drawArea(p, color, fillImage, fillImageAlpha, getAreaName(r));
+                drawArea(r, p, color, fillImage, fillImageAlpha, text);
             }
         }
     }

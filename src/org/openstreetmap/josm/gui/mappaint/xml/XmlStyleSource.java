@@ -349,6 +349,8 @@ public class XmlStyleSource extends StyleSource {
             }
             if (p.area != null) {
                 def.putOrClear("fill-color", p.area.color);
+                def.putOrClear("text-position", "center");
+                def.putOrClear("text", "auto");
                 def.remove("fill-image");
             }
         }

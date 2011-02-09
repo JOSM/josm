@@ -17,7 +17,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
-import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
@@ -30,7 +29,7 @@ public class NodeElemStyle extends ElemStyle {
     public ImageIcon icon;
     public int iconAlpha;
     public Symbol symbol;
-    public TextElement text;
+    public NodeTextElement text;
 
     private ImageIcon disabledIcon;
 
@@ -88,55 +87,37 @@ public class NodeElemStyle extends ElemStyle {
         }
     }
 
-    public static class TextElement {
-        public String textKey;
+    public static class NodeTextElement extends TextElement {
         public HorizontalTextAlignment hAlign;
         public VerticalTextAlignment vAlign;
-        public Font font;
-        public int xOffset;
-        public int yOffset;
-        public Color color;
 
-        public TextElement(String textKey, HorizontalTextAlignment hAlign, VerticalTextAlignment vAlign, Font font, int xOffset, int yOffset, Color color) {
+        public NodeTextElement(String textKey, HorizontalTextAlignment hAlign, VerticalTextAlignment vAlign, Font font, int xOffset, int yOffset, Color color) {
+            super(textKey, font, xOffset, yOffset, color);
             CheckParameterUtil.ensureParameterNotNull(hAlign);
             CheckParameterUtil.ensureParameterNotNull(vAlign);
-            CheckParameterUtil.ensureParameterNotNull(font);
-            CheckParameterUtil.ensureParameterNotNull(color);
-            this.textKey = textKey;
             this.hAlign = hAlign;
             this.vAlign = vAlign;
-            this.font = font;
-            this.xOffset = xOffset;
-            this.yOffset = yOffset;
-            this.color = color;
         }
 
         @Override
         public boolean equals(Object obj) {
+            if (!super.equals(obj))
+                return false;
             if (obj == null || getClass() != obj.getClass())
                 return false;
-            final TextElement other = (TextElement) obj;
-            return  equal(textKey, other.textKey) &&
-                    hAlign == other.hAlign &&
-                    vAlign == other.vAlign &&
-                    equal(font, other.font) &&
-                    xOffset == other.xOffset &&
-                    yOffset == other.yOffset &&
-                    equal(color, other.color);
+            final NodeTextElement other = (NodeTextElement) obj;
+            return hAlign == other.hAlign &&
+                    vAlign == other.vAlign;
         }
 
         @Override
         public int hashCode() {
-            int hash = 3;
-            hash = 79 * hash + (textKey != null ? textKey.hashCode() : 0);
-            hash = 79 * hash + hAlign.hashCode();
-            hash = 79 * hash + vAlign.hashCode();
-            hash = 79 * hash + font.hashCode();
-            hash = 79 * hash + xOffset;
-            hash = 79 * hash + yOffset;
-            hash = 79 * hash + color.hashCode();
+            int hash = super.hashCode();
+            hash = 97 * hash + hAlign.hashCode();
+            hash = 97 * hash + vAlign.hashCode();
             return hash;
         }
+
     }
     
     public static final NodeElemStyle SIMPLE_NODE_ELEMSTYLE;
@@ -146,7 +127,7 @@ public class NodeElemStyle extends ElemStyle {
         SIMPLE_NODE_ELEMSTYLE = create(c, true);
     }
 
-    protected NodeElemStyle(Cascade c, ImageIcon icon, int iconAlpha, Symbol symbol, TextElement text) {
+    protected NodeElemStyle(Cascade c, ImageIcon icon, int iconAlpha, Symbol symbol, NodeTextElement text) {
         super(c);
         this.icon = icon;
         this.iconAlpha = iconAlpha;
@@ -178,13 +159,9 @@ public class NodeElemStyle extends ElemStyle {
         if (icon == null && symbol == null && !allowOnlyText)
             return null;
 
-        TextElement text = null;
-        String textStr = c.get("text", null, String.class);
-        if (textStr != null) {
-            String textKey = null;
-            if (!"auto".equalsIgnoreCase(textStr)) {
-                textKey = textStr;
-            }
+        NodeTextElement text = null;
+        TextElement te = TextElement.create(c);
+        if (te != null) {
             HorizontalTextAlignment hAlign = HorizontalTextAlignment.RIGHT;
             String hAlignStr = c.get("text-anchor-horizontal", null, String.class);
             if (equal(hAlignStr, "left")) {
@@ -207,23 +184,7 @@ public class NodeElemStyle extends ElemStyle {
             } else if (equal(vAlignStr, "below")) {
                 vAlign = VerticalTextAlignment.BELOW;
             }
-            String name = c.get("font-family", Main.pref.get("mappaint.font", "Helvetica"), String.class);
-            float size = c.get("font-size", (float) Main.pref.getInteger("mappaint.fontsize", 8), Float.class);
-            int weight = Font.PLAIN;
-            String weightStr = c.get("font-wheight", null, String.class);
-            if (equal(weightStr, "bold")) {
-                weight = Font.BOLD;
-            }
-            int style = Font.PLAIN;
-            String styleStr = c.get("font-style", null, String.class);
-            if (equal(styleStr, "italic")) {
-                style = Font.ITALIC;
-            }
-            Font font = new Font(name, weight | style, Math.round(size));
-            int xOffset = c.get("text-offset-x", 0f, Float.class).intValue();
-            int yOffset = c.get("text-offset-y", 0f, Float.class).intValue();
-            Color color = c.get("text-color", PaintColors.TEXT.get(), Color.class);
-            text = new TextElement(textKey, hAlign, vAlign, font, xOffset, yOffset, color);
+            text = new NodeTextElement(te.textKey, hAlign, vAlign, te.font, te.xOffset, te.yOffset, te.color);
         }
         
         return new NodeElemStyle(c, icon, iconAlpha, symbol, text);
