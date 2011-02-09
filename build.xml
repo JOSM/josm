@@ -32,7 +32,6 @@
 	  ** the REVISION file used by JOSM
 	-->
 	<target name="create-revision-eclipse">
-		<copy file="styles/standard/elemstyles.xml" todir="data"/>
 		<property name="revision.dir" value="bin"/>
 		<antcall target="create-revision" />
 	</target>
