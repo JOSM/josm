@@ -15,7 +15,8 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         WMS("wms"),
         TMS("tms"),
         HTML("html"),
-        BING("bing");
+        BING("bing"),
+        SCANEX("scanex");
 
         private String urlString;
         ImageryType(String urlString) {

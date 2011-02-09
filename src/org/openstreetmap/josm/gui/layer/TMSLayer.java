@@ -42,6 +42,7 @@ import org.openstreetmap.gui.jmapviewer.JobDispatcher;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
+import org.openstreetmap.gui.jmapviewer.ScanexIRSTileSource;
 import org.openstreetmap.gui.jmapviewer.TMSTileSource;
 import org.openstreetmap.gui.jmapviewer.TemplatedTMSTileSource;
 import org.openstreetmap.gui.jmapviewer.Tile;
@@ -237,6 +238,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 return new TMSTileSource(info.getName(),info.getUrl(), info.getMaxZoom());
         } else if (info.getImageryType() == ImageryType.BING)
             return new BingAerialTileSource();
+        else if (info.getImageryType() == ImageryType.SCANEX)
+            return new ScanexIRSTileSource();
         return null;
     }
 
@@ -285,10 +288,10 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         MapView mv = Main.map.mapView;
         LatLon topLeft = mv.getLatLon(0, 0);
         LatLon botRight = mv.getLatLon(mv.getWidth(), mv.getHeight());
-        double x1 = lonToTileX(topLeft.lon(), zoom);
-        double y1 = latToTileY(topLeft.lat(), zoom);
-        double x2 = lonToTileX(botRight.lon(), zoom);
-        double y2 = latToTileY(botRight.lat(), zoom);
+        double x1 = tileSource.lonToTileX(topLeft.lon(), zoom);
+        double y1 = tileSource.latToTileY(topLeft.lat(), zoom);
+        double x2 = tileSource.lonToTileX(botRight.lon(), zoom);
+        double y2 = tileSource.latToTileY(botRight.lat(), zoom);
 
         int screenPixels = mv.getWidth()*mv.getHeight();
         double tilePixels = Math.abs((y2-y1)*(x2-x1)*tileSource.getTileSize()*tileSource.getTileSize());
@@ -676,8 +679,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     LatLon tileLatLon(Tile t)
     {
         int zoom = t.getZoom();
-        return new LatLon(tileYToLat(t.getYtile(), zoom),
-                tileXToLon(t.getXtile(), zoom));
+        return new LatLon(tileSource.tileYToLat(t.getYtile(), zoom),
+                tileSource.tileXToLon(t.getXtile(), zoom));
     }
 
     Rectangle tileToRect(Tile t1)
@@ -865,8 +868,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         return Main.map.mapView.getPoint(Main.proj.latlon2eastNorth(ll).add(getDx(), getDy()));
     }
     private Point pixelPos(Tile t) {
-        double lon = tileXToLon(t.getXtile(), t.getZoom());
-        LatLon tmpLL = new LatLon(tileYToLat(t.getYtile(), t.getZoom()), lon);
+        double lon = tileSource.tileXToLon(t.getXtile(), t.getZoom());
+        LatLon tmpLL = new LatLon(tileSource.tileYToLat(t.getYtile(), t.getZoom()), lon);
         return pixelPos(tmpLL);
     }
     private LatLon getShiftedLatLon(EastNorth en) {
@@ -897,10 +900,10 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             if (zoom == 0)
                 return;
 
-            x0 = (int)lonToTileX(topLeft.lon(),  zoom);
-            y0 = (int)latToTileY(topLeft.lat(),  zoom);
-            x1 = (int)lonToTileX(botRight.lon(), zoom);
-            y1 = (int)latToTileY(botRight.lat(), zoom);
+            x0 = (int)tileSource.lonToTileX(topLeft.lon(),  zoom);
+            y0 = (int)tileSource.latToTileY(topLeft.lat(),  zoom);
+            x1 = (int)tileSource.lonToTileX(botRight.lon(), zoom);
+            y1 = (int)tileSource.latToTileY(botRight.lat(), zoom);
             if (x0 > x1) {
                 int tmp = x0;
                 x0 = x1;
@@ -1301,25 +1304,5 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     @Override
     public boolean isChanged() {
         return needRedraw;
-    }
-
-    private static double latToTileY(double lat, int zoom) {
-        double l = lat / 180 * Math.PI;
-        double pf = Math.log(Math.tan(l) + (1 / Math.cos(l)));
-        return Math.pow(2.0, zoom - 1) * (Math.PI - pf) / Math.PI;
-    }
-
-    private static double lonToTileX(double lon, int zoom) {
-        return Math.pow(2.0, zoom - 3) * (lon + 180.0) / 45.0;
-    }
-
-    private static double tileYToLat(int y, int zoom) {
-        return Math.atan(Math.sinh(Math.PI
-                - (Math.PI * y / Math.pow(2.0, zoom - 1))))
-                * 180 / Math.PI;
-    }
-
-    private static double tileXToLon(int x, int zoom) {
-        return x * 45.0 / Math.pow(2.0, zoom - 3) - 180.0;
     }
 }

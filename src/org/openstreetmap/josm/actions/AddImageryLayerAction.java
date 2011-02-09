@@ -32,7 +32,7 @@ public class AddImageryLayerAction extends JosmAction {
         // never enable blacklisted entries.
         if (info.isBlacklisted()) {
             setEnabled(false);
-        } else if (info.getImageryType() == ImageryType.TMS || info.getImageryType() == ImageryType.BING) {
+        } else if (info.getImageryType() == ImageryType.TMS || info.getImageryType() == ImageryType.BING || info.getImageryType() == ImageryType.SCANEX) {
             setEnabled(true);
         } else if (Main.map != null && Main.map.mapView != null && !Main.map.mapView.getAllLayers().isEmpty()) {
             setEnabled(true);

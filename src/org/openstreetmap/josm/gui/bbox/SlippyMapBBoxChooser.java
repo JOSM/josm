@@ -79,6 +79,14 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         @Override public String getAttributionLinkURL() { return source.getAttributionLinkURL(); }
 
         @Override public String getTermsOfUseURL() { return source.getTermsOfUseURL(); }
+
+        @Override public double latToTileY(double lat, int zoom) { return source.latToTileY(lat,zoom); }
+
+        @Override public double lonToTileX(double lon, int zoom) { return source.lonToTileX(lon,zoom); }
+
+        @Override public double tileYToLat(int y, int zoom) { return tileYToLat(y, zoom); }
+
+        @Override public double tileXToLon(int x, int zoom) { return tileXToLon(x, zoom); }
     }
 
     /**
