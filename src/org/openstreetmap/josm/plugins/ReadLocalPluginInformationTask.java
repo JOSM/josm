@@ -64,10 +64,16 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
             info.localversion = info.version;
             availablePlugins.put(info.getName(), info);
         } else {
-            availablePlugins.get(info.getName()).localversion = info.version;
+            PluginInformation current = availablePlugins.get(info.getName());
+            current.localversion = info.version;
             if (info.icon != null) {
-                availablePlugins.get(info.getName()).icon = info.icon;
+                current.icon = info.icon;
             }
+            current.early = info.early;
+            current.className = info.className;
+            current.libraries = info.libraries;
+            current.stage = info.stage;
+            current.requires = info.requires;
         }
     }
 

@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.data.projection.ProjectionSubPrefs;
 import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 
 public class ProjectionPreference implements PreferenceSetting {
@@ -202,27 +203,27 @@ public class ProjectionPreference implements PreferenceSetting {
         Bounds b = (Main.map != null && Main.map.mapView != null) ? Main.map.mapView.getRealBounds() : null;
         Projection oldProj = Main.proj;
 
-        try {
-            Main.proj = (Projection)Class.forName(name).newInstance();
-        } catch (final Exception e) {
-            // backup plan: if we cannot instantiate this, maybe we have an instance already.
-            Main.proj = null;
-            for (Projection p : Projections.getProjections()) {
-                if (p.getClass().getName().equals(name)) {
-                    Main.proj = p; break;
-                } 
+        Projection p = null;
+        for (ClassLoader cl : PluginHandler.getResourceClassLoaders()) {
+            try {
+                p = (Projection) Class.forName(name, true, cl).newInstance();
+            } catch (final Exception e) {
             }
-            if (Main.proj == null) {
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("The projection {0} could not be activated. Using Mercator", name),
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE
-                );
-                coll = null;
-                Main.proj = new Mercator();
-                name = Main.proj.getClass().getName();
+            if (p != null) {
+                Main.proj = p;
+                break;
             }
+        }
+        if (p == null) {
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("The projection {0} could not be activated. Using Mercator", name),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
+            coll = null;
+            Main.proj = new Mercator();
+            name = Main.proj.getClass().getName();
         }
         PROP_SUB_PROJECTION.put(coll);
         PROP_PROJECTION_SUBPROJECTION.put(coll, name);
@@ -284,6 +285,7 @@ public class ProjectionPreference implements PreferenceSetting {
      * Sets up projection combobox with default values and action listener
      */
     private void setupProjectionCombo() {
+        boolean found = false;
         for (int i = 0; i < projectionCombo.getItemCount(); ++i) {
             Projection proj = (Projection)projectionCombo.getItemAt(i);
             String name = proj.getClass().getName();
@@ -293,9 +295,12 @@ public class ProjectionPreference implements PreferenceSetting {
             if (name.equals(PROP_PROJECTION.get())) {
                 projectionCombo.setSelectedIndex(i);
                 selectedProjectionChanged(proj);
+                found = true;
                 break;
             }
         }
+        if (!found)
+            throw new RuntimeException("Couldn't find the current projection in the list of available projections!");
 
         projectionCombo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

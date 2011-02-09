@@ -158,6 +158,24 @@ public class PluginHandler {
     public final static Collection<PluginProxy> pluginList = new LinkedList<PluginProxy>();
 
     /**
+     * Add here all ClassLoader whose resource should be searched.
+     */
+    private static final List<ClassLoader> sources = new LinkedList<ClassLoader>();
+
+    static {
+        try {
+            sources.add(ClassLoader.getSystemClassLoader());
+            sources.add(org.openstreetmap.josm.gui.MainApplication.class.getClassLoader());
+        } catch (SecurityException ex) {
+            sources.add(ImageProvider.class.getClassLoader());
+        }
+    }
+
+    public static Collection<ClassLoader> getResourceClassLoaders() {
+        return Collections.unmodifiableCollection(sources);
+    }
+
+    /**
      * Removes deprecated plugins from a collection of plugins. Modifies the
      * collection <code>plugins</code>.
      *
@@ -515,7 +533,7 @@ public class PluginHandler {
                 return;
 
             ClassLoader pluginClassLoader = createClassLoader(toLoad);
-            ImageProvider.sources.add(0, pluginClassLoader);
+            sources.add(0, pluginClassLoader);
             monitor.setTicksCount(toLoad.size());
             for (PluginInformation info : toLoad) {
                 monitor.setExtraText(tr("Loading plugin ''{0}''...", info.name));

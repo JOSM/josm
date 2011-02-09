@@ -23,8 +23,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -35,6 +33,7 @@ import javax.swing.ImageIcon;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.plugins.PluginHandler;
 
 /**
  * Helperclass to support the application with images.
@@ -67,12 +66,6 @@ public class ImageProvider {
      * The icon cache
      */
     private static Map<String, ImageWrapper> cache = new HashMap<String, ImageWrapper>();
-
-    /**
-     * Add here all ClassLoader whose resource should be searched. Plugin's class loaders are added
-     * by main.
-     */
-    public static final List<ClassLoader> sources = new LinkedList<ClassLoader>();
 
     /**
      * Return an image from the specified location.
@@ -233,7 +226,7 @@ public class ImageProvider {
     private static URL getImageUrl(String path, String name) {
         if (path.startsWith("resource://")) {
             String p = path.substring("resource://".length());
-            for (ClassLoader source : sources) {
+            for (ClassLoader source : PluginHandler.getResourceClassLoaders()) {
                 URL res;
                 if ((res = source.getResource(p + name)) != null)
                     return res;
@@ -352,15 +345,6 @@ public class ImageProvider {
         }
         overlay.paintIcon(null, g, x, y);
         return new ImageIcon(img);
-    }
-
-    static {
-        try {
-            sources.add(ClassLoader.getSystemClassLoader());
-            sources.add(org.openstreetmap.josm.gui.MainApplication.class.getClassLoader());
-        } catch (SecurityException ex) {
-            sources.add(ImageProvider.class.getClassLoader());
-        }
     }
 
     /*

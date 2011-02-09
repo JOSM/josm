@@ -33,6 +33,12 @@ public class Projections {
         return allProjections;
     }
 
+    /**
+     * Adds a new projection to the list of known projections.
+     * 
+     * For Plugins authors: make sure your plugin is an early plugin, i.e. put
+     * Plugin-Early=true in your Manifest.
+     */
     public static void addProjection(Projection proj) {
         allProjections.add(proj);
     }
