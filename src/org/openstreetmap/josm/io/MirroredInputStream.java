@@ -60,7 +60,15 @@ public class MirroredInputStream extends InputStream {
                     file = new File(name.substring("file://".length()));
                 }
             } else {
-                file = checkLocal(url, destDir, maxTime);
+                if(Main.applet) {
+                    URLConnection conn = url.openConnection();
+                    conn.setConnectTimeout(5000);
+                    conn.setReadTimeout(5000);
+                    fs = new BufferedInputStream(conn.getInputStream());
+                    file = new File(url.getFile());
+                } else {
+                    file = checkLocal(url, destDir, maxTime);
+                }
             }
         } catch (java.net.MalformedURLException e) {
             if(name.startsWith("resource://")) {
@@ -177,12 +185,15 @@ public class MirroredInputStream extends InputStream {
         if (localPath != null && localPath.length() > 0) {
             String[] lp = localPath.split(";");
             file = new File(lp[1]);
-            if (maxTime <= 0) {
-                maxTime = Main.pref.getInteger("mirror.maxtime", 7*24*60*60);
-            }
-            if (System.currentTimeMillis() - Long.parseLong(lp[0]) < maxTime*1000) {
-                if(file.exists())
+            if(!file.exists())
+                file = null;
+            else {
+                if (maxTime <= 0) {
+                    maxTime = Main.pref.getInteger("mirror.maxtime", 7*24*60*60);
+                }
+                if (System.currentTimeMillis() - Long.parseLong(lp[0]) < maxTime*1000) {
                     return file;
+                }
             }
         }
         if(destDir == null) {
@@ -210,6 +221,11 @@ public class MirroredInputStream extends InputStream {
             while ((length = bis.read(buffer)) > -1) {
                 bos.write(buffer, 0, length);
             }
+            bos.close();
+            bos = null;
+            file = new File(destDir, localPath);
+            destDirFile.renameTo(file);
+            Main.pref.put(prefKey, System.currentTimeMillis() + ";" + file);
         } finally {
             if (bis != null) {
                 try {
@@ -225,9 +241,6 @@ public class MirroredInputStream extends InputStream {
                     e.printStackTrace();
                 }
             }
-            file = new File(destDir, localPath);
-            destDirFile.renameTo(file);
-            Main.pref.put(prefKey, System.currentTimeMillis() + ";" + file);
         }
 
         return file;
