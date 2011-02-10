@@ -107,6 +107,27 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             } else {
                 name = node.getName();
             }
+            if(name == null)
+            {
+                String s;
+                if((s = node.get("addr:housename")) != null) {
+                    /* I18n: name of house as parameter */
+                    name = tr("House {0}", s);
+                }
+                if(name == null && (s = node.get("addr:housenumber")) != null) {
+                    String t = node.get("addr:street");
+                    if(t != null) {
+                        /* I18n: house number, street as parameter, number should remain
+                        before street for better visibility */
+                        name =  tr("House number {0} at {1}", s, t);
+                    }
+                    else {
+                        /* I18n: house number as parameter */
+                        name = tr("House number {0}", s);
+                    }
+                }
+            }
+
             if (name == null) {
                 name = node.isNew() ? tr("node") : ""+ node.getId();
             }
@@ -140,17 +161,38 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                     (way.get("highway") != null) ? tr("highway") :
                         (way.get("railway") != null) ? tr("railway") :
                             (way.get("waterway") != null) ? tr("waterway") :
-                                (way.get("landuse") != null) ? tr("landuse") : "";
+                                (way.get("landuse") != null) ? tr("landuse") : null;
+            }
+            if(name == null)
+            {
+                String s;
+                if((s = way.get("addr:housename")) != null) {
+                    /* I18n: name of house as parameter */
+                    name = tr("House {0}", s);
+                }
+                if(name == null && (s = way.get("addr:housenumber")) != null) {
+                    String t = way.get("addr:street");
+                    if(t != null) {
+                        /* I18n: house number, street as parameter, number should remain
+                        before street for better visibility */
+                        name =  tr("House number {0} at {1}", s, t);
+                    }
+                    else {
+                        /* I18n: house number as parameter */
+                        name = tr("House number {0}", s);
+                    }
+                }
             }
 
             int nodesNo = way.getNodesCount();
             if (nodesNo > 1 && way.isClosed()) {
                 nodesNo--;
             }
-            if(name.length() == 0 )
+            if(name == null || name.length() == 0)
                 name = String.valueOf(way.getId());
             /* note: length == 0 should no longer happen, but leave the bracket code
                nevertheless, who knows what future brings */
+            /* I18n: count of nodes as parameter */
             String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
             name += (name.length() > 0) ? " ("+nodes+")" : nodes;
         }
