@@ -42,7 +42,7 @@ import org.openstreetmap.gui.jmapviewer.JobDispatcher;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmFileCacheTileLoader;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
-import org.openstreetmap.gui.jmapviewer.ScanexIRSTileSource;
+import org.openstreetmap.gui.jmapviewer.ScanexTileSource;
 import org.openstreetmap.gui.jmapviewer.TMSTileSource;
 import org.openstreetmap.gui.jmapviewer.TemplatedTMSTileSource;
 import org.openstreetmap.gui.jmapviewer.Tile;
@@ -239,7 +239,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         } else if (info.getImageryType() == ImageryType.BING)
             return new BingAerialTileSource();
         else if (info.getImageryType() == ImageryType.SCANEX)
-            return new ScanexIRSTileSource();
+            return new ScanexTileSource(info.getUrl());
         return null;
     }
 
