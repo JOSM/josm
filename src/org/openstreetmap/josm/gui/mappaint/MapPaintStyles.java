@@ -77,6 +77,10 @@ public class MapPaintStyles {
                 dirs.add(a[1]);
             }
         }
+        String sourceDir = ref.source.getLocalSourceDir();
+        if (sourceDir != null) {
+            dirs.add(sourceDir);
+        }
         ImageIcon i = ImageProvider.getIfAvailable(dirs, "mappaint."+styleName, null, ref.iconName, ref.source.zipIcons, sanitize);
         if(i == null)
         {

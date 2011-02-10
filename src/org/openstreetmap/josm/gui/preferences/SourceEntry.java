@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences;
 
+import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -120,5 +121,15 @@ public class SourceEntry {
         if (url.startsWith("http://") || url.startsWith("resource://"))
             return false;
         return true;
+    }
+
+    public String getLocalSourceDir() {
+        if (!isLocal())
+            return null;
+        File f = new File(url);
+        File dir = f.getParentFile();
+        if (dir == null)
+            return null;
+        return dir.getPath();
     }
 }
