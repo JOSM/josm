@@ -277,7 +277,11 @@ public class XmlStyleSource extends StyleSource {
 
     @Override
     public void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed) {
-        Cascade def = mc.getCascade("default");
+        Cascade def = mc.get("default");
+        if (def == null) {
+            def = new Cascade(false);
+            mc.put("default", def);
+        }
         boolean useMinMaxScale = Main.pref.getBoolean("mappaint.zoomLevelDisplay", false);
 
         if (osm instanceof Node || (osm instanceof Relation && "restriction".equals(osm.get("type")))) {
@@ -320,11 +324,21 @@ public class XmlStyleSource extends StyleSource {
                 for (LinemodPrototype mod : p.linemods) {
                     Cascade c;
                     if (mod.over) {
-                        c = mc.getCascade(String.format("over_%d", numOver));
+                        String layer = String.format("over_%d", numOver);
+                        c = mc.get(layer);
+                        if (c == null) {
+                            c = new Cascade(true);
+                            mc.put(layer, c);
+                        }
                         c.put("object-z-index", new Float(numOver));
                         ++numOver;
                     } else {
-                        c = mc.getCascade(String.format("under_%d", numUnder));
+                        String layer = String.format("under_%d", numUnder);
+                        c = mc.get(layer);
+                        if (c == null) {
+                            c = new Cascade(true);
+                            mc.put(layer, c);
+                        }
                         c.put("object-z-index", new Float(-numUnder));
                         ++numUnder;
                     }

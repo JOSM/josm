@@ -607,7 +607,7 @@ public class MapPaintDialog extends ToggleDialog {
                 tblStyles.setRowSelectionInterval(index, index);
             }
             MapPaintPopup menu = new MapPaintPopup();
-            menu.show(MapPaintDialog.this, p.x, p.y);
+            menu.show(tblStyles, p.x, p.y);
         }
     }
 

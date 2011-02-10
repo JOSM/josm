@@ -16,13 +16,16 @@ public class MultiCascade extends HashMap<String, Cascade> {
         range = new Range();
     }
 
-    public Cascade getCascade(String key) {
-        if (key == null)
+    /**
+     * Return the cascade for the given layer key. If it does not exist,
+     * return a new cascade, but do not keep it.
+     */
+    public Cascade getCascade(String layer) {
+        if (layer == null)
             throw new IllegalArgumentException();
-        Cascade c = get(key);
+        Cascade c = get(layer);
         if (c == null) {
-            c = new Cascade(!key.equals("default"));
-            put(key, c);
+            c = new Cascade(!layer.equals("default"));
         }
         return c;
     }

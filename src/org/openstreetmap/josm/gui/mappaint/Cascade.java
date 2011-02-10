@@ -138,6 +138,9 @@ public class Cascade implements Cloneable {
             }
             return a;
         }
+        Float f = toFloat(o);
+        if (f != null)
+            return new float[] { f };
         return null;
     }
 

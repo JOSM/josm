@@ -867,7 +867,7 @@ public class LayerListDialog extends ToggleDialog {
             }
             Layer layer = model.getLayer(index);
             LayerListPopup menu = new LayerListPopup(getModel().getSelectedLayers(), layer);
-            menu.show(LayerListDialog.this, p.x, p.y-3);
+            menu.show(layerList, p.x, p.y-3);
         }
     }
 

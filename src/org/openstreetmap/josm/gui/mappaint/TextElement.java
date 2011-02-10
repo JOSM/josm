@@ -37,10 +37,24 @@ public class TextElement {
         }
 
         Font font = ElemStyle.getFont(c);
-        int xOffset = c.get("text-offset-x", 0f, Float.class).intValue();
-        int yOffset = -c.get("text-offset-y", 0f, Float.class).intValue();
+
+        float xOffset = 0;
+        float yOffset = 0;
+        float[] offset = c.get("text-offset", null, float[].class);
+        if (offset != null) {
+            if (offset.length == 1) {
+                yOffset = offset[0];
+            } else if (offset.length >= 2) {
+                xOffset = offset[0];
+                yOffset = offset[1];
+            }
+        }
+        xOffset = c.get("text-offset-x", xOffset, Float.class);
+        yOffset = c.get("text-offset-y", yOffset, Float.class);
+        
         Color color = c.get("text-color", PaintColors.TEXT.get(), Color.class);
-        return new TextElement(textKey, font, xOffset, yOffset, color);
+        
+        return new TextElement(textKey, font, (int) xOffset, (int) yOffset, color);
     }
 
     @Override

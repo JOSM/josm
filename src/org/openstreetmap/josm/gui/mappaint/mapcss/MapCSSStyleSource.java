@@ -133,7 +133,7 @@ public class MapCSSStyleSource extends StyleSource {
                         mc.put(sub, c);
                     }
 
-                    if (sub.equals("*")) { // fixme: proper subparts handling
+                    if (sub.equals("*")) {
                         for (Entry<String, Cascade> entry : mc.entrySet()) {
                             env.layer = entry.getKey();
                             for (Instruction i : r.declaration) {
