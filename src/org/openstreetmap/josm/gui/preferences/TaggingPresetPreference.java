@@ -309,8 +309,8 @@ public class TaggingPresetPreference implements PreferenceSetting {
         }
 
         /**
-         * The internal path of elemstyles.xml has changed, this
-         * can be removed when a few months have passed.
+         * FIXME: The internal path of elemstyles.xml has changed, this
+         * can be removed in summer 2011.
          */
         private boolean removeDeprecated(List<SourceEntry> ls) {
             boolean changed = false;
