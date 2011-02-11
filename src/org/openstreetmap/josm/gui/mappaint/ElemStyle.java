@@ -46,7 +46,7 @@ abstract public class ElemStyle {
             else if (relativeTo != null) {
                 RelativeFloat width_rel = c.get(key, null, RelativeFloat.class, true);
                 if (width_rel != null)
-                    return relativeTo + width_rel.val;
+                    return relativeTo + 2*width_rel.val;
             }
         }
         return null;

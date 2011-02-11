@@ -348,8 +348,9 @@ Condition pseudoclass() :
     boolean not = false;
 }
 {
+    ( <EXCLAMATION> { not = true; } )? 
     <COLON>
-    ( <EXCLAMATION> { not = true; } )? t=<IDENT>
+    t=<IDENT>
     { return new Condition.PseudoClassCondition(t.image, not); }
 }
 

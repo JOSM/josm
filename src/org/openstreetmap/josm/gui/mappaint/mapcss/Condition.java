@@ -42,7 +42,7 @@ abstract public class Condition {
         @Override
         public boolean applies(Environment env) {
             String val = env.osm.get(k);
-            if (val == null)
+            if (val == null && op != Op.NEQ)
                 return false;
             switch (op) {
                 case EQ:
@@ -126,6 +126,10 @@ abstract public class Condition {
 
         @Override
         public boolean applies(Environment e) {
+            return not ^ appliesImpl(e);
+        }
+
+        public boolean appliesImpl(Environment e) {
             if (equal(id, "closed")) {
                 if (e.osm instanceof Way && ((Way) e.osm).isClosed())
                     return true;

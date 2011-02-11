@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.Utils.equal;
 import java.awt.Color;
 import java.awt.Font;
 
-import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public class TextElement {
@@ -26,7 +25,7 @@ public class TextElement {
         this.color = color;
     }
 
-    public static TextElement create(Cascade c) {
+    public static TextElement create(Cascade c, Color defTextColor) {
         String textStr = c.get("text", null, String.class);
         if (textStr == null)
             return null;
@@ -52,9 +51,9 @@ public class TextElement {
         xOffset = c.get("text-offset-x", xOffset, Float.class);
         yOffset = c.get("text-offset-y", yOffset, Float.class);
         
-        Color color = c.get("text-color", PaintColors.TEXT.get(), Color.class);
+        Color color = c.get("text-color", defTextColor, Color.class);
         
-        return new TextElement(textKey, font, (int) xOffset, (int) yOffset, color);
+        return new TextElement(textKey, font, (int) xOffset, - (int) yOffset, color);
     }
 
     @Override

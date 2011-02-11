@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
+import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
@@ -78,7 +79,7 @@ public class AreaElemStyle extends ElemStyle
         TextElement text = null;
         String textPos = c.get("text-position", null, String.class);
         if (textPos == null || Utils.equal(textPos, "center")) {
-            text = TextElement.create(c);
+            text = TextElement.create(c, PaintColors.AREA_TEXT.get());
         }
         
         if (color != null)

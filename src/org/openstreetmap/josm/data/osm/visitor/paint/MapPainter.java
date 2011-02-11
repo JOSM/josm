@@ -55,10 +55,8 @@ public class MapPainter {
     private final boolean showIcons;
 
     private final Color inactiveColor;
-    private final Color textColor;
     private final Color selectedColor;
     private final Color relationSelectedColor;
-    private final Color areaTextColor;
     private final Color nodeColor;
     private final Color backgroundColor;
 
@@ -89,10 +87,8 @@ public class MapPainter {
         this.showIcons = settings.getShowIconsDistance() > circum;
 
         this.inactiveColor = PaintColors.INACTIVE.get();
-        this.textColor = PaintColors.TEXT.get();
         this.selectedColor = PaintColors.SELECTED.get();
         this.relationSelectedColor = PaintColors.RELATIONSELECTED.get();
-        this.areaTextColor = PaintColors.AREA_TEXT.get();
         this.nodeColor = PaintColors.NODE.get();
         this.backgroundColor = PaintColors.BACKGROUND.get();
 
@@ -492,9 +488,9 @@ public class MapPainter {
             if ((pb.width >= nb.getWidth() && pb.height >= nb.getHeight()) && // quick check
                     polygon.contains(centeredNBounds) // slow but nice
             ) {
-                g.setColor(areaTextColor);
+                g.setColor(text.color);
                 Font defaultFont = g.getFont();
-                g.setFont (orderFont);
+                g.setFont (text.font);
                 g.drawString (name,
                         (int)(centeredNBounds.getMinX() - nb.getMinX()),
                         (int)(centeredNBounds.getMinY() - nb.getMinY()));

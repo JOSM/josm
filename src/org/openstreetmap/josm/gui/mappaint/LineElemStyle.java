@@ -52,7 +52,8 @@ public class LineElemStyle extends ElemStyle {
     public static LineElemStyle createCasing(Environment env) {
         LineElemStyle casing =  createImpl(env, true);
         if (casing != null) {
-            casing.object_z_index = -1;
+            casing.z_index = -100;
+            casing.isModifier = true;
         }
         return casing;
     }
@@ -178,7 +179,7 @@ public class LineElemStyle extends ElemStyle {
         if (!casing) {
             String textPos = c.get("text-position", null, String.class);
             if (textPos == null || equal(textPos, "line")) {
-                text = TextElement.create(c);
+                text = TextElement.create(c, PaintColors.TEXT.get());
             }
         }
 
@@ -191,8 +192,8 @@ public class LineElemStyle extends ElemStyle {
         /* show direction arrows, if draw.segment.relevant_directions_only is not set,
         the way is tagged with a direction key
         (even if the tag is negated as in oneway=false) or the way is selected */
-        boolean showDirection = selected || ((!paintSettings.isUseRealWidth()) && (paintSettings.isShowDirectionArrow()
-                && (!paintSettings.isShowRelevantDirectionsOnly() || w.hasDirectionKeys())));
+        boolean showDirection = !isModifier && (selected || ((!paintSettings.isUseRealWidth()) && (paintSettings.isShowDirectionArrow()
+                && (!paintSettings.isShowRelevantDirectionsOnly() || w.hasDirectionKeys()))));
         boolean reversedDirection = w.reversedDirection();
         /* head only takes over control if the option is true,
         the direction should be shown at all and not only because it's selected */

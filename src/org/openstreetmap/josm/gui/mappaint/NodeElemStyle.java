@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
+import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
@@ -160,7 +161,7 @@ public class NodeElemStyle extends ElemStyle {
             return null;
 
         NodeTextElement text = null;
-        TextElement te = TextElement.create(c);
+        TextElement te = TextElement.create(c, PaintColors.TEXT.get());
         if (te != null) {
             HorizontalTextAlignment hAlign = HorizontalTextAlignment.RIGHT;
             String hAlignStr = c.get("text-anchor-horizontal", null, String.class);
