@@ -697,6 +697,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="highway" value="motorway_junction" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <text key="ref" text="Number" default="" delete_if_empty="true" />
+            <text key="exit_to" text="Exit to" default="" delete_if_empty="true" />
         </item>
         <item name="Services" icon="styles/standard/vehicle/services.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=services" />
