@@ -192,17 +192,19 @@ public class LineElemStyle extends ElemStyle {
         /* show direction arrows, if draw.segment.relevant_directions_only is not set,
         the way is tagged with a direction key
         (even if the tag is negated as in oneway=false) or the way is selected */
-        boolean showDirection = !isModifier && (selected || ((!paintSettings.isUseRealWidth()) && (paintSettings.isShowDirectionArrow()
-                && (!paintSettings.isShowRelevantDirectionsOnly() || w.hasDirectionKeys()))));
-        boolean reversedDirection = w.reversedDirection();
+        boolean showOrientation = !isModifier && selected && !paintSettings.isUseRealWidth();
+        boolean showOneway = !isModifier && !selected &&
+                !paintSettings.isUseRealWidth() &&
+                paintSettings.isShowDirectionArrow() && w.hasDirectionKeys();
+        boolean onewayReversed = w.reversedDirection();
         /* head only takes over control if the option is true,
         the direction should be shown at all and not only because it's selected */
-        boolean showOnlyHeadArrowOnly = showDirection && !selected && paintSettings.isShowHeadArrowOnly();
+        boolean showOnlyHeadArrowOnly = showOrientation && !selected && paintSettings.isShowHeadArrowOnly();
         Node lastN;
 
         Color myDashedColor = dashesBackground;
         BasicStroke myLine = line, myDashLine = dashesLine;
-        if (realWidth > 0 && paintSettings.isUseRealWidth() && !showDirection) {
+        if (realWidth > 0 && paintSettings.isUseRealWidth() && !showOrientation) {
             float myWidth = (int) (100 /  (float) (painter.getCircum() / realWidth));
             if (myWidth < line.getLineWidth()) {
                 myWidth = line.getLineWidth();
@@ -215,20 +217,20 @@ public class LineElemStyle extends ElemStyle {
             }
         }
 
-        Color markColor = null;
+        Color myColor = color;
         if(w.isHighlighted()) {
-            markColor = paintSettings.getHighlightColor();
+            myColor = paintSettings.getHighlightColor();
         } else if (selected) {
-            markColor = paintSettings.getSelectedColor(color.getAlpha());
+            myColor = paintSettings.getSelectedColor(color.getAlpha());
         } else if (member) {
-            markColor = paintSettings.getRelationSelectedColor(color.getAlpha());
+            myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
         } else if(w.isDisabled()) {
-            markColor = paintSettings.getInactiveColor();
+            myColor = paintSettings.getInactiveColor();
             myDashedColor = paintSettings.getInactiveColor();
         }
 
-        painter.drawWay(w, markColor != null ? markColor : color, myLine, myDashLine, myDashedColor, text, showDirection,
-                selected ? false : reversedDirection, showOnlyHeadArrowOnly);
+        painter.drawWay(w, myColor, myLine, myDashLine, myDashedColor, text, showOrientation,
+                showOnlyHeadArrowOnly, showOneway, onewayReversed);
 
         if(paintSettings.isShowOrderNumber()) {
             int orderNumber = 0;

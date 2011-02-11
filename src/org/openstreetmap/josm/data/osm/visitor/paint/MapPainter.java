@@ -43,6 +43,7 @@ import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.VerticalTextAlignment;
 import org.openstreetmap.josm.gui.mappaint.TextElement;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Pair;
 
 public class MapPainter {
 
@@ -103,14 +104,26 @@ public class MapPainter {
         this.leftHandTraffic = leftHandTraffic;
     }
 
-    public void drawWay(Way way, Color color, BasicStroke line, BasicStroke dashes, Color dashedColor, TextElement text, boolean showDirection,
-            boolean reversedDirection, boolean showHeadArrowOnly) {
+    /**
+     * draw way
+     * @param showOrientation show arrows that indicate the technical orientation of
+     *              the way (defined by order of nodes)
+     * @param showOneway show symbols that indicate the direction of the feature,
+     *              e.g. oneway street or waterway
+     * @param onewayReversed for oneway=-1 and similar
+     */
+    public void drawWay(Way way, Color color, BasicStroke line, BasicStroke dashes, Color dashedColor, 
+            TextElement text, boolean showOrientation, boolean showHeadArrowOnly,
+            boolean showOneway, boolean onewayReversed) {
 
         GeneralPath path = new GeneralPath();
-        GeneralPath arrows = new GeneralPath();
+        GeneralPath orientationArrows = showOrientation ? new GeneralPath() : null;
+        GeneralPath onewayArrows = showOneway ? new GeneralPath() : null;
+        GeneralPath onewayArrowsCasing = showOneway ? new GeneralPath() : null;
         Rectangle bounds = g.getClipBounds();
         bounds.grow(100, 100);                  // avoid arrow heads at the border
 
+        double wayLength = 0;
         Point lastPoint = null;
         boolean initialMoveToNeeded = true;
         Iterator<Node> it = way.getNodes().iterator();
@@ -139,43 +152,83 @@ public class MapPainter {
                     path.lineTo(p2.x, p2.y);
 
                     /* draw arrow */
-                    if (showHeadArrowOnly ? !it.hasNext() : showDirection) {
-                        if (reversedDirection) {
-                            Point tmp = p1;
-                            p1 = p2;
-                            p2 = tmp;
-                        }
-                        final double l =  10. / p1.distance(p2);
+                    if (showHeadArrowOnly ? !it.hasNext() : showOrientation) {
+                        final double l =  (10. + line.getLineWidth()) / p1.distance(p2);
 
                         final double sx = l * (p1.x - p2.x);
                         final double sy = l * (p1.y - p2.y);
 
-                        arrows.moveTo(p2.x, p2.y);
-                        arrows.lineTo (p2.x + (int) Math.round(cosPHI * sx - sinPHI * sy), p2.y + (int) Math.round(sinPHI * sx + cosPHI * sy));
-                        arrows.moveTo (p2.x + (int) Math.round(cosPHI * sx + sinPHI * sy), p2.y + (int) Math.round(- sinPHI * sx + cosPHI * sy));
-                        arrows.lineTo(p2.x, p2.y);
+                        orientationArrows.moveTo(p2.x, p2.y);
+                        orientationArrows.lineTo (p2.x + cosPHI * sx - sinPHI * sy, p2.y + sinPHI * sx + cosPHI * sy);
+                        orientationArrows.moveTo (p2.x + cosPHI * sx + sinPHI * sy, p2.y - sinPHI * sx + cosPHI * sy);
+                        orientationArrows.lineTo(p2.x, p2.y);
+                    }
+                    if (showOneway) {
+                        final double segmentLength = p1.distance(p2);
+                        final double nx = (p2.x - p1.x) / segmentLength;
+                        final double ny = (p2.y - p1.y) / segmentLength;
+
+                        final double interval = 60;
+                        // distance from p1
+                        double dist = interval - (wayLength % interval);
+
+                        while (dist < segmentLength) {
+                            for (Pair<Float, GeneralPath> sizeAndPath : Arrays.asList(new Pair[] {
+                                    new Pair<Float, GeneralPath>(3f, onewayArrowsCasing),
+                                    new Pair<Float, GeneralPath>(2f, onewayArrows)})) {
+
+                                // scale such that border is 1 px
+                                final double fac = - (onewayReversed ? -1 : 1) * sizeAndPath.a * (1 + sinPHI) / (sinPHI * cosPHI);
+                                final double sx = nx * fac;
+                                final double sy = ny * fac;
+
+                                // Attach the triangle at the incenter and not at the tip.
+                                // Makes the border even at all sides.
+                                final double x = p1.x + nx * (dist + (onewayReversed ? -1 : 1) * (sizeAndPath.a / sinPHI));
+                                final double y = p1.y + ny * (dist + (onewayReversed ? -1 : 1) * (sizeAndPath.a / sinPHI));
+
+                                sizeAndPath.b.moveTo(x, y);
+                                sizeAndPath.b.lineTo (x + cosPHI * sx - sinPHI * sy, y + sinPHI * sx + cosPHI * sy);
+                                sizeAndPath.b.lineTo (x + cosPHI * sx + sinPHI * sy, y - sinPHI * sx + cosPHI * sy);
+                                sizeAndPath.b.lineTo(x, y);
+                            }
+                            dist += interval;
+                        }
+                        wayLength += segmentLength;
                     }
                 }
             }
             lastPoint = p;
         }
-        displaySegments(path, arrows, color, line, dashes, dashedColor);
+        displaySegments(path, orientationArrows, onewayArrows, onewayArrowsCasing, color, line, dashes, dashedColor);
         drawTextOnPath(way, text);
     }
 
-    private void displaySegments(GeneralPath path, GeneralPath arrows, Color color, BasicStroke line, BasicStroke dashes, Color dashedColor) {
+    private void displaySegments(GeneralPath path, GeneralPath orientationArrows, GeneralPath onewayArrows, GeneralPath onewayArrowsCasing,
+            Color color, BasicStroke line, BasicStroke dashes, Color dashedColor) {
         g.setColor(inactive ? inactiveColor : color);
         if (useStrokes) {
             g.setStroke(line);
         }
         g.draw(path);
-        g.draw(arrows);
 
         if(!inactive && useStrokes && dashes != null) {
             g.setColor(dashedColor);
             g.setStroke(dashes);
             g.draw(path);
-            g.draw(arrows);
+        }
+
+        if (orientationArrows != null) {
+            g.setColor(inactive ? inactiveColor : color);
+            g.setStroke(new BasicStroke(line.getLineWidth(), line.getEndCap(), BasicStroke.JOIN_MITER, line.getMiterLimit()));
+            g.draw(orientationArrows);
+        }
+
+        if (onewayArrows != null) {
+            g.setStroke(new BasicStroke(1, line.getEndCap(), BasicStroke.JOIN_MITER, line.getMiterLimit()));
+            g.fill(onewayArrowsCasing);
+            g.setColor(inactive ? inactiveColor : backgroundColor);
+            g.fill(onewayArrows);
         }
 
         if(useStrokes) {
