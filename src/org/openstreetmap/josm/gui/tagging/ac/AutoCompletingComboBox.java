@@ -84,16 +84,9 @@ public class AutoCompletingComboBox extends JComboBox {
                 }
             }
 
-            // the string being inserted might be a "full" string from the list
-            // of valid completions (instanceof AutoCompletionListItem), or a
-            // "partial" string being typed (instanceof String).
-            Object item = comboBox.getSelectedItem();
-            if (item != null && (item instanceof String || !curText.equals(((AutoCompletionListItem) item).getValue()))) {
-                // only in the latter case do we have to
             // lookup and select a matching item
-                item = lookupItem(curText);
+            Object item = lookupItem(curText);
             setSelectedItem(item);
-            }
             if (initial) {
                 start = 0;
             }
@@ -120,11 +113,14 @@ public class AutoCompletingComboBox extends JComboBox {
             selecting = false;
         }
 
-        private AutoCompletionListItem lookupItem(String pattern) {
+        private Object lookupItem(String pattern) {
             ComboBoxModel model = comboBox.getModel();
             AutoCompletionListItem bestItem = null;
             for (int i = 0, n = model.getSize(); i < n; i++) {
                 AutoCompletionListItem currentItem = (AutoCompletionListItem) model.getElementAt(i);
+                if (currentItem.getValue().equals(pattern)) {
+                    return currentItem;
+                }
                 if (currentItem.getValue().startsWith(pattern)) {
                     if (bestItem == null || currentItem.getPriority().compareTo(bestItem.getPriority()) > 0) {
                         bestItem = currentItem;
