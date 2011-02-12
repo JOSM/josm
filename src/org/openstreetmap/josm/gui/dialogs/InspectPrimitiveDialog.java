@@ -9,6 +9,7 @@ import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.JPanel;
@@ -30,6 +31,7 @@ import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.NavigatableComponent;
+import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
@@ -287,8 +289,8 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                     txtMappaint.append("\n\n> applying "+getSort(s)+" style \""+s.getDisplayString()+"\n");
                     s.apply(mc, osm, scale, null, false);
                     txtMappaint.append("\nRange:"+mc.range);
-                    for (String key : mc.keySet()) {
-                        txtMappaint.append("\n "+key+": \n"+mc.get(key));
+                    for (Entry<String, Cascade> e : mc.getLayers()) {
+                        txtMappaint.append("\n "+e.getKey()+": \n"+e.getValue());
                     }
                 } else {
                     txtMappaint.append("\n\n> skipping \""+s.getDisplayString()+"\" (not active)");

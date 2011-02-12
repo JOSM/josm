@@ -44,7 +44,7 @@ abstract public class Instruction {
                     value = new IconReference((String) value, env.source);
                 }
             }
-            env.getCascade().putOrClear(key, value);
+            env.mc.getOrCreateCascade(env.layer).putOrClear(key, value);
         }
 
         @Override

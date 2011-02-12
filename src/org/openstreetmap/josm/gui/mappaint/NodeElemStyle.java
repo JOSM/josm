@@ -123,7 +123,7 @@ public class NodeElemStyle extends ElemStyle {
     
     public static final NodeElemStyle SIMPLE_NODE_ELEMSTYLE;
     static {
-        Cascade c = new Cascade(false);
+        Cascade c = new Cascade();
         c.put("text", "auto");
         SIMPLE_NODE_ELEMSTYLE = create(c, true);
     }
@@ -148,6 +148,9 @@ public class NodeElemStyle extends ElemStyle {
 
         if (iconRef != null) {
             icon = MapPaintStyles.getIcon(iconRef, false);
+            if (icon == null) {
+                icon = MapPaintStyles.getNoIcon_Icon(iconRef.source, false);
+            }
             iconAlpha = Math.min(255, Math.max(0, Integer.valueOf(Main.pref.getInteger("mappaint.icon-image-alpha", 255))));
             Integer pAlpha = Utils.color_float2int(c.get("icon-opacity", null, float.class));
             if (pAlpha != null) {

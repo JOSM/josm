@@ -2,9 +2,6 @@
 package org.openstreetmap.josm.gui.mappaint;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.mappaint.Cascade;
-import org.openstreetmap.josm.gui.mappaint.MultiCascade;
-import org.openstreetmap.josm.gui.mappaint.StyleSource;
 
 public class Environment {
     
@@ -20,7 +17,4 @@ public class Environment {
         this.source = source;
     }
 
-    public Cascade getCascade() {
-        return mc.getCascade(layer);
-    }
 }

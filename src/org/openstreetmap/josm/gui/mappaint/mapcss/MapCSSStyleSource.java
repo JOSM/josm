@@ -57,7 +57,7 @@ public class MapCSSStyleSource extends StyleSource {
         } catch (ParseException e) {
             System.err.println(tr("Warning: failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
             e.printStackTrace();
-            logError(e);
+            logError(new ParseException(e.getMessage())); // allow e to be garbage collected, it links to the entire token stream
         }
     }
 
@@ -123,19 +123,12 @@ public class MapCSSStyleSource extends StyleSource {
                         sub = "default";
                     }
 
-                    Cascade c = mc.get(sub);
-                    if (c == null) {
-                        if (mc.containsKey("*")) {
-                            c = mc.get("*").clone();
-                        } else {
-                            c = new Cascade(!sub.equals("default"));
-                        }
-                        mc.put(sub, c);
-                    }
-
                     if (sub.equals("*")) {
-                        for (Entry<String, Cascade> entry : mc.entrySet()) {
+                        for (Entry<String, Cascade> entry : mc.getLayers()) {
                             env.layer = entry.getKey();
+                            if (Utils.equal(env.layer, "*")) {
+                                continue;
+                            }
                             for (Instruction i : r.declaration) {
                                 i.execute(env);
                             }

@@ -121,7 +121,7 @@ public interface Expression {
             public Object prop(String key, String layer) {
                 Cascade c;
                 if (layer == null) {
-                    c = env.getCascade();
+                    c = env.mc.getCascade(env.layer);
                 } else {
                     c = env.mc.getCascade(layer);
                 }
@@ -135,7 +135,10 @@ public interface Expression {
             public Boolean is_prop_set(String key, String layer) {
                 Cascade c;
                 if (layer == null) {
-                    c = env.getCascade();
+                    // env.layer is null if expression is evaluated
+                    // in ExpressionCondition, but MultiCascade.getCascade
+                    // handles this
+                    c = env.mc.getCascade(env.layer);
                 } else {
                     c = env.mc.getCascade(layer);
                 }

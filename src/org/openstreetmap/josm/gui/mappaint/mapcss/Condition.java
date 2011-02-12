@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Environment;
@@ -97,15 +98,20 @@ abstract public class Condition {
 
         private String k;
         private boolean not;
+        private boolean yes;
 
-        public KeyCondition(String k, boolean not) {
+        public KeyCondition(String k, boolean not, boolean yes) {
             this.k = k;
             this.not = not;
+            this.yes = yes;
         }
 
         @Override
         public boolean applies(Environment e) {
-            return e.osm.hasKey(k) ^ not;
+            if (yes)
+                return OsmUtils.isTrue(e.osm.get(k)) ^ not;
+            else
+                return e.osm.hasKey(k) ^ not;
         }
 
         @Override

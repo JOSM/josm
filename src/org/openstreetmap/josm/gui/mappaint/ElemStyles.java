@@ -218,7 +218,7 @@ public class ElemStyles {
             }
         }
 
-        for (Entry<String, Cascade> e : mc.entrySet()) {
+        for (Entry<String, Cascade> e : mc.getLayers()) {
             if ("*".equals(e.getKey()))
                 continue;
             env.layer = e.getKey();

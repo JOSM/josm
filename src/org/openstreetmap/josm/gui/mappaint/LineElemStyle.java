@@ -18,11 +18,10 @@ import org.openstreetmap.josm.tools.Utils;
 public class LineElemStyle extends ElemStyle {
 
     public static LineElemStyle createSimpleLineStyle(Color color) {
-        Cascade c = new Cascade(false);
+        MultiCascade mc = new MultiCascade();
+        Cascade c = mc.getOrCreateCascade("default");
         c.put("width", -1f);
         c.put("color", color != null ? color : PaintColors.UNTAGGED.get());
-        MultiCascade mc = new MultiCascade();
-        mc.put("default", c);
         return createLine(new Environment(null, mc, "default", null));
     }
     public static final LineElemStyle UNTAGGED_WAY = createSimpleLineStyle(null);
@@ -59,7 +58,7 @@ public class LineElemStyle extends ElemStyle {
     }
 
     private static LineElemStyle createImpl(Environment env, boolean casing) {
-        Cascade c = env.getCascade();
+        Cascade c = env.mc.getCascade(env.layer);
         Cascade c_def = env.mc.getCascade("default");
 
         String prefix = casing ? "casing-" : "";

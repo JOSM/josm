@@ -277,11 +277,7 @@ public class XmlStyleSource extends StyleSource {
 
     @Override
     public void apply(MultiCascade mc, OsmPrimitive osm, double scale, OsmPrimitive multipolyOuterWay, boolean pretendWayIsClosed) {
-        Cascade def = mc.get("default");
-        if (def == null) {
-            def = new Cascade(false);
-            mc.put("default", def);
-        }
+        Cascade def = mc.getOrCreateCascade("default");
         boolean useMinMaxScale = Main.pref.getBoolean("mappaint.zoomLevelDisplay", false);
 
         if (osm instanceof Node || (osm instanceof Relation && "restriction".equals(osm.get("type")))) {
@@ -318,27 +314,19 @@ public class XmlStyleSource extends StyleSource {
             if (refWidth != null && p.linemods != null) {
                 int numOver = 0, numUnder = 0;
 
-                while (mc.containsKey(String.format("over_%d", ++numOver))) {}
-                while (mc.containsKey(String.format("under_%d", ++numUnder))) {}
+                while (mc.hasLayer(String.format("over_%d", ++numOver))) {}
+                while (mc.hasLayer(String.format("under_%d", ++numUnder))) {}
 
                 for (LinemodPrototype mod : p.linemods) {
                     Cascade c;
                     if (mod.over) {
                         String layer = String.format("over_%d", numOver);
-                        c = mc.get(layer);
-                        if (c == null) {
-                            c = new Cascade(true);
-                            mc.put(layer, c);
-                        }
+                        c = mc.getOrCreateCascade(layer);
                         c.put("object-z-index", new Float(numOver));
                         ++numOver;
                     } else {
                         String layer = String.format("under_%d", numUnder);
-                        c = mc.get(layer);
-                        if (c == null) {
-                            c = new Cascade(true);
-                            mc.put(layer, c);
-                        }
+                        c = mc.getOrCreateCascade(layer);
                         c.put("object-z-index", new Float(-numUnder));
                         ++numUnder;
                     }

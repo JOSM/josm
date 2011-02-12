@@ -289,12 +289,14 @@ Condition condition() :
 Condition simple_key_condition() :
 {
     boolean not = false;
+    boolean yes = false;
     String key;
 }
 {
     ( <EXCLAMATION> { not = true; } )?
     key=string_or_ident()
-    { return new Condition.KeyCondition(key, not); }
+    ( <QUESTION> { yes = true; } )?
+    { return new Condition.KeyCondition(key, not, yes); }
 }
 
 Condition simple_key_value_condition() :
@@ -503,11 +505,13 @@ Object literal() :
 
 JAVACODE
 void error_skipto(int kind) {
+    if (token.kind == EOF)
+        throw new ParseException("Reached end of file while parsing");
     ParseException e = generateParseException();
     System.err.println("Skipping to the next rule, because of an error:");
     System.err.println(e);
     if (sheet != null) {
-        sheet.logError(e);
+        sheet.logError(new ParseException(e.getMessage()));
     }
     Token t;
     do {
@@ -526,6 +530,14 @@ String readRaw() {
     StringBuilder s = new StringBuilder();
     while (true) {
         t = getNextToken();
+        if ((t.kind == S || t.kind == STRING || t.kind == UNEXPECTED_CHAR) &&
+                t.image.contains("\n")) {
+            ParseException e = new ParseException(String.format("Warning: end of line while reading an unquoted string at line %s column %s.", t.beginLine, t.beginColumn));
+            System.err.println(e);
+            if (sheet != null) {
+                sheet.logError(e);
+            }
+        }
         if (t.kind == SEMICOLON || t.kind == EOF)
             break;
         s.append(t.image);

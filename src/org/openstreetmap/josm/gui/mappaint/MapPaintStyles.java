@@ -36,7 +36,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class MapPaintStyles {
 
     private static ElemStyles styles = new ElemStyles();
-    private static Collection<String> iconDirs;
 
     public static ElemStyles getStyles()
     {
@@ -61,9 +60,38 @@ public class MapPaintStyles {
 
     public static ImageIcon getIcon(IconReference ref, boolean sanitize)
     {
-        String styleName = ref.source.getPrefName();
+        String namespace = ref.source.getPrefName();
+        ImageIcon i = ImageProvider.getIfAvailable(getIconSourceDirs(ref.source), "mappaint."+namespace, null, ref.iconName, ref.source.zipIcons, sanitize);
+        if(i == null)
+        {
+            System.out.println("Mappaint style \""+namespace+"\" icon \"" + ref.iconName + "\" not found.");
+            return null;
+        }
+        return i;
+    }
+
+    /**
+     * No icon with the given name was found, show a dummy icon instead
+     * @return the icon misc/no_icon.png, in descending priority:
+     *   - relative to source file
+     *   - from user icon paths
+     *   - josm's default icon
+     *  can be null if the defaults are turned off by user
+     */
+    public static ImageIcon getNoIcon_Icon(StyleSource source, boolean sanitize) {
+        return ImageProvider.getIfAvailable(getIconSourceDirs(source), "mappaint."+source.getPrefName(), null, "misc/no_icon.png", source.zipIcons, sanitize);
+    }
+
+    private static List<String> getIconSourceDirs(StyleSource source) {
         List<String> dirs = new LinkedList<String>();
-        for(String fileset : iconDirs)
+
+        String sourceDir = source.getLocalSourceDir();
+        if (sourceDir != null) {
+            dirs.add(sourceDir);
+        }
+
+        Collection<String> prefIconDirs = Main.pref.getCollection("mappaint.icon.sources");
+        for(String fileset : prefIconDirs)
         {
             String[] a;
             if(fileset.indexOf("=") >= 0) {
@@ -73,34 +101,22 @@ public class MapPaintStyles {
             }
 
             /* non-prefixed path is generic path, always take it */
-            if(a[0].length() == 0 || styleName.equals(a[0])) {
+            if(a[0].length() == 0 || source.getPrefName().equals(a[0])) {
                 dirs.add(a[1]);
             }
         }
-        String sourceDir = ref.source.getLocalSourceDir();
-        if (sourceDir != null) {
-            dirs.add(sourceDir);
+
+        if (Main.pref.getBoolean("mappaint.icon.enable-defaults", true)) {
+            /* don't prefix icon path, as it should be generic */
+            dirs.add("resource://images/styles/standard/");
+            dirs.add("resource://images/styles/");
         }
-        ImageIcon i = ImageProvider.getIfAvailable(dirs, "mappaint."+styleName, null, ref.iconName, ref.source.zipIcons, sanitize);
-        if(i == null)
-        {
-            System.out.println("Mappaint style \""+styleName+"\" icon \"" + ref.iconName + "\" not found.");
-            i = ImageProvider.getIfAvailable(dirs, "mappaint."+styleName, null, "misc/no_icon.png");
-        }
-        return i;
+        
+        return dirs;
     }
 
     public static void readFromPreferences() {
         styles.clear();
-        iconDirs = Main.pref.getCollection("mappaint.icon.sources", Collections.<String>emptySet());
-        if(Main.pref.getBoolean("mappaint.icon.enable-defaults", true))
-        {
-            LinkedList<String> f = new LinkedList<String>(iconDirs);
-            /* don't prefix icon path, as it should be generic */
-            f.add("resource://images/styles/standard/");
-            f.add("resource://images/styles/");
-            iconDirs = f;
-        }
 
         Collection<? extends SourceEntry> sourceEntries = MapPaintPrefMigration.INSTANCE.get();
 
