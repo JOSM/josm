@@ -49,7 +49,7 @@ public class XmlStyleSource extends StyleSource {
     }
 
     protected void init() {
-        clearErrors();
+        super.init();
         icons.clear();
         lines.clear();
         modifiers.clear();

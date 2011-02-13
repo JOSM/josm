@@ -620,14 +620,14 @@ public abstract class SourceEditor extends JPanel {
         public ExtendedSourceEntry(String simpleFileName, String url) {
             super(url, null, null, true);
             this.simpleFileName = simpleFileName;
-            version = author = link = description = shortdescription = null;
+            version = author = link = description = title = null;
         }
 
         /**
          * @return string representation for GUI list or menu entry
          */
         public String getDisplayName() {
-            return shortdescription == null ? simpleFileName : shortdescription;
+            return title == null ? simpleFileName : title;
         }
 
         public String getTooltip() {
@@ -655,10 +655,7 @@ public abstract class SourceEditor extends JPanel {
 
     protected class EditSourceEntryDialog extends ExtendedDialog {
 
-        /**
-         * We call this text field "name", but it is actually the shortdescription.
-         */
-        private JTextField tfName;
+        private JTextField tfTitle;
         private JTextField tfURL;
         private JCheckBox cbActive;
 
@@ -669,9 +666,9 @@ public abstract class SourceEditor extends JPanel {
 
             JPanel p = new JPanel(new GridBagLayout());
 
-            tfName = new JTextField(60);
+            tfTitle = new JTextField(60);
             p.add(new JLabel(tr("Name (optional):")), GBC.std().insets(15, 0, 5, 5));
-            p.add(tfName, GBC.eol().insets(0, 0, 5, 5));
+            p.add(tfTitle, GBC.eol().insets(0, 0, 5, 5));
 
             tfURL = new JTextField(60);
             p.add(new JLabel(tr("URL / File:")), GBC.std().insets(15, 0, 5, 0));
@@ -681,8 +678,8 @@ public abstract class SourceEditor extends JPanel {
             p.add(fileChooser, GBC.eol().insets(0, 0, 5, 5));
 
             if (e != null) {
-                if (e.shortdescription != null) {
-                    tfName.setText(e.shortdescription);
+                if (e.title != null) {
+                    tfTitle.setText(e.title);
                 }
                 tfURL.setText(e.url);
             }
@@ -737,8 +734,8 @@ public abstract class SourceEditor extends JPanel {
             }
         }
 
-        public String getShortdescription() {
-            return tfName.getText();
+        public String getTitle() {
+            return tfTitle.getText();
         }
 
         public String getURL() {
@@ -772,7 +769,7 @@ public abstract class SourceEditor extends JPanel {
                 }
                 activeSourcesModel.addSource(new SourceEntry(
                         editEntryDialog.getURL(),
-                        null, editEntryDialog.getShortdescription(), active));
+                        null, editEntryDialog.getTitle(), active));
                 activeSourcesModel.fireTableDataChanged();
             }
         }
@@ -827,10 +824,10 @@ public abstract class SourceEditor extends JPanel {
                     SourceEditor.this, tr("Edit source entry:"), e);
             editEntryDialog.showDialog();
             if (editEntryDialog.getValue() == 1) {
-                if (e.shortdescription != null || !equal(editEntryDialog.getShortdescription(), "")) {
-                    e.shortdescription = editEntryDialog.getShortdescription();
-                    if (equal(e.shortdescription, "")) {
-                        e.shortdescription = null;
+                if (e.title != null || !equal(editEntryDialog.getTitle(), "")) {
+                    e.title = editEntryDialog.getTitle();
+                    if (equal(e.title, "")) {
+                        e.title = null;
                     }
                 }
                 e.url = editEntryDialog.getURL();
@@ -1173,8 +1170,10 @@ public abstract class SourceEditor extends JPanel {
                                 last.link = value;
                             } else if ("description".equals(key) && last.description == null) {
                                 last.description = value;
-                            } else if ("shortdescription".equals(key) && last.shortdescription == null) {
-                                last.shortdescription = value;
+                            } else if ((lang + "shortdescription").equals(key) && last.title == null) {
+                                last.title = value;
+                            } else if ("shortdescription".equals(key) && last.title == null) {
+                                last.title = value;
                             } else if ("name".equals(key) && last.name == null) {
                                 last.name = value;
                             } else if ((lang + "author").equals(key)) {
@@ -1183,8 +1182,6 @@ public abstract class SourceEditor extends JPanel {
                                 last.link = value;
                             } else if ((lang + "description").equals(key)) {
                                 last.description = value;
-                            } else if ((lang + "shortdescription").equals(key)) {
-                                last.shortdescription = value;
                             }
                         }
                     } else {
@@ -1221,11 +1218,11 @@ public abstract class SourceEditor extends JPanel {
 
         private String fromSourceEntry(SourceEntry entry) {
             StringBuilder s = new StringBuilder("<html><b>");
-            if (entry.shortdescription != null) {
-                s.append(entry.shortdescription).append("</b> (");
+            if (entry.title != null) {
+                s.append(entry.title).append("</b> (");
             }
             s.append(entry.url);
-            if (entry.shortdescription != null) {
+            if (entry.title != null) {
                 s.append(")");
             }
             s.append("</html>");

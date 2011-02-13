@@ -31,9 +31,9 @@ public class SourceEntry {
     public String name;
 
     /**
-     * A short description that can be used as menu entry.
+     * A title that can be used as menu entry.
      */
-    public String shortdescription;
+    public String title;
 
     /**
      * active is a boolean flag that can be used to turn the style on or off
@@ -44,14 +44,14 @@ public class SourceEntry {
     public SourceEntry(String url, String name, String shortdescription, Boolean active) {
         this.url = url;
         this.name = equal(name, "") ? null : name;
-        this.shortdescription = equal(shortdescription, "") ? null : shortdescription;
+        this.title = equal(shortdescription, "") ? null : shortdescription;
         this.active = active;
     }
 
     public SourceEntry(SourceEntry e) {
         this.url = e.url;
         this.name = e.name;
-        this.shortdescription = e.shortdescription;
+        this.title = e.title;
         this.active = e.active;
     }
 
@@ -62,7 +62,7 @@ public class SourceEntry {
         final SourceEntry other = (SourceEntry) obj;
         return equal(other.url, url) && 
                 equal(other.name, name) &&
-                equal(other.shortdescription, shortdescription) &&
+                equal(other.title, title) &&
                 other.active == active;
     }
 
@@ -71,14 +71,14 @@ public class SourceEntry {
         int hash = 5;
         hash = 89 * hash + (this.url != null ? this.url.hashCode() : 0);
         hash = 89 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 89 * hash + (this.shortdescription != null ? this.shortdescription.hashCode() : 0);
+        hash = 89 * hash + (this.title != null ? this.title.hashCode() : 0);
         hash = 89 * hash + (this.active ? 1 : 0);
         return hash;
     }
 
     @Override
     public String toString() {
-        return shortdescription != null ? shortdescription : url;
+        return title != null ? title : url;
     }
 
     /**
@@ -87,8 +87,8 @@ public class SourceEntry {
      * if no shortdescription is available.
      */
     public String getDisplayString() {
-        if (shortdescription != null)
-            return shortdescription;
+        if (title != null)
+            return title;
         else
             return getFileNamePart();
     }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rules xmlns="http://josm.openstreetmap.de/mappaint-style-1.0"
-       name="standard">
+       name="standard" icon="dialogs/mappaint/josm_small.png">
 <!--
 A little help:
 1. every rule starts with <rule> and ends with </rule>

@@ -241,14 +241,14 @@ public class MapPaintPreference implements PreferenceSetting {
         public Collection<ExtendedSourceEntry> getDefault() {
             ExtendedSourceEntry i = new ExtendedSourceEntry("elemstyles.xml", "resource://styles/standard/elemstyles.xml");
             i.name = "standard";
-            i.shortdescription = tr("Internal Style");
+            i.title = tr("JOSM Internal Style");
             i.description = tr("Internal style to be used as base for runtime switchable overlay styles");
             return Collections.singletonList(i);
         }
 
         @Override
         public Collection<String> serialize(SourceEntry entry) {
-            return Arrays.asList(new String[] {entry.url, entry.name, entry.shortdescription, Boolean.toString(entry.active)});
+            return Arrays.asList(new String[] {entry.url, entry.name, entry.title, Boolean.toString(entry.active)});
         }
 
         @Override

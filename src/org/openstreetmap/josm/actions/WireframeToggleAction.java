@@ -67,4 +67,8 @@ public class WireframeToggleAction extends JosmAction {
     protected void updateEnabledState() {
         setEnabled(Main.map != null && Main.main.getEditLayer() != null);
     }
+
+    public boolean isSelected() {
+        return selected;
+    }
 }

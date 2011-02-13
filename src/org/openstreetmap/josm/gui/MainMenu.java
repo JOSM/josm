@@ -137,6 +137,7 @@ public class MainMenu extends JMenuBar {
     public final JosmAction preferences = new PreferencesAction();
 
     /* View menu */
+    public final WireframeToggleAction wireFrameToggleAction = new WireframeToggleAction();
     public final JosmAction toggleGPXLines = new ToggleGPXLinesAction();
     public final InfoAction info = new InfoAction();
     public final HistoryInfoAction historyinfo = new HistoryInfoAction();
@@ -271,7 +272,6 @@ public class MainMenu extends JMenuBar {
         add(editMenu, preferences);
 
         // -- wireframe toggle action
-        WireframeToggleAction wireFrameToggleAction = new WireframeToggleAction();
         final JCheckBoxMenuItem wireframe = new JCheckBoxMenuItem(wireFrameToggleAction);
         viewMenu.add(wireframe);
         wireframe.setAccelerator(wireFrameToggleAction.getShortcut().getKeyStroke());

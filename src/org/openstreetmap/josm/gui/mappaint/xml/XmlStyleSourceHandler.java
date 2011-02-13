@@ -159,8 +159,11 @@ public class XmlStyleSourceHandler extends DefaultHandler
                 if (style.name == null) {
                     style.name = atts.getValue("name");
                 }
-                if (style.shortdescription == null) {
-                    style.shortdescription = atts.getValue("shortdescription");
+                if (style.title == null) {
+                    style.title = atts.getValue("shortdescription");
+                }
+                if (style.icon == null) {
+                    style.icon = atts.getValue("icon");
                 }
             }
             else if (qName.equals("scale_max")) {

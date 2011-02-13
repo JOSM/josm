@@ -328,14 +328,14 @@ public class TaggingPresetPreference implements PreferenceSetting {
         @Override
         public Collection<ExtendedSourceEntry> getDefault() {
             ExtendedSourceEntry i = new ExtendedSourceEntry("defaultpresets.xml", "resource://data/defaultpresets.xml");
-            i.shortdescription = tr("Internal Preset");
+            i.title = tr("Internal Preset");
             i.description = tr("The default preset for JOSM");
             return Collections.singletonList(i);
         }
 
         @Override
         public Collection<String> serialize(SourceEntry entry) {
-            return Arrays.asList(new String[] {entry.url, entry.shortdescription});
+            return Arrays.asList(new String[] {entry.url, entry.title});
         }
 
         @Override

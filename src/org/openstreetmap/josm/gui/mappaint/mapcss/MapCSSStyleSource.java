@@ -40,8 +40,8 @@ public class MapCSSStyleSource extends StyleSource {
 
     @Override
     public void loadStyleSource() {
+        init();
         rules.clear();
-        clearErrors();
         try {
             MapCSSParser parser = new MapCSSParser(getSourceInputStream(), "UTF-8");
             parser.sheet(this);
@@ -99,9 +99,13 @@ public class MapCSSStyleSource extends StyleSource {
             }
         }
         Cascade c = mc.getCascade("default");
-        String sd = c.get("title", null, String.class);
-        if (sd != null) {
-            this.shortdescription = sd;
+        String pTitle = c.get("title", null, String.class);
+        if (title == null) {
+            title = pTitle;
+        }
+        String pIcon = c.get("icon", null, String.class);
+        if (icon == null) {
+            icon = pIcon;
         }
     }
 

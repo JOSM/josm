@@ -8,9 +8,11 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.BufferedInputStream;
@@ -25,7 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
+import javax.swing.DefaultButtonModel;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -37,14 +41,17 @@ import javax.swing.JTextArea;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.SingleSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
@@ -71,6 +78,9 @@ public class MapPaintDialog extends ToggleDialog {
 
     protected OnOffAction onoffAction;
     protected ReloadAction reloadAction;
+    protected MoveUpDownAction upAction;
+    protected MoveUpDownAction downAction;
+    protected JCheckBox cbWireframe;
 
     public MapPaintDialog() {
         super(tr("Map Paint Styles"), "mapstyle", tr("configure the map painting style"),
@@ -83,6 +93,27 @@ public class MapPaintDialog extends ToggleDialog {
         pnl.setLayout(new BorderLayout());
 
         model = new StylesModel();
+
+        cbWireframe = new JCheckBox();
+        JLabel wfLabel = new JLabel(tr("Wireframe View"), ImageProvider.get("dialogs/mappaint", "wireframe_small"), JLabel.HORIZONTAL);
+        wfLabel.setFont(wfLabel.getFont().deriveFont(Font.PLAIN));
+
+        cbWireframe.setModel(new DefaultButtonModel() {
+            @Override
+            public void setSelected(boolean b) {
+                super.setSelected(b);
+                tblStyles.setEnabled(!b);
+                onoffAction.updateEnabledState();
+                upAction.updateEnabledState();
+                downAction.updateEnabledState();
+            }
+        });
+        cbWireframe.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Main.main.menu.wireFrameToggleAction.actionPerformed(null);
+            }
+        });
+        cbWireframe.setBorder(new EmptyBorder(new Insets(1,1,1,1)));
         
         tblStyles = new StylesTable(model);
         tblStyles.setSelectionModel(selectionModel= new DefaultListSelectionModel());
@@ -93,11 +124,17 @@ public class MapPaintDialog extends ToggleDialog {
         tblStyles.setTableHeader(null);
         tblStyles.getColumnModel().getColumn(0).setMaxWidth(1);
         tblStyles.getColumnModel().getColumn(0).setResizable(false);
+        tblStyles.getColumnModel().getColumn(0).setCellRenderer(new MyCheckBoxRenderer());
         tblStyles.getColumnModel().getColumn(1).setCellRenderer(new StyleSourceRenderer());
         tblStyles.setShowGrid(false);
         tblStyles.setIntercellSpacing(new Dimension(0, 0));
 
-        pnl.add(new JScrollPane(tblStyles), BorderLayout.CENTER);
+        JPanel p = new JPanel(new GridBagLayout());
+        p.add(cbWireframe, GBC.std(0, 0));
+        p.add(wfLabel, GBC.std(1, 0).weight(1, 0));
+        p.add(tblStyles, GBC.std(0, 1).span(2).fill());
+
+        pnl.add(new JScrollPane(p), BorderLayout.CENTER);
 
         pnl.add(buildButtonRow(), BorderLayout.SOUTH);
 
@@ -125,15 +162,15 @@ public class MapPaintDialog extends ToggleDialog {
         JPanel p = getButtonPanel(4);
         reloadAction = new ReloadAction();
         onoffAction = new OnOffAction();
-        MoveUpDownAction up = new MoveUpDownAction(false);
-        MoveUpDownAction down = new MoveUpDownAction(true);
+        upAction = new MoveUpDownAction(false);
+        downAction = new MoveUpDownAction(true);
         selectionModel.addListSelectionListener(onoffAction);
         selectionModel.addListSelectionListener(reloadAction);
-        selectionModel.addListSelectionListener(up);
-        selectionModel.addListSelectionListener(down);
+        selectionModel.addListSelectionListener(upAction);
+        selectionModel.addListSelectionListener(downAction);
         p.add(new SideButton(onoffAction));
-        p.add(new SideButton(up));
-        p.add(new SideButton(down));
+        p.add(new SideButton(upAction));
+        p.add(new SideButton(downAction));
         p.add(new SideButton(new LaunchMapPaintPreferencesAction()));
 
         return p;
@@ -142,10 +179,12 @@ public class MapPaintDialog extends ToggleDialog {
     @Override
     public void showNotify() {
         MapPaintStyles.addMapPaintSylesUpdateListener(model);
+        Main.main.menu.wireFrameToggleAction.addButtonModel(cbWireframe.getModel());
     }
 
     @Override
     public void hideNotify() {
+        Main.main.menu.wireFrameToggleAction.removeButtonModel(cbWireframe.getModel());
         MapPaintStyles.removeMapPaintSylesUpdateListener(model);
     }
 
@@ -231,7 +270,22 @@ public class MapPaintDialog extends ToggleDialog {
         }
     }
 
-    private static class StyleSourceRenderer extends DefaultTableCellRenderer {
+    private class MyCheckBoxRenderer extends JCheckBox implements TableCellRenderer {
+
+        public MyCheckBoxRenderer() {
+            setHorizontalAlignment(SwingConstants.CENTER);
+            setVerticalAlignment(SwingConstants.CENTER);
+        }
+
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
+            boolean b = (Boolean) value;
+            setSelected(b);
+            setEnabled(!cbWireframe.isSelected());
+            return this;
+        }
+    }
+
+    private class StyleSourceRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             StyleSource s = (StyleSource) value;
@@ -239,6 +293,7 @@ public class MapPaintDialog extends ToggleDialog {
                     s.getDisplayString(), isSelected, hasFocus, row, column);
             label.setIcon(s.getIcon());
             label.setToolTipText(s.getToolTipText());
+            label.setEnabled(!cbWireframe.isSelected());
             return label;
         }
     }
@@ -251,7 +306,7 @@ public class MapPaintDialog extends ToggleDialog {
         }
 
         protected void updateEnabledState() {
-            setEnabled(tblStyles.getSelectedRowCount() > 0);
+            setEnabled(!cbWireframe.isSelected() && tblStyles.getSelectedRowCount() > 0);
         }
 
         @Override
@@ -273,7 +328,7 @@ public class MapPaintDialog extends ToggleDialog {
     /**
      * The action to move down the currently selected entries in the list.
      */
-    class MoveUpDownAction extends AbstractAction implements ListSelectionListener {
+    protected class MoveUpDownAction extends AbstractAction implements ListSelectionListener {
 
         final int increment;
 
@@ -286,7 +341,7 @@ public class MapPaintDialog extends ToggleDialog {
 
         public void updateEnabledState() {
             int[] sel = tblStyles.getSelectedRows();
-            setEnabled(MapPaintStyles.canMoveStyles(sel, increment));
+            setEnabled(!cbWireframe.isSelected() && MapPaintStyles.canMoveStyles(sel, increment));
         }
 
         @Override
@@ -327,24 +382,25 @@ public class MapPaintDialog extends ToggleDialog {
             putValue(NAME, tr("Reload from file"));
             putValue(SHORT_DESCRIPTION, tr("reload selected styles from file"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "refresh"));
-            updateEnabledState();
+            setEnabled(getEnabledState());
         }
 
-        protected void updateEnabledState() {
+        protected boolean getEnabledState() {
+            if (cbWireframe.isSelected())
+                return false;
             int[] pos = tblStyles.getSelectedRows();
-            boolean e = pos.length > 0;
+            if (pos.length == 0)
+                return false;
             for (int i : pos) {
-                if (!model.getRow(i).isLocal()) {
-                    e = false;
-                    break;
-                }
+                if (!model.getRow(i).isLocal())
+                    return false;
             }
-            setEnabled(e);
+            return true;
         }
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
+            setEnabled(getEnabledState());
         }
 
         @Override
@@ -598,6 +654,8 @@ public class MapPaintDialog extends ToggleDialog {
     class PopupMenuHandler extends PopupMenuLauncher {
         @Override
         public void launch(MouseEvent evt) {
+            if (cbWireframe.isSelected())
+                return;
             Point p = evt.getPoint();
             int index = tblStyles.rowAtPoint(p);
             if (index < 0) return;

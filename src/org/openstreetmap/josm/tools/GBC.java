@@ -119,4 +119,30 @@ public class GBC extends GridBagConstraints {
         short maxy = y > 0 ? Short.MAX_VALUE : 0;
         return new Box.Filler(new Dimension(x,y), new Dimension(x,y), new Dimension(maxx,maxy));
     }
+
+    public GBC grid(int x, int y) {
+        gridx = x;
+        gridy = y;
+        return this;
+    }
+
+    public GBC span(int width, int height) {
+        gridwidth = width;
+        gridheight = height;
+        return this;
+    }
+
+    public GBC span(int width) {
+        gridwidth = width;
+        return this;
+    }
+
+    public static GBC std(int x, int y) {
+        GBC c = new GBC();
+        c.anchor = WEST;
+        c.gridx = x;
+        c.gridy = y;
+        return c;
+    }
+
 }
