@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.awt.Color;
 import java.awt.Font;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -78,5 +80,13 @@ public class TextElement {
         hash = 79 * hash + color.hashCode();
         return hash;
     }
+
+    public String getString(OsmPrimitive osm, MapPainter painter) {
+        if (textKey == null)
+            return painter.getAreaName(osm);
+        else
+            return osm.get(textKey);
+    }
+
 
 }

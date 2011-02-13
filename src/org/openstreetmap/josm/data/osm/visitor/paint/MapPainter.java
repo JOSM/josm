@@ -247,7 +247,7 @@ public class MapPainter {
     private void drawTextOnPath(Way way, TextElement text) {
         if (text == null)
             return;
-        String name = getAreaName(way);
+        String name = text.getString(way, this);
         if (name == null || name.equals(""))
             return;
 
