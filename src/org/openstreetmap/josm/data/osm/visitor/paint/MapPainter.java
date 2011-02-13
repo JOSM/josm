@@ -473,7 +473,7 @@ public class MapPainter {
             } else if (text.vAlign == VerticalTextAlignment.CENTER) {
                 y += (metrics.getAscent() - metrics.getDescent()) / 2;
             } else if (text.vAlign == VerticalTextAlignment.BELOW) {
-                y += h_half + metrics.getAscent();
+                y += h_half + metrics.getAscent() + 2;
             } else throw new AssertionError();
         }
         g.drawString(s, x, y);

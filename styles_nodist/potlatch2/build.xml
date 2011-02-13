@@ -46,7 +46,7 @@
     </target>
     
     <!--    Determine revision and save in  ${version.entry.commit.revision}-->
-    <target name="source-revision" depends="init">
+    <target name="source-revision">
         <exec append="false" output="REVISION.XML" executable="svn" dir="source" failifexecutionfails="true">
             <env key="LANG" value="C"/>
             <arg value="info"/>

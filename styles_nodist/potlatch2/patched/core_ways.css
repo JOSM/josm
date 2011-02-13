@@ -71,8 +71,8 @@ way[railway=disused]::railway_over, way[railway=abandoned]::railway_over
 
 way[waterway=river],
 way[waterway=canal],
-way[waterway=stream]   { color: blue; width: 2; text:auto; text-color:blue; font-size:9; text-position: offset; text-offset: 7;}
-way[waterway=drain] 			 {color: blue; width: 1; text:auto; text-color: blue; text-position: offset; text-offset: 3;}
+way[waterway=stream]   { color: blue; width: 2; text:auto; text-color:blue; font-size:9; text-position: line; text-offset: 7;}
+way[waterway=drain] 			 {color: blue; width: 1; text:auto; text-color: blue; text-position: line; text-offset: 3;}
 way[waterway][tunnel=yes]                {dashes: 8,4;}
 
 /* Aeroways */

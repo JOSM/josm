@@ -17,5 +17,32 @@ meta {
 }
 
 canvas {
-    background-color: white;
+    background-color: #ffffea;
 }
+
+node, area {
+    text-color: black;
+}
+
+relation[restriction=no_left_turn] {
+    icon-image: "vehicle/restriction/turn_restrictions/no_left_turn.png";
+}
+relation[restriction=no_right_turn] {
+    icon-image: "vehicle/restriction/turn_restrictions/no_right_turn.png";
+}
+relation[restriction=no_straight_on] {
+    icon-image: "vehicle/restriction/turn_restrictions/no_straight_on.png";
+}
+relation[restriction=no_u_turn] {
+    icon-image: "vehicle/restriction/turn_restrictions/no_u_turn.png";
+}
+relation[restriction=only_left_turn] {
+    icon-image: "vehicle/restriction/turn_restrictions/only_left_turn.png";
+}
+relation[restriction=only_right_turn] {
+    icon-image: "vehicle/restriction/turn_restrictions/only_right_turn.png";
+}
+relation[restriction=only_straight_on] {
+    icon-image: "vehicle/restriction/turn_restrictions/only_straight_on.png";
+}
+
