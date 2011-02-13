@@ -110,7 +110,7 @@ public class MapPaintVisitor implements PaintVisitor {
         boolean leftHandTraffic = Main.pref.getBoolean("mappaint.lefthandtraffic", false);
 
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                Main.pref.getBoolean("mappaint.use-antialiasing", false) ?
+                Main.pref.getBoolean("mappaint.use-antialiasing", true) ?
                         RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 
         this.painter = new MapPainter(paintSettings, g, inactive, nc, virtual, circum, leftHandTraffic);

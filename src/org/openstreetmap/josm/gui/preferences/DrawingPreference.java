@@ -259,7 +259,7 @@ public class DrawingPreference implements PreferenceSetting {
 
         // antialiasing
         useAntialiasing.setToolTipText(tr("Apply antialiasing to the map view resulting in a smoother appearance."));
-        useAntialiasing.setSelected(Main.pref.getBoolean("mappaint.use-antialiasing", false));
+        useAntialiasing.setSelected(Main.pref.getBoolean("mappaint.use-antialiasing", true));
         panel.add(useAntialiasing, GBC.eop().insets(20,0,0,0));
 
         // downloaded area

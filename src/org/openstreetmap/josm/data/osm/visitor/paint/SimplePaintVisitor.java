@@ -126,7 +126,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         getColors();
 
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                Main.pref.getBoolean("mappaint.use-antialiasing", false) ?
+                Main.pref.getBoolean("mappaint.wireframe.use-antialiasing", false) ?
                         RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
     }
 
