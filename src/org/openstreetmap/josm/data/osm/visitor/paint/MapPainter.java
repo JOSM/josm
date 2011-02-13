@@ -91,7 +91,7 @@ public class MapPainter {
         this.selectedColor = PaintColors.SELECTED.get();
         this.relationSelectedColor = PaintColors.RELATIONSELECTED.get();
         this.nodeColor = PaintColors.NODE.get();
-        this.backgroundColor = PaintColors.BACKGROUND.get();
+        this.backgroundColor = PaintColors.getBackgroundColor();
 
         this.orderFont = new Font(Main.pref.get("mappaint.font", "Helvetica"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
         this.virtualNodeSize = virtual ? Main.pref.getInteger("mappaint.node.virtual-size", 8) / 2 : 0;

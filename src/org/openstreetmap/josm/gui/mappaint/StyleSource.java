@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.mappaint;
 
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -97,5 +98,9 @@ abstract public class StyleSource extends SourceEntry {
             return trn("There was an error when loading this style. Select ''Info'' from the right click menu for details.",
                     "There were {0} errors when loading this style. Select ''Info'' from the right click menu for details.",
                     errors.size(), errors.size());
+    }
+
+    public Color getBackgroundColorOverride() {
+        return null;
     }
 }

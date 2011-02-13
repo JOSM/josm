@@ -69,6 +69,7 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 public class MapPaintDialog extends ToggleDialog {
 
@@ -600,20 +601,29 @@ public class MapPaintDialog extends ToggleDialog {
 
         private JPanel buildInfoPanel(StyleSource s) {
             JPanel p = new JPanel(new GridBagLayout());
-            StringBuilder text = new StringBuilder("<table cellpadding=3><tr><td>");
-            text.append("<b>" + tr("Name:") + "</b></td><td>" + s.getDisplayString() + "</td></tr>");
-            text.append("<tr><td>");
+            StringBuilder text = new StringBuilder("<table cellpadding=3>");
+            text.append(tableRow(tr("Title:"), s.getDisplayString()));
             if (s.url.startsWith("http://")) {
-                text.append("<b>" + tr("URL:") + "</b></td><td>" + s.url + "</td></tr>");
+                text.append(tableRow(tr("URL:"), s.url));
             } else if (s.url.startsWith("resource://")) {
-                text.append("<b>" + tr("Built-in Style, internal path:</b>") + "</b></td><td>" + s.url + "</td></tr>");
+                text.append(tableRow(tr("Built-in Style, internal path:"), s.url));
             } else {
-                text.append("<b>" + tr("Path:") + "</b></td><td>" + s.url + "</td></tr>");
+                text.append(tableRow(tr("Path:"), s.url));
             }
-            text.append("<tr><td><b>" + tr("Style is currently active?") + "</b></td><td>" + (s.active ? tr("Yes") : tr("No")) + "</td></tr>");
+            if (s.icon != null) {
+                text.append(tableRow(tr("Icon:"), s.icon));
+            }
+            if (s.getBackgroundColorOverride() != null) {
+                text.append(tableRow(tr("Background:"), Utils.toString(s.getBackgroundColorOverride())));
+            }
+            text.append(tableRow(tr("Style is currently active?"), s.active ? tr("Yes") : tr("No")));
             text.append("</table>");
             p.add(new JScrollPane(new HtmlPanel(text.toString())), GBC.eol().fill(GBC.BOTH));
             return p;
+        }
+
+        private String tableRow(String firstColumn, String secondColumn) {
+            return "<tr><td><b>" + firstColumn + "</b></td><td>" + secondColumn + "</td></tr>";
         }
 
         private void buildSourcePanel(StyleSource s, JPanel p) {

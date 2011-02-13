@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class MapCSSStyleSource extends StyleSource {
     
     final public List<MapCSSRule> rules;
+    private Color backgroundColorOverride;
 
     public MapCSSStyleSource(String url, String name, String shortdescription) {
         super(url, name, shortdescription);
@@ -46,6 +48,7 @@ public class MapCSSStyleSource extends StyleSource {
             MapCSSParser parser = new MapCSSParser(getSourceInputStream(), "UTF-8");
             parser.sheet(this);
             loadMeta();
+            loadCanvas();
         } catch(IOException e) {
             System.err.println(tr("Warning: failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
             e.printStackTrace();
@@ -77,6 +80,24 @@ public class MapCSSStyleSource extends StyleSource {
      * load meta info from a selector "meta"
      */
     private void loadMeta() {
+        Cascade c = constructSpecial("meta");
+        String pTitle = c.get("title", null, String.class);
+        if (title == null) {
+            title = pTitle;
+        }
+        String pIcon = c.get("icon", null, String.class);
+        if (icon == null) {
+            icon = pIcon;
+        }
+    }
+
+    private void loadCanvas() {
+        Cascade c = constructSpecial("canvas");
+        backgroundColorOverride = c.get("background-color", null, Color.class);
+    }
+
+    private Cascade constructSpecial(String type) {
+
         MultiCascade mc = new MultiCascade();
         Node n = new Node();
         String code = LanguageInfo.getJOSMLocaleCode();
@@ -87,7 +108,7 @@ public class MapCSSStyleSource extends StyleSource {
         NEXT_RULE:
         for (MapCSSRule r : rules) {
             for (Selector s : r.selectors) {
-                if (s.base.equals("meta")) {
+                if (s.base.equals(type)) {
                     for (Condition cnd : s.conds) {
                         if (!cnd.applies(env))
                             continue NEXT_RULE;
@@ -98,15 +119,11 @@ public class MapCSSStyleSource extends StyleSource {
                 }
             }
         }
-        Cascade c = mc.getCascade("default");
-        String pTitle = c.get("title", null, String.class);
-        if (title == null) {
-            title = pTitle;
-        }
-        String pIcon = c.get("icon", null, String.class);
-        if (icon == null) {
-            icon = pIcon;
-        }
+        return mc.getCascade("default");
+    }
+
+    public Color getBackgroundColorOverride() {
+        return backgroundColorOverride;
     }
 
     @Override

@@ -4,9 +4,13 @@ package org.openstreetmap.josm.data.osm.visitor.paint;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.Color;
+import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.ColorKey;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
+import org.openstreetmap.josm.gui.mappaint.StyleSource;
 
 public enum PaintColors implements ColorKey {
 
@@ -29,6 +33,23 @@ public enum PaintColors implements ColorKey {
 
     private final String name;
     private final Color defaultColor;
+
+    private static Color backgroundColorCache = null;
+
+    private static final MapPaintSylesUpdateListener styleOverrideListener = new MapPaintSylesUpdateListener() {
+
+        public void mapPaintStylesUpdated() {
+            backgroundColorCache = null;
+        }
+
+        public void mapPaintStyleEntryUpdated(int idx) {
+            mapPaintStylesUpdated();
+        }
+    };
+
+    static {
+        MapPaintStyles.addMapPaintSylesUpdateListener(styleOverrideListener);
+    }
 
     private PaintColors(String name, Color defaultColor) {
         this.name = name;
@@ -55,5 +76,24 @@ public enum PaintColors implements ColorKey {
         for (PaintColors c:values()) {
             c.get();
         }
+    }
+
+    public static Color getBackgroundColor() {
+        if (backgroundColorCache != null)
+            return backgroundColorCache;
+        List<StyleSource> sources = MapPaintStyles.getStyles().getStyleSources();
+        for (StyleSource s : sources) {
+            if (!s.active) {
+                continue;
+            }
+            Color backgroundColorOverride = s.getBackgroundColorOverride();
+            if (backgroundColorOverride != null) {
+                backgroundColorCache = backgroundColorOverride;
+            }
+        }
+        if (backgroundColorCache == null) {
+            backgroundColorCache = BACKGROUND.get();
+        }
+        return backgroundColorCache;
     }
 }

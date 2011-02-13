@@ -259,7 +259,6 @@ public class ColorPreference implements PreferenceSetting {
         PaintColors.getColors();
         MarkerLayer.getColor(null);
         GpxLayer.getColor(null);
-        OsmDataLayer.getBackgroundColor();
         OsmDataLayer.getOutsideColor();
         MapScaler.getColor();
         ConflictDialog.getColor();

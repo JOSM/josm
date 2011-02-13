@@ -497,7 +497,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             }
             Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
             g2.setClip(g.getClip());
-            g2.setColor(PaintColors.BACKGROUND.get());
+            g2.setColor(PaintColors.getBackgroundColor());
             g2.fillRect(0, 0, getWidth(), getHeight());
 
             for (int i=0; i<nonChangedLayersCount; i++) {
