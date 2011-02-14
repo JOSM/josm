@@ -3609,6 +3609,11 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="misc/fixme.png" priority="10000"/>
 	</rule> 
 
+	<rule> 
+		<condition k="note"/> 
+		<icon annotate="true" src="misc/note.png" priority="-10000"/>
+	</rule> 
+
 <!--public_transport tags --> 
 	<rule> 
 		<condition k="public_transport" v="stop_position"/> 
