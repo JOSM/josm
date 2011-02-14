@@ -1,0 +1,8 @@
+/* Route relations */
+
+relation[type=route] > way::relation_underlay { z-index: -1; width: 13; color: blue; opacity: 0.3; linecap: none; }
+relation[type=route][route=bicycle][network=ncn] > way::relation_underlay { z-index: -1; width: 12; color: red; opacity: 0.3; linecap: none; }
+relation[type=route][route=bicycle][network=rcn] > way::relation_underlay { z-index: -1; width: 12; color: cyan; opacity: 0.3; linecap: none; }
+relation[type=route][route=bicycle][network=lcn] > way::relation_underlay { z-index: -1; width: 12; color: blue; opacity: 0.3; linecap: none; }
+relation[type=route][route=foot] > way::relation_underlay { z-index: -1; width: 10; color: #80ff80; opacity: 0.6; linecap: none; }
+

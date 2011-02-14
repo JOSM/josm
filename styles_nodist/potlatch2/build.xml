@@ -1,41 +1,15 @@
-<project name="potlatch2styles_mod" basedir=".">
-<!--
-
-    The potlatch 2 styles need to be patched in order to work with the JOSM MapCSS implementation.
-    When updating from the potlatch2 repository, the workflow can be like this:
-     * copy files from 'patched' to 'source'
-     * cd source && svn up
-     * solve possible conflicts
-     * modify the new sections, such that they work with josm
-     * create potlatch2.mapcss (ant assemble)
-     * copy files from 'source' to 'patched'
-     * update externals definition to the current revision (ant update-externals)
-     * commit everything (style, patches and externals definition)
-     
--->
+<project name="potlatch2_patch_utils" basedir="." default="assemble">
 
     <!--    concatinate the files to one mapcss style file     -->
     <target name="assemble">
         <concat destfile="../../styles/standard/potlatch2.mapcss">
             <filelist dir="." files="prelude.css"/>        
-            <filelist dir="patched" files="core_ways.css,core_pois.css,core_landuse.css,potlatch.css"/>        
+            <filelist dir="patched" files="core_ways.css,core_pois.css,core_landuse.css,core_relations.css,potlatch.css"/>        
         </concat>
     </target>
     
-    
-    <target name="copy-patched-to-source">
-        <copy todir="source" overwrite="true"> 
-            <fileset dir="patched"/>
-        </copy>
-    </target>
-    
-    <target name="copy-source-to-patched">
-        <copy todir="patched" overwrite="true"> 
-            <filelist dir="source" files="core_ways.css,core_pois.css,core_landuse.css,potlatch.css"/>        
-        </copy>
-    </target>
 
-    <!--    Update the explicit revision number in the externals definition to the current revision. -->
+    <!--    update the explicit revision number in the externals definition to the currently checked out revison  -->
     <target name="update-externals" depends="source-revision">
         <exec executable="svn">
             <arg value="propset"/>

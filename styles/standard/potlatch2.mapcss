@@ -281,11 +281,11 @@ node[leisure=marina] { icon-image: icons/transport_marina.n.16.png; z-index: 20;
 
 /* Addressing */
 
-node["addr:housenumber"],
-node["addr:housename"] { symbol-shape: circle; symbol-size: 8; symbol-fill-color: #B0E0E6; }
-node["addr:housenumber"]::hn_casing,
-node["addr:housename"]::hn_casing { z-index: -100; symbol-shape: circle; symbol-size: 10; symbol-fill-color: blue; }
-way["addr:interpolation"] { color: #B0E0E6; width: 3; dashes: 3,3;}
+node[addr:housenumber],
+node[addr:housename] { symbol-shape: circle; symbol-size: 8; symbol-fill-color: #B0E0E6; }
+node[addr:housenumber]::hn_casing,
+node[addr:housename]::hn_casing { z-index: -100; symbol-shape: circle; symbol-size: 10; symbol-fill-color: blue; }
+way[addr:interpolation] { color: #B0E0E6; width: 3; dashes: 3,3;}
 
 /****************
  * core_landuse.css
@@ -334,6 +334,14 @@ way[boundary=administrative]                { color: purple; width: 2; opacity: 
 way[boundary=administrative][waterway]      { opacity: 0.8; z-index: 4; dashes: 24,4; width: 6; }
 way[landuse=cemetery]						{ color: #664466; width: 2; fill-color: #664466; opacity: 0.2; prop_area_small_name : 1;}
 /* Addressing. Nodes with addresses *and* match POIs should have a poi icon, so we put addressing first */
+/* Route relations */
+
+relation[type=route] > way::relation_underlay { z-index: -1; width: 13; color: blue; opacity: 0.3; linecap: none; }
+relation[type=route][route=bicycle][network=ncn] > way::relation_underlay { z-index: -1; width: 12; color: red; opacity: 0.3; linecap: none; }
+relation[type=route][route=bicycle][network=rcn] > way::relation_underlay { z-index: -1; width: 12; color: cyan; opacity: 0.3; linecap: none; }
+relation[type=route][route=bicycle][network=lcn] > way::relation_underlay { z-index: -1; width: 12; color: blue; opacity: 0.3; linecap: none; }
+relation[type=route][route=foot] > way::relation_underlay { z-index: -1; width: 10; color: #80ff80; opacity: 0.6; linecap: none; }
+
 
 /*@import("stylesheets/core_ways.css");*/
 /*@import("stylesheets/core_pois.css");*/

@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parser.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parser.ParseException;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parser.TokenMgrError;
@@ -108,13 +109,17 @@ public class MapCSSStyleSource extends StyleSource {
         NEXT_RULE:
         for (MapCSSRule r : rules) {
             for (Selector s : r.selectors) {
-                if (s.base.equals(type)) {
-                    for (Condition cnd : s.conds) {
-                        if (!cnd.applies(env))
-                            continue NEXT_RULE;
-                    }
-                    for (Instruction i : r.declaration) {
-                        i.execute(env);
+                if ((s instanceof GeneralSelector)) {
+                    GeneralSelector gs = (GeneralSelector) s;
+                    if (gs.base.equals(type))
+                     {
+                        for (Condition cnd : gs.conds) {
+                            if (!cnd.applies(env))
+                                continue NEXT_RULE;
+                        }
+                        for (Instruction i : r.declaration) {
+                            i.execute(env);
+                        }
                     }
                 }
             }
@@ -132,14 +137,14 @@ public class MapCSSStyleSource extends StyleSource {
         for (MapCSSRule r : rules) {
             for (Selector s : r.selectors) {
                 if (s.applies(env)) {
-                    if (s.range.contains(scale)) {
-                        mc.range = Range.cut(mc.range, s.range);
+                    if (s.getRange().contains(scale)) {
+                        mc.range = Range.cut(mc.range, s.getRange());
                     } else {
-                        mc.range = mc.range.reduceAround(scale, s.range);
+                        mc.range = mc.range.reduceAround(scale, s.getRange());
                         continue;
                     }
 
-                    String sub = s.subpart;
+                    String sub = s.getSubpart();
                     if (sub == null) {
                         sub = "default";
                     }

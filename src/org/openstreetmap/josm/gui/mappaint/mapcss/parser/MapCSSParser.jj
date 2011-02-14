@@ -18,6 +18,8 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression.FunctionExpression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression.LiteralExpression;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.DescendentSelector;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.tools.Pair;
 
 public class MapCSSParser {
@@ -228,13 +230,27 @@ MapCSSRule rule():
     List<Instruction> decl;
 }
 {
-    sel=selector() { selectors.add(sel); } w()
+    sel=child_selector() { selectors.add(sel); }
     (
         <COMMA> w()
-        sel=selector() { selectors.add(sel); } w()
+        sel=child_selector() { selectors.add(sel); }
     )*
     decl=declaration()
     { return new MapCSSRule(selectors, decl); }
+}
+
+Selector child_selector() :
+{
+    boolean child = false;
+    Selector sel1, sel2 = null;
+}
+{
+    sel1=selector() w()
+    (
+        ( <GREATER> { child = true; } | <LESS> { child = false; } ) w()
+        sel2=selector() w()
+    )?
+    { return sel2 != null ? new DescendentSelector(sel1, sel2, child) : sel1; }
 }
 
 Selector selector() :
@@ -250,7 +266,7 @@ Selector selector() :
     ( r=zoom() )?
     ( ( c=condition() | c=pseudoclass() ) { conditions.add(c); } )*
     ( sub=subpart() )?
-    { return new Selector(base.image, r, conditions, sub); }
+    { return new GeneralSelector(base.image, r, conditions, sub); }
 }
 
 Pair<Integer, Integer> zoom() :
@@ -276,14 +292,25 @@ Condition condition() :
 {
     <LSQUARE>
     (
-        LOOKAHEAD(3)
+        LOOKAHEAD( simple_key_condition() <RSQUARE> )
             c=simple_key_condition() <RSQUARE> { return c; }
         |
-        LOOKAHEAD(5)
+        LOOKAHEAD( simple_key_value_condition() <RSQUARE> )
             c=simple_key_value_condition() <RSQUARE> { return c; }
         |
             e=expression() <RSQUARE> { return new Condition.ExpressionCondition(e); }
     )
+}
+
+String tag_key() :
+{
+    String s;
+    Token t;
+}
+{
+        s=string() { return s; }
+    |
+        t=<IDENT> { s = t.image; } ( <COLON> t=<IDENT> { s += ':' + t.image; } )* { return s; }
 }
 
 Condition simple_key_condition() :
@@ -294,7 +321,7 @@ Condition simple_key_condition() :
 }
 {
     ( <EXCLAMATION> { not = true; } )?
-    key=string_or_ident()
+    key=tag_key()
     ( <QUESTION> { yes = true; } )?
     { return new Condition.KeyCondition(key, not, yes); }
 }
@@ -307,7 +334,7 @@ Condition simple_key_value_condition() :
     Condition.Op op;
 }
 {
-    key=string_or_ident()
+    key=tag_key()
     (
             (
                     <EXCLAMATION> <EQUAL> { op=Condition.Op.NEQ; } val=string_or_ident()
