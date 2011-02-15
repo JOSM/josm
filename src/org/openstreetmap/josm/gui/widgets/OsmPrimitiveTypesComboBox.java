@@ -12,7 +12,8 @@ public class OsmPrimitiveTypesComboBox extends JComboBox {
 
     public OsmPrimitiveTypesComboBox() {
         for (OsmPrimitiveType type: OsmPrimitiveType.values()){
-            addItem(type);
+            if(type.getOsmClass() != null)
+                addItem(type);
         }
     }
 

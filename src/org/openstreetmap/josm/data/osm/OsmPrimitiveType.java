@@ -12,8 +12,8 @@ public enum OsmPrimitiveType {
     RELATION (marktr("relation"), Relation.class, RelationData.class),
 
     /* only for display, no real type */
-    CLOSEDWAY  (marktr("closedway"), Way.class, WayData.class),
-    MULTIPOLYGON (marktr("multipolygon"), Relation.class, RelationData.class);
+    CLOSEDWAY  (marktr("closedway"), null, WayData.class),
+    MULTIPOLYGON (marktr("multipolygon"), null, RelationData.class);
 
     private final String apiTypeName;
     private final Class<? extends OsmPrimitive> osmClass;
