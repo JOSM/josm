@@ -74,13 +74,15 @@ public class Cascade implements Cloneable {
         if (klass == boolean.class || klass == Boolean.class)
             return (T) toBool(o);
 
-        if (klass == float[].class) {
+        if (klass == float[].class)
             return (T) toFloatArray(o);
-        }
 
-        if (klass == Color.class) {
+        if (klass == Color.class)
             return (T) toColor(o);
-        }
+
+        if (klass == String.class)
+            return (T) o.toString();
+
         return null;
     }
 

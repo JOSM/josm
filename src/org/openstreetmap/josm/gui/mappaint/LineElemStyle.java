@@ -20,7 +20,7 @@ public class LineElemStyle extends ElemStyle {
     public static LineElemStyle createSimpleLineStyle(Color color) {
         MultiCascade mc = new MultiCascade();
         Cascade c = mc.getOrCreateCascade("default");
-        c.put("width", -1f);
+        c.put("width", "default");
         c.put("color", color != null ? color : PaintColors.UNTAGGED.get());
         return createLine(new Environment(null, mc, "default", null));
     }
@@ -94,8 +94,8 @@ public class LineElemStyle extends ElemStyle {
         }
 
         Color color = c.get(prefix + "color", null, Color.class);
-        if (color == null) {
-            color = c.get(prefix + "fill-color", null, Color.class);
+        if (!casing && color == null) {
+            color = c.get("fill-color", null, Color.class);
         }
         if (color == null) {
             color = PaintColors.UNTAGGED.get();

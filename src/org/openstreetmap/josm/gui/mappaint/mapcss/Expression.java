@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
+import static org.openstreetmap.josm.tools.Utils.equal;
+
 import java.awt.Color;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -114,6 +116,18 @@ public interface Expression {
                 return c;
             }
 
+            public float red(Color c) {
+                return Utils.color_int2float(c.getRed());
+            }
+
+            public float green(Color c) {
+                return Utils.color_int2float(c.getGreen());
+            }
+
+            public float blue(Color c) {
+                return Utils.color_int2float(c.getBlue());
+            }
+
             public Object prop(String key) {
                 return prop(key, null);
             }
@@ -153,28 +167,8 @@ public interface Expression {
                 return env.osm.hasKey(key);
             }
 
-            public Object cond(boolean cond, Object if_, Object else_) {
-                return cond ? if_ : else_; // fixme: do not evaluate the other branch
-            }
-
             public boolean not(boolean b) {
                 return !b;
-            }
-
-            public boolean and(boolean... bs) {
-                for (boolean b : bs) {  // fixme: lazy evaluation
-                    if (!b)
-                        return false;
-                }
-                return true;
-            }
-
-            public boolean or(boolean... bs) {
-                for (boolean b : bs) {
-                    if (b)
-                        return true;
-                }
-                return false;
             }
 
             public boolean greater_equal(float a, float b) {
@@ -193,6 +187,10 @@ public interface Expression {
                 return a < b;
             }
 
+            public int length(String s) {
+                return s.length();
+            }
+
             @SuppressWarnings("unchecked")
             public boolean equal(Object a, Object b) {
                 // make sure the casts are done in a meaningful way, so
@@ -200,7 +198,7 @@ public interface Expression {
                 for (Class klass : new Class[] {
                         Float.class, Boolean.class, Color.class, float[].class, String.class }) {
                     Object a2 = Cascade.convertTo(a, klass);
-                    Object b2 = Cascade.convertTo(a, klass);
+                    Object b2 = Cascade.convertTo(b, klass);
                     if (a2 != null && b2 != null && a2.equals(b2))
                         return true;
                 }
@@ -230,6 +228,30 @@ public interface Expression {
 
         @Override
         public Object evaluate(Environment env) {
+            if (equal(name, "cond")) { // this needs special handling since only one argument should be evaluated
+                if (args.size() != 3)
+                    return null;
+                Boolean b = Cascade.convertTo(args.get(0).evaluate(env), boolean.class);
+                if (b == null)
+                    return null;
+                return args.get(b ? 0 : 1).evaluate(env);
+            }
+            if (equal(name, "and")) {
+                for (Expression arg : args) {
+                    Boolean b = Cascade.convertTo(arg.evaluate(env), boolean.class);
+                    if (b == null || !b)
+                        return false;
+                }
+                return true;
+            }
+            if (equal(name, "or")) {
+                for (Expression arg : args) {
+                    Boolean b = Cascade.convertTo(arg.evaluate(env), boolean.class);
+                    if (b != null && b)
+                        return true;
+                }
+                return false;
+            }
             EvalFunctions fn = new EvalFunctions();
             fn.env = env;
             Method[] customMethods = EvalFunctions.class.getDeclaredMethods();

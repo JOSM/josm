@@ -228,14 +228,14 @@ public class ElemStyles {
                 addIfNotNull(sl, LineElemStyle.createLine(env));
                 addIfNotNull(sl, LineElemStyle.createCasing(env));
             } else if (osm instanceof Node) {
-                addIfNotNull(sl, NodeElemStyle.create(c));
+                addIfNotNull(sl, NodeElemStyle.create(env));
             } else if (osm instanceof Relation) {
                 if (((Relation)osm).isMultipolygon()) {
                     addIfNotNull(sl, AreaElemStyle.create(c));
                     addIfNotNull(sl, LineElemStyle.createLine(env));
                     addIfNotNull(sl, LineElemStyle.createCasing(env));
                 } else if ("restriction".equals(osm.get("type"))) {
-                    addIfNotNull(sl, NodeElemStyle.create(c));
+                    addIfNotNull(sl, NodeElemStyle.create(env));
                 }
             }
         }

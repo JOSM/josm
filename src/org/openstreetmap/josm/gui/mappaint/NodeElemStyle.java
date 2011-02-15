@@ -123,9 +123,10 @@ public class NodeElemStyle extends ElemStyle {
     
     public static final NodeElemStyle SIMPLE_NODE_ELEMSTYLE;
     static {
-        Cascade c = new Cascade();
+        MultiCascade mc = new MultiCascade();
+        Cascade c = mc.getOrCreateCascade("default");
         c.put("text", "auto");
-        SIMPLE_NODE_ELEMSTYLE = create(c, true);
+        SIMPLE_NODE_ELEMSTYLE = create(new Environment(null, mc, "default", null), true);
     }
 
     protected NodeElemStyle(Cascade c, ImageIcon icon, int iconAlpha, Symbol symbol, NodeTextElement text) {
@@ -136,11 +137,13 @@ public class NodeElemStyle extends ElemStyle {
         this.text = text;
     }
 
-    public static NodeElemStyle create(Cascade c) {
-        return create(c, false);
+    public static NodeElemStyle create(Environment env) {
+        return create(env, false);
     }
 
-    private static NodeElemStyle create(Cascade c, boolean allowOnlyText) {
+    private static NodeElemStyle create(Environment env, boolean allowOnlyText) {
+        Cascade c = env.mc.getCascade(env.layer);
+
         IconReference iconRef = c.get("icon-image", null, IconReference.class);
         ImageIcon icon = null;
         int iconAlpha = 0;
@@ -157,7 +160,7 @@ public class NodeElemStyle extends ElemStyle {
                 iconAlpha = pAlpha;
             }
         } else {
-            symbol = createSymbol(c);
+            symbol = createSymbol(env);
         }
 
         if (icon == null && symbol == null && !allowOnlyText)
@@ -194,7 +197,10 @@ public class NodeElemStyle extends ElemStyle {
         return new NodeElemStyle(c, icon, iconAlpha, symbol, text);
     }
 
-    private static Symbol createSymbol(Cascade c) {
+    private static Symbol createSymbol(Environment env) {
+        Cascade c = env.mc.getCascade(env.layer);
+        Cascade c_def = env.mc.getCascade("default");
+
         SymbolShape shape;
         String shapeStr = c.get("symbol-shape", null, String.class);
         if (equal(shapeStr, "square")) {
@@ -203,15 +209,23 @@ public class NodeElemStyle extends ElemStyle {
             shape = SymbolShape.CIRCLE;
         } else
             return null;
+        
+        Float sizeOnDefault = c_def.get("symbol-size", null, Float.class);
+        if (sizeOnDefault != null && sizeOnDefault <= 0) {
+            sizeOnDefault = null;
+        }
+        Float size = getWidth(c, "symbol-size", sizeOnDefault);
 
-        float size = c.get("symbol-size", 10f, Float.class);
+        if (size == null) {
+            size = 10f;
+        }
+
         if (size <= 0)
             return null;
 
-        Float strokeWidth = c.get("symbol-stroke-width", null, Float.class);
-        if (strokeWidth != null && strokeWidth <= 0) {
-            strokeWidth = null;
-        }
+        Float strokeWidthOnDefault = getWidth(c_def, "symbol-stroke-width", null);
+        Float strokeWidth = getWidth(c, "symbol-stroke-width", strokeWidthOnDefault);
+
         Color strokeColor = c.get("symbol-stroke-color", null, Color.class);
 
         if (strokeWidth == null && strokeColor != null) {

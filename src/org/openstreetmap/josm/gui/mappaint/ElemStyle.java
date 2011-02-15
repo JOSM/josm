@@ -35,14 +35,14 @@ abstract public class ElemStyle {
     protected static Float getWidth(Cascade c, String key, Float relativeTo) {
         Float width = c.get(key, null, Float.class, true);
         if (width != null) {
-            if (width == -1f)
-                return (float) MapPaintSettings.INSTANCE.getDefaultSegmentWidth();
             if (width > 0)
                 return width;
         } else {
             String width_key = c.get(key, null, String.class, true);
             if (equal(width_key, "thinnest"))
                 return 0f;
+            else if(equal(width_key, "default"))
+                return (float) MapPaintSettings.INSTANCE.getDefaultSegmentWidth();
             else if (relativeTo != null) {
                 RelativeFloat width_rel = c.get(key, null, RelativeFloat.class, true);
                 if (width_rel != null)
