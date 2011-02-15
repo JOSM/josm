@@ -11,6 +11,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Op;
 
@@ -168,10 +169,8 @@ abstract public class Condition {
 
         @Override
         public boolean applies(Environment env) {
-            Object o = e.evaluate(env);
-            if (o instanceof Boolean)
-                return (Boolean) o;
-            return false;
+            Boolean b = Cascade.convertTo(e.evaluate(env), Boolean.class);
+            return b != null && b;
         }
 
         @Override

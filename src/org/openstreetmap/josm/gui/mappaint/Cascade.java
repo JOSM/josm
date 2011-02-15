@@ -106,8 +106,13 @@ public class Cascade implements Cloneable {
     private static Boolean toBool(Object o) {
         if (o instanceof Boolean)
             return (Boolean) o;
-        if (o instanceof String)
-            return Boolean.parseBoolean((String) o);
+        if (o instanceof String) {
+            String s = (String) o;
+            if ("true".equals(o) || "yes".equals(o))
+                return true;
+            if ("false".equals(o) || "no".equals(o))
+                return false;
+        }
         return null;
     }
 
