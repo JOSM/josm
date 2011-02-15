@@ -237,7 +237,7 @@ public class LineElemStyle extends ElemStyle {
             for(Node n : w.getNodes()) {
                 if(lastN != null) {
                     orderNumber++;
-                    painter.drawOrderNumber(lastN, n, orderNumber);
+                    painter.drawOrderNumber(lastN, n, orderNumber, myColor);
                 }
                 lastN = n;
             }

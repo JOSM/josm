@@ -816,17 +816,17 @@ public class MapPainter {
      * Draw a number of the order of the two consecutive nodes within the
      * parents way
      */
-    public void drawOrderNumber(Node n1, Node n2, int orderNumber) {
+    public void drawOrderNumber(Node n1, Node n2, int orderNumber, Color clr) {
         Point p1 = nc.getPoint(n1);
         Point p2 = nc.getPoint(n2);
-        drawOrderNumber(p1, p2, orderNumber);
+        drawOrderNumber(p1, p2, orderNumber, clr);
     }
 
     /**
      * Draw an number of the order of the two consecutive nodes within the
      * parents way
      */
-    protected void drawOrderNumber(Point p1, Point p2, int orderNumber) {
+    protected void drawOrderNumber(Point p1, Point p2, int orderNumber, Color clr) {
         if (isSegmentVisible(p1, p2) && isLargeSegment(p1, p2, segmentNumberSpace)) {
             String on = Integer.toString(orderNumber);
             int strlen = on.length();
@@ -838,10 +838,9 @@ public class MapPainter {
                 y = (p1.y+p2.y)/2 - virtualNodeSize - 3;
             }
 
-            Color c = g.getColor();
             g.setColor(backgroundColor);
             g.fillRect(x-1, y-12, 8*strlen+1, 14);
-            g.setColor(c);
+            g.setColor(clr);
             g.drawString(on, x, y);
         }
     }
