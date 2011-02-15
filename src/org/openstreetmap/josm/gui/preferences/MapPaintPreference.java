@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagLayout;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -223,7 +222,7 @@ public class MapPaintPreference implements PreferenceSetting {
                     insertionIdx++;
                     changed = true;
                 } else {
-                    if (i > insertionIdx) {
+                    if (i >= insertionIdx) {
                         insertionIdx = i + 1;
                     }
                 }
@@ -239,11 +238,18 @@ public class MapPaintPreference implements PreferenceSetting {
 
         @Override
         public Collection<ExtendedSourceEntry> getDefault() {
-            ExtendedSourceEntry i = new ExtendedSourceEntry("elemstyles.xml", "resource://styles/standard/elemstyles.xml");
-            i.name = "standard";
-            i.title = tr("JOSM Internal Style");
-            i.description = tr("Internal style to be used as base for runtime switchable overlay styles");
-            return Collections.singletonList(i);
+            ExtendedSourceEntry defJOSM = new ExtendedSourceEntry("elemstyles.xml", "resource://styles/standard/elemstyles.xml");
+            defJOSM.active = true;
+            defJOSM.name = "standard";
+            defJOSM.title = tr("JOSM Internal Style");
+            defJOSM.description = tr("Internal style to be used as base for runtime switchable overlay styles");
+            ExtendedSourceEntry defPL2 = new ExtendedSourceEntry("potlatch2.mapcss", "resource://styles/standard/potlatch2.mapcss");
+            defPL2.active = false;
+            defPL2.name = "standard";
+            defPL2.title = tr("Potlatch 2");
+            defPL2.description = tr("the main Potlatch 2 style");
+
+            return Arrays.asList(new ExtendedSourceEntry[] { defJOSM, defPL2 });
         }
 
         @Override
