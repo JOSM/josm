@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.Field;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -733,6 +736,163 @@ public class Preferences {
                 /* everything which does not end with a number should not be deleted */
             }
         }
+    }
+
+    @Retention(RetentionPolicy.RUNTIME) public @interface pref { }
+    @Retention(RetentionPolicy.RUNTIME) public @interface writeExplicitly { }
+
+    /**
+     * Get a list of hashes which are represented by a struct-like class.
+     * It reads lines of the form
+     *  > key.0=prop:val \u001e prop:val \u001e ... \u001e prop:val
+     *  > ...
+     *  > key.N=prop:val \u001e prop:val \u001e ... \u001e prop:val
+     * Possible properties are given by fields of the class klass that have
+     * the @pref annotation.
+     * Default constructor is used to initialize the struct objects, properties
+     * then override some of these default values.
+     * @param key main preference key
+     * @param klass The struct class
+     * @return a list of objects of type T or an empty list if nothing was found
+     */
+    public <T> List<T> getListOfStructs(String key, Class<T> klass) {
+        List<T> r = getListOfStructs(key, null, klass);
+        if (r == null)
+            return Collections.emptyList();
+        else
+            return r;
+    }
+
+    /**
+     * same as above, but returns def if nothing was found
+     */
+    public <T> List<T> getListOfStructs(String key, Collection<T> def, Class<T> klass) {
+        Collection<Collection<String>> array =
+                getArray(key, def == null ? null : serializeListOfStructs(def, klass));
+        if (array == null)
+            return def == null ? null : new ArrayList<T>(def);
+        List<T> lst = new ArrayList<T>();
+        for (Collection<String> entries : array) {
+            T struct = deserializeStruct(entries, klass);
+            lst.add(struct);
+        }
+        return lst;
+    }
+
+    /**
+     * Save a list of hashes represented by a struct-like class.
+     * Considers only fields that have the @pref annotation.
+     * In addition it does not write fields with null values. (Thus they are cleared)
+     * Default values are given by the field values after default constructor has
+     * been called.
+     * Fields equal to the default value are not written unless the field has
+     * the @writeExplicitly annotation.
+     * @param key main preference key
+     * @param val the list that is supposed to be saved
+     * @param klass The struct class
+     * @return true if something has changed
+     */
+    public <T> boolean putListOfStructs(String key, Collection<T> val, Class<T> klass) {
+        return putArray(key, serializeListOfStructs(val, klass));
+    }
+
+    private <T> Collection<Collection<String>> serializeListOfStructs(Collection<T> l, Class<T> klass) {
+        if (l == null)
+            return null;
+        Collection<Collection<String>> vals = new ArrayList<Collection<String>>();
+        for (T struct : l) {
+            if (struct == null)
+                continue;
+            vals.add(serializeStruct(struct, klass));
+        }
+        return vals;
+    }
+
+    private <T> Collection<String> serializeStruct(T struct, Class<T> klass) {
+        T structPrototype;
+        try {
+            structPrototype = klass.newInstance();
+        } catch (InstantiationException ex) {
+            throw new RuntimeException();
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException();
+        }
+
+        Collection<String> hash = new ArrayList<String>();
+        for (Field f : klass.getDeclaredFields()) {
+            if (f.getAnnotation(pref.class) == null) {
+                continue;
+            }
+            f.setAccessible(true);
+            try {
+                Object fieldValue = f.get(struct);
+                Object defaultFieldValue = f.get(structPrototype);
+                if (fieldValue != null) {
+                    if (f.getAnnotation(writeExplicitly.class) != null || !Utils.equal(fieldValue, defaultFieldValue)) {
+                        hash.add(String.format("%s:%s", f.getName().replace("_", "-"), fieldValue.toString()));
+                    }
+                }
+            } catch (IllegalArgumentException ex) {
+                throw new RuntimeException();
+            } catch (IllegalAccessException ex) {
+                throw new RuntimeException();
+            }
+        }
+        return hash;
+    }
+
+    private <T> T deserializeStruct(Collection<String> hash, Class<T> klass) {
+        T struct = null;
+        try {
+            struct = klass.newInstance();
+        } catch (InstantiationException ex) {
+            throw new RuntimeException();
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException();
+        }
+        for (String key_value : hash) {
+            final int i = key_value.indexOf(':');
+            if (i == -1 || i == 0) {
+                continue;
+            }
+            String key = key_value.substring(0,i);
+            String valueString = key_value.substring(i+1);
+
+            Object value = null;
+            Field f;
+            try {
+                f = klass.getDeclaredField(key.replace("-", "_"));
+            } catch (NoSuchFieldException ex) {
+                continue;
+            } catch (SecurityException ex) {
+                throw new RuntimeException();
+            }
+            if (f.getAnnotation(pref.class) == null) {
+                continue;
+            }
+            f.setAccessible(true);
+            if (f.getType() == Boolean.class || f.getType() == boolean.class) {
+                value = Boolean.parseBoolean(valueString);
+            } else if (f.getType() == Integer.class || f.getType() == int.class) {
+                try {
+                    value = Integer.parseInt(valueString);
+                } catch (NumberFormatException nfe) {
+                    continue;
+                }
+            } else  if (f.getType() == String.class) {
+                value = valueString;
+            } else
+                throw new RuntimeException("unsupported preference primitive type");
+            
+            try {
+                f.set(struct, value);
+            } catch (IllegalArgumentException ex) {
+                throw new AssertionError();
+            } catch (IllegalAccessException ex) {
+                throw new RuntimeException();
+            }
+        }
+        return struct;
     }
 
     /**

@@ -24,6 +24,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Filter;
+import org.openstreetmap.josm.data.osm.Filter.FilterPreferenceEntry;
 import org.openstreetmap.josm.data.osm.FilterMatcher;
 import org.openstreetmap.josm.data.osm.FilterWorker;
 import org.openstreetmap.josm.data.osm.Node;
@@ -59,8 +60,6 @@ public class FilterTableModel extends AbstractTableModel {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-
-
 
     public void executeFilters() {
         DataSet ds = Main.main.getCurrentDataSet();
@@ -108,7 +107,6 @@ public class FilterTableModel extends AbstractTableModel {
             Main.map.filterDialog.updateDialogHeader();
         }
     }
-
 
     public void executeFilters(Collection<? extends OsmPrimitive> primitives) {
         DataSet ds = Main.main.getCurrentDataSet();
@@ -173,6 +171,24 @@ public class FilterTableModel extends AbstractTableModel {
     }
 
     private void loadPrefs() {
+        if (!loadPrefsImpl()) {
+            loadPrefsOld();
+            savePrefs();
+        }
+    }
+
+    private boolean loadPrefsImpl() {
+        List<FilterPreferenceEntry> entries = Main.pref.getListOfStructs("filters.entries", null, FilterPreferenceEntry.class);
+        if (entries == null)
+            return false;
+        for (FilterPreferenceEntry e : entries) {
+            filters.add(new Filter(e));
+        }
+        return true;
+    }
+
+    @Deprecated
+    private void loadPrefsOld() {
         Map<String, String> prefs = Main.pref.getAllPrefix("filters.filter");
         for (String value : prefs.values()) {
             filters.add(new Filter(value));
@@ -181,31 +197,16 @@ public class FilterTableModel extends AbstractTableModel {
     }
 
     private void savePrefs() {
-        Map<String, String> prefs = Main.pref.getAllPrefix("filters.filter");
-        for (String key : prefs.keySet()) {
-            String[] sts = key.split("\\.");
-            if (sts.length != 3)
-                throw new Error("Incompatible filter preferences");
-            Main.pref.put("filters.filter." + sts[2], null);
-        }
-
-        int i = 0;
+        Collection<FilterPreferenceEntry> entries = new ArrayList<FilterPreferenceEntry>();
         for (Filter flt : filters) {
-            Main.pref.put("filters.filter." + i++, flt.getPrefString());
+            entries.add(flt.getPreferenceEntry());
         }
-    }
-
-    private void savePref(int i) {
-        if (i >= filters.size()) {
-            Main.pref.put("filters.filter." + i, null);
-        } else {
-            Main.pref.put("filters.filter." + i, filters.get(i).getPrefString());
-        }
+        Main.pref.putListOfStructs("filters.entries", entries, FilterPreferenceEntry.class);
     }
 
     public void addFilter(Filter f) {
         filters.add(f);
-        savePref(filters.size() - 1);
+        savePrefs();
         updateFilters();
         fireTableRowsInserted(filters.size() - 1, filters.size() - 1);
     }
@@ -214,8 +215,7 @@ public class FilterTableModel extends AbstractTableModel {
         if (i >= filters.size() - 1)
             return;
         filters.add(i + 1, filters.remove(i));
-        savePref(i);
-        savePref(i + 1);
+        savePrefs();
         updateFilters();
         fireTableRowsUpdated(i, i + 1);
     }
@@ -224,8 +224,7 @@ public class FilterTableModel extends AbstractTableModel {
         if (i == 0)
             return;
         filters.add(i - 1, filters.remove(i));
-        savePref(i);
-        savePref(i - 1);
+        savePrefs();
         updateFilters();
         fireTableRowsUpdated(i - 1, i);
     }
@@ -239,7 +238,7 @@ public class FilterTableModel extends AbstractTableModel {
 
     public void setFilter(int i, Filter f) {
         filters.set(i, f);
-        savePref(i);
+        savePrefs();
         updateFilters();
         fireTableRowsUpdated(i, i);
     }
@@ -294,22 +293,22 @@ public class FilterTableModel extends AbstractTableModel {
         switch (column) {
         case 0:
             f.enable = (Boolean) aValue;
-            savePref(row);
+            savePrefs();
             updateFilters();
             fireTableRowsUpdated(row, row);
             break;
         case 1:
             f.hiding = (Boolean) aValue;
-            savePref(row);
+            savePrefs();
             updateFilters();
             break;
         case 2:
             f.text = (String) aValue;
-            savePref(row);
+            savePrefs();
             break;
         case 3:
             f.inverted = (Boolean) aValue;
-            savePref(row);
+            savePrefs();
             updateFilters();
             break;
         }
