@@ -1196,9 +1196,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             }
 
             // Draw attribution logo
-            int imgWidth = attrImage.getWidth(this);
             if(attrImage != null) {
                 int x = 2;
+                int imgWidth = attrImage.getWidth(this);
                 int height = attrImage.getHeight(this);
                 int y = termsTextY - height - textHeight - 5;
                 attrImageBounds = new Rectangle(x, y, imgWidth, height);
