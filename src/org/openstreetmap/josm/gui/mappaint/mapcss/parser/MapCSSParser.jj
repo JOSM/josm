@@ -353,13 +353,13 @@ Condition simple_key_value_condition() :
                 |
                     <EQUAL> { op=Condition.Op.EQ; }
                 |
-                    <TILDE> <EQUAL> { op=Condition.Op.ONE_OF; } val=string_or_ident()
+                    <TILDE> <EQUAL> { op=Condition.Op.ONE_OF; }
                 |
-                    <CARET> <EQUAL> { op=Condition.Op.BEGINS_WITH; } val=string_or_ident()
+                    <CARET> <EQUAL> { op=Condition.Op.BEGINS_WITH; }
                 |
-                    <DOLLAR> <EQUAL> { op=Condition.Op.ENDS_WITH; } val=string_or_ident()
+                    <DOLLAR> <EQUAL> { op=Condition.Op.ENDS_WITH; }
                 |
-                    <STAR> <EQUAL> { op=Condition.Op.CONTAINS; } val=string_or_ident()
+                    <STAR> <EQUAL> { op=Condition.Op.CONTAINS; }
             )
             s()
             ( 

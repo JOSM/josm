@@ -545,25 +545,21 @@ public class MapCSSParser implements MapCSSParserConstants {
           jj_consume_token(TILDE);
           jj_consume_token(EQUAL);
                                       op=Condition.Op.ONE_OF;
-          val = string_or_ident();
           break;
         case CARET:
           jj_consume_token(CARET);
           jj_consume_token(EQUAL);
                                       op=Condition.Op.BEGINS_WITH;
-          val = string_or_ident();
           break;
         case DOLLAR:
           jj_consume_token(DOLLAR);
           jj_consume_token(EQUAL);
                                        op=Condition.Op.ENDS_WITH;
-          val = string_or_ident();
           break;
         case STAR:
           jj_consume_token(STAR);
           jj_consume_token(EQUAL);
                                      op=Condition.Op.CONTAINS;
-          val = string_or_ident();
           break;
         default:
           jj_la1[25] = jj_gen;
@@ -1173,21 +1169,18 @@ public class MapCSSParser implements MapCSSParserConstants {
   private boolean jj_3R_41() {
     if (jj_scan_token(DOLLAR)) return true;
     if (jj_scan_token(EQUAL)) return true;
-    if (jj_3R_56()) return true;
     return false;
   }
 
   private boolean jj_3R_40() {
     if (jj_scan_token(CARET)) return true;
     if (jj_scan_token(EQUAL)) return true;
-    if (jj_3R_56()) return true;
     return false;
   }
 
   private boolean jj_3R_39() {
     if (jj_scan_token(TILDE)) return true;
     if (jj_scan_token(EQUAL)) return true;
-    if (jj_3R_56()) return true;
     return false;
   }
 
@@ -1250,14 +1243,6 @@ public class MapCSSParser implements MapCSSParserConstants {
     return false;
   }
 
-  private boolean jj_3_4() {
-    if (jj_scan_token(EQUAL)) return true;
-    if (jj_scan_token(TILDE)) return true;
-    if (jj_3R_14()) return true;
-    if (jj_3R_36()) return true;
-    return false;
-  }
-
   private boolean jj_3R_55() {
     if (jj_scan_token(COLON)) return true;
     if (jj_scan_token(IDENT)) return true;
@@ -1276,6 +1261,14 @@ public class MapCSSParser implements MapCSSParserConstants {
 
   private boolean jj_3R_73() {
     if (jj_scan_token(IDENT)) return true;
+    return false;
+  }
+
+  private boolean jj_3_4() {
+    if (jj_scan_token(EQUAL)) return true;
+    if (jj_scan_token(TILDE)) return true;
+    if (jj_3R_14()) return true;
+    if (jj_3R_36()) return true;
     return false;
   }
 
@@ -1857,7 +1850,6 @@ public class MapCSSParser implements MapCSSParserConstants {
   private boolean jj_3R_42() {
     if (jj_scan_token(STAR)) return true;
     if (jj_scan_token(EQUAL)) return true;
-    if (jj_3R_56()) return true;
     return false;
   }
 
