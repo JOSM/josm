@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.swing.JLabel;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
@@ -72,19 +73,25 @@ public class ChangePropertyCommand extends Command {
     }
 
     @Override public boolean executeCommand() {
-        super.executeCommand(); // save old
-        if (value == null) {
-            for (OsmPrimitive osm : objects) {
-                osm.setModified(true);
-                osm.remove(key);
+        Main.main.getCurrentDataSet().beginUpdate();
+        try {
+            super.executeCommand(); // save old
+            if (value == null) {
+                for (OsmPrimitive osm : objects) {
+                    osm.setModified(true);
+                    osm.remove(key);
+                }
+            } else {
+                for (OsmPrimitive osm : objects) {
+                    osm.setModified(true);
+                    osm.put(key, value);
+                }
             }
-        } else {
-            for (OsmPrimitive osm : objects) {
-                osm.setModified(true);
-                osm.put(key, value);
-            }
+            return true;
         }
-        return true;
+        finally {
+            Main.main.getCurrentDataSet().endUpdate();
+        }
     }
 
     @Override public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
