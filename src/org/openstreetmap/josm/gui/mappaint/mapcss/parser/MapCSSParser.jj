@@ -118,6 +118,14 @@ int uint() :
     i=<UINT> { return Integer.parseInt(i.image); }
 }
 
+int int_() :
+{
+    int i;
+}
+{
+    <MINUS> i=uint() { return -i; } | i=uint() { return i; }
+}
+
 float ufloat() :
 {
     Token f;
@@ -290,13 +298,13 @@ Condition condition() :
     Expression e;
 }
 {
-    <LSQUARE>
+    <LSQUARE> s()
     (
-        LOOKAHEAD( simple_key_condition() <RSQUARE> )
-            c=simple_key_condition() <RSQUARE> { return c; }
+        LOOKAHEAD( simple_key_condition() s() <RSQUARE> )
+            c=simple_key_condition() s() <RSQUARE> { return c; }
         |
-        LOOKAHEAD( simple_key_value_condition() <RSQUARE> )
-            c=simple_key_value_condition() <RSQUARE> { return c; }
+        LOOKAHEAD( simple_key_value_condition() s() <RSQUARE> )
+            c=simple_key_value_condition() s() <RSQUARE> { return c; }
         |
             e=expression() <RSQUARE> { return new Condition.ExpressionCondition(e); }
     )
@@ -331,21 +339,19 @@ Condition simple_key_value_condition() :
     String key;
     String val;
     float f;
+    int i;
     Condition.Op op;
 }
 {
-    key=tag_key()
+    key=tag_key() s()
     (
+        LOOKAHEAD(2)
+            <EQUAL> <TILDE> { op=Condition.Op.REGEX; } s() val=regex()
+        |
             (
-                    <EXCLAMATION> <EQUAL> { op=Condition.Op.NEQ; } val=string_or_ident()
+                    <EXCLAMATION> <EQUAL> { op=Condition.Op.NEQ; }
                 |
                     <EQUAL> { op=Condition.Op.EQ; }
-                    (
-                            <TILDE> { op=Condition.Op.REGEX; }
-                            val=regex()
-                        |
-                            val=string_or_ident()
-                    )
                 |
                     <TILDE> <EQUAL> { op=Condition.Op.ONE_OF; } val=string_or_ident()
                 |
@@ -355,7 +361,15 @@ Condition simple_key_value_condition() :
                 |
                     <STAR> <EQUAL> { op=Condition.Op.CONTAINS; } val=string_or_ident()
             )
-            { return new Condition.KeyValueCondition(key, val, op); }
+            s()
+            ( 
+                LOOKAHEAD(2) 
+                        i=int_() { val=Integer.toString(i); }
+                    | 
+                        f=float_() { val=Float.toString(f); } 
+                    |
+                        val=string_or_ident() 
+            )
         |
             (
                     <GREATER_EQUAL> { op=Condition.Op.GREATER_OR_EQUAL; }
@@ -366,9 +380,10 @@ Condition simple_key_value_condition() :
                 |
                     <LESS> { op=Condition.Op.LESS; }
             )
-            f=float_()
-            { return new Condition.KeyValueCondition(key, Float.toString(f), op); }
+            s()
+            f=float_() { val=Float.toString(f); }
     )
+    { return new Condition.KeyValueCondition(key, val, op); }
 }
 
 Condition pseudoclass() :
