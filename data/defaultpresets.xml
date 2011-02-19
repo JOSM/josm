@@ -2174,6 +2174,17 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
             <text key="wikipedia" text="Wikipedia" default="" delete_if_empty="true" />
         </item>
+        <item name="Dog Park" icon="presets/dogpark.png" type="node,closedway">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=dog_park"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:leisure=dog_park" />
+            <label text="Edit Dog Park" />
+            <key key="leisure" value="dog_park" />
+            <text key="name" text="Name" default="" delete_if_empty="true" />
+            <check key="area" text="Area" default="off" delete_if_empty="true" />
+            <combo key="barrier" text="Barrier" values="fence,wall" default="" delete_if_empty="true" />  
+            <combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00;Sa 08:00-12:00" default="" delete_if_empty="true" />
+            <check key="lit" text="Lit" default="off" delete_if_empty="true" />
+        </item>  
         <item name="Theme Park" icon="presets/theme_park.png" type="node,closedway">
             <label text="Edit Theme Park" />
             <key key="tourism" value="theme_park" />
