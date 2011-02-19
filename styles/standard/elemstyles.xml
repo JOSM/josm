@@ -2035,8 +2035,7 @@ For external files the <rules> should have following elements:
 	</rule>
 
 	<rule>
-		<condition k="amenity" v="fire_hydrant"/>
-		<area colour="amenity_light#f7efb7"/>
+		<condition k="emergency" v="fire_hydrant"/>
 		<icon annotate="true" src="service/fire_hydrant.png"/>
 	</rule>
 
