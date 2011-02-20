@@ -444,7 +444,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                             if(!tileSource.requiresAttribution())
                                 return;
 
-                            if(attrImageBounds.contains(e.getPoint())) {
+                            if(attrImageBounds != null && attrImageBounds.contains(e.getPoint())) {
                                 try {
                                     java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
                                     desktop.browse(new URI(tileSource.getAttributionLinkURL()));
