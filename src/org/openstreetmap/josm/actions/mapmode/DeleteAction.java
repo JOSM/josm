@@ -52,10 +52,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  * properly, highlighting way segments must be possible first. --xeen, 2009-09-02
  */
 public class DeleteAction extends MapMode implements AWTEventListener {
-    //private boolean drawTargetHighlight;
-    private boolean drawTargetCursor;
-    //private Collection<? extends OsmPrimitive> oldPrims = null;
-
     // Cache previous mouse event (needed when only the modifier keys are
     // pressed but the mouse isn't moved)
     private MouseEvent oldEvent = null;
@@ -79,7 +75,6 @@ public class DeleteAction extends MapMode implements AWTEventListener {
             return c;
         }
     }
-    private DeleteMode currentMode = DeleteMode.none;
 
     private static class DeleteParameters {
         DeleteMode mode;
@@ -104,8 +99,6 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         super.enterMode();
         if (!isEnabled())
             return;
-        //drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
-        drawTargetCursor = Main.pref.getBoolean("draw.target-cursor", true);
 
         Main.map.mapView.addMouseListener(this);
         Main.map.mapView.addMouseMotionListener(this);
@@ -115,8 +108,6 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         } catch (SecurityException ex) {
             System.out.println(ex);
         }
-
-        currentMode = DeleteMode.none;
     }
 
     @Override public void exitMode() {
@@ -188,35 +179,9 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         if(!Main.map.mapView.isActiveLayerVisible() || e == null)
             return;
 
-        // Clean old highlights
-        //cleanOldHighlights();
-
         DeleteParameters parameters = getDeleteParameters(e, modifiers);
-        setCursor(parameters.mode);
-
-        // Needs to implement WaySegment highlight first
-        /*if(drawTargetHighlight) {
-            // Add new highlights
-            for(OsmPrimitive p : prims) {
-                p.highlighted = true;
-            }
-            oldPrims = prims;
-        }*/
-
-        // We only need to repaint if the highlights changed
-        //Main.map.mapView.repaint();
+        Main.map.mapView.setNewCursor(parameters.mode.cursor(), this);
     }
-
-    /**
-     * Small helper function that cleans old highlights
-     */
-    /*private void cleanOldHighlights() {
-        if(oldPrims == null)
-            return;
-        for(OsmPrimitive p: oldPrims) {
-            p.highlighted = false;
-        }
-    }*/
 
     /**
      * If user clicked with the left button, delete the nearest object.
@@ -334,30 +299,6 @@ public class DeleteAction extends MapMode implements AWTEventListener {
         default:
             return null;
         }
-    }
-
-    /**
-     * This function sets the given cursor in a safe way. This implementation
-     * differs from the on in DrawAction (it is favorable, too).
-     * FIXME: Update DrawAction to use this "setCursor-style" and move function
-     * to MapMode.
-     * @param c
-     */
-    private void setCursor(final DeleteMode c) {
-        if(currentMode.equals(c) || (!drawTargetCursor && currentMode.equals(DeleteMode.none)))
-            return;
-        // We invoke this to prevent strange things from happening
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                // Don't change cursor when mode has changed already
-                if(!(Main.map.mapMode instanceof DeleteAction))
-                    return;
-
-                Main.map.mapView.setCursor(c.cursor());
-                //System.out.println("Set cursor to: " + c.name());
-            }
-        });
-        currentMode = c;
     }
 
     /**

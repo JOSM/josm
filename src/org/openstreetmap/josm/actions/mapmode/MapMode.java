@@ -23,8 +23,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * control.
  */
 abstract public class MapMode extends JosmAction implements MouseListener, MouseMotionListener {
-    private final Cursor cursor;
-    private Cursor oldCursor;
+    protected final Cursor cursor;
 
     /**
      * Constructor for mapmodes without an menu
@@ -47,13 +46,12 @@ abstract public class MapMode extends JosmAction implements MouseListener, Mouse
 
     public void enterMode() {
         putValue("active", true);
-        oldCursor = Main.map.mapView.getCursor();
-        Main.map.mapView.setCursor(cursor);
+        Main.map.mapView.setNewCursor(cursor, this);
         updateStatusLine();
     }
     public void exitMode() {
         putValue("active", false);
-        Main.map.mapView.setCursor(oldCursor);
+        Main.map.mapView.resetCursor(this);
     }
 
     protected void updateStatusLine() {

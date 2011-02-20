@@ -73,10 +73,6 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
     private EastNorth activeMoveDirection;
 
     /**
-     * The old cursor before the user pressed the mouse button.
-     */
-    private Cursor oldCursor;
-    /**
      * The position of the mouse cursor when the drag action was initiated.
      */
     private Point initialMousePos;
@@ -109,7 +105,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         super(tr("Extrude"), "extrude/extrude", tr("Create areas"),
                 Shortcut.registerShortcut("mapmode:extrude", tr("Mode: {0}", tr("Extrude")), KeyEvent.VK_X, Shortcut.GROUP_EDIT),
                 mapFrame,
-                getCursor("normal", "rectangle", Cursor.DEFAULT_CURSOR));
+                ImageProvider.getCursor("normal", "rectangle"));
         putValue("help", ht("/Action/Extrude"));
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
         selectedColor = PaintColors.SELECTED.get();
@@ -262,7 +258,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             Main.map.statusLine.setDist(distance);
             updateStatusLine();
 
-            setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+            Main.map.mapView.setNewCursor(Cursor.MOVE_CURSOR, this);
 
             if (mode == Mode.extrude) {
                 //nothing here
@@ -353,7 +349,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             }
 
             // Switch back into select mode
-            restoreCursor();
+            Main.map.mapView.setNewCursor(cursor, this);
             Main.map.mapView.removeTemporaryLayer(this);
             selectedSegment = null;
             moveCommand = null;
@@ -525,28 +521,6 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         }
         catch (NoninvertibleTransformException e) {
             return new Line2D.Double(start, new Point2D.Double(start.getX() + (unitvector.getX() * 10) , start.getY() + (unitvector.getY() * 10)));
-        }
-    }
-
-    private static Cursor getCursor(String name, String mod, int def) {
-        try {
-            return ImageProvider.getCursor(name, mod);
-        } catch (Exception e) {
-        }
-        return Cursor.getPredefinedCursor(def);
-    }
-
-    private void setCursor(Cursor c) {
-        if (oldCursor == null) {
-            oldCursor = Main.map.mapView.getCursor();
-            Main.map.mapView.setCursor(c);
-        }
-    }
-
-    private void restoreCursor() {
-        if (oldCursor != null) {
-            Main.map.mapView.setCursor(oldCursor);
-            oldCursor = null;
         }
     }
 }

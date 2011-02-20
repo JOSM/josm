@@ -61,11 +61,8 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, AWTEventListener {
     //static private final Logger logger = Logger.getLogger(DrawAction.class.getName());
 
-    final private Cursor cursorCrosshair;
     final private Cursor cursorJoinNode;
     final private Cursor cursorJoinWay;
-    enum Cursors { crosshair, node, way }
-    private Cursors currCursor = Cursors.crosshair;
 
     private Node lastUsedNode = null;
     private double PHI=Math.toRadians(90);
@@ -79,7 +76,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private boolean drawHelperLine;
     private boolean wayIsFinished = false;
     private boolean drawTargetHighlight;
-    private boolean drawTargetCursor;
     private Point mousePos;
     private Point oldMousePos;
     private Color selectedColor;
@@ -92,52 +88,14 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     public DrawAction(MapFrame mapFrame) {
         super(tr("Draw"), "node/autonode", tr("Draw nodes"),
                 Shortcut.registerShortcut("mapmode:draw", tr("Mode: {0}", tr("Draw")), KeyEvent.VK_A, Shortcut.GROUP_EDIT),
-                mapFrame, getCursor());
+                mapFrame, ImageProvider.getCursor("crosshair", null));
 
         // Add extra shortcut N
         extraShortcut = Shortcut.registerShortcut("mapmode:drawfocus", tr("Mode: Draw Focus"), KeyEvent.VK_N, Shortcut.GROUP_EDIT);
         Main.registerActionShortcut(this, extraShortcut);
 
-        cursorCrosshair = getCursor();
         cursorJoinNode = ImageProvider.getCursor("crosshair", "joinnode");
         cursorJoinWay = ImageProvider.getCursor("crosshair", "joinway");
-    }
-
-    private static Cursor getCursor() {
-        try {
-            return ImageProvider.getCursor("crosshair", null);
-        } catch (Exception e) {
-        }
-        return Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
-    }
-
-    /**
-     * Displays the given cursor instead of the normal one
-     * @param Cursors One of the available cursors
-     */
-    private void setCursor(final Cursors c) {
-        if(currCursor.equals(c) || (!drawTargetCursor && currCursor.equals(Cursors.crosshair)))
-            return;
-        // We invoke this to prevent strange things from happening
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                // Don't change cursor when mode has changed already
-                if(!(Main.map.mapMode instanceof DrawAction))
-                    return;
-                switch(c) {
-                case way:
-                    Main.map.mapView.setCursor(cursorJoinWay);
-                    break;
-                case node:
-                    Main.map.mapView.setCursor(cursorJoinNode);
-                    break;
-                default:
-                    Main.map.mapView.setCursor(cursorCrosshair);
-                    break;
-                }
-            }
-        });
-        currCursor = c;
     }
 
     /**
@@ -157,7 +115,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         removeHighlighting();
         // if ctrl key is held ("no join"), don't highlight anything
         if (ctrl) {
-            setCursor(Cursors.crosshair);
+            Main.map.mapView.setNewCursor(cursor, this);
             return;
         }
 
@@ -168,7 +126,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         }
 
         if (mouseOnExistingNode != null) {
-            setCursor(Cursors.node);
+            Main.map.mapView.setNewCursor(cursorJoinNode, this);
             // We also need this list for the statusbar help text
             oldHighlights.add(mouseOnExistingNode);
             if(drawTargetHighlight) {
@@ -179,11 +137,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         // Insert the node into all the nearby way segments
         if (mouseOnExistingWays.size() == 0) {
-            setCursor(Cursors.crosshair);
+            Main.map.mapView.setNewCursor(cursor, this);
             return;
         }
 
-        setCursor(Cursors.way);
+        Main.map.mapView.setNewCursor(cursorJoinWay, this);
 
         // We also need this list for the statusbar help text
         oldHighlights.addAll(mouseOnExistingWays);
@@ -207,11 +165,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         if (!isEnabled())
             return;
         super.enterMode();
-        currCursor = Cursors.crosshair;
         selectedColor =PaintColors.SELECTED.get();
         drawHelperLine = Main.pref.getBoolean("draw.helper-line", true);
         drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
-        drawTargetCursor = Main.pref.getBoolean("draw.target-cursor", true);
         wayIsFinished = false;
 
         Main.map.mapView.addMouseListener(this);

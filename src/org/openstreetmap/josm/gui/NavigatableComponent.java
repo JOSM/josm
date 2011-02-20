@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 
+import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
@@ -1211,5 +1212,59 @@ public class NavigatableComponent extends JComponent implements Helpful {
         SYSTEMS_OF_MEASUREMENT.put(marktr("Metric"), METRIC_SOM);
         SYSTEMS_OF_MEASUREMENT.put(marktr("Chinese"), CHINESE_SOM);
         SYSTEMS_OF_MEASUREMENT.put(marktr("Imperial"), IMPERIAL_SOM);
+    }
+
+    private class CursorInfo {
+        public Cursor cursor;
+        public Object object;
+        public CursorInfo(Cursor c, Object o) {
+            cursor = c;
+            object = o;
+        }
+    }
+
+    private LinkedList<CursorInfo> Cursors = new LinkedList<CursorInfo>();
+    /**
+     * Set new cursor.
+     */
+    public void setNewCursor(Cursor cursor, Object reference) {
+        if(Cursors.size() > 0) {
+            CursorInfo l = Cursors.getLast();
+            if(l != null && l.cursor == cursor && l.object == reference) {
+                return;
+            }
+            stripCursors(reference);
+        }
+        Cursors.add(new CursorInfo(cursor, reference));
+        setCursor(cursor);
+    }
+    public void setNewCursor(int cursor, Object reference) {
+        setNewCursor(Cursor.getPredefinedCursor(cursor), reference);
+    }
+    /**
+     * Remove the new cursor and reset to previous
+     */
+    public void resetCursor(Object reference) {
+        if(Cursors.size() == 0) {
+            setCursor(null);
+            return;
+        }
+        CursorInfo l = Cursors.getLast();
+        stripCursors(reference);
+        if(l != null && l.object == reference) {
+            if(Cursors.size() == 0)
+                setCursor(null);
+            else
+                setCursor(Cursors.getLast().cursor);
+        }
+    }
+
+    private void stripCursors(Object reference) {
+        LinkedList<CursorInfo> c = new LinkedList<CursorInfo>();
+        for(CursorInfo i : Cursors) {
+            if(i.object != reference)
+                c.add(i);
+        }
+        Cursors = c;
     }
 }

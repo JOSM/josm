@@ -75,10 +75,6 @@ public class SelectAction extends MapMode implements SelectionEnded {
     /**
      * The old cursor before the user pressed the mouse button.
      */
-    private Cursor oldCursor;
-    /**
-     * The position of the mouse before the user starts to drag it while pressing a button.
-     */
     private Point startingDraggingPos;
     /**
      * The last known position of the mouse.
@@ -108,34 +104,12 @@ public class SelectAction extends MapMode implements SelectionEnded {
         super(tr("Select"), "move/move", tr("Select, move, scale and rotate objects"),
                 Shortcut.registerShortcut("mapmode:select", tr("Mode: {0}", tr("Select")), KeyEvent.VK_S, Shortcut.GROUP_EDIT),
                 mapFrame,
-                getCursor("normal", "selection", Cursor.DEFAULT_CURSOR));
+                ImageProvider.getCursor("normal", "selection"));
         mv = mapFrame.mapView;
         putValue("help", ht("/Action/Move/Move"));
         selectionManager = new SelectionManager(this, false, mv);
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay", 200);
         initialMoveThreshold = Main.pref.getInteger("edit.initial-move-threshold", 5);
-    }
-
-    private static Cursor getCursor(String name, String mod, int def) {
-        try {
-            return ImageProvider.getCursor(name, mod);
-        } catch (Exception e) {
-        }
-        return Cursor.getPredefinedCursor(def);
-    }
-
-    private void setCursor(Cursor c) {
-        if (oldCursor == null) {
-            oldCursor = mv.getCursor();
-            mv.setCursor(c);
-        }
-    }
-
-    private void restoreCursor() {
-        if (oldCursor != null) {
-            mv.setCursor(oldCursor);
-            oldCursor = null;
-        }
     }
 
     @Override
@@ -181,7 +155,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
         }
 
         if (mode == Mode.move) {
-            setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+            mv.setNewCursor(Cursor.MOVE_CURSOR, this);
         }
 
         if (startingDraggingPos == null) {
@@ -256,7 +230,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
                                 tr("Cannot move objects outside of the world."),
                                 tr("Warning"),
                                 JOptionPane.WARNING_MESSAGE);
-                        restoreCursor();
+                        mv.setNewCursor(cursor, this);
                         return;
                     }
                 }
@@ -456,7 +430,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
             // Mode.select redraws when selectPrims is called
             // Mode.move   redraws when mouseDragged is called
             // Mode.rotate redraws here
-            setCursor(ImageProvider.getCursor("rotate", null));
+            mv.setNewCursor(ImageProvider.getCursor("rotate", null), this);
             mv.repaint();
         } else if (alt && ctrl) {
             mode = Mode.scale;
@@ -468,7 +442,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
             // Mode.select redraws when selectPrims is called
             // Mode.move   redraws when mouseDragged is called
             // Mode.scale redraws here
-            setCursor(ImageProvider.getCursor("scale", null));
+            mv.setNewCursor(ImageProvider.getCursor("scale", null), this);
             mv.repaint();
         } else if (!c.isEmpty()) {
             mode = Mode.move;
@@ -481,7 +455,6 @@ public class SelectAction extends MapMode implements SelectionEnded {
         } else {
             mode = Mode.select;
 
-            oldCursor = mv.getCursor();
             selectionManager.register(mv);
             selectionManager.mousePressed(e);
         }
@@ -499,7 +472,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
         startingDraggingPos = null;
 
-        restoreCursor();
+        mv.setNewCursor(cursor, this);
         if (mode == Mode.select) {
             selectionManager.unregister(mv);
 

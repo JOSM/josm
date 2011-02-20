@@ -66,10 +66,6 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
      * The map to move around.
      */
     private final NavigatableComponent nc;
-    /**
-     * The old cursor when we changed it to movement cursor.
-     */
-    private Cursor oldCursor;
 
     private boolean movementInPlace = false;
 
@@ -166,8 +162,7 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
             return;
         movementInPlace = true;
         mousePosMove = nc.getEastNorth(e.getX(), e.getY());
-        oldCursor = nc.getCursor();
-        nc.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+        nc.setNewCursor(Cursor.MOVE_CURSOR, this);
     }
 
     /**
@@ -177,12 +172,8 @@ public class MapMover extends MouseAdapter implements MouseMotionListener, Mouse
         if (!movementInPlace)
             return;
         movementInPlace = false;
-        if (oldCursor != null)
-            nc.setCursor(oldCursor);
-        else
-            nc.setCursor(Cursor.getDefaultCursor());
+        nc.resetCursor(this);
         mousePosMove = null;
-        oldCursor = null;
     }
 
     /**
