@@ -137,7 +137,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 if (newValue.equals(value)) {
                     newValue = invertNumber(value);
                 }
-            } else {
+            } else if (!key.startsWith("name") && !key.endsWith("name")) {
                 for (PrefixSuffixSwitcher prefixSuffixSwitcher : prefixSuffixSwitchers) {
                     newKey = prefixSuffixSwitcher.apply(key);
                     if (!key.equals(newKey)) {
