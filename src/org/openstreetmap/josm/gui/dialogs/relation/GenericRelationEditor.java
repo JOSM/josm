@@ -1544,8 +1544,11 @@ public class GenericRelationEditor extends RelationEditor  {
                 }
 
                 toAdd = filterConfirmedPrimitives(toAdd);
-                memberTableModel.addMembersAfterIdx(toAdd, memberTableModel
-                        .getSelectionModel().getMaxSelectionIndex());
+                int index = memberTableModel.getSelectionModel().getMaxSelectionIndex();
+                if (index == -1) {
+                    index = memberTableModel.getRowCount() - 1;
+                }
+                memberTableModel.addMembersAfterIdx(toAdd, index);
 
                 tfRole.requestFocusInWindow();
 
