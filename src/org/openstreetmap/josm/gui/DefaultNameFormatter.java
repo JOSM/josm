@@ -223,6 +223,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                     name = tr(building); // translate tag!
             }
             if (name == null) {
+                name = trc("Place type", relation.get("place"));
+            }
+            if (name == null) {
                 name = tr("relation");
             }
             String admin_level = relation.get("admin_level");
