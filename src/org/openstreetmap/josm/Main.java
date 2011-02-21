@@ -475,7 +475,7 @@ abstract public class Main {
             }
             if(!fileList.isEmpty())
             {
-                OpenFileAction.openFiles(fileList);
+                OpenFileAction.openFiles(fileList, true);
             }
         }
         if (args.containsKey("downloadgps")) {

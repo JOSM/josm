@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -72,7 +73,12 @@ public class OpenFileAction extends DiskAccessAction {
      * @param fileList A list of files
      */
     static public void openFiles(List<File> fileList) {
+        openFiles(fileList, false);
+    }
+
+    static public void openFiles(List<File> fileList, boolean recordHistory) {
         OpenFileTask task = new OpenFileTask(fileList, null);
+        task.setRecordHistory(recordHistory);
         Main.worker.submit(task);
     }
 
@@ -224,12 +230,12 @@ public class OpenFileAction extends DiskAccessAction {
                 }
             } else {
                 // find appropriate importer
-                MultiMap<FileImporter, File> map = new MultiMap<FileImporter, File>();
+                MultiMap<FileImporter, File> importerMap = new MultiMap<FileImporter, File>();
                 List<File> filesWithUnknownImporter = new LinkedList<File>();
                 FILES: for (File f : files) {
                     for (FileImporter importer : ExtensionFileFilter.importers) {
                         if (importer.acceptFile(f)) {
-                            map.put(importer, f);
+                            importerMap.put(importer, f);
                             continue FILES;
                         }
                     }
@@ -238,19 +244,27 @@ public class OpenFileAction extends DiskAccessAction {
                 if (!filesWithUnknownImporter.isEmpty()) {
                     alertFilesWithUnknownImporter(filesWithUnknownImporter);
                 }
-                List<FileImporter> ims = new ArrayList<FileImporter>(map.keySet());
-                Collections.sort(ims);
-                Collections.reverse(ims);
+                List<FileImporter> importers = new ArrayList<FileImporter>(importerMap.keySet());
+                Collections.sort(importers);
+                Collections.reverse(importers);
 
                 Set<String> fileHistory = new LinkedHashSet<String>();
+                Set<String> failedAll = new HashSet<String>();
 
-                for (FileImporter importer : ims) {
-                    List<File> files = new ArrayList<File>(map.get(importer));
+                for (FileImporter importer : importers) {
+                    List<File> files = new ArrayList<File>(importerMap.get(importer));
                     importData(importer, files);
+                    // suppose all files will fail to load
+                    List<File> failedFiles = new ArrayList<File>(files);
 
                     if (recordHistory && !importer.isBatchImporter()) {
-                        for (File f : files) {
+                        // remove the files which didn't fail to load from the failed list
+                        failedFiles.removeAll(successfullyOpenedFiles);
+                        for (File f : successfullyOpenedFiles) {
                             fileHistory.add(f.getPath());
+                        }
+                        for (File f : failedFiles) {
+                            failedAll.add(f.getPath());
                         }
                     }
                 }
@@ -258,6 +272,8 @@ public class OpenFileAction extends DiskAccessAction {
                 if (recordHistory) {
                     Collection<String> oldFileHistory = Main.pref.getCollection("file-open.history");
                     fileHistory.addAll(oldFileHistory);
+                    // remove the files which failed to load from the list
+                    fileHistory.removeAll(failedAll);
                     int maxsize = Math.max(0, Main.pref.getInteger("file-open.history.max-size", 15));
                     Collection<String> trimmedFileHistory = new ArrayList<String>(Math.min(maxsize, fileHistory.size()));
                     int i = 0;
