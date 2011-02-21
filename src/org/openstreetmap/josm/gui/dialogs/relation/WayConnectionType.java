@@ -39,7 +39,6 @@ public class WayConnectionType {
     public boolean isOnewayLoopBackwardPart = false;
     public boolean isOnewayHead = false;
     public boolean isOnewayTail = false;
-//    public boolean isOnewayOppositeConnected = true;
 
     public WayConnectionType(boolean linkPrev, boolean linkNext, Direction direction) {
         this.linkPrev = linkPrev;

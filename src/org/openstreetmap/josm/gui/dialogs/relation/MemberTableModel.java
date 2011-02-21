@@ -960,14 +960,8 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
 
         for (int i=0; i<members.size(); ++i) {
             final RelationMember m = members.get(i);
-            if (! m.isWay()) {
-                con.set(i, new WayConnectionType());
-                firstGroupIdx = i;
-                continue;
-            }
-
-            final Way w = m.getWay();
-            if (w == null || w.isIncomplete()) {
+            if (!m.isWay() || m.getWay() == null || m.getWay().isIncomplete()) {
+                if(i > 0) makeLoopIfNeeded(con, i-1);
                 con.set(i, new WayConnectionType());
                 firstGroupIdx = i;
                 continue;
@@ -1022,9 +1016,6 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         }
         makeLoopIfNeeded(con, members.size()-1);
         connectionType = con;
-        //        for (int i=0; i<con.size(); ++i) {
-        //            System.err.println(con.get(i));
-        //        }
     }
 
 //    private static void unconnectPreviousLink(List<WayConnectionType> con, int beg, boolean backward){
