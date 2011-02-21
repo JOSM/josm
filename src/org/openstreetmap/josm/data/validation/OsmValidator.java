@@ -252,7 +252,7 @@ public class OsmValidator implements LayerChangeListener {
         if (Main.proj.toString().equals(new Epsg4326().toString())) {
             OsmValidator.griddetail = 10000;
         } else if (Main.proj.toString().equals(new Mercator().toString())) {
-            OsmValidator.griddetail = 100000;
+            OsmValidator.griddetail = 0.01;
         } else if (Main.proj.toString().equals(new Lambert().toString())) {
             OsmValidator.griddetail = 0.1;
         }
