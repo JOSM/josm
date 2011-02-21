@@ -21,16 +21,18 @@ import org.openstreetmap.josm.data.coor.LatLon;
  */
 public class Mercator implements Projection {
 
+    final double radius = 6378137.0;
+
     public EastNorth latlon2eastNorth(LatLon p) {
         return new EastNorth(
-                p.lon()*Math.PI/180,
-                Math.log(Math.tan(Math.PI/4+p.lat()*Math.PI/360)));
+                p.lon()*Math.PI/180*radius,
+                Math.log(Math.tan(Math.PI/4+p.lat()*Math.PI/360))*radius);
     }
 
     public LatLon eastNorth2latlon(EastNorth p) {
         return new LatLon(
-                Math.atan(Math.sinh(p.north()))*180/Math.PI,
-                p.east()*180/Math.PI);
+                Math.atan(Math.sinh(p.north()/radius))*180/Math.PI,
+                p.east()/radius*180/Math.PI);
     }
 
     @Override public String toString() {
@@ -59,6 +61,6 @@ public class Mercator implements Projection {
 
     public double getDefaultZoomInPPD() {
         // This will set the scale bar to about 100 km
-        return 0.000158;
+        return 1000.0;/*0.000158*/
     }
 }
