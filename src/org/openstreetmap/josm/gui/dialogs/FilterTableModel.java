@@ -184,6 +184,7 @@ public class FilterTableModel extends AbstractTableModel {
         for (FilterPreferenceEntry e : entries) {
             filters.add(new Filter(e));
         }
+        updateFilters();
         return true;
     }
 
