@@ -254,7 +254,7 @@ public class AddWMSLayerPanel extends JPanel {
         try {
             URLConnection openConnection = getCapabilitiesUrl.openConnection();
             InputStream inputStream = openConnection.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
             String line;
             StringBuilder ba = new StringBuilder();
             while((line = br.readLine()) != null) {
