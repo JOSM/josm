@@ -1,7 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.dialogs.relation;
 
-import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.*;
+import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.BACKWARD;
+import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.FORWARD;
+import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.NONE;
+import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.ROUNDABOUT_LEFT;
+import static org.openstreetmap.josm.gui.dialogs.relation.WayConnectionType.Direction.ROUNDABOUT_RIGHT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -376,73 +380,34 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         return selectedIndices;
     }
 
-    public void addMembersAtBeginning(List<OsmPrimitive> primitives) {
+    private void addMembersAtIndex(List<? extends OsmPrimitive> primitives, int index) {
         if (primitives == null)
             return;
-        int index = 0;
-        for (OsmPrimitive primitive : primitives) {
-            RelationMember member = new RelationMember("", primitive);
-            members.add(index++, member);
-        }
-        fireTableDataChanged();
-        getSelectionModel().clearSelection();
-        for (int i = 0; i < primitives.size(); i++) {
-            getSelectionModel().addSelectionInterval(i, i);
-        }
-        fireMakeMemberVisible(0);
-    }
-
-    public void addMembersAtEnd(List<? extends OsmPrimitive> primitives) {
-        if (primitives == null)
-            return;
-
-        for (OsmPrimitive primitive : primitives) {
-            RelationMember member = new RelationMember("", primitive);
-            members.add(member);
-        }
-        fireTableDataChanged();
-        getSelectionModel().clearSelection();
-        for (int i = 0; i < primitives.size(); i++) {
-            getSelectionModel().addSelectionInterval(members.size() - 1 - i, members.size() - 1 - i);
-        }
-        fireMakeMemberVisible(members.size() - 1);
-    }
-
-    public void addMembersBeforeIdx(List<? extends OsmPrimitive> primitives, int idx) {
-        if (primitives == null)
-            return;
-
+        int idx = index;
         for (OsmPrimitive primitive : primitives) {
             RelationMember member = new RelationMember("", primitive);
             members.add(idx++, member);
         }
         fireTableDataChanged();
-        getSelectionModel().setValueIsAdjusting(true);
         getSelectionModel().clearSelection();
-        for (int i = 0; i < primitives.size(); i++) {
-            getSelectionModel().addSelectionInterval(idx + i, idx + i);
-        }
-        getSelectionModel().setValueIsAdjusting(false);
-        fireMakeMemberVisible(idx);
+        getSelectionModel().addSelectionInterval(index, index + primitives.size() - 1);
+        fireMakeMemberVisible(index);
+    }
+
+    public void addMembersAtBeginning(List<? extends OsmPrimitive> primitives) {
+        addMembersAtIndex(primitives, 0);
+    }
+
+    public void addMembersAtEnd(List<? extends OsmPrimitive> primitives) {
+        addMembersAtIndex(primitives, members.size());
+    }
+
+    public void addMembersBeforeIdx(List<? extends OsmPrimitive> primitives, int idx) {
+        addMembersAtIndex(primitives, idx);
     }
 
     public void addMembersAfterIdx(List<? extends OsmPrimitive> primitives, int idx) {
-        if (primitives == null)
-            return;
-        int j = 1;
-        for (OsmPrimitive primitive : primitives) {
-            RelationMember member = new RelationMember("", primitive);
-            members.add(idx + j, member);
-            j++;
-        }
-        fireTableDataChanged();
-        getSelectionModel().setValueIsAdjusting(true);
-        getSelectionModel().clearSelection();
-        for (int i = 0; i < primitives.size(); i++) {
-            getSelectionModel().addSelectionInterval(idx + 1 + i, idx + 1 + i);
-        }
-        getSelectionModel().setValueIsAdjusting(false);
-        fireMakeMemberVisible(idx + 1);
+        addMembersAtIndex(primitives, idx + 1);
     }
 
     /**
@@ -961,40 +926,44 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         for (int i=0; i<members.size(); ++i) {
             final RelationMember m = members.get(i);
             if (!m.isWay() || m.getWay() == null || m.getWay().isIncomplete()) {
-                if(i > 0) makeLoopIfNeeded(con, i-1);
+                if(i > 0) {
+                    makeLoopIfNeeded(con, i-1);
+                }
                 con.set(i, new WayConnectionType());
                 firstGroupIdx = i;
                 continue;
             }
-          
+
             WayConnectionType wct = new WayConnectionType(false);
             wct.linkPrev = i>0 && con.get(i-1) != null && con.get(i-1).isValid();
             wct.direction = NONE;
 
             if(isOneway(m)){
-                if(lastWct != null && lastWct.isOnewayTail)
+                if(lastWct != null && lastWct.isOnewayTail) {
                     wct.isOnewayHead = true;
+                }
                 if(lastBackwardWay == UNCONNECTED && lastForwardWay == UNCONNECTED){ //Beginning of new oneway
                     wct.isOnewayHead = true;
                     lastForwardWay = i-1;
                     lastBackwardWay = i-1;
                     onewayBeginning = true;
                 }
-            }            
+            }
 
             if (wct.linkPrev) {
                 if(lastBackwardWay != UNCONNECTED && lastForwardWay != UNCONNECTED) {
                     wct = determineOnewayConnectionType(con, m, i, wct);
-                    if(!wct.linkPrev)
+                    if(!wct.linkPrev) {
                         firstGroupIdx = i;
+                    }
                 }
 
                 if(!isOneway(m)) {
                     wct.direction = determineDirection(i-1, lastWct.direction, i);
                     wct.linkPrev = (wct.direction != NONE);
-                }                   
+                }
             }
-            
+
             if (!wct.linkPrev) {
                 wct.direction = determineDirectionOfFirst(i, m);
                 if(isOneway(m)){
@@ -1004,13 +973,16 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
             }
 
             wct.linkNext = false;
-            if(lastWct != null)
+            if(lastWct != null) {
                 lastWct.linkNext = wct.linkPrev;
+            }
             con.set(i, wct);
             lastWct = wct;
 
             if(!wct.linkPrev) {
-                if(i > 0) makeLoopIfNeeded(con, i-1);
+                if(i > 0) {
+                    makeLoopIfNeeded(con, i-1);
+                }
                 firstGroupIdx = i;
             }
         }
@@ -1018,15 +990,15 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         connectionType = con;
     }
 
-//    private static void unconnectPreviousLink(List<WayConnectionType> con, int beg, boolean backward){
-//        int i = beg;
-//        while(true){
-//            WayConnectionType t = con.get(i--);
-//            t.isOnewayOppositeConnected = false;
-//            if(backward && t.isOnewayLoopBackwardPart) break;
-//            if(!backward && t.isOnewayLoopForwardPart) break;
-//        }
-//    }
+    //    private static void unconnectPreviousLink(List<WayConnectionType> con, int beg, boolean backward){
+    //        int i = beg;
+    //        while(true){
+    //            WayConnectionType t = con.get(i--);
+    //            t.isOnewayOppositeConnected = false;
+    //            if(backward && t.isOnewayLoopBackwardPart) break;
+    //            if(!backward && t.isOnewayLoopForwardPart) break;
+    //        }
+    //    }
 
     private static Direction reverse(final Direction dir){
         if(dir == FORWARD) return BACKWARD;
@@ -1041,7 +1013,7 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     private static boolean isForward(final RelationMember member){
         return member.getRole().equals("forward");
     }
-    
+
     public static boolean isOneway(final RelationMember member){
         return isForward(member) || isBackward(member);
     }
@@ -1062,10 +1034,9 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     }
 
     private Direction determineDirectionOfFirst(final int i, final RelationMember m) {
-        if (roundaboutType(i) != NONE) {
+        if (roundaboutType(i) != NONE)
             return roundaboutType(i);
-        }
-        
+
         if (isOneway(m)){
             if(isBackward(m)) return BACKWARD;
             else return FORWARD;
@@ -1083,15 +1054,18 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         Direction dirFW = determineDirection(lastForwardWay, con.get(lastForwardWay).direction, i);
         Direction dirBW = NONE;
         if(onewayBeginning) {
-            if(lastBackwardWay < 0)
+            if(lastBackwardWay < 0) {
                 dirBW = determineDirection(firstGroupIdx, reverse(con.get(firstGroupIdx).direction), i, true);
-            else
+            } else {
                 dirBW = determineDirection(lastBackwardWay, con.get(lastBackwardWay).direction, i, true);
+            }
 
-            if(dirBW != NONE)
+            if(dirBW != NONE) {
                 onewayBeginning = false;
-        } else
+            }
+        } else {
             dirBW = determineDirection(lastBackwardWay, con.get(lastBackwardWay).direction, i, true);
+        }
 
         if(isOneway(m)) {
             if(dirBW != NONE){
@@ -1105,8 +1079,8 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
                 wct.isOnewayLoopForwardPart = true;
             }
             if(dirFW == NONE && dirBW == NONE) { //Not connected to previous
-//                        unconnectPreviousLink(con, i, true);
-//                        unconnectPreviousLink(con, i, false);
+                //                        unconnectPreviousLink(con, i, true);
+                //                        unconnectPreviousLink(con, i, false);
                 wct.linkPrev = false;
                 if(isOneway(m)){
                     wct.isOnewayHead = true;
@@ -1136,8 +1110,9 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
         } else {
             lastForwardWay = UNCONNECTED;
             lastBackwardWay = UNCONNECTED;
-            if(dirFW == NONE || dirBW == NONE)
+            if(dirFW == NONE || dirBW == NONE) {
                 wct.linkPrev = false;
+            }
         }
         return wct;
     }
