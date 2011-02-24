@@ -65,11 +65,10 @@ For external files the <rules> should have following elements:
 - version          a version number of some sort (e.g. creation date)
 - description      what is your style meant to be
 - shortdescription very short description
-- link       a link to a helpful website (optional)
+- link              a link to a helpful website (optional)
+- name             is the name of the style
+- icon             icon to display in style choosing dialog
 - The fields description, shortdescription and link may also be localized (e.g. de.link)
-- name       is the name of the style
-                   - when the style replaces the whole rendering choose a new name
-                   - when the style is additional choose "standard" or don't use name tag
 -->
 
 	<rule>
