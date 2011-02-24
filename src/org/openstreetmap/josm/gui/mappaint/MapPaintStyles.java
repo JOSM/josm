@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -146,7 +147,28 @@ public class MapPaintStyles {
             }
             if (entry.url.toLowerCase().endsWith(".mapcss")) {
                 return new MapCSSStyleSource(entry);
+            }
+            if (entry.url.toLowerCase().endsWith(".xml")) {
+                return new XmlStyleSource(entry);
             } else {
+                InputStreamReader reader = new InputStreamReader(in);
+                WHILE: while (true) {
+                    int c = reader.read();
+                    switch (c) {
+                        case -1:
+                            break WHILE;
+                        case ' ':
+                        case '\t':
+                        case '\n':
+                        case '\r':
+                            continue;
+                        case '<':
+                            return new XmlStyleSource(entry);
+                        default:
+                            return new MapCSSStyleSource(entry);
+                    }
+                }
+                System.err.println("Warning: Could not detect style type. Using default (xml).");
                 return new XmlStyleSource(entry);
             }
         } catch (IOException e) {

@@ -1174,6 +1174,10 @@ public abstract class SourceEditor extends JPanel {
                                 last.title = value;
                             } else if ("shortdescription".equals(key) && last.title == null) {
                                 last.title = value;
+                            } else if ((lang + "title").equals(key) && last.title == null) {
+                                last.title = value;
+                            } else if ("title".equals(key) && last.title == null) {
+                                last.title = value;
                             } else if ("name".equals(key) && last.name == null) {
                                 last.name = value;
                             } else if ((lang + "author").equals(key)) {
