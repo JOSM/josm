@@ -4,6 +4,8 @@ package org.openstreetmap.josm.data.imagery;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.openstreetmap.josm.io.OsmApi;
+
 /**
  * Class that stores info about an image background layer.
  *
@@ -27,14 +29,6 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         }
     }
 
-    private final static String[] BLACKLIST_REGEXES = {
-        // These entries are for Google tile servers (names and IPV4 numbers)
-        ".*\\.google\\.com/.*",
-        ".*209\\.85\\.2\\d\\d.*",
-        ".*209\\.85\\.1[3-9]\\d.*",
-        ".*209\\.85\\.12[89].*"
-    };
-
     String name;
     String url = null;
     String cookies = null;
@@ -42,7 +36,6 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     ImageryType imageryType = ImageryType.WMS;
     double pixelPerDegree = 0.0;
     int maxZoom = 0;
-    private boolean blacklisted = false;
 
     public ImageryInfo(String name) {
         this.name=name;
@@ -172,16 +165,6 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
 
     public void setUrl(String url) {
 
-        // determine if URL is on blacklist and flag accordingly.
-        blacklisted = false;
-        for (String blacklistRegex : BLACKLIST_REGEXES) {
-            if (url.matches(blacklistRegex)) {
-                blacklisted = true;
-                System.err.println("layer '" + name + "' uses blacklisted URL");
-                break;
-            }
-        }
-
         for (ImageryType type : ImageryType.values()) {
             if (url.startsWith(type.getUrlString() + ":")) {
                 this.url = url.substring(type.getUrlString().length() + 1);
@@ -251,7 +234,11 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         return url != null && url.contains("{") && url.contains("}");
     }
 
+    /**
+     * Returns true if this layer's URL is matched by one of the regular
+     * expressions kept by the current OsmApi instance.
+     */
     public boolean isBlacklisted() {
-        return blacklisted;
+        return OsmApi.getOsmApi().getCapabilities().isOnImageryBlacklist(this.url);
     }
 }

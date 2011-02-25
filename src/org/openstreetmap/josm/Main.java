@@ -70,6 +70,7 @@ import org.openstreetmap.josm.gui.preferences.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.ProjectionPreference;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -210,6 +211,16 @@ abstract public class Main {
         main = this;
         isOpenjdk = System.getProperty("java.vm.name").toUpperCase().indexOf("OPENJDK") != -1;
         platform.startupHook();
+
+        // We try to establish an API connection early, so that any API 
+        // capabilities are already known to the editor instance. However
+        // if it goes wrong that's not critical at this stage.
+        try {
+            OsmApi.getOsmApi().initialize(null);
+        } catch (Exception x) {
+            // ignore any exception here.
+        }
+
         contentPanePrivate.add(panel, BorderLayout.CENTER);
         panel.add(gettingStarted, BorderLayout.CENTER);
         menu = new MainMenu();
@@ -233,6 +244,7 @@ abstract public class Main {
 
         toolbar.control.updateUI();
         contentPanePrivate.updateUI();
+
     }
 
     /**

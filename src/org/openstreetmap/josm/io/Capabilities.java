@@ -3,17 +3,47 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Represents the server capabilities
  *
+ * Example capabilites document:
+ * 
+ * <osm version="0.6" generator="OpenStreetMap server">
+ *   <api>
+ *     <version minimum="0.6" maximum="0.6"/>
+ *     <area maximum="0.25"/>
+ *     <tracepoints per_page="5000"/>
+ *     <waynodes maximum="2000"/>
+ *     <changesets maximum_elements="50000"/>
+ *     <timeout seconds="300"/>
+ *   </api>
+ *   <policy>
+ *     <imagery>
+ *       <blacklist regex=".*\.google\.com/.*"/>
+ *       <blacklist regex=".*209\.85\.2\d\d.*"/> 
+ *       <blacklist regex=".*209\.85\.1[3-9]\d.*"/>
+ *       <blacklist regex=".*209\.85\.12[89].*"/>
+ *     </imagery>
+ *   </policy>
+ * </osm>
+ * 
+ * This class is used in conjunction with a very primitive parser
+ * and simply stuffs the each tag and its attributes into a hash
+ * of hashes, with the exception of the "blacklist" tag which gets
+ * a list of its own. The DOM hierarchy is disregarded.
  */
 public class Capabilities {
-    private  HashMap<String, HashMap<String,String>> capabilities;
+
+    private HashMap<String, HashMap<String,String>> capabilities;
+    private ArrayList<String> imageryBlacklist;
 
     public Capabilities() {
-        capabilities = new HashMap<String, HashMap<String,String>>();
+        clear();
     }
 
     public boolean isDefined(String element, String attribute) {
@@ -31,7 +61,7 @@ public class Capabilities {
     }
 
     /**
-     * replies the value of configuration item in the capabilities as
+     * returns the value of configuration item in the capabilities as
      * double value
      *
      * @param element  the name of the element
@@ -52,19 +82,23 @@ public class Capabilities {
     }
 
     public void put(String element, String attribute, String value) {
-        if (capabilities == null) {
-            capabilities = new HashMap<String, HashMap<String,String>>();
+        if (element.equals("blacklist")) {
+            if (attribute.equals("regex")) {
+                imageryBlacklist.add(value);
+            }
+        } else {
+            if (! capabilities.containsKey(element))  {
+                HashMap<String,String> h = new HashMap<String, String>();
+                capabilities.put(element, h);
+            }
+            HashMap<String, String> e = capabilities.get(element);
+            e.put(attribute, value);
         }
-        if (! capabilities.containsKey(element))  {
-            HashMap<String,String> h = new HashMap<String, String>();
-            capabilities.put(element, h);
-        }
-        HashMap<String, String> e = capabilities.get(element);
-        e.put(attribute, value);
     }
 
     public void clear() {
         capabilities = new HashMap<String, HashMap<String,String>>();
+        imageryBlacklist = new ArrayList<String>();
     }
 
     public boolean supportsVersion(String version) {
@@ -73,7 +107,7 @@ public class Capabilities {
     }
 
     /**
-     * Replies the max number of objects in a changeset. -1 if either the capabilities
+     * Returns the max number of objects in a changeset. -1 if either the capabilities
      * don't include this parameter or if the parameter value is illegal (not a number,
      * a negative number)
      *
@@ -93,5 +127,28 @@ public class Capabilities {
             System.err.println(tr("Warning: illegal value of attribute ''{0}'' of element ''{1}'' in server capabilities. Got ''{2}''", "changesets", "maximum_elements", v ));
             return -1;
         }
+    }
+
+    /**
+     * checks if the given URL is blacklisted by one of the of the 
+     * regular expressions.
+     */
+
+    public boolean isOnImageryBlacklist(String url)
+    {
+        for (String blacklistRegex : imageryBlacklist) {
+            if (url.matches(blacklistRegex)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** 
+     * returns the full list of blacklist regular expressions.
+     */
+    public List<String> getImageryBlacklist()
+    {
+        return Collections.unmodifiableList(imageryBlacklist);
     }
 }

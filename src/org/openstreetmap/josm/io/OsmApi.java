@@ -31,6 +31,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -156,7 +158,7 @@ public class OsmApi extends OsmConnection {
             return;
         cancel = false;
         try {
-            String s = sendRequest("GET", "capabilities", null,monitor, false);
+            String s = sendRequest("GET", "capabilities", null, monitor, false);
             InputSource inputSource = new InputSource(new StringReader(s));
             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, new CapabilitiesParser());
             if (capabilities.supportsVersion("0.6")) {
@@ -172,6 +174,33 @@ public class OsmApi extends OsmConnection {
                     version));
             osmWriter.setVersion(version);
             initialized = true;
+
+            /* This is an interim solution for openstreetmap.org not currently 
+             * transmitting their imagery blacklist in the capabilities call.
+             * remove this as soon as openstreetmap.org adds blacklists. */
+            if (this.serverUrl.matches(".*openstreetmap.org/api.*") && capabilities.getImageryBlacklist().isEmpty())
+            {
+                capabilities.put("blacklist", "regex", ".*\\.google\\.com/.*");
+                capabilities.put("blacklist", "regex", ".*209\\.85\\.2\\d\\d.*");
+                capabilities.put("blacklist", "regex", ".*209\\.85\\.1[3-9]\\d.*");
+                capabilities.put("blacklist", "regex", ".*209\\.85\\.12[89].*");
+            }
+
+            /* This checks if there are any layers currently displayed that
+             * are now on the blacklist, and removes them. This is a rare
+             * situaton - probably only occurs if the user changes the API URL
+             * in the preferences menu. Otherwise they would not have been able
+             * to load the layers in the first place becuase they would have
+             * been disabled! */
+            if (Main.main.isDisplayingMapView()) {
+                for (Layer l : Main.map.mapView.getLayersOfType(ImageryLayer.class)) {
+                    if (((ImageryLayer) l).getInfo().isBlacklisted()) {
+                        System.out.println(tr("Removed layer {0} because it is not allowed by the configured API.", l.getName()));
+                        Main.main.removeLayer(l);
+                    }
+                }
+            }
+
         } catch(IOException e) {
             initialized = false;
             throw new OsmApiInitializationException(e);

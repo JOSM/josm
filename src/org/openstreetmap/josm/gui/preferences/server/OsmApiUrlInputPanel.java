@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
+import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class OsmApiUrlInputPanel extends JPanel {
@@ -135,6 +136,7 @@ public class OsmApiUrlInputPanel extends JPanel {
      * Saves the values to the preferences
      */
     public void saveToPreferences() {
+        String old_url = Main.pref.get("osm-server.url", null);
         if (cbUseDefaultServerUrl.isSelected()) {
             Main.pref.put("osm-server.url", null);
         } else if (tfOsmServerUrl.getText().trim().equals(defaulturl)) {
@@ -142,7 +144,17 @@ public class OsmApiUrlInputPanel extends JPanel {
         } else {
             Main.pref.put("osm-server.url", tfOsmServerUrl.getText().trim());
         }
+        String new_url = Main.pref.get("osm-server.url", null);
 
+        // When API URL changes, re-initialize API connection so we may adjust
+        // server-dependent settings.
+        if ((old_url == null && new_url != null) || (old_url != null && !old_url.equals(new_url))) {
+            try {
+                OsmApi.getOsmApi().initialize(null);
+            } catch (Exception x) {
+                // ignore;
+            }
+        }
     }
 
     class ValidateApiUrlAction extends AbstractAction implements DocumentListener {
