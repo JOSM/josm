@@ -11,18 +11,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.swing.event.ChangeEvent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.SingleSelectionModel;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -30,6 +28,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
@@ -43,6 +42,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
  * Panel to inspect one or more OsmPrimitives.
@@ -171,12 +171,12 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     }
 
     protected void addCommon(StringBuilder s, OsmPrimitive o) {
-        s.append(String.format("Data set: %X; User: [%s]; ChangeSet id: %H; Timestamp: %s, Version: %d",
-                    o.getDataSet().hashCode(),
-                    userString(o.getUser()),
-                    o.getChangesetId(),
-                    DateUtils.fromDate(o.getTimestamp()),
-                    o.getVersion()));
+        s.append(String.format("Data set: %X; User: [%s]; ChangeSet id: %d; Timestamp: %s, Version: %d",
+                o.getDataSet().hashCode(),
+                userString(o.getUser()),
+                o.getChangesetId(),
+                DateUtils.fromDate(o.getTimestamp()),
+                o.getVersion()));
 
         /* selected state is left out: not interesting as it is always selected */
         if (o.isDeleted()) {
