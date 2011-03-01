@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
@@ -31,9 +32,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JOptionPane;
 
+import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlObjectParser;
+import org.xml.sax.SAXException;
 
 /**
  * This class holds all preferences for JOSM.
@@ -883,7 +887,7 @@ public class Preferences {
                 value = valueString;
             } else
                 throw new RuntimeException("unsupported preference primitive type");
-            
+
             try {
                 f.set(struct, value);
             } catch (IllegalArgumentException ex) {
@@ -908,7 +912,8 @@ public class Preferences {
     /**
      * The default plugin site
      */
-    private final static String[] DEFAULT_PLUGIN_SITE = {"http://josm.openstreetmap.de/plugin%<?plugins=>"};
+    private final static String[] DEFAULT_PLUGIN_SITE = {
+        "http://josm.openstreetmap.de/plugin%<?plugins=>"};
 
     /**
      * Replies the collection of plugin site URLs from where plugin lists can be downloaded
@@ -926,5 +931,71 @@ public class Preferences {
      */
     public void setPluginSites(Collection<String> sites) {
         putCollection("pluginmanager.sites", sites);
+    }
+
+    public static class XMLTag {
+        public String key;
+        public String value;
+    }
+    public static class XMLCollection {
+        public String key;
+    }
+    public static class XMLEntry {
+        public String value;
+    }
+    public void fromXML(Reader in) throws SAXException {
+        XmlObjectParser parser = new XmlObjectParser();
+        parser.map("tag", XMLTag.class);
+        parser.map("entry", XMLEntry.class);
+        parser.map("collection", XMLCollection.class);
+        parser.startWithValidation(in,
+        "http://josm.openstreetmap.de/preferences-1.0", "resource://data/preferences.xsd");
+        LinkedList<String> vals = new LinkedList<String>();
+        while(parser.hasNext()) {
+            Object o = parser.next();
+            if(o instanceof XMLTag) {
+                properties.put(((XMLTag)o).key, ((XMLTag)o).value);
+            } else if (o instanceof XMLEntry) {
+                vals.add(((XMLEntry)o).value);
+            } else if (o instanceof XMLCollection) {
+                properties.put(((XMLCollection)o).key, Utils.join("\u001e", vals));
+                vals = new LinkedList<String>();
+            }
+        }
+    }
+
+    public String toXML(boolean nopass) {
+        StringBuilder b = new StringBuilder(
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+        "<preferences xmlns=\"http://josm.openstreetmap.de/preferences-1.0\">\n");
+        for (Entry<String, String> p : properties.entrySet()) {
+            if (nopass && p.getKey().equals("osm-server.password")) {
+                continue; // do not store plain password.
+            }
+            String r = p.getValue();
+            if(r.contains("\u001e"))
+            {
+                b.append(" <collection key='");
+                b.append(XmlWriter.encode(p.getKey()));
+                b.append("'>\n");
+                for (String val : r.split("\u001e", -1))
+                {
+                    b.append("  <entry value='");
+                    b.append(XmlWriter.encode(val));
+                    b.append("' />\n");
+                }
+                b.append(" </collection>\n");
+            }
+            else
+            {
+                b.append(" <tag key='");
+                b.append(XmlWriter.encode(p.getKey()));
+                b.append("' value='");
+                b.append(XmlWriter.encode(p.getValue()));
+                b.append("' />\n");
+            }
+        }
+        b.append("</preferences>");
+        return b.toString();
     }
 }

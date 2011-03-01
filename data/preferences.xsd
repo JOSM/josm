@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://josm.openstreetmap.de/preferences-1.0"
+	xmlns:tns="http://josm.openstreetmap.de/preferences-1.0" elementFormDefault="qualified">
+
+	<element name="preferences" type="tns:root"/>
+
+	<complexType name="root">
+		<sequence>
+			<choice minOccurs="0" maxOccurs="unbounded">
+				<element name="tag" type="tns:tag" />
+				<element name="collection" type="tns:collection" />
+			</choice>
+		</sequence>
+	</complexType>
+
+	<complexType name="tag">
+		<attribute name="key" type="string" use="required" />
+		<attribute name="value" type="string" use="required"/>
+	</complexType>
+
+	<complexType name="collection">
+		<sequence>
+			<choice minOccurs="1" maxOccurs="unbounded">
+				<element name="entry" type="tns:entry" />
+			</choice>
+		</sequence>
+		<attribute name="key" type="string" use="required" />
+	</complexType>
+
+	<complexType name="entry">
+		<attribute name="value" type="string" use="required"/>
+	</complexType>
+</schema>

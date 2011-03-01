@@ -26,9 +26,8 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.io.OsmTransferException;
-import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.Base64;
-import org.openstreetmap.josm.tools.XmlObjectParser;
+import org.xml.sax.SAXException;
 
 /**
  * This class tweak the Preferences class to provide server side preference settings, as example
@@ -151,11 +150,6 @@ public class ServerSidePreferences extends Preferences {
     @Override public void save() {
     }
 
-    public static class Prop {
-        public String key;
-        public String value;
-    }
-
     public void download(String userName, String password) {
         if (!properties.containsKey("applet.username") && userName != null) {
             properties.put("applet.username", userName);
@@ -176,13 +170,10 @@ public class ServerSidePreferences extends Preferences {
         Reader in = new StringReader(cont);
         boolean res = false;
         try {
-            /* TODO: parse collection! */
-            XmlObjectParser.Uniform<Prop> parser = new XmlObjectParser.Uniform<Prop>(in, "tag", Prop.class);
-            for (Prop p : parser) {
-                res = true;
-                properties.put(p.key, p.value);
-            }
+            fromXML(in);
         } catch (RuntimeException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
             e.printStackTrace();
         }
         return res;
@@ -195,34 +186,6 @@ public class ServerSidePreferences extends Preferences {
      * This is triggered by an explicit menu option.
      */
     public void upload() {
-        StringBuilder b = new StringBuilder("<preferences>\n");
-        for (Entry<String, String> p : properties.entrySet()) {
-            if (p.getKey().equals("osm-server.password")) {
-                continue; // do not upload password. It would get stored in plain!
-            }
-            String r = p.getValue();
-            if(r.contains("\u001e"))
-            {
-                b.append("<collection key='");
-                b.append(XmlWriter.encode(p.getKey()));
-                b.append(">\n");
-                for (String val : r.split("\u001e", -1))
-                {
-                    b.append("  <entry value='");
-                    b.append(XmlWriter.encode(val));
-                    b.append("' />\n");
-                }
-            }
-            else
-            {
-                b.append("<tag key='");
-                b.append(XmlWriter.encode(p.getKey()));
-                b.append("' value='");
-                b.append(XmlWriter.encode(p.getValue()));
-                b.append("' />\n");
-            }
-        }
-        b.append("</preferences>");
-        connection.upload(b.toString());
+        connection.upload(toXML(true));
     }
 }
