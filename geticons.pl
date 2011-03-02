@@ -33,7 +33,7 @@ for my $arg (@ARGV ? @ARGV : @default)
         $img = "styles/$1" if((!-f "images/$img") && -f "images/styles/$1");
         ++$icons{$img};
       }
-      elsif($l =~ /icon\s*=\s*["'](.*?)["']/)
+      elsif($l =~ /icon\s*=\s*["']([^+]+?)["']/)
       {
         ++$icons{$1};
       }
