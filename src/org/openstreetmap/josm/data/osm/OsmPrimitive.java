@@ -304,7 +304,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     /* This should not be called from outside. Fixing the UI to add relevant
        get/set functions calling this implicitely is preferred, so we can have
        transparent cache handling in the future. */
-    public void clearCached()
+    public void clearCachedStyle()
     {
         mappaintStyle = null;
     }
@@ -1166,7 +1166,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
     }
 
     private void keysChangedImpl(Map<String, String> originalKeys) {
-        clearCached();
+        clearCachedStyle();
         updateDirectionFlags();
         updateTagged();
         if (dataSet != null) {
@@ -1366,7 +1366,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
             //
             setChangesetId(other.changesetId);
         }
-        clearCached();
+        clearCachedStyle();
     }
 
     /**

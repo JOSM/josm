@@ -40,8 +40,9 @@ public final class Relation extends OsmPrimitive {
     public void setMembers(List<RelationMember> members) {
         boolean locked = writeLock();
         try {
-            for (RelationMember rm:this.members) {
+            for (RelationMember rm : this.members) {
                 rm.getMember().removeReferrer(this);
+                rm.getMember().clearCachedStyle();
             }
 
             if (members != null) {
@@ -49,8 +50,9 @@ public final class Relation extends OsmPrimitive {
             } else {
                 this.members = new RelationMember[0];
             }
-            for (RelationMember rm:this.members) {
+            for (RelationMember rm : this.members) {
                 rm.getMember().addReferrer(this);
+                rm.getMember().clearCachedStyle();
             }
 
             fireMembersChanged();
@@ -78,6 +80,7 @@ public final class Relation extends OsmPrimitive {
             newMembers[members.length] = member;
             members = newMembers;
             member.getMember().addReferrer(this);
+            member.getMember().clearCachedStyle();
             fireMembersChanged();
         } finally {
             writeUnlock(locked);
@@ -93,6 +96,7 @@ public final class Relation extends OsmPrimitive {
             newMembers[index] = member;
             members = newMembers;
             member.getMember().addReferrer(this);
+            member.getMember().clearCachedStyle();
             fireMembersChanged();
         } finally {
             writeUnlock(locked);
@@ -112,7 +116,9 @@ public final class Relation extends OsmPrimitive {
             members[index] = member;
             if (originalMember.getMember() != member.getMember()) {
                 member.getMember().addReferrer(this);
+                member.getMember().clearCachedStyle();
                 originalMember.getMember().removeReferrer(this);
+                originalMember.getMember().clearCachedStyle();
                 fireMembersChanged();
             }
             return originalMember;

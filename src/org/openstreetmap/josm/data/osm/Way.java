@@ -61,7 +61,7 @@ public final class Way extends OsmPrimitive {
                 node.addReferrer(this);
             }
 
-            clearCached();
+            clearCachedStyle();
             fireNodesChanged();
         } finally {
             writeUnlock(locked);
@@ -322,7 +322,7 @@ public final class Way extends OsmPrimitive {
         try {
             if (isIncomplete())
                 throw new IllegalStateException(tr("Cannot add node {0} to incomplete way {1}.", n.getId(), getId()));
-            clearCached();
+            clearCachedStyle();
             n.addReferrer(this);
             Node[] newNodes = new Node[nodes.length + 1];
             System.arraycopy(nodes, 0, newNodes, 0, nodes.length);
@@ -351,7 +351,7 @@ public final class Way extends OsmPrimitive {
             if (isIncomplete())
                 throw new IllegalStateException(tr("Cannot add node {0} to incomplete way {1}.", n.getId(), getId()));
 
-            clearCached();
+            clearCachedStyle();
             n.addReferrer(this);
             Node[] newNodes = new Node[nodes.length + 1];
             System.arraycopy(nodes, 0, newNodes, 0, offs);
