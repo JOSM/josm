@@ -153,13 +153,17 @@ public abstract class CacheCustomContent {
      * Tries to load the data using the given ident from disk. If this fails, data will be updated
      */
     private void loadFromDisk() {
-        try {
-            BufferedInputStream input = new BufferedInputStream(new FileInputStream(path));
-            this.data = new byte[input.available()];
-            input.read(this.data);
-            input.close();
-        } catch(IOException e) {
+        if(Main.applet)
             this.data = updateForce();
+        else {
+            try {
+                BufferedInputStream input = new BufferedInputStream(new FileInputStream(path));
+                this.data = new byte[input.available()];
+                input.read(this.data);
+                input.close();
+            } catch(IOException e) {
+                this.data = updateForce();
+            }
         }
     }
 
@@ -167,6 +171,8 @@ public abstract class CacheCustomContent {
      * Stores the data to disk
      */
     private void saveToDisk() {
+        if(Main.applet)
+            return;
         try {
             BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(path));
             output.write(this.data);
