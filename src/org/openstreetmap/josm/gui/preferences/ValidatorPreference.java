@@ -36,10 +36,7 @@ public class ValidatorPreference implements PreferenceSetting {
     /** The preferences prefix */
     public static final String PREFIX = "validator";
 
-    /** The preferences key for debug preferences */
-    public static final String PREF_DEBUG = PREFIX + ".debug";
-
-    /** The preferences key for debug preferences */
+    /** The preferences key for error layer */
     public static final String PREF_LAYER = PREFIX + ".layer";
 
     /** The preferences key for enabled tests */
