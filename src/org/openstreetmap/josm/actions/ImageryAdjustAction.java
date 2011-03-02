@@ -10,15 +10,13 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.text.DecimalFormat;
 
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -148,9 +146,9 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         super.actionPerformed(e);
     }
 
-    class ImageryOffsetDialog extends ExtendedDialog implements PropertyChangeListener {
-        public final JFormattedTextField easting = new JFormattedTextField(new DecimalFormat("0.00000E0"));
-        public final JFormattedTextField northing = new JFormattedTextField(new DecimalFormat("0.00000E0"));
+    class ImageryOffsetDialog extends ExtendedDialog implements FocusListener {
+        public final JTextField easting = new JTextField();
+        public final JTextField northing = new JTextField();
         JTextField tBookmarkName = new JTextField();
         private boolean ignoreListener;
         public ImageryOffsetDialog() {
@@ -172,25 +170,41 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             pnl.add(tBookmarkName,GBC.eol().fill(GBC.HORIZONTAL));
             easting.setColumns(8);
             northing.setColumns(8);
-            easting.setValue(layer.getDx());
-            northing.setValue(layer.getDy());
-            easting.addPropertyChangeListener("value",this);
-            northing.addPropertyChangeListener("value",this);
+            easting.setText(String.valueOf(layer.getDx()));
+            northing.setText(String.valueOf(layer.getDy()));
+            easting.addFocusListener(this);
+            northing.addFocusListener(this);
             setContent(pnl);
             setupDialog();
         }
 
         @Override
-        public void propertyChange(PropertyChangeEvent evt) {
+        public void focusGained(FocusEvent e) {
+        }
+
+        @Override
+        public void focusLost(FocusEvent e) {
             if (ignoreListener) return;
-            layer.setOffset(((Number)easting.getValue()).doubleValue(), ((Number)northing.getValue()).doubleValue());
+            double dx = oldDx;
+            try {
+                dx = Double.parseDouble(easting.getText());
+            } catch (NumberFormatException nfe) {
+                easting.setText(String.valueOf(oldDx));
+            }
+            double dy = oldDy;
+            try {
+                dy = Double.parseDouble(northing.getText());
+            } catch (NumberFormatException nfe) {
+                northing.setText(String.valueOf(oldDy));
+            }
+            layer.setOffset(dx, dy);
             Main.map.repaint();
         }
 
         public void updateOffset() {
             ignoreListener = true;
-            easting.setValue(layer.getDx());
-            northing.setValue(layer.getDy());
+            easting.setText(String.valueOf(layer.getDx()));
+            northing.setText(String.valueOf(layer.getDy()));
             ignoreListener = false;
         }
 
