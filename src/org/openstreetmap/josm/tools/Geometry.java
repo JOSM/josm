@@ -289,7 +289,7 @@ public class Geometry {
         return new EastNorth((b1 * c2 - b2 * c1) / det, (a2 * c1 - a1 * c2) / det);
     }
 
-    public static boolean segmentsParralel(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
+    public static boolean segmentsParallel(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
         // Convert line from (point, point) form to ax+by=c
         double a1 = p2.getY() - p1.getY();
         double b1 = p1.getX() - p2.getX();
@@ -299,7 +299,9 @@ public class Geometry {
 
         // Solve the equations
         double det = a1 * b2 - a2 * b1;
-        return Math.abs(det) < 1e-13;
+        // remove influence of of scaling factor
+        det /= Math.sqrt(a1*a1 + b1*b1) * Math.sqrt(a2*a2 + b2*b2);
+        return Math.abs(det) < 1e-3;
     }
 
     /**
