@@ -301,14 +301,16 @@ public class MainMenu extends JMenuBar {
         mi.setAccelerator(changesetManagerToggleAction.getShortcut().getKeyStroke());
         changesetManagerToggleAction.addButtonModel(mi.getModel());
 
-        // -- fullscreen toggle action
-        FullscreenToggleAction fullscreenToggleAction = new FullscreenToggleAction();
-        if (fullscreenToggleAction.canFullscreen()) {
-            final JCheckBoxMenuItem fullscreen = new JCheckBoxMenuItem(fullscreenToggleAction);
-            viewMenu.addSeparator();
-            viewMenu.add(fullscreen);
-            fullscreen.setAccelerator(fullscreenToggleAction.getShortcut().getKeyStroke());
-            fullscreenToggleAction.addButtonModel(fullscreen.getModel());
+        if(!Main.applet) {
+            // -- fullscreen toggle action
+            FullscreenToggleAction fullscreenToggleAction = new FullscreenToggleAction();
+            if (fullscreenToggleAction.canFullscreen()) {
+                final JCheckBoxMenuItem fullscreen = new JCheckBoxMenuItem(fullscreenToggleAction);
+                viewMenu.addSeparator();
+                viewMenu.add(fullscreen);
+                fullscreen.setAccelerator(fullscreenToggleAction.getShortcut().getKeyStroke());
+                fullscreenToggleAction.addButtonModel(fullscreen.getModel());
+            }
         }
         viewMenu.addSeparator();
         add(viewMenu, info);
