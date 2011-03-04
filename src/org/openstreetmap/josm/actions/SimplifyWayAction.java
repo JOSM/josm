@@ -22,6 +22,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -137,50 +138,57 @@ public class SimplifyWayAction extends JosmAction {
     }
 
     public void actionPerformed(ActionEvent e) {
-        Collection<OsmPrimitive> selection = getCurrentDataSet().getSelected();
+        DataSet ds = getCurrentDataSet();
+        ds.beginUpdate();
+        try
+        {
+            Collection<OsmPrimitive> selection = ds.getSelected();
 
-        List<Bounds> bounds = getCurrentEditBounds();
-        for (OsmPrimitive prim : selection) {
-            if (! (prim instanceof Way)) {
-                continue;
-            }
-            if (bounds.size() > 0) {
-                Way way = (Way) prim;
-                // We check if each node of each way is at least in one download
-                // bounding box. Otherwise nodes may get deleted that are necessary by
-                // unloaded ways (see Ticket #1594)
-                for (Node node : way.getNodes()) {
-                    if (!isInBounds(node, bounds)) {
-                        if (!confirmWayWithNodesOutsideBoundingBox())
-                            return;
-                        break;
+            List<Bounds> bounds = getCurrentEditBounds();
+            for (OsmPrimitive prim : selection) {
+                if (! (prim instanceof Way)) {
+                    continue;
+                }
+                if (bounds.size() > 0) {
+                    Way way = (Way) prim;
+                    // We check if each node of each way is at least in one download
+                    // bounding box. Otherwise nodes may get deleted that are necessary by
+                    // unloaded ways (see Ticket #1594)
+                    for (Node node : way.getNodes()) {
+                        if (!isInBounds(node, bounds)) {
+                            if (!confirmWayWithNodesOutsideBoundingBox())
+                                return;
+                            break;
+                        }
                     }
                 }
             }
-        }
-        List<Way> ways = OsmPrimitive.getFilteredList(selection, Way.class);
-        if (ways.isEmpty()) {
-            alertSelectAtLeastOneWay();
-            return;
-        } else if (ways.size() > 10) {
-            if (!confirmSimplifyManyWays(ways.size()))
+            List<Way> ways = OsmPrimitive.getFilteredList(selection, Way.class);
+            if (ways.isEmpty()) {
+                alertSelectAtLeastOneWay();
                 return;
-        }
-
-        Collection<Command> allCommands = new LinkedList<Command>();
-        for (Way way: ways) {
-            SequenceCommand simplifyCommand = simplifyWay(way);
-            if (simplifyCommand == null) {
-                continue;
+            } else if (ways.size() > 10) {
+                if (!confirmSimplifyManyWays(ways.size()))
+                    return;
             }
-            allCommands.add(simplifyCommand);
+
+            Collection<Command> allCommands = new LinkedList<Command>();
+            for (Way way: ways) {
+                SequenceCommand simplifyCommand = simplifyWay(way, ds);
+                if (simplifyCommand == null) {
+                    continue;
+                }
+                allCommands.add(simplifyCommand);
+            }
+            if (allCommands.isEmpty()) return;
+            SequenceCommand rootCommand = new SequenceCommand(
+                    trn("Simplify {0} way", "Simplify {0} ways", allCommands.size(), allCommands.size()),
+                    allCommands
+            );
+            Main.main.undoRedo.add(rootCommand);
+        } finally {
+            ds.endUpdate();
         }
-        if (allCommands.isEmpty()) return;
-        SequenceCommand rootCommand = new SequenceCommand(
-                trn("Simplify {0} way", "Simplify {0} ways", allCommands.size(), allCommands.size()),
-                allCommands
-        );
-        Main.main.undoRedo.add(rootCommand);
         Main.map.repaint();
     }
 
@@ -212,7 +220,7 @@ public class SimplifyWayAction extends JosmAction {
      *
      * @param w the way to simplify
      */
-    public SequenceCommand simplifyWay(Way w) {
+    public SequenceCommand simplifyWay(Way w, DataSet ds) {
         double threshold = Double.parseDouble(Main.pref.get("simplify-way.max-error", "3"));
         int lower = 0;
         int i = 0;
@@ -248,6 +256,7 @@ public class SimplifyWayAction extends JosmAction {
         newWay.setNodes(newNodes);
         cmds.add(new ChangeCommand(w, newWay));
         cmds.add(new DeleteCommand(delNodes));
+        ds.clearSelection(delNodes);
         return new SequenceCommand(trn("Simplify Way (remove {0} node)", "Simplify Way (remove {0} nodes)", delNodes.size(), delNodes.size()), cmds);
     }
 
