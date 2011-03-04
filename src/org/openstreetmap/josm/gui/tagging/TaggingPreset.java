@@ -1064,7 +1064,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public void setDisplayName() {
         putValue(Action.NAME, getName());
         putValue("toolbar", "tagging_" + getRawName());
-    }
+        putValue(OPTIONAL_TOOLTIP_TEXT, (group != null ?
+            tr("Use preset ''{0}'' of group ''{1}''", getLocaleName(), group.getName()) :
+            tr("Use preset ''{0}''", getLocaleName())));
+   }
 
     public String getLocaleName() {
         if(locale_name == null) {
