@@ -1167,6 +1167,11 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
 
     private void keysChangedImpl(Map<String, String> originalKeys) {
         clearCachedStyle();
+        if (dataSet != null) {
+            for (OsmPrimitive ref : getReferrers()) {
+                ref.clearCachedStyle();
+            }
+        }
         updateDirectionFlags();
         updateTagged();
         if (dataSet != null) {
