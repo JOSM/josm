@@ -59,7 +59,7 @@ public class UntaggedNode extends Test {
         if(n.isUsable() && !n.isTagged() && n.getReferrers().isEmpty()) {
             if (!n.hasKeys()) {
                 String msg = marktr("No tags");
-                errors.add(new TestError(this, Severity.OTHER, tr("Unconnected nodes without physical tags"), tr(msg), msg, UNTAGGED_NODE_BLANK, n));
+                errors.add(new TestError(this, Severity.WARNING, tr("Unconnected nodes without physical tags"), tr(msg), msg, UNTAGGED_NODE_BLANK, n));
                 return;
             }
             for (Map.Entry<String, String> tag : n.getKeys().entrySet()) {
@@ -67,7 +67,7 @@ public class UntaggedNode extends Test {
                 if (contains(tag, "fixme") || contains(tag, "FIXME")) {
                     /* translation note: don't translate quoted words */
                     String msg = marktr("Has tag containing ''fixme'' or ''FIXME''");
-                    errors.add(new TestError(this, Severity.OTHER, tr("Unconnected nodes without physical tags"),
+                    errors.add(new TestError(this, Severity.WARNING, tr("Unconnected nodes without physical tags"),
                                 tr(msg), msg, UNTAGGED_NODE_FIXME, n));
                     return;
                 }
@@ -92,13 +92,13 @@ public class UntaggedNode extends Test {
                     code = UNTAGGED_NODE_SOURCE;
                 }
                 if (msg != null) {
-                    errors.add(new TestError(this, Severity.OTHER, tr("Unconnected nodes without physical tags"),
+                    errors.add(new TestError(this, Severity.WARNING, tr("Unconnected nodes without physical tags"),
                                 tr(msg), msg, code, n));
                     return;
                 }
             }
             // Does not happen, but just to be sure. Maybe definition of uninteresting tags changes in future.
-            errors.add(new TestError(this, Severity.OTHER, tr("Unconnected nodes without physical tags"),
+            errors.add(new TestError(this, Severity.WARNING, tr("Unconnected nodes without physical tags"),
                         tr("Other"), "Other", UNTAGGED_NODE_OTHER, n));
         }
     }
