@@ -147,19 +147,19 @@ public class MultipolygonTest extends Test {
             if (styles != null) {
 
                 AreaElemStyle area = null;
+                boolean areaStyle = false;
                 for (ElemStyle s : styles.generateStyles(r, SCALE, null, false).a) {
                     if (s instanceof AreaElemStyle) {
                         area = (AreaElemStyle) s;
+                        areaStyle = true;
                         break;
                     }
                 }
                 // If area style was not found for relation then use style of ways
                 if (area == null) {
-                    errors.add( new TestError(this, Severity.OTHER, tr("No style in multipolygon relation"),
-                            NO_STYLE_POLYGON, r));
                     for (Way w : polygon.getOuterWays()) {
 
-                        for (ElemStyle s : styles.generateStyles(r, SCALE, null, true).a) {
+                        for (ElemStyle s : styles.generateStyles(w, SCALE, null, true).a) {
                             if (s instanceof AreaElemStyle) {
                                 area = (AreaElemStyle) s;
                                 break;
@@ -169,6 +169,11 @@ public class MultipolygonTest extends Test {
                             break;
                         }
                     }
+                    if(area == null)
+                        errors.add(new TestError(this, Severity.OTHER, tr("No style for multipolygon"), NO_STYLE, r));
+                    else
+                        errors.add( new TestError(this, Severity.OTHER, tr("No style in multipolygon relation"),
+                            NO_STYLE_POLYGON, r));
                 }
 
                 if (area != null) {
@@ -189,25 +194,24 @@ public class MultipolygonTest extends Test {
                                     INNER_STYLE_MISMATCH, l, Collections.singletonList(wInner)));
                         }
                     }
-                    for (Way wOuter : polygon.getOuterWays()) {
-                        AreaElemStyle areaOuter = null;
-                        for (ElemStyle s : styles.generateStyles(wOuter, SCALE, null, false).a) {
-                            if (s instanceof AreaElemStyle) {
-                                areaOuter = (AreaElemStyle) s;
-                                break;
+                    if(!areaStyle) {
+                        for (Way wOuter : polygon.getOuterWays()) {
+                            AreaElemStyle areaOuter = null;
+                            for (ElemStyle s : styles.generateStyles(wOuter, SCALE, null, false).a) {
+                                if (s instanceof AreaElemStyle) {
+                                    areaOuter = (AreaElemStyle) s;
+                                    break;
+                                }
+                            }
+                            if (areaOuter != null && !area.equals(areaOuter)) {
+                                List<OsmPrimitive> l = new ArrayList<OsmPrimitive>();
+                                l.add(r);
+                                l.add(wOuter);
+                                errors.add(new TestError(this, Severity.WARNING, tr("Style for outer way mismatches"),
+                                OUTER_STYLE_MISMATCH, l, Collections.singletonList(wOuter)));
                             }
                         }
-                        if (areaOuter != null && !area.equals(areaOuter)) {
-                            List<OsmPrimitive> l = new ArrayList<OsmPrimitive>();
-                            l.add(r);
-                            l.add(wOuter);
-                            errors.add(new TestError(this, Severity.WARNING, tr("Style for outer way mismatches"),
-                            OUTER_STYLE_MISMATCH, l, Collections.singletonList(wOuter)));
-                        }
                     }
-                }
-                else {
-                    errors.add(new TestError(this, Severity.OTHER, tr("No style for multipolygon"), NO_STYLE, r));
                 }
             }
 
