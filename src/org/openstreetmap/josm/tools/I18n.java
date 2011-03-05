@@ -24,7 +24,7 @@ import org.openstreetmap.josm.Main;
  */
 public class I18n {
     private enum PluralMode { MODE_NOTONE, MODE_NONE, MODE_GREATERONE,
-        MODE_CS, MODE_AR, MODE_PL, MODE_RO, MODE_RU, MODE_SK, MODE_SL}
+        MODE_CS, MODE_AR, MODE_PL/*, MODE_RO*/, MODE_RU, MODE_SK/*, MODE_SL*/}
     private static PluralMode pluralMode = PluralMode.MODE_NOTONE; /* english default */
 
     /* Localization keys for file chooser (and color chooser). */
@@ -292,10 +292,10 @@ public class I18n {
         languages.put("nl", PluralMode.MODE_NOTONE);
         languages.put("pl", PluralMode.MODE_PL);
         languages.put("pt_BR", PluralMode.MODE_GREATERONE);
-        languages.put("ro", PluralMode.MODE_RO);
+        //languages.put("ro", PluralMode.MODE_RO);
         languages.put("ru", PluralMode.MODE_RU);
         languages.put("sk", PluralMode.MODE_SK);
-        languages.put("sl", PluralMode.MODE_SL);
+        //languages.put("sl", PluralMode.MODE_SL);
         languages.put("sv", PluralMode.MODE_NOTONE);
         languages.put("tr", PluralMode.MODE_NONE);
         languages.put("uk", PluralMode.MODE_RU);
@@ -532,16 +532,16 @@ public class I18n {
         case MODE_PL:
             return ((n == 1) ? 0 : (((((n % 10) >= 2) && ((n % 10) <= 4))
                     && (((n % 100) < 10) || ((n % 100) >= 20))) ? 1 : 2));
-        case MODE_RO:
-            return ((n == 1) ? 0 : ((((n % 100) > 19) || (((n % 100) == 0) && (n != 0))) ? 2 : 1));
+        //case MODE_RO:
+        //    return ((n == 1) ? 0 : ((((n % 100) > 19) || (((n % 100) == 0) && (n != 0))) ? 2 : 1));
         case MODE_RU:
             return ((((n % 10) == 1) && ((n % 100) != 11)) ? 0 : (((((n % 10) >= 2)
                     && ((n % 10) <= 4)) && (((n % 100) < 10) || ((n % 100) >= 20))) ? 1 : 2));
         case MODE_SK:
             return ((n == 1) ? 1 : (((n >= 2) && (n <= 4)) ? 2 : 0));
-        case MODE_SL:
-            return (((n % 100) == 1) ? 1 : (((n % 100) == 2) ? 2 : ((((n % 100) == 3)
-                    || ((n % 100) == 4)) ? 3 : 0)));
+        //case MODE_SL:
+        //    return (((n % 100) == 1) ? 1 : (((n % 100) == 2) ? 2 : ((((n % 100) == 3)
+        //            || ((n % 100) == 4)) ? 3 : 0)));
         }
         return 0;
     }
