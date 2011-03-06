@@ -214,10 +214,6 @@ public class MainApplication extends Main {
         removeObsoletePreferences();
         monitor.worked(1);
 
-        if (RemoteControl.PROP_REMOTECONTROL_ENABLED.get()) {
-            RemoteControl.start();
-        }
-
         monitor.indeterminateSubTask(tr("Creating main GUI"));
         JFrame mainFrame = new JFrame(tr("Java OpenStreetMap Editor"));
         Main.parent = mainFrame;
@@ -273,8 +269,14 @@ public class MainApplication extends Main {
                 }
 
                 main.postConstructorProcessCmdLine(args);
+
             }
         });
+
+        if (RemoteControl.PROP_REMOTECONTROL_ENABLED.get()) {
+            RemoteControl.start();
+        }
+
     }
 
     /**
