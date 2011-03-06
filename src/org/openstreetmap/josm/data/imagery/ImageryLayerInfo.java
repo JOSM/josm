@@ -24,12 +24,13 @@ public class ImageryLayerInfo {
     ArrayList<ImageryInfo> layers = new ArrayList<ImageryInfo>();
     ArrayList<ImageryInfo> defaultLayers = new ArrayList<ImageryInfo>();
 
-    private final static String[] DEFAULT_LAYER_SITES = { 
-        "http://josm.openstreetmap.de/maps" 
+    private final static String[] DEFAULT_LAYER_SITES = {
+        "http://josm.openstreetmap.de/maps"
     };
 
     public void load() {
         layers.clear();
+        defaultLayers.clear();
         Collection<String> defaults = Main.pref.getCollection(
                 "imagery.layers.default", Collections.<String>emptySet());
         for(Collection<String> c : Main.pref.getArray("imagery.layers",
@@ -95,6 +96,7 @@ public class ImageryLayerInfo {
         Main.pref.putCollection("imagery.layers.default", defaultsSave.size() > 0
                 ? defaultsSave : defaults);
         Collections.sort(layers);
+        Collections.sort(defaultLayers);
         save();
     }
 
