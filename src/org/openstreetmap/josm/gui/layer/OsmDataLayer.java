@@ -46,6 +46,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.DataSource;
@@ -64,8 +65,8 @@ import org.openstreetmap.josm.data.osm.visitor.paint.PaintVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.SimplePaintVisitor;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
-import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.tools.DateUtils;
@@ -298,7 +299,18 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
      */
     public void mergeFrom(final DataSet from) {
         final DataSetMerger visitor = new DataSetMerger(data,from);
-        visitor.merge();
+        try {
+            visitor.merge();
+        } catch (DataIntegrityProblemException e) {
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    e.getMessage(),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return;
+
+        }
 
         Area a = data.getDataSourceArea();
 

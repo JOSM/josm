@@ -308,8 +308,9 @@ public class DataSetMerger {
             // target and source are incomplete. Doesn't matter which one to
             // take. We take target.
             //
-        } else if (target.isVisible() != source.isVisible() && target.getVersion() == source.getVersion())
-            // Same version, but different "visible" attribute. It indicates a serious problem in datasets.
+        } else if (!target.isModified() && !source.isModified() && target.isVisible() != source.isVisible() && target.getVersion() == source.getVersion())
+            // Same version, but different "visible" attribute and neither of them are modified.
+            // It indicates a serious problem in datasets.
             // For example, datasets can be fetched from different OSM servers or badly hand-modified.
             // We shouldn't merge that datasets.
             throw new DataIntegrityProblemException(tr("Conflict in 'visible' attribute for object of type {0} with id {1}",
