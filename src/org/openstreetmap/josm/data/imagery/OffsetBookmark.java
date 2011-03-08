@@ -12,9 +12,10 @@ import java.util.ListIterator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.data.projection.ProjectionInfo;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 
 public class OffsetBookmark {
@@ -65,6 +66,11 @@ public class OffsetBookmark {
         if (array.size() >= 7) {
             this.centerX = Double.valueOf(array.get(5));
             this.centerY = Double.valueOf(array.get(6));
+        }
+        // Mercator scale factor migration
+        if (proj instanceof Mercator && this.dx < 1E-3 && this.dy < 1E-3) {
+            this.dx *= 6378137;
+            this.dy *= 6378137;
         }
         if (proj == null) {
             System.err.println(tr("Projection ''{0}'' is not found, bookmark ''{1}'' is not usable", projectionStr, name));
