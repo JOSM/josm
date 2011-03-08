@@ -74,7 +74,7 @@
     
     <target name="-post-compile">
     <!-- create the REVISION file to be included in the distribution -->
-		<exec append="false" output="REVISION.XML" executable="svn" failifexecutionfails="false">
+		<exec append="false" output="REVISION.XML" executable="svn" dir=".." failifexecutionfails="false">
 			<env key="LANG" value="C"/>
 			<arg value="info"/>
 			<arg value="--xml"/>
