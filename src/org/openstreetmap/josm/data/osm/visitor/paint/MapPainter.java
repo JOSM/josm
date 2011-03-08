@@ -55,6 +55,8 @@ public class MapPainter {
     private final boolean showNames;
     private final boolean showIcons;
 
+    private final boolean  isOutlineOnly;
+
     private final Color inactiveColor;
     private final Color selectedColor;
     private final Color relationSelectedColor;
@@ -86,6 +88,8 @@ public class MapPainter {
         this.useStrokes = settings.getUseStrokesDistance() > circum;
         this.showNames = settings.getShowNamesDistance() > circum;
         this.showIcons = settings.getShowIconsDistance() > circum;
+
+        this.isOutlineOnly = settings.isOutlineOnly();
 
         this.inactiveColor = PaintColors.INACTIVE.get();
         this.selectedColor = PaintColors.SELECTED.get();
@@ -497,18 +501,20 @@ public class MapPainter {
 
     protected void drawArea(OsmPrimitive osm, Polygon polygon, Color color, BufferedImage fillImage, float fillImageAlpha, TextElement text) {
 
-        if (fillImage == null) {
-            g.setColor(color);
-            g.fillPolygon(polygon);
-        } else {
-            TexturePaint texture = new TexturePaint(fillImage, 
-                    new Rectangle(polygon.xpoints[0], polygon.ypoints[0], fillImage.getWidth(), fillImage.getHeight()));
-            g.setPaint(texture);
-            if (fillImageAlpha != 1f) {
-                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fillImageAlpha));
+        if (!isOutlineOnly) {
+            if (fillImage == null) {
+                g.setColor(color);
+                g.fillPolygon(polygon);
+            } else {
+                TexturePaint texture = new TexturePaint(fillImage,
+                        new Rectangle(polygon.xpoints[0], polygon.ypoints[0], fillImage.getWidth(), fillImage.getHeight()));
+                g.setPaint(texture);
+                if (fillImageAlpha != 1f) {
+                    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, fillImageAlpha));
+                }
+                g.fill(polygon);
+                g.setPaintMode();
             }
-            g.fill(polygon);
-            g.setPaintMode();
         }
 
         if (text != null && isShowNames()) {

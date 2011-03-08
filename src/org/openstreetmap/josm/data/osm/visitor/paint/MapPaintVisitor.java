@@ -103,7 +103,7 @@ public class MapPaintVisitor implements PaintVisitor {
         this.paintSettings = MapPaintSettings.INSTANCE;
 
         circum = nc.getDist100Pixel();
-        boolean drawArea = circum <= Main.pref.getInteger("mappaint.fillareas", 10000000) && !paintSettings.isOutlineOnly();
+        boolean drawArea = circum <= Main.pref.getInteger("mappaint.fillareas", 10000000);
         boolean drawMultipolygon = drawArea && Main.pref.getBoolean("mappaint.multipolygon", true);
         styles.setDrawMultipolygon(drawMultipolygon);
         boolean drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
