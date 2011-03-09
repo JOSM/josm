@@ -68,7 +68,7 @@ public class OffsetBookmark {
             this.centerY = Double.valueOf(array.get(6));
         }
         // Mercator scale factor migration
-        if (proj instanceof Mercator && this.dx < 1E-3 && this.dy < 1E-3) {
+        if (proj instanceof Mercator && Math.abs(this.dx) < 1E-3 && Math.abs(this.dy) < 1E-3) {
             this.dx *= 6378137;
             this.dy *= 6378137;
         }
