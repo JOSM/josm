@@ -1052,7 +1052,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
     class HelpAction extends AbstractAction {
         public HelpAction() {
             putValue(NAME, tr("Go to OSM wiki for tag help (F1)"));
-            putValue(SHORT_DESCRIPTION, tr("Launch browser with wiki help to selected object"));
+            putValue(SHORT_DESCRIPTION, tr("Launch browser with wiki help for selected object"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "search"));
         }
 
