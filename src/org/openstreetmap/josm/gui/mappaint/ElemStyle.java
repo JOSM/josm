@@ -32,18 +32,25 @@ abstract public class ElemStyle {
 
     public abstract void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, MapPainter painter, boolean selected, boolean member);
 
+    /**
+     * Get a property value of type Width
+     * @param c the cascade
+     * @param key property key for the width value
+     * @param relativeTo reference width. Only needed, when relative width syntax
+     *              is used, e.g. "+4".
+     */
     protected static Float getWidth(Cascade c, String key, Float relativeTo) {
         Float width = c.get(key, null, Float.class, true);
         if (width != null) {
             if (width > 0)
                 return width;
         } else {
-            String width_key = c.get(key, null, String.class, true);
-            if (equal(width_key, "thinnest"))
+            Keyword widthKW = c.get(key, null, Keyword.class, true);
+            if (equal(widthKW, Keyword.THINNEST))
                 return 0f;
-            else if(equal(width_key, "default"))
+            if (equal(widthKW, Keyword.DEFAULT))
                 return (float) MapPaintSettings.INSTANCE.getDefaultSegmentWidth();
-            else if (relativeTo != null) {
+            if (relativeTo != null) {
                 RelativeFloat width_rel = c.get(key, null, RelativeFloat.class, true);
                 if (width_rel != null)
                     return relativeTo + width_rel.val;
@@ -56,13 +63,13 @@ abstract public class ElemStyle {
         String name = c.get("font-family", Main.pref.get("mappaint.font", "Helvetica"), String.class);
         float size = c.get("font-size", (float) Main.pref.getInteger("mappaint.fontsize", 8), Float.class);
         int weight = Font.PLAIN;
-        String weightStr = c.get("font-wheight", null, String.class);
-        if (equal(weightStr, "bold")) {
+        Keyword weightKW = c.get("font-wheight", null, Keyword.class);
+        if (weightKW != null && equal(weightKW, "bold")) {
             weight = Font.BOLD;
         }
         int style = Font.PLAIN;
-        String styleStr = c.get("font-style", null, String.class);
-        if (equal(styleStr, "italic")) {
+        Keyword styleKW = c.get("font-style", null, Keyword.class);
+        if (styleKW != null && equal(styleKW.val, "italic")) {
             style = Font.ITALIC;
         }
         return new Font(name, weight | style, Math.round(size));

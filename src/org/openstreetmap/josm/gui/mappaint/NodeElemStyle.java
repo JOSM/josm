@@ -120,7 +120,7 @@ public class NodeElemStyle extends ElemStyle {
         }
 
     }
-    
+
     public static final NodeElemStyle SIMPLE_NODE_ELEMSTYLE;
     static {
         MultiCascade mc = new MultiCascade();
@@ -170,16 +170,16 @@ public class NodeElemStyle extends ElemStyle {
         TextElement te = TextElement.create(c, PaintColors.TEXT.get());
         if (te != null) {
             HorizontalTextAlignment hAlign = HorizontalTextAlignment.RIGHT;
-            String hAlignStr = c.get("text-anchor-horizontal", null, String.class);
-            if (equal(hAlignStr, "left")) {
+            Keyword hAlignKW = c.get("text-anchor-horizontal", Keyword.RIGHT, Keyword.class);
+            if (equal(hAlignKW.val, "left")) {
                 hAlign = HorizontalTextAlignment.LEFT;
-            } else if (equal(hAlignStr, "center")) {
+            } else if (equal(hAlignKW.val, "center")) {
                 hAlign = HorizontalTextAlignment.CENTER;
-            } else if (equal(hAlignStr, "right")) {
+            } else if (equal(hAlignKW.val, "right")) {
                 hAlign = HorizontalTextAlignment.RIGHT;
             }
             VerticalTextAlignment vAlign = VerticalTextAlignment.BOTTOM;
-            String vAlignStr = c.get("text-anchor-vertical", null, String.class);
+            String vAlignStr = c.get("text-anchor-vertical", Keyword.BOTTOM, Keyword.class).val;
             if (equal(vAlignStr, "above")) {
                 vAlign = VerticalTextAlignment.ABOVE;
             } else if (equal(vAlignStr, "top")) {
@@ -202,10 +202,12 @@ public class NodeElemStyle extends ElemStyle {
         Cascade c_def = env.mc.getCascade("default");
 
         SymbolShape shape;
-        String shapeStr = c.get("symbol-shape", null, String.class);
-        if (equal(shapeStr, "square")) {
+        Keyword shapeKW = c.get("symbol-shape", null, Keyword.class);
+        if (shapeKW == null)
+            return null;
+        if (equal(shapeKW, "square")) {
             shape = SymbolShape.SQUARE;
-        } else if (equal(shapeStr, "circle")) {
+        } else if (equal(shapeKW, "circle")) {
             shape = SymbolShape.CIRCLE;
         } else
             return null;

@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
+import static org.openstreetmap.josm.tools.Utils.equal;
+
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -53,6 +55,22 @@ public class Cascade implements Cloneable {
         return prop.get(key);
     }
 
+    public void put(String key, Object val) {
+        prop.put(key, val);
+    }
+
+    public void putOrClear(String key, Object val) {
+        if (val != null) {
+            prop.put(key, val);
+        } else {
+            prop.remove(key);
+        }
+    }
+
+    public void remove(String key) {
+        prop.remove(key);
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> T convertTo(Object o, Class<T> klass) {
         if (o == null)
@@ -80,8 +98,12 @@ public class Cascade implements Cloneable {
         if (klass == Color.class)
             return (T) toColor(o);
 
-        if (klass == String.class)
+        if (klass == String.class) {
+            if (o instanceof Keyword)
+                return (T) ((Keyword) o).val;
+
             return (T) o.toString();
+        }
 
         return null;
     }
@@ -106,11 +128,11 @@ public class Cascade implements Cloneable {
     private static Boolean toBool(Object o) {
         if (o instanceof Boolean)
             return (Boolean) o;
-        if (o instanceof String) {
-            String s = (String) o;
-            if ("true".equals(o) || "yes".equals(o))
+        if (o instanceof Keyword) {
+            String s = ((Keyword) o).val;
+            if (equal(s, "true") || equal(s, "yes"))
                 return true;
-            if ("false".equals(o) || "no".equals(o))
+            if (equal(s, "false") || equal(s, "no"))
                 return false;
         }
         return null;
@@ -137,28 +159,12 @@ public class Cascade implements Cloneable {
         return null;
     }
 
-     public static Color toColor(Object o) {
+    private static Color toColor(Object o) {
         if (o instanceof Color)
             return (Color) o;
-        if (o instanceof String)
-            return CSSColors.get((String) o);
+        if (o instanceof Keyword)
+            return CSSColors.get(((Keyword) o).val);
         return null;
-    }
-
-    public void put(String key, Object val) {
-        prop.put(key, val);
-    }
-
-    public void putOrClear(String key, Object val) {
-        if (val != null) {
-            prop.put(key, val);
-        } else {
-            prop.remove(key);
-        }
-    }
-
-    public void remove(String key) {
-        prop.remove(key);
     }
 
     @Override

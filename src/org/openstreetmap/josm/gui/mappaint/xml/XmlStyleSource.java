@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
+import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
@@ -287,7 +288,7 @@ public class XmlStyleSource extends StyleSource {
                 if (osm instanceof Node) {
                     if (icon.annotate != null) {
                         if (icon.annotate) {
-                            def.put("text", "auto");
+                            def.put("text", Keyword.AUTO);
                         } else {
                             def.remove("text");
                         }
@@ -351,8 +352,8 @@ public class XmlStyleSource extends StyleSource {
             }
             if (p.area != null) {
                 def.putOrClear("fill-color", p.area.color);
-                def.putOrClear("text-position", "center");
-                def.putOrClear("text", "auto");
+                def.putOrClear("text-position", Keyword.CENTER);
+                def.putOrClear("text", Keyword.AUTO);
                 def.remove("fill-image");
             }
         }

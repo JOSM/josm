@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
@@ -1038,14 +1039,17 @@ public class MapCSSParser implements MapCSSParserConstants {
   }
 
   final public Object literal() throws ParseException {
-    Object val;
+    String val;
     Token t;
     float f;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case IDENT:
+      t = jj_consume_token(IDENT);
+                    {if (true) return new Keyword(t.image);}
+      break;
     case STRING:
-      val = string_or_ident();
-                                {if (true) return val;}
+      val = string();
+                       {if (true) return val;}
       break;
     case PLUS:
       jj_consume_token(PLUS);
@@ -1166,12 +1170,6 @@ public class MapCSSParser implements MapCSSParserConstants {
     finally { jj_save(6, xla); }
   }
 
-  private boolean jj_3R_41() {
-    if (jj_scan_token(DOLLAR)) return true;
-    if (jj_scan_token(EQUAL)) return true;
-    return false;
-  }
-
   private boolean jj_3R_40() {
     if (jj_scan_token(CARET)) return true;
     if (jj_scan_token(EQUAL)) return true;
@@ -1272,17 +1270,23 @@ public class MapCSSParser implements MapCSSParserConstants {
     return false;
   }
 
+  private boolean jj_3R_85() {
+    if (jj_scan_token(HEXCOLOR)) return true;
+    return false;
+  }
+
   private boolean jj_3R_27() {
     if (jj_3R_50()) return true;
     return false;
   }
 
   private boolean jj_3R_84() {
-    if (jj_scan_token(HEXCOLOR)) return true;
+    if (jj_3R_28()) return true;
     return false;
   }
 
   private boolean jj_3R_83() {
+    if (jj_scan_token(PLUS)) return true;
     if (jj_3R_28()) return true;
     return false;
   }
@@ -1303,13 +1307,12 @@ public class MapCSSParser implements MapCSSParserConstants {
   }
 
   private boolean jj_3R_82() {
-    if (jj_scan_token(PLUS)) return true;
-    if (jj_3R_28()) return true;
+    if (jj_3R_54()) return true;
     return false;
   }
 
   private boolean jj_3R_81() {
-    if (jj_3R_56()) return true;
+    if (jj_scan_token(IDENT)) return true;
     return false;
   }
 
@@ -1322,7 +1325,10 @@ public class MapCSSParser implements MapCSSParserConstants {
     jj_scanpos = xsp;
     if (jj_3R_83()) {
     jj_scanpos = xsp;
-    if (jj_3R_84()) return true;
+    if (jj_3R_84()) {
+    jj_scanpos = xsp;
+    if (jj_3R_85()) return true;
+    }
     }
     }
     }
@@ -1360,7 +1366,7 @@ public class MapCSSParser implements MapCSSParserConstants {
     return false;
   }
 
-  private boolean jj_3R_85() {
+  private boolean jj_3R_86() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_18()) return true;
     if (jj_3R_19()) return true;
@@ -1382,7 +1388,7 @@ public class MapCSSParser implements MapCSSParserConstants {
     Token xsp;
     while (true) {
       xsp = jj_scanpos;
-      if (jj_3R_85()) { jj_scanpos = xsp; break; }
+      if (jj_3R_86()) { jj_scanpos = xsp; break; }
     }
     return false;
   }
@@ -1849,6 +1855,12 @@ public class MapCSSParser implements MapCSSParserConstants {
 
   private boolean jj_3R_42() {
     if (jj_scan_token(STAR)) return true;
+    if (jj_scan_token(EQUAL)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_41() {
+    if (jj_scan_token(DOLLAR)) return true;
     if (jj_scan_token(EQUAL)) return true;
     return false;
   }

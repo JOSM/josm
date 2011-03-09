@@ -77,8 +77,8 @@ public class AreaElemStyle extends ElemStyle
         }
 
         TextElement text = null;
-        String textPos = c.get("text-position", null, String.class);
-        if (textPos == null || Utils.equal(textPos, "center")) {
+        Keyword textPos = c.get("text-position", null, Keyword.class);
+        if (textPos == null || Utils.equal(textPos.val, "center")) {
             text = TextElement.create(c, PaintColors.AREA_TEXT.get());
         }
         

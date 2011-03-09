@@ -11,6 +11,8 @@ import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public class TextElement {
+    // textKey == null means automatic generation of text string, otherwise
+    // the corresponding tag value is used
     public String textKey;
     public Font font;
     public int xOffset;
@@ -28,14 +30,15 @@ public class TextElement {
     }
 
     public static TextElement create(Cascade c, Color defTextColor) {
-        String textStr = c.get("text", null, String.class);
-        if (textStr == null)
-            return null;
 
         String textKey = null;
-        if (!"auto".equalsIgnoreCase(textStr)) {
-            textKey = textStr;
-        }
+        Keyword textKW = c.get("text", null, Keyword.class, true);
+        if (textKW == null) {
+            textKey = c.get("text", null, String.class);
+            if (textKey == null)
+                return null;
+        } else if (!textKW.val.equals("auto"))
+            return null;
 
         Font font = ElemStyle.getFont(c);
 

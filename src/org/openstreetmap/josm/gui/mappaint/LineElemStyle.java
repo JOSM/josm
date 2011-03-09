@@ -20,7 +20,7 @@ public class LineElemStyle extends ElemStyle {
     public static LineElemStyle createSimpleLineStyle(Color color) {
         MultiCascade mc = new MultiCascade();
         Cascade c = mc.getOrCreateCascade("default");
-        c.put("width", "default");
+        c.put("width", Keyword.DEFAULT);
         c.put("color", color != null ? color : PaintColors.UNTAGGED.get());
         return createLine(new Environment(null, mc, "default", null));
     }
@@ -102,7 +102,7 @@ public class LineElemStyle extends ElemStyle {
         }
 
         int alpha = 255;
-        Integer pAlpha = Utils.color_float2int(c.get("opacity", null, float.class));
+        Integer pAlpha = Utils.color_float2int(c.get("opacity", null, Float.class));
         if (pAlpha != null) {
             alpha = pAlpha;
         }
@@ -135,27 +135,33 @@ public class LineElemStyle extends ElemStyle {
                     dashesBackground.getBlue(), alpha);
         }
 
-        int cap;
-        String capStr = c.get(prefix + "linecap", null, String.class);
-        if (equal(capStr, "none")) {
-            cap = BasicStroke.CAP_BUTT;
-        } else if (equal(capStr, "round")) {
-            cap = BasicStroke.CAP_ROUND;
-        } else if (equal(capStr, "square")) {
-            cap = BasicStroke.CAP_SQUARE;
-        } else {
+        Integer cap = null;
+        Keyword capKW = c.get(prefix + "linecap", null, Keyword.class);
+        if (capKW != null) {
+            if (equal(capKW.val, "none")) {
+                cap = BasicStroke.CAP_BUTT;
+            } else if (equal(capKW.val, "round")) {
+                cap = BasicStroke.CAP_ROUND;
+            } else if (equal(capKW.val, "square")) {
+                cap = BasicStroke.CAP_SQUARE;
+            }
+        }
+        if (cap == null) {
             cap = dashes != null ? BasicStroke.CAP_BUTT : BasicStroke.CAP_ROUND;
         }
 
-        int join;
-        String joinStr = c.get(prefix + "linejoin", null, String.class);
-        if (equal(joinStr, "round")) {
-            join = BasicStroke.JOIN_ROUND;
-        } else if (equal(joinStr, "miter")) {
-            join = BasicStroke.JOIN_MITER;
-        } else if (equal(joinStr, "bevel")) {
-            join = BasicStroke.JOIN_BEVEL;
-        } else {
+        Integer join = null;
+        Keyword joinKW = c.get(prefix + "linejoin", null, Keyword.class);
+        if (joinKW != null) {
+            if (equal(joinKW.val, "round")) {
+                join = BasicStroke.JOIN_ROUND;
+            } else if (equal(joinKW.val, "miter")) {
+                join = BasicStroke.JOIN_MITER;
+            } else if (equal(joinKW.val, "bevel")) {
+                join = BasicStroke.JOIN_BEVEL;
+            }
+        }
+        if (join == null) {
             join = BasicStroke.JOIN_ROUND;
         }
 
@@ -176,8 +182,8 @@ public class LineElemStyle extends ElemStyle {
 
         TextElement text = null;
         if (!casing) {
-            String textPos = c.get("text-position", null, String.class);
-            if (textPos == null || equal(textPos, "line")) {
+            Keyword textPos = c.get("text-position", null, Keyword.class);
+            if (textPos == null || equal(textPos.val, "line")) {
                 text = TextElement.create(c, PaintColors.TEXT.get());
             }
         }

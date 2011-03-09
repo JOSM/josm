@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;
@@ -522,12 +523,14 @@ FunctionExpression function() :
 
 Object literal() :
 {
-    Object val;
+    String val;
     Token t;
     float f;
 }
 {
-        val=string_or_ident() { return val; }
+        t=<IDENT> { return new Keyword(t.image); }
+    |
+        val=string() { return val; }
     |
         <PLUS> f=ufloat() { return new Instruction.RelativeFloat(f); }
     |

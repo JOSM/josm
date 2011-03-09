@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss.parser;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction;

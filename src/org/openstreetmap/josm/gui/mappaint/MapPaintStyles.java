@@ -54,7 +54,7 @@ public class MapPaintStyles {
 
         @Override
         public String toString() {
-            return "IconReference{" + "iconName=" + iconName + " source=" + source.getDisplayString() + '}';
+            return "IconReference{" + "iconName='" + iconName + "' source='" + source.getDisplayString() + "'}";
         }
     }
 
