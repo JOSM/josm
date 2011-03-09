@@ -360,6 +360,21 @@ public class MapPainter {
         }
     }
 
+    private Polygon buildPolygon(Point center, int radius, int sides, double rotation) {
+        Polygon polygon = new Polygon();
+        for (int i = 0; i < sides; i++) {
+            double angle = ((2 * Math.PI / sides) * i) - rotation;
+            int x = (int) Math.round(center.x + radius * Math.cos(angle));
+            int y = (int) Math.round(center.y + radius * Math.sin(angle));
+            polygon.addPoint(x, y);
+        }
+        return polygon;
+    }
+
+    private Polygon buildPolygon(Point center, int radius, int sides) {
+        return buildPolygon(center, radius, sides, 0.0);
+    }
+
     public void drawNodeSymbol(Node n, Symbol s, Color fillColor, Color strokeColor, NodeTextElement text) {
         Point p = nc.getPoint(n);
         if ((p.x < 0) || (p.y < 0) || (p.x > nc.getWidth()) || (p.y > nc.getHeight())) return;
@@ -368,28 +383,70 @@ public class MapPainter {
         if (fillColor != null) {
             g.setColor(fillColor);
             switch (s.symbol) {
-                case SQUARE:
-                    g.fillRect(p.x - radius, p.y - radius, s.size, s.size);
-                    break;
-                case CIRCLE:
-                    g.fillOval(p.x - radius, p.y - radius, s.size, s.size);
-                    break;
-                default:
-                    throw new AssertionError();
+            case SQUARE:
+                g.fillRect(p.x - radius, p.y - radius, s.size, s.size);
+                break;
+            case CIRCLE:
+                g.fillOval(p.x - radius, p.y - radius, s.size, s.size);
+                break;
+            case TRIANGLE:
+                g.fillPolygon(buildPolygon(p, radius, 3, Math.PI / 2));
+                break;
+            case PENTAGON:
+                g.fillPolygon(buildPolygon(p, radius, 5, Math.PI / 2));
+                break;
+            case HEXAGON:
+                g.fillPolygon(buildPolygon(p, radius, 6));
+                break;
+            case HEPTAGON:
+                g.fillPolygon(buildPolygon(p, radius, 7, Math.PI / 2));
+                break;
+            case OCTAGON:
+                g.fillPolygon(buildPolygon(p, radius, 8, Math.PI / 8));
+                break;
+            case NONAGON:
+                g.fillPolygon(buildPolygon(p, radius, 9, Math.PI / 2));
+                break;
+            case DECAGON:
+                g.fillPolygon(buildPolygon(p, radius, 10));
+                break;
+            default:
+                throw new AssertionError();
             }
         }
         if (s.stroke != null) {
             g.setStroke(s.stroke);
             g.setColor(strokeColor);
             switch (s.symbol) {
-                case SQUARE:
-                    g.drawRect(p.x - radius, p.y - radius, s.size - 1, s.size - 1);
-                    break;
-                case CIRCLE:
-                    g.drawOval(p.x - radius, p.y - radius, s.size - 1, s.size - 1);
-                    break;
-                default:
-                    throw new AssertionError();
+            case SQUARE:
+                g.drawRect(p.x - radius, p.y - radius, s.size - 1, s.size - 1);
+                break;
+            case CIRCLE:
+                g.drawOval(p.x - radius, p.y - radius, s.size - 1, s.size - 1);
+                break;
+            case TRIANGLE:
+                g.drawPolygon(buildPolygon(p, radius, 3, Math.PI / 2));
+                break;
+            case PENTAGON:
+                g.drawPolygon(buildPolygon(p, radius, 5, Math.PI / 2));
+                break;
+            case HEXAGON:
+                g.drawPolygon(buildPolygon(p, radius, 6));
+                break;
+            case HEPTAGON:
+                g.drawPolygon(buildPolygon(p, radius, 7, Math.PI / 2));
+                break;
+            case OCTAGON:
+                g.drawPolygon(buildPolygon(p, radius, 8, Math.PI / 8));
+                break;
+            case NONAGON:
+                g.drawPolygon(buildPolygon(p, radius, 9, Math.PI / 2));
+                break;
+            case DECAGON:
+                g.drawPolygon(buildPolygon(p, radius, 10));
+                break;
+            default:
+                throw new AssertionError();
             }
             g.setStroke(new BasicStroke());
         }

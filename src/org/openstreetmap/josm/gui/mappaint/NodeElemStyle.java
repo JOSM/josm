@@ -34,7 +34,7 @@ public class NodeElemStyle extends ElemStyle {
 
     private ImageIcon disabledIcon;
 
-    public enum SymbolShape { SQUARE, CIRCLE }
+    public enum SymbolShape { SQUARE, CIRCLE, TRIANGLE, PENTAGON, HEXAGON, HEPTAGON, OCTAGON, NONAGON, DECAGON }
     public enum HorizontalTextAlignment { LEFT, CENTER, RIGHT }
     public enum VerticalTextAlignment { ABOVE, TOP, CENTER, BOTTOM, BELOW }
 
@@ -205,10 +205,24 @@ public class NodeElemStyle extends ElemStyle {
         Keyword shapeKW = c.get("symbol-shape", null, Keyword.class);
         if (shapeKW == null)
             return null;
-        if (equal(shapeKW, "square")) {
+        if (equal(shapeKW.val, "square")) {
             shape = SymbolShape.SQUARE;
-        } else if (equal(shapeKW, "circle")) {
+        } else if (equal(shapeKW.val, "circle")) {
             shape = SymbolShape.CIRCLE;
+        } else if (equal(shapeKW.val, "triangle")) {
+            shape = SymbolShape.TRIANGLE;
+        } else if (equal(shapeKW.val, "pentagon")) {
+            shape = SymbolShape.PENTAGON;
+        } else if (equal(shapeKW.val, "hexagon")) {
+            shape = SymbolShape.HEXAGON;
+        } else if (equal(shapeKW.val, "heptagon")) {
+            shape = SymbolShape.HEPTAGON;
+        } else if (equal(shapeKW.val, "octagon")) {
+            shape = SymbolShape.OCTAGON;
+        } else if (equal(shapeKW.val, "nonagon")) {
+            shape = SymbolShape.NONAGON;
+        } else if (equal(shapeKW.val, "decagon")) {
+            shape = SymbolShape.DECAGON;
         } else
             return null;
         
