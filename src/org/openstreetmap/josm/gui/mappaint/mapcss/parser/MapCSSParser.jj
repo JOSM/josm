@@ -495,7 +495,7 @@ Expression primary() :
     Object lit;
 }
 {
-    LOOKAHEAD(2) // both function and identifier start with an identifier
+    LOOKAHEAD(3) // both function and identifier start with an identifier (+ optional whitespace)
         fn=function() { return fn; }
     |
         lit=literal() { return new LiteralExpression(lit); }
