@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
@@ -200,7 +201,10 @@ public class AutoScaleAction extends JosmAction {
             if (mode.equals("selection")) {
                 sel = getCurrentDataSet().getSelected();
             } else if (mode.equals("conflict")) {
-                if (Main.map.conflictDialog.getConflicts() != null) {
+                Conflict<? extends OsmPrimitive> c = Main.map.conflictDialog.getSelectedConflict();
+                if (c != null) {
+                    sel.add(c.getMy());
+                } else if (Main.map.conflictDialog.getConflicts() != null) {
                     sel = Main.map.conflictDialog.getConflicts().getMyConflictParties();
                 }
             }

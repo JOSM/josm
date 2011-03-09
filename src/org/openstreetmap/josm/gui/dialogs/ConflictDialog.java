@@ -235,6 +235,20 @@ public final class ConflictDialog extends ToggleDialog implements MapView.EditLa
         return conflicts;
     }
 
+    /**
+     * returns the first selected item of the conflicts list
+     * 
+     * @return Conflict
+     */
+    public Conflict<? extends OsmPrimitive> getSelectedConflict() {
+        if (conflicts == null || model.getSize() == 0) return null;
+
+        int index = lstConflicts.getSelectedIndex();
+        if (index < 0) return null;
+
+        return conflicts.get(index);
+    }
+
     public void onConflictsAdded(ConflictCollection conflicts) {
         refreshView();
     }
