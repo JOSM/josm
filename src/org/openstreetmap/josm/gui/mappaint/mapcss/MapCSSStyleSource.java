@@ -159,11 +159,10 @@ public class MapCSSStyleSource extends StyleSource {
                                 i.execute(env);
                             }
                         }
-                    } else {
-                        env.layer = sub;
-                        for (Instruction i : r.declaration) {
-                            i.execute(env);
-                        }
+                    } 
+                    env.layer = sub;
+                    for (Instruction i : r.declaration) {
+                        i.execute(env);
                     }
                 }
             }

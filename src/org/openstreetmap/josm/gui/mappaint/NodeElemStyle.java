@@ -125,7 +125,7 @@ public class NodeElemStyle extends ElemStyle {
     static {
         MultiCascade mc = new MultiCascade();
         Cascade c = mc.getOrCreateCascade("default");
-        c.put("text", "auto");
+        c.put("text", Keyword.AUTO);
         SIMPLE_NODE_ELEMSTYLE = create(new Environment(null, mc, "default", null), true);
     }
 

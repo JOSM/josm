@@ -123,7 +123,7 @@ public class MainMenu extends JMenuBar {
     public final UndoAction undo = new UndoAction();
     public final RedoAction redo = new RedoAction();
     public final JosmAction copy = new CopyAction();
-    public final JosmAction paste = new PasteAction();
+    public final PasteAction paste = new PasteAction();
     public final JosmAction pasteTags = new PasteTagsAction();
     public final JosmAction duplicate = new DuplicateAction();
     public final JosmAction delete = new DeleteAction();
@@ -132,7 +132,6 @@ public class MainMenu extends JMenuBar {
     public final JosmAction mergeSelected = new MergeSelectionAction();
     public final JosmAction selectAll = new SelectAllAction();
     public final JosmAction unselectAll = new UnselectAllAction();
-    /* crashes when loading data, if using JosmAction for search */
     public final JosmAction search = new SearchAction();
     public final JosmAction preferences = new PreferencesAction();
 

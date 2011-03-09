@@ -37,7 +37,7 @@ public class MultiCascade {
                 c = new Cascade();
                 // Everything that is not on the default layer is assumed to
                 // be a modifier. Can be overridden in style definition.
-                if (!layer.equals("default")) {
+                if (!layer.equals("default") && !layer.equals("*")) {
                     c.put("modifier", true);
                 }
             }
@@ -58,7 +58,7 @@ public class MultiCascade {
         Cascade c = layers.get(layer);
         if (c == null) {
             c = new Cascade();
-            if (!layer.equals("default")) {
+            if (!layer.equals("default") && !layer.equals("*")) {
                 c.put("modifier", true);
             }
         }
