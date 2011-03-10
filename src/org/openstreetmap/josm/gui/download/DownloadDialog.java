@@ -392,7 +392,7 @@ public class DownloadDialog extends JDialog  {
         public DownloadAction() {
             putValue(NAME, tr("Download"));
             putValue(SMALL_ICON, ImageProvider.get("download"));
-            putValue(SHORT_DESCRIPTION, tr("Click do download the currently selected area"));
+            putValue(SHORT_DESCRIPTION, tr("Click to download the currently selected area"));
         }
 
         public void run() {
