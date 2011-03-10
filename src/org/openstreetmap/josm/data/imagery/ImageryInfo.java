@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * Class that stores info about an image background layer.
@@ -30,7 +31,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     }
 
     String name;
-    String url = null;
+    private String url = null;
     String cookies = null;
     public final String eulaAcceptanceRequired;
     ImageryType imageryType = ImageryType.WMS;
@@ -164,7 +165,8 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     }
 
     public void setUrl(String url) {
-
+        CheckParameterUtil.ensureParameterNotNull(url);
+        
         for (ImageryType type : ImageryType.values()) {
             if (url.startsWith(type.getUrlString() + ":")) {
                 this.url = url.substring(type.getUrlString().length() + 1);
