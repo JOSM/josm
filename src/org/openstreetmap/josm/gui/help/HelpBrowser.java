@@ -230,12 +230,13 @@ public class HelpBrowser extends JDialog {
      * @param relativeHelpTopic the help topic
      */
     protected void handleMissingHelpContent(String relativeHelpTopic) {
+        // i18n: do not translate "warning-header" and "warning-body"
         String message = tr("<html><p class=\"warning-header\">Help content for help topic missing</p>"
                 + "<p class=\"warning-body\">Help content for the help topic <strong>{0}</strong> is "
-                + "not available yet. It is missing both in your local language ({1}) and in english.<br><br>"
+                + "not available yet. It is missing both in your local language ({1}) and in English.<br><br>"
                 + "Please help to improve the JOSM help system and fill in the missing information. "
                 + "You can both edit the <a href=\"{2}\">help topic in your local language ({1})</a> and "
-                + "the <a href=\"{3}\">help topic in english</a>."
+                + "the <a href=\"{3}\">help topic in English</a>."
                 + "</p></html>",
                 relativeHelpTopic,
                 Locale.getDefault().getDisplayName(),
@@ -267,7 +268,7 @@ public class HelpBrowser extends JDialog {
      * Loads a help topic given by a relative help topic name (i.e. "/Action/New")
      *
      * First tries to load the language specific help topic. If it is missing, tries to
-     * load the topic in english.
+     * load the topic in English.
      *
      * @param relativeHelpTopic the relative help topic
      */

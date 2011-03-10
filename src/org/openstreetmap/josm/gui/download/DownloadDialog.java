@@ -409,7 +409,7 @@ public class DownloadDialog extends JDialog  {
                 JOptionPane.showMessageDialog(
                         DownloadDialog.this,
                         tr("<html>Neither <strong>{0}</strong> nor <strong>{1}</strong> is enabled.<br>"
-                                + "Please chose to either download OSM data, or GPX data, or both.</html>",
+                                + "Please choose to either download OSM data, or GPX data, or both.</html>",
                                 cbDownloadOsmData.getText(),
                                 cbDownloadGpxData.getText()
                         ),
