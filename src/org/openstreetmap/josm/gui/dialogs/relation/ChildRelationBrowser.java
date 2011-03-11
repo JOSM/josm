@@ -343,7 +343,7 @@ public class ChildRelationBrowser extends JPanel {
         protected void warnBecauseOfDeletedRelation(Relation r) {
             String message = tr("<html>The child relation<br>"
                     + "{0}<br>"
-                    + "is deleted on the server. It cannot be loaded",
+                    + "is deleted on the server. It cannot be loaded</html>",
                     r.getDisplayName(DefaultNameFormatter.getInstance())
             );
 
