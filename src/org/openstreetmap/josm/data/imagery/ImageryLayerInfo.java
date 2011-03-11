@@ -28,7 +28,7 @@ public class ImageryLayerInfo {
         "http://josm.openstreetmap.de/maps"
     };
 
-    public void load() {
+    public void load(boolean clearCache) {
         layers.clear();
         defaultLayers.clear();
         Collection<String> defaults = Main.pref.getCollection(
@@ -43,6 +43,9 @@ public class ImageryLayerInfo {
         {
             try
             {
+                if (clearCache) {
+                    MirroredInputStream.cleanup(source);
+                }
                 MirroredInputStream s = new MirroredInputStream(source, -1);
                 InputStreamReader r;
                 try

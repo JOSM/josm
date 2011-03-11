@@ -566,7 +566,7 @@ public class ImageryPreference implements PreferenceSetting {
             }
 
             public void actionPerformed(ActionEvent evt) {
-                layerInfo.load();
+                layerInfo.load(true);
                 modeldef.fireTableDataChanged();
             }
         }
@@ -856,7 +856,7 @@ public class ImageryPreference implements PreferenceSetting {
         if (!settingsMigration.hasConflicts()) {
             settingsMigration = null;
         }
-        ImageryLayerInfo.instance.load();
+        ImageryLayerInfo.instance.load(false);
         OffsetBookmark.loadBookmarks();
         Main.main.menu.imageryMenu.refreshImageryMenu();
         Main.main.menu.imageryMenu.refreshOffsetMenu();
