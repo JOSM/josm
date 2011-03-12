@@ -149,6 +149,8 @@ abstract public class Condition {
                 return e.osm.isNew();
             } else if (equal(id, "connection") && (e.osm instanceof Node)) {
                 return ((Node) e.osm).isConnectionNode();
+            } else if (equal(id, "tagged")) {
+                return e.osm.isTagged();
             }
             return true;
         }

@@ -234,7 +234,7 @@ public interface Expression {
                 Boolean b = Cascade.convertTo(args.get(0).evaluate(env), boolean.class);
                 if (b == null)
                     return null;
-                return args.get(b ? 0 : 1).evaluate(env);
+                return args.get(b ? 1 : 2).evaluate(env);
             }
             if (equal(name, "and")) {
                 for (Expression arg : args) {
