@@ -11,6 +11,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.TexturePaint;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
@@ -314,9 +315,18 @@ public class MapPainter {
             trfm.translate(-rect.getWidth()/2, off);
             gv.setGlyphTransform(i, trfm);
         }
-        g.setColor(text.color);
-        g.drawGlyphVector(gv, 0, 0);
-
+        if (text.haloRadius != null) {
+            Shape textOutline = gv.getOutline();
+            g.setStroke(new BasicStroke(2*text.haloRadius, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+            g.setColor(text.haloColor);
+            g.draw(textOutline);
+            g.setStroke(new BasicStroke());
+            g.setColor(text.color);
+            g.fill(textOutline);
+        } else {
+            g.setColor(text.color);
+            g.drawGlyphVector(gv, 0, 0);
+        }
     }
 
     private double[] pointAt(double t, Polygon poly, double pathLength) {
@@ -488,11 +498,6 @@ public class MapPainter {
         if (s == null)
             return;
 
-        if (inactive || n.isDisabled()) {
-            g.setColor(inactiveColor);
-        } else {
-            g.setColor(text.color);
-        }
         Font defaultFont = g.getFont();
         g.setFont(text.font);
 
@@ -537,7 +542,24 @@ public class MapPainter {
                 y += h_half + metrics.getAscent() + 2;
             } else throw new AssertionError();
         }
-        g.drawString(s, x, y);
+        if (inactive || n.isDisabled()) {
+            g.setColor(inactiveColor);
+        } else {
+            g.setColor(text.color);
+        }
+        if (text.haloRadius != null) {
+            g.setStroke(new BasicStroke(2*text.haloRadius, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+            g.setColor(text.haloColor);
+            FontRenderContext frc = g.getFontRenderContext();
+            GlyphVector gv = text.font.createGlyphVector(frc, s);
+            Shape textOutline = gv.getOutline(x, y);
+            g.draw(textOutline);
+            g.setStroke(new BasicStroke());
+            g.setColor(text.color);
+            g.fill(textOutline);
+        } else {
+            g.drawString(s, x, y);
+        }
         g.setFont(defaultFont);
     }
 

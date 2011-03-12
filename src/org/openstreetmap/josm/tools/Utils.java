@@ -159,4 +159,7 @@ public class Utils {
         return ((float) val) / 255f;
     }
 
+    public static Color complement(Color clr) {
+        return new Color(255 - clr.getRed(), 255 - clr.getGreen(), 255 - clr.getBlue(), clr.getAlpha());
+    }
 }

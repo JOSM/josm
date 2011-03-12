@@ -9,6 +9,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 public class TextElement {
     // textKey == null means automatic generation of text string, otherwise
@@ -18,8 +19,10 @@ public class TextElement {
     public int xOffset;
     public int yOffset;
     public Color color;
+    public Float haloRadius;
+    public Color haloColor;
 
-    public TextElement(String textKey, Font font, int xOffset, int yOffset, Color color) {
+    public TextElement(String textKey, Font font, int xOffset, int yOffset, Color color, Float haloRadius, Color haloColor) {
         CheckParameterUtil.ensureParameterNotNull(font);
         CheckParameterUtil.ensureParameterNotNull(color);
         this.textKey = textKey;
@@ -27,6 +30,18 @@ public class TextElement {
         this.xOffset = xOffset;
         this.yOffset = yOffset;
         this.color = color;
+        this.haloRadius = haloRadius;
+        this.haloColor = haloColor;
+    }
+
+    public TextElement(TextElement other) {
+        this.textKey = other.textKey;
+        this.font = other.font;
+        this.xOffset = other.xOffset;
+        this.yOffset = other.yOffset;
+        this.color = other.color;
+        this.haloColor = other.haloColor;
+        this.haloRadius = other.haloRadius;
     }
 
     public static TextElement create(Cascade c, Color defTextColor) {
@@ -57,8 +72,23 @@ public class TextElement {
         yOffset = c.get("text-offset-y", yOffset, Float.class);
         
         Color color = c.get("text-color", defTextColor, Color.class);
-        
-        return new TextElement(textKey, font, (int) xOffset, - (int) yOffset, color);
+        float alpha = c.get("text-opacity", 1f, Float.class);
+        color = new Color(color.getRed(), color.getGreen(),
+                color.getBlue(), Utils.color_float2int(alpha));
+
+        Float haloRadius = c.get("text-halo-radius", null, Float.class);
+        if (haloRadius != null && haloRadius <= 0) {
+            haloRadius = null;
+        }
+        Color haloColor = null;
+        if (haloRadius != null) {
+            haloColor = c.get("text-halo-color", Utils.complement(color), Color.class);
+            float haloAlpha = c.get("text-halo-opacity", 1f, Float.class);
+            haloColor = new Color(haloColor.getRed(), haloColor.getGreen(),
+                    haloColor.getBlue(), Utils.color_float2int(haloAlpha));
+        }
+
+        return new TextElement(textKey, font, (int) xOffset, - (int) yOffset, color, haloRadius, haloColor);
     }
 
     @Override
@@ -70,7 +100,9 @@ public class TextElement {
                 equal(font, other.font) &&
                 xOffset == other.xOffset &&
                 yOffset == other.yOffset &&
-                equal(color, other.color);
+                equal(color, other.color) &&
+                equal(haloRadius, other.haloRadius) &&
+                equal(haloColor, other.haloColor);
     }
 
     @Override
@@ -81,6 +113,8 @@ public class TextElement {
         hash = 79 * hash + xOffset;
         hash = 79 * hash + yOffset;
         hash = 79 * hash + color.hashCode();
+        hash = 79 * hash + (haloRadius != null ? Float.floatToIntBits(haloRadius) : 0);
+        hash = 79 * hash + (haloColor != null ? haloColor.hashCode() : 0);
         return hash;
     }
 

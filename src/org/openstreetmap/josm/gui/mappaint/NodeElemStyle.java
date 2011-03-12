@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Stroke;
 
 import javax.swing.GrayFilter;
@@ -92,8 +91,8 @@ public class NodeElemStyle extends ElemStyle {
         public HorizontalTextAlignment hAlign;
         public VerticalTextAlignment vAlign;
 
-        public NodeTextElement(String textKey, HorizontalTextAlignment hAlign, VerticalTextAlignment vAlign, Font font, int xOffset, int yOffset, Color color) {
-            super(textKey, font, xOffset, yOffset, color);
+        public NodeTextElement(TextElement text, HorizontalTextAlignment hAlign, VerticalTextAlignment vAlign) {
+            super(text);
             CheckParameterUtil.ensureParameterNotNull(hAlign);
             CheckParameterUtil.ensureParameterNotNull(vAlign);
             this.hAlign = hAlign;
@@ -191,7 +190,7 @@ public class NodeElemStyle extends ElemStyle {
             } else if (equal(vAlignStr, "below")) {
                 vAlign = VerticalTextAlignment.BELOW;
             }
-            text = new NodeTextElement(te.textKey, hAlign, vAlign, te.font, te.xOffset, te.yOffset, te.color);
+            text = new NodeTextElement(te, hAlign, vAlign);
         }
         
         return new NodeElemStyle(c, icon, iconAlpha, symbol, text);
