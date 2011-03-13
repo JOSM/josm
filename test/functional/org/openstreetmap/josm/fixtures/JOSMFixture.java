@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.DataSetMergerTest;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.I18n;
@@ -39,7 +39,7 @@ public class JOSMFixture {
         // load properties
         //
         try {
-            testProperties.load(DataSetMergerTest.class.getResourceAsStream(testPropertiesResourceName));
+            testProperties.load(JOSMFixture.class.getResourceAsStream(testPropertiesResourceName));
         } catch(Exception e){
             logger.log(Level.SEVERE, MessageFormat.format("failed to load property file ''{0}''", testPropertiesResourceName));
             fail(MessageFormat.format("failed to load property file ''{0}''. \nMake sure the path ''$project_root/test/config'' is on the classpath.", testPropertiesResourceName));
@@ -57,6 +57,7 @@ public class JOSMFixture {
             }
         }
         System.setProperty("josm.home", josmHome);
+        Main.pref = new Preferences();
         I18n.init();
         // initialize the plaform hook, and
         Main.determinePlatformHook();
