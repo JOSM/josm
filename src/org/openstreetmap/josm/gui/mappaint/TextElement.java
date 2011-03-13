@@ -5,16 +5,27 @@ import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.awt.Color;
 import java.awt.Font;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.visitor.paint.MapPainter;
 
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.mappaint.LabelCompositionStrategy.DeriveLabelFromNameTagsCompositionStrategy;
+import org.openstreetmap.josm.gui.mappaint.LabelCompositionStrategy.TagLookupCompositionStrategy;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Represents the rendering style for a textual label placed somewhere on the map.
+ *
+ */
 public class TextElement {
-    // textKey == null means automatic generation of text string, otherwise
-    // the corresponding tag value is used
-    public String textKey;
+    //static private final Logger logger = Logger.getLogger(TextElement.class.getName());
+
+    static private final LabelCompositionStrategy AUTO_LABEL_COMPOSITION_STRATEGY = new DeriveLabelFromNameTagsCompositionStrategy();
+
+    /** the strategy for building the actual label value for a given a {@link OsmPrimitive}.
+     * Check for null before accessing.
+     */
+    public LabelCompositionStrategy labelCompositionStrategy;
+    /** the font to be used when rendering*/
     public Font font;
     public int xOffset;
     public int yOffset;
@@ -22,10 +33,22 @@ public class TextElement {
     public Float haloRadius;
     public Color haloColor;
 
-    public TextElement(String textKey, Font font, int xOffset, int yOffset, Color color, Float haloRadius, Color haloColor) {
+    /**
+     * Creates a new text element
+     * 
+     * @param strategy the strategy indicating how the text is composed for a specific {@link OsmPrimitive} to be rendered.
+     * If null, no label is rendered.
+     * @param font the font to be used. Must not be null.
+     * @param xOffset
+     * @param yOffset
+     * @param color the color to be used. Must not be null
+     * @param haloRadius
+     * @param haloColor
+     */
+    public TextElement(LabelCompositionStrategy strategy, Font font, int xOffset, int yOffset, Color color, Float haloRadius, Color haloColor) {
         CheckParameterUtil.ensureParameterNotNull(font);
         CheckParameterUtil.ensureParameterNotNull(color);
-        this.textKey = textKey;
+        labelCompositionStrategy = strategy;
         this.font = font;
         this.xOffset = xOffset;
         this.yOffset = yOffset;
@@ -34,8 +57,13 @@ public class TextElement {
         this.haloColor = haloColor;
     }
 
+    /**
+     * Copy constructor
+     * 
+     * @param other the other element.
+     */
     public TextElement(TextElement other) {
-        this.textKey = other.textKey;
+        this.labelCompositionStrategy = other.labelCompositionStrategy;
         this.font = other.font;
         this.xOffset = other.xOffset;
         this.yOffset = other.yOffset;
@@ -44,17 +72,39 @@ public class TextElement {
         this.haloRadius = other.haloRadius;
     }
 
-    public static TextElement create(Cascade c, Color defTextColor) {
-
-        String textKey = null;
+    /**
+     * Derives a suitable label composition strategy from the style properties in
+     * {@code c}.
+     * 
+     * @param c the style properties
+     * @return the label composition strategy
+     */
+    protected static LabelCompositionStrategy buildLabelCompositionStrategy(Cascade c){
         Keyword textKW = c.get("text", null, Keyword.class, true);
         if (textKW == null) {
-            textKey = c.get("text", null, String.class);
-            if (textKey == null)
-                return null;
-        } else if (!textKW.val.equals("auto"))
-            return null;
+            String textKey = c.get("text", null, String.class);
+            if (textKey == null) return null;
+            return new TagLookupCompositionStrategy(textKey);
+        } else if (textKW.val.equals("auto"))
+            return AUTO_LABEL_COMPOSITION_STRATEGY;
+        else
+            return new TagLookupCompositionStrategy(textKW.val);
+    }
 
+    /**
+     * Builds a text element from style properties in {@code c} and the
+     * default text color {@code defaultTextColor}
+     * 
+     * @param c the style properties
+     * @param defaultTextColor the default text color. Must not be null.
+     * @return the text element or null, if the style properties don't include
+     * properties for text rendering
+     * @throws IllegalArgumentException thrown if {@code defaultTextColor} is null
+     */
+    public static TextElement create(Cascade c, Color defaultTextColor)  throws IllegalArgumentException{
+        CheckParameterUtil.ensureParameterNotNull(defaultTextColor);
+
+        LabelCompositionStrategy strategy = buildLabelCompositionStrategy(c);
         Font font = ElemStyle.getFont(c);
 
         float xOffset = 0;
@@ -70,8 +120,8 @@ public class TextElement {
         }
         xOffset = c.get("text-offset-x", xOffset, Float.class);
         yOffset = c.get("text-offset-y", yOffset, Float.class);
-        
-        Color color = c.get("text-color", defTextColor, Color.class);
+
+        Color color = c.get("text-color", defaultTextColor, Color.class);
         float alpha = c.get("text-opacity", 1f, Float.class);
         color = new Color(color.getRed(), color.getGreen(),
                 color.getBlue(), Utils.color_float2int(alpha));
@@ -88,27 +138,35 @@ public class TextElement {
                     haloColor.getBlue(), Utils.color_float2int(haloAlpha));
         }
 
-        return new TextElement(textKey, font, (int) xOffset, - (int) yOffset, color, haloRadius, haloColor);
+        return new TextElement(strategy, font, (int) xOffset, - (int) yOffset, color, haloRadius, haloColor);
+    }
+
+    /**
+     * Replies the label to be rendered for the primitive {@code osm}.
+     * 
+     * @param osm the the OSM object
+     * @return the label, or null, if {@code osm} is null or if no label can be
+     * derived for {@code osm}
+     */
+    public String getString(OsmPrimitive osm) {
+        if (labelCompositionStrategy == null) return null;
+        return labelCompositionStrategy.compose(osm);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        final TextElement other = (TextElement) obj;
-        return  equal(textKey, other.textKey) &&
-                equal(font, other.font) &&
-                xOffset == other.xOffset &&
-                yOffset == other.yOffset &&
-                equal(color, other.color) &&
-                equal(haloRadius, other.haloRadius) &&
-                equal(haloColor, other.haloColor);
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{TextElement ");
+        sb.append("strategy=");
+        sb.append(labelCompositionStrategy == null ? "null" : labelCompositionStrategy.toString());
+        sb.append("}");
+        return sb.toString();
     }
 
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 79 * hash + (textKey != null ? textKey.hashCode() : 0);
+        hash = 79 * hash + (labelCompositionStrategy != null ? labelCompositionStrategy.hashCode() : 0);
         hash = 79 * hash + font.hashCode();
         hash = 79 * hash + xOffset;
         hash = 79 * hash + yOffset;
@@ -118,12 +176,17 @@ public class TextElement {
         return hash;
     }
 
-    public String getString(OsmPrimitive osm, MapPainter painter) {
-        if (textKey == null)
-            return painter.getAreaName(osm);
-        else
-            return osm.get(textKey);
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        final TextElement other = (TextElement) obj;
+        return  equal(labelCompositionStrategy, other.labelCompositionStrategy) &&
+                equal(font, other.font) &&
+                xOffset == other.xOffset &&
+                yOffset == other.yOffset &&
+                equal(color, other.color) &&
+                equal(haloRadius, other.haloRadius) &&
+                equal(haloColor, other.haloColor);
     }
-
-
 }

@@ -25,6 +25,7 @@ import org.openstreetmap.josm.tools.Utils;
  * applies for Nodes and turn restriction relations
  */
 public class NodeElemStyle extends ElemStyle {
+    //static private final Logger logger = Logger.getLogger(NodeElemStyle.class.getName());
 
     public ImageIcon icon;
     public int iconAlpha;
@@ -140,7 +141,20 @@ public class NodeElemStyle extends ElemStyle {
         return create(env, false);
     }
 
+    /*
+     * Caches the default text color from the preferences.
+     *
+     * FIXME: the cache isn't updated if the user changes the preference during a JOSM
+     * session. There should be preference listener updating this cache.
+     */
+    static private Color DEFAULT_TEXT_COLOR = null;
+    static private void initDefaultParameters() {
+        if (DEFAULT_TEXT_COLOR != null) return;
+        DEFAULT_TEXT_COLOR = PaintColors.TEXT.get();
+    }
+
     private static NodeElemStyle create(Environment env, boolean allowOnlyText) {
+        initDefaultParameters();
         Cascade c = env.mc.getCascade(env.layer);
 
         IconReference iconRef = c.get("icon-image", null, IconReference.class);
@@ -166,7 +180,12 @@ public class NodeElemStyle extends ElemStyle {
             return null;
 
         NodeTextElement text = null;
-        TextElement te = TextElement.create(c, PaintColors.TEXT.get());
+        TextElement te = TextElement.create(c, DEFAULT_TEXT_COLOR);
+        // optimization: if we neither have a symbol, nor an icon, nor a text element
+        // we don't have to check for the remaining style properties and we don't
+        // have to allocate a node element style.
+        if (symbol == null && icon == null && te == null) return null;
+
         if (te != null) {
             HorizontalTextAlignment hAlign = HorizontalTextAlignment.RIGHT;
             Keyword hAlignKW = c.get("text-anchor-horizontal", Keyword.RIGHT, Keyword.class);
@@ -192,7 +211,7 @@ public class NodeElemStyle extends ElemStyle {
             }
             text = new NodeTextElement(te, hAlign, vAlign);
         }
-        
+
         return new NodeElemStyle(c, icon, iconAlpha, symbol, text);
     }
 
@@ -224,7 +243,7 @@ public class NodeElemStyle extends ElemStyle {
             shape = SymbolShape.DECAGON;
         } else
             return null;
-        
+
         Float sizeOnDefault = c_def.get("symbol-size", null, Float.class);
         if (sizeOnDefault != null && sizeOnDefault <= 0) {
             sizeOnDefault = null;
@@ -258,8 +277,9 @@ public class NodeElemStyle extends ElemStyle {
         }
 
         Color fillColor = c.get("symbol-fill-color", null, Color.class);
-        if (stroke == null && fillColor == null)
+        if (stroke == null && fillColor == null) {
             fillColor = Color.BLUE;
+        }
 
         if (fillColor != null) {
             float fillAlpha = c.get("symbol-fill-opacity", 1f, Float.class);

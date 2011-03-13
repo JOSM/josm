@@ -38,12 +38,11 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.Poly
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.HorizontalTextAlignment;
-import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.NodeTextElement;
+import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.Symbol;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle.VerticalTextAlignment;
 import org.openstreetmap.josm.gui.mappaint.TextElement;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Pair;
 
 public class MapPainter {
@@ -73,8 +72,6 @@ public class MapPainter {
 
     private final boolean leftHandTraffic;
 
-    private final Collection<String> regionalNameOrder;
-
     private static final double PHI = Math.toRadians(20);
     private static final double cosPHI = Math.cos(PHI);
     private static final double sinPHI = Math.sin(PHI);
@@ -103,8 +100,6 @@ public class MapPainter {
         this.virtualNodeSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
         this.segmentNumberSpace = Main.pref.getInteger("mappaint.segmentnumber.space", 40);
 
-        String[] names = {"name:" + LanguageInfo.getJOSMLocaleCode(), "name", "int_name", "ref", "operator", "brand", "addr:housenumber"};
-        this.regionalNameOrder = Main.pref.getCollection("mappaint.nameOrder", Arrays.asList(names));
         this.circum = circum;
         this.leftHandTraffic = leftHandTraffic;
     }
@@ -117,7 +112,7 @@ public class MapPainter {
      *              e.g. oneway street or waterway
      * @param onewayReversed for oneway=-1 and similar
      */
-    public void drawWay(Way way, Color color, BasicStroke line, BasicStroke dashes, Color dashedColor, 
+    public void drawWay(Way way, Color color, BasicStroke line, BasicStroke dashes, Color dashedColor,
             TextElement text, boolean showOrientation, boolean showHeadArrowOnly,
             boolean showOneway, boolean onewayReversed) {
 
@@ -252,7 +247,7 @@ public class MapPainter {
     private void drawTextOnPath(Way way, TextElement text) {
         if (text == null)
             return;
-        String name = text.getString(way, this);
+        String name = text.getString(way);
         if (name == null || name.equals(""))
             return;
 
@@ -291,8 +286,8 @@ public class MapPainter {
         double tStart;
 
         if (p1[0] < p2[0] &&
-            p1[2] < Math.PI/2 &&
-            p1[2] > -Math.PI/2) {
+                p1[2] < Math.PI/2 &&
+                p1[2] > -Math.PI/2) {
             angleOffset = 0;
             offsetSign = 1;
             tStart = t1;
@@ -346,8 +341,8 @@ public class MapPainter {
                 continue;
             }
             return new double[] {poly.xpoints[i-1]+(totalLen - curLen)/segLen*dx,
-                                 poly.ypoints[i-1]+(totalLen - curLen)/segLen*dy,
-                                 Math.atan2(dy, dx)};
+                    poly.ypoints[i-1]+(totalLen - curLen)/segLen*dy,
+                    Math.atan2(dy, dx)};
         }
         return null;
     }
@@ -494,9 +489,12 @@ public class MapPainter {
         if (!isShowNames() || text == null)
             return;
 
-        String s = text.textKey == null ? getNodeName(n) : n.get(text.textKey);
-        if (s == null)
-            return;
+        /*
+         * abort if we can't compose the label to be rendered
+         */
+        if (text.labelCompositionStrategy == null) return;
+        String s = text.labelCompositionStrategy.compose(n);
+        if (s == null) return;
 
         Font defaultFont = g.getFont();
         g.setFont(text.font);
@@ -597,9 +595,12 @@ public class MapPainter {
         }
 
         if (text != null && isShowNames()) {
-            String name = text.textKey == null ? getAreaName(osm) : osm.get(text.textKey);
-            if (name == null)
-                return;
+            /*
+             * abort if we can't compose the label to be rendered
+             */
+            if (text.labelCompositionStrategy == null) return;
+            String name = text.labelCompositionStrategy.compose(osm);
+            if (name == null) return;
 
             Rectangle pb = polygon.getBounds();
             FontMetrics fontMetrics = g.getFontMetrics(orderFont); // if slow, use cache
@@ -928,34 +929,6 @@ public class MapPainter {
             g.setColor(clr);
             g.drawString(on, x, y);
         }
-    }
-
-    //TODO Not a good place for this method
-    public String getNodeName(Node n) {
-        String name = null;
-        if (n.hasKeys()) {
-            for (String rn : regionalNameOrder) {
-                name = n.get(rn);
-                if (name != null) {
-                    break;
-                }
-            }
-        }
-        return name;
-    }
-
-    //TODO Not a good place for this method
-    public String getAreaName(OsmPrimitive w) {
-        String name = null;
-        if (w.hasKeys()) {
-            for (String rn : regionalNameOrder) {
-                name = w.get(rn);
-                if (name != null) {
-                    break;
-                }
-            }
-        }
-        return name;
     }
 
     public boolean isInactive() {

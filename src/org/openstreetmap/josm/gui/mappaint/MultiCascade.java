@@ -6,13 +6,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.openstreetmap.josm.tools.CheckParameterUtil;
+
 /**
  * Several layers / cascades, e.g. one for the main Line and one for each overlay.
  * The range is (0,Infinity) at first and it shrinks in the process when
  * StyleSources apply zoom level dependent properties.
  */
 public class MultiCascade {
-    
+
     private Map<String, Cascade> layers;
     public Range range;
 
@@ -27,8 +29,7 @@ public class MultiCascade {
      * a clone of the "*" layer, if it exists.
      */
     public Cascade getOrCreateCascade(String layer) {
-        if (layer == null)
-            throw new IllegalArgumentException();
+        CheckParameterUtil.ensureParameterNotNull(layer);
         Cascade c = layers.get(layer);
         if (c == null) {
             if (layers.containsKey("*")) {

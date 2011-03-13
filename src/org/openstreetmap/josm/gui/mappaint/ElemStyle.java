@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.mappaint;
 import static org.openstreetmap.josm.tools.Utils.equal;
 
 import java.awt.Font;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -16,7 +18,7 @@ abstract public class ElemStyle {
     public float z_index;
     public float object_z_index;
     public boolean isModifier;  // false, if style can serve as main style for the
-                                // primitive; true, if it is a highlight or modifier
+    // primitive; true, if it is a highlight or modifier
 
     public ElemStyle(float z_index, float object_z_index, boolean isModifier) {
         this.z_index = z_index;
@@ -59,11 +61,86 @@ abstract public class ElemStyle {
         return null;
     }
 
+    /* ------------------------------------------------------------------------------- */
+    /* cached values                                                                   */
+    /* ------------------------------------------------------------------------------- */
+    /*
+     * Two preference values and the set of created fonts are cached in order to avoid
+     * expensive lookups and to avoid too many font objects
+     * (in analogy to flyweight pattern).
+     * 
+     * FIXME: cached preference values are not updated if the user changes them during
+     * a JOSM session. Should have a listener listening to preference changes.
+     */
+    static private String DEFAULT_FONT_NAME = null;
+    static private Float DEFAULT_FONT_SIZE = null;
+    static private void initDefaultFontParameters() {
+        if (DEFAULT_FONT_NAME != null) return; // already initialized - skip initialization
+        DEFAULT_FONT_NAME = Main.pref.get("mappaint.font", "Helvetica");
+        DEFAULT_FONT_SIZE = (float) Main.pref.getInteger("mappaint.fontsize", 8);
+    }
+
+    static private class FontDescriptor {
+        public String name;
+        public int style;
+        public int size;
+
+        public FontDescriptor(String name, int style, int size){
+            this.name = name;
+            this.style = style;
+            this.size = size;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((name == null) ? 0 : name.hashCode());
+            result = prime * result + size;
+            result = prime * result + style;
+            return result;
+        }
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            FontDescriptor other = (FontDescriptor) obj;
+            if (name == null) {
+                if (other.name != null)
+                    return false;
+            } else if (!name.equals(other.name))
+                return false;
+            if (size != other.size)
+                return false;
+            if (style != other.style)
+                return false;
+            return true;
+        }
+    }
+
+    static private final Map<FontDescriptor, Font> FONT_MAP = new HashMap<FontDescriptor, Font>();
+    static private Font getCachedFont(FontDescriptor fd) {
+        Font f = FONT_MAP.get(fd);
+        if (f != null) return f;
+        f = new Font(fd.name, fd.style, fd.size);
+        FONT_MAP.put(fd, f);
+        return f;
+    }
+
+    static private Font getCachedFont(String name, int style, int size){
+        return getCachedFont(new FontDescriptor(name, style, size));
+    }
+
     protected static Font getFont(Cascade c) {
-        String name = c.get("font-family", Main.pref.get("mappaint.font", "Helvetica"), String.class);
-        float size = c.get("font-size", (float) Main.pref.getInteger("mappaint.fontsize", 8), Float.class);
+        initDefaultFontParameters(); // populated cached preferences, if necesary
+        String name = c.get("font-family", DEFAULT_FONT_NAME, String.class);
+        float size = c.get("font-size", DEFAULT_FONT_SIZE, Float.class);
         int weight = Font.PLAIN;
-        Keyword weightKW = c.get("font-wheight", null, Keyword.class);
+        Keyword weightKW = c.get("font-weight", null, Keyword.class);
         if (weightKW != null && equal(weightKW, "bold")) {
             weight = Font.BOLD;
         }
@@ -72,7 +149,7 @@ abstract public class ElemStyle {
         if (styleKW != null && equal(styleKW.val, "italic")) {
             style = Font.ITALIC;
         }
-        return new Font(name, weight | style, Math.round(size));
+        return getCachedFont(name, style | weight, Math.round(size));
     }
 
     @Override

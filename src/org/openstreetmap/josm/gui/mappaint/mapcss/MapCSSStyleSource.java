@@ -27,7 +27,8 @@ import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Utils;
 
 public class MapCSSStyleSource extends StyleSource {
-    
+    //static private final Logger logger = Logger.getLogger(MapCSSStyleSource.class.getName());
+
     final public List<MapCSSRule> rules;
     private Color backgroundColorOverride;
 
@@ -65,6 +66,7 @@ public class MapCSSStyleSource extends StyleSource {
         }
     }
 
+    @Override
     public InputStream getSourceInputStream() throws IOException {
         MirroredInputStream in = new MirroredInputStream(url);
         InputStream zip = in.getZipEntry("mapcss", "style");
@@ -127,6 +129,7 @@ public class MapCSSStyleSource extends StyleSource {
         return mc.getCascade("default");
     }
 
+    @Override
     public Color getBackgroundColorOverride() {
         return backgroundColorOverride;
     }
@@ -159,7 +162,7 @@ public class MapCSSStyleSource extends StyleSource {
                                 i.execute(env);
                             }
                         }
-                    } 
+                    }
                     env.layer = sub;
                     for (Instruction i : r.declaration) {
                         i.execute(env);
