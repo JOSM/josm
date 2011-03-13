@@ -25,7 +25,7 @@ import java.util.List;
  *   <policy>
  *     <imagery>
  *       <blacklist regex=".*\.google\.com/.*"/>
- *       <blacklist regex=".*209\.85\.2\d\d.*"/> 
+ *       <blacklist regex=".*209\.85\.2\d\d.*"/>
  *       <blacklist regex=".*209\.85\.1[3-9]\d.*"/>
  *       <blacklist regex=".*209\.85\.12[89].*"/>
  *     </imagery>
@@ -130,21 +130,22 @@ public class Capabilities {
     }
 
     /**
-     * checks if the given URL is blacklisted by one of the of the 
+     * checks if the given URL is blacklisted by one of the of the
      * regular expressions.
      */
 
     public boolean isOnImageryBlacklist(String url)
     {
-        for (String blacklistRegex : imageryBlacklist) {
-            if (url.matches(blacklistRegex)) {
-                return true;
+        if (url != null){
+            for (String blacklistRegex : imageryBlacklist) {
+                if (url.matches(blacklistRegex))
+                    return true;
             }
         }
         return false;
     }
 
-    /** 
+    /**
      * returns the full list of blacklist regular expressions.
      */
     public List<String> getImageryBlacklist()
