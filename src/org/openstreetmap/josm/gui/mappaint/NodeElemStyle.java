@@ -176,11 +176,8 @@ public class NodeElemStyle extends ElemStyle {
             symbol = createSymbol(env);
         }
 
-        if (icon == null && symbol == null && !allowOnlyText)
-            return null;
-
         NodeTextElement text = null;
-        TextElement te = TextElement.create(c, DEFAULT_TEXT_COLOR);
+        TextElement te = TextElement.create(c, DEFAULT_TEXT_COLOR, symbol == null && icon == null);
         // optimization: if we neither have a symbol, nor an icon, nor a text element
         // we don't have to check for the remaining style properties and we don't
         // have to allocate a node element style.

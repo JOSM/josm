@@ -184,7 +184,7 @@ public class LineElemStyle extends ElemStyle {
         if (!casing) {
             Keyword textPos = c.get("text-position", null, Keyword.class);
             if (textPos == null || equal(textPos.val, "line")) {
-                text = TextElement.create(c, PaintColors.TEXT.get());
+                text = TextElement.create(c, PaintColors.TEXT.get(), false);
             }
         }
 

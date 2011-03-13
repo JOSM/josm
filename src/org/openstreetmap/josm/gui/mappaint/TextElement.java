@@ -79,11 +79,12 @@ public class TextElement {
      * @param c the style properties
      * @return the label composition strategy
      */
-    protected static LabelCompositionStrategy buildLabelCompositionStrategy(Cascade c){
+    protected static LabelCompositionStrategy buildLabelCompositionStrategy(Cascade c, boolean defaultAnnotate){
         Keyword textKW = c.get("text", null, Keyword.class, true);
         if (textKW == null) {
             String textKey = c.get("text", null, String.class);
-            if (textKey == null) return null;
+            if (textKey == null) 
+                return defaultAnnotate ? AUTO_LABEL_COMPOSITION_STRATEGY : null;
             return new TagLookupCompositionStrategy(textKey);
         } else if (textKW.val.equals("auto"))
             return AUTO_LABEL_COMPOSITION_STRATEGY;
@@ -101,10 +102,10 @@ public class TextElement {
      * properties for text rendering
      * @throws IllegalArgumentException thrown if {@code defaultTextColor} is null
      */
-    public static TextElement create(Cascade c, Color defaultTextColor)  throws IllegalArgumentException{
+    public static TextElement create(Cascade c, Color defaultTextColor, boolean defaultAnnotate)  throws IllegalArgumentException{
         CheckParameterUtil.ensureParameterNotNull(defaultTextColor);
 
-        LabelCompositionStrategy strategy = buildLabelCompositionStrategy(c);
+        LabelCompositionStrategy strategy = buildLabelCompositionStrategy(c, defaultAnnotate);
         Font font = ElemStyle.getFont(c);
 
         float xOffset = 0;
