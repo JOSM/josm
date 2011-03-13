@@ -7,29 +7,5 @@
             <filelist dir="patched" files="core_ways.css,core_pois.css,core_landuse.css,core_relations.css,potlatch.css"/>        
         </concat>
     </target>
-    
-
-    <!--    update the explicit revision number in the externals definition to the currently checked out revison  -->
-    <target name="update-externals" depends="source-revision">
-        <exec executable="svn">
-            <arg value="propset"/>
-            <arg value="svn:externals"/>
-            <arg value="source -r ${version.entry.commit.revision} http://svn.openstreetmap.org/applications/editors/potlatch2/resources/stylesheets"/>
-            <arg value="."/>
-        </exec>
-    </target>
-    
-    <!--    Determine revision and save in  ${version.entry.commit.revision}-->
-    <target name="source-revision">
-        <exec append="false" output="REVISION.XML" executable="svn" dir="source" failifexecutionfails="true">
-            <env key="LANG" value="C"/>
-            <arg value="info"/>
-            <arg value="--xml"/>
-            <arg value="."/>
-        </exec>
-        <xmlproperty file="REVISION.XML" prefix="version" keepRoot="false" collapseAttributes="true"/>
-        <delete file="REVISION.XML" />
-    </target>
-    
 </project>
 

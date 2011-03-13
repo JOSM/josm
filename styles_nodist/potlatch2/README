@@ -1,14 +1,11 @@
 The Potlatch 2 styles need to be patched in order to work with the JOSM MapCSS implementation.
 
-The subversion externals definition has an explicit revision number set. 
-When updating from the remote repository, make sure to change the patched files accordingly.
+Potlatch 2's repository is git://git.openstreetmap.org/potlatch2.git
 
-The ant task 'assemble' concatinates the patched files to the final style potlatch2.mapcss
+ * 'source' contains the unmodified source files copied from git.openstreetmap.org/potlatch2.git/history/master:/resources/stylesheets.
+ * 'patched' contains the manually edited version.
+ * The ant task 'assemble' concatinates the patched files to the final style 'styles/standard/potlatch2.mapcss'
 
-Another ant task 'update-externals' is a shortcut to change the svn property, such that the externals 
-points to the revision that is currently checked out.
+When updating from upstream, keep all 3 in sync.
 
-When committing, the following should be in sync:
- * revision number in the svn externals property
- * patched *.css files
- * styles/standard/potlatch2.mapcss
+At time of writing, the last update used 0f12f406e80e7cedb1ca9d4662ab2977077fdc79 but better check the commit dates as well.
