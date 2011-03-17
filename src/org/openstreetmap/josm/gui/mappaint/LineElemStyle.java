@@ -120,7 +120,7 @@ public class LineElemStyle extends ElemStyle {
                     break;
                 }
             }
-            if (!hasPositive || dashes.length == 0) {
+            if (!hasPositive || (dashes != null && dashes.length == 0)) {
                 dashes = null;
             }
         }
@@ -197,10 +197,10 @@ public class LineElemStyle extends ElemStyle {
         /* show direction arrows, if draw.segment.relevant_directions_only is not set,
         the way is tagged with a direction key
         (even if the tag is negated as in oneway=false) or the way is selected */
-        boolean showOrientation = !isModifier && selected && !paintSettings.isUseRealWidth();
+        boolean showOrientation = !isModifier && (selected || paintSettings.isShowDirectionArrow()) && !paintSettings.isUseRealWidth();
         boolean showOneway = !isModifier && !selected &&
-                !paintSettings.isUseRealWidth() &&
-                paintSettings.isShowDirectionArrow() && w.hasDirectionKeys();
+        !paintSettings.isUseRealWidth() &&
+        paintSettings.isShowOnewayArrow() && w.hasDirectionKeys();
         boolean onewayReversed = w.reversedDirection();
         /* head only takes over control if the option is true,
         the direction should be shown at all and not only because it's selected */
@@ -214,7 +214,7 @@ public class LineElemStyle extends ElemStyle {
             if (myWidth < line.getLineWidth()) {
                 myWidth = line.getLineWidth();
             }
-            myLine = new BasicStroke(myWidth, line.getEndCap(), line.getLineJoin(), 
+            myLine = new BasicStroke(myWidth, line.getEndCap(), line.getLineJoin(),
                     line.getMiterLimit(), line.getDashArray(), line.getDashPhase());
             if (dashesLine != null) {
                 myDashLine = new BasicStroke(myWidth, dashesLine.getEndCap(), dashesLine.getLineJoin(),
@@ -258,11 +258,11 @@ public class LineElemStyle extends ElemStyle {
             return false;
         final LineElemStyle other = (LineElemStyle) obj;
         return  equal(line, other.line) &&
-                equal(color, other.color) &&
-                equal(dashesLine, other.dashesLine) &&
-                equal(dashesBackground, other.dashesBackground) &&
-                equal(text, other.text) &&
-                realWidth == other.realWidth;
+        equal(color, other.color) &&
+        equal(dashesLine, other.dashesLine) &&
+        equal(dashesBackground, other.dashesBackground) &&
+        equal(text, other.text) &&
+        realWidth == other.realWidth;
     }
 
     @Override
@@ -280,9 +280,9 @@ public class LineElemStyle extends ElemStyle {
     @Override
     public String toString() {
         return "LineElemStyle{" + super.toString() + "width=" + line.getLineWidth() +
-                " realWidth=" + realWidth + " color=" + Utils.toString(color) +
-                " dashed=" + Arrays.toString(line.getDashArray()) +
-                (line.getDashPhase() == 0f ? "" : " dashesOffses=" + line.getDashPhase()) +
-                " dashedColor=" + Utils.toString(dashesBackground) + '}';
+        " realWidth=" + realWidth + " color=" + Utils.toString(color) +
+        " dashed=" + Arrays.toString(line.getDashArray()) +
+        (line.getDashPhase() == 0f ? "" : " dashesOffses=" + line.getDashPhase()) +
+        " dashedColor=" + Utils.toString(dashesBackground) + '}';
     }
 }

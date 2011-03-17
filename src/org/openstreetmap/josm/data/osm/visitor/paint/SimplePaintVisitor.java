@@ -62,7 +62,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
     protected Color connectionColor;
     protected Color taggedConnectionColor;
     protected boolean showDirectionArrow;
-    protected boolean showRelevantDirectionsOnly;
+    protected boolean showOnewayArrow;
     protected boolean showHeadArrowOnly;
     protected boolean showOrderNumber;
     protected boolean fillSelectedNode;
@@ -108,7 +108,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
     protected void getSettings(boolean virtual) {
         MapPaintSettings settings = MapPaintSettings.INSTANCE;
         showDirectionArrow = settings.isShowDirectionArrow();
-        showRelevantDirectionsOnly = settings.isShowRelevantDirectionsOnly();
+        showOnewayArrow = settings.isShowOnewayArrow();
         showHeadArrowOnly = settings.isShowHeadArrowOnly();
         showOrderNumber = settings.isShowOrderNumber();
         selectedNodeSize = settings.getSelectedNodeSize();
@@ -332,8 +332,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         /* show direction arrows, if draw.segment.relevant_directions_only is not set, the way is tagged with a direction key
            (even if the tag is negated as in oneway=false) or the way is selected */
 
-        boolean showThisDirectionArrow = ds.isSelected(w)
-        || (showDirectionArrow && (!showRelevantDirectionsOnly || w.hasDirectionKeys()));
+        boolean showThisDirectionArrow = ds.isSelected(w) || showDirectionArrow;
         /* head only takes over control if the option is true,
            the direction should be shown at all and not only because it's selected */
         boolean showOnlyHeadArrowOnly = showThisDirectionArrow && !ds.isSelected(w) && showHeadArrowOnly;

@@ -13,7 +13,7 @@ public class MapPaintSettings implements PreferenceChangedListener {
 
     private boolean useRealWidth;
     private boolean showDirectionArrow;
-    private boolean showRelevantDirectionsOnly;
+    private boolean showOnewayArrow;
     private int defaultSegmentWidth;
     private boolean showOrderNumber;
     private boolean showHeadArrowOnly;
@@ -45,7 +45,7 @@ public class MapPaintSettings implements PreferenceChangedListener {
 
     private void load() {
         showDirectionArrow = Main.pref.getBoolean("draw.segment.direction", true);
-        showRelevantDirectionsOnly = Main.pref.getBoolean("draw.segment.relevant_directions_only", true);
+        showOnewayArrow = Main.pref.getBoolean("draw.oneway", true);
         useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth", false);
         defaultSegmentWidth = Main.pref.getInteger("mappaint.segment.default-width", 2);
 
@@ -80,7 +80,7 @@ public class MapPaintSettings implements PreferenceChangedListener {
         fillConnectionNode = Main.pref.getBoolean("mappaint.node.fill-connection", false);
 
         outlineOnly = Main.pref.getBoolean("draw.data.area_outline_only", false);
-        
+
     }
 
     public void preferenceChanged(PreferenceChangeEvent e) {
@@ -95,8 +95,8 @@ public class MapPaintSettings implements PreferenceChangedListener {
         return showDirectionArrow;
     }
 
-    public boolean isShowRelevantDirectionsOnly() {
-        return showRelevantDirectionsOnly;
+    public boolean isShowOnewayArrow() {
+        return showOnewayArrow;
     }
 
     public int getDefaultSegmentWidth() {
