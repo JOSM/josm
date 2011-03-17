@@ -215,12 +215,10 @@ abstract public class Main {
         // We try to establish an API connection early, so that any API 
         // capabilities are already known to the editor instance. However
         // if it goes wrong that's not critical at this stage.
-        if (Main.pref.getBoolean("get-capabilities-at-start", false)) {
-            try {
-                OsmApi.getOsmApi().initialize(null);
-            } catch (Exception x) {
-                // ignore any exception here.
-            }
+        try {
+            OsmApi.getOsmApi().initialize(null, true);
+        } catch (Exception x) {
+            // ignore any exception here.
         }
 
         contentPanePrivate.add(panel, BorderLayout.CENTER);

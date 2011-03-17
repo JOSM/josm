@@ -148,17 +148,22 @@ public class OsmApi extends OsmConnection {
         return version;
     }
 
+    public void initialize(ProgressMonitor monitor) throws OsmApiInitializationException, OsmTransferCancelledException {
+        initialize(monitor, false);
+    }
     /**
      * Initializes this component by negotiating a protocol version with the server.
      *
+     * @param monitor
+     * @param fastFail true to request quick initialisation with a small timeout (more likely to throw exception)
      * @exception OsmApiInitializationException thrown, if an exception occurs
      */
-    public void initialize(ProgressMonitor monitor) throws OsmApiInitializationException, OsmTransferCancelledException {
+    public void initialize(ProgressMonitor monitor, boolean fastFail) throws OsmApiInitializationException, OsmTransferCancelledException {
         if (initialized)
             return;
         cancel = false;
         try {
-            String s = sendRequest("GET", "capabilities", null, monitor, false);
+            String s = sendRequest("GET", "capabilities", null, monitor, false, fastFail);
             InputSource inputSource = new InputSource(new StringReader(s));
             SAXParserFactory.newInstance().newSAXParser().parse(inputSource, new CapabilitiesParser());
             if (capabilities.supportsVersion("0.6")) {
@@ -505,7 +510,11 @@ public class OsmApi extends OsmConnection {
     }
 
     private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor) throws OsmTransferException {
-        return sendRequest(requestMethod, urlSuffix, requestBody, monitor, true);
+        return sendRequest(requestMethod, urlSuffix, requestBody, monitor, true, false);
+    }
+
+    private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor, boolean doAuth) throws OsmTransferException {
+        return sendRequest(requestMethod, urlSuffix, requestBody, monitor, doAuth, false);
     }
 
     /**
@@ -521,12 +530,13 @@ public class OsmApi extends OsmConnection {
      * @param monitor the progress monitor
      * @param doAuthenticate  set to true, if the request sent to the server shall include authentication
      * credentials;
+     * @param fastFail true to request a short timeout
      *
      * @return the body of the HTTP response, if and only if the response code was "200 OK".
      * @exception OsmTransferException if the HTTP return code was not 200 (and retries have
      *    been exhausted), or rewrapping a Java exception.
      */
-    private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor, boolean doAuthenticate) throws OsmTransferException {
+    private String sendRequest(String requestMethod, String urlSuffix,String requestBody, ProgressMonitor monitor, boolean doAuthenticate, boolean fastFail) throws OsmTransferException {
         StringBuffer responseBody = new StringBuffer();
         int retries = getMaxRetries();
 
@@ -535,7 +545,7 @@ public class OsmApi extends OsmConnection {
                 URL url = new URL(new URL(getBaseUrl()), urlSuffix);
                 System.out.print(requestMethod + " " + url + "... ");
                 activeConnection = (HttpURLConnection)url.openConnection();
-                activeConnection.setConnectTimeout(15000);
+                activeConnection.setConnectTimeout(fastFail ? 1000 : 15000);
                 activeConnection.setRequestMethod(requestMethod);
                 if (doAuthenticate) {
                     addAuth(activeConnection);
