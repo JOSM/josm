@@ -243,10 +243,6 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
             Changeset cs = (Changeset)cbOpenChangesets.getSelectedItem();
             if (cs == null) return;
             if (rbExisting.isSelected()) {
-                // create a clone of the selected changeset and make sure
-                // we keep the current changeset comment (see #4371)
-                cs = new Changeset(cs);
-                cs.put("comment", changesetCommentModel.getComment());
                 firePropertyChange(SELECTED_CHANGESET_PROP, null, cs);
             }
         }
@@ -283,17 +279,14 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
             if (rbUseNew.isSelected()) {
                 cbOpenChangesets.setEnabled(false);
                 firePropertyChange(SELECTED_CHANGESET_PROP, null, null);
-            } else {
+            } else if (rbExisting.isSelected()) {
                 cbOpenChangesets.setEnabled(true);
                 if (cbOpenChangesets.getSelectedItem() == null) {
                     model.selectFirstChangeset();
                 }
                 Changeset cs = (Changeset)cbOpenChangesets.getSelectedItem();
                 if (cs == null) return;
-                // create a clone of the selected changeset and make sure
-                // we keep the current changeset comment (see #4371)
-                cs = new Changeset(cs);
-                cs.put("comment", changesetCommentModel.getComment());
+                changesetCommentModel.setComment(cs.get("comment"));
                 firePropertyChange(SELECTED_CHANGESET_PROP, null, cs);
             }
         }
