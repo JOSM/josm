@@ -414,7 +414,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         public ZoomInCurrentLayerAction() {
             putValue(NAME, tr("Zoom to in layer"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/autoscale", "selection"));
-            putValue(SHORT_DESCRIPTION, tr("Zoom to the primitives in the content of this changeset in the current data layer"));
+            putValue(SHORT_DESCRIPTION, tr("Zoom to the objects in the content of this changeset in the current data layer"));
             updateEnabledState();
         }
 

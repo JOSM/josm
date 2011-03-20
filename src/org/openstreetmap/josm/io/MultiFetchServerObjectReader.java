@@ -420,7 +420,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
                 multiGetIdPackage(type, pkg, progressMonitor);
             } catch(OsmApiException e) {
                 if (e.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                    logger.warning(tr("Server replied with response code 404, retrying with an individual request for each primitive."));
+                    logger.warning(tr("Server replied with response code 404, retrying with an individual request for each object."));
                     singleGetIdPackage(type, pkg, progressMonitor);
                 } else
                     throw e;

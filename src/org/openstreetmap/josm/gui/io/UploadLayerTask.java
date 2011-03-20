@@ -91,7 +91,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
         if (p.isDeleted()) {
             // we tried to delete an already deleted primitive.
             //
-            System.out.println(tr("Warning: primitive ''{0}'' is already deleted on the server. Skipping this primitive and retrying to upload.", p.getDisplayName(DefaultNameFormatter.getInstance())));
+            System.out.println(tr("Warning: object ''{0}'' is already deleted on the server. Skipping this object and retrying to upload.", p.getDisplayName(DefaultNameFormatter.getInstance())));
             processedPrimitives.addAll(writer.getProcessedPrimitives());
             processedPrimitives.add(p);
             toUpload.removeAll(processedPrimitives);
@@ -105,7 +105,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
 
     @Override
     public void run() {
-        monitor.indeterminateSubTask(tr("Preparing primitives to upload ..."));
+        monitor.indeterminateSubTask(tr("Preparing objects to upload ..."));
         APIDataSet ds = new APIDataSet(layer.data);
         try {
             ds.adjustRelationUploadOrder();

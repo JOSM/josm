@@ -247,7 +247,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         public ShowHistoryAction() {
             putValue(NAME, tr("Show history"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "history"));
-            putValue(SHORT_DESCRIPTION, tr("Download and show the history of the selected primitives"));
+            putValue(SHORT_DESCRIPTION, tr("Download and show the history of the selected objects"));
             updateEnabledState();
         }
 
@@ -376,7 +376,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         public ZoomInCurrentLayerAction() {
             putValue(NAME, tr("Zoom to in layer"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/autoscale", "selection"));
-            putValue(SHORT_DESCRIPTION, tr("Zoom to the corresponding primitives in the current data layer"));
+            putValue(SHORT_DESCRIPTION, tr("Zoom to the corresponding objects in the current data layer"));
             updateEnabledState();
         }
 

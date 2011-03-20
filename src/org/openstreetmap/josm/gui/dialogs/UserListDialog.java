@@ -4,8 +4,8 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.Component;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -25,17 +25,18 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JLabel;
 import javax.swing.ListSelectionModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumnModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractInfoAction;
@@ -49,8 +50,6 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.ImageProvider;
-import javax.swing.ImageIcon;
 
 /**
  * Displays a dialog with all users who have last edited something in the
@@ -117,6 +116,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         TableColumnModel columnModel = userTable.getColumnModel();
         columnModel.getColumn(3).setPreferredWidth(20);
         columnModel.getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 final JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                 label.setIcon((ImageIcon)value);
@@ -178,7 +178,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     class SelectUsersPrimitivesAction extends AbstractAction implements ListSelectionListener{
         public SelectUsersPrimitivesAction() {
             putValue(NAME, tr("Select"));
-            putValue(SHORT_DESCRIPTION, tr("Select primitives submitted by this user"));
+            putValue(SHORT_DESCRIPTION, tr("Select objects submitted by this user"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
             updateEnabledState();
         }
@@ -280,7 +280,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             User.loadRelicensingInformation();
             Layer layer = Main.main.getActiveLayer();
             if (layer instanceof OsmDataLayer) {
-               refresh(((OsmDataLayer)layer).data.getSelected());
+                refresh(((OsmDataLayer)layer).data.getSelected());
             }
             setEnabled(false);
         }

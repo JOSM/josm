@@ -62,9 +62,9 @@ public class UndeletePrimitivesCommand extends ConflictResolveCommand {
 
     @Override public JLabel getDescription() {
         return new JLabel(
-                        trn("Undelete {0} primitive", "Undelete {0} primitives", toUndelete.size(), toUndelete.size()),
-                        ImageProvider.get("data", "object"),
-                        JLabel.HORIZONTAL
+                trn("Undelete {0} object", "Undelete {0} objects", toUndelete.size(), toUndelete.size()),
+                ImageProvider.get("data", "object"),
+                JLabel.HORIZONTAL
         );
     }
 

@@ -23,7 +23,7 @@ public class RelationMemberTableColumnModel extends DefaultTableColumnModel {
 
         // column 0 - Version
         col = new TableColumn(1);
-        col.setHeaderValue(tr("Primitive"));
+        col.setHeaderValue(tr("Object"));
         col.setCellRenderer(renderer);
         addColumn(col);
     }

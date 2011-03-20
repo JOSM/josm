@@ -27,7 +27,7 @@ public class ConflictAddCommand extends Command {
     protected void warnBecauseOfDoubleConflict() {
         JOptionPane.showMessageDialog(
                 Main.parent,
-                tr("<html>Layer ''{0}'' already has a conflict for primitive<br>"
+                tr("<html>Layer ''{0}'' already has a conflict for object<br>"
                         + "''{1}''.<br>"
                         + "This conflict cannot be added.</html>",
                         getLayer().getName(),
@@ -49,7 +49,7 @@ public class ConflictAddCommand extends Command {
 
     @Override public void undoCommand() {
         if (! Main.map.mapView.hasLayer(getLayer())) {
-            System.out.println(tr("Warning: Layer ''{0}'' does not exist any more. Cannot remove conflict for primitive ''{1}''.",
+            System.out.println(tr("Warning: Layer ''{0}'' does not exist any more. Cannot remove conflict for object ''{1}''.",
                     getLayer().getName(),
                     conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance())
             ));
@@ -64,11 +64,11 @@ public class ConflictAddCommand extends Command {
 
     @Override public JLabel getDescription() {
         return new JLabel(
-                        tr("Add conflict for ''{0}''",
-                                conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance())
-                        ),
-                        ImageProvider.get(OsmPrimitiveType.from(conflict.getMy())),
-                        JLabel.HORIZONTAL
+                tr("Add conflict for ''{0}''",
+                        conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance())
+                ),
+                ImageProvider.get(OsmPrimitiveType.from(conflict.getMy())),
+                JLabel.HORIZONTAL
         );
     }
 }

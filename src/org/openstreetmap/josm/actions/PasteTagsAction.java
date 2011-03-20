@@ -253,7 +253,7 @@ public final class PasteTagsAction extends JosmAction implements PasteBufferChan
         }
         if (!commands.isEmpty()) {
             String title1 = trn("Pasting {0} tag", "Pasting {0} tags", commands.size(), commands.size());
-            String title2 = trn("to {0} primitive", "to {0} primtives", selection.size(), selection.size());
+            String title2 = trn("to {0} object", "to {0} objects", selection.size(), selection.size());
             Main.main.undoRedo.add(
                     new SequenceCommand(
                             title1 + " " + title2,

@@ -322,7 +322,7 @@ public abstract class ListMergeModel<T> extends Observable {
         }
         StringBuffer sb = new StringBuffer();
         sb.append("<html>");
-        sb.append(tr("The following primitives could not be copied to the target primitive<br>because they are deleted in the target dataset:"));
+        sb.append(tr("The following objects could not be copied to the target object<br>because they are deleted in the target dataset:"));
         sb.append("<ul>");
         for (String item: items) {
             sb.append("<li>").append(item).append("</li>");
@@ -332,7 +332,7 @@ public abstract class ListMergeModel<T> extends Observable {
         HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
                 sb.toString(),
-                tr("Merging deleted primitives failed"),
+                tr("Merging deleted objects failed"),
                 JOptionPane.WARNING_MESSAGE,
                 HelpUtil.ht("/Dialog/Conflict#MergingDeletedPrimitivesFailed")
         );

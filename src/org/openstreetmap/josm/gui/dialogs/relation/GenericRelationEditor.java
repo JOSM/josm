@@ -669,7 +669,7 @@ public class GenericRelationEditor extends RelationEditor  {
 
         protected boolean confirmAddingPrimtive(OsmPrimitive primitive)  throws AddAbortException {
             String msg = tr("<html>This relation already has one or more members referring to<br>"
-                    + "the primitive ''{0}''<br>"
+                    + "the object ''{0}''<br>"
                     + "<br>"
                     + "Do you really want to add another relation member?</html>",
                     primitive.getDisplayName(DefaultNameFormatter.getInstance())
@@ -678,7 +678,7 @@ public class GenericRelationEditor extends RelationEditor  {
                     "add_primitive_to_relation",
                     Main.parent,
                     msg,
-                    tr("Multiple members referring to same primitive"),
+                    tr("Multiple members referring to same object."),
                     JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.WARNING_MESSAGE,
                     null,
@@ -737,7 +737,7 @@ public class GenericRelationEditor extends RelationEditor  {
     class AddSelectedAtStartAction extends AddFromSelectionAction implements TableModelListener {
         public AddSelectedAtStartAction() {
             putValue(SHORT_DESCRIPTION,
-                    tr("Add all primitives selected in the current dataset before the first member"));
+                    tr("Add all objects selected in the current dataset before the first member"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copystartright"));
             // putValue(NAME, tr("Add Selected"));
             refreshEnabled();
@@ -763,7 +763,7 @@ public class GenericRelationEditor extends RelationEditor  {
 
     class AddSelectedAtEndAction extends AddFromSelectionAction implements TableModelListener {
         public AddSelectedAtEndAction() {
-            putValue(SHORT_DESCRIPTION, tr("Add all primitives selected in the current dataset after the last member"));
+            putValue(SHORT_DESCRIPTION, tr("Add all objects selected in the current dataset after the last member"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copyendright"));
             // putValue(NAME, tr("Add Selected"));
             refreshEnabled();
@@ -790,7 +790,7 @@ public class GenericRelationEditor extends RelationEditor  {
     class AddSelectedBeforeSelection extends AddFromSelectionAction implements TableModelListener, ListSelectionListener {
         public AddSelectedBeforeSelection() {
             putValue(SHORT_DESCRIPTION,
-                    tr("Add all primitives selected in the current dataset before the first selected member"));
+                    tr("Add all objects selected in the current dataset before the first selected member"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copybeforecurrentright"));
             // putValue(NAME, tr("Add Selected"));
             refreshEnabled();
@@ -824,7 +824,7 @@ public class GenericRelationEditor extends RelationEditor  {
     class AddSelectedAfterSelection extends AddFromSelectionAction implements TableModelListener, ListSelectionListener {
         public AddSelectedAfterSelection() {
             putValue(SHORT_DESCRIPTION,
-                    tr("Add all primitives selected in the current dataset after the last selected member"));
+                    tr("Add all objects selected in the current dataset after the last selected member"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/conflict", "copyaftercurrentright"));
             // putValue(NAME, tr("Add Selected"));
             refreshEnabled();
@@ -856,7 +856,7 @@ public class GenericRelationEditor extends RelationEditor  {
 
     class RemoveSelectedAction extends AbstractAction implements TableModelListener {
         public RemoveSelectedAction() {
-            putValue(SHORT_DESCRIPTION, tr("Remove all members referring to one of the selected primitives"));
+            putValue(SHORT_DESCRIPTION, tr("Remove all members referring to one of the selected objects"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "deletemembers"));
             // putValue(NAME, tr("Remove Selected"));
             Shortcut.registerShortcut("relationeditor:removeselected", tr("Relation Editor: Remove Selected"),
@@ -893,7 +893,7 @@ public class GenericRelationEditor extends RelationEditor  {
      */
     class SelectedMembersForSelectionAction extends AbstractAction implements TableModelListener {
         public SelectedMembersForSelectionAction() {
-            putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to primitives in the current selection"));
+            putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to objects in the current selection"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "selectmembers"));
             updateEnabledState();
         }
@@ -903,9 +903,9 @@ public class GenericRelationEditor extends RelationEditor  {
             &&  !memberTableModel.getChildPrimitives(getLayer().data.getSelected()).isEmpty();
 
             if (enabled) {
-                putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to {0} primitives in the current selection",memberTableModel.getChildPrimitives(getLayer().data.getSelected()).size()));
+                putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to {0} objects in the current selection",memberTableModel.getChildPrimitives(getLayer().data.getSelected()).size()));
             } else {
-                putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to primitives in the current selection"));
+                putValue(SHORT_DESCRIPTION, tr("Select relation members which refer to objects in the current selection"));
             }
             setEnabled(enabled);
         }
@@ -927,7 +927,7 @@ public class GenericRelationEditor extends RelationEditor  {
      */
     class SelectPrimitivesForSelectedMembersAction extends AbstractAction implements ListSelectionListener {
         public SelectPrimitivesForSelectedMembersAction() {
-            putValue(SHORT_DESCRIPTION, tr("Select primitives for selected relation members"));
+            putValue(SHORT_DESCRIPTION, tr("Select objects for selected relation members"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "selectprimitives"));
             updateEnabledState();
         }
@@ -1182,7 +1182,7 @@ public class GenericRelationEditor extends RelationEditor  {
         protected void warnDoubleConflict() {
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("<html>Layer ''{0}'' already has a conflict for primitive<br>"
+                    tr("<html>Layer ''{0}'' already has a conflict for object<br>"
                             + "''{1}''.<br>"
                             + "Please resolve this conflict first, then try again.</html>",
                             getLayer().getName(),
@@ -1380,10 +1380,10 @@ public class GenericRelationEditor extends RelationEditor  {
 
         protected boolean confirmSettingEmptyRole(int onNumMembers) {
             String message = "<html>"
-                + trn("You are setting an empty role on {0} primitive.",
-                        "You are setting an empty role on {0} primitives.", onNumMembers, onNumMembers)
+                + trn("You are setting an empty role on {0} object.",
+                        "You are setting an empty role on {0} objects.", onNumMembers, onNumMembers)
                         + "<br>"
-                        + tr("This is equal to deleting the roles of these primitives.") +
+                        + tr("This is equal to deleting the roles of these objects.") +
                         "<br>"
                         + tr("Do you really want to apply the new role?") + "</html>";
             String [] options = new String[] {

@@ -19,10 +19,10 @@ import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
+import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy.PasteBufferChangedListener;
 import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.WayData;
-import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy.PasteBufferChangedListener;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -153,9 +153,9 @@ public final class PasteAction extends JosmAction implements PasteBufferChangedL
                 tr("Delete incomplete members?"),
                 new String[] {tr("Paste without incomplete members"), tr("Cancel")});
         ed.setButtonIcons(new String[] {"dialogs/relation/deletemembers.png", "cancel.png"});
-        ed.setContent(tr("The copied data contains incomplete primitives.  "
-                + "When pasting the incomplete primitives are removed.  "
-                + "Do you want to paste the data without the incomplete primitives?"));
+        ed.setContent(tr("The copied data contains incomplete objects.  "
+                + "When pasting the incomplete objects are removed.  "
+                + "Do you want to paste the data without the incomplete objects?"));
         ed.showDialog();
         return ed.getValue() == 1;
     }
