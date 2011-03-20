@@ -44,7 +44,7 @@ public class MapPaintSettings implements PreferenceChangedListener {
     }
 
     private void load() {
-        showDirectionArrow = Main.pref.getBoolean("draw.segment.direction", true);
+        showDirectionArrow = Main.pref.getBoolean("draw.segment.direction", false);
         showOnewayArrow = Main.pref.getBoolean("draw.oneway", true);
         useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth", false);
         defaultSegmentWidth = Main.pref.getInteger("mappaint.segment.default-width", 2);

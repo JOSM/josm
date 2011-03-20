@@ -234,7 +234,7 @@ public class DrawingPreference implements PreferenceSetting {
             }
         });
         directionHint.setToolTipText(tr("Draw direction hints for way segments."));
-        directionHint.setSelected(Main.pref.getBoolean("draw.segment.direction", true));
+        directionHint.setSelected(Main.pref.getBoolean("draw.segment.direction", false));
         panel.add(directionHint, GBC.eop().insets(20,0,0,0));
 
         // only on the head of a way
