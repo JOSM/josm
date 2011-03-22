@@ -340,7 +340,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
      */
     public void checkDataset() {
         if (dataSet == null)
-            throw new DataIntegrityProblemException("Primitive  must be part of the dataset: " + toString());
+            throw new DataIntegrityProblemException("Primitive must be part of the dataset: " + toString());
     }
 
     protected boolean writeLock() {
