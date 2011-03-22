@@ -88,6 +88,7 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         if (!(event instanceof KeyEvent)) return;
         if (event.getID() != KeyEvent.KEY_PRESSED) return;
         if (layer == null) return;
+        if (offsetDialog != null && offsetDialog.areFieldsInFocus()) return;
         KeyEvent kev = (KeyEvent)event;
         double dx = 0, dy = 0;
         switch (kev.getKeyCode()) {
@@ -147,8 +148,7 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
     }
 
     class ImageryOffsetDialog extends ExtendedDialog implements FocusListener {
-        public final JTextField easting = new JTextField();
-        public final JTextField northing = new JTextField();
+        public final JTextField tOffset = new JTextField();
         JTextField tBookmarkName = new JTextField();
         private boolean ignoreListener;
         public ImageryOffsetDialog() {
@@ -162,20 +162,19 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             pnl.add(new JMultilineLabel(tr("Use arrow keys or drag the imagery layer with mouse to adjust the imagery offset.\n" +
                     "You can also enter east and north offset in the {0} coordinates.\n" +
                     "If you want to save the offset as bookmark, enter the bookmark name below",Main.proj.toString())), GBC.eop());
-            pnl.add(new JLabel(tr("Easting") + ": "),GBC.std());
-            pnl.add(easting,GBC.std().fill(GBC.HORIZONTAL).insets(0, 0, 5, 0));
-            pnl.add(new JLabel(tr("Northing") + ": "),GBC.std());
-            pnl.add(northing,GBC.eol().fill(GBC.HORIZONTAL));
-            pnl.add(new JLabel(tr("Bookmark name: ")),GBC.eol().insets(0,5,0,0));
+            pnl.add(new JLabel(tr("Offset: ")),GBC.std());
+            pnl.add(tOffset,GBC.eol().fill(GBC.HORIZONTAL).insets(0,0,0,5));
+            pnl.add(new JLabel(tr("Bookmark name: ")),GBC.std());
             pnl.add(tBookmarkName,GBC.eol().fill(GBC.HORIZONTAL));
-            easting.setColumns(8);
-            northing.setColumns(8);
-            easting.setText(String.valueOf(layer.getDx()));
-            northing.setText(String.valueOf(layer.getDy()));
-            easting.addFocusListener(this);
-            northing.addFocusListener(this);
+            tOffset.setColumns(16);
+            updateOffsetIntl();
+            tOffset.addFocusListener(this);
             setContent(pnl);
             setupDialog();
+        }
+
+        public boolean areFieldsInFocus() {
+            return tOffset.hasFocus();
         }
 
         @Override
@@ -185,27 +184,37 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         @Override
         public void focusLost(FocusEvent e) {
             if (ignoreListener) return;
-            double dx = oldDx;
-            try {
-                dx = Double.parseDouble(easting.getText());
-            } catch (NumberFormatException nfe) {
-                easting.setText(String.valueOf(oldDx));
+            String ostr = tOffset.getText();
+            int semicolon = ostr.indexOf(';');
+            if( semicolon >= 0 && semicolon + 1 < ostr.length() ) {
+                try {
+                    // here we assume that Double.parseDouble() needs '.' as a decimal separator
+                    String easting = ostr.substring(0, semicolon).trim().replace(',', '.');
+                    String northing = ostr.substring(semicolon + 1).trim().replace(',', '.');
+                    double dx = Double.parseDouble(easting);
+                    double dy = Double.parseDouble(northing);
+                    layer.setOffset(dx, dy);
+                } catch (NumberFormatException nfe) {
+                    // we repaint offset numbers in any case
+                }
             }
-            double dy = oldDy;
-            try {
-                dy = Double.parseDouble(northing.getText());
-            } catch (NumberFormatException nfe) {
-                northing.setText(String.valueOf(oldDy));
-            }
-            layer.setOffset(dx, dy);
+            updateOffsetIntl();
             Main.map.repaint();
         }
 
         public void updateOffset() {
             ignoreListener = true;
-            easting.setText(String.valueOf(layer.getDx()));
-            northing.setText(String.valueOf(layer.getDy()));
+            updateOffsetIntl();
             ignoreListener = false;
+        }
+
+        public void updateOffsetIntl() {
+            // Support projections with very small numbers (e.g. 4326)
+            int precision = Main.proj.getDefaultZoomInPPD() >= 1.0 ? 2 : 7;
+            // US locale to force decimal separator to be '.'
+            tOffset.setText(new java.util.Formatter(java.util.Locale.US).format(
+                    "%1." + precision + "f; %1." + precision + "f",
+                    layer.getDx(), layer.getDy()).toString());
         }
 
         private boolean confirmOverwriteBookmark() {
