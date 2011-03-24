@@ -50,6 +50,7 @@ public class MapPainter {
     private final Graphics2D g;
     private final NavigatableComponent nc;
     private final boolean inactive;
+    private final MapPaintSettings settings;
 
     private final boolean useStrokes;
     private final boolean showNames;
@@ -80,6 +81,7 @@ public class MapPainter {
             boolean inactive, NavigatableComponent nc, boolean virtual,
             double circum, boolean leftHandTraffic)
     {
+        this.settings = settings;
         this.g = g;
         this.inactive = inactive;
         this.nc = nc;
@@ -647,7 +649,9 @@ public class MapPainter {
                 if(!isPolygonVisible(p)) {
                     continue;
                 }
-                drawArea(r, p, color, fillImage, fillImageAlpha, text);
+                drawArea(r, p, 
+                        pd.selected ? settings.getRelationSelectedColor(color.getAlpha()) : color,
+                        fillImage, fillImageAlpha, text);
             }
         }
     }
