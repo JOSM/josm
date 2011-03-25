@@ -156,11 +156,24 @@ public class TextElement {
 
     @Override
     public String toString() {
+        return "TextElement{" + toStringImpl() + '}';
+    }
+
+    protected String toStringImpl() {
         StringBuilder sb = new StringBuilder();
-        sb.append("{TextElement ");
-        sb.append("strategy=");
-        sb.append(labelCompositionStrategy == null ? "null" : labelCompositionStrategy.toString());
-        sb.append("}");
+        sb.append("labelCompositionStrategy=" + labelCompositionStrategy);
+        sb.append(" font=" + font);
+        if (xOffset != 0) {
+            sb.append(" xOffset=" + xOffset);
+        }
+        if (yOffset != 0) {
+            sb.append(" yOffset=" + yOffset);
+        }
+        sb.append(" color=" + Utils.toString(color));
+        if (haloRadius != null) {
+            sb.append(" haloRadius=" + haloRadius);
+            sb.append(" haloColor=" + haloColor);
+        }
         return sb.toString();
     }
 

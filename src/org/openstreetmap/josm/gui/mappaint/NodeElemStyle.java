@@ -121,6 +121,14 @@ public class NodeElemStyle extends ElemStyle {
             return hash;
         }
 
+        @Override
+        public String toString() {
+            return "NodeTextElement{" + toStringImpl() + '}';
+        }
+
+        protected String toStringImpl() {
+            return super.toStringImpl() + " hAlign=" + hAlign + " vAlign=" + vAlign;
+        }
     }
 
     public static final NodeElemStyle SIMPLE_NODE_ELEMSTYLE;
@@ -451,9 +459,19 @@ public class NodeElemStyle extends ElemStyle {
 
     @Override
     public String toString() {
-        return "NodeElemStyle{" + super.toString() +
-                (icon != null ? ("icon=" + icon + " iconAlpha=" + iconAlpha) : "") +
-                (symbol != null ? (" symbol=[" + symbol + "]") : "") + '}';
+        StringBuilder s = new StringBuilder("NodeElemStyle{");
+        s.append(super.toString());
+        if (icon != null) {
+            s.append(" icon=" + icon + " iconAlpha=" + iconAlpha);
+        }
+        if (symbol != null) {
+            s.append(" symbol=[" + symbol + "]");
+        }
+        if (text != null) {
+            s.append(" text=[" + text.toStringImpl() + "]");
+        }
+        s.append('}');
+        return s.toString();
     }
 
 }
