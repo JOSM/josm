@@ -7,7 +7,11 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -16,6 +20,132 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.Poly
 import org.openstreetmap.josm.gui.NavigatableComponent;
 
 public class Multipolygon {
+    static private final Logger logger = Logger.getLogger(Multipolygon.class.getName());
+
+    /** preference key for a collection of roles which indicate that the respective member belongs to an
+     * <em>outer</em> polygon. Default is <tt>outer</tt>.
+     */
+    static public final String PREF_KEY_OUTER_ROLES = "mappaint.multipolygon.outer.roles";
+    /** preference key for collection of role prefixes which indicate that the respective
+     *  member belongs to an <em>outer</em> polygon. Default is empty.
+     */
+    static public final String PREF_KEY_OUTER_ROLE_PREFIXES = "mappaint.multipolygon.outer.role-prefixes";
+    /** preference key for a collection of roles which indicate that the respective member belongs to an
+     * <em>inner</em> polygon. Default is <tt>inner</tt>.
+     */
+    static public final String PREF_KEY_INNER_ROLES = "mappaint.multipolygon.inner.roles";
+    /** preference key for collection of role prefixes which indicate that the respective
+     *  member belongs to an <em>inner</em> polygon. Default is empty.
+     */
+    static public final String PREF_KEY_INNER_ROLE_PREFIXES = "mappaint.multipolygon.inner.role-prefixes";
+
+    /**
+     * <p>Kind of strategy object which is responsible for deciding whether a given
+     * member role indicates that the member belongs to an <em>outer</em> or an
+     * <em>inner</em> polygon.</p>
+     * 
+     * <p>The decision is taken based on preference settings, see the four preference keys
+     * above.</p>
+     * 
+     */
+    private static class MultipolygonRoleMatcher implements PreferenceChangedListener{
+        private final List<String> outerExactRoles = new ArrayList<String>();
+        private final List<String> outerRolePrefixes = new ArrayList<String>();
+        private final List<String> innerExactRoles = new ArrayList<String>();
+        private final List<String> innerRolePrefixes = new ArrayList<String>();
+
+        private void initDefaults() {
+            outerExactRoles.clear();
+            outerRolePrefixes.clear();
+            innerExactRoles.clear();
+            innerRolePrefixes.clear();
+            outerExactRoles.add("outer");
+            innerExactRoles.add("inner");
+        }
+
+        private void setNormalized(Collection<String> literals, List<String> target){
+            target.clear();
+            for(String l: literals) {
+                if (l == null) {
+                    continue;
+                }
+                l = l.trim();
+                if (!target.contains(l)) {
+                    target.add(l);
+                }
+            }
+        }
+
+        private void initFromPreferences() {
+            initDefaults();
+            if (Main.pref == null) return;
+            Collection<String> literals;
+            literals = Main.pref.getCollection(PREF_KEY_OUTER_ROLES);
+            if (literals != null && !literals.isEmpty()){
+                setNormalized(literals, outerExactRoles);
+            }
+            literals = Main.pref.getCollection(PREF_KEY_OUTER_ROLE_PREFIXES);
+            if (literals != null && !literals.isEmpty()){
+                setNormalized(literals, outerRolePrefixes);
+            }
+            literals = Main.pref.getCollection(PREF_KEY_INNER_ROLES);
+            if (literals != null && !literals.isEmpty()){
+                setNormalized(literals, innerExactRoles);
+            }
+            literals = Main.pref.getCollection(PREF_KEY_INNER_ROLE_PREFIXES);
+            if (literals != null && !literals.isEmpty()){
+                setNormalized(literals, innerRolePrefixes);
+            }
+        }
+
+        @Override
+        public void preferenceChanged(PreferenceChangeEvent evt) {
+            if (PREF_KEY_INNER_ROLE_PREFIXES.equals(evt.getKey()) ||
+                    PREF_KEY_INNER_ROLES.equals(evt.getKey()) ||
+                    PREF_KEY_OUTER_ROLE_PREFIXES.equals(evt.getKey()) ||
+                    PREF_KEY_OUTER_ROLES.equals(evt.getKey())){
+                initFromPreferences();
+            }
+        }
+
+        public boolean isOuterRole(String role){
+            if (role == null) return false;
+            for (String candidate: outerExactRoles) {
+                if (role.equals(candidate)) return true;
+            }
+            for (String candidate: outerRolePrefixes) {
+                if (role.startsWith(candidate)) return true;
+            }
+            return false;
+        }
+
+        public boolean isInnerRole(String role){
+            if (role == null) return false;
+            for (String candidate: innerExactRoles) {
+                if (role.equals(candidate)) return true;
+            }
+            for (String candidate: innerRolePrefixes) {
+                if (role.startsWith(candidate)) return true;
+            }
+            return false;
+        }
+    }
+
+    /*
+     * Init a private global matcher object which will listen to preference
+     * changes.
+     */
+    private static MultipolygonRoleMatcher roleMatcher;
+    private static MultipolygonRoleMatcher getMultipoloygonRoleMatcher() {
+        if (roleMatcher == null) {
+            roleMatcher = new MultipolygonRoleMatcher();
+            if (Main.pref != null){
+                roleMatcher.initFromPreferences();
+                Main.pref.addPreferenceChangeListener(roleMatcher);
+            }
+        }
+        return roleMatcher;
+    }
 
     public static class JoinedWay {
         private final List<Node> nodes;
@@ -122,6 +252,8 @@ public class Multipolygon {
     }
 
     public void load(Relation r) {
+        MultipolygonRoleMatcher matcher = getMultipoloygonRoleMatcher();
+
         // Fill inner and outer list with valid ways
         for (RelationMember m : r.getMembers()) {
             if (m.getMember().isDrawable()) {
@@ -132,12 +264,12 @@ public class Multipolygon {
                         continue;
                     }
 
-                    if("inner".equals(m.getRole())) {
-                        getInnerWays().add(w);
-                    } else if("outer".equals(m.getRole())) {
-                        getOuterWays().add(w);
+                    if(matcher.isInnerRole(m.getRole())) {
+                        innerWays.add(w);
+                    } else if(matcher.isOuterRole(m.getRole())) {
+                        outerWays.add(w);
                     } else if (!m.hasRole()) {
-                        getOuterWays().add(w);
+                        outerWays.add(w);
                     } // Remaining roles ignored
                 } // Non ways ignored
             }
