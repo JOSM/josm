@@ -140,7 +140,7 @@ public class NodeElemStyle extends ElemStyle {
     }
 
     protected NodeElemStyle(Cascade c, ImageIcon icon, Integer iconAlpha, Symbol symbol, NodeTextElement text) {
-        super(c);
+        super(c, 1000f);
         this.icon = icon;
         this.iconAlpha = iconAlpha == null ? 0 : iconAlpha;
         this.symbol = symbol;

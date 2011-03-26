@@ -20,7 +20,6 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.AreaElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyle;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
-import org.openstreetmap.josm.gui.mappaint.LineElemStyle;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.NodeElemStyle;
 import org.openstreetmap.josm.gui.mappaint.StyleCache.StyleList;
@@ -39,19 +38,44 @@ public class MapPaintVisitor implements PaintVisitor {
     private DataSet data;
 
     private class StyleCollector {
-        private List<Pair<ElemStyle, OsmPrimitive>> styleElems;
-        protected boolean memberSelected = false;
-        private Class klass;
+        private final boolean drawArea;
+        private final boolean drawMultipolygon;
+        private final boolean drawRestriction;
+        private final boolean memberSelected;
 
-        public StyleCollector(Class<?> klass) {
+        private final List<Pair<ElemStyle, OsmPrimitive>> styleElems;
+
+        public StyleCollector(boolean drawArea, boolean drawMultipolygon, boolean drawRestriction, boolean memberSelected) {
+            this.drawArea = drawArea;
+            this.drawMultipolygon = drawMultipolygon;
+            this.drawRestriction = drawRestriction;
+            this.memberSelected = memberSelected;
             styleElems = new ArrayList<Pair<ElemStyle, OsmPrimitive>>();
-            this.klass = klass;
         }
 
-        public void add(OsmPrimitive osm) {
+        public void add(Node osm) {
             StyleList sl = styles.get(osm, circum, nc);
             for (ElemStyle s : sl) {
-                if (klass.isInstance(s)) {
+                styleElems.add(new Pair<ElemStyle, OsmPrimitive>(s, osm));
+            }
+        }
+
+        public void add(Way osm) {
+            StyleList sl = styles.get(osm, circum, nc);
+            for (ElemStyle s : sl) {
+                if (!drawArea && s instanceof AreaElemStyle) {
+                    continue;
+                }
+                styleElems.add(new Pair<ElemStyle, OsmPrimitive>(s, osm));
+            }
+        }
+
+        public void add(Relation osm) {
+            StyleList sl = styles.get(osm, circum, nc);
+            for (ElemStyle s : sl) {
+                if (drawMultipolygon && drawArea && s instanceof AreaElemStyle) {
+                    styleElems.add(new Pair<ElemStyle, OsmPrimitive>(s, osm));
+                } else if (drawRestriction && s instanceof NodeElemStyle) {
                     styleElems.add(new Pair<ElemStyle, OsmPrimitive>(s, osm));
                 }
             }
@@ -62,14 +86,6 @@ public class MapPaintVisitor implements PaintVisitor {
             for (Pair<ElemStyle, OsmPrimitive> p : styleElems) {
                 p.a.paintPrimitive(p.b, paintSettings, painter, data.isSelected(p.b), memberSelected);
             }
-        }
-
-        public boolean isMemberSelected() {
-            return memberSelected;
-        }
-
-        public void setMemberSelected(boolean memberSelected) {
-            this.memberSelected = memberSelected;
         }
     }
 
@@ -115,101 +131,64 @@ public class MapPaintVisitor implements PaintVisitor {
 
         this.painter = new MapPainter(paintSettings, g, inactive, nc, virtual, circum, leftHandTraffic);
 
-        StyleCollector scDisabledLines = new StyleCollector(LineElemStyle.class);
-        StyleCollector scSelectedLines = new StyleCollector(LineElemStyle.class);
-        StyleCollector scSelectedAreas = new StyleCollector(AreaElemStyle.class);
-        StyleCollector scMemberLines = new StyleCollector(LineElemStyle.class);
-        scMemberLines.setMemberSelected(true);
-        StyleCollector scNormalAreas = new StyleCollector(AreaElemStyle.class);
-        StyleCollector scNormalLines = new StyleCollector(LineElemStyle.class);
-        for (final Way w : data.searchWays(bbox)) {
-            if (w.isDrawable()) {
-                if (w.isDisabled()) {
-                    scDisabledLines.add(w);
-                } else if (w.isSelected()) {
-                    scSelectedLines.add(w);
-                    if (drawArea) {
-                        scSelectedAreas.add(w);
-                    }
-                } else if (w.isMemberOfSelected()) {
-                    scMemberLines.add(w);
-                    if (drawArea) {
-                        scNormalAreas.add(w);
-                    }
-                } else {
-                    scNormalLines.add(w);
-                    if (drawArea) {
-                        scNormalAreas.add(w);
-                    }
-                }
-            }
-        }
-        scDisabledLines.drawAll();
-        scDisabledLines = null;
+        StyleCollector scDisabledPrimitives = new StyleCollector(false, false, drawRestriction, false);
+        StyleCollector scSelectedPrimitives = new StyleCollector(drawArea, drawMultipolygon, drawRestriction, false);
+        StyleCollector scMemberPrimitives = new StyleCollector(drawArea, drawMultipolygon, drawRestriction, true);
+        StyleCollector scNormalPrimitives = new StyleCollector(drawArea, drawMultipolygon, drawRestriction, false);
 
-        StyleCollector scDisabledNodes = new StyleCollector(NodeElemStyle.class);
-        StyleCollector scSelectedNodes = new StyleCollector(NodeElemStyle.class);
-        StyleCollector scMemberNodes = new StyleCollector(NodeElemStyle.class);
-        scMemberNodes.setMemberSelected(true);
-        StyleCollector scNormalNodes = new StyleCollector(NodeElemStyle.class);
         for (final Node n: data.searchNodes(bbox)) {
             if (n.isDrawable()) {
                 if (n.isDisabled()) {
-                    scDisabledNodes.add(n);
+                    scDisabledPrimitives.add(n);
                 } else if (n.isSelected()) {
-                    scSelectedNodes.add(n);
+                    scSelectedPrimitives.add(n);
                 } else if (n.isMemberOfSelected()) {
-                    scMemberNodes.add(n);
+                    scMemberPrimitives.add(n);
                 } else {
-                    scNormalNodes.add(n);
+                    scNormalPrimitives.add(n);
                 }
             }
         }
-        scDisabledNodes.drawAll();
-        scDisabledNodes = null;
-
-        StyleCollector scDisabledRestrictions = new StyleCollector(NodeElemStyle.class);
-        StyleCollector scNormalRestrictions = new StyleCollector(NodeElemStyle.class);
-        StyleCollector scSelectedRestrictions = new StyleCollector(NodeElemStyle.class);
+        for (final Way w : data.searchWays(bbox)) {
+            if (w.isDrawable()) {
+                if (w.isDisabled()) {
+                    scDisabledPrimitives.add(w);
+                } else if (w.isSelected()) {
+                    scSelectedPrimitives.add(w);
+                } else if (w.isMemberOfSelected()) {
+                    scMemberPrimitives.add(w);
+                } else {
+                    scNormalPrimitives.add(w);
+                }
+            }
+        }
         for (Relation r: data.searchRelations(bbox)) {
             if (r.isDrawable()) {
                 if (r.isDisabled()) {
-                    if (drawRestriction) {
-                        scDisabledRestrictions.add(r);
-                    }
+                    scDisabledPrimitives.add(r);
                 } else if (r.isSelected()) {
-                    if (drawMultipolygon) {
-                        scSelectedAreas.add(r);
-                    }
-                    if (drawRestriction) {
-                        scSelectedRestrictions.add(r);
-                    }
+                    scSelectedPrimitives.add(r);
                 } else {
-                    if (drawMultipolygon) {
-                        scNormalAreas.add(r);
-                    }
-                    if (drawRestriction) {
-                        scNormalRestrictions.add(r);
-                    }
+                    scNormalPrimitives.add(r);
                 }
             }
         }
-        scDisabledRestrictions.drawAll();
-        scDisabledRestrictions = null;
 
-        scNormalAreas.drawAll();
-        scSelectedAreas.drawAll();
-        scNormalLines.drawAll();
-        scMemberLines.drawAll();
-        scSelectedLines.drawAll();
-        scNormalNodes.drawAll();
-        scNormalRestrictions.drawAll();
-        scMemberNodes.drawAll();
-        scSelectedRestrictions.drawAll();
-        scSelectedNodes.drawAll();
+        //long phase1 = System.currentTimeMillis();
+
+        scDisabledPrimitives.drawAll();
+        scDisabledPrimitives = null;
+        scNormalPrimitives.drawAll();
+        scNormalPrimitives = null;
+        scMemberPrimitives.drawAll();
+        scMemberPrimitives = null;
+        scSelectedPrimitives.drawAll();
+        scSelectedPrimitives = null;
 
         painter.drawVirtualNodes(data.searchWays(bbox));
-        //System.err.println("PAINTING TOOK "+(System.currentTimeMillis() - start)+ " (at scale "+circum+")");
+        
+        //long now = System.currentTimeMillis();
+        //System.err.println(String.format("PAINTING TOOK %d [PHASE1 took %d] (at scale %s)", now - start, phase1 - start, circum));
     }
 
     public void setGraphics(Graphics2D g) {

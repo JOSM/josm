@@ -26,8 +26,8 @@ abstract public class ElemStyle {
         this.isModifier = isModifier;
     }
 
-    protected ElemStyle(Cascade c) {
-        z_index = c.get("z-index", 0f, Float.class);
+    protected ElemStyle(Cascade c, float default_z_index) {
+        z_index = c.get("z-index", default_z_index, Float.class);
         object_z_index = c.get("object-z-index", 0f, Float.class);
         isModifier = c.get("modifier", false, Boolean.class);
     }

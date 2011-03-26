@@ -35,7 +35,7 @@ public class LineElemStyle extends ElemStyle {
     private BasicStroke dashesLine;
 
     protected LineElemStyle(Cascade c, BasicStroke line, Color color, BasicStroke dashesLine, Color dashesBackground, TextElement text, float realWidth) {
-        super(c);
+        super(c, 0f);
         this.line = line;
         this.color = color;
         this.dashesLine = dashesLine;

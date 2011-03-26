@@ -29,7 +29,7 @@ public class AreaElemStyle extends ElemStyle
     public TextElement text;
 
     protected AreaElemStyle(Cascade c, Color color, BufferedImage fillImage, float fillImageAlpha, TextElement text) {
-        super(c);
+        super(c, -1000f);
         CheckParameterUtil.ensureParameterNotNull(color);
         this.color = color;
         this.fillImage = fillImage;
