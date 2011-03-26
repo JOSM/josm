@@ -34,6 +34,10 @@ abstract public class ElemStyle {
 
     public abstract void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, MapPainter painter, boolean selected, boolean member);
 
+    public boolean isProperLineStyle() {
+        return false;
+    }
+
     /**
      * Get a property value of type Width
      * @param c the cascade

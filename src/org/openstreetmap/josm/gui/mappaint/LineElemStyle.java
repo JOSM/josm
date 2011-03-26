@@ -29,18 +29,16 @@ public class LineElemStyle extends ElemStyle {
     private BasicStroke line;
     public Color color;
     public Color dashesBackground;
-    public TextElement text;
     public float realWidth; // the real width of this line in meter
 
     private BasicStroke dashesLine;
 
-    protected LineElemStyle(Cascade c, BasicStroke line, Color color, BasicStroke dashesLine, Color dashesBackground, TextElement text, float realWidth) {
+    protected LineElemStyle(Cascade c, BasicStroke line, Color color, BasicStroke dashesLine, Color dashesBackground, float realWidth) {
         super(c, 0f);
         this.line = line;
         this.color = color;
         this.dashesLine = dashesLine;
         this.dashesBackground = dashesBackground;
-        this.text = text;
         this.realWidth = realWidth;
     }
 
@@ -180,15 +178,7 @@ public class LineElemStyle extends ElemStyle {
             dashesLine = new BasicStroke(width, cap, join, miterlimit, dashes2, dashes2[0] + dashesOffset);
         }
 
-        TextElement text = null;
-        if (!casing) {
-            Keyword textPos = c.get("text-position", null, Keyword.class);
-            if (textPos == null || equal(textPos.val, "line")) {
-                text = TextElement.create(c, PaintColors.TEXT.get(), false);
-            }
-        }
-
-        return new LineElemStyle(c, line, color, dashesLine, dashesBackground, text, realWidth);
+        return new LineElemStyle(c, line, color, dashesLine, dashesBackground, realWidth);
     }
 
     @Override
@@ -234,7 +224,7 @@ public class LineElemStyle extends ElemStyle {
             myDashedColor = paintSettings.getInactiveColor();
         }
 
-        painter.drawWay(w, myColor, myLine, myDashLine, myDashedColor, text, showOrientation,
+        painter.drawWay(w, myColor, myLine, myDashLine, myDashedColor, showOrientation,
                 showOnlyHeadArrowOnly, showOneway, onewayReversed);
 
         if(paintSettings.isShowOrderNumber()) {
@@ -251,6 +241,11 @@ public class LineElemStyle extends ElemStyle {
     }
 
     @Override
+    public boolean isProperLineStyle() {
+        return !isModifier;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == null || getClass() != obj.getClass())
             return false;
@@ -258,11 +253,10 @@ public class LineElemStyle extends ElemStyle {
             return false;
         final LineElemStyle other = (LineElemStyle) obj;
         return  equal(line, other.line) &&
-        equal(color, other.color) &&
-        equal(dashesLine, other.dashesLine) &&
-        equal(dashesBackground, other.dashesBackground) &&
-        equal(text, other.text) &&
-        realWidth == other.realWidth;
+            equal(color, other.color) &&
+            equal(dashesLine, other.dashesLine) &&
+            equal(dashesBackground, other.dashesBackground) &&
+            realWidth == other.realWidth;
     }
 
     @Override
@@ -272,7 +266,6 @@ public class LineElemStyle extends ElemStyle {
         hash = 29 * hash + color.hashCode();
         hash = 29 * hash + (dashesLine != null ? dashesLine.hashCode() : 0);
         hash = 29 * hash + (dashesBackground != null ? dashesBackground.hashCode() : 0);
-        hash = 29 * hash + (text != null ? text.hashCode() : 0);
         hash = 29 * hash + Float.floatToIntBits(realWidth);
         return hash;
     }
@@ -280,9 +273,9 @@ public class LineElemStyle extends ElemStyle {
     @Override
     public String toString() {
         return "LineElemStyle{" + super.toString() + "width=" + line.getLineWidth() +
-        " realWidth=" + realWidth + " color=" + Utils.toString(color) +
-        " dashed=" + Arrays.toString(line.getDashArray()) +
-        (line.getDashPhase() == 0f ? "" : " dashesOffses=" + line.getDashPhase()) +
-        " dashedColor=" + Utils.toString(dashesBackground) + '}';
+            " realWidth=" + realWidth + " color=" + Utils.toString(color) +
+            " dashed=" + Arrays.toString(line.getDashArray()) +
+            (line.getDashPhase() == 0f ? "" : " dashesOffses=" + line.getDashPhase()) +
+            " dashedColor=" + Utils.toString(dashesBackground) + '}';
     }
 }

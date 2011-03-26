@@ -63,14 +63,14 @@ public class ElemStyles {
                 p.a = new StyleList(p.a, NodeElemStyle.SIMPLE_NODE_ELEMSTYLE);
             }
         } else if (osm instanceof Way) {
-            boolean hasNonModifierLine = false;
+            boolean hasProperLineStyle = false;
             for (ElemStyle s : p.a) {
-                if (s instanceof LineElemStyle && !s.isModifier) {
-                    hasNonModifierLine = true;
+                if (s.isProperLineStyle()) {
+                    hasProperLineStyle = true;
                     break;
                 }
             }
-            if (!hasNonModifierLine) {
+            if (!hasProperLineStyle) {
                 AreaElemStyle area = Utils.find(p.a, AreaElemStyle.class);
                 LineElemStyle line = (area == null ? LineElemStyle.UNTAGGED_WAY : LineElemStyle.createSimpleLineStyle(area.color));
                 p.a = new StyleList(p.a, line);
@@ -91,7 +91,6 @@ public class ElemStyles {
             Pair<StyleList, Range> p = generateStyles(osm, scale, null, false);
 
             boolean isOuterWayOfSomeMP = false;
-            boolean hasIndependentLineElemStyle = false;
             Color wayColor = null;
 
             for (OsmPrimitive referrer : osm.getReferrers()) {
@@ -103,6 +102,7 @@ public class ElemStyles {
                 multipolygon.load(r);
 
                 if (multipolygon.getOuterWays().contains(osm)) {
+                    boolean hasIndependentLineStyle = false;
                     if (!isOuterWayOfSomeMP) { // do this only one time
                         List<ElemStyle> tmp = new ArrayList<ElemStyle>(p.a.size());
                         for (ElemStyle s : p.a) {
@@ -110,20 +110,28 @@ public class ElemStyles {
                                 wayColor = ((AreaElemStyle) s).color;
                             } else {
                                 tmp.add(s);
+                                if (s.isProperLineStyle()) {
+                                    hasIndependentLineStyle = true;
+                                }
                             }
                         }
                         p.a = new StyleList(tmp);
                         isOuterWayOfSomeMP = true;
-                        hasIndependentLineElemStyle = Utils.exists(p.a, LineElemStyle.class);
                     }
 
-                    if (!hasIndependentLineElemStyle) {
+                    if (!hasIndependentLineStyle) {
                         Pair<StyleList, Range> mpElemStyles = getStyleCacheWithRange(r, scale, nc);
-                        LineElemStyle mpLine = Utils.find(mpElemStyles.a, LineElemStyle.class);
-                        if (mpLine != null) {
-                                p.a = new StyleList(p.a, mpLine);
-                                p.b = Range.cut(p.b, mpElemStyles.b);
+                        ElemStyle mpLine = null;
+                        for (ElemStyle s : mpElemStyles.a) {
+                            if (s.isProperLineStyle()) {
+                                mpLine = s;
                                 break;
+                            }
+                        }
+                        if (mpLine != null) {
+                            p.a = new StyleList(p.a, mpLine);
+                            p.b = Range.cut(p.b, mpElemStyles.b);
+                            break;
                         } else if (wayColor == null) {
                             AreaElemStyle mpArea = Utils.find(mpElemStyles.a, AreaElemStyle.class);
                             if (mpArea != null) {
@@ -135,7 +143,14 @@ public class ElemStyles {
                 }
             }
             if (isOuterWayOfSomeMP) {
-                if (!Utils.exists(p.a, LineElemStyle.class)) {
+                boolean hasLineStyle = false;
+                for (ElemStyle s : p.a) {
+                    if (s.isProperLineStyle()) {
+                        hasLineStyle = true;
+                        break;
+                    }
+                }
+                if (!hasLineStyle) {
                     p.a = new StyleList(p.a, LineElemStyle.createSimpleLineStyle(wayColor));
                 }
                 return p;
@@ -154,7 +169,7 @@ public class ElemStyles {
                     p = generateStyles(osm, scale, it.hasNext() ? it.next() : null, false);
                     boolean hasIndependentElemStyle = false;
                     for (ElemStyle s : p.a) {
-                        if (s instanceof LineElemStyle || s instanceof AreaElemStyle) {
+                        if (s.isProperLineStyle() || s instanceof AreaElemStyle) {
                             hasIndependentElemStyle = true;
                         }
                     }
@@ -225,15 +240,19 @@ public class ElemStyles {
             Cascade c = e.getValue();
             if (osm instanceof Way) {
                 addIfNotNull(sl, AreaElemStyle.create(c));
+                addIfNotNull(sl, LinePatternElemStyle.create(env));
                 addIfNotNull(sl, LineElemStyle.createLine(env));
                 addIfNotNull(sl, LineElemStyle.createCasing(env));
+                addIfNotNull(sl, LineTextElemStyle.create(env));
             } else if (osm instanceof Node) {
                 addIfNotNull(sl, NodeElemStyle.create(env));
             } else if (osm instanceof Relation) {
                 if (((Relation)osm).isMultipolygon()) {
                     addIfNotNull(sl, AreaElemStyle.create(c));
+                    addIfNotNull(sl, LinePatternElemStyle.create(env));
                     addIfNotNull(sl, LineElemStyle.createLine(env));
                     addIfNotNull(sl, LineElemStyle.createCasing(env));
+                    addIfNotNull(sl, LineTextElemStyle.create(env));
                 } else if ("restriction".equals(osm.get("type"))) {
                     addIfNotNull(sl, NodeElemStyle.create(env));
                 }

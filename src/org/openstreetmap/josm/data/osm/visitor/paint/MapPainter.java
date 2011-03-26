@@ -115,7 +115,7 @@ public class MapPainter {
      * @param onewayReversed for oneway=-1 and similar
      */
     public void drawWay(Way way, Color color, BasicStroke line, BasicStroke dashes, Color dashedColor,
-            TextElement text, boolean showOrientation, boolean showHeadArrowOnly,
+            boolean showOrientation, boolean showHeadArrowOnly,
             boolean showOneway, boolean onewayReversed) {
 
         GeneralPath path = new GeneralPath();
@@ -203,7 +203,6 @@ public class MapPainter {
             lastPoint = p;
         }
         displaySegments(path, orientationArrows, onewayArrows, onewayArrowsCasing, color, line, dashes, dashedColor);
-        drawTextOnPath(way, text);
     }
 
     private void displaySegments(GeneralPath path, GeneralPath orientationArrows, GeneralPath onewayArrows, GeneralPath onewayArrowsCasing,
@@ -246,7 +245,7 @@ public class MapPainter {
         return true;
     }
 
-    private void drawTextOnPath(Way way, TextElement text) {
+    public void drawTextOnPath(Way way, TextElement text) {
         if (text == null)
             return;
         String name = text.getString(way);
@@ -347,6 +346,51 @@ public class MapPainter {
                     Math.atan2(dy, dx)};
         }
         return null;
+    }
+
+    public void drawLinePattern(Way way, ImageIcon pattern) {
+        final int width = pattern.getIconWidth();
+        final int height = pattern.getIconHeight();
+
+        Point lastP = null;
+        double wayLength = 0;
+
+        Iterator<Node> it = way.getNodes().iterator();
+        while (it.hasNext()) {
+            Node n = it.next();
+            Point thisP = nc.getPoint(n);
+
+            if (lastP != null) {
+                final double segmentLength = thisP.distance(lastP);
+
+                final double dx = thisP.x - lastP.x;
+                final double dy = thisP.y - lastP.y;
+
+                double dist = wayLength == 0 ? 0 : width - (wayLength % width);
+
+                AffineTransform saveTransform = g.getTransform();
+                g.translate(lastP.x, lastP.y);
+                g.rotate(Math.atan2(dy, dx));
+
+                if (dist > 0) {
+                    g.drawImage(pattern.getImage(), 0, 0, (int) dist, height,
+                            width - (int) dist, 0, width, height, null);
+                }
+                while (dist < segmentLength) {
+                    if (dist + width > segmentLength) {
+                        g.drawImage(pattern.getImage(), (int) dist, 0, (int) segmentLength, height,
+                                0, 0, (int) segmentLength - (int) dist, height, null);
+                    } else {
+                        pattern.paintIcon(nc, g, (int) dist, 0);
+                    }
+                    dist += width;
+                }
+                g.setTransform(saveTransform);
+
+                wayLength += segmentLength;
+            }
+            lastP = thisP;
+        }
     }
 
     public void drawNodeIcon(Node n, ImageIcon icon, float iconAlpha, boolean selected, boolean member, NodeTextElement text) {
