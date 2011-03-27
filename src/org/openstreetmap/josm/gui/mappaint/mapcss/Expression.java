@@ -130,6 +130,14 @@ public interface Expression {
                 return Utils.color_int2float(c.getBlue());
             }
 
+            public String concat(Object... args) {
+                StringBuilder res = new StringBuilder();
+                for (Object f : args) {
+                    res.append(f.toString());
+                }
+                return res.toString();
+            }
+
             public Object prop(String key) {
                 return prop(key, null);
             }
