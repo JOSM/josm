@@ -8,7 +8,9 @@ import java.awt.Font;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.mappaint.LabelCompositionStrategy.DeriveLabelFromNameTagsCompositionStrategy;
+import org.openstreetmap.josm.gui.mappaint.LabelCompositionStrategy.StaticLabelCompositionStrategy;
 import org.openstreetmap.josm.gui.mappaint.LabelCompositionStrategy.TagLookupCompositionStrategy;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.TagKeyReference;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -80,16 +82,29 @@ public class TextElement {
      * @return the label composition strategy
      */
     protected static LabelCompositionStrategy buildLabelCompositionStrategy(Cascade c, boolean defaultAnnotate){
-        Keyword textKW = c.get("text", null, Keyword.class, true);
-        if (textKW == null) {
-            String textKey = c.get("text", null, String.class);
-            if (textKey == null) 
-                return defaultAnnotate ? AUTO_LABEL_COMPOSITION_STRATEGY : null;
-            return new TagLookupCompositionStrategy(textKey);
-        } else if (textKW.val.equals("auto"))
+        /*
+         * If the cascade includes a TagKeyReference we will lookup the rendered label
+         * from a tag value.
+         */
+        TagKeyReference tkr = c.get("text", null, TagKeyReference.class, true);
+        if (tkr != null)
+            return new TagLookupCompositionStrategy(tkr.key);
+
+        /*
+         * Check whether the label composition strategy is given by
+         * a keyword
+         */
+        Keyword keyword = c.get("text", null, Keyword.class, true);
+        if (equal(keyword, Keyword.AUTO))
             return AUTO_LABEL_COMPOSITION_STRATEGY;
-        else
-            return new TagLookupCompositionStrategy(textKW.val);
+
+        /*
+         * Do we have a static text label?
+         */
+        String text = c.get("text", null, String.class, true);
+        if (text != null)
+            return new StaticLabelCompositionStrategy(text);
+        return defaultAnnotate ? AUTO_LABEL_COMPOSITION_STRATEGY : null;
     }
 
     /**

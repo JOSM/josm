@@ -20,8 +20,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
-import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.MapPaintPreference.MapPaintPrefMigration;
+import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.MirroredInputStream;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -41,11 +41,31 @@ public class MapPaintStyles {
     {
         return styles;
     }
-    
+
+    /**
+     * Value holder for a reference to a tag name. A style instruction
+     * <pre>
+     *    text: a_tag_name;
+     * </pre>
+     * results in a tag reference for the tag <tt>a_tag_name</tt> in the
+     * style cascade.
+     */
+    public static class TagKeyReference {
+        public final String key;
+        public TagKeyReference(String key){
+            this.key = key;
+        }
+
+        @Override
+        public String toString() {
+            return "TagKeyReference{" + "key='" + key + "'}";
+        }
+    }
+
     public static class IconReference {
 
-        public String iconName;
-        public StyleSource source;
+        public final String iconName;
+        public final StyleSource source;
 
         public IconReference(String iconName, StyleSource source) {
             this.iconName = iconName;
@@ -58,8 +78,7 @@ public class MapPaintStyles {
         }
     }
 
-    public static ImageIcon getIcon(IconReference ref, boolean sanitize)
-    {
+    public static ImageIcon getIcon(IconReference ref, boolean sanitize) {
         String namespace = ref.source.getPrefName();
         ImageIcon i = ImageProvider.getIfAvailable(getIconSourceDirs(ref.source), "mappaint."+namespace, null, ref.iconName, ref.source.zipIcons, sanitize);
         if(i == null)
@@ -111,7 +130,7 @@ public class MapPaintStyles {
             dirs.add("resource://images/styles/standard/");
             dirs.add("resource://images/styles/");
         }
-        
+
         return dirs;
     }
 
@@ -129,7 +148,7 @@ public class MapPaintStyles {
         for (StyleSource source : styles.getStyleSources()) {
             source.loadStyleSource();
         }
-        
+
         fireMapPaintSylesUpdated();
     }
 
@@ -138,19 +157,16 @@ public class MapPaintStyles {
         try {
             in = new MirroredInputStream(entry.url);
             InputStream zip = in.getZipEntry("xml", "style");
-            if (zip != null) {
+            if (zip != null)
                 return new XmlStyleSource(entry);
-            }
             zip = in.getZipEntry("mapcss", "style");
-            if (zip != null) {
+            if (zip != null)
                 return new MapCSSStyleSource(entry);
-            }
-            if (entry.url.toLowerCase().endsWith(".mapcss")) {
+            if (entry.url.toLowerCase().endsWith(".mapcss"))
                 return new MapCSSStyleSource(entry);
-            }
-            if (entry.url.toLowerCase().endsWith(".xml")) {
+            if (entry.url.toLowerCase().endsWith(".xml"))
                 return new XmlStyleSource(entry);
-            } else {
+            else {
                 InputStreamReader reader = new InputStreamReader(in);
                 WHILE: while (true) {
                     int c = reader.read();
@@ -271,12 +287,11 @@ public class MapPaintStyles {
         int[] selSorted = Arrays.copyOf(sel, sel.length);
         Arrays.sort(selSorted);
 
-        if (i < 0) { // Up
+        if (i < 0) // Up
             return selSorted[0] >= -i;
-        } else
-        if (i > 0) { // Down
+        else if (i > 0) // Down
             return selSorted[selSorted.length-1] <= styles.getStyleSources().size() - 1 - i;
-        } else
+        else
             return true;
     }
 

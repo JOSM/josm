@@ -47,6 +47,7 @@ public abstract class LabelCompositionStrategy {
 
     static public class StaticLabelCompositionStrategy extends LabelCompositionStrategy {
         private String defaultLabel;
+
         public StaticLabelCompositionStrategy(String defaultLabel){
             this.defaultLabel = defaultLabel;
         }

@@ -15,19 +15,22 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
 public interface Expression {
-
     public Object evaluate(Environment env);
 
     public static class LiteralExpression implements Expression {
         Object literal;
 
-        public LiteralExpression(Object lit) {
-            this.literal = lit;
+        public LiteralExpression(Object literal) {
+            CheckParameterUtil.ensureParameterNotNull(literal);
+            this.literal = literal;
         }
 
         @Override
@@ -37,8 +40,6 @@ public interface Expression {
 
         @Override
         public String toString() {
-            if (literal == null)
-                return "Lit{<null>}";
             if (literal instanceof float[])
                 return Arrays.toString((float[]) literal);
             return "<"+literal.toString()+">";
@@ -46,6 +47,8 @@ public interface Expression {
     }
 
     public static class FunctionExpression implements Expression {
+        //static Logger logger = Logger.getLogger(FunctionExpression.class.getName());
+
         String name;
         List<Expression> args;
 
@@ -72,9 +75,8 @@ public interface Expression {
             public Float minus(float... args) {
                 if (args.length == 0)
                     return 0f;
-                if (args.length == 1) { // unary minus
+                if (args.length == 1)
                     return -args[0];
-                }
                 float res = args[0];
                 for (int i=1; i<args.length; ++i) {
                     res -= args[i];
@@ -159,8 +161,17 @@ public interface Expression {
                 return c.containsKey(key);
             }
 
-            public String get_tag_value(String key) {
+            public String tag(String key) {
                 return env.osm.get(key);
+            }
+
+            // FIXME: respect parent selector chain
+            public String parent_tag(String key) {
+                for (Relation parent: OsmPrimitive.getFilteredList(env.osm.getReferrers(), Relation.class)) {
+                    String value = parent.get(key);
+                    if (value != null) return value;
+                }
+                return null;
             }
 
             public boolean has_tag_key(String key) {
@@ -285,8 +296,9 @@ public interface Expression {
                 throw  new RuntimeException(ex);
             }
             for (Method m : allMethods) {
-                if (!m.getName().equals(name))
+                if (!m.getName().equals(name)) {
                     continue;
+                }
                 Class<?>[] expectedParameterTypes = m.getParameterTypes();
                 Object[] convertedArgs = new Object[expectedParameterTypes.length];
 
@@ -303,8 +315,9 @@ public interface Expression {
                     }
                     convertedArgs[0] = arrayArg;
                 } else {
-                    if (args.size() != expectedParameterTypes.length)
+                    if (args.size() != expectedParameterTypes.length) {
                         continue;
+                    }
                     for (int i=0; i<args.size(); ++i) {
                         convertedArgs[i] = Cascade.convertTo(args.get(i).evaluate(env), expectedParameterTypes[i]);
                         if (convertedArgs[i] == null)
