@@ -530,6 +530,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
             lon = (deg + (min / 60) + (sec / 3600));
 
+            if (Double.isNaN(lon))
+                throw new IllegalArgumentException();
+
             if (dir.getString(GpsDirectory.TAG_GPS_LONGITUDE_REF).charAt(0) == 'W') {
                 lon = -lon;
             }
@@ -543,6 +546,9 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             sec = components[2].floatValue();
 
             lat = (deg + (min / 60) + (sec / 3600));
+
+            if (Double.isNaN(lat))
+                throw new IllegalArgumentException();
 
             if (dir.getString(GpsDirectory.TAG_GPS_LATITUDE_REF).charAt(0) == 'S') {
                 lat = -lat;
