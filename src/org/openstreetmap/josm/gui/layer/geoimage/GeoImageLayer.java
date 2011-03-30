@@ -46,10 +46,10 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.MapFrame.MapModeChangeListener;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
+import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -504,7 +504,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
     private static void extractExif(ImageEntry e) {
 
-        int deg;
+        double deg;
         double min, sec;
         double lon, lat;
         Metadata metadata = null;
@@ -524,14 +524,14 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
             Rational[] components = dir.getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
 
-            deg = components[0].intValue();
-            min = components[1].floatValue();
-            sec = components[2].floatValue();
+            deg = components[0].doubleValue();
+            min = components[1].doubleValue();
+            sec = components[2].doubleValue();
 
-            lon = (deg + (min / 60) + (sec / 3600));
-
-            if (Double.isNaN(lon))
+            if (Double.isNaN(deg) && Double.isNaN(min) && Double.isNaN(sec))
                 throw new IllegalArgumentException();
+
+            lon = (Double.isNaN(deg) ? 0 : deg + (Double.isNaN(min) ? 0 : (min / 60)) + (Double.isNaN(sec) ? 0 : (sec / 3600)));
 
             if (dir.getString(GpsDirectory.TAG_GPS_LONGITUDE_REF).charAt(0) == 'W') {
                 lon = -lon;
@@ -541,11 +541,14 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
             components = dir.getRationalArray(GpsDirectory.TAG_GPS_LATITUDE);
 
-            deg = components[0].intValue();
-            min = components[1].floatValue();
-            sec = components[2].floatValue();
+            deg = components[0].doubleValue();
+            min = components[1].doubleValue();
+            sec = components[2].doubleValue();
 
-            lat = (deg + (min / 60) + (sec / 3600));
+            if (Double.isNaN(deg) && Double.isNaN(min) && Double.isNaN(sec))
+                throw new IllegalArgumentException();
+
+            lat = (Double.isNaN(deg) ? 0 : deg + (Double.isNaN(min) ? 0 : (min / 60)) + (Double.isNaN(sec) ? 0 : (sec / 3600)));
 
             if (Double.isNaN(lat))
                 throw new IllegalArgumentException();
