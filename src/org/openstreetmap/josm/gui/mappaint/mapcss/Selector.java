@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.Node;
@@ -14,45 +15,82 @@ import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
 public interface Selector {
-    
-    public boolean applies(Environment e);
+
+    /**
+     * Apply the selector to the primitive and check if it matches.
+     *
+     * @param env the Environment. env.mc and env.layer are read-only when matching a selector.
+     * env.source is not needed. This method will set the matchingReferrers field of env as
+     * a side effect! Make sure to clear it before invoking this method.
+     * @return true, if the selector applies
+     */
+    public boolean matches(Environment env);
 
     public String getSubpart();
+
     public Range getRange();
 
-    public static class DescendentSelector implements Selector {
+    /**
+     * <p>Represents a child selector or a parent selector.</p>
+     * 
+     * <p>In addition to the standard CSS notation for child selectors, JOSM also supports
+     * an "inverse" notation:</p>
+     * <pre>
+     *    selector_a > selector_b { ... }       // the standard notation (child selector)
+     *    relation[type=route] > way { ... }    // example (all ways of a route)
+     * 
+     *    selector_a < selector_b { ... }       // the inverse notation (parent selector)
+     *    node[traffic_calming] < way { ... }   // example (way that has a traffic calming node)
+     * </pre>
+     *
+     */
+    public static class ChildOrParentSelector implements Selector {
         Selector a, b;
-        boolean child;
+        /** true, if this represents a parent selector (otherwise it is a child selector)
+         */
+        private final boolean parentSelector;
 
-        public DescendentSelector(Selector a, Selector b, boolean child) {
+        /**
+         * 
+         * @param a the first selector
+         * @param b the second selector
+         * @param parentSelector if true, this is a parent selector; otherwise a child selector
+         */
+        public ChildOrParentSelector(Selector a, Selector b, boolean parentSelector) {
             this.a = a;
             this.b = b;
-            this.child = child;
+            this.parentSelector = parentSelector;
         }
 
         @Override
-        public boolean applies(Environment e) {
-            if (!b.applies(e))
+        public boolean matches(Environment e) {
+            if (!b.matches(e))
                 return false;
 
             Environment e2 = new Environment(null, e.mc, e.layer, e.source);
-            if (child) {
-                for (OsmPrimitive osm : e.osm.getReferrers()) {
-                    e2.osm = osm;
-                    if (a.applies(e2))
-                        return true;
+            List<OsmPrimitive> matchingRefs = new ArrayList<OsmPrimitive>();
+            if (!parentSelector) {
+                for (OsmPrimitive ref : e.osm.getReferrers()) {
+                    e2.osm = ref;
+                    if (a.matches(e2)) {
+                        matchingRefs.add(ref);
+                    }
+                }
+                if (!matchingRefs.isEmpty()) {
+                    e.setMatchingReferrers(matchingRefs);
+                    return true;
                 }
             } else {
                 if (e.osm instanceof Relation) {
                     for (OsmPrimitive chld : ((Relation) e.osm).getMemberPrimitives()) {
                         e2.osm = chld;
-                        if (a.applies(e2))
+                        if (a.matches(e2))
                             return true;
                     }
                 } else if (e.osm instanceof Way) {
                     for (Node n : ((Way) e.osm).getNodes()) {
                         e2.osm = n;
-                        if (a.applies(e2))
+                        if (a.matches(e2))
                             return true;
                     }
                 }
@@ -103,7 +141,7 @@ public interface Selector {
         }
 
         @Override
-        public boolean applies(Environment e) {
+        public boolean matches(Environment e) {
             if (!baseApplies(e.osm))
                 return false;
             for (Condition c : conds) {

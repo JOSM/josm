@@ -16,7 +16,6 @@ import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -173,13 +172,21 @@ public interface Expression {
                 return env.osm.get(key);
             }
 
-            // FIXME: respect parent selector chain
             public String parent_tag(String key) {
-                for (Relation parent: OsmPrimitive.getFilteredList(env.osm.getReferrers(), Relation.class)) {
-                    String value = parent.get(key);
-                    if (value != null) return value;
+                if (env.getMatchingReferrers() == null) {
+                    // we don't have a matched parent, so just search all referrers
+                    for (OsmPrimitive parent : env.osm.getReferrers()) {
+                        String value = parent.get(key);
+                        if (value != null)
+                            return value;
+                    }
+                    return null;
                 }
-                return null;
+                if (env.getMatchingReferrers().isEmpty())
+                    return null;
+                // use always the first matching referrer to have consistency
+                // in an expression and declaration block
+                return env.getMatchingReferrers().iterator().next().get(key);
             }
 
             public boolean has_tag_key(String key) {

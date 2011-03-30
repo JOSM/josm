@@ -14,7 +14,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression.FunctionExpression;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Expression.LiteralExpression;
-import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.DescendentSelector;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.ChildOrParentSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.tools.Pair;
 
@@ -274,7 +274,7 @@ public class MapCSSParser implements MapCSSParserConstants {
   }
 
   final public Selector child_selector() throws ParseException {
-    boolean child = false;
+    boolean parentSelector = false;
     Selector sel1, sel2 = null;
     sel1 = selector();
     w();
@@ -284,11 +284,11 @@ public class MapCSSParser implements MapCSSParserConstants {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case GREATER:
         jj_consume_token(GREATER);
-                      child = true;
+                      parentSelector = false;
         break;
       case LESS:
         jj_consume_token(LESS);
-                                                 child = false;
+                                                           parentSelector = true;
         break;
       default:
         jj_la1[10] = jj_gen;
@@ -303,7 +303,7 @@ public class MapCSSParser implements MapCSSParserConstants {
       jj_la1[11] = jj_gen;
       ;
     }
-      {if (true) return sel2 != null ? new DescendentSelector(sel1, sel2, child) : sel1;}
+      {if (true) return sel2 != null ? new ChildOrParentSelector(sel1, sel2, parentSelector) : sel1;}
     throw new Error("Missing return statement in function");
   }
 
