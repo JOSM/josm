@@ -506,7 +506,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 } else if (s.charAt(index) == ' ') {
                     break;
                 } else {
-                    System.out.println("Uknown char in SearchSettings: " + s);
+                    System.out.println("Unknown char in SearchSettings: " + s);
                     break;
                 }
                 index++;
