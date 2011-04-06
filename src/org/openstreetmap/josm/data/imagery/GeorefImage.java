@@ -94,7 +94,9 @@ public class GeorefImage implements Serializable {
             break;
         }
         default:
-            this.image = layer.sharpenImage(this.image);
+            if (this.image != null) {
+                this.image = layer.sharpenImage(this.image);
+            }
             break;
         }
     }
