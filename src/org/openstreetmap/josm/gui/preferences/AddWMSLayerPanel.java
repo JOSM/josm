@@ -10,6 +10,8 @@ import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,9 +32,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -46,8 +51,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.data.projection.ProjectionSubPrefs;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.tools.GBC;
 import org.w3c.dom.Document;
@@ -72,18 +77,26 @@ public class AddWMSLayerPanel extends JPanel {
     private JButton showBoundsButton;
 
     private boolean previouslyShownUnsupportedCrsError = false;
+    private JTextArea tmsURL;
 
     public AddWMSLayerPanel() {
-        JPanel wmsFetchPanel = new JPanel(new GridBagLayout());
+        JPanel imageryAddPanel = new JPanel(new GridBagLayout());
+        imageryAddPanel.add(new JLabel(tr("Menu Name")), GBC.std().insets(0,0,5,0));
         menuName = new JTextField(40);
-        menuName.setText(tr("Unnamed WMS Layer"));
-        final JTextArea serviceUrl = new JTextArea(3, 40);
-        serviceUrl.setLineWrap(true);
-        serviceUrl.setText("http://sample.com/wms?");
-        wmsFetchPanel.add(new JLabel(tr("Menu Name")), GBC.std().insets(0,0,5,0));
-        wmsFetchPanel.add(menuName, GBC.eop().insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
+        menuName.setText(tr("Unnamed Imagery Layer"));
+        imageryAddPanel.add(menuName, GBC.eop().insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
+
+        final JTabbedPane tabbedPane = new JTabbedPane();
+
+        final JPanel wmsFetchPanel = new JPanel(new GridBagLayout());
+        tabbedPane.addTab(tr("WMS"), wmsFetchPanel);
+        imageryAddPanel.add(tabbedPane, GBC.eop().insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
+
+        final JTextArea serviceUrlText = new JTextArea(3, 40);
+        serviceUrlText.setLineWrap(true);
+        serviceUrlText.setText("http://sample.com/wms?");
         wmsFetchPanel.add(new JLabel(tr("Service URL")), GBC.std().insets(0,0,5,0));
-        JScrollPane scrollPane = new JScrollPane(serviceUrl,
+        JScrollPane scrollPane = new JScrollPane(serviceUrlText,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         wmsFetchPanel.add(scrollPane, GBC.eop().insets(5,0,0,0));
@@ -94,7 +107,7 @@ public class AddWMSLayerPanel extends JPanel {
                 Cursor beforeCursor = getCursor();
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    attemptGetCapabilities(serviceUrl.getText());
+                    attemptGetCapabilities(serviceUrlText.getText());
                 } finally {
                     setCursor(beforeCursor);
                 }
@@ -170,12 +183,50 @@ public class AddWMSLayerPanel extends JPanel {
         layerManipulationButtons.add(showBoundsButton);
 
         wmsFetchPanel.add(layerManipulationButtons, GBC.eol().insets(0,0,5,0));
-        wmsFetchPanel.add(new JLabel(tr("WMS URL")), GBC.std().insets(0,0,5,0));
+
+        final JPanel tmsView = new JPanel(new GridBagLayout());
+        tmsView.add(new JLabel(tr("TMS URL")), GBC.std().insets(0,0,5,0));
+        tmsURL = new JTextArea(3, 40);
+        tmsURL.setLineWrap(true);
+        tmsURL.setText("http://sample.com/tms/{zoom}/{x}/{y}.jpg");
+        tmsURL.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                resultingLayerField.setText(buildTMSUrl());
+            }
+        });
+        JScrollPane tmsUrlScrollPane = new JScrollPane(tmsURL,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        tmsView.add(tmsUrlScrollPane, GBC.eop().insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
+        tabbedPane.addTab(tr("TMS"), tmsView);
+
+        imageryAddPanel.add(new JLabel(tr("Imagery URL")), GBC.std().insets(0,0,5,0));
         resultingLayerField = new JTextArea(3, 40);
         resultingLayerField.setLineWrap(true);
-        wmsFetchPanel.add(new JScrollPane(resultingLayerField, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), GBC.eop().insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
+        imageryAddPanel.add(new JScrollPane(resultingLayerField, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER), GBC.eop().insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
 
-        add(wmsFetchPanel);
+        tabbedPane.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                Component sel = tabbedPane.getSelectedComponent();
+                if(tmsView == sel) {
+                    resultingLayerField.setText(buildTMSUrl());
+                } else if(wmsFetchPanel == sel) {
+                    if(serviceUrl != null) {
+                        resultingLayerField.setText(buildGetMapUrl());
+                    }
+                }
+            }
+        });
+
+        add(imageryAddPanel);
+    }
+
+    private String buildTMSUrl() {
+        StringBuilder a = new StringBuilder("tms:");
+        a.append(tmsURL.getText());
+        return a.toString();
     }
 
     private String buildRootUrl() {
