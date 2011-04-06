@@ -434,9 +434,10 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                Main.map.mapView.addMouseListener(new MouseAdapter() {
+                final MouseAdapter adapter = new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
+                        if (!isVisible()) return;
                         if (e.getButton() == MouseEvent.BUTTON3) {
                             clickedTile = getTileForPixelpos(e.getX(), e.getY());
                             tileOptionMenu.show(e.getComponent(), e.getX(), e.getY());
@@ -465,7 +466,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                             }
                         }
                     }
-                });
+                };
+                Main.map.mapView.addMouseListener(adapter);
 
                 MapView.addLayerChangeListener(new LayerChangeListener() {
                     @Override
@@ -480,7 +482,10 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
                     @Override
                     public void layerRemoved(Layer oldLayer) {
-                        MapView.removeLayerChangeListener(this);
+                        if (oldLayer == TMSLayer.this) {
+                            Main.map.mapView.removeMouseListener(adapter);
+                            MapView.removeLayerChangeListener(this);
+                        }
                     }
                 });
             }
