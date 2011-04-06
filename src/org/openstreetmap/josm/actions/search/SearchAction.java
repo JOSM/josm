@@ -42,7 +42,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 public class SearchAction extends JosmAction implements ParameterizedAction {
 
-    public static final int DEFAULT_SEARCH_HISTORY_SIZE = 10;
+    public static final int DEFAULT_SEARCH_HISTORY_SIZE = 15;
 
     private static final String SEARCH_EXPRESSION = "searchExpression";
 
@@ -135,7 +135,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
         // -- prepare the combo box with the search expressions
         //
-        JLabel label = new JLabel( initialValues instanceof Filter ? tr("Please enter a filter string.") : tr("Please enter a search string."));
+        JLabel label = new JLabel( initialValues instanceof Filter ? tr("Filter string:") : tr("Search string:"));
         final HistoryComboBox hcbSearchString = new HistoryComboBox();
         hcbSearchString.setText(initialValues.text);
         hcbSearchString.getEditor().selectAll();
@@ -164,9 +164,10 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         allElements.setToolTipText(tr("Also include incomplete and deleted objects in search."));
         final JCheckBox regexSearch   = new JCheckBox(tr("regular expression"), initialValues.regexSearch);
 
+        JPanel top = new JPanel(new GridBagLayout());
+        top.add(label, GBC.std().insets(0, 0, 5, 0));
+        top.add(hcbSearchString, GBC.eol().fill(GBC.HORIZONTAL));
         JPanel left = new JPanel(new GridBagLayout());
-        left.add(label, GBC.eop());
-        left.add(hcbSearchString, GBC.eop().fill(GBC.HORIZONTAL));
         left.add(replace, GBC.eol());
         left.add(add, GBC.eol());
         left.add(remove, GBC.eol());
@@ -211,9 +212,10 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         description.setFont(description.getFont().deriveFont(Font.PLAIN));
         right.add(description);
 
-        final JPanel p = new JPanel();
-        p.add(left);
-        p.add(right);
+        final JPanel p = new JPanel(new GridBagLayout());
+        p.add(top, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 5, 5, 0));
+        p.add(left, GBC.std().anchor(GBC.NORTH).insets(5, 10, 10, 0));
+        p.add(right, GBC.eol());
         ExtendedDialog dialog = new ExtendedDialog(
                 Main.parent,
                 initialValues instanceof Filter ? tr("Filter") : tr("Search"),

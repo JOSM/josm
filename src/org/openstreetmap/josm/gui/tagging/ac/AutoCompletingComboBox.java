@@ -144,6 +144,8 @@ public class AutoCompletingComboBox extends JComboBox {
                     }
                 }
         );
+        int maxsize=Math.max(getMaximumRowCount(),java.awt.Toolkit.getDefaultToolkit().getScreenSize().height/getPreferredSize().height - 1);
+        setMaximumRowCount(maxsize);
     }
 
     /**
