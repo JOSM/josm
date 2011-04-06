@@ -22,22 +22,32 @@ public class ImageryLayerInfo {
 
     public static final ImageryLayerInfo instance = new ImageryLayerInfo();
     ArrayList<ImageryInfo> layers = new ArrayList<ImageryInfo>();
-    ArrayList<ImageryInfo> defaultLayers = new ArrayList<ImageryInfo>();
+    static ArrayList<ImageryInfo> defaultLayers = new ArrayList<ImageryInfo>();
 
     private final static String[] DEFAULT_LAYER_SITES = {
         "http://josm.openstreetmap.de/maps"
     };
 
-    public void load(boolean clearCache) {
+    private ImageryLayerInfo() {
+    }
+
+    public ImageryLayerInfo(ImageryLayerInfo info) {
+        layers.addAll(info.layers);
+    }
+
+    public void load() {
         layers.clear();
-        defaultLayers.clear();
-        Collection<String> defaults = Main.pref.getCollection(
-                "imagery.layers.default", Collections.<String>emptySet());
         for(Collection<String> c : Main.pref.getArray("imagery.layers",
                 Collections.<Collection<String>>emptySet())) {
             add(new ImageryInfo(c));
         }
+        Collections.sort(layers);
+    }
 
+    public void loadDefaults(boolean clearCache) {
+        defaultLayers.clear();
+        Collection<String> defaults = Main.pref.getCollection(
+                "imagery.layers.default", Collections.<String>emptySet());
         ArrayList<String> defaultsSave = new ArrayList<String>();
         for(String source : Main.pref.getCollection("imagery.layers.sites", Arrays.asList(DEFAULT_LAYER_SITES)))
         {
@@ -96,11 +106,9 @@ public class ImageryLayerInfo {
             }
         }
 
+        Collections.sort(defaultLayers);
         Main.pref.putCollection("imagery.layers.default", defaultsSave.size() > 0
                 ? defaultsSave : defaults);
-        Collections.sort(layers);
-        Collections.sort(defaultLayers);
-        save();
     }
 
     public void add(ImageryInfo info) {

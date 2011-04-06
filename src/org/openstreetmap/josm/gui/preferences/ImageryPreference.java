@@ -70,6 +70,7 @@ public class ImageryPreference implements PreferenceSetting {
         }
     }
     ImageryProvidersPanel imageryProviders;
+    ImageryLayerInfo layerInfo;
 
     static ImagerySettingsMigration settingsMigration;
 
@@ -268,7 +269,8 @@ public class ImageryPreference implements PreferenceSetting {
     public void addGui(final PreferenceTabbedPane gui) {
         JPanel p = gui.createPreferenceTab("imagery", tr("Imagery Preferences"), tr("Modify list of imagery layers displayed in the Imagery menu"));
         JTabbedPane pane = new JTabbedPane();
-        imageryProviders = new ImageryProvidersPanel(gui, ImageryLayerInfo.instance);
+        layerInfo = new ImageryLayerInfo(ImageryLayerInfo.instance);
+        imageryProviders = new ImageryProvidersPanel(gui, layerInfo);
         pane.add(imageryProviders);
         pane.add(buildSettingsPanel(gui));
         pane.add(new OffsetBookmarksPanel(gui));
@@ -307,7 +309,8 @@ public class ImageryPreference implements PreferenceSetting {
     @Override
     public boolean ok() {
         boolean restartRequired = false;
-        ImageryLayerInfo.instance.save();
+        layerInfo.save();
+        ImageryLayerInfo.instance.load();
         Main.main.menu.imageryMenu.refreshImageryMenu();
         Main.main.menu.imageryMenu.refreshOffsetMenu();
         OffsetBookmark.saveBookmarks();
@@ -566,7 +569,7 @@ public class ImageryPreference implements PreferenceSetting {
             }
 
             public void actionPerformed(ActionEvent evt) {
-                layerInfo.load(true);
+                layerInfo.loadDefaults(true);
                 modeldef.fireTableDataChanged();
             }
         }
@@ -856,7 +859,8 @@ public class ImageryPreference implements PreferenceSetting {
         if (!settingsMigration.hasConflicts()) {
             settingsMigration = null;
         }
-        ImageryLayerInfo.instance.load(false);
+        ImageryLayerInfo.instance.load();
+        ImageryLayerInfo.instance.loadDefaults(false);
         OffsetBookmark.loadBookmarks();
         Main.main.menu.imageryMenu.refreshImageryMenu();
         Main.main.menu.imageryMenu.refreshOffsetMenu();
