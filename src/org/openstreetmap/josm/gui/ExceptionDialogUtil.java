@@ -271,9 +271,10 @@ public class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainAuthorizationFailed(OsmApiException e) {
+        // Fixme: add special handling that calls ExceptionUtil.explainFailedOAuthAuthorisation(e)
         HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
-                ExceptionUtil.explainFailedOAuthAuthorisation(e),
+                ExceptionUtil.explainFailedAuthorisation(e),
                 tr("Authorisation Failed"),
                 JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#AuthenticationFailed")

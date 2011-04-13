@@ -128,6 +128,30 @@ public class ExceptionUtil {
         );
     }
 
+    public static String explainFailedAuthorisation(OsmApiException e) {
+        e.printStackTrace();
+        String header = e.getErrorHeader();
+        String body = e.getErrorBody();
+        String msg = null;
+        if (header != null) {
+            if (body != null && !header.equals(body)) {
+                msg = header + " (" + body + ")";
+            } else {
+                msg = header;
+            }
+        } else {
+            msg = body;
+        }
+        
+        return tr("<html>"
+                + "Authorisation at the OSM server failed.<br>"
+                + "The server reported the following error:<br>"
+                + "''{0}''"
+                + "</html>",
+                msg
+        );
+    }
+
     public static String explainFailedOAuthAuthorisation(OsmApiException e) {
         e.printStackTrace();
         return tr("<html>"
