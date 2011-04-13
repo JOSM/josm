@@ -13,6 +13,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
@@ -326,6 +327,10 @@ public class GpxLayer extends Layer {
         lastUpdateCount = sumUpdateCount();
         lastTracks.clear();
         lastTracks.addAll(data.tracks);
+
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+        Main.pref.getBoolean("mappaint.gpx.use-antialiasing", false) ?
+                RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 
         /****************************************************************
          ********** STEP 1 - GET CONFIG VALUES **************************
