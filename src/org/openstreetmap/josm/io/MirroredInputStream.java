@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -145,10 +147,10 @@ public class MirroredInputStream extends InputStream {
             if (!url.getProtocol().equals("file"))
             {
                 String prefKey = getPrefKey(url, destDir);
-                String localPath = Main.pref.get(prefKey);
-                if (localPath != null && localPath.length() > 0)
-                {
-                    String[] lp = localPath.split(";");
+                // FIXME: replace with normal getCollection after july 2011
+                Collection<String> localPath = Main.pref.getCollectionOld(prefKey, ";");
+                if(localPath.size() == 2) {
+                    String[] lp = (String[]) localPath.toArray();
                     File lfile = new File(lp[1]);
                     if(lfile.exists()) {
                         lfile.delete();
@@ -175,15 +177,16 @@ public class MirroredInputStream extends InputStream {
             prefKey.append(".");
         }
         prefKey.append(url.toString());
-        return prefKey.toString();
+        return prefKey.toString().replaceAll("=","_");
     }
 
     private File checkLocal(URL url, String destDir, long maxTime) throws IOException {
         String prefKey = getPrefKey(url, destDir);
-        String localPath = Main.pref.get(prefKey);
         File file = null;
-        if (localPath != null && localPath.length() > 0) {
-            String[] lp = localPath.split(";");
+        // FIXME: replace with normal getCollection after july 2011
+        Collection<String> localPathEntry = Main.pref.getCollectionOld(prefKey, ";");
+        if(localPathEntry.size() == 2) {
+            String[] lp = (String[]) localPathEntry.toArray();
             file = new File(lp[1]);
             if(!file.exists())
                 file = null;
@@ -206,7 +209,7 @@ public class MirroredInputStream extends InputStream {
         }
 
         String a = url.toString().replaceAll("[^A-Za-z0-9_.-]", "_");
-        localPath = "mirror_" + a;
+        String localPath = "mirror_" + a;
         destDirFile = new File(destDir, localPath + ".tmp");
         BufferedOutputStream bos = null;
         BufferedInputStream bis = null;
@@ -225,7 +228,8 @@ public class MirroredInputStream extends InputStream {
             bos = null;
             file = new File(destDir, localPath);
             destDirFile.renameTo(file);
-            Main.pref.put(prefKey, System.currentTimeMillis() + ";" + file);
+            Main.pref.putCollection(prefKey, Arrays.asList(new String[]
+            {Long.toString(System.currentTimeMillis()), file.toString()}));
         } finally {
             if (bis != null) {
                 try {
