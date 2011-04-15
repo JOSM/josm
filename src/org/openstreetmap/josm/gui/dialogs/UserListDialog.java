@@ -168,6 +168,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     @Override
     public void showDialog() {
         super.showDialog();
+        User.initRelicensingInformation();
         Layer layer = Main.main.getActiveLayer();
         if (layer instanceof OsmDataLayer) {
             refresh(((OsmDataLayer)layer).data.getSelected());
@@ -277,7 +278,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            User.loadRelicensingInformation();
+            User.loadRelicensingInformation(true);
             Layer layer = Main.main.getActiveLayer();
             if (layer instanceof OsmDataLayer) {
                 refresh(((OsmDataLayer)layer).data.getSelected());

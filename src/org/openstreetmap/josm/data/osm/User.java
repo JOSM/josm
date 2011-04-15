@@ -109,11 +109,17 @@ public class User {
         return ret;
     }
 
-    public static void loadRelicensingInformation() {
+    public static void initRelicensingInformation() {
+        if(relicensingUsers == null) {
+            loadRelicensingInformation(false);
+        }
+    }
+
+    public static void loadRelicensingInformation(boolean clean) {
         relicensingUsers = new HashSet<Long>();
         try {
             MirroredInputStream stream = new MirroredInputStream(Main.pref.get("url.licensechange",
-            "http://planet.openstreetmap.org/users_agreed/users_agreed.txt"), 7200);
+            "http://planet.openstreetmap.org/users_agreed/users_agreed.txt"), clean ? 1 : 7200);
             try {
                 InputStreamReader r;
                 r = new InputStreamReader(stream);
