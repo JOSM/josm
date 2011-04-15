@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -118,7 +119,7 @@ public class SplashScreen extends JFrame {
             gc.weightx = 1.0;
             gc.weighty = 0.0;
             gc.insets = new Insets(5,0,0,5);
-            add(lblTaskTitle = new JLabel(""), gc);
+            add(lblTaskTitle = new JLabel(" "), gc);
 
             gc.gridx = 0;
             gc.gridy = 1;
@@ -126,7 +127,14 @@ public class SplashScreen extends JFrame {
             gc.weightx = 1.0;
             gc.weighty = 0.0;
             gc.insets = new Insets(5,0,0,5);
-            add(lblCustomText = new JLabel(""), gc);
+            add(lblCustomText = new JLabel(" ") {
+                @Override
+                public Dimension getPreferredSize() {
+                    Dimension d = super.getPreferredSize();
+                    if(d.width < 600) d.width = 600;
+                    return d;
+                }
+            }, gc);
 
             gc.gridx = 0;
             gc.gridy = 2;
@@ -142,6 +150,8 @@ public class SplashScreen extends JFrame {
         }
 
         public void setCustomText(String message) {
+            if(message.isEmpty())
+                message = " "; /* prevent killing of additional line */
             lblCustomText.setText(message);
             repaint();
         }
