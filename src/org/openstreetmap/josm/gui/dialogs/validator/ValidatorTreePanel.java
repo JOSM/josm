@@ -235,7 +235,7 @@ public class ValidatorTreePanel extends JTree {
                     if (groupNode != null) {
                         msg = msgErrors.getKey() + " (" + errs.size() + ")";
                     } else {
-                        msg = bag.getKey() + " - " + msgErrors.getKey() + " (" + errs.size() + ")";
+                        msg = msgErrors.getKey() + " - " + bag.getKey() + " (" + errs.size() + ")";
                     }
                     DefaultMutableTreeNode messageNode = new DefaultMutableTreeNode(msg);
                     if (groupNode != null) {

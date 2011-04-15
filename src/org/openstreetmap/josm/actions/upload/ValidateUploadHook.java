@@ -20,8 +20,10 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.AgregatePrimitivesVisitor;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.dialogs.validator.ValidatorTreePanel;
 import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
+import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -107,18 +109,42 @@ public class ValidateUploadHook implements UploadHook
         JPanel p = new JPanel(new GridBagLayout());
         ValidatorTreePanel errorPanel = new ValidatorTreePanel(errors);
         errorPanel.expandAll();
-        p.add(new JScrollPane(errorPanel), GBC.eol());
+        HtmlPanel pnlMessage = new HtmlPanel();
+        pnlMessage.setText("<html><body>"
+                + tr("The following are results of automatic validation. Try fixing"
+                + " these, but be careful( don't destray valid data)."
+                + " When in doubt ignore them.<br>When you"
+                + " cancel this dialog, you can find the entries in the validator"
+                + " side panel to inspect them.")
+                + "<table align=\"center\">"
+                + "<tr><td align=\"left\"><b>"+tr("Errors")
+                + "&nbsp;</b></td><td align=\"left\">"
+                + tr("Usually this should be fixed.")+"</td></tr>"
+                + "<tr><td align=\"left\"><b>"+tr("Warnings")
+                + "&nbsp;</b></td><td align=\"left\">"
+                + tr("Fix these when possible.")+"</td></tr>"
+                + "<tr><td align=\"left\"><b>"+tr("Other")
+                + "&nbsp;</b></td><td align=\"left\">"
+                + tr("Informational warnings, expect many false entries.")+"</td></tr>"
+                + "</table>"
+        );
+        p.add(pnlMessage, GBC.eol());
+        p.add(new JScrollPane(errorPanel), GBC.eol().fill(GBC.BOTH));
 
-        int res = JOptionPane.showConfirmDialog(Main.parent, p,
-            tr("Data with errors. Upload anyway?"),
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.QUESTION_MESSAGE);
-        if (res == JOptionPane.NO_OPTION) {
+        ExtendedDialog ed = new ExtendedDialog(Main.parent,
+                tr("Supicious data found. Upload anyway?"),
+                new String[] {tr("Continue upload"), tr("Cancel")});
+        ed.setButtonIcons(new String[] {"ok.png", "cancel.png"});
+        ed.setContent(p);
+        ed.showDialog();
+
+        if(ed.getValue() != 1) {
             OsmValidator.initializeErrorLayer();
             Main.map.validatorDialog.unfurlDialog();
             Main.map.validatorDialog.tree.setErrors(errors);
             Main.main.getCurrentDataSet().fireSelectionChanged();
+            return false;
         }
-        return res == JOptionPane.YES_OPTION;
+        return true;
     }
 }

@@ -398,8 +398,8 @@ public class TagChecker extends Test
                 }
 
                 if (!ignore) {
-                    errors.add( new TestError(this, Severity.ERROR, tr("Illegal tag/value combinations"),
-                            tr("Illegal tag/value combinations"), tr("Illegal tag/value combinations"), 1272, p) );
+                    errors.add( new TestError(this, Severity.ERROR, tr("Suspicious tag/value combinations"),
+                            tr("Suspicious tag/value combinations"), tr("Suspicious tag/value combinations"), 1272, p) );
                     withErrors.put(p, "TC");
                 }
             }
@@ -407,7 +407,7 @@ public class TagChecker extends Test
             Map<String, String> keys = p.getKeys();
             for (CheckerData d : checkerData) {
                 if (d.match(p, keys)) {
-                    errors.add( new TestError(this, d.getSeverity(), tr("Illegal tag/value combinations"),
+                    errors.add( new TestError(this, d.getSeverity(), tr("Suspicious tag/value combinations"),
                             d.getDescription(), d.getDescriptionOrig(), d.getCode(), p) );
                     withErrors.put(p, "TC");
                 }
