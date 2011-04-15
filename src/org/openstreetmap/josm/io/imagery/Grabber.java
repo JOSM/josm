@@ -11,7 +11,7 @@ import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.io.CacheFiles;
 
 abstract public class Grabber implements Runnable {
-    public final static CacheFiles cache = new CacheFiles("imagery");
+    public final static CacheFiles cache = new CacheFiles("imagery", false);
 
     protected final MapView mv;
     protected final WMSLayer layer;
