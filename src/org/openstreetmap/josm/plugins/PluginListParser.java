@@ -95,6 +95,8 @@ public class PluginListParser {
                     }
                 }
                 String x[] = line.split(";");
+                if(x.length != 2)
+                  throw new IOException(tr("Illegal entry in plugin list."));
                 name = x[0];
                 url = x[1];
                 manifest = new StringBuilder();
