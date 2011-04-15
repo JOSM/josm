@@ -1,14 +1,18 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
+
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.MirroredInputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
 
 /**
  * A simple class to keep a list of user names.
@@ -108,20 +112,25 @@ public class User {
     public static void loadRelicensingInformation() {
         relicensingUsers = new HashSet<Long>();
         try {
-        MirroredInputStream stream = new MirroredInputStream("http://planet.openstreetmap.org/users_agreed/users_agreed.txt", 7200);
-        InputStreamReader r;
-        r = new InputStreamReader(stream);
-        BufferedReader reader = new BufferedReader(r);
-        String line;
-        while ((line = reader.readLine()) != null) {
-            if (line.startsWith("#")) continue;
+            MirroredInputStream stream = new MirroredInputStream(Main.pref.get("url.licensechange",
+            "http://planet.openstreetmap.org/users_agreed/users_agreed.txt"), 7200);
             try {
-                relicensingUsers.add(new Long(Long.parseLong(line.trim())));
-            } catch (java.lang.NumberFormatException ex) {
+                InputStreamReader r;
+                r = new InputStreamReader(stream);
+                BufferedReader reader = new BufferedReader(r);
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.startsWith("#")) continue;
+                    try {
+                        relicensingUsers.add(new Long(Long.parseLong(line.trim())));
+                    } catch (java.lang.NumberFormatException ex) {
+                    }
+                }
             }
-        }
-        stream.close();
-        } catch (java.io.IOException ex) {
+            finally {
+                stream.close();
+            }
+        } catch (IOException ex) {
         }
     }
 
