@@ -74,17 +74,6 @@ public class PluginHandler {
     static {
         String IN_CORE = tr("integrated into main program");
 
-        class RemotecontrolMigration implements Runnable {
-            public void run() {
-                System.out.println("Migrating remotecontrol plugin...");
-                if (!RemoteControl.PROP_REMOTECONTROL_ENABLED.isSet()) {
-                    System.out.println("  Setting "+RemoteControl.PROP_REMOTECONTROL_ENABLED.getKey()+"=true");
-                    RemoteControl.PROP_REMOTECONTROL_ENABLED.put(true);
-                }
-                System.out.println("...Done.");
-            }
-        }
-
         DEPRECATED_PLUGINS = Arrays.asList(new DeprecatedPlugin[] {
             new DeprecatedPlugin("mappaint", IN_CORE),
             new DeprecatedPlugin("unglueplugin", IN_CORE),
@@ -110,7 +99,7 @@ public class PluginHandler {
             new DeprecatedPlugin("ghost", IN_CORE),
             new DeprecatedPlugin("validator", IN_CORE),
             new DeprecatedPlugin("multipoly", IN_CORE),
-            new DeprecatedPlugin("remotecontrol", IN_CORE, new RemotecontrolMigration()),
+            new DeprecatedPlugin("remotecontrol", IN_CORE),
             new DeprecatedPlugin("imagery", IN_CORE),
             new DeprecatedPlugin("slippymap", IN_CORE),
             new DeprecatedPlugin("wmsplugin", IN_CORE),

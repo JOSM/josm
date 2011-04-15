@@ -72,8 +72,6 @@ public class ImageryPreference implements PreferenceSetting {
     ImageryProvidersPanel imageryProviders;
     ImageryLayerInfo layerInfo;
 
-    static ImagerySettingsMigration settingsMigration;
-
     // Common settings
     private Color colFadeColor;
     private JButton btnFadeColor;
@@ -136,23 +134,6 @@ public class ImageryPreference implements PreferenceSetting {
         p.add(GBC.glue(5, 0), GBC.std().fill(GBC.HORIZONTAL));
         p.add(this.sharpen, GBC.eol().fill(GBC.HORIZONTAL));
 
-        if (settingsMigration != null) {
-            final JButton btnSettingsMigration = new JButton(tr("WMSPlugin/SlippyMap settings migration"));
-            btnSettingsMigration.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (settingsMigration == null) return;
-                    settingsMigration.settingsMigrationDialog(gui);
-                    loadSettings();
-                    imageryProviders.model.fireTableDataChanged();
-                    if (!settingsMigration.hasConflicts()) {
-                        btnSettingsMigration.setEnabled(false);
-                        settingsMigration = null;
-                    }
-                }
-            });
-            p.add(btnSettingsMigration,GBC.eol().insets(0,5,0,5));
-        }
         this.useOffsetServer = new JCheckBox(tr("Use offset server: "));
         this.offsetServerUrl = new JTextField();
         this.useOffsetServer.addChangeListener(new ChangeListener() {
@@ -854,11 +835,6 @@ public class ImageryPreference implements PreferenceSetting {
     }
 
     public static void initialize() {
-        settingsMigration = new ImagerySettingsMigration();
-        settingsMigration.migrateSettings();
-        if (!settingsMigration.hasConflicts()) {
-            settingsMigration = null;
-        }
         ImageryLayerInfo.instance.load();
         ImageryLayerInfo.instance.loadDefaults(false);
         OffsetBookmark.loadBookmarks();
