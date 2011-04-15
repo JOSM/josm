@@ -83,7 +83,7 @@ public class SplashScreen extends JFrame {
         // Add a status message
         progressRenderer = new SplashScreenProgressRenderer();
         gbc.gridy = 3;
-        gbc.insets = new Insets(5, 5, 10, 5);
+        gbc.insets = new Insets(0, 0, 10, 0);
         innerContentPane.add(progressRenderer, gbc);
         progressMonitor = new SwingRenderingProgressMonitor(progressRenderer);
 
@@ -118,7 +118,7 @@ public class SplashScreen extends JFrame {
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             gc.weighty = 0.0;
-            gc.insets = new Insets(5,0,0,5);
+            gc.insets = new Insets(5,0,0,0);
             add(lblTaskTitle = new JLabel(" "), gc);
 
             gc.gridx = 0;
@@ -126,7 +126,7 @@ public class SplashScreen extends JFrame {
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             gc.weighty = 0.0;
-            gc.insets = new Insets(5,0,0,5);
+            gc.insets = new Insets(5,0,0,0);
             add(lblCustomText = new JLabel(" ") {
                 @Override
                 public Dimension getPreferredSize() {
@@ -141,7 +141,7 @@ public class SplashScreen extends JFrame {
             gc.fill = GridBagConstraints.HORIZONTAL;
             gc.weightx = 1.0;
             gc.weighty = 0.0;
-            gc.insets = new Insets(5,0,0,5);
+            gc.insets = new Insets(5,0,0,0);
             add(progressBar = new JProgressBar(JProgressBar.HORIZONTAL), gc);
         }
 
