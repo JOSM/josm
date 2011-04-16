@@ -32,6 +32,7 @@ public class User {
      */
     private static HashMap<Long,User> userMap = new HashMap<Long,User>();
     private static HashSet<Long> relicensingUsers = null;
+    private static HashSet<Long> nonRelicensingUsers = null;
 
     private static long getNextLocalUid() {
         return uidCounter.decrementAndGet();
@@ -110,16 +111,19 @@ public class User {
     }
 
     public static void initRelicensingInformation() {
-        if(relicensingUsers == null) {
+        if (relicensingUsers == null) {
             loadRelicensingInformation(false);
         }
     }
 
     public static void loadRelicensingInformation(boolean clean) {
         relicensingUsers = new HashSet<Long>();
+        nonRelicensingUsers = new HashSet<Long>();
         try {
-            MirroredInputStream stream = new MirroredInputStream(Main.pref.get("url.licensechange",
-            "http://planet.openstreetmap.org/users_agreed/users_agreed.txt"), clean ? 1 : 7200);
+            MirroredInputStream stream = new MirroredInputStream(
+                 Main.pref.get("url.licensechange",
+                    "http://planet.openstreetmap.org/users_agreed/users_agreed.txt"),
+                 clean ? 1 : 7200);
             try {
                 InputStreamReader r;
                 r = new InputStreamReader(stream);
@@ -128,7 +132,33 @@ public class User {
                 while ((line = reader.readLine()) != null) {
                     if (line.startsWith("#")) continue;
                     try {
-                        relicensingUsers.add(new Long(Long.parseLong(line.trim())));
+                        Long id = new Long(Long.parseLong(line.trim()));
+                        relicensingUsers.add(id);
+                    } catch (java.lang.NumberFormatException ex) {
+                    }
+                }
+            }
+            finally {
+                stream.close();
+            }
+        } catch (IOException ex) {
+        }
+
+        try {
+            MirroredInputStream stream = new MirroredInputStream(
+                Main.pref.get("url.licensechange_reject",
+                    "http://planet.openstreetmap.org/users_agreed/users_disagreed.txt"),
+                clean ? 1 : 7200);
+            try {
+                InputStreamReader r;
+                r = new InputStreamReader(stream);
+                BufferedReader reader = new BufferedReader(r);
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.startsWith("#")) continue;
+                    try {
+                        Long id = new Long(Long.parseLong(line.trim()));
+                        nonRelicensingUsers.add(id);
                     } catch (java.lang.NumberFormatException ex) {
                     }
                 }
@@ -155,7 +185,10 @@ public class User {
     public int getRelicensingStatus() {
         if (uid >= 286582) return STATUS_AUTO_AGREED;
         if (relicensingUsers == null) return STATUS_UNKNOWN;
-        return (relicensingUsers.contains(new Long(uid)) ? STATUS_AGREED : STATUS_NOT_AGREED);
+        Long id = new Long(uid);
+        if (relicensingUsers.contains(id)) return STATUS_AGREED;
+        if (nonRelicensingUsers.contains(id)) return STATUS_NOT_AGREED;
+        return STATUS_UNKNOWN;
     }
 
     /**

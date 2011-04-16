@@ -338,11 +338,15 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     static class UserTableModel extends DefaultTableModel {
         private ArrayList<UserInfo> data;
         private ImageIcon greenCheckmark;
+        private ImageIcon greyCheckmark;
+        private ImageIcon redX;
 
         public UserTableModel() {
             setColumnIdentifiers(new String[]{tr("Author"),tr("# Objects"),"%", tr("CT")});
             data = new ArrayList<UserInfo>();
             greenCheckmark = ImageProvider.get("misc", "green_check.png");
+            greyCheckmark = ImageProvider.get("misc", "grey_check.png");
+            redX = ImageProvider.get("misc", "red_x.png");
         }
 
         protected Map<User, Integer> computeStatistics(Collection<? extends OsmPrimitive> primitives) {
@@ -384,9 +388,12 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             case 1: /* count */ return info.count;
             case 2: /* percent */ return NumberFormat.getPercentInstance().format(info.percent);
             case 3: /* relicensing status */
-                if (info.getRelicensingStatus() == User.STATUS_AGREED) return greenCheckmark;
-                if (info.getRelicensingStatus() == User.STATUS_AUTO_AGREED) return greenCheckmark;
-                return null;
+                switch(info.getRelicensingStatus()) {
+                case User.STATUS_AGREED: return greenCheckmark;
+                case User.STATUS_AUTO_AGREED: return greyCheckmark;
+                case User.STATUS_NOT_AGREED: return redX;
+                default: return null;
+                }
             }
             return null;
         }
