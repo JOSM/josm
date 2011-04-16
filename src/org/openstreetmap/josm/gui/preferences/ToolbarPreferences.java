@@ -26,10 +26,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -56,6 +58,7 @@ import javax.swing.tree.TreePath;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ActionParameter;
+import org.openstreetmap.josm.actions.AdaptableAction;
 import org.openstreetmap.josm.actions.ParameterizedAction;
 import org.openstreetmap.josm.actions.ParameterizedActionDecorator;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
@@ -69,6 +72,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
     public static class ActionDefinition {
         private final Action action;
+        private String name = "";
+        private String icon = "";
         private final Map<String, Object> parameters = new HashMap<String, Object>();
 
         public ActionDefinition(Action action) {
@@ -88,6 +93,27 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         public Action getAction() {
             return action;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+            action.putValue(AbstractAction.SHORT_DESCRIPTION, Main.platform.makeTooltip(name, null));
+            action.putValue(AbstractAction.NAME, name);
+        }
+
+        public String getIcon() {
+            return icon;
+        }
+
+        public void setIcon(String icon) {
+            this.icon = icon;
+            ImageIcon ico = ImageProvider.getIfAvailable("", icon);
+            if(ico != null)
+                action.putValue(AbstractAction.SMALL_ICON, ico);
         }
 
         public boolean isSeparator() {
@@ -134,7 +160,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             index = 0;
             this.s = actionName.toCharArray();
 
-            String name = readTillChar('(', '(');
+            String name = readTillChar('(', '{');
             Action action = actions.get(name);
 
             if (action == null)
@@ -151,7 +177,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     actionParams.put(param.getName(), param);
                 }
 
-                do {
+                while (index < s.length && s[index] != ')') {
                     String paramName = readTillChar('=', '=');
                     skip('=');
                     String paramValue = readTillChar(',',')');
@@ -162,7 +188,23 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                         }
                     }
                     skip(',');
-                } while (index < s.length && s[index] != ')');
+                }
+                skip(')');
+            }
+            if (action instanceof AdaptableAction) {
+                skip('{');
+
+                while (index < s.length && s[index] != '}') {
+                    String paramName = readTillChar('=', '=');
+                    skip('=');
+                    String paramValue = readTillChar(',','}');
+                    if ("icon".equals(paramName) && paramValue.length() > 0)
+                        result.setIcon(paramValue);
+                    else if("name".equals(paramName) && paramValue.length() > 0)
+                        result.setName(paramValue);
+                    skip(',');
+                }
+                skip('}');
             }
 
             return result;
@@ -171,7 +213,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         private void escape(String s) {
             for (int i=0; i<s.length(); i++) {
                 char ch = s.charAt(i);
-                if (ch == '\\' || ch == '(' || ch == ',' || ch == ')' || ch == '=') {
+                if (ch == '\\' || ch == '(' || ch == '{' || ch == ',' || ch == ')' || ch == '}' || ch == '=') {
                     result.append('\\');
                     result.append(ch);
                 } else {
@@ -203,6 +245,25 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     }
                 }
             }
+            if (action.getAction() instanceof AdaptableAction) {
+                boolean first = true;
+                String tmp = action.getName();
+                if(tmp.length() != 0) {
+                    result.append(first ? "{" : ",");
+                    result.append("name=");
+                    escape(tmp);
+                    first = false;
+                }
+                tmp = action.getIcon();
+                if(tmp.length() != 0) {
+                    result.append(first ? "{" : ",");
+                    result.append("icon=");
+                    escape(tmp);
+                    first = false;
+                }
+                if(!first)
+                    result.append('}');
+            }
 
             return result.toString();
         }
@@ -220,7 +281,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             if (currentAction.isSeparator() || !(currentAction.getAction() instanceof ParameterizedAction))
                 return 0;
             ParameterizedAction pa = (ParameterizedAction)currentAction.getAction();
-            return pa.getActionParameters().size();
+            return pa.getActionParameters().size()
+            + ((currentAction.getAction() instanceof ParameterizedAction) ? 2 : 0);
         }
 
         @SuppressWarnings("unchecked")
@@ -230,6 +292,20 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         }
 
         public Object getValueAt(int rowIndex, int columnIndex) {
+            if(currentAction.getAction() instanceof ParameterizedAction)
+            {
+                if (rowIndex < 2) {
+                    switch (columnIndex) {
+                    case 0:
+                        return rowIndex == 0 ? tr("Tooltip") : tr("Icon");
+                    case 1:
+                        return rowIndex == 0 ? currentAction.getName() : currentAction.getIcon();
+                    default:
+                        return null;
+                    }
+                } else
+                    rowIndex -= 2;
+            }
             ActionParameter<Object> param = getParam(rowIndex);
             switch (columnIndex) {
             case 0:
@@ -248,6 +324,17 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            if(currentAction.getAction() instanceof ParameterizedAction)
+            {
+                if (rowIndex == 0) {
+                     currentAction.setName((String)aValue);
+                     return;
+                } else if (rowIndex == 1) {
+                     currentAction.setIcon((String)aValue);
+                     return;
+                } else
+                    rowIndex -= 2;
+            }
             ActionParameter<Object> param = getParam(rowIndex);
             currentAction.getParameters().put(param.getName(), param.readFromString((String)aValue));
         }

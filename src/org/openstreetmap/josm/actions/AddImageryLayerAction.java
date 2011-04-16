@@ -10,7 +10,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 
-public class AddImageryLayerAction extends JosmAction {
+public class AddImageryLayerAction extends JosmAction implements AdaptableAction {
 
     private final ImageryInfo info;
 

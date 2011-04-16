@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.swing.Action;
 
-public interface ParameterizedAction extends Action {
+public interface ParameterizedAction extends AdaptableAction {
 
     List<ActionParameter<?>> getActionParameters();
     void actionPerformed(ActionEvent e, Map<String, Object> parameters);
