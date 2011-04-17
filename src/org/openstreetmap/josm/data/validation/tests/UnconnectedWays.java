@@ -70,8 +70,8 @@ public class UnconnectedWays extends Test {
         endnodes_highway = new HashSet<Node>();
         middlenodes = new HashSet<Node>();
         othernodes = new HashSet<Node>();
-        mindist = Main.pref.getDouble(PREFIX + ".node_way_distance", 10.0)/6378135.0;
-        minmiddledist = Main.pref.getDouble(PREFIX + ".way_way_distance", 0.0)/6378135.0;
+        mindist = Main.pref.getDouble(PREFIX + ".node_way_distance", 10.0);
+        minmiddledist = Main.pref.getDouble(PREFIX + ".way_way_distance", 0.0);
         this.ds = Main.main.getCurrentDataSet();
         this.ds_area = ds.getDataSourceArea();
     }
