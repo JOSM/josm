@@ -74,6 +74,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         private final Action action;
         private String name = "";
         private String icon = "";
+        private ImageIcon ico = null;
         private final Map<String, Object> parameters = new HashMap<String, Object>();
 
         public ActionDefinition(Action action) {
@@ -99,10 +100,27 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             return name;
         }
 
+        public String getDisplayName() {
+            return name.isEmpty() ? (String) action.getValue(Action.NAME) : name;
+        }
+
+        public String getDisplayTooltip() {
+            if(!name.isEmpty())
+                return name;
+
+            Object tt = action.getValue(TaggingPreset.OPTIONAL_TOOLTIP_TEXT);
+            if (tt != null)
+                return (String) tt;
+
+            return (String) action.getValue(Action.SHORT_DESCRIPTION);
+        }
+
+        public Icon getDisplayIcon() {
+            return ico != null ? ico : (Icon) action.getValue(Action.SMALL_ICON);
+        }
+
         public void setName(String name) {
             this.name = name;
-            action.putValue(AbstractAction.SHORT_DESCRIPTION, Main.platform.makeTooltip(name, null));
-            action.putValue(AbstractAction.NAME, name);
         }
 
         public String getIcon() {
@@ -111,9 +129,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         public void setIcon(String icon) {
             this.icon = icon;
-            ImageIcon ico = ImageProvider.getIfAvailable("", icon);
-            if(ico != null)
-                action.putValue(AbstractAction.SMALL_ICON, ico);
+            ico = ImageProvider.getIfAvailable("", icon);
         }
 
         public boolean isSeparator() {
@@ -278,11 +294,11 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         }
 
         public int getRowCount() {
+            int adaptable = ((currentAction.getAction() instanceof AdaptableAction) ? 2 : 0);
             if (currentAction.isSeparator() || !(currentAction.getAction() instanceof ParameterizedAction))
-                return 0;
+                return adaptable;
             ParameterizedAction pa = (ParameterizedAction)currentAction.getAction();
-            return pa.getActionParameters().size()
-            + ((currentAction.getAction() instanceof ParameterizedAction) ? 2 : 0);
+            return pa.getActionParameters().size() + adaptable;
         }
 
         @SuppressWarnings("unchecked")
@@ -292,7 +308,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         }
 
         public Object getValueAt(int rowIndex, int columnIndex) {
-            if(currentAction.getAction() instanceof ParameterizedAction)
+            if(currentAction.getAction() instanceof AdaptableAction)
             {
                 if (rowIndex < 2) {
                     switch (columnIndex) {
@@ -324,7 +340,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            if(currentAction.getAction() instanceof ParameterizedAction)
+            if(currentAction.getAction() instanceof AdaptableAction)
             {
                 if (rowIndex == 0) {
                      currentAction.setName((String)aValue);
@@ -502,8 +518,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     Icon i;
                     ActionDefinition action = (ActionDefinition)value;
                     if (!action.isSeparator()) {
-                        s = (String) action.getAction().getValue(Action.NAME);
-                        i = (Icon) action.getAction().getValue(Action.SMALL_ICON);
+                        s = action.getDisplayName();
+                        i = action.getDisplayIcon();
                     } else {
                         i = ImageProvider.get("preferences/separator");
                         s = tr("Separator");
@@ -798,7 +814,14 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         rootActionsNode.add(new DefaultMutableTreeNode(null));
     }
 
-    private static final String[] deftoolbar = {"open", "save", "download", "upload", "|", "undo", "redo", "|", "dialogs/search", "preference", "|", "splitway", "combineway", "wayflip", "|", "imagery-offset", "|", "tagginggroup_Highways/Streets", "tagginggroup_Highways/Ways", "tagginggroup_Highways/Waypoints", "tagginggroup_Highways/Barriers", "|", "tagginggroup_Transport/Car", "tagginggroup_Transport/Public Transport", "|", "tagginggroup_Travel/Tourism", "tagginggroup_Travel/Food+Drinks", "|", "tagginggroup_Travel/Historic Places", "|", "tagginggroup_Man-Made/Man Made"};
+    private static final String[] deftoolbar = {"open", "save", "download", "upload", "|",
+    "undo", "redo", "|", "dialogs/search", "preference", "|", "splitway", "combineway",
+    "wayflip", "|", "imagery-offset", "|", "tagginggroup_Highways/Streets",
+    "tagginggroup_Highways/Ways", "tagginggroup_Highways/Waypoints",
+    "tagginggroup_Highways/Barriers", "|", "tagginggroup_Transport/Car",
+    "tagginggroup_Transport/Public Transport", "|", "tagginggroup_Facilities/Tourism",
+    "tagginggroup_Facilities/Food+Drinks", "|", "tagginggroup_Man Made/Historic Places", "|",
+    "tagginggroup_Man Made/Man Made"};
 
     private static Collection<String> getToolString() {
 
@@ -825,6 +848,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 ActionDefinition a = actionParser.loadAction(s);
                 if(a != null) {
                     result.add(a);
+                } else {
+                    System.out.println("Could not load tool definition "+s);
                 }
             }
         }
@@ -853,12 +878,13 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             if (action.isSeparator()) {
                 control.addSeparator();
             } else {
-                Action a = action.getParametrizedAction();
-                JButton b = control.add(a);
-                Object tt = a.getValue(TaggingPreset.OPTIONAL_TOOLTIP_TEXT);
-                if (tt != null) {
-                    b.setToolTipText((String)tt);
-                }
+                JButton b = control.add(action.getParametrizedAction());
+                String tt = action.getDisplayTooltip();
+                if (tt != null && !tt.isEmpty())
+                    b.setToolTipText(tt);
+                Icon i = action.getDisplayIcon();
+                if (i != null)
+                    b.setIcon(i);
             }
         }
         control.setVisible(control.getComponentCount() != 0);
