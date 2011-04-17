@@ -88,8 +88,8 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
      * Constructor
      */
     public ValidatorDialog() {
-        super(tr("Validation errors"), "validator", tr("Open the validation window."),
-                Shortcut.registerShortcut("subwindow:validator", tr("Toggle: {0}", tr("Validation errors")),
+        super(tr("Validation results"), "validator", tr("Open the validation window."),
+                Shortcut.registerShortcut("subwindow:validator", tr("Toggle: {0}", tr("Validation results")),
                         KeyEvent.VK_V, Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
 
         popupMenu = new JPopupMenu();
@@ -116,12 +116,12 @@ public class ValidatorDialog extends ToggleDialog implements ActionListener, Sel
         selectButton.setEnabled(false);
         buttonPanel.add(selectButton);
         buttonPanel.add(new SideButton(Main.main.validator.validateAction), "refresh");
-        fixButton = new SideButton(marktr("Fix"), "fix", "Validator", tr("Fix the selected errors."), this);
+        fixButton = new SideButton(marktr("Fix"), "fix", "Validator", tr("Fix the selected issue."), this);
         fixButton.setEnabled(false);
         buttonPanel.add(fixButton);
         if (Main.pref.getBoolean(ValidatorPreference.PREF_USE_IGNORE, true)) {
             ignoreButton = new SideButton(marktr("Ignore"), "delete", "Validator",
-                    tr("Ignore the selected errors next time."), this);
+                    tr("Ignore the selected issue next time."), this);
             ignoreButton.setEnabled(false);
             buttonPanel.add(ignoreButton);
         } else {

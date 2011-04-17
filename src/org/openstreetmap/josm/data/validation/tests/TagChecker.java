@@ -398,7 +398,7 @@ public class TagChecker extends Test
                 }
 
                 if (!ignore) {
-                    errors.add( new TestError(this, Severity.ERROR, tr("Suspicious tag/value combinations"),
+                    errors.add( new TestError(this, Severity.OTHER, tr("Suspicious tag/value combinations"),
                             tr("Suspicious tag/value combinations"), tr("Suspicious tag/value combinations"), 1272, p) );
                     withErrors.put(p, "TC");
                 }
