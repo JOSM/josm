@@ -132,6 +132,13 @@ public class ExceptionUtil {
         e.printStackTrace();
         String header = e.getErrorHeader();
         String body = e.getErrorBody();
+        if (body.equals("Your access to the API is temporarily suspended. Please log-in to the web interface to view the Contributor Terms. You do not need to agree, but you must view them.")) {
+            return tr("<html>"
+                    +"Your access to the API is temporarily suspended.<br>"
+                    + "Please log-in to the web interface to view the Contributor Terms.<br>"
+                    + "You do not need to agree, but you must view them."
+                    + "</html>");
+        }
         String msg = null;
         if (header != null) {
             if (body != null && !header.equals(body)) {
