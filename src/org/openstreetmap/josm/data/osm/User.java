@@ -187,6 +187,7 @@ public class User {
         if (relicensingUsers == null) return STATUS_UNKNOWN;
         Long id = new Long(uid);
         if (relicensingUsers.contains(id)) return STATUS_AGREED;
+        if (nonRelicensingUsers == null) return STATUS_UNKNOWN;
         if (nonRelicensingUsers.contains(id)) return STATUS_NOT_AGREED;
         return STATUS_UNKNOWN;
     }
