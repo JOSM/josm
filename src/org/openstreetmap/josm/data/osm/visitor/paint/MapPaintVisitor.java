@@ -35,84 +35,122 @@ public class MapPaintVisitor implements PaintVisitor {
     private double circum;
     private MapPainter painter;
     private MapPaintSettings paintSettings;
-    private DataSet data;
 
+    private static int FLAG_NORMAL = 0;
+    private static int FLAG_DISABLED = 1;
+    private static int FLAG_SELECTED = 2;
+    private static int FLAG_MEMBER_OF_SELECTED = 4;
+
+    private static class StyleRecord implements Comparable<StyleRecord> {
+        final ElemStyle style;
+        final OsmPrimitive osm;
+        final int flags;
+
+        public StyleRecord(ElemStyle style, OsmPrimitive osm, int flags) {
+            this.style = style;
+            this.osm = osm;
+            this.flags = flags;
+        }
+
+        @Override
+        public int compareTo(StyleRecord other) {
+            if ((this.flags & FLAG_DISABLED) != 0 && (other.flags & FLAG_DISABLED) == 0)
+                return -1;
+            if ((this.flags & FLAG_DISABLED) == 0 && (other.flags & FLAG_DISABLED) != 0)
+                return 1;
+            float z_index1 = this.style.z_index;
+            if ((this.flags & FLAG_SELECTED) != 0) {
+                z_index1 += 700f;
+            } else if ((this.flags & FLAG_MEMBER_OF_SELECTED) != 0) {
+                z_index1 += 600f;
+            }
+            float z_index2 = other.style.z_index;
+            if ((other.flags & FLAG_SELECTED) != 0) {
+                z_index2 += 700f;
+            } else if ((other.flags & FLAG_MEMBER_OF_SELECTED) != 0) {
+                z_index2 += 600f;
+            }
+            
+            int d1 = Float.compare(z_index1, z_index2);
+            if (d1 != 0)
+                return d1;
+            
+            // simple node on top of icons and shapes
+            if (this.style == NodeElemStyle.SIMPLE_NODE_ELEMSTYLE && other.style != NodeElemStyle.SIMPLE_NODE_ELEMSTYLE)
+                return 1;
+            if (this.style != NodeElemStyle.SIMPLE_NODE_ELEMSTYLE && other.style == NodeElemStyle.SIMPLE_NODE_ELEMSTYLE)
+                return -1;
+            
+            // newer primitives to the front
+            long id = this.osm.getUniqueId() - other.osm.getUniqueId();
+            if (id > 0)
+                return 1;
+            if (id < 0)
+                return -1;
+            
+            return Float.compare(this.style.object_z_index, other.style.object_z_index);
+        }
+    }
+    
     private class StyleCollector {
         private final boolean drawArea;
         private final boolean drawMultipolygon;
         private final boolean drawRestriction;
-        private final boolean memberSelected;
 
-        private final List<Pair<ElemStyle, OsmPrimitive>> styleElems;
+        private final List<StyleRecord> styleElems;
 
-        public StyleCollector(boolean drawArea, boolean drawMultipolygon, boolean drawRestriction, boolean memberSelected) {
+        public StyleCollector(boolean drawArea, boolean drawMultipolygon, boolean drawRestriction) {
             this.drawArea = drawArea;
             this.drawMultipolygon = drawMultipolygon;
             this.drawRestriction = drawRestriction;
-            this.memberSelected = memberSelected;
-            styleElems = new ArrayList<Pair<ElemStyle, OsmPrimitive>>();
+            styleElems = new ArrayList<StyleRecord>();
         }
 
-        public void add(Node osm) {
+        public void add(Node osm, int flags) {
             StyleList sl = styles.get(osm, circum, nc);
             for (ElemStyle s : sl) {
-                styleElems.add(new Pair<ElemStyle, OsmPrimitive>(s, osm));
+                styleElems.add(new StyleRecord(s, osm, flags));
             }
         }
 
-        public void add(Way osm) {
+        public void add(Way osm, int flags) {
             StyleList sl = styles.get(osm, circum, nc);
             for (ElemStyle s : sl) {
-                if (!drawArea && s instanceof AreaElemStyle) {
+                if (!(drawArea && (flags & FLAG_DISABLED) == 0) && s instanceof AreaElemStyle) {
                     continue;
                 }
-                styleElems.add(new Pair<ElemStyle, OsmPrimitive>(s, osm));
+                styleElems.add(new StyleRecord(s, osm, flags));
             }
         }
 
-        public void add(Relation osm) {
+        public void add(Relation osm, int flags) {
             StyleList sl = styles.get(osm, circum, nc);
             for (ElemStyle s : sl) {
-                if (drawMultipolygon && drawArea && s instanceof AreaElemStyle) {
-                    styleElems.add(new Pair<ElemStyle, OsmPrimitive>(s, osm));
+                if (drawMultipolygon && drawArea && s instanceof AreaElemStyle && (flags & FLAG_DISABLED) == 0) {
+                    styleElems.add(new StyleRecord(s, osm, flags));
                 } else if (drawRestriction && s instanceof NodeElemStyle) {
-                    styleElems.add(new Pair<ElemStyle, OsmPrimitive>(s, osm));
+                    styleElems.add(new StyleRecord(s, osm, flags));
                 }
             }
         }
 
         public void drawAll() {
-            Collections.sort(styleElems, STYLE_COMPARATOR);
-            for (Pair<ElemStyle, OsmPrimitive> p : styleElems) {
-                p.a.paintPrimitive(p.b, paintSettings, painter, data.isSelected(p.b), memberSelected);
+            Collections.sort(styleElems);
+            for (StyleRecord r : styleElems) {
+                r.style.paintPrimitive(
+                        r.osm, 
+                        paintSettings, 
+                        painter, 
+                        (r.flags & FLAG_SELECTED) != 0, 
+                        (r.flags & FLAG_MEMBER_OF_SELECTED) != 0
+                );
             }
         }
     }
 
-    private final static Comparator<Pair<ElemStyle, OsmPrimitive>> STYLE_COMPARATOR = new Comparator<Pair<ElemStyle, OsmPrimitive>>() {
-        @Override
-        public int compare(Pair<ElemStyle, OsmPrimitive> p1, Pair<ElemStyle, OsmPrimitive> p2) {
-            int d1 = Float.compare(p1.a.z_index, p2.a.z_index);
-            if (d1 != 0)
-                return d1;
-            if (p1.a == NodeElemStyle.SIMPLE_NODE_ELEMSTYLE && p2.a != NodeElemStyle.SIMPLE_NODE_ELEMSTYLE)
-                return 1;
-            if (p1.a != NodeElemStyle.SIMPLE_NODE_ELEMSTYLE && p2.a == NodeElemStyle.SIMPLE_NODE_ELEMSTYLE)
-                return -1;
-            // newer primitives to the front
-            long id = p1.b.getUniqueId() - p2.b.getUniqueId();
-            if (id > 0)
-                return 1;
-            if (id < 0)
-                return -1;
-            return Float.compare(p1.a.object_z_index, p2.a.object_z_index);
-        }
-    };
-
     public void visitAll(final DataSet data, boolean virtual, Bounds bounds) {
         //long start = System.currentTimeMillis();
         BBox bbox = new BBox(bounds);
-        this.data = data;
 
         styles = MapPaintStyles.getStyles();
 
@@ -131,59 +169,50 @@ public class MapPaintVisitor implements PaintVisitor {
 
         this.painter = new MapPainter(paintSettings, g, inactive, nc, virtual, circum, leftHandTraffic);
 
-        StyleCollector scDisabledPrimitives = new StyleCollector(false, false, drawRestriction, false);
-        StyleCollector scSelectedPrimitives = new StyleCollector(drawArea, drawMultipolygon, drawRestriction, false);
-        StyleCollector scMemberPrimitives = new StyleCollector(drawArea, drawMultipolygon, drawRestriction, true);
-        StyleCollector scNormalPrimitives = new StyleCollector(drawArea, drawMultipolygon, drawRestriction, false);
+        StyleCollector sc = new StyleCollector(drawArea, drawMultipolygon, drawRestriction);
 
         for (final Node n: data.searchNodes(bbox)) {
             if (n.isDrawable()) {
                 if (n.isDisabled()) {
-                    scDisabledPrimitives.add(n);
-                } else if (n.isSelected()) {
-                    scSelectedPrimitives.add(n);
+                    sc.add(n, FLAG_DISABLED);
+                } else if (data.isSelected(n)) {
+                    sc.add(n, FLAG_SELECTED);
                 } else if (n.isMemberOfSelected()) {
-                    scMemberPrimitives.add(n);
+                    sc.add(n, FLAG_MEMBER_OF_SELECTED);
                 } else {
-                    scNormalPrimitives.add(n);
+                    sc.add(n, FLAG_NORMAL);
                 }
             }
         }
         for (final Way w : data.searchWays(bbox)) {
             if (w.isDrawable()) {
                 if (w.isDisabled()) {
-                    scDisabledPrimitives.add(w);
-                } else if (w.isSelected()) {
-                    scSelectedPrimitives.add(w);
+                    sc.add(w, FLAG_DISABLED);
+                } else if (data.isSelected(w)) {
+                    sc.add(w, FLAG_SELECTED);
                 } else if (w.isMemberOfSelected()) {
-                    scMemberPrimitives.add(w);
+                    sc.add(w, FLAG_MEMBER_OF_SELECTED);
                 } else {
-                    scNormalPrimitives.add(w);
+                    sc.add(w, FLAG_NORMAL);
                 }
             }
         }
         for (Relation r: data.searchRelations(bbox)) {
             if (r.isDrawable()) {
                 if (r.isDisabled()) {
-                    scDisabledPrimitives.add(r);
-                } else if (r.isSelected()) {
-                    scSelectedPrimitives.add(r);
+                    sc.add(r, FLAG_DISABLED);
+                } else if (data.isSelected(r)) {
+                    sc.add(r, FLAG_SELECTED);
                 } else {
-                    scNormalPrimitives.add(r);
+                    sc.add(r, FLAG_NORMAL);
                 }
             }
         }
 
         //long phase1 = System.currentTimeMillis();
 
-        scDisabledPrimitives.drawAll();
-        scDisabledPrimitives = null;
-        scNormalPrimitives.drawAll();
-        scNormalPrimitives = null;
-        scMemberPrimitives.drawAll();
-        scMemberPrimitives = null;
-        scSelectedPrimitives.drawAll();
-        scSelectedPrimitives = null;
+        sc.drawAll();
+        sc = null;
 
         painter.drawVirtualNodes(data.searchWays(bbox));
         

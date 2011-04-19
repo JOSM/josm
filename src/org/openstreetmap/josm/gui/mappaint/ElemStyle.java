@@ -32,6 +32,14 @@ abstract public class ElemStyle {
         isModifier = c.get("modifier", false, Boolean.class);
     }
 
+    /**
+     * draws a primitive
+     * @param primitive
+     * @param paintSettings
+     * @param painter
+     * @param selected true, if primitive is selected
+     * @param member true, if primitive is not selected and member of a selected relation
+     */
     public abstract void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, MapPainter painter, boolean selected, boolean member);
 
     public boolean isProperLineStyle() {
