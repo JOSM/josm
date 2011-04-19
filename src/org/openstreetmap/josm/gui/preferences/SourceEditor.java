@@ -1221,6 +1221,8 @@ public abstract class SourceEditor extends JPanel {
         }
 
         private String fromSourceEntry(SourceEntry entry) {
+            if (entry == null)
+                return null;
             StringBuilder s = new StringBuilder("<html><b>");
             if (entry.title != null) {
                 s.append(entry.title).append("</b> (");
