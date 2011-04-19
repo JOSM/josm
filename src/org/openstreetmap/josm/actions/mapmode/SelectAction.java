@@ -162,6 +162,11 @@ public class SelectAction extends MapMode implements SelectionEnded {
             startingDraggingPos = new Point(e.getX(), e.getY());
         }
 
+        if( lastMousePos == null ) {
+            lastMousePos = e.getPoint();
+            return;
+        }
+
         if (!initialMoveThresholdExceeded) {
             int dxp = lastMousePos.x - e.getX();
             int dyp = lastMousePos.y - e.getY();
