@@ -155,46 +155,51 @@ public class MapPainter {
 
                     /* draw arrow */
                     if (showHeadArrowOnly ? !it.hasNext() : showOrientation) {
-                        final double l =  (10. + line.getLineWidth()) / p1.distance(p2);
+                        final double segmentLength = p1.distance(p2);
+                        if (segmentLength != 0.0) {
+                            final double l =  (10. + line.getLineWidth()) / segmentLength;
 
-                        final double sx = l * (p1.x - p2.x);
-                        final double sy = l * (p1.y - p2.y);
+                            final double sx = l * (p1.x - p2.x);
+                            final double sy = l * (p1.y - p2.y);
 
-                        orientationArrows.moveTo(p2.x, p2.y);
-                        orientationArrows.lineTo (p2.x + cosPHI * sx - sinPHI * sy, p2.y + sinPHI * sx + cosPHI * sy);
-                        orientationArrows.moveTo (p2.x + cosPHI * sx + sinPHI * sy, p2.y - sinPHI * sx + cosPHI * sy);
-                        orientationArrows.lineTo(p2.x, p2.y);
+                            double tmp = p2.x + cosPHI * sx - sinPHI * sy;
+                            orientationArrows.moveTo (p2.x + cosPHI * sx - sinPHI * sy, p2.y + sinPHI * sx + cosPHI * sy);
+                            orientationArrows.lineTo(p2.x, p2.y);
+                            orientationArrows.lineTo (p2.x + cosPHI * sx + sinPHI * sy, p2.y - sinPHI * sx + cosPHI * sy);
+                        }
                     }
                     if (showOneway) {
                         final double segmentLength = p1.distance(p2);
-                        final double nx = (p2.x - p1.x) / segmentLength;
-                        final double ny = (p2.y - p1.y) / segmentLength;
+                        if (segmentLength != 0.0) {
+                            final double nx = (p2.x - p1.x) / segmentLength;
+                            final double ny = (p2.y - p1.y) / segmentLength;
 
-                        final double interval = 60;
-                        // distance from p1
-                        double dist = interval - (wayLength % interval);
+                            final double interval = 60;
+                            // distance from p1
+                            double dist = interval - (wayLength % interval);
 
-                        while (dist < segmentLength) {
-                            for (Pair<Float, GeneralPath> sizeAndPath : Arrays.asList(new Pair[] {
-                                    new Pair<Float, GeneralPath>(3f, onewayArrowsCasing),
-                                    new Pair<Float, GeneralPath>(2f, onewayArrows)})) {
+                            while (dist < segmentLength) {
+                                for (Pair<Float, GeneralPath> sizeAndPath : Arrays.asList(new Pair[] {
+                                        new Pair<Float, GeneralPath>(3f, onewayArrowsCasing),
+                                        new Pair<Float, GeneralPath>(2f, onewayArrows)})) {
 
-                                // scale such that border is 1 px
-                                final double fac = - (onewayReversed ? -1 : 1) * sizeAndPath.a * (1 + sinPHI) / (sinPHI * cosPHI);
-                                final double sx = nx * fac;
-                                final double sy = ny * fac;
+                                    // scale such that border is 1 px
+                                    final double fac = - (onewayReversed ? -1 : 1) * sizeAndPath.a * (1 + sinPHI) / (sinPHI * cosPHI);
+                                    final double sx = nx * fac;
+                                    final double sy = ny * fac;
 
-                                // Attach the triangle at the incenter and not at the tip.
-                                // Makes the border even at all sides.
-                                final double x = p1.x + nx * (dist + (onewayReversed ? -1 : 1) * (sizeAndPath.a / sinPHI));
-                                final double y = p1.y + ny * (dist + (onewayReversed ? -1 : 1) * (sizeAndPath.a / sinPHI));
+                                    // Attach the triangle at the incenter and not at the tip.
+                                    // Makes the border even at all sides.
+                                    final double x = p1.x + nx * (dist + (onewayReversed ? -1 : 1) * (sizeAndPath.a / sinPHI));
+                                    final double y = p1.y + ny * (dist + (onewayReversed ? -1 : 1) * (sizeAndPath.a / sinPHI));
 
-                                sizeAndPath.b.moveTo(x, y);
-                                sizeAndPath.b.lineTo (x + cosPHI * sx - sinPHI * sy, y + sinPHI * sx + cosPHI * sy);
-                                sizeAndPath.b.lineTo (x + cosPHI * sx + sinPHI * sy, y - sinPHI * sx + cosPHI * sy);
-                                sizeAndPath.b.lineTo(x, y);
+                                    sizeAndPath.b.moveTo(x, y);
+                                    sizeAndPath.b.lineTo (x + cosPHI * sx - sinPHI * sy, y + sinPHI * sx + cosPHI * sy);
+                                    sizeAndPath.b.lineTo (x + cosPHI * sx + sinPHI * sy, y - sinPHI * sx + cosPHI * sy);
+                                    sizeAndPath.b.lineTo(x, y);
+                                }
+                                dist += interval;
                             }
-                            dist += interval;
                         }
                         wayLength += segmentLength;
                     }
