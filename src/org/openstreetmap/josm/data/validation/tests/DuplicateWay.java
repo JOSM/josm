@@ -33,7 +33,7 @@ import org.openstreetmap.josm.tools.MultiMap;
 public class DuplicateWay extends Test
 {
 
-    private static class WayPair {
+    private class WayPair {
         public List<LatLon> coor;
         public Map<String, String> keys;
         public WayPair(List<LatLon> _coor, Map<String, String> _keys) {
@@ -55,17 +55,38 @@ public class DuplicateWay extends Test
         }
     }
 
+    private class WayPairNoTags {
+        public List<LatLon> coor;
+        public WayPairNoTags(List<LatLon> _coor) {
+            coor=_coor;
+        }
+        @Override
+        public int hashCode() {
+            return coor.hashCode();
+        }
+        @Override
+        public boolean equals(Object obj) {
+            if (!(obj instanceof WayPairNoTags)) return false;
+            WayPairNoTags wp = (WayPairNoTags) obj;
+            return wp.coor.equals(coor);
+        }
+    }
+
     protected static int DUPLICATE_WAY = 1401;
+    protected static int SAME_WAY = 1402;
 
     /** Bag of all ways */
     MultiMap<WayPair, OsmPrimitive> ways;
+
+    /** Bag of all ways, regardless of tags */
+    MultiMap<WayPairNoTags, OsmPrimitive> waysNoTags;
 
     /**
      * Constructor
      */
     public DuplicateWay() {
         super(tr("Duplicated ways."),
-                tr("This test checks that there are no ways with same tags and same node coordinates."));
+              tr("This test checks that there are no ways with same node coordinates and optionally also same tags."));
     }
 
 
@@ -73,6 +94,7 @@ public class DuplicateWay extends Test
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
         ways = new MultiMap<WayPair, OsmPrimitive>(1000);
+        waysNoTags = new MultiMap<WayPairNoTags, OsmPrimitive>(1000);
     }
 
     @Override
@@ -84,7 +106,40 @@ public class DuplicateWay extends Test
                 errors.add(testError);
             }
         }
+
+        for(Set<OsmPrimitive> sameway : waysNoTags.values()) {
+            if( sameway.size() > 1) {
+                //Report error only if at least some tags are different, as otherwise the error was already reported as duplicated ways
+                Map<String, String> tags0=null;
+                boolean skip=true;
+
+                for(OsmPrimitive o : sameway) {
+                    if (tags0==null) {
+                        tags0=o.getKeys();
+                        removeUninterestingKeys(tags0);
+                    } else {
+                        Map<String, String> tagsCmp=o.getKeys();
+                        removeUninterestingKeys(tagsCmp);
+                        if (!tagsCmp.equals(tags0)) {
+                            skip=false;
+                            break;
+                        }
+                    }
+                }
+                if (skip) continue;
+                TestError testError = new TestError(this, Severity.WARNING, tr("Ways with same position"), SAME_WAY, sameway);
+                errors.add(testError);
+            }
+        }
         ways = null;
+        waysNoTags = null;
+    }
+
+    /**
+     * Remove uninteresting keys, like created_by to normalize the tags 
+     */
+    public void removeUninterestingKeys(Map<String, String> wkeys) {
+        wkeys.remove("created_by");
     }
 
     @Override
@@ -97,9 +152,11 @@ public class DuplicateWay extends Test
             wLat.add(wNodes.get(i).getCoor());
         }
         Map<String, String> wkeys = w.getKeys();
-        wkeys.remove("created_by");
+        removeUninterestingKeys(wkeys);
         WayPair wKey = new WayPair(wLat, wkeys);
         ways.put(wKey, w);
+        WayPairNoTags wKeyN = new WayPairNoTags(wLat);
+        waysNoTags.put(wKeyN, w);
     }
 
     /**
@@ -172,6 +229,9 @@ public class DuplicateWay extends Test
     public boolean isFixable(TestError testError) {
         if (!(testError.getTester() instanceof DuplicateWay))
             return false;
+
+        //Do not automatically fix same ways with different tags
+        if (testError.getCode()!=DUPLICATE_WAY) return false;
 
         // We fix it only if there is no more than one way that is relation member.
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();

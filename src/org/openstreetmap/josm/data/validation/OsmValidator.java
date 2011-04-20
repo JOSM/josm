@@ -30,6 +30,7 @@ import org.openstreetmap.josm.data.validation.tests.Coastlines;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays;
 import org.openstreetmap.josm.data.validation.tests.DuplicateNode;
 import org.openstreetmap.josm.data.validation.tests.DuplicateWay;
+import org.openstreetmap.josm.data.validation.tests.DuplicateRelation;
 import org.openstreetmap.josm.data.validation.tests.DuplicatedWayNodes;
 import org.openstreetmap.josm.data.validation.tests.MultipolygonTest;
 import org.openstreetmap.josm.data.validation.tests.NameMismatch;
@@ -94,6 +95,7 @@ public class OsmValidator implements LayerChangeListener {
             MultipolygonTest.class, // ID  1601 ..  1699
             RelationChecker.class, // ID  1701 ..  1799
             TurnrestrictionTest.class, // ID  1801 ..  1899
+            DuplicateRelation.class, // ID 1901 .. 1999
     };
 
     public OsmValidator() {
