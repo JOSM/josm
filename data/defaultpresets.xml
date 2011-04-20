@@ -431,23 +431,30 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
             <check key="toll" text="Toll" default="off" delete_if_empty="true"  />
             <check key="noexit" text="No exit (cul-de-sac)" default="off" delete_if_empty="true"  />
-            <combo key="access" text="Access" values="yes,private,destination,permissive,agricultural,forestry,delivery,unknown,no" default="" delete_if_empty="true" />
-            <combo key="agricultural" text="Agricultural" values="yes,designated,destination,permissive,delivery,unknown,no" default="" delete_if_empty="true" />
-            <combo key="bicycle" text="Bicycle" values="yes,private,designated,official,destination,permissive,unknown,no" default="" delete_if_empty="true"  />
-            <combo key="foot" text="Foot" values="yes,private,designated,official,destination,permissive,unknown,no" default="" delete_if_empty="true" />
-            <combo key="goods" text="Goods" values="yes,private,designated,official,destination,permissive,agricultural,forestry,delivery,unknown,no" default="" delete_if_empty="true" />
-            <combo key="hgv" text="Heavy Goods Vehicles (hgv)" values="yes,private,designated,official,destination,permissive,agricultural,forestry,delivery,unknown,no" default="" delete_if_empty="true" />
-            <combo key="horse" text="Horse" values="yes,private,designated,official,permissive,unknown,no" default="" delete_if_empty="true" />
-            <combo key="motorcycle" text="Motorcycle" values="yes,private,designated,destination,official,permissive,agricultural,forestry,delivery,unknown,no" default="" delete_if_empty="true" />
-            <combo key="motorcar" text="Motorcar" values="yes,private,designated,official,destination,permissive,agricultural,forestry,delivery,unknown,no" default="" delete_if_empty="true" />
-            <combo key="psv" text="Public Service Vehicles (psv)"   values="yes,private,designated,official,destination,permissive,unknown,no" default="" delete_if_empty="true" />
+            <label text="Transport mode restrictions" />
+            <combo key="access" text="General Access" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" default="" delete_if_empty="true" />
+            <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,no" default="" delete_if_empty="true" />
+            <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" default="" delete_if_empty="true" />
+            <label text="Vehicles per type" />
+            <combo key="vehicle" text="All vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" default="" delete_if_empty="true"  />
+            <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,no" default="" delete_if_empty="true"  />
+            <combo key="motor_vehicle" text="Motor vehicles" values="yes,destination,delivery,permissive,private,agricultural,forestry,no" default="" delete_if_empty="true"  />
+            <combo key="motorcycle" text="Motorcycle" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" default="" delete_if_empty="true" />
+            <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" default="" delete_if_empty="true" />
+            <combo key="goods" text="Light Commercial Vehicles (goods)" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" default="" delete_if_empty="true" />
+            <combo key="hgv" text="Heavy Goods Vehicles (hgv)" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" default="" delete_if_empty="true" />
+            <label text="Vehicles per use" />
+            <combo key="agricultural" text="Agricultural" values="yes,official,designated,destination,permissive,private,no" default="" delete_if_empty="true" />
+            <combo key="emergency" text="Emergency vehicles"  values="yes,official,designated,destination,permissive,private,no" default="" delete_if_empty="true" />
+            <combo key="hov" text="High-occupancy vehicles (hov)"  values="yes,official,designated,destination,permissive,private,no" default="" delete_if_empty="true" />
+            <combo key="psv" text="Public Service Vehicles (psv)"   values="yes,official,designated,destination,permissive,private,no" default="" delete_if_empty="true" />
             <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
             <text key="minspeed" text="Min. speed (km/h)" default="" delete_if_empty="true" />
             <text key="maxweight" text="Max. weight (tonnes)" default="" delete_if_empty="true" />
             <text key="maxaxleload" text="Max. axleload (tonnes)" default="" delete_if_empty="true" />
-            <text key="maxheight" text="Max. Height (meters)" default="" delete_if_empty="true" />
-            <text key="maxwidth" text="Max. Width (meters)" default="" delete_if_empty="true" />
-            <text key="maxlength" text="Max. Length (meters)" default="" delete_if_empty="true" />
+            <text key="maxheight" text="Max. height (meters)" default="" delete_if_empty="true" />
+            <text key="maxwidth" text="Max. width (meters)" default="" delete_if_empty="true" />
+            <text key="maxlength" text="Max. length (meters)" default="" delete_if_empty="true" />
         </item>
         <separator/>
         <item name="Roundabout" icon="presets/roundabout.png" type="closedway">
@@ -521,9 +528,10 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
-                <combo key="access" text="Access" values="yes,private,designated,official,destination,permissive,agricultural,forestry,delivery,unknown,no" default="" delete_if_empty="true" />
-                <combo key="motorcycle" text="Motorcycle" values="yes,private,designated,official,destination,permissive,agricultural,forestry,delivery,unknown,no" default="" delete_if_empty="true" />
-                <combo key="motorcar" text="Motorcar" values="yes,private,designated,official,destination,permissive,agricultural,forestry,delivery,unknown,no" default="" delete_if_empty="true" />
+                <combo key="access" text="General access" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" default="" delete_if_empty="true" />
+                <combo key="motor_vehicle" text="Motor vehicles" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" default="" delete_if_empty="true" />
+                <combo key="motorcycle" text="Motorcycle" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" default="" delete_if_empty="true" />
+                <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
         </item>
@@ -543,8 +551,8 @@ are supplied, then "values" will be treated as "display_values" and translated i
                     <short_description>single plainly climbing up to second grade. Exposed, demanding terrain, jagged rocks, few dangerous glacier and snow</short_description>
                     <short_description>climbing up to second grade. Often very exposed, precarious jagged rocks, glacier with danger to slip and fall</short_description>
                 </combo>
-                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <combo key="mtb:scale" text="MTB Scale" values="0,1,2,3,4,5" default="" delete_if_empty="true" />
+                <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
                 <combo key="trail_visibility" text="Visibility" values="excellent,good,intermediate,bad,horrible,no" default="" delete_if_empty="true" />
                 <check key="bridge" text="Bridge" default="off" delete_if_empty="true" />
                 <check key="tunnel" text="Tunnel" default="off" delete_if_empty="true" />
@@ -552,12 +560,12 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="embankment" text="Embankment" default="off" delete_if_empty="true" />
                 <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <check key="oneway" text="Oneway" default="off" delete_if_empty="true" />
-                <combo key="foot" text="Foot" values="yes,designated,official,no" default="" delete_if_empty="true" />
-                <combo key="bicycle" text="Bicycle" values="yes,designated,official,no" default="" delete_if_empty="true" />
-                <combo key="horse" text="Horse" values="yes,designated,official,no" default="" delete_if_empty="true" />
-                <combo key="wheelchair" text="Wheelchairs" values="unknown,yes,no" default="" delete_if_empty="true" />
-                <combo key="ski" text="Ski" values="yes,designated,official,no" default="" delete_if_empty="true" />
-                <combo key="snowmobile" text="Snowmobile" values="yes,designated,official,no" default="" delete_if_empty="true" />
+                <combo key="foot" text="Foot" values="yes,official,designated,permissive,destination,delivery,private,no" default="" delete_if_empty="true" />
+                <combo key="bicycle" text="Bicycle" values="yes,official,designated,permissive,destination,delivery,private,no" default="" delete_if_empty="true" />
+                <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" default="" delete_if_empty="true" />
+                <combo key="wheelchair" text="Wheelchairs" values="unknown,yes,official,no" default="" delete_if_empty="true" />
+                <combo key="ski" text="Ski" values="yes,official,designated,permissive,private,no" default="" delete_if_empty="true" />
+                <combo key="snowmobile" text="Snowmobile" values="yes,official,designated,permissive,destination,delivery,private,no" default="" delete_if_empty="true" />
                 <!-- <combo key="motorcar" text="Motorcar" values="yes,designated,no" default="no" delete_if_empty="true" /> -->
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
