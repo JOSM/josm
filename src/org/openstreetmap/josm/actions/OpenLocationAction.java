@@ -36,6 +36,7 @@ public class OpenLocationAction extends JosmAction {
      * Create an open action. The name is "Open a file".
      */
     public OpenLocationAction() {
+        /* I18N: Command to download a specific location/URL */
         super(tr("Open Location..."), "openlocation", tr("Open an URL."),
                 Shortcut.registerShortcut("system:open_location", tr("File: {0}", tr("Open Location...")), KeyEvent.VK_L, Shortcut.GROUP_MENU), true);
         putValue("help", ht("/Action/OpenLocation"));

@@ -36,7 +36,7 @@ public class DownloadPrimitiveAction extends JosmAction {
 
     public DownloadPrimitiveAction() {
         super(tr("Download object..."), "downloadprimitive", tr("Download OSM object by ID."),
-                Shortcut.registerShortcut("system:download_primitive", tr("File: {0}", tr("Download Object...")), KeyEvent.VK_O, Shortcut.GROUP_MENU + Shortcut.GROUPS_ALT1), true);
+                Shortcut.registerShortcut("system:download_primitive", tr("File: {0}", tr("Download object...")), KeyEvent.VK_O, Shortcut.GROUP_MENU + Shortcut.GROUPS_ALT1), true);
         putValue("help", ht("/Action/DownloadObject"));
     }
 
@@ -75,7 +75,7 @@ public class DownloadPrimitiveAction extends JosmAction {
         gc.gridy = 3;
         all.add(layer, gc);
         ExtendedDialog dialog = new ExtendedDialog(Main.parent,
-                tr("Download Object"),
+                tr("Download object"),
                 new String[] {tr("Download object"), tr("Cancel")}
         );
         dialog.setContent(all, false);

@@ -1435,6 +1435,7 @@ public class JoinAreasAction extends JosmAction {
         for (Way w : ways) {
             stripTags(w);
         }
+        /* I18N: current action printed in status display */
         commitCommands(marktr("Remove tags from inner ways"));
     }
 

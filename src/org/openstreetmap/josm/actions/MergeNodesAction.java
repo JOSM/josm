@@ -67,7 +67,7 @@ public class MergeNodesAction extends JosmAction {
             if (nearestNodes.isEmpty()) {
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        tr("Please select at least two nodes to merge or node that is close to another node."),
+                        tr("Please select at least two nodes to merge or a node that is close to another node."),
                         tr("Warning"),
                         JOptionPane.WARNING_MESSAGE
                 );

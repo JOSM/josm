@@ -109,6 +109,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
             if (conflicts != null && !conflicts.isEmpty()) {
                 ExtendedDialog dialog = new ExtendedDialog(
                         Main.parent,
+                        /* I18N: Display title of the window showing conflicts */
                         tr("Conflicts"),
                         new String[] {tr("Reject Conflicts and Save"), tr("Cancel")}
                 );
