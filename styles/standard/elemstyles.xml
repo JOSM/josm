@@ -460,9 +460,15 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 
-		<rule>
+	<rule>
 		<condition k="highway" v="tertiary"/>
 		<line width="2" realwidth="5" colour="tertiary#f7f496"/>
+		<icon annotate="true" src="misc/deprecated.png"/>
+	</rule>
+
+	<rule>
+		<condition k="highway" v="tertiary_link"/>
+		<line width="2" realwidth="4" colour="tertiary#f7f496"/>
 		<icon annotate="true" src="misc/deprecated.png"/>
 	</rule>
 
