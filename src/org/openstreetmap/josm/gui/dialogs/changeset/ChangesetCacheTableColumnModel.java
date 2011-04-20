@@ -18,7 +18,7 @@ public class ChangesetCacheTableColumnModel extends DefaultTableColumnModel {
 
         // column 0 - Id
         col = new TableColumn(0);
-        col.setHeaderValue("ID");
+        col.setHeaderValue(tr("ID"));
         col.setResizable(true);
         col.setWidth(20);
         col.setPreferredWidth(20);

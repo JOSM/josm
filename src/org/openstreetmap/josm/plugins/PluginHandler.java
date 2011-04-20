@@ -26,8 +26,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -49,9 +49,9 @@ import javax.swing.UIManager;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
@@ -476,13 +476,14 @@ public class PluginHandler {
             e.printStackTrace();
             if (e.getCause() instanceof ClassNotFoundException) {
                 msg = tr("<html>Could not load plugin {0} because the plugin<br>main class ''{1}'' was not found.<br>"
-                        + "Delete from preferences?", plugin.name, plugin.className);
+                        + "Delete from preferences?</html>", plugin.name, plugin.className);
             }
         }  catch (Throwable e) {
             e.printStackTrace();
         }
-        if(msg != null && confirmDisablePlugin(parent, msg, plugin.name))
+        if(msg != null && confirmDisablePlugin(parent, msg, plugin.name)) {
             Main.pref.removeFromCollection("plugins", plugin.name);
+        }
     }
 
     /**
@@ -706,8 +707,8 @@ public class PluginHandler {
      * @throws IllegalArgumentException thrown if plugins is null
      */
     public static List<PluginInformation>  updatePlugins(Window parent,
-    List<PluginInformation> plugins, ProgressMonitor monitor)
-    throws IllegalArgumentException{
+            List<PluginInformation> plugins, ProgressMonitor monitor)
+            throws IllegalArgumentException{
         CheckParameterUtil.ensureParameterNotNull(plugins, "plugins");
         if (monitor == null) {
             monitor = NullProgressMonitor.INSTANCE;
@@ -1000,11 +1001,12 @@ public class PluginHandler {
             PluginInformation pi = pp.getPluginInformation();
             pl.remove(pi.name);
             pl.add(pi.name + " (" + (pi.localversion != null && !pi.localversion.equals("")
-            ? pi.localversion : "unknown") + ")");
+                    ? pi.localversion : "unknown") + ")");
         }
         Collections.sort(pl);
-        for (String s : pl)
+        for (String s : pl) {
             text += "Plugin: " + s + "\n";
+        }
         return text;
     }
 

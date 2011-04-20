@@ -60,7 +60,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     boolean mappaintTabLoaded;
 
     public InspectPrimitiveDialog(Collection<OsmPrimitive> primitives) {
-        super(Main.parent, tr("Advanced object info"), new String[] {"Close"});
+        super(Main.parent, tr("Advanced object info"), new String[] {tr("Close")});
         this.primitives = primitives;
         setPreferredSize(new Dimension(750, 550));
 

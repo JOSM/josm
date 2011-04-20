@@ -64,8 +64,8 @@ public class DuplicateWay extends Test
      * Constructor
      */
     public DuplicateWay() {
-        super(tr("Duplicated ways")+".",
-              tr("This test checks that there are no ways with same tags and same node coordinates."));
+        super(tr("Duplicated ways."),
+                tr("This test checks that there are no ways with same tags and same node coordinates."));
     }
 
 
@@ -94,7 +94,7 @@ public class DuplicateWay extends Test
         List<Node> wNodes = w.getNodes();
         List<LatLon> wLat = new ArrayList<LatLon>(wNodes.size());
         for (int i=0;i<wNodes.size();i++) {
-             wLat.add(wNodes.get(i).getCoor());
+            wLat.add(wNodes.get(i).getCoor());
         }
         Map<String, String> wkeys = w.getKeys();
         wkeys.remove("created_by");

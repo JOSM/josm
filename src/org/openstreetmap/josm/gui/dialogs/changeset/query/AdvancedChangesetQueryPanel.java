@@ -664,7 +664,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
             gc.gridx = 2;
             gc.weightx = 0.0;
-            pnl.add(new JLabel("Time: "),gc);
+            pnl.add(new JLabel(tr("Time:")),gc);
 
             gc.gridx = 3;
             gc.weightx = 0.3;
@@ -697,7 +697,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
             tfClosedAfterDate2.setToolTipText(valClosedAfterDate2.getStandardTooltipTextAsHtml());
             gc.gridx = 3;
             gc.weightx = 0.0;
-            pnl.add(new JLabel("Time:"),gc);
+            pnl.add(new JLabel(tr("Time:")),gc);
 
             gc.gridx = 4;
             gc.weightx = 0.3;
@@ -728,7 +728,7 @@ public class AdvancedChangesetQueryPanel extends JPanel {
 
             gc.gridx = 3;
             gc.weightx = 0.0;
-            pnl.add(new JLabel("Time:"),gc);
+            pnl.add(new JLabel(tr("Time:")),gc);
 
             gc.gridx = 4;
             gc.weightx = 0.3;

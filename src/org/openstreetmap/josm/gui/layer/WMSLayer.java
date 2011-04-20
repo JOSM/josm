@@ -231,7 +231,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
                 + "for this WMS layer does neither end with a ''&'' nor with a ''?''.<br>"
                 + "This is likely to lead to invalid WMS request. You should check your<br>"
                 + "preference settings.<br>"
-                + "Do you want to fetch WMS tiles anyway?",
+                + "Do you want to fetch WMS tiles anyway?</html>",
                 url);
         String [] options = new String[] {
                 tr("Yes, fetch images"),

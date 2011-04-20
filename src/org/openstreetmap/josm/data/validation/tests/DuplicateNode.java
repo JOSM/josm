@@ -65,9 +65,8 @@ public class DuplicateNode extends Test {
                 if (precision==0)
                     return ((List<Node>) o).get(0).getCoor().getRoundedToOsmPrecision();
                 return RoundCoord(((List<Node>) o).get(0));
-            } else {
+            } else
                 throw new AssertionError();
-            }
         }
 
         @Override
@@ -106,7 +105,7 @@ public class DuplicateNode extends Test {
      * Constructor
      */
     public DuplicateNode() {
-        super(tr("Duplicated nodes")+".",
+        super(tr("Duplicated nodes."),
                 tr("This test checks that there are no nodes at the very same location."));
     }
 

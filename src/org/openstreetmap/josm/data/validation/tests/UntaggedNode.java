@@ -36,7 +36,7 @@ public class UntaggedNode extends Test {
      * Constructor
      */
     public UntaggedNode() {
-        super(tr("Untagged and unconnected nodes")+".",
+        super(tr("Untagged and unconnected nodes."),
                 tr("This test checks for untagged nodes that are not part of any way."));
     }
 
@@ -68,7 +68,7 @@ public class UntaggedNode extends Test {
                     /* translation note: don't translate quoted words */
                     String msg = marktr("Has tag containing ''fixme'' or ''FIXME''");
                     errors.add(new TestError(this, Severity.WARNING, tr("Unconnected nodes without physical tags"),
-                                tr(msg), msg, UNTAGGED_NODE_FIXME, n));
+                            tr(msg), msg, UNTAGGED_NODE_FIXME, n));
                     return;
                 }
 
@@ -93,13 +93,13 @@ public class UntaggedNode extends Test {
                 }
                 if (msg != null) {
                     errors.add(new TestError(this, Severity.WARNING, tr("Unconnected nodes without physical tags"),
-                                tr(msg), msg, code, n));
+                            tr(msg), msg, code, n));
                     return;
                 }
             }
             // Does not happen, but just to be sure. Maybe definition of uninteresting tags changes in future.
             errors.add(new TestError(this, Severity.WARNING, tr("Unconnected nodes without physical tags"),
-                        tr("Other"), "Other", UNTAGGED_NODE_OTHER, n));
+                    tr("Other"), "Other", UNTAGGED_NODE_OTHER, n));
         }
     }
 
@@ -117,11 +117,11 @@ public class UntaggedNode extends Test {
         if (testError.getTester() instanceof UntaggedNode) {
             int code = testError.getCode();
             switch (code) {
-                case UNTAGGED_NODE_BLANK:
-                case UNTAGGED_NODE_CREATED_BY:
-                case UNTAGGED_NODE_WATCH:
-                case UNTAGGED_NODE_SOURCE:
-                    return true;
+            case UNTAGGED_NODE_BLANK:
+            case UNTAGGED_NODE_CREATED_BY:
+            case UNTAGGED_NODE_WATCH:
+            case UNTAGGED_NODE_SOURCE:
+                return true;
             }
         }
         return false;
