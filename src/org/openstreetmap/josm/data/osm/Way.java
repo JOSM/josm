@@ -74,13 +74,15 @@ public final class Way extends OsmPrimitive {
     private List<Node> removeDouble(List<Node> nodes) {
         Node last = null;
         int count = nodes.size();
-        for(int i = 0; i < count && count > 2; ++i) {
+        for(int i = 0; i < count && count > 2;) {
             Node n = nodes.get(i);
             if(last == n) {
                 nodes.remove(i);
                 --count;
+            } else {
+                last = n;
+                ++i;
             }
-            last = n;
         }
         return nodes;
     }
