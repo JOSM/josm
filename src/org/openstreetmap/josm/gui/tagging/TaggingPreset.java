@@ -56,6 +56,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.QuadStateCheckBox;
@@ -113,6 +114,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public String locale_name;
     public final static String OPTIONAL_TOOLTIP_TEXT = "Optional tooltip text";
     private static File zipIcons = null;
+    private static final BooleanProperty PROP_FILL_DEFAULT = new BooleanProperty("taggingpreset.fill-default-for-tagged-primitives", false);
 
     public static abstract class Item {
         protected void initAutoCompletionField(AutoCompletingTextField field, String key) {
@@ -246,10 +248,16 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             AutoCompletingTextField textField = new AutoCompletingTextField();
             initAutoCompletionField(textField, key);
             if (usage.unused()){
-                if (use_last_as_default && lastValue.containsKey(key)) {
-                    textField.setText(lastValue.get(key));
+                if (!usage.hadKeys() || PROP_FILL_DEFAULT.get()) {
+                    // selected osm primitives are untagged or filling default values feature is enabled
+                    if (use_last_as_default && lastValue.containsKey(key)) {
+                        textField.setText(lastValue.get(key));
+                    } else {
+                        textField.setText(default_);
+                    }
                 } else {
-                    textField.setText(default_);
+                    // selected osm primitives are tagged and filling default values feature is disabled
+                    textField.setText("");
                 }
                 value = textField;
                 originalValue = null;
@@ -336,8 +344,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 oneValue = s;
             }
             if (usage.values.size() < 2 && (oneValue == null || value_on.equals(oneValue) || value_off.equals(oneValue))) {
-                if(def)
-                {
+                if (def && !PROP_FILL_DEFAULT.get()) {
+                    // default is set and filling default values feature is disabled - check if all primitives are untagged
                     for (OsmPrimitive s : sel)
                         if(s.hasKeys()) {
                             def = false;
@@ -487,20 +495,31 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             tf.getAutoCompletionList().add(Arrays.asList(display_array), AutoCompletionItemPritority.IS_IN_STANDARD);
             combo.setEditor(tf);
 
-            if (usage.hasUniqueValue() && !usage.unused()){
+            if (usage.hasUniqueValue()) {
+                // all items have the same value (and there were no unset items)
                 originalValue=lhm.get(usage.getFirst());
+                combo.setSelectedItem(originalValue);
             }
-            // use default only in case it is a totally new entry
-            else if(def != null && !usage.hadKeys()) {
+            else if (def != null && usage.unused()) {
+                // default is set and all items were unset
+                if (!usage.hadKeys() || PROP_FILL_DEFAULT.get()) {
+                    // selected osm primitives are untagged or filling default feature is enabled
+                    combo.setSelectedItem(def);
+                } else {
+                    // selected osm primitives are tagged and filling default feature is disabled
+                    combo.setSelectedItem("");
+                }
                 originalValue=lhm.get(DIFFERENT);
             }
-            else if(usage.unused()){
+            else if (usage.unused()) {
+                // all items were unset (and so is default)
                 originalValue=lhm.get("");
+                combo.setSelectedItem(originalValue);
             }
-            else{
+            else {
                 originalValue=lhm.get(DIFFERENT);
+                combo.setSelectedItem(originalValue);
             }
-            combo.setSelectedItem(originalValue);
 
             if(locale_text == null) {
                 if(text_context != null) {
