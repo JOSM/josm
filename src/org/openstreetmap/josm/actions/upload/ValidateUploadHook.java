@@ -112,7 +112,7 @@ public class ValidateUploadHook implements UploadHook
         HtmlPanel pnlMessage = new HtmlPanel();
         pnlMessage.setText("<html><body>"
                 + tr("The following are results of automatic validation. Try fixing"
-                + " these, but be careful( don't destray valid data)."
+                + " these, but be careful (don't destroy valid data)."
                 + " When in doubt ignore them.<br>When you"
                 + " cancel this dialog, you can find the entries in the validator"
                 + " side panel to inspect them.")
