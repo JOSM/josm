@@ -66,8 +66,9 @@ public class CrossingWays extends Test {
         if(!w.isUsable())
             return;
 
-        String coastline1 = w.get("natural");
-        boolean isCoastline1 = "water".equals(coastline1) || "coastline".equals(coastline1);
+        String natural1 = w.get("natural");
+        String landuse1 = w.get("landuse");
+        boolean isCoastline1 = "water".equals(natural1) || "coastline".equals(natural1) || "reservoir".equals(landuse1);
         String railway1 = w.get("railway");
         boolean isSubway1 = "subway".equals(railway1);
         boolean isTram1 = "tram".equals(railway1);
@@ -79,11 +80,12 @@ public class CrossingWays extends Test {
             return;
 
         String layer1 = w.get("layer");
+        if ("0".equals(layer1)) layer1 = null; //0 is default value
 
         int nodesSize = w.getNodesCount();
         for (int i = 0; i < nodesSize - 1; i++) {
             WaySegment ws = new WaySegment(w, i);
-            ExtendedSegment es1 = new ExtendedSegment(ws, layer1, railway1, coastline1);
+            ExtendedSegment es1 = new ExtendedSegment(ws, layer1, railway1, isCoastline1);
             List<List<ExtendedSegment>> cellSegments = getSegments(es1.n1, es1.n2);
             for (List<ExtendedSegment> segments : cellSegments) {
                 for (ExtendedSegment es2 : segments) {
@@ -95,7 +97,7 @@ public class CrossingWays extends Test {
 
                     String layer2 = es2.layer;
                     String railway2 = es2.railway;
-                    String coastline2 = es2.coastline;
+                    boolean isCoastline2 = es2.coastline;
                     if (layer1 == null ? layer2 != null : !layer1.equals(layer2))
                         continue;
 
@@ -103,7 +105,6 @@ public class CrossingWays extends Test {
                     if (isSubway1 && "subway".equals(railway2)) continue;
                     if (isTram1 && "tram".equals(railway2)) continue;
 
-                    boolean isCoastline2 = coastline2 != null && (coastline2.equals("water") || coastline2.equals("coastline"));
                     if (isCoastline1 != isCoastline2) continue;
 
                     if ((es1.railway != null && es1.railway.equals("abandoned"))
@@ -169,16 +170,16 @@ public class CrossingWays extends Test {
         public String railway;
 
         /** The coastline type */
-        public String coastline;
+        public boolean coastline;
 
         /**
          * Constructor
          * @param ws The way segment
          * @param layer The layer of the way this segment is in
          * @param railway The railway type of the way this segment is in
-         * @param coastline The coastline typo of the way the segment is in
+         * @param coastline The coastline flag of the way the segment is in
          */
-        public ExtendedSegment(WaySegment ws, String layer, String railway, String coastline) {
+        public ExtendedSegment(WaySegment ws, String layer, String railway, boolean coastline) {
             this.ws = ws;
             this.n1 = ws.way.getNodes().get(ws.lowerIndex);
             this.n2 = ws.way.getNodes().get(ws.lowerIndex + 1);
