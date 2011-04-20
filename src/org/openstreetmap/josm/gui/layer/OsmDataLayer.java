@@ -522,21 +522,25 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
             gpxData.tracks.add(new ImmutableGpxTrack(trk, trkAttr));
         }
 
-        // what is this loop meant to do? it creates waypoints but never
-        // records them?
         for (Node n : data.getNodes()) {
             if (n.isIncomplete() || n.isDeleted() || doneNodes.contains(n)) {
                 continue;
             }
+            String name = n.get("name");
+            if (name == null)
+		continue;
             WayPoint wpt = new WayPoint(n.getCoor());
+            wpt.attr.put("name", name);
             if (!n.isTimestampEmpty()) {
                 wpt.attr.put("time", DateUtils.fromDate(n.getTimestamp()));
                 wpt.setTime();
             }
-            String name = n.get("name");
-            if (name != null) {
-                wpt.attr.put("name", name);
-            }
+            String desc = n.get("description");
+            if (desc != null) {
+               wpt.attr.put("desc", desc);
+	    }
+
+            gpxData.waypoints.add(wpt);
         }
         return gpxData;
     }
