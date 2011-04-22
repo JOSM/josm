@@ -72,7 +72,7 @@ public class ElemStyles {
             }
             if (!hasProperLineStyle) {
                 AreaElemStyle area = Utils.find(p.a, AreaElemStyle.class);
-                LineElemStyle line = (area == null ? LineElemStyle.UNTAGGED_WAY : LineElemStyle.createSimpleLineStyle(area.color));
+                LineElemStyle line = (area == null ? LineElemStyle.UNTAGGED_WAY : LineElemStyle.createSimpleLineStyle(area.color, true));
                 p.a = new StyleList(p.a, line);
             }
         }
@@ -151,7 +151,7 @@ public class ElemStyles {
                     }
                 }
                 if (!hasLineStyle) {
-                    p.a = new StyleList(p.a, LineElemStyle.createSimpleLineStyle(wayColor));
+                    p.a = new StyleList(p.a, LineElemStyle.createSimpleLineStyle(wayColor, true));
                 }
                 return p;
             }
@@ -182,7 +182,7 @@ public class ElemStyles {
                                 break;
                             }
                         }
-                        p.a = new StyleList(p.a, LineElemStyle.createSimpleLineStyle(mpColor));
+                        p.a = new StyleList(p.a, LineElemStyle.createSimpleLineStyle(mpColor, true));
                     }
                     return p;
                 }

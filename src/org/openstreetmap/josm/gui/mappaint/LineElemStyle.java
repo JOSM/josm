@@ -17,14 +17,17 @@ import org.openstreetmap.josm.tools.Utils;
 
 public class LineElemStyle extends ElemStyle {
 
-    public static LineElemStyle createSimpleLineStyle(Color color) {
+    public static LineElemStyle createSimpleLineStyle(Color color, boolean isAreaEdge) {
         MultiCascade mc = new MultiCascade();
         Cascade c = mc.getOrCreateCascade("default");
         c.put("width", Keyword.DEFAULT);
         c.put("color", color != null ? color : PaintColors.UNTAGGED.get());
+        if (isAreaEdge) {
+            c.put("z-index", -3f);
+        }
         return createLine(new Environment(null, mc, "default", null));
     }
-    public static final LineElemStyle UNTAGGED_WAY = createSimpleLineStyle(null);
+    public static final LineElemStyle UNTAGGED_WAY = createSimpleLineStyle(null, false);
 
     private BasicStroke line;
     public Color color;
