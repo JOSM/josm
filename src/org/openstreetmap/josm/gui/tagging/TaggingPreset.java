@@ -682,6 +682,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public boolean delete_if_empty = false;
         public boolean use_last_as_default = false;
         public boolean required = false;
+        public long rows = -1;
 
         private List<String> short_description_list;
         private ConcatenatingJList list;
@@ -751,7 +752,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             }
 
             list = new ConcatenatingJList(delimiter, lhm.values().toArray());
-            list.setCellRenderer(new PresetListCellRenderer());
+            PresetListCellRenderer renderer = new PresetListCellRenderer();
+            list.setCellRenderer(renderer);
 
             if (usage.hasUniqueValue() && !usage.unused()) {
                 originalValue=usage.getFirst();
@@ -775,7 +777,16 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 }
             }
             p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
-            p.add(new JScrollPane(list), GBC.eol().fill(GBC.HORIZONTAL));
+            JScrollPane sp = new JScrollPane(list);
+            // if a number of rows has been specified in the preset,
+            // modify preferred height of scroll pane to match that row count.
+            if (rows != -1)
+            {
+                double height = renderer.getListCellRendererComponent(list, 
+                    new PresetListEntry("x"), 0, false, false).getPreferredSize().getHeight() * rows;
+                sp.setPreferredSize(new Dimension((int) sp.getPreferredSize().getWidth(), (int) height));
+            }
+            p.add(sp, GBC.eol().fill(GBC.HORIZONTAL));
             return true;
         }
 
