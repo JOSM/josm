@@ -42,9 +42,9 @@ public class UnconnectedWays extends Test {
     protected static final String PREFIX = ValidatorPreference.PREFIX + "." + UnconnectedWays.class.getSimpleName();
 
     Set<MyWaySegment> ways;
-    Set<Node> endnodes; // nodes at end of way
-    Set<Node> endnodes_highway; // nodes at end of way
-    Set<Node> middlenodes; // nodes in middle of way
+    QuadBuckets<Node> endnodes; // nodes at end of way
+    QuadBuckets<Node> endnodes_highway; // nodes at end of way
+    QuadBuckets<Node> middlenodes; // nodes in middle of way
     Set<Node> othernodes; // nodes appearing at least twice
     //NodeSearchCache nodecache;
     QuadBuckets<Node> nodecache;
@@ -66,9 +66,9 @@ public class UnconnectedWays extends Test {
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
         ways = new HashSet<MyWaySegment>();
-        endnodes = new HashSet<Node>();
-        endnodes_highway = new HashSet<Node>();
-        middlenodes = new HashSet<Node>();
+        endnodes = new QuadBuckets<Node>();
+        endnodes_highway = new QuadBuckets<Node>();
+        middlenodes = new QuadBuckets<Node>();
         othernodes = new HashSet<Node>();
         mindist = Main.pref.getDouble(PREFIX + ".node_way_distance", 10.0);
         minmiddledist = Main.pref.getDouble(PREFIX + ".way_way_distance", 0.0);
@@ -93,7 +93,8 @@ public class UnconnectedWays extends Test {
                     //System.err.println("processing segment nr: " + nr + " of " + ways.size());
                     last_print = now;
                 }
-                for (Node en : s.nearbyNodes(mindist)) {
+                Collection<Node> nearbyNodes = s.nearbyNodes(mindist);
+                for (Node en : nearbyNodes) {
                     if (en == null || !s.highway || !endnodes_highway.contains(en)) {
                         continue;
                     }
@@ -270,7 +271,8 @@ public class UnconnectedWays extends Test {
                     // the nodes that are not in the smaller
                     // area, but keep the old larger cache.
                     Set<Node> trimmed = new HashSet<Node>(nearbyNodeCache);
-                    for (Node n : new HashSet<Node>(nearbyNodeCache)) {
+                    Set<Node> initial = new HashSet<Node>(nearbyNodeCache);
+                    for (Node n : initial) {
                         if (!nearby(n, dist)) {
                             trimmed.remove(n);
                         }
@@ -289,7 +291,9 @@ public class UnconnectedWays extends Test {
             // overlap a bit and can return duplicate nodes.
             nearbyNodeCache = null;
             List<LatLon> bounds = this.getBounds(dist);
-            List<Node> found_nodes = ds.searchNodes(new BBox(bounds.get(0), bounds.get(1)));
+            List<Node> found_nodes = endnodes_highway.search(new BBox(bounds.get(0), bounds.get(1)));
+            found_nodes.addAll(endnodes.search(new BBox(bounds.get(0), bounds.get(1))));
+
             if (found_nodes == null)
                 return Collections.emptySet();
 
@@ -347,7 +351,7 @@ public class UnconnectedWays extends Test {
     @Override
     public void visit(Way w) {
         ways.addAll(getWaySegments(w));
-        Set<Node> set = endnodes;
+        QuadBuckets<Node> set = endnodes;
         if (w.hasKey("highway") || w.hasKey("railway")) {
             set = endnodes_highway;
         }
@@ -359,7 +363,7 @@ public class UnconnectedWays extends Test {
     public void visit(Node n) {
     }
 
-    private void addNode(Node n, Set<Node> s) {
+    private void addNode(Node n, QuadBuckets<Node> s) {
         boolean m = middlenodes.contains(n);
         boolean e = endnodes.contains(n);
         boolean eh = endnodes_highway.contains(n);
