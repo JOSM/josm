@@ -215,4 +215,8 @@ public class Test extends AbstractVisitor
     public String getName() {
         return name;
     }
+
+    public boolean isCancelled() {
+        return progressMonitor.isCancelled();
+    }
 }

@@ -78,21 +78,10 @@ public class UnconnectedWays extends Test {
 
     @Override
     public void endTest() {
-        //Area a = Main.ds.getDataSourceArea();
         Map<Node, Way> map = new HashMap<Node, Way>();
-        //long last = -1;
         for (int iter = 0; iter < 1; iter++) {
-            //last = System.currentTimeMillis();
-            long last_print = -1;
-            int nr = 0;
             Collection<MyWaySegment> tmp_ways = ways;
             for (MyWaySegment s : tmp_ways) {
-                nr++;
-                long now = System.currentTimeMillis();
-                if (now - last_print > 200) {
-                    //System.err.println("processing segment nr: " + nr + " of " + ways.size());
-                    last_print = now;
-                }
                 Collection<Node> nearbyNodes = s.nearbyNodes(mindist);
                 for (Node en : nearbyNodes) {
                     if (en == null || !s.highway || !endnodes_highway.contains(en)) {
@@ -112,9 +101,9 @@ public class UnconnectedWays extends Test {
                     // the ways to which 'en' belongs are not connected to 's.w'.
                     map.put(en, s.w);
                 }
+                if(isCancelled())
+                    return;
             }
-            //System.out.println("p1 elapsed: " + (System.currentTimeMillis()-last));
-            //last = System.currentTimeMillis();
         }
         for (Map.Entry<Node, Way> error : map.entrySet()) {
             errors.add(new TestError(this, Severity.WARNING,
@@ -124,6 +113,8 @@ public class UnconnectedWays extends Test {
         }
         map.clear();
         for (MyWaySegment s : ways) {
+            if(isCancelled())
+                return;
             for (Node en : s.nearbyNodes(mindist)) {
                 if (endnodes_highway.contains(en) && !s.highway && !s.isArea()) {
                     map.put(en, s.w);
@@ -132,8 +123,6 @@ public class UnconnectedWays extends Test {
                 }
             }
         }
-        //System.out.println("p2 elapsed: " + (System.currentTimeMillis()-last));
-        //last = System.currentTimeMillis();
         for (Map.Entry<Node, Way> error : map.entrySet()) {
             errors.add(new TestError(this, Severity.WARNING,
                     tr("Way end node near other way"),
@@ -144,6 +133,8 @@ public class UnconnectedWays extends Test {
         if (minmiddledist > 0.0) {
             map.clear();
             for (MyWaySegment s : ways) {
+                if(isCancelled())
+                    return;
                 for (Node en : s.nearbyNodes(minmiddledist)) {
                     if (!middlenodes.contains(en)) {
                         continue;
@@ -162,6 +153,8 @@ public class UnconnectedWays extends Test {
             map.clear();
             for (MyWaySegment s : ways) {
                 for (Node en : s.nearbyNodes(minmiddledist)) {
+                    if(isCancelled())
+                        return;
                     if (!othernodes.contains(en)) {
                         continue;
                     }
