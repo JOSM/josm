@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -59,7 +60,16 @@ public class MainApplication extends Main {
         mainFrame.setContentPane(contentPanePrivate);
         mainFrame.setJMenuBar(menu);
         mainFrame.setBounds(bounds);
-        mainFrame.setIconImage(ImageProvider.get("logo.png").getImage());
+        LinkedList<Image> l = new LinkedList<Image>();
+        l.add(ImageProvider.get("logo_16x16x32").getImage());
+        l.add(ImageProvider.get("logo_16x16x8").getImage());
+        l.add(ImageProvider.get("logo_32x32x32").getImage());
+        l.add(ImageProvider.get("logo_32x32x8").getImage());
+        l.add(ImageProvider.get("logo_48x48x32").getImage());
+        l.add(ImageProvider.get("logo_48x48x8").getImage());
+        l.add(ImageProvider.get("logo").getImage());
+        //mainFrame.setIconImage(ImageProvider.get("logo").getImage());
+        mainFrame.setIconImages(l);
         mainFrame.addWindowListener(new WindowAdapter(){
             @Override public void windowClosing(final WindowEvent arg0) {
                 Main.exitJosm(true);
