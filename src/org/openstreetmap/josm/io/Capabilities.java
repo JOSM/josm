@@ -136,7 +136,7 @@ public class Capabilities {
 
     public boolean isOnImageryBlacklist(String url)
     {
-        if (url != null){
+        if (url != null && imageryBlacklist.size() != 0) {
             for (String blacklistRegex : imageryBlacklist) {
                 if (url.matches(blacklistRegex))
                     return true;
