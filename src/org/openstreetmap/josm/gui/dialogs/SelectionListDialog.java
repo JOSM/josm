@@ -199,6 +199,8 @@ public class SelectionListDialog extends ToggleDialog  {
         SelectionEventManager.getInstance().addSelectionListener(model, FireMode.IN_EDT_CONSOLIDATED);
         DatasetEventManager.getInstance().addDatasetListener(model, FireMode.IN_EDT);
         MapView.addEditLayerChangeListener(actSearch);
+        // editLayerChanged also gets the selection history of the level
+        model.editLayerChanged(null, Main.map.mapView.getEditLayer());
         if (Main.map.mapView.getEditLayer() != null) {
             model.setJOSMSelection(Main.map.mapView.getEditLayer().data.getSelected());
         }
@@ -221,9 +223,6 @@ public class SelectionListDialog extends ToggleDialog  {
         return arrowButton;
     }
 
-    public void clearSelectionHistory() {
-        model.clearSelectionHistory();
-    }
 
     /**
      * Responds to double clicks on the list of selected objects
@@ -481,7 +480,8 @@ public class SelectionListDialog extends ToggleDialog  {
 
         private static final int SELECTION_HISTORY_SIZE = 10;
 
-        private final LinkedList<Collection<? extends OsmPrimitive>> history = new LinkedList<Collection<? extends OsmPrimitive>>();
+        // Variable to store history from currentDataSet()
+        private LinkedList<Collection<? extends OsmPrimitive>> history;
         private final List<OsmPrimitive> selection = new ArrayList<OsmPrimitive>();
         private DefaultListSelectionModel selectionModel;
 
@@ -521,6 +521,7 @@ public class SelectionListDialog extends ToggleDialog  {
         public void remember(Collection<? extends OsmPrimitive> selection) {
             if (selection == null)return;
             if (selection.isEmpty())return;
+            if (history == null) return;
             if (history.isEmpty()) {
                 history.add(selection);
                 return;
@@ -546,10 +547,6 @@ public class SelectionListDialog extends ToggleDialog  {
          */
         public List<Collection<? extends OsmPrimitive>> getSelectionHistory() {
             return history;
-        }
-
-        public void clearSelectionHistory() {
-            history.clear();
         }
 
         public Object getElementAt(int index) {
@@ -689,7 +686,9 @@ public class SelectionListDialog extends ToggleDialog  {
         public void editLayerChanged(OsmDataLayer oldLayer, OsmDataLayer newLayer) {
             if (newLayer == null) {
                 setJOSMSelection(null);
+                history = null;
             } else {
+                history = newLayer.data.getSelectionHistory();
                 setJOSMSelection(newLayer.data.getSelected());
             }
         }

@@ -133,6 +133,27 @@ public class DataSet implements Cloneable {
     }
 
     /**
+     * History of selections - shared by plugins and SelectionListDialog
+     */
+    private final LinkedList<Collection<? extends OsmPrimitive>> selectionHistory = new LinkedList<Collection<? extends OsmPrimitive>>();
+
+    /**
+     * Replies the history of JOSM selections
+     *
+     * @return
+     */
+    public LinkedList<Collection<? extends OsmPrimitive>> getSelectionHistory() {
+        return selectionHistory;
+    } 
+
+    /**
+     * Clears selection history list
+     */
+    public void clearSelectionHistory() {
+            selectionHistory.clear();
+        }
+
+    /**
      * Maintain a list of used tags for autocompletion
      */
     private AutoCompletionManager autocomplete;
