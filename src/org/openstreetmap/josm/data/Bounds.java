@@ -177,10 +177,10 @@ public class Bounds {
      * the interior but the closure. (">=" instead of ">")
      */
     public boolean intersects(Bounds b) {
-        return b.getMax().lat() >= minLat &&
-        b.getMax().lon() >= minLon &&
-        b.getMin().lat() <= maxLat &&
-        b.getMin().lon() <= maxLon;
+        return b.maxLat >= minLat &&
+        b.maxLon >= minLon &&
+        b.minLat <= maxLat &&
+        b.minLon <= maxLon;
     }
 
 

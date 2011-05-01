@@ -34,10 +34,10 @@ class MapSlider extends JSlider implements PropertyChangeListener, ChangeListene
         ProjectionBounds world = this.mv.getMaxProjectionBounds();
         ProjectionBounds current = this.mv.getProjectionBounds();
 
-        double cur_e = current.max.east()-current.min.east();
-        double cur_n = current.max.north()-current.min.north();
-        double e = world.max.east()-world.min.east();
-        double n = world.max.north()-world.min.north();
+        double cur_e = current.maxEast-current.minEast;
+        double cur_n = current.maxNorth-current.minNorth;
+        double e = world.maxEast-world.minEast;
+        double n = world.maxNorth-world.minNorth;
         int zoom = 0;
 
         while(zoom <= 150) {
@@ -58,8 +58,8 @@ class MapSlider extends JSlider implements PropertyChangeListener, ChangeListene
 
         ProjectionBounds world = this.mv.getMaxProjectionBounds();
         double fact = Math.pow(1.1, getValue());
-        double es = world.max.east()-world.min.east();
-        double n = world.max.north()-world.min.north();
+        double es = world.maxEast-world.minEast;
+        double n = world.maxNorth-world.minNorth;
 
         this.mv.zoomTo(new ProjectionBounds(this.mv.getCenter(), es/fact, n/fact));
     }

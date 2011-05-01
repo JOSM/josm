@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://josm.openstreetmap.de/wms-cache"
+	xmlns:tns="http://josm.openstreetmap.de/wms-cache" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd"
+	elementFormDefault="qualified" jaxb:version="2.0">
+	
+	<annotation>
+		<appinfo>
+			<jaxb:schemaBindings>
+				<jaxb:package name="org.openstreetmap.josm.data.imagery.types">
+				</jaxb:package>
+				<jaxb:nameXmlTransform>
+					<jaxb:typeName suffix="Type" />
+					<jaxb:elementName suffix="Type" />
+				</jaxb:nameXmlTransform>
+			</jaxb:schemaBindings>
+			<jaxb:globalBindings>
+				<jaxb:javaType name="java.util.Calendar" xmlType="date"
+					parseMethod="javax.xml.bind.DatatypeConverter.parseDate"
+					printMethod="org.openstreetmap.josm.data.imagery.WmsCache.printDate" />
+			</jaxb:globalBindings>
+		</appinfo>
+	</annotation>
+
+	<element name="wms-cache">
+		<complexType>
+			<sequence>
+				<element name="projection" type="tns:projection" minOccurs="0"
+					maxOccurs="unbounded" />
+			</sequence>
+			<attribute name="tileSize" type="int" use="required" />
+			<attribute name="totalFileSize" type="int" use="required"/>
+		</complexType>
+	</element>
+	
+	<complexType name="projection">
+		<sequence>
+			<element name="entry" type="tns:entry" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+		<attribute name="name" type="string"/>
+		<attribute name="cache-directory" type="string"/>
+	</complexType>
+
+	<complexType name="entry">
+		<sequence>
+			<element name="pixelPerDegree" type="double" />
+			<element name="east" type="double" />
+			<element name="north" type="double" />
+			<element name="lastUsed" type="date" />
+			<element name="lastModified" type="date" />
+			<element name="filename" type="string" />
+		</sequence>
+	</complexType>
+</schema>

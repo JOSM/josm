@@ -10,16 +10,18 @@ public class WMSRequest implements Comparable<WMSRequest> {
     private final int yIndex;
     private final double pixelPerDegree;
     private final boolean real; // Download even if autodownloading is disabled
+    private final boolean allowPartialCacheMatch;
     private int priority;
     // Result
     private State state;
     private BufferedImage image;
 
-    public WMSRequest(int xIndex, int yIndex, double pixelPerDegree, boolean real) {
+    public WMSRequest(int xIndex, int yIndex, double pixelPerDegree, boolean real, boolean allowPartialCacheMatch) {
         this.xIndex = xIndex;
         this.yIndex = yIndex;
         this.pixelPerDegree = pixelPerDegree;
         this.real = real;
+        this.allowPartialCacheMatch = allowPartialCacheMatch;
     }
 
     public void finish(State state, BufferedImage image) {
@@ -67,6 +69,8 @@ public class WMSRequest implements Comparable<WMSRequest> {
             return false;
         if (yIndex != other.yIndex)
             return false;
+        if (allowPartialCacheMatch != other.allowPartialCacheMatch)
+            return false;
         return true;
     }
 
@@ -99,5 +103,9 @@ public class WMSRequest implements Comparable<WMSRequest> {
 
     public boolean isReal() {
         return real;
+    }
+
+    public boolean isAllowPartialCacheMatch() {
+        return allowPartialCacheMatch;
     }
 }

@@ -8,11 +8,8 @@ import org.openstreetmap.josm.data.imagery.GeorefImage.State;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
-import org.openstreetmap.josm.io.CacheFiles;
 
 abstract public class Grabber implements Runnable {
-    public final static CacheFiles cache = new CacheFiles("imagery", false);
-
     protected final MapView mv;
     protected final WMSLayer layer;
 
@@ -31,17 +28,16 @@ abstract public class Grabber implements Runnable {
         b = new ProjectionBounds(
                 layer.getEastNorth(request.getXIndex(), request.getYIndex()),
                 layer.getEastNorth(request.getXIndex() + 1, request.getYIndex() + 1));
-        if (b.min != null && b.max != null && WMSLayer.PROP_OVERLAP.get()) {
-            double eastSize =  b.max.east() - b.min.east();
-            double northSize =  b.max.north() - b.min.north();
+        if (WMSLayer.PROP_OVERLAP.get()) {
+            double eastSize =  b.maxEast - b.minEast;
+            double northSize =  b.maxNorth - b.minNorth;
 
             double eastCoef = WMSLayer.PROP_OVERLAP_EAST.get() / 100.0;
             double northCoef = WMSLayer.PROP_OVERLAP_NORTH.get() / 100.0;
 
-            this.b = new ProjectionBounds( new EastNorth(b.min.east(),
-                    b.min.north()),
-                    new EastNorth(b.max.east() + eastCoef * eastSize,
-                            b.max.north() + northCoef * northSize));
+            this.b = new ProjectionBounds(b.getMin(),
+                    new EastNorth(b.maxEast + eastCoef * eastSize,
+                            b.maxNorth + northCoef * northSize));
         }
 
         this.proj = Main.proj;

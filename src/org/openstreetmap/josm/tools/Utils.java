@@ -2,6 +2,10 @@
 package org.openstreetmap.josm.tools;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 
 public class Utils {
@@ -14,7 +18,7 @@ public class Utils {
         return false;
     }
 
-    public static <T> boolean exists(Iterable collection, Class<? extends T> klass) {
+    public static <T> boolean exists(Iterable<T> collection, Class<? extends T> klass) {
         for (Object item : collection) {
             if (klass.isInstance(item))
                 return true;
@@ -30,12 +34,11 @@ public class Utils {
         return null;
     }
 
-    public static <T> T find(Iterable collection, Class<? extends T> klass) {
+    @SuppressWarnings("unchecked")
+    public static <T> T find(Iterable<? super T> collection, Class<? extends T> klass) {
         for (Object item : collection) {
-            if (klass.isInstance(item)) {
-                @SuppressWarnings("unchecked") T res = (T) item;
-                return res;
-            }
+            if (klass.isInstance(item))
+                return (T) item;
         }
         return null;
     }
@@ -59,9 +62,8 @@ public class Utils {
                 return a;
             return b;
         } else {
-            if (a < c) {
+            if (a < c)
                 return a;
-            }
             return c;
         }
     }
@@ -159,7 +161,36 @@ public class Utils {
         return ((float) val) / 255f;
     }
 
+
+    public static int copyStream(InputStream source, OutputStream destination) throws IOException {
+        int count = 0;
+        byte[] b = new byte[512];
+        int read;
+        while ((read = source.read(b)) != -1) {
+            count += read;
+            destination.write(b, 0, read);
+        }
+        return count;
+    }
+
+
+
     public static Color complement(Color clr) {
         return new Color(255 - clr.getRed(), 255 - clr.getGreen(), 255 - clr.getBlue(), clr.getAlpha());
+    }
+
+    public static boolean deleteDirectory(File path) {
+        if( path.exists() ) {
+            File[] files = path.listFiles();
+            for(int i=0; i<files.length; i++) {
+                if(files[i].isDirectory()) {
+                    deleteDirectory(files[i]);
+                }
+                else {
+                    files[i].delete();
+                }
+            }
+        }
+        return( path.delete() );
     }
 }

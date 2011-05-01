@@ -15,8 +15,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -40,13 +42,13 @@ import org.openstreetmap.josm.data.imagery.GeorefImage.State;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
+import org.openstreetmap.josm.data.imagery.WmsCache;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
-import org.openstreetmap.josm.io.CacheFiles;
 import org.openstreetmap.josm.io.imagery.Grabber;
 import org.openstreetmap.josm.io.imagery.HTMLGrabber;
 import org.openstreetmap.josm.io.imagery.WMSGrabber;
@@ -78,6 +80,8 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
     protected boolean settingsChanged;
     protected ImageryInfo info;
     protected final MapView mv;
+    public WmsCache cache;
+
 
     // Image index boundary for current view
     private volatile int bminx;
@@ -117,6 +121,18 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         mv = Main.map.mapView;
         setBackgroundLayer(true); /* set global background variable */
         initializeImages();
+        if (info.getUrl() != null) {
+            for (WMSLayer layer: Main.map.mapView.getLayersOfType(WMSLayer.class)) {
+                if (layer.getInfo().getUrl().equals(info.getUrl())) {
+                    cache = layer.cache;
+                    break;
+                }
+            }
+            if (cache == null) {
+                cache = new WmsCache(info.getUrl(), imageSize);
+                cache.loadIndex();
+            }
+        }
         this.info = new ImageryInfo(info);
         if(this.info.getPixelPerDegree() == 0.0) {
             this.info.setPixelPerDegree(getPPD());
@@ -156,6 +172,9 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
     public void destroy() {
         cancelGrabberThreads(false);
         Main.pref.removePreferenceChangeListener(this);
+        if (cache != null) {
+            cache.saveIndex();
+        }
     }
 
     public void initializeImages() {
@@ -204,18 +223,19 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         settingsChanged = false;
 
         ProjectionBounds bounds = mv.getProjectionBounds();
-        bminx= getImageXIndex(bounds.min.east());
-        bminy= getImageYIndex(bounds.min.north());
-        bmaxx= getImageXIndex(bounds.max.east());
-        bmaxy= getImageYIndex(bounds.max.north());
+        bminx= getImageXIndex(bounds.minEast);
+        bminy= getImageYIndex(bounds.minNorth);
+        bmaxx= getImageXIndex(bounds.maxEast);
+        bmaxy= getImageYIndex(bounds.maxNorth);
 
-        leftEdge = (int)(bounds.min.east() * getPPD());
-        bottomEdge = (int)(bounds.min.north() * getPPD());
+        leftEdge = (int)(bounds.minEast * getPPD());
+        bottomEdge = (int)(bounds.minNorth * getPPD());
 
         if (zoomIsTooBig()) {
-            for(int x = bminx; x<=bmaxx; ++x) {
-                for(int y = bminy; y<=bmaxy; ++y) {
-                    images[modulo(x,dax)][modulo(y,day)].paint(g, mv, x, y, leftEdge, bottomEdge);
+            for(int x = 0; x<images.length; ++x) {
+                for(int y = 0; y<images[0].length; ++y) {
+                    GeorefImage image = images[x][y];
+                    image.paint(g, mv, image.getXIndex(), image.getYIndex(), leftEdge, bottomEdge);
                 }
             }
         } else {
@@ -304,12 +324,16 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         return imageSize;
     }
 
+    public boolean isOverlapEnabled() {
+        return WMSLayer.PROP_OVERLAP.get() && (WMSLayer.PROP_OVERLAP_EAST.get() > 0 || WMSLayer.PROP_OVERLAP_NORTH.get() > 0);
+    }
+
     /**
      * 
      * @return When overlapping is enabled, return visible part of tile. Otherwise return original image
      */
     public BufferedImage normalizeImage(BufferedImage img) {
-        if (WMSLayer.PROP_OVERLAP.get() && (WMSLayer.PROP_OVERLAP_EAST.get() > 0 || WMSLayer.PROP_OVERLAP_NORTH.get() > 0)) {
+        if (isOverlapEnabled()) {
             BufferedImage copy = img;
             img = new BufferedImage(imageSize, imageSize, copy.getType());
             img.createGraphics().drawImage(copy, 0, 0, imageSize, imageSize,
@@ -356,16 +380,23 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         }
 
         gatherFinishedRequests();
+        Set<ProjectionBounds> areaToCache = new HashSet<ProjectionBounds>();
 
         for(int x = bminx; x<=bmaxx; ++x) {
             for(int y = bminy; y<=bmaxy; ++y){
                 GeorefImage img = images[modulo(x,dax)][modulo(y,day)];
                 if (!img.paint(g, mv, x, y, leftEdge, bottomEdge)) {
-                    WMSRequest request = new WMSRequest(x, y, info.getPixelPerDegree(), real);
+                    WMSRequest request = new WMSRequest(x, y, info.getPixelPerDegree(), real, true);
                     addRequest(request);
+                    areaToCache.add(new ProjectionBounds(getEastNorth(x, y), getEastNorth(x + 1, y + 1)));
+                } else if (img.getState() == State.PARTLY_IN_CACHE && autoDownloadEnabled) {
+                    WMSRequest request = new WMSRequest(x, y, info.getPixelPerDegree(), real, false);
+                    addRequest(request);
+                    areaToCache.add(new ProjectionBounds(getEastNorth(x, y), getEastNorth(x + 1, y + 1)));
                 }
             }
         }
+        cache.setAreaToCache(areaToCache);
     }
 
     @Override public void visitBoundingBox(BoundingXYVisitor v) {
@@ -547,10 +578,14 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         }
         @Override
         public void actionPerformed(ActionEvent ev) {
-            initializeImages();
             resolution = mv.getDist100PixelText();
             info.setPixelPerDegree(getPPD());
             settingsChanged = true;
+            for(int x = 0; x<dax; ++x) {
+                for(int y = 0; y<day; ++y) {
+                    images[x][y].changePosition(-1, -1);
+                }
+            }
             mv.repaint();
         }
     }
@@ -563,14 +598,13 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         public void actionPerformed(ActionEvent ev) {
             // Delete small files, because they're probably blank tiles.
             // See https://josm.openstreetmap.de/ticket/2307
-            Grabber.cache.customCleanUp(CacheFiles.CLEAN_SMALL_FILES, 4096);
+            cache.cleanSmallFiles(4096);
 
             for (int x = 0; x < dax; ++x) {
                 for (int y = 0; y < day; ++y) {
                     GeorefImage img = images[modulo(x,dax)][modulo(y,day)];
                     if(img.getState() == State.FAILED){
-                        addRequest(new WMSRequest(img.getXIndex(), img.getYIndex(), info.getPixelPerDegree(), true));
-                        mv.repaint();
+                        addRequest(new WMSRequest(img.getXIndex(), img.getYIndex(), info.getPixelPerDegree(), true, false));
                     }
                 }
             }
@@ -679,8 +713,13 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
                 }
                 settingsChanged = true;
                 mv.repaint();
+                if (cache != null) {
+                    cache.saveIndex();
+                    cache = null;
+                }
                 if(info.getUrl() != null)
                 {
+                    cache = new WmsCache(info.getUrl(), imageSize);
                     startGrabberThreads();
                 }
             }
@@ -736,7 +775,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
                     for (int y = 0; y < day; ++y) {
                         GeorefImage img = images[modulo(x,dax)][modulo(y,day)];
                         if(img.getState() == State.NOT_IN_CACHE){
-                            addRequest(new WMSRequest(img.getXIndex(), img.getYIndex(), info.getPixelPerDegree(), false));
+                            addRequest(new WMSRequest(img.getXIndex(), img.getYIndex(), info.getPixelPerDegree(), false, true));
                         }
                     }
                 }

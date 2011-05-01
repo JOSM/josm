@@ -55,8 +55,8 @@ public class BoundingXYVisitor extends AbstractVisitor {
     public void visit(ProjectionBounds b) {
         if(b != null)
         {
-            visit(b.min);
-            visit(b.max);
+            visit(b.getMin());
+            visit(b.getMax());
         }
     }
 
@@ -83,7 +83,7 @@ public class BoundingXYVisitor extends AbstractVisitor {
 
     public boolean hasExtend()
     {
-        return bounds != null && !bounds.min.equals(bounds.max);
+        return bounds != null && !bounds.getMin().equals(bounds.getMax());
     }
 
     /**
@@ -112,8 +112,8 @@ public class BoundingXYVisitor extends AbstractVisitor {
     public void enlargeBoundingBox(double enlargeDegree) {
         if (bounds == null)
             return;
-        LatLon minLatlon = Main.proj.eastNorth2latlon(bounds.min);
-        LatLon maxLatlon = Main.proj.eastNorth2latlon(bounds.max);
+        LatLon minLatlon = Main.proj.eastNorth2latlon(bounds.getMin());
+        LatLon maxLatlon = Main.proj.eastNorth2latlon(bounds.getMax());
         bounds = new ProjectionBounds(
                 Main.proj.latlon2eastNorth(new LatLon(minLatlon.lat() - enlargeDegree, minLatlon.lon() - enlargeDegree)),
                 Main.proj.latlon2eastNorth(new LatLon(maxLatlon.lat() + enlargeDegree, maxLatlon.lon() + enlargeDegree)));

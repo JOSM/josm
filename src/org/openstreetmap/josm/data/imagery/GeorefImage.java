@@ -25,7 +25,7 @@ import org.openstreetmap.josm.gui.layer.WMSLayer;
 public class GeorefImage implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public enum State { IMAGE, NOT_IN_CACHE, FAILED}
+    public enum State { IMAGE, NOT_IN_CACHE, FAILED, PARTLY_IN_CACHE}
 
     private WMSLayer layer;
     private State state;

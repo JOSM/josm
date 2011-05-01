@@ -23,7 +23,6 @@ import java.util.TreeMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JComponent;
-import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -366,7 +365,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
-     * Create a thread that moves the viewport to the given center in an 
+     * Create a thread that moves the viewport to the given center in an
      * animated fashion.
      */
     public void smoothScrollTo(EastNorth newCenter) {
@@ -381,16 +380,16 @@ public class NavigatableComponent extends JComponent implements Helpful {
             final EastNorth finalNewCenter = newCenter;
 
             new Thread(
-                new Runnable() {
-                    public void run() {
-                        for (int i=0; i<frames; i++)
-                        {
-                            // fixme - not use zoom history here
-                            zoomTo(oldCenter.interpolate(finalNewCenter, (double) (i+1) / (double) frames));
-                            try { Thread.sleep(1000 / fps); } catch (InterruptedException ex) { };
+                    new Runnable() {
+                        public void run() {
+                            for (int i=0; i<frames; i++)
+                            {
+                                // fixme - not use zoom history here
+                                zoomTo(oldCenter.interpolate(finalNewCenter, (i+1) / frames));
+                                try { Thread.sleep(1000 / fps); } catch (InterruptedException ex) { };
+                            }
                         }
                     }
-                }
             ).start();
         }
     }
@@ -424,8 +423,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
             h = 20;
         }
 
-        double scaleX = (box.max.east()-box.min.east())/w;
-        double scaleY = (box.max.north()-box.min.north())/h;
+        double scaleX = (box.maxEast-box.minEast)/w;
+        double scaleY = (box.maxNorth-box.minNorth)/h;
         double newScale = Math.max(scaleX, scaleY);
 
         zoomTo(box.getCenter(), newScale);
@@ -1230,9 +1229,8 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public void setNewCursor(Cursor cursor, Object reference) {
         if(Cursors.size() > 0) {
             CursorInfo l = Cursors.getLast();
-            if(l != null && l.cursor == cursor && l.object == reference) {
+            if(l != null && l.cursor == cursor && l.object == reference)
                 return;
-            }
             stripCursors(reference);
         }
         Cursors.add(new CursorInfo(cursor, reference));
@@ -1252,18 +1250,20 @@ public class NavigatableComponent extends JComponent implements Helpful {
         CursorInfo l = Cursors.getLast();
         stripCursors(reference);
         if(l != null && l.object == reference) {
-            if(Cursors.size() == 0)
+            if(Cursors.size() == 0) {
                 setCursor(null);
-            else
+            } else {
                 setCursor(Cursors.getLast().cursor);
+            }
         }
     }
 
     private void stripCursors(Object reference) {
         LinkedList<CursorInfo> c = new LinkedList<CursorInfo>();
         for(CursorInfo i : Cursors) {
-            if(i.object != reference)
+            if(i.object != reference) {
                 c.add(i);
+            }
         }
         Cursors = c;
     }

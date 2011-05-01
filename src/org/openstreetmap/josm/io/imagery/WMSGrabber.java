@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,6 +35,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.ProgressInputStream;
+import org.openstreetmap.josm.tools.Utils;
 
 
 public class WMSGrabber extends Grabber {
@@ -52,8 +55,8 @@ public class WMSGrabber extends Grabber {
         URL url = null;
         try {
             url = getURL(
-                    b.min.east(), b.min.north(),
-                    b.max.east(), b.max.north(),
+                    b.minEast, b.minNorth,
+                    b.maxEast, b.maxNorth,
                     width(), height());
             request.finish(State.IMAGE, grab(url, attempt));
 
@@ -142,24 +145,24 @@ public class WMSGrabber extends Grabber {
 
     @Override
     public boolean loadFromCache(WMSRequest request) {
-        URL url = null;
-        try{
-            url = getURL(
-                    b.min.east(), b.min.north(),
-                    b.max.east(), b.max.north(),
-                    width(), height());
-        } catch(Exception e) {
-            return false;
-        }
-        BufferedImage cached = cache.getImg(url.toString());
-        if((!request.isReal() && !layer.hasAutoDownload()) || cached != null){
-            if(cached == null){
-                request.finish(State.NOT_IN_CACHE, null);
-                return true;
-            }
+        BufferedImage cached = layer.cache.getExactMatch(Main.proj, pixelPerDegree, b.minEast, b.minNorth);
+
+        if (cached != null) {
             request.finish(State.IMAGE, cached);
             return true;
+        } else if (request.isAllowPartialCacheMatch()) {
+            BufferedImage partialMatch = layer.cache.getPartialMatch(Main.proj, pixelPerDegree, b.minEast, b.minNorth);
+            if (partialMatch != null) {
+                request.finish(State.PARTLY_IN_CACHE, partialMatch);
+                return true;
+            }
         }
+
+        if((!request.isReal() && !layer.hasAutoDownload())){
+            request.finish(State.NOT_IN_CACHE, null);
+            return true;
+        }
+
         return false;
     }
 
@@ -179,11 +182,18 @@ public class WMSGrabber extends Grabber {
                 || contentType != null && !contentType.startsWith("image") )
             throw new IOException(readException(conn));
 
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         InputStream is = new ProgressInputStream(conn, null);
-        BufferedImage img = layer.normalizeImage(ImageIO.read(is));
-        is.close();
+        try {
+            Utils.copyStream(is, baos);
+        } finally {
+            is.close();
+        }
 
-        cache.saveImg(url.toString(), img);
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        BufferedImage img = layer.normalizeImage(ImageIO.read(bais));
+        bais.reset();
+        layer.cache.saveToCache(layer.isOverlapEnabled()?img:null, bais, Main.proj, pixelPerDegree, b.minEast, b.minNorth);
         return img;
     }
 

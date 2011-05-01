@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.io.imagery;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -10,9 +12,11 @@ import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
+import org.openstreetmap.josm.tools.Utils;
 
 public class HTMLGrabber extends WMSGrabber {
     public static final StringProperty PROP_BROWSER = new StringProperty("imagery.wms.browser", "webkit-image {0}");
@@ -42,8 +46,13 @@ public class HTMLGrabber extends WMSGrabber {
             throw new IOException( "Could not start browser. Please check that the executable path is correct.\n" + ioe.getMessage() );
         }
 
-        BufferedImage img = layer.normalizeImage(ImageIO.read(browser.getInputStream()));
-        cache.saveImg(urlstring, img);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Utils.copyStream(browser.getInputStream(), baos);
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        BufferedImage img = layer.normalizeImage(ImageIO.read(bais));
+        bais.reset();
+        layer.cache.saveToCache(layer.isOverlapEnabled()?img:null, bais, Main.proj, pixelPerDegree, b.minEast, b.minNorth);
+
         return img;
     }
 }
