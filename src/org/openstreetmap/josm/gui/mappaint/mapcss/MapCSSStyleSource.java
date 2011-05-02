@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.mappaint.mapcss;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.parser.ParseException;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parser.TokenMgrError;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -31,6 +33,7 @@ public class MapCSSStyleSource extends StyleSource {
 
     final public List<MapCSSRule> rules;
     private Color backgroundColorOverride;
+    private String css = null;
 
     public MapCSSStyleSource(String url, String name, String shortdescription) {
         super(url, name, shortdescription);
@@ -39,6 +42,20 @@ public class MapCSSStyleSource extends StyleSource {
 
     public MapCSSStyleSource(SourceEntry entry) {
         super(entry);
+        rules = new ArrayList<MapCSSRule>();
+    }
+
+    /**
+     * <p>Creates a new style source from the MapCSS styles supplied in
+     * {@code css}</p>
+     * 
+     * @param css the MapCSS style declaration. Must not be null.
+     * @throws IllegalArgumentException thrown if {@code css} is null
+     */
+    public MapCSSStyleSource(String css) throws IllegalArgumentException{
+        super(null, null, null);
+        CheckParameterUtil.ensureParameterNotNull(css);
+        this.css = css;
         rules = new ArrayList<MapCSSRule>();
     }
 
@@ -68,6 +85,9 @@ public class MapCSSStyleSource extends StyleSource {
 
     @Override
     public InputStream getSourceInputStream() throws IOException {
+        if (css != null)
+            return new ByteArrayInputStream(css.getBytes("UTF-8"));
+
         MirroredInputStream in = new MirroredInputStream(url);
         InputStream zip = in.getZipEntry("mapcss", "style");
         if (zip != null) {
@@ -113,8 +133,7 @@ public class MapCSSStyleSource extends StyleSource {
             for (Selector s : r.selectors) {
                 if ((s instanceof GeneralSelector)) {
                     GeneralSelector gs = (GeneralSelector) s;
-                    if (gs.base.equals(type))
-                     {
+                    if (gs.base.equals(type)) {
                         for (Condition cnd : gs.conds) {
                             if (!cnd.applies(env))
                                 continue NEXT_RULE;
@@ -139,8 +158,8 @@ public class MapCSSStyleSource extends StyleSource {
         Environment env = new Environment(osm, mc, null, this);
         for (MapCSSRule r : rules) {
             for (Selector s : r.selectors) {
-                env.clearMatchingReferrers();
-                if (s.matches(env)) { // as side effect env.matchingReferrers will be set (if s is a child selector)
+                env.clearSelectorMatchingInformation();
+                if (s.matches(env)) { // as side effect env.parent will be set (if s is a child selector)
                     if (s.getRange().contains(scale)) {
                         mc.range = Range.cut(mc.range, s.getRange());
                     } else {

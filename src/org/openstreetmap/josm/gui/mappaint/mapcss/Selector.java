@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Range;
@@ -45,7 +45,10 @@ public interface Selector {
      *
      */
     public static class ChildOrParentSelector implements Selector {
-        Selector a, b;
+        //static private final Logger logger = Logger.getLogger(ChildOrParentSelector.class.getName());
+        private final Selector left;
+        private final LinkSelector link;
+        private final Selector right;
         /** true, if this represents a parent selector (otherwise it is a child selector)
          */
         private final boolean parentSelector;
@@ -56,42 +59,72 @@ public interface Selector {
          * @param b the second selector
          * @param parentSelector if true, this is a parent selector; otherwise a child selector
          */
-        public ChildOrParentSelector(Selector a, Selector b, boolean parentSelector) {
-            this.a = a;
-            this.b = b;
+        public ChildOrParentSelector(Selector a, LinkSelector link, Selector b, boolean parentSelector) {
+            this.left = a;
+            this.link = link;
+            this.right = b;
             this.parentSelector = parentSelector;
         }
 
         @Override
         public boolean matches(Environment e) {
-            if (!b.matches(e))
+            if (!right.matches(e))
                 return false;
 
-            Environment e2 = new Environment(null, e.mc, e.layer, e.source);
-            List<OsmPrimitive> matchingRefs = new ArrayList<OsmPrimitive>();
             if (!parentSelector) {
                 for (OsmPrimitive ref : e.osm.getReferrers()) {
-                    e2.osm = ref;
-                    if (a.matches(e2)) {
-                        matchingRefs.add(ref);
+                    if (!left.matches(e.withPrimitive(ref)))
+                        continue;
+                    if (ref instanceof Way) {
+                        List<Node> wayNodes = ((Way) ref).getNodes();
+                        for (int i=0; i<wayNodes.size(); i++) {
+                            if (wayNodes.get(i).equals(e.osm)) {
+                                if (link.matches(e.withParent(ref).withIndex(i).withLinkContext())) {
+                                    e.parent = ref;
+                                    e.index = i;
+                                    return true;
+                                }
+                            }
+                        }
+                    } else if (ref instanceof Relation) {
+                        List<RelationMember> members = ((Relation) ref).getMembers();
+                        for (int i=0; i<members.size(); i++) {
+                            RelationMember m = members.get(i);
+                            if (m.getMember().equals(e.osm)) {
+                                if (link.matches(e.withParent(ref).withIndex(i).withLinkContext())) {
+                                    e.parent = ref;
+                                    e.index = i;
+                                    return true;
+                                }
+                            }
+                        }
                     }
-                }
-                if (!matchingRefs.isEmpty()) {
-                    e.setMatchingReferrers(matchingRefs);
-                    return true;
                 }
             } else {
-                if (e.osm instanceof Relation) {
-                    for (OsmPrimitive chld : ((Relation) e.osm).getMemberPrimitives()) {
-                        e2.osm = chld;
-                        if (a.matches(e2))
-                            return true;
+                if (e.osm instanceof Way) {
+                    List<Node> wayNodes = ((Way) e.osm).getNodes();
+                    for (int i=0; i<wayNodes.size(); i++) {
+                        Node n = wayNodes.get(i);
+                        if (left.matches(e.withPrimitive(n))) {
+                            if (link.matches(e.withChild(n).withIndex(i).withLinkContext())) {
+                                e.child = n;
+                                e.index = i;
+                                return true;
+                            }
+                        }
                     }
-                } else if (e.osm instanceof Way) {
-                    for (Node n : ((Way) e.osm).getNodes()) {
-                        e2.osm = n;
-                        if (a.matches(e2))
-                            return true;
+                }
+                else if (e.osm instanceof Relation) {
+                    List<RelationMember> members = ((Relation) e.osm).getMembers();
+                    for (int i=0; i<members.size(); i++) {
+                        OsmPrimitive member = members.get(i).getMember();
+                        if (left.matches(e.withPrimitive(member))) {
+                            if (link.matches(e.withChild(member).withIndex(i).withLinkContext())) {
+                                e.child = member;
+                                e.index = i;
+                                return true;
+                            }
+                        }
                     }
                 }
             }
@@ -100,12 +133,49 @@ public interface Selector {
 
         @Override
         public String getSubpart() {
-            return b.getSubpart();
+            return right.getSubpart();
         }
 
         @Override
         public Range getRange() {
-            return b.getRange();
+            return right.getRange();
+        }
+
+        @Override
+        public String toString() {
+            return left +" "+ (parentSelector? "<" : ">")+link+" " +right;
+        }
+    }
+
+    public static class LinkSelector implements Selector {
+        protected List<Condition> conditions;
+
+        public LinkSelector(List<Condition> conditions) {
+            this.conditions = conditions;
+        }
+
+        @Override
+        public boolean matches(Environment env) {
+            Utils.ensure(env.isLinkContext(), "Requires LINK context in environment, got ''{0}''", env.getContext());
+            for (Condition c: conditions) {
+                if (!c.applies(env)) return false;
+            }
+            return true;
+        }
+
+        @Override
+        public String getSubpart() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public Range getRange() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public String toString() {
+            return "LinkSelector{" + "conditions=" + conditions + '}';
         }
     }
 

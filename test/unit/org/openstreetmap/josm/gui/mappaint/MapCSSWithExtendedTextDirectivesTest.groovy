@@ -1,13 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint
 
-import java.awt.Color;
+import java.awt.Color
 
-import org.junit.*;
-import org.openstreetmap.josm.fixtures.JOSMFixture 
-import org.openstreetmap.josm.gui.mappaint.LabelCompositionStrategy.DeriveLabelFromNameTagsCompositionStrategy 
-import org.openstreetmap.josm.gui.mappaint.LabelCompositionStrategy.StaticLabelCompositionStrategy 
-import org.openstreetmap.josm.gui.mappaint.LabelCompositionStrategy.TagLookupCompositionStrategy 
+import org.junit.*
+import org.openstreetmap.josm.fixtures.JOSMFixture
+import org.openstreetmap.josm.gui.mappaint.LabelCompositionStrategy.DeriveLabelFromNameTagsCompositionStrategy
+import org.openstreetmap.josm.gui.mappaint.LabelCompositionStrategy.TagLookupCompositionStrategy
 class MapCSSWithExtendedTextDirectivesTest {
     
 

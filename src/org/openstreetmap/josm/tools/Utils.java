@@ -6,8 +6,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.MessageFormat;
 import java.util.Collection;
 
+/**
+ * Basic utils, that can be useful in different parts of the program.
+ */
 public class Utils {
 
     public static <T> boolean exists(Iterable<? extends T> collection, Predicate<? super T> predicate) {
@@ -79,6 +83,13 @@ public class Utils {
         if (a == b)
             return true;
         return (a != null && a.equals(b));
+    }
+
+    public static void ensure(boolean condition, String message, Object...data) {
+        if (!condition)
+            throw new AssertionError(
+                    MessageFormat.format(message,data)
+            );
     }
 
     /**
@@ -161,6 +172,9 @@ public class Utils {
         return ((float) val) / 255f;
     }
 
+    public static Color complement(Color clr) {
+        return new Color(255 - clr.getRed(), 255 - clr.getGreen(), 255 - clr.getBlue(), clr.getAlpha());
+    }
 
     public static int copyStream(InputStream source, OutputStream destination) throws IOException {
         int count = 0;
@@ -171,12 +185,6 @@ public class Utils {
             destination.write(b, 0, read);
         }
         return count;
-    }
-
-
-
-    public static Color complement(Color clr) {
-        return new Color(255 - clr.getRed(), 255 - clr.getGreen(), 255 - clr.getBlue(), clr.getAlpha());
     }
 
     public static boolean deleteDirectory(File path) {

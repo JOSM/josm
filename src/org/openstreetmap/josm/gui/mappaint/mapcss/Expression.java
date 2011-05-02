@@ -173,7 +173,7 @@ public interface Expression {
             }
 
             public String parent_tag(String key) {
-                if (env.getMatchingReferrers() == null) {
+                if (env.parent == null) {
                     // we don't have a matched parent, so just search all referrers
                     for (OsmPrimitive parent : env.osm.getReferrers()) {
                         String value = parent.get(key);
@@ -182,15 +182,21 @@ public interface Expression {
                     }
                     return null;
                 }
-                if (env.getMatchingReferrers().isEmpty())
-                    return null;
-                // use always the first matching referrer to have consistency
-                // in an expression and declaration block
-                return env.getMatchingReferrers().iterator().next().get(key);
+                return env.parent.get(key);
             }
 
             public boolean has_tag_key(String key) {
                 return env.osm.hasKey(key);
+            }
+
+            public Float index() {
+                if (env.index == null)
+                    return null;
+                return new Float(env.index + 1);
+            }
+
+            public String role() {
+                return env.getRole();
             }
 
             public boolean not(boolean b) {
