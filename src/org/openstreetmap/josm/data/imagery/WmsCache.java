@@ -177,13 +177,13 @@ public class WmsCache {
     }
 
     public synchronized void loadIndex() {
+        File indexFile = new File(cacheDir, INDEX_FILENAME);
         try {
             JAXBContext context = JAXBContext.newInstance(
                     WmsCacheType.class.getPackage().getName(),
                     WmsCacheType.class.getClassLoader());
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            WmsCacheType cacheEntries = (WmsCacheType)unmarshaller.unmarshal(
-                    new FileInputStream(new File(cacheDir, INDEX_FILENAME)));
+            WmsCacheType cacheEntries = (WmsCacheType)unmarshaller.unmarshal(new FileInputStream(indexFile));
             totalFileSize = cacheEntries.getTotalFileSize();
             if (cacheEntries.getTileSize() != tileSize) {
                 System.out.println("Cache created with different tileSize, cache will be discarded");
@@ -200,8 +200,12 @@ public class WmsCache {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Unable to load index for wms-cache, new file will be created");
+            if (indexFile.exists()) {
+                e.printStackTrace();
+                System.out.println("Unable to load index for wms-cache, new file will be created");
+            } else {
+                System.out.println("Index for wms-cache doesn't exist, new file will be created");
+            }
         }
 
         removeNonReferencedFiles();
