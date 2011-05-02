@@ -67,7 +67,7 @@ public class User {
             user = new User(uid, name);
             userMap.put(user.getId(), user);
         }
-        user.addName(name);
+        if (name != null) user.addName(name);
         return user;
     }
 
@@ -174,22 +174,37 @@ public class User {
     private final HashSet<String> names = new HashSet<String>();
     /** the user id */
     private final long uid;
+    private int relicensingStatus = STATUS_UNKNOWN;
 
-    public static final int STATUS_UNKNOWN = 0;
+    public static final int STATUS_UNKNOWN = -1;
+    public static final int STATUS_UNDECIDED = 0;
     public static final int STATUS_AGREED = 1;
     public static final int STATUS_NOT_AGREED = 2;
     public static final int STATUS_AUTO_AGREED = 3;
+    public static final int STATUS_ANONYMOUS = 4;
 
     /** 
+    * Finds out this user's relicensing status and saves it for quicker
+    * access.
     */
     public int getRelicensingStatus() {
-        if (uid >= 286582) return STATUS_AUTO_AGREED;
+        if (relicensingStatus != STATUS_UNKNOWN) return relicensingStatus;
+        if (uid >= 286582) return (relicensingStatus = STATUS_AUTO_AGREED);
         if (relicensingUsers == null) return STATUS_UNKNOWN;
         Long id = new Long(uid);
-        if (relicensingUsers.contains(id)) return STATUS_AGREED;
+        if (relicensingUsers.contains(id)) return (relicensingStatus = STATUS_AGREED);
         if (nonRelicensingUsers == null) return STATUS_UNKNOWN;
-        if (nonRelicensingUsers.contains(id)) return STATUS_NOT_AGREED;
+        if (nonRelicensingUsers.contains(id)) return (relicensingStatus = STATUS_NOT_AGREED);
         return STATUS_UNKNOWN;
+    }
+
+    /**
+    * Sets this user's relicensing status. This can be used if relicensing
+    * information is available from another source so that directly looking
+    * at the users_agreed/users_not_agreed files it not required.
+    */
+    public void setRelicensingStatus(int status) {
+        relicensingStatus = status;
     }
 
     /**
