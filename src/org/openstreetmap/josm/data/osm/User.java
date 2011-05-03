@@ -195,7 +195,7 @@ public class User {
         if (relicensingUsers.contains(id)) return (relicensingStatus = STATUS_AGREED);
         if (nonRelicensingUsers == null) return STATUS_UNKNOWN;
         if (nonRelicensingUsers.contains(id)) return (relicensingStatus = STATUS_NOT_AGREED);
-        return STATUS_UNKNOWN;
+        return STATUS_UNDECIDED;
     }
 
     /**
