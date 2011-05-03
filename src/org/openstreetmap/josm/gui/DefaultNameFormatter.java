@@ -8,6 +8,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +51,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     /** the default list of tags which are used as naming tags in relations */
     static public final String[] DEFAULT_NAMING_TAGS_FOR_RELATIONS = {"name", "ref", "restriction", "landuse", "natural",
-    "public_transport", ":LocationCode", "note"};
+        "public_transport", ":LocationCode", "note"};
 
     /** the current list of tags used as naming tags in relations */
     static private List<String> namingTagsForRelations =  null;
@@ -137,6 +138,18 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return name;
     }
 
+    private final Comparator<Node> nodeComparator = new Comparator<Node>() {
+        @Override
+        public int compare(Node n1, Node n2) {
+            return format(n1).compareTo(format(n2));
+        }
+    };
+
+    public Comparator<Node> getNodeComparator() {
+        return nodeComparator;
+    }
+
+
     /**
      * Formats a name for a way
      *
@@ -188,8 +201,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             if (nodesNo > 1 && way.isClosed()) {
                 nodesNo--;
             }
-            if(name == null || name.length() == 0)
+            if(name == null || name.length() == 0) {
                 name = String.valueOf(way.getId());
+            }
             /* note: length == 0 should no longer happen, but leave the bracket code
                nevertheless, who knows what future brings */
             /* I18n: count of nodes as parameter */
@@ -199,6 +213,18 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         name = decorateNameWithId(name, way);
         return name;
     }
+
+    private final Comparator<Way> wayComparator = new Comparator<Way>() {
+        @Override
+        public int compare(Way w1, Way w2) {
+            return format(w1).compareTo(format(w2));
+        }
+    };
+
+    public Comparator<Way> getWayComparator() {
+        return wayComparator;
+    }
+
 
     /**
      * Formats a name for a relation
@@ -211,70 +237,19 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         if (relation.isIncomplete()) {
             name = tr("incomplete");
         } else {
-            name = trc("Relation type", relation.get("type"));
-            if (name == null) {
-                name = (relation.get("public_transport") != null) ? tr("public transport") : "";
-            }
-            if (name == null) {
-                String building  = relation.get("building");
-                if(OsmUtils.isTrue(building))
-                    name = tr("building");
-                else if(building != null)
-                    name = tr(building); // translate tag!
-            }
-            if (name == null) {
-                name = trc("Place type", relation.get("place"));
-            }
-            if (name == null) {
-                name = tr("relation");
-            }
-            String admin_level = relation.get("admin_level");
-            if (admin_level != null) {
-                name += "["+admin_level+"]";
-            }
-
-            name += " (";
-            String nameTag = null;
-            for (String n : getNamingtagsForRelations()) {
-                if (n.equals("name")) {
-                    if (Main.pref.getBoolean("osm-primitives.localize-name", true)) {
-                        nameTag = relation.getLocalName();
-                    } else {
-                        nameTag = relation.getName();
-                    }
-                } else if (n.equals(":LocationCode")) {
-                    for (String m : relation.keySet()) {
-                        if (m.endsWith(n)) {
-                            nameTag = relation.get(m);
-                            break;
-                        }
-                    }
-                } else {
-                    String str = relation.get(n);
-                    if(str != null)
-                        nameTag = tr(str);
-                }
-                if (nameTag != null) {
-                    break;
-                }
-            }
-            if (nameTag == null) {
-                name += Long.toString(relation.getId()) + ", ";
+            name = getRelationTypeName(relation);
+            String relationName = getRelationName(relation);
+            if (relationName == null) {
+                relationName = Long.toString(relation.getId());
             } else {
-                name += "\"" + nameTag + "\", ";
+                relationName = "\"" + relationName + "\"";
             }
+            name += " (" + relationName + ", ";
 
             int mbno = relation.getMembersCount();
             name += trn("{0} member", "{0} members", mbno, mbno);
 
-            boolean incomplete = false;
-            for (RelationMember m : relation.getMembers()) {
-                if (m.getMember().isIncomplete()) {
-                    incomplete = true;
-                    break;
-                }
-            }
-            if (incomplete) {
+            if (relationHasIncompleteMember(relation)) {
                 name += ", "+tr("incomplete");
             }
 
@@ -282,6 +257,133 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
         name = decorateNameWithId(name, relation);
         return name;
+    }
+
+    private final Comparator<Relation> relationComparator = new Comparator<Relation>() {
+        @Override
+        public int compare(Relation r1, Relation r2) {
+            String type1 = getRelationTypeName(r1);
+            String type2 = getRelationTypeName(r2);
+
+            int comp = type1.compareTo(type2);
+            if (comp != 0)
+                return comp;
+
+            String name1 = getRelationName(r1);
+            String name2 = getRelationName(r2);
+
+            if (name1 == null && name2 == null)
+                return (r1.getUniqueId() > r2.getUniqueId())?1:-1;
+            else if (name1 == null)
+                return -1;
+            else if (name2 == null)
+                return 1;
+            else if (!name1.isEmpty() && !name2.isEmpty() && Character.isDigit(name1.charAt(0)) && Character.isDigit(name2.charAt(0))) {
+                //Compare numerically
+                String ln1 = getLeadingNumber(name1);
+                String ln2 = getLeadingNumber(name2);
+
+                comp = Long.valueOf(ln1).compareTo(Long.valueOf(ln2));
+                if (comp != 0)
+                    return comp;
+
+                // put 1 before 0001
+                comp = ln1.compareTo(ln2);
+                if (comp != 0)
+                    return comp;
+
+                comp = name1.substring(ln1.length()).compareTo(name2.substring(ln2.length()));
+                if (comp != 0)
+                    return comp;
+            } else {
+                comp = name1.compareToIgnoreCase(name2);
+                if (comp != 0)
+                    return comp;
+            }
+
+            if (r1.getMembersCount() != r2.getMembersCount())
+                return (r1.getMembersCount() > r2.getMembersCount())?1:-1;
+
+            comp = Boolean.valueOf(relationHasIncompleteMember(r1)).compareTo(Boolean.valueOf(relationHasIncompleteMember(r2)));
+            if (comp != 0)
+                return comp;
+
+            return r1.getUniqueId() > r2.getUniqueId()?1:-1;
+        }
+    };
+
+    public Comparator<Relation> getRelationComparator() {
+        return relationComparator;
+    }
+
+    private String getLeadingNumber(String s) {
+        int i = 0;
+        while (i < s.length() && Character.isDigit(s.charAt(i))) {
+            i++;
+        }
+        return s.substring(0, i);
+    }
+
+    private String getRelationTypeName(Relation relation) {
+        String name = trc("Relation type", relation.get("type"));
+        if (name == null) {
+            name = (relation.get("public_transport") != null) ? tr("public transport") : null;
+        }
+        if (name == null) {
+            String building  = relation.get("building");
+            if(OsmUtils.isTrue(building)) {
+                name = tr("building");
+            } else if(building != null)
+            {
+                name = tr(building); // translate tag!
+            }
+        }
+        if (name == null) {
+            name = trc("Place type", relation.get("place"));
+        }
+        if (name == null) {
+            name = tr("relation");
+        }
+        String admin_level = relation.get("admin_level");
+        if (admin_level != null) {
+            name += "["+admin_level+"]";
+        }
+
+        return name;
+    }
+
+    private String getNameTagValue(Relation relation, String nameTag) {
+        if (nameTag.equals("name")) {
+            if (Main.pref.getBoolean("osm-primitives.localize-name", true))
+                return relation.getLocalName();
+            else
+                return relation.getName();
+        } else if (nameTag.equals(":LocationCode")) {
+            for (String m : relation.keySet()) {
+                if (m.endsWith(nameTag))
+                    return relation.get(m);
+            }
+            return null;
+        } else
+            return relation.get(nameTag);
+    }
+
+    private String getRelationName(Relation relation) {
+        String nameTag = null;
+        for (String n : getNamingtagsForRelations()) {
+            nameTag = getNameTagValue(relation, n);
+            if (nameTag != null)
+                return nameTag;
+        }
+        return null;
+    }
+
+    private boolean relationHasIncompleteMember(Relation relation) {
+        for (RelationMember m : relation.getMembers()) {
+            if (m.getMember().isIncomplete())
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -406,8 +508,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
         int nodesNo = way.isClosed() ? way.getNumNodes() -1 : way.getNumNodes();
         String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
-        if(sb.length() == 0 )
+        if(sb.length() == 0 ) {
             sb.append(way.getId());
+        }
         /* note: length == 0 should no longer happen, but leave the bracket code
            nevertheless, who knows what future brings */
         sb.append((sb.length() > 0) ? " ("+nodes+")" : nodes);

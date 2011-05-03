@@ -33,7 +33,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -41,18 +40,18 @@ import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
 import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
 import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
-import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.SideButton;
-import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
@@ -90,7 +89,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
     public RelationListDialog() {
         super(tr("Relations"), "relationlist", tr("Open a list of all relations."),
                 Shortcut.registerShortcut("subwindow:relations", tr("Toggle: {0}", tr("Relations")), KeyEvent.VK_R,
-                    Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
+                        Shortcut.GROUP_LAYER, Shortcut.SHIFT_DEFAULT), 150);
 
         // create the list of relations
         //
@@ -577,13 +576,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         public void sort() {
             Collections.sort(
                     relations,
-                    new Comparator<Relation>() {
-                        NameFormatter formatter = DefaultNameFormatter.getInstance();
-
-                        public int compare(Relation r1, Relation r2) {
-                            return r1.getDisplayName(formatter).compareTo(r2.getDisplayName(formatter));
-                        }
-                    }
+                    DefaultNameFormatter.getInstance().getRelationComparator()
             );
         }
 
