@@ -59,7 +59,7 @@ public class UnconnectedWays extends Test {
      */
     public UnconnectedWays() {
         super(tr("Unconnected ways."),
-              tr("This test checks if a way has an endpoint very near to another way."));
+                tr("This test checks if a way has an endpoint very near to another way."));
     }
 
     @Override
@@ -88,10 +88,10 @@ public class UnconnectedWays extends Test {
                         continue;
                     }
                     if ("turning_circle".equals(en.get("highway"))
-                        || "bus_stop".equals(en.get("highway"))
-                        || "buffer_stop".equals(en.get("railway"))
-                        || OsmUtils.isTrue(en.get("noexit"))
-                        || en.hasKey("barrier")) {
+                            || "bus_stop".equals(en.get("highway"))
+                            || "buffer_stop".equals(en.get("railway"))
+                            || OsmUtils.isTrue(en.get("noexit"))
+                            || en.hasKey("barrier")) {
                         continue;
                     }
                     // There's a small false-positive here.  Imagine an intersection
@@ -197,7 +197,7 @@ public class UnconnectedWays extends Test {
             this.highway = (highway != null || railway != null) && !isAbandoned;
             this.isBoundary = !this.highway && "administrative".equals(w.get("boundary"));
             line = new Line2D.Double(n1.getEastNorth().east(), n1.getEastNorth().north(),
-                                     n2.getEastNorth().east(), n2.getEastNorth().north());
+                    n2.getEastNorth().east(), n2.getEastNorth().north());
             len = line.getP1().distance(line.getP2());
             this.n1 = n1;
             this.n2 = n2;
@@ -287,12 +287,9 @@ public class UnconnectedWays extends Test {
             List<Node> found_nodes = endnodes_highway.search(new BBox(bounds.get(0), bounds.get(1)));
             found_nodes.addAll(endnodes.search(new BBox(bounds.get(0), bounds.get(1))));
 
-            if (found_nodes == null)
-                return Collections.emptySet();
-
             for (Node n : found_nodes) {
                 if (!nearby(n, dist) ||
-                     (ds_area != null && !ds_area.contains(n.getCoor()))) {
+                        (ds_area != null && !ds_area.contains(n.getCoor()))) {
                     continue;
                 }
                 // It is actually very rare for us to find a node
@@ -312,17 +309,17 @@ public class UnconnectedWays extends Test {
 
         public boolean isArea() {
             return w.hasKey("landuse")
-                || w.hasKey("leisure")
-                || w.hasKey("amenity")
-                || w.hasKey("building");
+            || w.hasKey("leisure")
+            || w.hasKey("amenity")
+            || w.hasKey("building");
         }
     }
 
     List<MyWaySegment> getWaySegments(Way w) {
         List<MyWaySegment> ret = new ArrayList<MyWaySegment>();
         if (!w.isUsable()
-            || w.hasKey("barrier")
-            || "cliff".equals(w.get("natural")))
+                || w.hasKey("barrier")
+                || "cliff".equals(w.get("natural")))
             return ret;
 
         int size = w.getNodesCount();
@@ -343,13 +340,15 @@ public class UnconnectedWays extends Test {
 
     @Override
     public void visit(Way w) {
-        ways.addAll(getWaySegments(w));
-        QuadBuckets<Node> set = endnodes;
-        if (w.hasKey("highway") || w.hasKey("railway")) {
-            set = endnodes_highway;
+        if (w.getNodesCount() > 0) {
+            ways.addAll(getWaySegments(w));
+            QuadBuckets<Node> set = endnodes;
+            if (w.hasKey("highway") || w.hasKey("railway")) {
+                set = endnodes_highway;
+            }
+            addNode(w.firstNode(), set);
+            addNode(w.lastNode(), set);
         }
-        addNode(w.firstNode(), set);
-        addNode(w.lastNode(), set);
     }
 
     @Override

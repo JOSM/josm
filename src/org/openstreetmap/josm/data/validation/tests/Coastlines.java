@@ -13,8 +13,8 @@ import java.util.List;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
@@ -43,7 +43,7 @@ public class Coastlines extends Test {
      */
     public Coastlines() {
         super(tr("Coastlines."),
-              tr("This test checks that coastlines are correct."));
+                tr("This test checks that coastlines are correct."));
     }
 
     @Override
@@ -66,7 +66,7 @@ public class Coastlines extends Test {
             Node head = c1.firstNode();
             Node tail = c1.lastNode();
 
-            if (head.equals(tail)) {
+            if (c1.getNodesCount() == 0 || head.equals(tail)) {
                 continue;
             }
 
@@ -161,7 +161,7 @@ public class Coastlines extends Test {
 
                 if (highlight.size() > 0) {
                     errors.add(new TestError(this, Severity.ERROR, tr("Unconnected coastline"),
-                                             UNCONNECTED_COASTLINE, primitives, highlight));
+                            UNCONNECTED_COASTLINE, primitives, highlight));
                 }
             }
 
@@ -190,11 +190,11 @@ public class Coastlines extends Test {
                 }
 
                 errors.add(new TestError(this, Severity.ERROR, tr("Unordered coastline"),
-                                         UNORDERED_COASTLINE, primitives, highlight));
+                        UNORDERED_COASTLINE, primitives, highlight));
             }
             else if (reversed) {
                 errors.add(new TestError(this, Severity.ERROR, tr("Reversed coastline"),
-                                         REVERSED_COASTLINE, primitives));
+                        REVERSED_COASTLINE, primitives));
             }
         }
 
