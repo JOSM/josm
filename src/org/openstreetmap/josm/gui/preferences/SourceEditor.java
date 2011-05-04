@@ -83,7 +83,7 @@ import org.xml.sax.SAXException;
 public abstract class SourceEditor extends JPanel {
 
     final protected boolean isMapPaint;
-    
+
     protected JTable tblActiveSources;
     protected ActiveSourcesModel activeSourcesModel;
     protected JList lstAvailableSources;
@@ -112,6 +112,7 @@ public abstract class SourceEditor extends JPanel {
         tblActiveSources = new JTable(activeSourcesModel = new ActiveSourcesModel(selectionModel)) {
             // some kind of hack to prevent the table from scrolling slightly to the
             // right when clicking on the text
+            @Override
             public void scrollRectToVisible(Rectangle aRect) {
                 super.scrollRectToVisible(new Rectangle(0, aRect.y, aRect.width, aRect.height));
             }
@@ -141,7 +142,7 @@ public abstract class SourceEditor extends JPanel {
             }
         });
         activeSourcesModel.setActiveSources(getInitialSourcesList());
-        
+
         final EditActiveSourceAction editActiveSourceAction = new EditActiveSourceAction();
         tblActiveSources.getSelectionModel().addListSelectionListener(editActiveSourceAction);
         tblActiveSources.addMouseListener(new MouseAdapter() {
@@ -367,9 +368,9 @@ public abstract class SourceEditor extends JPanel {
      * Identifiers for strings that need to be provided.
      */
     protected enum I18nString { AVAILABLE_SOURCES, ACTIVE_SOURCES, NEW_SOURCE_ENTRY_TOOLTIP, NEW_SOURCE_ENTRY,
-            REMOVE_SOURCE_TOOLTIP, EDIT_SOURCE_TOOLTIP, ACTIVATE_TOOLTIP, RELOAD_ALL_AVAILABLE,
-            LOADING_SOURCES_FROM, FAILED_TO_LOAD_SOURCES_FROM, FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC,
-            ILLEGAL_FORMAT_OF_ENTRY }
+        REMOVE_SOURCE_TOOLTIP, EDIT_SOURCE_TOOLTIP, ACTIVATE_TOOLTIP, RELOAD_ALL_AVAILABLE,
+        LOADING_SOURCES_FROM, FAILED_TO_LOAD_SOURCES_FROM, FAILED_TO_LOAD_SOURCES_FROM_HELP_TOPIC,
+        ILLEGAL_FORMAT_OF_ENTRY }
 
     /**
      * adjust the preferred width of column col to the maximum preferred width of the cells
@@ -377,13 +378,13 @@ public abstract class SourceEditor extends JPanel {
      */
     private static void adjustColumnWidth(JTable tbl, int col) {
         int maxwidth = 0;
-		for (int row=0; row<tbl.getRowCount(); row++) {
+        for (int row=0; row<tbl.getRowCount(); row++) {
             TableCellRenderer tcr = tbl.getCellRenderer(row, col);
-                Object val = tbl.getValueAt(row, col);
-                Component comp = tcr.getTableCellRendererComponent(tbl, val, false, false, row, col);
-                maxwidth = Math.max(comp.getPreferredSize().width, maxwidth);
-		}
-		tbl.getColumnModel().getColumn(col).setPreferredWidth(maxwidth);
+            Object val = tbl.getValueAt(row, col);
+            Component comp = tcr.getTableCellRendererComponent(tbl, val, false, false, row, col);
+            maxwidth = Math.max(comp.getPreferredSize().width, maxwidth);
+        }
+        tbl.getColumnModel().getColumn(col).setPreferredWidth(maxwidth);
     }
 
     public boolean hasActiveSourcesChanged() {
@@ -586,12 +587,12 @@ public abstract class SourceEditor extends JPanel {
             int[] sel = tblActiveSources.getSelectedRows();
             if (sel.length == 0)
                 return false;
-            if (i < 0) { // Up
+            if (i < 0)
                 return sel[0] >= -i;
-            } else if (i > 0) { // Down
-                return sel[sel.length-1] <= getRowCount()-1 - i;
-            } else
-                return true;
+                else if (i > 0)
+                    return sel[sel.length-1] <= getRowCount()-1 - i;
+                else
+                    return true;
         }
 
         public void move(int i) {
@@ -734,6 +735,7 @@ public abstract class SourceEditor extends JPanel {
             }
         }
 
+        @Override
         public String getTitle() {
             return tfTitle.getText();
         }
@@ -1210,10 +1212,12 @@ public abstract class SourceEditor extends JPanel {
             availableSourcesModel.setSources(sources);
         }
     }
-    
+
     class SourceEntryTableCellRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            if (value == null)
+                return this;
             SourceEntry se = (SourceEntry) value;
             JLabel label = (JLabel)super.getTableCellRendererComponent(table,
                     fromSourceEntry(se), isSelected, hasFocus, row, column);
@@ -1489,9 +1493,8 @@ public abstract class SourceEditor extends JPanel {
 
         public Collection<? extends SourceEntry> readNewFormat() {
             List<SourceEntry> entries = readNewFormatImpl();
-            if (entries == null) {
+            if (entries == null)
                 return getDefault();
-            }
             return entries;
         }
 
@@ -1499,9 +1502,8 @@ public abstract class SourceEditor extends JPanel {
             List<SourceEntry> entries = new ArrayList<SourceEntry>();
             Collection<Collection<String>> mappaintSrc = Main.pref.getArray(pref, null);
             if (mappaintSrc == null || mappaintSrc.isEmpty()) {
-                if (Main.pref.getBoolean(pref + "._empty_", false)) {
+                if (Main.pref.getBoolean(pref + "._empty_", false))
                     return Collections.<SourceEntry>emptyList();
-                }
                 return null;
             }
 

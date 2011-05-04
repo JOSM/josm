@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.border.Border;
@@ -164,6 +163,9 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
 
         RelationMember member = (RelationMember)value;
         reset();
+        if (value == null)
+            return this;
+
         renderBackground(getModel(table), member, row, column, isSelected);
         renderForeground(getModel(table), member, row, column, isSelected);
         switch(column) {

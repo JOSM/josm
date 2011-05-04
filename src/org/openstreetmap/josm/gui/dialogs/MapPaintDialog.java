@@ -20,9 +20,9 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,7 +115,7 @@ public class MapPaintDialog extends ToggleDialog {
             }
         });
         cbWireframe.setBorder(new EmptyBorder(new Insets(1,1,1,1)));
-        
+
         tblStyles = new StylesTable(model);
         tblStyles.setSelectionModel(selectionModel= new DefaultListSelectionModel());
         tblStyles.addMouseListener(new PopupMenuHandler());
@@ -210,7 +210,7 @@ public class MapPaintDialog extends ToggleDialog {
         public int getRowCount() {
             return data.size();
         }
-        
+
         @Override
         public Object getValueAt(int row, int column) {
             if (column == 0)
@@ -279,6 +279,8 @@ public class MapPaintDialog extends ToggleDialog {
         }
 
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
+            if (value == null)
+                return this;
             boolean b = (Boolean) value;
             setSelected(b);
             setEnabled(!cbWireframe.isSelected());
@@ -289,6 +291,8 @@ public class MapPaintDialog extends ToggleDialog {
     private class StyleSourceRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            if (value == null)
+                return this;
             StyleSource s = (StyleSource) value;
             JLabel label = (JLabel)super.getTableCellRendererComponent(table,
                     s.getDisplayString(), isSelected, hasFocus, row, column);
@@ -361,7 +365,7 @@ public class MapPaintDialog extends ToggleDialog {
             updateEnabledState();
         }
     }
-    
+
     /**
      * Opens preferences window and selects the mappaint tab.
      */
@@ -425,7 +429,7 @@ public class MapPaintDialog extends ToggleDialog {
             });
         }
     }
-    
+
     protected class SaveAsAction extends AbstractAction {
 
         public SaveAsAction() {

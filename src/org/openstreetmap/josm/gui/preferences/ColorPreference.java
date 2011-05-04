@@ -12,9 +12,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.Vector;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,8 +37,8 @@ import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.gui.MapScaler;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
-import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 
@@ -219,6 +219,8 @@ public class ColorPreference implements PreferenceSetting {
         final TableCellRenderer oldColorsRenderer = colors.getDefaultRenderer(Object.class);
         colors.setDefaultRenderer(Object.class, new TableCellRenderer(){
             public Component getTableCellRendererComponent(JTable t, Object o, boolean selected, boolean focus, int row, int column) {
+                if (o == null)
+                    return new JLabel();
                 if (column == 1) {
                     JLabel l = new JLabel(ColorHelper.color2html((Color)o));
                     l.setBackground((Color)o);

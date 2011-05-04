@@ -25,6 +25,9 @@ public abstract class TagMergeTableCellRenderer extends JLabel implements TableC
             int col) {
 
         reset();
+        if (value == null)
+            return this;
+
         TagMergeItem item = (TagMergeItem)value;
         switch(col) {
         case 0:

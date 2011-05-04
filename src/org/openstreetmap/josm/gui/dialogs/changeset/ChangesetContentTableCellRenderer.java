@@ -56,6 +56,8 @@ public class ChangesetContentTableCellRenderer extends JLabel implements TableCe
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
+        if (value == null)
+            return this;
         reset();
         renderColors(isSelected);
         switch(column) {

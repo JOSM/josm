@@ -148,6 +148,10 @@ public class VersionTableCellRenderer extends JLabel implements TableCellRendere
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
+
+        if (value == null)
+            return this;
+
         if (getModel(table).isLatest(row)) {
             renderLatest(getModel(table).getLatest(),table, row, isSelected);
         } else {

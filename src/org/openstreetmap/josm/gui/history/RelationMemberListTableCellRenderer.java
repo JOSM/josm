@@ -93,6 +93,9 @@ public class RelationMemberListTableCellRenderer extends JLabel implements Table
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
+        if (value == null)
+            return this;
+
         HistoryBrowserModel.RelationMemberTableModel model = gteRelationMemberTableModel(table);
         RelationMember member = (RelationMember)value;
         renderIcon(member);

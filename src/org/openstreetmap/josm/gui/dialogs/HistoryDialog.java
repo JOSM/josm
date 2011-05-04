@@ -108,7 +108,7 @@ public class HistoryDialog extends ToggleDialog implements HistoryDataSetListene
         historyTable.getTableHeader().setDefaultRenderer(new DefaultTableCellRenderer(){
             @Override public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 JComponent c = (JComponent)oldRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                if (!value.equals(""))
+                if (!"".equals(value))
                     return c;
                 JLabel l = new JLabel(ImageProvider.get("misc","showhide"));
                 l.setForeground(c.getForeground());

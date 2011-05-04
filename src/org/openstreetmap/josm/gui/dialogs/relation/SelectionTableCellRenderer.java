@@ -67,6 +67,9 @@ public  class SelectionTableCellRenderer extends JLabel implements TableCellRend
             int row, int column) {
 
         reset();
+        if (value == null)
+            return this;
+
         renderBackground((OsmPrimitive)value, isSelected);
         renderPrimitive((OsmPrimitive)value);
         return this;

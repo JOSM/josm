@@ -25,7 +25,11 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
+
         reset();
+        if (value == null)
+            return this;
+
         this.value = (WayConnectionType) value;
         renderForeground(isSelected);
         //setText(value.toString());
@@ -43,9 +47,13 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         int ymax=this.getSize().height - 1;
         int xloop = 10;
         int xowloop = 0;
-        if(value.isOnewayLoopForwardPart) xowloop = -3;
-        if(value.isOnewayLoopBackwardPart) xowloop = 3;
-        
+        if(value.isOnewayLoopForwardPart) {
+            xowloop = -3;
+        }
+        if(value.isOnewayLoopBackwardPart) {
+            xowloop = 3;
+        }
+
         int xoff = this.getSize().width / 2;
         if (value.isLoop) {
             xoff -= xloop / 2 - 1;
@@ -57,10 +65,11 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
 
         if (value.linkPrev) {
             g.setColor(Color.black);
-            if(value.isOnewayHead)
+            if(value.isOnewayHead) {
                 g.fillRect(xoff - 1, 0, 3, 1);
-            else
+            } else {
                 g.fillRect(xoff - 1 + xowloop, 0, 3, 1);
+            }
             y1 = 0;
         } else {
             if (value.isLoop) {
@@ -72,20 +81,22 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
             }
             else {
                 g.setColor(Color.red);
-                if(value.isOnewayHead)
+                if(value.isOnewayHead) {
                     g.drawRect(xoff-1, p - 3 - w, w, w);
-                else
+                } else {
                     g.drawRect(xoff-1 + xowloop, p - 1 - w, w, w);
+                }
                 y1 = p;
             }
         }
 
         if (value.linkNext) {
             g.setColor(Color.black);
-            if(value.isOnewayTail)
+            if(value.isOnewayTail) {
                 g.fillRect(xoff - 1, ymax, 3, 1);
-            else
+            } else {
                 g.fillRect(xoff - 1 + xowloop, ymax, 3, 1);
+            }
             y2 = ymax;
         } else {
             if (value.isLoop) {
@@ -98,10 +109,11 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
             }
             else {
                 g.setColor(Color.red);
-                if(value.isOnewayTail)
+                if(value.isOnewayTail) {
                     g.drawRect(xoff-1, ymax - p + 3, w, w);
-                else
+                } else {
                     g.drawRect(xoff-1 + xowloop, ymax - p + 1, w, w);
+                }
                 y2 = ymax - p;
             }
         }
@@ -143,9 +155,9 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         if (!value.isOnewayLoopForwardPart && !value.isOnewayLoopBackwardPart){
             g.drawLine(xoff, y1, xoff, y2);
         }
-        
+
         g.drawLine(xoff+xowloop, y1, xoff+xowloop, y2);
-      
+
         /* special icons */
         Image arrow = null;
         switch (value.direction) {
@@ -168,10 +180,11 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         }
 
         if (value.isOnewayLoopBackwardPart && value.isOnewayLoopForwardPart) {
-            if(arrow == arrowDown)
+            if(arrow == arrowDown) {
                 arrow = arrowUp;
-            else if (arrow == arrowUp)
+            } else if (arrow == arrowUp) {
                 arrow = arrowDown;
+            }
         }
 
         if ((arrow != null)) {
@@ -181,12 +194,12 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
 
     private void setDotted(Graphics g) {
         ((Graphics2D)g).setStroke(new BasicStroke(
-              1f,
-              BasicStroke.CAP_BUTT,
-              BasicStroke.CAP_BUTT,
-              5f,
-              new float[] {1f, 2f},
-              0f));
+                1f,
+                BasicStroke.CAP_BUTT,
+                BasicStroke.CAP_BUTT,
+                5f,
+                new float[] {1f, 2f},
+                0f));
     }
 
     private void unsetDotted(Graphics g) {

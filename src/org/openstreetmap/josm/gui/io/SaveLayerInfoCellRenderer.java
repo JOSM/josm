@@ -133,14 +133,17 @@ class SaveLayerInfoCellRenderer implements TableCellRenderer {
             boolean hasFocus, int row, int column) {
 
         resetRenderers();
+        if (value == null)
+            return null;
+
         SaveLayerInfo info = (SaveLayerInfo)value;
         switch(column) {
-            case 0: return prepareLayerNameRenderer(info);
-            case 1: return prepareUploadRequiredRenderer(info);
-            case 2: return prepareSaveToFileRequired(info);
-            case 3: return prepareFileNameRenderer(info);
-            case 4: return prepareUploadRenderer(info);
-            case 5: return prepareSaveToFileRenderer(info);
+        case 0: return prepareLayerNameRenderer(info);
+        case 1: return prepareUploadRequiredRenderer(info);
+        case 2: return prepareSaveToFileRequired(info);
+        case 3: return prepareFileNameRenderer(info);
+        case 4: return prepareUploadRenderer(info);
+        case 5: return prepareSaveToFileRenderer(info);
         }
         return null;
     }

@@ -46,6 +46,9 @@ public class RelationMemberConflictDecisionRenderer extends JLabel implements Ta
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
             int row, int column) {
         resetTableRenderer();
+        if (value == null)
+            return this;
+
         if (isSelected) {
             setBackground(UIManager.getColor("Table.selectionBackground"));
             setForeground(UIManager.getColor("Table.selectionForeground"));

@@ -562,6 +562,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
+                if (value == null)
+                    return this;
                 if (c instanceof JLabel) {
                     String str = null;
                     if (value instanceof String) {
@@ -609,6 +611,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
+                if (value == null)
+                    return this;
                 if (c instanceof JLabel) {
                     JLabel label = (JLabel)c;
                     Relation r = (Relation)value;
@@ -624,6 +628,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         mod.getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
+                if (value == null)
+                    return this;
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
                 boolean isDisabledAndHidden = (((Relation)table.getValueAt(row, 0))).isDisabledAndHidden();
                 if (c instanceof JLabel) {

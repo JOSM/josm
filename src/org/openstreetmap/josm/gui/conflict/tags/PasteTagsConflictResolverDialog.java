@@ -477,6 +477,9 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int row, int column) {
             reset();
+            if (value == null)
+                return this;
+
             if (row == 0) {
                 setFont(getFont().deriveFont(Font.BOLD));
                 setText((String)value);

@@ -163,6 +163,8 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
 
         Node node = (Node)value;
         reset();
+        if (value == null)
+            return this;
         switch(column) {
         case 0:
             renderRowId(getModel(table),row, isSelected);

@@ -88,6 +88,8 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer  {
     public Component getTableCellRendererComponent(JTable table, Object value,
             boolean isSelected, boolean hasFocus, int rowIndex, int vColIndex) {
         resetRenderer();
+        if (value == null)
+            return this;
 
         // set background color
         //

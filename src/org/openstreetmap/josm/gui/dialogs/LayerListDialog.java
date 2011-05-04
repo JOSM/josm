@@ -59,8 +59,8 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -786,7 +786,7 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            boolean active = (Boolean) value;
+            boolean active =  value != null && (Boolean) value;
             cb.setSelected(active);
             cb.setToolTipText(active ? tr("this layer is the active layer") : tr("this layer is not currently active (click to activate)"));
             return cb;
@@ -801,7 +801,9 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            cb.updateStatus((Layer)value);
+            if (value != null) {
+                cb.updateStatus((Layer)value);
+            }
             return cb;
         }
     }
@@ -830,6 +832,8 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            if (value == null)
+                return this;
             Layer layer = (Layer)value;
             JLabel label = (JLabel)super.getTableCellRendererComponent(table,
                     layer.getName(), isSelected, hasFocus, row, column);

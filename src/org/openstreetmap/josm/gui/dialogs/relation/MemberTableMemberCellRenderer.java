@@ -26,6 +26,8 @@ public class MemberTableMemberCellRenderer extends MemberTableCellRenderer {
             int row, int column) {
 
         reset();
+        if (value == null)
+            return this;
 
         renderForeground(isSelected);
         OsmPrimitive primitive = (OsmPrimitive) value;

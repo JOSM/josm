@@ -37,13 +37,13 @@ import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
 import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
 import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
-import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -205,7 +205,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
     static class BooleanRenderer extends JCheckBox implements TableCellRenderer {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,int row,int column) {
             FilterTableModel model = (FilterTableModel)table.getModel();
-            setSelected((Boolean)value);
+            setSelected(value != null && (Boolean)value);
             setEnabled(model.isCellEnabled(row, column));
             setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
             return this;

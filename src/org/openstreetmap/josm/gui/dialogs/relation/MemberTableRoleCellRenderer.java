@@ -11,6 +11,8 @@ public class MemberTableRoleCellRenderer extends MemberTableCellRenderer {
             int row, int column) {
 
         reset();
+        if (value == null)
+            return this;
 
         renderForeground(isSelected);
         String role = (String) value;
