@@ -100,3 +100,4 @@ class KeyConditionTest {
         assert cond.applies(e)
     }    
 }
+

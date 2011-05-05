@@ -315,6 +315,4 @@ Build-Date: ${build.tstamp}
 		</as:check-signature>
 
 	</target>
-
-
 </project>

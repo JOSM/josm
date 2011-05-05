@@ -55,3 +55,4 @@ class ParsingLinkSelectorTest {
         assert source.rules.size() == 1
     }
 }
+

@@ -9,6 +9,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.tools.Pair;
@@ -66,40 +67,89 @@ public interface Selector {
             this.parentSelector = parentSelector;
         }
 
+        /**
+         * <p>Finds the first referrer matching {@link #left}</p>
+         * 
+         * <p>The visitor works on an environment and it saves the matching
+         * referrer in {@code e.parent} and its relative position in the
+         * list referrers "child list" in {@code e.index}.</p>
+         * 
+         * <p>If after execution {@code e.parent} is null, no matching
+         * referrer was found.</p>
+         *
+         */
+        private  class MatchingReferrerFinder extends AbstractVisitor{
+            private Environment e;
+
+            /**
+             * Constructor
+             * @param e the environment against which we match
+             */
+            public MatchingReferrerFinder(Environment e){
+                this.e = e;
+            }
+
+            @Override
+            public void visit(Node n) {
+                // node should never be a referrer
+                throw new AssertionError();
+            }
+
+            @Override
+            public void visit(Way w) {
+                /*
+                 * If e.parent is already set to the first matching referrer. We skip any following
+                 * referrer injected into the visitor.
+                 */
+                if (e.parent != null) return;
+
+                if (!left.matches(e.withPrimitive(w)))
+                    return;
+                for (int i=0; i<w.getNodesCount(); i++) {
+                    Node n = w.getNode(i);
+                    if (n.equals(e.osm)) {
+                        if (link.matches(e.withParent(w).withIndex(i).withLinkContext())) {
+                            e.parent = w;
+                            e.index = i;
+                            return;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void visit(Relation r) {
+                /*
+                 * If e.parent is already set to the first matching referrer. We skip any following
+                 * referrer injected into the visitor.
+                 */
+                if (e.parent != null) return;
+
+                if (!left.matches(e.withPrimitive(r)))
+                    return;
+                for (int i=0; i < r.getMembersCount(); i++) {
+                    RelationMember m = r.getMember(i);
+                    if (m.getMember().equals(e.osm)) {
+                        if (link.matches(e.withParent(r).withIndex(i).withLinkContext())) {
+                            e.parent = r;
+                            e.index = i;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
         @Override
         public boolean matches(Environment e) {
             if (!right.matches(e))
                 return false;
 
             if (!parentSelector) {
-                for (OsmPrimitive ref : e.osm.getReferrers()) {
-                    if (!left.matches(e.withPrimitive(ref)))
-                        continue;
-                    if (ref instanceof Way) {
-                        List<Node> wayNodes = ((Way) ref).getNodes();
-                        for (int i=0; i<wayNodes.size(); i++) {
-                            if (wayNodes.get(i).equals(e.osm)) {
-                                if (link.matches(e.withParent(ref).withIndex(i).withLinkContext())) {
-                                    e.parent = ref;
-                                    e.index = i;
-                                    return true;
-                                }
-                            }
-                        }
-                    } else if (ref instanceof Relation) {
-                        List<RelationMember> members = ((Relation) ref).getMembers();
-                        for (int i=0; i<members.size(); i++) {
-                            RelationMember m = members.get(i);
-                            if (m.getMember().equals(e.osm)) {
-                                if (link.matches(e.withParent(ref).withIndex(i).withLinkContext())) {
-                                    e.parent = ref;
-                                    e.index = i;
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                }
+                MatchingReferrerFinder collector = new MatchingReferrerFinder(e);
+                e.osm.visitReferrers(collector);
+                if (e.parent != null)
+                    return true;
             } else {
                 if (e.osm instanceof Way) {
                     List<Node> wayNodes = ((Way) e.osm).getNodes();
@@ -180,9 +230,9 @@ public interface Selector {
     }
 
     public static class GeneralSelector implements Selector {
-        public String base;
+        private String base;
         public Range range;
-        protected List<Condition> conds;
+        private List<Condition> conds;
         private String subpart;
 
         public GeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, String subpart) {
@@ -197,7 +247,11 @@ public interface Selector {
             if (range == null) {
                 range = new Range();
             }
-            this.conds = conds;
+            if (conds == null || conds.isEmpty()) {
+                this.conds = null;
+            } else {
+                this.conds = conds;
+            }
             this.subpart = subpart;
         }
 
@@ -210,10 +264,22 @@ public interface Selector {
             return range;
         }
 
-        @Override
-        public boolean matches(Environment e) {
-            if (!baseApplies(e.osm))
-                return false;
+        public boolean matchesBase(Environment e){
+            if (base.equals("*"))
+                return true;
+            if (base.equals("area")) {
+                if (e.osm instanceof Way)
+                    return true;
+                if (e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon())
+                    return true;
+            }
+            if (base.equals(OsmPrimitiveType.from(e.osm).getAPIName()))
+                return true;
+            return false;
+        }
+
+        public boolean matchesConditions(Environment e){
+            if (conds == null) return true;
             for (Condition c : conds) {
                 if (!c.applies(e))
                     return false;
@@ -221,18 +287,14 @@ public interface Selector {
             return true;
         }
 
-        private boolean baseApplies(OsmPrimitive osm) {
-            if (base.equals("*"))
-                return true;
-            if (base.equals("area")) {
-                if (osm instanceof Way)
-                    return true;
-                if (osm instanceof Relation && ((Relation) osm).isMultipolygon())
-                    return true;
-            }
-            if (base.equals(OsmPrimitiveType.from(osm).getAPIName()))
-                return true;
-            return false;
+        @Override
+        public boolean matches(Environment e) {
+            if (!matchesBase(e)) return false;
+            return matchesConditions(e);
+        }
+
+        public String getBase() {
+            return base;
         }
 
         public static Range fromLevel(int a, int b) {

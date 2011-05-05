@@ -83,9 +83,7 @@ public class ElemStyles {
 
     private Pair<StyleList, Range> getImpl(OsmPrimitive osm, double scale, NavigatableComponent nc) {
         if (osm instanceof Node)
-        {
             return generateStyles(osm, scale, null, false);
-        }
         else if (osm instanceof Way)
         {
             Pair<StyleList, Range> p = generateStyles(osm, scale, null, false);
@@ -234,8 +232,9 @@ public class ElemStyles {
         }
 
         for (Entry<String, Cascade> e : mc.getLayers()) {
-            if ("*".equals(e.getKey()))
+            if ("*".equals(e.getKey())) {
                 continue;
+            }
             env.layer = e.getKey();
             Cascade c = e.getValue();
             if (osm instanceof Way) {

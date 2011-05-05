@@ -133,14 +133,11 @@ public class MapCSSStyleSource extends StyleSource {
             for (Selector s : r.selectors) {
                 if ((s instanceof GeneralSelector)) {
                     GeneralSelector gs = (GeneralSelector) s;
-                    if (gs.base.equals(type)) {
-                        for (Condition cnd : gs.conds) {
-                            if (!cnd.applies(env))
-                                continue NEXT_RULE;
+                    if (gs.getBase().equals(type)) {
+                        if (!gs.matchesConditions(env)) {
+                            continue NEXT_RULE;
                         }
-                        for (Instruction i : r.declaration) {
-                            i.execute(env);
-                        }
+                        r.execute(env);
                     }
                 }
             }
@@ -178,15 +175,11 @@ public class MapCSSStyleSource extends StyleSource {
                             if (Utils.equal(env.layer, "*")) {
                                 continue;
                             }
-                            for (Instruction i : r.declaration) {
-                                i.execute(env);
-                            }
+                            r.execute(env);
                         }
                     }
                     env.layer = sub;
-                    for (Instruction i : r.declaration) {
-                        i.execute(env);
-                    }
+                    r.execute(env);
                 }
             }
         }

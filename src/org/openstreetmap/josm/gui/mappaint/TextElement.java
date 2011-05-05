@@ -113,6 +113,8 @@ public class TextElement {
      * 
      * @param c the style properties
      * @param defaultTextColor the default text color. Must not be null.
+     * @param defaultAnnotate true, if a text label shall be rendered by default, even if the style sheet
+     *   doesn't include respective style declarations
      * @return the text element or null, if the style properties don't include
      * properties for text rendering
      * @throws IllegalArgumentException thrown if {@code defaultTextColor} is null
@@ -211,11 +213,11 @@ public class TextElement {
             return false;
         final TextElement other = (TextElement) obj;
         return  equal(labelCompositionStrategy, other.labelCompositionStrategy) &&
-                equal(font, other.font) &&
-                xOffset == other.xOffset &&
-                yOffset == other.yOffset &&
-                equal(color, other.color) &&
-                equal(haloRadius, other.haloRadius) &&
-                equal(haloColor, other.haloColor);
+        equal(font, other.font) &&
+        xOffset == other.xOffset &&
+        yOffset == other.yOffset &&
+        equal(color, other.color) &&
+        equal(haloRadius, other.haloRadius) &&
+        equal(haloColor, other.haloColor);
     }
 }

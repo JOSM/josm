@@ -16,8 +16,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.openstreetmap.josm.Main;
@@ -1301,8 +1301,31 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, Tagged, 
                 }
             }
         }
-
         return result;
+    }
+
+    /**
+     * <p>Visits {@code visitor} for all referrers.</p>
+     * 
+     * @param visitor the visitor. Ignored, if null.
+     */
+    public void visitReferrers(Visitor visitor){
+        if (visitor == null) return;
+        if (this.referrers == null)
+            return;
+        else if (this.referrers instanceof OsmPrimitive) {
+            OsmPrimitive ref = (OsmPrimitive) this.referrers;
+            if (ref.dataSet == dataSet) {
+                ref.visit(visitor);
+            }
+        } else if (this.referrers instanceof OsmPrimitive[]) {
+            OsmPrimitive[] refs = (OsmPrimitive[]) this.referrers;
+            for (OsmPrimitive ref: refs) {
+                if (ref.dataSet == dataSet) {
+                    ref.visit(visitor);
+                }
+            }
+        }
     }
 
     /**

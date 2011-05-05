@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test/unit"/>
 	<classpathentry kind="src" path="test/functional"/>
-	<classpathentry excluding="build/|data_nodist/|dist/|doc/|lib/|macosx/|src/|test/|test/build/|test/functional/|test/performance/|test/unit/|tools/|utils/" kind="src" path=""/>
+	<classpathentry excluding="build/|data_nodist/|dist/|doc/|lib/|macosx/|nb/|src/|test/|test/build/|test/functional/|test/performance/|test/unit/|tools/|utils/" kind="src" path=""/>
 	<classpathentry kind="src" path="test/performance"/>
 	<classpathentry kind="lib" path="lib/metadata-extractor-2.3.1-nosun.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
