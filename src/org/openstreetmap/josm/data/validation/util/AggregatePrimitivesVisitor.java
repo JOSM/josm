@@ -18,7 +18,7 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
  *
  * @author frsantos
  */
-public class AgregatePrimitivesVisitor extends AbstractVisitor {
+public class AggregatePrimitivesVisitor extends AbstractVisitor {
     /** Aggregated data */
     final Collection<OsmPrimitive> aggregatedData = new HashSet<OsmPrimitive>();
 

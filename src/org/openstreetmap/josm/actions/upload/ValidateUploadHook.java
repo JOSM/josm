@@ -19,7 +19,7 @@ import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.data.validation.util.AgregatePrimitivesVisitor;
+import org.openstreetmap.josm.data.validation.util.AggregatePrimitivesVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.dialogs.validator.ValidatorTreePanel;
 import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
@@ -48,7 +48,7 @@ public class ValidateUploadHook implements UploadHook
         if (tests.isEmpty())
             return true;
 
-        AgregatePrimitivesVisitor v = new AgregatePrimitivesVisitor();
+        AggregatePrimitivesVisitor v = new AggregatePrimitivesVisitor();
         v.visit(apiDataSet.getPrimitivesToAdd());
         Collection<OsmPrimitive> selection = v.visit(apiDataSet.getPrimitivesToUpdate());
 

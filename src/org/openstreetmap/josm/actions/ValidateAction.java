@@ -17,7 +17,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.data.validation.util.AgregatePrimitivesVisitor;
+import org.openstreetmap.josm.data.validation.util.AggregatePrimitivesVisitor;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -79,7 +79,7 @@ public class ValidateAction extends JosmAction {
                 selection = Main.main.getCurrentDataSet().allNonDeletedPrimitives();
                 lastSelection = null;
             } else {
-                AgregatePrimitivesVisitor v = new AgregatePrimitivesVisitor();
+                AggregatePrimitivesVisitor v = new AggregatePrimitivesVisitor();
                 selection = v.visit(selection);
                 lastSelection = selection;
             }
