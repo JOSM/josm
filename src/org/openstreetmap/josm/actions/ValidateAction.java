@@ -107,7 +107,7 @@ public class ValidateAction extends JosmAction {
      */
     class ValidationTask extends PleaseWaitRunnable {
         private Collection<Test> tests;
-        private Collection<OsmPrimitive> validatedPrimitmives;
+        private Collection<OsmPrimitive> validatedPrimitives;
         private Collection<OsmPrimitive> formerValidatedPrimitives;
         private boolean canceled;
         private List<TestError> errors;
@@ -120,7 +120,7 @@ public class ValidateAction extends JosmAction {
          */
         public ValidationTask(Collection<Test> tests, Collection<OsmPrimitive> validatedPrimitives, Collection<OsmPrimitive> formerValidatedPrimitives) {
             super(tr("Validating"), false /*don't ignore exceptions */);
-            this.validatedPrimitmives  = validatedPrimitives;
+            this.validatedPrimitives  = validatedPrimitives;
             this.formerValidatedPrimitives = formerValidatedPrimitives;
             this.tests = tests;
         }
@@ -157,7 +157,7 @@ public class ValidateAction extends JosmAction {
             if (tests == null || tests.isEmpty())
                 return;
             errors = new ArrayList<TestError>(200);
-            getProgressMonitor().setTicksCount(tests.size() * validatedPrimitmives.size());
+            getProgressMonitor().setTicksCount(tests.size() * validatedPrimitives.size());
             int testCounter = 0;
             for (Test test : tests) {
                 if (canceled)
@@ -165,8 +165,8 @@ public class ValidateAction extends JosmAction {
                 testCounter++;
                 getProgressMonitor().setCustomText(tr("Test {0}/{1}: Starting {2}", testCounter, tests.size(),test.getName()));
                 test.setPartialSelection(formerValidatedPrimitives != null);
-                test.startTest(getProgressMonitor().createSubTaskMonitor(validatedPrimitmives.size(), false));
-                test.visit(validatedPrimitmives);
+                test.startTest(getProgressMonitor().createSubTaskMonitor(validatedPrimitives.size(), false));
+                test.visit(validatedPrimitives);
                 test.endTest();
                 errors.addAll(test.getErrors());
             }
