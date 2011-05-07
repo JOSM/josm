@@ -530,7 +530,7 @@ public class WmsCache {
         return false;
     }
 
-    public void setAreaToCache(Set<ProjectionBounds> areaToCache) {
+    public synchronized void setAreaToCache(Set<ProjectionBounds> areaToCache) {
         this.areaToCache = areaToCache;
         Iterator<CacheEntry> it = memoryCache.keySet().iterator();
         while (it.hasNext()) {
@@ -538,9 +538,5 @@ public class WmsCache {
                 it.remove();
             }
         }
-    }
-
-    public Set<ProjectionBounds> getAreaToCache() {
-        return areaToCache;
     }
 }
