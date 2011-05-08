@@ -119,8 +119,6 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 final JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                if (value == null)
-                    return this;
                 label.setIcon((ImageIcon)value);
                 label.setText("");
                 return label;
