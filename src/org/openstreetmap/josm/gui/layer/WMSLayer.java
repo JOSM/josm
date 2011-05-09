@@ -420,6 +420,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
                 new SaveWmsAction(),
                 new BookmarkWmsAction(),
                 SeparatorLayerAction.INSTANCE,
+                new ZoomToNativeResolution(),
                 new StartStopAction(),
                 new ToggleAlphaAction(),
                 new ChangeResolutionAction(),
@@ -782,6 +783,19 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
                 mv.repaint();
             }
         }
+    }
+
+    private class ZoomToNativeResolution extends AbstractAction {
+
+        public ZoomToNativeResolution() {
+            super(tr("Zoom to native resolution"));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Main.map.mapView.zoomTo(Main.map.mapView.getCenter(), 1 / info.getPixelPerDegree());
+        }
+
     }
 
     private void cancelGrabberThreads(boolean wait) {

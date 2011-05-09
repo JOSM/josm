@@ -279,7 +279,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param newCenter The center x-value (easting) to zoom to.
      * @param scale The scale to use.
      */
-    private void zoomTo(EastNorth newCenter, double newScale) {
+    public void zoomTo(EastNorth newCenter, double newScale) {
         Bounds b = getProjection().getWorldBoundsLatLon();
         CachedLatLon cl = new CachedLatLon(newCenter);
         boolean changed = false;
