@@ -176,7 +176,7 @@ public class I18n {
     }
 
     /**
-     * Example: trn("Found {0} error!", "Found {0} errors!", i, Integer.toString(i));
+     * Example: trn("Found {0} error in {1}!", "Found {0} errors in {1}!", i, Integer.toString(i), url);
      */
     public static final String trn(String text, String pluralText, long n, Object... objects) {
         return MessageFormat.format(gettextn(text, pluralText, null, n), objects);

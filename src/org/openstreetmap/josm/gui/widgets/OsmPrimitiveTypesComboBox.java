@@ -18,6 +18,10 @@ public class OsmPrimitiveTypesComboBox extends JComboBox {
     }
 
     public OsmPrimitiveType getType() {
-        return (OsmPrimitiveType)this.getSelectedItem();
+        try {
+            return (OsmPrimitiveType)this.getSelectedItem();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
