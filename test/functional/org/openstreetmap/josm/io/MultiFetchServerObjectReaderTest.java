@@ -321,6 +321,6 @@ public class MultiFetchServerObjectReaderTest {
         }
         assertFalse(reader.getMissingPrimitives().isEmpty());
         assertEquals(1, reader.getMissingPrimitives().size());
-        assertEquals(9999999, (long)reader.getMissingPrimitives().iterator().next());
+        assertEquals(9999999, reader.getMissingPrimitives().iterator().next().getUniqueId());
     }
 }
