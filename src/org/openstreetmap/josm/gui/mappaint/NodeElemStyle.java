@@ -126,6 +126,7 @@ public class NodeElemStyle extends ElemStyle {
             return "NodeTextElement{" + toStringImpl() + '}';
         }
 
+        @Override
         protected String toStringImpl() {
             return super.toStringImpl() + " hAlign=" + hAlign + " vAlign=" + vAlign;
         }
@@ -206,7 +207,7 @@ public class NodeElemStyle extends ElemStyle {
             text = new NodeTextElement(te, hAlign, vAlign);
         }
 
-        return new NodeElemStyle(c, 
+        return new NodeElemStyle(c,
                 icon == null ? null : icon.a,
                 icon == null ? null : icon.b,
                 symbol,
@@ -341,7 +342,7 @@ public class NodeElemStyle extends ElemStyle {
         if (primitive instanceof Node) {
             Node n = (Node) primitive;
             if (icon != null && painter.isShowIcons()) {
-                painter.drawNodeIcon(n, (painter.isInactive() || n.isDisabled()) ? getDisabledIcon() : icon,
+                painter.drawNodeIcon(n, (painter.isInactiveMode() || n.isDisabled()) ? getDisabledIcon() : icon,
                         Utils.color_int2float(iconAlpha), selected, member, text);
             } else if (symbol != null) {
                 Color fillColor = symbol.fillColor;
@@ -349,7 +350,7 @@ public class NodeElemStyle extends ElemStyle {
                     if (n.isHighlighted()) {
                         fillColor = settings.getHighlightColor();
                     } else {
-                        if (painter.isInactive() || n.isDisabled()) {
+                        if (painter.isInactiveMode() || n.isDisabled()) {
                             fillColor = settings.getInactiveColor();
                         } else if (selected) {
                             fillColor = settings.getSelectedColor(fillColor.getAlpha());
@@ -363,7 +364,7 @@ public class NodeElemStyle extends ElemStyle {
                     if (n.isHighlighted()) {
                         strokeColor = settings.getHighlightColor();
                     } else {
-                        if (painter.isInactive() || n.isDisabled()) {
+                        if (painter.isInactiveMode() || n.isDisabled()) {
                             strokeColor = settings.getInactiveColor();
                         } else if (selected) {
                             strokeColor = settings.getSelectedColor(strokeColor.getAlpha());
@@ -380,7 +381,7 @@ public class NodeElemStyle extends ElemStyle {
                     Color color;
                     boolean isConnection = n.isConnectionNode();
 
-                    if (painter.isInactive() || n.isDisabled()) {
+                    if (painter.isInactiveMode() || n.isDisabled()) {
                         color = settings.getInactiveColor();
                     } else if (selected) {
                         color = settings.getSelectedColor();
@@ -401,14 +402,14 @@ public class NodeElemStyle extends ElemStyle {
                     }
 
                     final int size = Utils.max((selected ? settings.getSelectedNodeSize() : 0),
-                                            (n.isTagged() ? settings.getTaggedNodeSize() : 0),
-                                            (isConnection ? settings.getConnectionNodeSize() : 0),
-                                            settings.getUnselectedNodeSize());
+                            (n.isTagged() ? settings.getTaggedNodeSize() : 0),
+                            (isConnection ? settings.getConnectionNodeSize() : 0),
+                            settings.getUnselectedNodeSize());
 
                     final boolean fill = (selected && settings.isFillSelectedNode()) ||
-                                            (n.isTagged() && settings.isFillTaggedNode()) ||
-                                            (isConnection && settings.isFillConnectionNode()) ||
-                                            settings.isFillUnselectedNode();
+                            (n.isTagged() && settings.isFillTaggedNode()) ||
+                            (isConnection && settings.isFillConnectionNode()) ||
+                            settings.isFillUnselectedNode();
 
                     painter.drawNode(n, color, size, fill, text);
                 }
@@ -473,5 +474,4 @@ public class NodeElemStyle extends ElemStyle {
         s.append('}');
         return s.toString();
     }
-
 }

@@ -204,6 +204,16 @@ public class Bounds {
         return sb.toString();
     }
 
+    /**
+     * <p>Replies true, if this bounds are <em>collapsed</em>, i.e. if the min
+     * and the max corner are equal.</p>
+     * 
+     * @return true, if this bounds are <em>collapsed</em>
+     */
+    public boolean isCollapsed() {
+        return getMin().equals(getMax());
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

@@ -9,8 +9,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintVisitor;
-import org.openstreetmap.josm.data.osm.visitor.paint.PaintVisitor;
+import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
+import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
@@ -51,13 +51,10 @@ public class MapPaintVisitorPerformanceTest {
     }
 
     private static void test(int iterations, DataSet ds, Bounds bounds) throws Exception {
-        PaintVisitor visitor = new MapPaintVisitor();
+        Rendering visitor = new StyledMapRenderer(g,nc,false);
         nc.zoomTo(bounds);
-        visitor.setGraphics(g);
-        visitor.setNavigatableComponent(nc);
-        visitor.setInactive(false);
         for (int i=0; i<iterations; i++) {
-            visitor.visitAll(ds, true, bounds);
+            visitor.render(ds, true, bounds);
         }
     }
 

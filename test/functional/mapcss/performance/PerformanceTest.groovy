@@ -11,7 +11,7 @@ import org.junit.*
 import org.openstreetmap.josm.Main
 import org.openstreetmap.josm.data.Bounds
 import org.openstreetmap.josm.data.osm.DataSet
-import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintVisitor
+import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer
 import org.openstreetmap.josm.gui.MainApplication
 import org.openstreetmap.josm.gui.layer.OsmDataLayer
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles
@@ -115,13 +115,13 @@ class PerformanceTest {
         BufferedImage img = mv.createImage(mv.getWidth(), mv.getHeight())
         Graphics2D g = img.createGraphics()
         g.setClip(0,0, mv.getWidth(), mv.getHeight())
-        def visitor = new MapPaintVisitor()
+        def visitor = new StyledMapRenderer()
         visitor.setNavigatableComponent(Main.map.mapView)
         visitor.setGraphics(g)
 
         print "Rendering ..."
         long time = timed {
-            visitor.visitAll(ds, false, new Bounds(-90,-180,90,180))
+            visitor.render(ds, false, new Bounds(-90,-180,90,180))
         }
         println "DONE"
         println "data file : ${DATA_FILE}"

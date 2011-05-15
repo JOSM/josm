@@ -41,7 +41,6 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
-import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
@@ -60,9 +59,8 @@ import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter.Listener;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
-import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintVisitor;
-import org.openstreetmap.josm.data.osm.visitor.paint.PaintVisitor;
-import org.openstreetmap.josm.data.osm.visitor.paint.SimplePaintVisitor;
+import org.openstreetmap.josm.data.osm.visitor.paint.MapRendererFactory;
+import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
@@ -240,16 +238,15 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
             b.grow(100, 100);
             Area a = new Area(b);
 
-            // now succesively subtract downloaded areas
-            for (DataSource src : data.dataSources) {
-                if (src.bounds != null && !src.bounds.getMin().equals(src.bounds.getMax())) {
-                    EastNorth en1 = mv.getProjection().latlon2eastNorth(src.bounds.getMin());
-                    EastNorth en2 = mv.getProjection().latlon2eastNorth(src.bounds.getMax());
-                    Point p1 = mv.getPoint(en1);
-                    Point p2 = mv.getPoint(en2);
-                    Rectangle r = new Rectangle(Math.min(p1.x, p2.x),Math.min(p1.y, p2.y),Math.abs(p2.x-p1.x),Math.abs(p2.y-p1.y));
-                    a.subtract(new Area(r));
+            // now successively subtract downloaded areas
+            for (Bounds bounds : data.getDataSourceBounds()) {
+                if (bounds.isCollapsed()) {
+                    continue;
                 }
+                Point p1 = mv.getPoint(bounds.getMin());
+                Point p2 = mv.getPoint(bounds.getMax());
+                Rectangle r = new Rectangle(Math.min(p1.x, p2.x),Math.min(p1.y, p2.y),Math.abs(p2.x-p1.x),Math.abs(p2.y-p1.y));
+                a.subtract(new Area(r));
             }
 
             // paint remainder
@@ -257,16 +254,8 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
             g.fill(a);
         }
 
-        PaintVisitor painter;
-        if (Main.pref.getBoolean("draw.wireframe")) {
-            painter = new SimplePaintVisitor();
-        } else {
-            painter = new MapPaintVisitor();
-        }
-        painter.setGraphics(g);
-        painter.setNavigatableComponent(mv);
-        painter.setInactive(inactive);
-        painter.visitAll(data, virtual, box);
+        Rendering painter = MapRendererFactory.getInstance().createActiveRenderer(g, mv, inactive);
+        painter.render(data, virtual, box);
         Main.map.conflictDialog.paintConflicts(g, mv);
     }
 
@@ -527,8 +516,9 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
                 continue;
             }
             String name = n.get("name");
-            if (name == null)
-		continue;
+            if (name == null) {
+                continue;
+            }
             WayPoint wpt = new WayPoint(n.getCoor());
             wpt.attr.put("name", name);
             if (!n.isTimestampEmpty()) {
@@ -537,8 +527,8 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
             }
             String desc = n.get("description");
             if (desc != null) {
-               wpt.attr.put("desc", desc);
-	    }
+                wpt.attr.put("desc", desc);
+            }
 
             gpxData.waypoints.add(wpt);
         }

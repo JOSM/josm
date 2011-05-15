@@ -12,7 +12,6 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.BufferedInputStream;
@@ -27,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
-import javax.swing.DefaultButtonModel;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -98,24 +96,10 @@ public class MapPaintDialog extends ToggleDialog {
         cbWireframe = new JCheckBox();
         JLabel wfLabel = new JLabel(tr("Wireframe View"), ImageProvider.get("dialogs/mappaint", "wireframe_small"), JLabel.HORIZONTAL);
         wfLabel.setFont(wfLabel.getFont().deriveFont(Font.PLAIN));
-
-        cbWireframe.setModel(new DefaultButtonModel() {
-            @Override
-            public void setSelected(boolean b) {
-                super.setSelected(b);
-                tblStyles.setEnabled(!b);
-                onoffAction.updateEnabledState();
-                upAction.updateEnabledState();
-                downAction.updateEnabledState();
-            }
-        });
-        cbWireframe.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Main.main.menu.wireFrameToggleAction.actionPerformed(null);
-            }
-        });
+        cbWireframe.setFont(cbWireframe.getFont().deriveFont(Font.PLAIN));
+        cbWireframe.setAction(Main.main.menu.wireFrameToggleAction);
         cbWireframe.setBorder(new EmptyBorder(new Insets(1,1,1,1)));
-
+        cbWireframe.setText("");
         tblStyles = new StylesTable(model);
         tblStyles.setSelectionModel(selectionModel= new DefaultListSelectionModel());
         tblStyles.addMouseListener(new PopupMenuHandler());
@@ -129,6 +113,7 @@ public class MapPaintDialog extends ToggleDialog {
         tblStyles.getColumnModel().getColumn(1).setCellRenderer(new StyleSourceRenderer());
         tblStyles.setShowGrid(false);
         tblStyles.setIntercellSpacing(new Dimension(0, 0));
+        cbWireframe.addChangeListener(tblStyles);
 
         JPanel p = new JPanel(new GridBagLayout());
         p.add(cbWireframe, GBC.std(0, 0));
@@ -136,13 +121,11 @@ public class MapPaintDialog extends ToggleDialog {
         p.add(tblStyles, GBC.std(0, 1).span(2).fill());
 
         pnl.add(new JScrollPane(p), BorderLayout.CENTER);
-
         pnl.add(buildButtonRow(), BorderLayout.SOUTH);
-
         add(pnl, BorderLayout.CENTER);
     }
 
-    protected static class StylesTable extends JTable {
+    protected class StylesTable extends JTable implements ChangeListener{
 
         public StylesTable(TableModel dm) {
             super(dm);
@@ -157,6 +140,11 @@ public class MapPaintDialog extends ToggleDialog {
             rect.setLocation(rect.x - pt.x, rect.y - pt.y);
             viewport.scrollRectToVisible(rect);
         }
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            setEnabled(!cbWireframe.isSelected());
+        }
     }
 
     protected JPanel buildButtonRow() {
@@ -169,6 +157,10 @@ public class MapPaintDialog extends ToggleDialog {
         selectionModel.addListSelectionListener(reloadAction);
         selectionModel.addListSelectionListener(upAction);
         selectionModel.addListSelectionListener(downAction);
+        cbWireframe.addChangeListener(onoffAction);
+        cbWireframe.addChangeListener(upAction);
+        cbWireframe.addChangeListener(downAction);
+
         p.add(new SideButton(onoffAction));
         p.add(new SideButton(upAction));
         p.add(new SideButton(downAction));
@@ -179,13 +171,13 @@ public class MapPaintDialog extends ToggleDialog {
 
     @Override
     public void showNotify() {
+        cbWireframe.setAction(Main.main.menu.wireFrameToggleAction);
         MapPaintStyles.addMapPaintSylesUpdateListener(model);
-        Main.main.menu.wireFrameToggleAction.addButtonModel(cbWireframe.getModel());
     }
 
     @Override
     public void hideNotify() {
-        Main.main.menu.wireFrameToggleAction.removeButtonModel(cbWireframe.getModel());
+        cbWireframe.setAction(null);
         MapPaintStyles.removeMapPaintSylesUpdateListener(model);
     }
 
@@ -303,20 +295,31 @@ public class MapPaintDialog extends ToggleDialog {
         }
     }
 
-    protected class OnOffAction extends AbstractAction implements ListSelectionListener {
+    protected abstract class EventListeningAction extends AbstractAction implements ListSelectionListener, ChangeListener {
+
+        protected abstract void updateEnabledState();
+
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            updateEnabledState();
+        }
+    }
+
+    protected class OnOffAction extends EventListeningAction {
         public OnOffAction() {
             putValue(SHORT_DESCRIPTION, tr("Turn selected styles on or off"));
             putValue(SMALL_ICON, ImageProvider.get("apply"));
             updateEnabledState();
         }
 
+        @Override
         protected void updateEnabledState() {
             setEnabled(!cbWireframe.isSelected() && tblStyles.getSelectedRowCount() > 0);
-        }
-
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
         }
 
         @Override
@@ -333,7 +336,7 @@ public class MapPaintDialog extends ToggleDialog {
     /**
      * The action to move down the currently selected entries in the list.
      */
-    protected class MoveUpDownAction extends AbstractAction implements ListSelectionListener {
+    protected class MoveUpDownAction extends EventListeningAction {
 
         final int increment;
 
@@ -344,6 +347,7 @@ public class MapPaintDialog extends ToggleDialog {
             updateEnabledState();
         }
 
+        @Override
         public void updateEnabledState() {
             int[] sel = tblStyles.getSelectedRows();
             setEnabled(!cbWireframe.isSelected() && MapPaintStyles.canMoveStyles(sel, increment));
@@ -359,10 +363,6 @@ public class MapPaintDialog extends ToggleDialog {
                 selectionModel.addSelectionInterval(row + increment, row + increment);
             }
             model.ensureSelectedIsVisible();
-        }
-
-        public void valueChanged(ListSelectionEvent e) {
-            updateEnabledState();
         }
     }
 
@@ -502,20 +502,8 @@ public class MapPaintDialog extends ToggleDialog {
                 } catch (IOException e) {
                     error = true;
                 } finally {
-                    if (bis != null) {
-                        try {
-                            bis.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (bos != null) {
-                        try {
-                            bos.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    Utils.close(bis);
+                    Utils.close(bos);
                 }
             }
 
@@ -647,10 +635,7 @@ public class MapPaintDialog extends ToggleDialog {
             } catch (IOException ex) {
                 txtSource.append("<ERROR: failed to read file!>");
             } finally {
-                try {
-                    is.close();
-                } catch (IOException ex) {
-                }
+                Utils.close(is);
             }
         }
 

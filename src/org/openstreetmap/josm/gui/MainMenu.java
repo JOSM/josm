@@ -276,7 +276,6 @@ public class MainMenu extends JMenuBar {
         final JCheckBoxMenuItem wireframe = new JCheckBoxMenuItem(wireFrameToggleAction);
         viewMenu.add(wireframe);
         wireframe.setAccelerator(wireFrameToggleAction.getShortcut().getKeyStroke());
-        wireFrameToggleAction.addButtonModel(wireframe.getModel());
 
         viewMenu.addSeparator();
         add(viewMenu, new ZoomInAction());

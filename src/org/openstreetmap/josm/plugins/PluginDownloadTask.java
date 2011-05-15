@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 
@@ -144,19 +145,11 @@ public class PluginDownloadTask extends PleaseWaitRunnable{
                 return;
             throw new PluginDownloadException(e);
         } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch(IOException e) { /* ignore */}
-            }
+            Utils.close(in);
             synchronized(this) {
                 downloadConnection = null;
             }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch(IOException e) { /* ignore */}
-            }
+            Utils.close(out);
         }
     }
 

@@ -36,7 +36,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
-import org.openstreetmap.josm.data.osm.visitor.paint.SimplePaintVisitor;
+import org.openstreetmap.josm.data.osm.visitor.paint.WireframeMapRenderer;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
@@ -297,7 +297,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
                 Point2D p1 = mv.getPoint2D(wnp.a = w.getNode(ws.lowerIndex));
                 Point2D p2 = mv.getPoint2D(wnp.b = w.getNode(ws.lowerIndex + 1));
-                if (SimplePaintVisitor.isLargeSegment(p1, p2, virtualSpace)) {
+                if (WireframeMapRenderer.isLargeSegment(p1, p2, virtualSpace)) {
                     Point2D pc = new Point2D.Double((p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
                     if (p.distanceSq(pc) < virtualSnapDistSq) {
                         // Check that only segments on top of each other get added to the

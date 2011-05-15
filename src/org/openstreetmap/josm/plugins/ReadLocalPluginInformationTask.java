@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -185,11 +186,7 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
         } catch(IOException e) {
             throw new PluginListParseException(e);
         } finally {
-            if (fin != null) {
-                try {
-                    fin.close();
-                } catch(IOException e){ /* ignore */}
-            }
+            Utils.close(fin);
         }
     }
 

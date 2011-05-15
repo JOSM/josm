@@ -33,6 +33,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -187,11 +188,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
                 }
                 connection = null;
             }
-            if (in != null) {
-                try {
-                    in.close();
-                } catch(IOException e){/* ignore */}
-            }
+            Utils.close(in);
             monitor.finishTask();
         }
     }
@@ -241,11 +238,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable{
                 }
                 connection = null;
             }
-            if (in != null) {
-                try {
-                    in.close();
-                } catch(IOException e){/* ignore */}
-            }
+            Utils.close(in);
             monitor.finishTask();
         }
         for (PluginInformation pi : availablePlugins) {

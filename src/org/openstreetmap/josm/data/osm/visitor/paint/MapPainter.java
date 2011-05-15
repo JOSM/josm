@@ -79,8 +79,7 @@ public class MapPainter {
 
     public MapPainter(MapPaintSettings settings, Graphics2D g,
             boolean inactive, NavigatableComponent nc, boolean virtual,
-            double circum, boolean leftHandTraffic)
-    {
+            double circum, boolean leftHandTraffic){
         this.settings = settings;
         this.g = g;
         this.inactive = inactive;
@@ -162,7 +161,6 @@ public class MapPainter {
                             final double sx = l * (p1.x - p2.x);
                             final double sy = l * (p1.y - p2.y);
 
-                            double tmp = p2.x + cosPHI * sx - sinPHI * sy;
                             orientationArrows.moveTo (p2.x + cosPHI * sx - sinPHI * sy, p2.y + sinPHI * sx + cosPHI * sy);
                             orientationArrows.lineTo(p2.x, p2.y);
                             orientationArrows.lineTo (p2.x + cosPHI * sx + sinPHI * sy, p2.y - sinPHI * sx + cosPHI * sy);
@@ -698,9 +696,9 @@ public class MapPainter {
                 if(!isPolygonVisible(p)) {
                     continue;
                 }
-                drawArea(r, p, 
+                drawArea(r, p,
                         pd.selected ? settings.getRelationSelectedColor(color.getAlpha()) : color,
-                        fillImage, fillImageAlpha, text);
+                                fillImage, fillImageAlpha, text);
             }
         }
     }
@@ -984,10 +982,6 @@ public class MapPainter {
         }
     }
 
-    public boolean isInactive() {
-        return inactive;
-    }
-
     public boolean isShowNames() {
         return showNames;
     }
@@ -1000,4 +994,7 @@ public class MapPainter {
         return showIcons;
     }
 
+    public boolean isInactiveMode() {
+        return inactive;
+    }
 }

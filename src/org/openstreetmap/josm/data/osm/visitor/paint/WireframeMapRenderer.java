@@ -1,8 +1,6 @@
 /* License: GPL. Copyright 2007 by Immanuel Scholz and others */
 package org.openstreetmap.josm.data.osm.visitor.paint;
 
-/* To enable debugging or profiling remove the double / signs */
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -19,32 +17,23 @@ import java.util.Iterator;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.BBox;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 
 /**
- * A visitor that paints a simple scheme of every primitive it visits to a
+ * A map renderer that paints a simple scheme of every primitive it visits to a
  * previous set graphic environment.
  *
  * @author imi
  */
-public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor {
-    /**
-     * The environment to paint to.
-     */
-    protected Graphics2D g;
-    /**
-     * MapView to get screen coordinates.
-     */
-    protected NavigatableComponent nc;
-
-    public boolean inactive;
+public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor {
 
     /**
      * Preferences
@@ -83,6 +72,13 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
      */
     protected Color currentColor = null;
     protected GeneralPath currentPath = new GeneralPath();
+
+    /**
+     * {@inheritDoc}
+     */
+    public WireframeMapRenderer(Graphics2D g, NavigatableComponent nc, boolean isInactiveMode) {
+        super(g, nc, isInactiveMode);
+    }
 
     public void getColors()
     {
@@ -131,46 +127,23 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
     }
 
     DataSet ds;
-    public void visitAll(DataSet data, boolean virtual, Bounds bounds) {
+    public void render(DataSet data, boolean virtual, Bounds bounds) {
         BBox bbox = new BBox(bounds);
         this.ds = data;
-        //boolean profiler = Main.pref.getBoolean("simplepaint.profiler",false);
-        //long profilerStart = java.lang.System.currentTimeMillis();
-        //long profilerLast = profilerStart;
-        //int profilerN = 0;
-        //if(profiler)
-        //    System.out.println("Simplepaint Profiler");
-
         getSettings(virtual);
-
-        //if(profiler)
-        //{
-        //    System.out.format("Prepare  : %4dms\n", (java.lang.System.currentTimeMillis()-profilerLast));
-        //    profilerLast = java.lang.System.currentTimeMillis();
-        //}
 
         /* draw tagged ways first, then untagged ways. takes
            time to iterate through list twice, OTOH does not
            require changing the colour while painting... */
-        //profilerN = 0;
         for (final OsmPrimitive osm: data.searchRelations(bbox)) {
             if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isDisabledAndHidden()) {
                 osm.visit(this);
-                //        profilerN++;
             }
         }
 
-        //if(profiler)
-        //{
-        //    System.out.format("Relations: %4dms, n=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-        //    profilerLast = java.lang.System.currentTimeMillis();
-        //}
-
-        //profilerN = 0;
         for (final OsmPrimitive osm:data.searchWays(bbox)){
             if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isDisabledAndHidden() && osm.isTagged()) {
                 osm.visit(this);
-                //        profilerN++;
             }
         }
         displaySegments();
@@ -178,55 +151,23 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         for (final OsmPrimitive osm:data.searchWays(bbox)){
             if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isDisabledAndHidden() && !osm.isTagged()) {
                 osm.visit(this);
-                //        profilerN++;
             }
         }
         displaySegments();
-
-        //if(profiler)
-        //{
-        //    System.out.format("Ways     : %4dms, n=%5d\n",
-        //        (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-        //    profilerLast = java.lang.System.currentTimeMillis();
-        //}
-
-        //profilerN = 0;
         for (final OsmPrimitive osm : data.getSelected()) {
             if (!osm.isDeleted()) {
                 osm.visit(this);
-                //        profilerN++;
             }
         }
         displaySegments();
 
-        //if(profiler)
-        //{
-        //    System.out.format("Selected : %4dms, n=%5d\n", (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-        //    profilerLast = java.lang.System.currentTimeMillis();
-        //}
-
-        //profilerN = 0;
         for (final OsmPrimitive osm: data.searchNodes(bbox)) {
             if (!osm.isDeleted() && !ds.isSelected(osm) && !osm.isDisabledAndHidden())
             {
                 osm.visit(this);
-                //        profilerN++;
             }
         }
-
-        //if(profiler)
-        //{
-        //    System.out.format("Nodes    : %4dms, n=%5d\n",
-        //        (java.lang.System.currentTimeMillis()-profilerLast), profilerN);
-        //    profilerLast = java.lang.System.currentTimeMillis();
-        //}
-
         drawVirtualNodes(data.searchWays(bbox));
-
-        //if(profiler)
-        //{
-        //    System.out.format("All      : %4dms\n", (profilerLast-profilerStart));
-        //}
     }
 
     private static final int max(int a, int b, int c, int d) {
@@ -247,7 +188,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         } else {
             Color color;
 
-            if (inactive || n.isDisabled()) {
+            if (isInactiveMode || n.isDisabled()) {
                 color = inactiveColor;
             } else if (ds.isSelected(n)) {
                 color = selectedColor;
@@ -338,7 +279,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         boolean showOnlyHeadArrowOnly = showThisDirectionArrow && !ds.isSelected(w) && showHeadArrowOnly;
         Color wayColor;
 
-        if (inactive || w.isDisabled()) {
+        if (isInactiveMode || w.isDisabled()) {
             wayColor = inactiveColor;
         } else if(w.isHighlighted()) {
             wayColor = highlightColor;
@@ -371,7 +312,7 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         if (r.isIncomplete()) return;
 
         Color col;
-        if (inactive || r.isDisabled()) {
+        if (isInactiveMode || r.isDisabled()) {
             col = inactiveColor;
         } else if (ds.isSelected(r)) {
             col = selectedColor;
@@ -414,6 +355,9 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
             }
         }
     }
+
+    @Override
+    public void visit(Changeset cs) {/* ignore */}
 
     /**
      * Draw an number of the order of the two consecutive nodes within the
@@ -518,14 +462,6 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
         return true;
     }
 
-    public void setGraphics(Graphics2D g) {
-        this.g = g;
-    }
-
-    public void setNavigatableComponent(NavigatableComponent nc) {
-        this.nc = nc;
-    }
-
     protected void displaySegments() {
         displaySegments(null);
     }
@@ -536,9 +472,5 @@ public class SimplePaintVisitor extends AbstractVisitor implements PaintVisitor 
             currentPath = new GeneralPath();
             currentColor = newColor;
         }
-    }
-
-    public void setInactive(boolean inactive) {
-        this.inactive = inactive;
     }
 }

@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.text.MessageFormat;
 import java.util.Collection;
 
@@ -200,5 +201,47 @@ public class Utils {
             }
         }
         return( path.delete() );
+    }
+
+    /**
+     * <p>Utility method for closing an input stream.</p>
+     * 
+     * @param is the input stream. May be null.
+     */
+    public static void close(InputStream is){
+        if (is == null) return;
+        try {
+            is.close();
+        } catch(IOException e){
+            // ignore
+        }
+    }
+
+    /**
+     * <p>Utility method for closing an output stream.</p>
+     * 
+     * @param os the output stream. May be null.
+     */
+    public static void close(OutputStream os){
+        if (os == null) return;
+        try {
+            os.close();
+        } catch(IOException e){
+            // ignore
+        }
+    }
+
+    /**
+     * <p>Utility method for closing a reader.</p>
+     * 
+     * @param reader the reader. May be null.
+     */
+    public static void close(Reader reader){
+        if (reader == null) return;
+        try {
+            reader.close();
+        } catch(IOException e){
+            // ignore
+        }
     }
 }
