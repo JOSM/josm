@@ -293,12 +293,11 @@ public class WmsCache {
                     WmsCacheType.class.getPackage().getName(),
                     WmsCacheType.class.getClassLoader());
             Marshaller marshaller = context.createMarshaller();
-            marshaller.marshal(index, new File(cacheDir, INDEX_FILENAME));
-        } catch (JAXBException e) {
+            marshaller.marshal(index, new FileOutputStream(new File(cacheDir, INDEX_FILENAME)));
+        } catch (Exception e) {
             System.err.println("Failed to save wms-cache file");
             e.printStackTrace();
         }
-
     }
 
     private File getImageFile(ProjectionEntries projection, CacheEntry entry) {
