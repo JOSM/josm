@@ -32,6 +32,7 @@ import org.openstreetmap.josm.actions.DownloadPrimitiveAction;
 import org.openstreetmap.josm.actions.DownloadReferrersAction;
 import org.openstreetmap.josm.actions.DuplicateAction;
 import org.openstreetmap.josm.actions.ExitAction;
+import org.openstreetmap.josm.actions.FollowLineAction;
 import org.openstreetmap.josm.actions.FullscreenToggleAction;
 import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.HelpAction;
@@ -160,6 +161,7 @@ public class MainMenu extends JMenuBar {
     public final JosmAction simplifyWay = new SimplifyWayAction();
     public final JosmAction joinAreas = new JoinAreasAction();
     public final JosmAction createMultipolygon = new CreateMultipolygonAction();
+    public final JosmAction followLine = new FollowLineAction();
 
     /* Audio menu */
     public final JosmAction audioPlayPause = new AudioPlayPauseAction();
@@ -329,6 +331,7 @@ public class MainMenu extends JMenuBar {
         add(toolsMenu, ortho);
         add(toolsMenu, mirror);
         toolsMenu.addSeparator();
+        add(toolsMenu, followLine);
         add(toolsMenu, addnode);
         add(toolsMenu, movenode);
         add(toolsMenu, createCircle);

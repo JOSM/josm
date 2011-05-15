@@ -751,6 +751,10 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         return way;
     }
 
+    public Node getCurrentBaseNode() {
+        return currentBaseNode;
+    }
+
     private static void pruneSuccsAndReverse(List<Integer> is) {
         //if (is.size() < 2) return;
 
