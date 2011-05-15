@@ -266,7 +266,7 @@ public class MainApplication extends Main {
                         dialog.setContent(
                                 trn("JOSM found {0} unsaved osm data layer. ",
                                         "JOSM found {0} unsaved osm data layers. ", unsavedLayerFiles.size(), unsavedLayerFiles.size()) +
-                                        tr("It looks like JOSM crashed last time. Do you like to restore the data?"));
+                                        tr("It looks like JOSM crashed last time. Would you like to restore the data?"));
                         dialog.setButtonIcons(new String[] {"ok", "cancel", "dialogs/remove"});
                         int selection = dialog.showDialog().getValue();
                         if (selection == 1) {
