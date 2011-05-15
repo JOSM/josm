@@ -27,6 +27,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
@@ -573,21 +574,52 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         }
     }
 
-    public class ChangeResolutionAction extends AbstractAction {
+    public static class ChangeResolutionAction extends AbstractAction implements LayerAction {
         public ChangeResolutionAction() {
             super(tr("Change resolution"));
         }
-        @Override
-        public void actionPerformed(ActionEvent ev) {
-            resolution = mv.getDist100PixelText();
-            info.setPixelPerDegree(getPPD());
-            settingsChanged = true;
-            for(int x = 0; x<dax; ++x) {
-                for(int y = 0; y<day; ++y) {
-                    images[x][y].changePosition(-1, -1);
+
+        private void changeResolution(WMSLayer layer) {
+            layer.resolution = layer.mv.getDist100PixelText();
+            layer.info.setPixelPerDegree(layer.getPPD());
+            layer.settingsChanged = true;
+            for(int x = 0; x<layer.dax; ++x) {
+                for(int y = 0; y<layer.day; ++y) {
+                    layer.images[x][y].changePosition(-1, -1);
                 }
             }
-            mv.repaint();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ev) {
+
+            if (LayerListDialog.getInstance() == null)
+                return;
+
+            List<Layer> layers = LayerListDialog.getInstance().getModel().getSelectedLayers();
+            for (Layer l: layers) {
+                changeResolution((WMSLayer) l);
+            }
+            Main.map.mapView.repaint();
+        }
+
+        @Override
+        public boolean supportLayers(List<Layer> layers) {
+            for (Layer l: layers) {
+                if (!(l instanceof WMSLayer))
+                    return false;
+            }
+            return true;
+        }
+
+        @Override
+        public Component createMenuComponent() {
+            return new JMenuItem(this);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof ChangeResolutionAction;
         }
     }
 
