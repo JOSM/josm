@@ -1,11 +1,11 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.actions.search;
 
-import java.awt.Dimension;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -27,9 +27,9 @@ import javax.swing.JRadioButton;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ActionParameter;
+import org.openstreetmap.josm.actions.ActionParameter.SearchSettingsActionParameter;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.ParameterizedAction;
-import org.openstreetmap.josm.actions.ActionParameter.SearchSettingsActionParameter;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Filter;
@@ -198,10 +198,12 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     + "<li>"+tr("<b>tags:</b>... - object with given number of tags (tags:count or tags:min-max)")+"</li>"
                     + "<li>"+tr("<b>role:</b>... - object with given role in a relation")+"</li>"
                     + "<li>"+tr("<b>timestamp:</b>... -  objects with this timestamp (<b>2009-11-12T14:51:09Z</b>, <b>2009-11-12</b> or <b>T14:51</b> ...)")+"</li>"
+                    + "<li>"+tr("<b>areaSize:</b>... - closed ways with area between MIN and MAX m\u00b2. (areaSize:MIN-MAX or areaSize:MAX)")+"</li>"
                     + "<li>"+tr("<b>modified</b> - all changed objects")+"</li>"
                     + "<li>"+tr("<b>selected</b> - all selected objects")+"</li>"
                     + "<li>"+tr("<b>incomplete</b> - all incomplete objects")+"</li>"
                     + "<li>"+tr("<b>untagged</b> - all untagged objects")+"</li>"
+                    + "<li>"+tr("<b>closed</b> - all closed ways (a node is not considered closed)")+"</li>"
                     + "<li>"+tr("<b>child <i>expr</i></b> - all children of objects matching the expression")+"</li>"
                     + "<li>"+tr("<b>parent <i>expr</i></b> - all parents of objects matching the expression")+"</li>"
                     + "<li>"+tr("Use <b>|</b> or <b>OR</b> to combine with logical or")+"</li>"

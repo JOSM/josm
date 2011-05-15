@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.DateUtils;
+import org.openstreetmap.josm.tools.Geometry;
 
 /**
  Implements a google-like search.
@@ -629,6 +630,32 @@ public class SearchCompiler {
         }
         @Override public String toString() {return "child(" + parent + ")";}
     }
+    
+    /**
+     * Matches on the area of a closed way.
+     * 
+     * @author Ole Jørgen Brønner
+     */
+    private static class Area extends Match {
+        private int min, max;
+
+        public Area(int min, int max) {
+            this.min = min;
+            this.max = max;
+            if (min == max) {
+                this.min = 0;
+            }
+        }
+
+        @Override
+        public boolean match(OsmPrimitive osm) {
+            if(!(osm instanceof Way && ((Way) osm).isClosed()))
+                return false;
+            Way way = (Way)osm;
+            double area = Geometry.closedWayArea(way);
+            return (min <= area && area <= max);
+        }
+    }
 
     public static class ParseError extends Exception {
         public ParseError(String msg) {
@@ -700,6 +727,9 @@ public class SearchCompiler {
                 } else if ("nodes".equals(key)) {
                     Range range = tokenizer.readRange(tr("Range of numbers expected"));
                     return new NodeCountRange((int)range.getStart(), (int)range.getEnd());
+                } else if ("areaSize".equals(key)) {
+                    Range range = tokenizer.readRange(tr("Range of numbers expected"));
+                    return new Area((int)range.getStart(), (int)range.getEnd());
                 } else if ("changeset".equals(key))
                     return new ChangesetId(tokenizer.readNumber(tr("Changeset id expected")));
                 else if ("version".equals(key))

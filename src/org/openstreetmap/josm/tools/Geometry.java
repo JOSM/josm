@@ -457,4 +457,60 @@ public class Geometry {
 
         return inside;
     }
+    
+    /**
+     * returns area of a closed way in square meters
+     * (approximate(?), but should be OK for small areas)
+     */
+    public static double closedWayArea(Way way) {
+
+        //http://local.wasp.uwa.edu.au/~pbourke/geometry/polyarea/
+        double area = 0;
+        Node lastN = null;
+        for (Node n : way.getNodes()) {
+            if (lastN != null) {
+                n.getEastNorth().getX();
+
+                area += (calcX(n) * calcY(lastN)) - (calcY(n) * calcX(lastN));
+            }
+            lastN = n;
+        }
+        return Math.abs(area/2);
+    }
+    
+    protected static double calcX(Node p1){
+        double lat1, lon1, lat2, lon2;
+        double dlon, dlat;
+
+        lat1 = p1.getCoor().lat() * Math.PI / 180.0;
+        lon1 = p1.getCoor().lon() * Math.PI / 180.0;
+        lat2 = lat1;
+        lon2 = 0;
+
+        dlon = lon2 - lon1;
+        dlat = lat2 - lat1;
+
+        double a = (Math.pow(Math.sin(dlat/2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dlon/2), 2));
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return 6367000 * c;
+    }
+    
+    protected static double calcY(Node p1){
+        double lat1, lon1, lat2, lon2;
+        double dlon, dlat;
+
+        lat1 = p1.getCoor().lat() * Math.PI / 180.0;
+        lon1 = p1.getCoor().lon() * Math.PI / 180.0;
+        lat2 = 0;
+        lon2 = lon1;
+
+        dlon = lon2 - lon1;
+        dlat = lat2 - lat1;
+
+        double a = (Math.pow(Math.sin(dlat/2), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dlon/2), 2));
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return 6367000 * c;
+    }
+
+
 }
