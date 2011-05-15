@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -109,10 +110,10 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
                         osm = new Node(id.getUniqueId());
                         break;
                     case WAY:
-                        osm = new Node(id.getUniqueId());
+                        osm = new Way(id.getUniqueId());
                         break;
                     case RELATION:
-                        osm = new Node(id.getUniqueId());
+                        osm = new Relation(id.getUniqueId());
                         break;
                     default: throw new AssertionError();
                 }
