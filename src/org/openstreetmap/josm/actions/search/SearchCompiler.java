@@ -727,7 +727,7 @@ public class SearchCompiler {
                 } else if ("nodes".equals(key)) {
                     Range range = tokenizer.readRange(tr("Range of numbers expected"));
                     return new NodeCountRange((int)range.getStart(), (int)range.getEnd());
-                } else if ("areaSize".equals(key)) {
+                } else if ("areasize".equals(key)) {
                     Range range = tokenizer.readRange(tr("Range of numbers expected"));
                     return new Area((int)range.getStart(), (int)range.getEnd());
                 } else if ("changeset".equals(key))

@@ -198,7 +198,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     + "<li>"+tr("<b>tags:</b>... - object with given number of tags (tags:count or tags:min-max)")+"</li>"
                     + "<li>"+tr("<b>role:</b>... - object with given role in a relation")+"</li>"
                     + "<li>"+tr("<b>timestamp:</b>... -  objects with this timestamp (<b>2009-11-12T14:51:09Z</b>, <b>2009-11-12</b> or <b>T14:51</b> ...)")+"</li>"
-                    + "<li>"+tr("<b>areaSize:</b>... - closed ways with area between MIN and MAX m\u00b2. (areaSize:MIN-MAX or areaSize:MAX)")+"</li>"
+                    + "<li>"+tr("<b>areasize:</b>... - closed ways with area between MIN and MAX m\u00b2. (areasize:MIN-MAX or areasize:MAX)")+"</li>"
                     + "<li>"+tr("<b>modified</b> - all changed objects")+"</li>"
                     + "<li>"+tr("<b>selected</b> - all selected objects")+"</li>"
                     + "<li>"+tr("<b>incomplete</b> - all incomplete objects")+"</li>"
