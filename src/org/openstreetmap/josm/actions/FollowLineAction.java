@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
+import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -107,13 +108,15 @@ public class FollowLineAction extends JosmAction {
                 }
             }
             if (newPoint != null) {
+                Way newFollower = new Way(follower);
                 if (reversed) {
-                    follower.addNode(0, newPoint);
+                    newFollower.addNode(0, newPoint);
                 } else {
-                    follower.addNode(newPoint);
+                    newFollower.addNode(newPoint);
                 }
+                Main.main.undoRedo.add(new ChangeCommand(follower, newFollower));
                 osmLayer.data.clearSelection();
-                osmLayer.data.addSelected(follower);
+                osmLayer.data.addSelected(newFollower);
                 osmLayer.data.addSelected(newPoint);
                 return;
             }
