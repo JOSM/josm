@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
+import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.Node;
@@ -83,6 +84,7 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
         Runnable r = new Runnable() {
             public void run() {
                 layer.mergeFrom(ds);
+                AutoScaleAction.zoomTo(ds.allPrimitives());
                 layer.onPostDownloadFromServer();
             }
         };
@@ -139,6 +141,24 @@ public class DownloadPrimitivesTask extends PleaseWaitRunnable {
             }
             DataSetMerger merger = new DataSetMerger(ds, theirDataSet);
             merger.merge();
+            
+            // if incomplete relation members exist, download them too
+            for (Relation r : ds.getRelations()) {
+                if (canceled) return;
+                if (r.hasIncompleteMembers()) {
+                    synchronized(this) {
+                        if (canceled) return;
+                        objectReader = new OsmServerObjectReader(r.getId(), OsmPrimitiveType.RELATION, true /* full */);
+                    }
+                    theirDataSet = objectReader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+                    synchronized (this) {
+                        objectReader = null;
+                    }
+                    merger = new DataSetMerger(ds, theirDataSet);
+                    merger.merge();
+                }
+            }
+
             // a way loaded with MultiFetch may have incomplete nodes because at least one of its
             // nodes isn't present in the local data set. We therefore fully load all
             // ways with incomplete nodes.
