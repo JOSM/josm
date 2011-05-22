@@ -93,6 +93,10 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
             Object value, boolean isSelected, int row, int column) {
         currentTag = (TagModel) value;
 
+        // no autocompletion for initial editor#setText()
+        if(autoCompletionList != null) {
+            autoCompletionList.clear();
+        }
         if (column == 0) {
             editor.setText(currentTag.getName());
             TagEditorModel model = (TagEditorModel)table.getModel();
