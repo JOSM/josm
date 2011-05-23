@@ -7,6 +7,8 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,6 +19,7 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
@@ -192,18 +195,26 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
             reader = null;
         }
         Collection<Way> ways = ds.getWays();
+
         DataSetMerger merger;
         if (!ways.isEmpty()) {
-            reader = new MultiFetchServerObjectReader();
+            Set<Node> nodes = new HashSet<Node>();
             for (Way w: ways) {
-                ((MultiFetchServerObjectReader)reader).append(w.getNodes());
+                // Ensure each node is only listed once
+                nodes.addAll(w.getNodes());
             }
-            DataSet wayNodes = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
-            synchronized(this) { // avoid race condition in cancel()
-                reader = null;
+            // Don't retrieve any nodes we've already grabbed
+            nodes.removeAll(targetLayer.data.getNodes());
+            if (!nodes.isEmpty()) {
+                reader = new MultiFetchServerObjectReader();
+                ((MultiFetchServerObjectReader)reader).append(nodes);
+                DataSet wayNodes = reader.parseOsm(progressMonitor.createSubTaskMonitor(1, false));
+                synchronized(this) { // avoid race condition in cancel()
+                    reader = null;
+                }
+                merger = new DataSetMerger(ds, wayNodes);
+                merger.merge();
             }
-            merger = new DataSetMerger(ds, wayNodes);
-            merger.merge();
         }
         merger = new DataSetMerger(parents, ds);
         merger.merge();
