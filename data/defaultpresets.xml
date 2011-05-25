@@ -3833,7 +3833,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Wood" />
             <key key="natural" value="wood" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
-            <combo key="wood" text="Type" values="coniferous,deciduous,mixed" default="" delete_if_empty="true" />
+            <combo key="wood" text="Type" values="coniferous,deciduous,mixed" values_context="wood" default="" delete_if_empty="true" />
         </item>
         <item name="Forest" icon="presets/landuse.png" type="node,closedway,relation">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=forest"

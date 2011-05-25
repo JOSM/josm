@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Font;
@@ -56,16 +57,16 @@ public class DownloadPrimitiveAction extends JosmAction {
     }
 
     public void actionPerformed(ActionEvent e) {
-        
+
         JPanel all = new JPanel();
         GroupLayout layout = new GroupLayout(all);
         all.setLayout(layout);
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
-        
+
         JLabel lbl1 = new JLabel(tr("Object type:"));
         OsmPrimitiveTypesComboBox cbType = new OsmPrimitiveTypesComboBox();
-        cbType.addItem(new SimpleListItem("mixed", tr("mixed")));
+        cbType.addItem(new SimpleListItem("mixed", trc("osm object types", "mixed")));
         cbType.setToolTipText(tr("Choose the OSM object type"));
         JLabel lbl2 = new JLabel(tr("Object ID:"));
         OsmIdTextField tfId = new OsmIdTextField();
@@ -82,7 +83,7 @@ public class DownloadPrimitiveAction extends JosmAction {
                 + " Examples: <b><ul><li>1 2 5</li><li>1,2,5</li></ul><br/></b>"
                 + " In mixed mode, specify objects like this: <b>w123, n110, w12, r15</b><br/>"));
         help.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-        
+
         layout.setVerticalGroup(layout.createSequentialGroup()
             .addGroup(layout.createParallelGroup()
                 .addComponent(lbl1)
@@ -94,7 +95,7 @@ public class DownloadPrimitiveAction extends JosmAction {
             .addComponent(layer)
             .addComponent(help)
         );
-        
+
         layout.setHorizontalGroup(layout.createParallelGroup()
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup()
@@ -109,7 +110,7 @@ public class DownloadPrimitiveAction extends JosmAction {
             .addComponent(layer)
             .addComponent(help)
         );
-        
+
         ExtendedDialog dialog = new ExtendedDialog(Main.parent,
                 tr("Download object"),
                 new String[] {tr("Download object"), tr("Cancel")}
@@ -143,8 +144,8 @@ public class DownloadPrimitiveAction extends JosmAction {
 
         processItems(layer.isSelected(), cbType.getType(), tfId.getIds(), referrers.isSelected());
     }
-    
-    void processItems(boolean newLayer, OsmPrimitiveType type, 
+
+    void processItems(boolean newLayer, OsmPrimitiveType type,
             final List<PrimitiveId> ids,
             boolean downloadReferrers) {
         OsmDataLayer layer = getEditLayer();
@@ -154,13 +155,13 @@ public class DownloadPrimitiveAction extends JosmAction {
         }
         final DownloadPrimitivesTask task = new DownloadPrimitivesTask(layer, ids);
         Main.worker.submit(task);
-        
+
         if (downloadReferrers) {
             for (PrimitiveId id : ids) {
                 Main.worker.submit(new DownloadReferrersTask(layer, id));
             }
         }
-        
+
         Runnable showErrorsAndWarnings = new Runnable() {
             @Override
             public void run() {
@@ -168,12 +169,12 @@ public class DownloadPrimitiveAction extends JosmAction {
                 if (errs != null && !errs.isEmpty()) {
                     final ExtendedDialog dlg = reportProblemDialog(errs,
                             trn("Object could not be downloaded", "Some objects could not be downloaded", errs.size()),
-                            trn("One object could not be downloaded.<br>", 
+                            trn("One object could not be downloaded.<br>",
                                 "{0} objects could not be downloaded.<br>",
                                 errs.size(),
                                 errs.size())
                             + tr("The server replied with response code 404.<br>"
-                                + "This usually means, the server does not know an object with the requested id."), 
+                                + "This usually means, the server does not know an object with the requested id."),
                             tr("missing objects:"),
                             JOptionPane.ERROR_MESSAGE
                     );
@@ -188,7 +189,7 @@ public class DownloadPrimitiveAction extends JosmAction {
                     } catch (InvocationTargetException ex) {
                     }
                 }
-                
+
                 Set<PrimitiveId> del = new TreeSet<PrimitiveId>();
                 DataSet ds = getCurrentDataSet();
                 for (PrimitiveId id : ids) {
@@ -201,7 +202,7 @@ public class DownloadPrimitiveAction extends JosmAction {
                     final ExtendedDialog dlg = reportProblemDialog(del,
                             trn("Object deleted", "Objects deleted", del.size()),
                             trn(
-                                "One downloaded object is deleted.", 
+                                "One downloaded object is deleted.",
                                 "{0} downloaded objects are deleted.",
                                 del.size(),
                                 del.size()),
@@ -219,8 +220,8 @@ public class DownloadPrimitiveAction extends JosmAction {
         };
         Main.worker.submit(showErrorsAndWarnings);
     }
-    
-    private ExtendedDialog reportProblemDialog(Set<PrimitiveId> errs, 
+
+    private ExtendedDialog reportProblemDialog(Set<PrimitiveId> errs,
             String TITLE, String TEXT, String LIST_LABEL, int msgType) {
         JPanel p = new JPanel(new GridBagLayout());
         p.add(new HtmlPanel(TEXT), GBC.eop());
@@ -241,7 +242,7 @@ public class DownloadPrimitiveAction extends JosmAction {
 
         return new ExtendedDialog(
                 Main.parent,
-                TITLE, 
+                TITLE,
                 new String[] { tr("Ok") })
             .setButtonIcons(new String[] { "ok" })
             .setIcon(msgType)
@@ -251,14 +252,14 @@ public class DownloadPrimitiveAction extends JosmAction {
     private static class SimpleListItem  {
         final String data;
         final String text;
-        
-        public SimpleListItem(String data, String text) {  
-            this.data = data;   
-            this.text = text; 
+
+        public SimpleListItem(String data, String text) {
+            this.data = data;
+            this.text = text;
         }
-        
-        @Override public String toString() { 
-            return text; 
+
+        @Override public String toString() {
+            return text;
         }
     }
 }
