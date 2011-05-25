@@ -21,7 +21,6 @@ import javax.swing.text.PlainDocument;
 import javax.swing.text.StyleConstants;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.util.TableCellEditorSupport;
 
 /**
@@ -97,10 +96,9 @@ public class AutoCompletingTextField extends JTextField implements ComboBoxEdito
                 remove(0,getLength());
                 super.insertString(0,matchingString,a);
 
-                // highlight from end to insert position
-                //
-                setCaretPosition(getLength());
-                moveCaretPosition(offs + str.length());
+                // highlight from insert position to end position to put the caret at the end
+                setCaretPosition(offs + str.length());
+                moveCaretPosition(getLength());
             } else {
                 // there are no matches. Insert the new text, do not highlight
                 //
