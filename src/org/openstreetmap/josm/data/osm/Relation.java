@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CopyList;
 
@@ -161,6 +162,10 @@ public final class Relation extends OsmPrimitive implements IRelation {
     }
 
     @Override public void visit(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override public void visit(PrimitiveVisitor visitor) {
         visitor.visit(this);
     }
 

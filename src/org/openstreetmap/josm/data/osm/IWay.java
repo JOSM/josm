@@ -5,5 +5,6 @@ public interface IWay extends IPrimitive {
 
     int getNodesCount();
     long getNodeId(int idx);
-    
+    boolean isClosed();
+
 }

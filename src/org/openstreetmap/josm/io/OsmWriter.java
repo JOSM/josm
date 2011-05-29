@@ -15,14 +15,16 @@ import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSource;
+import org.openstreetmap.josm.data.osm.INode;
+import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.tools.DateUtils;
 
 /**
@@ -30,7 +32,7 @@ import org.openstreetmap.josm.tools.DateUtils;
  * xml library for storing.
  * @author imi
  */
-public class OsmWriter extends XmlWriter implements Visitor {
+public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
 
     public static final String DEFAULT_API_VERSION = "0.6";
 
@@ -66,7 +68,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
     }
 
     private static final Comparator<OsmPrimitive> byIdComparator = new Comparator<OsmPrimitive>() {
-        public int compare(OsmPrimitive o1, OsmPrimitive o2) {
+        @Override public int compare(OsmPrimitive o1, OsmPrimitive o2) {
             return (o1.getUniqueId()<o2.getUniqueId() ? -1 : (o1.getUniqueId()==o2.getUniqueId() ? 0 : 1));
         }
     };
@@ -111,7 +113,8 @@ public class OsmWriter extends XmlWriter implements Visitor {
         }
     }
 
-    public void visit(Node n) {
+    @Override
+    public void visit(INode n) {
         if (n.isIncomplete()) return;
         addCommon(n, "node");
         out.print(" lat='"+n.getCoor().lat()+"' lon='"+n.getCoor().lon()+"'");
@@ -122,32 +125,34 @@ public class OsmWriter extends XmlWriter implements Visitor {
         }
     }
 
-    public void visit(Way w) {
+    @Override
+    public void visit(IWay w) {
         if (w.isIncomplete()) return;
         addCommon(w, "way");
         if (!withBody) {
             out.println("/>");
         } else {
             out.println(">");
-            for (Node n : w.getNodes()) {
-                out.println("    <nd ref='"+n.getUniqueId()+"' />");
+            for (int i=0; i<w.getNodesCount(); ++i) {
+                out.println("    <nd ref='"+w.getNodeId(i) +"' />");
             }
             addTags(w, "way", false);
         }
     }
 
-    public void visit(Relation e) {
+    @Override
+    public void visit(IRelation e) {
         if (e.isIncomplete()) return;
         addCommon(e, "relation");
         if (!withBody) {
             out.println("/>");
         } else {
             out.println(">");
-            for (RelationMember em : e.getMembers()) {
+            for (int i=0; i<e.getMembersCount(); ++i) {
                 out.print("    <member type='");
-                out.print(OsmPrimitiveType.from(em.getMember()).getAPIName());
-                out.println("' ref='"+em.getMember().getUniqueId()+"' role='" +
-                        XmlWriter.encode(em.getRole()) + "' />");
+                out.print(e.getMemberType(i));
+                out.println("' ref='"+e.getMemberId(i)+"' role='" +
+                        XmlWriter.encode(e.getRole(i)) + "' />");
             }
             addTags(e, "relation", false);
         }
@@ -180,7 +185,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
     }
 
     private static final Comparator<Entry<String, String>> byKeyComparator = new Comparator<Entry<String,String>>() {
-        public int compare(Entry<String, String> o1, Entry<String, String> o2) {
+        @Override public int compare(Entry<String, String> o1, Entry<String, String> o2) {
             return o1.getKey().compareTo(o2.getKey());
         }
     };
@@ -210,7 +215,7 @@ public class OsmWriter extends XmlWriter implements Visitor {
      * Add the common part as the form of the tag as well as the XML attributes
      * id, action, user, and visible.
      */
-    private void addCommon(OsmPrimitive osm, String tagname) {
+    private void addCommon(IPrimitive osm, String tagname) {
         out.print("  <"+tagname);
         if (osm.getUniqueId() != 0) {
             out.print(" id='"+ osm.getUniqueId()+"'");

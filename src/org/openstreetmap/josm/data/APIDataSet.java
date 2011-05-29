@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Represents a collection of {@see OsmPrimitive}s which should be uploaded to the
@@ -285,10 +286,10 @@ public class APIDataSet {
      */
     public void adjustRelationUploadOrder() throws CyclicUploadDependencyException{
         LinkedList<OsmPrimitive> newToAdd = new LinkedList<OsmPrimitive>();
-        newToAdd.addAll(OsmPrimitive.getFilteredList(toAdd, Node.class));
-        newToAdd.addAll(OsmPrimitive.getFilteredList(toAdd, Way.class));
+        newToAdd.addAll(Utils.filteredCollection(toAdd, Node.class));
+        newToAdd.addAll(Utils.filteredCollection(toAdd, Way.class));
 
-        List<Relation> relationsToAdd = OsmPrimitive.getFilteredList(toAdd, Relation.class);
+        List<Relation> relationsToAdd = new ArrayList<Relation>(Utils.filteredCollection(toAdd, Relation.class));
         List<Relation> noProblemRelations = filterRelationsNotReferringToNewRelations(relationsToAdd);
         newToAdd.addAll(noProblemRelations);
         relationsToAdd.removeAll(noProblemRelations);

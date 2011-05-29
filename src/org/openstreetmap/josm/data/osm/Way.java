@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CopyList;
 import org.openstreetmap.josm.tools.Pair;
@@ -157,6 +158,10 @@ public final class Way extends OsmPrimitive implements IWay {
     }
 
     @Override public void visit(Visitor visitor) {
+        visitor.visit(this);
+    }
+    
+    @Override public void visit(PrimitiveVisitor visitor) {
         visitor.visit(this);
     }
 
@@ -408,6 +413,7 @@ public final class Way extends OsmPrimitive implements IWay {
         }
     }
 
+    @Override
     public boolean isClosed() {
         if (isIncomplete()) return false;
 

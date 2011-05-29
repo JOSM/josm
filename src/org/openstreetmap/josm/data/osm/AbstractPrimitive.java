@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -162,6 +163,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * @see #isNew()
      * @see #isUndeleted()
      */
+    @Override
     public boolean isNewOrUndeleted() {
         return (id <= 0) || ((flags & (FLAG_VISIBLE + FLAG_DELETED)) == 0);
     }
@@ -260,6 +262,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      *
      * @return the unique primitive id for this primitive
      */
+    @Override
     public PrimitiveId getPrimitiveId() {
         return new SimplePrimitiveId(getUniqueId(), getType());
     }
@@ -637,4 +640,50 @@ public abstract class AbstractPrimitive implements IPrimitive {
      */
     abstract protected void keysChangedImpl(Map<String, String> originalKeys);
     
+    /**
+     * Replies the name of this primitive. The default implementation replies the value
+     * of the tag <tt>name</tt> or null, if this tag is not present.
+     *
+     * @return the name of this primitive
+     */
+    @Override
+    public String getName() {
+        return get("name");
+    }
+
+    /**
+     * Replies the a localized name for this primitive given by the value of the tags (in this order)
+     * <ul>
+     *   <li>name:lang_COUNTRY_Variant  of the current locale</li>
+     *   <li>name:lang_COUNTRY of the current locale</li>
+     *   <li>name:lang of the current locale</li>
+     *   <li>name of the current locale</li>
+     * </ul>
+     *
+     * null, if no such tag exists
+     *
+     * @return the name of this primitive
+     */
+    @Override
+    public String getLocalName() {
+        String key = "name:" + Locale.getDefault().toString();
+        if (get(key) != null)
+            return get(key);
+        key = "name:" + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry();
+        if (get(key) != null)
+            return get(key);
+        key = "name:" + Locale.getDefault().getLanguage();
+        if (get(key) != null)
+            return get(key);
+        return getName();
+    }
+    
+    /**
+     * Replies the display name of a primitive formatted by <code>formatter</code>
+     *
+     * @return the display name
+     */
+    @Override
+    public abstract String getDisplayName(NameFormatter formatter);
+
 }

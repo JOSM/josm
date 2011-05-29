@@ -16,6 +16,10 @@ import java.util.Set;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.INode;
+import org.openstreetmap.josm.data.osm.IPrimitive;
+import org.openstreetmap.josm.data.osm.IRelation;
+import org.openstreetmap.josm.data.osm.IWay;
 import org.openstreetmap.josm.data.osm.NameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -82,7 +86,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param primitive the primitive
      * @return the decorated name
      */
-    protected String decorateNameWithId(String name, OsmPrimitive primitive) {
+    protected String decorateNameWithId(String name, IPrimitive primitive) {
         if (Main.pref.getBoolean("osm-primitives.showid"))
             if (Main.pref.getBoolean("osm-primitives.showid.new-primitives"))
                 return name + tr(" [id: {0}]", primitive.getUniqueId());
@@ -98,7 +102,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param node the node
      * @return the name
      */
-    public String format(Node node) {
+    public String format(INode node) {
         String name = "";
         if (node.isIncomplete()) {
             name = tr("incomplete");
@@ -156,7 +160,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param way the way
      * @return the name
      */
-    public String format(Way way) {
+    public String format(IWay way) {
         String name = "";
         if (way.isIncomplete()) {
             name = tr("incomplete");
@@ -232,7 +236,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param relation the relation
      * @return the name
      */
-    public String format(Relation relation) {
+    public String format(IRelation relation) {
         String name;
         if (relation.isIncomplete()) {
             name = tr("incomplete");
@@ -249,8 +253,10 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             int mbno = relation.getMembersCount();
             name += trn("{0} member", "{0} members", mbno, mbno);
 
-            if (relationHasIncompleteMember(relation)) {
-                name += ", "+tr("incomplete");
+            if (relation instanceof Relation) {
+                if (relationHasIncompleteMember((Relation) relation)) {
+                    name += ", "+tr("incomplete");
+                }
             }
 
             name += ")";
@@ -324,7 +330,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return s.substring(0, i);
     }
 
-    private String getRelationTypeName(Relation relation) {
+    private String getRelationTypeName(IRelation relation) {
         String name = trc("Relation type", relation.get("type"));
         if (name == null) {
             name = (relation.get("public_transport") != null) ? tr("public transport") : null;
@@ -352,7 +358,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         return name;
     }
 
-    private String getNameTagValue(Relation relation, String nameTag) {
+    private String getNameTagValue(IRelation relation, String nameTag) {
         if (nameTag.equals("name")) {
             if (Main.pref.getBoolean("osm-primitives.localize-name", true))
                 return relation.getLocalName();
@@ -368,7 +374,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             return relation.get(nameTag);
     }
 
-    private String getRelationName(Relation relation) {
+    private String getRelationName(IRelation relation) {
         String nameTag = null;
         for (String n : getNamingtagsForRelations()) {
             nameTag = getNameTagValue(relation, n);
@@ -402,7 +408,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param primitive the primitmive
      * @return the tooltip text
      */
-    public String buildDefaultToolTip(OsmPrimitive primitive) {
+    public String buildDefaultToolTip(IPrimitive primitive) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append("<strong>id</strong>=")

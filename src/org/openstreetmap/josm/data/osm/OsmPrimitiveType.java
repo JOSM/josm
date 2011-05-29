@@ -44,26 +44,11 @@ public enum OsmPrimitiveType {
         throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' is not a valid type name. Got ''{1}''.", "typeName", typeName));
     }
 
-    public static OsmPrimitiveType from(OsmPrimitive obj) {
-        return from(obj.getClass());
-    }
-
-    public static OsmPrimitiveType from(Class<? extends OsmPrimitive> cls) {
-        if (cls.equals(Node.class)) return NODE;
-        if (cls.equals(Way.class)) return WAY;
-        if (cls.equals(Relation.class)) return RELATION;
-        throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' is not an acceptable class. Got ''{1}''.", "cls", cls.toString()));
-    }
-
-    public static OsmPrimitiveType fromData(Class<? extends PrimitiveData> cls) {
-        if (cls.equals(NodeData.class)) return NODE;
-        if (cls.equals(WayData.class)) return WAY;
-        if (cls.equals(RelationData.class)) return RELATION;
-        throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' is not an acceptable class. Got ''{1}''.", "cls", cls.toString()));
-    }
-
-    public static OsmPrimitiveType fromData(PrimitiveData data) {
-        return fromData(data.getClass());
+    public static OsmPrimitiveType from(IPrimitive obj) {
+        if (obj instanceof INode) return NODE;
+        if (obj instanceof IWay) return WAY;
+        if (obj instanceof IRelation) return RELATION;
+        throw new IllegalArgumentException();
     }
 
     public static OsmPrimitiveType from(String value) {

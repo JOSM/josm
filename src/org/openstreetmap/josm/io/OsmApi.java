@@ -29,7 +29,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
@@ -229,7 +229,7 @@ public class OsmApi extends OsmConnection {
      * @param addBody true to generate the full XML, false to only generate the encapsulating tag
      * @return XML string
      */
-    private String toXml(OsmPrimitive o, boolean addBody) {
+    private String toXml(IPrimitive o, boolean addBody) {
         swriter.getBuffer().setLength(0);
         osmWriter.setWithBody(addBody);
         osmWriter.setChangeset(changeset);
@@ -249,7 +249,7 @@ public class OsmApi extends OsmConnection {
     private String toXml(Changeset s) {
         swriter.getBuffer().setLength(0);
         osmWriter.header();
-        s.visit(osmWriter);
+        osmWriter.visit(s);
         osmWriter.footer();
         osmWriter.out.flush();
         return swriter.toString();
@@ -279,7 +279,7 @@ public class OsmApi extends OsmConnection {
      * @param osm the primitive
      * @throws OsmTransferException if something goes wrong
      */
-    public void createPrimitive(OsmPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
+    public void createPrimitive(IPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
         String ret = "";
         try {
             ensureValidChangeset();
@@ -299,7 +299,7 @@ public class OsmApi extends OsmConnection {
      * @param monitor the progress monitor
      * @throws OsmTransferException if something goes wrong
      */
-    public void modifyPrimitive(OsmPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
+    public void modifyPrimitive(IPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
         String ret = null;
         try {
             ensureValidChangeset();
@@ -319,7 +319,7 @@ public class OsmApi extends OsmConnection {
      * @param osm the primitive
      * @throws OsmTransferException if something goes wrong
      */
-    public void deletePrimitive(OsmPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
+    public void deletePrimitive(IPrimitive osm, ProgressMonitor monitor) throws OsmTransferException {
         ensureValidChangeset();
         initialize(monitor);
         // can't use a the individual DELETE method in the 0.6 API. Java doesn't allow
@@ -439,7 +439,7 @@ public class OsmApi extends OsmConnection {
      * @return list of processed primitives
      * @throws OsmTransferException if something is wrong
      */
-    public Collection<OsmPrimitive> uploadDiff(Collection<OsmPrimitive> list, ProgressMonitor monitor) throws OsmTransferException {
+    public Collection<IPrimitive> uploadDiff(Collection<? extends IPrimitive> list, ProgressMonitor monitor) throws OsmTransferException {
         try {
             monitor.beginTask("", list.size() * 2);
             if (changeset == null)

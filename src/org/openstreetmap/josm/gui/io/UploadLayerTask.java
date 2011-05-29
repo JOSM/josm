@@ -92,7 +92,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
             // we tried to delete an already deleted primitive.
             //
             System.out.println(tr("Warning: object ''{0}'' is already deleted on the server. Skipping this object and retrying to upload.", p.getDisplayName(DefaultNameFormatter.getInstance())));
-            processedPrimitives.addAll(writer.getProcessedPrimitives());
+            processedPrimitives.addAll((Collection) writer.getProcessedPrimitives());
             processedPrimitives.add(p);
             toUpload.removeAll(processedPrimitives);
             return;
@@ -123,7 +123,7 @@ class UploadLayerTask extends AbstractIOTask implements Runnable {
                     ProgressMonitor m = monitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
                     if (isCancelled()) return;
                     writer.uploadOsm(strategy, toUpload, changeset, m);
-                    processedPrimitives.addAll(writer.getProcessedPrimitives());
+                    processedPrimitives.addAll((Collection) writer.getProcessedPrimitives()); // OsmPrimitive in => OsmPrimitive out
                     break;
                 } catch(OsmApiPrimitiveGoneException e) {
                     recoverFromGoneOnServer(e, monitor);

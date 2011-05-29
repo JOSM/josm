@@ -4,6 +4,8 @@ package org.openstreetmap.josm.data.osm;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
+
 public class RelationData extends PrimitiveData implements IRelation {
 
     private List<RelationMemberData> members = new ArrayList<RelationMemberData>();
@@ -59,4 +61,15 @@ public class RelationData extends PrimitiveData implements IRelation {
     public OsmPrimitiveType getType() {
         return OsmPrimitiveType.RELATION;
     }
+    
+    @Override 
+    public void visit(PrimitiveVisitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    public String getDisplayName(NameFormatter formatter) {
+        return formatter.format(this);
+    }
+
 }

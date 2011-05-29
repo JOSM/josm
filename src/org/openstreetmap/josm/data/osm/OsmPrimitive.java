@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -1010,49 +1009,6 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
         && (user == null ? other.user==null : user==other.user)
         && changesetId == other.changesetId;
     }
-
-    /**
-     * Replies the name of this primitive. The default implementation replies the value
-     * of the tag <tt>name</tt> or null, if this tag is not present.
-     *
-     * @return the name of this primitive
-     */
-    public String getName() {
-        return get("name");
-    }
-
-    /**
-     * Replies the a localized name for this primitive given by the value of the tags (in this order)
-     * <ul>
-     *   <li>name:lang_COUNTRY_Variant  of the current locale</li>
-     *   <li>name:lang_COUNTRY of the current locale</li>
-     *   <li>name:lang of the current locale</li>
-     *   <li>name of the current locale</li>
-     * </ul>
-     *
-     * null, if no such tag exists
-     *
-     * @return the name of this primitive
-     */
-    public String getLocalName() {
-        String key = "name:" + Locale.getDefault().toString();
-        if (get(key) != null)
-            return get(key);
-        key = "name:" + Locale.getDefault().getLanguage() + "_" + Locale.getDefault().getCountry();
-        if (get(key) != null)
-            return get(key);
-        key = "name:" + Locale.getDefault().getLanguage();
-        if (get(key) != null)
-            return get(key);
-        return getName();
-    }
-
-    /**
-     * Replies the display name of a primitive formatted by <code>formatter</code>
-     *
-     * @return the display name
-     */
-    public abstract String getDisplayName(NameFormatter formatter);
 
     /**
      * Loads (clone) this primitive from provided PrimitiveData
