@@ -9,16 +9,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
@@ -39,25 +36,7 @@ import org.openstreetmap.josm.tools.Predicate;
  *
  * @author imi
  */
-abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, IPrimitive {
-
-    private static final AtomicLong idCounter = new AtomicLong(0);
-
-    static long generateUniqueId() {
-        return idCounter.decrementAndGet();
-    }
-
-    /**
-     * This flag shows, that the properties have been changed by the user
-     * and on upload the object will be send to the server
-     */
-    private static final int FLAG_MODIFIED = 1 << 0;
-
-    /**
-     * The visible flag indicates, that an object is marked
-     * as deleted on the server.
-     */
-    private static final int FLAG_VISIBLE  = 1 << 1;
+abstract public class OsmPrimitive extends AbstractPrimitive implements Comparable<OsmPrimitive> {
 
     /**
      * An object can be disabled by the filter mechanism.
@@ -66,16 +45,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, IPrimiti
      * Disabled objects usually cannot be selected or modified
      * while the filter is active.
      */
-    private static final int FLAG_DISABLED = 1 << 2;
-
-    /**
-     * An object that was deleted by the user.
-     * Deleted objects are usually hidden on the map and a request
-     * for deletion will be send to the server on upload.
-     * An object usually cannot be deleted if it has non-deleted
-     * objects still referring to it.
-     */
-    private static final int FLAG_DELETED  = 1 << 3;
+    protected static final int FLAG_DISABLED = 1 << 4;
 
     /**
      * This flag is only relevant if an object is disabled by the
@@ -86,41 +56,34 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, IPrimiti
      * When the primitive is not disabled, this flag should be
      * unset as well (for efficient access).
      */
-    private static final int FLAG_HIDE_IF_DISABLED = 1 << 4;
+    protected static final int FLAG_HIDE_IF_DISABLED = 1 << 5;
 
     /**
      * This flag is set if the primitive is a way and
      * according to the tags, the direction of the way is important.
      * (e.g. one way street.)
      */
-    private static final int FLAG_HAS_DIRECTIONS = 1 << 5;
+    protected static final int FLAG_HAS_DIRECTIONS = 1 << 6;
 
     /**
      * If the primitive is tagged.
      * Some trivial tags like source=* are ignored here.
      */
-    private static final int FLAG_TAGGED = 1 << 6;
+    protected static final int FLAG_TAGGED = 1 << 7;
 
     /**
      * This flag is only relevant if FLAG_HAS_DIRECTIONS is set.
      * It shows, that direction of the arrows should be reversed.
      * (E.g. oneway=-1.)
      */
-    private static final int FLAG_DIRECTION_REVERSED = 1 << 7;
+    protected static final int FLAG_DIRECTION_REVERSED = 1 << 8;
 
     /**
      * When hovering over ways and nodes in add mode, the
      * "target" objects are visually highlighted. This flag indicates
      * that the primitive is currently highlighted.
      */
-    private static final int FLAG_HIGHLIGHTED = 1 << 8;
-
-    /**
-     * A primitive is incomplete if we know its id and type, but nothing more.
-     * Typically some members of a relation are incomplete until they are
-     * fetched from the server.
-     */
-    private static final int FLAG_INCOMPLETE = 1 << 9;
+    protected static final int FLAG_HIGHLIGHTED = 1 << 9;
 
     /**
      * Replies the sub-collection of {@see OsmPrimitive}s of type <code>type</code> present in
@@ -358,88 +321,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, IPrimiti
         }
     }
 
-
-    /*-------------------
-     * OTHER PROPERTIES
-     *-------------------*/
-
-    /**
-     * Unique identifier in OSM. This is used to identify objects on the server.
-     * An id of 0 means an unknown id. The object has not been uploaded yet to
-     * know what id it will get.
-     *
-     */
-    private long id = 0;
-
-    /**
-     * User that last modified this primitive, as specified by the server.
-     * Never changed by JOSM.
-     */
-    private User user = null;
-
-    /**
-     * Contains the version number as returned by the API. Needed to
-     * ensure update consistency
-     */
-    private int version = 0;
-
-    /**
-     * The id of the changeset this primitive was last uploaded to.
-     * 0 if it wasn't uploaded to a changeset yet of if the changeset
-     * id isn't known.
-     */
-    private int changesetId;
-
-    /**
-     * Replies the version number as returned by the API. The version is 0 if the id is 0 or
-     * if this primitive is incomplete.
-     *
-     * @see #setVersion(int)
-     */
-    @Override
-    public int getVersion() {
-        return version;
-    }
-
-    /**
-     * Replies the id of this primitive.
-     *
-     * @return the id of this primitive.
-     */
-    @Override
-    public long getId() {
-        long id = this.id;
-        return id >= 0?id:0;
-    }
-
-    /**
-     *
-     * @return Osm id if primitive already exists on the server. Unique negative value if primitive is new
-     */
-    @Override
-    public long getUniqueId() {
-        return id;
-    }
-
-    /**
-     *
-     * @return True if primitive is new (not yet uploaded the server, id <= 0)
-     */
-    @Override
-    public boolean isNew() {
-        return id <= 0;
-    }
-
-    /**
-     *
-     * @return True if primitive is new or undeleted
-     * @see #isNew()
-     * @see #isUndeleted()
-     */
-    public boolean isNewOrUndeleted() {
-        return (id <= 0) || ((flags & (FLAG_VISIBLE + FLAG_DELETED)) == 0);
-    }
-
     /**
      * Sets the id and the version of this primitive if it is known to the OSM API.
      *
@@ -467,9 +348,7 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, IPrimiti
                 this.id = id;
                 datasetCopy.addPrimitive(this);
             }
-            this.id = id;
-            this.version = version;
-            this.setIncomplete(false);
+            super.setOsmId(id, version);
         } finally {
             writeUnlock(locked);
         }
@@ -484,75 +363,29 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, IPrimiti
      *
      * @throws DataIntegrityProblemException If primitive was already added to the dataset
      */
+    @Override
     public void clearOsmId() {
         if (dataSet != null)
             throw new DataIntegrityProblemException("Method cannot be called after primitive was added to the dataset");
-
-        // Not part of dataset - no lock necessary
-        this.id = generateUniqueId();
-        this.version = 0;
-        this.changesetId = 0; // reset changeset id on a new object
-        this.setIncomplete(false);
+        super.clearOsmId();
     }
 
-    /**
-     * Replies the user who has last touched this object. May be null.
-     *
-     * @return the user who has last touched this object. May be null.
-     */
-    @Override
-    public User getUser() {
-        return user;
-    }
-
-    /**
-     * Sets the user who has last touched this object.
-     *
-     * @param user the user
-     */
     @Override
     public void setUser(User user) {
         boolean locked = writeLock();
         try {
-            this.user = user;
+            super.setUser(user);
         } finally {
             writeUnlock(locked);
         }
     }
 
-    /**
-     * Replies the id of the changeset this primitive was last uploaded to.
-     * 0 if this primitive wasn't uploaded to a changeset yet or if the
-     * changeset isn't known.
-     *
-     * @return the id of the changeset this primitive was last uploaded to.
-     */
-    @Override
-    public int getChangesetId() {
-        return changesetId;
-    }
-
-    /**
-     * Sets the changeset id of this primitive. Can't be set on a new
-     * primitive.
-     *
-     * @param changesetId the id. >= 0 required.
-     * @throws IllegalStateException thrown if this primitive is new.
-     * @throws IllegalArgumentException thrown if id < 0
-     */
     @Override
     public void setChangesetId(int changesetId) throws IllegalStateException, IllegalArgumentException {
         boolean locked = writeLock();
         try {
-            if (this.changesetId == changesetId)
-                return;
-            if (changesetId < 0)
-                throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' >= 0 expected, got {1}", "changesetId", changesetId));
-            if (isNew() && changesetId > 0)
-                throw new IllegalStateException(tr("Cannot assign a changesetId > 0 to a new primitive. Value of changesetId is {0}", changesetId));
-
             int old = this.changesetId;
-            this.changesetId = changesetId;
+            super.setChangesetId(changesetId);
             if (dataSet != null) {
                 dataSet.fireChangesetIdChanged(this, old, changesetId);
             }
@@ -561,62 +394,27 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, IPrimiti
         }
     }
 
-    /**
-     * Replies the unique primitive id for this primitive
-     *
-     * @return the unique primitive id for this primitive
-     */
-    public PrimitiveId getPrimitiveId() {
-        return new SimplePrimitiveId(getUniqueId(), getType());
-    }
-
-    public OsmPrimitiveType getDisplayType() {
-        return getType();
-    }
-
     @Override
     public void setTimestamp(Date timestamp) {
         boolean locked = writeLock();
         try {
-            this.timestamp = (int)(timestamp.getTime() / 1000);
+            super.setTimestamp(timestamp);
         } finally {
             writeUnlock(locked);
         }
     }
 
-    /**
-     * Time of last modification to this object. This is not set by JOSM but
-     * read from the server and delivered back to the server unmodified. It is
-     * used to check against edit conflicts.
-     *
-     */
-    @Override
-    public Date getTimestamp() {
-        return new Date(timestamp * 1000l);
-    }
-
-    @Override
-    public boolean isTimestampEmpty() {
-        return timestamp == 0;
-    }
-
-    private int timestamp;
 
     /* -------
     /* FLAGS
     /* ------*/
 
-    private volatile short flags = FLAG_VISIBLE;   // visible per default
-
-    private void updateFlagsNoLock(int flag, boolean value) {
-        if (value) {
-            flags |= flag;
-        } else {
-            flags &= ~flag;
-        }
+    private void updateFlagsNoLock (int flag, boolean value) {
+        super.updateFlags(flag, value);
     }
-
-    private void updateFlags(int flag, boolean value) {
+    
+    @Override
+    protected final void updateFlags(int flag, boolean value) {
         boolean locked = writeLock();
         try {
             updateFlagsNoLock(flag, value);
@@ -680,60 +478,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, IPrimiti
         return isDisabledAndHidden();
     }
 
-    /**
-     * Marks this primitive as being modified.
-     *
-     * @param modified true, if this primitive is to be modified
-     */
-    @Override
-    public void setModified(boolean modified) {
-        updateFlags(FLAG_MODIFIED, modified);
-    }
-
-    /**
-     * Replies <code>true</code> if the object has been modified since it was loaded from
-     * the server. In this case, on next upload, this object will be updated.
-     *
-     * Deleted objects are deleted from the server. If the objects are added (id=0),
-     * the modified is ignored and the object is added to the server.
-     *
-     * @return <code>true</code> if the object has been modified since it was loaded from
-     * the server
-     */
-    @Override
-    public boolean isModified() {
-        return (flags & FLAG_MODIFIED) != 0;
-    }
-
-    /**
-     * Replies <code>true</code>, if the object has been deleted.
-     *
-     * @return <code>true</code>, if the object has been deleted.
-     * @see #setDeleted(boolean)
-     */
-    @Override
-    public boolean isDeleted() {
-        return (flags & FLAG_DELETED) != 0;
-    }
-
-    /**
-     * Replies <code>true</code> if the object has been deleted on the server and was undeleted by the user.
-     * @return <code>true</code> if the object has been undeleted
-     */
-    public boolean isUndeleted() {
-        return (flags & (FLAG_VISIBLE + FLAG_DELETED)) == 0;
-    }
-
-    /**
-     * Replies <code>true</code>, if the object is usable (i.e. complete
-     * and not deleted).
-     *
-     * @return <code>true</code>, if the object is usable.
-     * @see #delete(boolean)
-     */
-    public boolean isUsable() {
-        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE)) == 0;
-    }
 
     public boolean isSelectable() {
         return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_DISABLED + FLAG_HIDE_IF_DISABLED)) == 0;
@@ -743,52 +487,21 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, IPrimiti
         return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_HIDE_IF_DISABLED)) == 0;
     }
 
-    /**
-     * Replies true if this primitive is either unknown to the server (i.e. its id
-     * is 0) or it is known to the server and it hasn't be deleted on the server.
-     * Replies false, if this primitive is known on the server and has been deleted
-     * on the server.
-     *
-     * @see #setVisible(boolean)
-     */
     @Override
-    public boolean isVisible() {
-        return (flags & FLAG_VISIBLE) != 0;
-    }
-
-    /**
-     * Sets whether this primitive is visible, i.e. whether it is known on the server
-     * and not deleted on the server.
-     *
-     * @see #isVisible()
-     * @throws IllegalStateException thrown if visible is set to false on an primitive with
-     * id==0
-     */
-    @Override
-    public void setVisible(boolean visible) throws IllegalStateException{
+    public void setVisible(boolean visible) throws IllegalStateException {
         boolean locked = writeLock();
         try {
-            if (isNew() && visible == false)
-                throw new IllegalStateException(tr("A primitive with ID = 0 cannot be invisible."));
-            updateFlagsNoLock(FLAG_VISIBLE, visible);
+            super.setVisible(visible);
         } finally {
             writeUnlock(locked);
         }
     }
 
-    /**
-     * Sets whether this primitive is deleted or not.
-     *
-     * Also marks this primitive as modified if deleted is true.
-     *
-     * @param deleted  true, if this primitive is deleted; false, otherwise
-     */
     @Override
     public void setDeleted(boolean deleted) {
         boolean locked = writeLock();
         try {
-            updateFlagsNoLock(FLAG_DELETED, deleted);
-            setModified(deleted ^ !isVisible());
+            super.setDeleted(deleted);
             if (dataSet != null) {
                 if (deleted) {
                     dataSet.firePrimitivesRemoved(Collections.singleton(this), false);
@@ -801,12 +514,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, IPrimiti
         }
     }
 
-
-    /**
-     * If set to true, this object is incomplete, which means only the id
-     * and type is known (type is the objects instance class)
-     */
-    private void setIncomplete(boolean incomplete) {
+    @Override
+    protected void setIncomplete(boolean incomplete) {
         boolean locked = writeLock();
         try {
             if (dataSet != null && incomplete != this.isIncomplete()) {
@@ -816,15 +525,10 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, IPrimiti
                     dataSet.firePrimitivesAdded(Collections.singletonList(this), true);
                 }
             }
-            updateFlagsNoLock(FLAG_INCOMPLETE, incomplete);
+            super.setIncomplete(incomplete);
         }  finally {
             writeUnlock(locked);
         }
-    }
-
-    @Override
-    public boolean isIncomplete() {
-        return (flags & FLAG_INCOMPLETE) != 0;
     }
 
     public boolean isSelected() {
@@ -996,203 +700,49 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, IPrimiti
     /*------------
      * Keys handling
      ------------*/
-
-    // Note that all methods that read keys first make local copy of keys array reference. This is to ensure thread safety - reading
-    // doesn't have to be locked so it's possible that keys array will be modified. But all write methods make copy of keys array so
-    // the array itself will be never modified - only reference will be changed
-
-    /**
-     * The key/value list for this primitive.
-     *
-     */
-    private String[] keys;
-
-    /**
-     * Replies the map of key/value pairs. Never replies null. The map can be empty, though.
-     *
-     * @return tags of this primitive. Changes made in returned map are not mapped
-     * back to the primitive, use setKeys() to modify the keys
-     */
+    
     @Override
-    public Map<String, String> getKeys() {
-        Map<String, String> result = new HashMap<String, String>();
-        String[] keys = this.keys;
-        if (keys != null) {
-            for (int i=0; i<keys.length ; i+=2) {
-                result.put(keys[i], keys[i + 1]);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Sets the keys of this primitives to the key/value pairs in <code>keys</code>.
-     * If <code>keys</code> is null removes all existing key/value pairs.
-     *
-     * @param keys the key/value pairs to set. If null, removes all existing key/value pairs.
-     */
-    @Override
-    public void setKeys(Map<String, String> keys) {
+    public final void setKeys(Map<String, String> keys) {
         boolean locked = writeLock();
         try {
-            Map<String, String> originalKeys = getKeys();
-            if (keys == null || keys.isEmpty()) {
-                this.keys = null;
-                keysChangedImpl(originalKeys);
-                return;
-            }
-            String[] newKeys = new String[keys.size() * 2];
-            int index = 0;
-            for (Entry<String, String> entry:keys.entrySet()) {
-                newKeys[index++] = entry.getKey();
-                newKeys[index++] = entry.getValue();
-            }
-            this.keys = newKeys;
-            keysChangedImpl(originalKeys);
+            super.setKeys(keys);
         } finally {
             writeUnlock(locked);
         }
     }
-
-    /**
-     * Set the given value to the given key. If key is null, does nothing. If value is null,
-     * removes the key and behaves like {@see #remove(String)}.
-     *
-     * @param key  The key, for which the value is to be set. Can be null, does nothing in this case.
-     * @param value The value for the key. If null, removes the respective key/value pair.
-     *
-     * @see #remove(String)
-     */
+    
     @Override
     public final void put(String key, String value) {
         boolean locked = writeLock();
         try {
-            Map<String, String> originalKeys = getKeys();
-            if (key == null)
-                return;
-            else if (value == null) {
-                remove(key);
-            } else if (keys == null){
-                keys = new String[] {key, value};
-                keysChangedImpl(originalKeys);
-            } else {
-                for (int i=0; i<keys.length;i+=2) {
-                    if (keys[i].equals(key)) {
-                        keys[i+1] = value;  // This modifies the keys array but it doesn't make it invalidate for any time so its ok (see note no top)
-                        keysChangedImpl(originalKeys);
-                        return;
-                    }
-                }
-                String[] newKeys = new String[keys.length + 2];
-                for (int i=0; i< keys.length;i+=2) {
-                    newKeys[i] = keys[i];
-                    newKeys[i+1] = keys[i+1];
-                }
-                newKeys[keys.length] = key;
-                newKeys[keys.length + 1] = value;
-                keys = newKeys;
-                keysChangedImpl(originalKeys);
-            }
+            super.put(key, value);
         } finally {
             writeUnlock(locked);
         }
-    }
-    /**
-     * Remove the given key from the list
-     *
-     * @param key  the key to be removed. Ignored, if key is null.
-     */
+    }  
+    
     @Override
     public final void remove(String key) {
         boolean locked = writeLock();
         try {
-            if (key == null || keys == null) return;
-            if (!hasKey(key))
-                return;
-            Map<String, String> originalKeys = getKeys();
-            if (keys.length == 2) {
-                keys = null;
-                keysChangedImpl(originalKeys);
-                return;
-            }
-            String[] newKeys = new String[keys.length - 2];
-            int j=0;
-            for (int i=0; i < keys.length; i+=2) {
-                if (!keys[i].equals(key)) {
-                    newKeys[j++] = keys[i];
-                    newKeys[j++] = keys[i+1];
-                }
-            }
-            keys = newKeys;
-            keysChangedImpl(originalKeys);
+            super.remove(key);
         } finally {
             writeUnlock(locked);
         }
     }
 
-    /**
-     * Removes all keys from this primitive.
-     *
-     * @since 1843
-     */
     @Override
     public final void removeAll() {
         boolean locked = writeLock();
         try {
-            if (keys != null) {
-                Map<String, String> originalKeys = getKeys();
-                keys = null;
-                keysChangedImpl(originalKeys);
-            }
+            super.removeAll();
         } finally {
             writeUnlock(locked);
         }
-    }
-
-    /**
-     * Replies the value for key <code>key</code>. Replies null, if <code>key</code> is null.
-     * Replies null, if there is no value for the given key.
-     *
-     * @param key the key. Can be null, replies null in this case.
-     * @return the value for key <code>key</code>.
-     */
+    }  
+    
     @Override
-    public final String get(String key) {
-        String[] keys = this.keys;
-        if (key == null)
-            return null;
-        if (keys == null)
-            return null;
-        for (int i=0; i<keys.length;i+=2) {
-            if (keys[i].equals(key)) return keys[i+1];
-        }
-        return null;
-    }
-
-    @Override
-    public final Collection<String> keySet() {
-        String[] keys = this.keys;
-        if (keys == null)
-            return Collections.emptySet();
-        Set<String> result = new HashSet<String>(keys.length / 2);
-        for (int i=0; i<keys.length; i+=2) {
-            result.add(keys[i]);
-        }
-        return result;
-    }
-
-    /**
-     * Replies true, if the map of key/value pairs of this primitive is not empty.
-     *
-     * @return true, if the map of key/value pairs of this primitive is not empty; false
-     *   otherwise
-     */
-    @Override
-    public final boolean hasKeys() {
-        return keys != null;
-    }
-
-    private void keysChangedImpl(Map<String, String> originalKeys) {
+    protected final void keysChangedImpl(Map<String, String> originalKeys) {
         clearCachedStyle();
         if (dataSet != null) {
             for (OsmPrimitive ref : getReferrers()) {
@@ -1204,32 +754,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, IPrimiti
         if (dataSet != null) {
             dataSet.fireTagsChanged(this, originalKeys);
         }
-    }
-
-    /**
-     * Replies true if this primitive has a tag with key <code>key</code>
-     *
-     * @param key the key
-     * @return true, if his primitive has a tag with key <code>key</code>
-     */
-    public boolean hasKey(String key) {
-        String[] keys = this.keys;
-        if (key == null) return false;
-        if (keys == null) return false;
-        for (int i=0; i< keys.length;i+=2) {
-            if (keys[i].equals(key)) return true;
-        }
-        return false;
-    }
-
-    /**
-     * Replies true if other isn't null and has the same tags (key/value-pairs) as this.
-     *
-     * @param other the other object primitive
-     * @return true if other isn't null and has the same tags (key/value-pairs) as this.
-     */
-    public boolean hasSameTags(OsmPrimitive other) {
-        return getKeys().equals(other.getKeys());
     }
 
     /*------------
@@ -1391,7 +915,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, IPrimiti
      */
     abstract public void visit(Visitor visitor);
 
-
     /**
      * Get and write all attributes from the parameter. Does not fire any listener, so
      * use this only in the data initializing phase
@@ -1400,27 +923,8 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, IPrimiti
         // write lock is provided by subclasses
         if (id != other.id && dataSet != null)
             throw new DataIntegrityProblemException("Osm id cannot be changed after primitive was added to the dataset");
-        setKeys(other.getKeys());
-        id = other.id;
-        if (id <=0) {
-            // reset version and changeset id
-            version = 0;
-            changesetId = 0;
-        }
-        timestamp = other.timestamp;
-        if (id > 0) {
-            version = other.version;
-        }
-        setIncomplete(other.isIncomplete());
-        flags = other.flags;
-        user= other.user;
-        if (id > 0 && other.changesetId > 0) {
-            // #4208: sometimes we cloned from other with id < 0 *and*
-            // an assigned changeset id. Don't know why yet. For primitives
-            // with id < 0 we don't propagate the changeset id any more.
-            //
-            setChangesetId(other.changesetId);
-        }
+
+        super.cloneFrom(other);
         clearCachedStyle();
     }
 
@@ -1586,7 +1090,6 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, IPrimiti
         data.setVersion(version);
     }
 
-
     public abstract BBox getBBox();
 
     /**
@@ -1598,21 +1101,10 @@ abstract public class OsmPrimitive implements Comparable<OsmPrimitive>, IPrimiti
      * OBJECT METHODS
      *---------------*/
 
+    @Override
     protected String getFlagsAsString() {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(super.getFlagsAsString());
 
-        if (isIncomplete()) {
-            builder.append("I");
-        }
-        if (isModified()) {
-            builder.append("M");
-        }
-        if (isVisible()) {
-            builder.append("V");
-        }
-        if (isDeleted()) {
-            builder.append("D");
-        }
         if (isDisabled()) {
             if (isDisabledAndHidden()) {
                 builder.append("h");

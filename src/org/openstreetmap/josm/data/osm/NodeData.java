@@ -13,15 +13,6 @@ public class NodeData extends PrimitiveData implements INode {
 
     }
 
-    public NodeData(double lat, double lon, String... keys) {
-        setCoor(new LatLon(lat, lon));
-        setKeysAsList(keys);
-    }
-
-    public NodeData(String... keys) {
-        setKeysAsList(keys);
-    }
-
     public NodeData(NodeData data) {
         super(data);
         setCoor(data.getCoor());
