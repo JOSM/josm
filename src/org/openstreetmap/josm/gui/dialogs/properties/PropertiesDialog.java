@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Point;
@@ -265,7 +266,12 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         };
         final JDialog dlg = optionPane.createDialog(Main.parent, tr("Change values?"));
         dlg.setModalityType(ModalityType.DOCUMENT_MODAL);
-
+        Dimension dlgSize = dlg.getSize();
+        if(dlgSize.width > Main.parent.getSize().width) {
+            dlgSize.width = Math.max(250, Main.parent.getSize().width);
+            dlg.setSize(dlgSize);
+        }
+        dlg.setLocationRelativeTo(Main.parent);
         values.getEditor().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dlg.setVisible(false);
