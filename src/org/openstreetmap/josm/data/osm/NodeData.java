@@ -5,7 +5,7 @@ import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 
-public class NodeData extends PrimitiveData {
+public class NodeData extends PrimitiveData implements INode {
 
     private final CachedLatLon coor = new CachedLatLon(0, 0);
 
@@ -27,18 +27,22 @@ public class NodeData extends PrimitiveData {
         setCoor(data.getCoor());
     }
 
+    @Override
     public LatLon getCoor() {
         return coor;
     }
 
+    @Override
     public void setCoor(LatLon coor) {
         this.coor.setCoor(coor);
     }
 
+    @Override
     public EastNorth getEastNorth() {
         return this.coor.getEastNorth();
     }
 
+    @Override
     public void setEastNorth(EastNorth eastNorth) {
         this.coor.setEastNorth(eastNorth);
     }

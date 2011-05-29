@@ -4,7 +4,7 @@ package org.openstreetmap.josm.data.osm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RelationData extends PrimitiveData {
+public class RelationData extends PrimitiveData implements IRelation {
 
     private List<RelationMemberData> members = new ArrayList<RelationMemberData>();
 
@@ -23,6 +23,26 @@ public class RelationData extends PrimitiveData {
 
     public void setMembers(List<RelationMemberData> memberData) {
         members = new ArrayList<RelationMemberData>(memberData);
+    }
+
+    @Override
+    public int getMembersCount() {
+        return members.size();
+    }
+
+    @Override
+    public long getMemberId(int idx) {
+        return members.get(idx).getMemberId();
+    }
+
+    @Override
+    public String getRole(int idx) {
+        return members.get(idx).getRole();
+    }
+
+    @Override
+    public OsmPrimitiveType getMemberType(int idx) {
+        return members.get(idx).getMemberType();
     }
 
     @Override

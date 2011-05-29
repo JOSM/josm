@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -15,7 +17,7 @@ import java.util.Map;
  * reported by events
  *
  */
-public abstract class PrimitiveData implements Tagged, PrimitiveId {
+public abstract class PrimitiveData implements IPrimitive {
 
     // Useful?
     //private boolean disabled;
@@ -50,60 +52,90 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
     private Date timestamp = new Date();
     private int changesetId;
 
+    @Override
     public boolean isModified() {
         return modified;
     }
+    @Override
     public void setModified(boolean modified) {
         this.modified = modified;
     }
+    @Override
     public boolean isVisible() {
         return visible;
     }
+    @Override
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
+    @Override
     public boolean isDeleted() {
         return deleted;
     }
+    @Override
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
+    @Override
     public long getId() {
         return id > 0 ? id : 0;
     }
     public void setId(long id) {
         this.id = id;
     }
+    @Override
     public User getUser() {
         return user;
     }
+    @Override
     public void setUser(User user) {
         this.user = user;
     }
+    @Override
     public int getVersion() {
         return version;
     }
     public void setVersion(int version) {
         this.version = version;
     }
+    @Override
+    public void setOsmId(long id, int version) {
+        if (id <= 0)
+            throw new IllegalArgumentException(tr("ID > 0 expected. Got {0}.", id));
+        if (version <= 0)
+            throw new IllegalArgumentException(tr("Version > 0 expected. Got {0}.", version));
+        this.id = id;
+        this.version = version;
+        this.setIncomplete(false);
+    }
+    @Override
     public Date getTimestamp() {
         return timestamp;
     }
+    @Override
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
+    @Override
+    public boolean isTimestampEmpty() {
+        return timestamp == null || timestamp.getTime() == 0;
+    }
 
+    @Override
     public int getChangesetId() {
         return changesetId;
     }
 
+    @Override
     public void setChangesetId(int changesetId) {
         this.changesetId = changesetId;
     }
 
+    @Override
     public Map<String, String> getKeys() {
         return keys;
     }
+    @Override
     public boolean isIncomplete() {
         return incomplete;
     }
@@ -140,30 +172,37 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
 
     // Tagged implementation
 
+    @Override
     public String get(String key) {
         return keys.get(key);
     }
 
+    @Override
     public boolean hasKeys() {
         return !keys.isEmpty();
     }
 
+    @Override
     public Collection<String> keySet() {
         return keys.keySet();
     }
 
+    @Override
     public void put(String key, String value) {
         keys.put(key, value);
     }
 
+    @Override
     public void remove(String key) {
         keys.remove(key);
     }
 
+    @Override
     public void removeAll() {
         keys.clear();
     }
 
+    @Override
     public void setKeys(Map<String, String> keys) {
         this.keys.clear();
         this.keys.putAll(keys);
@@ -190,6 +229,7 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
     /**
      * PrimitiveId implementation. Returns the same value as getId()
      */
+    @Override
     public long getUniqueId() {
         return id;
     }
@@ -203,9 +243,11 @@ public abstract class PrimitiveData implements Tagged, PrimitiveId {
         return new SimplePrimitiveId(getUniqueId(), getType());
     }
 
+    @Override
     public boolean isNew() {
         return id <= 0;
     }
 
+    @Override
     public abstract OsmPrimitiveType getType();
 }

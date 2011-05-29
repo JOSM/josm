@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.Pair;
  *
  * @author imi
  */
-public final class Way extends OsmPrimitive {
+public final class Way extends OsmPrimitive implements IWay {
 
     /**
      * All way nodes in this way
@@ -93,6 +93,7 @@ public final class Way extends OsmPrimitive {
      * @return the number of nodes in this ways.
      * @since 1862
      */
+    @Override
     public int getNodesCount() {
         return nodes.length;
     }
@@ -108,6 +109,11 @@ public final class Way extends OsmPrimitive {
      */
     public Node getNode(int index) {
         return nodes[index];
+    }
+
+    @Override
+    public long getNodeId(int idx) {
+        return nodes[idx].getUniqueId();
     }
 
     /**
@@ -274,6 +280,7 @@ public final class Way extends OsmPrimitive {
         return true;
     }
 
+    @Override
     public int compareTo(OsmPrimitive o) {
         if (o instanceof Relation)
             return 1;
@@ -443,6 +450,7 @@ public final class Way extends OsmPrimitive {
         return formatter.format(this);
     }
 
+    @Override
     public OsmPrimitiveType getType() {
         return OsmPrimitiveType.WAY;
     }

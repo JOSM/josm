@@ -4,7 +4,7 @@ package org.openstreetmap.josm.data.osm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WayData extends PrimitiveData {
+public class WayData extends PrimitiveData implements IWay {
 
     private List<Long> nodes = new ArrayList<Long>();
 
@@ -19,6 +19,16 @@ public class WayData extends PrimitiveData {
 
     public List<Long> getNodes() {
         return nodes;
+    }
+
+    @Override
+    public int getNodesCount() {
+        return nodes.size();
+    }
+
+    @Override
+    public long getNodeId(int idx) {
+        return nodes.get(idx);
     }
 
     public void setNodes(List<Long> nodes) {

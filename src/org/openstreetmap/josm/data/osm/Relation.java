@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.CopyList;
  *
  * @author Frederik Ramm <frederik@remote.org>
  */
-public final class Relation extends OsmPrimitive {
+public final class Relation extends OsmPrimitive implements IRelation {
 
     private RelationMember[] members = new RelationMember[0];
 
@@ -64,6 +64,7 @@ public final class Relation extends OsmPrimitive {
     /**
      * @return number of members
      */
+    @Override
     public int getMembersCount() {
         return members.length;
     }
@@ -142,6 +143,21 @@ public final class Relation extends OsmPrimitive {
         } finally {
             writeUnlock(locked);
         }
+    }
+
+    @Override
+    public long getMemberId(int idx) {
+        return members[idx].getUniqueId();
+    }
+
+    @Override
+    public String getRole(int idx) {
+        return members[idx].getRole();
+    }
+
+    @Override
+    public OsmPrimitiveType getMemberType(int idx) {
+        return members[idx].getType();
     }
 
     @Override public void visit(Visitor visitor) {
@@ -265,6 +281,7 @@ public final class Relation extends OsmPrimitive {
         return Arrays.equals(members, r.members);
     }
 
+    @Override
     public int compareTo(OsmPrimitive o) {
         return o instanceof Relation ? Long.valueOf(getUniqueId()).compareTo(o.getUniqueId()) : -1;
     }
@@ -372,10 +389,12 @@ public final class Relation extends OsmPrimitive {
         return ret;
     }
 
+    @Override
     public OsmPrimitiveType getType() {
         return OsmPrimitiveType.RELATION;
     }
 
+    @Override
     public OsmPrimitiveType getDisplayType() {
         return isMultipolygon() ? OsmPrimitiveType.MULTIPOLYGON
         : OsmPrimitiveType.RELATION;
