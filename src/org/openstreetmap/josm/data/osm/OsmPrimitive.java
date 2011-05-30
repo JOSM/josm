@@ -1034,8 +1034,7 @@ abstract public class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     protected void saveCommonAttributes(PrimitiveData data) {
         data.setId(id);
-        data.getKeys().clear();
-        data.getKeys().putAll(getKeys());
+        data.setKeys(getKeys());
         data.setTimestamp(getTimestamp());
         data.setUser(user);
         data.setDeleted(isDeleted());

@@ -465,7 +465,8 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     /**
      * Sets the keys of this primitives to the key/value pairs in <code>keys</code>.
-     * If <code>keys</code> is null removes all existing key/value pairs.
+     * Old key/value pairs are removed.
+     * If <code>keys</code> is null, clears existing key/value pairs.
      *
      * @param keys the key/value pairs to set. If null, removes all existing key/value pairs.
      */
