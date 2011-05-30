@@ -150,7 +150,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             out.println(">");
             for (int i=0; i<e.getMembersCount(); ++i) {
                 out.print("    <member type='");
-                out.print(e.getMemberType(i));
+                out.print(e.getMemberType(i).getAPIName());
                 out.println("' ref='"+e.getMemberId(i)+"' role='" +
                         XmlWriter.encode(e.getRole(i)) + "' />");
             }
