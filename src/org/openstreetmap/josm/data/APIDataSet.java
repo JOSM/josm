@@ -71,6 +71,7 @@ public class APIDataSet {
         }
         sortDeleted();
         sortNew();
+        sortUpdated();
     }
 
     /**
@@ -132,6 +133,34 @@ public class APIDataSet {
                 }
         );
     }
+    /* 
+     * Sort list of updated elements, so it looks neat in the confirmation dialog.
+     */
+    protected void sortUpdated() {
+        Collections.sort(
+                toUpdate,
+                new Comparator<OsmPrimitive>() {
+                    public int compare(OsmPrimitive o1, OsmPrimitive o2) {
+                        if (o1 instanceof Node && o2 instanceof Node)
+                            return 0;
+                        else if (o1 instanceof Node)
+                            return -1;
+                        else if (o2 instanceof Node)
+                            return 1;
+
+                        if (o1 instanceof Way && o2 instanceof Way)
+                            return 0;
+                        else if (o1 instanceof Way && o2 instanceof Relation)
+                            return -1;
+                        else if (o2 instanceof Way && o1 instanceof Relation)
+                            return 1;
+
+                        return 0;
+                    }
+                }
+        );
+    }
+    
     /**
      * initializes the API data set with the modified primitives in <code>ds</code>
      *
