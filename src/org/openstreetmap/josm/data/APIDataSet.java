@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -69,98 +70,13 @@ public class APIDataSet {
                 toDelete.add(osm);
             }
         }
-        sortDeleted();
-        sortNew();
-        sortUpdated();
+        OsmPrimitiveComparator c = new OsmPrimitiveComparator();
+        c.relationsFirst = true;
+        Collections.sort(toDelete, c); 
+        Collections.sort(toAdd, c); 
+        Collections.sort(toUpdate, c); 
     }
 
-    /**
-     * Ensures that primitives are deleted in the following order: Relations, then Ways,
-     * then Nodes.
-     *
-     */
-    protected void sortDeleted() {
-        Collections.sort(
-                toDelete,
-                new Comparator<OsmPrimitive>() {
-                    public int compare(OsmPrimitive o1, OsmPrimitive o2) {
-                        if (o1 instanceof Node && o2 instanceof Node)
-                            return 0;
-                        else if (o1 instanceof Node)
-                            return 1;
-                        else if (o2 instanceof Node)
-                            return -1;
-
-                        if (o1 instanceof Way && o2 instanceof Way)
-                            return 0;
-                        else if (o1 instanceof Way && o2 instanceof Relation)
-                            return 1;
-                        else if (o2 instanceof Way && o1 instanceof Relation)
-                            return -1;
-
-                        return 0;
-                    }
-                }
-        );
-    }
-
-    /**
-     * Ensures that primitives are added in the following order: Nodes, then Ways,
-     * then Relations.
-     *
-     */
-    protected void sortNew() {
-        Collections.sort(
-                toAdd,
-                new Comparator<OsmPrimitive>() {
-                    public int compare(OsmPrimitive o1, OsmPrimitive o2) {
-                        if (o1 instanceof Node && o2 instanceof Node)
-                            return 0;
-                        else if (o1 instanceof Node)
-                            return -1;
-                        else if (o2 instanceof Node)
-                            return 1;
-
-                        if (o1 instanceof Way && o2 instanceof Way)
-                            return 0;
-                        else if (o1 instanceof Way && o2 instanceof Relation)
-                            return -1;
-                        else if (o2 instanceof Way && o1 instanceof Relation)
-                            return 1;
-
-                        return 0;
-                    }
-                }
-        );
-    }
-    /* 
-     * Sort list of updated elements, so it looks neat in the confirmation dialog.
-     */
-    protected void sortUpdated() {
-        Collections.sort(
-                toUpdate,
-                new Comparator<OsmPrimitive>() {
-                    public int compare(OsmPrimitive o1, OsmPrimitive o2) {
-                        if (o1 instanceof Node && o2 instanceof Node)
-                            return 0;
-                        else if (o1 instanceof Node)
-                            return -1;
-                        else if (o2 instanceof Node)
-                            return 1;
-
-                        if (o1 instanceof Way && o2 instanceof Way)
-                            return 0;
-                        else if (o1 instanceof Way && o2 instanceof Relation)
-                            return -1;
-                        else if (o2 instanceof Way && o1 instanceof Relation)
-                            return 1;
-
-                        return 0;
-                    }
-                }
-        );
-    }
-    
     /**
      * initializes the API data set with the modified primitives in <code>ds</code>
      *
@@ -235,8 +151,11 @@ public class APIDataSet {
                 toDelete.addFirst(osm);
             }
         }
-        sortNew();
-        sortDeleted();
+        OsmPrimitiveComparator c = new OsmPrimitiveComparator();
+        c.relationsFirst = true;
+        Collections.sort(toDelete, c); 
+        Collections.sort(toAdd, c); 
+        Collections.sort(toUpdate, c); 
     }
 
     /**
