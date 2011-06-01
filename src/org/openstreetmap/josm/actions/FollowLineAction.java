@@ -68,6 +68,8 @@ public class FollowLineAction extends JosmAction {
             return;
         
         Node last = ((DrawAction) Main.map.mapMode).getCurrentBaseNode();
+        if (last == null)
+            return;
         Way follower = selectedLines.iterator().next();
         Node prev = follower.getNode(1);
         boolean reversed = true;
