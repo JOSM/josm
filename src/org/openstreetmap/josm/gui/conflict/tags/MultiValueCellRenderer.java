@@ -64,25 +64,57 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
         switch(decision.getDecisionType()) {
         case UNDECIDED:
             model.addElement(tr("Choose a value"));
-            setFont(getFont().deriveFont(Font.ITALIC));
-            setToolTipText(tr("Please decide which values to keep"));
+            cbDecisionRenderer.setFont(getFont().deriveFont(Font.ITALIC));
             cbDecisionRenderer.setSelectedIndex(0);
             break;
         case KEEP_ONE:
             model.addElement(decision.getChosenValue());
-            setToolTipText(tr("Value ''{0}'' is going to be applied for key ''{1}''", decision.getChosenValue(), decision.getKey()));
+            cbDecisionRenderer.setFont(getFont());
             cbDecisionRenderer.setSelectedIndex(0);
             break;
         case KEEP_NONE:
             model.addElement(tr("deleted"));
-            setFont(getFont().deriveFont(Font.ITALIC));
-            setToolTipText(tr("The key ''{0}'' and all its values are going to be removed", decision.getKey()));
+            cbDecisionRenderer.setFont(getFont().deriveFont(Font.ITALIC));
             cbDecisionRenderer.setSelectedIndex(0);
             break;
         case KEEP_ALL:
             model.addElement(decision.getChosenValue());
-            setToolTipText(tr("All values joined as ''{0}'' are going to be applied for key ''{1}''", decision.getChosenValue(), decision.getKey()));
+            cbDecisionRenderer.setFont(getFont());
             cbDecisionRenderer.setSelectedIndex(0);
+            break;
+        }
+    }
+
+    /**
+     * Sets the text of the tooltip for both renderers, this (the JLabel) and the combobox renderer.
+     */
+    protected void renderToolTipText(MultiValueResolutionDecision decision) {
+        switch(decision.getDecisionType()) {
+        case UNDECIDED:
+        {
+            String toolTipText = tr("Please decide which values to keep");
+            setToolTipText(toolTipText);
+            cbDecisionRenderer.setToolTipText(toolTipText);
+            break;
+        }
+        case KEEP_ONE:
+        {
+            String toolTipText = tr("Value ''{0}'' is going to be applied for key ''{1}''", decision.getChosenValue(), decision.getKey());
+            setToolTipText(toolTipText);
+            cbDecisionRenderer.setToolTipText(toolTipText);
+            break;
+        }
+        case KEEP_NONE:
+        {
+            String toolTipText = tr("The key ''{0}'' and all its values are going to be removed", decision.getKey());
+            setToolTipText(toolTipText);
+            cbDecisionRenderer.setToolTipText(toolTipText);
+            break;
+        }
+        case KEEP_ALL:
+            String toolTipText = tr("All values joined as ''{0}'' are going to be applied for key ''{1}''", decision.getChosenValue(), decision.getKey());
+            setToolTipText(toolTipText);
+            cbDecisionRenderer.setToolTipText(toolTipText);
             break;
         }
     }
@@ -102,6 +134,7 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
 
         MultiValueResolutionDecision decision = (MultiValueResolutionDecision)value;
         renderColors(decision,isSelected);
+        renderToolTipText(decision);
         switch(column) {
         case 0:
             if (decision.isDecided()) {
