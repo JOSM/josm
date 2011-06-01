@@ -363,6 +363,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                 ((MemberInfo) membershipData.getValueAt(row, 1)).role).setVisible(true);
     }
 
+    private static String lastAddKey = null;
+    private static String lastAddValue = null;
     /**
      * Open the add selection dialog and add a new key/value to the table (and
      * to the dataset, of course).
@@ -379,12 +381,18 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         AutoCompletionManager autocomplete = Main.main.getEditLayer().data.getAutoCompletionManager();
         List<AutoCompletionListItem> keyList = autocomplete.getKeys();
 
+        AutoCompletionListItem itemToSelect = null; 
         // remove the object's tag keys from the list
         Iterator<AutoCompletionListItem> iter = keyList.iterator();
         while (iter.hasNext()) {
             AutoCompletionListItem item = iter.next();
+            if (item.getValue().equals(lastAddKey)) {
+                itemToSelect = item;
+            }
             for (int i = 0; i < propertyData.getRowCount(); ++i) {
                 if (item.getValue().equals(propertyData.getValueAt(i, 0))) {
+                    if (itemToSelect == item)
+                        itemToSelect = null;
                     iter.remove();
                     break;
                 }
@@ -403,6 +411,10 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         final AutoCompletingComboBox values = new AutoCompletingComboBox();
         values.setEditable(true);
         p2.add(values, BorderLayout.CENTER);
+        if (itemToSelect != null) {
+            keys.setSelectedItem(itemToSelect);
+            values.setSelectedItem(lastAddValue);
+        }
 
         FocusAdapter focus = addFocusAdapter(-1, keys, values, autocomplete);
         // fire focus event in advance or otherwise the popup list will be too small at first
@@ -424,6 +436,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         String value = values.getEditor().getItem().toString().trim();
         if (value.equals(""))
             return;
+        lastAddKey = key;
+        lastAddValue = value;
         Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, value));
         btnAdd.requestFocusInWindow();
     }
