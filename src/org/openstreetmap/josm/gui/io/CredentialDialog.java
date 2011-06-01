@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -103,14 +104,14 @@ public class CredentialDialog extends JDialog {
 
     public void prepareForOsmApiCredentials(String username, String password) {
         setTitle(tr("Enter credentials for OSM API"));
-        getContentPane().add(pnlCredentials = new OsmApiCredentialsPanel(), BorderLayout.CENTER);
+        getContentPane().add(pnlCredentials = new OsmApiCredentialsPanel(this), BorderLayout.CENTER);
         pnlCredentials.init(username, password);
         validate();
     }
 
     public void prepareForProxyCredentials(String username, String password) {
         setTitle(tr("Enter credentials for HTTP proxy"));
-        getContentPane().add(pnlCredentials = new HttpProxyCredentialsPanel(), BorderLayout.CENTER);
+        getContentPane().add(pnlCredentials = new HttpProxyCredentialsPanel(this), BorderLayout.CENTER);
         pnlCredentials.init(username, password);
         validate();
     }
@@ -136,12 +137,15 @@ public class CredentialDialog extends JDialog {
         protected JCheckBox cbSaveCredentials;
         protected JMultilineLabel lblHeading;
         protected JMultilineLabel lblWarning;
+        protected CredentialDialog owner; // owner Dependency Injection to use Key listeners for username and password text fields
 
         protected void build() {
             tfUserName = new JTextField(20);
             tfPassword = new JPasswordField(20);
             tfUserName.addFocusListener(new SelectAllOnFocusHandler());
             tfPassword.addFocusListener(new SelectAllOnFocusHandler());
+            tfUserName.addKeyListener(new TFKeyListener(owner, tfUserName, tfPassword));
+            tfPassword.addKeyListener(new TFKeyListener(owner, tfPassword, tfUserName));
             cbSaveCredentials =  new JCheckBox(tr("Save user and password (unencrypted)"));
 
             setLayout(new GridBagLayout());
@@ -201,7 +205,8 @@ public class CredentialDialog extends JDialog {
 
         }
 
-        public CredentialPanel() {
+        public CredentialPanel(CredentialDialog owner) {
+            this.owner = owner;
         }
 
         public void init(String username, String password) {
@@ -242,7 +247,8 @@ public class CredentialDialog extends JDialog {
             lblWarning.setText(tr("Warning: The password is transferred unencrypted."));
         }
 
-        public OsmApiCredentialsPanel() {
+        public OsmApiCredentialsPanel(CredentialDialog owner) {
+            super(owner);
             build();
         }
     }
@@ -259,7 +265,8 @@ public class CredentialDialog extends JDialog {
             lblWarning.setText("<html>" + tr("Warning: depending on the authentication method the proxy server uses the password may be transferred unencrypted.") + "</html>");
         }
 
-        public HttpProxyCredentialsPanel() {
+        public HttpProxyCredentialsPanel(CredentialDialog owner) {
+            super(owner);
             build();
         }
     }
@@ -271,6 +278,48 @@ public class CredentialDialog extends JDialog {
                 JTextField tf = (JTextField)e.getSource();
                 tf.selectAll();
             }
+        }
+    }
+
+    /**
+     * Listener for username and password text fields key events.
+     * When user presses Enter:
+     *   If current text field is empty (or just contains a sequence of spaces), nothing happens (or all spaces become selected).
+     *   If current text field is not empty, but the next one is (or just contains a sequence of spaces), focuses the next text field.
+     *   If both text fields contain characters, submits the form by calling owner's {@link OKAction}.
+     */
+    static private class TFKeyListener implements KeyListener{
+        protected CredentialDialog owner; // owner Dependency Injection to call OKAction
+        protected JTextField currentTF;
+        protected JTextField nextTF;
+
+        public TFKeyListener (CredentialDialog owner, JTextField currentTF, JTextField nextTF)
+        {
+            this.owner = owner;
+            this.currentTF = currentTF;
+            this.nextTF = nextTF;
+        }
+
+        public void keyPressed(KeyEvent e) {
+            if(e.getKeyChar() == KeyEvent.VK_ENTER) {
+                if (currentTF.getText().trim().isEmpty()) {
+                    currentTF.selectAll();
+                    return;
+                } else if (nextTF.getText().trim().isEmpty()) {
+                    nextTF.requestFocusInWindow();
+                    nextTF.selectAll();
+                    return;
+                } else {
+                    OKAction okAction = owner.new OKAction();
+                    okAction.actionPerformed(null);
+                }
+            }
+        }
+
+        public void keyReleased ( KeyEvent e ){
+        }
+
+        public void keyTyped ( KeyEvent e ){
         }
     }
 
