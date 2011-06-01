@@ -26,12 +26,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.Vector;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -80,6 +82,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.dialogs.properties.PresetListPanel.PresetHandler;
+import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset;
@@ -605,6 +608,8 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     Relation relation = (Relation)membershipData.getValueAt(row, 0);
                     menu.add(new SelectRelationAction(relation, true));
                     menu.add(new SelectRelationAction(relation, false));
+                    menu.add(new SelectRelationMembersAction(relation));
+                    menu.add(new DownloadIncompleteMembersAction(relation));
                     menu.addSeparator();
                     menu.add(helpAction);
                     menu.show(membershipTable, p.x, p.y-3);
@@ -1182,4 +1187,59 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             }
         }
     }
+
+
+    /**
+     * Sets the current selection to the members of selected relation
+     *
+     */
+    class SelectRelationMembersAction extends AbstractAction {
+        Relation relation;
+        public SelectRelationMembersAction(Relation r) {
+            relation = r;
+            putValue(SHORT_DESCRIPTION,tr("Select the members of selected relation"));
+            putValue(SMALL_ICON, ImageProvider.get("selectall"));
+            putValue(NAME, tr("Select members"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            HashSet<OsmPrimitive> members = new HashSet<OsmPrimitive>();
+            members.addAll(relation.getMemberPrimitives());
+            Main.map.mapView.getEditLayer().data.setSelected(members);
+        }
+
+    }
+
+    /**
+     * Action for downloading incomplete members of selected relation
+     *
+     */
+    class DownloadIncompleteMembersAction extends AbstractAction {
+        Relation relation;
+        public DownloadIncompleteMembersAction(Relation r) {
+            relation = r;
+            putValue(SHORT_DESCRIPTION, tr("Download incomplete members of selected relations"));
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/relation", "downloadincompleteselected"));
+            putValue(NAME, tr("Download incomplete members"));
+        }
+
+        public Set<OsmPrimitive> buildSetOfIncompleteMembers(Relation r) {
+            Set<OsmPrimitive> ret = new HashSet<OsmPrimitive>();
+            ret.addAll(r.getIncompleteMembers());
+            return ret;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if (!relation.hasIncompleteMembers()) return;
+            ArrayList<Relation> rels = new ArrayList<Relation>();
+            rels.add(relation);
+            Main.worker.submit(new DownloadRelationMemberTask(
+                    rels,
+                    buildSetOfIncompleteMembers(relation),
+                    Main.map.mapView.getEditLayer()
+            ));
+        }
+    }
+
+
 }
