@@ -95,8 +95,17 @@ public class WmsCache {
     private Map<CacheEntry, SoftReference<BufferedImage>> memoryCache = new HashMap<WmsCache.CacheEntry, SoftReference<BufferedImage>>();
     private Set<ProjectionBounds> areaToCache;
 
+    protected String cacheDirPath() {
+        String cPath = PROP_CACHE_PATH.get();
+        if (!(cPath.startsWith("/") || cPath.startsWith(":/",1))) {
+            //Not an absolute path
+            cPath = Main.pref.getPreferencesDir() + cPath;
+        }
+        return cPath;
+    }
+
     public WmsCache(String url, int tileSize) {
-        File globalCacheDir = new File(Main.pref.getPreferencesDir() + PROP_CACHE_PATH.get());
+        File globalCacheDir = new File(cacheDirPath());
         globalCacheDir.mkdirs();
         cacheDir = new File(globalCacheDir, getCacheDirectory(url));
         cacheDir.mkdirs();
@@ -109,7 +118,7 @@ public class WmsCache {
         OutputStream fos = null;
         try {
             Properties layersIndex = new Properties();
-            File layerIndexFile = new File(Main.pref.getPreferencesDir() + PROP_CACHE_PATH.get(), LAYERS_INDEX_FILENAME);
+            File layerIndexFile = new File(cacheDirPath(), LAYERS_INDEX_FILENAME);
             try {
                 fis = new FileInputStream(layerIndexFile);
                 layersIndex.load(fis);
