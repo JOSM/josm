@@ -47,8 +47,7 @@ class SaveLayerTask extends AbstractIOTask {
     public void run() {
         try {
             parentMonitor.subTask(tr("Saving layer to ''{0}'' ...", layerInfo.getFile().toString()));
-            layerInfo.getLayer().setAssociatedFile(layerInfo.getFile());
-            if (!new SaveAction().doSave(layerInfo.getLayer())) {
+            if (!new SaveAction().doSave(layerInfo.getLayer(), layerInfo.getFile())) {
                 setFailed(true);
                 return;
             }

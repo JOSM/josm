@@ -36,7 +36,8 @@ public class SaveAction extends SaveActionBase {
             f=null;
         }
 
-        // FIXME: why only for GpxLayer?
+        // Ask for overwrite in case of GpxLayer: GpxLayers usually are imports
+        // and modifying is an error most of the time.
         if(f != null && layer instanceof GpxLayer) {
             ExtendedDialog dialog = new ExtendedDialog(
                     Main.parent,

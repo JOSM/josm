@@ -115,7 +115,7 @@ public class SaveLayersModel extends DefaultTableModel {
     public List<SaveLayerInfo> getLayersWithIllegalFilesAndSaveRequest() {
         List<SaveLayerInfo> ret =new ArrayList<SaveLayerInfo>();
         for (SaveLayerInfo info: layerInfo) {
-            if (info.isDoSaveToFile() && info.getFile() != null && ! info.getFile().canWrite()) {
+            if (info.isDoSaveToFile() && info.getFile() != null && info.getFile().exists() && !info.getFile().canWrite()) {
                 ret.add(info);
             }
         }

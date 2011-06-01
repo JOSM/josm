@@ -45,14 +45,18 @@ public abstract class SaveActionBase extends DiskAccessAction {
     }
 
     public boolean doSave(Layer layer) {
-        if (layer == null)
+        if(!checkSaveConditions(layer))
             return false;
-        if ( !(layer instanceof OsmDataLayer) && !(layer instanceof GpxLayer))
-            return false;
-        if (!checkSaveConditions(layer))
-            return false;
+        return doInternalSave(layer, getFile(layer));
+    }
 
-        File file = getFile(layer);
+    public boolean doSave(Layer layer, File file) {
+        if(!checkSaveConditions(layer))
+            return false;
+        return doInternalSave(layer, file);
+    }
+
+    private boolean doInternalSave(Layer layer, File file) {
         if (file == null)
             return false;
 
@@ -90,21 +94,21 @@ public abstract class SaveActionBase extends DiskAccessAction {
      * @return <code>true</code>, if it is safe to save.
      */
     public boolean checkSaveConditions(Layer layer) {
-        if (layer instanceof OsmDataLayer && isDataSetEmpty((OsmDataLayer)layer)) {
-            ExtendedDialog dialog = new ExtendedDialog(
-                    Main.parent,
-                    tr("Empty document"),
-                    new String[] {tr("Save anyway"), tr("Cancel")}
-            );
-            dialog.setContent(tr("The document contains no data."));
-            dialog.setButtonIcons(new String[] {"save.png", "cancel.png"});
-            dialog.showDialog();
-            if (dialog.getValue() != 1) return false;
-        }
+        if (layer instanceof GpxLayer)
+            return ((GpxLayer)layer).data != null;
+        else if (layer instanceof OsmDataLayer)  {
+            if (isDataSetEmpty((OsmDataLayer)layer)) {
+                ExtendedDialog dialog = new ExtendedDialog(
+                        Main.parent,
+                        tr("Empty document"),
+                        new String[] {tr("Save anyway"), tr("Cancel")}
+                );
+                dialog.setContent(tr("The document contains no data."));
+                dialog.setButtonIcons(new String[] {"save.png", "cancel.png"});
+                dialog.showDialog();
+                if (dialog.getValue() != 1) return false;
+            }
 
-        if (layer instanceof GpxLayer && ((GpxLayer)layer).data == null)
-            return false;
-        if (layer instanceof OsmDataLayer)  {
             ConflictCollection conflicts = ((OsmDataLayer)layer).getConflicts();
             if (conflicts != null && !conflicts.isEmpty()) {
                 ExtendedDialog dialog = new ExtendedDialog(
@@ -118,8 +122,9 @@ public abstract class SaveActionBase extends DiskAccessAction {
                 dialog.showDialog();
                 if (dialog.getValue() != 1) return false;
             }
+            return true;
         }
-        return true;
+        return false;
     }
 
     public static File openFileDialog(Layer layer) {
