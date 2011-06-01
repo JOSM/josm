@@ -972,6 +972,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                     new String[] {tr("Delete from relation"), tr("Cancel")});
             ed.setButtonIcons(new String[] {"dialogs/delete.png", "cancel.png"});
             ed.setContent(tr("Really delete selection from relation {0}?", cur.getDisplayName(DefaultNameFormatter.getInstance())));
+            ed.toggleEnable("delete_from_relation");
             ed.showDialog();
 
             if(ed.getValue() != 1)
