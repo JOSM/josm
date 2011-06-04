@@ -145,7 +145,10 @@ public class PropertiesMergeModel extends Observable {
         deletedMergeDecision = UNDECIDED;
         setChanged();
         notifyObservers();
-        fireCompletelyResolved();
+        /* call fire directly, to allow null as old value, otherwise the call can be
+           optimized away when resolvedCompletely is false. */
+        support.firePropertyChange(RESOLVED_COMPLETELY_PROP, null, resolvedCompletely);
+        //fireCompletelyResolved();
     }
 
     /**
