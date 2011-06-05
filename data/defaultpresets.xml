@@ -55,6 +55,7 @@ multiselect: list of values from which zero or more can be selected
   delimiter: character that separates values (default: semicolon) - this
              will also be used to separate selected values in the tag.
   values: delimiter-separated list of values (delimiter can be escaped with backslash)
+  rows: specify the number of rows to display (default -1)
   display_values: delimiter-separated list of values to be displayed instead of the
                   database values, order and number must be equal to values
   short_description: delimiter-separated list of texts to be displayed below each
