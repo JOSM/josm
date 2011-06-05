@@ -423,7 +423,7 @@ public class SelectAction extends MapMode implements SelectionEnded {
         lastMousePos = e.getPoint();
 
         Collection<OsmPrimitive> c = MapView.asColl(
-                mv.getNearestNodeOrWay(e.getPoint(), OsmPrimitive.isSelectablePredicate, false));
+                mv.getNearestNodeOrWay(e.getPoint(), OsmPrimitive.isSelectablePredicate, true));
 
         if (shift && ctrl) {
             mode = Mode.rotate;
