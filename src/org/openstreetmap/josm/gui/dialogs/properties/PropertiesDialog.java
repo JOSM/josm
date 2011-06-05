@@ -567,6 +567,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         // setting up the properties table
         propertyData.setColumnIdentifiers(new String[]{tr("Key"),tr("Value")});
         propertyTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        propertyTable.getTableHeader().setReorderingAllowed(false);
         propertyTable.addMouseListener(new PopupMenuLauncher() {
             @Override
             public void launch(MouseEvent evt) {
@@ -632,6 +633,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         });
 
         TableColumnModel mod = membershipTable.getColumnModel();
+        membershipTable.getTableHeader().setReorderingAllowed(false);
         mod.getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
             @Override public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
