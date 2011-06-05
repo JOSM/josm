@@ -2547,6 +2547,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="amenity" value="shelter" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <check key="fireplace" text="Fireplace" default="off" delete_if_empty="true" />
+            <combo key="shelter_type" text="Type of shelter" values="weather_shelter,public_transport,picnic_shelter,wildlife_hide" values_context="shelter" default="" delete_if_empty="true" />
         </item>
         <item name="Hunting Stand" icon="presets/hunting_stand.png" type="node">
             <label text="Edit Hunting Stand" />
