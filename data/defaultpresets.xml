@@ -419,7 +419,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
                 <check key="lit" text="Lit" default="off" delete_if_empty="true" /> 
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" default="" delete_if_empty="true" />
                 <combo key="surface" text="Surface" values="paved,unpaved,asphalt,concrete,metal,wood,paving_stones,cobblestone,gravel,pebblestone,compacted,grass_paver,grass,sand,ground" default="" delete_if_empty="true" />
-                <combo key="junction" text="Junction" values="roundabout" default="" delete_if_empty="true" />
+                <combo key="junction" text="Junction" values="roundabout,jughandle,yes" default="" delete_if_empty="true" />
                 <text key="maxspeed" text="Max. speed (km/h)" default="" delete_if_empty="true" />
                 <text key="width" text="Width (meters)" default="" delete_if_empty="true" />
             </optional>
