@@ -347,6 +347,7 @@ public class GenericRelationEditor extends RelationEditor  {
                 }
         );
         tfRole.setEnabled(memberTable.getSelectedRowCount() > 0);
+        memberTable.setRowHeight(tfRole.getPreferredSize().height);
         SideButton btnApply = new SideButton(setRoleAction);
         btnApply.setPreferredSize(new Dimension(20,20));
         btnApply.setText("");
@@ -424,6 +425,7 @@ public class GenericRelationEditor extends RelationEditor  {
         pnl.setLayout(new BorderLayout());
         selectionTable = new SelectionTable(selectionTableModel, new SelectionTableColumnModel(memberTableModel));
         selectionTable.setMemberTableModel(memberTableModel);
+        selectionTable.setRowHeight(tfRole.getPreferredSize().height);
         JScrollPane pane = new JScrollPane(selectionTable);
         pnl.add(pane, BorderLayout.CENTER);
         return pnl;
