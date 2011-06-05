@@ -2790,7 +2790,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="name" text="Name" default="" delete_if_empty="true" />
             <combo key="leisure" text="type" values="pitch,sports_centre,stadium,track" default="" delete_if_empty="true" />
         </item>
-        <item name="Volleyball" icon="styles/standard/sport/volleyball.png" type="node">         	
+        <item name="Volleyball" icon="styles/standard/sport/volleyball.png" type="node,closedway">         	
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dvolleyball" />
             <label text="Edit Volleyball" />
             <space />            
@@ -2799,7 +2799,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="operator" text="Operator" default="" delete_if_empty="true" /> 
             <combo key="leisure" text="Type" values="stadium,pitch,sports_centre" default="" delete_if_empty="true" />
         </item> 
-        <item name="Beachvolleyball" icon="presets/beachvolleyball.png" type="node">         	
+        <item name="Beachvolleyball" icon="presets/beachvolleyball.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport%3Dbeachvolleyball" />
             <label text="Edit Beachvolleyball" />
             <space />            
