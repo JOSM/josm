@@ -2527,6 +2527,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <check key="recycling:glass" text="Glass" default="off" delete_if_empty="true" />
             <check key="recycling:paper" text="Paper" default="off" delete_if_empty="true" />
             <check key="recycling:scrap_metal" text="Scrap Metal" default="off" delete_if_empty="true" />
+            <combo key="recycling_type" text="Type" values="container,centre" default="" delete_if_empty="true" />
         </item>
         <item name="Waste Basket" icon="styles/standard/service/recycling/trash-bin.png" type="node">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity%3Dwaste_basket" />
