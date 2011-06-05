@@ -53,7 +53,7 @@ public class PropertiesMergeModel extends Observable {
     private List<OsmPrimitive> theirReferrers;
     private MergeDecisionType deletedMergeDecision;
     private final PropertyChangeSupport support;
-    private boolean resolvedCompletely;
+    private Boolean resolvedCompletely;
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         support.addPropertyChangeListener(listener);
@@ -64,7 +64,7 @@ public class PropertiesMergeModel extends Observable {
     }
 
     public void fireCompletelyResolved() {
-        boolean oldValue = resolvedCompletely;
+        Boolean oldValue = resolvedCompletely;
         resolvedCompletely = isResolvedCompletely();
         support.firePropertyChange(RESOLVED_COMPLETELY_PROP, oldValue, resolvedCompletely);
     }
@@ -73,7 +73,7 @@ public class PropertiesMergeModel extends Observable {
         coordMergeDecision = UNDECIDED;
         deletedMergeDecision = UNDECIDED;
         support = new PropertyChangeSupport(this);
-        resolvedCompletely = false;
+        resolvedCompletely = null;
     }
 
     /**
@@ -145,10 +145,7 @@ public class PropertiesMergeModel extends Observable {
         deletedMergeDecision = UNDECIDED;
         setChanged();
         notifyObservers();
-        /* call fire directly, to allow null as old value, otherwise the call can be
-           optimized away when resolvedCompletely is false. */
-        support.firePropertyChange(RESOLVED_COMPLETELY_PROP, null, resolvedCompletely);
-        //fireCompletelyResolved();
+        fireCompletelyResolved();
     }
 
     /**
