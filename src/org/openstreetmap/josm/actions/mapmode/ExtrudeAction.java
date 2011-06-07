@@ -254,7 +254,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             newN2en = new EastNorth(initialN2en.getX() + bestMovement.getX(), initialN2en.getY() + bestMovement.getY());
 
             // find out the movement distance, in metres
-            double distance = Main.proj.eastNorth2latlon(initialN1en).greatCircleDistance(Main.proj.eastNorth2latlon(newN1en));
+            double distance = Main.getProjection().eastNorth2latlon(initialN1en).greatCircleDistance(Main.getProjection().eastNorth2latlon(newN1en));
             Main.map.statusLine.setDist(distance);
             updateStatusLine();
 
@@ -308,10 +308,10 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
                         //move existing node
                         Node n1Old = selectedSegment.getFirstNode();
-                        cmds.add(new MoveCommand(n1Old, Main.proj.eastNorth2latlon(newN1en)));
+                        cmds.add(new MoveCommand(n1Old, Main.getProjection().eastNorth2latlon(newN1en)));
                     } else {
                         //introduce new node
-                        Node n1New = new Node(Main.proj.eastNorth2latlon(newN1en));
+                        Node n1New = new Node(Main.getProjection().eastNorth2latlon(newN1en));
                         wnew.addNode(insertionPoint, n1New);
                         insertionPoint ++;
                         cmds.add(new AddCommand(n1New));
@@ -325,10 +325,10 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                     if (nodeOverlapsSegment && !alwaysCreateNodes && !hasOtherWays) {
                         //move existing node
                         Node n2Old = selectedSegment.getSecondNode();
-                        cmds.add(new MoveCommand(n2Old, Main.proj.eastNorth2latlon(newN2en)));
+                        cmds.add(new MoveCommand(n2Old, Main.getProjection().eastNorth2latlon(newN2en)));
                     } else {
                         //introduce new node
-                        Node n2New = new Node(Main.proj.eastNorth2latlon(newN2en));
+                        Node n2New = new Node(Main.getProjection().eastNorth2latlon(newN2en));
                         wnew.addNode(insertionPoint, n2New);
                         insertionPoint ++;
                         cmds.add(new AddCommand(n2New));

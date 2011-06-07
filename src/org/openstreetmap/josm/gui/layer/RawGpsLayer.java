@@ -94,7 +94,7 @@ public class RawGpsLayer extends Layer implements PreferenceChangedListener {
         public final String time;
         public GpsPoint(LatLon ll, String t) {
             latlon = ll;
-            eastNorth = Main.proj.latlon2eastNorth(ll);
+            eastNorth = Main.getProjection().latlon2eastNorth(ll);
             time = t;
         }
     }

@@ -57,7 +57,7 @@ public class HistoryBrowserTest extends JFrame {
         Main.pref.init(false);
 
         // init projection
-        Main.proj = new Mercator();
+        Main.setProjection(new Mercator());
     }
 
     private HistoryBrowser browser;

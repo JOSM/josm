@@ -38,6 +38,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.preferences.ProjectionPreference;
 import org.openstreetmap.josm.tools.Predicate;
@@ -95,7 +96,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * every physical pixel on screen are 10 x or 10 y units in the
      * northing/easting space of the projection.
      */
-    private double scale = Main.proj.getDefaultZoomInPPD();
+    private double scale = Main.getProjection().getDefaultZoomInPPD();
     /**
      * Center n/e coordinate of the desired screen center.
      */
@@ -110,11 +111,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     private EastNorth calculateDefaultCenter() {
-        Bounds b = Main.proj.getWorldBoundsLatLon();
+        Bounds b = Main.getProjection().getWorldBoundsLatLon();
         double lat = (b.getMax().lat() + b.getMin().lat())/2;
         double lon = (b.getMax().lon() + b.getMin().lon())/2;
 
-        return Main.proj.latlon2eastNorth(new LatLon(lat, lon));
+        return Main.getProjection().latlon2eastNorth(new LatLon(lat, lon));
     }
 
     public static String getDistText(double dist) {
@@ -208,7 +209,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         EastNorth p1 = getEastNorth(r.x, r.y);
         EastNorth p2 = getEastNorth(r.x + r.width, r.y + r.height);
 
-        Bounds result = new Bounds(Main.proj.eastNorth2latlon(p1));
+        Bounds result = new Bounds(Main.getProjection().eastNorth2latlon(p1));
 
         double eastMin = Math.min(p1.east(), p2.east());
         double eastMax = Math.max(p1.east(), p2.east());
@@ -218,10 +219,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
         double deltaNorth = (northMax - northMin) / 10;
 
         for (int i=0; i < 10; i++) {
-            result.extend(Main.proj.eastNorth2latlon(new EastNorth(eastMin + i * deltaEast, northMin)));
-            result.extend(Main.proj.eastNorth2latlon(new EastNorth(eastMin + i * deltaEast, northMax)));
-            result.extend(Main.proj.eastNorth2latlon(new EastNorth(eastMin, northMin  + i * deltaNorth)));
-            result.extend(Main.proj.eastNorth2latlon(new EastNorth(eastMax, northMin  + i * deltaNorth)));
+            result.extend(Main.getProjection().eastNorth2latlon(new EastNorth(eastMin + i * deltaEast, northMin)));
+            result.extend(Main.getProjection().eastNorth2latlon(new EastNorth(eastMin + i * deltaEast, northMax)));
+            result.extend(Main.getProjection().eastNorth2latlon(new EastNorth(eastMin, northMin  + i * deltaNorth)));
+            result.extend(Main.getProjection().eastNorth2latlon(new EastNorth(eastMax, northMin  + i * deltaNorth)));
         }
 
         return result;
@@ -249,6 +250,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         else
             return getPoint2D(getProjection().latlon2eastNorth(latlon));
     }
+
     public Point2D getPoint2D(Node n) {
         return getPoint2D(n.getEastNorth());
     }
@@ -281,7 +283,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public void zoomTo(EastNorth newCenter, double newScale) {
         Bounds b = getProjection().getWorldBoundsLatLon();
-        CachedLatLon cl = new CachedLatLon(newCenter);
+        LatLon cl = Projections.inverseProject(newCenter);
         boolean changed = false;
         double lat = cl.lat();
         double lon = cl.lon();
@@ -290,7 +292,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         if(lon < b.getMin().lon()) {changed = true; lon = b.getMin().lon(); }
         else if(lon > b.getMax().lon()) {changed = true; lon = b.getMax().lon(); }
         if(changed) {
-            newCenter = new CachedLatLon(lat, lon).getEastNorth();
+            newCenter = Projections.project(new LatLon(lat,lon));
         }
         int width = getWidth()/2;
         int height = getHeight()/2;
@@ -349,19 +351,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     public void zoomTo(LatLon newCenter) {
-        if(newCenter instanceof CachedLatLon) {
-            zoomTo(((CachedLatLon)newCenter).getEastNorth(), scale);
-        } else {
-            zoomTo(getProjection().latlon2eastNorth(newCenter), scale);
-        }
+        zoomTo(Projections.project(newCenter));
     }
 
     public void smoothScrollTo(LatLon newCenter) {
-        if (newCenter instanceof CachedLatLon) {
-            smoothScrollTo(((CachedLatLon)newCenter).getEastNorth());
-        } else {
-            smoothScrollTo(getProjection().latlon2eastNorth(newCenter));
-        }
+        smoothScrollTo(Projections.project(newCenter));
     }
 
     /**
@@ -440,7 +434,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         double scale;
 
         public ZoomData(EastNorth center, double scale) {
-            this.center = new CachedLatLon(center);
+            this.center = Projections.inverseProject(center);
             this.scale = scale;
         }
 
@@ -1144,7 +1138,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @return The projection to be used in calculating stuff.
      */
     public Projection getProjection() {
-        return Main.proj;
+        return Main.getProjection();
     }
 
     public String helpTopic() {

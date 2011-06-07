@@ -161,7 +161,7 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
             JPanel pnl = new JPanel(new GridBagLayout());
             pnl.add(new JMultilineLabel(tr("Use arrow keys or drag the imagery layer with mouse to adjust the imagery offset.\n" +
                     "You can also enter east and north offset in the {0} coordinates.\n" +
-                    "If you want to save the offset as bookmark, enter the bookmark name below",Main.proj.toString())), GBC.eop());
+                    "If you want to save the offset as bookmark, enter the bookmark name below",Main.getProjection().toString())), GBC.eop());
             pnl.add(new JLabel(tr("Offset: ")),GBC.std());
             pnl.add(tOffset,GBC.eol().fill(GBC.HORIZONTAL).insets(0,0,0,5));
             pnl.add(new JLabel(tr("Bookmark name: ")),GBC.std());
@@ -210,7 +210,7 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
 
         public void updateOffsetIntl() {
             // Support projections with very small numbers (e.g. 4326)
-            int precision = Main.proj.getDefaultZoomInPPD() >= 1.0 ? 2 : 7;
+            int precision = Main.getProjection().getDefaultZoomInPPD() >= 1.0 ? 2 : 7;
             // US locale to force decimal separator to be '.'
             tOffset.setText(new java.util.Formatter(java.util.Locale.US).format(
                     "%1." + precision + "f; %1." + precision + "f",

@@ -61,6 +61,7 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapRendererFactory;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
+import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
@@ -79,6 +80,8 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 public class OsmDataLayer extends Layer implements Listener, SelectionChangedListener {
+    // static private final Logger logger = Logger.getLogger(OsmDataLayer.class.getName());
+
     static public final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
     static public final String REQUIRES_UPLOAD_TO_SERVER_PROP = OsmDataLayer.class.getName() + ".requiresUploadToServer";
 
@@ -657,7 +660,6 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
                 JOptionPane.showMessageDialog(Main.parent, p, tr("Warning"), JOptionPane.WARNING_MESSAGE);
             }
         }
-
     }
 
     @Override
@@ -673,5 +675,13 @@ public class OsmDataLayer extends Layer implements Listener, SelectionChangedLis
 
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
         isChanged = true;
+    }
+
+    @Override
+    public void projectionChanged(Projection oldValue, Projection newValue) {
+        /*
+         * No reprojection required. The dataset itself is registered as projection
+         * change listener and already got notified.
+         */
     }
 }

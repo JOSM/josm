@@ -82,7 +82,7 @@ public abstract class ImageryLayer extends Layer {
     }
 
     public double getPPD(){
-        if (Main.map == null || Main.map.mapView == null) return Main.proj.getDefaultZoomInPPD();
+        if (Main.map == null || Main.map.mapView == null) return Main.getProjection().getDefaultZoomInPPD();
         ProjectionBounds bounds = Main.map.mapView.getProjectionBounds();
         return Main.map.mapView.getWidth() / (bounds.maxEast - bounds.minEast);
     }

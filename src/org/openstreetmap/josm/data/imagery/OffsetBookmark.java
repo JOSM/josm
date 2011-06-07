@@ -29,7 +29,7 @@ public class OffsetBookmark {
 
     public boolean isUsable(ImageryLayer layer) {
         if (proj == null) return false;
-        if (!Main.proj.toCode().equals(proj.toCode())) return false;
+        if (!Main.getProjection().toCode().equals(proj.toCode())) return false;
         return layer.getInfo().getName().equals(layerName);
     }
 
@@ -121,12 +121,12 @@ public class OffsetBookmark {
     public static void bookmarkOffset(String name, ImageryLayer layer) {
         LatLon center;
         if (Main.map != null && Main.map.mapView != null) {
-            center = Main.proj.eastNorth2latlon(Main.map.mapView.getCenter());
+            center = Main.getProjection().eastNorth2latlon(Main.map.mapView.getCenter());
         } else {
             center = new LatLon(0,0);
         }
         OffsetBookmark nb = new OffsetBookmark(
-                Main.proj, layer.getInfo().getName(),
+                Main.getProjection(), layer.getInfo().getName(),
                 name, layer.getDx(), layer.getDy(), center.lon(), center.lat());
         for (ListIterator<OffsetBookmark> it = allBookmarks.listIterator();it.hasNext();) {
             OffsetBookmark b = it.next();

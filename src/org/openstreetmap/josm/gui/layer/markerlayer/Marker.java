@@ -15,13 +15,13 @@ import java.util.Map;
 
 import javax.swing.Icon;
 
-import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -69,14 +69,10 @@ public class Marker implements ActionListener {
     public double offset; /* time offset in seconds from the gpx point from which it was derived,
                              may be adjusted later to sync with other data, so not final */
 
-    private CachedLatLon coor;
+    private LatLon coor;
 
     public final void setCoor(LatLon coor) {
-        if(this.coor == null) {
-            this.coor = new CachedLatLon(coor);
-        } else {
-            this.coor.setCoor(coor);
-        }
+        this.coor = new LatLon(coor);
     }
 
     public final LatLon getCoor() {
@@ -84,11 +80,11 @@ public class Marker implements ActionListener {
     }
 
     public final void setEastNorth(EastNorth eastNorth) {
-        coor.setEastNorth(eastNorth);
+        this.coor = Projections.inverseProject(eastNorth);
     }
 
     public final EastNorth getEastNorth() {
-        return coor.getEastNorth();
+        return Projections.project(this.coor);
     }
 
     /**
@@ -263,12 +259,10 @@ public class Marker implements ActionListener {
      * @return Text
      */
     public String getText() {
-        if (this.text != null ) {
+        if (this.text != null )
             return this.text;
-        }
-        else {
+        else
             return getText(this.textMap);
-        }
     }
 
     /**

@@ -40,7 +40,7 @@ abstract public class Grabber implements Runnable {
                             b.maxNorth + northCoef * northSize));
         }
 
-        this.proj = Main.proj;
+        this.proj = Main.getProjection();
         this.pixelPerDegree = request.getPixelPerDegree();
         this.request = request;
     }

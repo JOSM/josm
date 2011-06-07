@@ -22,15 +22,14 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ValidateAction;
-import org.openstreetmap.josm.actions.upload.ValidateUploadHook;
 import org.openstreetmap.josm.data.projection.Epsg4326;
 import org.openstreetmap.josm.data.projection.Lambert;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.validation.tests.Coastlines;
 import org.openstreetmap.josm.data.validation.tests.CrossingWays;
 import org.openstreetmap.josm.data.validation.tests.DuplicateNode;
-import org.openstreetmap.josm.data.validation.tests.DuplicateWay;
 import org.openstreetmap.josm.data.validation.tests.DuplicateRelation;
+import org.openstreetmap.josm.data.validation.tests.DuplicateWay;
 import org.openstreetmap.josm.data.validation.tests.DuplicatedWayNodes;
 import org.openstreetmap.josm.data.validation.tests.MultipolygonTest;
 import org.openstreetmap.josm.data.validation.tests.NameMismatch;
@@ -47,9 +46,9 @@ import org.openstreetmap.josm.data.validation.tests.UntaggedNode;
 import org.openstreetmap.josm.data.validation.tests.UntaggedWay;
 import org.openstreetmap.josm.data.validation.tests.WronglyOrderedWays;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
-import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.preferences.ValidatorPreference;
 
 /**
@@ -76,26 +75,26 @@ public class OsmValidator implements LayerChangeListener {
      */
     @SuppressWarnings("unchecked")
     public static Class<Test>[] allAvailableTests = new Class[] {
-            DuplicateNode.class, // ID    1 ..   99
-            OverlappingWays.class, // ID  101 ..  199
-            UntaggedNode.class, // ID  201 ..  299
-            UntaggedWay.class, // ID  301 ..  399
-            SelfIntersectingWay.class, // ID  401 ..  499
-            DuplicatedWayNodes.class, // ID  501 ..  599
-            CrossingWays.class, // ID  601 ..  699
-            SimilarNamedWays.class, // ID  701 ..  799
-            NodesWithSameName.class, // ID  801 ..  899
-            Coastlines.class, // ID  901 ..  999
-            WronglyOrderedWays.class, // ID 1001 .. 1099
-            UnclosedWays.class, // ID 1101 .. 1199
-            TagChecker.class, // ID 1201 .. 1299
-            UnconnectedWays.class, // ID 1301 .. 1399
-            DuplicateWay.class, // ID 1401 .. 1499
-            NameMismatch.class, // ID  1501 ..  1599
-            MultipolygonTest.class, // ID  1601 ..  1699
-            RelationChecker.class, // ID  1701 ..  1799
-            TurnrestrictionTest.class, // ID  1801 ..  1899
-            DuplicateRelation.class, // ID 1901 .. 1999
+        DuplicateNode.class, // ID    1 ..   99
+        OverlappingWays.class, // ID  101 ..  199
+        UntaggedNode.class, // ID  201 ..  299
+        UntaggedWay.class, // ID  301 ..  399
+        SelfIntersectingWay.class, // ID  401 ..  499
+        DuplicatedWayNodes.class, // ID  501 ..  599
+        CrossingWays.class, // ID  601 ..  699
+        SimilarNamedWays.class, // ID  701 ..  799
+        NodesWithSameName.class, // ID  801 ..  899
+        Coastlines.class, // ID  901 ..  999
+        WronglyOrderedWays.class, // ID 1001 .. 1099
+        UnclosedWays.class, // ID 1101 .. 1199
+        TagChecker.class, // ID 1201 .. 1299
+        UnconnectedWays.class, // ID 1301 .. 1399
+        DuplicateWay.class, // ID 1401 .. 1499
+        NameMismatch.class, // ID  1501 ..  1599
+        MultipolygonTest.class, // ID  1601 ..  1699
+        RelationChecker.class, // ID  1701 ..  1799
+        TurnrestrictionTest.class, // ID  1801 ..  1899
+        DuplicateRelation.class, // ID 1901 .. 1999
     };
 
     public OsmValidator() {
@@ -241,11 +240,11 @@ public class OsmValidator implements LayerChangeListener {
      * until most bugs were discovered while keeping the processing time reasonable)
      */
     public void initializeGridDetail() {
-        if (Main.proj.toString().equals(new Epsg4326().toString())) {
+        if (Main.getProjection().toString().equals(new Epsg4326().toString())) {
             OsmValidator.griddetail = 10000;
-        } else if (Main.proj.toString().equals(new Mercator().toString())) {
+        } else if (Main.getProjection().toString().equals(new Mercator().toString())) {
             OsmValidator.griddetail = 0.01;
-        } else if (Main.proj.toString().equals(new Lambert().toString())) {
+        } else if (Main.getProjection().toString().equals(new Lambert().toString())) {
             OsmValidator.griddetail = 0.1;
         }
     }
@@ -264,9 +263,9 @@ public class OsmValidator implements LayerChangeListener {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("Error initializing test {0}:\n {1}", test.getClass()
-                        .getSimpleName(), e),
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE);
+                                .getSimpleName(), e),
+                                tr("Error"),
+                                JOptionPane.ERROR_MESSAGE);
             }
         }
     }

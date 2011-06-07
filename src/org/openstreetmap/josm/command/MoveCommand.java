@@ -11,12 +11,12 @@ import java.util.List;
 
 import javax.swing.JLabel;
 
-import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -58,7 +58,7 @@ public class MoveCommand extends Command {
     }
 
     public MoveCommand(Node node, LatLon position) {
-        this(Collections.singleton((OsmPrimitive) node), node.getEastNorth().sub(new CachedLatLon(position).getEastNorth()));
+        this(Collections.singleton((OsmPrimitive) node), node.getEastNorth().sub(Projections.project(position)));
     }
 
     public MoveCommand(Collection<OsmPrimitive> objects, EastNorth offset) {

@@ -39,7 +39,7 @@ public class OsmosnimkiOffsetServer implements OffsetServer {
 
     @Override
     public EastNorth getOffset(ImageryInfo info, EastNorth en) {
-        LatLon ll = Main.proj.eastNorth2latlon(en);
+        LatLon ll = Main.getProjection().eastNorth2latlon(en);
         try {
             URL url = new URL(this.url + "action=GetOffsetForPoint&lat=" + ll.lat() + "&lon=" + ll.lon() + "&id=" + URLEncoder.encode(info.getFullUrl(), "UTF-8"));
             System.out.println(tr("Querying offset: {0}", url.toString()));
@@ -49,7 +49,7 @@ public class OsmosnimkiOffsetServer implements OffsetServer {
             if (i == -1) return null;
             String sLon = s.substring(1,i);
             String sLat = s.substring(i+1,s.length()-1);
-            return Main.proj.latlon2eastNorth(new LatLon(Double.valueOf(sLat),Double.valueOf(sLon))).sub(en);
+            return Main.getProjection().latlon2eastNorth(new LatLon(Double.valueOf(sLat),Double.valueOf(sLon))).sub(en);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

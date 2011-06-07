@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
@@ -26,8 +25,8 @@ import org.openstreetmap.josm.data.preferences.ParametrizedCollectionProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.projection.Mercator;
 import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.data.projection.ProjectionSubPrefs;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
@@ -38,10 +37,6 @@ public class ProjectionPreference implements PreferenceSetting {
         public PreferenceSetting createPreferenceSetting() {
             return new ProjectionPreference();
         }
-    }
-
-    public interface ProjectionChangedListener {
-        void projectionChanged();
     }
 
     private static final StringProperty PROP_PROJECTION = new StringProperty("projection", Mercator.class.getName());
@@ -63,24 +58,6 @@ public class ProjectionPreference implements PreferenceSetting {
             unitsValuesTr[i] = tr(unitsValues[i]);
         }
     }
-
-    //TODO This is not nice place for a listener code but probably only Dataset will want to listen for projection changes so it's acceptable
-    private static CopyOnWriteArrayList<ProjectionChangedListener> listeners = new CopyOnWriteArrayList<ProjectionChangedListener>();
-
-    public static void addProjectionChangedListener(ProjectionChangedListener listener) {
-        listeners.addIfAbsent(listener);
-    }
-
-    public static void removeProjectionChangedListener(ProjectionChangedListener listener) {
-        listeners.remove(listener);
-    }
-
-    private static void fireProjectionChanged() {
-        for (ProjectionChangedListener listener: listeners) {
-            listener.projectionChanged();
-        }
-    }
-
 
     /**
      * Combobox with all projections available
@@ -160,7 +137,7 @@ public class ProjectionPreference implements PreferenceSetting {
         JScrollPane scrollpane = new JScrollPane(projPanel);
         gui.mapcontent.addTab(tr("Map Projection"), scrollpane);
 
-        updateMeta(Main.proj);
+        updateMeta(Main.getProjection());
     }
 
     private void updateMeta(Projection proj)
@@ -201,20 +178,18 @@ public class ProjectionPreference implements PreferenceSetting {
     static public void setProjection(String name, Collection<String> coll)
     {
         Bounds b = (Main.map != null && Main.map.mapView != null) ? Main.map.mapView.getRealBounds() : null;
-        Projection oldProj = Main.proj;
 
-        Projection p = null;
+        Projection proj = null;
         for (ClassLoader cl : PluginHandler.getResourceClassLoaders()) {
             try {
-                p = (Projection) Class.forName(name, true, cl).newInstance();
+                proj = (Projection) Class.forName(name, true, cl).newInstance();
             } catch (final Exception e) {
             }
-            if (p != null) {
-                Main.proj = p;
+            if (proj != null) {
                 break;
             }
         }
-        if (p == null) {
+        if (proj == null) {
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("The projection {0} could not be activated. Using Mercator", name),
@@ -222,16 +197,17 @@ public class ProjectionPreference implements PreferenceSetting {
                     JOptionPane.ERROR_MESSAGE
             );
             coll = null;
-            Main.proj = new Mercator();
-            name = Main.proj.getClass().getName();
+            proj = new Mercator();
+            name = Main.getProjection().getClass().getName();
         }
         PROP_SUB_PROJECTION.put(coll);
         PROP_PROJECTION_SUBPROJECTION.put(coll, name);
-        if(Main.proj instanceof ProjectionSubPrefs) {
-            ((ProjectionSubPrefs) Main.proj).setPreferences(coll);
+        if(proj instanceof ProjectionSubPrefs) {
+            ((ProjectionSubPrefs) proj).setPreferences(coll);
         }
-        fireProjectionChanged(); // This should be probably called from the if bellow, but hashCode condition doesn't look sure enough
-        if(b != null && (!Main.proj.getClass().getName().equals(oldProj.getClass().getName()) || Main.proj.hashCode() != oldProj.hashCode()))
+        Projection oldProj = Main.getProjection();
+        Main.setProjection(proj);
+        if(b != null && (!proj.getClass().getName().equals(oldProj.getClass().getName()) || proj.hashCode() != oldProj.hashCode()))
         {
             Main.map.mapView.zoomTo(b);
             /* TODO - remove layers with fixed projection */

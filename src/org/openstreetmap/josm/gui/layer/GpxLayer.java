@@ -51,6 +51,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxRoute;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
@@ -58,6 +59,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MapView;
@@ -329,8 +331,8 @@ public class GpxLayer extends Layer {
         lastTracks.addAll(data.tracks);
 
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-        Main.pref.getBoolean("mappaint.gpx.use-antialiasing", false) ?
-                RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
+                Main.pref.getBoolean("mappaint.gpx.use-antialiasing", false) ?
+                        RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 
         /****************************************************************
          ********** STEP 1 - GET CONFIG VALUES **************************
@@ -1230,7 +1232,7 @@ public class GpxLayer extends Layer {
         }
         if (bestEN == null)
             return null;
-        WayPoint best = new WayPoint(Main.proj.eastNorth2latlon(bestEN));
+        WayPoint best = new WayPoint(Main.getProjection().eastNorth2latlon(bestEN));
         best.time = bestTime;
         return best;
     }
@@ -1489,6 +1491,34 @@ public class GpxLayer extends Layer {
             addRecursiveFiles(files, sel);
             importer.importDataHandleExceptions(files, NullProgressMonitor.INSTANCE);
         }
+    }
 
+    @Override
+    public void projectionChanged(Projection oldValue, Projection newValue) {
+        if (newValue == null) return;
+        if (data.waypoints != null) {
+            for (WayPoint wp : data.waypoints){
+                wp.invalidateEastNorthCache();
+            }
+        }
+        if (data.tracks != null){
+            for (GpxTrack track: data.tracks) {
+                for (GpxTrackSegment segment: track.getSegments()) {
+                    for (WayPoint wp: segment.getWayPoints()) {
+                        wp.invalidateEastNorthCache();
+                    }
+                }
+            }
+        }
+        if (data.routes != null) {
+            for (GpxRoute route: data.routes) {
+                if (route.routePoints == null) {
+                    continue;
+                }
+                for (WayPoint wp: route.routePoints) {
+                    wp.invalidateEastNorthCache();
+                }
+            }
+        }
     }
 }

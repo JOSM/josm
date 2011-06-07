@@ -75,7 +75,7 @@ public class DataSetMergerTest {
         my.setVersion("0.6");
         their = new DataSet();
         their.setVersion("0.6");
-        Main.proj = new Mercator();
+        Main.setProjection(new Mercator());
     }
 
     private void runConsistencyTests(DataSet ds) throws Exception {

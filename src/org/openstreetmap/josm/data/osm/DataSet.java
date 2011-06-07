@@ -19,6 +19,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -33,10 +34,13 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
+import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.FilteredCollection;
 import org.openstreetmap.josm.tools.Predicate;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * DataSet is the data behind the application. It can consists of only a few points up to the whole
@@ -82,7 +86,7 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
  *
  * @author imi
  */
-public class DataSet implements Cloneable {
+public class DataSet implements Cloneable, ProjectionChangeListener {
 
     /**
      * Maximum number of events that can be fired between beginUpdate/endUpdate to be send as single events (ie without DatasetChangedEvent)
@@ -119,6 +123,14 @@ public class DataSet implements Cloneable {
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private final Object selectionLock = new Object();
+
+    public DataSet() {
+        /*
+         * Transparently register as projection change lister. No need to explicitly remove the
+         * the listener, projection change listeners are managed as WeakReferences.
+         */
+        Main.addProjectionChangeListener(this);
+    }
 
     public Lock getReadLock() {
         return lock.readLock();
@@ -974,6 +986,25 @@ public class DataSet implements Cloneable {
         highlightUpdateCount++;
     }
 
+    /**
+     * Invalidates the internal cache of projected east/north coordinates.
+     * 
+     * This method can be invoked after the globally configured projection method
+     * changed. In contrast to {@link DataSet#reproject()} it only invalidates the
+     * cache and doesn't reproject the coordinates.
+     */
+    public void invalidateEastNorthCache() {
+        if (Main.getProjection() == null) return; // sanity check
+        try {
+            beginUpdate();
+            for (Node n: Utils.filteredCollection(allPrimitives, Node.class)) {
+                n.invalidateEastNorthCache();
+            }
+        } finally {
+            endUpdate();
+        }
+    }
+
     public void cleanupDeletedPrimitives() {
         beginUpdate();
         try {
@@ -1062,5 +1093,13 @@ public class DataSet implements Cloneable {
             }
         }
         return ret;
+    }
+
+    /* --------------------------------------------------------------------------------- */
+    /* interface ProjectionChangeListner                                                 */
+    /* --------------------------------------------------------------------------------- */
+    @Override
+    public void projectionChanged(Projection oldValue, Projection newValue) {
+        invalidateEastNorthCache();
     }
 }

@@ -111,7 +111,7 @@ public class Geometry {
                                     return intersectionNodes;
                                 }
 
-                                Node newNode = new Node(Main.proj.eastNorth2latlon(intersection));
+                                Node newNode = new Node(Main.getProjection().eastNorth2latlon(intersection));
                                 Node intNode = newNode;
                                 boolean insertInSeg1 = false;
                                 boolean insertInSeg2 = false;
@@ -457,7 +457,7 @@ public class Geometry {
 
         return inside;
     }
-    
+
     /**
      * returns area of a closed way in square meters
      * (approximate(?), but should be OK for small areas)
@@ -477,7 +477,7 @@ public class Geometry {
         }
         return Math.abs(area/2);
     }
-    
+
     protected static double calcX(Node p1){
         double lat1, lon1, lat2, lon2;
         double dlon, dlat;
@@ -494,7 +494,7 @@ public class Geometry {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         return 6367000 * c;
     }
-    
+
     protected static double calcY(Node p1){
         double lat1, lon1, lat2, lon2;
         double dlon, dlat;

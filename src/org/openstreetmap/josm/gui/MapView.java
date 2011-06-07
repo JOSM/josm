@@ -117,7 +117,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
      * Adds an edit layer change listener
      *
      * @param listener the listener. Ignored if null or already registered.
-     * @param initialFire Fire an edit-layer-changed-event right after adding 
+     * @param initialFire Fire an edit-layer-changed-event right after adding
      * the listener in case there is an edit layer present
      */
     public static void addEditLayerChangeListener(EditLayerChangeListener listener, boolean initialFire) {
@@ -284,6 +284,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
             setActiveLayer(layer);
         }
         layer.addPropertyChangeListener(this);
+        Main.addProjectionChangeListener(layer);
         AudioPlayer.reset();
         repaint();
     }
@@ -358,6 +359,7 @@ public class MapView extends NavigatableComponent implements PropertyChangeListe
         }
 
         layers.remove(layer);
+        Main.removeProjectionChangeListener(layer);
         fireLayerRemoved(layer);
         layer.removePropertyChangeListener(this);
         layer.destroy();

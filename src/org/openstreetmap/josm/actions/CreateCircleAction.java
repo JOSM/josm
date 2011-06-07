@@ -152,7 +152,7 @@ public final class CreateCircleAction extends JosmAction {
                     // get the position of the new node and insert it
                     double x = xc + r*Math.cos(a);
                     double y = yc + r*Math.sin(a);
-                    Node n = new Node(Main.proj.eastNorth2latlon(new EastNorth(x,y)));
+                    Node n = new Node(Main.getProjection().eastNorth2latlon(new EastNorth(x,y)));
                     wayToAdd.add(n);
                     cmds.add(new AddCommand(n));
                 }
@@ -244,7 +244,7 @@ public final class CreateCircleAction extends JosmAction {
                 // get the position of the new node and insert it
                 double x = xc + r*Math.cos(a);
                 double y = yc + r*Math.sin(a);
-                Node n = new Node(Main.proj.eastNorth2latlon(new EastNorth(x,y)));
+                Node n = new Node(Main.getProjection().eastNorth2latlon(new EastNorth(x,y)));
                 wayToAdd.add(n);
                 cmds.add(new AddCommand(n));
             }

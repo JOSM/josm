@@ -65,14 +65,14 @@ public class QuadBucketsTest {
 
     @Test
     public void testRemove() throws Exception {
-        Main.proj = new Mercator();
+        Main.setProjection(new Mercator());
         DataSet ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/restriction.osm"), NullProgressMonitor.INSTANCE);
         removeAllTest(ds);
     }
 
     @Test
     public void testMove() throws Exception {
-        Main.proj = new Mercator();
+        Main.setProjection(new Mercator());
         DataSet ds = OsmReader.parseDataSet(new FileInputStream("data_nodist/restriction.osm"), NullProgressMonitor.INSTANCE);
 
         for (Node n: ds.getNodes()) {

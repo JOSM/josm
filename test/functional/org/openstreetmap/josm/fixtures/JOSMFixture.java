@@ -67,7 +67,7 @@ public class JOSMFixture {
         Main.pref.init(false);
 
         // init projection
-        Main.proj = new Mercator();
+        Main.setProjection(new Mercator());
 
         // make sure we don't upload to or test against production
         //

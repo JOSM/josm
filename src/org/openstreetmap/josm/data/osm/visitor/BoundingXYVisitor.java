@@ -112,11 +112,11 @@ public class BoundingXYVisitor extends AbstractVisitor {
     public void enlargeBoundingBox(double enlargeDegree) {
         if (bounds == null)
             return;
-        LatLon minLatlon = Main.proj.eastNorth2latlon(bounds.getMin());
-        LatLon maxLatlon = Main.proj.eastNorth2latlon(bounds.getMax());
+        LatLon minLatlon = Main.getProjection().eastNorth2latlon(bounds.getMin());
+        LatLon maxLatlon = Main.getProjection().eastNorth2latlon(bounds.getMax());
         bounds = new ProjectionBounds(
-                Main.proj.latlon2eastNorth(new LatLon(minLatlon.lat() - enlargeDegree, minLatlon.lon() - enlargeDegree)),
-                Main.proj.latlon2eastNorth(new LatLon(maxLatlon.lat() + enlargeDegree, maxLatlon.lon() + enlargeDegree)));
+                Main.getProjection().latlon2eastNorth(new LatLon(minLatlon.lat() - enlargeDegree, minLatlon.lon() - enlargeDegree)),
+                Main.getProjection().latlon2eastNorth(new LatLon(maxLatlon.lat() + enlargeDegree, maxLatlon.lon() + enlargeDegree)));
     }
 
     @Override public String toString() {

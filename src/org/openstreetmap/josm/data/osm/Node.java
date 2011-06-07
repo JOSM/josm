@@ -1,11 +1,12 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.data.osm;
 
-import org.openstreetmap.josm.data.coor.CachedLatLon;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.data.projection.Projections;
 
 /**
  * One node data, consisting of one world coordinate waypoint.
@@ -14,7 +15,22 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
  */
 public final class Node extends OsmPrimitive implements INode {
 
-    private CachedLatLon coor;
+    /*
+     * We "inline" lat/lon rather than using a LatLon-object => reduces memory footprint
+     */
+    static private final double COORDINATE_NOT_DEFINED = Double.NaN;
+    private double lat = COORDINATE_NOT_DEFINED;
+    private double lon = COORDINATE_NOT_DEFINED;
+
+    /*
+     * the cached projected coordinates
+     */
+    private double east = Double.NaN;
+    private double north = Double.NaN;
+
+    private boolean isLatLonKnown() {
+        return lat != COORDINATE_NOT_DEFINED && lon != COORDINATE_NOT_DEFINED;
+    }
 
     @Override
     public final void setCoor(LatLon coor) {
@@ -45,31 +61,60 @@ public final class Node extends OsmPrimitive implements INode {
 
     @Override
     public final LatLon getCoor() {
-        return coor;
+        if (!isLatLonKnown()) return null;
+        return new LatLon(lat,lon);
     }
 
+    /**
+     * <p>Replies the projected east/north coordinates.</p>
+     * 
+     * <p>Uses the {@link Main#getProjection() global projection} to project the lan/lon-coordinates.
+     * Internally caches the projected coordinates.</p>
+     *
+     * <p><strong>Caveat:</strong> doesn't listen to projection changes. Clients must
+     * {@link #invalidateEastNorthCache() invalidate the internal cache}.</p>
+     * 
+     * <p>Replies {@code null} if this node doesn't know lat/lon-coordinates, i.e. because it is an incomplete node.
+     * 
+     * @return the east north coordinates or {@code null}
+     * @see #invalidateEastNorthCache()
+     * 
+     */
     @Override
     public final EastNorth getEastNorth() {
-        return coor != null ? coor.getEastNorth() : null;
+        if (!isLatLonKnown()) return null;
+        
+        if (getDataSet() == null)
+            // there is no dataset that listens for projection changes
+            // and invalidates the cache, so we don't use the cache at all
+            return Projections.project(new LatLon(lat, lon));
+        
+        if (Double.isNaN(east) || Double.isNaN(north)) {
+            // projected coordinates haven't been calculated yet,
+            // so fill the cache of the projected node coordinates
+            EastNorth en = Projections.project(new LatLon(lat, lon));
+            this.east = en.east();
+            this.north = en.north();
+        }
+        return new EastNorth(east, north);
     }
 
     /**
      * To be used only by Dataset.reindexNode
      */
     protected void setCoorInternal(LatLon coor, EastNorth eastNorth) {
-        if(this.coor == null) {
-            if (eastNorth == null) {
-                this.coor = new CachedLatLon(coor);
-            } else {
-                this.coor = new CachedLatLon(eastNorth);
-            }
-        } else {
-            if (eastNorth == null) {
-                this.coor.setCoor(coor);
-            } else {
-                this.coor.setEastNorth(eastNorth);
-            }
-        }
+        if (coor != null) {
+            this.lat = coor.lat();
+            this.lon = coor.lon();
+            invalidateEastNorthCache();
+        } else if (eastNorth != null) {
+            LatLon ll = Projections.inverseProject(eastNorth);
+            this.lat = ll.lat();
+            this.lon = ll.lon();
+            this.east = eastNorth.east();
+            this.north = eastNorth.north();
+        } else
+            throw new IllegalArgumentException();
     }
 
     protected Node(long id, boolean allowNegative) {
@@ -149,7 +194,7 @@ public final class Node extends OsmPrimitive implements INode {
         boolean locked = writeLock();
         try {
             super.cloneFrom(osm);
-            setCoor(((Node)osm).coor);
+            setCoor(((Node)osm).getCoor());
         } finally {
             writeUnlock(locked);
         }
@@ -172,7 +217,7 @@ public final class Node extends OsmPrimitive implements INode {
         try {
             super.mergeFrom(other);
             if (!other.isIncomplete()) {
-                setCoor(new LatLon(((Node)other).coor));
+                setCoor(((Node)other).getCoor());
             }
         } finally {
             writeUnlock(locked);
@@ -199,7 +244,7 @@ public final class Node extends OsmPrimitive implements INode {
     }
 
     @Override public String toString() {
-        String coorDesc = coor == null?"":"lat="+coor.lat()+",lon="+coor.lon();
+        String coorDesc = isLatLonKnown() ? "lat="+lat+",lon="+lon : "";
         return "{Node id=" + getUniqueId() + " version=" + getVersion() + " " + getFlagsAsString() + " "  + coorDesc+"}";
     }
 
@@ -210,10 +255,12 @@ public final class Node extends OsmPrimitive implements INode {
         if (! super.hasEqualSemanticAttributes(other))
             return false;
         Node n = (Node)other;
-        if (coor == null && n.coor == null)
+        LatLon coor = getCoor();
+        LatLon otherCoor = n.getCoor();
+        if (coor == null && otherCoor == null)
             return true;
-        else if (coor != null && n.coor != null)
-            return coor.equalsEpsilon(n.coor);
+        else if (coor != null && otherCoor != null)
+            return coor.equalsEpsilon(otherCoor);
         else
             return false;
     }
@@ -240,7 +287,6 @@ public final class Node extends OsmPrimitive implements INode {
 
     @Override
     public void updatePosition() {
-        // TODO: replace CachedLatLon with simple doubles and update precalculated EastNorth value here
     }
 
     public boolean isConnectionNode() {
@@ -252,14 +298,24 @@ public final class Node extends OsmPrimitive implements INode {
         builder.append("Unexpected error. Please report it to http://josm.openstreetmap.de/ticket/3892\n");
         builder.append(toString());
         builder.append("\n");
-        if (coor == null) {
+        if (isLatLonKnown()) {
             builder.append("Coor is null\n");
         } else {
-            builder.append(String.format("EastNorth: %s\n", coor.getEastNorth()));
-            builder.append(coor.getProjection());
+            builder.append(String.format("EastNorth: %s\n", getEastNorth()));
+            builder.append(Main.getProjection());
             builder.append("\n");
         }
 
         return builder.toString();
+    }
+
+    /**
+     * Invoke to invalidate the internal cache of projected east/north coordinates.
+     * Coordinates are reprojected on demand when the {@link #getEastNorth()} is invoked
+     * next time.
+     */
+    public void invalidateEastNorthCache() {
+        this.east = Double.NaN;
+        this.north = Double.NaN;
     }
 }

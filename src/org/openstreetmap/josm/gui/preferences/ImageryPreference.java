@@ -733,7 +733,7 @@ public class ImageryPreference implements PreferenceSetting {
             add.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    OffsetBookmark b = new OffsetBookmark(Main.proj,"","",0,0);
+                    OffsetBookmark b = new OffsetBookmark(Main.getProjection(),"","",0,0);
                     model.addRow(b);
                 }
             });

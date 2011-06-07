@@ -31,7 +31,7 @@ public class MapPaintVisitorPerformanceTest {
 
     @BeforeClass
     public static void load() throws Exception {
-        Main.proj = new Mercator();
+        Main.setProjection(new Mercator());
         img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_3BYTE_BGR);
         g = (Graphics2D)img.getGraphics();
         nc = new NavigatableComponent();

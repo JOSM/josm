@@ -51,7 +51,7 @@ public class HTMLGrabber extends WMSGrabber {
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         BufferedImage img = layer.normalizeImage(ImageIO.read(bais));
         bais.reset();
-        layer.cache.saveToCache(layer.isOverlapEnabled()?img:null, bais, Main.proj, pixelPerDegree, b.minEast, b.minNorth);
+        layer.cache.saveToCache(layer.isOverlapEnabled()?img:null, bais, Main.getProjection(), pixelPerDegree, b.minEast, b.minNorth);
 
         return img;
     }

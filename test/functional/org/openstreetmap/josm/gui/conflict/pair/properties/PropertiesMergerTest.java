@@ -17,7 +17,7 @@ public class PropertiesMergerTest extends JFrame{
     private PropertiesMerger merger;
 
     protected void build() {
-        Main.proj = new Epsg4326();
+        Main.setProjection(new Epsg4326());
 
         setLayout(new BorderLayout());
         add(merger = new PropertiesMerger(), BorderLayout.CENTER);

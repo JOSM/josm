@@ -46,7 +46,7 @@ public class PropertiesMergeModelTest {
 
     @BeforeClass
     public static void init() {
-        Main.proj = new Epsg4326();
+        Main.setProjection(new Epsg4326());
         Main.pref = new Preferences();
     }
 

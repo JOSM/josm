@@ -870,7 +870,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     }
 
     private Point pixelPos(LatLon ll) {
-        return Main.map.mapView.getPoint(Main.proj.latlon2eastNorth(ll).add(getDx(), getDy()));
+        return Main.map.mapView.getPoint(Main.getProjection().latlon2eastNorth(ll).add(getDx(), getDy()));
     }
     private Point pixelPos(Tile t) {
         double lon = tileSource.tileXToLon(t.getXtile(), t.getZoom());
@@ -878,7 +878,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         return pixelPos(tmpLL);
     }
     private LatLon getShiftedLatLon(EastNorth en) {
-        return Main.proj.eastNorth2latlon(en.add(-getDx(), -getDy()));
+        return Main.getProjection().eastNorth2latlon(en.add(-getDx(), -getDy()));
     }
     private Coordinate getShiftedCoord(EastNorth en) {
         LatLon ll = getShiftedLatLon(en);

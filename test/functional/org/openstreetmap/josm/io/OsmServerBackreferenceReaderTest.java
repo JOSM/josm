@@ -182,7 +182,7 @@ public class OsmServerBackreferenceReaderTest {
         // don't use atomic upload, the test API server can't cope with large diff uploads
         //
         Main.pref.put("osm-server.atomic-upload", false);
-        Main.proj = new Mercator();
+        Main.setProjection(new Mercator());
 
         File dataSetCacheOutputFile = new File(tempOutputDir, MultiFetchServerObjectReaderTest.class.getName() + ".dataset");
 

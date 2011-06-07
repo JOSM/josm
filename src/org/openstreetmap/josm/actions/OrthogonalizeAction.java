@@ -116,7 +116,7 @@ public final class OrthogonalizeAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        if ("EPSG:4326".equals(Main.proj.toString())) {
+        if ("EPSG:4326".equals(Main.getProjection().toString())) {
             String msg = tr("<html>You are using the EPSG:4326 projection which might lead<br>" +
                     "to undesirable results when doing rectangular alignments.<br>" +
                     "Change your projection to get rid of this warning.<br>" +

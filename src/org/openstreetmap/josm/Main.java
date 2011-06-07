@@ -15,10 +15,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -55,6 +57,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.PrimitiveDeepCopy;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.gui.GettingStarted;
 import org.openstreetmap.josm.gui.MainMenu;
@@ -72,6 +75,7 @@ import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
@@ -118,10 +122,7 @@ abstract public class Main {
      */
     public static PrimitiveDeepCopy pasteBuffer = new PrimitiveDeepCopy();
     public static Layer pasteSource;
-    /**
-     * The projection method used.
-     */
-    public static Projection proj;
+
     /**
      * The MapFrame. Use setMapFrame to set or clear it.
      */
@@ -153,7 +154,7 @@ abstract public class Main {
      * Print a debug message if debugging is on.
      */
     static public int debug_level = 1;
-    static public final void debug(String msg) {
+    static public void debug(String msg) {
         if (debug_level <= 0)
             return;
         System.out.println(msg);
@@ -212,7 +213,7 @@ abstract public class Main {
         isOpenjdk = System.getProperty("java.vm.name").toUpperCase().indexOf("OPENJDK") != -1;
         platform.startupHook();
 
-        // We try to establish an API connection early, so that any API 
+        // We try to establish an API connection early, so that any API
         // capabilities are already known to the editor instance. However
         // if it goes wrong that's not critical at this stage.
         try {
@@ -766,5 +767,109 @@ abstract public class Main {
             }
         }
         System.err.println("Error: Could not recognize Java Version: "+version);
+    }
+
+    /* ----------------------------------------------------------------------------------------- */
+    /* projection handling  - Main is a registry for a single, global projection instance        */
+    /*                                                                                           */
+    /* TODO: For historical reasons the registry is implemented by Main. An alternative approach */
+    /* would be a singleton org.openstreetmap.josm.data.projection.ProjectionRegistry class.     */
+    /* ----------------------------------------------------------------------------------------- */
+    /**
+     * The projection method used.
+     * @deprecated use {@link #getProjection()} and {@link #setProjection(Projection)} instead.
+     * For the time being still publicly available, but avoid/migrate write access to it. Use
+     * {@link #setProjection(Projection)} in order to trigger a projection change event.
+     */
+    @Deprecated
+    public static Projection proj;
+
+    /**
+     * Replies the current projection.
+     * 
+     * @return
+     */
+    public static Projection getProjection() {
+        return proj;
+    }
+
+    /**
+     * Sets the current projection
+     * 
+     * @param p the projection
+     */
+    public static void setProjection(Projection p) {
+        CheckParameterUtil.ensureParameterNotNull(p);
+        Projection oldValue = proj;
+        proj = p;
+        fireProjectionChanged(oldValue, proj);
+    }
+
+    /*
+     * Keep WeakReferences to the listeners. This relieves clients from the burden of
+     * explicitly removing the listeners and allows us to transparently register every
+     * created dataset as projection change listener.
+     */
+    private static final ArrayList<WeakReference<ProjectionChangeListener>> listeners = new ArrayList<WeakReference<ProjectionChangeListener>>();
+
+    private static void fireProjectionChanged(Projection oldValue, Projection newValue) {
+        if (newValue == null ^ oldValue == null
+                || (newValue != null && oldValue != null && !newValue.getClass().getName().equals(oldValue.getClass().getName()))) {
+
+            synchronized(Main.class) {
+                Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();
+                while(it.hasNext()){
+                    WeakReference<ProjectionChangeListener> wr = it.next();
+                    if (wr.get() == null) {
+                        it.remove();
+                        continue;
+                    }
+                    wr.get().projectionChanged(oldValue, newValue);
+                }
+            }
+            if (newValue != null) {
+                Bounds b = (Main.map != null && Main.map.mapView != null) ? Main.map.mapView.getRealBounds() : null;
+                if (b != null){
+                    Main.map.mapView.zoomTo(b);
+                }
+            }
+            /* TODO - remove layers with fixed projection */
+        }
+    }
+
+    /**
+     * Register a projection change listener
+     * 
+     * @param listener the listener. Ignored if null.
+     */
+    public static void addProjectionChangeListener(ProjectionChangeListener listener) {
+        if (listener == null) return;
+        synchronized (Main.class) {
+            for (WeakReference<ProjectionChangeListener> wr : listeners) {
+                // already registered ? => abort
+                if (wr.get() == listener) return;
+            }
+        }
+        listeners.add(new WeakReference<ProjectionChangeListener>(listener));
+    }
+
+    /**
+     * Removes a projection change listener
+     * 
+     * @param listener the listener. Ignored if null.
+     */
+    public static void removeProjectionChangeListener(ProjectionChangeListener listener) {
+        if (listener == null) return;
+        synchronized(Main.class){
+            Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();
+            while(it.hasNext()){
+                WeakReference<ProjectionChangeListener> wr = it.next();
+                // remove the listener - and any other listener which god garbage
+                // collected in the meantime
+                if (wr.get() == null || wr.get() == listener) {
+                    it.remove();
+                }
+            }
+        }
     }
 }

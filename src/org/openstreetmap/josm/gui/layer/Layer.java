@@ -22,6 +22,8 @@ import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -41,7 +43,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @author imi
  */
-abstract public class Layer implements Destroyable, MapViewPaintable {
+abstract public class Layer implements Destroyable, MapViewPaintable, ProjectionChangeListener {
 
     public interface LayerAction {
         boolean supportLayers(List<Layer> layers);
@@ -360,5 +362,13 @@ abstract public class Layer implements Destroyable, MapViewPaintable {
         public void actionPerformed(ActionEvent e) {
             new GpxExportAction().export(layer);
         }
+    }
+
+    /* --------------------------------------------------------------------------------- */
+    /* interface ProjectionChangeListener                                                */
+    /* --------------------------------------------------------------------------------- */
+    @Override
+    public void projectionChanged(Projection oldValue, Projection newValue) {
+        // default implementation does nothing - override in subclasses
     }
 }

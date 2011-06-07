@@ -6,9 +6,10 @@ package org.openstreetmap.josm.data.gpx;
 import java.awt.Color;
 import java.util.Date;
 
-import org.openstreetmap.josm.data.coor.CachedLatLon;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.tools.PrimaryDateParser;
 
 public class WayPoint extends WithAttributes implements Comparable<WayPoint> {
@@ -25,22 +26,62 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint> {
     public int dir;
 
     public WayPoint(LatLon ll) {
-        coor = new CachedLatLon(ll);
+        lat = ll.lat();
+        lon = ll.lon();
     }
 
-    private final CachedLatLon coor;
+    /*
+     * We "inline" lat/lon, rather than usinga LatLon internally => reduces memory overhead. Relevant
+     * because a lot of GPX waypoints are created when GPS tracks are downloaded from the OSM server.
+     */
+    private double lat = 0;
+    private double lon = 0;
+
+    /*
+     * internal cache of projected coordinates
+     */
+    private double east = Double.NaN;
+    private double north = Double.NaN;
+
+    /**
+     * Invalidate the internal cache of east/north coordinates.
+     */
+    public void invalidateEastNorthCache() {
+        this.east = Double.NaN;
+        this.north = Double.NaN;
+    }
 
     public final LatLon getCoor() {
-        return coor;
+        return new LatLon(lat,lon);
     }
 
+    /**
+     * <p>Replies the projected east/north coordinates.</p>
+     * 
+     * <p>Uses the {@link Main#getProjection() global projection} to project the lan/lon-coordinates.
+     * Internally caches the projected coordinates.</p>
+     *
+     * <p><strong>Caveat:</strong> doesn't listen to projection changes. Clients must
+     * {@link #reproject() trigger a reprojection} or {@link #invalidateEastNorthCache() invalidate the internal cache}.</p>
+     * 
+     * @return the east north coordinates or {@code null}
+     * @see #invalidateEastNorthCache()
+     * 
+     */
     public final EastNorth getEastNorth() {
-        return coor.getEastNorth();
+        if (Double.isNaN(east) || Double.isNaN(north)) {
+            // projected coordinates haven't been calculated yet,
+            // so fill the cache of the projected waypoint coordinates
+            EastNorth en = Projections.project(new LatLon(lat, lon));
+            this.east = en.east();
+            this.north = en.north();
+        }
+        return new EastNorth(east, north);
     }
 
     @Override
     public String toString() {
-        return "WayPoint (" + (attr.containsKey("name") ? attr.get("name") + ", " :"") + coor.toString() + ", " + attr + ")";
+        return "WayPoint (" + (attr.containsKey("name") ? attr.get("name") + ", " :"") + getCoor().toString() + ", " + attr + ")";
     }
 
     /**
@@ -56,8 +97,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint> {
         }
     }
 
-    public int compareTo(WayPoint w)
-    {
+    public int compareTo(WayPoint w) {
         return Double.compare(time, w.time);
     }
 

@@ -71,11 +71,11 @@ public class WMSGrabber extends Grabber {
 
     protected URL getURL(double w, double s,double e,double n,
             int wi, int ht) throws MalformedURLException {
-        String myProj = Main.proj.toCode();
-        if(Main.proj instanceof Mercator) // don't use mercator code directly
+        String myProj = Main.getProjection().toCode();
+        if(Main.getProjection() instanceof Mercator) // don't use mercator code directly
         {
-            LatLon sw = Main.proj.eastNorth2latlon(new EastNorth(w, s));
-            LatLon ne = Main.proj.eastNorth2latlon(new EastNorth(e, n));
+            LatLon sw = Main.getProjection().eastNorth2latlon(new EastNorth(w, s));
+            LatLon ne = Main.getProjection().eastNorth2latlon(new EastNorth(e, n));
             myProj = "EPSG:4326";
             s = sw.lat();
             w = sw.lon();
@@ -113,8 +113,8 @@ public class WMSGrabber extends Grabber {
 
     static public String getProjection(String baseURL, Boolean warn)
     {
-        String projname = Main.proj.toCode();
-        if(Main.proj instanceof Mercator) {
+        String projname = Main.getProjection().toCode();
+        if(Main.getProjection() instanceof Mercator) {
             projname = "EPSG:4326";
         }
         String res = "";
@@ -145,13 +145,13 @@ public class WMSGrabber extends Grabber {
 
     @Override
     public boolean loadFromCache(WMSRequest request) {
-        BufferedImage cached = layer.cache.getExactMatch(Main.proj, pixelPerDegree, b.minEast, b.minNorth);
+        BufferedImage cached = layer.cache.getExactMatch(Main.getProjection(), pixelPerDegree, b.minEast, b.minNorth);
 
         if (cached != null) {
             request.finish(State.IMAGE, cached);
             return true;
         } else if (request.isAllowPartialCacheMatch()) {
-            BufferedImage partialMatch = layer.cache.getPartialMatch(Main.proj, pixelPerDegree, b.minEast, b.minNorth);
+            BufferedImage partialMatch = layer.cache.getPartialMatch(Main.getProjection(), pixelPerDegree, b.minEast, b.minNorth);
             if (partialMatch != null) {
                 request.finish(State.PARTLY_IN_CACHE, partialMatch);
                 return true;
@@ -193,7 +193,7 @@ public class WMSGrabber extends Grabber {
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         BufferedImage img = layer.normalizeImage(ImageIO.read(bais));
         bais.reset();
-        layer.cache.saveToCache(layer.isOverlapEnabled()?img:null, bais, Main.proj, pixelPerDegree, b.minEast, b.minNorth);
+        layer.cache.saveToCache(layer.isOverlapEnabled()?img:null, bais, Main.getProjection(), pixelPerDegree, b.minEast, b.minNorth);
         return img;
     }
 

@@ -36,7 +36,7 @@ public class MergeSourceBuildingVisitorTest {
 
     @BeforeClass
     public static void setUp() {
-        Main.proj = new Mercator();
+        Main.setProjection(new Mercator());
         Main.pref = new Preferences();
     }
 

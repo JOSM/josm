@@ -1,42 +1,59 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
+import org.openstreetmap.josm.data.projection.Projections;
 
 public class NodeData extends PrimitiveData implements INode {
 
-    private final CachedLatLon coor = new CachedLatLon(0, 0);
+    /*
+     * we "inline" lat/lon coordinates instead of using a LatLon => reduces memory footprint
+     */
+    private double lat = Double.NaN;
+    private double lon = Double.NaN;
 
-    public NodeData() {
-
-    }
+    public NodeData() {}
 
     public NodeData(NodeData data) {
         super(data);
         setCoor(data.getCoor());
     }
 
+    private boolean isLatLonKnown() {
+        return lat != Double.NaN && lon != Double.NaN;
+    }
+    
     @Override
     public LatLon getCoor() {
-        return coor;
+        return isLatLonKnown() ? new LatLon(lat,lon) : null;
     }
 
     @Override
     public void setCoor(LatLon coor) {
-        this.coor.setCoor(coor);
+        if (coor == null) {
+            this.lat = Double.NaN;
+            this.lon = Double.NaN;
+        } else {
+            this.lat = coor.lat();
+            this.lon = coor.lon();
+        }
     }
 
     @Override
     public EastNorth getEastNorth() {
-        return this.coor.getEastNorth();
+        /*
+         * No internal caching of projected coordinates needed. In contrast to getEastNorth()
+         * on Node, this method is rarely used. Caching would be overkill.
+         */
+        return Projections.project(getCoor());
     }
 
     @Override
     public void setEastNorth(EastNorth eastNorth) {
-        this.coor.setEastNorth(eastNorth);
+        LatLon ll = Projections.inverseProject(eastNorth);
+        setCoor(ll);
     }
 
     @Override
@@ -46,15 +63,15 @@ public class NodeData extends PrimitiveData implements INode {
 
     @Override
     public String toString() {
-        return super.toString() + " NODE " + coor;
+        return super.toString() + " NODE " + getCoor();
     }
 
     @Override
     public OsmPrimitiveType getType() {
         return OsmPrimitiveType.NODE;
     }
-    
-    @Override 
+
+    @Override
     public void visit(PrimitiveVisitor visitor) {
         visitor.visit(this);
     }
@@ -63,5 +80,4 @@ public class NodeData extends PrimitiveData implements INode {
     public String getDisplayName(NameFormatter formatter) {
         return formatter.format(this);
     }
-
 }
