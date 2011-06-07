@@ -257,7 +257,6 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
      */
     public IconToggleButton addToggleDialog(final ToggleDialog dlg) {
         final IconToggleButton button = new IconToggleButton(dlg.getToggleAction());
-        toolBarToggle.add(button);
         button.addMouseListener(new PopupMenuLauncher(new JPopupMenu() {
             {
                 add(new AbstractAction() {
@@ -269,16 +268,29 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         dlg.hideButton();
+                        validateToolBarToggle();
                     }
                 });
             }
         }));
         dlg.setButton(button);
+        if (button.isVisible()) {
+            toolBarToggle.add(button);
+        }
         allDialogs.add(dlg);
         if (dialogsPanel.initialized) {
             dialogsPanel.add(dlg);
         }
         return button;
+    }
+    
+    public void validateToolBarToggle() {
+        toolBarToggle.removeAll();
+        for (ToggleDialog dlg : allDialogs) {
+            if (dlg.getButton().isVisible()) {
+                toolBarToggle.add(dlg.getButton());
+            }
+        }
     }
 
     public void addMapMode(IconToggleButton b) {
@@ -380,8 +392,10 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
                     public void actionPerformed(ActionEvent e) {
                         if ((Boolean) getValue(SELECTED_KEY)) {
                             t.showButton();
+                            validateToolBarToggle();
                         } else {
                             t.hideButton();
+                            validateToolBarToggle();
                         }
                     }
                 }));
