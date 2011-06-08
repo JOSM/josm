@@ -182,6 +182,7 @@ public class MirroredInputStream extends InputStream {
 
     private File checkLocal(URL url, String destDir, long maxTime) throws IOException {
         String prefKey = getPrefKey(url, destDir);
+        long age = 0L;
         File file = null;
         // FIXME: replace with normal getCollection after july 2011
         Collection<String> localPathEntry = Main.pref.getCollectionOld(prefKey, ";");
@@ -194,7 +195,8 @@ public class MirroredInputStream extends InputStream {
                 if (maxTime <= 0) {
                     maxTime = Main.pref.getInteger("mirror.maxtime", 7*24*60*60);
                 }
-                if (System.currentTimeMillis() - Long.parseLong(lp[0]) < maxTime*1000) {
+                age = System.currentTimeMillis() - Long.parseLong(lp[0]);
+                if (age < maxTime*1000) {
                     return file;
                 }
             }
@@ -230,6 +232,14 @@ public class MirroredInputStream extends InputStream {
             destDirFile.renameTo(file);
             Main.pref.putCollection(prefKey, Arrays.asList(new String[]
             {Long.toString(System.currentTimeMillis()), file.toString()}));
+        } catch (IOException e) {
+            if (age > maxTime*1000 && age < maxTime*1000*2) {
+                System.out.println(tr("Failed to load {0}, use cached file and retry next time: {1}",
+                url, e));
+                return file;
+            } else {
+                throw e;
+            }
         } finally {
             if (bis != null) {
                 try {
