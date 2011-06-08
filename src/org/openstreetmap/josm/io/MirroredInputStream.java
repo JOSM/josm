@@ -233,7 +233,7 @@ public class MirroredInputStream extends InputStream {
             Main.pref.putCollection(prefKey, Arrays.asList(new String[]
             {Long.toString(System.currentTimeMillis()), file.toString()}));
         } catch (IOException e) {
-            if (age > maxTime*1000 && age < maxTime*1000*2) {
+            if (age >= maxTime*1000 && age < maxTime*1000*2) {
                 System.out.println(tr("Failed to load {0}, use cached file and retry next time: {1}",
                 url, e));
                 return file;
