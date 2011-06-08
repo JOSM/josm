@@ -25,6 +25,18 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint> {
     public boolean drawLine;
     public int dir;
 
+    public WayPoint(WayPoint p) {
+        attr.putAll(p.attr);
+        lat = p.lat;
+        lon = p.lon;
+        east = p.east;
+        north = p.north;
+        time = p.time;
+        customColoring = p.customColoring;
+        drawLine = p.drawLine;
+        dir = p.dir;
+    }
+
     public WayPoint(LatLon ll) {
         lat = ll.lat();
         lon = ll.lon();

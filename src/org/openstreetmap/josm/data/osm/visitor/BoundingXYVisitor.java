@@ -66,7 +66,7 @@ public class BoundingXYVisitor extends AbstractVisitor {
             if(latlon instanceof CachedLatLon) {
                 visit(((CachedLatLon)latlon).getEastNorth());
             } else {
-                visit(Main.proj.latlon2eastNorth(latlon));
+                visit(Main.getProjection().latlon2eastNorth(latlon));
             }
         }
     }
