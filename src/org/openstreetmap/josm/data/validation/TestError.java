@@ -222,7 +222,7 @@ public class TestError {
      * @return The command to fix the error
      */
     public Command getFix() {
-        if (tester == null)
+        if (tester == null || !tester.isFixable(this))
             return null;
 
         return tester.fixError(this);
