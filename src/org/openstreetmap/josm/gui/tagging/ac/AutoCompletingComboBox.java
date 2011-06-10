@@ -69,23 +69,23 @@ public class AutoCompletingComboBox extends JComboBox {
             int end = start;
             String curText = getText(0, size);
 
-            // if the text starts with a number we don't autocomplete
+            // item for lookup and selection
+            Object item = null;
+            // if the text is a number we don't autocomplete
             if (Main.pref.getBoolean("autocomplete.dont_complete_numbers", true)) {
                 try {
                     Long.parseLong(str);
-                    if (curText.length() == 0)
-                        // we don't autocomplete on numbers
-                        return;
-                    Long.parseLong(curText);
-                    return;
+                    if (curText.length() != 0)
+                        Long.parseLong(curText);
                 } catch (NumberFormatException e) {
                     // either the new text or the current text isn't a number. We continue with
                     // autocompletion
+                    item = lookupItem(curText);
                 }
+            } else {
+                item = lookupItem(curText);
             }
 
-            // lookup and select a matching item
-            Object item = lookupItem(curText);
             setSelectedItem(item);
             if (initial) {
                 start = 0;

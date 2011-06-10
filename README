@@ -34,7 +34,7 @@ you don't used the latest version.)
 
 Under Linux open a shell, go to the file directory and type
 "java -jar josm-latest.jar" to launch. If this don't help, try to set
-you JAVA_HOME variable to the java location (the root location, not
+your JAVA_HOME variable to the java location (the root location, not
 the bin)
 
 MacOS people just click on the jar-file.

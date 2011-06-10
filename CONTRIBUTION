@@ -33,10 +33,6 @@ Most icons have been nicked from GNOME and the GIMP, both
 under GPL. Some are originally LGPL but redistributed here under 
 GPL. The world image is from onearth.pl.
 
-The gettext-commons-0.9.jar is from Felix Berger and Steffen 
-Pingel (http://xnap-commons.sourceforge.net/gettext-commons/).
-The jar file is licensed under LGPL.
-
 The Bzip2 code is from Keiron Liddle (Apache project) and licensed
 with Apache license version 2.0.
 
