@@ -333,6 +333,20 @@ public class Geometry {
             return new EastNorth(segmentP1.getX() + ldx * offset, segmentP1.getY() + ldy * offset);
     }
 
+    public static EastNorth closestPointToLine(EastNorth lineP1, EastNorth lineP2, EastNorth point) {
+        double ldx = lineP2.getX() - lineP1.getX();
+        double ldy = lineP2.getY() - lineP1.getY();
+
+        if (ldx == 0 && ldy == 0) //segment zero length
+            return lineP1;
+
+        double pdx = point.getX() - lineP1.getX();
+        double pdy = point.getY() - lineP1.getY();
+
+        double offset = (pdx * ldx + pdy * ldy) / (ldx * ldx + ldy * ldy);
+        return new EastNorth(lineP1.getX() + ldx * offset, lineP1.getY() + ldy * offset);
+    }
+
     /**
      * This method tests if secondNode is clockwise to first node.
      * @param commonNode starting point for both vectors

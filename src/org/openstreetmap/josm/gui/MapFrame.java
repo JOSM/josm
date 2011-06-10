@@ -40,6 +40,7 @@ import org.openstreetmap.josm.actions.mapmode.DeleteAction;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.mapmode.ExtrudeAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
+import org.openstreetmap.josm.actions.mapmode.ParallelWayAction;
 import org.openstreetmap.josm.actions.mapmode.SelectAction;
 import org.openstreetmap.josm.actions.mapmode.ZoomAction;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
@@ -128,9 +129,10 @@ public class MapFrame extends JPanel implements Destroyable, LayerChangeListener
         toolBarActions.setFloatable(false);
         addMapMode(new IconToggleButton(new SelectAction(this)));
         addMapMode(new IconToggleButton(new DrawAction(this)));
-        addMapMode(new IconToggleButton(new ExtrudeAction(this)));
         addMapMode(new IconToggleButton(new ZoomAction(this)));
         addMapMode(new IconToggleButton(new DeleteAction(this)));
+        addMapMode(new IconToggleButton(new ExtrudeAction(this)));
+        addMapMode(new IconToggleButton(new ParallelWayAction(this)));
 
         toolGroup.setSelected(((AbstractButton)toolBarActions.getComponent(0)).getModel(), true);
 

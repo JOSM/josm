@@ -26,6 +26,14 @@ public class EastNorth extends Coordinate {
         return new EastNorth(x+dx, y+dy);
     }
 
+    public EastNorth add(EastNorth other) {
+        return new EastNorth(x+other.x, y+other.y);
+    }
+
+    public EastNorth scale(double s) {
+        return new EastNorth(s * x, s * y);
+    }
+
     public EastNorth interpolate(EastNorth en2, double proportion) {
         return new EastNorth(this.x + proportion * (en2.x - this.x),
             this.y + proportion * (en2.y - this.y));
