@@ -101,7 +101,6 @@ public class CreateMultipolygonAction extends JosmAction {
             List<Command> list = this.removeTagsFromInnerWays(relation);
             list.add(new AddCommand(relation));
             Main.main.undoRedo.add(new SequenceCommand(tr("Create multipolygon"), list));
-            Main.map.relationListDialog.unfurlDialog();
             // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
             // knows about the new relation before we try to select it.
             // (Yes, we are already in event dispatch thread. But DatasetEventManager
