@@ -103,6 +103,7 @@ public class PluginHandler {
             new DeprecatedPlugin("imagery", IN_CORE),
             new DeprecatedPlugin("slippymap", IN_CORE),
             new DeprecatedPlugin("wmsplugin", IN_CORE),
+            new DeprecatedPlugin("ParallelWay", IN_CORE),
         });
     }
 
