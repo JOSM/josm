@@ -104,6 +104,7 @@ public class PluginHandler {
             new DeprecatedPlugin("slippymap", IN_CORE),
             new DeprecatedPlugin("wmsplugin", IN_CORE),
             new DeprecatedPlugin("ParallelWay", IN_CORE),
+            new DeprecatedPlugin("dumbutils", tr("replaced by new {0} plugin","utilsplugin2")),
         });
     }
 
