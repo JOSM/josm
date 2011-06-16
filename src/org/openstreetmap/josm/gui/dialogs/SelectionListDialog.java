@@ -623,6 +623,13 @@ public class SelectionListDialog extends ToggleDialog  {
             sort();
             fireContentsChanged(this, 0, getSize());
             remember(selection);
+            double dist = -1;
+            if(this.selection.size() == 1) {
+                OsmPrimitive o = this.selection.get(0);
+                if(o instanceof Way)
+                   dist = ((Way)o).getLength();
+            }
+            Main.map.statusLine.setDist(dist);
         }
 
         /**

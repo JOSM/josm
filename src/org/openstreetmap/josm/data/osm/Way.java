@@ -531,4 +531,17 @@ public final class Way extends OsmPrimitive implements IWay {
     public boolean isDrawable() {
         return super.isDrawable() && !hasIncompleteNodes();
     }
+
+
+    /* since revision 4138 */
+    public double getLength() {
+        double length = 0;
+        Node lastN = null;
+        for (Node n:nodes) {
+            if(lastN != null)
+                length += n.getCoor().greatCircleDistance(lastN.getCoor());
+            lastN = n;
+        }
+        return length;
+    }
 }
