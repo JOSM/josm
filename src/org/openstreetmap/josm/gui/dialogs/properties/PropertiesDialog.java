@@ -309,6 +309,25 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         if (key.equals(newkey) || value == null) {
             Main.main.undoRedo.add(new ChangePropertyCommand(sel, newkey, value));
         } else {
+            for (OsmPrimitive osm: sel) {
+                if(osm.get(newkey) != null) {
+                    ExtendedDialog ed = new ExtendedDialog(
+                            Main.parent,
+                            tr("Overwrite key"),
+                            new String[]{tr("Replace"), tr("Cancel")});
+                    ed.setButtonIcons(new String[]{"purge", "cancel"});
+                    ed.setContent(tr("You changed the key from ''{0}'' to ''{1}''.\n"
+                    + "The new key is already used, overwrite values?", key, newkey));
+                    ed.setCancelButton(2);
+                    ed.toggleEnable("overwriteEditKey");
+                    ed.showDialog();
+
+                    if (ed.getValue() != 1) {
+                        return;
+                    }
+                    break;
+                }
+            }
             Collection<Command> commands=new Vector<Command>();
             commands.add(new ChangePropertyCommand(sel, key, null));
             if (value.equals(tr("<different>"))) {
@@ -1257,6 +1276,4 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
             ));
         }
     }
-
-
 }
