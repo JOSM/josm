@@ -67,6 +67,20 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
     };
     JMenuItem singleOffset = new JMenuItem(offsetAction);
     JMenuItem offsetMenuItem = singleOffset;
+    Map_Rectifier_WMSmenuAction rectaction = new Map_Rectifier_WMSmenuAction();
+    JosmAction blankmenu = new JosmAction(
+            tr("Blank Layer"), "blankmenu", tr("Open a blank WMS layer to load data from a file"), null, false) {
+        @Override
+        public void actionPerformed(ActionEvent ev) {
+            if (!isEnabled()) return;
+            Main.main.addLayer(new WMSLayer());
+        }
+
+        @Override
+        protected void updateEnabledState() {
+            setEnabled(Main.map != null && Main.map.mapView != null && !Main.map.mapView.getAllLayers().isEmpty());
+        }
+    };
     int offsPos;
 
     public ImageryMenu() {
@@ -82,25 +96,13 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
             add(new AddImageryLayerAction(u));
         }
         addSeparator();
-        add(new JMenuItem(new Map_Rectifier_WMSmenuAction()));
+        add(new JMenuItem(rectaction));
 
         addSeparator();
         offsPos = getMenuComponentCount();
         add(offsetMenuItem);
         addSeparator();
-        add(new JMenuItem(new JosmAction(
-                tr("Blank Layer"), "blankmenu", tr("Open a blank WMS layer to load data from a file"), null, false) {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                if (!isEnabled()) return;
-                Main.main.addLayer(new WMSLayer());
-            }
-
-            @Override
-            protected void updateEnabledState() {
-                setEnabled(Main.map != null && Main.map.mapView != null && !Main.map.mapView.getAllLayers().isEmpty());
-            }
-        }));
+        add(new JMenuItem(blankmenu));
     }
 
     private JMenuItem getNewOffsetMenu(){

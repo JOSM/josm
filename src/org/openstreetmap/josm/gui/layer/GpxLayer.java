@@ -461,9 +461,9 @@ public class GpxLayer extends Layer {
         }
 
         LinkedList<WayPoint> visibleSegments = new LinkedList<WayPoint>();
+        WayPoint last = null;
         for (GpxTrack trk: data.tracks) {
             for (GpxTrackSegment trkSeg: trk.getSegments()) {
-                WayPoint last = null;
                 for(WayPoint pt : trkSeg.getWayPoints())
                 {
                     Bounds b = new Bounds(pt.getCoor());
