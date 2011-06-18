@@ -4,13 +4,17 @@ package org.openstreetmap.josm.actions.mapmode;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.AWTEvent;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -50,7 +54,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
-    enum Mode { extrude, translate, select }
+    enum Mode { extrude, translate, select, create_new }
 
     private Mode mode = Mode.select;
 
@@ -97,6 +101,25 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
      */
     private MoveCommand moveCommand;
 
+    /** The cursor for the 'create_new' mode. */
+    private final Cursor cursorCreateNew;
+
+    /**
+     * This listener is used to indicate the 'create_new' mode, if the Alt modifier is pressed.
+     */
+    private final AWTEventListener altKeyListener = new AWTEventListener() {
+        @Override
+        public void eventDispatched(AWTEvent e) {
+            if(Main.map == null || Main.map.mapView == null || !Main.map.mapView.isActiveLayerDrawable())
+                return;
+            InputEvent ie = (InputEvent) e;
+            boolean alt = (ie.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
+            if(mode == Mode.select) {
+                Main.map.mapView.setNewCursor(alt ? cursorCreateNew : cursor, this);
+            }
+        }
+    };
+
     /**
      * Create a new SelectAction
      * @param mapFrame The MapFrame this action belongs to.
@@ -109,6 +132,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         putValue("help", ht("/Action/Extrude"));
         initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay",200);
         selectedColor = PaintColors.SELECTED.get();
+        cursorCreateNew = ImageProvider.getCursor("normal", "rectangle_plus");
     }
 
     @Override public String getModeHelpText() {
@@ -116,8 +140,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
             return tr("Move a segment along its normal, then release the mouse button.");
         else if (mode == Mode.extrude)
             return tr("Draw a rectangle of the desired size, then release the mouse button.");
+        else if (mode == Mode.create_new)
+            return tr("Draw a rectangle of the desired size, then release the mouse button.");
         else
-            return tr("Drag a way segment to make a rectangle. Ctrl-drag to move a segment along its normal.");
+            return tr("Drag a way segment to make a rectangle. Ctrl-drag to move a segment along its normal, " +
+            "Alt-drag to create a new rectangle, double click to add a new node.");
     }
 
     @Override public boolean layerIsSupported(Layer l) {
@@ -128,18 +155,26 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         super.enterMode();
         Main.map.mapView.addMouseListener(this);
         Main.map.mapView.addMouseMotionListener(this);
+        try {
+            Toolkit.getDefaultToolkit().addAWTEventListener(altKeyListener, AWTEvent.KEY_EVENT_MASK);
+        } catch (SecurityException ex) {
+        }
     }
 
     @Override public void exitMode() {
         Main.map.mapView.removeMouseListener(this);
         Main.map.mapView.removeMouseMotionListener(this);
         Main.map.mapView.removeTemporaryLayer(this);
+        try {
+            Toolkit.getDefaultToolkit().removeAWTEventListener(altKeyListener);
+        } catch (SecurityException ex) {
+        }
         super.exitMode();
     }
 
     /**
      * If the left mouse button is pressed over a segment, switch
-     * to either extrude or translate mode depending on whether Ctrl is held.
+     * to either extrude, translate or create_new mode depending on whether Ctrl or Alt is held.
      */
     @Override public void mousePressed(MouseEvent e) {
         if(!Main.map.mapView.isActiveLayerVisible())
@@ -158,6 +193,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
             if ((e.getModifiers() & ActionEvent.CTRL_MASK) != 0) {
                 mode = Mode.translate;
+            } else if ((e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0) {
+                mode = Mode.create_new;
+                // create a new segment and then select and extrude the new segment
+                getCurrentDataSet().setSelected(selectedSegment.way);
+                alwaysCreateNodes = true;
             } else {
                 mode = Mode.extrude;
                 getCurrentDataSet().setSelected(selectedSegment.way);
@@ -224,7 +264,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         if (mode == Mode.select) {
             // Just sit tight and wait for mouse to be released.
         } else {
-            //move and extrude mode - move the selected segment
+            //move, create new and extrude mode - move the selected segment
 
             EastNorth initialMouseEn = Main.map.mapView.getEastNorth(initialMousePos.x, initialMousePos.y);
             EastNorth mouseEn = Main.map.mapView.getEastNorth(e.getPoint().x, e.getPoint().y);
@@ -260,7 +300,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
 
             Main.map.mapView.setNewCursor(Cursor.MOVE_CURSOR, this);
 
-            if (mode == Mode.extrude) {
+            if (mode == Mode.extrude || mode == Mode.create_new) {
                 //nothing here
             } else if (mode == Mode.translate) {
                 //move nodes to new position
@@ -292,8 +332,45 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
         if (mode == Mode.select) {
             // Nothing to be done
         } else {
-            if (mode == Mode.extrude) {
+            if (mode == Mode.create_new) {
                 if (e.getPoint().distance(initialMousePos) > 10 && newN1en != null) {
+                    // crete a new rectangle
+                    Collection<Command> cmds = new LinkedList<Command>();
+                    Node third = new Node(newN2en);
+                    Node fourth = new Node(newN1en);
+                    Way wnew = new Way();
+                    wnew.addNode(selectedSegment.getFirstNode());
+                    wnew.addNode(selectedSegment.getSecondNode());
+                    wnew.addNode(third);
+                    wnew.addNode(fourth);
+                    // ... and close the way
+                    wnew.addNode(selectedSegment.getFirstNode());
+                    // undo support
+                    cmds.add(new AddCommand(third));
+                    cmds.add(new AddCommand(fourth));
+                    cmds.add(new AddCommand(wnew));
+                    Command c = new SequenceCommand(tr("Extrude Way"), cmds);
+                    Main.main.undoRedo.add(c);
+                    getCurrentDataSet().setSelected(wnew);
+                }
+            } else if (mode == Mode.extrude) {
+                if( e.getClickCount() == 2 && e.getPoint().equals(initialMousePos) ) {
+                    // double click add a new node
+                    // Should maybe do the same as in DrawAction and fetch all nearby segments?
+                    WaySegment ws = Main.map.mapView.getNearestWaySegment(e.getPoint(), OsmPrimitive.isSelectablePredicate);
+                    if (ws != null) {
+                        Node n = new Node(Main.map.mapView.getLatLon(e.getX(), e.getY()));
+                        EastNorth A = ws.getFirstNode().getEastNorth();
+                        EastNorth B = ws.getSecondNode().getEastNorth();
+                        n.setEastNorth(Geometry.closestPointToSegment(A, B, n.getEastNorth()));
+                        Way wnew = new Way(ws.way);
+                        wnew.addNode(ws.lowerIndex+1, n);
+                        SequenceCommand cmds = new SequenceCommand(tr("Add a new node to an existing way"),
+                                new AddCommand(n), new ChangeCommand(ws.way, wnew));
+                        Main.main.undoRedo.add(cmds);
+                    }
+                }
+                else if (e.getPoint().distance(initialMousePos) > 10 && newN1en != null) {
                     // create extrusion
 
                     Collection<Command> cmds = new LinkedList<Command>();
@@ -348,8 +425,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                 //the move command is already committed in mouseDragged
             }
 
+            boolean alt = (e.getModifiers() & (ActionEvent.ALT_MASK|InputEvent.ALT_GRAPH_MASK)) != 0;
             // Switch back into select mode
-            Main.map.mapView.setNewCursor(cursor, this);
+            Main.map.mapView.setNewCursor(alt ? cursorCreateNew : cursor, this);
             Main.map.mapView.removeTemporaryLayer(this);
             selectedSegment = null;
             moveCommand = null;
@@ -438,7 +516,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable {
                 Point p3 = mv.getPoint(newN1en);
                 Point p4 = mv.getPoint(newN2en);
 
-                if (mode == Mode.extrude) {
+                if (mode == Mode.extrude || mode == Mode.create_new) {
                     // Draw rectangle around new area.
                     GeneralPath b = new GeneralPath();
                     b.moveTo(p1.x, p1.y); b.lineTo(p3.x, p3.y);
