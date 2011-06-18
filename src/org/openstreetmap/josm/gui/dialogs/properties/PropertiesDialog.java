@@ -432,7 +432,9 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
         p2.add(values, BorderLayout.CENTER);
         if (itemToSelect != null) {
             keys.setSelectedItem(itemToSelect);
-            values.setSelectedItem(lastAddValue);
+            /* don't add single chars, as they are no properly selected */
+            if(lastAddValue != null && lastAddValue.length() > 1)
+                values.setSelectedItem(lastAddValue);
         }
 
         FocusAdapter focus = addFocusAdapter(-1, keys, values, autocomplete);
