@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -16,8 +17,10 @@ public class HistoryInfoAction extends AbstractInfoAction {
         super(tr("Object history"), "about",
                 tr("Display history information about OSM ways, nodes, or relations."),
                 Shortcut.registerShortcut("core:history",
-                        tr("Object history"), KeyEvent.VK_H, Shortcut.GROUP_HOTKEY), true);
+                        tr("Object history"), KeyEvent.VK_H, Shortcut.GROUP_HOTKEY), false);
         putValue("help", ht("/Action/ObjectHistory"));
+        putValue("toolbar", "action/historyinfo");
+        Main.toolbar.register(this);
     }
 
     @Override

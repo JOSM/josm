@@ -251,6 +251,8 @@ public class MainApplication extends Main {
         } else {
             // Main.debug("Main window not maximized");
         }
+        if(main.menu.fullscreenToggleAction != null)
+            main.menu.fullscreenToggleAction.initial();
 
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {

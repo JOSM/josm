@@ -29,7 +29,9 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class JumpToAction extends JosmAction implements MouseListener {
     public JumpToAction() {
         super(tr("Jump To Position"), null, tr("Opens a dialog that allows to jump to a specific location"), Shortcut.registerShortcut("tools:jumpto", tr("Tool: {0}", tr("Jump To Position")),
-        KeyEvent.VK_G, Shortcut.GROUP_HOTKEY), true);
+        KeyEvent.VK_G, Shortcut.GROUP_HOTKEY), false);
+        putValue("toolbar", "action/jumpto");
+        Main.toolbar.register(this);
     }
 
     private JTextField url = new JTextField();

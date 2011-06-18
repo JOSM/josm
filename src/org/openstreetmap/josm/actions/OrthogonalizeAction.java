@@ -80,7 +80,9 @@ public final class OrthogonalizeAction extends JosmAction {
                     tr("Undo orthogonalization for certain nodes"),
                     Shortcut.registerShortcut("tools:orthogonalizeUndo", tr("Tool: {0}", tr("Orthogonalize Shape / Undo")),
                             KeyEvent.VK_Q,
-                            Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), true);
+                            Shortcut.GROUP_EDIT, Shortcut.SHIFT_DEFAULT), false);
+            putValue("toolbar", "action/orthogonalize/undo");
+            Main.toolbar.register(this);
         }
         public void actionPerformed(ActionEvent e) {
             if (!isEnabled())

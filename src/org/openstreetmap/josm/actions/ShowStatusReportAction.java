@@ -43,6 +43,7 @@ public final class ShowStatusReportAction extends JosmAction {
                         tr("Show Status Report")), KeyEvent.VK_R, Shortcut.GROUP_NONE), true);
 
         putValue("help", ht("/Action/ShowStatusReport"));
+        putValue("toolbar", "help/showstatusreport");
     }
 
     public static String getReportHeader()

@@ -36,9 +36,11 @@ public class FullscreenToggleAction extends JosmAction {
                 null, /* no icon */
                 tr("Toggle fullscreen view"),
                 Shortcut.registerShortcut("menu:view:fullscreen", tr("Toggle fullscreen view"),KeyEvent.VK_F11, Shortcut.GROUP_DIRECT),
-                true /* register shortcut */
+                false /* register */
         );
         putValue("help", ht("/Action/FullscreenView"));
+        putValue("toolbar", "fullscreen");
+        Main.toolbar.register(this);
         gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         selected = Main.pref.getBoolean("draw.fullscreen", false);
         notifySelectedState();
@@ -76,7 +78,15 @@ public class FullscreenToggleAction extends JosmAction {
         selected = !selected;
         Main.pref.put("draw.fullscreen", selected);
         notifySelectedState();
+        setMode();
+    }
 
+    public void initial() {
+        if(selected)
+            setMode();
+    }
+
+    protected void setMode() {
         Frame frame = (Frame) Main.parent;
 
         List<Window> visibleWindows = new ArrayList<Window>();

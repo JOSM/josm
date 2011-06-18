@@ -195,7 +195,7 @@ public class MainMenu extends JMenuBar {
     public final JumpToAction jumpToAct = new JumpToAction();
 
     public final TaggingPresetSearchAction presetSearchAction = new TaggingPresetSearchAction();
-
+    public FullscreenToggleAction fullscreenToggleAction = null;
     /**
      * Add a JosmAction to a menu.
      *
@@ -303,7 +303,7 @@ public class MainMenu extends JMenuBar {
 
         if(!Main.applet) {
             // -- fullscreen toggle action
-            FullscreenToggleAction fullscreenToggleAction = new FullscreenToggleAction();
+            fullscreenToggleAction = new FullscreenToggleAction();
             if (fullscreenToggleAction.canFullscreen()) {
                 final JCheckBoxMenuItem fullscreen = new JCheckBoxMenuItem(fullscreenToggleAction);
                 viewMenu.addSeparator();

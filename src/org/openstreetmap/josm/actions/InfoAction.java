@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 
 import java.awt.event.KeyEvent;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -16,8 +17,10 @@ public class InfoAction extends AbstractInfoAction {
         super(tr("Info about Element"), "about",
                 tr("Display object information about OSM nodes, ways, or relations."),
                 Shortcut.registerShortcut("core:information",
-                        tr("Info about Element"), KeyEvent.VK_I, Shortcut.GROUP_HOTKEY), true);
+                        tr("Info about Element"), KeyEvent.VK_I, Shortcut.GROUP_HOTKEY), false);
         putValue("help", ht("/Action/InfoAboutElements"));
+        putValue("toolbar", "action/info");
+        Main.toolbar.register(this);
     }
 
     @Override

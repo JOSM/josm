@@ -23,6 +23,7 @@ public class HelpAction extends AbstractAction {
 
     public HelpAction() {
         super(tr("Help"), ImageProvider.get("help"));
+        putValue("toolbar", "help");
     }
 
     public void actionPerformed(ActionEvent e) {

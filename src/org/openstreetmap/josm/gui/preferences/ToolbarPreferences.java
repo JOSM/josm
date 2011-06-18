@@ -242,7 +242,10 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         public String saveAction(ActionDefinition action) {
             result.setLength(0);
 
-            escape((String) action.getAction().getValue("toolbar"));
+            String val = (String) action.getAction().getValue("toolbar");
+            if(val == null)
+                return null;
+            escape(val);
             if (action.getAction() instanceof ParameterizedAction) {
                 result.append('(');
                 List<ActionParameter<?>> params = ((ParameterizedAction)action.getAction()).getActionParameters();
@@ -752,7 +755,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 if (action.isSeparator()) {
                     t.add("|");
                 } else {
-                    t.add(parser.saveAction(action));
+                    String res = parser.saveAction(action);
+                    if(res != null)
+                        t.add(res);
                 }
             }
             if (t.isEmpty()) {
@@ -782,7 +787,18 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 if (menuItem.getAction() != null) {
                     Action action = menuItem.getAction();
                     userObject = action;
-                    actions.put((String) action.getValue("toolbar"), action);
+                    String toolbar = (String) action.getValue("toolbar");
+                    if(toolbar == null) {
+                        System.out.println(tr("Toolbar action without name: {0}",
+                        action.getClass().getName()));
+                    } else {
+                        Action r = actions.get(toolbar);
+                        if(r != null &&  r != action) {
+                            System.out.println(tr("Toolbar action {0} overwritten: {1} gets {2}",
+                            toolbar, r.getClass().getName(), action.getClass().getName()));
+                        }
+                    }
+                    actions.put(toolbar, action);
                 } else {
                     userObject = menuItem.getText();
                 }
@@ -861,7 +877,18 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
      * @return The parameter (for better chaining)
      */
     public Action register(Action action) {
-        regactions.put((String) action.getValue("toolbar"), action);
+        String toolbar = (String) action.getValue("toolbar");
+        if(toolbar == null) {
+            System.out.println(tr("Registered toolbar action without name: {0}",
+            action.getClass().getName()));
+        } else {
+            Action r = regactions.get(toolbar);
+            if(r != null) {
+                System.out.println(tr("Registered toolbar action {0} overwritten: {1} gets {2}",
+                toolbar, r.getClass().getName(), action.getClass().getName()));
+            }
+        }
+        regactions.put(toolbar, action);
         return action;
     }
 
