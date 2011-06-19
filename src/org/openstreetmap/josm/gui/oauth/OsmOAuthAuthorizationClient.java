@@ -319,8 +319,8 @@ public class OsmOAuthAuthorizationClient {
             connection.setUseCaches(false);
 
             Map<String,String> parameters = new HashMap<String, String>();
-            parameters.put("user[email]", userName);
-            parameters.put("user[password]", password);
+            parameters.put("username", userName);
+            parameters.put("password", password);
             parameters.put("referer", "/");
             parameters.put("commit", "Login");
 

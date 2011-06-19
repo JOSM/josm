@@ -144,11 +144,9 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         kit.getStyleSheet().addRule("ol {margin-left: 1cm}");
         pnlMessage.setText("<html><body>"
                 + "<p class=\"warning-body\">"
-                + tr("<strong>Warning:</strong> The password is transferred <strong>once</strong> in clear text "
-                        + "to the OSM website. <strong>Do not</strong> use a sensitive "
-                        + "password until the OSM server provides an encrypted communication channel (HTTPS).")
-                        + "</p>"
-                        + "</body></html>");
+                + tr("<strong>Warning:</strong> JOSM does login <strong>once</strong> using a secure connection.")
+                + "</p>"
+                + "</body></html>");
         pnl.add(pnlMessage, gc);
 
         // filler - grab remaining space
