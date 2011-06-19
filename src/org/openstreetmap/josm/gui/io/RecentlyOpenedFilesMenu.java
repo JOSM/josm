@@ -57,6 +57,7 @@ public class RecentlyOpenedFilesMenu extends JMenu {
                 {
                     putValue(NAME, file);
                     putValue("help", ht("/Action/OpenRecent"));
+                    putValue("toolbar", false);
                 }
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -82,6 +83,7 @@ public class RecentlyOpenedFilesMenu extends JMenu {
             super(tr("Clear"));
             putValue(SHORT_DESCRIPTION, tr("Clear the list of recently opened files"));
             putValue("help", ht("/Action/OpenRecent"));
+            putValue("toolbar", "recentlyopenedfiles/clear");
         }
 
         @Override

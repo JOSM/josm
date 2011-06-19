@@ -489,7 +489,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         private void updateEnabledState() {
             int index = selectedList.getSelectedIndex();
             upButton.setEnabled(index > 0);
-            downButton.setEnabled(index < selectedList.getModel().getSize() - 1);
+            downButton.setEnabled(index != -1 && index < selectedList.getModel().getSize() - 1);
             removeButton.setEnabled(index != -1);
             addButton.setEnabled(actionsTree.getSelectionCount() > 0);
         }
@@ -787,18 +787,26 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 if (menuItem.getAction() != null) {
                     Action action = menuItem.getAction();
                     userObject = action;
-                    String toolbar = (String) action.getValue("toolbar");
-                    if(toolbar == null) {
+                    Object tb = action.getValue("toolbar");
+                    if(tb == null) {
                         System.out.println(tr("Toolbar action without name: {0}",
                         action.getClass().getName()));
+                        continue;
+                    } else if (!(tb instanceof String)) {
+                        if(!(tb instanceof Boolean) || (Boolean)tb) {
+                            System.out.println(tr("Strange toolbar value: {0}",
+                            action.getClass().getName()));
+                        }
+                        continue;
                     } else {
+                        String toolbar = (String) tb;
                         Action r = actions.get(toolbar);
                         if(r != null &&  r != action) {
                             System.out.println(tr("Toolbar action {0} overwritten: {1} gets {2}",
                             toolbar, r.getClass().getName(), action.getClass().getName()));
                         }
+                        actions.put(toolbar, action);
                     }
-                    actions.put(toolbar, action);
                 } else {
                     userObject = menuItem.getText();
                 }

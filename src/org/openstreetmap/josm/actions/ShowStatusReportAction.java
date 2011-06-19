@@ -40,10 +40,11 @@ public final class ShowStatusReportAction extends JosmAction {
                 "clock",
                 tr("Show status report with useful information that can be attached to bugs"),
                 Shortcut.registerShortcut("help:showstatusreport", tr("Help: {0}",
-                        tr("Show Status Report")), KeyEvent.VK_R, Shortcut.GROUP_NONE), true);
+                        tr("Show Status Report")), KeyEvent.VK_R, Shortcut.GROUP_NONE), false);
 
         putValue("help", ht("/Action/ShowStatusReport"));
         putValue("toolbar", "help/showstatusreport");
+        Main.toolbar.register(this);
     }
 
     public static String getReportHeader()
