@@ -200,6 +200,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
         // Not part of dataset - no lock necessary
         this.id = generateUniqueId();
         this.version = 0;
+        this.user = null;
         this.changesetId = 0; // reset changeset id on a new object
         this.setIncomplete(false);
     }
