@@ -156,6 +156,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
         for (Way w : sourceWays) {
             w.setHighlighted(true);
         }
+        mv.repaint();
     }
 
     @Override
@@ -174,6 +175,7 @@ public class ParallelWayAction extends MapMode implements AWTEventListener, MapV
         pWays = null;
         sourceWays = null;
         referenceSegment = null;
+        mv.repaint();
     }
 
     @Override
