@@ -43,6 +43,7 @@ import org.openstreetmap.josm.gui.mappaint.xml.XmlStyleSource;
 import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
+import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * Panel to inspect one or more OsmPrimitives.
@@ -62,7 +63,8 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     public InspectPrimitiveDialog(Collection<OsmPrimitive> primitives) {
         super(Main.parent, tr("Advanced object info"), new String[] {tr("Close")});
         this.primitives = primitives;
-        setPreferredSize(new Dimension(750, 550));
+        setRememberWindowGeometry(getClass().getName() + ".geometry",
+                WindowGeometry.centerInWindow(Main.parent, new Dimension(750, 550)));
 
         setButtonIcons(new String[] {"ok.png"});
         final JTabbedPane tabs = new JTabbedPane();
@@ -100,18 +102,18 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     protected String buildDataText() {
         StringBuilder s = new StringBuilder();
         for (Node n : new SubclassFilteredCollection<OsmPrimitive, Node>(primitives, OsmPrimitive.nodePredicate)) {
-            s.append("Node id="+n.getUniqueId());
+            s.append(tr("Node id={0}", n.getUniqueId()));
             if (!checkDataSet(n)) {
-                s.append(" not in data set");
+                s.append(tr(" not in data set"));
                 continue;
             }
             if (n.isIncomplete()) {
-                s.append(" incomplete\n");
+                s.append(tr(" incomplete\n"));
                 addWayReferrer(s, n);
                 addRelationReferrer(s, n);
                 continue;
             }
-            s.append(String.format(" lat=%s lon=%s (projected: x=%s, y=%s); ",
+            s.append(tr(" lat={0} lon={0} (projected: x={0}, y={0}); ",
                     Double.toString(n.getCoor().lat()), Double.toString(n.getCoor().lon()),
                     Double.toString(n.getEastNorth().east()), Double.toString(n.getEastNorth().north())));
             addCommon(s, n);
@@ -122,22 +124,22 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         }
 
         for (Way w : new SubclassFilteredCollection<OsmPrimitive, Way>(primitives, OsmPrimitive.wayPredicate)) {
-            s.append("Way id="+ w.getUniqueId());
+            s.append(tr("Way id={0}", w.getUniqueId()));
             if (!checkDataSet(w)) {
-                s.append(" not in data set");
+                s.append(tr(" not in data set"));
                 continue;
             }
             if (w.isIncomplete()) {
-                s.append(" incomplete\n");
+                s.append(tr(" incomplete\n"));
                 addRelationReferrer(s, w);
                 continue;
             }
-            s.append(String.format(" %d nodes; ", w.getNodes().size()));
+            s.append(tr(" {0} nodes; ", w.getNodes().size()));
             addCommon(s, w);
             addAttributes(s, w);
             addRelationReferrer(s, w);
 
-            s.append("  nodes:\n");
+            s.append(tr("  nodes:\n"));
             for (Node n : w.getNodes()) {
                 s.append(String.format("    %d\n", n.getUniqueId()));
             }
@@ -145,22 +147,22 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         }
 
         for (Relation r : new SubclassFilteredCollection<OsmPrimitive, Relation>(primitives, OsmPrimitive.relationPredicate)) {
-            s.append("Relation id="+r.getUniqueId());
+            s.append(tr("Relation id={0}",r.getUniqueId()));
             if (!checkDataSet(r)) {
-                s.append(" not in data set");
+                s.append(tr(" not in data set"));
                 continue;
             }
             if (r.isIncomplete()) {
-                s.append(" incomplete\n");
+                s.append(tr(" incomplete\n"));
                 addRelationReferrer(s, r);
                 continue;
             }
-            s.append(String.format(" %d members; ",r.getMembersCount()));
+            s.append(tr(" {0} members; ",r.getMembersCount()));
             addCommon(s, r);
             addAttributes(s, r);
             addRelationReferrer(s, r);
 
-            s.append("  members:\n");
+            s.append(tr("  members:\n"));
             for (RelationMember m : r.getMembers() ) {
                 s.append(String.format("    %s%d '%s'\n", m.getMember().getType().getAPIName().substring(0,1), m.getMember().getUniqueId(), m.getRole()));
             }
@@ -171,33 +173,33 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     }
 
     protected void addCommon(StringBuilder s, OsmPrimitive o) {
-        s.append(String.format("Data set: %X; User: [%s]; ChangeSet id: %d; Timestamp: %s, Version: %d",
-                o.getDataSet().hashCode(),
+        s.append(tr("Data set: {0}; User: [{1}]; ChangeSet id: {2}; Timestamp: {3}, Version: {4}",
+                Integer.toHexString(o.getDataSet().hashCode()),
                 userString(o.getUser()),
                 o.getChangesetId(),
-                DateUtils.fromDate(o.getTimestamp()),
+                o.isTimestampEmpty() ? tr("<new object>") : DateUtils.fromDate(o.getTimestamp()),
                 o.getVersion()));
 
         /* selected state is left out: not interesting as it is always selected */
         if (o.isDeleted()) {
-            s.append("; deleted");
+            s.append(tr("; deleted"));
         }
         if (!o.isVisible()) {
-            s.append("; deleted-on-server");
+            s.append(tr("; deleted-on-server"));
         }
         if (o.isModified()) {
-            s.append("; modified");
+            s.append(tr("; modified"));
         }
         if (o.isDisabledAndHidden()) {
-            s.append("; filtered/hidden");
+            s.append(tr("; filtered/hidden"));
         }
         if (o.isDisabled()) {
-            s.append("; filtered/disabled");
+            s.append(tr("; filtered/disabled"));
         }
         if (o.hasDirectionKeys()) {
-            s.append("; has direction keys");
+            s.append(tr("; has direction keys"));
             if (o.reversedDirection()) {
-                s.append(" (reversed)");
+                s.append(tr(" (reversed)"));
             }
         }
         s.append("\n");
@@ -205,7 +207,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
     protected void addAttributes(StringBuilder s, OsmPrimitive o) {
         if (o.hasKeys()) {
-            s.append("  tags:\n");
+            s.append(tr("  tags:\n"));
             for (String key: o.keySet()) {
                 s.append(String.format("    \"%s\"=\"%s\"\n", key, o.get(key)));
             }
@@ -217,7 +219,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         List<OsmPrimitive> refs = n.getReferrers();
         Collection<Way> wayRefs = new SubclassFilteredCollection<OsmPrimitive, Way>(refs, OsmPrimitive.wayPredicate);
         if (wayRefs.size() > 0) {
-            s.append("  way referrer:\n");
+            s.append(tr("  way referrer:\n"));
             for (Way w : wayRefs) {
                 s.append("    "+w.getUniqueId()+"\n");
             }
@@ -228,7 +230,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         List<OsmPrimitive> refs = o.getReferrers();
         Collection<Relation> relRefs = new SubclassFilteredCollection<OsmPrimitive, Relation>(refs, OsmPrimitive.relationPredicate);
         if (relRefs.size() > 0) {
-            s.append("  relation referrer:\n");
+            s.append(tr("  relation referrer:\n"));
             for (Relation r : relRefs) {
                 s.append("    "+r.getUniqueId()+"\n");
             }
@@ -248,18 +250,18 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
     protected String userString(User user) {
         if (user == null)
-            return "<null>";
+            return tr("<new object>");
 
         List<String> names = user.getNames();
 
         StringBuilder us = new StringBuilder();
 
-        us.append("id:"+user.getId());
+        us.append(tr("id: {0}",user.getId()));
         if (names.size() == 1) {
-            us.append(" name:"+user.getName());
+            us.append(tr(" name: {0}",user.getName()));
         }
         else if (names.size() > 1) {
-            us.append(String.format(" %d names:%s", names.size(), user.getName()));
+            us.append(tr(" {0} names: {1}", names.size(), user.getName()));
         }
         return us.toString();
     }
@@ -280,23 +282,23 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         double scale = nc.getDist100Pixel();
 
         for (OsmPrimitive osm : sel) {
-            txtMappaint.append("Styles Cache for \""+osm.getDisplayName(DefaultNameFormatter.getInstance())+"\":");
+            txtMappaint.append(tr("Styles Cache for \"{0}\":",osm.getDisplayName(DefaultNameFormatter.getInstance())));
 
             MultiCascade mc = new MultiCascade();
 
             for (StyleSource s : elemstyles.getStyleSources()) {
                 if (s.active) {
-                    txtMappaint.append("\n\n> applying "+getSort(s)+" style \""+s.getDisplayString()+"\n");
+                    txtMappaint.append(tr("\n\n> applying {0} style \"{1}\"\n",getSort(s), s.getDisplayString()));
                     s.apply(mc, osm, scale, null, false);
-                    txtMappaint.append("\nRange:"+mc.range);
+                    txtMappaint.append(tr("\nRange:{0}",mc.range));
                     for (Entry<String, Cascade> e : mc.getLayers()) {
                         txtMappaint.append("\n "+e.getKey()+": \n"+e.getValue());
                     }
                 } else {
-                    txtMappaint.append("\n\n> skipping \""+s.getDisplayString()+"\" (not active)");
+                    txtMappaint.append(tr("\n\n> skipping \"{0}\" (not active)",s.getDisplayString()));
                 }
             }
-            txtMappaint.append("\n\nList of generated Styles:\n");
+            txtMappaint.append(tr("\n\nList of generated Styles:\n"));
             StyleList sl = elemstyles.get(osm, scale, nc);
             for (ElemStyle s : sl) {
                 txtMappaint.append(" * "+s+"\n");
@@ -309,23 +311,23 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
             StyleCache sc1 = selList.get(0).mappaintStyle;
             StyleCache sc2 = selList.get(1).mappaintStyle;
             if (sc1 == sc2) {
-                txtMappaint.append("The 2 selected Objects have identical style caches.");
+                txtMappaint.append(tr("The 2 selected objects have identical style caches."));
             }
             if (!sc1.equals(sc2)) {
-                txtMappaint.append("The 2 selected Objects have different style caches.");
+                txtMappaint.append(tr("The 2 selected objects have different style caches."));
             }
             if (sc1.equals(sc2) && sc1 != sc2) {
-                txtMappaint.append("Warning: The 2 selected Objects have equal, but not identical style caches.");
+                txtMappaint.append(tr("Warning: The 2 selected objects have equal, but not identical style caches."));
             }
         }
     }
 
     private String getSort(StyleSource s) {
         if (s instanceof XmlStyleSource)
-            return "xml";
+            return tr("xml");
         if (s instanceof MapCSSStyleSource)
-            return "mapcss";
-        return "unkown";
+            return tr("mapcss");
+        return tr("unkown");
     }
 
 }
