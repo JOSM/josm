@@ -1357,7 +1357,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         if (Main.main == null) return;
         if (Main.main.getCurrentDataSet() == null) return;
 
-        Collection<OsmPrimitive> sel = Main.main.getCurrentDataSet().getSelected();
+        Collection<OsmPrimitive> sel = createSelection(Main.main.getCurrentDataSet().getSelected());
         int answer = showDialog(sel, supportsRelation());
 
         if (sel.size() != 0 && answer == DIALOG_ANSWER_APPLY) {
@@ -1388,8 +1388,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
     }
 
-    public int showDialog(Collection<OsmPrimitive> selection, final boolean showNewRelation) {
-        Collection<OsmPrimitive> sel = createSelection(selection);
+    public int showDialog(Collection<OsmPrimitive> sel, final boolean showNewRelation) {
         PresetPanel p = createPanel(sel);
         if (p == null)
             return DIALOG_ANSWER_CANCEL;
@@ -1446,7 +1445,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
      * @param participants List of possibile OsmPrimitives to tag
      * @return Cleaned list with suitable OsmPrimitives only
      */
-    private Collection<OsmPrimitive> createSelection(Collection<OsmPrimitive> participants) {
+    public Collection<OsmPrimitive> createSelection(Collection<OsmPrimitive> participants) {
         originalSelectionEmpty = participants.size() == 0;
         Collection<OsmPrimitive> sel = new LinkedList<OsmPrimitive>();
         for (OsmPrimitive osm : participants)

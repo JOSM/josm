@@ -56,7 +56,7 @@ public class PresetListPanel extends JPanel {
             this.presetHandler = presetHandler;
         }
         public void mouseClicked(MouseEvent arg0) {
-            Collection<OsmPrimitive> selection = presetHandler.getSelection();
+            Collection<OsmPrimitive> selection = tag.createSelection(presetHandler.getSelection());
             if (selection == null || selection.isEmpty())
                 return;
             int answer = tag.showDialog(selection, false);
