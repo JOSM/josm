@@ -1231,21 +1231,28 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     }
 
     public static Collection<TaggingPreset> readAll(String source, boolean validate) throws SAXException, IOException {
+        Collection<TaggingPreset> tp;
         MirroredInputStream s = new MirroredInputStream(source);
-        InputStream zip = s.getZipEntry("xml","preset");
-        if(zip != null) {
-            zipIcons = s.getFile();
+        try {
+            InputStream zip = s.getZipEntry("xml","preset");
+            if(zip != null) {
+                zipIcons = s.getFile();
+            }
+            InputStreamReader r;
+            try {
+                r = new InputStreamReader(zip == null ? s : zip, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                r = new InputStreamReader(zip == null ? s: zip);
+            }
+            try {
+                tp = TaggingPreset.readAll(new BufferedReader(r), validate);
+            } finally {
+                r.close();
+            }
+        } finally {
+            s.close();
         }
-        InputStreamReader r;
-        try
-        {
-            r = new InputStreamReader(zip == null ? s : zip, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-            r = new InputStreamReader(zip == null ? s: zip);
-        }
-        return TaggingPreset.readAll(new BufferedReader(r), validate);
+        return tp;
     }
 
     public static Collection<TaggingPreset> readAll(Collection<String> sources, boolean validate) {

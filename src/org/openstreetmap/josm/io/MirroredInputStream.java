@@ -220,7 +220,8 @@ public class MirroredInputStream extends InputStream {
             conn.setConnectTimeout(5000);
             conn.setReadTimeout(5000);
             bis = new BufferedInputStream(conn.getInputStream());
-            bos = new BufferedOutputStream( new FileOutputStream(destDirFile));
+            FileOutputStream fos = new FileOutputStream(destDirFile);
+            bos = new BufferedOutputStream(fos);
             byte[] buffer = new byte[4096];
             int length;
             while ((length = bis.read(buffer)) > -1) {
@@ -228,10 +229,17 @@ public class MirroredInputStream extends InputStream {
             }
             bos.close();
             bos = null;
+            /* close fos as well to be sure! */
+            fos.close();
+            fos = null;
             file = new File(destDir, localPath);
-            destDirFile.renameTo(file);
-            Main.pref.putCollection(prefKey, Arrays.asList(new String[]
-            {Long.toString(System.currentTimeMillis()), file.toString()}));
+            if(destDirFile.renameTo(file)) {
+                Main.pref.putCollection(prefKey, Arrays.asList(new String[]
+                {Long.toString(System.currentTimeMillis()), file.toString()}));
+            } else {
+                System.out.println(tr("Failed to rename file {0} to {1}.",
+                destDirFile.getPath(), file.getPath()));
+            }
         } catch (IOException e) {
             if (age >= maxTime*1000 && age < maxTime*1000*2) {
                 System.out.println(tr("Failed to load {0}, use cached file and retry next time: {1}",

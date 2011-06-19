@@ -78,9 +78,11 @@ public class PluginInformation {
     public PluginInformation(File file, String name) throws PluginException{
         this.name = name;
         this.file = file;
+        FileInputStream fis = null;
         JarInputStream jar = null;
         try {
-            jar = new JarInputStream(new FileInputStream(file));
+            fis = new FileInputStream(file);
+            jar = new JarInputStream(fis);
             Manifest manifest = jar.getManifest();
             if (manifest == null)
                 throw new PluginException(name, tr("The plugin file ''{0}'' does not include a Manifest.", file.toString()));
@@ -92,6 +94,11 @@ public class PluginInformation {
             if (jar != null) {
                 try {
                     jar.close();
+                } catch(IOException e) { /* ignore */ }
+            }
+            if (fis != null) {
+                try {
+                    fis.close();
                 } catch(IOException e) { /* ignore */ }
             }
         }

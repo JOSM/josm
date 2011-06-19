@@ -57,48 +57,52 @@ public class ImageryLayerInfo {
                     MirroredInputStream.cleanup(source);
                 }
                 MirroredInputStream s = new MirroredInputStream(source, -1);
-                InputStreamReader r;
-                try
-                {
-                    r = new InputStreamReader(s, "UTF-8");
-                }
-                catch (UnsupportedEncodingException e)
-                {
-                    r = new InputStreamReader(s);
-                }
-                BufferedReader reader = new BufferedReader(r);
-                String line;
-                while((line = reader.readLine()) != null)
-                {
-                    String val[] = line.split(";");
-                    if(!line.startsWith("#") && (val.length == 3 || val.length == 4)) {
-                        boolean force = "true".equals(val[0]);
-                        String name = tr(val[1]);
-                        String url = val[2];
-                        String eulaAcceptanceRequired = null;
+                try {
+                    InputStreamReader r;
+                    try
+                    {
+                        r = new InputStreamReader(s, "UTF-8");
+                    }
+                    catch (UnsupportedEncodingException e)
+                    {
+                        r = new InputStreamReader(s);
+                    }
+                    BufferedReader reader = new BufferedReader(r);
+                    String line;
+                    while((line = reader.readLine()) != null)
+                    {
+                        String val[] = line.split(";");
+                        if(!line.startsWith("#") && (val.length == 3 || val.length == 4)) {
+                            boolean force = "true".equals(val[0]);
+                            String name = tr(val[1]);
+                            String url = val[2];
+                            String eulaAcceptanceRequired = null;
 
-                        if (val.length == 4) {
-                            // 4th parameter optional for license agreement (EULA)
-                            eulaAcceptanceRequired = val[3];
-                        }
+                            if (val.length == 4) {
+                                // 4th parameter optional for license agreement (EULA)
+                                eulaAcceptanceRequired = val[3];
+                            }
 
-                        defaultLayers.add(new ImageryInfo(name, url, eulaAcceptanceRequired));
+                            defaultLayers.add(new ImageryInfo(name, url, eulaAcceptanceRequired));
 
-                        if (force) {
-                            defaultsSave.add(url);
-                            if (!defaults.contains(url)) {
-                                for (ImageryInfo i : layers) {
-                                    if ((i.getImageryType() == ImageryType.WMS && url.equals(i.getUrl()))
-                                            || url.equals(i.getFullUrl())) {
-                                        force = false;
+                            if (force) {
+                                defaultsSave.add(url);
+                                if (!defaults.contains(url)) {
+                                    for (ImageryInfo i : layers) {
+                                        if ((i.getImageryType() == ImageryType.WMS && url.equals(i.getUrl()))
+                                                || url.equals(i.getFullUrl())) {
+                                            force = false;
+                                        }
                                     }
-                                }
-                                if (force) {
-                                    add(new ImageryInfo(name, url));
+                                    if (force) {
+                                        add(new ImageryInfo(name, url));
+                                    }
                                 }
                             }
                         }
                     }
+                } finally {
+                    s.close();
                 }
             }
             catch (IOException e)
