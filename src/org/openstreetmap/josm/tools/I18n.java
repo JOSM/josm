@@ -159,6 +159,14 @@ public class I18n {
         return MessageFormat.format(gettext(text, context), (Object)null);
     }
 
+    public static final String trc_lazy(String context, String text) {
+        if (context == null)
+            return tr(text);
+        if (text == null)
+            return null;
+        return MessageFormat.format(gettext_lazy(text, context), (Object)null);
+    }
+
     /**
      * Marks a string for translation (such that a script can harvest
      * the translatable strings from the source files).
@@ -217,6 +225,29 @@ public class I18n {
                 return trans[0];
         }
         return text;
+    }
+
+    /* try without context, when context try fails */
+    private static final String gettext_lazy(String text, String ctx)
+    {
+        int i;
+        if(ctx == null && text.startsWith("_:") && (i = text.indexOf("\n")) >= 0)
+        {
+            ctx = text.substring(2,i-1);
+            text = text.substring(i+1);
+        }
+        if(strings != null)
+        {
+            String trans = strings.get(ctx == null ? text : "_:"+ctx+"\n"+text);
+            if(trans != null)
+                return trans;
+        }
+        if(pstrings != null) {
+            String[] trans = pstrings.get(ctx == null ? text : "_:"+ctx+"\n"+text);
+            if(trans != null)
+                return trans[0];
+        }
+        return gettext(text, null);
     }
 
     private static final String gettextn(String text, String plural, String ctx, long num)

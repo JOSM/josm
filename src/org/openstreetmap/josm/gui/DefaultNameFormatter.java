@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
+import static org.openstreetmap.josm.tools.I18n.trc_lazy;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.ArrayList;
@@ -371,7 +372,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             }
             return null;
         } else
-            return relation.get(nameTag);
+            return trc_lazy(nameTag, relation.get(nameTag));
     }
 
     private String getRelationName(IRelation relation) {
