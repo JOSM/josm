@@ -4,6 +4,7 @@ package org.openstreetmap.josm.tools;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 
 import org.openstreetmap.josm.Main;
@@ -58,5 +59,13 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
     public String getDefaultStyle()
     {
         return "com.sun.java.swing.plaf.windows.WindowsLookAndFeel";
+    }
+
+    @Override
+    public boolean rename(File from, File to)
+    {
+        if(to.exists())
+            to.delete();
+        return from.renameTo(to);
     }
 }

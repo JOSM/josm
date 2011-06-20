@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.tools;
 
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -267,5 +268,11 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
     public String getDefaultStyle()
     {
         return "javax.swing.plaf.metal.MetalLookAndFeel";
+    }
+
+    @Override
+    public boolean rename(File from, File to)
+    {
+        return from.renameTo(to);
     }
 }

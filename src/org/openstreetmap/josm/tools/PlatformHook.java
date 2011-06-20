@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -101,4 +102,6 @@ public interface PlatformHook {
     public String makeTooltip(String name, Shortcut sc);
 
     public String getDefaultStyle();
+
+    public boolean rename(File from, File to);
 }

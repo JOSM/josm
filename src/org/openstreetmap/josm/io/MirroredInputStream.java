@@ -233,7 +233,7 @@ public class MirroredInputStream extends InputStream {
             fos.close();
             fos = null;
             file = new File(destDir, localPath);
-            if(destDirFile.renameTo(file)) {
+            if(Main.platform.rename(destDirFile, file)) {
                 Main.pref.putCollection(prefKey, Arrays.asList(new String[]
                 {Long.toString(System.currentTimeMillis()), file.toString()}));
             } else {
