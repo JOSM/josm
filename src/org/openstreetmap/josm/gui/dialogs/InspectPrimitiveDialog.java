@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -134,7 +135,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                 addRelationReferrer(s, w);
                 continue;
             }
-            s.append(tr(" {0} nodes; ", w.getNodes().size()));
+            s.append(trn(" {0} node; ", " {0} nodes; ", w.getNodes().size(), w.getNodes().size()));
             addCommon(s, w);
             addAttributes(s, w);
             addRelationReferrer(s, w);
@@ -157,7 +158,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                 addRelationReferrer(s, r);
                 continue;
             }
-            s.append(tr(" {0} members; ",r.getMembersCount()));
+            s.append(trn(" {0} member; ", " {0} members; ", r.getMembersCount(), r.getMembersCount()));
             addCommon(s, r);
             addAttributes(s, r);
             addRelationReferrer(s, r);
@@ -261,7 +262,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
             us.append(tr(" name: {0}",user.getName()));
         }
         else if (names.size() > 1) {
-            us.append(tr(" {0} names: {1}", names.size(), user.getName()));
+            us.append(trn(" {0} name: {1}", " {0} names: {1}", names.size(), names.size(), user.getName()));
         }
         return us.toString();
     }
