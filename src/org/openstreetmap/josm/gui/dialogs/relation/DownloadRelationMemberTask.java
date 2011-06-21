@@ -40,14 +40,16 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
 
     public DownloadRelationMemberTask(Relation parent, Collection<OsmPrimitive> children, OsmDataLayer curLayer, Dialog dialog) {
         super(tr("Download relation members"), new PleaseWaitProgressMonitor(dialog), false /* don't ignore exception */);
-        this.parents.add(parent);
+        if(parent != null)
+            this.parents.add(parent);
         this.children = children;
         this.curLayer = curLayer;
     }
 
     public DownloadRelationMemberTask(Relation parent, Collection<OsmPrimitive> children, OsmDataLayer curLayer) {
         super(tr("Download relation members"), false /* don't ignore exception */);
-        this.parents.add(parent);
+        if(parent != null)
+            this.parents.add(parent);
         this.children = children;
         this.curLayer = curLayer;
     }
@@ -88,21 +90,25 @@ public class DownloadRelationMemberTask extends PleaseWaitRunnable {
     }
 
     protected String buildDownloadFeedbackMessage() {
-        if (parents.size() == 1) {
+        if (parents.size() == 0) {
+            return trn("Downloading {0} incomplete object",
+                    "Downloading {0} incomplete objects",
+                    children.size(),
+                    children.size());
+        } else if (parents.size() == 1) {
             Relation parent = parents.iterator().next();
             return trn("Downloading {0} incomplete child of relation ''{1}''",
                     "Downloading {0} incomplete children of relation ''{1}''",
                     children.size(),
                     children.size(),
-                    parent.getDisplayName(DefaultNameFormatter.getInstance())
-            );
-        } else
+                    parent.getDisplayName(DefaultNameFormatter.getInstance()));
+        } else {
             return trn("Downloading {0} incomplete child of {1} parent relations",
                     "Downloading {0} incomplete children of  {1} parent relations",
                     children.size(),
                     children.size(),
-                    parents.size()
-            );
+                    parents.size());
+        }
     }
 
     @Override

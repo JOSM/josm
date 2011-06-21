@@ -1316,10 +1316,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         protected void updateEnabledState() {
-            setEnabled(
-                    getRelation() != null
-                    && memberTableModel.hasIncompleteMembers()
-            );
+            setEnabled(memberTableModel.hasIncompleteMembers());
         }
 
         public void tableChanged(TableModelEvent e) {
@@ -1349,10 +1346,7 @@ public class GenericRelationEditor extends RelationEditor  {
         }
 
         protected void updateEnabledState() {
-            setEnabled(
-                    getRelation() != null
-                    && memberTableModel.hasIncompleteSelectedMembers()
-            );
+            setEnabled(memberTableModel.hasIncompleteSelectedMembers());
         }
 
         public void valueChanged(ListSelectionEvent e) {
