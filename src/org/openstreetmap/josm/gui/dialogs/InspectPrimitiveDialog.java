@@ -113,7 +113,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
                 addRelationReferrer(s, n);
                 continue;
             }
-            s.append(tr(" lat={0} lon={0} (projected: x={0}, y={0}); ",
+            s.append(tr(" lat={0} lon={1} (projected: x={2}, y={3}); ",
                     Double.toString(n.getCoor().lat()), Double.toString(n.getCoor().lon()),
                     Double.toString(n.getEastNorth().east()), Double.toString(n.getEastNorth().north())));
             addCommon(s, n);
