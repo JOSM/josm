@@ -174,7 +174,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     }
 
     protected void addCommon(StringBuilder s, OsmPrimitive o) {
-        s.append(tr("Data set: {0}; User: [{1}]; ChangeSet id: {2}; Timestamp: {3}, Version: {4}",
+        s.append(tr("Data set: {0}; User: [{1}]; ChangeSet id: {2}; Timestamp: {3}; Version: {4}",
                 Integer.toHexString(o.getDataSet().hashCode()),
                 userString(o.getUser()),
                 o.getChangesetId(),
