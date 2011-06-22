@@ -138,7 +138,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
         // the select action
         //
-        SelectAction selectAction = new SelectAction();
+        SelectAction selectAction = new SelectAction(false);
         displaylist.addListSelectionListener(selectAction);
         tp.add(new SideButton(selectAction, false));
 
@@ -429,10 +429,14 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
      *
      */
     class SelectAction extends AbstractAction implements ListSelectionListener{
-        public SelectAction() {
-            putValue(SHORT_DESCRIPTION,tr("Set the current selection to the list of selected relations"));
+        boolean add;
+        public SelectAction(boolean add) {
+            putValue(SHORT_DESCRIPTION, add ? tr("Add the selected relations to the current selection")
+            : tr("Set the current selection to the list of selected relations"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
-            setEnabled(false);
+            putValue(NAME, add ? tr("Select relation (add)") : tr("Select relation"));
+            this.add = add;
+            updateEnabledState();
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -443,11 +447,18 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             for (int i: idx) {
                 selection.add(model.getRelation(i));
             }
-            Main.map.mapView.getEditLayer().data.setSelected(selection);
+            if(add)
+                Main.map.mapView.getEditLayer().data.addSelected(selection);
+            else
+                Main.map.mapView.getEditLayer().data.setSelected(selection);
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(displaylist.getSelectedIndices() != null && displaylist.getSelectedIndices().length > 0);
         }
 
         public void valueChanged(ListSelectionEvent e) {
-            setEnabled(displaylist.getSelectedIndices() != null && displaylist.getSelectedIndices().length > 0);
+            updateEnabledState();
         }
     }
 
@@ -456,10 +467,13 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
      *
      */
     class SelectMembersAction extends AbstractAction implements ListSelectionListener{
-        public SelectMembersAction() {
-            putValue(SHORT_DESCRIPTION,tr("Select the members of all selected relations"));
+        boolean add;
+        public SelectMembersAction(boolean add) {
+            putValue(SHORT_DESCRIPTION,add ? tr("Add the members of all selected relations to current selection")
+            : tr("Select the members of all selected relations"));
             putValue(SMALL_ICON, ImageProvider.get("selectall"));
-            putValue(NAME, tr("Select members"));
+            putValue(NAME, add ? tr("Select members (add)") : tr("Select members"));
+            this.add = add;
             updateEnabledState();
         }
 
@@ -470,7 +484,10 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             for(Relation r: relations) {
                 members.addAll(r.getMemberPrimitives());
             }
-            Main.map.mapView.getEditLayer().data.setSelected(members);
+            if(add)
+                Main.map.mapView.getEditLayer().data.addSelected(members);
+            else
+                Main.map.mapView.getEditLayer().data.setSelected(members);
         }
 
         protected void updateEnabledState() {
@@ -782,9 +799,23 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
             // -- select members action
             //
-            SelectMembersAction selectMembersAction = new SelectMembersAction();
+            SelectMembersAction selectMembersAction = new SelectMembersAction(false);
             displaylist.addListSelectionListener(selectMembersAction);
             add(selectMembersAction);
+
+            selectMembersAction = new SelectMembersAction(true);
+            displaylist.addListSelectionListener(selectMembersAction);
+            add(selectMembersAction);
+
+            // -- select action
+            //
+            SelectAction selectAction = new SelectAction(false);
+            displaylist.addListSelectionListener(selectAction);
+            add(selectAction);
+
+            selectAction = new SelectAction(true);
+            displaylist.addListSelectionListener(selectAction);
+            add(selectAction);
         }
 
         public RelationDialogPopupMenu() {
