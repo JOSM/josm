@@ -60,6 +60,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -447,6 +448,7 @@ public class PluginHandler {
             }
             allPluginLibraries.addAll(info.libraries);
             File pluginJar = new File(pluginDir, info.name + ".jar");
+            I18n.addTexts(pluginJar);
             URL pluginJarUrl = PluginInformation.fileToURL(pluginJar);
             allPluginLibraries.add(pluginJarUrl);
         }

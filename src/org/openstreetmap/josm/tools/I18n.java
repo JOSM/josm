@@ -2,12 +2,17 @@
 package org.openstreetmap.josm.tools;
 
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.jar.JarInputStream;
+import java.util.zip.ZipEntry;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -26,6 +31,7 @@ public class I18n {
     private enum PluralMode { MODE_NOTONE, MODE_NONE, MODE_GREATERONE,
         MODE_CS, MODE_AR, MODE_PL/*, MODE_RO*/, MODE_RU, MODE_SK/*, MODE_SL*/}
     private static PluralMode pluralMode = PluralMode.MODE_NOTONE; /* english default */
+    private static String loadedCode = "en";
 
     /* Localization keys for file chooser (and color chooser). */
     private static final String[] javaInternalMessageKeys = new String[] {
@@ -339,6 +345,63 @@ public class I18n {
         }
     }
 
+    public static void addTexts(File source)
+    {
+        FileInputStream fis = null;
+        JarInputStream jar = null;
+        FileInputStream fisTrans = null;
+        JarInputStream jarTrans = null;
+        String enfile = "data/en.lang";
+        String langfile = "data/"+loadedCode+".lang";
+        try
+        {
+            ZipEntry e;
+            fis = new FileInputStream(source);
+            jar = new JarInputStream(fis);
+            boolean found = false;
+            while(!found && (e = jar.getNextEntry()) != null)
+            {
+                String name = e.getName();
+                if(name.equals(enfile))
+                    found = true;
+            }
+            if(found)
+            {
+                fisTrans = new FileInputStream(source);
+                jarTrans = new JarInputStream(fisTrans);
+                found = false;
+                while(!found && (e = jarTrans.getNextEntry()) != null)
+                {
+                    String name = e.getName();
+                    if(name.equals(langfile))
+                        found = true;
+                }
+                if(found)
+                    load(jar, jarTrans, true);
+            }
+        }
+        catch(IOException e)
+        {
+        }
+        finally
+        {
+            try
+            {
+                if(jar != null)
+                    jar.close();
+                if(fis != null)
+                    fis.close();
+                if(jarTrans != null)
+                    jarTrans.close();
+                if(fisTrans != null)
+                    fisTrans.close();
+            }
+            catch(IOException e)
+            {
+            }
+        }
+    }
+
     private static boolean load(String l)
     {
         if(l.equals("en") || l.equals("en_US"))
@@ -352,19 +415,45 @@ public class I18n {
         if(en == null)
             return false;
         URL tr = Main.class.getResource("/data/"+l+".lang");
-        if(tr == null)
+        if(tr == null || !languages.containsKey(l))
         {
             int i = l.indexOf('_');
             if (i > 0) {
                 l = l.substring(0, i);
             }
             tr = Main.class.getResource("/data/"+l+".lang");
-            if(tr == null)
+            if(tr == null || !languages.containsKey(l))
                 return false;
         }
+        try
+        {
+            if(load(en.openStream(), tr.openStream(), false))
+            {
+                pluralMode = languages.get(l);
+                loadedCode = l;
+                return true;
+            }
+        }
+        catch(IOException e)
+        {
+        }
+        return false;
+    }
 
-        HashMap<String, String> s = new HashMap<String, String>();
-        HashMap<String, String[]> p = new HashMap<String, String[]>();
+    private static boolean load(InputStream en, InputStream tr, boolean add)
+    {
+        HashMap<String, String> s;
+        HashMap<String, String[]> p;
+        if(add)
+        {
+            s = strings;
+            p = pstrings;
+        }
+        else
+        {
+            s = new HashMap<String, String>();
+            p = new HashMap<String, String[]>();
+        }
         /* file format:
            for all single strings:
            {
@@ -382,8 +471,8 @@ public class I18n {
          */
         try
         {
-            InputStream ens = new BufferedInputStream(en.openStream());
-            InputStream trs = new BufferedInputStream(tr.openStream());
+            InputStream ens = new BufferedInputStream(en);
+            InputStream trs = new BufferedInputStream(tr);
             byte[] enlen = new byte[2];
             byte[] trlen = new byte[2];
             boolean multimode = false;
@@ -429,7 +518,7 @@ public class I18n {
                             return false;
                         trstrings[i] = new String(str, 0, val, "utf-8");
                     }
-                    if(trnum > 0) {
+                    if(trnum > 0 && !p.containsKey(enstrings[0])) {
                         p.put(enstrings[0], trstrings);
                     }
                 }
@@ -470,21 +559,21 @@ public class I18n {
                             if(val != trval) /* file corrupt */
                                 return false;
                             String trstr = new String(str, 0, trval, "utf-8");
-                            s.put(enstr, trstr);
+                            if(!s.containsKey(enstr))
+                                s.put(enstr, trstr);
                         }
                     }
                 }
             }
         }
-        catch(Exception e)
+        catch(IOException e)
         {
             return false;
         }
-        if(!s.isEmpty() && languages.containsKey(l))
+        if(!s.isEmpty())
         {
             strings = s;
             pstrings = p;
-            pluralMode = languages.get(l);
             return true;
         }
         return false;
