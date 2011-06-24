@@ -1429,7 +1429,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="aerialway" value="pylon" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
-        <item name="Goods" name_context="aerialway" icon="presets/goods.png" type="node">
+        <item name="Goods" name_context="aerialway" icon="presets/goods.png" type="way">
             <label text="Edit Goods" text_context="aerialway" />
             <key key="aerialway" value="goods" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
