@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -24,18 +25,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public  class RelationMemberTableCellRenderer extends JLabel implements TableCellRenderer {
-    public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
-    public final static Color BGCOLOR_EMPTY_ROW = new Color(234,234,234);
-
-    public final static Color BGCOLOR_NOT_IN_OPPOSITE = new Color(255,197,197);
-    public final static Color BGCOLOR_IN_OPPOSITE = new Color(255,234,213);
-    public final static Color BGCOLOR_SAME_POSITION_IN_OPPOSITE = new Color(217,255,217);
-
-    public final static Color BGCOLOR_PARTICIPAING_IN_COMPARISON = Color.BLACK;
-    public final static Color FGCOLOR_PARTICIPAING_IN_COMPARISON = Color.WHITE;
-
-    public final static Color BGCOLOR_FROZEN = new Color(234,234,234);
-
     private  Border rowNumberBorder = null;
 
     /**
@@ -83,38 +72,38 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
      * reset the renderer
      */
     protected void reset() {
-        setBackground(Color.WHITE);
-        setForeground(Color.BLACK);
+        setBackground(ConflictColors.BGCOLOR.get());
+        setForeground(ConflictColors.FGCOLOR.get());
         setBorder(null);
         setIcon(null);
         setToolTipText(null);
     }
 
     protected void renderBackground(ListMergeModel<Node>.EntriesTableModel model, RelationMember member, int row, int col, boolean isSelected) {
-        Color bgc = Color.WHITE;
+        Color bgc = ConflictColors.BGCOLOR.get();
         if (col == 0) {
             if (model.getListMergeModel().isFrozen()) {
-                bgc = BGCOLOR_FROZEN;
+                bgc = ConflictColors.BGCOLOR_FROZEN.get();
             } else if (model.isParticipatingInCurrentComparePair()) {
-                bgc = BGCOLOR_PARTICIPAING_IN_COMPARISON;
+                bgc = ConflictColors.BGCOLOR_PARTICIPAING_IN_COMPARISON.get();
             } else if (isSelected) {
-                bgc = BGCOLOR_SELECTED;
+                bgc = ConflictColors.BGCOLOR_SELECTED.get();
             }
         } else {
             if (model.getListMergeModel().isFrozen()) {
-                bgc = BGCOLOR_FROZEN;
+                bgc = ConflictColors.BGCOLOR_FROZEN.get();
             } else if (member == null) {
-                bgc = BGCOLOR_EMPTY_ROW;
+                bgc = ConflictColors.BGCOLOR_EMPTY_ROW.get();
             } else if (isSelected) {
-                bgc = BGCOLOR_SELECTED;
+                bgc = ConflictColors.BGCOLOR_SELECTED.get();
             } else {
                 if (model.isParticipatingInCurrentComparePair()) {
                     if (model.isSamePositionInOppositeList(row)) {
-                        bgc = BGCOLOR_SAME_POSITION_IN_OPPOSITE;
+                        bgc = ConflictColors.BGCOLOR_SAME_POSITION_IN_OPPOSITE.get();
                     } else if (model.isIncludedInOppositeList(row)) {
-                        bgc = BGCOLOR_IN_OPPOSITE;
+                        bgc = ConflictColors.BGCOLOR_IN_OPPOSITE.get();
                     } else {
-                        bgc = BGCOLOR_NOT_IN_OPPOSITE;
+                        bgc = ConflictColors.BGCOLOR_NOT_IN_OPPOSITE.get();
                     }
                 }
             }
@@ -123,9 +112,9 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
     }
 
     protected void renderForeground(ListMergeModel<Node>.EntriesTableModel model, RelationMember member, int row, int col, boolean isSelected) {
-        Color fgc = Color.BLACK;
+        Color fgc = ConflictColors.FGCOLOR.get();
         if (col == 0 && model.isParticipatingInCurrentComparePair() && ! model.getListMergeModel().isFrozen()) {
-            fgc = Color.WHITE;
+            fgc = ConflictColors.FGCOLOR_PARTICIPAING_IN_COMPARISON.get();
         }
         setForeground(fgc);
     }
@@ -154,7 +143,7 @@ public  class RelationMemberTableCellRenderer extends JLabel implements TableCel
 
     protected void renderEmptyRow() {
         setIcon(null);
-        setBackground(BGCOLOR_EMPTY_ROW);
+        setBackground(ConflictColors.BGCOLOR_EMPTY_ROW.get());
         setText("");
     }
 

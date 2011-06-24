@@ -3,39 +3,34 @@ package org.openstreetmap.josm.gui.conflict.pair.tags;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
-
+import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 
 public class MineTableCellRenderer extends TagMergeTableCellRenderer {
-
-    public final static Color BGCOLOR_UNDECIDED = new Color(255,197,197);
-    public final static Color BGCOLOR_MINE = new Color(217,255,217);
-    public final static Color BGCOLOR_THEIR = Color.white;
-    public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
+    /* NOTE: mine and their colors are reversed for this renderer */
 
     protected void setBackgroundColor(TagMergeItem item, boolean isSelected) {
         if (isSelected)  {
-            setBackground(BGCOLOR_SELECTED);
+            setBackground(ConflictColors.BGCOLOR_SELECTED.get());
             return;
         }
 
         if (MergeDecisionType.KEEP_MINE.equals(item.getMergeDecision())) {
-            setBackground(BGCOLOR_MINE);
+            setBackground(ConflictColors.BGCOLOR_THEIR.get());
         } else if (MergeDecisionType.KEEP_THEIR.equals(item.getMergeDecision())) {
-            setBackground(BGCOLOR_THEIR);
+            setBackground(ConflictColors.BGCOLOR_MINE.get());
         } else if (MergeDecisionType.UNDECIDED.equals(item.getMergeDecision())) {
-            setBackground(BGCOLOR_UNDECIDED);
+            setBackground(ConflictColors.BGCOLOR_UNDECIDED.get());
         }
     }
 
     protected void setTextColor(TagMergeItem item) {
         if (MergeDecisionType.KEEP_MINE.equals(item.getMergeDecision())) {
-            setForeground(Color.black);
+            setForeground(ConflictColors.FGCOLOR_THEIR.get());
         } else if (MergeDecisionType.KEEP_THEIR.equals(item.getMergeDecision())) {
-            setForeground(Color.LIGHT_GRAY);
+            setForeground(ConflictColors.FGCOLOR_MINE.get());
         } else if (MergeDecisionType.UNDECIDED.equals(item.getMergeDecision())) {
-            setForeground(Color.black);
+            setForeground(ConflictColors.FGCOLOR_UNDECIDED.get());
         }
     }
 
@@ -64,5 +59,4 @@ public class MineTableCellRenderer extends TagMergeTableCellRenderer {
             setToolTipText(item.getMyTagValue());
         }
     }
-
 }

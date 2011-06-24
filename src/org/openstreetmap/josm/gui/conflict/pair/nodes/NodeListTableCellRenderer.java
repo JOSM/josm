@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair.nodes;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -17,6 +16,7 @@ import javax.swing.table.TableCellRenderer;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -25,17 +25,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public  class NodeListTableCellRenderer extends JLabel implements TableCellRenderer {
-    //static private final Logger logger = Logger.getLogger(NodeListTableCellRenderer.class.getName());
-    //private static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000");
-    public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
-    public final static Color BGCOLOR_EMPTY_ROW = new Color(234,234,234);
-    public final static Color BGCOLOR_FROZEN = new Color(234,234,234);
-    public final static Color BGCOLOR_PARTICIPAING_IN_COMPARISON = Color.BLACK;
-    public final static Color FGCOLOR_PARTICIPAING_IN_COMPARISON = Color.WHITE;
-
-    public final static Color BGCOLOR_NOT_IN_OPPOSITE = new Color(255,197,197);
-    public final static Color BGCOLOR_IN_OPPOSITE = new Color(255,234,213);
-    public final static Color BGCOLOR_SAME_POSITION_IN_OPPOSITE = new Color(217,255,217);
 
     private final ImageIcon icon;
     private final Border rowNumberBorder;
@@ -101,8 +90,8 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
      * reset the renderer
      */
     protected void reset() {
-        setBackground(Color.WHITE);
-        setForeground(Color.BLACK);
+        setBackground(ConflictColors.BGCOLOR.get());
+        setForeground(ConflictColors.FGCOLOR.get());
     }
 
     /**
@@ -115,16 +104,16 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
         setIcon(icon);
         setBorder(null);
         if (model.getListMergeModel().isFrozen()) {
-            setBackground(BGCOLOR_FROZEN);
+            setBackground(ConflictColors.BGCOLOR_FROZEN.get());
         } else if (isSelected) {
-            setBackground(BGCOLOR_SELECTED);
+            setBackground(ConflictColors.BGCOLOR_SELECTED.get());
         } else if (model.isParticipatingInCurrentComparePair()) {
             if (model.isSamePositionInOppositeList(row)) {
-                setBackground(BGCOLOR_SAME_POSITION_IN_OPPOSITE);
+                setBackground(ConflictColors.BGCOLOR_SAME_POSITION_IN_OPPOSITE.get());
             } else if (model.isIncludedInOppositeList(row)) {
-                setBackground(BGCOLOR_IN_OPPOSITE);
+                setBackground(ConflictColors.BGCOLOR_IN_OPPOSITE.get());
             } else {
-                setBackground(BGCOLOR_NOT_IN_OPPOSITE);
+                setBackground(ConflictColors.BGCOLOR_NOT_IN_OPPOSITE.get());
             }
         }
         setText(node.getDisplayName(DefaultNameFormatter.getInstance()));
@@ -136,7 +125,7 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
      */
     protected void renderEmptyRow() {
         setIcon(null);
-        setBackground(BGCOLOR_EMPTY_ROW);
+        setBackground(ConflictColors.BGCOLOR_EMPTY_ROW.get());
         setText("");
     }
 
@@ -150,10 +139,10 @@ public  class NodeListTableCellRenderer extends JLabel implements TableCellRende
         setIcon(null);
         setBorder(rowNumberBorder);
         if (model.getListMergeModel().isFrozen()) {
-            setBackground(BGCOLOR_FROZEN);
+            setBackground(ConflictColors.BGCOLOR_FROZEN.get());
         } else if (model.isParticipatingInCurrentComparePair()) {
-            setBackground(BGCOLOR_PARTICIPAING_IN_COMPARISON);
-            setForeground(FGCOLOR_PARTICIPAING_IN_COMPARISON);
+            setBackground(ConflictColors.BGCOLOR_PARTICIPAING_IN_COMPARISON.get());
+            setForeground(ConflictColors.FGCOLOR_PARTICIPAING_IN_COMPARISON.get());
         }
         setText(Integer.toString(row+1));
     }

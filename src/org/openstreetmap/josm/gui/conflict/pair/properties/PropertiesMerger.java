@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.conflict.pair.properties;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -24,6 +23,7 @@ import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -35,10 +35,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class PropertiesMerger extends JPanel implements Observer, IConflictResolver {
     private static DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000000");
-
-    public final static Color BGCOLOR_NO_CONFLICT = new Color(234,234,234);
-    public final static Color BGCOLOR_UNDECIDED = new Color(255,197,197);
-    public final static Color BGCOLOR_DECIDED = new Color(217,255,217);
 
     private  JLabel lblMyVersion;
     private  JLabel lblMergedVersion;
@@ -327,23 +323,23 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         lblMergedCoordinates.setText(coordToString(model.getMergedCoords()));
         lblTheirCoordinates.setText(coordToString(model.getTheirCoords()));
         if (! model.hasCoordConflict()) {
-            lblMyCoordinates.setBackground(BGCOLOR_NO_CONFLICT);
-            lblMergedCoordinates.setBackground(BGCOLOR_NO_CONFLICT);
-            lblTheirCoordinates.setBackground(BGCOLOR_NO_CONFLICT);
+            lblMyCoordinates.setBackground(ConflictColors.BGCOLOR_NO_CONFLICT.get());
+            lblMergedCoordinates.setBackground(ConflictColors.BGCOLOR_NO_CONFLICT.get());
+            lblTheirCoordinates.setBackground(ConflictColors.BGCOLOR_NO_CONFLICT.get());
         } else {
             if (!model.isDecidedCoord()) {
-                lblMyCoordinates.setBackground(BGCOLOR_UNDECIDED);
-                lblMergedCoordinates.setBackground(BGCOLOR_NO_CONFLICT);
-                lblTheirCoordinates.setBackground(BGCOLOR_UNDECIDED);
+                lblMyCoordinates.setBackground(ConflictColors.BGCOLOR_UNDECIDED.get());
+                lblMergedCoordinates.setBackground(ConflictColors.BGCOLOR_NO_CONFLICT.get());
+                lblTheirCoordinates.setBackground(ConflictColors.BGCOLOR_UNDECIDED.get());
             } else {
                 lblMyCoordinates.setBackground(
                         model.isCoordMergeDecision(MergeDecisionType.KEEP_MINE)
-                        ? BGCOLOR_DECIDED : BGCOLOR_NO_CONFLICT
+                        ? ConflictColors.BGCOLOR_DECIDED.get() : ConflictColors.BGCOLOR_NO_CONFLICT.get()
                 );
-                lblMergedCoordinates.setBackground(BGCOLOR_DECIDED);
+                lblMergedCoordinates.setBackground(ConflictColors.BGCOLOR_DECIDED.get());
                 lblTheirCoordinates.setBackground(
                         model.isCoordMergeDecision(MergeDecisionType.KEEP_THEIR)
-                        ? BGCOLOR_DECIDED : BGCOLOR_NO_CONFLICT
+                        ? ConflictColors.BGCOLOR_DECIDED.get() : ConflictColors.BGCOLOR_NO_CONFLICT.get()
                 );
             }
         }
@@ -355,23 +351,23 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
         lblTheirDeletedState.setText(deletedStateToString(model.getTheirDeletedState()));
 
         if (! model.hasDeletedStateConflict()) {
-            lblMyDeletedState.setBackground(BGCOLOR_NO_CONFLICT);
-            lblMergedDeletedState.setBackground(BGCOLOR_NO_CONFLICT);
-            lblTheirDeletedState.setBackground(BGCOLOR_NO_CONFLICT);
+            lblMyDeletedState.setBackground(ConflictColors.BGCOLOR_NO_CONFLICT.get());
+            lblMergedDeletedState.setBackground(ConflictColors.BGCOLOR_NO_CONFLICT.get());
+            lblTheirDeletedState.setBackground(ConflictColors.BGCOLOR_NO_CONFLICT.get());
         } else {
             if (!model.isDecidedDeletedState()) {
-                lblMyDeletedState.setBackground(BGCOLOR_UNDECIDED);
-                lblMergedDeletedState.setBackground(BGCOLOR_NO_CONFLICT);
-                lblTheirDeletedState.setBackground(BGCOLOR_UNDECIDED);
+                lblMyDeletedState.setBackground(ConflictColors.BGCOLOR_UNDECIDED.get());
+                lblMergedDeletedState.setBackground(ConflictColors.BGCOLOR_NO_CONFLICT.get());
+                lblTheirDeletedState.setBackground(ConflictColors.BGCOLOR_UNDECIDED.get());
             } else {
                 lblMyDeletedState.setBackground(
                         model.isDeletedStateDecision(MergeDecisionType.KEEP_MINE)
-                        ? BGCOLOR_DECIDED : BGCOLOR_NO_CONFLICT
+                        ? ConflictColors.BGCOLOR_DECIDED.get() : ConflictColors.BGCOLOR_NO_CONFLICT.get()
                 );
-                lblMergedDeletedState.setBackground(BGCOLOR_DECIDED);
+                lblMergedDeletedState.setBackground(ConflictColors.BGCOLOR_DECIDED.get());
                 lblTheirDeletedState.setBackground(
                         model.isDeletedStateDecision(MergeDecisionType.KEEP_THEIR)
-                        ? BGCOLOR_DECIDED : BGCOLOR_NO_CONFLICT
+                        ? ConflictColors.BGCOLOR_DECIDED.get() : ConflictColors.BGCOLOR_NO_CONFLICT.get()
                 );
             }
         }
@@ -379,9 +375,9 @@ public class PropertiesMerger extends JPanel implements Observer, IConflictResol
 
     protected void updateReferrers() {
         lblMyReferrers.setText(referrersToString(model.getMyReferrers()));
-        lblMyReferrers.setBackground(BGCOLOR_NO_CONFLICT);
+        lblMyReferrers.setBackground(ConflictColors.BGCOLOR_NO_CONFLICT.get());
         lblTheirReferrers.setText(referrersToString(model.getTheirReferrers()));
-        lblTheirReferrers.setBackground(BGCOLOR_NO_CONFLICT);
+        lblTheirReferrers.setBackground(ConflictColors.BGCOLOR_NO_CONFLICT.get());
     }
 
     public void update(Observable o, Object arg) {

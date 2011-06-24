@@ -39,6 +39,12 @@ public enum Severity {
         this.color = color;
     }
 
+    public static void getColors() {
+        for (Severity c:values()) {
+            c.getColor();
+        }
+    }
+
     @Override
     public String toString() {
         return message;

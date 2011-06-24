@@ -29,6 +29,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
@@ -71,6 +73,7 @@ public class Preferences {
      */
     protected final SortedMap<String, String> properties = new TreeMap<String, String>();
     protected final SortedMap<String, String> defaults = new TreeMap<String, String>();
+    protected final SortedMap<String, String> colornames = new TreeMap<String, String>();
 
     public interface PreferenceChangeEvent{
         String getKey();
@@ -525,6 +528,25 @@ public class Preferences {
         return getColor(colName, null, def);
     }
 
+    /* only for preferences */
+    synchronized public String getColorName(String o) {
+        try
+        {
+            Matcher m = Pattern.compile("mappaint\\.(.+?)\\.(.+)").matcher(o);
+            m.matches();
+            return tr("Paint style {0}: {1}", tr(m.group(1)), tr(m.group(2)));
+        }
+        catch (Exception e) {}
+        try
+        {
+            Matcher m = Pattern.compile("layer (.+)").matcher(o);
+            m.matches();
+            return tr("Layer: {0}", tr(m.group(1)));
+        }
+        catch (Exception e) {}
+        return tr(colornames.containsKey(o) ? colornames.get(o) : o);
+    }
+
     public Color getColor(ColorKey key) {
         return getColor(key.getColorName(), key.getSpecialName(), key.getDefault());
     }
@@ -538,10 +560,13 @@ public class Preferences {
      * @return a Color object for the configured colour, or the default value if none configured.
      */
     synchronized public Color getColor(String colName, String specName, Color def) {
-        putDefault("color."+colName, ColorHelper.color2html(def));
+        String colKey = colName.toLowerCase().replaceAll("[^a-z0-9]+",".");
+        if(!colKey.equals(colName))
+            colornames.put(colKey, colName);
+        putDefault("color."+colKey, ColorHelper.color2html(def));
         String colStr = specName != null ? get("color."+specName) : "";
         if(colStr.equals("")) {
-            colStr = get("color."+colName);
+            colStr = get("color."+colKey);
         }
         return colStr.equals("") ? def : ColorHelper.html2color(colStr);
     }

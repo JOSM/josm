@@ -1,16 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair;
 
-import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-public class ComparePairListCellRenderer extends JLabel implements ListCellRenderer {
-    public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
+import org.openstreetmap.josm.gui.conflict.ConflictColors;
 
+public class ComparePairListCellRenderer extends JLabel implements ListCellRenderer {
     public ComparePairListCellRenderer() {
         setOpaque(true);
     }
@@ -23,8 +22,8 @@ public class ComparePairListCellRenderer extends JLabel implements ListCellRende
     {
         ComparePairType type = (ComparePairType)value;
         setText(type.getDisplayName());
-        setBackground(isSelected ? BGCOLOR_SELECTED : Color.WHITE);
-        setForeground(Color.BLACK);
+        setBackground(isSelected ? ConflictColors.BGCOLOR_SELECTED.get() : ConflictColors.BGCOLOR.get());
+        setForeground(ConflictColors.FGCOLOR.get());
         return this;
     }
 }

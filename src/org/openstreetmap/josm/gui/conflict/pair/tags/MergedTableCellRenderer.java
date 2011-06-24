@@ -3,28 +3,21 @@ package org.openstreetmap.josm.gui.conflict.pair.tags;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.Color;
-
+import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 
 public class MergedTableCellRenderer extends TagMergeTableCellRenderer {
-
-    public final static Color BGCOLOR_UNDECIDED = new Color(255,197,197);
-    public final static Color BGCOLOR_MINE = new Color(217,255,217);
-    public final static Color BGCOLOR_THEIR = new Color(217,255,217);
-    public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
-
     protected void setBackgroundColor(TagMergeItem item, boolean isSelected) {
         if (isSelected) {
-            setBackground(BGCOLOR_SELECTED);
+            setBackground(ConflictColors.BGCOLOR_SELECTED.get());
             return;
         }
         if (MergeDecisionType.KEEP_MINE.equals(item.getMergeDecision())) {
-            setBackground(BGCOLOR_MINE);
+            setBackground(ConflictColors.BGCOLOR_COMBINED.get());
         } else if (MergeDecisionType.KEEP_THEIR.equals(item.getMergeDecision())) {
-            setBackground(BGCOLOR_THEIR);
+            setBackground(ConflictColors.BGCOLOR_COMBINED.get());
         } else if (MergeDecisionType.UNDECIDED.equals(item.getMergeDecision())) {
-            setBackground(BGCOLOR_UNDECIDED);
+            setBackground(ConflictColors.BGCOLOR_UNDECIDED.get());
         }
     }
 

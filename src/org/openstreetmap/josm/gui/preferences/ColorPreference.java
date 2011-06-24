@@ -15,8 +15,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -34,9 +32,12 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
+import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.gui.MapScaler;
+import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.ColorHelper;
@@ -131,21 +132,7 @@ public class ColorPreference implements PreferenceSetting {
 
     private String getName(String o)
     {
-        try
-        {
-            Matcher m = Pattern.compile("mappaint\\.(.+?)\\.(.+)").matcher(o);
-            m.matches();
-            return tr("Paint style {0}: {1}", tr(m.group(1)), tr(m.group(2)));
-        }
-        catch (Exception e) {}
-        try
-        {
-            Matcher m = Pattern.compile("layer (.+)").matcher(o);
-            m.matches();
-            return tr("Layer: {0}", tr(m.group(1)));
-        }
-        catch (Exception e) {}
-        return tr(o);
+        return Main.pref.getColorName(o);
     }
 
     public void addGui(final PreferenceTabbedPane gui) {
@@ -259,9 +246,12 @@ public class ColorPreference implements PreferenceSetting {
      */
     private void fixColorPrefixes() {
         PaintColors.getColors();
+        ConflictColors.getColors();
+        Severity.getColors();
         MarkerLayer.getColor(null);
         GpxLayer.getColor(null);
         OsmDataLayer.getOutsideColor();
+        ImageryLayer.getFadeColor();
         MapScaler.getColor();
         ConflictDialog.getColor();
     }

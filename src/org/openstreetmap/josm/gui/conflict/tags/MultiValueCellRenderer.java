@@ -15,6 +15,7 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
+import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -22,8 +23,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class MultiValueCellRenderer extends JLabel implements TableCellRenderer {
-
-    public final static Color BGCOLOR_UNDECIDED = new Color(255,197,197);
 
     private ImageIcon iconDecided;
     private ImageIcon iconUndecided;
@@ -45,7 +44,7 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
             switch(decision.getDecisionType()) {
             case UNDECIDED:
                 setForeground(UIManager.getColor("Table.foreground"));
-                setBackground(BGCOLOR_UNDECIDED);
+                setBackground(ConflictColors.BGCOLOR_UNDECIDED.get());
                 break;
             case KEEP_NONE:
                 setForeground(UIManager.getColor("Panel.foreground"));

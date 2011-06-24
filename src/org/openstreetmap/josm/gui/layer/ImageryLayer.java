@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
@@ -43,7 +44,7 @@ public abstract class ImageryLayer extends Layer {
     public static final IntegerProperty PROP_SHARPEN_LEVEL = new IntegerProperty("imagery.sharpen_level", 0);
 
     public static Color getFadeColor() {
-        return Main.pref.getColor("imagery.fade", Color.white);
+        return Main.pref.getColor(marktr("Imagery fade"), Color.white);
     }
 
     public static Color getFadeColorWithAlpha() {
@@ -52,7 +53,7 @@ public abstract class ImageryLayer extends Layer {
     }
 
     public static void setFadeColor(Color color) {
-        Main.pref.putColor("imagery.fade", color);
+        Main.pref.putColor(marktr("Imagery fade"), color);
     }
 
     protected final ImageryInfo info;

@@ -150,10 +150,10 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
 
         protected void renderColors(boolean selected) {
             if (selected) {
-                setForeground( UIManager.getColor("ComboBox.selectionForeground"));
+                setForeground(UIManager.getColor("ComboBox.selectionForeground"));
                 setBackground(UIManager.getColor("ComboBox.selectionBackground"));
             } else {
-                setForeground( UIManager.getColor("ComboBox.foreground"));
+                setForeground(UIManager.getColor("ComboBox.foreground"));
                 setBackground(UIManager.getColor("ComboBox.background"));
             }
         }

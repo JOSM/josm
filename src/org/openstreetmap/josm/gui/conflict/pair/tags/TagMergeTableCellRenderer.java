@@ -1,13 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.conflict.pair.tags;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.text.MessageFormat;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
+
+import org.openstreetmap.josm.gui.conflict.ConflictColors;
 
 public abstract class TagMergeTableCellRenderer extends JLabel implements TableCellRenderer {
 
@@ -17,8 +18,8 @@ public abstract class TagMergeTableCellRenderer extends JLabel implements TableC
 
     protected void reset() {
         setOpaque(true);
-        setBackground(Color.white);
-        setForeground(Color.black);
+        setBackground(ConflictColors.BGCOLOR.get());
+        setForeground(ConflictColors.FGCOLOR.get());
     }
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row,
