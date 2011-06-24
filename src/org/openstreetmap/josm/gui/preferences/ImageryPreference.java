@@ -443,7 +443,7 @@ public class ImageryPreference implements PreferenceSetting {
         class NewEntryAction extends AbstractAction {
             public NewEntryAction() {
                 putValue(NAME, tr("New"));
-                putValue(SHORT_DESCRIPTION, tr("add a new wms/tms entry by entering the url"));
+                putValue(SHORT_DESCRIPTION, tr("Add a new WMS/TMS entry by entering the URL"));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "add"));
             }
 
@@ -463,7 +463,7 @@ public class ImageryPreference implements PreferenceSetting {
 
             public RemoveEntryAction() {
                 putValue(NAME, tr("Remove"));
-                putValue(SHORT_DESCRIPTION, tr("remove entry"));
+                putValue(SHORT_DESCRIPTION, tr("Remove entry"));
                 putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
                 updateEnabledState();
             }

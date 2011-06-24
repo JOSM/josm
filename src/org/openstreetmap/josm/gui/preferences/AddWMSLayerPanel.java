@@ -107,7 +107,7 @@ public class AddWMSLayerPanel extends JPanel {
                 Cursor beforeCursor = getCursor();
                 try {
                     setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    attemptGetCapabilities(serviceUrlText.getText());
+                    attemptGetCapabilities(sanitize(serviceUrlText.getText()));
                 } finally {
                     setCursor(beforeCursor);
                 }
@@ -223,9 +223,13 @@ public class AddWMSLayerPanel extends JPanel {
         add(imageryAddPanel);
     }
 
+    private String sanitize(String s) {
+        return s.replaceAll("[\r\n]+","").trim();
+    }
+
     private String buildTMSUrl() {
         StringBuilder a = new StringBuilder("tms:");
-        a.append(tmsURL.getText());
+        a.append(sanitize(tmsURL.getText()));
         return a.toString();
     }
 
