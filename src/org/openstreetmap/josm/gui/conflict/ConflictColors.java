@@ -14,14 +14,14 @@ public enum ConflictColors implements ColorKey {
     BGCOLOR_NO_CONFLICT(marktr("Conflict background: no conflict"), new Color(234,234,234)),
     BGCOLOR_DECIDED(marktr("Conflict background: decided"), new Color(217,255,217)),
     BGCOLOR_UNDECIDED(marktr("Conflict background: undecided"), new Color(255,197,197)),
-    BGCOLOR_MINE(marktr("Conflict background: mine"), Color.white),
-    BGCOLOR_THEIR(marktr("Conflict background: their"), new Color(217,255,217)),
+    BGCOLOR_DROP(marktr("Conflict background: drop"), Color.white),
+    BGCOLOR_KEEP(marktr("Conflict background: keep"), new Color(217,255,217)),
     BGCOLOR_COMBINED(marktr("Conflict background: combined"), new Color(217,255,217)),
     BGCOLOR_SELECTED(marktr("Conflict background: selected"), new Color(143,170,255)),
 
     FGCOLOR_UNDECIDED(marktr("Conflict foreground: undecided"), Color.black),
-    FGCOLOR_MINE(marktr("Conflict foreground: mine"), Color.lightGray),
-    FGCOLOR_THEIR(marktr("Conflict foreground: their"), Color.black),
+    FGCOLOR_DROP(marktr("Conflict foreground: drop"), Color.lightGray),
+    FGCOLOR_KEEP(marktr("Conflict foreground: keep"), Color.black),
 
     BGCOLOR_EMPTY_ROW(marktr("Conflict background: empty row"), new Color(234,234,234)),
     BGCOLOR_FROZEN(marktr("Conflict background: frozen"), new Color(234,234,234)),

@@ -7,18 +7,16 @@ import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 
 public class MineTableCellRenderer extends TagMergeTableCellRenderer {
-    /* NOTE: mine and their colors are reversed for this renderer */
 
     protected void setBackgroundColor(TagMergeItem item, boolean isSelected) {
-        if (isSelected)  {
+        if (isSelected) {
             setBackground(ConflictColors.BGCOLOR_SELECTED.get());
             return;
         }
-
         if (MergeDecisionType.KEEP_MINE.equals(item.getMergeDecision())) {
-            setBackground(ConflictColors.BGCOLOR_THEIR.get());
+            setBackground(ConflictColors.BGCOLOR_KEEP.get());
         } else if (MergeDecisionType.KEEP_THEIR.equals(item.getMergeDecision())) {
-            setBackground(ConflictColors.BGCOLOR_MINE.get());
+            setBackground(ConflictColors.BGCOLOR_DROP.get());
         } else if (MergeDecisionType.UNDECIDED.equals(item.getMergeDecision())) {
             setBackground(ConflictColors.BGCOLOR_UNDECIDED.get());
         }
@@ -26,9 +24,9 @@ public class MineTableCellRenderer extends TagMergeTableCellRenderer {
 
     protected void setTextColor(TagMergeItem item) {
         if (MergeDecisionType.KEEP_MINE.equals(item.getMergeDecision())) {
-            setForeground(ConflictColors.FGCOLOR_THEIR.get());
+            setForeground(ConflictColors.FGCOLOR_KEEP.get());
         } else if (MergeDecisionType.KEEP_THEIR.equals(item.getMergeDecision())) {
-            setForeground(ConflictColors.FGCOLOR_MINE.get());
+            setForeground(ConflictColors.FGCOLOR_DROP.get());
         } else if (MergeDecisionType.UNDECIDED.equals(item.getMergeDecision())) {
             setForeground(ConflictColors.FGCOLOR_UNDECIDED.get());
         }
@@ -36,7 +34,7 @@ public class MineTableCellRenderer extends TagMergeTableCellRenderer {
 
     @Override
     protected void renderKey(TagMergeItem item, boolean isSelected) {
-        setBackgroundColor(item,isSelected);
+        setBackgroundColor(item, isSelected);
         setTextColor(item);
         if (item.getMyTagValue() == null) {
             setText(tr("<undefined>"));
