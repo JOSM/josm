@@ -36,6 +36,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.preferences.StringProperty;
+import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 
 public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
@@ -310,6 +311,12 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
         repaint();
     }
 
+    private DownloadDialog iGui;
+
+    public void setGui(final DownloadDialog gui) {
+        iGui = gui;
+    }
+
     /**
      * Performs resizing of the DownloadDialog in order to enlarge or shrink the
      * map.
@@ -325,6 +332,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
             // make the each dimension 90% of the absolute display size
             w = iScreenSize.width * 90 / 100;
             h = iScreenSize.height * 90 / 100;
+            iDownloadDialogDimension = iGui.getSize(); 
         }
         // shrink
         else {
@@ -334,6 +342,8 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
             iDownloadDialogDimension = null;
         }
 
+        // resize and center the DownloadDialog 
+        iGui.setBounds((iScreenSize.width - w) / 2, (iScreenSize.height - h) / 2, w, h); 
         repaint();
     }
 
