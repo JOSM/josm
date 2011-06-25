@@ -278,9 +278,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             if(locale_text == null) {
                 if (text != null) {
                     if(text_context != null) {
-                        locale_text = trc(text_context, text);
+                        locale_text = trc(text_context, text.replaceAll("'","''"));
                     } else {
-                        locale_text = tr(text);
+                        locale_text = tr(text.replaceAll("'","''"));
                     }
                 }
             }
@@ -333,9 +333,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
             if(locale_text == null) {
                 if(text_context != null) {
-                    locale_text = trc(text_context, text);
+                    locale_text = trc(text_context, text.replaceAll("'","''"));
                 } else {
-                    locale_text = tr(text);
+                    locale_text = tr(text.replaceAll("'","''"));
                 }
             }
 
@@ -466,11 +466,11 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             for (int i=0; i<value_array.length; i++) {
                 PresetListEntry e = new PresetListEntry(value_array[i]);
                 e.display_value = (locale_display_values == null)
-                ? (values_context == null ? tr(display_array[i])
-                        : trc(values_context, display_array[i])) : display_array[i];
+                ? (values_context == null ? tr(display_array[i].replaceAll("'","''"))
+                        : trc(values_context, display_array[i].replaceAll("'","''"))) : display_array[i];
                 if (short_descriptions_array != null) {
-                    e.short_description = locale_short_descriptions == null ? tr(short_descriptions_array[i])
-                            : short_descriptions_array[i];
+                    e.short_description = locale_short_descriptions == null ? tr(short_descriptions_array[i].replaceAll("'","''"))
+                            : short_descriptions_array[i].replaceAll("'","''");
                 }
                 lhm.put(value_array[i], e);
             }
@@ -523,9 +523,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
             if(locale_text == null) {
                 if(text_context != null) {
-                    locale_text = trc(text_context, text);
+                    locale_text = trc(text_context, text.replaceAll("'","''"));
                 } else {
-                    locale_text = tr(text);
+                    locale_text = tr(text.replaceAll("'","''"));
                 }
             }
             p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
@@ -742,10 +742,10 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             for (int i=0; i<value_array.length; i++) {
                 PresetListEntry e = new PresetListEntry(value_array[i]);
                 e.display_value = (locale_display_values == null)
-                ? (values_context == null ? tr(display_array[i])
-                        : trc(values_context, display_array[i])) : display_array[i];
+                ? (values_context == null ? tr(display_array[i].replaceAll("'","''"))
+                        : trc(values_context, display_array[i].replaceAll("'","''"))) : display_array[i];
                 if (short_descriptions_array != null) {
-                    e.short_description = locale_short_descriptions == null ? tr(short_descriptions_array[i])
+                    e.short_description = locale_short_descriptions == null ? tr(short_descriptions_array[i].replaceAll("'","''"))
                             : short_descriptions_array[i];
                 }
                 lhm.put(value_array[i], e);
@@ -771,9 +771,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
             if (locale_text == null) {
                 if(text_context != null) {
-                    locale_text = trc(text_context, text);
+                    locale_text = trc(text_context, text.replaceAll("'","''"));
                 } else {
-                    locale_text = tr(text);
+                    locale_text = tr(text.replaceAll("'","''"));
                 }
             }
             p.add(new JLabel(locale_text+":"), GBC.std().insets(0,0,10,0));
@@ -913,9 +913,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         @Override public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel) {
             if(locale_text == null) {
                 if(text_context != null) {
-                    locale_text = trc(text_context, text);
+                    locale_text = trc(text_context, text.replaceAll("'","''"));
                 } else {
-                    locale_text = tr(text);
+                    locale_text = tr(text.replaceAll("'","''"));
                 }
             }
             p.add(new JLabel(locale_text), GBC.eol());
@@ -936,9 +936,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 if(text == null) {
                     locale_text = tr("More information about this feature");
                 } else if(text_context != null) {
-                    locale_text = trc(text_context, text);
+                    locale_text = trc(text_context, text.replaceAll("'","''"));
                 } else {
-                    locale_text = tr(text);
+                    locale_text = tr(text.replaceAll("'","''"));
                 }
             }
             String url = locale_href;
@@ -1001,9 +1001,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             if(locale_text == null) {
                 if (text != null) {
                     if(text_context != null) {
-                        locale_text = trc(text_context, text);
+                        locale_text = trc(text_context, text.replaceAll("'","''"));
                     } else {
-                        locale_text = tr(text);
+                        locale_text = tr(text.replaceAll("'","''"));
                     }
                 }
             }
@@ -1102,9 +1102,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
     public String getLocaleName() {
         if(locale_name == null) {
             if(name_context != null) {
-                locale_name = trc(name_context, name);
+                locale_name = trc(name_context, name.replaceAll("'","''"));
             } else {
-                locale_name = tr(name);
+                locale_name = tr(name.replaceAll("'","''"));
             }
         }
         return locale_name;
