@@ -1596,6 +1596,13 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <label text="Edit Bicycle Shop" />
             <key key="shop" value="bicycle" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
+			<check key="service:bicycle:retail" text="Bicycles are sold" />
+			<check key="service:bicycle:second_hand" text="Second-hand bicycles are sold" />
+			<check key="service:bicycle:repair" text="Bicycles are repaired" />
+			<check key="service:bicycle:rental" text="Bicycles are rented" />
+			<check key="service:bicycle:pump" text="Free bicycle pump" />
+			<check key="service:bicycle:diy" text="Tools for do-it-yourself repair (may be a bike co-operative)" />
+			<check key="service:bicycle:cleaning" text="Bicycles are washed (for a fee)" />
         </item>
         <item name="Rental" icon="presets/bicycle_rental.png" type="node,closedway">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=bicycle_rental"
