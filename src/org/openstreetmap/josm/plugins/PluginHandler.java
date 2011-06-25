@@ -939,20 +939,25 @@ public class PluginHandler {
      * Replies the plugin which most likely threw the exception <code>ex</code>.
      *
      * @param ex the exception
-     * @return the plugin; null, if the exception proably wasn't thrown from a plugin
+     * @return the plugin; null, if the exception probably wasn't thrown from a plugin
      */
     private static PluginProxy getPluginCausingException(Throwable ex) {
+        PluginProxy err = null;
+        StackTraceElement[] stack = ex.getStackTrace();
+        /* remember the error position, as multiple plugins may be involved,
+           we search the topmost one */
+        int pos = stack.length;
         for (PluginProxy p : pluginList) {
             String baseClass = p.getPluginInformation().className;
-            int i = baseClass.lastIndexOf(".");
-            baseClass = baseClass.substring(0, i);
-            for (StackTraceElement element : ex.getStackTrace()) {
-                String c = element.getClassName();
-                if (c.startsWith(baseClass))
-                    return p;
+            baseClass = baseClass.substring(0, baseClass.lastIndexOf("."));
+            for (int elpos = 0; elpos < pos; ++elpos) {
+                if (stack[elpos].getClassName().startsWith(baseClass)) {
+                    pos = elpos;
+                    err = p;
+                }
             }
         }
-        return null;
+        return err;
     }
 
     /**
