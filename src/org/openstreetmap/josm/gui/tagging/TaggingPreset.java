@@ -87,7 +87,7 @@ import org.xml.sax.SAXException;
 public class TaggingPreset extends AbstractAction implements MapView.LayerChangeListener {
 
     public enum PresetType {
-        NODE("Mf_node"), WAY("Mf_way"), RELATION("Mf_relation"), CLOSEDWAY("Mf_closedway");
+        NODE(/* ICON */"Mf_node"), WAY(/* ICON */"Mf_way"), RELATION(/* ICON */"Mf_relation"), CLOSEDWAY(/* ICON */"Mf_closedway");
 
         private final String iconName;
 

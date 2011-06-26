@@ -7,13 +7,13 @@ import java.text.MessageFormat;
 
 public enum OsmPrimitiveType {
 
-    NODE (marktr("node"), Node.class, NodeData.class),
-    WAY  (marktr("way"), Way.class, WayData.class),
-    RELATION (marktr("relation"), Relation.class, RelationData.class),
+    NODE (marktr(/* ICON(data/) */"node"), Node.class, NodeData.class),
+    WAY  (marktr(/* ICON(data/) */"way"), Way.class, WayData.class),
+    RELATION (marktr(/* ICON(data/) */"relation"), Relation.class, RelationData.class),
 
     /* only for display, no real type */
-    CLOSEDWAY  (marktr("closedway"), null, WayData.class),
-    MULTIPOLYGON (marktr("multipolygon"), null, RelationData.class);
+    CLOSEDWAY  (marktr(/* ICON(data/) */"closedway"), null, WayData.class),
+    MULTIPOLYGON (marktr(/* ICON(data/) */"multipolygon"), null, RelationData.class);
 
     private final String apiTypeName;
     private final Class<? extends OsmPrimitive> osmClass;

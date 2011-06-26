@@ -78,7 +78,7 @@ public abstract class OsmServerReader extends OsmConnection {
                 activeConnection.setRequestProperty("Accept-Encoding", "gzip, deflate");
             }
 
-            activeConnection.setConnectTimeout(15000);
+            activeConnection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
 
             try {
                 System.out.println("GET " + url);

@@ -364,7 +364,7 @@ public class PlaceSelection implements DownloadSelection {
                 synchronized(this) {
                     connection = (HttpURLConnection)url.openConnection();
                 }
-                connection.setConnectTimeout(15000);
+                connection.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
                 InputStream inputStream = connection.getInputStream();
                 InputSource inputSource = new InputSource(new InputStreamReader(inputStream, "UTF-8"));
                 NameFinderResultParser parser = new NameFinderResultParser();

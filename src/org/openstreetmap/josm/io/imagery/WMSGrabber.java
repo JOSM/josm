@@ -174,8 +174,8 @@ public class WMSGrabber extends Grabber {
             conn.setRequestProperty("Cookie", layer.getInfo().getCookies());
         }
         conn.setRequestProperty("User-Agent", Main.pref.get("imagery.wms.user_agent", Version.getInstance().getAgentString()));
-        conn.setConnectTimeout(Main.pref.getInteger("imagery.wms.timeout.connect", 30) * 1000);
-        conn.setReadTimeout(Main.pref.getInteger("imagery.wms.timeout.read", 30) * 1000);
+        conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15) * 1000);
+        conn.setReadTimeout(Main.pref.getInteger("socket.timeout.read", 30) * 1000);
 
         String contentType = conn.getHeaderField("Content-Type");
         if( conn.getResponseCode() != 200

@@ -64,8 +64,8 @@ public class MirroredInputStream extends InputStream {
             } else {
                 if(Main.applet) {
                     URLConnection conn = url.openConnection();
-                    conn.setConnectTimeout(5000);
-                    conn.setReadTimeout(5000);
+                    conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
+                    conn.setReadTimeout(Main.pref.getInteger("socket.timeout.read",30)*1000);
                     fs = new BufferedInputStream(conn.getInputStream());
                     file = new File(url.getFile());
                 } else {
@@ -217,8 +217,8 @@ public class MirroredInputStream extends InputStream {
         BufferedInputStream bis = null;
         try {
             URLConnection conn = url.openConnection();
-            conn.setConnectTimeout(5000);
-            conn.setReadTimeout(5000);
+            conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
+            conn.setReadTimeout(Main.pref.getInteger("socket.timeout.read",30)*1000);
             bis = new BufferedInputStream(conn.getInputStream());
             FileOutputStream fos = new FileOutputStream(destDirFile);
             bos = new BufferedOutputStream(fos);

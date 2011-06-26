@@ -15,7 +15,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
     private final ImageryInfo info;
 
     public AddImageryLayerAction(ImageryInfo info) {
-        super(info.getMenuName(), "imagery_menu", tr("Add imagery layer {0}",info.getName()), null, false, false);
+        super(info.getMenuName(), /* ICON */"imagery_menu", tr("Add imagery layer {0}",info.getName()), null, false, false);
         putValue("toolbar", "imagery_" + info.getToolbarName());
         this.info = info;
         installAdapters();

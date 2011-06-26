@@ -1157,7 +1157,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                             HttpURLConnection conn;
                             for (URI u : uris) {
                                 conn = (HttpURLConnection) u.toURL().openConnection();
-                                conn.setConnectTimeout(5000);
+                                conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
 
                                 if (conn.getResponseCode() != 200) {
                                     System.out.println("INFO: " + u + " does not exist");
@@ -1170,7 +1170,7 @@ public class PropertiesDialog extends ToggleDialog implements SelectionChangedLi
                                             .replace("=", "%3D") /* do not URLencode whole string! */
                                             .replaceFirst("/wiki/", "/w/index.php?redirect=no&title=")
                                     ).toURL().openConnection();
-                                    conn.setConnectTimeout(5000);
+                                    conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15)*1000);
 
                                     /* redirect pages have different content length, but retrieving a "nonredirect"
                                      *  page using index.php and the direct-link method gives slightly different

@@ -69,7 +69,7 @@ public class ImageryMenu extends JMenu implements MapView.LayerChangeListener {
     JMenuItem offsetMenuItem = singleOffset;
     Map_Rectifier_WMSmenuAction rectaction = new Map_Rectifier_WMSmenuAction();
     JosmAction blankmenu = new JosmAction(
-            tr("Blank Layer"), "blankmenu", tr("Open a blank WMS layer to load data from a file"), null, false) {
+            tr("Blank Layer"), /* ICON */"blankmenu", tr("Open a blank WMS layer to load data from a file"), null, false) {
         @Override
         public void actionPerformed(ActionEvent ev) {
             if (!isEnabled()) return;

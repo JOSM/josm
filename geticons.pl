@@ -4,6 +4,7 @@
 
 my @default = (
   "styles/standard/*.xml",
+  "styles/standard/*.mapcss",
   "data/*.xml",
   "src/org/openstreetmap/josm/*.java",
   "src/org/openstreetmap/josm/*/*.java",
@@ -31,16 +32,36 @@ for my $arg (@ARGV ? @ARGV : @default)
       {
         my $img = "styles/standard/$1";
         $img = "styles/$1" if((!-f "images/$img") && -f "images/styles/$1");
+        $img = $1 if((!-f "images/$img") && -f "images/$1");
         ++$icons{$img};
       }
-      elsif($l =~ /icon\s*=\s*["']([^+]+?)["']/)
+      elsif($l =~ /icon\s*[:=]\s*["']([^+]+?)["']/)
       {
         ++$icons{$1};
       }
 
+      if($l =~ /icon-image:\s*\"?(.*?)\"?\s*;/)
+      {
+        my $img = "styles/standard/$1";
+        $img = "styles/$1" if((!-f "images/$img") && -f "images/styles/$1");
+        $img = $1 if((!-f "images/$img") && -f "images/$1");
+        ++$icons{$img};
+      }
       if($l =~ /ImageProvider\.get\(\"([^\"]*?)\"\)/)
       {
         my $i = $1;
+        $i .= ".png" if !($i =~ /\.png$/);
+        ++$icons{$i};
+      }
+      while($l =~ /\/\*\s*ICON\s*\*\/\s*\"(.*?)\"/g)
+      {
+        my $i = $1;
+        $i .= ".png" if !($i =~ /\.png$/);
+        ++$icons{$i};
+      }
+      while($l =~ /\/\*\s*ICON\((.*?)\)\s*\*\/\s*\"(.*?)\"/g)
+      {
+        my $i = "$1$2";
         $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }
@@ -80,6 +101,12 @@ for my $arg (@ARGV ? @ARGV : @default)
       if($l =~ /ImageProvider\.getCursor\(\"(.*?)\",\s*null\)/)
       {
         my $i = "cursor/$1";
+        $i .= ".png" if !($i =~ /\.png$/);
+        ++$icons{$i};
+      }
+      if($l =~ /SideButton*\(\s*(?:mark)?tr\s*\(\s*\".*?\"\s*\)\s*,\s*\"(.*?)\"/)
+      {
+        my $i = "dialogs/$1";
         $i .= ".png" if !($i =~ /\.png$/);
         ++$icons{$i};
       }

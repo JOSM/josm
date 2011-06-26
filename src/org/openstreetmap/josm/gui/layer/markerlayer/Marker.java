@@ -178,6 +178,8 @@ public class Marker implements ActionListener {
         this.text = null;
         this.offset = offset;
         this.time = time;
+        // /* ICON(markers/) */"Bridge"
+        // /* ICON(markers/) */"Crossing"
         this.symbol = ImageProvider.getIfAvailable("markers",iconName);
         this.parentLayer = parentLayer;
     }

@@ -83,7 +83,7 @@ public class MapPaintStyles {
         ImageIcon i = ImageProvider.getIfAvailable(getIconSourceDirs(ref.source), "mappaint."+namespace, null, ref.iconName, ref.source.zipIcons, sanitize);
         if(i == null)
         {
-            System.out.println("Mappaint style \""+namespace+"\" icon \"" + ref.iconName + "\" not found.");
+            System.out.println("Mappaint style \""+namespace+"\" ("+ref.source.getDisplayString()+") icon \"" + ref.iconName + "\" not found.");
             return null;
         }
         return i;

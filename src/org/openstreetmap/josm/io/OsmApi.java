@@ -545,7 +545,7 @@ public class OsmApi extends OsmConnection {
                 URL url = new URL(new URL(getBaseUrl()), urlSuffix);
                 System.out.print(requestMethod + " " + url + "... ");
                 activeConnection = (HttpURLConnection)url.openConnection();
-                activeConnection.setConnectTimeout(fastFail ? 1000 : 15000);
+                activeConnection.setConnectTimeout(fastFail ? 1000 : Main.pref.getInteger("socket.timeout.connect",15)*1000);
                 activeConnection.setRequestMethod(requestMethod);
                 if (doAuthenticate) {
                     addAuth(activeConnection);
