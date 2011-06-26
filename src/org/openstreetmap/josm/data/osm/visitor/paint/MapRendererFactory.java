@@ -114,7 +114,6 @@ public class MapRendererFactory {
 
     private MapRendererFactory() {
         registerDefaultRenderers();
-        activateDefault();
         boolean drawWireframe = false;
         if (Main.pref.hasKey("draw.wireframe")) {
             drawWireframe = Main.pref.getBoolean("draw.wireframe",false);
