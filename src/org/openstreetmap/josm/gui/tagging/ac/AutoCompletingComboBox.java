@@ -77,13 +77,14 @@ public class AutoCompletingComboBox extends JComboBox {
                     Long.parseLong(str);
                     if (curText.length() != 0)
                         Long.parseLong(curText);
+                    item = lookupItem(curText, true);
                 } catch (NumberFormatException e) {
                     // either the new text or the current text isn't a number. We continue with
                     // autocompletion
-                    item = lookupItem(curText);
+                    item = lookupItem(curText, false);
                 }
             } else {
-                item = lookupItem(curText);
+                item = lookupItem(curText, false);
             }
 
             setSelectedItem(item);
@@ -113,7 +114,7 @@ public class AutoCompletingComboBox extends JComboBox {
             selecting = false;
         }
 
-        private Object lookupItem(String pattern) {
+        private Object lookupItem(String pattern, boolean match) {
             ComboBoxModel model = comboBox.getModel();
             AutoCompletionListItem bestItem = null;
             for (int i = 0, n = model.getSize(); i < n; i++) {
@@ -121,7 +122,7 @@ public class AutoCompletingComboBox extends JComboBox {
                 if (currentItem.getValue().equals(pattern)) {
                     return currentItem;
                 }
-                if (currentItem.getValue().startsWith(pattern)) {
+                if (!match && currentItem.getValue().startsWith(pattern)) {
                     if (bestItem == null || currentItem.getPriority().compareTo(bestItem.getPriority()) > 0) {
                         bestItem = currentItem;
                     }
