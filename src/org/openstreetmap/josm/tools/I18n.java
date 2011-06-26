@@ -347,6 +347,8 @@ public class I18n {
 
     public static void addTexts(File source)
     {
+        if(loadedCode.equals("en"))
+            return;
         FileInputStream fis = null;
         JarInputStream jar = null;
         FileInputStream fisTrans = null;
@@ -408,6 +410,7 @@ public class I18n {
         {
             strings = null;
             pstrings = null;
+            loadedCode = "en";
             pluralMode = PluralMode.MODE_NOTONE;
             return true;
         }
