@@ -222,7 +222,7 @@ public class Bounds {
         maxLon < -180 || maxLon > 180;
     }
 
-    private double toInterval(double value, double min, double max) {
+    private double toIntervalLat(double value, double min, double max) {
         if (value < min)
             return min;
         if (value > max)
@@ -230,11 +230,22 @@ public class Bounds {
         return value;
     }
 
+    private double toIntervalLon(double value) {
+        if (value < -180 || value > 180) {
+            value = (value + 180) % 360;
+            if (value < 0) {
+                value += 360;
+            }
+            return value - 180;
+        } else
+            return value;
+    }
+
     public void normalize() {
-        minLat = toInterval(minLat, -90, 90);
-        maxLat = toInterval(maxLat, -90, 90);
-        minLon = toInterval(minLon, -180, 180);
-        maxLon = toInterval(maxLon, -180, 180);
+        minLat = toIntervalLat(minLat, -90, 90);
+        maxLat = toIntervalLat(maxLat, -90, 90);
+        minLon = toIntervalLon(minLon);
+        maxLon = toIntervalLon(maxLon);
     }
 
     @Override
