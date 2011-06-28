@@ -197,10 +197,10 @@ public class ElemStyles {
                     multipolygon.load((Relation) osm);
                     for (Way w : multipolygon.getOuterWays()) {
                         Pair<StyleList, Range> wayStyles = generateStyles(w, scale, null, false);
+                        p.b = Range.cut(p.b, wayStyles.b);
                         ElemStyle area = Utils.find(wayStyles.a, AreaElemStyle.class);
                         if (area != null) {
                             p.a = new StyleList(p.a, area);
-                            p.b = Range.cut(p.b, wayStyles.b);
                             break;
                         }
                     }
