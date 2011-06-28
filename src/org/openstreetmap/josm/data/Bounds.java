@@ -214,6 +214,29 @@ public class Bounds {
         return getMin().equals(getMax());
     }
 
+    public boolean isOutOfTheWorld() {
+        return
+        minLat < -90 || minLat > 90 ||
+        maxLat < -90 || maxLat > 90 ||
+        minLon < -180 || minLon > 180 ||
+        maxLon < -180 || maxLon > 180;
+    }
+
+    private double toInterval(double value, double min, double max) {
+        if (value < min)
+            return min;
+        if (value > max)
+            return max;
+        return value;
+    }
+
+    public void normalize() {
+        minLat = toInterval(minLat, -90, 90);
+        maxLat = toInterval(maxLat, -90, 90);
+        minLon = toInterval(minLon, -180, 180);
+        maxLon = toInterval(maxLon, -180, 180);
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

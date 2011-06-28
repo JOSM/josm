@@ -150,8 +150,13 @@ public class OsmReader {
                             origin = generator;
                         }
                         Bounds bounds = new Bounds(
-                                new LatLon(Double.parseDouble(minlat), Double.parseDouble(minlon)),
-                                new LatLon(Double.parseDouble(maxlat), Double.parseDouble(maxlon)));
+                                Double.parseDouble(minlat), Double.parseDouble(minlon),
+                                Double.parseDouble(maxlat), Double.parseDouble(maxlon));
+                        if (bounds.isOutOfTheWorld()) {
+                            Bounds copy = new Bounds(bounds);
+                            bounds.normalize();
+                            System.out.println("Bbox " + copy + " is out of the world, normalized to " + bounds);
+                        }
                         DataSource src = new DataSource(bounds, origin);
                         ds.dataSources.add(src);
                     } else {

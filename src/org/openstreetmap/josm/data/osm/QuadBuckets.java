@@ -730,7 +730,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             // Walk back up the tree when the last
             // search spot can not cover the current
             // search
-            while (!search_cache.bbox().bounds(search_bbox)) {
+            while (search_cache != null && !search_cache.bbox().bounds(search_bbox)) {
                 if (debug) {
                     out("bbox: " + search_bbox);
                 }
@@ -742,6 +742,11 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 if (debug) {
                     out("new search_cache: " + search_cache);
                 }
+            }
+
+            if (search_cache == null) {
+                search_cache = root;
+                out("bbox: " + search_bbox + " is out of the world");
             }
         } else {
             search_cache = root;
