@@ -33,6 +33,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
@@ -61,6 +62,9 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
+import org.openstreetmap.josm.data.projection.Epsg4326;
+import org.openstreetmap.josm.data.projection.Mercator;
+import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapView.LayerChangeListener;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -313,6 +317,15 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     @SuppressWarnings("serial")
     public TMSLayer(ImageryInfo info) {
         super(info);
+
+        if(!isProjectionSupported(Main.getProjection())) {
+              JOptionPane.showMessageDialog(Main.parent,
+                  tr("TMS layers do not support the projection {1}.\n{2}\n"
+                  + "Change the projection or remove the layer.",
+                      Main.getProjection().toCode(), nameSupportedProjections()),
+                      tr("Warning"),
+                      JOptionPane.WARNING_MESSAGE);
+        }
 
         setBackgroundLayer(true);
         this.setVisible(true);
@@ -1309,5 +1322,15 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     @Override
     public boolean isChanged() {
         return needRedraw;
+    }
+
+    @Override
+    public boolean isProjectionSupported(Projection proj) {
+        return proj instanceof Mercator || proj instanceof Epsg4326;
+    }
+
+    @Override
+    public String nameSupportedProjections() {
+        return tr("EPSG:4326 and Mercator projection are supported");
     }
 }

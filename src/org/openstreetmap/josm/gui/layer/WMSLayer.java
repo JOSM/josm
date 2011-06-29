@@ -37,6 +37,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.ProjectionBounds;
+import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.GeorefImage;
 import org.openstreetmap.josm.data.imagery.GeorefImage.State;
@@ -106,7 +107,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
     private int threadCount;
     private int workingThreadCount;
     private boolean canceled;
-
+    private ArrayList<String> serverProjections = null;
 
     /** set to true if this layer uses an invalid base url */
     private boolean usesInvalidUrl = false;
@@ -141,7 +142,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         resolution = mv.getDist100PixelText();
 
         if(info.getUrl() != null) {
-            WMSGrabber.getProjection(info.getUrl(), true);
+            serverProjections = WMSGrabber.getServerProjections(info.getUrl(), true);
             startGrabberThreads();
             if(info.getImageryType() == ImageryType.WMS && !ImageryInfo.isUrlWithPatterns(info.getUrl())) {
                 if (!(info.getUrl().endsWith("&") || info.getUrl().endsWith("?"))) {
@@ -912,4 +913,19 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         else throw new IllegalStateException("getGrabber() called for non-WMS layer type");
     }
 
+    @Override
+    public boolean isProjectionSupported(Projection proj) {
+        return serverProjections == null || serverProjections.contains(proj.toCode().toUpperCase());
+    }
+
+    @Override
+    public String nameSupportedProjections() {
+        String res = "";
+        for(String p : serverProjections) {
+            if(!res.isEmpty())
+                res += ", ";
+            res += p;
+        }
+        return tr("Supported projections are: {1}", res);
+    }
 }

@@ -15,8 +15,10 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.GpxExportAction;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.actions.SaveAsAction;
@@ -73,7 +75,6 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
     static public final String VISIBLE_PROP = Layer.class.getName() + ".visible";
     static public final String OPACITY_PROP = Layer.class.getName() + ".opacity";
     static public final String NAME_PROP = Layer.class.getName() + ".name";
-
 
     /** keeps track of property change listeners */
     protected PropertyChangeSupport propertyChangeSupport;
@@ -307,12 +308,30 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
     }
 
     /**
-     *
+     * Check changed status of layer
      *
      * @return True if layer was changed since last paint
      */
     public boolean isChanged() {
         return true;
+    }
+
+    /**
+     * allows to check whether a projection is supported or not
+     *
+     * @return True if projection is supported for this layer
+     */
+    public boolean isProjectionSupported(Projection proj) {
+        return true;
+    }
+
+    /**
+     * Specify user information about projections
+     *
+     * @return User readable text telling about supported projections
+     */
+    public String nameSupportedProjections() {
+        return tr("All projections are supported");
     }
 
     /**
@@ -369,6 +388,13 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
     /* --------------------------------------------------------------------------------- */
     @Override
     public void projectionChanged(Projection oldValue, Projection newValue) {
-        // default implementation does nothing - override in subclasses
+        if(!isProjectionSupported(newValue)) {
+              JOptionPane.showMessageDialog(Main.parent,
+                  tr("The layer {0} does not support the new projection {1}.\n{2}\n"
+                  + "Change the projection again or remove the layer.",
+                      getName(), newValue.toCode(), nameSupportedProjections()),
+                      tr("Warning"),
+                      JOptionPane.WARNING_MESSAGE);
+        }
     }
 }

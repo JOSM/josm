@@ -17,6 +17,7 @@ import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -72,7 +73,27 @@ public class WMSGrabber extends Grabber {
     protected URL getURL(double w, double s,double e,double n,
             int wi, int ht) throws MalformedURLException {
         String myProj = Main.getProjection().toCode();
-        if(Main.getProjection() instanceof Mercator) // don't use mercator code directly
+        String srs = "";
+        boolean useepsg = false;
+        try
+        {
+            Matcher m = Pattern.compile(".*srs=([a-z0-9:]+).*").matcher(baseURL.toUpperCase());
+            if(m.matches())
+            {
+                if(m.group(1).equals("EPSG:4326") && Main.getProjection() instanceof Mercator)
+                    useepsg = true;
+            } else if(Main.getProjection() instanceof Mercator) {
+                useepsg = true;
+                srs ="&srs=EPSG:4326";
+            } else {
+                srs ="&srs="+myProj;
+            }
+        }
+        catch(Exception ex)
+        {
+        }
+
+        if(useepsg) // don't use mercator code directly
         {
             LatLon sw = Main.getProjection().eastNorth2latlon(new EastNorth(w, s));
             LatLon ne = Main.getProjection().eastNorth2latlon(new EastNorth(e, n));
@@ -100,7 +121,7 @@ public class WMSGrabber extends Grabber {
             .replaceAll("\\{height\\}", String.valueOf(ht));
         } else {
             str += "bbox=" + bbox
-            + getProjection(baseURL, false)
+            + srs
             + "&width=" + wi + "&height=" + ht;
             if (!(baseURL.endsWith("&") || baseURL.endsWith("?"))) {
                 System.out.println(tr("Warning: The base URL ''{0}'' for a WMS service doesn't have a trailing '&' or a trailing '?'.", baseURL));
@@ -111,36 +132,39 @@ public class WMSGrabber extends Grabber {
         return new URL(str.replace(" ", "%20"));
     }
 
-    static public String getProjection(String baseURL, Boolean warn)
+    static public ArrayList<String> getServerProjections(String baseURL, Boolean warn)
     {
-        String projname = Main.getProjection().toCode();
-        if(Main.getProjection() instanceof Mercator) {
-            projname = "EPSG:4326";
-        }
-        String res = "";
+        ArrayList<String> serverProjections = new ArrayList<String>();
         try
         {
-            Matcher m = Pattern.compile(".*srs=([a-z0-9:]+).*").matcher(baseURL.toLowerCase());
+            Matcher m = Pattern.compile(".*srs=([a-z0-9:]+).*").matcher(baseURL.toUpperCase());
             if(m.matches())
             {
-                projname = projname.toLowerCase();
-                if(!projname.equals(m.group(1)) && warn)
-                {
-                    JOptionPane.showMessageDialog(Main.parent,
-                            tr("The projection ''{0}'' in URL and current projection ''{1}'' mismatch.\n"
-                                    + "This may lead to wrong coordinates.",
-                                    m.group(1), projname),
-                                    tr("Warning"),
-                                    JOptionPane.WARNING_MESSAGE);
-                }
-            } else {
-                res ="&srs="+projname;
+                serverProjections.add(m.group(1));
+                if(m.group(1).equals("EPSG:4326"))
+                    serverProjections.add(new Mercator().toCode());
             }
+            /* TODO: here should be an "else" code checking server capabilities */
         }
         catch(Exception e)
         {
         }
-        return res;
+        if(serverProjections.isEmpty())
+            return null;
+        if(warn)
+        {
+            String myProj = Main.getProjection().toCode().toUpperCase();
+            if(!serverProjections.contains(myProj))
+            {
+                JOptionPane.showMessageDialog(Main.parent,
+                        tr("The projection ''{0}'' in URL and current projection ''{1}'' mismatch.\n"
+                                + "This may lead to wrong coordinates.",
+                                serverProjections.get(0), myProj),
+                                tr("Warning"),
+                                JOptionPane.WARNING_MESSAGE);
+            }
+        }
+        return serverProjections;
     }
 
     @Override
