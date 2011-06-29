@@ -926,6 +926,6 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
                 res += ", ";
             res += p;
         }
-        return tr("Supported projections are: {1}", res);
+        return tr("Supported projections are: {0}", res);
     }
 }

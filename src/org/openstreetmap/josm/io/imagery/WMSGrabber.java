@@ -77,7 +77,7 @@ public class WMSGrabber extends Grabber {
         boolean useepsg = false;
         try
         {
-            Matcher m = Pattern.compile(".*srs=([a-z0-9:]+).*").matcher(baseURL.toUpperCase());
+            Matcher m = Pattern.compile(".*SRS=([a-z0-9:]+).*", Pattern.CASE_INSENSITIVE).matcher(baseURL.toUpperCase());
             if(m.matches())
             {
                 if(m.group(1).equals("EPSG:4326") && Main.getProjection() instanceof Mercator)
@@ -111,7 +111,7 @@ public class WMSGrabber extends Grabber {
         + latLonFormat.format(n);
 
         if (urlWithPatterns) {
-            str = str.replaceAll("\\{proj\\}", myProj)
+            str = str.replaceAll("\\{proj(\\([^})]+\\))?\\}", myProj)
             .replaceAll("\\{bbox\\}", bbox)
             .replaceAll("\\{w\\}", latLonFormat.format(w))
             .replaceAll("\\{s\\}", latLonFormat.format(s))
@@ -137,14 +137,30 @@ public class WMSGrabber extends Grabber {
         ArrayList<String> serverProjections = new ArrayList<String>();
         try
         {
-            Matcher m = Pattern.compile(".*srs=([a-z0-9:]+).*").matcher(baseURL.toUpperCase());
+            Matcher m = Pattern.compile(".*\\{PROJ\\(([^)}]+)\\)\\}.*").matcher(baseURL.toUpperCase());
             if(m.matches())
             {
-                serverProjections.add(m.group(1));
-                if(m.group(1).equals("EPSG:4326"))
+                boolean hasepsg = false;
+                for(String p : m.group(1).split(","))
+                {
+                    serverProjections.add(p);
+                    if(p.equals("EPSG:4326"))
+                        hasepsg = true;
+                }
+                if(hasepsg && !serverProjections.contains(new Mercator().toCode()))
                     serverProjections.add(new Mercator().toCode());
             }
-            /* TODO: here should be an "else" code checking server capabilities */
+            else
+            {
+                m = Pattern.compile(".*SRS=([a-z0-9:]+).*", Pattern.CASE_INSENSITIVE).matcher(baseURL.toUpperCase());
+                if(m.matches())
+                {
+                    serverProjections.add(m.group(1));
+                    if(m.group(1).equals("EPSG:4326"))
+                        serverProjections.add(new Mercator().toCode());
+                }
+                /* TODO: here should be an "else" code checking server capabilities */
+            }
         }
         catch(Exception e)
         {
