@@ -29,7 +29,6 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
@@ -229,15 +228,17 @@ public class WmsCache {
             usedProjections.add(projectionEntries.cacheDirectory);
 
             File projectionDir = new File(cacheDir, projectionEntries.cacheDirectory);
-            Set<String> referencedFiles = new HashSet<String>();
+            if (projectionDir.exists()) {
+                Set<String> referencedFiles = new HashSet<String>();
 
-            for (CacheEntry ce: projectionEntries.entries) {
-                referencedFiles.add(ce.filename);
-            }
+                for (CacheEntry ce: projectionEntries.entries) {
+                    referencedFiles.add(ce.filename);
+                }
 
-            for (File file: projectionDir.listFiles()) {
-                if (!referencedFiles.contains(file.getName())) {
-                    file.delete();
+                for (File file: projectionDir.listFiles()) {
+                    if (!referencedFiles.contains(file.getName())) {
+                        file.delete();
+                    }
                 }
             }
         }
