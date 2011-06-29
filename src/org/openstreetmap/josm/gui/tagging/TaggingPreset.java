@@ -1454,7 +1454,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             {
                 if(osm instanceof Relation)
                 {
-                    if(!types.contains(PresetType.RELATION)) {
+                    if(!types.contains(PresetType.RELATION) &&
+                            !(types.contains(PresetType.CLOSEDWAY) && ((Relation)osm).isMultipolygon())) {
                         continue;
                     }
                 }
