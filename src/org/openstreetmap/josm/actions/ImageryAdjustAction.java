@@ -46,6 +46,7 @@ public class ImageryAdjustAction extends MapMode implements MouseListener, Mouse
         super(tr("New offset"), "adjustimg",
                 tr("Adjust the position of this imagery layer"), Main.map,
                 cursor);
+        putValue("toolbar", false);
         this.layer = layer;
     }
 
