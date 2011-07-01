@@ -151,11 +151,21 @@ abstract public class Main {
     private GettingStarted gettingStarted = new GettingStarted();
 
     /**
-     * Print a debug message if debugging is on.
+     * Print a message if logging is on.
      */
-    static public int debug_level = 1;
+    static public int log_level = 2;
+    static public void warn(String msg) {
+        if (log_level < 1)
+            return;
+        System.out.println(msg);
+    }
+    static public void info(String msg) {
+        if (log_level < 2)
+            return;
+        System.out.println(msg);
+    }
     static public void debug(String msg) {
-        if (debug_level <= 0)
+        if (log_level < 3)
             return;
         System.out.println(msg);
     }
@@ -440,7 +450,6 @@ abstract public class Main {
                 bounds = new Rectangle(x,y,w,h);
                 if(!Main.pref.get("gui.geometry").equals(geometry)) {
                     // remember this geometry
-                    // Main.debug("Main window: saving geometry \"" + geometry + "\"");
                     Main.pref.put("gui.geometry", geometry);
                 }
             } else {
@@ -450,7 +459,6 @@ abstract public class Main {
         if (bounds == null) {
             bounds = !args.containsKey("no-maximize") ? new Rectangle(0,0,screenDimension.width,screenDimension.height) : new Rectangle(1000,740);
         }
-        // Main.debug("window geometry: "+bounds);
     }
 
     public void postConstructorProcessCmdLine(Map<String, Collection<String>> args) {
