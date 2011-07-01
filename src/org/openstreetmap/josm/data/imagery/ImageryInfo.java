@@ -172,6 +172,8 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     public void setUrl(String url) {
         CheckParameterUtil.ensureParameterNotNull(url);
         
+        defaultMaxZoom = 0;
+        defaultMinZoom = 0;
         for (ImageryType type : ImageryType.values()) {
             Matcher m = Pattern.compile(type.getUrlString()+"(?:\\[(?:(\\d+),)?(\\d+)\\])?:(.*)").matcher(url);
             if(m.matches()) {
