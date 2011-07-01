@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
-import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -18,9 +17,6 @@ import javax.swing.table.TableCellRenderer;
  *
  */
 public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
-    @SuppressWarnings("unused")
-    static private Logger logger = Logger.getLogger(TagTableCellRenderer.class.getName());
-
     public final static Color BGCOLOR_DIFFERENCE = new Color(255,197,197);
 
     public TagTableCellRenderer() {

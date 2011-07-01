@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
-import java.util.logging.Logger;
 
 import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
 import org.openstreetmap.josm.data.conflict.Conflict;
@@ -278,8 +277,6 @@ public class APIDataSet {
      *
      */
     private class RelationUploadDependencyGraph {
-        @SuppressWarnings("unused")
-        private final Logger logger = Logger.getLogger(RelationUploadDependencyGraph.class.getName());
         private HashMap<Relation, Set<Relation>> children;
         private Collection<Relation> relations;
         private Set<Relation> visited;

@@ -53,8 +53,6 @@ import org.xml.sax.SAXException;
  *
  */
 public class ChildRelationBrowser extends JPanel {
-    //static private final Logger logger = Logger.getLogger(ChildRelationBrowser.class.getName());
-
     /** the tree with relation children */
     private RelationTree childTree;
     /**  the tree model */

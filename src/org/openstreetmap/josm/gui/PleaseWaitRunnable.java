@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
@@ -23,9 +22,6 @@ import org.xml.sax.SAXException;
  * @author Imi
  */
 public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
-    @SuppressWarnings("unused")
-    private final static Logger logger = Logger.getLogger(PleaseWaitRunnable.class.getName());
-
     private boolean cancelled = false;
     private boolean ignoreException;
     private final String title;

@@ -15,7 +15,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -44,9 +43,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class OAuthAuthenticationPreferencesPanel extends JPanel implements PropertyChangeListener {
-    @SuppressWarnings("unused")
-    private static final Logger logger = Logger.getLogger(OAuthAuthenticationPreferencesPanel.class.getName());
-
     private JPanel pnlAuthorisationMessage;
     private NotYetAuthorisedPanel pnlNotYetAuthorised;
     private AlreadyAuthorisedPanel pnlAlreadyAuthorised;

@@ -80,8 +80,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 public class OsmDataLayer extends Layer implements Listener, SelectionChangedListener {
-    // static private final Logger logger = Logger.getLogger(OsmDataLayer.class.getName());
-
     static public final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
     static public final String REQUIRES_UPLOAD_TO_SERVER_PROP = OsmDataLayer.class.getName() + ".requiresUploadToServer";
 

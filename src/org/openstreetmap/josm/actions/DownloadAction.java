@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.concurrent.Future;
-import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
@@ -26,9 +25,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class DownloadAction extends JosmAction {
-    @SuppressWarnings("unused")
-    private static final Logger logger = Logger.getLogger(DownloadAction.class.getName());
-
     public DownloadAction() {
         super(tr("Download from OSM..."), "download", tr("Download map data from the OSM server."),
                 Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download from OSM...")), KeyEvent.VK_D, Shortcut.GROUPS_ALT1+Shortcut.GROUP_HOTKEY), true);

@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
@@ -49,8 +48,6 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  */
 public class MultiFetchServerObjectReader extends OsmServerReader{
-
-    static final private Logger logger = Logger.getLogger(MultiFetchServerObjectReader.class.getName());
     /**
      * the max. number of primitives retrieved in one step. Assuming IDs with 7 digits,
      * this leads to a max. request URL of ~ 1600 Bytes ((7 digits +  1 Separator) * 200),
@@ -360,7 +357,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
                 singleGetId(type, id, progressMonitor);
             } catch(OsmApiException e) {
                 if (e.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                    logger.warning(tr("Server replied with response code 404 for id {0}. Skipping.", Long.toString(id)));
+                    System.out.println(tr("Server replied with response code 404 for id {0}. Skipping.", Long.toString(id)));
                     missingPrimitives.add(new SimplePrimitiveId(id, type));
                     continue;
                 }
@@ -415,7 +412,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
                 multiGetIdPackage(type, pkg, progressMonitor);
             } catch(OsmApiException e) {
                 if (e.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                    logger.warning(tr("Server replied with response code 404, retrying with an individual request for each object."));
+                    System.out.println(tr("Server replied with response code 404, retrying with an individual request for each object."));
                     singleGetIdPackage(type, pkg, progressMonitor);
                 } else
                     throw e;

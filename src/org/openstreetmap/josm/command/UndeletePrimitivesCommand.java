@@ -27,8 +27,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 @Deprecated
 public class UndeletePrimitivesCommand extends ConflictResolveCommand {
-    //static private final Logger logger = Logger.getLogger(UndeletePrimitivesCommand.class.getName());
-
     /** the node to undelete */
     private final List<OsmPrimitive> toUndelete = new ArrayList<OsmPrimitive>();
     /** primitives that replaced undeleted primitives */

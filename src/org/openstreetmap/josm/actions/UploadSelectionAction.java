@@ -38,8 +38,6 @@ import org.xml.sax.SAXException;
  *
  */
 public class UploadSelectionAction extends JosmAction{
-    //static private Logger logger = Logger.getLogger(UploadSelectionAction.class.getName());
-
     public UploadSelectionAction() {
         super(
                 tr("Upload selection"),

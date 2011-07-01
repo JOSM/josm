@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
@@ -31,9 +30,6 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
 
 public class DownloadPrimitivesTask extends PleaseWaitRunnable {
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(UpdatePrimitivesTask.class.getName());
-
     private DataSet ds;
     private boolean canceled;
     private Exception lastException;

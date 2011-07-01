@@ -21,7 +21,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -54,9 +53,6 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  *
  */
 public class OAuthAuthorizationWizard extends JDialog {
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(OAuthAuthorizationWizard.class.getName());
-
     private HtmlPanel pnlMessage;
     private boolean canceled;
     private String apiUrl;

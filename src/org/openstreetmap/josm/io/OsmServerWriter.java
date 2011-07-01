@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.IPrimitive;
@@ -28,9 +27,6 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * deleted. - All remaining objects with modified flag set are updated.
  */
 public class OsmServerWriter {
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(OsmServerWriter.class.getName());
-
     /**
      * This list contains all successfully processed objects. The caller of
      * upload* has to check this after the call and update its dataset.

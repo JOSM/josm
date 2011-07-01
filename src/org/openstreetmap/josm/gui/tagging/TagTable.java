@@ -22,8 +22,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.EventObject;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.CellEditor;
@@ -49,9 +47,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class TagTable extends JTable  {
-
-    private static final Logger logger = Logger.getLogger(TagTable.class.getName());
-
     /** the table cell editor used by this table */
     private TagCellEditor editor = null;
 
@@ -409,7 +404,7 @@ public class TagTable extends JTable  {
 
     public void setAutoCompletionManager(AutoCompletionManager autocomplete) {
         if (autocomplete == null) {
-            logger.warning("argument autocomplete should not be null. Aborting.");
+            System.out.println("argument autocomplete should not be null. Aborting.");
             Thread.dumpStack();
             return;
         }
@@ -431,9 +426,7 @@ public class TagTable extends JTable  {
 
     public void  addOKAccelatorListener(KeyListener l) {
         addKeyListener(l);
-        if (editor == null) {
-            logger.warning("editor is null. cannot register OK accelator listener.");
-        } else {
+        if (editor != null) {
             editor.getEditor().addKeyListener(l);
         }
     }
@@ -480,7 +473,7 @@ public class TagTable extends JTable  {
             robot.mouseRelease(InputEvent.BUTTON1_MASK);
             robot.mouseMove(before.x, before.y);
         } catch(AWTException e) {
-            logger.log(Level.SEVERE, "failed to simulate mouse click event at (" + r.x + "," + r.y + "). Exception: " + e.toString());
+            System.out.println("Failed to simulate mouse click event at (" + r.x + "," + r.y + "). Exception: " + e.toString());
             return;
         }
     }

@@ -5,7 +5,6 @@ import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 
@@ -16,8 +15,6 @@ import org.openstreetmap.josm.Main;
  *
  */
 public  class DefaultAuthenticator extends Authenticator {
-    @SuppressWarnings("unused")
-    private static final Logger logger = Logger.getLogger(DefaultAuthenticator.class.getName());
     private static DefaultAuthenticator instance;
 
     public static DefaultAuthenticator getInstance() {

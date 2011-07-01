@@ -46,7 +46,6 @@ public interface Selector {
      *
      */
     public static class ChildOrParentSelector implements Selector {
-        //static private final Logger logger = Logger.getLogger(ChildOrParentSelector.class.getName());
         private final Selector left;
         private final LinkSelector link;
         private final Selector right;

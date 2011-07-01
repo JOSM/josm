@@ -12,7 +12,6 @@ import java.net.URI;
 import java.net.Proxy.Type;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
@@ -23,9 +22,6 @@ import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel.Proxy
  *
  */
 public class DefaultProxySelector extends ProxySelector {
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(DefaultProxySelector.class.getName());
-
     /**
      * The {@see ProxySelector} provided by the JDK will retrieve proxy information
      * from the system settings, if the system property <tt>java.net.useSystemProxies</tt>

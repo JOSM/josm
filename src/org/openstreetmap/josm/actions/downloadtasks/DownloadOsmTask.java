@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.Future;
-import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -30,8 +29,6 @@ import org.xml.sax.SAXException;
  * Run in the worker thread.
  */
 public class DownloadOsmTask extends AbstractDownloadTask {
-    private static final Logger logger = Logger.getLogger(DownloadOsmTask.class.getName());
-
     private Bounds currentBounds;
     private DataSet downloadedData;
     private DownloadTask downloadTask;
@@ -91,7 +88,7 @@ public class DownloadOsmTask extends AbstractDownloadTask {
                 dataSet = reader.parseOsm(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             } catch(Exception e) {
                 if (isCanceled()) {
-                    logger.warning(tr("Ignoring exception because download has been cancelled. Exception was: {0}", e.toString()));
+                    System.out.println(tr("Ignoring exception because download has been cancelled. Exception was: {0}", e.toString()));
                     return;
                 }
                 if (e instanceof OsmTransferCancelledException) {

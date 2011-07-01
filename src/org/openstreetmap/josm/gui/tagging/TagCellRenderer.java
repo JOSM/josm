@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.Font;
-import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -20,9 +19,6 @@ import javax.swing.table.TableCellRenderer;
  *
  */
 public class TagCellRenderer extends JLabel implements TableCellRenderer  {
-    @SuppressWarnings("unused")
-    private static final Logger logger = Logger.getLogger(TagCellRenderer.class.getName());
-
     private Font fontStandard = null;
     private Font fontItalic = null;
 

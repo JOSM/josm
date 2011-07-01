@@ -17,7 +17,6 @@ import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -53,8 +52,6 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  *
  */
 public class UploadDialog extends JDialog implements PropertyChangeListener, PreferenceChangedListener{
-    protected static final Logger logger = Logger.getLogger(UploadDialog.class.getName());
-
     /**  the unique instance of the upload dialog */
     static private UploadDialog uploadDialog;
 

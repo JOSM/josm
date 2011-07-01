@@ -29,8 +29,6 @@ import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
  *
  */
 public class TagMergeModel extends DefaultTableModel {
-    //private static final Logger logger = Logger.getLogger(TagMergeModel.class.getName());
-
     static public final String PROP_NUM_UNDECIDED_TAGS = TagMergeModel.class.getName() + ".numUndecidedTags";
 
     /** the list of tag merge items */

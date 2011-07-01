@@ -20,7 +20,7 @@ import org.openstreetmap.josm.data.coor.QuadTiling;
  */
 public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
 {
-    private static boolean debug = false;
+    //private static boolean debug = false;
     private static final boolean consistency_testing = false;
     private static final int NW_INDEX = 1;
     private static final int NE_INDEX = 3;
@@ -137,12 +137,12 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             long this_quadpart = mult * (parent_index << shift);
             this.quad = parent.quad | this_quadpart;
             this.bbox = calculateBBox(); // calculateBBox reference quad
-            if (debug) {
+            /*if (debug) {
                 out("new level["+this.level+"] bbox["+parent_index+"]: " + this.bbox()
                         + " coor: " + this.coor()
                         + " quadpart: " + Long.toHexString(this_quadpart)
                         + " quad: " + Long.toHexString(this.quad));
-            }
+            }*/
         }
 
         private BBox calculateBBox() {
@@ -188,20 +188,20 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         int get_index(BBox bbox, int level) {
             int index = -1;
             for (LatLon c : bbox.points()) {
-                if (debug) {
+                /*if (debug) {
                     out("getting index for point: " + c);
-                }
+                }*/
                 if (index == -1) {
                     index = QuadTiling.index(c, level);
-                    if (debug) {
+                    /*if (debug) {
                         out("set initial index to: " + index);
-                    }
+                    }*/
                     continue;
                 }
                 int another_index = QuadTiling.index(c, level);
-                if (debug) {
+                /*if (debug) {
                     out("other point index: " + another_index);
-                }
+                }*/
                 if (another_index != index)
                     return -1;
             }
@@ -214,11 +214,11 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
          * is a dead end.
          */
         void __split() {
-            if (debug) {
+            /*if (debug) {
                 out("splitting "+this.bbox()+" level "+level+" with "
                         + content.size() + " entries (my dimensions: "
                         + this.bbox().width()+", "+this.bbox().height()+")");
-            }
+            }*/
             List<T> tmpcontent = content;
             content = null;
 
@@ -242,9 +242,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 content = new ArrayList<T>();
             }
             ret = content.add(o);
-            if (debug && !this.isLeaf()) {
+            /*if (debug && !this.isLeaf()) {
                 pout("added "+o.getClass().getName()+" to non-leaf with size: " + content.size());
-            }
+            }*/
             return ret;
         }
         boolean matches(T o, BBox search_bbox)
@@ -255,9 +255,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
         private void search_contents(BBox search_bbox, List<T> result)
         {
-            if (debug) {
+            /*if (debug) {
                 out("searching contents (size: " + content == null?"<null>":content.size() + ") for " + search_bbox);
-            }
+            }*/
             /*
              * It is possible that this was created in a split
              * but never got any content populated.
@@ -270,9 +270,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                     result.add(o);
                 }
             }
-            if (debug) {
+            /*if (debug) {
                 out("done searching quad " + Long.toHexString(this.quad));
-            }
+            }*/
         }
         /*
          * This is stupid.  I tried to have a QBLeaf and QBBranch
@@ -297,29 +297,29 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 __nr++;
                 int nr = __nr-1;
                 if (sibling == null) {
-                    if (debug) {
+                    /*if (debug) {
                         out("[" + this.level + "] null child nr: " + nr);
-                    }
+                    }*/
                     continue;
                 }
                 // We're looking for the *next* child
                 // after us.
                 if (sibling == this) {
-                    if (debug) {
+                    /*if (debug) {
                         out("[" + this.level + "] I was child nr: " + nr);
-                    }
+                    }*/
                     found_me = true;
                     continue;
                 }
                 if (found_me) {
-                    if (debug) {
+                    /*if (debug) {
                         out("[" + this.level + "] next sibling was child nr: " + nr);
-                    }
+                    }*/
                     return sibling;
                 }
-                if (debug) {
+                /*if (debug) {
                     out("[" + this.level + "] nr: " + nr + " is before me, ignoring...");
-                }
+                }*/
             }
             return null;
         }
@@ -335,9 +335,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             // next sibling node.  It may be either
             // a leaf or branch.
             while (sibling == null) {
-                if (debug) {
+                /*if (debug) {
                     out("no siblings at level["+next.level+"], moving to parent");
-                }
+                }*/
                 next = next.parent;
                 if (next == null) {
                     break;
@@ -378,14 +378,14 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         void doAdd(T o) {
             if (consistency_testing) {
                 if (!matches(o, this.bbox())) {
-                    out("-----------------------------");
-                    debug = true;
+                    /*out("-----------------------------");
+                    debug = true;*/
                     get_index(o.getBBox(), level);
                     get_index(o.getBBox(), level-1);
                     int nr = 0;
-                    for (QBLevel sibling : parent.getChildren()) {
+                    /*for (QBLevel sibling : parent.getChildren()) {
                         out("sibling["+ (nr++) +"]: " + sibling.bbox() + " this: " + (this==sibling));
-                    }
+                    }*/
                     abort("\nobject " + o + " does not belong in node at level: " + level + " bbox: " + this.bbox());
                 }
             }
@@ -401,14 +401,14 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
 
         private void search(BBox search_bbox, List<T> result)
         {
-            if (debug) {
+            /*if (debug) {
                 System.out.print("[" + level + "] qb bbox: " + this.bbox() + " ");
-            }
+            }*/
             if (!this.bbox().intersects(search_bbox)) {
-                if (debug) {
+                /*if (debug) {
                     out("miss " + Long.toHexString(this.quad));
                     //QuadTiling.tile2xy(this.quad);
-                }
+                }*/
                 return;
             } else if (bbox().bounds(search_bbox)) {
                 search_cache = this;
@@ -418,13 +418,10 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 search_contents(search_bbox, result);
             }
 
-            if (debug) {
+            /*if (debug) {
                 out("hit " + this.quads());
-            }
-
-            if (debug) {
                 out("[" + level + "] not leaf, moving down");
-            }
+            }*/
 
             //TODO Coincidence vector should be calculated here and only buckets that match search_bbox should be checked
 
@@ -518,10 +515,10 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         root = new QBLevel();
         search_cache = null;
         size = 0;
-        if (debug) {
+        /*if (debug) {
             out("QuadBuckets() cleared: " + this);
             out("root: " + root + " level: " + root.level + " bbox: " + root.bbox());
-        }
+        }*/
     }
     public boolean add(T n) {
         root.add(n);
@@ -531,7 +528,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
 
     public void unsupported()
     {
-        out("unsupported operation");
+        System.out.println("unsupported operation");
         throw new UnsupportedOperationException();
     }
     public boolean retainAll(Collection<?> objects)
@@ -591,9 +588,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         for (T n : this) {
             a.add(n);
         }
-        if (debug) {
+        /*if (debug) {
             out("returning array list with size: " + a.size());
-        }
+        }*/
         return a;
     }
     public Object[] toArray()
@@ -624,25 +621,25 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         }
         public QuadBucketIterator(QuadBuckets<T> qb)
         {
-            if (debug) {
+            /*if (debug) {
                 out(this + " is a new iterator qb: " + qb + " size: " + qb.size());
-            }
+            }*/
             if (!qb.root.hasChildren() || qb.root.hasContent()) {
                 current_node = qb.root;
             } else {
                 current_node = next_content_node(qb.root);
             }
-            if (debug) {
+            /*if (debug) {
                 out("\titerator first leaf: " + current_node);
-            }
+            }*/
             iterated_over = 0;
         }
         public boolean hasNext()
         {
             if (this.peek() == null) {
-                if (debug) {
+                /*if (debug) {
                     out(this + " no hasNext(), but iterated over so far: " + iterated_over);
-                }
+                }*/
                 return false;
             }
             return true;
@@ -650,16 +647,16 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         T peek()
         {
             if (current_node == null) {
-                if (debug) {
+                /*if (debug) {
                     out("null current leaf, nowhere to go");
-                }
+                }*/
                 return null;
             }
             while((current_node.content == null) ||
                     (content_index >= current_node.content.size())) {
-                if (debug) {
+                /*if (debug) {
                     out("moving to next leaf");
-                }
+                }*/
                 content_index = 0;
                 current_node = next_content_node(current_node);
                 if (current_node == null) {
@@ -667,9 +664,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
                 }
             }
             if (current_node == null || current_node.content == null) {
-                if (debug) {
+                /*if (debug) {
                     out("late nowhere to go " + current_node);
-                }
+                }*/
                 return null;
             }
             return current_node.content.get(content_index);
@@ -678,14 +675,14 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         {
             T ret = peek();
             content_index++;
-            if (debug) {
+            /*if (debug) {
                 out("iteration["+iterated_over+"] " + content_index + " leaf: " + current_node);
-            }
+            }*/
             iterated_over++;
             if (ret == null) {
-                if (debug) {
+                /*if (debug) {
                     out(this + " no next node, but iterated over so far: " + iterated_over);
-                }
+                }*/
             }
             return ret;
         }
@@ -715,10 +712,10 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
         return false;
     }
     public List<T> search(BBox search_bbox) {
-        if (debug) {
+        /*if (debug) {
             out("qb root search at " + search_bbox);
             out("root bbox: " + root.bbox());
-        }
+        }*/
         List<T> ret = new ArrayList<T>();
         // Doing this cuts down search cost on a real-life data
         // set by about 25%
@@ -731,17 +728,15 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             // search spot can not cover the current
             // search
             while (search_cache != null && !search_cache.bbox().bounds(search_bbox)) {
-                if (debug) {
+                /*if (debug) {
                     out("bbox: " + search_bbox);
-                }
-                if (debug) {
                     out("search_cache: " + search_cache + " level: " + search_cache.level);
                     out("search_cache.bbox(): " + search_cache.bbox());
-                }
+                }*/
                 search_cache = search_cache.parent;
-                if (debug) {
+                /*if (debug) {
                     out("new search_cache: " + search_cache);
-                }
+                }*/
             }
 
             if (search_cache == null) {
@@ -763,9 +758,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T>
             tmp.search_contents(search_bbox, ret);
             tmp = tmp.parent;
         }
-        if (debug) {
+        /*if (debug) {
             out("search of QuadBuckets for " + search_bbox + " ret len: " + ret.size());
-        }
+        }*/
         return ret;
     }
 

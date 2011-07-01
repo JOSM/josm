@@ -22,8 +22,6 @@ import org.openstreetmap.josm.data.osm.RelationMember;
  *
  */
 public class RelationTreeModel implements TreeModel {
-    //private static final Logger logger = Logger.getLogger(RelationTreeModel.class.getName());
-
     /** the root relation */
     private Relation root;
 

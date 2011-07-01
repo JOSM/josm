@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 
 import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
@@ -36,9 +35,6 @@ import org.openstreetmap.josm.io.OsmTransferCancelledException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public class OsmOAuthAuthorizationClient {
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(OsmOAuthAuthorizationClient.class.getName());
-
     private OAuthParameters oauthProviderParameters;
     private OAuthConsumer consumer;
     private OAuthProvider provider;

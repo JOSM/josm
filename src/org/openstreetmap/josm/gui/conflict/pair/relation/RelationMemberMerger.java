@@ -15,8 +15,6 @@ import org.openstreetmap.josm.gui.conflict.pair.ListMerger;
  * A UI component for resolving conflicts in the member lists of two {@see Relation}
  */
 public class RelationMemberMerger extends ListMerger<RelationMember> implements IConflictResolver {
-    //private static final Logger logger = Logger.getLogger(RelationMemberMerger.class.getName());
-
     @Override
     protected JScrollPane buildMyElementsTable() {
         myEntriesTable  = new JTable(

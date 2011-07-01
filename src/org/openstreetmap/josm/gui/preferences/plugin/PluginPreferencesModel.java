@@ -13,16 +13,12 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Set;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.plugins.PluginException;
 import org.openstreetmap.josm.plugins.PluginInformation;
 
 public class PluginPreferencesModel extends Observable{
-    @SuppressWarnings("unused")
-    private final static Logger logger = Logger.getLogger(PluginPreferencesModel.class.getName());
-
     private final ArrayList<PluginInformation> availablePlugins = new ArrayList<PluginInformation>();
     private final ArrayList<PluginInformation> displayedPlugins = new ArrayList<PluginInformation>();
     private final HashMap<PluginInformation, Boolean> selectedPluginsMap = new HashMap<PluginInformation, Boolean>();

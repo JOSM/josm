@@ -7,7 +7,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.EventObject;
-import java.util.logging.Logger;
 
 import javax.swing.ComboBoxEditor;
 import javax.swing.JTable;
@@ -33,9 +32,6 @@ import org.openstreetmap.josm.gui.util.TableCellEditorSupport;
  *
  */
 public class AutoCompletingTextField extends JTextField implements ComboBoxEditor, TableCellEditor {
-    @SuppressWarnings("unused")
-    static private Logger logger = Logger.getLogger(AutoCompletingTextField.class.getName());
-
     /**
      * The document model for the editor
      */

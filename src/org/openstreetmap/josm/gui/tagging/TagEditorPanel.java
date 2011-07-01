@@ -8,7 +8,6 @@ import java.awt.Insets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -32,8 +31,6 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  */
 public class TagEditorPanel extends JPanel {
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(TagEditorPanel.class.getName());
     /** the tag editor model */
     private TagEditorModel model;
     /** the tag table */

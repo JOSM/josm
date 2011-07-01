@@ -59,8 +59,6 @@ import org.xml.sax.SAXException;
  * @author imi
  */
 public class Preferences {
-    //static private final Logger logger = Logger.getLogger(Preferences.class.getName());
-
     /**
      * Internal storage for the preference directory.
      * Do not access this variable directly!

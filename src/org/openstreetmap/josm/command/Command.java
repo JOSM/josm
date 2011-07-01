@@ -120,11 +120,8 @@ abstract public class Command extends PseudoCommand {
         PrimitiveData o = cloneMap.get(osm);
         if (o != null)
             return o;
-        Main.debug("unable to find osm with id: " + osm.getId() + " hashCode: " + osm.hashCode());
         for (OsmPrimitive t : cloneMap.keySet()) {
             PrimitiveData to = cloneMap.get(t);
-            Main.debug("now: " + t.getId() + " hashCode: " + t.hashCode());
-            Main.debug("orig: " + to.getUniqueId() + " hashCode: " + to.hashCode());
         }
         return o;
     }

@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -50,8 +48,6 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  */
 public class OsmReader {
-    static private final Logger logger = Logger.getLogger(OsmReader.class.getName());
-
     /**
      * The dataset to add parsed objects to.
      */
@@ -207,7 +203,7 @@ public class OsmReader {
                         );
                     }
                     if (currentPrimitive.isDeleted()) {
-                        logger.info(tr("Deleted way {0} contains nodes", currentPrimitive.getUniqueId()));
+                        System.out.println(tr("Deleted way {0} contains nodes", currentPrimitive.getUniqueId()));
                     } else {
                         list.add(id);
                     }
@@ -258,7 +254,7 @@ public class OsmReader {
                     }
 
                     if (currentPrimitive.isDeleted()) {
-                        logger.info(tr("Deleted relation {0} contains members", currentPrimitive.getUniqueId()));
+                        System.out.println(tr("Deleted relation {0} contains members", currentPrimitive.getUniqueId()));
                     } else {
                         list.add(emd);
                     }
@@ -449,17 +445,15 @@ public class OsmReader {
                     }
                 }
                 if (n.isDeleted()) {
-                    logger.warning(tr("Deleted node {0} is part of way {1}", id, w.getId()));
+                    System.out.println(tr("Deleted node {0} is part of way {1}", id, w.getId()));
                 } else {
                     wayNodes.add(n);
                 }
             }
             w.setNodes(wayNodes);
             if (w.hasIncompleteNodes()) {
-                if (logger.isLoggable(Level.FINE)) {
-                    logger.fine(tr("Way {0} with {1} nodes has incomplete nodes because at least one node was missing in the loaded data.",
-                            externalWayId, w.getNodesCount()));
-                }
+                  System.out.println(tr("Way {0} with {1} nodes has incomplete nodes because at least one node was missing in the loaded data.",
+                          externalWayId, w.getNodesCount()));
             }
             ds.addPrimitive(w);
         }
@@ -537,7 +531,7 @@ public class OsmReader {
                     }
                 }
                 if (primitive.isDeleted()) {
-                    logger.warning(tr("Deleted member {0} is used by relation {1}", primitive.getId(), relation.getId()));
+                    System.out.println(tr("Deleted member {0} is used by relation {1}", primitive.getId(), relation.getId()));
                 } else {
                     relationMembers.add(new RelationMember(rm.role, primitive));
                 }

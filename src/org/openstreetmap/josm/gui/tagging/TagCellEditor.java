@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.tagging;
 
 import java.awt.Component;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
@@ -18,9 +17,6 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
  */
 @SuppressWarnings("serial")
 public class TagCellEditor extends AbstractCellEditor implements TableCellEditor{
-
-    /** the logger object */
-    static private Logger logger = Logger.getLogger(TagCellEditor.class.getName());
 
     protected AutoCompletingTextField editor = null;
     protected TagModel currentTag = null;
@@ -51,7 +47,6 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
     protected void initAutoCompletionListForKeys(TagEditorModel model, TagModel currentTag) {
 
         if (autoCompletionList == null)
-            //logger.warning("autoCompletionList is null. Make sure an instance of AutoCompletionList is injected into TableCellEditor.");
             return;
         autoCompletionList.clear();
 
@@ -79,7 +74,6 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
      */
     protected void initAutoCompletionListForValues(String forKey) {
         if (autoCompletionList == null) {
-            logger.warning("autoCompletionList is null. Make sure an instance of AutoCompletionList is injected into TableCellEditor.");
             return;
         }
         autoCompletionList.clear();
@@ -114,7 +108,6 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
             initAutoCompletionListForValues(currentTag.getName());
             return editor;
         } else {
-            logger.warning("column this table cell editor is requested for is out of range. column=" + column);
             return null;
         }
     }

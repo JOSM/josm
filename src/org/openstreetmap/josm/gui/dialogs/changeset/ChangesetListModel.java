@@ -21,8 +21,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Storage;
 
 public class ChangesetListModel extends DefaultListModel  implements ChangesetCacheListener{
-    //static private final Logger logger = Logger.getLogger(ChangesetListModel.class.getName());
-
     private final List<Changeset> data = new ArrayList<Changeset>();
     private final Storage<Changeset> shownChangesets = new Storage<Changeset>(true);
     private DefaultListSelectionModel selectionModel;

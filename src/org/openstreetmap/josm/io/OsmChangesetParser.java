@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
@@ -39,9 +38,6 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  */
 public class OsmChangesetParser {
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(OsmChangesetParser.class.getName());
-
     private List<Changeset> changesets;
 
     private OsmChangesetParser() {

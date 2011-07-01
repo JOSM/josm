@@ -9,7 +9,6 @@ import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,8 +33,6 @@ import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public abstract class AbstractUploadTask extends PleaseWaitRunnable {
-    private static final Logger logger = Logger.getLogger(AbstractUploadTask.class.getName());
-
     public AbstractUploadTask(String title, boolean ignoreException) {
         super(title, ignoreException);
     }
@@ -272,7 +269,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
             handleUploadConflictForNodeStillInUse(Long.parseLong(m.group(1)), Long.parseLong(m.group(2)));
             return;
         }
-        logger.warning(tr("Warning: error header \"{0}\" did not match with an expected pattern", e.getErrorHeader()));
+        System.out.println(tr("Warning: error header \"{0}\" did not match with an expected pattern", e.getErrorHeader()));
         handleUploadConflictForUnknownConflict();
     }
 
@@ -289,7 +286,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
             handleUploadConflictForNodeStillInUse(Long.parseLong(m.group(1)), Long.parseLong(m.group(2)));
             return;
         }
-        logger.warning(tr("Warning: error header \"{0}\" did not match with an expected pattern", e.getErrorHeader()));
+        System.out.println(tr("Warning: error header \"{0}\" did not match with an expected pattern", e.getErrorHeader()));
         ExceptionDialogUtil.explainPreconditionFailed(e);
     }
 

@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
@@ -33,9 +32,6 @@ import org.xml.sax.SAXException;
  *
  */
 public class UpdatePrimitivesTask extends PleaseWaitRunnable {
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(UpdatePrimitivesTask.class.getName());
-
     private DataSet ds;
     private boolean canceled;
     private Exception lastException;

@@ -46,8 +46,6 @@ public interface Expression {
     }
 
     public static class FunctionExpression implements Expression {
-        //static Logger logger = Logger.getLogger(FunctionExpression.class.getName());
-
         String name;
         List<Expression> args;
 

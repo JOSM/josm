@@ -7,7 +7,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -26,10 +25,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class VersionTableCellRenderer extends JLabel implements TableCellRenderer {
-
-    @SuppressWarnings("unused")
-    static private Logger logger = Logger.getLogger(VersionTableCellRenderer.class.getName());
-
     public final static Color BGCOLOR_SELECTED = new Color(143,170,255);
     public final static Color BGCOLOR_IS_REFERENCE_POINT = new Color(255,197,197);
 

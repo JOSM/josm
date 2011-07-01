@@ -51,9 +51,6 @@ public class SequenceCommand extends Command {
         for (int i=0; i < sequence.length; i++) {
             Command c = sequence[i];
             boolean result = c.executeCommand();
-            if (!result) {
-                Main.debug("SequenceCommand, executing command[" + i + "] " +  c + " result: " + result);
-            }
             if (!result && !continueOnError) {
                 this.undoCommands(i-1);
                 return false;

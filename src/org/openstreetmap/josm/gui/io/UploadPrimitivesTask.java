@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -39,9 +38,6 @@ import org.xml.sax.SAXException;
  *
  */
 public class UploadPrimitivesTask extends  AbstractUploadTask {
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(UploadPrimitivesTask.class.getName());
-
     private boolean uploadCancelled = false;
     private Exception lastException = null;
     private APIDataSet toUpload;

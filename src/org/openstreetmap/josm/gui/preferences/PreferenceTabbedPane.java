@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -39,9 +38,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author imi
  */
 public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListener {
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(PreferenceTabbedPane.class.getName());
-
     /**
      * Allows PreferenceSettings to do validation of entered values when ok was pressed.
      * If data is invalid then event can return false to cancel closing of preferences dialog.
@@ -222,7 +218,6 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
 
     public void buildGui() {
         for (PreferenceSettingFactory factory : settingsFactory) {
-            // logger.info("creating settings: " + factory);
             PreferenceSetting setting = factory.createPreferenceSetting();
             if (setting != null) {
                 settings.add(setting);
@@ -234,7 +229,6 @@ public class PreferenceTabbedPane extends JTabbedPane implements MouseWheelListe
         for (Iterator<PreferenceSetting> it = settings.iterator(); it.hasNext();) {
             try {
                 PreferenceSetting settings = it.next();
-                //logger.info("adding gui: " + settings);
                 settings.addGui(this);
             } catch (SecurityException e) {
                 it.remove();

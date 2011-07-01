@@ -14,7 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
@@ -35,9 +34,6 @@ import org.xml.sax.SAXException;
  *
  */
 public class PluginDownloadTask extends PleaseWaitRunnable{
-    @SuppressWarnings("unused")
-    private static final Logger logger = Logger.getLogger(PluginDownloadTask.class.getName());
-
     private final Collection<PluginInformation> toUpdate = new LinkedList<PluginInformation>();
     private final Collection<PluginInformation> failed = new LinkedList<PluginInformation>();
     private final Collection<PluginInformation> downloaded = new LinkedList<PluginInformation>();

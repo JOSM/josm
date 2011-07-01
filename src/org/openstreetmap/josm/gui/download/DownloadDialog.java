@@ -22,7 +22,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBox;
@@ -50,9 +49,6 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  *
  */
 public class DownloadDialog extends JDialog  {
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(DownloadDialog.class.getName());
-
     /** the unique instance of the download dialog */
     static private DownloadDialog instance;
 

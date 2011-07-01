@@ -27,7 +27,6 @@ abstract public class Instruction {
     }
 
     public static class AssignmentInstruction extends Instruction {
-        //static private final Logger logger = Logger.getLogger(AssignmentInstruction.class.getName());
         public final String key;
         public final Object val;
 

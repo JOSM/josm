@@ -21,8 +21,6 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  */
 public class HistoryDataSet implements LayerChangeListener{
-    //private final static Logger logger = Logger.getLogger(HistoryDataSet.class.getName());
-
     /** the unique instance */
     private static HistoryDataSet historyDataSet;
 

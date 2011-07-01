@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.table.AbstractTableModel;
@@ -31,9 +30,6 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 @SuppressWarnings("serial")
 public class TagEditorModel extends AbstractTableModel {
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(TagEditorModel.class.getName());
-
     static public final String PROP_DIRTY = TagEditorModel.class.getName() + ".dirty";
 
     /** the list holding the tags */

@@ -73,8 +73,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  */
 public class LayerListDialog extends ToggleDialog {
-    //static private final Logger logger = Logger.getLogger(LayerListDialog.class.getName());
-
     /** the unique instance of the dialog */
     static private LayerListDialog instance;
 

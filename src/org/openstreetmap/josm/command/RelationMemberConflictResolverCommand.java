@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 
@@ -22,8 +21,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class RelationMemberConflictResolverCommand extends Command {
-    private static final Logger logger = Logger.getLogger(RelationMemberConflictResolverCommand.class.getName());
-
     /** my relation */
     private final Relation my;
     /** their relation */
@@ -81,7 +78,7 @@ public class RelationMemberConflictResolverCommand extends Command {
     @Override
     public void undoCommand() {
         if (! Main.map.mapView.hasLayer(layer)) {
-            logger.warning(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
+            System.out.println(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
                     this.toString(),
                     layer.toString()
             ));

@@ -68,8 +68,6 @@ import org.openstreetmap.josm.tools.OpenBrowser;
  *
  */
 public class ChangesetDialog extends ToggleDialog{
-    //static private final Logger logger = Logger.getLogger(ChangesetDialog.class.getName());
-
     private ChangesetInSelectionListModel inSelectionModel;
     private ChangesetsInActiveDataLayerListModel inActiveDataLayerModel;
     private JList lstInSelection;

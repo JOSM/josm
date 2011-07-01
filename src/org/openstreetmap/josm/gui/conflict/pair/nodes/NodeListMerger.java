@@ -16,8 +16,6 @@ import org.openstreetmap.josm.gui.conflict.pair.ListMerger;
  *
  */
 public class NodeListMerger extends ListMerger<Node> implements IConflictResolver {
-    //private static final Logger logger = Logger.getLogger(NodeListMerger.class.getName());
-
     public NodeListMerger() {
         super(new NodeListMergeModel());
     }

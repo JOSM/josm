@@ -20,8 +20,6 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  *
  */
 public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>{
-    //private static final Logger logger = Logger.getLogger(RelationMemberListMergeModel.class.getName());
-
     private DataSet myDataset;
 
     @Override

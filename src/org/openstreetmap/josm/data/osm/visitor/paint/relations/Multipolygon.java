@@ -7,7 +7,6 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
@@ -20,8 +19,6 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.Poly
 import org.openstreetmap.josm.gui.NavigatableComponent;
 
 public class Multipolygon {
-    static private final Logger logger = Logger.getLogger(Multipolygon.class.getName());
-
     /** preference key for a collection of roles which indicate that the respective member belongs to an
      * <em>outer</em> polygon. Default is <tt>outer</tt>.
      */

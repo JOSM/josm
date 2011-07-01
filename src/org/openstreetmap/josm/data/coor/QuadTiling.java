@@ -24,14 +24,10 @@ public class QuadTiling
         double y_unit = Y_PARTS/2;
         long shift = (NR_LEVELS*2)-2;
 
-        //if (debug)
-        //    out("tile2xy(0x"+Long.toHexString(quad)+")");
         double x = 0;
         double y = 0;
         for (int i = 0; i < NR_LEVELS; i++) {
             long bits = (quad >> shift) & 0x3;
-            //if (debug)
-            //    out("shift: " + shift + " bits: " + bits);
             // remember x is the MSB
             if ((bits & 0x2) != 0) {
                 x += x_unit;

@@ -10,7 +10,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
@@ -29,8 +28,6 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
  * @author imi
  */
 public abstract class OsmServerReader extends OsmConnection {
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(OsmServerReader.class.getName());
     private OsmApi api = OsmApi.getOsmApi();
     private boolean doAuthenticate = false;
 

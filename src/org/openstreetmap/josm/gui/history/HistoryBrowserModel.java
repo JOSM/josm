@@ -66,8 +66,6 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * @see HistoryBrowser
  */
 public class HistoryBrowserModel extends Observable implements LayerChangeListener, DataSetListener {
-    //private static Logger logger = Logger.getLogger(HistoryBrowserModel.class.getName());
-
     /** the history of an OsmPrimitive */
     private History history;
     private HistoryOsmPrimitive reference;

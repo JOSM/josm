@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 
@@ -22,9 +21,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class TagConflictResolveCommand extends ConflictResolveCommand {
-    @SuppressWarnings("unused")
-    private static final Logger logger = Logger.getLogger(TagConflictResolveCommand.class.getName());
-
     /** the conflict to resolve */
     private Conflict<? extends OsmPrimitive> conflict;
 

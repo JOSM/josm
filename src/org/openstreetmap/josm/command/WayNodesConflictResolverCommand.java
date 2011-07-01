@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.swing.JLabel;
 
@@ -21,9 +20,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
-
-    static private final Logger logger = Logger.getLogger(WayNodesConflictResolverCommand.class.getName());
-
     /** the conflict to resolve */
     private Conflict<Way> conflict;
 
@@ -63,7 +59,7 @@ public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
         //
         for (Node n:mergedNodeList) {
             if (! getLayer().data.getNodes().contains(n)) {
-                logger.warning(tr("Main dataset does not include node {0}", n.toString()));
+                System.out.println(tr("Main dataset does not include node {0}", n.toString()));
             }
         }
         conflict.getMy().setNodes(mergedNodeList);

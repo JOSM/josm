@@ -18,7 +18,6 @@ import java.io.StringReader;
 import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -51,8 +50,6 @@ import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class HelpBrowser extends JDialog {
-    static private final Logger logger = Logger.getLogger(HelpBrowser.class.getName());
-
     /** the unique instance */
     private static HelpBrowser instance;
 
@@ -280,7 +277,6 @@ public class HelpBrowser extends JDialog {
         } catch(MissingHelpContentException e) {
             url = HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic(relativeHelpTopic, Locale.ENGLISH));
             try {
-                logger.info("fetching url: " + url);
                 content = reader.fetchHelpTopicContent(url, true);
             } catch(MissingHelpContentException e1) {
                 this.url = url;

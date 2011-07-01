@@ -3,8 +3,6 @@ package org.openstreetmap.josm.command;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.logging.Logger;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
@@ -19,8 +17,6 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  *
  */
 public abstract class ConflictResolveCommand extends Command {
-    private static final Logger logger = Logger.getLogger(ConflictResolveCommand.class.getName());
-
     /** the list of resolved conflicts */
     private ConflictCollection resolvedConflicts;
 
@@ -64,7 +60,7 @@ public abstract class ConflictResolveCommand extends Command {
         super.undoCommand();
 
         if (! Main.map.mapView.hasLayer(getLayer())) {
-            logger.warning(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
+            System.out.println(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
                     this.toString(),
                     getLayer().toString()
             ));

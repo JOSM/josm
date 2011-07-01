@@ -60,8 +60,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class SelectAction extends MapMode implements SelectionEnded {
-    //static private final Logger logger = Logger.getLogger(SelectAction.class.getName());
-
     enum Mode { move, rotate, scale, select }
     
     private Mode mode = null;
@@ -400,8 +398,6 @@ public class SelectAction extends MapMode implements SelectionEnded {
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        debug("mousePressed: e.getPoint()=" + e.getPoint());
-
         // return early
         if (!mv.isActiveLayerVisible() || !(Boolean) this.getValue("active") || e.getButton() != MouseEvent.BUTTON1) {
             return;
@@ -469,8 +465,6 @@ public class SelectAction extends MapMode implements SelectionEnded {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        debug("mouseReleased: e.getPoint()=" + e.getPoint());
-
         if (!mv.isActiveLayerVisible()) {
             return;
         }
@@ -566,11 +560,6 @@ public class SelectAction extends MapMode implements SelectionEnded {
     private Collection<OsmPrimitive> cyclePrims(Collection<OsmPrimitive> prims, MouseEvent e) {
         OsmPrimitive nxt = null;
 
-        debug("cyclePrims(): entry.....");
-        for (OsmPrimitive osm : prims) {
-            debug("cyclePrims(): prims id=" + osm.getId());
-        }
-
         if (prims.size() > 1) {
             boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
             boolean shift = (e.getModifiers() & ActionEvent.SHIFT_MASK) != 0;
@@ -582,7 +571,6 @@ public class SelectAction extends MapMode implements SelectionEnded {
             for (Iterator<OsmPrimitive> i = prims.iterator(); i.hasNext();) {
                 if (cyclePrims && shift) {
                     if (!(nxt = i.next()).isSelected()) {
-                        debug("cyclePrims(): taking " + nxt.getId());
                         break; // take first primitive in prims list not in sel
                     }
                 } else {
@@ -592,7 +580,6 @@ public class SelectAction extends MapMode implements SelectionEnded {
                             ds.clearSelection(foundInDS);
                             nxt = i.hasNext() ? i.next() : first;
                         }
-                        debug("selectPrims(): taking " + nxt.getId());
                         break; // take next primitive in prims list
                     }
                 }
@@ -605,23 +592,18 @@ public class SelectAction extends MapMode implements SelectionEnded {
                     if (!prims.contains(cycleStart)) {
                         ds.clearSelection(prims);
                         cycleStart = foundInDS;
-                        debug("selectPrims(): cycleStart set to foundInDS=" + cycleStart.getId());
                     } else if (cycleStart.equals(nxt)) {
                         // loop detected, insert deselect step
                         ds.addSelected(nxt);
-                        debug("selectPrims(): cycleStart hit");
                     }
                 } else {
                     // setup for iterating a sel group again or a new, different one..
                     nxt = (prims.contains(cycleStart)) ? cycleStart : first;
                     cycleStart = nxt;
-                    debug("selectPrims(): cycleStart set to nxt=" + cycleStart.getId());
                 }
             } else {
                 cycleStart = null;
             }
-
-            debug("cyclePrims(): truncated prims list to id=" + nxt.getId());
         }
 
         // pass on prims, if it had less than 2 elements
@@ -699,9 +681,5 @@ public class SelectAction extends MapMode implements SelectionEnded {
     @Override
     public boolean layerIsSupported(Layer l) {
         return l instanceof OsmDataLayer;
-    }
-
-    private static void debug(String s) {
-        //System.err.println("SelectAction:" + s);
     }
 }

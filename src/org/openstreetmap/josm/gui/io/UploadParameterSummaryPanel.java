@@ -9,7 +9,6 @@ import java.awt.Font;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
-import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
@@ -26,9 +25,6 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 public class UploadParameterSummaryPanel extends JPanel implements HyperlinkListener, PropertyChangeListener{
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(UploadParameterSummaryPanel.class.getName());
-
     private UploadStrategySpecification spec = new UploadStrategySpecification();
     private int numObjects;
     private JEditorPane jepMessage;

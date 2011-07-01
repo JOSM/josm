@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.awt.Component;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
@@ -13,9 +12,6 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 
 public class MemberRoleCellEditor extends AbstractCellEditor implements TableCellEditor {
-    @SuppressWarnings("unused")
-    static private Logger logger = Logger.getLogger(MemberRoleCellEditor.class.getName());
-
     private AutoCompletingTextField editor = null;
     private DataSet ds;
 

@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -85,9 +84,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  */
 public class SelectionListDialog extends ToggleDialog  {
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(SelectionListDialog.class.getName());
-
     private JList lstPrimitives;
     private SelectionListModel model;
 

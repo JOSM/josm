@@ -18,8 +18,6 @@ import org.openstreetmap.josm.gui.conflict.pair.ListRole;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public class NodeListMergeModel extends ListMergeModel<Node>{
-    //private static final Logger logger = Logger.getLogger(NodeListMergeModel.class.getName());
-
     private DataSet myDataset;
 
     /**

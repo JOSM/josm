@@ -26,8 +26,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  */
 public class VersionTable extends JTable implements Observer{
-    //private static Logger logger = Logger.getLogger(VersionTable.class.getName());
-
     private VersionTablePopupMenu popupMenu;
 
     protected void build() {

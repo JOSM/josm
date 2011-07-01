@@ -68,8 +68,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  * objects are visible on the map and can be selected there. Relations are not.
  */
 public class RelationListDialog extends ToggleDialog implements DataSetListener {
-    //private static final Logger logger = Logger.getLogger(RelationListDialog.class.getName());
-
     /** The display list. */
     private JList displaylist;
     /** the list model used */

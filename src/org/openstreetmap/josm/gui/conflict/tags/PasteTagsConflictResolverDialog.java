@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -428,9 +427,6 @@ public class PasteTagsConflictResolverDialog extends JDialog  implements Propert
     }
 
     static private class StatisticsInfoRenderer extends JLabel implements TableCellRenderer {
-        @SuppressWarnings("unused")
-        static private final Logger logger = Logger.getLogger(StatisticsInfoRenderer.class.getName());
-
         protected void reset() {
             setIcon(null);
             setText("");

@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
@@ -34,9 +33,6 @@ import org.xml.sax.SAXException;
  * @see RelationTreeModel
  */
 public class RelationTree extends JTree {
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(RelationTree.class.getName());
-
     /**
      * builds the UI
      */

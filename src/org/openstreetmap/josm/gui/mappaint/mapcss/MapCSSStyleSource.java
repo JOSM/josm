@@ -29,8 +29,6 @@ import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Utils;
 
 public class MapCSSStyleSource extends StyleSource {
-    //static private final Logger logger = Logger.getLogger(MapCSSStyleSource.class.getName());
-
     final public List<MapCSSRule> rules;
     private Color backgroundColorOverride;
     private String css = null;

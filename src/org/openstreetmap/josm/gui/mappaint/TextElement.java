@@ -19,8 +19,6 @@ import org.openstreetmap.josm.tools.Utils;
  *
  */
 public class TextElement {
-    //static private final Logger logger = Logger.getLogger(TextElement.class.getName());
-
     static private final LabelCompositionStrategy AUTO_LABEL_COMPOSITION_STRATEGY = new DeriveLabelFromNameTagsCompositionStrategy();
 
     /** the strategy for building the actual label value for a given a {@link OsmPrimitive}.

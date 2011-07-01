@@ -22,8 +22,6 @@ public final class AddNodeAction extends JosmAction {
     // remember input from last time
     private String text;
 
-    //static private final Logger logger = Logger.getLogger(AddNodeAction.class.getName());
-
     public AddNodeAction() {
         super(tr("Add Node..."), "addnode", tr("Add a node by entering latitude and longitude."),
                 Shortcut.registerShortcut("addnode", tr("Edit: {0}", tr("Add Node...")), KeyEvent.VK_D, Shortcut.GROUP_EDIT,

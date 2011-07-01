@@ -9,7 +9,6 @@ import java.util.StringTokenizer;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.io.remotecontrol.PermissionPref;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 
 /**
@@ -81,8 +80,7 @@ public abstract class RequestHandler {
      *
      * @return the preference name and error message or null
      */
-    @SuppressWarnings("deprecation")
-    public PermissionPref getPermissionPref()
+    public PermissionPrefWithDefault getPermissionPref()
     {
         /* Example:
         return new PermissionPrefWithDefault("fooobar.remotecontrol",
@@ -103,7 +101,6 @@ public abstract class RequestHandler {
      *
      * @throws RequestHandlerForbiddenException
      */
-    @SuppressWarnings("deprecation")
     final public void checkPermission() throws RequestHandlerForbiddenException
     {
         /*
@@ -113,21 +110,11 @@ public abstract class RequestHandler {
          * Note: we use the deprecated class here for compatibility with
          * older versions of WMSPlugin.
          */
-        PermissionPref permissionPref = getPermissionPref();
+        PermissionPrefWithDefault permissionPref = getPermissionPref();
         if((permissionPref != null) && (permissionPref.pref != null))
         {
-            PermissionPrefWithDefault permissionPrefWithDefault;
-            if(permissionPref instanceof PermissionPrefWithDefault)
-            {
-                permissionPrefWithDefault = (PermissionPrefWithDefault) permissionPref;
-            }
-            else
-            {
-                permissionPrefWithDefault = new PermissionPrefWithDefault(permissionPref);
-            }
-            if (!Main.pref.getBoolean(permissionPrefWithDefault.pref,
-                    permissionPrefWithDefault.defaultVal)) {
-                System.out.println(permissionPrefWithDefault.message);
+            if (!Main.pref.getBoolean(permissionPref.pref, permissionPref.defaultVal)) {
+                System.out.println(permissionPref.message);
                 throw new RequestHandlerForbiddenException();
             }
         }

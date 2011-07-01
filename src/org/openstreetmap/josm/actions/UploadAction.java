@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
-import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -36,8 +35,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author imi
  */
 public class UploadAction extends JosmAction{
-    @SuppressWarnings("unused")
-    static private Logger logger = Logger.getLogger(UploadAction.class.getName());
     /**
      * The list of upload hooks. These hooks will be called one after the other
      * when the user wants to upload data. Plugins can insert their own hooks here

@@ -59,8 +59,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  */
 public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, AWTEventListener {
-    //static private final Logger logger = Logger.getLogger(DrawAction.class.getName());
-
     final private Cursor cursorJoinNode;
     final private Cursor cursorJoinWay;
 

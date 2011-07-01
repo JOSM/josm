@@ -27,8 +27,6 @@ import org.openstreetmap.josm.tools.Utils;
  * applies for Nodes and turn restriction relations
  */
 public class NodeElemStyle extends ElemStyle {
-    //static private final Logger logger = Logger.getLogger(NodeElemStyle.class.getName());
-
     public ImageIcon icon;
     public int iconAlpha;
     public Symbol symbol;

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
@@ -34,9 +33,6 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
  *
  */
 public class ChangesetCache implements PreferenceChangedListener{
-    @SuppressWarnings("unused")
-    static private final Logger logger = Logger.getLogger(ChangesetCache.class.getName());
-
     /** the unique instance */
     static private final ChangesetCache instance = new ChangesetCache();
 

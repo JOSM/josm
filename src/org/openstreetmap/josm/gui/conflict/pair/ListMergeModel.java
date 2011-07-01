@@ -62,8 +62,6 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
  * @see ListMerger
  */
 public abstract class ListMergeModel<T> extends Observable {
-    //private static final Logger logger = Logger.getLogger(ListMergeModel.class.getName());
-
     public static final String FROZEN_PROP = ListMergeModel.class.getName() + ".frozen";
 
     private static final int MAX_DELETED_PRIMITIVE_IN_DIALOG = 5;

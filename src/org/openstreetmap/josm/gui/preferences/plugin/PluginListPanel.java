@@ -9,7 +9,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -24,9 +23,6 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
 public class PluginListPanel extends VerticallyScrollablePanel{
-    @SuppressWarnings("unused")
-    private static final Logger logger = Logger.getLogger(PluginListPanel.class.getName());
-
     private PluginPreferencesModel model;
 
     public PluginListPanel() {

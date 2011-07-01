@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.logging.Logger;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.bbox.BBoxChooser;
@@ -19,8 +18,6 @@ import org.openstreetmap.josm.gui.bbox.TileSelectionBBoxChooser;
  *
  */
 public class TileSelection implements DownloadSelection, PropertyChangeListener {
-    private static final Logger logger = Logger.getLogger(TileSelection.class.getName());
-
     private TileSelectionBBoxChooser chooser;
     private DownloadDialog parent;
 

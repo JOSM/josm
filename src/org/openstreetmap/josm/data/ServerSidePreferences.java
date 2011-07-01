@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 import java.util.Map.Entry;
-//import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -36,8 +35,6 @@ import org.xml.sax.SAXException;
  * @author Imi
  */
 public class ServerSidePreferences extends Preferences {
-    //static private final Logger logger = Logger.getLogger(ServerSidePreferences.class.getName());
-
     public class MissingPassword extends Exception{
         public String realm;
         public MissingPassword(String r) {

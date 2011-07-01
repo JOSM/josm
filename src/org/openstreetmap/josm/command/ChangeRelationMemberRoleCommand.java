@@ -42,7 +42,6 @@ public class ChangeRelationMemberRoleCommand extends Command {
 
     @Override public boolean executeCommand() {
         if (position < 0 || position >= relation.getMembersCount()) {
-            Main.debug("error changing the role");
             return false;
         }
 
