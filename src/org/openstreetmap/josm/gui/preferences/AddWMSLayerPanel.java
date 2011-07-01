@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.preferences;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Component;
 import java.awt.Cursor;
@@ -78,6 +79,7 @@ public class AddWMSLayerPanel extends JPanel {
 
     private boolean previouslyShownUnsupportedCrsError = false;
     private JTextArea tmsURL;
+    private JTextField tmsZoom;
 
     public AddWMSLayerPanel() {
         JPanel imageryAddPanel = new JPanel(new GridBagLayout());
@@ -199,6 +201,15 @@ public class AddWMSLayerPanel extends JPanel {
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         tmsView.add(tmsUrlScrollPane, GBC.eop().insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
+        tmsView.add(new JLabel(trc("layer", "Zoom")), GBC.std().insets(0,0,5,0));
+        tmsZoom = new JTextField(3);
+        tmsZoom.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                resultingLayerField.setText(buildTMSUrl());
+            }
+        });
+        tmsView.add(tmsZoom, GBC.eop().insets(5,0,0,0).fill(GridBagConstraints.HORIZONTAL));
         tabbedPane.addTab(tr("TMS"), tmsView);
 
         imageryAddPanel.add(new JLabel(tr("Imagery URL")), GBC.std().insets(0,0,5,0));
@@ -228,7 +239,11 @@ public class AddWMSLayerPanel extends JPanel {
     }
 
     private String buildTMSUrl() {
-        StringBuilder a = new StringBuilder("tms:");
+        StringBuilder a = new StringBuilder("tms");
+        String z = sanitize(tmsZoom.getText());
+        if(!z.isEmpty())
+            a.append("["+z+"]");
+        a.append(":");
         a.append(sanitize(tmsURL.getText()));
         return a.toString();
     }

@@ -91,7 +91,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public static final BooleanProperty PROP_DEFAULT_AUTOLOAD = new BooleanProperty(PREFERENCE_PREFIX + ".default_autoload", true);
     public static final IntegerProperty PROP_MIN_ZOOM_LVL = new IntegerProperty(PREFERENCE_PREFIX + ".min_zoom_lvl", DEFAULT_MIN_ZOOM);
     public static final IntegerProperty PROP_MAX_ZOOM_LVL = new IntegerProperty(PREFERENCE_PREFIX + ".max_zoom_lvl", DEFAULT_MAX_ZOOM);
-    public static final BooleanProperty PROP_DRAW_DEBUG = new BooleanProperty(PREFERENCE_PREFIX + ".draw_debug", false);
+    //public static final BooleanProperty PROP_DRAW_DEBUG = new BooleanProperty(PREFERENCE_PREFIX + ".draw_debug", false);
     public static final BooleanProperty PROP_ADD_TO_SLIPPYMAP_CHOOSER = new BooleanProperty(PREFERENCE_PREFIX + ".add_to_slippymap_chooser", true);
     public static final StringProperty PROP_TILECACHE_DIR;
 
@@ -104,11 +104,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         PROP_TILECACHE_DIR = new StringProperty(PREFERENCE_PREFIX + ".tilecache_path", defPath);
     }
 
-    boolean debug = false;
-    void out(String s)
-    {
-        Main.debug(s);
-    }
+    /*boolean debug = false;*/
 
     protected MemoryTileCache tileCache;
     protected TileSource tileSource;
@@ -130,9 +126,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         needRedraw = true;
         Main.map.repaint(100);
         tileRequestsOutstanding.remove(tile);
-        if (debug) {
-            out("tileLoadingFinished() tile: " + tile + " success: " + success);
-        }
+        /*if (debug) {
+            Main.debug("tileLoadingFinished() tile: " + tile + " success: " + success);
+        }*/
     }
     @Override
     public TileCache getTileCache()
@@ -141,9 +137,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     }
     void clearTileCache()
     {
-        if (debug) {
-            out("clearing tile storage");
-        }
+        /*if (debug) {
+            Main.debug("clearing tile storage");
+        }*/
         tileCache = new MemoryTileCache();
         tileCache.setCacheSize(200);
     }
@@ -184,11 +180,11 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     static int checkMaxZoomLvl(int maxZoomLvl, TileSource ts)
     {
         if(maxZoomLvl > MAX_ZOOM) {
-            System.err.println("MaxZoomLvl shouldnt be more than 30! Setting to 30.");
+            /*Main.debug("Max. zoom level should not be more than 30! Setting to 30.");*/
             maxZoomLvl = MAX_ZOOM;
         }
         if(maxZoomLvl < PROP_MIN_ZOOM_LVL.get()) {
-            System.err.println("maxZoomLvl shouldnt be more than minZoomLvl! Setting to minZoomLvl.");
+            /*Main.debug("Max. zoom level should not be more than min. zoom level! Setting to min.");*/
             maxZoomLvl = PROP_MIN_ZOOM_LVL.get();
         }
         if (ts != null && ts.getMaxZoom() != 0 && ts.getMaxZoom() < maxZoomLvl) {
@@ -210,15 +206,15 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     static int checkMinZoomLvl(int minZoomLvl, TileSource ts)
     {
         if(minZoomLvl < MIN_ZOOM) {
-            System.err.println("minZoomLvl shouldnt be lees than "+MIN_ZOOM+"! Setting to that.");
+            /*Main.debug("Min. zoom level should not be less than "+MIN_ZOOM+"! Setting to that.");*/
             minZoomLvl = MIN_ZOOM;
         }
         if(minZoomLvl > PROP_MAX_ZOOM_LVL.get()) {
-            System.err.println("minZoomLvl shouldnt be more than maxZoomLvl! Setting to maxZoomLvl.");
+            /*Main.debug("Min. zoom level should not be more than Max. zoom level! Setting to Max.");*/
             minZoomLvl = getMaxZoomLvl(ts);
         }
         if (ts != null && ts.getMinZoom() > minZoomLvl) {
-            System.err.println("increasomg minZoomLvl to match tile source");
+            /*Main.debug("Increasing min. zoom level to match tile source");*/
             minZoomLvl = ts.getMinZoom();
         }
         return minZoomLvl;
@@ -237,9 +233,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public static TileSource getTileSource(ImageryInfo info) {
         if (info.getImageryType() == ImageryType.TMS) {
             if(ImageryInfo.isUrlWithPatterns(info.getUrl()))
-                return new TemplatedTMSTileSource(info.getName(), info.getUrl(), info.getMaxZoom());
+                return new TemplatedTMSTileSource(info.getName(), info.getUrl(), info.getMinZoom(), info.getMaxZoom());
             else
-                return new TMSTileSource(info.getName(),info.getUrl(), info.getMaxZoom());
+                return new TMSTileSource(info.getName(),info.getUrl(), info.getMinZoom(), info.getMaxZoom());
         } else if (info.getImageryType() == ImageryType.BING)
             return new BingAerialTileSource();
         else if (info.getImageryType() == ImageryType.SCANEX)
@@ -253,11 +249,11 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         boolean requireAttr = tileSource.requiresAttribution();
         if(requireAttr) {
             attrImage = tileSource.getAttributionImage();
-            if(attrImage == null) {
-                System.out.println("Attribution image was null.");
+            /*if(attrImage == null) {
+                Main.debug("Attribution image was null.");
             } else {
-                System.out.println("Got an attribution image " + attrImage.getHeight(this) + "x" + attrImage.getWidth(this));
-            }
+                Main.debug("Got an attribution image " + attrImage.getHeight(this) + "x" + attrImage.getWidth(this));
+            }*/
 
             attrTermsUrl = tileSource.getTermsOfUseURL();
         }
@@ -373,7 +369,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 tr("Show Tile Info")) {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                out("info tile: " + clickedTile);
+                //Main.debug("info tile: " + clickedTile);
                 if (clickedTile != null) {
                     showMetadataTile = clickedTile;
                     redraw();
@@ -437,9 +433,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 new AbstractAction(tr("Flush Tile Cache")) {
                     @Override
                     public void actionPerformed(ActionEvent ae) {
-                        System.out.print("flushing all tiles...");
+                        //Main.debug("flushing all tiles...");
                         clearTileCache();
-                        System.out.println("done");
+                        //Main.debug("done");
                     }
                 }));
         // end of adding menu commands
@@ -507,9 +503,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     void zoomChanged()
     {
-        if (debug) {
-            out("zoomChanged(): " + currentZoomLevel);
-        }
+        /*if (debug) {
+            Main.debug("zoomChanged(): " + currentZoomLevel);
+        }*/
         needRedraw = true;
         jobDispatcher.cancelOutstandingJobs();
         tileRequestsOutstanding.clear();
@@ -536,22 +532,22 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public boolean zoomIncreaseAllowed()
     {
         boolean zia = currentZoomLevel < this.getMaxZoomLvl();
-        if (debug) {
-            out("zoomIncreaseAllowed(): " + zia + " " + currentZoomLevel + " vs. " + this.getMaxZoomLvl() );
-        }
+        /*if (debug) {
+            Main.debug("zoomIncreaseAllowed(): " + zia + " " + currentZoomLevel + " vs. " + this.getMaxZoomLvl() );
+        }*/
         return zia;
     }
     public boolean increaseZoomLevel()
     {
         if (zoomIncreaseAllowed()) {
             currentZoomLevel++;
-            if (debug) {
-                out("increasing zoom level to: " + currentZoomLevel);
-            }
+            /*if (debug) {
+                Main.debug("increasing zoom level to: " + currentZoomLevel);
+            }*/
             zoomChanged();
         } else {
-            System.err.println("current zoom lvl ("+currentZoomLevel+") couldnt be increased. "+
-                    "MaxZoomLvl ("+this.getMaxZoomLvl()+") reached.");
+            Main.warn("Current zoom level ("+currentZoomLevel+") could not be increased. "+
+                    "Max.zZoom Level "+this.getMaxZoomLvl()+" reached.");
             return false;
         }
         return true;
@@ -579,13 +575,13 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public boolean decreaseZoomLevel() {
         int minZoom = this.getMinZoomLvl();
         if (zoomDecreaseAllowed()) {
-            if (debug) {
-                out("decreasing zoom level to: " + currentZoomLevel);
-            }
+            /*if (debug) {
+                Main.debug("decreasing zoom level to: " + currentZoomLevel);
+            }*/
             currentZoomLevel--;
             zoomChanged();
         } else {
-            System.err.println("current zoom lvl couldnt be decreased. MinZoomLvl("+minZoom+") reached.");
+            /*Main.debug("Current zoom level could not be decreased. Min. zoom level "+minZoom+" reached.");*/
             return false;
         }
         return true;
@@ -670,9 +666,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
         boolean done = ((infoflags & (ERROR | FRAMEBITS | ALLBITS)) != 0);
         needRedraw = true;
-        if (debug) {
-            out("imageUpdate() done: " + done + " calling repaint");
-        }
+        /*if (debug) {
+            Main.debug("imageUpdate() done: " + done + " calling repaint");
+        }*/
         Main.map.repaint(done ? 0 : 100);
         return !done;
     }
@@ -729,9 +725,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         // to draw.
         if (border != null) {
             target = source.intersection(border);
-            if (debug) {
-                out("source: " + source + "\nborder: " + border + "\nintersection: " + target);
-            }
+            /*if (debug) {
+                Main.debug("source: " + source + "\nborder: " + border + "\nintersection: " + target);
+            }*/
         }
 
         // All of the rectangles are in screen coordinates.  We need
@@ -756,9 +752,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         int img_x_end   = img_x_offset + (int)(target.getWidth() * imageXScaling);
         int img_y_end   = img_y_offset + (int)(target.getHeight() * imageYScaling);
 
-        if (debug) {
-            out("drawing image into target rect: " + target);
-        }
+        /*if (debug) {
+            Main.debug("drawing image into target rect: " + target);
+        }*/
         g.drawImage(sourceImg,
                 target.x, target.y,
                 target.x + target.width, target.y + target.height,
@@ -791,9 +787,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         for (Tile tile : ts.allTiles()) {
             Image img = getLoadedTileImage(tile);
             if (img == null || tile.hasError()) {
-                if (debug) {
-                    out("missed tile: " + tile);
-                }
+                /*if (debug) {
+                    Main.debug("missed tile: " + tile);
+                }*/
                 missedTiles.add(tile);
                 continue;
             }
@@ -821,14 +817,14 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         Point p = pixelPos(t);
         int texty = p.y + 2 + fontHeight;
 
-        if (PROP_DRAW_DEBUG.get()) {
+        /*if (PROP_DRAW_DEBUG.get()) {
             myDrawString(g, "x=" + t.getXtile() + " y=" + t.getYtile() + " z=" + zoom + "", p.x + 2, texty);
             texty += 1 + fontHeight;
             if ((t.getXtile() % 32 == 0) && (t.getYtile() % 32 == 0)) {
                 myDrawString(g, "x=" + t.getXtile() / 32 + " y=" + t.getYtile() / 32 + " z=7", p.x + 2, texty);
                 texty += 1 + fontHeight;
             }
-        }// end of if draw debug
+        }*/// end of if draw debug
 
         if (tile == showMetadataTile) {
             String md = tile.toString();
@@ -846,17 +842,17 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         }
 
         String tileStatus = tile.getStatus();
-        if (!tile.isLoaded() && PROP_DRAW_DEBUG.get()) {
+        /*if (!tile.isLoaded() && PROP_DRAW_DEBUG.get()) {
             myDrawString(g, tr("image " + tileStatus), p.x + 2, texty);
             texty += 1 + fontHeight;
-        }
+        }*/
 
         if (tile.hasError()) {
             myDrawString(g, tr("Error") + ": " + tr(tile.getErrorMessage()), p.x + 2, texty);
             texty += 1 + fontHeight;
         }
 
-        int xCursor = -1;
+        /*int xCursor = -1;
         int yCursor = -1;
         if (PROP_DRAW_DEBUG.get()) {
             if (yCursor < t.getYtile()) {
@@ -879,7 +875,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 }
                 xCursor = t.getXtile();
             }
-        }
+        }*/
     }
 
     private Point pixelPos(LatLon ll) {
@@ -1006,10 +1002,10 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                     nr_queued++;
                 }
             }
-            if (debug)
+            /*if (debug)
                 if (nr_queued > 0) {
-                    out("queued to load: " + nr_queued + "/" + tiles.size() + " tiles at zoom: " + zoom);
-                }
+                    Main.debug("queued to load: " + nr_queued + "/" + tiles.size() + " tiles at zoom: " + zoom);
+                }*/
         }
     }
 
@@ -1083,7 +1079,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         EastNorth botRight = mv.getEastNorth(mv.getWidth(), mv.getHeight());
 
         if (botRight.east() == 0.0 || botRight.north() == 0) {
-            Main.debug("still initializing??");
+            /*Main.debug("still initializing??");*/
             // probably still initializing
             return;
         }
@@ -1142,7 +1138,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
         // Too many tiles... refuse to download
         if (!ts.tooLarge()) {
-            //out("size: " + ts.size() + " spanned: " + ts.tilesSpanned());
+            //Main.debug("size: " + ts.size() + " spanned: " + ts.tilesSpanned());
             ts.loadAllTiles(false);
         }
 
@@ -1183,9 +1179,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             }
             missedTiles = newlyMissedTiles;
         }
-        if (debug && missedTiles.size() > 0) {
-            out("still missed "+missedTiles.size()+" in the end");
-        }
+        /*if (debug && missedTiles.size() > 0) {
+            Main.debug("still missed "+missedTiles.size()+" in the end");
+        }*/
         g.setColor(Color.red);
         g.setFont(InfoFont);
 
@@ -1250,12 +1246,12 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         if (noTilesAtZoom) {
             myDrawString(g, tr("No tiles at this zoom level"), 120, 120);
         }
-        if (debug) {
+        /*if (debug) {
             myDrawString(g, tr("Current zoom: {0}", currentZoomLevel), 50, 140);
             myDrawString(g, tr("Display zoom: {0}", displayZoomLevel), 50, 155);
             myDrawString(g, tr("Pixel scale: {0}", getScaleFactor(currentZoomLevel)), 50, 170);
             myDrawString(g, tr("Best zoom: {0}", Math.log(getScaleFactor(1))/Math.log(2)/2+1), 50, 185);
-        }
+        }*/
     }// end of paint method
 
     /**
@@ -1263,9 +1259,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
      * user right-clicks on the map.
      */
     Tile getTileForPixelpos(int px, int py) {
-        if (debug) {
-            out("getTileForPixelpos("+px+", "+py+")");
-        }
+        /*if (debug) {
+            Main.debug("getTileForPixelpos("+px+", "+py+")");
+        }*/
         MapView mv = Main.map.mapView;
         Point clicked = new Point(px, py);
         EastNorth topLeft = mv.getEastNorth(0, 0);
@@ -1281,9 +1277,9 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
             Tile t2 = tempCornerTile(t1);
             Rectangle r = new Rectangle(pixelPos(t1));
             r.add(pixelPos(t2));
-            if (debug) {
-                out("r: " + r + " clicked: " + clicked);
-            }
+            /*if (debug) {
+                Main.debug("r: " + r + " clicked: " + clicked);
+            }*/
             if (!r.contains(clicked)) {
                 continue;
             }
@@ -1292,8 +1288,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
         }
         if (clickedTile == null)
             return null;
-        System.out.println("clicked on tile: " + clickedTile.getXtile() + " " + clickedTile.getYtile() +
-                " currentZoomLevel: " + currentZoomLevel);
+        /*Main.debug("Clicked on tile: " + clickedTile.getXtile() + " " + clickedTile.getYtile() +
+                " currentZoomLevel: " + currentZoomLevel);*/
         return clickedTile;
     }
 

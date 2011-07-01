@@ -3,6 +3,8 @@ package org.openstreetmap.josm.data.imagery;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -37,6 +39,8 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     ImageryType imageryType = ImageryType.WMS;
     double pixelPerDegree = 0.0;
     int maxZoom = 0;
+    int defaultMaxZoom = 0;
+    int defaultMinZoom = 0;
 
     public ImageryInfo(String name) {
         this.name=name;
@@ -134,6 +138,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         this.url=i.url;
         this.cookies=i.cookies;
         this.imageryType=i.imageryType;
+        this.defaultMaxZoom=i.defaultMaxZoom;
         this.pixelPerDegree=i.pixelPerDegree;
         this.eulaAcceptanceRequired = null;
     }
@@ -168,9 +173,17 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         CheckParameterUtil.ensureParameterNotNull(url);
         
         for (ImageryType type : ImageryType.values()) {
-            if (url.startsWith(type.getUrlString() + ":")) {
-                this.url = url.substring(type.getUrlString().length() + 1);
+            Matcher m = Pattern.compile(type.getUrlString()+"(?:\\[(?:(\\d+),)?(\\d+)\\])?:(.*)").matcher(url);
+            if(m.matches()) {
+                this.url = m.group(3);
                 this.imageryType = type;
+                if(m.group(2) != null) {
+                    defaultMaxZoom = Integer.valueOf(m.group(2));
+                    maxZoom = defaultMaxZoom;
+                }
+                if(m.group(1) != null) {
+                    defaultMinZoom = Integer.valueOf(m.group(1));
+                }
                 return;
             }
         }
@@ -204,8 +217,13 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         return this.maxZoom;
     }
 
+    public int getMinZoom() {
+        return this.defaultMinZoom;
+    }
+
     public String getFullUrl() {
-        return imageryType.getUrlString() + ":" + url;
+        return imageryType.getUrlString() + (defaultMaxZoom != 0
+            ? "["+(defaultMinZoom != 0 ? defaultMinZoom+",":"")+defaultMaxZoom+"]" : "") + ":" + url;
     }
 
     public String getToolbarName()
@@ -222,7 +240,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         String res = name;
         if(pixelPerDegree != 0.0) {
             res += " ("+pixelPerDegree+")";
-        } else if(maxZoom != 0) {
+        } else if(maxZoom != 0 && maxZoom != defaultMaxZoom) {
             res += " (z"+maxZoom+")";
         }
         return res;
