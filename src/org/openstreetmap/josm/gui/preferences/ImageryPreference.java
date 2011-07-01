@@ -203,11 +203,11 @@ public class ImageryPreference implements PreferenceSetting {
         tmsTab.add(GBC.glue(5, 0), GBC.std());
         tmsTab.add(autoloadTiles, GBC.eol().fill(GBC.HORIZONTAL));
 
-        tmsTab.add(new JLabel(tr("Min zoom lvl: ")), GBC.std());
+        tmsTab.add(new JLabel(tr("Min. zoom level: ")), GBC.std());
         tmsTab.add(GBC.glue(5, 0), GBC.std());
         tmsTab.add(this.minZoomLvl, GBC.eol());
 
-        tmsTab.add(new JLabel(tr("Max zoom lvl: ")), GBC.std());
+        tmsTab.add(new JLabel(tr("Max. zoom level: ")), GBC.std());
         tmsTab.add(GBC.glue(5, 0), GBC.std());
         tmsTab.add(this.maxZoomLvl, GBC.eol());
 
