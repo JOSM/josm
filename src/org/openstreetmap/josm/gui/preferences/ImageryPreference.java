@@ -529,8 +529,8 @@ public class ImageryPreference implements PreferenceSetting {
                         }
                     }
 
-                    if (info.eulaAcceptanceRequired != null) {
-                        if (!confirmEulaAcceptance(gui, info.eulaAcceptanceRequired)) {
+                    if (info.getEulaAcceptanceRequired() != null) {
+                        if (!confirmEulaAcceptance(gui, info.getEulaAcceptanceRequired())) {
                             continue outer;
                         }
                     }

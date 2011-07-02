@@ -158,7 +158,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
     Tile showMetadataTile;
     private Image attrImage;
     private String attrTermsUrl;
-    private Rectangle attrImageBounds, attrToUBounds;
+    private Rectangle attrImageBounds, attrToUBounds, attrTextBounds;
     private static final Font InfoFont = new Font("sansserif", Font.BOLD, 13);
     private static final Font ATTR_FONT = new Font("Arial", Font.PLAIN, 10);
     private static final Font ATTR_LINK_FONT;
@@ -232,10 +232,15 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
     public static TileSource getTileSource(ImageryInfo info) {
         if (info.getImageryType() == ImageryType.TMS) {
-            if(ImageryInfo.isUrlWithPatterns(info.getUrl()))
-                return new TemplatedTMSTileSource(info.getName(), info.getUrl(), info.getMinZoom(), info.getMaxZoom());
-            else
-                return new TMSTileSource(info.getName(),info.getUrl(), info.getMinZoom(), info.getMaxZoom());
+            if(ImageryInfo.isUrlWithPatterns(info.getUrl())) {
+                TMSTileSource t = new TemplatedTMSTileSource(info.getName(), info.getUrl(), info.getMinZoom(), info.getMaxZoom());
+                info.setAttribution(t);
+                return t;
+            } else {
+                TMSTileSource t = new TMSTileSource(info.getName(),info.getUrl(), info.getMinZoom(), info.getMaxZoom());
+                info.setAttribution(t);
+                return t;
+            }
         } else if (info.getImageryType() == ImageryType.BING)
             return new BingAerialTileSource();
         else if (info.getImageryType() == ImageryType.SCANEX)
@@ -316,7 +321,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
         if(!isProjectionSupported(Main.getProjection())) {
               JOptionPane.showMessageDialog(Main.parent,
-                  tr("TMS layers do not support the projection {1}.\n{2}\n"
+                  tr("TMS layers do not support the projection {0}.\n{1}\n"
                   + "Change the projection or remove the layer.",
                       Main.getProjection().toCode(), nameSupportedProjections()),
                       tr("Warning"),
@@ -454,7 +459,8 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                             if(!tileSource.requiresAttribution())
                                 return;
 
-                            if(attrImageBounds != null && attrImageBounds.contains(e.getPoint())) {
+                            if((attrImageBounds != null && attrImageBounds.contains(e.getPoint()))
+                            || (attrTextBounds != null && attrTextBounds.contains(e.getPoint()))) {
                                 try {
                                     java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
                                     desktop.browse(new URI(tileSource.getAttributionLinkURL()));
@@ -1199,13 +1205,14 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
 
             // Draw terms of use text
             Rectangle2D termsStringBounds = g.getFontMetrics().getStringBounds("Background Terms of Use", g);
-            int textHeight = (int) termsStringBounds.getHeight() - 5;
+            int textRealHeight = (int) termsStringBounds.getHeight();
+            int textHeight = textRealHeight - 5;
             int textWidth = (int) termsStringBounds.getWidth();
             int termsTextY = mv.getHeight() - textHeight;
             if(attrTermsUrl != null) {
                 int x = 2;
                 int y = mv.getHeight() - textHeight;
-                attrToUBounds = new Rectangle(x, y, textWidth, textHeight);
+                attrToUBounds = new Rectangle(x, y-textHeight, textWidth, textRealHeight);
                 myDrawString(g, "Background Terms of Use", x, y);
             }
 
@@ -1227,6 +1234,7 @@ public class TMSLayer extends ImageryLayer implements ImageObserver, TileLoaderL
                 int x = mv.getWidth() - (int) stringBounds.getWidth();
                 int y = mv.getHeight() - textHeight;
                 myDrawString(g, attributionText, x, y);
+                attrTextBounds = new Rectangle(x, y-textHeight, textWidth, textRealHeight);
             }
 
             g.setFont(font);

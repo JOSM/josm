@@ -6,8 +6,15 @@ import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.ImageIcon;
+
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource.Mapnik;
+import org.openstreetmap.gui.jmapviewer.tilesources.TMSTileSource;
 
 /**
  * Class that stores info about an image background layer.
@@ -32,25 +39,28 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         }
     }
 
-    String name;
+    private String name;
     private String url = null;
-    String cookies = null;
-    public final String eulaAcceptanceRequired;
-    ImageryType imageryType = ImageryType.WMS;
-    double pixelPerDegree = 0.0;
-    int maxZoom = 0;
-    int defaultMaxZoom = 0;
-    int defaultMinZoom = 0;
+    private String cookies = null;
+    private String eulaAcceptanceRequired= null;
+    private ImageryType imageryType = ImageryType.WMS;
+    private double pixelPerDegree = 0.0;
+    private int maxZoom = 0;
+    private int defaultMaxZoom = 0;
+    private int defaultMinZoom = 0;
+    private Bounds bounds = null;
+    private String attributionText;
+    private String attributionImage;
+    private String attributionLinkURL;
+    private String termsOfUseURL;
 
     public ImageryInfo(String name) {
         this.name=name;
-        this.eulaAcceptanceRequired = null;
     }
 
     public ImageryInfo(String name, String url) {
         this.name=name;
         setUrl(url);
-        this.eulaAcceptanceRequired = null;
     }
 
     public ImageryInfo(String name, String url, String eulaAcceptanceRequired) {
@@ -71,66 +81,61 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         setUrl(url);
         this.cookies=cookies;
         this.pixelPerDegree=pixelPerDegree;
-        this.eulaAcceptanceRequired = null;
     }
 
     public ArrayList<String> getInfoArray() {
-        String e2 = null;
-        String e3 = null;
-        String e4 = null;
-        if(url != null && !url.isEmpty()) {
-            e2 = getFullUrl();
-        }
-        if(cookies != null && !cookies.isEmpty()) {
-            e3 = cookies;
-        }
-        if(imageryType == ImageryType.WMS || imageryType == ImageryType.HTML) {
-            if(pixelPerDegree != 0.0) {
-                e4 = String.valueOf(pixelPerDegree);
-            }
-        } else {
-            if(maxZoom != 0) {
-                e4 = String.valueOf(maxZoom);
-            }
-        }
-        if(e4 != null && e3 == null) {
-            e3 = "";
-        }
-        if(e3 != null && e2 == null) {
-            e2 = "";
-        }
-
         ArrayList<String> res = new ArrayList<String>();
         res.add(name);
-        if(e2 != null) {
-            res.add(e2);
+        res.add((url != null && !url.isEmpty()) ? getFullUrl() : null);
+        res.add(cookies);
+        if(imageryType == ImageryType.WMS || imageryType == ImageryType.HTML) {
+            res.add(pixelPerDegree != 0.0 ? String.valueOf(pixelPerDegree) : null);
+        } else {
+            res.add(maxZoom != 0 ? String.valueOf(maxZoom) : null);
         }
-        if(e3 != null) {
-            res.add(e3);
-        }
-        if(e4 != null) {
-            res.add(e4);
-        }
+        res.add(bounds != null ? bounds.encodeAsString(",") : null);
+        res.add(attributionText);
+        res.add(attributionLinkURL);
+        res.add(attributionImage);
+        res.add(termsOfUseURL);
         return res;
     }
 
     public ImageryInfo(Collection<String> list) {
         ArrayList<String> array = new ArrayList<String>(list);
         this.name=array.get(0);
-        if(array.size() >= 2) {
+        if(array.size() >= 2 && !array.get(1).isEmpty()) {
             setUrl(array.get(1));
         }
-        if(array.size() >= 3) {
+        if(array.size() >= 3 && !array.get(2).isEmpty()) {
             this.cookies=array.get(2);
         }
-        if(array.size() >= 4) {
+        if(array.size() >= 4 && !array.get(3).isEmpty()) {
             if (imageryType == ImageryType.WMS || imageryType == ImageryType.HTML) {
                 this.pixelPerDegree=Double.valueOf(array.get(3));
             } else {
                 this.maxZoom=Integer.valueOf(array.get(3));
             }
         }
-        this.eulaAcceptanceRequired = null;
+        if(array.size() >= 5 && !array.get(4).isEmpty()) {
+            try {
+                bounds = new Bounds(array.get(4), ",");
+            } catch (IllegalArgumentException e) {
+                Main.warn(e.toString());
+            }
+        }
+        if(array.size() >= 6 && !array.get(5).isEmpty()) {
+            setAttributionText(array.get(5));
+        }
+        if(array.size() >= 7 && !array.get(6).isEmpty()) {
+            setAttributionLinkURL(array.get(6));
+        }
+        if(array.size() >= 8 && !array.get(7).isEmpty()) {
+            setAttributionImage(array.get(7));
+        }
+        if(array.size() >= 9 && !array.get(8).isEmpty()) {
+            setTermsOfUseURL(array.get(8));
+        }
     }
 
     public ImageryInfo(ImageryInfo i) {
@@ -138,9 +143,16 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         this.url=i.url;
         this.cookies=i.cookies;
         this.imageryType=i.imageryType;
+        this.defaultMinZoom=i.defaultMinZoom;
+        this.maxZoom=i.maxZoom;
         this.defaultMaxZoom=i.defaultMaxZoom;
         this.pixelPerDegree=i.pixelPerDegree;
         this.eulaAcceptanceRequired = null;
+        this.bounds = i.bounds;
+        this.attributionImage = i.attributionImage;
+        this.attributionLinkURL = i.attributionLinkURL;
+        this.attributionText = i.attributionText;
+        this.termsOfUseURL = i.termsOfUseURL;
     }
 
     @Override
@@ -167,6 +179,26 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
 
     public void setMaxZoom(int maxZoom) {
         this.maxZoom = maxZoom;
+    }
+
+    public void setBounds(Bounds b) {
+        this.bounds = b;
+    }
+
+    public void setAttributionText(String text) {
+         attributionText = text;
+    }
+
+    public void setAttributionImage(String text) {
+        attributionImage = text;
+    }
+
+    public void setAttributionLinkURL(String text) {
+        attributionLinkURL = text;
+    }
+
+    public void setTermsOfUseURL(String text) {
+        termsOfUseURL = text;
     }
 
     public void setUrl(String url) {
@@ -223,6 +255,10 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         return this.defaultMinZoom;
     }
 
+    public String getEulaAcceptanceRequired() {
+        return eulaAcceptanceRequired;
+    }
+
     public String getFullUrl() {
         return imageryType.getUrlString() + (defaultMaxZoom != 0
             ? "["+(defaultMinZoom != 0 ? defaultMinZoom+",":"")+defaultMaxZoom+"]" : "") + ":" + url;
@@ -246,6 +282,33 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
             res += " (z"+maxZoom+")";
         }
         return res;
+    }
+
+    public void setAttribution(TMSTileSource s)
+    {
+        if(attributionLinkURL != null) {
+            if(attributionLinkURL.equals("osm"))
+                s.setAttributionLinkURL(new Mapnik().getAttributionLinkURL());
+            else
+                s.setAttributionLinkURL(attributionLinkURL);
+        }
+        if(attributionText != null) {
+            if(attributionText.equals("osm"))
+                s.setAttributionText(new Mapnik().getAttributionText(0, null, null));
+            else
+                s.setAttributionText(attributionText);
+        }
+        if(attributionImage != null) {
+            ImageIcon i = ImageProvider.getIfAvailable(null, attributionImage);
+            if(i != null)
+                s.setAttributionImage(i.getImage());
+        }
+        if(termsOfUseURL != null) {
+            if(termsOfUseURL.equals("osm"))
+                s.setTermsOfUseURL(new Mapnik().getTermsOfUseURL());
+            else
+                s.setTermsOfUseURL(termsOfUseURL);
+        }
     }
 
     public ImageryType getImageryType() {

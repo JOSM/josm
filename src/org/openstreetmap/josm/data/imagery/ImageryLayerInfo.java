@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.io.MirroredInputStream;
 
 public class ImageryLayerInfo {
@@ -72,18 +73,41 @@ public class ImageryLayerInfo {
                     while((line = reader.readLine()) != null)
                     {
                         String val[] = line.split(";");
-                        if(!line.startsWith("#") && (val.length == 3 || val.length == 4)) {
+                        if(!line.startsWith("#") && val.length >= 3) {
                             boolean force = "true".equals(val[0]);
                             String name = tr(val[1]);
                             String url = val[2];
                             String eulaAcceptanceRequired = null;
 
-                            if (val.length == 4) {
+                            if (val.length >= 4 && !val[3].isEmpty()) {
                                 // 4th parameter optional for license agreement (EULA)
                                 eulaAcceptanceRequired = val[3];
                             }
 
-                            defaultLayers.add(new ImageryInfo(name, url, eulaAcceptanceRequired));
+                            ImageryInfo info = new ImageryInfo(name, url, eulaAcceptanceRequired);
+
+                            if (val.length >= 5 && !val[4].isEmpty()) {
+                                // 5th parameter optional for bounds
+                                try {
+                                    info.setBounds(new Bounds(val[4], ","));
+                                } catch (IllegalArgumentException e) {
+                                    Main.warn(e.toString());
+                                }
+                            }
+                            if (val.length >= 6 && !val[5].isEmpty()) {
+                                info.setAttributionText(val[5]);
+                            }
+                            if (val.length >= 7 && !val[6].isEmpty()) {
+                                info.setAttributionLinkURL(val[6]);
+                            }
+                            if (val.length >= 8 && !val[7].isEmpty()) {
+                                info.setTermsOfUseURL(val[7]);
+                            }
+                            if (val.length >= 9 && !val[8].isEmpty()) {
+                                info.setAttributionImage(val[8]);
+                            }
+
+                            defaultLayers.add(info);
 
                             if (force) {
                                 defaultsSave.add(url);

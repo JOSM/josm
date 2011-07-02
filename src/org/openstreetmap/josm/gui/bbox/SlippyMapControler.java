@@ -148,10 +148,11 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
             if (iSizeButton.hit(e.getPoint())) {
                 iSizeButton.toggle();
                 iSlippyMapChooser.resizeSlippyMap();
+            } else if (iSlippyMapChooser.handleAttribution(e.getPoint(), true)) {
+                /* do nothing, handleAttribution() already did the work */
             } else if (sourceButton == SourceButton.HIDE_OR_SHOW) {
                 iSourceButton.toggle();
                 iSlippyMapChooser.repaint();
-
             } else if (sourceButton != 0) {
                 iSlippyMapChooser.toggleMapSource(iSourceButton.hitToTileSource(sourceButton));
             } else {
@@ -169,6 +170,7 @@ public class SlippyMapControler extends MouseAdapter implements MouseMotionListe
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        iSlippyMapChooser.handleAttribution(e.getPoint(), false);
     }
 
     private class MoveXAction extends AbstractAction {
