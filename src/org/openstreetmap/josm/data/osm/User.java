@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A simple class to keep a list of user names.
@@ -213,13 +214,7 @@ public class User {
      * @return the user name. Never null, but may be the empty string
      */
     public String getName() {
-        StringBuilder sb = new StringBuilder();
-        for (String name: names) {
-            sb.append(name);
-            sb.append('/');
-        }
-        sb.deleteCharAt(sb.length() - 1);
-        return sb.toString();
+        return Utils.join("/", names);
     }
 
     /**

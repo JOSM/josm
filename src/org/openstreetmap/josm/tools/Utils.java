@@ -139,7 +139,7 @@ public class Utils {
             if (a == null) {
                 a = "";
             }
-            if(s != null) {
+            if (s != null) {
                 s.append(sep).append(a.toString());
             } else {
                 s = new StringBuilder(a.toString());
