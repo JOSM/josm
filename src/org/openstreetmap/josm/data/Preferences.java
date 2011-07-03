@@ -24,18 +24,18 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlObjectParser;
@@ -364,11 +364,13 @@ public class Preferences {
         updateSystemProperties();
         if(Main.applet)
             return;
-        File prefFile = new File(getPreferencesDirFile(), "preferences");
+
+        File prefFile = getPreferenceFile();
+        File backupFile = new File(prefFile + "_backup");
 
         // Backup old preferences if there are old preferences
         if(prefFile.exists()) {
-            copyFile(prefFile, new File(prefFile + "_backup"));
+            copyFile(prefFile, backupFile);
         }
 
         final PrintWriter out = new PrintWriter(new OutputStreamWriter(
@@ -385,6 +387,18 @@ public class Preferences {
         File tmpFile = new File(prefFile + "_tmp");
         copyFile(tmpFile, prefFile);
         tmpFile.delete();
+
+        setCorrectPermissions(prefFile);
+        setCorrectPermissions(backupFile);
+    }
+
+
+    private void setCorrectPermissions(File file) {
+        file.setReadable(false, false);
+        file.setWritable(false, false);
+        file.setExecutable(false, false);
+        file.setReadable(true, true);
+        file.setWritable(true, true);
     }
 
     /**
@@ -559,8 +573,9 @@ public class Preferences {
      */
     synchronized public Color getColor(String colName, String specName, Color def) {
         String colKey = colName.toLowerCase().replaceAll("[^a-z0-9]+",".");
-        if(!colKey.equals(colName))
+        if(!colKey.equals(colName)) {
             colornames.put(colKey, colName);
+        }
         putDefault("color."+colKey, ColorHelper.color2html(def));
         String colStr = specName != null ? get("color."+specName) : "";
         if(colStr.equals("")) {
@@ -708,12 +723,13 @@ public class Preferences {
     /**
      * Used to read a 2-dimensional array of strings from the preference file.
      * If not a single entry could be found, def is returned.
-     */ 
+     */
     synchronized public Collection<Collection<String>> getArray(String key,
             Collection<Collection<String>> def)
-    {
-        if(def != null)
+            {
+        if(def != null) {
             putArrayDefault(key, def);
+        }
         key += ".";
         int num = 0;
         Collection<Collection<String>> col = new LinkedList<Collection<String>>();
@@ -721,8 +737,8 @@ public class Preferences {
             col.add(getCollection(key+num++, null));
         }
         return num == 0 ? def : col;
-    }
-    
+            }
+
     synchronized public boolean putArray(String key, Collection<Collection<String>> val) {
         boolean changed = false;
         key += ".";
@@ -795,7 +811,7 @@ public class Preferences {
      */
     public <T> List<T> getListOfStructs(String key, Collection<T> def, Class<T> klass) {
         Collection<Collection<String>> array =
-                getArray(key, def == null ? null : serializeListOfStructs(def, klass));
+            getArray(key, def == null ? null : serializeListOfStructs(def, klass));
         if (array == null)
             return def == null ? null : new ArrayList<T>(def);
         List<T> lst = new ArrayList<T>();
@@ -828,8 +844,9 @@ public class Preferences {
             return null;
         Collection<Collection<String>> vals = new ArrayList<Collection<String>>();
         for (T struct : l) {
-            if (struct == null)
+            if (struct == null) {
                 continue;
+            }
             vals.add(serializeStruct(struct, klass));
         }
         return vals;
@@ -936,7 +953,7 @@ public class Preferences {
      * The default plugin site
      */
     private final static String[] DEFAULT_PLUGIN_SITE = {
-        "http://josm.openstreetmap.de/plugin%<?plugins=>"};
+    "http://josm.openstreetmap.de/plugin%<?plugins=>"};
 
     /**
      * Replies the collection of plugin site URLs from where plugin lists can be downloaded
@@ -972,7 +989,7 @@ public class Preferences {
         parser.map("entry", XMLEntry.class);
         parser.map("collection", XMLCollection.class);
         parser.startWithValidation(in,
-        "http://josm.openstreetmap.de/preferences-1.0", "resource://data/preferences.xsd");
+                "http://josm.openstreetmap.de/preferences-1.0", "resource://data/preferences.xsd");
         LinkedList<String> vals = new LinkedList<String>();
         while(parser.hasNext()) {
             Object o = parser.next();
@@ -989,7 +1006,7 @@ public class Preferences {
 
     public String toXML(boolean nopass) {
         StringBuilder b = new StringBuilder(
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
         "<preferences xmlns=\"http://josm.openstreetmap.de/preferences-1.0\">\n");
         for (Entry<String, String> p : properties.entrySet()) {
             if (nopass && p.getKey().equals("osm-server.password")) {
