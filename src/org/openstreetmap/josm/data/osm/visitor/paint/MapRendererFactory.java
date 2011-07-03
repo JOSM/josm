@@ -129,7 +129,7 @@ public class MapRendererFactory {
             return;
         }
 
-        String rendererClassName = Main.pref.get(PREF_KEY_RENDERER_CLASS_NAME);
+        String rendererClassName = Main.pref.get(PREF_KEY_RENDERER_CLASS_NAME, null);
         if (rendererClassName != null) {
             activateMapRenderer(rendererClassName);
         } else {
