@@ -835,8 +835,8 @@ public class ImageryPreference implements PreferenceSetting {
     }
 
     public static void initialize() {
-        ImageryLayerInfo.instance.load();
         ImageryLayerInfo.instance.loadDefaults(false);
+        ImageryLayerInfo.instance.load();
         OffsetBookmark.loadBookmarks();
         Main.main.menu.imageryMenu.refreshImageryMenu();
         Main.main.menu.imageryMenu.refreshOffsetMenu();

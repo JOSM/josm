@@ -185,6 +185,10 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         this.bounds = b;
     }
 
+    public Bounds getBounds() {
+        return bounds;
+    }
+
     public void setAttributionText(String text) {
          attributionText = text;
     }
@@ -282,6 +286,19 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
             res += " (z"+maxZoom+")";
         }
         return res;
+    }
+
+    public boolean hasAttribution()
+    {
+        return attributionText != null;
+    }
+
+    public void copyAttribution(ImageryInfo i)
+    {
+        this.attributionImage = i.attributionImage;
+        this.attributionLinkURL = i.attributionLinkURL;
+        this.attributionText = i.attributionText;
+        this.termsOfUseURL = i.termsOfUseURL;
     }
 
     public void setAttribution(TMSTileSource s)

@@ -40,7 +40,19 @@ public class ImageryLayerInfo {
         layers.clear();
         for(Collection<String> c : Main.pref.getArray("imagery.layers",
                 Collections.<Collection<String>>emptySet())) {
-            add(new ImageryInfo(c));
+            ImageryInfo i = new ImageryInfo(c);
+            /* FIXME: Remove the attribution copy stuff end of 2011 */
+            if(!i.hasAttribution()) {
+                String url = i.getUrl();
+                for(ImageryInfo d : defaultLayers) {
+                    if(url.equals(d.getUrl())) {
+                        i.copyAttribution(d);
+                        i.setBounds(d.getBounds());
+                        break;
+                    }
+                }
+            }
+            add(i);
         }
         Collections.sort(layers);
     }
