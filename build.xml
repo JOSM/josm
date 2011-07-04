@@ -42,7 +42,7 @@
             <env key="LANG" value="C"/>
             <arg value="info"/>
             <arg value="--xml"/>
-            <arg value="."/>
+            <arg value="http://josm.openstreetmap.de/svn/trunk"/>
         </exec>
         <xmlproperty file="REVISION.XML" prefix="version" keepRoot="false" collapseAttributes="true"/>
         <delete file="REVISION.XML"/>
@@ -63,7 +63,7 @@ Build-Date: ${build.tstamp}
             <env key="LANG" value="C"/>
             <arg value="info"/>
             <arg value="--xml"/>
-            <arg value="."/>
+            <arg value="http://josm.openstreetmap.de/svn/trunk"/>
         </exec>
         <xmlproperty file="REVISION" prefix="version" keepRoot="false" collapseAttributes="true"/>
         <delete file="REVISION"/>
