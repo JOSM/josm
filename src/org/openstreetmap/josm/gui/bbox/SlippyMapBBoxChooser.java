@@ -234,7 +234,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser{
                 /*else
                     Main.warn(ts.getAttributionLinkURL());*/
                 return true;
-            } else if(attrToUBounds.contains(p)) {
+            } else if(attrToUBounds != null && attrToUBounds.contains(p)) {
                 if(click)
                     Desktop.getDesktop().browse(new URI(ts.getTermsOfUseURL()));
                 /*else
