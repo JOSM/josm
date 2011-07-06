@@ -1,6 +1,7 @@
 // License: GPL. Copyright 2007 by Immanuel Scholz and others
 package org.openstreetmap.josm.tools;
 
+import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
@@ -77,6 +78,13 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     public String getDefaultStyle() {
         return "javax.swing.plaf.metal.MetalLookAndFeel";
+    }
+
+    @Override
+    public boolean canFullscreen()
+    {
+        return GraphicsEnvironment.getLocalGraphicsEnvironment()
+        .getDefaultScreenDevice().isFullScreenSupported();
     }
 
     @Override
