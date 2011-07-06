@@ -103,5 +103,7 @@ public interface PlatformHook {
 
     public String getDefaultStyle();
 
+    public boolean canFullscreen();
+
     public boolean rename(File from, File to);
 }

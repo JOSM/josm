@@ -46,14 +46,6 @@ public class FullscreenToggleAction extends JosmAction {
         notifySelectedState();
     }
 
-    public boolean canFullscreen() {
-        /* We only support fullscreen, see
-         * http://lists.openstreetmap.org/pipermail/josm-dev/2009-March/002659.html
-         * for why
-         */
-        return Main.platform instanceof PlatformHookUnixoid && gd.isFullScreenSupported();
-    }
-
     public void addButtonModel(ButtonModel model) {
         if (model != null && !buttonModels.contains(model)) {
             buttonModels.add(model);
@@ -104,7 +96,7 @@ public class FullscreenToggleAction extends JosmAction {
             prevBounds = frame.getBounds();
             frame.setBounds(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
         }
-        
+
         // we cannot use hw-exclusive fullscreen mode in MS-Win, as long
         // as josm throws out modal dialogs, see here:
         // http://forums.sun.com/thread.jspa?threadID=5351882

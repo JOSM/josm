@@ -305,7 +305,7 @@ public class MainMenu extends JMenuBar {
         if(!Main.applet) {
             // -- fullscreen toggle action
             fullscreenToggleAction = new FullscreenToggleAction();
-            if (fullscreenToggleAction.canFullscreen()) {
+            if (Main.platform.canFullscreen()) {
                 final JCheckBoxMenuItem fullscreen = new JCheckBoxMenuItem(fullscreenToggleAction);
                 viewMenu.addSeparator();
                 viewMenu.add(fullscreen);

@@ -271,6 +271,12 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements PlatformHook
     }
 
     @Override
+    public boolean canFullscreen()
+    {
+        return false;
+    }
+
+    @Override
     public boolean rename(File from, File to)
     {
         return from.renameTo(to);

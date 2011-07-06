@@ -62,6 +62,12 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
     }
 
     @Override
+    public boolean canFullscreen()
+    {
+        return false;
+    }
+
+    @Override
     public boolean rename(File from, File to)
     {
         if(to.exists())
