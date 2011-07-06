@@ -64,7 +64,7 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
     @Override
     public boolean canFullscreen()
     {
-        return false;
+        return true;
     }
 
     @Override
