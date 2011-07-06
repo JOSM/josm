@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
@@ -64,7 +65,8 @@ public class PlatformHookWindows extends PlatformHookUnixoid implements Platform
     @Override
     public boolean canFullscreen()
     {
-        return true;
+        return GraphicsEnvironment.getLocalGraphicsEnvironment()
+        .getDefaultScreenDevice().isFullScreenSupported();
     }
 
     @Override
