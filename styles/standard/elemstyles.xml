@@ -1240,6 +1240,7 @@ For external files the <rules> should have following elements:
 		<icon annotate="true" src="misc/landmark/power.png"/>
 	</rule>
 
+    <!-- power_source is depricated by the wiki, but still in use -->
 	<rule>
 		<condition k="power_source" v="wind"/>
 		<icon annotate="true" src="misc/landmark/power/wind.png"/>
@@ -1278,6 +1279,37 @@ For external files the <rules> should have following elements:
 
 	<rule>
 		<condition k="power_source" v="nuclear"/>
+		<icon annotate="true" src="misc/landmark/power/nuclear.png"/>
+		<area colour="power#eeeeee"/>
+	</rule>
+
+    <!-- generator:source replaces power_source -->
+	<rule>
+		<condition k="generator:source" v="wind"/>
+		<icon annotate="true" src="misc/landmark/power/wind.png"/>
+		<area colour="power#eeeeee"/>
+	</rule>
+
+	<rule>
+		<condition k="generator:source" v="hydro"/>
+		<icon annotate="true" src="misc/landmark/power/hydro.png"/>
+		<area colour="power#eeeeee"/>
+	</rule>
+
+	<rule>
+		<condition k="generator:source" v="coal"/>
+		<icon annotate="true" src="misc/landmark/power/fossil.png"/>
+		<area colour="power#eeeeee"/>
+	</rule>
+
+	<rule>
+		<condition k="generator:source" v="gas"/>
+		<icon annotate="true" src="misc/landmark/power/fossil.png"/>
+		<area colour="power#eeeeee"/>
+	</rule>
+
+	<rule>
+		<condition k="generator:source" v="nuclear"/>
 		<icon annotate="true" src="misc/landmark/power/nuclear.png"/>
 		<area colour="power#eeeeee"/>
 	</rule>
