@@ -408,7 +408,7 @@ public class GpxLayer extends Layer {
         // paint direction arrow with alternate math. may be faster
         boolean alternatedirection = Main.pref.getBoolean("draw.rawgps.alternatedirection");
         // don't draw arrows nearer to each other than this
-        int delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", 0);
+        int delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", 40);
         // allows to tweak line coloring for different speed levels.
         int colorTracksTune = Main.pref.getInteger("draw.rawgps.colorTracksTune", 45);
 
@@ -466,8 +466,6 @@ public class GpxLayer extends Layer {
                                 break;
 
                             case direction:
-                                // unfortunately "heading" misses a cos-factor in the
-                                // longitudes to account for the convergence of meridians
                                 double dirColor = oldWp.getCoor().heading(trkPnt.getCoor()) / (2.0 * Math.PI) * 256;
                                 // Bad case first
                                 if (dirColor != dirColor || dirColor < 0.0 || dirColor >= 256.0) {
