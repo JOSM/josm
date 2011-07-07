@@ -3102,7 +3102,8 @@ are supplied, then "values" will be treated as "display_values" and translated i
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=generator" />
             <label text="Edit Power Generator" />
             <key key="power" value="generator" />
-            <combo key="power_source" text="Type" values="wind,hydro,fossil,nuclear,coal,photovoltaic,gas,oil" default="" />
+            <combo key="generator:source" text="Source" values="wind,hydro,solar,gas,coal,nuclear,fossil,oil,biofuel,waste,biomass,geothermal,biogas" default="" />
+            <combo key="generator:method" text="Method" values="photovoltaic,combustion,fission,thermal,gasification,wind_turbine,anaerobic_digestion" default="" />
             <text key="name" text="Name" default="" delete_if_empty="true" />
         </item>
         <item name="Power Station" icon="presets/power.png" type="node,closedway">
