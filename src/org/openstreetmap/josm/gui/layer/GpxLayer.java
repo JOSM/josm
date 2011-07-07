@@ -77,6 +77,7 @@ import org.openstreetmap.josm.tools.DateUtils;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.UrlLabel;
+import org.openstreetmap.josm.tools.Utils;
 
 public class GpxLayer extends Layer {
 
@@ -303,25 +304,60 @@ public class GpxLayer extends Layer {
         computeCacheInSync = false;
     }
 
-    private static Color[] colors = new Color[256];
+    private final static Color[] colors = new Color[256];
     static {
         for (int i = 0; i < colors.length; i++) {
             colors[i] = Color.getHSBColor(i / 300.0f, 1, 1);
         }
     }
 
+    private final static Color[] colors_cyclic = new Color[256];
+    static {
+        for (int i = 0; i < colors_cyclic.length; i++) {
+            //                    red   yellow  green   blue    red
+            int[] h = new int[] { 0,    59,     127,    244,    360};
+            int[] s = new int[] { 100,  84,     99,     100 };
+            int[] b = new int[] { 90,   93,     74,     83 };
+
+            float angle = 4 - i / 256f * 4;
+            int quadrant = (int) angle;
+            angle -= quadrant;
+            quadrant = Utils.mod(quadrant+1, 4);
+
+            float vh = h[quadrant] * w(angle) + h[quadrant+1] * (1 - w(angle));
+            float vs = s[quadrant] * w(angle) + s[Utils.mod(quadrant+1, 4)] * (1 - w(angle));
+            float vb = b[quadrant] * w(angle) + b[Utils.mod(quadrant+1, 4)] * (1 - w(angle));
+
+            colors_cyclic[i] = Color.getHSBColor(vh/360f, vs/100f, vb/100f);
+        }
+    }
+
+    /**
+     * transition function: 
+     *  w(0)=1, w(1)=0, 0<=w(x)<=1
+     * @param x number: 0<=x<=1
+     * @return the weighted value
+     */
+    private static float w(float x) {
+        if (x < 0.5) {
+            return 1 - 2*x*x;
+        } else {
+        return 2*(1-x)*(1-x);
+        }
+    }
+    
     // lookup array to draw arrows without doing any math
-    private static int ll0 = 9;
-    private static int sl4 = 5;
-    private static int sl9 = 3;
-    private static int[][] dir = { { +sl4, +ll0, +ll0, +sl4 }, { -sl9, +ll0, +sl9, +ll0 }, { -ll0, +sl4, -sl4, +ll0 },
+    private final static int ll0 = 9;
+    private final static int sl4 = 5;
+    private final static int sl9 = 3;
+    private final static int[][] dir = { { +sl4, +ll0, +ll0, +sl4 }, { -sl9, +ll0, +sl9, +ll0 }, { -ll0, +sl4, -sl4, +ll0 },
         { -ll0, -sl9, -ll0, +sl9 }, { -sl4, -ll0, -ll0, -sl4 }, { +sl9, -ll0, -sl9, -ll0 },
         { +ll0, -sl4, +sl4, -ll0 }, { +ll0, +sl9, +ll0, -sl9 }, { +sl4, +ll0, +ll0, +sl4 },
         { -sl9, +ll0, +sl9, +ll0 }, { -ll0, +sl4, -sl4, +ll0 }, { -ll0, -sl9, -ll0, +sl9 } };
 
     // the different color modes
     enum colorModes {
-        none, velocity, dilution
+        none, velocity, dilution, direction
     }
 
     @Override
@@ -372,7 +408,7 @@ public class GpxLayer extends Layer {
         // paint direction arrow with alternate math. may be faster
         boolean alternatedirection = Main.pref.getBoolean("draw.rawgps.alternatedirection");
         // don't draw arrows nearer to each other than this
-        int delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", 0);
+        int delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", 40);
         // allows to tweak line coloring for different speed levels.
         int colorTracksTune = Main.pref.getInteger("draw.rawgps.colorTracksTune", 45);
 
@@ -429,6 +465,15 @@ public class GpxLayer extends Layer {
                                 }
                                 break;
 
+                            case direction:
+                                double dirColor = oldWp.getCoor().heading(trkPnt.getCoor()) / (2.0 * Math.PI) * 256;
+                                // Bad case first
+                                if (dirColor != dirColor || dirColor < 0.0 || dirColor >= 256.0) {
+                                    trkPnt.customColoring = colors_cyclic[0];
+                                } else {
+                                    trkPnt.customColoring = colors_cyclic[(int) (dirColor)];
+                                }
+                                break;
                             case dilution:
                                 if (trkPnt.attr.get("hdop") != null) {
                                     float hdop = ((Float) trkPnt.attr.get("hdop")).floatValue();
@@ -646,6 +691,7 @@ public class GpxLayer extends Layer {
             super(tr("Convert to data layer"), ImageProvider.get("converttoosm"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             JPanel msg = new JPanel(new GridBagLayout());
             msg
@@ -701,6 +747,7 @@ public class GpxLayer extends Layer {
             super(tr("Download from OSM along this track"), ImageProvider.get("downloadalongtrack"));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             JPanel msg = new JPanel(new GridBagLayout());
             Integer dist[] = { 5000, 500, 50 };
@@ -875,6 +922,7 @@ public class GpxLayer extends Layer {
             final Future<?> future = new DownloadOsmTaskList().download(false, toDownload, monitor);
             Main.worker.submit(
                     new Runnable() {
+                        @Override
                         public void run() {
                             try {
                                 future.get();
@@ -1086,6 +1134,7 @@ public class GpxLayer extends Layer {
         /* we must have got at least one waypoint now */
 
         Collections.sort((ArrayList<WayPoint>) waypoints, new Comparator<WayPoint>() {
+            @Override
             public int compare(WayPoint a, WayPoint b) {
                 return a.time <= b.time ? -1 : 1;
             }
@@ -1404,6 +1453,7 @@ public class GpxLayer extends Layer {
                 // long as they don't overlap, that's fine)
                 if (sel.length > 1) {
                     Arrays.sort(sel, new Comparator<File>() {
+                        @Override
                         public int compare(File a, File b) {
                             return a.lastModified() <= b.lastModified() ? -1 : 1;
                         }
