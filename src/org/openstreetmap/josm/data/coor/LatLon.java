@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.asin;
+import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
@@ -180,24 +181,23 @@ public class LatLon extends Coordinate {
      * Returns the heading, in radians, that you have to use to get from
      * this lat/lon to another.
      *
+     * (I don't know the original source of this formula, but see
+     * http://math.stackexchange.com/questions/720/how-to-calculate-a-heading-on-the-earths-surface
+     * for some hints how it is derived.)
+     * 
      * @param other the "destination" position
-     * @return heading
+     * @return heading in the range 0 <= hd < 2*PI
      */
     public double heading(LatLon other) {
-        double rv;
-        if (other.lat() == lat()) {
-            rv = (other.lon()>lon() ? Math.PI / 2 : Math.PI * 3 / 2);
-        } else {
-            rv = Math.atan((other.lon()-lon())/(other.lat()-lat()));
-            if (rv < 0) {
-                rv += Math.PI;
-            }
-            if (other.lon() < lon()) {
-                rv += Math.PI;
-            }
+        double hd = atan2(sin(toRadians(this.lon() - other.lon())) * cos(toRadians(other.lat())),
+                cos(toRadians(this.lat())) * sin(toRadians(other.lat())) -
+                sin(toRadians(this.lat())) * cos(toRadians(other.lat())) * cos(toRadians(this.lon() - other.lon())));
+        hd %= 2 * PI;
+        if (hd < 0) {
+            hd += 2 * PI;
         }
-        return rv;
-    }
+        return hd;
+     }
 
     /**
      * Returns this lat/lon pair in human-readable format.
