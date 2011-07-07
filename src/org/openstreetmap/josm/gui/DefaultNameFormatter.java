@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -42,6 +43,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     static private DefaultNameFormatter instance;
 
+    private static final LinkedList<NameFormatterHook> formatHooks = new LinkedList<NameFormatterHook>();
+
     /**
      * Replies the unique instance of this formatter
      *
@@ -52,6 +55,31 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             instance = new DefaultNameFormatter();
         }
         return instance;
+    }
+    
+    /**
+     * Registers a format hook. Adds the hook at the first position of the format hooks.
+     * (for plugins)
+     *
+     * @param hook the format hook. Ignored if null.
+     */
+    public static void registerFormatHook(NameFormatterHook hook) {
+        if (hook == null) return;
+        if (!formatHooks.contains(hook)) {
+            formatHooks.add(0,hook);
+        }
+    }
+
+    /**
+     * Unregisters a format hook. Removes the hook from the list of format hooks.
+     *
+     * @param hook the format hook. Ignored if null.
+     */
+    public static void unregisterFormatHook(NameFormatterHook hook) {
+        if (hook == null) return;
+        if (formatHooks.contains(hook)) {
+            formatHooks.remove(hook);
+        }
     }
 
     /** the default list of tags which are used as naming tags in relations */
@@ -140,6 +168,14 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             name += " (" + node.getCoor().latToString(CoordinateFormat.getDefaultFormat()) + ", " + node.getCoor().lonToString(CoordinateFormat.getDefaultFormat()) + ")";
         }
         name = decorateNameWithId(name, node);
+
+        for (NameFormatterHook hook: formatHooks) {
+            String hookResult = hook.checkFormat(node, name);
+            if (hookResult != null) {
+                return hookResult;
+            }
+        }
+
         return name;
     }
 
@@ -216,6 +252,14 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             name += (name.length() > 0) ? " ("+nodes+")" : nodes;
         }
         name = decorateNameWithId(name, way);
+        
+        for (NameFormatterHook hook: formatHooks) {
+            String hookResult = hook.checkFormat(way, name);
+            if (hookResult != null) {
+                return hookResult;
+            }
+        }
+
         return name;
     }
 
@@ -263,6 +307,14 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             name += ")";
         }
         name = decorateNameWithId(name, relation);
+
+        for (NameFormatterHook hook: formatHooks) {
+            String hookResult = hook.checkFormat(relation, name);
+            if (hookResult != null) {
+                return hookResult;
+            }
+        }
+
         return name;
     }
 
@@ -354,6 +406,13 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         String admin_level = relation.get("admin_level");
         if (admin_level != null) {
             name += "["+admin_level+"]";
+        }
+        
+        for (NameFormatterHook hook: formatHooks) {
+            String hookResult = hook.checkRelationTypeName(relation, name);
+            if (hookResult != null) {
+                return hookResult;
+            }
         }
 
         return name;

@@ -24,7 +24,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @author Frederik Ramm <frederik@remote.org>
  */
 public class OsmPrimitivRenderer implements ListCellRenderer, TableCellRenderer {
-    private DefaultNameFormatter formatter = new DefaultNameFormatter();
+    private DefaultNameFormatter formatter = DefaultNameFormatter.getInstance();
 
     /**
      * Default list cell renderer - delegate for ListCellRenderer operation
