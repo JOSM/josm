@@ -44,6 +44,7 @@ public class DrawingPreference implements PreferenceSetting {
     private JCheckBox hdopCircleGpsPoints = new JCheckBox(tr("Draw a circle form HDOP value."));
     private ButtonGroup colorGroup;
     private JRadioButton colorTypeVelocity = new JRadioButton(tr("Velocity (red = slow, green = fast)"));
+    private JRadioButton colorTypeDirection = new JRadioButton(tr("Direction (red = west, yellow = north, green = east, blue = south)"));
     private JRadioButton colorTypeDilution = new JRadioButton(tr("Dilution of Position (red = high, green = low, if available)"));
     private JRadioButton colorTypeNone = new JRadioButton(tr("Single Color (can be customized for named layers)"));
     private JComboBox colorTypeVelocityTune = new JComboBox(new String[] {tr("Car"), tr("Bicycle"), tr("Foot")});
@@ -169,6 +170,7 @@ public class DrawingPreference implements PreferenceSetting {
         colorGroup = new ButtonGroup();
         colorGroup.add(colorTypeNone);
         colorGroup.add(colorTypeVelocity);
+        colorGroup.add(colorTypeDirection);
         colorGroup.add(colorTypeDilution);
 
         colorTypeVelocity.addChangeListener(new ChangeListener(){
@@ -187,10 +189,14 @@ public class DrawingPreference implements PreferenceSetting {
         case 2:
             colorTypeDilution.setSelected(true);
             break;
+        case 3:
+            colorTypeDirection.setSelected(true);
+            break;
         }
 
         colorTypeNone.setToolTipText(tr("All points and track segments will have the same color. Can be customized in Layer Manager."));
         colorTypeVelocity.setToolTipText(tr("Colors points and track segments by velocity."));
+        colorTypeDirection.setToolTipText(tr("Colors points and track segments by direction."));
         colorTypeDilution.setToolTipText(tr("Colors points and track segments by dilution of position (HDOP). Your capture device needs to log that information."));
 
         // color Tracks by Velocity Tune
@@ -205,6 +211,7 @@ public class DrawingPreference implements PreferenceSetting {
         panel.add(colorTypeNone, GBC.eol().insets(40,0,0,0));
         panel.add(colorTypeVelocity, GBC.std().insets(40,0,0,0));
         panel.add(colorTypeVelocityTune, GBC.eop().insets(5,0,0,5));
+        panel.add(colorTypeDirection, GBC.eol().insets(40,0,0,0));
         panel.add(colorTypeDilution, GBC.eol().insets(40,0,0,0));
 
         // waypointLabel
@@ -299,6 +306,8 @@ public class DrawingPreference implements PreferenceSetting {
             Main.pref.putInteger("draw.rawgps.colors", 1);
         } else if(colorTypeDilution.isSelected()) {
             Main.pref.putInteger("draw.rawgps.colors", 2);
+        } else if(colorTypeDirection.isSelected()) {
+            Main.pref.putInteger("draw.rawgps.colors", 3);
         } else {
             Main.pref.putInteger("draw.rawgps.colors", 0);
         }
