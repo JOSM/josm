@@ -291,6 +291,7 @@ public class ImageryPreference implements PreferenceSetting {
     public boolean ok() {
         boolean restartRequired = false;
         layerInfo.save();
+        ImageryLayerInfo.instance.clear();
         ImageryLayerInfo.instance.load();
         Main.main.menu.imageryMenu.refreshImageryMenu();
         Main.main.menu.imageryMenu.refreshOffsetMenu();
@@ -835,6 +836,7 @@ public class ImageryPreference implements PreferenceSetting {
     }
 
     public static void initialize() {
+        ImageryLayerInfo.instance.clear();
         ImageryLayerInfo.instance.loadDefaults(false);
         ImageryLayerInfo.instance.load();
         OffsetBookmark.loadBookmarks();
