@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.tagging;
 import java.awt.Component;
 
 import javax.swing.AbstractCellEditor;
+import javax.swing.BorderFactory;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
@@ -32,6 +33,7 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
      */
     public TagCellEditor() {
         editor = new AutoCompletingTextField();
+        editor.setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
     }
 
     /**
