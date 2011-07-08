@@ -120,6 +120,11 @@ public class FollowLineAction extends JosmAction {
                 osmLayer.data.clearSelection();
                 osmLayer.data.addSelected(newFollower);
                 osmLayer.data.addSelected(newPoint);
+                // "viewport following" mode for tracing long features 
+                // from aerial imagery or GPS tracks. 
+                if (Main.map.mapView.viewportFollowing) {
+                    Main.map.mapView.smoothScrollTo(newPoint.getEastNorth());
+                };
                 return;
             }
         }
