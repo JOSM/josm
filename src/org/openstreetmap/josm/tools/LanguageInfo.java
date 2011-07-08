@@ -68,10 +68,10 @@ public class LanguageInfo {
             return "he";
         else if (full.equals("in"))
             return "id";
-        /* list of non-single codes supported by josm */
-        else if (full.equals("en_GB") || full.equals("pt_BR") || full.equals("en_AU") || full.equals("zh_TW") || full.equals("zh_CN"))
+        else if (I18n.hasCode(full)) /* catch all non-single codes */
             return full;
 
+        /* return single code */
         return locale.getLanguage();
     }
 

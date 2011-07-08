@@ -300,6 +300,11 @@ public class I18n {
         return l;
     }
 
+    public static boolean hasCode(String code)
+    {
+        return languages.containsKey(code);
+    }
+
     public static void init()
     {
         languages.put("ar", PluralMode.MODE_AR);
