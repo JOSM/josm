@@ -66,11 +66,38 @@ public class LanguageInfo {
         String full = locale.toString();
         if (full.equals("iw_IL"))
             return "he";
-        /* list of non-single codes supported by josm */
-        else if (full.equals("en_GB") || full.equals("pt_BR") || full.equals("en_AU") || full.equals("zh_TW") || full.equals("zh_CN"))
+        else if (full.equals("in"))
+            return "id";
+        else if (I18n.hasCode(full)) /* catch all non-single codes */
             return full;
 
+        /* return single code */
         return locale.getLanguage();
+    }
+
+    /**
+     * Replies the locale code used by Java for a given locale.
+     *
+     * In most cases JOSM and Java uses the same codes, but for some exceptions this is needed.
+     *
+     * @param code the locale code.
+     * @return the resulting locale
+     */
+    static public Locale getLocale(String localeName) {
+        if (localeName.equals("he")) {
+            localeName = "iw_IL";
+        }
+        else if (localeName.equals("id")) {
+            localeName = "in";
+        }
+        Locale l;
+        int i = localeName.indexOf('_');
+        if (i > 0) {
+            l = new Locale(localeName.substring(0, i), localeName.substring(i + 1));
+        } else {
+            l = new Locale(localeName);
+        }
+        return l;
     }
 
     static public String getLanguageCodeXML()

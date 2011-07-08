@@ -285,12 +285,7 @@ public class I18n {
         {
             for (String loc : languages.keySet()) {
                 if(Main.class.getResource("/data/"+loc+".lang") != null) {
-                    int i = loc.indexOf('_');
-                    if (i > 0) {
-                        v.add(new Locale(loc.substring(0, i), loc.substring(i + 1)));
-                    } else {
-                        v.add(new Locale(loc));
-                    }
+                    v.add(LanguageInfo.getLocale(loc));
                 }
             }
         }
@@ -303,6 +298,11 @@ public class I18n {
             }
         });
         return l;
+    }
+
+    public static boolean hasCode(String code)
+    {
+        return languages.containsKey(code);
     }
 
     public static void init()
@@ -321,9 +321,10 @@ public class I18n {
         languages.put("fi", PluralMode.MODE_NOTONE);
         languages.put("fr", PluralMode.MODE_GREATERONE);
         languages.put("gl", PluralMode.MODE_NOTONE);
+        languages.put("he", PluralMode.MODE_NOTONE);
+        //languages.put("id", PluralMode.MODE_NONE);
         languages.put("is", PluralMode.MODE_NOTONE);
         languages.put("it", PluralMode.MODE_NOTONE);
-        languages.put("iw_IL", PluralMode.MODE_NOTONE);
         languages.put("ja", PluralMode.MODE_NONE);
         languages.put("nb", PluralMode.MODE_NOTONE);
         languages.put("nl", PluralMode.MODE_NOTONE);
@@ -593,17 +594,8 @@ public class I18n {
      */
     public static void set(String localeName){
         if (localeName != null) {
-            Locale l;
-            if (localeName.equals("he")) {
-                localeName = "iw_IL";
-            }
-            int i = localeName.indexOf('_');
-            if (i > 0) {
-                l = new Locale(localeName.substring(0, i), localeName.substring(i + 1));
-            } else {
-                l = new Locale(localeName);
-            }
-            if (load(localeName)) {
+            Locale l = LanguageInfo.getLocale(localeName);
+            if (load(LanguageInfo.getJOSMLocaleCode(l))) {
                 Locale.setDefault(l);
             } else {
                 if (!l.getLanguage().equals("en")) {
