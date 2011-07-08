@@ -36,8 +36,11 @@ public class ImageryLayerInfo {
         layers.addAll(info.layers);
     }
 
-    public void load() {
+    public void clear() {
         layers.clear();
+    }
+
+    public void load() {
         for(Collection<String> c : Main.pref.getArray("imagery.layers",
                 Collections.<Collection<String>>emptySet())) {
             ImageryInfo i = new ImageryInfo(c);
