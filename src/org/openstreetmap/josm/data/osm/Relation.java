@@ -406,7 +406,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
     }
 
     public boolean isMultipolygon() {
-        return "multipolygon".equals(get("type"));
+        return "multipolygon".equals(get("type")) || "boundary".equals(get("type"));
     }
 
     @Override
