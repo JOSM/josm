@@ -95,6 +95,10 @@ public class MainApplet extends JApplet {
         Main.platform.preStartupHook();
 
         Main.pref = new ServerSidePreferences(getCodeBase());
+
+        String lang = getParameter("language");
+        I18n.set(lang != null ? lang : Main.pref.get("language", null));
+
         try
         {
             ((ServerSidePreferences)Main.pref).download();
