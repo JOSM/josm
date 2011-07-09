@@ -255,7 +255,8 @@ public class MultipolygonTest extends Test {
                     errors.add(new TestError(this, Severity.WARNING, tr("No useful role for multipolygon member"), WRONG_MEMBER_ROLE, rm.getMember()));
                 }
             } else {
-                errors.add(new TestError(this, Severity.WARNING, tr("Non-Way in multipolygon"), WRONG_MEMBER_TYPE, rm.getMember()));
+                if(!"admin_centre".equals(rm.getRole()))
+                    errors.add(new TestError(this, Severity.WARNING, tr("Non-Way in multipolygon"), WRONG_MEMBER_TYPE, rm.getMember()));
             }
         }
     }

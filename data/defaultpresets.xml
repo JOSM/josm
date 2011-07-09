@@ -30,7 +30,7 @@ text: text box
   text: fixed label to display
   default: default string to display
   delete_if_empty: true/false
-  use_last_as_default: true/false
+  use_last_as_default: true/false/force
 
 combo: combo box, with multiple choices and possible to enter free form text
   key: key to set
@@ -47,7 +47,7 @@ combo: combo box, with multiple choices and possible to enter free form text
                         <short_description>last description</short_description>
   default: default string to display
   delete_if_empty: true/false
-  use_last_as_default: true/false
+  use_last_as_default: true/false/force
 
 multiselect: list of values from which zero or more can be selected
   key: key to set
@@ -67,7 +67,7 @@ multiselect: list of values from which zero or more can be selected
                         <short_description>last description</short_description>
   default: default string to display
   delete_if_empty: true/false
-  use_last_as_default: true/false
+  use_last_as_default: true/false/force
 
 check: checkbox
   key: key to set
@@ -4067,10 +4067,10 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="addr:housenumber" text="House number" default="" delete_if_empty="true" />
             <optional>
                 <text key="addr:housename" text="House name" default="" delete_if_empty="true" />
-                <text key="addr:street" text="Street name" use_last_as_default="true" delete_if_empty="true" />
-                <text key="addr:city" text="City name" use_last_as_default="true" delete_if_empty="true" />
-                <text key="addr:postcode" text="Post code" use_last_as_default="true" delete_if_empty="true" />
-                <combo key="addr:country" text="Country code" values="AT,CH,DE,FR,GB,IT,US" use_last_as_default="true" delete_if_empty="true" />
+                <text key="addr:street" text="Street name" use_last_as_default="force" delete_if_empty="true" />
+                <text key="addr:city" text="City name" use_last_as_default="force" delete_if_empty="true" />
+                <text key="addr:postcode" text="Post code" use_last_as_default="force" delete_if_empty="true" />
+                <combo key="addr:country" text="Country code" values="AT,CH,DE,FR,GB,IT,US" use_last_as_default="force" delete_if_empty="true" />
             </optional>
         </item>
         <item name="Address Interpolation" icon="presets/interpolation.png" type="way">
