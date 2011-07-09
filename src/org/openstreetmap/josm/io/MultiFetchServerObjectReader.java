@@ -299,7 +299,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         if (in == null) return;
         progressMonitor.subTask(tr("Downloading OSM data..."));
         try {
-            DataSet loaded = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+            DataSet loaded = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(pkg.size(), false));
             rememberNodesOfIncompleteWaysToLoad(loaded);
             merge(loaded);
         } catch(Exception e) {
@@ -323,7 +323,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
             return;
         progressMonitor.subTask(tr("Downloading OSM data..."));
         try {
-            DataSet loaded = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
+            DataSet loaded = OsmReader.parseDataSet(in, progressMonitor.createSubTaskMonitor(1, false));
             rememberNodesOfIncompleteWaysToLoad(loaded);
             merge(loaded);
         } catch(Exception e) {
@@ -403,11 +403,12 @@ public class MultiFetchServerObjectReader extends OsmServerReader{
         case WAY:  msg = tr("Fetching a package of ways from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
         case RELATION:  msg = tr("Fetching a package of relations from ''{0}''", OsmApi.getOsmApi().getBaseUrl()); break;
         }
-        progressMonitor.indeterminateSubTask(msg);
+        progressMonitor.setTicksCount(ids.size());
+        progressMonitor.setTicks(0);
         Set<Long> toFetch = new HashSet<Long>(ids);
-        toFetch.addAll(ids);
         while(! toFetch.isEmpty() && !isCanceled()) {
             Set<Long> pkg = extractIdPackage(toFetch);
+            progressMonitor.subTask(msg + "... " + progressMonitor.getTicks() + "/" + progressMonitor.getTicksCount());
             try {
                 multiGetIdPackage(type, pkg, progressMonitor);
             } catch(OsmApiException e) {
