@@ -235,7 +235,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String text_context;
         public String default_;
         public String originalValue;
-        public boolean use_last_as_default = false;
+        public String use_last_as_default = "false";
         public boolean delete_if_empty = false;
         public boolean required = false;
 
@@ -248,9 +248,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             AutoCompletingTextField textField = new AutoCompletingTextField();
             initAutoCompletionField(textField, key);
             if (usage.unused()){
-                if (!usage.hadKeys() || PROP_FILL_DEFAULT.get()) {
+                if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
                     // selected osm primitives are untagged or filling default values feature is enabled
-                    if (use_last_as_default && lastValue.containsKey(key)) {
+                    if (!"false".equals(use_last_as_default) && lastValue.containsKey(key)) {
                         textField.setText(lastValue.get(key));
                     } else {
                         textField.setText(default_);
@@ -296,7 +296,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                     ((JComboBox)value).getEditor().getItem().toString() :
                         ((JTextField)value).getText();
 
-                    if (use_last_as_default) {
+                    if (!"false".equals(use_last_as_default)) {
                         lastValue.put(key, v);
                     }
                     if (v.equals(originalValue) || (originalValue == null && v.length() == 0)) return;
@@ -318,7 +318,6 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String value_on = OsmUtils.trueval;
         public String value_off = OsmUtils.falseval;
         public boolean default_ = false; // only used for tagless objects
-        public boolean use_last_as_default = false;
         public boolean required = false;
 
         private QuadStateCheckBox check;
@@ -410,7 +409,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String default_;
         public boolean delete_if_empty = false;
         public boolean editable = true;
-        public boolean use_last_as_default = false;
+        public String use_last_as_default = "false";
         public boolean required = false;
 
         private List<String> short_description_list;
@@ -445,7 +444,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 short_descriptions_array = short_description_list.toArray(new String[0]);
             }
 
-            if (use_last_as_default && def == null && lastValue.containsKey(key)) {
+            if (!"false".equals(use_last_as_default) && def == null && lastValue.containsKey(key)) {
                 def = lastValue.get(key);
             }
 
@@ -502,7 +501,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             }
             else if (def != null && usage.unused()) {
                 // default is set and all items were unset
-                if (!usage.hadKeys() || PROP_FILL_DEFAULT.get()) {
+                if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
                     // selected osm primitives are untagged or filling default feature is enabled
                     combo.setSelectedItem(def);
                 } else {
@@ -604,7 +603,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             if (delete_if_empty && value.length() == 0) {
                 value = null;
             }
-            if (use_last_as_default) {
+            if (!"false".equals(use_last_as_default)) {
                 lastValue.put(key, value);
             }
             changedTags.add(new Tag(key, value));
@@ -680,7 +679,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         public String default_;
         public String delimiter = ";";
         public boolean delete_if_empty = false;
-        public boolean use_last_as_default = false;
+        public String use_last_as_default = "false";
         public boolean required = false;
         public long rows = -1;
 
@@ -721,7 +720,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 short_descriptions_array = short_description_list.toArray(new String[0]);
             }
 
-            if (use_last_as_default && def == null && lastValue.containsKey(key)) {
+            if (!"false".equals(use_last_as_default) && def == null && lastValue.containsKey(key)) {
                 def = lastValue.get(key);
             }
 
@@ -757,17 +756,20 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
 
             if (usage.hasUniqueValue() && !usage.unused()) {
                 originalValue=usage.getFirst();
+                list.setSelectedItem(originalValue);
             }
-            else if (def != null && !usage.hadKeys()) {
-                originalValue=def;
+            else if (def != null && !usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
+                originalValue=DIFFERENT;
+                list.setSelectedItem(def);
             }
             else if (usage.unused()) {
                 originalValue=null;
+                list.setSelectedItem(originalValue);
             }
             else {
                 originalValue=DIFFERENT;
+                list.setSelectedItem(originalValue);
             }
-            list.setSelectedItem(originalValue);
 
             if (locale_text == null) {
                 if(text_context != null) {
@@ -858,7 +860,7 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             if (delete_if_empty && value.length() == 0) {
                 value = null;
             }
-            if (use_last_as_default) {
+            if (!"false".equals(use_last_as_default)) {
                 lastValue.put(key, value);
             }
             changedTags.add(new Tag(key, value));

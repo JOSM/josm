@@ -113,7 +113,7 @@
 		<attribute name="text_context" type="string" />
 		<attribute name="default" type="string" />
 		<attribute name="delete_if_empty" type="boolean" />
-		<attribute name="use_last_as_default" type="boolean" />
+		<attribute name="use_last_as_default" type="tns:last_default" />
 		<attribute name="required" type="boolean" />
 
 		<attribute name="type" use="prohibited" />
@@ -135,6 +135,7 @@
 		<attribute name="values_context" type="string" />
 		<attribute name="display_values" type="string" />
 		<attribute name="default" type="string" />
+		<attribute name="use_last_as_default" type="tns:last_default" />
 		<attribute name="editable" type="boolean" />
 		<attribute name="delete_if_empty" type="boolean" />
 		<attribute name="required" type="boolean" />
@@ -155,6 +156,7 @@
 		<attribute name="values_context" type="string" />
 		<attribute name="display_values" type="string" />
 		<attribute name="default" type="string" />
+		<attribute name="use_last_as_default" type="tns:last_default" />
 		<attribute name="delimiter" type="string" />
 		<attribute name="delete_if_empty" type="boolean" />
 		<attribute name="required" type="boolean" />
@@ -172,7 +174,6 @@
 		<attribute name="text" type="string" />
 		<attribute name="text_context" type="string" />
 		<attribute name="default" type="tns:check_default" />
-		<attribute name="use_last_as_default" type="boolean" />
 		<attribute name="required" type="boolean" />
 		<attribute name="value_on" type="string" />
 		<attribute name="value_off" type="string" />
@@ -187,6 +188,14 @@
 		<restriction base="string">
 			<enumeration value="on" />
 			<enumeration value="off" />
+		</restriction>
+	</simpleType>
+
+	<simpleType name="last_default">
+		<restriction base="string">
+			<enumeration value="true" />
+			<enumeration value="false" />
+			<enumeration value="force" />
 		</restriction>
 	</simpleType>
 
