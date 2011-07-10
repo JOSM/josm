@@ -222,12 +222,12 @@ public class MultiValueResolutionDecision {
     /**
      * Applies this resolution to a collection of primitives
      *
-     * @param primtives the collection of primitives
+     * @param primitives the collection of primitives
      * @throws IllegalStateException thrown if this resolution is not resolved yet
      */
-    public void applyTo(Collection<? extends OsmPrimitive> primtives) throws IllegalStateException {
-        if (primtives == null) return;
-        for (OsmPrimitive primitive: primtives) {
+    public void applyTo(Collection<? extends OsmPrimitive> primitives) throws IllegalStateException {
+        if (primitives == null) return;
+        for (OsmPrimitive primitive: primitives) {
             if (primitive == null) {
                 continue;
             }

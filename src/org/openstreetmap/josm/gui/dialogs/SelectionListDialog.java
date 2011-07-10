@@ -738,8 +738,8 @@ public class SelectionListDialog extends ToggleDialog  {
             update(event.getPrimitives());
         }
 
-        public void primtivesAdded(PrimitivesAddedEvent event) {/* ignored - handled by SelectionChangeListener */}
-        public void primtivesRemoved(PrimitivesRemovedEvent event) {/* ignored - handled by SelectionChangeListener*/}
+        public void primitivesAdded(PrimitivesAddedEvent event) {/* ignored - handled by SelectionChangeListener */}
+        public void primitivesRemoved(PrimitivesRemovedEvent event) {/* ignored - handled by SelectionChangeListener*/}
     }
 
     /**

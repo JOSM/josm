@@ -274,11 +274,11 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         filterModel.executeFilters();
     }
 
-    public void primtivesAdded(PrimitivesAddedEvent event) {
+    public void primitivesAdded(PrimitivesAddedEvent event) {
         filterModel.executeFilters(event.getPrimitives());
     }
 
-    public void primtivesRemoved(PrimitivesRemovedEvent event) {
+    public void primitivesRemoved(PrimitivesRemovedEvent event) {
         filterModel.executeFilters();
     }
 

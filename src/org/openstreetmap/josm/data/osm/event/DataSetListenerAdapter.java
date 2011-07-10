@@ -27,11 +27,11 @@ public class DataSetListenerAdapter implements DataSetListener {
         listener.processDatasetEvent(event);
     }
 
-    public void primtivesAdded(PrimitivesAddedEvent event) {
+    public void primitivesAdded(PrimitivesAddedEvent event) {
         listener.processDatasetEvent(event);
     }
 
-    public void primtivesRemoved(PrimitivesRemovedEvent event) {
+    public void primitivesRemoved(PrimitivesRemovedEvent event) {
         listener.processDatasetEvent(event);
     }
 

@@ -22,7 +22,7 @@ public class PrimitivesAddedEvent extends AbstractDatasetChangedEvent {
 
     @Override
     public void fire(DataSetListener listener) {
-        listener.primtivesAdded(this);
+        listener.primitivesAdded(this);
     }
 
     @Override

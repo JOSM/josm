@@ -281,13 +281,13 @@ public class AutoCompletionManager implements DataSetListener {
      *
      **/
 
-    public void primtivesAdded(PrimitivesAddedEvent event) {
+    public void primitivesAdded(PrimitivesAddedEvent event) {
         if (dirty)
             return;
         cachePrimitives(event.getPrimitives());
     }
 
-    public void primtivesRemoved(PrimitivesRemovedEvent event) {
+    public void primitivesRemoved(PrimitivesRemovedEvent event) {
         dirty = true;
     }
 

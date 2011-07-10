@@ -106,9 +106,9 @@ public class MemberTableModel extends AbstractTableModel implements TableModelLi
     }
 
     public void nodeMoved(NodeMovedEvent event) {/* ignore */}
-    public void primtivesAdded(PrimitivesAddedEvent event) {/* ignore */}
+    public void primitivesAdded(PrimitivesAddedEvent event) {/* ignore */}
 
-    public void primtivesRemoved(PrimitivesRemovedEvent event) {
+    public void primitivesRemoved(PrimitivesRemovedEvent event) {
         // ignore - the relation in the editor might become out of sync with the relation
         // in the dataset. We will deal with it when the relation editor is closed or
         // when the changes in the editor are applied.

@@ -830,12 +830,12 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
 
     public void wayNodesChanged(WayNodesChangedEvent event) {/* irrelevant in this context */}
 
-    public void primtivesAdded(final PrimitivesAddedEvent event) {
+    public void primitivesAdded(final PrimitivesAddedEvent event) {
         model.addRelations(event.getPrimitives());
         model.updateTitle();
     }
 
-    public void primtivesRemoved(final PrimitivesRemovedEvent event) {
+    public void primitivesRemoved(final PrimitivesRemovedEvent event) {
         model.removeRelations(event.getPrimitives());
         model.updateTitle();
     }
