@@ -33,7 +33,7 @@ public interface DataSetListener {
      *
      * @param added A collection of newly-visible primitives
      */
-    void primtivesAdded(PrimitivesAddedEvent event);
+    void primitivesAdded(PrimitivesAddedEvent event);
 
     /**
      * A bunch of primitives were removed from the DataSet, or preexisting
@@ -41,7 +41,7 @@ public interface DataSetListener {
      *
      * @param removed A collection of newly-invisible primitives
      */
-    void primtivesRemoved(PrimitivesRemovedEvent event);
+    void primitivesRemoved(PrimitivesRemovedEvent event);
 
     /**
      * There was some change in the tag set of a primitive. It can have been

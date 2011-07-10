@@ -35,13 +35,13 @@ public class ChangesetsInActiveDataLayerListModel extends ChangesetListModel imp
         initFromDataSet(event.getDataset());
     }
 
-    public void primtivesAdded(PrimitivesAddedEvent event) {
+    public void primitivesAdded(PrimitivesAddedEvent event) {
         for (OsmPrimitive primitive:event.getPrimitives()) {
             addChangeset(new Changeset(primitive.getChangesetId()));
         }
     }
 
-    public void primtivesRemoved(PrimitivesRemovedEvent event) {
+    public void primitivesRemoved(PrimitivesRemovedEvent event) {
         for (OsmPrimitive primitive:event.getPrimitives()) {
             removeChangeset(new Changeset(primitive.getChangesetId()));
         }

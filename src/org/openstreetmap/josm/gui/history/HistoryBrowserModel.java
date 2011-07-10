@@ -779,7 +779,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
     }
 
-    public void primtivesAdded(PrimitivesAddedEvent event) {
+    public void primitivesAdded(PrimitivesAddedEvent event) {
         for (OsmPrimitive p: event.getPrimitives()) {
             if (canShowAsLatest(p)) {
                 setLatest(new HistoryPrimitiveBuilder().build(p));
@@ -787,7 +787,7 @@ public class HistoryBrowserModel extends Observable implements LayerChangeListen
         }
     }
 
-    public void primtivesRemoved(PrimitivesRemovedEvent event) {
+    public void primitivesRemoved(PrimitivesRemovedEvent event) {
         for (OsmPrimitive p: event.getPrimitives()) {
             if (!p.isNew() && p.getId() == history.getId()) {
                 setLatest(null);

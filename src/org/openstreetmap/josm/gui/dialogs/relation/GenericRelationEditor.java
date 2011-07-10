@@ -278,20 +278,6 @@ public class GenericRelationEditor extends RelationEditor  {
         memberTable = new MemberTable(getLayer(),memberTableModel);
         memberTable.addMouseListener(new MemberTableDblClickAdapter());
         memberTableModel.addMemberModelListener(memberTable);
-        // setup a cell editor with a small border
-        final JTextField cellEditorTextField = new JTextField();
-        cellEditorTextField.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
-        cellEditorTextField.addFocusListener(
-                new FocusAdapter() {
-                    @Override public void focusGained(FocusEvent e) {
-                        cellEditorTextField.selectAll();
-                    }
-                }
-        );
-        DefaultCellEditor cellEditor = new DefaultCellEditor(cellEditorTextField);
-        cellEditor.setClickCountToStart(1);
-        memberTable.getColumnModel().getColumn(0).setCellEditor(cellEditor);
-        memberTable.setRowHeight(cellEditorTextField.getPreferredSize().height);
 
         final JScrollPane scrollPane = new JScrollPane(memberTable);
 
@@ -360,6 +346,7 @@ public class GenericRelationEditor extends RelationEditor  {
                 }
         );
         tfRole.setEnabled(memberTable.getSelectedRowCount() > 0);
+        memberTable.setRowHeight(tfRole.getPreferredSize().height);
         SideButton btnApply = new SideButton(setRoleAction);
         btnApply.setPreferredSize(new Dimension(20,20));
         btnApply.setText("");
