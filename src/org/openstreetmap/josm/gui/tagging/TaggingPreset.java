@@ -784,8 +784,8 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
             // modify preferred height of scroll pane to match that row count.
             if (rows != -1)
             {
-                double height = renderer.getListCellRendererComponent(list, 
-                    new PresetListEntry("x"), 0, false, false).getPreferredSize().getHeight() * rows;
+                double height = renderer.getListCellRendererComponent(list,
+                        new PresetListEntry("x"), 0, false, false).getPreferredSize().getHeight() * rows;
                 sp.setPreferredSize(new Dimension((int) sp.getPreferredSize().getWidth(), (int) height));
             }
             p.add(sp, GBC.eol().fill(GBC.HORIZONTAL));
@@ -1097,9 +1097,9 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
         putValue(Action.NAME, getName());
         putValue("toolbar", "tagging_" + getRawName());
         putValue(OPTIONAL_TOOLTIP_TEXT, (group != null ?
-            tr("Use preset ''{0}'' of group ''{1}''", getLocaleName(), group.getName()) :
-            tr("Use preset ''{0}''", getLocaleName())));
-   }
+                tr("Use preset ''{0}'' of group ''{1}''", getLocaleName(), group.getName()) :
+                    tr("Use preset ''{0}''", getLocaleName())));
+    }
 
     public String getLocaleName() {
         if(locale_name == null) {
@@ -1368,13 +1368,12 @@ public class TaggingPreset extends AbstractAction implements MapView.LayerChange
                 Main.main.undoRedo.add(cmd);
             }
         } else if (answer == DIALOG_ANSWER_NEW_RELATION) {
-            List<Command> cmds = new ArrayList<Command>(2);
             final Relation r = new Relation();
             final Collection<RelationMember> members = new HashSet<RelationMember>();
             for(Tag t : getChangedTags()) {
                 r.put(t.getKey(), t.getValue());
             }
-            for(OsmPrimitive osm : sel) {
+            for(OsmPrimitive osm : Main.main.getCurrentDataSet().getSelected()) {
                 RelationMember rm = new RelationMember("", osm);
                 r.addMember(rm);
                 members.add(rm);
