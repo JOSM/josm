@@ -13,7 +13,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -430,7 +429,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         boolean add;
         public SelectAction(boolean add) {
             putValue(SHORT_DESCRIPTION, add ? tr("Add the selected relations to the current selection")
-            : tr("Set the current selection to the list of selected relations"));
+                    : tr("Set the current selection to the list of selected relations"));
             putValue(SMALL_ICON, ImageProvider.get("dialogs", "select"));
             putValue(NAME, add ? tr("Select relation (add)") : tr("Select relation"));
             this.add = add;
@@ -445,10 +444,11 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             for (int i: idx) {
                 selection.add(model.getRelation(i));
             }
-            if(add)
+            if(add) {
                 Main.map.mapView.getEditLayer().data.addSelected(selection);
-            else
+            } else {
                 Main.map.mapView.getEditLayer().data.setSelected(selection);
+            }
         }
 
         protected void updateEnabledState() {
@@ -468,7 +468,7 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
         boolean add;
         public SelectMembersAction(boolean add) {
             putValue(SHORT_DESCRIPTION,add ? tr("Add the members of all selected relations to current selection")
-            : tr("Select the members of all selected relations"));
+                    : tr("Select the members of all selected relations"));
             putValue(SMALL_ICON, ImageProvider.get("selectall"));
             putValue(NAME, add ? tr("Select members (add)") : tr("Select members"));
             this.add = add;
@@ -482,10 +482,11 @@ public class RelationListDialog extends ToggleDialog implements DataSetListener 
             for(Relation r: relations) {
                 members.addAll(r.getMemberPrimitives());
             }
-            if(add)
+            if(add) {
                 Main.map.mapView.getEditLayer().data.addSelected(members);
-            else
+            } else {
                 Main.map.mapView.getEditLayer().data.setSelected(members);
+            }
         }
 
         protected void updateEnabledState() {

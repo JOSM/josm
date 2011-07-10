@@ -39,6 +39,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.TaggingPreset.Check;
@@ -55,6 +56,9 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
     private int CLASSIFICATION_NAME_MATCH = 300;
     private int CLASSIFICATION_GROUP_MATCH = 200;
     private int CLASSIFICATION_TAGS_MATCH = 100;
+
+    private final BooleanProperty SEARCH_IN_TAGS = new BooleanProperty("taggingpreset.dialog.search-in-tags", true);
+    private final BooleanProperty ONLY_APPLICABLE  = new BooleanProperty("taggingpreset.dialog.only-applicable-to-selection", true);
 
     private static class ResultListCellRenderer extends DefaultListCellRenderer {
         @Override
@@ -285,7 +289,7 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
             ckOnlyApplicable.setSelected(false);
             ckOnlyApplicable.setEnabled(false);
         } else {
-            ckOnlyApplicable.setSelected(true);
+            ckOnlyApplicable.setSelected(ONLY_APPLICABLE.get());
             ckOnlyApplicable.addItemListener(new ItemListener() {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
@@ -296,7 +300,7 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
 
         ckSearchInTags = new JCheckBox();
         ckSearchInTags.setText(tr("Search in tags"));
-        ckSearchInTags.setSelected(Main.pref.getBoolean("taggingpreset.dialog.search-in-tags", true));
+        ckSearchInTags.setSelected(SEARCH_IN_TAGS.get());
         ckSearchInTags.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -431,7 +435,10 @@ public class TaggingPresetSearchDialog extends ExtendedDialog {
             lsResultModel.getPresets().get(selectPreset).preset.actionPerformed(null);
         }
 
-        Main.pref.put("taggingpreset.dialog.search-in-tags", ckSearchInTags.isSelected());
+        SEARCH_IN_TAGS.put(ckSearchInTags.isSelected());
+        if (ckOnlyApplicable.isEnabled()) {
+            ONLY_APPLICABLE.put(ckOnlyApplicable.isSelected());
+        }
     }
 
 }

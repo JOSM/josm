@@ -43,6 +43,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -281,11 +282,11 @@ public class GenericRelationEditor extends RelationEditor  {
         final JTextField cellEditorTextField = new JTextField();
         cellEditorTextField.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
         cellEditorTextField.addFocusListener(
-            new FocusAdapter() {
-                @Override public void focusGained(FocusEvent e) {
-                    cellEditorTextField.selectAll();
+                new FocusAdapter() {
+                    @Override public void focusGained(FocusEvent e) {
+                        cellEditorTextField.selectAll();
+                    }
                 }
-            }
         );
         DefaultCellEditor cellEditor = new DefaultCellEditor(cellEditorTextField);
         cellEditor.setClickCountToStart(1);
@@ -1099,7 +1100,7 @@ public class GenericRelationEditor extends RelationEditor  {
          * apply updates to a new relation
          */
         protected void applyNewRelation() {
-            Relation newRelation = new Relation();
+            final Relation newRelation = new Relation();
             tagEditorPanel.getModel().applyToPrimitive(newRelation);
             memberTableModel.applyToRelation(newRelation);
             List<RelationMember> newMembers = new ArrayList<RelationMember>();
@@ -1129,6 +1130,13 @@ public class GenericRelationEditor extends RelationEditor  {
                     getRelation(),
                     GenericRelationEditor.this
             );
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                	// Relation list gets update in EDT so selecting my be postponed to following EDT run
+                    Main.map.relationListDialog.selectRelation(newRelation);
+                }
+            });
         }
 
         /**
