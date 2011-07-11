@@ -44,7 +44,7 @@ import org.apache.commons.codec.StringEncoder;
  * 
  * @author Apache Software Foundation
  * @since 1.3
- * @version $Id: QCodec.java 1087901 2011-04-01 21:17:22Z ggregory $
+ * @version $Id: QCodec.java 1145000 2011-07-11 01:10:36Z ggregory $
  */
 public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder {
     /**
@@ -153,8 +153,8 @@ public class QCodec extends RFC1522Codec implements StringEncoder, StringDecoder
             return null;
         }
         boolean hasUnderscores = false;
-        for (int i = 0; i < bytes.length; i++) {
-            if (bytes[i] == UNDERSCORE) {
+        for (byte b : bytes) {
+            if (b == UNDERSCORE) {
                 hasUnderscores = true;
                 break;
             }

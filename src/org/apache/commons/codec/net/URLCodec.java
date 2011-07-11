@@ -48,7 +48,7 @@ import org.apache.commons.codec.binary.StringUtils;
  * 
  * @author Apache Software Foundation
  * @since 1.2
- * @version $Id: URLCodec.java 1125236 2011-05-20 05:10:48Z ggregory $
+ * @version $Id: URLCodec.java 1145000 2011-07-11 01:10:36Z ggregory $
  */
 public class URLCodec implements BinaryEncoder, BinaryDecoder, StringEncoder, StringDecoder {
     
@@ -130,8 +130,8 @@ public class URLCodec implements BinaryEncoder, BinaryDecoder, StringEncoder, St
         }
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        for (int i = 0; i < bytes.length; i++) {
-            int b = bytes[i];
+        for (byte c : bytes) {
+            int b = c;
             if (b < 0) {
                 b = 256 + b;
             }

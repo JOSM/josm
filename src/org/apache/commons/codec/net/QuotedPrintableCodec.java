@@ -58,7 +58,7 @@ import org.apache.commons.codec.binary.StringUtils;
  * 
  * @author Apache Software Foundation
  * @since 1.3
- * @version $Id: QuotedPrintableCodec.java 1099568 2011-05-04 19:36:47Z ggregory $
+ * @version $Id: QuotedPrintableCodec.java 1145000 2011-07-11 01:10:36Z ggregory $
  */
 public class QuotedPrintableCodec implements BinaryEncoder, BinaryDecoder, StringEncoder, StringDecoder {
     /**
@@ -145,8 +145,8 @@ public class QuotedPrintableCodec implements BinaryEncoder, BinaryDecoder, Strin
             printable = PRINTABLE_CHARS;
         }
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        for (int i = 0; i < bytes.length; i++) {
-            int b = bytes[i];
+        for (byte c : bytes) {
+            int b = c;
             if (b < 0) {
                 b = 256 + b;
             }

@@ -32,7 +32,7 @@ import org.apache.commons.codec.StringEncoder;
  * </ul>
  * 
  * @author Apache Software Foundation
- * @version $Id: DoubleMetaphone.java 1072742 2011-02-20 21:39:03Z ggregory $
+ * @version $Id: DoubleMetaphone.java 1145002 2011-07-11 01:12:39Z ggregory $
  */
 public class DoubleMetaphone implements StringEncoder {
 
@@ -905,8 +905,8 @@ public class DoubleMetaphone implements StringEncoder {
      */    
     private boolean isSilentStart(String value) {
         boolean result = false;
-        for (int i = 0; i < SILENT_START.length; i++) {
-            if (value.startsWith(SILENT_START[i])) {
+        for (String element : SILENT_START) {
+            if (value.startsWith(element)) {
                 result = true;
                 break;
             }
@@ -1013,8 +1013,8 @@ public class DoubleMetaphone implements StringEncoder {
         if (start >= 0 && start + length <= value.length()) {
             String target = value.substring(start, start + length);
 
-            for (int i = 0; i < criteria.length; i++) {
-                if (target.equals(criteria[i])) {
+            for (String element : criteria) {
+                if (target.equals(element)) {
                     result = true;
                     break;
                 }
@@ -1031,9 +1031,9 @@ public class DoubleMetaphone implements StringEncoder {
      */
     public class DoubleMetaphoneResult {
 
-        private StringBuffer primary = new StringBuffer(getMaxCodeLen());
-        private StringBuffer alternate = new StringBuffer(getMaxCodeLen());
-        private int maxLength;
+        private final StringBuffer primary = new StringBuffer(getMaxCodeLen());
+        private final StringBuffer alternate = new StringBuffer(getMaxCodeLen());
+        private final int maxLength;
 
         public DoubleMetaphoneResult(int maxLength) {
             this.maxLength = maxLength;
