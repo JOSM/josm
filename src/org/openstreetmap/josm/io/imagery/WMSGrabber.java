@@ -18,7 +18,10 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.Locale;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,12 +46,26 @@ public class WMSGrabber extends Grabber {
 
     protected String baseURL;
     private final boolean urlWithPatterns;
+    private Map<String, String> props = new HashMap<String, String>();
 
     public WMSGrabber(MapView mv, WMSLayer layer) {
         super(mv, layer);
         this.baseURL = layer.getInfo().getUrl();
         /* URL containing placeholders? */
         urlWithPatterns = ImageryInfo.isUrlWithPatterns(baseURL);
+        if(layer.getInfo().getCookies() != null && !layer.getInfo().getCookies().equals("")) {
+            props.put("Cookie", layer.getInfo().getCookies());
+        }
+        props.put("User-Agent", Main.pref.get("imagery.wms.user_agent", Version.getInstance().getAgentString()));
+        Pattern pattern = Pattern.compile("\\{header\\(([^,]+),([^}]+)\\)\\}");
+        StringBuffer output = new StringBuffer();
+        Matcher matcher = pattern.matcher(this.baseURL);
+        while (matcher.find()) {
+            props.put(matcher.group(1),matcher.group(2));
+            matcher.appendReplacement(output, "");
+        }
+        matcher.appendTail(output);
+        this.baseURL = output.toString();
     }
 
     @Override
@@ -210,10 +227,9 @@ public class WMSGrabber extends Grabber {
         System.out.println("Grabbing WMS " + (attempt > 1? "(attempt " + attempt + ") ":"") + url);
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        if(layer.getInfo().getCookies() != null && !layer.getInfo().getCookies().equals("")) {
-            conn.setRequestProperty("Cookie", layer.getInfo().getCookies());
+        for(Entry<String, String> e : props.entrySet()) {
+            conn.setRequestProperty(e.getKey(), e.getValue());
         }
-        conn.setRequestProperty("User-Agent", Main.pref.get("imagery.wms.user_agent", Version.getInstance().getAgentString()));
         conn.setConnectTimeout(Main.pref.getInteger("socket.timeout.connect",15) * 1000);
         conn.setReadTimeout(Main.pref.getInteger("socket.timeout.read", 30) * 1000);
 
