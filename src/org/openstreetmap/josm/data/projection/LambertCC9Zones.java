@@ -194,7 +194,7 @@ public class LambertCC9Zones implements Projection, ProjectionSubPrefs {
         p.add(GBC.glue(1, 0), GBC.std().fill(GBC.HORIZONTAL));
         /* Note: we use component position 2 below to find this again */
         p.add(prefcb, GBC.eop().fill(GBC.HORIZONTAL));
-        p.add(new JLabel(ImageProvider.get("data/projection", "LambertCC9Zones.png")), GBC.eol().fill(GBC.HORIZONTAL));
+        p.add(new JLabel(ImageProvider.get("data/projection", "Departements_Lambert4Zones.png")), GBC.eol().fill(GBC.HORIZONTAL));
         p.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
 
         if (listener != null) {
