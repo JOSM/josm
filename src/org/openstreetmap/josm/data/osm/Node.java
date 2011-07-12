@@ -18,9 +18,8 @@ public final class Node extends OsmPrimitive implements INode {
     /*
      * We "inline" lat/lon rather than using a LatLon-object => reduces memory footprint
      */
-    static private final double COORDINATE_NOT_DEFINED = Double.NaN;
-    private double lat = COORDINATE_NOT_DEFINED;
-    private double lon = COORDINATE_NOT_DEFINED;
+    private double lat = Double.NaN;
+    private double lon = Double.NaN;
 
     /*
      * the cached projected coordinates
@@ -29,7 +28,7 @@ public final class Node extends OsmPrimitive implements INode {
     private double north = Double.NaN;
 
     private boolean isLatLonKnown() {
-        return lat != COORDINATE_NOT_DEFINED && lon != COORDINATE_NOT_DEFINED;
+        return !Double.isNaN(lat) && !Double.isNaN(lon);
     }
 
     @Override
@@ -83,12 +82,12 @@ public final class Node extends OsmPrimitive implements INode {
     @Override
     public final EastNorth getEastNorth() {
         if (!isLatLonKnown()) return null;
-        
+
         if (getDataSet() == null)
             // there is no dataset that listens for projection changes
             // and invalidates the cache, so we don't use the cache at all
             return Projections.project(new LatLon(lat, lon));
-        
+
         if (Double.isNaN(east) || Double.isNaN(north)) {
             // projected coordinates haven't been calculated yet,
             // so fill the cache of the projected node coordinates
