@@ -23,7 +23,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -38,6 +37,7 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.layer.CustomizeColor;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.AudioPlayer;
@@ -148,14 +148,22 @@ public class MarkerLayer extends Layer {
         return ImageProvider.get("layer", "marker_small");
     }
 
-    static public Color getColor(String name)
+    @Override
+    public Color getColor(boolean ignoreCustom)
     {
+        String name = getName();
         return Main.pref.getColor(marktr("gps marker"), name != null ? "layer "+name : null, Color.gray);
+    }
+
+    /* for preferences */
+    static public Color getGenericColor()
+    {
+        return Main.pref.getColor(marktr("gps marker"), Color.gray);
     }
 
     @Override public void paint(Graphics2D g, MapView mv, Bounds box) {
         boolean showTextOrIcon = isTextOrIconShown();
-        g.setColor(getColor(getName()));
+        g.setColor(getColor(true));
 
         if (mousePressed) {
             boolean mousePressedTmp = mousePressed;
@@ -202,7 +210,7 @@ public class MarkerLayer extends Layer {
         components.add(new ShowHideMarkerText(this));
         components.add(LayerListDialog.getInstance().createDeleteLayerAction());
         components.add(SeparatorLayerAction.INSTANCE);
-        components.add(new CustomizeColor());
+        components.add(new CustomizeColor(this));
         components.add(SeparatorLayerAction.INSTANCE);
         components.add(new SynchronizeAudio());
         if (Main.pref.getBoolean("marker.traceaudio", true)) {
@@ -395,45 +403,9 @@ public class MarkerLayer extends Layer {
             return showMarkerTextItem;
         }
 
-
         @Override
         public boolean supportLayers(List<Layer> layers) {
             return layers.size() == 1 && layers.get(0) instanceof MarkerLayer;
-        }
-    }
-
-    private class CustomizeColor extends AbstractAction {
-
-        public CustomizeColor() {
-            super(tr("Customize Color"), ImageProvider.get("colorchooser"));
-            putValue("help", ht("/Action/LayerCustomizeColor"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JColorChooser c = new JColorChooser(getColor(getName()));
-            Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
-            int answer = JOptionPane.showOptionDialog(
-                    Main.parent,
-                    c,
-                    tr("Choose a color"),
-                    JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    options,
-                    options[0]
-            );
-            switch (answer) {
-            case 0:
-                Main.pref.putColor("layer "+getName(), c.getColor());
-                break;
-            case 1:
-                return;
-            case 2:
-                Main.pref.putColor("layer "+getName(), null);
-                break;
-            }
-            Main.map.repaint();
         }
     }
 

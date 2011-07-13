@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -51,6 +52,11 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
         boolean supportLayers(List<Layer> layers);
         Component createMenuComponent();
     }
+
+    public interface MultiLayerAction {
+        Action getMultiLayerAction(List<Layer> layers);
+    }
+
 
     /**
      * Special class that can be returned by getMenuEntries when JSeparator needs to be created
@@ -127,6 +133,16 @@ abstract public class Layer implements Destroyable, MapViewPaintable, Projection
      * be larger than 64 pixel in any dimension.
      */
     abstract public Icon getIcon();
+
+    /**
+     * Return a Color for this layer. Return null when no color specified.
+     * @param ignoreCustom Custom color should return null, as no default color
+     *      is used. When this is true, then even for custom coloring the base
+     *      color is returned - mainly for layer internal use.
+     */
+    public Color getColor(boolean ignoreCustom) {
+        return null;
+    }
 
     /**
      * @return A small tooltip hint about some statistics for this layer.

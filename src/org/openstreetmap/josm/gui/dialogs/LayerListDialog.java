@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.dialogs;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -820,7 +821,7 @@ public class LayerListDialog extends ToggleDialog {
         }
     }
 
-    private static class LayerNameCellRenderer extends DefaultTableCellRenderer {
+    private class LayerNameCellRenderer extends DefaultTableCellRenderer {
 
         protected boolean isActiveLayer(Layer layer) {
             if (Main.map == null) return false;
@@ -837,6 +838,25 @@ public class LayerListDialog extends ToggleDialog {
                     layer.getName(), isSelected, hasFocus, row, column);
             if (isActiveLayer(layer)) {
                 label.setFont(label.getFont().deriveFont(Font.BOLD));
+            }
+            if(Main.pref.getBoolean("dialog.layer.colorname", true)) {
+                Color c = layer.getColor(false);
+                if(c != null) {
+                    Color oc = null;
+                    for(Layer l : model.getLayers()) {
+                        oc = l.getColor(false);
+                        if(oc != null) {
+                            if(oc.equals(c))
+                                oc = null;
+                            else
+                                break;
+                        }
+                    }
+                    if(oc == null) /* not more than one color, don't use coloring */
+                        c = null;
+                }
+                /* Setting foreground properly handles null as default! */
+                label.setForeground(c);
             }
             label.setIcon(layer.getIcon());
             label.setToolTipText(layer.getToolTipText());
@@ -1230,7 +1250,7 @@ public class LayerListDialog extends ToggleDialog {
          * @return the list of layers currently managed by {@see MapView}.
          * Never null, but can be empty.
          */
-        protected List<Layer> getLayers() {
+        public List<Layer> getLayers() {
             if (Main.map == null || Main.map.mapView == null)
                 return Collections.<Layer>emptyList();
             return Main.map.mapView.getAllLayersAsList();

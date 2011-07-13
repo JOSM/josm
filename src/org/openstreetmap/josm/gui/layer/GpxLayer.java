@@ -9,6 +9,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
@@ -33,10 +34,10 @@ import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
-import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -218,8 +219,24 @@ public class GpxLayer extends Layer {
         return sp;
     }
 
-    static public Color getColor(String name) {
-        return Main.pref.getColor(marktr("gps point"), name != null ? "layer " + name : null, Color.gray);
+    @Override
+    public Color getColor(boolean ignoreCustom) {
+        Color c = Main.pref.getColor(marktr("gps point"), "layer " + getName(), Color.gray);
+
+        return ignoreCustom || getColorMode() == colorModes.none ? c : null;
+    }
+
+    public colorModes getColorMode() {
+        try {
+            return colorModes.values()[Main.pref.getInteger("draw.rawgps.colors", "layer "+getName(), 0)];
+        } catch (Exception e) {
+        }
+        return colorModes.none;
+    }
+
+    /* for preferences */
+    static public Color getGenericColor() {
+        return Main.pref.getColor(marktr("gps point"), Color.gray);
     }
 
     @Override
@@ -229,8 +246,8 @@ public class GpxLayer extends Layer {
                 LayerListDialog.getInstance().createShowHideLayerAction(),
                 LayerListDialog.getInstance().createDeleteLayerAction(),
                 SeparatorLayerAction.INSTANCE,
-                new CustomizeColor(),
-                new CustomizeLineDrawing(),
+                new CustomizeColor(this),
+                new CustomizeLineDrawing(this),
                 new ConvertToDataLayerAction(),
                 SeparatorLayerAction.INSTANCE,
                 new RenameLayerAction(getAssociatedFile(), this),
@@ -242,8 +259,8 @@ public class GpxLayer extends Layer {
                 SeparatorLayerAction.INSTANCE,
                 new LayerSaveAction(this),
                 new LayerSaveAsAction(this),
-                new CustomizeColor(),
-                new CustomizeLineDrawing(),
+                new CustomizeColor(this),
+                new CustomizeLineDrawing(this),
                 new ImportImages(),
                 new ImportAudio(),
                 new MarkersFromNamedPoins(),
@@ -374,43 +391,35 @@ public class GpxLayer extends Layer {
          ********** STEP 1 - GET CONFIG VALUES **************************
          ****************************************************************/
         // Long startTime = System.currentTimeMillis();
-        Color neutralColor = getColor(getName());
+        Color neutralColor = getColor(true);
         // also draw lines between points belonging to different segments
-        boolean forceLines = Main.pref.getBoolean("draw.rawgps.lines.force");
+        boolean forceLines = Main.pref.getBoolean("draw.rawgps.lines.force", "layer "+getName(), false);
         // draw direction arrows on the lines
-        boolean direction = Main.pref.getBoolean("draw.rawgps.direction");
+        boolean direction = Main.pref.getBoolean("draw.rawgps.direction", "layer "+getName(), false);
         // don't draw lines if longer than x meters
-        int lineWidth = Main.pref.getInteger("draw.rawgps.linewidth",0);
+        int lineWidth = Main.pref.getInteger("draw.rawgps.linewidth", "layer "+getName(), 0);
 
         int maxLineLength;
+        boolean lines;
         if (this.isLocalFile) {
-            maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length.local", -1);
+            maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length.local", "layer "+getName(), -1);
+            lines = Main.pref.getBoolean("draw.rawgps.lines.local", "layer "+getName(), true);
         } else {
-            maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length", 200);
-        }
-        // draw line between points, global setting
-        boolean lines = (Main.pref.getBoolean("draw.rawgps.lines", true) || (Main.pref
-                .getBoolean("draw.rawgps.lines.localfiles") && this.isLocalFile));
-        String linesKey = "draw.rawgps.lines.layer " + getName();
-        // draw lines, per-layer setting
-        if (Main.pref.hasKey(linesKey)) {
-            lines = Main.pref.getBoolean(linesKey);
+            maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length", "layer "+getName(), 200);
+            lines = Main.pref.getBoolean("draw.rawgps.lines", "layer "+getName(), true);
         }
         // paint large dots for points
-        boolean large = Main.pref.getBoolean("draw.rawgps.large");
-        boolean hdopcircle = Main.pref.getBoolean("draw.rawgps.hdopcircle", true);
+        boolean large = Main.pref.getBoolean("draw.rawgps.large", "layer "+getName(), false);
+        int largesize = Main.pref.getInteger("draw.rawgps.large.size", "layer "+getName(), 3);
+        boolean hdopcircle = Main.pref.getBoolean("draw.rawgps.hdopcircle", "layer "+getName(), false);
         // color the lines
-        colorModes colored = colorModes.none;
-        try {
-            colored = colorModes.values()[Main.pref.getInteger("draw.rawgps.colors", 0)];
-        } catch (Exception e) {
-        }
+        colorModes colored = getColorMode();
         // paint direction arrow with alternate math. may be faster
-        boolean alternatedirection = Main.pref.getBoolean("draw.rawgps.alternatedirection");
+        boolean alternatedirection = Main.pref.getBoolean("draw.rawgps.alternatedirection", "layer "+getName(), false);
         // don't draw arrows nearer to each other than this
-        int delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", 40);
+        int delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", "layer "+getName(), 40);
         // allows to tweak line coloring for different speed levels.
-        int colorTracksTune = Main.pref.getInteger("draw.rawgps.colorTracksTune", 45);
+        int colorTracksTune = Main.pref.getInteger("draw.rawgps.colorTracksTune", "layer "+getName(), 45);
 
         if(lineWidth != 0)
         {
@@ -639,7 +648,7 @@ public class GpxLayer extends Layer {
                     g.drawArc(screen.x-hdopp/2, screen.y-hdopp/2, hdopp, hdopp, 0, 360);
                 }
                 if (large) {
-                    g.fillRect(screen.x-1, screen.y-1, 3, 3);
+                    g.fillRect(screen.x-1, screen.y-1, largesize, largesize);
                 }
             } // end for trkpnt
         } // end if large || hdopcircle
@@ -1295,14 +1304,48 @@ public class GpxLayer extends Layer {
         return best;
     }
 
-    private class CustomizeLineDrawing extends AbstractAction {
+    private class CustomizeLineDrawing extends AbstractAction implements LayerAction, MultiLayerAction {
+        List<Layer> layers;
 
-        CustomizeLineDrawing() {
+        public CustomizeLineDrawing(List<Layer> l) {
+            this();
+            layers = l;
+        }
+
+        public CustomizeLineDrawing(Layer l) {
+            this();
+            layers = new LinkedList<Layer>();
+            layers.add(l); 
+        }
+
+        private CustomizeLineDrawing() {
             super(tr("Customize line drawing"), ImageProvider.get("mapmode/addsegment"));
         }
 
         @Override
+        public boolean supportLayers(List<Layer> layers) {
+            for(Layer layer: layers) {
+                if(!(layer instanceof GpxLayer))
+                    return false;
+            }
+            return true;
+        }
+
+        @Override
+        public Component createMenuComponent() {
+            return new JMenuItem(this);
+        }
+
+        @Override
+        public Action getMultiLayerAction(List<Layer> layers) {
+            return new CustomizeLineDrawing(layers);
+        }
+
+        @Override
         public void actionPerformed(ActionEvent e) {
+            /* FIXME: Add all the other GPX settings here as well. Unify with DrawingPreferences
+               Each option should be able to "use global settings". Attention with the handling
+               of local layer for the two local layer options! */
             JRadioButton[] r = new JRadioButton[3];
             r[0] = new JRadioButton(tr("Use global settings."));
             r[1] = new JRadioButton(tr("Draw lines between points for this layer."));
@@ -1313,7 +1356,8 @@ public class GpxLayer extends Layer {
                 group.add(b);
                 panel.add(b);
             }
-            String propName = "draw.rawgps.lines.layer " + getName();
+            String propbase = isLocalFile ? "draw.rawgps.lines.local" : "draw.rawgps.lines";
+            String propName = propbase + ".layer " + layers.get(0).getName();
             if (Main.pref.hasKey(propName)) {
                 group.setSelected(r[Main.pref.getBoolean(propName) ? 1 : 2].getModel(), true);
             } else {
@@ -1328,48 +1372,16 @@ public class GpxLayer extends Layer {
             default:
                 // continue
             }
-            if (group.getSelection() == r[0].getModel()) {
-                Main.pref.put(propName, null);
-            } else {
-                Main.pref.put(propName, group.getSelection() == r[1].getModel());
+            for(Layer layer : layers) {
+                propName = propbase + ".layer " + layer.getName();
+                if (group.getSelection() == r[0].getModel()) {
+                    Main.pref.put(propName, null);
+                } else {
+                    Main.pref.put(propName, group.getSelection() == r[1].getModel());
+                }
             }
             Main.map.repaint();
         }
-    }
-
-    private class CustomizeColor extends AbstractAction {
-
-        public CustomizeColor() {
-            super(tr("Customize Color"), ImageProvider.get("colorchooser"));
-            putValue("help", ht("/Action/LayerCustomizeColor"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            JColorChooser c = new JColorChooser(getColor(getName()));
-            Object[] options = new Object[] { tr("OK"), tr("Cancel"), tr("Default") };
-            int answer = JOptionPane.showOptionDialog(
-                    Main.parent,
-                    c,
-                    tr("Choose a color"),
-                    JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    options, options[0]
-            );
-            switch (answer) {
-            case 0:
-                Main.pref.putColor("layer " + getName(), c.getColor());
-                break;
-            case 1:
-                return;
-            case 2:
-                Main.pref.putColor("layer " + getName(), null);
-                break;
-            }
-            Main.map.repaint();
-        }
-
     }
 
     private class MarkersFromNamedPoins extends AbstractAction {

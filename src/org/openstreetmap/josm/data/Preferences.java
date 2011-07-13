@@ -289,6 +289,14 @@ public class Preferences {
         return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : def;
     }
 
+    synchronized public boolean getBoolean(final String key, final String specName, final boolean def) {
+        putDefault(key, Boolean.toString(def));
+        String skey = key+"."+specName;
+        if(properties.containsKey(skey))
+            return Boolean.parseBoolean(properties.get(skey));
+        return properties.containsKey(key) ? Boolean.parseBoolean(properties.get(key)) : def;
+    }
+
     /**
      * Set a value for a certain setting. The changed setting is saved
      * to the preference file immediately. Due to caching mechanisms on modern
@@ -596,6 +604,22 @@ public class Preferences {
     synchronized public int getInteger(String key, int def) {
         putDefault(key, Integer.toString(def));
         String v = get(key);
+        if(null == v)
+            return def;
+
+        try {
+            return Integer.parseInt(v);
+        } catch(NumberFormatException e) {
+            // fall out
+        }
+        return def;
+    }
+
+    synchronized public int getInteger(String key, String specName, int def) {
+        putDefault(key, Integer.toString(def));
+        String v = get(key+"."+specName);
+        if(null == v)
+            v = get(key);
         if(null == v)
             return def;
 
