@@ -27,7 +27,8 @@ at http://josm.openstreetmap.de/svn/ for details. Use
 Copyright rests with the contributors.
 
 The jpeg metadata extraction code is from Drew Noakes
-(http://drewnoakes.com/code/exif).
+(http://code.google.com/p/metadata-extractor/) and licensed
+with Apache license version 2.0.
 
 Most icons have been nicked from GNOME and the GIMP, both
 under GPL. Some are originally LGPL but redistributed here under 
