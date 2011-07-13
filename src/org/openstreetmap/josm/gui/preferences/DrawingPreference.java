@@ -218,7 +218,6 @@ public class DrawingPreference implements PreferenceSetting {
         panel.add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
 
         waypointLabel.setSelectedIndex(Main.pref.getInteger("draw.rawgps.layer.wpt", 0 ));
-        colorTypeDilution.setToolTipText(tr("Allows to change the labelling of track waypoints."));
         panel.add(new JLabel(tr("Waypoint labelling")), GBC.std().insets(20,0,0,0));
         panel.add(waypointLabel, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
 
