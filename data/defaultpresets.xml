@@ -2548,7 +2548,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <key key="amenity" value="bench" />
             <combo key="backrest" text="Backrest" values="yes,no" default="" delete_if_empty="true" />
             <combo key="material" text="Material" values="stone,metal,wood,plastic" default="" delete_if_empty="true" />
-            <combo key="colour" text="Colour" values="black,brown,green,red,blue,gray,white" default="" delete_if_empty="true" />
+            <combo key="colour" text="Colour" values_context="color" values="black,brown,green,red,blue,gray,white" default="" delete_if_empty="true" />
             <combo key="seats" text="Amount of Seats" values="2,3,4,5,6,7,8,9,10" default="" delete_if_empty="true" />
         </item>
         <item name="Shelter" icon="presets/shelter.png" type="node,closedway">
@@ -2586,7 +2586,7 @@ are supplied, then "values" will be treated as "display_values" and translated i
             <text key="ref" text="Reference" default="" delete_if_empty="true" />
             <text key="operator" text="Operator" default="" delete_if_empty="true" />
             <space />
-            <combo key="fire_hydrant:position" text="Position" values="lane,parking_lot,sidewalk,green" default="" delete_if_empty="true" />
+            <combo key="fire_hydrant:position" text="Position" values_context="hydrant position" values="lane,parking_lot,sidewalk,green" default="" delete_if_empty="true" />
             <combo key="fire_hydrant:pressure" text="Pressure" values="xx l/min,suction" default="" delete_if_empty="true" />
             <text key="fire_hydrant:count" text="Count" values="" default="" delete_if_empty="true" />
         </item>
