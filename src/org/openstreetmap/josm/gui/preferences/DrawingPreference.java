@@ -82,7 +82,7 @@ public class DrawingPreference implements PreferenceSetting {
 
 
         /* ensure that default is in data base */
-        Boolean lf = Main.pref.getBoolean("draw.rawgps.lines.localfiles", false);
+        Boolean lf = Main.pref.getBoolean("draw.rawgps.lines.local", true);
         if(Main.pref.getBoolean("draw.rawgps.lines", true)) {
             drawRawGpsLinesAll.setSelected(true);
         } else if (lf) {
@@ -157,7 +157,7 @@ public class DrawingPreference implements PreferenceSetting {
         panel.add(drawGpsArrowsMinDist, GBC.eol().fill(GBC.HORIZONTAL).insets(5,0,0,5));
 
         // hdopCircleGpsPoints
-        hdopCircleGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.hdopcircle", true));
+        hdopCircleGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.hdopcircle", false));
         hdopCircleGpsPoints.setToolTipText(tr("Draw a circle form HDOP value."));
         panel.add(hdopCircleGpsPoints, GBC.eop().insets(20,0,0,0));
 
@@ -295,7 +295,7 @@ public class DrawingPreference implements PreferenceSetting {
         Main.pref.put("marker.makeautomarkers", makeAutoMarkers.isSelected());
         Main.pref.put("draw.data.area_outline_only", outlineOnly.isSelected());
         Main.pref.put("draw.rawgps.lines", drawRawGpsLinesAll.isSelected());
-        Main.pref.put("draw.rawgps.lines.localfiles", drawRawGpsLinesLocal.isSelected());
+        Main.pref.put("draw.rawgps.lines.local", drawRawGpsLinesAll.isSelected() || drawRawGpsLinesLocal.isSelected());
         Main.pref.put("draw.rawgps.max-line-length", drawRawGpsMaxLineLength.getText());
         Main.pref.put("draw.rawgps.max-line-length.local", drawRawGpsMaxLineLengthLocal.getText());
         Main.pref.put("draw.rawgps.lines.force", forceRawGpsLines.isSelected());

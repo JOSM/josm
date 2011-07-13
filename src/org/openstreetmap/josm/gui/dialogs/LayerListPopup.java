@@ -18,6 +18,7 @@ import javax.swing.JPopupMenu;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
+import org.openstreetmap.josm.gui.layer.Layer.MultiLayerAction;
 import org.openstreetmap.josm.gui.layer.Layer.SeparatorLayerAction;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -58,6 +59,8 @@ public class LayerListPopup extends JPopupMenu {
                     actions.add(a);
                 } else if (a instanceof LayerAction && ((LayerAction)a).supportLayers(selectedLayers)) {
                     separatorAdded = false;
+                    if(a instanceof MultiLayerAction)
+                        a = ((MultiLayerAction)a).getMultiLayerAction(selectedLayers);
                     actions.add(a);
                 }
             }
@@ -65,7 +68,8 @@ public class LayerListPopup extends JPopupMenu {
             for (int i=1; i<selectedLayers.size(); i++) {
                 separatorAdded = false;
                 for (Action a: selectedLayers.get(i).getMenuEntries()) {
-                    if (a instanceof LayerAction && ((LayerAction)a).supportLayers(selectedLayers) && !actions.contains(a)) {
+                    if (a instanceof LayerAction && !(a instanceof MultiLayerAction)
+                    && ((LayerAction)a).supportLayers(selectedLayers) && !actions.contains(a)) {
                         if (!separatorAdded) {
                             separatorAdded = true;
                             actions.add(SeparatorLayerAction.INSTANCE);
