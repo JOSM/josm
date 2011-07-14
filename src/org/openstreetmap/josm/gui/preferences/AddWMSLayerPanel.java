@@ -322,6 +322,7 @@ public class AddWMSLayerPanel extends JPanel {
 
         String incomingData;
         try {
+            System.out.println("GET "+getCapabilitiesUrl.toString());
             URLConnection openConnection = getCapabilitiesUrl.openConnection();
             InputStream inputStream = openConnection.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
@@ -340,6 +341,7 @@ public class AddWMSLayerPanel extends JPanel {
 
         Document document;
         try {
+            //System.out.println("WMS capabilities:\n"+incomingData+"\n");
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             builderFactory.setValidating(false);
             builderFactory.setNamespaceAware(true);

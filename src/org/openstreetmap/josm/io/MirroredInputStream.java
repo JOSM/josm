@@ -28,9 +28,11 @@ import org.openstreetmap.josm.Main;
 public class MirroredInputStream extends InputStream {
     InputStream fs = null;
     File file = null;
+    
+    public final static long DEFAULT_MAXTIME = -1l;
 
     public MirroredInputStream(String name) throws IOException {
-        this(name, null, -1L);
+        this(name, null, DEFAULT_MAXTIME);
     }
 
     public MirroredInputStream(String name, long maxTime) throws IOException {
@@ -38,7 +40,7 @@ public class MirroredInputStream extends InputStream {
     }
 
     public MirroredInputStream(String name, String destDir) throws IOException {
-        this(name, destDir, -1L);
+        this(name, destDir, DEFAULT_MAXTIME);
     }
 
     /**
@@ -192,7 +194,9 @@ public class MirroredInputStream extends InputStream {
             if(!file.exists())
                 file = null;
             else {
-                if (maxTime <= 0) {
+                if ( maxTime == DEFAULT_MAXTIME 
+                        || maxTime <= 0 // arbitrary value <= 0 is deprecated
+                ) {
                     maxTime = Main.pref.getInteger("mirror.maxtime", 7*24*60*60);
                 }
                 age = System.currentTimeMillis() - Long.parseLong(lp[0]);

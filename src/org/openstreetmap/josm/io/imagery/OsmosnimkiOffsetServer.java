@@ -25,7 +25,7 @@ public class OsmosnimkiOffsetServer implements OffsetServer {
     @Override
     public boolean isLayerSupported(ImageryInfo info) {
         try {
-            URL url = new URL(this.url + "action=CheckAvailability&id=" + URLEncoder.encode(info.getFullUrl(), "UTF-8"));
+            URL url = new URL(this.url + "action=CheckAvailability&id=" + URLEncoder.encode(info.getUrl(), "UTF-8"));
             System.out.println(tr("Querying offset availability: {0}", url));
             final BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream(), "UTF-8"));
             String response = rdr.readLine();
@@ -41,7 +41,7 @@ public class OsmosnimkiOffsetServer implements OffsetServer {
     public EastNorth getOffset(ImageryInfo info, EastNorth en) {
         LatLon ll = Main.getProjection().eastNorth2latlon(en);
         try {
-            URL url = new URL(this.url + "action=GetOffsetForPoint&lat=" + ll.lat() + "&lon=" + ll.lon() + "&id=" + URLEncoder.encode(info.getFullUrl(), "UTF-8"));
+            URL url = new URL(this.url + "action=GetOffsetForPoint&lat=" + ll.lat() + "&lon=" + ll.lon() + "&id=" + URLEncoder.encode(info.getUrl(), "UTF-8"));
             System.out.println(tr("Querying offset: {0}", url.toString()));
             final BufferedReader rdr = new BufferedReader(new InputStreamReader(url.openConnection().getInputStream(), "UTF-8"));
             String s = rdr.readLine();
