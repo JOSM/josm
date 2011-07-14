@@ -20,11 +20,11 @@
         <isset property="clevel"/>
     </condition>
     <!-- Java classpath addition (all jar files to compile tests with this) -->
-    <path id="classpath">
+    <!-- <path id="classpath">
         <fileset dir="lib">
             <include name="**/*.jar"/>
         </fileset>
-    </path>
+    </path> -->
     <!--
 	  ** Used by Eclipse ant builder for updating
 	  ** the REVISION file used by JOSM
@@ -105,8 +105,8 @@ Build-Date: ${build.tstamp}
         </zip>
     </target>
     <target name="compile" depends="init">
-        <javac srcdir="src" classpathref="classpath" includes="com/drew/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.5" source="1.5" debug="on" encoding="iso-8859-1"/>
-        <javac srcdir="src" classpathref="classpath" excludes="com/drew/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.5" source="1.5" debug="on" encoding="UTF-8">
+        <javac srcdir="src" includes="com/drew/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.5" source="1.5" debug="on" encoding="iso-8859-1"/>
+        <javac srcdir="src" excludes="com/drew/**,oauth/**,org/apache/commons/codec/**" destdir="build" target="1.5" source="1.5" debug="on" encoding="UTF-8">
             <compilerarg value="-Xlint:deprecation"/>
             <compilerarg value="-Xlint:unchecked"/>
         </javac>

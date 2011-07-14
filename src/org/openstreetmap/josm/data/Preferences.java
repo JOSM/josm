@@ -604,7 +604,7 @@ public class Preferences {
     synchronized public int getInteger(String key, int def) {
         putDefault(key, Integer.toString(def));
         String v = get(key);
-        if(null == v)
+        if(v.isEmpty())
             return def;
 
         try {
@@ -618,9 +618,9 @@ public class Preferences {
     synchronized public int getInteger(String key, String specName, int def) {
         putDefault(key, Integer.toString(def));
         String v = get(key+"."+specName);
-        if(null == v)
+        if(v.isEmpty())
             v = get(key);
-        if(null == v)
+        if(v.isEmpty())
             return def;
 
         try {
