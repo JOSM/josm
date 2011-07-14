@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
@@ -25,17 +26,28 @@ public class NMEAImporter extends FileImporter {
     }
 
     @Override public void importData(File file, ProgressMonitor progressMonitor) throws IOException {
-        String fn = file.getName();
-        NmeaReader r = new NmeaReader(new FileInputStream(file), file.getAbsoluteFile().getParentFile());
+        final String fn = file.getName();
+        final NmeaReader r = new NmeaReader(new FileInputStream(file), file.getAbsoluteFile().getParentFile());
         if (r.getNumberOfCoordinates() > 0) {
             r.data.storageFile = file;
-            GpxLayer gpxLayer = new GpxLayer(r.data, fn, true);
-            Main.main.addLayer(gpxLayer);
-            if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
-                MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), file, gpxLayer);
-                if (ml.data.size() > 0) {
-                    Main.main.addLayer(ml);
+            final GpxLayer gpxLayer = new GpxLayer(r.data, fn, true);
+            final File fileFinal = file;
+
+            Runnable uiStuff = new Runnable() {
+                public void run() {
+                    Main.main.addLayer(gpxLayer);
+                    if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
+                        MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), fileFinal, gpxLayer);
+                        if (ml.data.size() > 0) {
+                            Main.main.addLayer(ml);
+                        }
+                    }
                 }
+            };
+            if (SwingUtilities.isEventDispatchThread()) {
+                uiStuff.run();
+            } else {
+                SwingUtilities.invokeLater(uiStuff);
             }
         }
         showNmeaInfobox(r.getNumberOfCoordinates() > 0, r);
