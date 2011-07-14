@@ -42,9 +42,9 @@ import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.io.auth.CredentialsAgent;
+import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
-import org.openstreetmap.josm.io.auth.CredentialsManagerException;
-import org.openstreetmap.josm.io.auth.CredentialsManagerFactory;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.SAXException;
 
@@ -181,7 +181,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
     @Override
     public void initFromPreferences(Preferences pref) {
         super.initFromPreferences(pref);
-        CredentialsManager cm = CredentialsManagerFactory.getCredentialManager();
+        CredentialsAgent cm = CredentialsManager.getInstance();
         try {
             PasswordAuthentication pa = cm.lookup(RequestorType.SERVER);
             if (pa == null) {
@@ -191,7 +191,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                 tfUserName.setText(pa.getUserName() == null ? "" : pa.getUserName());
                 tfPassword.setText(pa.getPassword() == null ? "" : String.valueOf(pa.getPassword()));
             }
-        } catch(CredentialsManagerException e) {
+        } catch(CredentialsAgentException e) {
             e.printStackTrace();
             tfUserName.setText("");
             tfPassword.setText("");

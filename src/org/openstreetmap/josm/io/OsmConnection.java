@@ -17,9 +17,9 @@ import oauth.signpost.exception.OAuthException;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
-import org.openstreetmap.josm.io.auth.CredentialsManagerException;
-import org.openstreetmap.josm.io.auth.CredentialsManagerFactory;
-import org.openstreetmap.josm.io.auth.CredentialsManagerResponse;
+import org.openstreetmap.josm.io.auth.CredentialsAgentException;
+import org.openstreetmap.josm.io.auth.CredentialsManager;
+import org.openstreetmap.josm.io.auth.CredentialsAgentResponse;
 import org.openstreetmap.josm.tools.Base64;
 
 /**
@@ -72,13 +72,13 @@ public class OsmConnection {
      */
     protected void addBasicAuthorizationHeader(HttpURLConnection con) throws OsmTransferException {
         CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
-        CredentialsManagerResponse response;
+        CredentialsAgentResponse response;
         String token;
         try {
-            synchronized (CredentialsManagerFactory.getCredentialManager()) {
-                response = CredentialsManagerFactory.getCredentialManager().getCredentials(RequestorType.SERVER, false /* don't know yet whether the credentials will succeed */);
+            synchronized (CredentialsManager.getInstance()) {
+                response = CredentialsManager.getInstance().getCredentials(RequestorType.SERVER, false /* don't know yet whether the credentials will succeed */);
             }
-        } catch (CredentialsManagerException e) {
+        } catch (CredentialsAgentException e) {
             throw new OsmTransferException(e);
         }
         if (response == null) {

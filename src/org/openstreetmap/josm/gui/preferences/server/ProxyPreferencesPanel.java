@@ -30,9 +30,9 @@ import org.openstreetmap.josm.gui.JMultilineLabel;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.io.DefaultProxySelector;
+import org.openstreetmap.josm.io.auth.CredentialsAgent;
+import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
-import org.openstreetmap.josm.io.auth.CredentialsManagerException;
-import org.openstreetmap.josm.io.auth.CredentialsManagerFactory;
 import org.openstreetmap.josm.tools.GBC;
 
 public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
@@ -320,7 +320,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
         // save the proxy user and the proxy password to a credentials store managed by
         // the credentials manager
-        CredentialsManager cm = CredentialsManagerFactory.getCredentialManager();
+        CredentialsAgent cm = CredentialsManager.getInstance();
         try {
             PasswordAuthentication pa = cm.lookup(RequestorType.PROXY);
             if (pa == null) {
@@ -330,7 +330,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
                 tfProxyHttpUser.setText(pa.getUserName() == null ? "" : pa.getUserName());
                 tfProxyHttpPassword.setText(pa.getPassword() == null ? "" : String.valueOf(pa.getPassword()));
             }
-        } catch(CredentialsManagerException e) {
+        } catch(CredentialsAgentException e) {
             e.printStackTrace();
             tfProxyHttpUser.setText("");
             tfProxyHttpPassword.setText("");
@@ -394,14 +394,14 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
             ((DefaultProxySelector)selector).initFromPreferences();
         }
 
-        CredentialsManager cm = CredentialsManagerFactory.getCredentialManager();
+        CredentialsAgent cm = CredentialsManager.getInstance();
         try {
             PasswordAuthentication pa = new PasswordAuthentication(
                     tfProxyHttpUser.getText().trim(),
                     tfProxyHttpPassword.getPassword()
             );
             cm.store(RequestorType.PROXY, pa);
-        } catch(CredentialsManagerException e) {
+        } catch(CredentialsAgentException e) {
             e.printStackTrace();
         }
     }

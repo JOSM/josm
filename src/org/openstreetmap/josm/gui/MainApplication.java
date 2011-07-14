@@ -31,7 +31,7 @@ import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.DefaultProxySelector;
-import org.openstreetmap.josm.io.auth.CredentialsManagerFactory;
+import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.plugins.PluginHandler;
@@ -187,10 +187,10 @@ public class MainApplication extends Main {
         }
         Main.pref.updateSystemProperties();
 
-        DefaultAuthenticator.createInstance(CredentialsManagerFactory.getCredentialManager());
+        DefaultAuthenticator.createInstance(CredentialsManager.getInstance());
         Authenticator.setDefault(DefaultAuthenticator.getInstance());
         ProxySelector.setDefault(new DefaultProxySelector(ProxySelector.getDefault()));
-        OAuthAccessTokenHolder.getInstance().init(Main.pref, CredentialsManagerFactory.getCredentialManager());
+        OAuthAccessTokenHolder.getInstance().init(Main.pref, CredentialsManager.getInstance());
 
         // asking for help? show help and exit
         if (args.containsKey("help")) {

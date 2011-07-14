@@ -19,10 +19,10 @@ import javax.swing.text.html.HTMLEditorKit;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
+import org.openstreetmap.josm.io.auth.CredentialsAgent;
+import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
-import org.openstreetmap.josm.io.auth.CredentialsManagerException;
-import org.openstreetmap.josm.io.auth.CredentialsManagerFactory;
-import org.openstreetmap.josm.io.auth.JosmPreferencesCredentialManager;
+import org.openstreetmap.josm.io.auth.JosmPreferencesCredentialAgent;
 
 /**
  * The preferences panel for parameters necessary for the Basic Authentication
@@ -102,7 +102,7 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
     }
 
     public void initFromPreferences() {
-        CredentialsManager cm = CredentialsManagerFactory.getCredentialManager();
+        CredentialsAgent cm = CredentialsManager.getInstance();
         try {
             PasswordAuthentication pa = cm.lookup(RequestorType.SERVER);
             if (pa == null) {
@@ -112,7 +112,7 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
                 tfOsmUserName.setText(pa.getUserName() == null? "" : pa.getUserName());
                 tfOsmPassword.setText(pa.getPassword() == null ? "" : String.valueOf(pa.getPassword()));
             }
-        } catch(CredentialsManagerException e) {
+        } catch(CredentialsAgentException e) {
             e.printStackTrace();
             System.err.println(tr("Warning: failed to retrieve OSM credentials from credential manager."));
             System.err.println(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));
@@ -122,7 +122,7 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
     }
 
     public void saveToPreferences() {
-        CredentialsManager cm = CredentialsManagerFactory.getCredentialManager();
+        CredentialsAgent cm = CredentialsManager.getInstance();
         try {
             PasswordAuthentication pa = new PasswordAuthentication(
                     tfOsmUserName.getText().trim(),
@@ -131,10 +131,10 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
             cm.store(RequestorType.SERVER, pa);
             // always save the username to the preferences if it isn't already saved there
             // by the credential manager
-            if (! (cm instanceof JosmPreferencesCredentialManager)) {
+            if (! (cm instanceof JosmPreferencesCredentialAgent)) {
                 Main.pref.put("osm-server.username", tfOsmUserName.getText().trim());
             }
-        } catch(CredentialsManagerException e) {
+        } catch(CredentialsAgentException e) {
             e.printStackTrace();
             System.err.println(tr("Warning: failed to save OSM credentials to credential manager."));
             System.err.println(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));

@@ -12,17 +12,18 @@ import org.openstreetmap.josm.gui.io.CredentialDialog;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
 
 /**
- * This is the default credential manager in JOSM. It keeps username and password for both
+ * This is the default credentials agent in JOSM. It keeps username and password for both
  * the OSM API and an optional HTTP proxy in the JOSM preferences file.
  *
  */
-public class JosmPreferencesCredentialManager implements CredentialsManager {
+public class JosmPreferencesCredentialAgent implements CredentialsAgent {
 
     Map<RequestorType, PasswordAuthentication> memoryCredentialsCache = new HashMap<RequestorType, PasswordAuthentication>();
     /**
-     * @see CredentialsManager#lookup(RequestorType)
+     * @see CredentialsAgent#lookup(RequestorType)
      */
-    public PasswordAuthentication lookup(RequestorType requestorType) throws CredentialsManagerException{
+    @Override
+    public PasswordAuthentication lookup(RequestorType requestorType) throws CredentialsAgentException{
         if (requestorType == null)
             return null;
         String user;
@@ -45,9 +46,10 @@ public class JosmPreferencesCredentialManager implements CredentialsManager {
     }
 
     /**
-     * @see CredentialsManager#store(RequestorType, PasswordAuthentication)
+     * @see CredentialsAgent#store(RequestorType, PasswordAuthentication)
      */
-    public void store(RequestorType requestorType, PasswordAuthentication credentials) throws CredentialsManagerException {
+    @Override
+    public void store(RequestorType requestorType, PasswordAuthentication credentials) throws CredentialsAgentException {
         if (requestorType == null)
             return;
         switch(requestorType) {
@@ -71,16 +73,17 @@ public class JosmPreferencesCredentialManager implements CredentialsManager {
     }
 
     /**
-     * @see CredentialsManager#getCredentials(RequestorType, boolean)
+     * @see CredentialsAgent#getCredentials(RequestorType, boolean)
      */
-    public CredentialsManagerResponse getCredentials(RequestorType requestorType, boolean noSuccessWithLastResponse) throws CredentialsManagerException{
+    @Override
+    public CredentialsAgentResponse getCredentials(RequestorType requestorType, boolean noSuccessWithLastResponse) throws CredentialsAgentException{
         if (requestorType == null)
             return null;
         PasswordAuthentication credentials =  lookup(requestorType);
         String username = (credentials == null || credentials.getUserName() == null) ? "" : credentials.getUserName();
         String password = (credentials == null || credentials.getPassword() == null) ? "" : String.valueOf(credentials.getPassword());
 
-        CredentialsManagerResponse response = new CredentialsManagerResponse();
+        CredentialsAgentResponse response = new CredentialsAgentResponse();
 
         /*
          * Last request was successful and there was no credentials stored
@@ -141,9 +144,10 @@ public class JosmPreferencesCredentialManager implements CredentialsManager {
      * Access Token is currently managed by this CredentialManager.
      *
      * @return the current OAuth Access Token to access the OSM server.
-     * @throws CredentialsManagerException thrown if something goes wrong
+     * @throws CredentialsAgentException thrown if something goes wrong
      */
-    public OAuthToken lookupOAuthAccessToken() throws CredentialsManagerException {
+    @Override
+    public OAuthToken lookupOAuthAccessToken() throws CredentialsAgentException {
         String accessTokenKey = Main.pref.get("oauth.access-token.key", null);
         String accessTokenSecret = Main.pref.get("oauth.access-token.secret", null);
         if (accessTokenKey == null && accessTokenSecret == null)
@@ -155,9 +159,10 @@ public class JosmPreferencesCredentialManager implements CredentialsManager {
      * Stores the OAuth Access Token <code>accessToken</code>.
      *
      * @param accessToken the access Token. null, to remove the Access Token.
-     * @throws CredentialsManagerException thrown if something goes wrong
+     * @throws CredentialsAgentException thrown if something goes wrong
      */
-    public void storeOAuthAccessToken(OAuthToken accessToken) throws CredentialsManagerException {
+    @Override
+    public void storeOAuthAccessToken(OAuthToken accessToken) throws CredentialsAgentException {
         if (accessToken == null) {
             Main.pref.put("oauth.access-token.key", null);
             Main.pref.put("oauth.access-token.secret", null);
