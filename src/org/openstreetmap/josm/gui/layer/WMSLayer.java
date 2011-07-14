@@ -107,7 +107,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
     private int threadCount;
     private int workingThreadCount;
     private boolean canceled;
-    private ArrayList<String> serverProjections = null;
+    private List<String> serverProjections = null;
 
     /** set to true if this layer uses an invalid base url */
     private boolean usesInvalidUrl = false;
@@ -120,6 +120,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
 
     public WMSLayer(ImageryInfo info) {
         super(info);
+        serverProjections = info.getServerProjections();
         mv = Main.map.mapView;
         setBackgroundLayer(true); /* set global background variable */
         initializeImages();
@@ -142,7 +143,9 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         resolution = mv.getDist100PixelText();
 
         if(info.getUrl() != null) {
-            serverProjections = WMSGrabber.getServerProjections(info.getUrl(), true);
+            if (serverProjections == null) {
+                serverProjections = WMSGrabber.getServerProjections(info.getUrl(), true);
+            }
             startGrabberThreads();
             if(info.getImageryType() == ImageryType.WMS && !ImageryInfo.isUrlWithPatterns(info.getUrl())) {
                 if (!(info.getUrl().endsWith("&") || info.getUrl().endsWith("?"))) {
@@ -309,7 +312,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
      * @return Size of image in original zoom
      */
     public int getBaseImageWidth() {
-        int overlap = (PROP_OVERLAP.get()?PROP_OVERLAP_EAST.get() * imageSize / 100:0);
+        int overlap = PROP_OVERLAP.get() ? (PROP_OVERLAP_EAST.get() * imageSize / 100) : 0;
         return imageSize + overlap;
     }
 
@@ -318,7 +321,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
      * @return Size of image in original zoom
      */
     public int getBaseImageHeight() {
-        int overlap = (PROP_OVERLAP.get()?PROP_OVERLAP_NORTH.get() * imageSize / 100:0);
+        int overlap = PROP_OVERLAP.get() ? (PROP_OVERLAP_NORTH.get() * imageSize / 100) : 0;
         return imageSize + overlap;
     }
 
@@ -695,7 +698,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
                     oos.writeInt(imageSize);
                     oos.writeDouble(info.getPixelPerDegree());
                     oos.writeObject(info.getName());
-                    oos.writeObject(info.getFullUrl());
+                    oos.writeObject(info.getExtendedUrl());
                     oos.writeObject(images);
                     oos.close();
                 }
@@ -734,7 +737,7 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
                 imageSize = ois.readInt();
                 info.setPixelPerDegree(ois.readDouble());
                 doSetName((String)ois.readObject());
-                info.setUrl((String) ois.readObject());
+                info.setExtendedUrl((String) ois.readObject());
                 images = (GeorefImage[][])ois.readObject();
                 ois.close();
                 fis.close();
@@ -913,6 +916,17 @@ public class WMSLayer extends ImageryLayer implements PreferenceChangedListener 
         else throw new IllegalStateException("getGrabber() called for non-WMS layer type");
     }
 
+    /**
+     * Get the list of projections supported by the WMS server corresponding to this layer.
+     * @return The list of projections, if known. An empty list otherwise.
+     */
+    public List<String> getServerProjections() {
+        if (serverProjections == null)
+            return Collections.emptyList();
+        else
+            return Collections.unmodifiableList(serverProjections);
+    }
+    
     @Override
     public boolean isProjectionSupported(Projection proj) {
         return serverProjections == null || serverProjections.contains(proj.toCode().toUpperCase());

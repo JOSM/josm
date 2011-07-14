@@ -3,6 +3,8 @@ package org.openstreetmap.josm.data.imagery;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +43,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
 
     private String name;
     private String url = null;
+    private boolean defaultEntry = false;
     private String cookies = null;
     private String eulaAcceptanceRequired= null;
     private ImageryType imageryType = ImageryType.WMS;
@@ -49,10 +52,14 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     private int defaultMaxZoom = 0;
     private int defaultMinZoom = 0;
     private Bounds bounds = null;
+    private List<String> serverProjections;
     private String attributionText;
     private String attributionImage;
     private String attributionLinkURL;
     private String termsOfUseURL;
+
+    public ImageryInfo() {
+    }
 
     public ImageryInfo(String name) {
         this.name=name;
@@ -60,25 +67,25 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
 
     public ImageryInfo(String name, String url) {
         this.name=name;
-        setUrl(url);
+        setExtendedUrl(url);
     }
 
     public ImageryInfo(String name, String url, String eulaAcceptanceRequired) {
         this.name=name;
-        setUrl(url);
+        setExtendedUrl(url);
         this.eulaAcceptanceRequired = eulaAcceptanceRequired;
     }
 
     public ImageryInfo(String name, String url, String eulaAcceptanceRequired, String cookies) {
         this.name=name;
-        setUrl(url);
+        setExtendedUrl(url);
         this.cookies=cookies;
         this.eulaAcceptanceRequired = eulaAcceptanceRequired;
     }
 
     public ImageryInfo(String name, String url, String cookies, double pixelPerDegree) {
         this.name=name;
-        setUrl(url);
+        setExtendedUrl(url);
         this.cookies=cookies;
         this.pixelPerDegree=pixelPerDegree;
     }
@@ -86,7 +93,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
     public ArrayList<String> getInfoArray() {
         ArrayList<String> res = new ArrayList<String>();
         res.add(name);
-        res.add((url != null && !url.isEmpty()) ? getFullUrl() : null);
+        res.add((url != null && !url.isEmpty()) ? getExtendedUrl() : null);
         res.add(cookies);
         if(imageryType == ImageryType.WMS || imageryType == ImageryType.HTML) {
             res.add(pixelPerDegree != 0.0 ? String.valueOf(pixelPerDegree) : null);
@@ -105,7 +112,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         ArrayList<String> array = new ArrayList<String>(list);
         this.name=array.get(0);
         if(array.size() >= 2 && !array.get(1).isEmpty()) {
-            setUrl(array.get(1));
+            setExtendedUrl(array.get(1));
         }
         if(array.size() >= 3 && !array.get(2).isEmpty()) {
             this.cookies=array.get(2);
@@ -177,6 +184,14 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         this.pixelPerDegree = ppd;
     }
 
+    public void setDefaultMaxZoom(int defaultMaxZoom) {
+        this.defaultMaxZoom = defaultMaxZoom;
+    }
+
+    public void setDefaultMinZoom(int defaultMinZoom) {
+        this.defaultMinZoom = defaultMinZoom;
+    }
+    
     public void setMaxZoom(int maxZoom) {
         this.maxZoom = maxZoom;
     }
@@ -205,7 +220,7 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         termsOfUseURL = text;
     }
 
-    public void setUrl(String url) {
+    public void setExtendedUrl(String url) {
         CheckParameterUtil.ensureParameterNotNull(url);
         
         defaultMaxZoom = 0;
@@ -243,6 +258,18 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         return this.url;
     }
 
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public boolean isDefaultEntry() {
+        return defaultEntry;
+    }
+
+    public void setDefaultEntry(boolean defaultEntry) {
+        this.defaultEntry = defaultEntry;
+    }
+
     public String getCookies() {
         return this.cookies;
     }
@@ -263,7 +290,26 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
         return eulaAcceptanceRequired;
     }
 
-    public String getFullUrl() {
+    public void setEulaAcceptanceRequired(String eulaAcceptanceRequired) {
+        this.eulaAcceptanceRequired = eulaAcceptanceRequired;
+    }
+
+    /**
+     * Get the projections supported by the server. Only relevant for
+     * WMS-type ImageryInfo at the moment.
+     * @return null, if no projections have been specified; the list
+     * of supported projections otherwise.
+     */
+    public List<String> getServerProjections() {
+        if (serverProjections == null) return null;
+        return Collections.unmodifiableList(serverProjections);
+    }
+
+    public void setServerProjections(Collection<String> serverProjections) {
+        this.serverProjections = new ArrayList<String>(serverProjections);
+    }
+
+    public String getExtendedUrl() {
         return imageryType.getUrlString() + (defaultMaxZoom != 0
             ? "["+(defaultMinZoom != 0 ? defaultMinZoom+",":"")+defaultMaxZoom+"]" : "") + ":" + url;
     }
@@ -330,6 +376,10 @@ public class ImageryInfo implements Comparable<ImageryInfo> {
 
     public ImageryType getImageryType() {
         return imageryType;
+    }
+
+    public void setImageryType(ImageryType imageryType) {
+        this.imageryType = imageryType;
     }
 
     public static boolean isUrlWithPatterns(String url) {

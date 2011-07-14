@@ -18,6 +18,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Locale;
 import java.util.Map;
@@ -46,11 +47,13 @@ public class WMSGrabber extends Grabber {
 
     protected String baseURL;
     private final boolean urlWithPatterns;
+    private List<String> serverProjections;
     private Map<String, String> props = new HashMap<String, String>();
 
     public WMSGrabber(MapView mv, WMSLayer layer) {
         super(mv, layer);
         this.baseURL = layer.getInfo().getUrl();
+        this.serverProjections = layer.getServerProjections();
         /* URL containing placeholders? */
         urlWithPatterns = ImageryInfo.isUrlWithPatterns(baseURL);
         if(layer.getInfo().getCookies() != null && !layer.getInfo().getCookies().equals("")) {
@@ -138,8 +141,8 @@ public class WMSGrabber extends Grabber {
             .replaceAll("\\{height\\}", String.valueOf(ht));
         } else {
             str += "bbox=" + bbox
-            + srs
-            + "&width=" + wi + "&height=" + ht;
+                    + srs
+                    + "&width=" + wi + "&height=" + ht;
             if (!(baseURL.endsWith("&") || baseURL.endsWith("?"))) {
                 System.out.println(tr("Warning: The base URL ''{0}'' for a WMS service doesn't have a trailing '&' or a trailing '?'.", baseURL));
                 System.out.println(tr("Warning: Fetching WMS tiles is likely to fail. Please check you preference settings."));

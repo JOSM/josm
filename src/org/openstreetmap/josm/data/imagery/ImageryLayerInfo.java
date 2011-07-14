@@ -1,12 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,9 +10,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
-import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.io.imagery.ImageryReader;
 import org.openstreetmap.josm.io.MirroredInputStream;
+import org.openstreetmap.josm.tools.Utils;
+import org.xml.sax.SAXException;
 
 public class ImageryLayerInfo {
 
@@ -64,96 +60,63 @@ public class ImageryLayerInfo {
 
     public void loadDefaults(boolean clearCache) {
         defaultLayers.clear();
-        Collection<String> defaults = Main.pref.getCollection(
-                "imagery.layers.default", Collections.<String>emptySet());
+        for (String source : Main.pref.getCollection("imagery.layers.sites", Arrays.asList(DEFAULT_LAYER_SITES))) {
+            if (clearCache) {
+                MirroredInputStream.cleanup(source);
+            }
+            MirroredInputStream stream = null;
+            try {
+                ImageryReader reader = new ImageryReader(source);
+                Collection<ImageryInfo> result = reader.parse();
+                defaultLayers.addAll(result);
+            } catch (IOException ex) {
+                Utils.close(stream);
+                ex.printStackTrace();
+                continue;
+            } catch (SAXException sex) {
+                Utils.close(stream);
+                sex.printStackTrace();
+                continue;
+            }
+        }
+        while (defaultLayers.remove(null)) {}
+        
+        Collection<String> defaults = Main.pref.getCollection("imagery.layers.default");
         ArrayList<String> defaultsSave = new ArrayList<String>();
-        for(String source : Main.pref.getCollection("imagery.layers.sites", Arrays.asList(DEFAULT_LAYER_SITES)))
-        {
-            try
-            {
-                if (clearCache) {
-                    MirroredInputStream.cleanup(source);
+        for (ImageryInfo def : defaultLayers) {
+            if (def.isDefaultEntry()) {
+                defaultsSave.add(def.getUrl());
+                
+                boolean isKnownDefault = false;
+                for (String url : defaults) {
+                    if (isSimilar(url, def.getUrl())) {
+                        isKnownDefault = true;
+                        break;
+                    }
                 }
-                MirroredInputStream s = new MirroredInputStream(source, -1);
-                try {
-                    InputStreamReader r;
-                    try
-                    {
-                        r = new InputStreamReader(s, "UTF-8");
-                    }
-                    catch (UnsupportedEncodingException e)
-                    {
-                        r = new InputStreamReader(s);
-                    }
-                    BufferedReader reader = new BufferedReader(r);
-                    String line;
-                    while((line = reader.readLine()) != null)
-                    {
-                        String val[] = line.split(";");
-                        if(!line.startsWith("#") && val.length >= 3) {
-                            boolean force = "true".equals(val[0]);
-                            String name = tr(val[1]);
-                            String url = val[2];
-                            String eulaAcceptanceRequired = null;
-
-                            if (val.length >= 4 && !val[3].isEmpty()) {
-                                // 4th parameter optional for license agreement (EULA)
-                                eulaAcceptanceRequired = val[3];
-                            }
-
-                            ImageryInfo info = new ImageryInfo(name, url, eulaAcceptanceRequired);
-
-                            if (val.length >= 5 && !val[4].isEmpty()) {
-                                // 5th parameter optional for bounds
-                                try {
-                                    info.setBounds(new Bounds(val[4], ","));
-                                } catch (IllegalArgumentException e) {
-                                    Main.warn(e.toString());
-                                }
-                            }
-                            if (val.length >= 6 && !val[5].isEmpty()) {
-                                info.setAttributionText(val[5]);
-                            }
-                            if (val.length >= 7 && !val[6].isEmpty()) {
-                                info.setAttributionLinkURL(val[6]);
-                            }
-                            if (val.length >= 8 && !val[7].isEmpty()) {
-                                info.setTermsOfUseURL(val[7]);
-                            }
-                            if (val.length >= 9 && !val[8].isEmpty()) {
-                                info.setAttributionImage(val[8]);
-                            }
-
-                            defaultLayers.add(info);
-
-                            if (force) {
-                                defaultsSave.add(url);
-                                if (!defaults.contains(url)) {
-                                    for (ImageryInfo i : layers) {
-                                        if ((i.getImageryType() == ImageryType.WMS && url.equals(i.getUrl()))
-                                                || url.equals(i.getFullUrl())) {
-                                            force = false;
-                                        }
-                                    }
-                                    if (force) {
-                                        add(new ImageryInfo(name, url));
-                                    }
-                                }
-                            }
+                boolean isInUserList = false;
+                if (!isKnownDefault) {
+                    for (ImageryInfo i : layers) {
+                        if (isSimilar(def.getUrl(), i.getUrl())) {
+                            isInUserList = true;
+                            break;
                         }
                     }
-                } finally {
-                    s.close();
                 }
-            }
-            catch (IOException e)
-            {
+                if (!isKnownDefault && !isInUserList) {
+                    add(new ImageryInfo(def));
+                }
             }
         }
 
         Collections.sort(defaultLayers);
         Main.pref.putCollection("imagery.layers.default", defaultsSave.size() > 0
                 ? defaultsSave : defaults);
+    }
+    
+    // some additional checks to respect extended URLs in preferences (legacy workaround)
+    private boolean isSimilar(String a, String b) {
+        return Utils.equal(a, b) || (a != null && b != null && !"".equals(a) && !"".equals(b) && (a.contains(b) || b.contains(a)));
     }
 
     public void add(ImageryInfo info) {
