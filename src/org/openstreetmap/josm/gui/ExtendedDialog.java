@@ -52,6 +52,20 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * Note: The button indices are counted from 1 and upwards.
  * So for getValue(), setDefaultButton(int) and setCancelButton(int) the
  * first button has index 1.
+ * 
+ * Simple example:
+ * <code>
+ *  ExtendedDialog ed = new ExtendedDialog(
+ *          Main.parent, tr("Dialog Title"),
+ *          new String[] {tr("Ok"), tr("Cancel")});
+ *  ed.setButtonIcons(new String[] {"ok", "cancel"});   // optional
+ *  ed.setIcon(JOptionPane.WARNING_MESSAGE);            // optional
+ *  ed.setContent(tr("Really proceed? Interesting things may happen..."));
+ *  ed.showDialog();
+ *  if (ed.getValue() == 1) { // user clicked first button "Ok"
+ *      // proceed...
+ *  }
+ * </code>
  */
 public class ExtendedDialog extends JDialog {
     private final boolean disposeOnClose;
@@ -281,10 +295,10 @@ public class ExtendedDialog extends JDialog {
         JButton button;
         JPanel buttonsPanel = new JPanel(new GridBagLayout());
 
-        for(int i=0; i < bTexts.length; i++) {
+        for (int i=0; i < bTexts.length; i++) {
             final int final_i = i;
             Action action = new AbstractAction(bTexts[i]) {
-                public void actionPerformed(ActionEvent evt) {
+                @Override public void actionPerformed(ActionEvent evt) {
                     buttonAction(final_i, evt);
                 }
             };
@@ -414,7 +428,7 @@ public class ExtendedDialog extends JDialog {
      */
     private void setupEscListener() {
         Action actionListener = new AbstractAction() {
-            public void actionPerformed(ActionEvent actionEvent) {
+            @Override public void actionPerformed(ActionEvent actionEvent) {
                 // 0 means that the dialog has been closed otherwise.
                 // We need to set it to zero again, in case the dialog has been re-used
                 // and the result differs from its default value
@@ -534,7 +548,7 @@ public class ExtendedDialog extends JDialog {
     protected void fixFocus() {
         if (toggleable && defaultButton != null) {
             SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
+                @Override public void run() {
                     defaultButton.requestFocusInWindow();
                 }
             });
@@ -610,7 +624,7 @@ public class ExtendedDialog extends JDialog {
             putValue(SMALL_ICON, ImageProvider.get("help"));
         }
 
-        public void actionPerformed(ActionEvent e) {
+        @Override public void actionPerformed(ActionEvent e) {
             HelpBrowser.setUrlForHelpTopic(helpTopic);
         }
     }

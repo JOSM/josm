@@ -3,12 +3,9 @@ package org.openstreetmap.josm.io.auth;
 
 import java.net.PasswordAuthentication;
 import java.net.Authenticator.RequestorType;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
-import org.openstreetmap.josm.gui.io.CredentialDialog;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
 
 /**
@@ -16,9 +13,8 @@ import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
  * the OSM API and an optional HTTP proxy in the JOSM preferences file.
  *
  */
-public class JosmPreferencesCredentialAgent implements CredentialsAgent {
+public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
 
-    Map<RequestorType, PasswordAuthentication> memoryCredentialsCache = new HashMap<RequestorType, PasswordAuthentication>();
     /**
      * @see CredentialsAgent#lookup(RequestorType)
      */
@@ -70,73 +66,6 @@ public class JosmPreferencesCredentialAgent implements CredentialsAgent {
             }
             break;
         }
-    }
-
-    /**
-     * @see CredentialsAgent#getCredentials(RequestorType, boolean)
-     */
-    @Override
-    public CredentialsAgentResponse getCredentials(RequestorType requestorType, boolean noSuccessWithLastResponse) throws CredentialsAgentException{
-        if (requestorType == null)
-            return null;
-        PasswordAuthentication credentials =  lookup(requestorType);
-        String username = (credentials == null || credentials.getUserName() == null) ? "" : credentials.getUserName();
-        String password = (credentials == null || credentials.getPassword() == null) ? "" : String.valueOf(credentials.getPassword());
-
-        CredentialsAgentResponse response = new CredentialsAgentResponse();
-
-        /*
-         * Last request was successful and there was no credentials stored
-         * in file (or only the username is stored).
-         * -> Try to recall credentials that have been entered
-         * manually in this session.
-         */
-        if (!noSuccessWithLastResponse && memoryCredentialsCache.containsKey(requestorType) &&
-                (credentials == null || credentials.getPassword() == null || credentials.getPassword().length == 0)) {
-            PasswordAuthentication pa = memoryCredentialsCache.get(requestorType);
-            response.setUsername(pa.getUserName());
-            response.setPassword(pa.getPassword());
-            response.setCanceled(false);
-        /*
-         * Prompt the user for credentials. This happens the first time each
-         * josm start if the user does not save the credentials to preference
-         * file (username=="") and each time after authentication failed
-         * (noSuccessWithLastResponse == true).
-         */
-        } else if (noSuccessWithLastResponse || username.equals("") || password.equals("")) {
-            CredentialDialog dialog = null;
-            switch(requestorType) {
-            case SERVER: dialog = CredentialDialog.getOsmApiCredentialDialog(username, password); break;
-            case PROXY: dialog = CredentialDialog.getHttpProxyCredentialDialog(username, password); break;
-            }
-            dialog.setVisible(true);
-            response.setCanceled(dialog.isCanceled());
-            if (dialog.isCanceled())
-                return response;
-            response.setUsername(dialog.getUsername());
-            response.setPassword(dialog.getPassword());
-            if (dialog.isSaveCredentials()) {
-                store(requestorType, new PasswordAuthentication(
-                        response.getUsername(),
-                        response.getPassword()
-                ));
-            /*
-             * User decides not to save credentials to file. Keep it
-             * in memory so we don't have to ask over and over again.
-             */
-            } else {
-                PasswordAuthentication pa = new PasswordAuthentication(dialog.getUsername(), dialog.getPassword());
-                memoryCredentialsCache.put(requestorType, pa);
-            }
-        /*
-         * We got it from file.
-         */
-        } else {
-            response.setUsername(username);
-            response.setPassword(password.toCharArray());
-            response.setCanceled(false);
-        }
-        return response;
     }
 
     /**
