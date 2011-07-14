@@ -20,7 +20,7 @@ import org.openstreetmap.josm.tools.LanguageInfo;
  *
  */
 public class Version {
-    /** constant to indicate that the currnt build isn't assigned a JOSM version number */
+    /** constant to indicate that the current build isn't assigned a JOSM version number */
     static public final int JOSM_UNKNOWN_VERSION = 0;
 
     /** the unique instance */
@@ -37,7 +37,7 @@ public class Version {
         BufferedReader in;
         String s = null;
         try {
-            in = new BufferedReader(new InputStreamReader(resource.openStream()));
+            in = new BufferedReader(new InputStreamReader(resource.openStream(), "UTF-8"));
             StringBuffer sb = new StringBuffer();
             for (String line = in.readLine(); line != null; line = in.readLine()) {
                 sb.append(line).append("\n");
