@@ -291,7 +291,9 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
     public void initFromPreferences() {
         String policy = Main.pref.get(PROXY_POLICY, null);
         ProxyPolicy pp = ProxyPolicy.fromName(policy);
-        pp = pp == null? ProxyPolicy.NO_PROXY: pp;
+        if (pp == null) {
+            pp = ProxyPolicy.NO_PROXY;
+        }
         rbProxyPolicy.get(pp).setSelected(true);
         String value = Main.pref.get("proxy.host", null);
         if (value != null) {
@@ -352,6 +354,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
     }
 
     class ProxyPolicyChangeListener implements ItemListener {
+        @Override
         public void itemStateChanged(ItemEvent arg0) {
             updateEnabledState();
         }

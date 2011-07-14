@@ -37,7 +37,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class OsmApiUrlInputPanel extends JPanel {
     static public final String API_URL_PROP = OsmApiUrlInputPanel.class.getName() + ".apiUrl";
 
-    static private final String defaulturl = "http://api.openstreetmap.org/api";
+    static public final String defaulturl = "http://api.openstreetmap.org/api";
     private JLabel lblValid;
     private JLabel lblApiUrl;
     private JTextField tfOsmServerUrl;

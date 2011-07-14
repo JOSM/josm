@@ -24,7 +24,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * can partially identify the user.
  *
  * The current user is fully identified if JOSM knows both the user name and the unique
- * id of the users OSM account. The later is retrieved from the OSM server with a
+ * id of the users OSM account. The latter is retrieved from the OSM server with a
  * <tt>GET /api/0.6/user/details</tt> request, submitted with the user name and password
  * of the current user.
  *
