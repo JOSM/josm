@@ -265,7 +265,7 @@ public class NmeaReader {
             String currentDate = ps.p_Date;
 
             // handle the packet content
-            if(e[0].equals("$GPGGA")) {
+            if(e[0].equals("$GPGGA") || e[0].equals("$GNGGA")) {
                 // Position
                 LatLon latLon = parseLatLon(
                         e[GPGGA.LATITUDE_NAME.position],
@@ -345,7 +345,7 @@ public class NmeaReader {
                         break;
                     }
                 }
-            } else if(e[0].equals("$GPVTG")) {
+            } else if(e[0].equals("$GPVTG") || e[0].equals("$GNVTG")) {
                 // COURSE
                 accu = e[GPVTG.COURSE_REF.position];
                 if(accu.equals("T")) {
@@ -366,7 +366,7 @@ public class NmeaReader {
                         currentwp.attr.put("speed", Double.toString(speed));
                     }
                 }
-            } else if(e[0].equals("$GPGSA")) {
+            } else if(e[0].equals("$GPGSA") || e[0].equals("$GNGSA")) {
                 // vdop
                 accu=e[GPGSA.VDOP.position];
                 if(!accu.equals("")) {
@@ -383,7 +383,7 @@ public class NmeaReader {
                     currentwp.attr.put("pdop", Float.parseFloat(accu));
                 }
             }
-            else if(e[0].equals("$GPRMC")) {
+            else if(e[0].equals("$GPRMC") || e[0].equals("$GNRMC")) {
                 // coordinates
                 LatLon latLon = parseLatLon(
                         e[GPRMC.WIDTH_NORTH_NAME.position],
