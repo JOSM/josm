@@ -5,8 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
-import org.openstreetmap.josm.io.auth.CredentialsManager;
-import org.openstreetmap.josm.io.auth.CredentialsManagerException;
+import org.openstreetmap.josm.io.auth.CredentialsAgent;
+import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 
@@ -135,13 +135,13 @@ public class OAuthAccessTokenHolder {
      * @param cm the credential manager. Must not be null.
      * @throws IllegalArgumentException thrown if cm is null
      */
-    public void init(Preferences pref, CredentialsManager cm) throws IllegalArgumentException {
+    public void init(Preferences pref, CredentialsAgent cm) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(pref, "pref");
         CheckParameterUtil.ensureParameterNotNull(cm, "cm");
         OAuthToken token = null;
         try {
             token = cm.lookupOAuthAccessToken();
-        } catch(CredentialsManagerException e) {
+        } catch(CredentialsAgentException e) {
             e.printStackTrace();
             System.err.println(tr("Warning: Failed to retrieve OAuth Access Token from credential manager"));
             System.err.println(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));
@@ -162,7 +162,7 @@ public class OAuthAccessTokenHolder {
      * @throws IllegalArgumentException thrown if preferences is null
      * @throws IllegalArgumentException thrown if cm is null
      */
-    public void save(Preferences preferences, CredentialsManager cm) throws IllegalArgumentException {
+    public void save(Preferences preferences, CredentialsAgent cm) throws IllegalArgumentException {
         CheckParameterUtil.ensureParameterNotNull(preferences, "preferences");
         CheckParameterUtil.ensureParameterNotNull(cm, "cm");
         preferences.put("oauth.access-token.save-to-preferences", saveToPreferences);
@@ -172,7 +172,7 @@ public class OAuthAccessTokenHolder {
             } else {
                 cm.storeOAuthAccessToken(new OAuthToken(accessTokenKey, accessTokenSecret));
             }
-        } catch(CredentialsManagerException e){
+        } catch(CredentialsAgentException e){
             e.printStackTrace();
             System.err.println(tr("Warning: Failed to store OAuth Access Token to credentials manager"));
             System.err.println(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));

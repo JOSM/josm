@@ -31,7 +31,7 @@ import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.oauth.AdvancedOAuthPropertiesPanel;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.oauth.TestAccessTokenTask;
-import org.openstreetmap.josm.io.auth.CredentialsManagerFactory;
+import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -160,7 +160,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
      */
     public void saveToPreferences() {
         OAuthAccessTokenHolder.getInstance().setSaveToPreferences(cbSaveToPreferences.isSelected());
-        OAuthAccessTokenHolder.getInstance().save(Main.pref, CredentialsManagerFactory.getCredentialManager());
+        OAuthAccessTokenHolder.getInstance().save(Main.pref, CredentialsManager.getInstance());
         pnlAdvancedProperties.getAdvancedParameters().saveToPreferences(Main.pref);
     }
 

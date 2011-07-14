@@ -21,20 +21,20 @@ public  class DefaultAuthenticator extends Authenticator {
         return instance;
     }
 
-    public static void createInstance(CredentialsManager credentialManager) {
+    public static void createInstance(CredentialsAgent credentialManager) {
         instance = new DefaultAuthenticator(credentialManager);
     }
 
-    private CredentialsManager credentialManager;
+    private CredentialsAgent credentialsAgent;
     private final Map<RequestorType, Boolean> credentialsTried = new HashMap<RequestorType, Boolean>();
     private boolean enabled = true;
 
     /**
      *
-     * @param credentialManager the credential manager
+     * @param credentialsAgent the credential manager
      */
-    private DefaultAuthenticator(CredentialsManager credentialManager) {
-        this.credentialManager = credentialManager;
+    private DefaultAuthenticator(CredentialsAgent credentialsAgent) {
+        this.credentialsAgent = credentialsAgent;
     }
 
     /**
@@ -54,12 +54,12 @@ public  class DefaultAuthenticator extends Authenticator {
                     return null;
             }
             boolean tried = credentialsTried.get(getRequestorType()) != null;
-            CredentialsManagerResponse response = credentialManager.getCredentials(getRequestorType(), tried);
+            CredentialsAgentResponse response = credentialsAgent.getCredentials(getRequestorType(), tried);
             if (response == null || response.isCanceled())
                 return null;
             credentialsTried.put(getRequestorType(), true);
             return new PasswordAuthentication(response.getUsername(), response.getPassword());
-        } catch(CredentialsManagerException e) {
+        } catch(CredentialsAgentException e) {
             e.printStackTrace();
             return null;
         }

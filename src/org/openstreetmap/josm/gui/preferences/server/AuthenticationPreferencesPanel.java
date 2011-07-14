@@ -19,7 +19,7 @@ import javax.swing.JRadioButton;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
-import org.openstreetmap.josm.io.auth.CredentialsManagerFactory;
+import org.openstreetmap.josm.io.auth.CredentialsManager;
 
 /**
  * This is the preference panel for the authentication method and the authentication
@@ -123,7 +123,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
             // save username and password and clear the OAuth token
             pnlBasicAuthPreferences.saveToPreferences();
             OAuthAccessTokenHolder.getInstance().clear();
-            OAuthAccessTokenHolder.getInstance().save(Main.pref, CredentialsManagerFactory.getCredentialManager());
+            OAuthAccessTokenHolder.getInstance().save(Main.pref, CredentialsManager.getInstance());
         } else if (authMethod.equals("oauth")) {
             // clear the password in the preferences
             pnlBasicAuthPreferences.clearPassword();
