@@ -62,6 +62,8 @@ import com.drew.lang.CompoundException;
 import com.drew.lang.Rational;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
+import com.drew.metadata.exif.ExifDirectory;
 import com.drew.metadata.exif.GpsDirectory;
 
 public class GeoImageLayer extends Layer implements PropertyChangeListener {
@@ -508,11 +510,12 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         double min, sec;
         double lon, lat;
         Metadata metadata = null;
-        Directory dir = null;
+        Directory dirExif = null, dirGps = null;
 
         try {
             metadata = JpegMetadataReader.readMetadata(e.getFile());
-            dir = metadata.getDirectory(GpsDirectory.class);
+            dirExif = metadata.getDirectory(ExifDirectory.class);
+            dirGps = metadata.getDirectory(GpsDirectory.class);
         } catch (CompoundException p) {
             e.setExifCoor(null);
             e.setPos(null);
@@ -520,9 +523,15 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         }
 
         try {
+            int orientation = dirExif.getInt(ExifDirectory.TAG_ORIENTATION);
+            e.setExifOrientation(orientation);
+        } catch (MetadataException ex) {
+        }
+        
+        try {
             // longitude
 
-            Rational[] components = dir.getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
+            Rational[] components = dirGps.getRationalArray(GpsDirectory.TAG_GPS_LONGITUDE);
 
             deg = components[0].doubleValue();
             min = components[1].doubleValue();
@@ -533,13 +542,13 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
 
             lon = (Double.isNaN(deg) ? 0 : deg + (Double.isNaN(min) ? 0 : (min / 60)) + (Double.isNaN(sec) ? 0 : (sec / 3600)));
 
-            if (dir.getString(GpsDirectory.TAG_GPS_LONGITUDE_REF).charAt(0) == 'W') {
+            if (dirGps.getString(GpsDirectory.TAG_GPS_LONGITUDE_REF).charAt(0) == 'W') {
                 lon = -lon;
             }
 
             // latitude
 
-            components = dir.getRationalArray(GpsDirectory.TAG_GPS_LATITUDE);
+            components = dirGps.getRationalArray(GpsDirectory.TAG_GPS_LATITUDE);
 
             deg = components[0].doubleValue();
             min = components[1].doubleValue();
@@ -553,7 +562,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
             if (Double.isNaN(lat))
                 throw new IllegalArgumentException();
 
-            if (dir.getString(GpsDirectory.TAG_GPS_LATITUDE_REF).charAt(0) == 'S') {
+            if (dirGps.getString(GpsDirectory.TAG_GPS_LATITUDE_REF).charAt(0) == 'S') {
                 lat = -lat;
             }
 
@@ -565,8 +574,8 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         } catch (CompoundException p) {
             // Try to read lon/lat as double value (Nonstandard, created by some cameras -> #5220)
             try {
-                Double longitude = dir.getDouble(GpsDirectory.TAG_GPS_LONGITUDE);
-                Double latitude = dir.getDouble(GpsDirectory.TAG_GPS_LATITUDE);
+                Double longitude = dirGps.getDouble(GpsDirectory.TAG_GPS_LONGITUDE);
+                Double latitude = dirGps.getDouble(GpsDirectory.TAG_GPS_LATITUDE);
                 if (longitude == null || latitude == null)
                     throw new CompoundException("");
 
@@ -589,7 +598,7 @@ public class GeoImageLayer extends Layer implements PropertyChangeListener {
         Rational direction = null;
 
         try {
-            direction = dir.getRational(GpsDirectory.TAG_GPS_IMG_DIRECTION);
+            direction = dirGps.getRational(GpsDirectory.TAG_GPS_IMG_DIRECTION);
             if (direction != null) {
                 e.setExifImgDir(direction.doubleValue());
             }

@@ -229,7 +229,7 @@ public class ImageViewerDialog extends ToggleDialog {
         }
 
         if (entry != null) {
-            imgDisplay.setImage(entry.getFile());
+            imgDisplay.setImage(entry.getFile(), entry.getExifOrientation());
             setTitle("Geotagged Images" + (entry.getFile() != null ? " - " + entry.getFile().getName() : ""));
             StringBuffer osd = new StringBuffer(entry.getFile() != null ? entry.getFile().getName() : "");
             if (entry.getElevation() != null) {
@@ -252,7 +252,7 @@ public class ImageViewerDialog extends ToggleDialog {
 
             imgDisplay.setOsdText(osd.toString());
         } else {
-            imgDisplay.setImage(null);
+            imgDisplay.setImage(null, null);
             imgDisplay.setOsdText("");
         }
         if (! isDialogShowing()) {
