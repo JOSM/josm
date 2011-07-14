@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.dialogs.relation;
 import java.awt.Component;
 
 import javax.swing.AbstractCellEditor;
+import javax.swing.BorderFactory;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
@@ -24,6 +25,7 @@ public class MemberRoleCellEditor extends AbstractCellEditor implements TableCel
     public MemberRoleCellEditor(DataSet ds) {
         this.ds = ds;
         editor = new AutoCompletingTextField();
+        editor.setBorder(BorderFactory.createEmptyBorder(1,1,1,1)); 
         autoCompletionList = new AutoCompletionList();
         editor.setAutoCompletionList(autoCompletionList);
     }
@@ -53,5 +55,10 @@ public class MemberRoleCellEditor extends AbstractCellEditor implements TableCel
     @Override
     public boolean stopCellEditing() {
         return super.stopCellEditing();
+    }
+    
+    /** Returns the edit field for this cell editor. */
+    public AutoCompletingTextField getEditor() {
+        return editor;
     }
 }

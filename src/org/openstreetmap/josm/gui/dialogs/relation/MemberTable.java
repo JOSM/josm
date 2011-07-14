@@ -58,6 +58,8 @@ public class MemberTable extends JTable implements IMemberModelListener {
      * initialize the table
      */
     protected void init() {
+        MemberRoleCellEditor ce = (MemberRoleCellEditor)getColumnModel().getColumn(0).getCellEditor();  
+        setRowHeight(ce.getEditor().getPreferredSize().height);
         setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);

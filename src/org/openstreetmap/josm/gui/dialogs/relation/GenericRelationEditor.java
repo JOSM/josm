@@ -32,7 +32,6 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultCellEditor;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -40,7 +39,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -346,7 +344,6 @@ public class GenericRelationEditor extends RelationEditor  {
                 }
         );
         tfRole.setEnabled(memberTable.getSelectedRowCount() > 0);
-        memberTable.setRowHeight(tfRole.getPreferredSize().height);
         SideButton btnApply = new SideButton(setRoleAction);
         btnApply.setPreferredSize(new Dimension(20,20));
         btnApply.setText("");
