@@ -32,11 +32,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
 import javax.swing.AbstractAction;
@@ -347,7 +345,12 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
                 public void valueChanged(ListSelectionEvent arg0) {
                     int index = imgList.getSelectedIndex();
-                    imgDisp.setImage(yLayer.data.get(index).getFile());
+                    Integer orientation = null;
+                    try {
+                        orientation = ExifReader.readOrientation(yLayer.data.get(index).getFile());
+                    } catch (Exception e) {
+                    }
+                    imgDisp.setImage(yLayer.data.get(index).getFile(), orientation);
                     Date date = yLayer.data.get(index).getExifTime();
                     if (date != null) {
                         lbExifTime.setText(new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(date));
@@ -379,7 +382,12 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     if (sel == null)
                         return;
 
-                    imgDisp.setImage(sel);
+                    Integer orientation = null;
+                    try {
+                        orientation = ExifReader.readOrientation(sel);
+                    } catch (Exception e) {
+                    }
+                    imgDisp.setImage(sel, orientation);
 
                     Date date = null;
                     try {

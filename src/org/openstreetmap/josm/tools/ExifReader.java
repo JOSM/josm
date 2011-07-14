@@ -7,9 +7,12 @@ import java.util.Date;
 import java.util.Iterator;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
 import com.drew.metadata.Tag;
+import com.drew.metadata.exif.ExifDirectory;
 
 /**
  * Read out exif file information from a jpeg file
@@ -37,4 +40,19 @@ public class ExifReader {
         }
         return date;
     }
+
+    @SuppressWarnings("unchecked") public static Integer readOrientation(File filename) throws ParseException {
+        Integer orientation = null;
+        try {
+            final Metadata metadata = JpegMetadataReader.readMetadata(filename);
+            final Directory dir = metadata.getDirectory(ExifDirectory.class);
+            orientation = dir.getInt(ExifDirectory.TAG_ORIENTATION);
+        } catch (JpegProcessingException e) {
+            e.printStackTrace();
+        } catch (MetadataException e) {
+            e.printStackTrace();
+        }
+        return orientation;
+    }
+
 }

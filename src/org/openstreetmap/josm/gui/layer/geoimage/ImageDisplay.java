@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Point;
@@ -19,7 +20,9 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.swing.JComponent;
@@ -33,7 +36,7 @@ public class ImageDisplay extends JComponent {
 
     /** The image currently displayed */
     private Image image = null;
-
+    
     /** The image currently displayed */
     private boolean errorLoading = false;
 
@@ -55,10 +58,12 @@ public class ImageDisplay extends JComponent {
     /** The thread that reads the images. */
     private class LoadImageRunnable implements Runnable {
 
-        File file = null;
+        private File file;
+        private int orientation;
 
-        public LoadImageRunnable(File file) {
+        public LoadImageRunnable(File file, Integer orientation) {
             this.file = file;
+            this.orientation = orientation == null ? -1 : orientation;
         }
 
         public void run() {
@@ -89,8 +94,53 @@ public class ImageDisplay extends JComponent {
                     tracker.removeImage(img);
                     return;
                 }
+
                 ImageDisplay.this.image = img;
                 visibleRect = new Rectangle(0, 0, img.getWidth(null), img.getHeight(null));
+
+                final int w = (int) visibleRect.getWidth();
+                final int h = (int) visibleRect.getHeight();
+
+                outer: {
+                    final int hh, ww, q;
+                    final double ax, ay;
+                    switch (orientation) {
+                    case 8:
+                        q = -1;
+                        ax = w / 2;
+                        ay = w / 2;
+                        ww = h;
+                        hh = w;
+                        break;
+                    case 3:
+                        q = 2;
+                        ax = w / 2;
+                        ay = h / 2;
+                        ww = w;
+                        hh = h;
+                        break;
+                    case 6:
+                        q = 1;
+                        ax = h / 2;
+                        ay = h / 2;
+                        ww = h;
+                        hh = w;
+                        break;
+                    default:
+                        break outer;
+                    }
+
+                    final BufferedImage rot = new BufferedImage(ww, hh, BufferedImage.TYPE_INT_RGB);
+                    final AffineTransform xform = AffineTransform.getQuadrantRotateInstance(q, ax, ay);
+                    final Graphics2D g = rot.createGraphics();
+                    g.drawImage(image, xform, null);
+                    g.dispose();
+
+                    visibleRect.setSize(ww, hh);
+                    image.flush();
+                    ImageDisplay.this.image = rot;
+                }
+
                 selectedRect = null;
                 errorLoading = error;
             }
@@ -393,7 +443,7 @@ public class ImageDisplay extends JComponent {
         addMouseMotionListener(mouseListener);
     }
 
-    public void setImage(File file) {
+    public void setImage(File file, Integer orientation) {
         synchronized(this) {
             this.file = file;
             image = null;
@@ -402,7 +452,7 @@ public class ImageDisplay extends JComponent {
         }
         repaint();
         if (file != null) {
-            new Thread(new LoadImageRunnable(file)).start();
+            new Thread(new LoadImageRunnable(file, orientation)).start();
         }
     }
 
